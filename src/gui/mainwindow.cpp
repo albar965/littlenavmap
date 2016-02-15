@@ -48,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
   place->setDescription("Test place");
   place->setPopulation(15000);
   place->setCountryCode("Germany");
-  place->setStyle(style2);
+  //place->setStyle(style2);
 
   GeoDataDocument *document = new GeoDataDocument;
   document->append(place);

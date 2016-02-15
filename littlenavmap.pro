@@ -17,7 +17,7 @@ TEMPLATE = app
 win32 {
   QT_BIN=C:\\Qt\\5.5\\mingw492_32\\bin
   GIT_BIN='C:\\Git\\bin\\git'
-  MARBLE_BASE=c:\\Program Files (x86)\\Marble
+  MARBLE_BASE=\"c:\\Program Files (x86)\\Marble\"
 }
 
 unix {
@@ -40,11 +40,16 @@ HEADERS  += src/gui/mainwindow.h \
 FORMS    += src/gui/mainwindow.ui
 
 # Marble dependencies
-win32:CONFIG(release, debug|release): LIBS += -L$$MARBLE_BASE/lib/release/ -lmarblewidget-qt5
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$MARBLE_BASE/lib/debug/ -lmarblewidget-qt5
-else:unix: LIBS += -L$$MARBLE_BASE/lib/ -lmarblewidget-qt5
-INCLUDEPATH += $$MARBLE_BASE/include
-DEPENDPATH += $$MARBLE_BASE/include
+win32 {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+unix {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  DEPENDPATH += $$MARBLE_BASE/include
+}
 
 # Add dependencies to atools project and its static library to ensure relinking on changes
 DEPENDPATH += $$PWD/../atools/src
@@ -76,7 +81,7 @@ unix {
   cleandata.commands = rm -Rvf $$OUT_PWD/help
 }
 
-# Windows specific deploy target only for release builds
+# Windows specific deploy target
 win32 {
   RC_ICONS = resources/icons/navroute.ico
 
@@ -88,24 +93,41 @@ win32 {
   DEPLOY_DIR_NAME=Little Navmap
   DEPLOY_DIR=\"$${WINPWD}\\deploy\\$${DEPLOY_DIR_NAME}\"
 
-  copydata.commands = xcopy /i /s /e /f /y $${WINPWD}\\help $${WINOUT_PWD}\\help
-
-  cleandata.commands = del /s /q $${WINOUT_PWD}\\help
+  CONFIG(debug, debug|release):DLL_SUFFIX=d
+  CONFIG(release, debug|release):DLL_SUFFIX=
 
   deploy.commands = rmdir /s /q $${DEPLOY_DIR} &
   deploy.commands += mkdir $${DEPLOY_DIR} &
-  deploy.commands += copy $${WINOUT_PWD}\\littlenavmap.exe $${DEPLOY_DIR} &&
-  deploy.commands += copy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR} &&
-  deploy.commands += copy $${WINPWD}\\README.txt $${DEPLOY_DIR} &&
-  deploy.commands += copy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR} &&
-  deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR}\\help &&
-  deploy.commands += copy $${QT_BIN}\\libgcc*.dll $${DEPLOY_DIR} &&
-  deploy.commands += copy $${QT_BIN}\\libstdc*.dll $${DEPLOY_DIR} &&
-  deploy.commands += copy $${QT_BIN}\\libwinpthread*.dll $${DEPLOY_DIR} &&
-  deploy.commands += $${QT_BIN}\\windeployqt --compiler-runtime $${DEPLOY_DIR} &&
-  # Delete some unneeded files copied by windeployqt
-  deploy.commands += del /s /q $${DEPLOY_DIR}\\imageformats\\qdds.dll $${DEPLOY_DIR}\\imageformats\\qjp2.dll $${DEPLOY_DIR}\\imageformats\\qtga.dll $${DEPLOY_DIR}\\imageformats\\qtiff.dll &
-  deploy.commands += del /s /q $${DEPLOY_DIR}\\sqldrivers\qsqlmysql.dll $${DEPLOY_DIR}\\sqldrivers\qsqlodbc.dll $${DEPLOY_DIR}\\sqldrivers\qsqlpsql.dll
+  deploy.commands += xcopy $${WINOUT_PWD}\\littlenavmap.exe $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${QT_BIN}\\libgcc*.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${QT_BIN}\\libstdc*.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${QT_BIN}\\libwinpthread*.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\libmarblewidget-qt5$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\libastro$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Qml$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Quick$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Script$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5WebKit$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\icudt54.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\icuin54.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\icuuc54.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Positioning$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Multimedia$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Sensors$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5WebChannel$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5WebKitWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy $${MARBLE_BASE}\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR} &&
+  deploy.commands += xcopy /i /s /e /f /y $${MARBLE_BASE}\\data $${DEPLOY_DIR}\\data &&
+  deploy.commands += xcopy /i /s /e /f /y $${MARBLE_BASE}\\plugins $${DEPLOY_DIR}\\plugins &&
+  deploy.commands += $${QT_BIN}\\windeployqt --compiler-runtime $${DEPLOY_DIR}
 }
 
 QMAKE_EXTRA_TARGETS += deploy
