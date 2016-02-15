@@ -7,7 +7,10 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class NavMapWidget;
+
+class MainWindow :
+  public QMainWindow
 {
   Q_OBJECT
 
@@ -15,8 +18,11 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
+  void tableContextMenu(const QPoint& pos);
+
 private:
   Ui::MainWindow *ui;
+  NavMapWidget *mapWidget;
 };
 
 #endif // MAINWINDOW_H

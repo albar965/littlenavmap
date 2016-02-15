@@ -1,0 +1,34 @@
+Version 1.5.0
+
+Export
+* Added Google Earth KML export (can be configured in the little_logbook.ini if needed).
+* Added paging to HTML export (multiple HTML files with next and previous links) to avoid browser
+  crashes with too large documents.
+
+File management
+* Added Support for multiple flight simulator installations (FSX, FSX SE, P3D V2 and P3D V3).
+* Flight simulator installation directory and files directory are now automatically detected
+  for all simulators.
+* Completely changed file management for logbook and runway files.
+* Added optional filter that removes incomplete logbook entries on loading (can be configured in
+  the little_logbook.ini if needed).
+* runways.xml can now be added at runtime without restarting.
+* Fixed error handling on wrong or not accessible logbook.bin and runways.xml files.
+* Current database information is now kept if opening a file fails (added proper transaction handling).
+* Added reset database menu to completely erase and reload the database in case of inconsistencies.
+
+Table view
+* Added zoom functionality to increase or decrease font size.
+* Empty fields are now always put at the end of the list when sorting.
+* Added copy to clipboard functionality that copies all selected rows as seen
+  in the table into the clipboard (CSV like format).
+* Fixed display error showing "invalid date" for all dates before 2005.
+* Locale specific fixes to number format, etc.
+* Improvements to table view context menu - added copy and select all.
+* Fixed potential problem with too small cells when using larger fonts.
+
+Other
+* Removed night and instrument average time columns since these are misleading.
+
+Version 1.0.1
+* Initial release.

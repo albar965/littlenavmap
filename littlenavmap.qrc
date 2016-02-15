@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/littlenavmap">
+        <file>resources/icons/about.svg</file>
+        <file>resources/icons/application-exit.svg</file>
+        <file>resources/icons/checkmark.svg</file>
+        <file>resources/icons/clear.svg</file>
+        <file>resources/icons/cleartable.svg</file>
+        <file>resources/icons/copy.svg</file>
+        <file>resources/icons/database.svg</file>
+        <file>resources/icons/editclear.svg</file>
+        <file>resources/icons/exclamation.svg</file>
+        <file>resources/icons/export.svg</file>
+        <file>resources/icons/fileopen.svg</file>
+        <file>resources/icons/filesave.svg</file>
+        <file>resources/icons/filter-add.svg</file>
+        <file>resources/icons/filter-remove.svg</file>
+        <file>resources/icons/globals.svg</file>
+        <file>resources/icons/group-by.svg</file>
+        <file>resources/icons/help.svg</file>
+        <file>resources/icons/littlelogbook.ico</file>
+        <file>resources/icons/load-all.svg</file>
+        <file>resources/icons/logbook.svg</file>
+        <file>resources/icons/navroute.svg</file>
+        <file>resources/icons/reload.svg</file>
+        <file>resources/icons/revert.svg</file>
+        <file>resources/icons/search.svg</file>
+        <file>resources/icons/search_ext.svg</file>
+        <file>resources/icons/sql.svg</file>
+        <file>resources/icons/zoomin.svg</file>
+        <file>resources/icons/zoomout.svg</file>
+        <file>resources/config/logging.cfg</file>
+        <file>resources/config/navdatareader.cfg</file>
+        <file>resources/css/export.css</file>
+        <file>resources/icons/navroute.ico</file>
+    </qresource>
+</RCC>
