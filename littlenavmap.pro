@@ -4,7 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql xml
+QT       += core gui sql xml network svg
+
+
+# axcontainer axserver concurrent core dbus declarative designer gui help multimedia
+# multimediawidgets network opengl printsupport qml qmltest x11extras quick script scripttools
+# sensors serialport sql svg testlib uitools webkit webkitwidgets widgets winextras xml xmlpatterns
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,10 +37,12 @@ unix:DEFINES += GIT_REVISION='\\"$$system(git rev-parse --short HEAD)\\"'
 
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
-    src/map/navmapwidget.cpp
+    src/map/navmapwidget.cpp \
+    src/map/mappaintlayer.cpp
 
 HEADERS  += src/gui/mainwindow.h \
-    src/map/navmapwidget.h
+    src/map/navmapwidget.h \
+    src/map/mappaintlayer.h
 
 FORMS    += src/gui/mainwindow.ui
 
@@ -48,6 +55,7 @@ win32 {
 
 unix {
   INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5
   DEPENDPATH += $$MARBLE_BASE/include
 }
 

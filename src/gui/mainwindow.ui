@@ -242,6 +242,9 @@
                <property name="text">
                 <string>Closed</string>
                </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item row="1" column="3">
@@ -776,6 +779,11 @@
           <widget class="QTextEdit" name="textEdit_2"/>
          </item>
         </layout>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Com</string>
+        </attribute>
        </widget>
        <widget class="QWidget" name="tabNavIdInfo">
         <attribute name="title">

@@ -15,49 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAPPAINTLAYER_H
+#define MAPPAINTLAYER_H
 
-#include <QMainWindow>
+#include <marble/LayerInterface.h>
 
-#include "sql/sqldatabase.h"
-
-namespace atools {
-namespace gui {
-class Dialog;
-class ErrorHandler;
+namespace Marble {
+class MarbleWidget;
+class GeoPainter;
+class GeoSceneLayer;
+class ViewportParams;
 }
 
-}
-
-namespace Ui {
-class MainWindow;
-}
-
-class NavMapWidget;
-
-class MainWindow :
-  public QMainWindow
+class MapPaintLayer :
+  public QObject, public Marble::LayerInterface
 {
-  Q_OBJECT
-
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
+  MapPaintLayer(Marble::MarbleWidget *widget);
 
-  void tableContextMenu(const QPoint& pos);
+  // Implemented from LayerInterface
+  virtual QStringList renderPosition() const override
+  {
+    return QStringList("ORBIT");
+  }
+
+  // Implemented from LayerInterface
+  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
+                      const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
 private:
-  Ui::MainWindow *ui;
-  NavMapWidget *mapWidget;
-
-  atools::gui::Dialog *dialog;
-  atools::gui::ErrorHandler *errorHandler;
-  void openDatabase();
-  void closeDatabase();
-
-  atools::sql::SqlDatabase db;
-  QString databaseFile;
+  Marble::MarbleWidget *m_widget;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAPPAINTLAYER_H
