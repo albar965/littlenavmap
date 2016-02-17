@@ -63,8 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
   mapWidget->setShowBackground(false);
   mapWidget->setShowAtmosphere(false);
   mapWidget->setShowGrid(true);
-  // mapWidget->setShowTerrain(true);
-  // mapWidget->setShowRelief(true);
+   mapWidget->setShowTerrain(true);
+   mapWidget->setShowRelief(true);
   // mapWidget->setShowSunShading(true);
 
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");

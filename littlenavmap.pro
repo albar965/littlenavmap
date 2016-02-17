@@ -6,7 +6,6 @@
 
 QT       += core gui sql xml network svg
 
-
 # axcontainer axserver concurrent core dbus declarative designer gui help multimedia
 # multimediawidgets network opengl printsupport qml qmltest x11extras quick script scripttools
 # sensors serialport sql svg testlib uitools webkit webkitwidgets widgets winextras xml xmlpatterns
@@ -22,11 +21,13 @@ TEMPLATE = app
 win32 {
   QT_BIN=C:\\Qt\\5.5\\mingw492_32\\bin
   GIT_BIN='C:\\Git\\bin\\git'
-  MARBLE_BASE="c:\\Program Files (x86)\\marble-debug"
+  CONFIG(debug, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-debug"
+  CONFIG(release, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-release"
 }
 
 unix {
-  MARBLE_BASE=/home/alex/Programme/Marble-Debug
+  CONFIG(debug, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-debug
+  CONFIG(release, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-release
 }
 
 CONFIG += c++11
@@ -51,7 +52,8 @@ FORMS    += src/gui/mainwindow.ui
 # Marble dependencies
 win32 {
   INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
+  CONFIG(debug, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
+  CONFIG(release, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
