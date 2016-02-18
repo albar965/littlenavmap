@@ -22,7 +22,13 @@
 
 #include "sql/sqldatabase.h"
 
+class QProgressDialog;
+class Controller;
+
 namespace atools {
+namespace fs {
+class BglReaderProgressInfo;
+}
 namespace gui {
 class Dialog;
 class ErrorHandler;
@@ -47,17 +53,42 @@ public:
 
   void tableContextMenu(const QPoint& pos);
 
-private:
-  Ui::MainWindow *ui;
-  NavMapWidget *mapWidget;
+signals:
+  /* Emitted when window is shown the first time */
+  void windowShown();
 
-  atools::gui::Dialog *dialog;
-  atools::gui::ErrorHandler *errorHandler;
+private:
+  /* Work on the close event that also catches clicking the close button
+   * in the window frame */
+  virtual void closeEvent(QCloseEvent *event) override;
+
+  /* Emit a signal windowShown after first appearance */
+  virtual void showEvent(QShowEvent *event) override;
+
+  Ui::MainWindow *ui;
+  NavMapWidget *mapWidget = nullptr;
+  QProgressDialog *progressDialog = nullptr;
+
+  Controller* airportController;
+
+  atools::gui::Dialog *dialog = nullptr;
+  atools::gui::ErrorHandler *errorHandler = nullptr;
   void openDatabase();
   void closeDatabase();
 
   atools::sql::SqlDatabase db;
   QString databaseFile;
+  void connectAllSlots();
+  void mainWindowShown();
+
+  bool firstStart = true;
+  void writeSettings();
+  void readSettings();
+  void updateActionStates();
+  void setupUi();
+  void showHideLayoutElements(QLayout* layout, bool visible, const QList<QWidget*>& otherWidgets = QList<QWidget*>());
+  void loadScenery();
+  bool progressCallback(const atools::fs::BglReaderProgressInfo& progress);
 };
 
 #endif // MAINWINDOW_H

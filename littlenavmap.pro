@@ -41,11 +41,20 @@ win32:DEFINES +=_USE_MATH_DEFINES
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
     src/map/navmapwidget.cpp \
-    src/map/mappaintlayer.cpp
+    src/map/mappaintlayer.cpp \
+    src/table/columnlist.cpp \
+    src/table/controller.cpp \
+    src/table/formatter.cpp \
+    src/table/sqlmodel.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
-    src/map/mappaintlayer.h
+    src/map/mappaintlayer.h \
+    src/table/colum.h \
+    src/table/columnlist.h \
+    src/table/controller.h \
+    src/table/formatter.h \
+    src/table/sqlmodel.h
 
 FORMS    += src/gui/mainwindow.ui
 
