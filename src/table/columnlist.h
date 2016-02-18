@@ -66,7 +66,13 @@ public:
   /* Enable or disable widgets except the ones with the give column names */
   void enableWidgets(bool enabled = true, const QStringList& exceptColNames = QStringList());
 
+  QString getTablename() const
+  {
+    return tablename;
+  }
+
 private:
+  QString tablename;
   QVector<Column> columns;
   QHash<QString, Column *> nameColumnMap;
 };

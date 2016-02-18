@@ -41,9 +41,7 @@ class SqlModel :
   Q_OBJECT
 
 public:
-  SqlModel(QWidget *parent,
-           atools::sql::SqlDatabase *sqlDb,
-           const ColumnList *columnList);
+  SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
   virtual ~SqlModel();
 
   /* Creates an include filer for value at index in the table */
@@ -163,7 +161,7 @@ private:
   void filterBy(QModelIndex index, bool exclude);
   QString  sortOrderToSql(Qt::SortOrder order);
 
-  QString tableName, groupByCol, orderByCol, orderByOrder, whereOperator = "and";
+  QString groupByCol, orderByCol, orderByOrder, whereOperator = "and";
   QString currentSqlQuery;
 
   int orderByColIndex = 0;

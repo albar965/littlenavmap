@@ -23,120 +23,83 @@
 
 ColumnList::ColumnList()
 {
-  // Use sort function to put nulls at end of the list
-  QString nullAtEndsortFunc = "ifnull(%1,'~')";
-  QString nullAtEndSortFuncDesc = "ifnull(%1,' ')";
-
+  tablename = "airport";
   // Default view column descriptors
-  columns.append(Column("logbook_id", tr("Logbook-\nEntry")).
+  columns.append(Column("airport_id", tr("ID")).
                  canSort().defaultCol().defaultSort().defaultSortOrder(Qt::SortOrder::DescendingOrder));
 
-  columns.append(Column("simulator_id",
-                        tr("Simulator")).canGroup().canSort().defaultCol().alwaysAnd());
+  columns.append(Column("ident",
+                        tr("ICAO")).canSort().canFilter().defaultCol());
 
-  columns.append(Column("startdate", tr("Start Time")).
-                 canSort().defaultCol());
+  columns.append(Column("name",
+                        tr("Name")).canSort().canFilter().defaultCol());
 
-  columns.append(Column("airport_from_icao",
-                        tr("From\nICAO")).canFilter().canGroup().canSort().defaultCol().
-                 sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-//  if(hasAirports)
-  {
-    columns.append(Column("airport_from_name",
-                          tr("From Airport")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_from_city",
-                          tr("From City")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_from_state",
-                          tr("From State")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_from_country",
-                          tr("From Country")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-  }
-
-  columns.append(Column("airport_to_icao",
-                        tr("To\nICAO")).canFilter().canGroup().canSort().defaultCol().
-                 sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-//  if(hasAirports)
-  {
-    columns.append(Column("airport_to_name",
-                          tr("To Airport")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_to_city",
-                          tr("To City")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_to_state",
-                          tr("To State")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("airport_to_country",
-                          tr("To Country")).canFilter().canGroup().canSort().defaultCol().
-                   sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-    columns.append(Column("distance",
-                          tr("Distance\nNM")).canSum().canSort().defaultCol());
-  }
-
-  columns.append(Column("description",
-                        tr("Flight\nDescription")).canFilter().canGroup().canSort().defaultCol().
-                 sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-  columns.append(Column("total_time",
-                        tr("Total Time\nh:mm")).canSum().canSort().defaultCol());
-
-  columns.append(Column("night_time",
-                        tr("Night Time\nh:mm")).canSum().canSort().defaultCol());
-
-  columns.append(Column("instrument_time",
-                        tr("Instrument\nTime h:mm")).canSum().canSort().defaultCol());
-
-  columns.append(Column("aircraft_reg",
-                        tr("Aircraft\nRegistration")).canFilter().canGroup().canSort().defaultCol().
-                 sortFunc(nullAtEndsortFunc, nullAtEndSortFuncDesc));
-
-  columns.append(Column("aircraft_descr",
-                        tr("Aircraft\nDescription")).canFilter().canGroup().canSort().defaultCol());
-
-  // Do aircraft type sorting by localized type name
-  QString aircraftTypeSort = QString(
-    "CASE WHEN aircraft_type = 0 THEN '%1' "
-    "WHEN aircraft_type = 1 THEN '%2' "
-    "WHEN aircraft_type = 2 THEN '%3' "
-    "WHEN aircraft_type = 3 THEN '%4' "
-    "WHEN aircraft_type = 4 THEN '%5'"
-    "ELSE '%6' END").arg(tr("Unknown")).arg(tr("Glider")).
-                             arg(tr("Fixed Wing")).arg(tr("Amphibious")).
-                             arg(tr("Rotor")).arg(tr("Unknown"));
-
-  columns.append(Column("aircraft_type",
-                        tr("Aircraft\nType")).canGroup().canSort().defaultCol().
-                 sortFunc(aircraftTypeSort, aircraftTypeSort));
-
-  columns.append(Column("aircraft_flags",
-                        tr("Aircraft\nInformation")).canGroup().canSort().defaultCol());
-
-  columns.append(Column("visits", tr("Visits\nAirport/Landings, ...")).defaultCol());
-
-  // Column descriptors for grouped views
-  columns.append(Column("total_time_sum", tr("Total Time all\nh:mm")).canSort());
-  columns.append(Column("night_time_sum", tr("Night Time all\nh:mm")).canSort());
-  columns.append(Column("instrument_time_sum", tr("Instrument\nTime all h:mm")).canSort());
-  columns.append(Column("distance_sum", tr("Total Distance\nNM")).canSort());
-  columns.append(Column("num_flights", tr("Number of\nFlights")).canSort());
+  columns.append(Column("city",
+                        tr("City")).canSort().canFilter().defaultCol());
+  columns.append(Column("state",
+                        tr("State")).canSort().canFilter().defaultCol());
+  columns.append(Column("country",
+                        tr("Country")).canSort().canFilter().defaultCol());
 
   // Add names to the index
   for(Column& cd : columns)
     nameColumnMap.insert(cd.getColumnName(), &cd);
+
+  // airport_id
+  // file_id
+  // ident
+  // region
+  // name
+  // country
+  // state
+  // city
+  // fuel_flags
+  // has_avgas
+  // has_jetfuel
+  // has_tower_object
+  // has_tower
+  // is_closed
+  // is_military
+  // is_addon
+  // num_boundary_fence
+  // num_com
+  // num_parking_gate
+  // num_parking_ga_ramp
+  // num_approach
+  // num_runway_hard
+  // num_runway_soft
+  // num_runway_water
+  // num_runway_light
+  // num_runway_end_closed
+  // num_runway_end_vasi
+  // num_runway_end_als
+  // num_runway_end_ils
+  // num_apron
+  // num_taxi_path
+  // num_helipad
+  // num_jetway
+  // longest_runway_length
+  // longest_runway_width
+  // longest_runway_heading
+  // longest_runway_surface
+  // num_runways
+  // largest_parking_ramp
+  // largest_parking_gate
+  // rating
+  // scenery_local_path
+  // bgl_filename
+  // left_lonx
+  // top_laty
+  // right_lonx
+  // bottom_laty
+  // mag_var
+  // tower_altitude
+  // tower_lonx
+  // tower_laty
+  // altitude
+  // lonx
+  // laty
+
 }
 
 ColumnList::~ColumnList()
@@ -191,3 +154,5 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
         cd.getComboBoxWidget()->setEnabled(enabled);
     }
 }
+
+

@@ -24,6 +24,7 @@
 
 class QProgressDialog;
 class Controller;
+class ColumnList;
 
 namespace atools {
 namespace fs {
@@ -69,7 +70,9 @@ private:
   NavMapWidget *mapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
-  Controller* airportController;
+  Controller *airportController;
+  ColumnList *airportColumns;
+  int defaultTableViewFontPointSize;
 
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
@@ -86,9 +89,14 @@ private:
   void readSettings();
   void updateActionStates();
   void setupUi();
-  void showHideLayoutElements(QLayout* layout, bool visible, const QList<QWidget*>& otherWidgets = QList<QWidget*>());
+  void showHideLayoutElements(const QList<QLayout*> layouts, bool visible,
+                              const QList<QWidget *>& otherWidgets = QList<QWidget *>());
   void loadScenery();
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress);
+
+  void initTableViewZoom();
+  void setTableViewFontSize(int pointSize);
+  void assignSearchFieldsToController();
 };
 
 #endif // MAINWINDOW_H

@@ -51,7 +51,7 @@ public:
    * @param hasLogbookEntries true if logbook table is present and populated
    * @param hasAirportTable true if additional airport information is available
    */
-  Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, QTableView *view);
+  Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~Controller();
 
   /* Assign a QLineEdit to a column descriptor */

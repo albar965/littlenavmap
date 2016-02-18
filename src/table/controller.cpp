@@ -28,8 +28,9 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 
-Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, QTableView *tableView)
-  : parentWidget(parent), db(sqlDb), view(tableView)
+Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols,
+                       QTableView *tableView)
+  : parentWidget(parent), db(sqlDb), view(tableView), columns(cols)
 {
 }
 
@@ -37,7 +38,6 @@ Controller::~Controller()
 {
   if(!isGrouped())
     saveViewState();
-  delete columns;
 }
 
 void Controller::clearModel()
@@ -48,9 +48,6 @@ void Controller::clearModel()
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(nullptr);
   delete m;
-
-  delete columns;
-  columns = nullptr;
 
   if(model != nullptr)
     model->clear();
@@ -103,9 +100,9 @@ void Controller::groupByColumn(const QModelIndex& index)
 
   saveViewState();
 
-  columns->clearWidgets({"simulator_id"});
+  columns->clearWidgets();
   // Disable all search widgets except the one for the group by column
-  columns->enableWidgets(false, {model->record().fieldName(index.column()), "simulator_id"});
+  columns->enableWidgets(false, {model->record().fieldName(index.column())});
 
   model->getGroupByColumn(index);
   processViewColumns();
@@ -117,8 +114,8 @@ void Controller::ungroup()
 {
   Q_ASSERT(model != nullptr);
   Q_ASSERT(columns != nullptr);
-  columns->clearWidgets({"simulator_id"});
-  columns->enableWidgets(true, {"simulator_id"});
+  columns->clearWidgets();
+  columns->enableWidgets(true);
 
   model->ungroup();
   processViewColumns();
@@ -184,8 +181,8 @@ void Controller::resetView()
   Q_ASSERT(model != nullptr);
   if(columns != nullptr)
   {
-    columns->clearWidgets({"simulator_id"});
-    columns->enableWidgets(true, {"simulator_id"});
+    columns->clearWidgets();
+    columns->enableWidgets(true);
   }
 
   // Reorder columns to match model order
@@ -204,7 +201,7 @@ void Controller::resetView()
 void Controller::resetSearch()
 {
   if(columns != nullptr)
-    columns->clearWidgets({"simulator_id"});
+    columns->clearWidgets();
 
   if(model != nullptr)
     model->resetSearch();
@@ -272,8 +269,6 @@ void Controller::processViewColumns()
 
 void Controller::prepareModel()
 {
-  columns = new ColumnList();
-
   model = new SqlModel(parentWidget, db, columns);
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(model);
@@ -298,15 +293,16 @@ void Controller::assignComboBox(const QString& field, QComboBox *combo)
 void Controller::saveViewState() const
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  s->setValue("MainWindow/ViewState", view->horizontalHeader()->saveState());
+  s->setValue("MainWindow/ViewState_" + columns->getTablename(), view->horizontalHeader()->saveState());
   s.syncSettings();
 }
 
 void Controller::restoreViewState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  if(s->contains("MainWindow/ViewState"))
-    view->horizontalHeader()->restoreState(s->value("MainWindow/ViewState").toByteArray());
+  if(s->contains("MainWindow/ViewState_" + columns->getTablename()))
+    view->horizontalHeader()->restoreState(
+      s->value("MainWindow/ViewState_" + columns->getTablename()).toByteArray());
 }
 
 void Controller::loadAllRows()

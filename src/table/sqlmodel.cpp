@@ -42,8 +42,6 @@ using atools::gui::ErrorHandler;
 SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *columnList)
   : QSqlQueryModel(parent), db(sqlDb), columns(columnList), parentWidget(parent)
 {
-  tableName = "logbook";
-
   /* Alternating colors */
   rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
@@ -205,16 +203,7 @@ void SqlModel::resetSearch()
 
 void SqlModel::clearWhereConditions()
 {
-  // Keep simulator filter - system dependent
-  auto iter = whereConditionMap.find("simulator_id");
-  if(iter != whereConditionMap.end())
-  {
-    WhereCondition wc = *iter;
-    whereConditionMap.clear();
-    whereConditionMap.insert(wc.col->getColumnName(), wc);
-  }
-  else
-    whereConditionMap.clear();
+  whereConditionMap.clear();
 }
 
 void SqlModel::ungroup()
@@ -429,7 +418,7 @@ void SqlModel::buildQuery()
       queryOrder += "order by " + orderByCol + " " + orderByOrder;
   }
 
-  currentSqlQuery = "select " + queryCols + " from " + tableName +
+  currentSqlQuery = "select " + queryCols + " from " + columns->getTablename() +
                     " " + queryWhere + " " + queryGroup + " " + queryOrder;
 
   // Build a query to find the total row count of the result
@@ -437,10 +426,10 @@ void SqlModel::buildQuery()
   QString queryCount;
   if(isGrouped())
     queryCount = "select count(1) from "
-                 "(select count(" + groupByCol + ") from " + tableName + " " + queryWhere + " " +
-                 queryGroup + ")";
+                 "(select count(" + groupByCol + ") from " +
+                 columns->getTablename() + " " + queryWhere + " " + queryGroup + ")";
   else
-    queryCount = "select count(1) from " + tableName + " " + queryWhere;
+    queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
 
   try
   {
@@ -469,6 +458,8 @@ void SqlModel::buildQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
+
+
   using namespace atools::fs::lb::types;
   using namespace atools::fs::fstype;
 

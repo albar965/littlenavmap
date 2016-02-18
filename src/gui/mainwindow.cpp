@@ -49,6 +49,10 @@
 using namespace Marble;
 using atools::settings::Settings;
 
+const int SECTION_TO_FONT_SIZE = 2;
+const int MIN_TABLE_VIEW_FONT_POINT_SIZE = 7;
+const int MAX_TABLE_VIEW_FONT_POINT_SIZE = 16;
+
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -61,7 +65,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   openDatabase();
 
-  airportController = new Controller(this, &db, ui->tableViewAirportSearch);
+  airportColumns = new ColumnList();
+  airportController = new Controller(this, &db, airportColumns, ui->tableViewAirportSearch);
+  airportController->prepareModel();
 
   readSettings();
 
@@ -85,7 +91,9 @@ MainWindow::MainWindow(QWidget *parent) :
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
   connectAllSlots();
+  assignSearchFieldsToController();
   updateActionStates();
+  initTableViewZoom();
 
   GeoDataIconStyle *style = new GeoDataIconStyle;
   // style->setIconPath(":/littlenavmap/resources/icons/checkmark.svg");
@@ -139,6 +147,41 @@ MainWindow::MainWindow(QWidget *parent) :
   mapWidget->centerOn(8.26589, 50.29824, false);
 }
 
+void MainWindow::assignSearchFieldsToController()
+{
+  airportController->assignLineEdit("ident", ui->lineEditAirportIcaoSearch);
+  airportController->assignLineEdit("name", ui->lineEditAirportNameSearch);
+  airportController->assignLineEdit("city", ui->lineEditAirportCitySearch);
+  airportController->assignLineEdit("state", ui->lineEditAirportStateSearch);
+  airportController->assignLineEdit("country", ui->lineEditAirportCountrySearch);
+}
+
+void MainWindow::initTableViewZoom()
+{
+  // Adjust cell height to be smaller than default but according to font height
+  defaultTableViewFontPointSize = ui->tableViewAirportSearch->font().pointSize();
+
+  // int newPointSize = Settings::instance()->value(ll::constants::SETTINGS_TABLE_VIEW_ZOOM,
+  // defaultTableViewFontPointSize).toInt();
+  setTableViewFontSize(defaultTableViewFontPointSize /*newPointSize*/);
+}
+
+void MainWindow::setTableViewFontSize(int pointSize)
+{
+  QFont newFont(ui->tableViewAirportSearch->font());
+  newFont.setPointSize(pointSize);
+
+  int newFontHeight = QFontMetrics(newFont).height();
+
+  qDebug() << "new font height" << newFontHeight << "point size" << newFont.pointSize();
+
+  ui->tableViewAirportSearch->setFont(newFont);
+
+  // Adjust the cell height - default is too big
+  ui->tableViewAirportSearch->verticalHeader()->setDefaultSectionSize(newFontHeight + SECTION_TO_FONT_SIZE);
+  ui->tableViewAirportSearch->verticalHeader()->setMinimumSectionSize(newFontHeight + SECTION_TO_FONT_SIZE);
+}
+
 MainWindow::~MainWindow()
 {
   delete ui;
@@ -162,21 +205,23 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUi()
 {
-ui->checkBoxAirportAddonSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportApprSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportApprSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportClosedSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportIlsSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportLightSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportMilSearch->setCheckState(Qt::Unchecked);
-ui->checkBoxAirportTowerSearch->setCheckState(Qt::Unchecked);
+  ui->checkBoxAirportAddonSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportApprSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportApprSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportClosedSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportIlsSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportLightSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportMilSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportTowerSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportScenerySearch->setCheckState(Qt::PartiallyChecked);
 
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
 
-  ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowExtOptions,
+  ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
+                                           ui->actionAirportSearchShowExtOptions,
                                            ui->actionAirportSearchShowFuelParkOptions,
                                            ui->actionAirportSearchShowRunwayOptions,
                                            ui->actionAirportSearchShowAltOptions,
@@ -184,12 +229,12 @@ ui->checkBoxAirportTowerSearch->setCheckState(Qt::Unchecked);
                                            ui->actionAirportSearchShowSceneryOptions});
   ui->toolButtonAirportSearch->setArrowType(Qt::NoArrow);
 
-  showHideLayoutElements(ui->gridLayoutAirportExtSearch, false, {ui->lineAirportExtSearch});
-  showHideLayoutElements(ui->horizontalLayoutAirportFuelParkSearch, false, {ui->lineAirportFuelParkSearch});
-  showHideLayoutElements(ui->horizontalLayoutAirportRunwaySearch, false, {ui->lineAirportRunwaySearch});
-  showHideLayoutElements(ui->horizontalLayoutAirportAltitudeSearch, false, {ui->lineAirportAltSearch});
-  showHideLayoutElements(ui->horizontalLayoutAirportDistanceSearch, false, {ui->lineAirportDistSearch});
-  showHideLayoutElements(ui->horizontalLayoutAirportScenerySearch, false, {ui->lineAirportScenerySearch});
+  showHideLayoutElements({ui->gridLayoutAirportExtSearch}, false, {ui->lineAirportExtSearch});
+  showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, false, {ui->lineAirportFuelParkSearch});
+  showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, false, {ui->lineAirportRunwaySearch});
+  showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, false, {ui->lineAirportAltSearch});
+  showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, false, {ui->lineAirportDistSearch});
+  showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, false, {ui->lineAirportScenerySearch});
 
 }
 
@@ -264,23 +309,51 @@ void MainWindow::connectAllSlots()
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
 
   /* *INDENT-OFF* */
+  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled,
+          [=](bool state) {
+    ui->actionAirportSearchShowExtOptions->setChecked(state);
+    ui->actionAirportSearchShowFuelParkOptions->setChecked(state);
+    ui->actionAirportSearchShowRunwayOptions->setChecked(state);
+    ui->actionAirportSearchShowAltOptions->setChecked(state);
+    ui->actionAirportSearchShowDistOptions->setChecked(state);
+    ui->actionAirportSearchShowSceneryOptions->setChecked(state);
+  });
+
   connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->gridLayoutAirportExtSearch, state, {ui->lineAirportExtSearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch}); });
 
   connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->horizontalLayoutAirportFuelParkSearch, state, {ui->lineAirportFuelParkSearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state, {ui->lineAirportFuelParkSearch}); });
 
   connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->horizontalLayoutAirportRunwaySearch, state, {ui->lineAirportRunwaySearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state, {ui->lineAirportRunwaySearch}); });
 
   connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->horizontalLayoutAirportAltitudeSearch, state, {ui->lineAirportAltSearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch}); });
 
   connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->horizontalLayoutAirportDistanceSearch, state, {ui->lineAirportDistSearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch}); });
 
   connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled,
-          [=](bool state) {showHideLayoutElements(ui->horizontalLayoutAirportScenerySearch, state, {ui->lineAirportScenerySearch}); });
+          [=](bool state) {
+    showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch}); });
+
+  connect(ui->lineEditAirportIcaoSearch, &QLineEdit::textEdited,
+          [=](const QString& text) {airportController->filterByLineEdit("ident", text); });
+
+  connect(ui->lineEditAirportNameSearch, &QLineEdit::textEdited,
+          [=](const QString& text) {airportController->filterByLineEdit("name", text); });
+  connect(ui->lineEditAirportCitySearch, &QLineEdit::textEdited,
+          [=](const QString& text) {airportController->filterByLineEdit("city", text); });
+  connect(ui->lineEditAirportStateSearch, &QLineEdit::textEdited,
+          [=](const QString& text) {airportController->filterByLineEdit("state", text); });
+  connect(ui->lineEditAirportCountrySearch, &QLineEdit::textEdited,
+          [=](const QString& text) {airportController->filterByLineEdit("country", text); });
   /* *INDENT-ON* */
 
 }
@@ -290,13 +363,15 @@ void MainWindow::mainWindowShown()
   qDebug() << "MainWindow::mainWindowShown()";
 }
 
-void MainWindow::showHideLayoutElements(QLayout *layout, bool visible, const QList<QWidget *>& otherWidgets)
+void MainWindow::showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
+                                        const QList<QWidget *>& otherWidgets)
 {
   for(QWidget *w : otherWidgets)
     w->setVisible(visible);
 
-  for(int i = 0; i < layout->count(); i++)
-    layout->itemAt(i)->widget()->setVisible(visible);
+  for(QLayout *layout : layouts)
+    for(int i = 0; i < layout->count(); i++)
+      layout->itemAt(i)->widget()->setVisible(visible);
 }
 
 void MainWindow::updateActionStates()
