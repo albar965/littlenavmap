@@ -178,6 +178,12 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="iconSize">
+                <size>
+                 <width>10</width>
+                 <height>16</height>
+                </size>
+               </property>
                <property name="popupMode">
                 <enum>QToolButton::InstantPopup</enum>
                </property>
@@ -839,8 +845,14 @@
              <attribute name="horizontalHeaderMinimumSectionSize">
               <number>5</number>
              </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>true</bool>
+             </attribute>
              <attribute name="verticalHeaderCascadingSectionResizes">
               <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
              </attribute>
             </widget>
            </item>
@@ -947,6 +959,199 @@
     </layout>
    </widget>
   </widget>
+
+  <action name="actionFilterIncluding">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filter-add.svg</normaloff>:/littlenavmap/resources/icons/filter-add.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Filter by Entries &amp;including &quot;%1&quot;</string>
+   </property>
+   <property name="toolTip">
+    <string>Filter by logbook entries including text</string>
+   </property>
+   <property name="statusTip">
+    <string>Filter by logbook entries including text</string>
+   </property>
+  </action>
+  <action name="actionFilterExcluding">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filter-remove.svg</normaloff>:/littlenavmap/resources/icons/filter-remove.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Filter by Entries e&amp;xcluding &quot;%1&quot;</string>
+   </property>
+   <property name="toolTip">
+    <string>Filter by logbook entries excluding text</string>
+   </property>
+   <property name="statusTip">
+    <string>Filter by logbook entries excluding text</string>
+   </property>
+  </action>
+  <action name="actionResetView">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cleartable.svg</normaloff>:/littlenavmap/resources/icons/cleartable.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Reset View</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset sort order, column order and column sizes to default</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset sort order, column order and column sizes to default</string>
+   </property>
+  </action>
+  <action name="actionTableSelectAll">
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all logbook entries in the table view</string>
+   </property>
+   <property name="statusTip">
+    <string>Select all logbook entries in the table view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionTableCopy">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/copy.svg</normaloff>:/littlenavmap/resources/icons/copy.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy selected logbook entries into the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy selected logbook entries into the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;In</string>
+   </property>
+   <property name="iconText">
+    <string>Zoom In</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase font size in table view</string>
+   </property>
+   <property name="statusTip">
+    <string>Increase font size in table view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/zoomout.svg</normaloff>:/littlenavmap/resources/icons/zoomout.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom &amp;Out</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease font size in table view</string>
+   </property>
+   <property name="statusTip">
+    <string>Decrease font size in table view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionZoomDefault">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Default Zoom</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset font size in table view to default</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset font size in table view to default</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
+  </action>
+
+  <action name="actionResetSearch">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+   </property>
+   <property name="text">
+    <string>R&amp;eset Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear all search filters</string>
+   </property>
+   <property name="statusTip">
+    <string>Clear all search filters</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionUngroup">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/group-by.svg</normaloff>:/littlenavmap/resources/icons/group-by.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Un&amp;group</string>
+   </property>
+   <property name="toolTip">
+    <string>Release column grouping</string>
+   </property>
+   <property name="statusTip">
+    <string>Release column grouping</string>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionShowAll">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/load-all.svg</normaloff>:/littlenavmap/resources/icons/load-all.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Show All</string>
+   </property>
+   <property name="toolTip">
+    <string>Load all logbook entries into the view</string>
+   </property>
+   <property name="statusTip">
+    <string>Load all logbook entries into the view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+
   <action name="actionOpenRoute">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">

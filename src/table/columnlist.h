@@ -42,7 +42,7 @@ public:
    * @param hasAirports true if the airports table (from runways.xml file)
    * exists.
    */
-  ColumnList();
+  ColumnList(const QString& table);
   virtual ~ColumnList();
 
   /* Get column descriptor for the given query column name or alias */
@@ -55,10 +55,10 @@ public:
   }
 
   /* Assign a QLineEdit widget to the column descriptor with the given name */
-  void assignLineEdit(const QString& field, QLineEdit *edit);
+  void assignLineEdit(const QString& field, QLineEdit *widget);
 
   /* Assign a QComboBox widget to the column descriptor with the given name */
-  void assignComboBox(const QString& field, QComboBox *combo);
+  void assignComboBox(const QString& field, QComboBox *widget);
 
   /* Clear all LineEdit widgets and ComboBox widgets */
   void clearWidgets(const QStringList& exceptColNames = QStringList());
@@ -66,15 +66,24 @@ public:
   /* Enable or disable widgets except the ones with the give column names */
   void enableWidgets(bool enabled = true, const QStringList& exceptColNames = QStringList());
 
+  ColumnList& append(Column col);
+
   QString getTablename() const
   {
     return tablename;
   }
 
+  void setTablename(const QString& value)
+  {
+    tablename = value;
+  }
+
+  void clear();
+
 private:
   QString tablename;
   QVector<Column> columns;
-  QHash<QString, Column *> nameColumnMap;
+  QHash<QString, int> nameColumnMap;
 };
 
 #endif // LITTLENAVMAP_COLUMNLIST_H

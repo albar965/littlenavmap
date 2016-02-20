@@ -45,7 +45,9 @@ SOURCES += src/main.cpp\
     src/table/columnlist.cpp \
     src/table/controller.cpp \
     src/table/formatter.cpp \
-    src/table/sqlmodel.cpp
+    src/table/sqlmodel.cpp \
+    src/table/searchpane.cpp \
+    src/table/searchpanelist.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
@@ -54,7 +56,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
     src/table/controller.h \
     src/table/formatter.h \
-    src/table/sqlmodel.h
+    src/table/sqlmodel.h \
+    src/table/searchpane.h \
+    src/table/searchpanelist.h
 
 FORMS    += src/gui/mainwindow.ui
 

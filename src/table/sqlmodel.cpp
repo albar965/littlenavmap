@@ -295,7 +295,7 @@ QString SqlModel::buildColumnList()
     if(groupByCol.isEmpty())
     {
       // Not grouping - default view
-      if(col.isDefaultCol() || col.isHiddenCol())
+      if(col.isDefaultCol() || !col.isHiddenCol())
         colNames.append(col.getColumnName());
     }
     else if(col.getColumnName() == groupByCol || col.isGroupShow())
@@ -458,7 +458,6 @@ void SqlModel::buildQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
-
 
   using namespace atools::fs::lb::types;
   using namespace atools::fs::fstype;

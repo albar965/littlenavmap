@@ -37,21 +37,26 @@
 #include <marble/GeoDataStyle.h>
 #include <marble/GeoDataIconStyle.h>
 #include <marble/RenderPlugin.h>
+#include <marble/MarbleDirs.h>
+#include <marble/QtMarbleConfigDialog.h>
+
 #include <QCloseEvent>
 #include <QProgressDialog>
 #include <QSettings>
-#include <settings/settings.h>
-#include <fs/bglreaderoptions.h>
-#include <table/controller.h>
+
+#include "settings/settings.h"
+#include "fs/bglreaderoptions.h"
+#include "table/controller.h"
+#include "gui/widgetstatesaver.h"
+#include "gui/tablezoomhandler.h"
 #include "fs/bglreaderprogressinfo.h"
-#include <fs/navdatabase.h>
+#include "fs/navdatabase.h"
+#include "table/searchpanelist.h"
+
+#include <sql/sqlutil.h>
 
 using namespace Marble;
 using atools::settings::Settings;
-
-const int SECTION_TO_FONT_SIZE = 2;
-const int MIN_TABLE_VIEW_FONT_POINT_SIZE = 7;
-const int MAX_TABLE_VIEW_FONT_POINT_SIZE = 16;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)
@@ -65,11 +70,61 @@ MainWindow::MainWindow(QWidget *parent) :
 
   openDatabase();
 
-  airportColumns = new ColumnList();
-  airportController = new Controller(this, &db, airportColumns, ui->tableViewAirportSearch);
-  airportController->prepareModel();
+  searchPanes = new SearchPaneList(this, &db);
+  searchPanes->createAirportSearch();
 
+  // atools::gui::TableZoomHandler(ui->tableViewAirportSearch);
+  // airportController = new Controller(this, &db, airportColumns, ui->tableViewAirportSearch);
+  // airportController->prepareModel();
+
+  createNavMap();
   readSettings();
+
+  connectAllSlots();
+  assignSearchFieldsToController();
+  updateActionStates();
+
+#if 0
+  GeoDataDocument *document = new GeoDataDocument;
+
+  GeoDataIconStyle *style = new GeoDataIconStyle;
+  // style->setIconPath(":/littlenavmap/resources/icons/checkmark.svg");
+  GeoDataStyle *style2 = new GeoDataStyle;
+  style2->setIconStyle(*style);
+
+  atools::sql::SqlQuery query(db);
+
+  query.exec("select ident, name, lonx, laty, altitude from airport where rating > 0");
+
+  while(query.next())
+  {
+    GeoDataPlacemark *place = new GeoDataPlacemark(query.value("ident").toString() + " " +
+                                                   query.value("name").toString());
+    place->setCoordinate(query.value("lonx").toDouble(), query.value("laty").toDouble(),
+                         query.value("altitude").toDouble(), GeoDataCoordinates::Degree);
+    // place->setDescription("Test place");
+    // place->setCountryCode("Germany");
+    // place->setStyle(style2);
+
+    document->append(place);
+  }
+
+  // Add the document to MarbleWidget's tree model
+  mapWidget->model()->treeModel()->addDocument(document);
+#endif
+}
+
+void MainWindow::createNavMap()
+{
+  MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+  MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+
+  qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
+  qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+  qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+  qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+  qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
+  qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
   // Create a Marble QWidget without a parent
   mapWidget = new NavMapWidget(this);
@@ -80,49 +135,31 @@ MainWindow::MainWindow(QWidget *parent) :
   // mapWidget->setShowBorders( true );
   // mapWidget->setShowClouds( true );
   // mapWidget->setProjection( Marble::Mercator );
+  mapWidget->setAnimationsEnabled(false);
   mapWidget->setShowCrosshairs(false);
   mapWidget->setShowBackground(false);
   mapWidget->setShowAtmosphere(false);
   mapWidget->setShowGrid(true);
-  mapWidget->setShowTerrain(true);
+  // mapWidget->setShowTerrain(true);place marks
   mapWidget->setShowRelief(true);
+  mapWidget->setVolatileTileCacheLimit(512 * 1024);
+
   // mapWidget->setShowSunShading(true);
 
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
-  connectAllSlots();
-  assignSearchFieldsToController();
-  updateActionStates();
-  initTableViewZoom();
-
-  GeoDataIconStyle *style = new GeoDataIconStyle;
-  // style->setIconPath(":/littlenavmap/resources/icons/checkmark.svg");
-  GeoDataStyle *style2 = new GeoDataStyle;
-  style2->setIconStyle(*style);
-
-  GeoDataPlacemark *place = new GeoDataPlacemark("Bad Camberg");
-  place->setCoordinate(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
-  place->setDescription("Test place");
-  place->setPopulation(15000);
-  place->setCountryCode("Germany");
-  // place->setStyle(style2);
-
-  GeoDataDocument *document = new GeoDataDocument;
-  document->append(place);
-
-  // Add the document to MarbleWidget's tree model
-  mapWidget->model()->treeModel()->addDocument(document);
 
   MarbleWidgetInputHandler *inputHandler = mapWidget->inputHandler();
   inputHandler->setMouseButtonPopupEnabled(Qt::RightButton, false);
+  inputHandler->setMouseButtonPopupEnabled(Qt::LeftButton, false);
+  mapWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
 
-  mapWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-
   QSet<QString> pluginEnable;
-  pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation" <<
-  "Overview Map" << "Position Marker";
+  pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation"
+               << "Overview Map" << "Position Marker" << "Elevation Profile" << "Elevation Profile Marker"
+               << "Download Progress Indicator";
 
   // pluginDisable << "Annotation" << "Amateur Radio Aprs Plugin" << "Atmosphere" << "Compass" <<
   // "Crosshairs" << "Earthquakes" << "Eclipses" << "Elevation Profile" << "Elevation Profile Marker" <<
@@ -133,62 +170,40 @@ MainWindow::MainWindow(QWidget *parent) :
 
   QList<RenderPlugin *> localRenderPlugins = mapWidget->renderPlugins();
   for(RenderPlugin *p : localRenderPlugins)
-  {
-    qInfo() << p->name();
     if(!pluginEnable.contains(p->name()))
+    {
+      qDebug() << "Disabled plugin" << p->name();
       p->setEnabled(false);
-  }
+    }
+    else
+      qDebug() << "Found plugin" << p->name();
 
   // MarbleWidgetPopupMenu *menu = mapWidget->popupMenu();
   // QAction tst(QString("Menu"), mapWidget);
   // menu->addAction(Qt::RightButton, &tst);
-
-  // mapWidget->setFocusPoint(GeoDataCoordinates(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree));
-  mapWidget->centerOn(8.26589, 50.29824, false);
 }
 
 void MainWindow::assignSearchFieldsToController()
 {
-  airportController->assignLineEdit("ident", ui->lineEditAirportIcaoSearch);
-  airportController->assignLineEdit("name", ui->lineEditAirportNameSearch);
-  airportController->assignLineEdit("city", ui->lineEditAirportCitySearch);
-  airportController->assignLineEdit("state", ui->lineEditAirportStateSearch);
-  airportController->assignLineEdit("country", ui->lineEditAirportCountrySearch);
+  // airportController->assignLineEdit("ident", ui->lineEditAirportIcaoSearch);
+  // airportController->assignLineEdit("name", ui->lineEditAirportNameSearch);
+  // airportController->assignLineEdit("city", ui->lineEditAirportCitySearch);
+  // airportController->assignLineEdit("state", ui->lineEditAirportStateSearch);
+  // airportController->assignLineEdit("country", ui->lineEditAirportCountrySearch);
 }
 
-void MainWindow::initTableViewZoom()
+void MainWindow::buildColumnList()
 {
-  // Adjust cell height to be smaller than default but according to font height
-  defaultTableViewFontPointSize = ui->tableViewAirportSearch->font().pointSize();
 
-  // int newPointSize = Settings::instance()->value(ll::constants::SETTINGS_TABLE_VIEW_ZOOM,
-  // defaultTableViewFontPointSize).toInt();
-  setTableViewFontSize(defaultTableViewFontPointSize /*newPointSize*/);
-}
-
-void MainWindow::setTableViewFontSize(int pointSize)
-{
-  QFont newFont(ui->tableViewAirportSearch->font());
-  newFont.setPointSize(pointSize);
-
-  int newFontHeight = QFontMetrics(newFont).height();
-
-  qDebug() << "new font height" << newFontHeight << "point size" << newFont.pointSize();
-
-  ui->tableViewAirportSearch->setFont(newFont);
-
-  // Adjust the cell height - default is too big
-  ui->tableViewAirportSearch->verticalHeader()->setDefaultSectionSize(newFontHeight + SECTION_TO_FONT_SIZE);
-  ui->tableViewAirportSearch->verticalHeader()->setMinimumSectionSize(newFontHeight + SECTION_TO_FONT_SIZE);
 }
 
 MainWindow::~MainWindow()
 {
+  delete searchPanes;
   delete ui;
 
   qDebug() << "MainWindow destructor";
 
-  delete airportController;
   delete dialog;
   delete errorHandler;
   delete progressDialog;
@@ -205,41 +220,28 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUi()
 {
-  ui->checkBoxAirportAddonSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportApprSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportApprSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportClosedSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportIlsSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportLightSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportMilSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportTowerSearch->setCheckState(Qt::PartiallyChecked);
-  ui->checkBoxAirportScenerySearch->setCheckState(Qt::PartiallyChecked);
+  // ui->tableViewAirportSearch->horizontalHeader()->setSectionsMovable(true);
 
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
 
-  ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
-                                           ui->actionAirportSearchShowExtOptions,
-                                           ui->actionAirportSearchShowFuelParkOptions,
-                                           ui->actionAirportSearchShowRunwayOptions,
-                                           ui->actionAirportSearchShowAltOptions,
-                                           ui->actionAirportSearchShowDistOptions,
-                                           ui->actionAirportSearchShowSceneryOptions});
-  ui->toolButtonAirportSearch->setArrowType(Qt::NoArrow);
+}
 
-  showHideLayoutElements({ui->gridLayoutAirportExtSearch}, false, {ui->lineAirportExtSearch});
-  showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, false, {ui->lineAirportFuelParkSearch});
-  showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, false, {ui->lineAirportRunwaySearch});
-  showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, false, {ui->lineAirportAltSearch});
-  showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, false, {ui->lineAirportDistSearch});
-  showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, false, {ui->lineAirportScenerySearch});
-
+void MainWindow::createEmptySchema()
+{
+  if(!atools::sql::SqlUtil(&db).hasTable("airport"))
+  {
+    atools::fs::BglReaderOptions opts;
+    atools::fs::Navdatabase nd(&opts, &db);
+    nd.createSchema();
+  }
 }
 
 void MainWindow::loadScenery()
 {
+  preDatabaseLoad();
   using atools::fs::BglReaderOptions;
   QString config = Settings::getOverloadedPath(":/littlenavmap/resources/config/navdatareader.cfg");
   QSettings settings(config, QSettings::IniFormat);
@@ -272,6 +274,8 @@ void MainWindow::loadScenery()
 
   delete progressDialog;
   progressDialog = nullptr;
+
+  postDatabaseLoad(false);
 }
 
 bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progress)
@@ -297,7 +301,11 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
 void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
-  connect(mapWidget, &NavMapWidget::customContextMenuRequested, this, &MainWindow::tableContextMenu);
+
+  // connect(ui->tableViewAirportSearch, &QTableView::customContextMenuRequested, this,
+  // &MainWindow::tableContextMenu);
+
+  connect(mapWidget, &NavMapWidget::customContextMenuRequested, this, &MainWindow::mapContextMenu);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -308,53 +316,16 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
 
-  /* *INDENT-OFF* */
-  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled,
-          [=](bool state) {
-    ui->actionAirportSearchShowExtOptions->setChecked(state);
-    ui->actionAirportSearchShowFuelParkOptions->setChecked(state);
-    ui->actionAirportSearchShowRunwayOptions->setChecked(state);
-    ui->actionAirportSearchShowAltOptions->setChecked(state);
-    ui->actionAirportSearchShowDistOptions->setChecked(state);
-    ui->actionAirportSearchShowSceneryOptions->setChecked(state);
-  });
+  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
 
-  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch}); });
-
-  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state, {ui->lineAirportFuelParkSearch}); });
-
-  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state, {ui->lineAirportRunwaySearch}); });
-
-  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch}); });
-
-  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch}); });
-
-  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled,
-          [=](bool state) {
-    showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch}); });
-
-  connect(ui->lineEditAirportIcaoSearch, &QLineEdit::textEdited,
-          [=](const QString& text) {airportController->filterByLineEdit("ident", text); });
-
-  connect(ui->lineEditAirportNameSearch, &QLineEdit::textEdited,
-          [=](const QString& text) {airportController->filterByLineEdit("name", text); });
-  connect(ui->lineEditAirportCitySearch, &QLineEdit::textEdited,
-          [=](const QString& text) {airportController->filterByLineEdit("city", text); });
-  connect(ui->lineEditAirportStateSearch, &QLineEdit::textEdited,
-          [=](const QString& text) {airportController->filterByLineEdit("state", text); });
-  connect(ui->lineEditAirportCountrySearch, &QLineEdit::textEdited,
-          [=](const QString& text) {airportController->filterByLineEdit("country", text); });
   /* *INDENT-ON* */
+
+}
+
+void MainWindow::options()
+{
+  // QtMarbleConfigDialog dlg(mapWidget);
+  // dlg.exec();
 
 }
 
@@ -363,36 +334,22 @@ void MainWindow::mainWindowShown()
   qDebug() << "MainWindow::mainWindowShown()";
 }
 
-void MainWindow::showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
-                                        const QList<QWidget *>& otherWidgets)
-{
-  for(QWidget *w : otherWidgets)
-    w->setVisible(visible);
-
-  for(QLayout *layout : layouts)
-    for(int i = 0; i < layout->count(); i++)
-      layout->itemAt(i)->widget()->setVisible(visible);
-}
-
 void MainWindow::updateActionStates()
 {
   qDebug() << "Updating action states";
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 }
 
-void MainWindow::tableContextMenu(const QPoint& pos)
+void MainWindow::mapContextMenu(const QPoint& pos)
 {
+  Q_UNUSED(pos);
   qInfo() << "tableContextMenu";
-  MarbleWidgetPopupMenu *menu = mapWidget->popupMenu();
 
   QMenu m;
-  m.addAction("Menu");
-  m.addAction("Copy");
-  m.addAction("Paste");
+  m.addAction(ui->actionTableCopy);
+  m.addAction(ui->actionTableSelectAll);
 
   m.exec(QCursor::pos());
-
-  // menu->slotInfoDialog();
 }
 
 void MainWindow::openDatabase()
@@ -409,6 +366,8 @@ void MainWindow::openDatabase()
     db = SqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(databaseFile);
     db.open({"PRAGMA foreign_keys = ON"});
+
+    createEmptySchema();
   }
   catch(std::exception& e)
   {
@@ -443,33 +402,21 @@ void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
 
-  Settings& s = Settings::instance();
+  atools::gui::WidgetStateSaver ws("MainWindow/Widget");
+  ws.load({this, ui->statusBar, ui->tableViewAirportSearch});
 
-  if(s->contains("MainWindow/Size"))
-    resize(s->value("MainWindow/Size", sizeHint()).toSize());
-
-  if(s->contains("MainWindow/State"))
-    restoreState(s->value("MainWindow/State").toByteArray());
-
-  ui->statusBar->setHidden(!s->value("MainWindow/ShowStatusbar", true).toBool());
-
-  // showSearchBar(s->value(ll::constants::SETTINGS_SHOW_SEARCHOOL, true).toBool());
-
-  // ui->actionOpenAfterExport->setChecked(s->value(ll::constants::SETTINGS_EXPORT_OPEN, true).toBool());
-
-  // ui->actionFilterLogbookEntries->setChecked(s->value(ll::constants::SETTINGS_FILTER_ENTRIES, false).toBool());
+  mapWidget->restoreState();
 }
 
 void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
 
-  Settings& s = Settings::instance();
-  s->setValue("MainWindow/Size", size());
-  s->setValue("MainWindow/State", saveState());
-  s->setValue("MainWindow/ShowStatusbar", !ui->statusBar->isHidden());
+  atools::gui::WidgetStateSaver ws("MainWindow/Widget");
+  ws.save({this, ui->statusBar, ui->tableViewAirportSearch});
+  mapWidget->saveState();
+  ws.syncSettings();
 
-  s.syncSettings();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -497,4 +444,37 @@ void MainWindow::showEvent(QShowEvent *event)
   }
 
   event->ignore();
+}
+
+void MainWindow::preDatabaseLoad()
+{
+  if(!hasDatabaseLoadStatus)
+  {
+    hasDatabaseLoadStatus = true;
+    searchPanes->preDatabaseLoad();
+    // airportController->resetSearch();
+    // airportController->clearModel();
+  }
+  else
+    qDebug() << "Already in database loading status";
+}
+
+void MainWindow::postDatabaseLoad(bool force)
+{
+  if(hasDatabaseLoadStatus || force)
+  {
+    // Check if there are any logbook entries at all to disable most GUI elements
+    searchPanes->postDatabaseLoad();
+
+    // airportController->prepareModel();
+    // connectControllerSlots();
+    // assignSearchFieldsToController();
+
+    // updateWidgetsOnSelection();
+    // updateWidgetStatus();
+    // updateGlobalStats();
+    hasDatabaseLoadStatus = false;
+  }
+  else
+    qDebug() << "Not in database loading status";
 }

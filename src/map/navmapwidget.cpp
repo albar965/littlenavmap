@@ -19,6 +19,9 @@
 #include "navmapwidget.h"
 #include <marble/MarbleLocale.h>
 #include <QContextMenuEvent>
+#include "settings/settings.h"
+
+#include <QSettings>
 
 using namespace Marble;
 
@@ -36,4 +39,22 @@ NavMapWidget::NavMapWidget(QWidget *parent)
   // MarbleWidgetInputHandler *localInputHandler = inputHandler();
   // MarbleAbstractPresenter *pres = new MarbleAbstractPresenter;
   // setInputHandler(nullptr);
+}
+
+void NavMapWidget::saveState()
+{
+  atools::settings::Settings& s = atools::settings::Settings::instance();
+  s->setValue("Map/Zoom", zoom());
+  s->setValue("Map/LonX", centerLongitude());
+  s->setValue("Map/LatY", centerLatitude());
+}
+
+void NavMapWidget::restoreState()
+{
+  atools::settings::Settings& s = atools::settings::Settings::instance();
+  if(s->contains("Map/Zoom"))
+    setZoom(s->value("Map/Zoom").toInt());
+
+  if(s->contains("Map/LonX") && s->contains("Map/LatY"))
+    centerOn(s->value("Map/LonX").toDouble(), s->value("Map/LatY").toDouble(), false);
 }

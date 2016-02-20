@@ -30,6 +30,9 @@ class NavMapWidget :
 public:
   NavMapWidget(QWidget *parent);
 
+  void saveState();
+  void restoreState();
+
   // QWidget interface
 
 };

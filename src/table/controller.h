@@ -168,7 +168,7 @@ private:
   void processViewColumns();
 
   /* Save view state to settings */
-  void saveViewState() const;
+  void saveViewState();
 
   /* Load view state from settings */
   void restoreViewState();
@@ -178,6 +178,7 @@ private:
   QTableView *view = nullptr;
   SqlModel *model = nullptr;
   ColumnList *columns = nullptr;
+  QByteArray viewState;
 };
 
 #endif // LITTLENAVMAP_CONTROLLER_H

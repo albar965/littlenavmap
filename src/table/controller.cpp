@@ -290,19 +290,15 @@ void Controller::assignComboBox(const QString& field, QComboBox *combo)
   columns->assignComboBox(field, combo);
 }
 
-void Controller::saveViewState() const
+void Controller::saveViewState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
-  s->setValue("MainWindow/ViewState_" + columns->getTablename(), view->horizontalHeader()->saveState());
-  s.syncSettings();
+  viewState = view->horizontalHeader()->saveState();
 }
 
 void Controller::restoreViewState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
-  if(s->contains("MainWindow/ViewState_" + columns->getTablename()))
-    view->horizontalHeader()->restoreState(
-      s->value("MainWindow/ViewState_" + columns->getTablename()).toByteArray());
+  if(!viewState.isEmpty())
+    view->horizontalHeader()->restoreState(viewState);
 }
 
 void Controller::loadAllRows()

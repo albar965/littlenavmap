@@ -25,6 +25,7 @@
 class QProgressDialog;
 class Controller;
 class ColumnList;
+class SearchPaneList;
 
 namespace atools {
 namespace fs {
@@ -52,13 +53,20 @@ public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
-  void tableContextMenu(const QPoint& pos);
+  void mapContextMenu(const QPoint& pos);
+
+  Ui::MainWindow *getUi() const
+  {
+    return ui;
+  }
 
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
 
 private:
+  SearchPaneList *searchPanes;
+
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
   virtual void closeEvent(QCloseEvent *event) override;
@@ -70,9 +78,7 @@ private:
   NavMapWidget *mapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
-  Controller *airportController;
-  ColumnList *airportColumns;
-  int defaultTableViewFontPointSize;
+  bool hasDatabaseLoadStatus = false;
 
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
@@ -89,14 +95,18 @@ private:
   void readSettings();
   void updateActionStates();
   void setupUi();
-  void showHideLayoutElements(const QList<QLayout*> layouts, bool visible,
-                              const QList<QWidget *>& otherWidgets = QList<QWidget *>());
   void loadScenery();
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress);
 
-  void initTableViewZoom();
-  void setTableViewFontSize(int pointSize);
   void assignSearchFieldsToController();
+  void buildColumnList();
+  void createNavMap();
+  void options();
+  void tableContextMenu(const QPoint& pos);
+  void preDatabaseLoad();
+  void postDatabaseLoad(bool force);
+  void createEmptySchema();
+
 };
 
 #endif // MAINWINDOW_H

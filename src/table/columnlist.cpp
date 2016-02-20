@@ -21,85 +21,9 @@
 #include <QLineEdit>
 #include <QComboBox>
 
-ColumnList::ColumnList()
+ColumnList::ColumnList(const QString& table)
+  : tablename(table)
 {
-  tablename = "airport";
-  // Default view column descriptors
-  columns.append(Column("airport_id", tr("ID")).
-                 canSort().defaultCol().defaultSort().defaultSortOrder(Qt::SortOrder::DescendingOrder));
-
-  columns.append(Column("ident",
-                        tr("ICAO")).canSort().canFilter().defaultCol());
-
-  columns.append(Column("name",
-                        tr("Name")).canSort().canFilter().defaultCol());
-
-  columns.append(Column("city",
-                        tr("City")).canSort().canFilter().defaultCol());
-  columns.append(Column("state",
-                        tr("State")).canSort().canFilter().defaultCol());
-  columns.append(Column("country",
-                        tr("Country")).canSort().canFilter().defaultCol());
-
-  // Add names to the index
-  for(Column& cd : columns)
-    nameColumnMap.insert(cd.getColumnName(), &cd);
-
-  // airport_id
-  // file_id
-  // ident
-  // region
-  // name
-  // country
-  // state
-  // city
-  // fuel_flags
-  // has_avgas
-  // has_jetfuel
-  // has_tower_object
-  // has_tower
-  // is_closed
-  // is_military
-  // is_addon
-  // num_boundary_fence
-  // num_com
-  // num_parking_gate
-  // num_parking_ga_ramp
-  // num_approach
-  // num_runway_hard
-  // num_runway_soft
-  // num_runway_water
-  // num_runway_light
-  // num_runway_end_closed
-  // num_runway_end_vasi
-  // num_runway_end_als
-  // num_runway_end_ils
-  // num_apron
-  // num_taxi_path
-  // num_helipad
-  // num_jetway
-  // longest_runway_length
-  // longest_runway_width
-  // longest_runway_heading
-  // longest_runway_surface
-  // num_runways
-  // largest_parking_ramp
-  // largest_parking_gate
-  // rating
-  // scenery_local_path
-  // bgl_filename
-  // left_lonx
-  // top_laty
-  // right_lonx
-  // bottom_laty
-  // mag_var
-  // tower_altitude
-  // tower_lonx
-  // tower_laty
-  // altitude
-  // lonx
-  // laty
-
 }
 
 ColumnList::~ColumnList()
@@ -107,26 +31,39 @@ ColumnList::~ColumnList()
 
 }
 
+void ColumnList::clear()
+{
+  columns.clear();
+  nameColumnMap.clear();
+}
+
+ColumnList& ColumnList::append(Column col)
+{
+  columns.append(col);
+  nameColumnMap.insert(col.getColumnName(), columns.size() - 1);
+  return *this;
+}
+
 const Column *ColumnList::getColumn(const QString& field) const
 {
   if(nameColumnMap.contains(field))
-    return nameColumnMap.value(field);
+    return &columns.at(nameColumnMap.value(field));
   else
     return nullptr;
 }
 
-void ColumnList::assignLineEdit(const QString& field, QLineEdit *edit)
+void ColumnList::assignLineEdit(const QString& field, QLineEdit *widget)
 {
   if(nameColumnMap.contains(field))
-    nameColumnMap[field]->lineEdit(edit);
+    columns[nameColumnMap.value(field)].lineEdit(widget);
   else
     qWarning() << "Cannot assign line edit to" << field;
 }
 
-void ColumnList::assignComboBox(const QString& field, QComboBox *combo)
+void ColumnList::assignComboBox(const QString& field, QComboBox *widget)
 {
   if(nameColumnMap.contains(field))
-    nameColumnMap[field]->comboBox(combo);
+    columns[nameColumnMap.value(field)].comboBox(widget);
   else
     qWarning() << "Cannot assign combo box to" << field;
 }
@@ -154,5 +91,3 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
         cd.getComboBoxWidget()->setEnabled(enabled);
     }
 }
-
-
