@@ -20,8 +20,11 @@
 
 #include <QString>
 
-class QLineEdit;
+class QWidget;
 class QComboBox;
+class QLineEdit;
+class QCheckBox;
+class QSpinBox;
 
 /*
  * A column descriptor defines query and view behaviour for each column. Key is
@@ -34,124 +37,59 @@ class Column
 public:
   Column()
   {
-
   }
 
   /*
    * @param columnName Name or alias of the column as returned by the query
    * @param columnDisplayName Table header title for the column
    */
-  Column(const QString& columnName, const QString& columnDisplayName = QString()) :
-    colName(columnName), displayName(columnDisplayName)
-  {
-
-  }
+  Column(const QString& columnName, const QString& columnDisplayName = QString());
+  Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName = QString());
 
   /* Show column in grouping queries */
-  Column& canGroupShow(bool b = true)
-  {
-    groupByShow = b;
-    return *this;
-  }
+  Column& canGroupShow(bool b = true);
 
   /* Can calculate minimum value in grouping query */
-  Column& canMin(bool b = true)
-  {
-    groupByMin = b;
-    return *this;
-  }
+  Column& canMin(bool b = true);
 
   /* Can calculate maximum value in grouping query */
-  Column& canMax(bool b = true)
-  {
-    groupByMax = b;
-    return *this;
-  }
+  Column& canMax(bool b = true);
 
   /* Can summarize value in grouping query */
-  Column& canSum(bool b = true)
-  {
-    groupBySum = b;
-    return *this;
-  }
+  Column& canSum(bool b = true);
 
   /* Column can be used in filters */
-  Column& canFilter(bool b = true)
-  {
-    canBeFiltered = b;
-    return *this;
-  }
+  Column& canFilter(bool b = true);
 
   /* Column can be used in group by */
-  Column& canGroup(bool b = true)
-  {
-    canBeGrouped = b;
-    return *this;
-  }
+  Column& canGroup(bool b = true);
 
   /* Table can be sorted by column */
-  Column& canSort(bool b = true)
-  {
-    canBeSorted = b;
-    return *this;
-  }
+  Column& canSort(bool b = true);
 
   /* Column is part of default view */
-  Column& defaultCol(bool b = true)
-  {
-    isDefaultColumn = b;
-    return *this;
-  }
+  Column& defaultCol(bool b = true);
 
   /* Column is hidden in view */
-  Column& hidden(bool b = true)
-  {
-    isHiddenColumn = b;
-    return *this;
-  }
+  Column& hidden(bool b = true);
 
   /* Column is defining sort order in default view */
-  Column& defaultSort(bool b = true)
-  {
-    isDefaultSortColumn = b;
-    return *this;
-  }
+  Column& defaultSort(bool b = true);
 
   /* Column is always add using "and" to the search criteria */
-  Column& alwaysAnd(bool b = true)
-  {
-    isAlwaysAndColumn = b;
-    return *this;
-  }
+  Column& alwaysAnd(bool b = true);
 
   /* Sort function for column */
-  Column& sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc)
-  {
-    sortFuncForColAsc = sortFuncAsc;
-    sortFuncForColDesc = sortFuncDesc;
-    return *this;
-  }
+  Column& sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc);
 
-  /* QLineEdit widget that is used for filtering this column */
-  Column& lineEdit(QLineEdit *edit)
-  {
-    lineEditWidget = edit;
-    return *this;
-  }
+  /* Widget that is used for filtering this column */
+  Column& widget(QWidget *widget);
 
-  /* QComboBox widget that is used for filtering this column */
-  Column& comboBox(QComboBox *combo)
-  {
-    comboBoxWidget = combo;
-    return *this;
-  }
+  Column& minWidget(QWidget *widget);
+  Column& maxWidget(QWidget *widget);
 
   /* Sort order if this is the sort by column in default view */
-  Column& defaultSortOrder(Qt::SortOrder order)
-  {
-    defaultSortOrd = order;
-    return *this;
-  }
+  Column& defaultSortOrder(Qt::SortOrder order);
 
   bool isGroupShow() const
   {
@@ -201,15 +139,10 @@ public:
       return displayName;
   }
 
-  QLineEdit *getLineEditWidget() const
-  {
-    return lineEditWidget;
-  }
-
-  QComboBox *getComboBoxWidget() const
-  {
-    return comboBoxWidget;
-  }
+  QLineEdit *getLineEditWidget() const;
+  QComboBox *getComboBoxWidget() const;
+  QCheckBox *getCheckBoxWidget() const;
+  QSpinBox *getSpinBoxWidget() const;
 
   bool isDefaultCol() const
   {
@@ -246,11 +179,28 @@ public:
     return defaultSortOrd;
   }
 
+  QWidget *getWidget() const
+  {
+    return colWidget;
+  }
+
+  QWidget *getMinWidget() const
+  {
+    return minColWidget;
+  }
+
+  QWidget *getMaxWidget() const
+  {
+    return maxColWidget;
+  }
+
+  QSpinBox *getMinSpinBoxWidget() const;
+  QSpinBox *getMaxSpinBoxWidget() const;
+
 private:
   QString colName;
   QString displayName;
-  QLineEdit *lineEditWidget = nullptr;
-  QComboBox *comboBoxWidget = nullptr;
+  QWidget *colWidget = nullptr, *maxColWidget = nullptr, *minColWidget = nullptr;
   QString sortFuncForColAsc, sortFuncForColDesc;
 
   bool groupByShow = false;

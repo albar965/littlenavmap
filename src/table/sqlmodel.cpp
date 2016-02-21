@@ -27,6 +27,7 @@
 #include "sql/sqlutil.h"
 #include "geo/calculations.h"
 #include "logging/loggingdefs.h"
+#include "column.h"
 
 #include <algorithm>
 #include <QApplication>
@@ -57,8 +58,10 @@ SqlModel::~SqlModel()
 {
 }
 
-void SqlModel::filter(const QString& colName, const QVariant& value)
+void SqlModel::filter(const Column *col, const QVariant& value)
 {
+  Q_ASSERT(col != nullptr);
+  QString colName = col->getColumnName();
   bool colAlreadyFiltered = whereConditionMap.contains(colName);
 
   if(value.isNull() || (value.type() == QVariant::String && value.toString().isEmpty()))
@@ -109,9 +112,6 @@ void SqlModel::filter(const QString& colName, const QVariant& value)
       newVariant = value;
       condition = "=";
     }
-    const Column *col = columns->getColumn(colName);
-    Q_ASSERT(col != nullptr);
-
     if(colAlreadyFiltered)
     {
       // Replace values in existing condition
@@ -290,26 +290,26 @@ void SqlModel::sort(int column, Qt::SortOrder order)
 QString SqlModel::buildColumnList()
 {
   QVector<QString> colNames;
-  for(const Column& col : columns->getColumns())
+  for(const Column* col : columns->getColumns())
   {
     if(groupByCol.isEmpty())
     {
       // Not grouping - default view
-      if(col.isDefaultCol() || !col.isHiddenCol())
-        colNames.append(col.getColumnName());
+      if(col->isDefaultCol() || !col->isHiddenCol())
+        colNames.append(col->getColumnName());
     }
-    else if(col.getColumnName() == groupByCol || col.isGroupShow())
+    else if(col->getColumnName() == groupByCol || col->isGroupShow())
       // Add the group by column
-      colNames.append(col.getColumnName());
+      colNames.append(col->getColumnName());
     else
     {
       // Add all aggregate columns
-      QString cname = col.getColumnName();
-      if(col.isMin())
+      QString cname = col->getColumnName();
+      if(col->isMin())
         colNames.append("min(" + cname + ") as " + cname + "_min");
-      if(col.isMax())
+      if(col->isMax())
         colNames.append("max(" + cname + ") as " + cname + "_max");
-      if(col.isSum())
+      if(col->isSum())
         colNames.append("sum(" + cname + ") as " + cname + "_sum");
     }
   }
@@ -336,7 +336,7 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
   QString val;
   if(cond.value.type() == QVariant::String || cond.value.type() == QVariant::Char)
-    val = " '" + cond.value.toString() + "'";
+    val = " '" + cond.value.toString().replace("'", "''") + "'";
   else if(cond.value.type() == QVariant::Bool ||
           cond.value.type() == QVariant::Int ||
           cond.value.type() == QVariant::UInt ||

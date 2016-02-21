@@ -54,12 +54,6 @@ public:
   Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~Controller();
 
-  /* Assign a QLineEdit to a column descriptor */
-  void assignLineEdit(const QString& field, QLineEdit *edit);
-
-  /* Assign a QComboBox to a column descriptor */
-  void assignComboBox(const QString& field, QComboBox *combo);
-
   /* Update logbook status if it has been loaded later */
   void setHasLogbook(bool value);
 
@@ -93,10 +87,12 @@ public:
   void ungroup();
 
   /* Set a filter by text from a line edit */
-  void filterByLineEdit(const QString& field, const QString& text);
+  void filterByLineEdit(const Column *col, const QString& text);
 
   /* Set a filter by an index from a combo box */
-  void filterByComboBox(const QString& field, int value, bool noFilter);
+  void filterByComboBox(const Column *col, int value, bool noFilter);
+  void filterByCheckbox(const Column *col, int state, bool triState);
+  void filterBySpinBox(const Column *col, int value);
 
   /* Use "and" or "or" to combine searches */
   void filterOperator(bool useAnd);
@@ -163,6 +159,7 @@ public:
   /* Select all rows in view */
   void selectAll();
 
+  int getIdForRow(const QModelIndex& index);
 private:
   /* Adapt columns to query change */
   void processViewColumns();

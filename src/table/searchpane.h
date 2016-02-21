@@ -67,6 +67,7 @@ private:
   void tableCopyCipboard();
   void loadAllRowsIntoView();
 
+  void doubleClick(const QModelIndex& index);
 };
 
 #endif // SEARCHPANE_H

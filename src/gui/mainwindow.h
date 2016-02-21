@@ -98,8 +98,6 @@ private:
   void loadScenery();
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress);
 
-  void assignSearchFieldsToController();
-  void buildColumnList();
   void createNavMap();
   void options();
   void tableContextMenu(const QPoint& pos);

@@ -83,7 +83,7 @@ public:
 
   /* Add a filter for a column. Placeholder and negation will be adapted to SQL
    * query */
-  void filter(const QString& colName, const QVariant& value);
+  void filter(const Column* col, const QVariant& value);
 
   /* Operator to connect all conditions ("and" or "or") */
   void filterOperator(const QString& op);

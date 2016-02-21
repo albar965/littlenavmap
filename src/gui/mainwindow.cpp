@@ -47,7 +47,7 @@
 #include "settings/settings.h"
 #include "fs/bglreaderoptions.h"
 #include "table/controller.h"
-#include "gui/widgetstatesaver.h"
+#include "gui/widgetstate.h"
 #include "gui/tablezoomhandler.h"
 #include "fs/bglreaderprogressinfo.h"
 #include "fs/navdatabase.h"
@@ -68,20 +68,17 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setupUi();
 
+  readSettings();
   openDatabase();
 
   searchPanes = new SearchPaneList(this, &db);
   searchPanes->createAirportSearch();
-
-  // atools::gui::TableZoomHandler(ui->tableViewAirportSearch);
-  // airportController = new Controller(this, &db, airportColumns, ui->tableViewAirportSearch);
-  // airportController->prepareModel();
+  searchPanes->restoreState();
 
   createNavMap();
-  readSettings();
+  mapWidget->restoreState();
 
   connectAllSlots();
-  assignSearchFieldsToController();
   updateActionStates();
 
 #if 0
@@ -183,20 +180,6 @@ void MainWindow::createNavMap()
   // menu->addAction(Qt::RightButton, &tst);
 }
 
-void MainWindow::assignSearchFieldsToController()
-{
-  // airportController->assignLineEdit("ident", ui->lineEditAirportIcaoSearch);
-  // airportController->assignLineEdit("name", ui->lineEditAirportNameSearch);
-  // airportController->assignLineEdit("city", ui->lineEditAirportCitySearch);
-  // airportController->assignLineEdit("state", ui->lineEditAirportStateSearch);
-  // airportController->assignLineEdit("country", ui->lineEditAirportCountrySearch);
-}
-
-void MainWindow::buildColumnList()
-{
-
-}
-
 MainWindow::~MainWindow()
 {
   delete searchPanes;
@@ -220,13 +203,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupUi()
 {
-  // ui->tableViewAirportSearch->horizontalHeader()->setSectionsMovable(true);
-
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
-
 }
 
 void MainWindow::createEmptySchema()
@@ -302,23 +282,15 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  // connect(ui->tableViewAirportSearch, &QTableView::customContextMenuRequested, this,
-  // &MainWindow::tableContextMenu);
-
   connect(mapWidget, &NavMapWidget::customContextMenuRequested, this, &MainWindow::mapContextMenu);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
-
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
-
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
-
-  /* *INDENT-ON* */
 
 }
 
@@ -402,19 +374,17 @@ void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
 
-  atools::gui::WidgetStateSaver ws("MainWindow/Widget");
-  ws.load({this, ui->statusBar, ui->tableViewAirportSearch});
+  atools::gui::WidgetState ws("MainWindow/Widget");
+  ws.restore({this, ui->statusBar, ui->tableViewAirportSearch});
 
-  mapWidget->restoreState();
 }
 
 void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
 
-  atools::gui::WidgetStateSaver ws("MainWindow/Widget");
+  atools::gui::WidgetState ws("MainWindow/Widget");
   ws.save({this, ui->statusBar, ui->tableViewAirportSearch});
-  mapWidget->saveState();
   ws.syncSettings();
 
 }
@@ -433,6 +403,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
   if(result != QMessageBox::Yes)
     event->ignore();
   writeSettings();
+  searchPanes->saveState();
+  mapWidget->saveState();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -452,8 +424,6 @@ void MainWindow::preDatabaseLoad()
   {
     hasDatabaseLoadStatus = true;
     searchPanes->preDatabaseLoad();
-    // airportController->resetSearch();
-    // airportController->clearModel();
   }
   else
     qDebug() << "Already in database loading status";
@@ -463,16 +433,7 @@ void MainWindow::postDatabaseLoad(bool force)
 {
   if(hasDatabaseLoadStatus || force)
   {
-    // Check if there are any logbook entries at all to disable most GUI elements
     searchPanes->postDatabaseLoad();
-
-    // airportController->prepareModel();
-    // connectControllerSlots();
-    // assignSearchFieldsToController();
-
-    // updateWidgetsOnSelection();
-    // updateWidgetStatus();
-    // updateGlobalStats();
     hasDatabaseLoadStatus = false;
   }
   else

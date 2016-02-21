@@ -47,18 +47,19 @@ SOURCES += src/main.cpp\
     src/table/formatter.cpp \
     src/table/sqlmodel.cpp \
     src/table/searchpane.cpp \
-    src/table/searchpanelist.cpp
+    src/table/searchpanelist.cpp \
+    src/table/column.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
     src/map/mappaintlayer.h \
-    src/table/colum.h \
     src/table/columnlist.h \
     src/table/controller.h \
     src/table/formatter.h \
     src/table/sqlmodel.h \
     src/table/searchpane.h \
-    src/table/searchpanelist.h
+    src/table/searchpanelist.h \
+    src/table/column.h
 
 FORMS    += src/gui/mainwindow.ui
 

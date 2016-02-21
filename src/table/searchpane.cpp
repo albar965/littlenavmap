@@ -27,6 +27,7 @@
 #include "table/controller.h"
 #include <gui/dialog.h>
 #include <gui/mainwindow.h>
+#include "column.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 SearchPane::SearchPane(MainWindow *parent, QTableView *view, ColumnList *columns,
@@ -50,27 +51,31 @@ SearchPane::~SearchPane()
 
 void SearchPane::addSearchWidget(const QString& field, QWidget *widget)
 {
-  if(QLineEdit * edit = dynamic_cast<QLineEdit *>(widget))
-    airportController->assignLineEdit(field, edit);
-  else if(QComboBox * box = dynamic_cast<QComboBox *>(widget))
-    airportController->assignComboBox(field, box);
+  airportColumns->assignWidget(field, widget);
 }
 
 void SearchPane::connectSearchWidgets()
 {
   void (QComboBox::*activatedPtr)(int) = &QComboBox::activated;
+  void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
 
-  for(const Column& col : airportColumns->getColumns())
+  for(const Column *col : airportColumns->getColumns())
   {
-    if(col.getLineEditWidget() != nullptr)
-      connect(col.getLineEditWidget(), &QLineEdit::textEdited,
-              [ = ](const QString &text) {airportController->filterByLineEdit(col.getColumnName(), text);
-              });
+    /* *INDENT-OFF* */
 
-    else if(col.getComboBoxWidget() != nullptr)
-      connect(col.getComboBoxWidget(), activatedPtr,
-              [ = ](int index) {airportController->filterByComboBox(col.getColumnName(), index, index == 0);
-              });
+    if(col->getLineEditWidget() != nullptr)
+      connect(col->getLineEditWidget(), &QLineEdit::textChanged,
+              [=](const QString &text) {airportController->filterByLineEdit(col, text); });
+    else if(col->getComboBoxWidget() != nullptr)
+      connect(col->getComboBoxWidget(), activatedPtr,
+              [=](int index) {airportController->filterByComboBox(col, index, index == 0); });
+    else if(col->getCheckBoxWidget() != nullptr)
+      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged,
+              [=](int state) {airportController->filterByCheckbox(col, state, true); });
+    else if(col->getSpinBoxWidget() != nullptr)
+      connect(col->getSpinBoxWidget(), valueChangedPtr,
+              [=](int value) {airportController->filterBySpinBox(col, value); });
+    /* *INDENT-ON* */
 
   }
 }
@@ -78,12 +83,25 @@ void SearchPane::connectSearchWidgets()
 void SearchPane::connectSlots()
 {
   Ui::MainWindow *ui = parentWidget->getUi();
+  connect(tableViewAirportSearch, &QTableView::doubleClicked, this,
+          &SearchPane::doubleClick);
   connect(tableViewAirportSearch, &QTableView::customContextMenuRequested, this,
           &SearchPane::tableContextMenu);
   connect(ui->actionResetSearch, &QAction::triggered, this, &SearchPane::resetSearch);
   connect(ui->actionResetView, &QAction::triggered, this, &SearchPane::resetView);
   connect(ui->actionTableCopy, &QAction::triggered, this, &SearchPane::tableCopyCipboard);
   connect(ui->actionShowAll, &QAction::triggered, this, &SearchPane::loadAllRowsIntoView);
+}
+
+void SearchPane::doubleClick(const QModelIndex& index)
+{
+  qDebug() << "double click";
+  if(index.isValid())
+  {
+
+    int id = airportController->getIdForRow(index);
+    qDebug() << "id" << id;
+  }
 }
 
 void SearchPane::tableContextMenu(const QPoint& pos)

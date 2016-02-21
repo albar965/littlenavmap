@@ -20,6 +20,7 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "settings/settings.h"
+#include "column.h"
 
 #include <QTableView>
 #include <QHeaderView>
@@ -67,20 +68,50 @@ void Controller::filterExcluding(const QModelIndex& index)
   model->filterExcluding(index);
 }
 
-void Controller::filterByLineEdit(const QString& field, const QString& text)
+void Controller::filterByLineEdit(const Column *col, const QString& text)
 {
   Q_ASSERT(model != nullptr);
-  model->filter(field, text);
+  model->filter(col, text);
 }
 
-void Controller::filterByComboBox(const QString& field, int value, bool noFilter)
+void Controller::filterBySpinBox(const Column *col, int value)
+{
+  Q_ASSERT(model != nullptr);
+  model->filter(col, value);
+}
+
+void Controller::filterByCheckbox(const Column *col, int state, bool triState)
+{
+  Q_ASSERT(model != nullptr);
+
+  if(triState)
+  {
+    Qt::CheckState s = static_cast<Qt::CheckState>(state);
+    switch(s)
+    {
+      case Qt::Unchecked:
+        model->filter(col, 0);
+        break;
+      case Qt::PartiallyChecked:
+        model->filter(col, QVariant(QVariant::Int));
+        break;
+      case Qt::Checked:
+        model->filter(col, 1);
+        break;
+    }
+  }
+  else
+    model->filter(col, state == Qt::Checked ? 1 : QVariant(QVariant::Int));
+}
+
+void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
 {
   Q_ASSERT(model != nullptr);
   if(noFilter)
     // Index 0 for combo box means here: no filter, so remove it
-    model->filter(field, QVariant(QVariant::Int));
+    model->filter(col, QVariant(QVariant::Int));
   else
-    model->filter(field, value);
+    model->filter(col, value);
 }
 
 void Controller::filterOperator(bool useAnd)
@@ -230,6 +261,14 @@ QString Controller::getFieldDataAt(const QModelIndex& index) const
   return model->getFormattedFieldData(index).toString();
 }
 
+int Controller::getIdForRow(const QModelIndex& index)
+{
+  if(index.isValid())
+    return model->getRawData(index.row()).at(0).toInt();
+  else
+    return -1;
+}
+
 bool Controller::isGrouped() const
 {
   if(model != nullptr)
@@ -278,16 +317,6 @@ void Controller::prepareModel()
   processViewColumns();
   if(!isGrouped())
     restoreViewState();
-}
-
-void Controller::assignLineEdit(const QString& field, QLineEdit *edit)
-{
-  columns->assignLineEdit(field, edit);
-}
-
-void Controller::assignComboBox(const QString& field, QComboBox *combo)
-{
-  columns->assignComboBox(field, combo);
 }
 
 void Controller::saveViewState()

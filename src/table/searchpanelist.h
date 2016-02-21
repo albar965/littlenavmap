@@ -27,6 +27,9 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void saveState();
+  void restoreState();
+
 private:
   atools::sql::SqlDatabase *db;
   ColumnList *airportColumns = nullptr;

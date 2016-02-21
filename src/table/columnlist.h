@@ -18,15 +18,13 @@
 #ifndef LITTLENAVMAP_COLUMNLIST_H
 #define LITTLENAVMAP_COLUMNLIST_H
 
-#include "table/colum.h"
-
 #include <QHash>
 #include <QObject>
 #include <QVector>
 #include <QStringList>
 
-class QLineEdit;
-class QComboBox;
+class QWidget;
+class Column;
 
 /*
  * A list of column descriptors that define behaviour and display in the table
@@ -49,16 +47,13 @@ public:
   const Column *getColumn(const QString& field) const;
 
   /* Get all column descriptors */
-  const QVector<Column>& getColumns() const
+  const QVector<Column *>& getColumns() const
   {
     return columns;
   }
 
-  /* Assign a QLineEdit widget to the column descriptor with the given name */
-  void assignLineEdit(const QString& field, QLineEdit *widget);
-
-  /* Assign a QComboBox widget to the column descriptor with the given name */
-  void assignComboBox(const QString& field, QComboBox *widget);
+  /* Assign a widget to the column descriptor with the given name */
+  void assignWidget(const QString& field, QWidget *widget);
 
   /* Clear all LineEdit widgets and ComboBox widgets */
   void clearWidgets(const QStringList& exceptColNames = QStringList());
@@ -66,7 +61,7 @@ public:
   /* Enable or disable widgets except the ones with the give column names */
   void enableWidgets(bool enabled = true, const QStringList& exceptColNames = QStringList());
 
-  ColumnList& append(Column col);
+  ColumnList& append(const Column& col);
 
   QString getTablename() const
   {
@@ -82,8 +77,8 @@ public:
 
 private:
   QString tablename;
-  QVector<Column> columns;
-  QHash<QString, int> nameColumnMap;
+  QVector<Column *> columns;
+  QHash<QString, Column *> nameColumnMap;
 };
 
 #endif // LITTLENAVMAP_COLUMNLIST_H
