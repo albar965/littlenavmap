@@ -18,20 +18,6 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayoutMap">
       <item>
-       <widget class="QToolButton" name="toolButton">
-        <property name="text">
-         <string>1</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QToolButton" name="toolButton_2">
-        <property name="text">
-         <string>2</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -45,15 +31,29 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="comboBox">
+       <widget class="QComboBox" name="comboBox_2">
         <item>
          <property name="text">
-          <string>All Airports</string>
+          <string>Globe</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Only Selected Airports</string>
+          <string>Flat</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <item>
+         <property name="text">
+          <string>Openstreetmap</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Blue Marble</string>
          </property>
         </item>
        </widget>
@@ -269,20 +269,20 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item row="0" column="3">
-              <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
                <property name="text">
-                <string>Closed</string>
+                <string>Lighted</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
-              <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
+             <item row="1" column="4">
+              <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
                <property name="text">
-                <string>Addon</string>
+                <string>Avgas</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -290,16 +290,6 @@
               </widget>
              </item>
              <item row="1" column="2">
-              <widget class="QCheckBox" name="checkBoxAirportApprSearch">
-               <property name="text">
-                <string>Approach</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
               <widget class="QCheckBox" name="checkBoxAirportIlsSearch">
                <property name="text">
                 <string>ILS</string>
@@ -309,7 +299,7 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
+             <item row="1" column="0">
               <widget class="QCheckBox" name="checkBoxAirportScenerySearch">
                <property name="text">
                 <string>Scenery</string>
@@ -322,17 +312,17 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
                <property name="text">
-                <string>Lighted</string>
+                <string>Addon</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="1">
               <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
                <property name="text">
                 <string>Tower</string>
@@ -342,10 +332,40 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="2">
+              <widget class="QCheckBox" name="checkBoxAirportApprSearch">
+               <property name="text">
+                <string>Approach</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
               <widget class="QCheckBox" name="checkBoxAirportMilSearch">
                <property name="text">
                 <string>Military</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
+               <property name="text">
+                <string>Closed</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="4">
+              <widget class="QCheckBox" name="checkBoxAirportJetASearch">
+               <property name="text">
+                <string>JetA</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -369,30 +389,14 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportFuelParkSearch">
-             <item>
-              <widget class="QComboBox" name="comboBoxAirportFuelSearch">
-               <item>
-                <property name="text">
-                 <string>Any Fuel</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Avgas</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Jet A</string>
-                </property>
-               </item>
-              </widget>
-             </item>
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QComboBox" name="comboBoxAirportRampSearch">
                <item>
                 <property name="text">
-                 <string>Any Ramp</string>
+                 <string>Any or no Ramp</string>
                 </property>
                </item>
                <item>
@@ -412,17 +416,17 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Ramp Cargo</string>
+                 <string>At least one Ramp Cargo</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Ramp Military Cargo</string>
+                 <string>At least one Ramp Military Cargo</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Ramp Military Combat</string>
+                 <string>At least one Ramp Military Combat</string>
                 </property>
                </item>
               </widget>
@@ -431,7 +435,7 @@
               <widget class="QComboBox" name="comboBoxAirportGateSearch">
                <item>
                 <property name="text">
-                 <string>Any Gate</string>
+                 <string>Any or no Gate</string>
                 </property>
                </item>
                <item>
@@ -468,6 +472,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportRunwaySearch">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QLabel" name="labelAirportRunwayMinSearch">
                <property name="sizePolicy">
@@ -518,6 +525,9 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportRunwaysMaxSearch">
+               <property name="specialValueText">
+                <string>All</string>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -536,7 +546,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBoxAirporSurfaceSearch">
+              <widget class="QComboBox" name="comboBoxAirportSurfaceSearch">
                <item>
                 <property name="text">
                  <string>Any Surface</string>
@@ -544,32 +554,32 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Hard</string>
+                 <string>Any in Hard</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Soft</string>
+                 <string>Any is Soft</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Water</string>
+                 <string>Any is Water</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Only Hard</string>
+                 <string>All Hard</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Only Soft</string>
+                 <string>All Soft</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Only Water</string>
+                 <string>All Water</string>
                 </property>
                </item>
               </widget>
@@ -591,6 +601,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportAltitudeSearch">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -625,7 +638,7 @@
                 <number>20000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
                <property name="value">
                 <number>-1500</number>
@@ -660,7 +673,7 @@
                 <number>15000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
                <property name="value">
                 <number>15000</number>
@@ -687,6 +700,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportDistanceSearch">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -718,7 +734,7 @@
                 <number>20000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
               </widget>
              </item>
@@ -744,10 +760,13 @@
                 <string> nm</string>
                </property>
                <property name="maximum">
-                <number>20000</number>
+                <number>10000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>10000</number>
                </property>
               </widget>
              </item>
@@ -800,6 +819,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportScenerySearch">
+             <property name="spacing">
+              <number>6</number>
+             </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
                <property name="placeholderText">
@@ -920,6 +942,65 @@
         <string>299 nm, 50 minutes</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QSpinBox" name="spinBox">
+         <property name="suffix">
+          <string> kts</string>
+         </property>
+         <property name="minimum">
+          <number>30</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_2">
+         <property name="suffix">
+          <string> ft</string>
+         </property>
+         <property name="minimum">
+          <number>500</number>
+         </property>
+         <property name="maximum">
+          <number>60000</number>
+         </property>
+         <property name="singleStep">
+          <number>500</number>
+         </property>
+         <property name="value">
+          <number>5000</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_3">
+         <item>
+          <property name="text">
+           <string>IFR</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>VFR</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QTableView" name="tableViewRoute"/>
@@ -1211,7 +1292,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Extended</string>
+    <string>Facilities</string>
    </property>
   </action>
   <action name="actionAirportSearchShowFuelParkOptions">
@@ -1222,7 +1303,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Fuel and Parking</string>
+    <string>Parking</string>
+   </property>
+   <property name="toolTip">
+    <string>Parking</string>
    </property>
   </action>
   <action name="actionAirportSearchShowRunwayOptions">

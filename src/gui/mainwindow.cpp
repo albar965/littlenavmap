@@ -26,7 +26,7 @@
 #include "logging/logginghandler.h"
 #include "gui/translator.h"
 #include "fs/fspaths.h"
-
+#include "table/searchpane.h"
 #include "map/navmapwidget.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -281,6 +281,8 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
 void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
+
+  connect(searchPanes->getAirportSearchPane(), &SearchPane::showPoint, mapWidget, &NavMapWidget::showPoint);
 
   connect(mapWidget, &NavMapWidget::customContextMenuRequested, this, &MainWindow::mapContextMenu);
 

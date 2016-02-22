@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_COLUMN_H
 
 #include <QString>
+#include <QStringList>
 
 class QWidget;
 class QComboBox;
@@ -88,8 +89,14 @@ public:
   Column& minWidget(QWidget *widget);
   Column& maxWidget(QWidget *widget);
 
+  Column& cond(const QString& include, const QString& exclude);
+
   /* Sort order if this is the sort by column in default view */
   Column& defaultSortOrder(Qt::SortOrder order);
+
+  Column& indexCondMap(const QStringList& indexMap);
+
+  Column& includesColName(bool value = true);
 
   bool isGroupShow() const
   {
@@ -126,23 +133,45 @@ public:
     return canBeSorted;
   }
 
-  QString getColumnName() const
+  const QString& getColumnName() const
   {
     return colName;
   }
 
-  QString getDisplayName() const
+  const QString& getDisplayName() const
   {
-    if(displayName.isEmpty())
+    if(colDisplayName.isEmpty())
       return colName;
     else
-      return displayName;
+      return colDisplayName;
+  }
+
+  bool isIncludesColName() const
+  {
+    return queryIncludesColName;
   }
 
   QLineEdit *getLineEditWidget() const;
   QComboBox *getComboBoxWidget() const;
   QCheckBox *getCheckBoxWidget() const;
   QSpinBox *getSpinBoxWidget() const;
+  QSpinBox *getMinSpinBoxWidget() const;
+  QSpinBox *getMaxSpinBoxWidget() const;
+
+  QWidget *getWidget() const
+  {
+    return colWidget;
+  }
+
+  QWidget *getMinWidget() const
+  {
+    return minColWidget;
+  }
+
+  QWidget *getMaxWidget() const
+  {
+    return maxColWidget;
+  }
 
   bool isDefaultCol() const
   {
@@ -179,29 +208,44 @@ public:
     return defaultSortOrd;
   }
 
-  QWidget *getWidget() const
+  const QString& getExcludeCondition() const
   {
-    return colWidget;
+    return colExcludeCond;
   }
 
-  QWidget *getMinWidget() const
+  const QString& getIncludeCondition() const
   {
-    return minColWidget;
+    return colIncludeCond;
   }
 
-  QWidget *getMaxWidget() const
+  const QStringList& getIndexConditionMap() const
   {
-    return maxColWidget;
+    return indexConditionMap;
   }
 
-  QSpinBox *getMinSpinBoxWidget() const;
-  QSpinBox *getMaxSpinBoxWidget() const;
+  bool hasIncludeExcludeCond() const
+  {
+    return !(colIncludeCond.isEmpty() || colExcludeCond.isEmpty());
+  }
+
+  bool hasMinMaxSpinbox() const
+  {
+    return !(maxColWidget == nullptr || minColWidget == nullptr);
+  }
+
+  bool hasIndexConditionMap() const
+  {
+    return !indexConditionMap.isEmpty();
+  }
 
 private:
   QString colName;
-  QString displayName;
+  QString colDisplayName;
   QWidget *colWidget = nullptr, *maxColWidget = nullptr, *minColWidget = nullptr;
   QString sortFuncForColAsc, sortFuncForColDesc;
+
+  QString colExcludeCond, colIncludeCond;
+  QStringList indexConditionMap;
 
   bool groupByShow = false;
   bool groupByMin = false;
@@ -214,6 +258,7 @@ private:
   bool isDefaultSortColumn = false;
   bool isAlwaysAndColumn = false;
   bool isHiddenColumn = false;
+  bool queryIncludesColName = false;
 
   Qt::SortOrder defaultSortOrd = Qt::SortOrder::AscendingOrder;
 };

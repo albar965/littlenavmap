@@ -62,7 +62,18 @@ void ColumnList::assignWidget(const QString& field, QWidget *widget)
   if(nameColumnMap.contains(field))
     nameColumnMap.value(field)->widget(widget);
   else
-    qWarning() << "Cannot assign line edit to" << field;
+    qWarning() << "Cannot assign widget to" << field;
+}
+
+void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
+{
+  if(nameColumnMap.contains(field))
+  {
+    nameColumnMap.value(field)->minWidget(minWidget);
+    nameColumnMap.value(field)->maxWidget(maxWidget);
+  }
+  else
+    qWarning() << "Cannot assign widget to" << field;
 }
 
 void ColumnList::clearWidgets(const QStringList& exceptColNames)
@@ -72,21 +83,22 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
     {
       if(QLineEdit * le = cd->getLineEditWidget())
         le->setText("");
-      else if(QComboBox * cb = cd->getComboBoxWidget())
+      if(QComboBox * cb = cd->getComboBoxWidget())
         cb->setCurrentIndex(0);
-      else if(QCheckBox * check = cd->getCheckBoxWidget())
+      if(QCheckBox * check = cd->getCheckBoxWidget())
       {
         if(check->isTristate())
           check->setCheckState(Qt::PartiallyChecked);
         else
           check->setCheckState(Qt::Unchecked);
       }
-      else if(QSpinBox * spin = cd->getSpinBoxWidget())
+      if(QSpinBox * spin = cd->getSpinBoxWidget())
         spin->setValue(0);
-      else if(QSpinBox * maxspin = cd->getMaxSpinBoxWidget())
-        spin->setValue(maxspin->maximum());
-      else if(QSpinBox * minspin = cd->getMaxSpinBoxWidget())
-        spin->setValue(minspin->minimum());
+
+      if(QSpinBox * maxspin = cd->getMaxSpinBoxWidget())
+        maxspin->setValue(maxspin->maximum());
+      if(QSpinBox * minspin = cd->getMinSpinBoxWidget())
+        minspin->setValue(minspin->minimum());
     }
 }
 

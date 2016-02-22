@@ -21,10 +21,15 @@
 #include "sql/sqlquery.h"
 #include "settings/settings.h"
 #include "column.h"
+#include "sqlproxymodel.h"
+#include "table/sqlmodel.h"
+#include "table/columnlist.h"
 
 #include <QTableView>
 #include <QHeaderView>
 #include <QSettings>
+#include <QSpinBox>
+#include <QSortFilterProxyModel>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -78,6 +83,19 @@ void Controller::filterBySpinBox(const Column *col, int value)
 {
   Q_ASSERT(model != nullptr);
   model->filter(col, value);
+}
+
+void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
+{
+  Q_ASSERT(model != nullptr);
+  QVariant minVal(minValue), maxVal(maxValue);
+  if(col->getMinSpinBoxWidget()->value() == col->getMinSpinBoxWidget()->minimum())
+    minVal = QVariant(QVariant::Int);
+
+  if(col->getMaxSpinBoxWidget()->value() == col->getMaxSpinBoxWidget()->maximum())
+    maxVal = QVariant(QVariant::Int);
+
+  model->filter(col, minVal, maxVal);
 }
 
 void Controller::filterByCheckbox(const Column *col, int state, bool triState)
@@ -135,7 +153,7 @@ void Controller::groupByColumn(const QModelIndex& index)
   // Disable all search widgets except the one for the group by column
   columns->enableWidgets(false, {model->record().fieldName(index.column())});
 
-  model->getGroupByColumn(index);
+  model->groupByColumn(index);
   processViewColumns();
   // No column order or size stored for grouped views
   view->resizeColumnsToContents();
@@ -309,8 +327,13 @@ void Controller::processViewColumns()
 void Controller::prepareModel()
 {
   model = new SqlModel(parentWidget, db, columns);
+
+  // Controller takes ownership
+  SqlProxyModel *proxyModel = new SqlProxyModel(this);
+  proxyModel->setSourceModel(model);
+
   QItemSelectionModel *m = view->selectionModel();
-  view->setModel(model);
+  view->setModel(proxyModel);
   delete m;
 
   model->fillHeaderData();

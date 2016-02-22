@@ -72,9 +72,25 @@ void SearchPaneList::restoreState()
                  ui->actionAirportSearchShowSceneryOptions});
 }
 
+SearchPane *SearchPaneList::getAirportSearchPane() const
+{
+  return airportSearchPane;
+}
+
 void SearchPaneList::createAirportSearch()
 {
   Ui::MainWindow *ui = parentWidget->getUi();
+
+  ui->checkBoxAirportScenerySearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportMilSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportLightSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportTowerSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportIlsSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportApprSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportClosedSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportAddonSearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportJetASearch->setCheckState(Qt::PartiallyChecked);
+  ui->checkBoxAirportAvgasSearch->setCheckState(Qt::PartiallyChecked);
 
   ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
                                            ui->actionAirportSearchShowExtOptions,
@@ -98,6 +114,30 @@ void SearchPaneList::createAirportSearch()
 
   airportColumns = new ColumnList("airport");
 
+  QStringList gateCondMap;
+  gateCondMap << QString()
+              << "like 'GATE_%'"
+              << "in ('GATE_MEDIUM', 'GATE_HEAVY')"
+              << "= 'GATE_HEAVY'";
+
+  QStringList rampCondMap;
+  rampCondMap << QString()
+              << "largest_parking_ramp like 'RAMP_GA_%'"
+              << "largest_parking_ramp in ('RAMP_GA_MEDIUM', 'RAMP_GA_LARGE')"
+              << "largest_parking_ramp = 'RAMP_GA_LARGE'"
+              << "num_parking_cargo > 0"
+              << "num_parking_mil_cargo > 0"
+              << "num_parking_mil_combat > 0";
+
+  QStringList rwSurface;
+  rwSurface << QString()
+            << "num_runway_hard > 0"
+            << "num_runway_soft > 0"
+            << "num_runway_water > 0"
+            << "num_runway_hard > 0 and num_runway_soft = 0 and num_runway_water = 0"
+            << "num_runway_soft > 0 and num_runway_hard = 0 and num_runway_water = 0"
+            << "num_runway_water > 0 and num_runway_hard = 0 and num_runway_soft = 0";
+
   // Default view column descriptors
   airportColumns->append(Column("airport_id", tr("ID")).hidden().defaultCol()).
   append(Column("ident", tr("ICAO")).canSort().canFilter().defaultCol().defaultSort()).
@@ -105,25 +145,45 @@ void SearchPaneList::createAirportSearch()
   append(Column("city", tr("City")).canSort().canFilter().defaultCol()).
   append(Column("state", tr("State")).canSort().canFilter().defaultCol()).
   append(Column("country", tr("Country")).canSort().canFilter().defaultCol()).
-  append(Column("rating", tr("Rating")).canSort().canFilter().defaultCol()).
-  append(Column("altitude", tr("Altitude")).canSort().canFilter().defaultCol()).
-  append(Column("has_avgas", tr("Avgas")).canSort().canFilter().defaultCol()).
-  append(Column("has_jetfuel", tr("Jetfuel")).canSort().canFilter().defaultCol()).
-  append(Column("has_tower", tr("Tower")).canSort().canFilter().defaultCol()).
-  append(Column("is_closed", tr("Closed")).canSort().canFilter().defaultCol()).
-  append(Column("is_military", tr("Military")).canSort().canFilter().defaultCol()).
-  append(Column("is_addon", tr("Addon")).canSort().canFilter().defaultCol()).
-  append(Column("num_runway_light", tr("Lights")).canSort().canFilter().defaultCol()).
-  append(Column("num_runway_end_ils", tr("ILS")).canSort().canFilter().defaultCol()).
-  append(Column("num_approach", tr("Approach")).canSort().canFilter().defaultCol()).
-  append(Column("largest_parking_ramp", tr("Largest\nRamp")).canSort().canFilter().defaultCol()).
-  append(Column("largest_parking_gate", tr("Largest\nGate")).canSort().canFilter().defaultCol()).
-  append(Column("num_parking_cargo", tr("Cargo Ramps")).canSort().canFilter().defaultCol()).
-  append(Column("num_parking_mil_cargo", tr("Mil Cargo")).canSort().canFilter().defaultCol()).
-  append(Column("num_parking_mil_combat", tr("Mil Combat")).canSort().canFilter().defaultCol()).
-  append(Column("longest_runway_length", tr("Longest\nRunway Length")).canSort().canFilter().defaultCol()).
-  append(Column("longest_runway_width", tr("Longest\nRunway Width")).canSort().canFilter().defaultCol()).
-  append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).canSort().canFilter().defaultCol()).
+
+  append(Column("rating", tr("Scenery\nRating")).canSort().defaultCol().
+         cond("> 0", "== 0")).
+
+  append(Column("altitude", tr("Altitude")).canSort().defaultCol()).
+  append(Column("has_avgas", tr("Avgas")).canSort().defaultCol()).
+  append(Column("has_jetfuel", tr("Jetfuel")).canSort().defaultCol()).
+  append(Column("has_tower", tr("Tower")).canSort().defaultCol()).
+  append(Column("is_closed", tr("Closed")).canSort().defaultCol()).
+  append(Column("is_military", tr("Military")).canSort().defaultCol()).
+  append(Column("is_addon", tr("Addon")).canSort().defaultCol()).
+
+  append(Column("num_runway_soft", tr("Soft\nRunways")).
+         canSort().defaultCol().includesColName().indexCondMap(rwSurface)).
+
+  append(Column("num_runway_hard", tr("Hard\nRunways")).canSort().defaultCol()).
+  append(Column("num_runway_water", tr("Water\nRunways")).canSort().defaultCol()).
+
+  append(Column("num_runway_light", tr("Lights")).canSort().defaultCol().
+         cond("> 0", "== 0")).
+
+  append(Column("num_runway_end_ils", tr("ILS")).canSort().defaultCol().
+         cond("> 0", "== 0")).
+
+  append(Column("num_approach", tr("Approach")).canSort().defaultCol().
+         cond("> 0", "== 0")).
+
+  append(Column("largest_parking_ramp", tr("Largest\nRamp")).
+         canSort().defaultCol().includesColName().indexCondMap(rampCondMap)).
+
+  append(Column("largest_parking_gate", tr("Largest\nGate")).
+         canSort().defaultCol().indexCondMap(gateCondMap)).
+
+  append(Column("num_parking_cargo", tr("Cargo Ramps")).canSort().defaultCol()).
+  append(Column("num_parking_mil_cargo", tr("Mil Cargo")).canSort().defaultCol()).
+  append(Column("num_parking_mil_combat", tr("Mil Combat")).canSort().defaultCol()).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length")).canSort().defaultCol()).
+  append(Column("longest_runway_width", tr("Longest\nRunway Width")).canSort().defaultCol()).
+  append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).canSort().defaultCol()).
   append(Column("scenery_local_path", tr("Scenery")).canSort().canFilter().defaultCol()).
   append(Column("bgl_filename", tr("File")).canSort().canFilter().defaultCol());
 
@@ -145,11 +205,28 @@ void SearchPaneList::createAirportSearch()
   airportSearchPane->addSearchWidget("num_approach", ui->checkBoxAirportApprSearch);
   airportSearchPane->addSearchWidget("is_closed", ui->checkBoxAirportClosedSearch);
   airportSearchPane->addSearchWidget("is_addon", ui->checkBoxAirportAddonSearch);
+  airportSearchPane->addSearchWidget("has_jetfuel", ui->checkBoxAirportJetASearch);
+  airportSearchPane->addSearchWidget("has_avgas", ui->checkBoxAirportAvgasSearch);
+
+  // Parking
+  airportSearchPane->addSearchWidget("largest_parking_gate", ui->comboBoxAirportGateSearch);
+  airportSearchPane->addSearchWidget("largest_parking_ramp", ui->comboBoxAirportRampSearch);
+
+  // Runways
+  airportSearchPane->addSearchWidget("num_runway_soft", ui->comboBoxAirportSurfaceSearch);
+  airportSearchPane->addMinMaxSearchWidget("longest_runway_length",
+                                           ui->spinBoxAirportRunwaysMinSearch,
+                                           ui->spinBoxAirportRunwaysMaxSearch);
+  // Altitude
+  airportSearchPane->addMinMaxSearchWidget("altitude",
+                                           ui->spinBoxAirportAltitudeMinSearch,
+                                           ui->spinBoxAirportAltitudeMaxSearch);
 
   // Scenery
   airportSearchPane->addSearchWidget("scenery_local_path", ui->lineEditAirportScenerySearch);
   airportSearchPane->addSearchWidget("bgl_filename", ui->lineEditAirportFileSearch);
 
+  // Connect widgets to the controller
   airportSearchPane->connectSearchWidgets();
 
   // Drop down menu actions

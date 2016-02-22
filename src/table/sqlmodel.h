@@ -51,7 +51,7 @@ public:
   void filterExcluding(QModelIndex index);
 
   /* Group by the column at index */
-  void getGroupByColumn(QModelIndex index);
+  void groupByColumn(QModelIndex index);
 
   /* Release grouping and go back to default view */
   void ungroup();
@@ -83,7 +83,7 @@ public:
 
   /* Add a filter for a column. Placeholder and negation will be adapted to SQL
    * query */
-  void filter(const Column* col, const QVariant& value);
+  void filter(const Column* col, const QVariant& value, const QVariant& maxValue = QVariant());
 
   /* Operator to connect all conditions ("and" or "or") */
   void filterOperator(const QString& op);
@@ -104,7 +104,7 @@ public:
     return orderByCol;
   }
 
-  QString getGroupByColumn() const
+  QString groupByColumn() const
   {
     return groupByCol;
   }

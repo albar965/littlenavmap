@@ -18,9 +18,6 @@
 #ifndef LITTLENAVMAP_CONTROLLER_H
 #define LITTLENAVMAP_CONTROLLER_H
 
-#include "table/columnlist.h"
-#include "table/sqlmodel.h"
-
 #include <QItemSelectionModel>
 #include <QObject>
 #include <functional>
@@ -36,6 +33,9 @@ class QTableView;
 class QModelIndex;
 class QPoint;
 class Column;
+class SqlProxyModel;
+class SqlModel;
+class ColumnList;
 
 /*
  * Combines all functionality around the table SQL model, view, view header and
@@ -93,6 +93,7 @@ public:
   void filterByComboBox(const Column *col, int value, bool noFilter);
   void filterByCheckbox(const Column *col, int state, bool triState);
   void filterBySpinBox(const Column *col, int value);
+  void filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue);
 
   /* Use "and" or "or" to combine searches */
   void filterOperator(bool useAnd);
@@ -160,6 +161,7 @@ public:
   void selectAll();
 
   int getIdForRow(const QModelIndex& index);
+
 private:
   /* Adapt columns to query change */
   void processViewColumns();
@@ -170,6 +172,7 @@ private:
   /* Load view state from settings */
   void restoreViewState();
 
+  SqlProxyModel *proxyModel = nullptr;
   QWidget *parentWidget = nullptr;
   atools::sql::SqlDatabase *db = nullptr;
   QTableView *view = nullptr;

@@ -56,5 +56,11 @@ void NavMapWidget::restoreState()
     setZoom(s->value("Map/Zoom").toInt());
 
   if(s->contains("Map/LonX") && s->contains("Map/LatY"))
-    centerOn(s->value("Map/LonX").toDouble(), s->value("Map/LatY").toDouble(), false);
+    centerOn(s->value("Map/LonX").toDouble(), s->value("Map/LatY").toDouble(), true);
+}
+
+void NavMapWidget::showPoint(double lonX, double latY, int zoom)
+{
+  setZoom(zoom);
+  centerOn(lonX, latY, false);
 }

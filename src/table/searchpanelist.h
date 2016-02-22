@@ -30,6 +30,8 @@ public:
   void saveState();
   void restoreState();
 
+  SearchPane* getAirportSearchPane() const;
+
 private:
   atools::sql::SqlDatabase *db;
   ColumnList *airportColumns = nullptr;

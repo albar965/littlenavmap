@@ -34,6 +34,8 @@
 #include <QLineEdit>
 #include <QSqlField>
 #include <QPalette>
+#include <QCheckBox>
+#include <QSpinBox>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -58,13 +60,15 @@ SqlModel::~SqlModel()
 {
 }
 
-void SqlModel::filter(const Column *col, const QVariant& value)
+void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& maxValue)
 {
   Q_ASSERT(col != nullptr);
   QString colName = col->getColumnName();
   bool colAlreadyFiltered = whereConditionMap.contains(colName);
 
-  if(value.isNull() || (value.type() == QVariant::String && value.toString().isEmpty()))
+  if((value.isNull() && !maxValue.isValid()) ||
+     (value.isNull() && maxValue.isNull()) ||
+     (value.type() == QVariant::String && value.toString().isEmpty()))
   {
     // If we get a null value or an empty string and the
     // column is already filtered remove it
@@ -74,53 +78,83 @@ void SqlModel::filter(const Column *col, const QVariant& value)
   else
   {
     QVariant newVariant;
-    QString condition;
+    QString oper;
 
-    if(value.type() == QVariant::String)
+    if(col->hasMinMaxSpinbox())
     {
-      // Use like queries for string
-      QString newVal = value.toString();
-
-      if(newVal.startsWith("-"))
+      if(!value.isNull() && maxValue.isNull())
       {
-        if(newVal == "-")
-        {
-          // A single "-" translates to not nulls
-          condition = "is not null";
-          newVal.clear();
-        }
-        else
-        {
-          condition = "not like";
-          newVal.remove(0, 1);
-        }
+        oper = ">";
+        newVariant = value;
+      }
+      else if(value.isNull() && !maxValue.isNull())
+      {
+        oper = "<";
+        newVariant = maxValue;
       }
       else
-        condition = "like";
-
-      // Replace "*" with "%" for SQL
-      if(newVal.contains("*"))
-        newVal = newVal.toUpper().replace("*", "%");
-      else if(!newVal.isEmpty())
-        newVal = newVal.toUpper() + "%";
-
-      newVariant = newVal;
+        oper = QString("between %1 and %2").arg(value.toInt()).arg(maxValue.toInt());
     }
-    else if(value.type() == QVariant::Int)
+    else if(col->hasIndexConditionMap())
+      // A combo box
+      oper = col->getIndexConditionMap().at(value.toInt());
+    else if(col->hasIncludeExcludeCond())
     {
-      // Use equal for numbers
-      newVariant = value;
-      condition = "=";
+      // A checkbox
+      if(value.toInt() == 0)
+        oper = col->getExcludeCondition();
+      else
+        oper = col->getIncludeCondition();
     }
+    else
+    {
+      if(value.type() == QVariant::String)
+      {
+        // Use like queries for string
+        QString newVal = value.toString();
+
+        if(newVal.startsWith("-"))
+        {
+          if(newVal == "-")
+          {
+            // A single "-" translates to not nulls
+            oper = "is not null";
+            newVal.clear();
+          }
+          else
+          {
+            oper = "not like";
+            newVal.remove(0, 1);
+          }
+        }
+        else
+          oper = "like";
+
+        // Replace "*" with "%" for SQL
+        if(newVal.contains("*"))
+          newVal = newVal.toUpper().replace("*", "%");
+        else if(!newVal.isEmpty())
+          newVal = newVal.toUpper() + "%";
+
+        newVariant = newVal;
+      }
+      else if(value.type() == QVariant::Int)
+      {
+        // Use equal for numbers
+        newVariant = value;
+        oper = "=";
+      }
+    }
+
     if(colAlreadyFiltered)
     {
       // Replace values in existing condition
-      whereConditionMap[colName].oper = condition;
+      whereConditionMap[colName].oper = oper;
       whereConditionMap[colName].value = newVariant;
       whereConditionMap[colName].col = col;
     }
     else
-      whereConditionMap.insert(colName, {condition, newVariant, col});
+      whereConditionMap.insert(colName, {oper, newVariant, col});
   }
   buildQuery();
 }
@@ -167,14 +201,34 @@ void SqlModel::filterBy(QModelIndex index, bool exclude)
   Q_ASSERT(col != nullptr);
 
   // Set the search text into the corresponding line edit
-  QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget();
-  if(edit != nullptr)
+  if(QLineEdit * edit = columns->getColumn(whereCol)->getLineEditWidget())
     edit->setText((exclude ? "-" : "") + whereValue.toString());
-
+  else if(QCheckBox * check = columns->getColumn(whereCol)->getCheckBoxWidget())
+  {
+    if(check->isTristate())
+    {
+      if(whereValue.isNull())
+        check->setCheckState(Qt::PartiallyChecked);
+      else
+      {
+        bool val = whereValue.toInt() > 0;
+        if(exclude)
+          val = !val;
+        check->setCheckState(val ? Qt::Checked : Qt::Unchecked);
+      }
+    }
+    else
+    {
+      bool val = whereValue.isNull() || whereValue.toInt() == 0;
+      if(exclude)
+        val = !val;
+      check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
+    }
+  }
   whereConditionMap.insert(whereCol, {whereOp, whereValue, col});
 }
 
-void SqlModel::getGroupByColumn(QModelIndex index)
+void SqlModel::groupByColumn(QModelIndex index)
 {
   groupByCol = record().fieldName(index.column());
   orderByCol = groupByCol;
@@ -290,7 +344,7 @@ void SqlModel::sort(int column, Qt::SortOrder order)
 QString SqlModel::buildColumnList()
 {
   QVector<QString> colNames;
-  for(const Column* col : columns->getColumns())
+  for(const Column *col : columns->getColumns())
   {
     if(groupByCol.isEmpty())
     {
@@ -359,7 +413,10 @@ QString SqlModel::buildWhere()
     {
       if(numCond++ > 0)
         queryWhere += " " + whereOperator + " ";
-      queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
+      if(cond.col->isIncludesColName())
+        queryWhere += " " + cond.oper + " ";
+      else
+        queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
       if(!cond.value.isNull())
         queryWhere += buildWhereValue(cond);
     }
@@ -367,7 +424,10 @@ QString SqlModel::buildWhere()
     {
       if(numAndCond++ > 0)
         queryWhereAnd += " and ";
-      queryWhereAnd += cond.col->getColumnName() + " " + cond.oper + " ";
+      if(cond.col->isIncludesColName())
+        queryWhereAnd += " " + cond.oper + " ";
+      else
+        queryWhereAnd += cond.col->getColumnName() + " " + cond.oper + " ";
       if(!cond.value.isNull())
         queryWhereAnd += buildWhereValue(cond);
     }

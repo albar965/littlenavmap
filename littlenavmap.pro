@@ -48,7 +48,8 @@ SOURCES += src/main.cpp\
     src/table/sqlmodel.cpp \
     src/table/searchpane.cpp \
     src/table/searchpanelist.cpp \
-    src/table/column.cpp
+    src/table/column.cpp \
+    src/table/sqlproxymodel.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
@@ -59,7 +60,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/sqlmodel.h \
     src/table/searchpane.h \
     src/table/searchpanelist.h \
-    src/table/column.h
+    src/table/column.h \
+    src/table/sqlproxymodel.h
 
 FORMS    += src/gui/mainwindow.ui
 

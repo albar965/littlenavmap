@@ -15,28 +15,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVMAPWIDGET_H
-#define NAVMAPWIDGET_H
+#include "sqlproxymodel.h"
 
-#include <marble/MarbleWidget.h>
-
-#include <QWidget>
-class QContextMenuEvent;
-class NavMapWidget :
-  public Marble::MarbleWidget
+SqlProxyModel::SqlProxyModel(QObject *parent)
+  : QSortFilterProxyModel(parent)
 {
-  Q_OBJECT
 
-public:
-  NavMapWidget(QWidget *parent);
+}
 
-  void saveState();
-  void restoreState();
+SqlProxyModel::~SqlProxyModel()
+{
 
-  // QWidget interface
+}
 
-  void showPoint(double lonX, double latY, int zoom);
-
-};
-
-#endif // NAVMAPWIDGET_H
+bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+{
+  Q_UNUSED(sourceRow);
+  Q_UNUSED(sourceParent);
+  return true;
+}

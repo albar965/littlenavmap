@@ -54,6 +54,7 @@ public:
 
   /* Assign a widget to the column descriptor with the given name */
   void assignWidget(const QString& field, QWidget *widget);
+  void assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget);
 
   /* Clear all LineEdit widgets and ComboBox widgets */
   void clearWidgets(const QStringList& exceptColNames = QStringList());

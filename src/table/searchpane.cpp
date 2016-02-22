@@ -30,6 +30,8 @@
 #include "column.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include "columnlist.h"
+
 SearchPane::SearchPane(MainWindow *parent, QTableView *view, ColumnList *columns,
                        atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb), airportColumns(columns), tableViewAirportSearch(view), parentWidget(parent)
@@ -54,9 +56,14 @@ void SearchPane::addSearchWidget(const QString& field, QWidget *widget)
   airportColumns->assignWidget(field, widget);
 }
 
+void SearchPane::addMinMaxSearchWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
+{
+  airportColumns->assignMinMaxWidget(field, minWidget, maxWidget);
+}
+
 void SearchPane::connectSearchWidgets()
 {
-  void (QComboBox::*activatedPtr)(int) = &QComboBox::activated;
+  void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
 
   for(const Column *col : airportColumns->getColumns())
@@ -64,17 +71,34 @@ void SearchPane::connectSearchWidgets()
     /* *INDENT-OFF* */
 
     if(col->getLineEditWidget() != nullptr)
-      connect(col->getLineEditWidget(), &QLineEdit::textChanged,
-              [=](const QString &text) {airportController->filterByLineEdit(col, text); });
+    {
+      connect(col->getLineEditWidget(), &QLineEdit::textChanged, [=](const QString &text)
+      {airportController->filterByLineEdit(col, text); });
+    }
     else if(col->getComboBoxWidget() != nullptr)
-      connect(col->getComboBoxWidget(), activatedPtr,
-              [=](int index) {airportController->filterByComboBox(col, index, index == 0); });
+    {
+      connect(col->getComboBoxWidget(), curIndexChangedPtr, [=](int index)
+      {airportController->filterByComboBox(col, index, index == 0); });
+    }
     else if(col->getCheckBoxWidget() != nullptr)
-      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged,
-              [=](int state) {airportController->filterByCheckbox(col, state, true); });
+    {
+      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, [=](int state)
+      {airportController->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate()); });
+    }
     else if(col->getSpinBoxWidget() != nullptr)
-      connect(col->getSpinBoxWidget(), valueChangedPtr,
-              [=](int value) {airportController->filterBySpinBox(col, value); });
+    {
+      connect(col->getSpinBoxWidget(), valueChangedPtr, [=](int value)
+      {airportController->filterBySpinBox(col, value); });
+    }
+    else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
+    {
+      connect(col->getMinSpinBoxWidget(), valueChangedPtr, [=](int value)
+      {airportController->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value()); });
+
+      connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [=](int value)
+      {airportController->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value); });
+
+    }
     /* *INDENT-ON* */
 
   }
@@ -98,8 +122,14 @@ void SearchPane::doubleClick(const QModelIndex& index)
   qDebug() << "double click";
   if(index.isValid())
   {
-
     int id = airportController->getIdForRow(index);
+
+    atools::sql::SqlQuery query(db);
+    query.prepare("select lonx, laty from airport where airport_id = :id");
+    query.bindValue(":id", id);
+    query.exec();
+    if(query.next())
+      emit showPoint(query.value("lonx").toDouble(), query.value("laty").toDouble(), 2700);
     qDebug() << "id" << id;
   }
 }

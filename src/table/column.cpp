@@ -23,13 +23,13 @@
 #include <QSpinBox>
 
 Column::Column(const QString& columnName, const QString& columnDisplayName)
-  : colName(columnName), displayName(columnDisplayName)
+  : colName(columnName), colDisplayName(columnDisplayName)
 {
 
 }
 
 Column::Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName)
-  : colName(columnName), displayName(columnDisplayName), colWidget(widget)
+  : colName(columnName), colDisplayName(columnDisplayName), colWidget(widget)
 {
 
 }
@@ -125,9 +125,28 @@ Column& Column::maxWidget(QWidget *widget)
   return *this;
 }
 
+Column& Column::cond(const QString& include, const QString& exclude)
+{
+  colIncludeCond = include;
+  colExcludeCond = exclude;
+  return *this;
+}
+
 Column& Column::defaultSortOrder(Qt::SortOrder order)
 {
   defaultSortOrd = order;
+  return *this;
+}
+
+Column&Column::indexCondMap(const QStringList& indexMap)
+{
+  indexConditionMap = indexMap;
+  return *this;
+}
+
+Column&Column::includesColName(bool value)
+{
+  queryIncludesColName = value;
   return *this;
 }
 
