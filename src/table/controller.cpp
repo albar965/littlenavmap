@@ -139,22 +139,23 @@ void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
     model->filter(col, value);
 }
 
-void Controller::filterByDistance(const atools::geo::Pos& center, int minDistance, int maxDistance)
+void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
+                                  int minDistance, int maxDistance)
 {
   currentDistanceCenter = center;
   atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
 
-  proxyModel->setDistanceFilter(center, minDistance, maxDistance);
+  proxyModel->setDistanceFilter(center, dir, minDistance, maxDistance);
   model->filterByBoundingRect(rect);
 }
 
-void Controller::filterByDistance(int minDistance, int maxDistance)
+void Controller::filterByDistance(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance)
 {
   if(currentDistanceCenter.isValid())
   {
     atools::geo::Rect rect(currentDistanceCenter, atools::geo::nmToMeter(maxDistance));
 
-    proxyModel->setDistanceFilter(currentDistanceCenter, minDistance, maxDistance);
+    proxyModel->setDistanceFilter(currentDistanceCenter, dir, minDistance, maxDistance);
     model->filterByBoundingRect(rect);
   }
 }
@@ -287,11 +288,12 @@ void Controller::resetSearch()
   if(columns != nullptr)
     columns->clearWidgets();
 
-  if(model != nullptr)
-    model->resetSearch();
-
+  currentDistanceCenter = atools::geo::Pos();
   if(proxyModel != nullptr)
     proxyModel->clearDistanceFilter();
+
+  if(model != nullptr)
+    model->resetSearch();
 }
 
 QString Controller::getCurrentSqlQuery() const

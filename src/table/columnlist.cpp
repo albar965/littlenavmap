@@ -42,6 +42,7 @@ void ColumnList::clear()
   tablename.clear();
   minDistanceWidget = nullptr;
   maxDistanceWidget = nullptr;
+  distanceDirectionWidget = nullptr;
 }
 
 ColumnList& ColumnList::append(const Column& col)
@@ -68,10 +69,12 @@ void ColumnList::assignWidget(const QString& field, QWidget *widget)
     qWarning() << "Cannot assign widget to" << field;
 }
 
-void ColumnList::assignDistanceSearchWidgets(QSpinBox *minWidget, QSpinBox *maxWidget)
+void ColumnList::assignDistanceSearchWidgets(QComboBox *directionWidget,
+                                             QSpinBox *minWidget, QSpinBox *maxWidget)
 {
   minDistanceWidget = minWidget;
   maxDistanceWidget = maxWidget;
+  distanceDirectionWidget = directionWidget;
 }
 
 void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
@@ -123,6 +126,8 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
     maxDistanceWidget->setMinimum(10);
     maxDistanceWidget->setMaximum(10000);
   }
+  if(distanceDirectionWidget != nullptr)
+    distanceDirectionWidget->setCurrentIndex(0);
 }
 
 void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
@@ -137,4 +142,7 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
 
   if(maxDistanceWidget != nullptr)
     maxDistanceWidget->setEnabled(enabled);
+
+  if(distanceDirectionWidget != nullptr)
+    distanceDirectionWidget->setEnabled(enabled);
 }

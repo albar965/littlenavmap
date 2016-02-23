@@ -23,6 +23,7 @@
 #include <functional>
 
 #include <geo/pos.h>
+#include "table/sqlproxymodel.h"
 
 namespace atools {
 namespace geo {
@@ -168,10 +169,11 @@ public:
   int getIdForRow(const QModelIndex& index);
 
   /* Initial search */
-  void filterByDistance(const atools::geo::Pos& center, int minDistance, int maxDistance);
+  void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
+                        int minDistance, int maxDistance);
 
   /* Distance updates from spin box widgets */
-  void filterByDistance(int minDistance, int maxDistance);
+  void filterByDistance(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
   void clearDistanceFilter();
 
 private:

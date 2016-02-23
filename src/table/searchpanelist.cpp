@@ -225,7 +225,8 @@ void SearchPaneList::createAirportSearch()
                                      ui->spinBoxAirportAltitudeMaxSearch);
 
   // Distance
-  airportColumns->assignDistanceSearchWidgets(ui->spinBoxAirportDistMinSearch,
+  airportColumns->assignDistanceSearchWidgets(ui->comboBoxAirportDistDirectionSearch,
+                                              ui->spinBoxAirportDistMinSearch,
                                               ui->spinBoxAirportDistMaxSearch);
 
   // Scenery

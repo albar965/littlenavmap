@@ -23,6 +23,20 @@
 #include <geo/pos.h>
 
 class SqlModel;
+
+namespace sqlproxymodel {
+enum SearchDirection
+{
+  // Numbers have to match index in the combo box
+  ALL = 0,
+  NORTH = 1,
+  EAST = 2,
+  SOUTH = 3,
+  WEST = 4
+};
+
+}
+
 class SqlProxyModel :
   public QSortFilterProxyModel
 {
@@ -32,7 +46,8 @@ public:
   SqlProxyModel(QObject *parent, SqlModel *parentSqlModel);
   virtual ~SqlProxyModel();
 
-  void setDistanceFilter(const atools::geo::Pos& centerPos, int minDistance, int maxDistance);
+  void setDistanceFilter(const atools::geo::Pos& centerPos, sqlproxymodel::SearchDirection dir,
+                         int minDistance, int maxDistance);
   void clearDistanceFilter();
 
 private:
@@ -44,8 +59,8 @@ private:
 
   SqlModel *sqlModel = nullptr;
   atools::geo::Pos pos;
+  sqlproxymodel::SearchDirection direction;
   int minDist = 0, maxDist = 0;
-  bool distanceFilter = false;
 };
 
 #endif // SQLSORTFILTERPROXYMODEL_H

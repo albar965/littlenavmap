@@ -93,19 +93,31 @@ void SearchPane::connectSearchWidgets()
 
   QSpinBox *minDistanceWidget = airportColumns->getMinDistanceWidget();
   QSpinBox *maxDistanceWidget = airportColumns->getMaxDistanceWidget();
-  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr)
+  QComboBox *distanceDirWidget = airportColumns->getDistanceDirectionWidget();
+  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr && distanceDirWidget != nullptr)
   {
     /* *INDENT-OFF* */
     connect(minDistanceWidget, valueChangedPtr, [=](int value)
     {
-      airportController->filterByDistance(value, maxDistanceWidget->value());
+      airportController->filterByDistance(
+            static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+            value, maxDistanceWidget->value());
       maxDistanceWidget->setMinimum(value > 10 ? value : 10);
     });
 
     connect(maxDistanceWidget, valueChangedPtr, [=](int value)
     {
-      airportController->filterByDistance(minDistanceWidget->value(), value);
+      airportController->filterByDistance(
+            static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+            minDistanceWidget->value(), value);
       minDistanceWidget->setMaximum(value);
+    });
+
+    connect(distanceDirWidget, curIndexChangedPtr, [=](int index)
+    {
+      airportController->filterByDistance(static_cast<sqlproxymodel::SearchDirection>(index),
+                                          minDistanceWidget->value(),
+                                          maxDistanceWidget->value());
     });
     /* *INDENT-ON* */
   }
@@ -145,6 +157,7 @@ void SearchPane::doubleClick(const QModelIndex& index)
 
     airportController->filterByDistance(
       atools::geo::Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
+      static_cast<sqlproxymodel::SearchDirection>(airportColumns->getDistanceDirectionWidget()->currentIndex()),
       airportColumns->getMinDistanceWidget()->value(),
       airportColumns->getMaxDistanceWidget()->value());
   }

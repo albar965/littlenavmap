@@ -26,6 +26,7 @@
 class QWidget;
 class Column;
 class QSpinBox;
+class QComboBox;
 
 /*
  * A list of column descriptors that define behaviour and display in the table
@@ -77,7 +78,7 @@ public:
 
   void clear();
 
-  void assignDistanceSearchWidgets(QSpinBox *minWidget, QSpinBox *maxWidget);
+  void assignDistanceSearchWidgets(QComboBox *directionWidget, QSpinBox *minWidget, QSpinBox *maxWidget);
 
   QSpinBox *getMinDistanceWidget() const
   {
@@ -89,8 +90,14 @@ public:
     return maxDistanceWidget;
   }
 
+  QComboBox *getDistanceDirectionWidget() const
+  {
+    return distanceDirectionWidget;
+  }
+
 private:
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
+  QComboBox *distanceDirectionWidget = nullptr;
   QString tablename;
   QVector<Column *> columns;
   QHash<QString, Column *> nameColumnMap;
