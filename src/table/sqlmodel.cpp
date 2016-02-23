@@ -182,6 +182,12 @@ void SqlModel::filterExcluding(QModelIndex index)
   buildQuery();
 }
 
+void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
+{
+  boundingRect = boundingRectangle;
+  buildQuery();
+}
+
 void SqlModel::filterBy(QModelIndex index, bool exclude)
 {
   QString whereCol = record().field(index.column()).name();
@@ -258,6 +264,7 @@ void SqlModel::resetSearch()
 void SqlModel::clearWhereConditions()
 {
   whereConditionMap.clear();
+  boundingRect = atools::geo::Rect();
 }
 
 void SqlModel::ungroup()
@@ -432,6 +439,19 @@ QString SqlModel::buildWhere()
         queryWhereAnd += buildWhereValue(cond);
     }
   }
+
+  if(boundingRect.isValid())
+  {
+    QString rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
+                       arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
+                       arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
+
+    if(numCond > 0)
+      queryWhere += " " + whereOperator + " ";
+    queryWhere += rectCond;
+    numCond++;
+  }
+
   if(numCond > 0)
     queryWhere = "(" + queryWhere + ")";
 
@@ -501,10 +521,7 @@ void SqlModel::buildQuery()
     qDebug() << "Query" << currentSqlQuery;
     qDebug() << "Query Count" << queryCount;
 
-    QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());
-
-    if(lastError().isValid())
-      atools::gui::ErrorHandler(parentWidget).handleSqlError(lastError());
+    resetSqlQuery();
   }
   catch(std::exception& e)
   {
@@ -516,74 +533,83 @@ void SqlModel::buildQuery()
   }
 }
 
+void SqlModel::resetSqlQuery()
+{
+  QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());
+
+  if(lastError().isValid())
+    atools::gui::ErrorHandler(parentWidget).handleSqlError(lastError());
+}
+
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
+  // using namespace atools::fs::lb::types;
+  // using namespace atools::fs::fstype;
 
-  using namespace atools::fs::lb::types;
-  using namespace atools::fs::fstype;
+  // if(colName.startsWith("simulator_id"))
+  // {
+  // SimulatorType type = static_cast<SimulatorType>(value.toInt());
+  // switch(type)
+  // {
+  // case atools::fs::fstype::FSX:
+  // return tr("FSX");
 
-  if(colName.startsWith("simulator_id"))
-  {
-  SimulatorType type = static_cast<SimulatorType>(value.toInt());
-  switch(type)
-  {
-    case atools::fs::fstype::FSX:
-      return tr("FSX");
+  // case atools::fs::fstype::FSX_SE:
+  // return tr("FSX SE");
 
-    case atools::fs::fstype::FSX_SE:
-      return tr("FSX SE");
+  // case atools::fs::fstype::P3D_V2:
+  // return tr("P3D V2");
 
-    case atools::fs::fstype::P3D_V2:
-      return tr("P3D V2");
+  // case atools::fs::fstype::P3D_V3:
+  // return tr("P3D V3");
 
-    case atools::fs::fstype::P3D_V3:
-      return tr("P3D V3");
+  // case atools::fs::fstype::MAX_VALUE:
+  // case atools::fs::fstype::ALL_SIMULATORS:
+  // return QString();
 
-    case atools::fs::fstype::MAX_VALUE:
-    case atools::fs::fstype::ALL_SIMULATORS:
-      return QString();
+  // }
+  // }
+  // else if(colName.startsWith("startdate"))
+  // return formatter::formatDate(value.toInt());
+  // else if(colName.startsWith("total_time"))
+  // return formatter::formatMinutesHours(value.toDouble());
+  // else if(colName.startsWith("night_time"))
+  // return formatter::formatMinutesHours(value.toDouble());
+  // else if(colName.startsWith("instrument_time"))
+  // return formatter::formatMinutesHours(value.toDouble());
+  // else if(colName.startsWith("distance"))
+  // return formatter::formatDoubleUnit(value.toDouble());
+  // else if(colName == "aircraft_type")
+  // {
+  // AircraftType type = static_cast<AircraftType>(value.toInt());
+  // switch(type)
+  // {
+  // case AIRCRAFT_UNKNOWN:
+  // return tr("Unknown");
 
-  }
-  }
-  else if(colName.startsWith("startdate"))
-    return formatter::formatDate(value.toInt());
-  else if(colName.startsWith("total_time"))
-    return formatter::formatMinutesHours(value.toDouble());
-  else if(colName.startsWith("night_time"))
-    return formatter::formatMinutesHours(value.toDouble());
-  else if(colName.startsWith("instrument_time"))
-    return formatter::formatMinutesHours(value.toDouble());
-  else if(colName.startsWith("distance"))
-    return formatter::formatDoubleUnit(value.toDouble());
-  else if(colName == "aircraft_type")
-  {
-    AircraftType type = static_cast<AircraftType>(value.toInt());
-    switch(type)
-    {
-      case AIRCRAFT_UNKNOWN:
-        return tr("Unknown");
+  // case AIRCRAFT_GLIDER:
+  // return tr("Glider");
 
-      case AIRCRAFT_GLIDER:
-        return tr("Glider");
+  // case AIRCRAFT_FIXED_WING:
+  // return tr("Fixed Wing");
 
-      case AIRCRAFT_FIXED_WING:
-        return tr("Fixed Wing");
+  // case AIRCRAFT_AMPHIBIOUS:
+  // return tr("Amphibious");
 
-      case AIRCRAFT_AMPHIBIOUS:
-        return tr("Amphibious");
+  // case AIRCRAFT_ROTARY:
+  // return tr("Rotor");
+  // }
+  // }
+  // else if(colName == "aircraft_flags")
+  // {
+  // if((value.toInt() & AIRCRAFT_FLAG_MULTIMOTOR) == AIRCRAFT_FLAG_MULTIMOTOR)
+  // return tr("Multi-engine");
+  // else
+  // return QString();
+  // }
+  // else
 
-      case AIRCRAFT_ROTARY:
-        return tr("Rotor");
-    }
-  }
-  else if(colName == "aircraft_flags")
-  {
-    if((value.toInt() & AIRCRAFT_FLAG_MULTIMOTOR) == AIRCRAFT_FLAG_MULTIMOTOR)
-      return tr("Multi-engine");
-    else
-      return QString();
-  }
-  else if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
+  if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
     return QLocale().toString(value.toInt());
   else if(value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong)
     return QLocale().toString(value.toLongLong());
@@ -622,15 +648,13 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
     {
       double nm = QSqlQueryModel::data(index).toDouble();
       if(nm > 0.01)
-        return formatter::formatDoubleUnit(atools::geo::nmToMeters(nm / 1000.), tr("kilometers"));
+        return formatter::formatDoubleUnit(atools::geo::nmToMeter(nm / 1000.), tr("kilometers"));
     }
   }
   else if(role == Qt::BackgroundRole)
   {
     if(index.column() == orderByColIndex)
-      return (index.row() % 2) == 0 ? rowSortBgColor : rowSortAltBgColor;
-    else
-      return (index.row() % 2) == 0 ? rowBgColor : rowAltBgColor;
+      return rowSortBgColor;
   }
   else if(role == Qt::TextAlignmentRole)
   {
@@ -663,12 +687,22 @@ void SqlModel::fetchMore(const QModelIndex& parent)
   emit fetchedMore();
 }
 
-QVariantList SqlModel::getRawData(int row) const
+QVariantList SqlModel::getRawRowData(int row) const
 {
   QVariantList values;
   for(int i = 0; i < columnCount(); ++i)
     values.append(QSqlQueryModel::data(createIndex(row, i)));
   return values;
+}
+
+QVariant SqlModel::getRawData(int row, const QString& colname) const
+{
+  return getRawData(row, record().indexOf(colname));
+}
+
+QVariant SqlModel::getRawData(int row, int col) const
+{
+  return QSqlQueryModel::data(createIndex(row, col));
 }
 
 QStringList SqlModel::getRawColumns() const

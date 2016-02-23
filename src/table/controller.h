@@ -22,7 +22,12 @@
 #include <QObject>
 #include <functional>
 
+#include <geo/pos.h>
+
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -162,6 +167,13 @@ public:
 
   int getIdForRow(const QModelIndex& index);
 
+  /* Initial search */
+  void filterByDistance(const atools::geo::Pos& center, int minDistance, int maxDistance);
+
+  /* Distance updates from spin box widgets */
+  void filterByDistance(int minDistance, int maxDistance);
+  void clearDistanceFilter();
+
 private:
   /* Adapt columns to query change */
   void processViewColumns();
@@ -179,6 +191,11 @@ private:
   SqlModel *model = nullptr;
   ColumnList *columns = nullptr;
   QByteArray viewState;
+
+  QModelIndex toS(const QModelIndex& index) const;
+  QModelIndex fromS(const QModelIndex& index) const;
+
+  atools::geo::Pos currentDistanceCenter;
 };
 
 #endif // LITTLENAVMAP_CONTROLLER_H

@@ -31,6 +31,7 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include "columnlist.h"
+#include <geo/pos.h>
 
 SearchPane::SearchPane(MainWindow *parent, QTableView *view, ColumnList *columns,
                        atools::sql::SqlDatabase *sqlDb)
@@ -51,16 +52,6 @@ SearchPane::~SearchPane()
 
 }
 
-void SearchPane::addSearchWidget(const QString& field, QWidget *widget)
-{
-  airportColumns->assignWidget(field, widget);
-}
-
-void SearchPane::addMinMaxSearchWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
-{
-  airportColumns->assignMinMaxWidget(field, minWidget, maxWidget);
-}
-
 void SearchPane::connectSearchWidgets()
 {
   void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -69,7 +60,6 @@ void SearchPane::connectSearchWidgets()
   for(const Column *col : airportColumns->getColumns())
   {
     /* *INDENT-OFF* */
-
     if(col->getLineEditWidget() != nullptr)
     {
       connect(col->getLineEditWidget(), &QLineEdit::textChanged, [=](const QString &text)
@@ -97,10 +87,27 @@ void SearchPane::connectSearchWidgets()
 
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [=](int value)
       {airportController->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value); });
-
     }
     /* *INDENT-ON* */
+  }
 
+  QSpinBox *minDistanceWidget = airportColumns->getMinDistanceWidget();
+  QSpinBox *maxDistanceWidget = airportColumns->getMaxDistanceWidget();
+  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr)
+  {
+    /* *INDENT-OFF* */
+    connect(minDistanceWidget, valueChangedPtr, [=](int value)
+    {
+      airportController->filterByDistance(value, maxDistanceWidget->value());
+      maxDistanceWidget->setMinimum(value > 10 ? value : 10);
+    });
+
+    connect(maxDistanceWidget, valueChangedPtr, [=](int value)
+    {
+      airportController->filterByDistance(minDistanceWidget->value(), value);
+      minDistanceWidget->setMaximum(value);
+    });
+    /* *INDENT-ON* */
   }
 }
 
@@ -120,6 +127,10 @@ void SearchPane::connectSlots()
 void SearchPane::doubleClick(const QModelIndex& index)
 {
   qDebug() << "double click";
+
+  qDebug() << "total" << airportController->getTotalRowCount() << "visible"
+           << airportController->getVisibleRowCount();
+
   if(index.isValid())
   {
     int id = airportController->getIdForRow(index);
@@ -131,6 +142,11 @@ void SearchPane::doubleClick(const QModelIndex& index)
     if(query.next())
       emit showPoint(query.value("lonx").toDouble(), query.value("laty").toDouble(), 2700);
     qDebug() << "id" << id;
+
+    airportController->filterByDistance(
+      atools::geo::Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
+      airportColumns->getMinDistanceWidget()->value(),
+      airportColumns->getMaxDistanceWidget()->value());
   }
 }
 

@@ -39,6 +39,9 @@ void ColumnList::clear()
   qDeleteAll(columns);
   columns.clear();
   nameColumnMap.clear();
+  tablename.clear();
+  minDistanceWidget = nullptr;
+  maxDistanceWidget = nullptr;
 }
 
 ColumnList& ColumnList::append(const Column& col)
@@ -63,6 +66,12 @@ void ColumnList::assignWidget(const QString& field, QWidget *widget)
     nameColumnMap.value(field)->widget(widget);
   else
     qWarning() << "Cannot assign widget to" << field;
+}
+
+void ColumnList::assignDistanceSearchWidgets(QSpinBox *minWidget, QSpinBox *maxWidget)
+{
+  minDistanceWidget = minWidget;
+  maxDistanceWidget = maxWidget;
 }
 
 void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
@@ -100,6 +109,20 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
       if(QSpinBox * minspin = cd->getMinSpinBoxWidget())
         minspin->setValue(minspin->minimum());
     }
+
+  if(minDistanceWidget != nullptr)
+  {
+    minDistanceWidget->setValue(0);
+    minDistanceWidget->setMinimum(0);
+    minDistanceWidget->setMaximum(10000);
+  }
+
+  if(maxDistanceWidget != nullptr)
+  {
+    maxDistanceWidget->setValue(10);
+    maxDistanceWidget->setMinimum(10);
+    maxDistanceWidget->setMaximum(10000);
+  }
 }
 
 void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
@@ -108,4 +131,10 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
     if(!exceptColNames.contains(cd->getColumnName()))
       if(cd->getWidget() != nullptr)
         cd->getWidget()->setEnabled(enabled);
+
+  if(minDistanceWidget != nullptr)
+    minDistanceWidget->setEnabled(enabled);
+
+  if(maxDistanceWidget != nullptr)
+    maxDistanceWidget->setEnabled(enabled);
 }

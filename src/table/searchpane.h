@@ -43,9 +43,6 @@ public:
                       atools::sql::SqlDatabase *sqlDb);
   virtual ~SearchPane();
 
-  void addSearchWidget(const QString& field, QWidget *widget);
-  void addMinMaxSearchWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget);
-
   void preDatabaseLoad();
   void postDatabaseLoad();
 

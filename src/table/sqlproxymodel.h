@@ -20,18 +20,32 @@
 
 #include <QSortFilterProxyModel>
 
+#include <geo/pos.h>
+
+class SqlModel;
 class SqlProxyModel :
   public QSortFilterProxyModel
 {
   Q_OBJECT
 
 public:
-  SqlProxyModel(QObject *parent = 0);
+  SqlProxyModel(QObject *parent, SqlModel *parentSqlModel);
   virtual ~SqlProxyModel();
 
-  // QSortFilterProxyModel interface
-protected:
+  void setDistanceFilter(const atools::geo::Pos& centerPos, int minDistance, int maxDistance);
+  void clearDistanceFilter();
+
+private:
   virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
+  virtual void sort(int column, Qt::SortOrder order) override;
+
+  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  QVariantList getRawRowData(const QModelIndex& index) const;
+
+  SqlModel *sqlModel = nullptr;
+  atools::geo::Pos pos;
+  int minDist = 0, maxDist = 0;
+  bool distanceFilter = false;
 };
 
 #endif // SQLSORTFILTERPROXYMODEL_H

@@ -17,6 +17,7 @@
 
 #include "table/controller.h"
 
+#include "geo/calculations.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "settings/settings.h"
@@ -30,6 +31,8 @@
 #include <QSettings>
 #include <QSpinBox>
 #include <QSortFilterProxyModel>
+
+#include <geo/rect.h>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -55,6 +58,10 @@ void Controller::clearModel()
   view->setModel(nullptr);
   delete m;
 
+  if(proxyModel != nullptr)
+    proxyModel->clear();
+  delete proxyModel;
+
   if(model != nullptr)
     model->clear();
   delete model;
@@ -64,13 +71,13 @@ void Controller::clearModel()
 void Controller::filterIncluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
-  model->filterIncluding(index);
+  model->filterIncluding(toS(index));
 }
 
 void Controller::filterExcluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
-  model->filterExcluding(index);
+  model->filterExcluding(toS(index));
 }
 
 void Controller::filterByLineEdit(const Column *col, const QString& text)
@@ -132,6 +139,33 @@ void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
     model->filter(col, value);
 }
 
+void Controller::filterByDistance(const atools::geo::Pos& center, int minDistance, int maxDistance)
+{
+  currentDistanceCenter = center;
+  atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
+
+  proxyModel->setDistanceFilter(center, minDistance, maxDistance);
+  model->filterByBoundingRect(rect);
+}
+
+void Controller::filterByDistance(int minDistance, int maxDistance)
+{
+  if(currentDistanceCenter.isValid())
+  {
+    atools::geo::Rect rect(currentDistanceCenter, atools::geo::nmToMeter(maxDistance));
+
+    proxyModel->setDistanceFilter(currentDistanceCenter, minDistance, maxDistance);
+    model->filterByBoundingRect(rect);
+  }
+}
+
+void Controller::clearDistanceFilter()
+{
+  currentDistanceCenter = atools::geo::Pos();
+  proxyModel->clearDistanceFilter();
+  model->filterByBoundingRect(atools::geo::Rect());
+}
+
 void Controller::filterOperator(bool useAnd)
 {
   Q_ASSERT(model != nullptr);
@@ -188,13 +222,14 @@ const QItemSelection Controller::getSelection() const
 int Controller::getVisibleRowCount() const
 {
   if(model != nullptr)
-    return model->rowCount();
+    return proxyModel->rowCount();
   else
     return 0;
 }
 
 int Controller::getTotalRowCount() const
 {
+  // TODO not accurate when filtering with proxy
   if(model != nullptr)
     return model->getTotalRowCount();
   else
@@ -254,6 +289,9 @@ void Controller::resetSearch()
 
   if(model != nullptr)
     model->resetSearch();
+
+  if(proxyModel != nullptr)
+    proxyModel->clearDistanceFilter();
 }
 
 QString Controller::getCurrentSqlQuery() const
@@ -276,13 +314,23 @@ QString Controller::getHeaderNameAt(const QModelIndex& index) const
 QString Controller::getFieldDataAt(const QModelIndex& index) const
 {
   Q_ASSERT(model != nullptr);
-  return model->getFormattedFieldData(index).toString();
+  return model->getFormattedFieldData(toS(index)).toString();
+}
+
+QModelIndex Controller::toS(const QModelIndex& index) const
+{
+  return proxyModel->mapToSource(index);
+}
+
+QModelIndex Controller::fromS(const QModelIndex& index) const
+{
+  return proxyModel->mapFromSource(index);
 }
 
 int Controller::getIdForRow(const QModelIndex& index)
 {
   if(index.isValid())
-    return model->getRawData(index.row()).at(0).toInt();
+    return model->getRawData(toS(index).row(), 0).toInt();
   else
     return -1;
 }
@@ -329,7 +377,8 @@ void Controller::prepareModel()
   model = new SqlModel(parentWidget, db, columns);
 
   // Controller takes ownership
-  SqlProxyModel *proxyModel = new SqlProxyModel(this);
+  proxyModel = new SqlProxyModel(this, model);
+  proxyModel->setDynamicSortFilter(false);
   proxyModel->setSourceModel(model);
 
   QItemSelectionModel *m = view->selectionModel();
@@ -401,7 +450,7 @@ QVariantList Controller::getFormattedModelData(int row) const
 QVariantList Controller::getRawModelData(int row) const
 {
   Q_ASSERT(model != nullptr);
-  return model->getRawData(row);
+  return model->getRawRowData(row);
 }
 
 QStringList Controller::getRawModelColumns() const

@@ -731,10 +731,10 @@
                 <string> nm</string>
                </property>
                <property name="maximum">
-                <number>20000</number>
+                <number>10000</number>
                </property>
                <property name="singleStep">
-                <number>100</number>
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -753,20 +753,26 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportDistMaxSearch">
+               <property name="specialValueText">
+                <string/>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
                <property name="suffix">
                 <string> nm</string>
                </property>
+               <property name="minimum">
+                <number>10</number>
+               </property>
                <property name="maximum">
                 <number>10000</number>
                </property>
                <property name="singleStep">
-                <number>100</number>
+                <number>10</number>
                </property>
                <property name="value">
-                <number>10000</number>
+                <number>10</number>
                </property>
               </widget>
              </item>

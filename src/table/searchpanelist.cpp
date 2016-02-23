@@ -185,46 +185,52 @@ void SearchPaneList::createAirportSearch()
   append(Column("longest_runway_width", tr("Longest\nRunway Width")).canSort().defaultCol()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).canSort().defaultCol()).
   append(Column("scenery_local_path", tr("Scenery")).canSort().canFilter().defaultCol()).
-  append(Column("bgl_filename", tr("File")).canSort().canFilter().defaultCol());
+  append(Column("bgl_filename", tr("File")).canSort().canFilter().defaultCol()).
+  append(Column("lonx", tr("Longitude")).canSort().defaultCol()).
+  append(Column("laty", tr("Latitude")).canSort().defaultCol());
 
   airportSearchPane = new SearchPane(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
                                      airportColumns, db);
 
-  airportSearchPane->addSearchWidget("ident", ui->lineEditAirportIcaoSearch);
-  airportSearchPane->addSearchWidget("name", ui->lineEditAirportNameSearch);
-  airportSearchPane->addSearchWidget("city", ui->lineEditAirportCitySearch);
-  airportSearchPane->addSearchWidget("state", ui->lineEditAirportStateSearch);
-  airportSearchPane->addSearchWidget("country", ui->lineEditAirportCountrySearch);
+  airportColumns->assignWidget("ident", ui->lineEditAirportIcaoSearch);
+  airportColumns->assignWidget("name", ui->lineEditAirportNameSearch);
+  airportColumns->assignWidget("city", ui->lineEditAirportCitySearch);
+  airportColumns->assignWidget("state", ui->lineEditAirportStateSearch);
+  airportColumns->assignWidget("country", ui->lineEditAirportCountrySearch);
 
   // Extended
-  airportSearchPane->addSearchWidget("rating", ui->checkBoxAirportScenerySearch);
-  airportSearchPane->addSearchWidget("is_military", ui->checkBoxAirportMilSearch);
-  airportSearchPane->addSearchWidget("num_runway_light", ui->checkBoxAirportLightSearch);
-  airportSearchPane->addSearchWidget("has_tower", ui->checkBoxAirportTowerSearch);
-  airportSearchPane->addSearchWidget("num_runway_end_ils", ui->checkBoxAirportIlsSearch);
-  airportSearchPane->addSearchWidget("num_approach", ui->checkBoxAirportApprSearch);
-  airportSearchPane->addSearchWidget("is_closed", ui->checkBoxAirportClosedSearch);
-  airportSearchPane->addSearchWidget("is_addon", ui->checkBoxAirportAddonSearch);
-  airportSearchPane->addSearchWidget("has_jetfuel", ui->checkBoxAirportJetASearch);
-  airportSearchPane->addSearchWidget("has_avgas", ui->checkBoxAirportAvgasSearch);
+  airportColumns->assignWidget("rating", ui->checkBoxAirportScenerySearch);
+  airportColumns->assignWidget("is_military", ui->checkBoxAirportMilSearch);
+  airportColumns->assignWidget("num_runway_light", ui->checkBoxAirportLightSearch);
+  airportColumns->assignWidget("has_tower", ui->checkBoxAirportTowerSearch);
+  airportColumns->assignWidget("num_runway_end_ils", ui->checkBoxAirportIlsSearch);
+  airportColumns->assignWidget("num_approach", ui->checkBoxAirportApprSearch);
+  airportColumns->assignWidget("is_closed", ui->checkBoxAirportClosedSearch);
+  airportColumns->assignWidget("is_addon", ui->checkBoxAirportAddonSearch);
+  airportColumns->assignWidget("has_jetfuel", ui->checkBoxAirportJetASearch);
+  airportColumns->assignWidget("has_avgas", ui->checkBoxAirportAvgasSearch);
 
   // Parking
-  airportSearchPane->addSearchWidget("largest_parking_gate", ui->comboBoxAirportGateSearch);
-  airportSearchPane->addSearchWidget("largest_parking_ramp", ui->comboBoxAirportRampSearch);
+  airportColumns->assignWidget("largest_parking_gate", ui->comboBoxAirportGateSearch);
+  airportColumns->assignWidget("largest_parking_ramp", ui->comboBoxAirportRampSearch);
 
   // Runways
-  airportSearchPane->addSearchWidget("num_runway_soft", ui->comboBoxAirportSurfaceSearch);
-  airportSearchPane->addMinMaxSearchWidget("longest_runway_length",
-                                           ui->spinBoxAirportRunwaysMinSearch,
-                                           ui->spinBoxAirportRunwaysMaxSearch);
+  airportColumns->assignWidget("num_runway_soft", ui->comboBoxAirportSurfaceSearch);
+  airportColumns->assignMinMaxWidget("longest_runway_length",
+                                     ui->spinBoxAirportRunwaysMinSearch,
+                                     ui->spinBoxAirportRunwaysMaxSearch);
   // Altitude
-  airportSearchPane->addMinMaxSearchWidget("altitude",
-                                           ui->spinBoxAirportAltitudeMinSearch,
-                                           ui->spinBoxAirportAltitudeMaxSearch);
+  airportColumns->assignMinMaxWidget("altitude",
+                                     ui->spinBoxAirportAltitudeMinSearch,
+                                     ui->spinBoxAirportAltitudeMaxSearch);
+
+  // Distance
+  airportColumns->assignDistanceSearchWidgets(ui->spinBoxAirportDistMinSearch,
+                                              ui->spinBoxAirportDistMaxSearch);
 
   // Scenery
-  airportSearchPane->addSearchWidget("scenery_local_path", ui->lineEditAirportScenerySearch);
-  airportSearchPane->addSearchWidget("bgl_filename", ui->lineEditAirportFileSearch);
+  airportColumns->assignWidget("scenery_local_path", ui->lineEditAirportScenerySearch);
+  airportColumns->assignWidget("bgl_filename", ui->lineEditAirportFileSearch);
 
   // Connect widgets to the controller
   airportSearchPane->connectSearchWidgets();

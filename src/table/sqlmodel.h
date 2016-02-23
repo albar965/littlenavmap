@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_SQLMODEL_H
 #define LITTLENAVMAP_SQLMODEL_H
 
+#include "geo/rect.h"
+
 #include <QColor>
 #include <QSqlQueryModel>
 
@@ -83,7 +85,7 @@ public:
 
   /* Add a filter for a column. Placeholder and negation will be adapted to SQL
    * query */
-  void filter(const Column* col, const QVariant& value, const QVariant& maxValue = QVariant());
+  void filter(const Column *col, const QVariant& value, const QVariant& maxValue = QVariant());
 
   /* Operator to connect all conditions ("and" or "or") */
   void filterOperator(const QString& op);
@@ -123,8 +125,14 @@ public:
   virtual void fetchMore(const QModelIndex& parent) override;
 
   /* Get unformatted data from the model */
-  QVariantList getRawData(int row) const;
+  QVariantList getRawRowData(int row) const;
+  QVariant getRawData(int row, int col) const;
+  QVariant getRawData(int row, const QString& colname) const;
   QStringList getRawColumns() const;
+
+  void resetSqlQuery();
+
+  void filterByBoundingRect(const atools::geo::Rect& boundingRectangle);
 
 signals:
   /* Emitted when more data was fetched*/
@@ -137,6 +145,8 @@ private:
     QVariant value;
     const Column *col;
   };
+
+  atools::geo::Rect boundingRect;
 
   /* Column header was clicked */
   virtual void sort(int column, Qt::SortOrder order) override;
