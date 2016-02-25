@@ -16,20 +16,15 @@
 *****************************************************************************/
 
 #include "table/sqlmodel.h"
-
 #include "gui/errorhandler.h"
-#include "fs/lb/types.h"
-#include "fs/fspaths.h"
 #include "table/columnlist.h"
-#include "table/formatter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "geo/calculations.h"
 #include "logging/loggingdefs.h"
-#include "column.h"
 
-#include <algorithm>
+#include "table/column.h"
+
 #include <QApplication>
 #include <QLineEdit>
 #include <QSqlField>
@@ -249,8 +244,6 @@ void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
   orderByColIndex = record().indexOf(colname);
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
-  // buildQuery();
-  // fillHeaderData();
 }
 
 void SqlModel::reset()
@@ -299,7 +292,7 @@ void SqlModel::fillHeaderData()
 
     Q_ASSERT_X(cd != nullptr, "fillHeaderData", QString("field \"" + field + "\" is null").toLocal8Bit());
 
-    if(!cd->isHiddenCol() && !(!boundingRect.isValid() && cd->isVirtualCol()))
+    if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isVirtual()))
     {
       qDebug() << "Header" << i << "display" << cd->getDisplayName();
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
@@ -365,7 +358,7 @@ QString SqlModel::buildColumnList()
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(col->isVirtualCol())
+    if(col->isVirtual())
       colNames.append("null as " + col->getColumnName());
     else if(groupByCol.isEmpty())
       // Not grouping - default view
@@ -428,11 +421,11 @@ QString SqlModel::buildWhere()
   int numCond = 0, numAndCond = 0;
   for(const WhereCondition& cond : whereConditionMap)
   {
-    if(!cond.col->isAlwaysAndCol())
+    if(!cond.col->alwaysAnd())
     {
       if(numCond++ > 0)
         queryWhere += " " + whereOperator + " ";
-      if(cond.col->isIncludesColName())
+      if(cond.col->isIncludesName())
         queryWhere += " " + cond.oper + " ";
       else
         queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
@@ -443,7 +436,7 @@ QString SqlModel::buildWhere()
     {
       if(numAndCond++ > 0)
         queryWhereAnd += " and ";
-      if(cond.col->isIncludesColName())
+      if(cond.col->isIncludesName())
         queryWhereAnd += " " + cond.oper + " ";
       else
         queryWhereAnd += cond.col->getColumnName() + " " + cond.oper + " ";
@@ -492,17 +485,17 @@ void SqlModel::buildQuery()
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
-  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isVirtualCol())
+  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isVirtual())
   {
     Q_ASSERT(col != nullptr);
 
-    if(!(col->getSortFuncColAsc().isEmpty() && col->getSortFuncColDesc().isEmpty()))
+    if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
     {
       // Use sort functions to have null values at end of the list - will avoid indexes
       if(orderByOrder == "asc")
-        queryOrder += "order by " + col->getSortFuncColAsc().arg(orderByCol) + " " + orderByOrder;
+        queryOrder += "order by " + col->getSortFuncAsc().arg(orderByCol) + " " + orderByOrder;
       else if(orderByOrder == "desc")
-        queryOrder += "order by " + col->getSortFuncColDesc().arg(orderByCol) + " " + orderByOrder;
+        queryOrder += "order by " + col->getSortFuncDesc().arg(orderByCol) + " " + orderByOrder;
       else
         Q_ASSERT(orderByOrder != "asc" && orderByOrder != "desc");
     }
@@ -570,72 +563,7 @@ void SqlModel::resetSqlQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
-  // using namespace atools::fs::lb::types;
-  // using namespace atools::fs::fstype;
-
-  // if(colName.startsWith("simulator_id"))
-  // {
-  // SimulatorType type = static_cast<SimulatorType>(value.toInt());
-  // switch(type)
-  // {
-  // case atools::fs::fstype::FSX:
-  // return tr("FSX");
-
-  // case atools::fs::fstype::FSX_SE:
-  // return tr("FSX SE");
-
-  // case atools::fs::fstype::P3D_V2:
-  // return tr("P3D V2");
-
-  // case atools::fs::fstype::P3D_V3:
-  // return tr("P3D V3");
-
-  // case atools::fs::fstype::MAX_VALUE:
-  // case atools::fs::fstype::ALL_SIMULATORS:
-  // return QString();
-
-  // }
-  // }
-  // else if(colName.startsWith("startdate"))
-  // return formatter::formatDate(value.toInt());
-  // else if(colName.startsWith("total_time"))
-  // return formatter::formatMinutesHours(value.toDouble());
-  // else if(colName.startsWith("night_time"))
-  // return formatter::formatMinutesHours(value.toDouble());
-  // else if(colName.startsWith("instrument_time"))
-  // return formatter::formatMinutesHours(value.toDouble());
-  // else if(colName.startsWith("distance"))
-  // return formatter::formatDoubleUnit(value.toDouble());
-  // else if(colName == "aircraft_type")
-  // {
-  // AircraftType type = static_cast<AircraftType>(value.toInt());
-  // switch(type)
-  // {
-  // case AIRCRAFT_UNKNOWN:
-  // return tr("Unknown");
-
-  // case AIRCRAFT_GLIDER:
-  // return tr("Glider");
-
-  // case AIRCRAFT_FIXED_WING:
-  // return tr("Fixed Wing");
-
-  // case AIRCRAFT_AMPHIBIOUS:
-  // return tr("Amphibious");
-
-  // case AIRCRAFT_ROTARY:
-  // return tr("Rotor");
-  // }
-  // }
-  // else if(colName == "aircraft_flags")
-  // {
-  // if((value.toInt() & AIRCRAFT_FLAG_MULTIMOTOR) == AIRCRAFT_FLAG_MULTIMOTOR)
-  // return tr("Multi-engine");
-  // else
-  // return QString();
-  // }
-  // else
-
+  Q_UNUSED(colName);
   if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
     return QLocale().toString(value.toInt());
   else if(value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong)

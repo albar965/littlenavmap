@@ -34,76 +34,76 @@ Column::Column(const QString& columnName, QWidget *widget, const QString& column
 
 }
 
-Column& Column::canGroupShow(bool b)
+Column& Column::groupShow(bool b)
 {
-  groupByShow = b;
+  colGroupByShow = b;
   return *this;
 }
 
 Column& Column::canMin(bool b)
 {
-  groupByMin = b;
+  colGroupByMin = b;
   return *this;
 }
 
 Column& Column::canMax(bool b)
 {
-  groupByMax = b;
+  colGroupByMax = b;
   return *this;
 }
 
 Column& Column::canSum(bool b)
 {
-  groupBySum = b;
+  colGroupBySum = b;
   return *this;
 }
 
-Column& Column::canFilter(bool b)
+Column& Column::filter(bool b)
 {
-  canBeFiltered = b;
+  colCanBeFiltered = b;
   return *this;
 }
 
-Column& Column::canGroup(bool b)
+Column& Column::group(bool b)
 {
-  canBeGrouped = b;
+  colCanBeGrouped = b;
   return *this;
 }
 
-Column& Column::canNotSort(bool b)
+Column& Column::noSort(bool b)
 {
-  canNotBeSorted = b;
+  colCanNotBeSorted = b;
   return *this;
 }
 
-Column& Column::noDefaultCol(bool b)
+Column& Column::noDefault(bool b)
 {
-  isNoDefaultColumn = b;
+  colIsNoDefaultColumn = b;
   return *this;
 }
 
 Column& Column::hidden(bool b)
 {
-  isHiddenColumn = b;
+  colIsHiddenColumn = b;
   return *this;
 }
 
 Column& Column::defaultSort(bool b)
 {
-  isDefaultSortColumn = b;
+  colIsDefaultSortColumn = b;
   return *this;
 }
 
 Column& Column::alwaysAnd(bool b)
 {
-  isAlwaysAndColumn = b;
+  colIsAlwaysAndColumn = b;
   return *this;
 }
 
 Column& Column::sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc)
 {
-  sortFuncForColAsc = sortFuncAsc;
-  sortFuncForColDesc = sortFuncDesc;
+  colSortFuncAsc = sortFuncAsc;
+  colSortFuncDesc = sortFuncDesc;
   return *this;
 }
 
@@ -115,17 +115,17 @@ Column& Column::widget(QWidget *widget)
 
 Column& Column::minWidget(QWidget *widget)
 {
-  minColWidget = widget;
+  colMinWidget = widget;
   return *this;
 }
 
 Column& Column::maxWidget(QWidget *widget)
 {
-  maxColWidget = widget;
+  colMaxWidget = widget;
   return *this;
 }
 
-Column& Column::cond(const QString& include, const QString& exclude)
+Column& Column::conditions(const QString& include, const QString& exclude)
 {
   colIncludeCond = include;
   colExcludeCond = exclude;
@@ -134,23 +134,23 @@ Column& Column::cond(const QString& include, const QString& exclude)
 
 Column& Column::defaultSortOrder(Qt::SortOrder order)
 {
-  defaultSortOrd = order;
+  colDefaultSortOrd = order;
   return *this;
 }
 
-Column&Column::indexCondMap(const QStringList& indexMap)
+Column& Column::indexCondMap(const QStringList& indexMap)
 {
-  indexConditionMap = indexMap;
+  colIndexConditionMap = indexMap;
   return *this;
 }
 
-Column&Column::includesColName(bool value)
+Column& Column::includesName(bool value)
 {
-  queryIncludesColName = value;
+  colQueryIncludesName = value;
   return *this;
 }
 
-Column&Column::virtualCol(bool value)
+Column& Column::virtualCol(bool value)
 {
   colIsVirtual = value;
   return *this;
@@ -178,10 +178,10 @@ QSpinBox *Column::getSpinBoxWidget() const
 
 QSpinBox *Column::getMinSpinBoxWidget() const
 {
-  return dynamic_cast<QSpinBox *>(minColWidget);
+  return dynamic_cast<QSpinBox *>(colMinWidget);
 }
 
 QSpinBox *Column::getMaxSpinBoxWidget() const
 {
-  return dynamic_cast<QSpinBox *>(maxColWidget);
+  return dynamic_cast<QSpinBox *>(colMaxWidget);
 }

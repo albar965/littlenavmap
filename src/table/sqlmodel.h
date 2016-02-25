@@ -136,12 +136,14 @@ public:
 
   QString getColumnName(int col) const;
   void setSort(const QString& colname, Qt::SortOrder order);
+
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
 
 private:
   virtual void sort(int column, Qt::SortOrder order) override;
+
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */

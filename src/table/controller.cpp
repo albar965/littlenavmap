@@ -72,24 +72,28 @@ void Controller::filterIncluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
   model->filterIncluding(toS(index));
+  changed = true;
 }
 
 void Controller::filterExcluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
   model->filterExcluding(toS(index));
+  changed = true;
 }
 
 void Controller::filterByLineEdit(const Column *col, const QString& text)
 {
   Q_ASSERT(model != nullptr);
   model->filter(col, text);
+  changed = true;
 }
 
 void Controller::filterBySpinBox(const Column *col, int value)
 {
   Q_ASSERT(model != nullptr);
   model->filter(col, value);
+  changed = true;
 }
 
 void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
@@ -103,6 +107,7 @@ void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxV
     maxVal = QVariant(QVariant::Int);
 
   model->filter(col, minVal, maxVal);
+  changed = true;
 }
 
 void Controller::filterByCheckbox(const Column *col, int state, bool triState)
@@ -127,6 +132,7 @@ void Controller::filterByCheckbox(const Column *col, int state, bool triState)
   }
   else
     model->filter(col, state == Qt::Checked ? 1 : QVariant(QVariant::Int));
+  changed = true;
 }
 
 void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
@@ -137,6 +143,7 @@ void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
     model->filter(col, QVariant(QVariant::Int));
   else
     model->filter(col, value);
+  changed = true;
 }
 
 void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
@@ -188,6 +195,7 @@ void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel:
     model->fillHeaderData();
     processViewColumns();
   }
+  changed = true;
 }
 
 void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance)
@@ -198,6 +206,7 @@ void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int 
 
     proxyModel->setDistanceFilter(currentDistanceCenter, dir, minDistance, maxDistance);
     model->filterByBoundingRect(rect);
+    changed = true;
   }
 }
 
@@ -381,7 +390,7 @@ QModelIndex Controller::fromS(const QModelIndex& index) const
 int Controller::getIdForRow(const QModelIndex& index)
 {
   if(index.isValid())
-    return model->getRawData(toS(index).row(), "airport_id").toInt();
+    return model->getRawData(toS(index).row(), columns->getIdColumnName()).toInt();
   else
     return -1;
 }
@@ -407,14 +416,14 @@ void Controller::processViewColumns()
     QString field = rec.fieldName(i);
     const Column *cd = columns->getColumn(field);
 
-    if(!currentDistanceCenter.isValid() && cd->isVirtualCol())
+    if(!currentDistanceCenter.isValid() && cd->isVirtual())
     {
       qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
     }
     else
     // Hide or show column
-    if(cd->isHiddenCol())
+    if(cd->isHidden())
     {
       qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
@@ -429,7 +438,7 @@ void Controller::processViewColumns()
     if(model->getSortColumn().isEmpty())
     {
       qDebug() << "default sort" << i << "name" << field;
-      if(cd->isDefaultSortCol())
+      if(cd->isDefaultSort())
       {
         qDebug() << "default sort" << i << "name" << field;
         view->sortByColumn(i, cd->getDefaultSortOrder());
@@ -451,10 +460,10 @@ void Controller::processViewColumns()
     view->sortByColumn(idx, c->getDefaultSortOrder());
   else
   {
-    if(sort->isHiddenCol())
+    if(sort->isHidden())
       view->sortByColumn(idx, c->getDefaultSortOrder());
     else if(!currentDistanceCenter.isValid())
-      if(sort->isVirtualCol())
+      if(sort->isVirtual())
         view->sortByColumn(idx, c->getDefaultSortOrder());
   }
 }
@@ -488,7 +497,7 @@ void Controller::loadAllRowsForRectQuery()
 {
   Q_ASSERT(model != nullptr);
 
-  if(proxyModel != nullptr)
+  if(changed && proxyModel != nullptr)
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     model->resetSqlQuery();
@@ -496,6 +505,7 @@ void Controller::loadAllRowsForRectQuery()
     while(model->canFetchMore())
       model->fetchMore(QModelIndex());
     QGuiApplication::restoreOverrideCursor();
+    changed = false;
   }
 }
 

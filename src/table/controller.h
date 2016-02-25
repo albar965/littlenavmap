@@ -176,6 +176,7 @@ public:
   void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
 
   void loadAllRowsForRectQuery();
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 
@@ -199,6 +200,7 @@ private:
   QModelIndex toS(const QModelIndex& index) const;
   QModelIndex fromS(const QModelIndex& index) const;
 
+  bool changed = false;
   atools::geo::Pos currentDistanceCenter;
 };
 

@@ -25,8 +25,8 @@
 #include <QSpinBox>
 #include <QPushButton>
 
-ColumnList::ColumnList(const QString& table)
-  : tablename(table)
+ColumnList::ColumnList(const QString& table, const QString& idColumnName)
+  : tablename(table), idColumn(idColumnName)
 {
 }
 
@@ -67,7 +67,7 @@ const Column *ColumnList::getColumn(const QString& field) const
 const Column *ColumnList::getDefaultSortColumn() const
 {
   for(const Column *c : columns)
-    if(c->isDefaultSortCol())
+    if(c->isDefaultSort())
       return c;
 
   return nullptr;
@@ -132,14 +132,14 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
   {
     minDistanceWidget->setValue(0);
     minDistanceWidget->setMinimum(0);
-    minDistanceWidget->setMaximum(10000);
+    minDistanceWidget->setMaximum(5000);
   }
 
   if(maxDistanceWidget != nullptr)
   {
-    maxDistanceWidget->setValue(10);
-    maxDistanceWidget->setMinimum(10);
-    maxDistanceWidget->setMaximum(10000);
+    maxDistanceWidget->setValue(100);
+    maxDistanceWidget->setMinimum(100);
+    maxDistanceWidget->setMaximum(5000);
   }
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setCurrentIndex(0);

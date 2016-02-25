@@ -44,7 +44,7 @@ public:
    * @param hasAirports true if the airports table (from runways.xml file)
    * exists.
    */
-  ColumnList(const QString& table);
+  ColumnList(const QString& table, const QString& idColumnName);
   virtual ~ColumnList();
 
   /* Get column descriptor for the given query column name or alias */
@@ -75,14 +75,10 @@ public:
     return tablename;
   }
 
-  void setTablename(const QString& value)
-  {
-    tablename = value;
-  }
-
   void clear();
 
-  void assignDistanceSearchWidgets(QPushButton* updateButton, QCheckBox *checkBox, QComboBox *directionWidget, QSpinBox *minWidget,
+  void assignDistanceSearchWidgets(QPushButton *updateButton, QCheckBox *checkBox, QComboBox *directionWidget,
+                                   QSpinBox *minWidget,
                                    QSpinBox *maxWidget);
 
   QSpinBox *getMinDistanceWidget() const
@@ -105,9 +101,14 @@ public:
     return distanceCheckBox;
   }
 
-  QPushButton* getDistanceUpdateButton() const
+  QPushButton *getDistanceUpdateButton() const
   {
     return distanceUpdate;
+  }
+
+  const QString& getIdColumnName() const
+  {
+    return idColumn;
   }
 
 private:
@@ -115,7 +116,7 @@ private:
   QCheckBox *distanceCheckBox = nullptr;
   QPushButton *distanceUpdate = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
-  QString tablename;
+  QString tablename, idColumn;
   QVector<Column *> columns;
   QHash<QString, Column *> nameColumnMap;
 };

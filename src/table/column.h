@@ -48,7 +48,7 @@ public:
   Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName = QString());
 
   /* Show column in grouping queries */
-  Column& canGroupShow(bool b = true);
+  Column& groupShow(bool b = true);
 
   /* Can calculate minimum value in grouping query */
   Column& canMin(bool b = true);
@@ -60,16 +60,16 @@ public:
   Column& canSum(bool b = true);
 
   /* Column can be used in filters */
-  Column& canFilter(bool b = true);
+  Column& filter(bool b = true);
 
   /* Column can be used in group by */
-  Column& canGroup(bool b = true);
+  Column& group(bool b = true);
 
   /* Table can not be sorted by this column */
-  Column& canNotSort(bool b = true);
+  Column& noSort(bool b = true);
 
   /* Column is part of default view */
-  Column& noDefaultCol(bool b = true);
+  Column& noDefault(bool b = true);
 
   /* Column is hidden in view */
   Column& hidden(bool b = true);
@@ -89,50 +89,50 @@ public:
   Column& minWidget(QWidget *widget);
   Column& maxWidget(QWidget *widget);
 
-  Column& cond(const QString& include, const QString& exclude);
+  Column& conditions(const QString& include, const QString& exclude);
 
   /* Sort order if this is the sort by column in default view */
   Column& defaultSortOrder(Qt::SortOrder order);
 
   Column& indexCondMap(const QStringList& indexMap);
 
-  Column& includesColName(bool value = true);
+  Column& includesName(bool value = true);
 
   Column& virtualCol(bool value = true);
 
   bool isGroupShow() const
   {
-    return groupByShow;
+    return colGroupByShow;
   }
 
   bool isMin() const
   {
-    return groupByMin;
+    return colGroupByMin;
   }
 
   bool isMax() const
   {
-    return groupByMax;
+    return colGroupByMax;
   }
 
   bool isSum() const
   {
-    return groupBySum;
+    return colGroupBySum;
   }
 
   bool isFilter() const
   {
-    return canBeFiltered;
+    return colCanBeFiltered;
   }
 
   bool isGroup() const
   {
-    return canBeGrouped;
+    return colCanBeGrouped;
   }
 
-  bool noSort() const
+  bool isNoSort() const
   {
-    return canNotBeSorted;
+    return colCanNotBeSorted;
   }
 
   const QString& getColumnName() const
@@ -148,9 +148,9 @@ public:
       return colDisplayName;
   }
 
-  bool isIncludesColName() const
+  bool isIncludesName() const
   {
-    return queryIncludesColName;
+    return colQueryIncludesName;
   }
 
   QLineEdit *getLineEditWidget() const;
@@ -167,52 +167,52 @@ public:
 
   QWidget *getMinWidget() const
   {
-    return minColWidget;
+    return colMinWidget;
   }
 
   QWidget *getMaxWidget() const
   {
-    return maxColWidget;
+    return colMaxWidget;
   }
 
-  bool isNoDefaultCol() const
+  bool isNoDefault() const
   {
-    return isNoDefaultColumn;
+    return colIsNoDefaultColumn;
   }
 
-  bool isAlwaysAndCol() const
+  bool alwaysAnd() const
   {
-    return isAlwaysAndColumn;
+    return colIsAlwaysAndColumn;
   }
 
-  QString getSortFuncColAsc() const
+  QString getSortFuncAsc() const
   {
-    return sortFuncForColAsc;
+    return colSortFuncAsc;
   }
 
-  QString getSortFuncColDesc() const
+  QString getSortFuncDesc() const
   {
-    return sortFuncForColDesc;
+    return colSortFuncDesc;
   }
 
-  bool isHiddenCol() const
+  bool isHidden() const
   {
-    return isHiddenColumn;
+    return colIsHiddenColumn;
   }
 
-  bool isVirtualCol() const
+  bool isVirtual() const
   {
     return colIsVirtual;
   }
 
-  bool isDefaultSortCol() const
+  bool isDefaultSort() const
   {
-    return isDefaultSortColumn;
+    return colIsDefaultSortColumn;
   }
 
   Qt::SortOrder getDefaultSortOrder() const
   {
-    return defaultSortOrd;
+    return colDefaultSortOrd;
   }
 
   const QString& getExcludeCondition() const
@@ -227,7 +227,7 @@ public:
 
   const QStringList& getIndexConditionMap() const
   {
-    return indexConditionMap;
+    return colIndexConditionMap;
   }
 
   bool hasIncludeExcludeCond() const
@@ -237,38 +237,38 @@ public:
 
   bool hasMinMaxSpinbox() const
   {
-    return !(maxColWidget == nullptr || minColWidget == nullptr);
+    return !(colMaxWidget == nullptr || colMinWidget == nullptr);
   }
 
   bool hasIndexConditionMap() const
   {
-    return !indexConditionMap.isEmpty();
+    return !colIndexConditionMap.isEmpty();
   }
 
 private:
   QString colName;
   QString colDisplayName;
-  QWidget *colWidget = nullptr, *maxColWidget = nullptr, *minColWidget = nullptr;
-  QString sortFuncForColAsc, sortFuncForColDesc;
+  QWidget *colWidget = nullptr, *colMaxWidget = nullptr, *colMinWidget = nullptr;
+  QString colSortFuncAsc, colSortFuncDesc;
 
   QString colExcludeCond, colIncludeCond;
-  QStringList indexConditionMap;
+  QStringList colIndexConditionMap;
 
-  bool groupByShow = false;
-  bool groupByMin = false;
-  bool groupByMax = false;
-  bool groupBySum = false;
-  bool canBeFiltered = false;
-  bool canBeGrouped = false;
-  bool canNotBeSorted = false;
-  bool isNoDefaultColumn = false;
-  bool isDefaultSortColumn = false;
-  bool isAlwaysAndColumn = false;
-  bool isHiddenColumn = false;
-  bool queryIncludesColName = false;
+  bool colGroupByShow = false;
+  bool colGroupByMin = false;
+  bool colGroupByMax = false;
+  bool colGroupBySum = false;
+  bool colCanBeFiltered = false;
+  bool colCanBeGrouped = false;
+  bool colCanNotBeSorted = false;
+  bool colIsNoDefaultColumn = false;
+  bool colIsDefaultSortColumn = false;
+  bool colIsAlwaysAndColumn = false;
+  bool colIsHiddenColumn = false;
+  bool colQueryIncludesName = false;
   bool colIsVirtual = false;
 
-  Qt::SortOrder defaultSortOrd = Qt::SortOrder::AscendingOrder;
+  Qt::SortOrder colDefaultSortOrd = Qt::SortOrder::AscendingOrder;
 };
 
 #endif // LITTLENAVMAP_COLUMN_H
