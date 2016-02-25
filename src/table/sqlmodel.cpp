@@ -244,6 +244,15 @@ void SqlModel::groupByColumn(QModelIndex index)
   fillHeaderData();
 }
 
+void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
+{
+  orderByColIndex = record().indexOf(colname);
+  orderByCol = colname;
+  orderByOrder = sortOrderToSql(order);
+  // buildQuery();
+  // fillHeaderData();
+}
+
 void SqlModel::reset()
 {
   orderByCol.clear();
@@ -290,8 +299,11 @@ void SqlModel::fillHeaderData()
 
     Q_ASSERT_X(cd != nullptr, "fillHeaderData", QString("field \"" + field + "\" is null").toLocal8Bit());
 
-    if(!cd->isHiddenCol())
+    if(!cd->isHiddenCol() && !(!boundingRect.isValid() && cd->isVirtualCol()))
+    {
+      qDebug() << "Header" << i << "display" << cd->getDisplayName();
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
+    }
   }
 }
 
@@ -353,12 +365,12 @@ QString SqlModel::buildColumnList()
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(groupByCol.isEmpty())
-    {
+    if(col->isVirtualCol())
+      colNames.append("null as " + col->getColumnName());
+    else if(groupByCol.isEmpty())
       // Not grouping - default view
-      if(col->isDefaultCol() || !col->isHiddenCol())
-        colNames.append(col->getColumnName());
-    }
+      // if(col->isNoDefaultCol() /*|| !col->isHiddenCol()*/)
+      colNames.append(col->getColumnName());
     else if(col->getColumnName() == groupByCol || col->isGroupShow())
       // Add the group by column
       colNames.append(col->getColumnName());
@@ -479,9 +491,9 @@ void SqlModel::buildQuery()
     queryGroup += "group by " + groupByCol;
 
   QString queryOrder;
-  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty())
+  const Column *col = columns->getColumn(orderByCol);
+  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isVirtualCol())
   {
-    const Column *col = columns->getColumn(orderByCol);
     Q_ASSERT(col != nullptr);
 
     if(!(col->getSortFuncColAsc().isEmpty() && col->getSortFuncColDesc().isEmpty()))
@@ -496,6 +508,20 @@ void SqlModel::buildQuery()
     }
     else
       queryOrder += "order by " + orderByCol + " " + orderByOrder;
+  }
+
+  if(boundingRect.isValid())
+  {
+    atools::geo::Pos center = boundingRect.getCenter();
+
+    QString srt("(lonx - %1) * (lonx - %1) + (laty - %2) * (laty - %2)");
+
+    if(queryOrder.isEmpty())
+      queryOrder += "order by ";
+    else
+      queryOrder += ",";
+
+    queryOrder += srt.arg(center.getLonX()).arg(center.getLatY()) + orderByOrder;
   }
 
   currentSqlQuery = "select " + queryCols + " from " + columns->getTablename() +
@@ -521,7 +547,8 @@ void SqlModel::buildQuery()
     qDebug() << "Query" << currentSqlQuery;
     qDebug() << "Query Count" << queryCount;
 
-    resetSqlQuery();
+    if(!boundingRect.isValid())
+      resetSqlQuery();
   }
   catch(std::exception& e)
   {
@@ -635,22 +662,6 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
     QString col = record().field(index.column()).name();
     return formatValue(col, var);
   }
-  else if(role == Qt::ToolTipRole)
-  {
-    QString col = record().field(index.column()).name();
-
-    /*  if((col == "airport_from_icao" || col == "airport_to_icao") && hasAirports)
-     *   return airportInfo->createAirportHtml(QSqlQueryModel::data(index, Qt::DisplayRole).toString());
-     *  else*/
-    if(col.startsWith("startdate"))
-      return formatter::formatDateLong(QSqlQueryModel::data(index).toInt());
-    else if(col.startsWith("distance"))
-    {
-      double nm = QSqlQueryModel::data(index).toDouble();
-      if(nm > 0.01)
-        return formatter::formatDoubleUnit(atools::geo::nmToMeter(nm / 1000.), tr("kilometers"));
-    }
-  }
   else if(role == Qt::BackgroundRole)
   {
     if(index.column() == orderByColIndex)
@@ -660,19 +671,13 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
   {
     QString col = record().field(index.column()).name();
 
-    if(col.startsWith("logbook_id"))
+    QVariant value = QSqlQueryModel::data(index, Qt::DisplayRole);
+
+    if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
       return Qt::AlignRight;
-    else if(col.startsWith("startdate"))
+    else if(value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong)
       return Qt::AlignRight;
-    else if(col.startsWith("total_time"))
-      return Qt::AlignRight;
-    else if(col.startsWith("night_time"))
-      return Qt::AlignRight;
-    else if(col.startsWith("instrument_time"))
-      return Qt::AlignRight;
-    else if(col.startsWith("distance"))
-      return Qt::AlignRight;
-    else if(col.startsWith("num_flights"))
+    else if(value.type() == QVariant::Double)
       return Qt::AlignRight;
     else
       return QSqlQueryModel::data(index, role);
@@ -711,6 +716,11 @@ QStringList SqlModel::getRawColumns() const
   for(int i = 0; i < columnCount(); ++i)
     cols.append(record().field(i).name());
   return cols;
+}
+
+QString SqlModel::getColumnName(int col) const
+{
+  return record().fieldName(col);
 }
 
 QVariantList SqlModel::getFormattedRowData(int row)

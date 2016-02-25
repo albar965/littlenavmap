@@ -21,14 +21,25 @@
 #include <marble/MarbleWidget.h>
 
 #include <QWidget>
+
+namespace atools {
+namespace geo {
+class Pos;
+}
+}
+
 class QContextMenuEvent;
+class MainWindow;
+
 class NavMapWidget :
   public Marble::MarbleWidget
 {
   Q_OBJECT
 
 public:
-  NavMapWidget(QWidget *parent);
+  NavMapWidget(MainWindow *parent);
+
+  void mapContextMenu(const QPoint& pos);
 
   void saveState();
   void restoreState();
@@ -36,6 +47,13 @@ public:
   // QWidget interface
 
   void showPoint(double lonX, double latY, int zoom);
+
+private:
+  MainWindow *parentWindow;
+  Marble::GeoDataPlacemark *place;
+
+signals:
+  void markChanged(const atools::geo::Pos& mark);
 
 };
 

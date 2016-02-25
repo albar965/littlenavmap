@@ -20,6 +20,8 @@
 
 #include <QMainWindow>
 
+#include <geo/pos.h>
+
 #include "sql/sqldatabase.h"
 
 class QProgressDialog;
@@ -58,6 +60,11 @@ public:
   Ui::MainWindow *getUi() const
   {
     return ui;
+  }
+
+  NavMapWidget *getMapWidget() const
+  {
+    return mapWidget;
   }
 
 signals:
@@ -100,7 +107,6 @@ private:
 
   void createNavMap();
   void options();
-  void tableContextMenu(const QPoint& pos);
   void preDatabaseLoad();
   void postDatabaseLoad(bool force);
   void createEmptySchema();

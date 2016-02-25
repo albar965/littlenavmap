@@ -50,17 +50,30 @@ public:
                          int minDistance, int maxDistance);
   void clearDistanceFilter();
 
+  void setMark(const atools::geo::Pos& value)
+  {
+    mark = value;
+  }
+
+  virtual void sort(int column, Qt::SortOrder order) override;
+
 private:
   virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
-  virtual void sort(int column, Qt::SortOrder order) override;
 
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
   QVariantList getRawRowData(const QModelIndex& index) const;
 
   SqlModel *sqlModel = nullptr;
-  atools::geo::Pos pos;
+  atools::geo::Pos pos, mark;
   sqlproxymodel::SearchDirection direction;
   int minDist = 0, maxDist = 0;
+
+  virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
+
+  bool matchDist(float lonx, float laty) const;
+public:
+  virtual QVariant data(const QModelIndex& index, int role) const override;
+
 };
 
 #endif // SQLSORTFILTERPROXYMODEL_H

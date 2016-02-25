@@ -70,15 +70,15 @@ Column& Column::canGroup(bool b)
   return *this;
 }
 
-Column& Column::canSort(bool b)
+Column& Column::canNotSort(bool b)
 {
-  canBeSorted = b;
+  canNotBeSorted = b;
   return *this;
 }
 
-Column& Column::defaultCol(bool b)
+Column& Column::noDefaultCol(bool b)
 {
-  isDefaultColumn = b;
+  isNoDefaultColumn = b;
   return *this;
 }
 
@@ -147,6 +147,12 @@ Column&Column::indexCondMap(const QStringList& indexMap)
 Column&Column::includesColName(bool value)
 {
   queryIncludesColName = value;
+  return *this;
+}
+
+Column&Column::virtualCol(bool value)
+{
+  colIsVirtual = value;
   return *this;
 }
 

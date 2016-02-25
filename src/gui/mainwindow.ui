@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1015</width>
+    <width>1052</width>
     <height>711</height>
    </rect>
   </property>
@@ -70,7 +70,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1015</width>
+     <width>1052</width>
      <height>24</height>
     </rect>
    </property>
@@ -505,6 +505,9 @@
                <property name="singleStep">
                 <number>100</number>
                </property>
+               <property name="displayIntegerBase">
+                <number>10</number>
+               </property>
               </widget>
              </item>
              <item>
@@ -707,6 +710,19 @@
               <number>0</number>
              </property>
              <item>
+              <widget class="QCheckBox" name="checkBoxAirportDistSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Distance</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="labelAirportDistMinSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -715,7 +731,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Distance: Min:</string>
+                <string>Min:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -724,6 +740,9 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportDistMinSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -731,7 +750,7 @@
                 <string> nm</string>
                </property>
                <property name="maximum">
-                <number>10000</number>
+                <number>5000</number>
                </property>
                <property name="singleStep">
                 <number>10</number>
@@ -753,6 +772,9 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportDistMaxSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="specialValueText">
                 <string/>
                </property>
@@ -763,21 +785,24 @@
                 <string> nm</string>
                </property>
                <property name="minimum">
-                <number>10</number>
+                <number>100</number>
                </property>
                <property name="maximum">
-                <number>10000</number>
+                <number>5000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
                <property name="value">
-                <number>10</number>
+                <number>100</number>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxAirportDistDirectionSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <item>
                 <property name="text">
                  <string>Any Direction</string>
@@ -803,6 +828,22 @@
                  <string>West</string>
                 </property>
                </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonAirportDistSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Update</string>
+               </property>
               </widget>
              </item>
             </layout>
@@ -1073,7 +1114,7 @@
     </layout>
    </widget>
   </widget>
-  <action name="actionFilterIncluding">
+  <action name="actionAirportSearchFilterIncluding">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/filter-add.svg</normaloff>:/littlenavmap/resources/icons/filter-add.svg</iconset>
@@ -1088,7 +1129,7 @@
     <string>Filter by logbook entries including text</string>
    </property>
   </action>
-  <action name="actionFilterExcluding">
+  <action name="actionAirportSearchFilterExcluding">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/filter-remove.svg</normaloff>:/littlenavmap/resources/icons/filter-remove.svg</iconset>
@@ -1103,7 +1144,7 @@
     <string>Filter by logbook entries excluding text</string>
    </property>
   </action>
-  <action name="actionResetView">
+  <action name="actionAirportSearchResetView">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/cleartable.svg</normaloff>:/littlenavmap/resources/icons/cleartable.svg</iconset>
@@ -1118,7 +1159,7 @@
     <string>Reset sort order, column order and column sizes to default</string>
    </property>
   </action>
-  <action name="actionTableSelectAll">
+  <action name="actionAirportSearchTableSelectAll">
    <property name="text">
     <string>Select &amp;All</string>
    </property>
@@ -1132,7 +1173,7 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionTableCopy">
+  <action name="actionAirportSearchTableCopy">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/copy.svg</normaloff>:/littlenavmap/resources/icons/copy.svg</iconset>
@@ -1206,7 +1247,7 @@
     <string>Ctrl+0</string>
    </property>
   </action>
-  <action name="actionResetSearch">
+  <action name="actionAirportSearchResetSearch">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
@@ -1245,7 +1286,7 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="actionShowAll">
+  <action name="actionAirportSearchShowAll">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/load-all.svg</normaloff>:/littlenavmap/resources/icons/load-all.svg</iconset>
@@ -1420,6 +1461,24 @@
    </property>
    <property name="text">
     <string>All</string>
+   </property>
+  </action>
+  <action name="actionAirportSearchSetMark">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set Mark</string>
+   </property>
+  </action>
+  <action name="actionSetMark">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set Mark</string>
    </property>
   </action>
  </widget>

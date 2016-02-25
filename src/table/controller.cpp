@@ -31,6 +31,8 @@
 #include <QSettings>
 #include <QSpinBox>
 #include <QSortFilterProxyModel>
+#include <QApplication>
+#include <QEventLoop>
 
 #include <geo/rect.h>
 
@@ -45,8 +47,7 @@ Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnL
 
 Controller::~Controller()
 {
-  if(!isGrouped())
-    saveViewState();
+  clearModel();
 }
 
 void Controller::clearModel()
@@ -54,13 +55,12 @@ void Controller::clearModel()
   if(!isGrouped())
     saveViewState();
 
-  QItemSelectionModel *m = view->selectionModel();
-  view->setModel(nullptr);
-  delete m;
+  viewSetModel(nullptr);
 
   if(proxyModel != nullptr)
     proxyModel->clear();
   delete proxyModel;
+  proxyModel = nullptr;
 
   if(model != nullptr)
     model->clear();
@@ -142,14 +142,55 @@ void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
 void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
                                   int minDistance, int maxDistance)
 {
-  currentDistanceCenter = center;
-  atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
+  if(center.isValid())
+  {
+    currentDistanceCenter = center;
+    atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
 
-  proxyModel->setDistanceFilter(center, dir, minDistance, maxDistance);
-  model->filterByBoundingRect(rect);
+    bool proxyWasNull = false;
+    if(proxyModel == nullptr)
+    {
+      proxyWasNull = true;
+      // Controller takes ownership
+      proxyModel = new SqlProxyModel(this, model);
+      proxyModel->setDynamicSortFilter(true);
+      proxyModel->setSourceModel(model);
+
+      viewSetModel(proxyModel);
+    }
+
+    proxyModel->setDistanceFilter(center, dir, minDistance, maxDistance);
+    model->filterByBoundingRect(rect);
+
+    if(proxyWasNull)
+    {
+      proxyModel->sort(0, Qt::DescendingOrder);
+      model->setSort("distance", Qt::DescendingOrder);
+      model->fillHeaderData();
+      view->reset();
+      processViewColumns();
+    }
+  }
+  else
+  {
+    currentDistanceCenter = atools::geo::Pos();
+
+    viewSetModel(model);
+
+    if(proxyModel != nullptr)
+    {
+      proxyModel->clear();
+      delete proxyModel;
+      proxyModel = nullptr;
+    }
+
+    model->filterByBoundingRect(atools::geo::Rect());
+    model->fillHeaderData();
+    processViewColumns();
+  }
 }
 
-void Controller::filterByDistance(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance)
+void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance)
 {
   if(currentDistanceCenter.isValid())
   {
@@ -160,13 +201,6 @@ void Controller::filterByDistance(sqlproxymodel::SearchDirection dir, int minDis
   }
 }
 
-void Controller::clearDistanceFilter()
-{
-  currentDistanceCenter = atools::geo::Pos();
-  proxyModel->clearDistanceFilter();
-  model->filterByBoundingRect(atools::geo::Rect());
-}
-
 void Controller::filterOperator(bool useAnd)
 {
   Q_ASSERT(model != nullptr);
@@ -174,6 +208,13 @@ void Controller::filterOperator(bool useAnd)
     model->filterOperator("and");
   else
     model->filterOperator("or");
+}
+
+void Controller::viewSetModel(QAbstractItemModel *newModel)
+{
+  QItemSelectionModel *m = view->selectionModel();
+  view->setModel(newModel);
+  delete m;
 }
 
 void Controller::groupByColumn(const QModelIndex& index)
@@ -222,10 +263,12 @@ const QItemSelection Controller::getSelection() const
 
 int Controller::getVisibleRowCount() const
 {
-  if(model != nullptr)
+  if(proxyModel != nullptr)
     return proxyModel->rowCount();
-  else
-    return 0;
+  else if(model != nullptr)
+    return model->rowCount();
+
+  return 0;
 }
 
 int Controller::getTotalRowCount() const
@@ -321,18 +364,24 @@ QString Controller::getFieldDataAt(const QModelIndex& index) const
 
 QModelIndex Controller::toS(const QModelIndex& index) const
 {
-  return proxyModel->mapToSource(index);
+  if(proxyModel != nullptr)
+    return proxyModel->mapToSource(index);
+  else
+    return index;
 }
 
 QModelIndex Controller::fromS(const QModelIndex& index) const
 {
-  return proxyModel->mapFromSource(index);
+  if(proxyModel != nullptr)
+    return proxyModel->mapFromSource(index);
+  else
+    return index;
 }
 
 int Controller::getIdForRow(const QModelIndex& index)
 {
   if(index.isValid())
-    return model->getRawData(toS(index).row(), 0).toInt();
+    return model->getRawData(toS(index).row(), "airport_id").toInt();
   else
     return -1;
 }
@@ -350,6 +399,7 @@ void Controller::processViewColumns()
   Q_ASSERT(model != nullptr);
   Q_ASSERT(columns != nullptr);
 
+  const Column *sort = nullptr;
   QSqlRecord rec = model->record();
   int cnt = rec.count();
   for(int i = 0; i < cnt; ++i)
@@ -357,20 +407,55 @@ void Controller::processViewColumns()
     QString field = rec.fieldName(i);
     const Column *cd = columns->getColumn(field);
 
+    if(!currentDistanceCenter.isValid() && cd->isVirtualCol())
+    {
+      qDebug() << "hide" << i << "name" << field;
+      view->hideColumn(i);
+    }
+    else
     // Hide or show column
     if(cd->isHiddenCol())
+    {
+      qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
+    }
     else
+    {
+      qDebug() << "show" << i << "name" << field;
       view->showColumn(i);
+    }
 
     // Set sort column
     if(model->getSortColumn().isEmpty())
     {
+      qDebug() << "default sort" << i << "name" << field;
       if(cd->isDefaultSortCol())
+      {
+        qDebug() << "default sort" << i << "name" << field;
         view->sortByColumn(i, cd->getDefaultSortOrder());
+        sort = cd;
+      }
     }
     else if(field == model->getSortColumn())
+    {
+      qDebug() << "sort" << i << "name" << field;
       view->sortByColumn(i, model->getSortOrder());
+      sort = cd;
+    }
+  }
+
+  const Column *c = columns->getDefaultSortColumn();
+  int idx = rec.indexOf(c->getColumnName());
+  qDebug() << "sort to default " << idx << " name" << c->getColumnName();
+  if(sort == nullptr)
+    view->sortByColumn(idx, c->getDefaultSortOrder());
+  else
+  {
+    if(sort->isHiddenCol())
+      view->sortByColumn(idx, c->getDefaultSortOrder());
+    else if(!currentDistanceCenter.isValid())
+      if(sort->isVirtualCol())
+        view->sortByColumn(idx, c->getDefaultSortOrder());
   }
 }
 
@@ -378,13 +463,8 @@ void Controller::prepareModel()
 {
   model = new SqlModel(parentWidget, db, columns);
 
-  // Controller takes ownership
-  proxyModel = new SqlProxyModel(this, model);
-  proxyModel->setDynamicSortFilter(false);
-  proxyModel->setSourceModel(model);
-
   QItemSelectionModel *m = view->selectionModel();
-  view->setModel(proxyModel);
+  view->setModel(model);
   delete m;
 
   model->fillHeaderData();
@@ -404,12 +484,37 @@ void Controller::restoreViewState()
     view->horizontalHeader()->restoreState(viewState);
 }
 
+void Controller::loadAllRowsForRectQuery()
+{
+  Q_ASSERT(model != nullptr);
+
+  if(proxyModel != nullptr)
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    model->resetSqlQuery();
+    proxyModel->invalidate();
+    while(model->canFetchMore())
+      model->fetchMore(QModelIndex());
+    QGuiApplication::restoreOverrideCursor();
+  }
+}
+
 void Controller::loadAllRows()
 {
   Q_ASSERT(model != nullptr);
 
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  if(proxyModel != nullptr)
+  {
+    model->resetSqlQuery();
+    proxyModel->invalidate();
+  }
+
   while(model->canFetchMore())
     model->fetchMore(QModelIndex());
+
+  QGuiApplication::restoreOverrideCursor();
 }
 
 void Controller::connectModelReset(std::function<void(void)> func)

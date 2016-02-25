@@ -134,11 +134,14 @@ public:
 
   void filterByBoundingRect(const atools::geo::Rect& boundingRectangle);
 
+  QString getColumnName(int col) const;
+  void setSort(const QString& colname, Qt::SortOrder order);
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
 
 private:
+  virtual void sort(int column, Qt::SortOrder order) override;
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */
@@ -149,7 +152,6 @@ private:
   atools::geo::Rect boundingRect;
 
   /* Column header was clicked */
-  virtual void sort(int column, Qt::SortOrder order) override;
 
   /* Format data for display */
   virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

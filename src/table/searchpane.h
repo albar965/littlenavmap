@@ -20,6 +20,8 @@
 
 #include <QObject>
 
+#include <geo/pos.h>
+
 class QWidget;
 class QTableView;
 class Controller;
@@ -48,10 +50,14 @@ public:
 
   void connectSearchWidgets();
 
+public slots:
+  void markChanged(const atools::geo::Pos& mark);
+
 private:
   void connectSlots();
 
   atools::sql::SqlDatabase *db;
+  atools::geo::Pos mapMark;
 
   Controller *airportController;
   ColumnList *airportColumns;

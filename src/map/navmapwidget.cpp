@@ -21,12 +21,23 @@
 #include <QContextMenuEvent>
 #include "settings/settings.h"
 
+#include <QMenu>
 #include <QSettings>
+
+#include <gui/mainwindow.h>
+#include "ui_mainwindow.h"
+
+#include <marble/GeoDataDocument.h>
+#include <marble/GeoDataIconStyle.h>
+#include <marble/GeoDataPlacemark.h>
+#include <marble/GeoDataStyle.h>
+#include <marble/GeoDataTreeModel.h>
+#include <marble/MarbleModel.h>
 
 using namespace Marble;
 
-NavMapWidget::NavMapWidget(QWidget *parent)
-  : Marble::MarbleWidget(parent)
+NavMapWidget::NavMapWidget(MainWindow *parent)
+  : Marble::MarbleWidget(parent), parentWindow(parent)
 {
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
 
@@ -39,6 +50,21 @@ NavMapWidget::NavMapWidget(QWidget *parent)
   // MarbleWidgetInputHandler *localInputHandler = inputHandler();
   // MarbleAbstractPresenter *pres = new MarbleAbstractPresenter;
   // setInputHandler(nullptr);
+  connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
+
+  GeoDataDocument *document = new GeoDataDocument;
+
+  GeoDataIconStyle *style = new GeoDataIconStyle;
+  GeoDataStyle *style2 = new GeoDataStyle;
+  style2->setIconStyle(*style);
+
+  place = new GeoDataPlacemark("Mark");
+  place->setCoordinate(0., 0., 0., GeoDataCoordinates::Degree);
+  document->append(place);
+
+  // Add the document to MarbleWidget's tree model
+  model()->treeModel()->addDocument(document);
+
 }
 
 void NavMapWidget::saveState()
@@ -47,6 +73,11 @@ void NavMapWidget::saveState()
   s->setValue("Map/Zoom", zoom());
   s->setValue("Map/LonX", centerLongitude());
   s->setValue("Map/LatY", centerLatitude());
+
+  GeoDataCoordinates c = place->coordinate();
+
+  s->setValue("Map/MarkLonX", c.longitude(GeoDataCoordinates::Degree));
+  s->setValue("Map/MarkLatY", c.latitude(GeoDataCoordinates::Degree));
 }
 
 void NavMapWidget::restoreState()
@@ -57,10 +88,47 @@ void NavMapWidget::restoreState()
 
   if(s->contains("Map/LonX") && s->contains("Map/LatY"))
     centerOn(s->value("Map/LonX").toDouble(), s->value("Map/LatY").toDouble(), true);
+
+  if(s->contains("Map/MarkLonX") && s->contains("Map/MarkLatY"))
+  {
+    place->setCoordinate(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble(),
+                         0., GeoDataCoordinates::Degree);
+    model()->treeModel()->updateFeature(place);
+
+    atools::geo::Pos newPos(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble());
+    qDebug() << "new mark" << newPos;
+    emit markChanged(newPos);
+  }
 }
 
 void NavMapWidget::showPoint(double lonX, double latY, int zoom)
 {
+  qDebug() << "NavMapWidget::showPoint";
   setZoom(zoom);
   centerOn(lonX, latY, false);
+}
+
+void NavMapWidget::mapContextMenu(const QPoint& pos)
+{
+  Q_UNUSED(pos);
+  qInfo() << "tableContextMenu";
+
+  QMenu m;
+  m.addAction(parentWindow->getUi()->actionSetMark);
+
+  QPoint cpos = QCursor::pos();
+  QAction *act = m.exec(cpos);
+  if(act == parentWindow->getUi()->actionSetMark)
+  {
+    qreal lon, lat;
+    if(geoCoordinates(pos.x(), pos.y(), lon, lat))
+    {
+      place->setCoordinate(lon, lat, 0., GeoDataCoordinates::Degree);
+      model()->treeModel()->updateFeature(place);
+
+      qDebug() << "new mark" << atools::geo::Pos(lon, lat);
+
+      emit markChanged(atools::geo::Pos(lon, lat));
+    }
+  }
 }

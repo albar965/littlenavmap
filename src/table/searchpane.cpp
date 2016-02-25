@@ -52,6 +52,24 @@ SearchPane::~SearchPane()
 
 }
 
+void SearchPane::markChanged(const atools::geo::Pos& mark)
+{
+  mapMark = mark;
+  qDebug() << "new mark" << mark;
+  if(airportColumns->getDistanceCheckBox()->isChecked() && mark.isValid())
+  {
+    QSpinBox *minDistanceWidget = airportColumns->getMinDistanceWidget();
+    QSpinBox *maxDistanceWidget = airportColumns->getMaxDistanceWidget();
+    QComboBox *distanceDirWidget = airportColumns->getDistanceDirectionWidget();
+
+    airportController->filterByDistance(mapMark,
+                                        static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->
+                                                                                    currentIndex()),
+                                        minDistanceWidget->value(), maxDistanceWidget->value());
+    airportController->loadAllRowsForRectQuery();
+  }
+}
+
 void SearchPane::connectSearchWidgets()
 {
   void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -64,11 +82,17 @@ void SearchPane::connectSearchWidgets()
     {
       connect(col->getLineEditWidget(), &QLineEdit::textChanged, [=](const QString &text)
       {airportController->filterByLineEdit(col, text); });
+
+      connect(col->getLineEditWidget(), &QLineEdit::editingFinished,
+              airportController, &Controller::loadAllRowsForRectQuery);
     }
     else if(col->getComboBoxWidget() != nullptr)
     {
       connect(col->getComboBoxWidget(), curIndexChangedPtr, [=](int index)
       {airportController->filterByComboBox(col, index, index == 0); });
+
+      connect(col->getComboBoxWidget(), curIndexChangedPtr,
+              airportController, &Controller::loadAllRowsForRectQuery);
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
@@ -79,14 +103,23 @@ void SearchPane::connectSearchWidgets()
     {
       connect(col->getSpinBoxWidget(), valueChangedPtr, [=](int value)
       {airportController->filterBySpinBox(col, value); });
+
+      connect(col->getSpinBoxWidget(), &QSpinBox::editingFinished,
+              airportController, &Controller::loadAllRowsForRectQuery);
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [=](int value)
       {airportController->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value()); });
 
+      connect(col->getMinSpinBoxWidget(), &QSpinBox::editingFinished,
+              airportController, &Controller::loadAllRowsForRectQuery);
+
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [=](int value)
       {airportController->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value); });
+
+      connect(col->getMaxSpinBoxWidget(), &QSpinBox::editingFinished,
+              airportController, &Controller::loadAllRowsForRectQuery);
     }
     /* *INDENT-ON* */
   }
@@ -94,12 +127,31 @@ void SearchPane::connectSearchWidgets()
   QSpinBox *minDistanceWidget = airportColumns->getMinDistanceWidget();
   QSpinBox *maxDistanceWidget = airportColumns->getMaxDistanceWidget();
   QComboBox *distanceDirWidget = airportColumns->getDistanceDirectionWidget();
-  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr && distanceDirWidget != nullptr)
+  QCheckBox *distanceCheckBox = airportColumns->getDistanceCheckBox();
+  QPushButton *distanceUpdate = airportColumns->getDistanceUpdateButton();
+
+  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr &&
+     distanceDirWidget != nullptr && distanceCheckBox != nullptr && distanceUpdate != nullptr)
   {
     /* *INDENT-OFF* */
-    connect(minDistanceWidget, valueChangedPtr, [=](int value)
+    connect(distanceCheckBox, &QCheckBox::stateChanged, [=](int state)
     {
       airportController->filterByDistance(
+            state == Qt::Checked ? mapMark : atools::geo::Pos(),
+            static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+            minDistanceWidget->value(), maxDistanceWidget->value());
+
+      minDistanceWidget->setEnabled(state == Qt::Checked);
+      maxDistanceWidget->setEnabled(state == Qt::Checked);
+      distanceDirWidget->setEnabled(state == Qt::Checked);
+      distanceUpdate->setEnabled(state == Qt::Checked);
+      if(state == Qt::Checked)
+        airportController->loadAllRowsForRectQuery();
+    });
+
+    connect(minDistanceWidget, valueChangedPtr, [=](int value)
+    {
+      airportController->filterByDistanceUpdate(
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             value, maxDistanceWidget->value());
       maxDistanceWidget->setMinimum(value > 10 ? value : 10);
@@ -107,7 +159,7 @@ void SearchPane::connectSearchWidgets()
 
     connect(maxDistanceWidget, valueChangedPtr, [=](int value)
     {
-      airportController->filterByDistance(
+      airportController->filterByDistanceUpdate(
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             minDistanceWidget->value(), value);
       minDistanceWidget->setMaximum(value);
@@ -115,10 +167,15 @@ void SearchPane::connectSearchWidgets()
 
     connect(distanceDirWidget, curIndexChangedPtr, [=](int index)
     {
-      airportController->filterByDistance(static_cast<sqlproxymodel::SearchDirection>(index),
-                                          minDistanceWidget->value(),
-                                          maxDistanceWidget->value());
+      airportController->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
+                                                minDistanceWidget->value(),
+                                                maxDistanceWidget->value());
+      airportController->loadAllRowsForRectQuery();
     });
+
+    connect(distanceUpdate, &QPushButton::clicked, airportController, &Controller::loadAllRowsForRectQuery);
+    connect(minDistanceWidget, &QSpinBox::editingFinished, airportController, &Controller::loadAllRowsForRectQuery);
+    connect(maxDistanceWidget, &QSpinBox::editingFinished, airportController, &Controller::loadAllRowsForRectQuery);
     /* *INDENT-ON* */
   }
 }
@@ -130,10 +187,10 @@ void SearchPane::connectSlots()
           &SearchPane::doubleClick);
   connect(tableViewAirportSearch, &QTableView::customContextMenuRequested, this,
           &SearchPane::tableContextMenu);
-  connect(ui->actionResetSearch, &QAction::triggered, this, &SearchPane::resetSearch);
-  connect(ui->actionResetView, &QAction::triggered, this, &SearchPane::resetView);
-  connect(ui->actionTableCopy, &QAction::triggered, this, &SearchPane::tableCopyCipboard);
-  connect(ui->actionShowAll, &QAction::triggered, this, &SearchPane::loadAllRowsIntoView);
+  connect(ui->actionAirportSearchResetSearch, &QAction::triggered, this, &SearchPane::resetSearch);
+  connect(ui->actionAirportSearchResetView, &QAction::triggered, this, &SearchPane::resetView);
+  connect(ui->actionAirportSearchTableCopy, &QAction::triggered, this, &SearchPane::tableCopyCipboard);
+  connect(ui->actionAirportSearchShowAll, &QAction::triggered, this, &SearchPane::loadAllRowsIntoView);
 }
 
 void SearchPane::doubleClick(const QModelIndex& index)
@@ -154,12 +211,6 @@ void SearchPane::doubleClick(const QModelIndex& index)
     if(query.next())
       emit showPoint(query.value("lonx").toDouble(), query.value("laty").toDouble(), 2700);
     qDebug() << "id" << id;
-
-    airportController->filterByDistance(
-      atools::geo::Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
-      static_cast<sqlproxymodel::SearchDirection>(airportColumns->getDistanceDirectionWidget()->currentIndex()),
-      airportColumns->getMinDistanceWidget()->value(),
-      airportColumns->getMaxDistanceWidget()->value());
   }
 }
 
@@ -195,52 +246,57 @@ void SearchPane::tableContextMenu(const QPoint& pos)
   // Build the menu
   QMenu menu;
 
-  menu.addAction(ui->actionTableCopy);
-  ui->actionTableCopy->setEnabled(index.isValid());
+  menu.addAction(ui->actionAirportSearchSetMark);
+  menu.addSeparator();
 
-  menu.addAction(ui->actionTableSelectAll);
-  ui->actionTableSelectAll->setEnabled(airportController->getTotalRowCount() > 0);
+  menu.addAction(ui->actionAirportSearchTableCopy);
+  ui->actionAirportSearchTableCopy->setEnabled(index.isValid());
+
+  menu.addAction(ui->actionAirportSearchTableSelectAll);
+  ui->actionAirportSearchTableSelectAll->setEnabled(airportController->getTotalRowCount() > 0);
 
   menu.addSeparator();
-  menu.addAction(ui->actionResetView);
-  menu.addAction(ui->actionResetSearch);
-  menu.addAction(ui->actionShowAll);
+  menu.addAction(ui->actionAirportSearchResetView);
+  menu.addAction(ui->actionAirportSearchResetSearch);
+  menu.addAction(ui->actionAirportSearchShowAll);
 
   QString actionFilterIncludingText, actionFilterExcludingText;
-  actionFilterIncludingText = ui->actionFilterIncluding->text();
-  actionFilterExcludingText = ui->actionFilterExcluding->text();
+  actionFilterIncludingText = ui->actionAirportSearchFilterIncluding->text();
+  actionFilterExcludingText = ui->actionAirportSearchFilterExcluding->text();
 
   // Add data to menu item text
-  ui->actionFilterIncluding->setText(ui->actionFilterIncluding->text().arg(fieldData));
-  ui->actionFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
+  ui->actionAirportSearchFilterIncluding->setText(ui->actionAirportSearchFilterIncluding->text().arg(
+                                                    fieldData));
+  ui->actionAirportSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
 
-  ui->actionFilterExcluding->setText(ui->actionFilterExcluding->text().arg(fieldData));
-  ui->actionFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
+  ui->actionAirportSearchFilterExcluding->setText(ui->actionAirportSearchFilterExcluding->text().arg(
+                                                    fieldData));
+  ui->actionAirportSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
 
   menu.addSeparator();
-  menu.addAction(ui->actionFilterIncluding);
-  menu.addAction(ui->actionFilterExcluding);
+  menu.addAction(ui->actionAirportSearchFilterIncluding);
+  menu.addAction(ui->actionAirportSearchFilterExcluding);
   menu.addSeparator();
 
   QAction *a = menu.exec(QCursor::pos());
   if(a != nullptr)
   {
     // A menu item was selected
-    if(a == ui->actionFilterIncluding)
+    if(a == ui->actionAirportSearchFilterIncluding)
       airportController->filterIncluding(index);
-    else if(a == ui->actionFilterExcluding)
+    else if(a == ui->actionAirportSearchFilterExcluding)
       airportController->filterExcluding(index);
-    else if(a == ui->actionTableSelectAll)
+    else if(a == ui->actionAirportSearchTableSelectAll)
       airportController->selectAll();
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action
   }
 
   // Restore old menu texts
-  ui->actionFilterIncluding->setText(actionFilterIncludingText);
-  ui->actionFilterIncluding->setEnabled(true);
+  ui->actionAirportSearchFilterIncluding->setText(actionFilterIncludingText);
+  ui->actionAirportSearchFilterIncluding->setEnabled(true);
 
-  ui->actionFilterExcluding->setText(actionFilterExcludingText);
-  ui->actionFilterExcluding->setEnabled(true);
+  ui->actionAirportSearchFilterExcluding->setText(actionFilterExcludingText);
+  ui->actionAirportSearchFilterExcluding->setEnabled(true);
 
 }
 

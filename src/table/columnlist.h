@@ -27,6 +27,8 @@ class QWidget;
 class Column;
 class QSpinBox;
 class QComboBox;
+class QCheckBox;
+class QPushButton;
 
 /*
  * A list of column descriptors that define behaviour and display in the table
@@ -47,6 +49,8 @@ public:
 
   /* Get column descriptor for the given query column name or alias */
   const Column *getColumn(const QString& field) const;
+
+  const Column *getDefaultSortColumn() const;
 
   /* Get all column descriptors */
   const QVector<Column *>& getColumns() const
@@ -78,7 +82,8 @@ public:
 
   void clear();
 
-  void assignDistanceSearchWidgets(QComboBox *directionWidget, QSpinBox *minWidget, QSpinBox *maxWidget);
+  void assignDistanceSearchWidgets(QPushButton* updateButton, QCheckBox *checkBox, QComboBox *directionWidget, QSpinBox *minWidget,
+                                   QSpinBox *maxWidget);
 
   QSpinBox *getMinDistanceWidget() const
   {
@@ -95,8 +100,20 @@ public:
     return distanceDirectionWidget;
   }
 
+  QCheckBox *getDistanceCheckBox() const
+  {
+    return distanceCheckBox;
+  }
+
+  QPushButton* getDistanceUpdateButton() const
+  {
+    return distanceUpdate;
+  }
+
 private:
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
+  QCheckBox *distanceCheckBox = nullptr;
+  QPushButton *distanceUpdate = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
   QString tablename;
   QVector<Column *> columns;

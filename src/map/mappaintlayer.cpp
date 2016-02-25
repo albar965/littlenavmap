@@ -48,46 +48,46 @@ bool MapPaintLayer::render(GeoPainter *painter,
 {
   // qDebug() << ;
   // Have window title reflect the current paint layer
-  GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
-  painter->mapQuality();
-  painter->setRenderHint(QPainter::Antialiasing, true);
+//  GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
+//  painter->mapQuality();
+//  painter->setRenderHint(QPainter::Antialiasing, true);
 
-  painter->setPen(QPen(QBrush(QColor::fromRgb(255, 0, 0, 200)), 3.0, Qt::SolidLine, Qt::RoundCap));
+//  painter->setPen(QPen(QBrush(QColor::fromRgb(255, 0, 0, 200)), 3.0, Qt::SolidLine, Qt::RoundCap));
 
-  if(m_widget->viewContext() == Marble::Still)
-    painter->drawEllipse(home, 10, 5, true);
+//  if(m_widget->viewContext() == Marble::Still)
+//    painter->drawEllipse(home, 10, 5, true);
 
-  GeoDataCoordinates France(2.2, 48.52, 0.0, GeoDataCoordinates::Degree);
-  painter->setPen(QColor(0, 0, 0));
-  painter->drawText(France, "France");
+//  GeoDataCoordinates France(2.2, 48.52, 0.0, GeoDataCoordinates::Degree);
+//  painter->setPen(QColor(0, 0, 0));
+//  painter->drawText(France, "France");
 
-  GeoDataCoordinates Canada(-77.02, 48.52, 0.0, GeoDataCoordinates::Degree);
-  painter->setPen(QColor(0, 0, 0));
-  painter->drawText(Canada, "Canada");
+//  GeoDataCoordinates Canada(-77.02, 48.52, 0.0, GeoDataCoordinates::Degree);
+//  painter->setPen(QColor(0, 0, 0));
+//  painter->drawText(Canada, "Canada");
 
-  // A line from France to Canada without tessellation
+//  // A line from France to Canada without tessellation
 
-  GeoDataLineString shapeNoTessellation(NoTessellation);
-  shapeNoTessellation << France << Canada;
+//  GeoDataLineString shapeNoTessellation(NoTessellation);
+//  shapeNoTessellation << France << Canada;
 
-  painter->setPen(QColor(255, 0, 0));
-  painter->drawPolyline(shapeNoTessellation);
+//  painter->setPen(QColor(255, 0, 0));
+//  painter->drawPolyline(shapeNoTessellation);
 
-  // The same line, but with tessellation
+//  // The same line, but with tessellation
 
-  GeoDataLineString shapeTessellate(Tessellate);
-  shapeTessellate << France << Canada;
+//  GeoDataLineString shapeTessellate(Tessellate);
+//  shapeTessellate << France << Canada;
 
-  painter->setPen(QColor(0, 255, 0));
-  painter->drawPolyline(shapeTessellate);
+//  painter->setPen(QColor(0, 255, 0));
+//  painter->drawPolyline(shapeTessellate);
 
-  // Now following the latitude circles
+//  // Now following the latitude circles
 
-  GeoDataLineString shapeLatitudeCircle(RespectLatitudeCircle | Tessellate);
-  shapeLatitudeCircle << France << Canada;
+//  GeoDataLineString shapeLatitudeCircle(RespectLatitudeCircle | Tessellate);
+//  shapeLatitudeCircle << France << Canada;
 
-  painter->setPen(QColor(0, 0, 255));
-  painter->drawPolyline(shapeLatitudeCircle);
+//  painter->setPen(QColor(0, 0, 255));
+//  painter->drawPolyline(shapeLatitudeCircle);
 
   // RespectLatitudeCircle = 0x2,
   // FollowGround = 0x4,

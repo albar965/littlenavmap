@@ -173,10 +173,12 @@ public:
                         int minDistance, int maxDistance);
 
   /* Distance updates from spin box widgets */
-  void filterByDistance(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
-  void clearDistanceFilter();
+  void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
 
+  void loadAllRowsForRectQuery();
 private:
+  void viewSetModel(QAbstractItemModel *newModel);
+
   /* Adapt columns to query change */
   void processViewColumns();
 

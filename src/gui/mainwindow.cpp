@@ -71,11 +71,12 @@ MainWindow::MainWindow(QWidget *parent) :
   readSettings();
   openDatabase();
 
+  createNavMap();
+
   searchPanes = new SearchPaneList(this, &db);
   searchPanes->createAirportSearch();
-  searchPanes->restoreState();
 
-  createNavMap();
+  searchPanes->restoreState();
   mapWidget->restoreState();
 
   connectAllSlots();
@@ -284,8 +285,6 @@ void MainWindow::connectAllSlots()
 
   connect(searchPanes->getAirportSearchPane(), &SearchPane::showPoint, mapWidget, &NavMapWidget::showPoint);
 
-  connect(mapWidget, &NavMapWidget::customContextMenuRequested, this, &MainWindow::mapContextMenu);
-
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
 
@@ -293,7 +292,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
-
 }
 
 void MainWindow::options()
@@ -312,18 +310,6 @@ void MainWindow::updateActionStates()
 {
   qDebug() << "Updating action states";
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
-}
-
-void MainWindow::mapContextMenu(const QPoint& pos)
-{
-  Q_UNUSED(pos);
-  qInfo() << "tableContextMenu";
-
-  QMenu m;
-  m.addAction(ui->actionTableCopy);
-  m.addAction(ui->actionTableSelectAll);
-
-  m.exec(QCursor::pos());
 }
 
 void MainWindow::openDatabase()
@@ -377,8 +363,7 @@ void MainWindow::readSettings()
   qDebug() << "readSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.restore({this, ui->statusBar, ui->tableViewAirportSearch});
-
+  ws.restore({this, ui->statusBar});
 }
 
 void MainWindow::writeSettings()
@@ -386,7 +371,7 @@ void MainWindow::writeSettings()
   qDebug() << "writeSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.save({this, ui->statusBar, ui->tableViewAirportSearch});
+  ws.save({this, ui->statusBar});
   ws.syncSettings();
 
 }

@@ -65,11 +65,11 @@ public:
   /* Column can be used in group by */
   Column& canGroup(bool b = true);
 
-  /* Table can be sorted by column */
-  Column& canSort(bool b = true);
+  /* Table can not be sorted by this column */
+  Column& canNotSort(bool b = true);
 
   /* Column is part of default view */
-  Column& defaultCol(bool b = true);
+  Column& noDefaultCol(bool b = true);
 
   /* Column is hidden in view */
   Column& hidden(bool b = true);
@@ -97,6 +97,8 @@ public:
   Column& indexCondMap(const QStringList& indexMap);
 
   Column& includesColName(bool value = true);
+
+  Column& virtualCol(bool value = true);
 
   bool isGroupShow() const
   {
@@ -128,9 +130,9 @@ public:
     return canBeGrouped;
   }
 
-  bool isSort() const
+  bool noSort() const
   {
-    return canBeSorted;
+    return canNotBeSorted;
   }
 
   const QString& getColumnName() const
@@ -173,9 +175,9 @@ public:
     return maxColWidget;
   }
 
-  bool isDefaultCol() const
+  bool isNoDefaultCol() const
   {
-    return isDefaultColumn;
+    return isNoDefaultColumn;
   }
 
   bool isAlwaysAndCol() const
@@ -196,6 +198,11 @@ public:
   bool isHiddenCol() const
   {
     return isHiddenColumn;
+  }
+
+  bool isVirtualCol() const
+  {
+    return colIsVirtual;
   }
 
   bool isDefaultSortCol() const
@@ -253,12 +260,13 @@ private:
   bool groupBySum = false;
   bool canBeFiltered = false;
   bool canBeGrouped = false;
-  bool canBeSorted = false;
-  bool isDefaultColumn = false;
+  bool canNotBeSorted = false;
+  bool isNoDefaultColumn = false;
   bool isDefaultSortColumn = false;
   bool isAlwaysAndColumn = false;
   bool isHiddenColumn = false;
   bool queryIncludesColName = false;
+  bool colIsVirtual = false;
 
   Qt::SortOrder defaultSortOrd = Qt::SortOrder::AscendingOrder;
 };
