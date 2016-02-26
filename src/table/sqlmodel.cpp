@@ -22,15 +22,15 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "logging/loggingdefs.h"
-
 #include "table/column.h"
 
 #include <QApplication>
 #include <QLineEdit>
 #include <QSqlField>
-#include <QPalette>
 #include <QCheckBox>
 #include <QSpinBox>
+
+#include <functional>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -40,13 +40,9 @@ using atools::gui::ErrorHandler;
 SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *columnList)
   : QSqlQueryModel(parent), db(sqlDb), columns(columnList), parentWidget(parent)
 {
-  /* Alternating colors */
-  rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
-
-  /* Slightly darker background for sort column */
-  rowSortBgColor = rowBgColor.darker(106);
-  rowSortAltBgColor = rowAltBgColor.darker(106);
+  handlerRoles << Qt::DisplayRole << Qt::BackgroundRole << Qt::TextAlignmentRole;
+  setFormatCallback(nullptr);
+  setDataCallback(nullptr);
 
   buildQuery();
 }
@@ -244,6 +240,26 @@ void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
   orderByColIndex = record().indexOf(colname);
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
+}
+
+void SqlModel::setFormatCallback(const FormatFunctionType& value)
+{
+  using namespace std::placeholders;
+
+  if(value == nullptr)
+    formatFunc = std::bind(&SqlModel::defaultFormatHandler, this, _1, _2, _3);
+  else
+    formatFunc = value;
+}
+
+void SqlModel::setDataCallback(const DataFunctionType& value)
+{
+  using namespace std::placeholders;
+
+  if(value == nullptr)
+    dataFunc = std::bind(&SqlModel::defaultDataHandler, this, _1, _2, _3, _4, _5, _6);
+  else
+    dataFunc = value;
 }
 
 void SqlModel::reset()
@@ -563,15 +579,7 @@ void SqlModel::resetSqlQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
-  Q_UNUSED(colName);
-  if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
-    return QLocale().toString(value.toInt());
-  else if(value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong)
-    return QLocale().toString(value.toLongLong());
-  else if(value.type() == QVariant::Double)
-    return QLocale().toString(value.toDouble());
-
-  return value.toString();
+  return formatFunc(columns->getColumn(colName), QVariant(), value);
 }
 
 Qt::SortOrder SqlModel::getSortOrder() const
@@ -579,39 +587,53 @@ Qt::SortOrder SqlModel::getSortOrder() const
   return orderByOrder == "desc" ? Qt::DescendingOrder : Qt::AscendingOrder;
 }
 
+void SqlModel::setHandlerRoles(const QSet<Qt::ItemDataRole>& value)
+{
+  handlerRoles = value;
+}
+
+QString SqlModel::defaultFormatHandler(const Column *col, const QVariant& value,
+                                       const QVariant& dataValue) const
+{
+  Q_UNUSED(col);
+  Q_UNUSED(dataValue);
+  return value.toString();
+}
+
+QVariant SqlModel::defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+                                      const QVariant& dataValue, Qt::ItemDataRole role) const
+{
+  Q_UNUSED(colIndex);
+  Q_UNUSED(rowIndex);
+  if(role == Qt::DisplayRole)
+    return formatFunc(col, value, dataValue);
+
+  return QVariant();
+}
+
 QVariant SqlModel::data(const QModelIndex& index, int role) const
 {
   if(!index.isValid())
     return QVariant();
 
-  if(role == Qt::DisplayRole)
+  Qt::ItemDataRole dataRole = static_cast<Qt::ItemDataRole>(role);
+  QVariant roleValue = QSqlQueryModel::data(index, role);
+  if(handlerRoles.contains(dataRole))
   {
-    QVariant var = QSqlQueryModel::data(index, role);
+    QVariant dataValue = QSqlQueryModel::data(index, Qt::DisplayRole);
     QString col = record().field(index.column()).name();
-    return formatValue(col, var);
-  }
-  else if(role == Qt::BackgroundRole)
-  {
-    if(index.column() == orderByColIndex)
-      return rowSortBgColor;
-  }
-  else if(role == Qt::TextAlignmentRole)
-  {
-    QString col = record().field(index.column()).name();
+    const Column *column = columns->getColumn(col);
 
-    QVariant value = QSqlQueryModel::data(index, Qt::DisplayRole);
+    int row = -1;
+    if(!boundingRect.isValid())
+      // no reliable row information with proxy
+      row = index.row();
 
-    if(value.type() == QVariant::Int || value.type() == QVariant::UInt)
-      return Qt::AlignRight;
-    else if(value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong)
-      return Qt::AlignRight;
-    else if(value.type() == QVariant::Double)
-      return Qt::AlignRight;
-    else
-      return QSqlQueryModel::data(index, role);
+    QVariant retval = dataFunc(index.column(), row, column, roleValue, dataValue, dataRole);
+    if(retval.isValid())
+      return retval;
   }
-
-  return QVariant();
+  return roleValue;
 }
 
 void SqlModel::fetchMore(const QModelIndex& parent)

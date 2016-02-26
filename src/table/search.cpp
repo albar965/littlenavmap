@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/searchpane.h"
+#include "table/search.h"
 #include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
 #include "sql/sqldatabase.h"
@@ -34,18 +34,29 @@
 #include <QMenu>
 #include <QLineEdit>
 
-SearchPane::SearchPane(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                       atools::sql::SqlDatabase *sqlDb)
+Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+               atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent)
 {
+  /* Alternating colors */
+  rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+  rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
+
+  /* Slightly darker background for sort column */
+  rowSortBgColor = rowBgColor.darker(106);
+  rowSortAltBgColor = rowAltBgColor.darker(106);
+
+  // Avoid stealing of Ctrl-C from other default menus
+  parentWidget->getUi()->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
 }
 
-SearchPane::~SearchPane()
+Search::~Search()
 {
 
 }
 
-void SearchPane::initViewAndController()
+void Search::initViewAndController()
 {
   view->horizontalHeader()->setSectionsMovable(true);
 
@@ -55,7 +66,7 @@ void SearchPane::initViewAndController()
   controller->prepareModel();
 }
 
-void SearchPane::markChanged(const atools::geo::Pos& mark)
+void Search::markChanged(const atools::geo::Pos& mark)
 {
   mapMark = mark;
   qDebug() << "new mark" << mark;
@@ -73,7 +84,7 @@ void SearchPane::markChanged(const atools::geo::Pos& mark)
   }
 }
 
-void SearchPane::connectSearchWidgets()
+void Search::connectSearchWidgets()
 {
   void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
@@ -186,15 +197,20 @@ void SearchPane::connectSearchWidgets()
   }
 }
 
-void SearchPane::connectSlots()
+void Search::connectSlots()
 {
-  connect(view, &QTableView::doubleClicked,
-          this, &SearchPane::doubleClick);
-  connect(view, &QTableView::customContextMenuRequested,
-          this, &SearchPane::tableContextMenu);
+  connect(view, &QTableView::doubleClicked, this, &Search::doubleClick);
+  connect(view, &QTableView::customContextMenuRequested, this, &Search::tableContextMenu);
+
+  Ui::MainWindow *ui = parentWidget->getUi();
+  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &Search::resetSearch);
+  connect(ui->actionSearchResetView, &QAction::triggered, this, &Search::resetView);
+  connect(ui->actionSearchTableCopy, &QAction::triggered, this, &Search::tableCopyCipboard);
+  connect(ui->actionSearchShowAll, &QAction::triggered, this, &Search::loadAllRowsIntoView);
+
 }
 
-void SearchPane::doubleClick(const QModelIndex& index)
+void Search::doubleClick(const QModelIndex& index)
 {
   qDebug() << "double click";
 
@@ -216,13 +232,13 @@ void SearchPane::doubleClick(const QModelIndex& index)
   }
 }
 
-void SearchPane::preDatabaseLoad()
+void Search::preDatabaseLoad()
 {
-  controller->resetSearch();
+  // controller->resetSearch();
   controller->clearModel();
 }
 
-void SearchPane::postDatabaseLoad()
+void Search::postDatabaseLoad()
 {
   controller->prepareModel();
   // connectControllerSlots();
@@ -233,7 +249,7 @@ void SearchPane::postDatabaseLoad()
   // updateGlobalStats();
 }
 
-void SearchPane::resetView()
+void Search::resetView()
 {
   atools::gui::Dialog dlg(parentWidget);
   int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
@@ -249,13 +265,13 @@ void SearchPane::resetView()
   }
 }
 
-void SearchPane::resetSearch()
+void Search::resetSearch()
 {
   controller->resetSearch();
   parentWidget->getUi()->statusBar->showMessage(tr("Search filters cleared."));
 }
 
-void SearchPane::tableCopyCipboard()
+void Search::tableCopyCipboard()
 {
   // QString rows;
   int exported = 0; // csvExporter->exportSelectedToString(&rows);
@@ -264,8 +280,97 @@ void SearchPane::tableCopyCipboard()
     QString(tr("Copied %1 logbook entries to clipboard.")).arg(exported));
 }
 
-void SearchPane::loadAllRowsIntoView()
+void Search::loadAllRowsIntoView()
 {
   controller->loadAllRows();
   parentWidget->getUi()->statusBar->showMessage(tr("All logbook entries read."));
+}
+
+void Search::tableContextMenu(const QPoint& pos)
+{
+  QObject *localSender = sender();
+  qDebug() << localSender->metaObject()->className() << localSender->objectName();
+
+  Ui::MainWindow *ui = parentWidget->getUi();
+  QString header, fieldData;
+  bool columnCanFilter = false, columnCanGroup = false;
+
+  QModelIndex index = controller->getModelIndexAt(pos);
+  if(index.isValid())
+  {
+    const Column *columnDescriptor = controller->getColumn(index.column());
+    Q_ASSERT(columnDescriptor != nullptr);
+    columnCanFilter = columnDescriptor->isFilter();
+    columnCanGroup = columnDescriptor->isGroup();
+
+    if(columnCanGroup)
+    {
+      header = controller->getHeaderNameAt(index);
+      Q_ASSERT(!header.isNull());
+      // strip LF and other from header name
+      header.replace("-\n", "").replace("\n", " ");
+    }
+
+    if(columnCanFilter)
+      // Disabled menu items don't need any content
+      fieldData = controller->getFieldDataAt(index);
+  }
+  else
+    qDebug() << "Invalid index at" << pos;
+
+  // Build the menu
+  QMenu menu;
+
+  menu.addAction(ui->actionSearchSetMark);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchTableCopy);
+  ui->actionSearchTableCopy->setEnabled(index.isValid());
+
+  menu.addAction(ui->actionSearchTableSelectAll);
+  ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
+
+  menu.addSeparator();
+  menu.addAction(ui->actionSearchResetView);
+  menu.addAction(ui->actionSearchResetSearch);
+  menu.addAction(ui->actionSearchShowAll);
+
+  QString actionFilterIncludingText, actionFilterExcludingText;
+  actionFilterIncludingText = ui->actionSearchFilterIncluding->text();
+  actionFilterExcludingText = ui->actionSearchFilterExcluding->text();
+
+  // Add data to menu item text
+  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().arg(
+                                             fieldData));
+  ui->actionSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
+
+  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(
+                                             fieldData));
+  ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
+
+  menu.addSeparator();
+  menu.addAction(ui->actionSearchFilterIncluding);
+  menu.addAction(ui->actionSearchFilterExcluding);
+  menu.addSeparator();
+
+  QAction *a = menu.exec(QCursor::pos());
+  if(a != nullptr)
+  {
+    // A menu item was selected
+    if(a == ui->actionSearchFilterIncluding)
+      controller->filterIncluding(index);
+    else if(a == ui->actionSearchFilterExcluding)
+      controller->filterExcluding(index);
+    else if(a == ui->actionSearchTableSelectAll)
+      controller->selectAll();
+    // else if(a == ui->actionTableCopy) this is alread covered by the connected action
+  }
+
+  // Restore old menu texts
+  ui->actionSearchFilterIncluding->setText(actionFilterIncludingText);
+  ui->actionSearchFilterIncluding->setEnabled(true);
+
+  ui->actionSearchFilterExcluding->setText(actionFilterExcludingText);
+  ui->actionSearchFilterExcluding->setEnabled(true);
+
 }

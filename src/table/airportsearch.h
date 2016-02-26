@@ -20,7 +20,7 @@
 
 #include "geo/pos.h"
 
-#include "table/searchpane.h"
+#include "table/search.h"
 
 #include <QObject>
 
@@ -30,6 +30,7 @@ class Controller;
 class ColumnList;
 class QAction;
 class MainWindow;
+class Column;
 
 namespace atools {
 namespace sql {
@@ -37,25 +38,37 @@ class SqlDatabase;
 }
 }
 
-class ApSearchPane :
-  public SearchPane
+class AirportSearch :
+  public Search
 {
   Q_OBJECT
 
 public:
-  explicit ApSearchPane(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                        atools::sql::SqlDatabase *sqlDb);
-  virtual ~ApSearchPane();
+  explicit AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                         atools::sql::SqlDatabase *sqlDb);
+  virtual ~AirportSearch();
 
   virtual void saveState() override;
   virtual void restoreState() override;
 
 private:
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+                            const QVariant& dataValue, Qt::ItemDataRole role) const;
+  QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
+
   void connectSlots() override;
-  void tableContextMenu(const QPoint& pos) override;
 
   QList<QObject *> airportSearchWidgets;
   QList<QAction *> airportSearchMenuActions;
+
+  QIcon *boolIcon;
+
+  static QStringList ratings;
+  static QSet<QString> boolColumns;
+  static QSet<QString> numberColumns;
+  static QHash<QString, QString> surfaceMap;
+  static QHash<QString, QString> parkingMapGate;
+  static QHash<QString, QString> parkingMapRamp;
 
 };
 

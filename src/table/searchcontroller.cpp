@@ -15,60 +15,60 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/searchpanelist.h"
+#include "table/searchcontroller.h"
 #include "gui/mainwindow.h"
 #include "table/column.h"
 #include "table/columnlist.h"
-#include "table/apsearchpane.h"
+#include "table/airportsearch.h"
 #include "ui_mainwindow.h"
 #include "map/navmapwidget.h"
 #include "gui/widgetstate.h"
 
-SearchPaneList::SearchPaneList(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
+SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb), parentWidget(parent)
 {
 }
 
-SearchPaneList::~SearchPaneList()
+SearchController::~SearchController()
 {
   delete airportSearchPane;
   delete airportColumns;
 }
 
-void SearchPaneList::saveState()
+void SearchController::saveState()
 {
   airportSearchPane->saveState();
 }
 
-void SearchPaneList::restoreState()
+void SearchController::restoreState()
 {
   airportSearchPane->restoreState();
 }
 
-SearchPane *SearchPaneList::getAirportSearchPane() const
+Search *SearchController::getAirportSearchPane() const
 {
   return airportSearchPane;
 }
 
-void SearchPaneList::createAirportSearch()
+void SearchController::createAirportSearch()
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearchPane = new ApSearchPane(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
-                                       airportColumns, db);
+  airportSearchPane = new AirportSearch(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
+                                        airportColumns, db);
   airportSearchPane->connectSlots();
 
   connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
-          airportSearchPane, &SearchPane::markChanged);
+          airportSearchPane, &Search::markChanged);
 }
 
-void SearchPaneList::preDatabaseLoad()
+void SearchController::preDatabaseLoad()
 {
   if(airportSearchPane != nullptr)
     airportSearchPane->preDatabaseLoad();
 }
 
-void SearchPaneList::postDatabaseLoad()
+void SearchController::postDatabaseLoad()
 {
   if(airportSearchPane != nullptr)
     airportSearchPane->postDatabaseLoad();

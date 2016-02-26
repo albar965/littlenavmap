@@ -509,6 +509,26 @@ void Controller::loadAllRowsForRectQuery()
   }
 }
 
+void Controller::setFormatCallback(const SqlModel::FormatFunctionType& value)
+{
+  Q_ASSERT(model != nullptr);
+
+  model->setFormatCallback(value);
+}
+
+void Controller::setDataCallback(const SqlModel::DataFunctionType& value)
+{
+  Q_ASSERT(model != nullptr);
+
+  model->setDataCallback(value);
+}
+
+void Controller::setHandlerRoles(const QSet<Qt::ItemDataRole>& value)
+{
+  Q_ASSERT(model != nullptr);
+  model->setHandlerRoles(value);
+}
+
 void Controller::loadAllRows()
 {
   Q_ASSERT(model != nullptr);
@@ -541,9 +561,6 @@ void Controller::connectFetchedMore(std::function<void(void)> func)
 
 QVector<const Column *> Controller::getCurrentColumns() const
 {
-  Q_ASSERT(model != nullptr);
-  Q_ASSERT(columns != nullptr);
-
   QVector<const Column *> cols;
   QSqlRecord rec = model->record();
   cols.clear();
@@ -554,30 +571,30 @@ QVector<const Column *> Controller::getCurrentColumns() const
 
 QString Controller::formatModelData(const QString& col, const QVariant& var) const
 {
-  Q_ASSERT(model != nullptr);
   return model->formatValue(col, var);
 }
 
 QVariantList Controller::getFormattedModelData(int row) const
 {
-  Q_ASSERT(model != nullptr);
   return model->getFormattedRowData(row);
 }
 
 QVariantList Controller::getRawModelData(int row) const
 {
-  Q_ASSERT(model != nullptr);
   return model->getRawRowData(row);
 }
 
 QStringList Controller::getRawModelColumns() const
 {
-  Q_ASSERT(model != nullptr);
   return model->getRawColumns();
 }
 
 QString Controller::getSortColumn() const
 {
-  Q_ASSERT(model != nullptr);
   return model->getSortColumn();
+}
+
+int Controller::getSortColumnIndex() const
+{
+  return model->getSortColumnIndex();
 }

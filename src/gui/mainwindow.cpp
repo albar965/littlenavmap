@@ -26,7 +26,7 @@
 #include "logging/logginghandler.h"
 #include "gui/translator.h"
 #include "fs/fspaths.h"
-#include "table/searchpane.h"
+#include "table/search.h"
 #include "map/navmapwidget.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -51,7 +51,7 @@
 #include "gui/tablezoomhandler.h"
 #include "fs/bglreaderprogressinfo.h"
 #include "fs/navdatabase.h"
-#include "table/searchpanelist.h"
+#include "table/searchcontroller.h"
 
 #include <sql/sqlutil.h>
 
@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   createNavMap();
 
-  searchPanes = new SearchPaneList(this, &db);
+  searchPanes = new SearchController(this, &db);
   searchPanes->createAirportSearch();
 
   searchPanes->restoreState();
@@ -283,7 +283,7 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(searchPanes->getAirportSearchPane(), &SearchPane::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchPanes->getAirportSearchPane(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);

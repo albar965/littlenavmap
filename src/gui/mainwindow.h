@@ -27,7 +27,7 @@
 class QProgressDialog;
 class Controller;
 class ColumnList;
-class SearchPaneList;
+class SearchController;
 
 namespace atools {
 namespace fs {
@@ -72,7 +72,7 @@ signals:
   void windowShown();
 
 private:
-  SearchPaneList *searchPanes;
+  SearchController *searchPanes;
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */

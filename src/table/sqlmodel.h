@@ -20,8 +20,9 @@
 
 #include "geo/rect.h"
 
-#include <QColor>
 #include <QSqlQueryModel>
+
+#include <functional>
 
 namespace atools {
 namespace sql {
@@ -106,6 +107,11 @@ public:
     return orderByCol;
   }
 
+  int getSortColumnIndex() const
+  {
+    return orderByColIndex;
+  }
+
   QString groupByColumn() const
   {
     return groupByCol;
@@ -137,11 +143,30 @@ public:
   QString getColumnName(int col) const;
   void setSort(const QString& colname, Qt::SortOrder order);
 
+  typedef std::function<QVariant(int, int, const Column *, const QVariant&, const QVariant&,
+                                 Qt::ItemDataRole)> DataFunctionType;
+
+  typedef std::function<QString(const Column *,
+                                const QVariant&, const QVariant&)> FormatFunctionType;
+
+  void setFormatCallback(const FormatFunctionType& value);
+  void setDataCallback(const DataFunctionType& value);
+  void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
+
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
 
 private:
+  FormatFunctionType formatFunc = nullptr;
+  DataFunctionType dataFunc = nullptr;
+
+  QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+                              const QVariant& dataValue, Qt::ItemDataRole role) const;
+  QString defaultFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
+
+  QSet<Qt::ItemDataRole> handlerRoles;
+
   virtual void sort(int column, Qt::SortOrder order) override;
 
   struct WhereCondition
@@ -152,8 +177,6 @@ private:
   };
 
   atools::geo::Rect boundingRect;
-
-  /* Column header was clicked */
 
   /* Format data for display */
   virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
@@ -188,8 +211,6 @@ private:
   QString lastOrderByCol;
   Qt::SortOrder lastOrderByOrder = Qt::DescendingOrder;
 
-  /* Alternating colors for normal display and display of sorted column */
-  QColor rowBgColor, rowAltBgColor, rowSortBgColor, rowSortAltBgColor;
   void clearWhereConditions();
 
 };

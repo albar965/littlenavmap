@@ -46,11 +46,11 @@ SOURCES += src/main.cpp\
     src/table/controller.cpp \
     src/table/formatter.cpp \
     src/table/sqlmodel.cpp \
-    src/table/searchpane.cpp \
-    src/table/searchpanelist.cpp \
     src/table/column.cpp \
     src/table/sqlproxymodel.cpp \
-    src/table/apsearchpane.cpp
+    src/table/searchcontroller.cpp \
+    src/table/search.cpp \
+    src/table/airportsearch.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
@@ -59,11 +59,11 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/controller.h \
     src/table/formatter.h \
     src/table/sqlmodel.h \
-    src/table/searchpane.h \
-    src/table/searchpanelist.h \
     src/table/column.h \
     src/table/sqlproxymodel.h \
-    src/table/apsearchpane.h
+    src/table/searchcontroller.h \
+    src/table/search.h \
+    src/table/airportsearch.h
 
 FORMS    += src/gui/mainwindow.ui
 

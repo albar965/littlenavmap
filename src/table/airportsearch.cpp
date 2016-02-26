@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/apsearchpane.h"
+#include "table/airportsearch.h"
 #include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
 #include "sql/sqldatabase.h"
@@ -36,14 +36,85 @@
 #include <QMenu>
 #include <QLineEdit>
 
-ApSearchPane::ApSearchPane(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                           atools::sql::SqlDatabase *sqlDb)
-  : SearchPane(parent, tableView, columnList, sqlDb)
+QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
+
+QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed", "is_military",
+                                          "is_addon"});
+QSet<QString> AirportSearch::numberColumns(
+  {"num_approach", "num_runway_hard", "num_runway_soft",
+   "num_runway_water", "num_runway_light", "num_runway_end_ils",
+   "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo",
+   "num_parking_mil_cargo", "num_parking_mil_combat",
+   "num_helipad"});
+
+QHash<QString, QString> AirportSearch::surfaceMap(
+  {
+    {"CONCRETE", QObject::tr("Concrete")},
+    {"GRASS", "Grass"},
+    {"WATER", "Water"},
+    {"ASPHALT", "Asphalt"},
+    {"CEMENT", "Cement"},
+    {"CLAY", "Clay"},
+    {"SNOW", "Snow"},
+    {"ICE", "Ice"},
+    {"DIRT", "Dirt"},
+    {"CORAL", "Coral"},
+    {"GRAVEL", "Gravel"},
+    {"OIL_TREATED", "Oil treated"},
+    {"STEEL_MATS", "Seel Mats"},
+    {"BITUMINOUS", "Bituminous"},
+    {"BRICK", "Brick"},
+    {"MACADAM", "Macadam"},
+    {"PLANKS", "Planks"},
+    {"SAND", "Sand"},
+    {"SHALE", "Shale"},
+    {"TARMAC", "Tarmac"},
+    {"UNKNOWN", "Unknown"}
+  });
+
+QHash<QString, QString> AirportSearch::parkingMapGate(
+  {
+    {"UNKNOWN", "Unknown"},
+    {"RAMP_GA", "Ramp GA"},
+    {"RAMP_GA_SMALL", "Ramp GA Small"},
+    {"RAMP_GA_MEDIUM", "Ramp GA Medium"},
+    {"RAMP_GA_LARGE", "Ramp GA Large"},
+    {"RAMP_CARGO", "Ramp Cargo"},
+    {"RAMP_MIL_CARGO", "Ramp Mil Cargo"},
+    {"RAMP_MIL_COMBAT", "Ramp Mil Combat"},
+    {"GATE_SMALL", "Small"},
+    {"GATE_MEDIUM", "Medium"},
+    {"GATE_HEAVY", "Heavy"},
+    {"DOCK_GA", "Dock GA"},
+    {"FUEL", "Fuel"},
+    {"VEHICLES", "Vehicles"}
+  });
+
+QHash<QString, QString> AirportSearch::parkingMapRamp(
+  {
+    {"UNKNOWN", "Unknown"},
+    {"RAMP_GA", "Ramp GA"},
+    {"RAMP_GA_SMALL", "Small"},
+    {"RAMP_GA_MEDIUM", "Medium"},
+    {"RAMP_GA_LARGE", "Large"},
+    {"RAMP_CARGO", "Ramp Cargo"},
+    {"RAMP_MIL_CARGO", "Ramp Mil Cargo"},
+    {"RAMP_MIL_COMBAT", "Ramp Mil Combat"},
+    {"GATE_SMALL", "Gate Small"},
+    {"GATE_MEDIUM", "Gate Medium"},
+    {"GATE_HEAVY", "Gate Heavy"},
+    {"DOCK_GA", "Dock GA"},
+    {"FUEL", "Fuel"},
+    {"VEHICLES", "Vehicles"}
+  });
+
+AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                             atools::sql::SqlDatabase *sqlDb)
+  : Search(parent, tableView, columnList, sqlDb)
 {
   Ui::MainWindow *ui = parentWidget->getUi();
 
-  // Avoid stealing of Ctrl-C from other default menus
-  ui->actionAirportSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
   airportSearchWidgets =
   {
@@ -134,8 +205,8 @@ ApSearchPane::ApSearchPane(MainWindow *parent, QTableView *tableView, ColumnList
   append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country")).filter()).
 
-  append(Column("rating", ui->checkBoxAirportScenerySearch, tr("Scenery\nRating")).conditions("> 0",
-                                                                                              "== 0")).
+  append(Column("rating", ui->checkBoxAirportScenerySearch,
+                tr("Scenery\nRating")).conditions("> 0", "== 0")).
 
   append(Column("altitude", tr("Altitude"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas"))).
@@ -150,44 +221,54 @@ ApSearchPane::ApSearchPane(MainWindow *parent, QTableView *tableView, ColumnList
 
   append(Column("num_runway_hard", tr("Hard\nRunways"))).
   append(Column("num_runway_water", tr("Water\nRunways"))).
-  append(Column("num_runway_light", ui->checkBoxAirportLightSearch, tr("Lights")).conditions("> 0", "== 0")).
+  append(Column("num_runway_light", ui->checkBoxAirportLightSearch,
+                tr("Lighted\nRunways")).conditions("> 0", "== 0"))
+  .
   append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).conditions("> 0", "== 0")).
-  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Approach")).conditions("> 0", "== 0")).
+  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Approaches")).conditions("> 0", "== 0")).
 
   append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).
          includesName().indexCondMap(rampCondMap)).
   append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).
          indexCondMap(gateCondMap)).
 
-  append(Column("num_parking_cargo", tr("Cargo Ramps"))).
-  append(Column("num_parking_mil_cargo", tr("Mil Cargo"))).
-  append(Column("num_parking_mil_combat", tr("Mil Combat"))).
+  append(Column("num_parking_gate", tr("Gates"))).
+  append(Column("num_parking_ga_ramp", tr("Ramps\nGA"))).
+  append(Column("num_parking_cargo", tr("Ramps\nCargo"))).
+  append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo"))).
+  append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat"))).
+  append(Column("num_helipad", tr("Helipads"))).
+
   append(Column("longest_runway_length", tr("Longest\nRunway Length"))).
   append(Column("longest_runway_width", tr("Longest\nRunway Width"))).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface"))).
+
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).
   append(Column("lonx", tr("Longitude")).hidden()).
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
-  initViewAndController();
+  Search::initViewAndController();
+
+  using namespace std::placeholders;
+
+  controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
+  controller->setFormatCallback(std::bind(&AirportSearch::modelFormatHandler, this, _1, _2, _3));
+
+  controller->setHandlerRoles({ /*Qt::CheckStateRole, */ Qt::DisplayRole, Qt::BackgroundRole,
+                                                         Qt::TextAlignmentRole, Qt::DecorationRole});
 }
 
-ApSearchPane::~ApSearchPane()
+AirportSearch::~AirportSearch()
 {
-
 }
 
-void ApSearchPane::connectSlots()
+void AirportSearch::connectSlots()
 {
-  SearchPane::connectSlots();
+  Search::connectSlots();
 
   Ui::MainWindow *ui = parentWidget->getUi();
-  connect(ui->actionAirportSearchResetSearch, &QAction::triggered, this, &ApSearchPane::resetSearch);
-  connect(ui->actionAirportSearchResetView, &QAction::triggered, this, &ApSearchPane::resetView);
-  connect(ui->actionAirportSearchTableCopy, &QAction::triggered, this, &ApSearchPane::tableCopyCipboard);
-  connect(ui->actionAirportSearchShowAll, &QAction::triggered, this, &ApSearchPane::loadAllRowsIntoView);
 
   // Runways
   columns->assignMinMaxWidget("longest_runway_length",
@@ -206,7 +287,14 @@ void ApSearchPane::connectSlots()
                                        ui->spinBoxAirportDistMaxSearch);
 
   // Connect widgets to the controller
-  SearchPane::connectSearchWidgets();
+  Search::connectSearchWidgets();
+  ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
+                                           ui->actionAirportSearchShowExtOptions,
+                                           ui->actionAirportSearchShowFuelParkOptions,
+                                           ui->actionAirportSearchShowRunwayOptions,
+                                           ui->actionAirportSearchShowAltOptions,
+                                           ui->actionAirportSearchShowDistOptions,
+                                           ui->actionAirportSearchShowSceneryOptions});
 
   // Drop down menu actions
   using atools::gui::WidgetTools;
@@ -224,105 +312,103 @@ void ApSearchPane::connectSlots()
   connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [=](bool state)
   { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch}); });
   /* *INDENT-ON* */
-
 }
 
-void ApSearchPane::tableContextMenu(const QPoint& pos)
-{
-  Ui::MainWindow *ui = parentWidget->getUi();
-  QString header, fieldData;
-  bool columnCanFilter = false, columnCanGroup = false;
-
-  QModelIndex index = controller->getModelIndexAt(pos);
-  if(index.isValid())
-  {
-    const Column *columnDescriptor = controller->getColumn(index.column());
-    Q_ASSERT(columnDescriptor != nullptr);
-    columnCanFilter = columnDescriptor->isFilter();
-    columnCanGroup = columnDescriptor->isGroup();
-
-    if(columnCanGroup)
-    {
-      header = controller->getHeaderNameAt(index);
-      Q_ASSERT(!header.isNull());
-      // strip LF and other from header name
-      header.replace("-\n", "").replace("\n", " ");
-    }
-
-    if(columnCanFilter)
-      // Disabled menu items don't need any content
-      fieldData = controller->getFieldDataAt(index);
-  }
-  else
-    qDebug() << "Invalid index at" << pos;
-
-  // Build the menu
-  QMenu menu;
-
-  menu.addAction(ui->actionAirportSearchSetMark);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionAirportSearchTableCopy);
-  ui->actionAirportSearchTableCopy->setEnabled(index.isValid());
-
-  menu.addAction(ui->actionAirportSearchTableSelectAll);
-  ui->actionAirportSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
-
-  menu.addSeparator();
-  menu.addAction(ui->actionAirportSearchResetView);
-  menu.addAction(ui->actionAirportSearchResetSearch);
-  menu.addAction(ui->actionAirportSearchShowAll);
-
-  QString actionFilterIncludingText, actionFilterExcludingText;
-  actionFilterIncludingText = ui->actionAirportSearchFilterIncluding->text();
-  actionFilterExcludingText = ui->actionAirportSearchFilterExcluding->text();
-
-  // Add data to menu item text
-  ui->actionAirportSearchFilterIncluding->setText(ui->actionAirportSearchFilterIncluding->text().arg(
-                                                    fieldData));
-  ui->actionAirportSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
-
-  ui->actionAirportSearchFilterExcluding->setText(ui->actionAirportSearchFilterExcluding->text().arg(
-                                                    fieldData));
-  ui->actionAirportSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
-
-  menu.addSeparator();
-  menu.addAction(ui->actionAirportSearchFilterIncluding);
-  menu.addAction(ui->actionAirportSearchFilterExcluding);
-  menu.addSeparator();
-
-  QAction *a = menu.exec(QCursor::pos());
-  if(a != nullptr)
-  {
-    // A menu item was selected
-    if(a == ui->actionAirportSearchFilterIncluding)
-      controller->filterIncluding(index);
-    else if(a == ui->actionAirportSearchFilterExcluding)
-      controller->filterExcluding(index);
-    else if(a == ui->actionAirportSearchTableSelectAll)
-      controller->selectAll();
-    // else if(a == ui->actionTableCopy) this is alread covered by the connected action
-  }
-
-  // Restore old menu texts
-  ui->actionAirportSearchFilterIncluding->setText(actionFilterIncludingText);
-  ui->actionAirportSearchFilterIncluding->setEnabled(true);
-
-  ui->actionAirportSearchFilterExcluding->setText(actionFilterExcludingText);
-  ui->actionAirportSearchFilterExcluding->setEnabled(true);
-
-}
-
-void ApSearchPane::saveState()
+void AirportSearch::saveState()
 {
   atools::gui::WidgetState saver("SearchPaneAirport/Widget");
   saver.save(airportSearchWidgets);
 }
 
-void ApSearchPane::restoreState()
+void AirportSearch::restoreState()
 {
   Ui::MainWindow *ui = parentWidget->getUi();
   atools::gui::WidgetState saver("SearchPaneAirport/Widget");
   saver.restore(airportSearchWidgets);
   ui->checkBoxAirportDistSearch->setChecked(false);
+}
+
+QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
+                                         const QVariant& dataValue, Qt::ItemDataRole role) const
+{
+  switch(role)
+  {
+    case Qt::DisplayRole:
+
+      return modelFormatHandler(col, value, dataValue);
+
+    case Qt::DecorationRole:
+      if(boolColumns.contains(col->getColumnName()) && dataValue.toInt() > 0)
+        return *boolIcon;
+
+      break;
+    case Qt::TextAlignmentRole:
+      if(boolColumns.contains(col->getColumnName()) && dataValue.toInt() > 0)
+        return Qt::AlignCenter;
+      else if(col->getColumnName() == "ident" || col->getColumnName() == "rating" ||
+              dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt ||
+              dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong ||
+              dataValue.type() == QVariant::Double)
+        return Qt::AlignRight;
+
+      break;
+    case Qt::BackgroundRole:
+      if(colIndex == controller->getSortColumnIndex())
+      {
+        if(rowIndex != -1)
+          return (rowIndex % 2) == 0 ? rowSortBgColor : rowSortAltBgColor;
+        else
+          return rowSortAltBgColor;
+      }
+      break;
+    case Qt::CheckStateRole:
+      // if(boolColumns.contains(col->getColumnName()))
+      // return dataValue.toInt() > 0 ? Qt::Checked : Qt::Unchecked;
+
+      break;
+    case Qt::ForegroundRole:
+    case Qt::EditRole:
+    case Qt::ToolTipRole:
+    case Qt::StatusTipRole:
+    case Qt::WhatsThisRole:
+    case Qt::FontRole:
+    case Qt::AccessibleTextRole:
+    case Qt::AccessibleDescriptionRole:
+    case Qt::SizeHintRole:
+    case Qt::InitialSortOrderRole:
+    case Qt::DisplayPropertyRole:
+    case Qt::DecorationPropertyRole:
+    case Qt::ToolTipPropertyRole:
+    case Qt::StatusTipPropertyRole:
+    case Qt::WhatsThisPropertyRole:
+    case Qt::UserRole:
+      break;
+  }
+
+  return QVariant();
+}
+
+QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& value,
+                                          const QVariant& dataValue) const
+{
+  if(numberColumns.contains(col->getColumnName()))
+    return dataValue.toInt() > 0 ? dataValue.toString() : QString();
+  else if(boolColumns.contains(col->getColumnName()))
+    return QString();
+  else if(col->getColumnName() == "longest_runway_surface")
+    return surfaceMap.value(dataValue.toString());
+  else if(col->getColumnName() == "largest_parking_ramp")
+    return parkingMapRamp.value(dataValue.toString());
+  else if(col->getColumnName() == "largest_parking_gate")
+    return parkingMapGate.value(dataValue.toString());
+  else if(col->getColumnName() == "rating")
+    return ratings.at(dataValue.toInt());
+  else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
+    return QLocale().toString(dataValue.toInt());
+  else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)
+    return QLocale().toString(dataValue.toLongLong());
+  else if(dataValue.type() == QVariant::Double)
+    return QLocale().toString(dataValue.toDouble());
+
+  return value.toString();
 }

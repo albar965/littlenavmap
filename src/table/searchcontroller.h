@@ -15,19 +15,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SEARCHPANE_H
-#define SEARCHPANE_H
-
-#include "geo/pos.h"
+#ifndef SEARCHPANELIST_H
+#define SEARCHPANELIST_H
 
 #include <QObject>
 
-class QWidget;
-class QTableView;
-class Controller;
-class ColumnList;
-class QAction;
 class MainWindow;
+class Search;
+class ColumnList;
+class QLayout;
+class QAction;
 
 namespace atools {
 namespace sql {
@@ -35,51 +32,31 @@ class SqlDatabase;
 }
 }
 
-class SearchPane :
+class SearchController :
   public QObject
 {
   Q_OBJECT
 
 public:
-  explicit SearchPane(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                      atools::sql::SqlDatabase *sqlDb);
-  virtual ~SearchPane();
+  SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
+  virtual ~SearchController();
+  void createAirportSearch();
 
   void preDatabaseLoad();
   void postDatabaseLoad();
 
-  void markChanged(const atools::geo::Pos& mark);
+  void saveState();
+  void restoreState();
 
-  virtual void connectSlots();
+  Search *getAirportSearchPane() const;
 
-  virtual void saveState() = 0;
-  virtual void restoreState() = 0;
-
-public slots:
-  void resetView();
-  void resetSearch();
-  void tableCopyCipboard();
-  void loadAllRowsIntoView();
-
-protected:
-  void connectSearchWidgets();
-  virtual void tableContextMenu(const QPoint& pos) = 0;
-
+private:
   atools::sql::SqlDatabase *db;
-  atools::geo::Pos mapMark;
+  ColumnList *airportColumns = nullptr;
+  Search *airportSearchPane = nullptr;
 
-  Controller *controller;
-  ColumnList *columns;
-  QTableView *view;
   MainWindow *parentWidget;
-
-  void doubleClick(const QModelIndex& index);
-
-  void initViewAndController();
-
-signals:
-  void showPoint(double lonX, double latY, int zoom);
 
 };
 
-#endif // SEARCHPANE_H
+#endif // SEARCHPANELIST_H

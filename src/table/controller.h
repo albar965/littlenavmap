@@ -22,7 +22,8 @@
 #include <QObject>
 #include <functional>
 
-#include <geo/pos.h>
+#include "table/sqlmodel.h"
+#include "geo/pos.h"
 #include "table/sqlproxymodel.h"
 
 namespace atools {
@@ -149,6 +150,7 @@ public:
 
   /* Column name for sorted column */
   QString getSortColumn() const;
+  int getSortColumnIndex() const;
 
   /* @return true if column at physical index is smaller
    * than minimal size + 1 */
@@ -176,6 +178,10 @@ public:
   void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
 
   void loadAllRowsForRectQuery();
+
+  void setFormatCallback(const SqlModel::FormatFunctionType& value);
+  void setDataCallback(const SqlModel::DataFunctionType& value);
+  void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);
