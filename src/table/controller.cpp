@@ -92,7 +92,10 @@ void Controller::filterByLineEdit(const Column *col, const QString& text)
 void Controller::filterBySpinBox(const Column *col, int value)
 {
   Q_ASSERT(model != nullptr);
-  model->filter(col, value);
+  if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
+    model->filter(col, QVariant(QVariant::Int));
+  else
+    model->filter(col, value);
   changed = true;
 }
 
@@ -582,6 +585,16 @@ QVariantList Controller::getFormattedModelData(int row) const
 QVariantList Controller::getRawModelData(int row) const
 {
   return model->getRawRowData(row);
+}
+
+QVariant Controller::getRawData(int row, const QString& colname) const
+{
+  return model->getRawData(row, colname);
+}
+
+QVariant Controller::getRawData(int row, int col) const
+{
+  return model->getRawData(row, col);
 }
 
 QStringList Controller::getRawModelColumns() const

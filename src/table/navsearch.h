@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef APSEARCHPANE_H
-#define APSEARCHPANE_H
+#ifndef NAVSEARCHPANE_H
+#define NAVSEARCHPANE_H
 
 #include "geo/pos.h"
 
@@ -38,15 +38,15 @@ class SqlDatabase;
 }
 }
 
-class AirportSearch :
+class NavSearch :
   public Search
 {
   Q_OBJECT
 
 public:
-  explicit AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                         atools::sql::SqlDatabase *sqlDb);
-  virtual ~AirportSearch();
+  explicit NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                     atools::sql::SqlDatabase *sqlDb);
+  virtual ~NavSearch();
 
   virtual void saveState() override;
   virtual void restoreState() override;
@@ -58,16 +58,10 @@ private:
 
   void connectSlots() override;
 
-  QList<QObject *> airportSearchWidgets;
-  QList<QAction *> airportSearchMenuActions;
-
-  static const QStringList ratings;
-  static const QSet<QString> boolColumns;
-  static const QSet<QString> numberColumns;
-  static const QHash<QString, QString> surfaceMap;
-  static const QHash<QString, QString> parkingMapGate;
-  static const QHash<QString, QString> parkingMapRamp;
+  QList<QObject *> navSearchWidgets;
+  QList<QAction *> navSearchMenuActions;
+  static const QHash<QString, QString> typeNames, navTypeNames;
 
 };
 
-#endif // APSEARCHPANE_H
+#endif // NAVSEARCHPANE_H

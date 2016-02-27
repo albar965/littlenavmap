@@ -86,6 +86,12 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
       else
         oper = QString("between %1 and %2").arg(value.toInt()).arg(maxValue.toInt());
     }
+    else if(!col->getCondition().isEmpty())
+    {
+      // Single spinbox giving a min or max value
+      oper = col->getCondition();
+      newVariant = value;
+    }
     else if(col->hasIndexConditionMap())
       // A combo box
       oper = col->getIndexConditionMap().at(value.toInt());

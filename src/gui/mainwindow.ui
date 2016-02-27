@@ -25,6 +25,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>&lt;&lt;</string>
         </property>
@@ -38,6 +44,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>&gt;&gt;</string>
         </property>
@@ -50,6 +62,12 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>40</width>
+          <height>16777215</height>
+         </size>
         </property>
         <property name="text">
          <string>Home</string>
@@ -177,7 +195,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
@@ -201,6 +219,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="maxLength">
+                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>ICAO Code</string>
@@ -1000,8 +1021,26 @@
            </property>
            <item>
             <widget class="QLineEdit" name="lineEditNavIcaoSearch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="sizeIncrement">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maxLength">
+              <number>6</number>
+             </property>
              <property name="placeholderText">
               <string>Ident</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1009,6 +1048,9 @@
             <widget class="QLineEdit" name="lineEditNavNameSearch">
              <property name="placeholderText">
               <string>Name</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1020,8 +1062,33 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="maxLength">
+              <number>5</number>
+             </property>
              <property name="placeholderText">
               <string>Region</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="lineEditNavAirportIcaoSearch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="maxLength">
+              <number>8</number>
+             </property>
+             <property name="placeholderText">
+              <string>Airport ICAO Code</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1055,15 +1122,40 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLineEdit" name="lineEditNavAirportIcaoSearch">
+            <widget class="QLabel" name="labelNavMaxRangeSearch">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Min Range:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxNavMaxRangeSearch">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="placeholderText">
-              <string>Airport ICAO Code</string>
+             <property name="suffix">
+              <string> nm</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>200</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>0</number>
              </property>
             </widget>
            </item>
@@ -1119,6 +1211,16 @@
                <string>Waypoint - Unnamed</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>Waypoint - VOR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Waypoint - NDB</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
@@ -1155,17 +1257,30 @@
              </item>
              <item>
               <property name="text">
-               <string>NDB</string>
+               <string>All NDB</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Waypoints</string>
+               <string>All Waypoints</string>
               </property>
              </item>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="Line" name="lineNavDistSearch">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
@@ -1315,6 +1430,19 @@
           </layout>
          </item>
          <item>
+          <widget class="Line" name="lineNavScenerySearch">
+           <property name="lineWidth">
+            <number>4</number>
+           </property>
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
            <property name="bottomMargin">
             <number>0</number>
@@ -1342,7 +1470,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableView" name="tableViewNavIdSearch">
+          <widget class="QTableView" name="tableViewNavSearch">
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -1394,16 +1522,6 @@
             <bool>false</bool>
            </attribute>
           </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabRouteSearch">
-        <attribute name="title">
-         <string>Route</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <widget class="QTableView" name="tableViewRouteSearch"/>
          </item>
         </layout>
        </widget>
@@ -1917,6 +2035,39 @@
    </property>
    <property name="text">
     <string>Set Mark</string>
+   </property>
+  </action>
+  <action name="actionNavSearchShowAllOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>All</string>
+   </property>
+  </action>
+  <action name="actionNavSearchShowDistOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Distance to Mark</string>
+   </property>
+  </action>
+  <action name="actionNavSearchShowSceneryOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Scenery</string>
    </property>
   </action>
  </widget>

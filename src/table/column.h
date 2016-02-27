@@ -100,6 +100,8 @@ public:
 
   Column& virtualCol(bool value = true);
 
+  Column& condition(const QString& cond);
+
   bool isGroupShow() const
   {
     return colGroupByShow;
@@ -225,6 +227,11 @@ public:
     return colIncludeCond;
   }
 
+  const QString& getCondition() const
+  {
+    return colCondition;
+  }
+
   const QStringList& getIndexConditionMap() const
   {
     return colIndexConditionMap;
@@ -251,7 +258,13 @@ private:
   QWidget *colWidget = nullptr, *colMaxWidget = nullptr, *colMinWidget = nullptr;
   QString colSortFuncAsc, colSortFuncDesc;
 
+  /* Conditions used for checkboxes */
   QString colExcludeCond, colIncludeCond;
+
+  /* Conditions used for spinboxes and others */
+  QString colCondition;
+
+  /* Condition list used for combo boxes */
   QStringList colIndexConditionMap;
 
   bool colGroupByShow = false;

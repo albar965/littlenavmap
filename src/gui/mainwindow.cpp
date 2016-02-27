@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   searchPanes = new SearchController(this, &db);
   searchPanes->createAirportSearch();
+  searchPanes->createNavSearch();
 
   searchPanes->restoreState();
   mapWidget->restoreState();
@@ -236,6 +237,9 @@ void MainWindow::loadScenery()
 
   progressDialog->setWindowModality(Qt::ApplicationModal);
   progressDialog->setLabel(label);
+  progressDialog->setAutoClose(false);
+  progressDialog->setAutoReset(false);
+  progressDialog->setMinimumDuration(0);
   progressDialog->show();
 
   atools::fs::fstype::SimulatorType type = atools::fs::fstype::FSX;
@@ -272,9 +276,9 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
     progressDialog->setLabelText("<br/><b>" + progress.getOtherAction() + "</b>");
 
   if(progress.isNewSceneryArea() || progress.isNewFile())
-    progressDialog->setLabelText("<br/><b>Scenery: " + progress.getSceneryTitle() + "</b> " +
-                                 "(" + progress.getSceneryPath() + "). " +
-                                 "File: " + progress.getBglFilepath() + ".");
+    progressDialog->setLabelText("<br/><b>Scenery:</b> " + progress.getSceneryTitle() +
+                                 "(" + progress.getSceneryPath() + ").<br/>" +
+                                 "<b>File:</b> " + progress.getBglFilepath() + ".");
 
   return progressDialog->wasCanceled();
 }
@@ -283,7 +287,8 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(searchPanes->getAirportSearchPane(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchPanes->getAirportSearch(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchPanes->getNavSearch(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);

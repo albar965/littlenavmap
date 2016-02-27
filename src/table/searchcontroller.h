@@ -40,7 +40,9 @@ class SearchController :
 public:
   SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~SearchController();
+
   void createAirportSearch();
+  void createNavSearch();
 
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -48,12 +50,16 @@ public:
   void saveState();
   void restoreState();
 
-  Search *getAirportSearchPane() const;
+  Search *getAirportSearch() const;
+  Search *getNavSearch() const;
 
 private:
   atools::sql::SqlDatabase *db;
   ColumnList *airportColumns = nullptr;
-  Search *airportSearchPane = nullptr;
+  Search *airportSearch = nullptr;
+
+  ColumnList *navColumns = nullptr;
+  Search *navSearch = nullptr;
 
   MainWindow *parentWidget;
 

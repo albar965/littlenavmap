@@ -63,6 +63,8 @@ public slots:
   void loadAllRowsIntoView();
 
 protected:
+  QIcon *boolIcon = nullptr;
+
   /* Alternating colors for normal display and display of sorted column */
   QColor rowBgColor, rowAltBgColor, rowSortBgColor, rowSortAltBgColor;
 

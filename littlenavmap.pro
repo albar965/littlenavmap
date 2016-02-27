@@ -50,7 +50,8 @@ SOURCES += src/main.cpp\
     src/table/sqlproxymodel.cpp \
     src/table/searchcontroller.cpp \
     src/table/search.cpp \
-    src/table/airportsearch.cpp
+    src/table/airportsearch.cpp \
+    src/table/navsearch.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
@@ -63,7 +64,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/sqlproxymodel.h \
     src/table/searchcontroller.h \
     src/table/search.h \
-    src/table/airportsearch.h
+    src/table/airportsearch.h \
+    src/table/navsearch.h
 
 FORMS    += src/gui/mainwindow.ui
 

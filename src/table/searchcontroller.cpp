@@ -20,9 +20,12 @@
 #include "table/column.h"
 #include "table/columnlist.h"
 #include "table/airportsearch.h"
+#include "navsearch.h"
 #include "ui_mainwindow.h"
 #include "map/navmapwidget.h"
 #include "gui/widgetstate.h"
+
+#include <gui/widgetstate.h>
 
 SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb), parentWidget(parent)
@@ -31,45 +34,77 @@ SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase 
 
 SearchController::~SearchController()
 {
-  delete airportSearchPane;
+  delete airportSearch;
   delete airportColumns;
+
+  delete navSearch;
+  delete navColumns;
 }
 
 void SearchController::saveState()
 {
-  airportSearchPane->saveState();
+  airportSearch->saveState();
+  navSearch->saveState();
+
+  atools::gui::WidgetState("Search/").save(parentWidget->getUi()->tabWidgetSearch);
 }
 
 void SearchController::restoreState()
 {
-  airportSearchPane->restoreState();
+  atools::gui::WidgetState("Search/").restore(parentWidget->getUi()->tabWidgetSearch);
+
+  airportSearch->restoreState();
+  navSearch->restoreState();
 }
 
-Search *SearchController::getAirportSearchPane() const
+Search *SearchController::getAirportSearch() const
 {
-  return airportSearchPane;
+  return airportSearch;
+}
+
+Search *SearchController::getNavSearch() const
+{
+  return navSearch;
 }
 
 void SearchController::createAirportSearch()
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearchPane = new AirportSearch(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
-                                        airportColumns, db);
-  airportSearchPane->connectSlots();
+  airportSearch = new AirportSearch(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
+                                    airportColumns, db);
+  airportSearch->connectSlots();
 
   connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
-          airportSearchPane, &Search::markChanged);
+          airportSearch, &Search::markChanged);
+}
+
+void SearchController::createNavSearch()
+{
+  navColumns = new ColumnList("nav_search", "nav_search_id");
+
+  navSearch = new NavSearch(parentWidget, parentWidget->getUi()->tableViewNavSearch,
+                                navColumns, db);
+  navSearch->connectSlots();
+
+  connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
+          navSearch, &Search::markChanged);
 }
 
 void SearchController::preDatabaseLoad()
 {
-  if(airportSearchPane != nullptr)
-    airportSearchPane->preDatabaseLoad();
+  if(airportSearch != nullptr)
+    airportSearch->preDatabaseLoad();
+
+  if(navSearch != nullptr)
+    navSearch->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  if(airportSearchPane != nullptr)
-    airportSearchPane->postDatabaseLoad();
+  if(airportSearch != nullptr)
+    airportSearch->postDatabaseLoad();
+
+  if(navSearch != nullptr)
+    navSearch->postDatabaseLoad();
 }

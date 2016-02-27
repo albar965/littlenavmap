@@ -28,6 +28,7 @@
 #include "geo/pos.h"
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
+#include "table/formatter.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -36,18 +37,19 @@
 #include <QMenu>
 #include <QLineEdit>
 
-QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
+const QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
 
-QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed", "is_military",
-                                          "is_addon"});
-QSet<QString> AirportSearch::numberColumns(
+const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
+                                                "is_military",
+                                                "is_addon"});
+const QSet<QString> AirportSearch::numberColumns(
   {"num_approach", "num_runway_hard", "num_runway_soft",
    "num_runway_water", "num_runway_light", "num_runway_end_ils",
    "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo",
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-QHash<QString, QString> AirportSearch::surfaceMap(
+const QHash<QString, QString> AirportSearch::surfaceMap(
   {
     {"CONCRETE", QObject::tr("Concrete")},
     {"GRASS", "Grass"},
@@ -72,7 +74,7 @@ QHash<QString, QString> AirportSearch::surfaceMap(
     {"UNKNOWN", "Unknown"}
   });
 
-QHash<QString, QString> AirportSearch::parkingMapGate(
+const QHash<QString, QString> AirportSearch::parkingMapGate(
   {
     {"UNKNOWN", "Unknown"},
     {"RAMP_GA", "Ramp GA"},
@@ -90,7 +92,7 @@ QHash<QString, QString> AirportSearch::parkingMapGate(
     {"VEHICLES", "Vehicles"}
   });
 
-QHash<QString, QString> AirportSearch::parkingMapRamp(
+const QHash<QString, QString> AirportSearch::parkingMapRamp(
   {
     {"UNKNOWN", "Unknown"},
     {"RAMP_GA", "Ramp GA"},
@@ -113,8 +115,6 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   : Search(parent, tableView, columnList, sqlDb)
 {
   Ui::MainWindow *ui = parentWidget->getUi();
-
-  boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
   airportSearchWidgets =
   {
@@ -209,6 +209,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
                 tr("Scenery\nRating")).conditions("> 0", "== 0")).
 
   append(Column("altitude", tr("Altitude"))).
+  append(Column("mag_var", tr("Mag\nVar"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas"))).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel"))).
   append(Column("has_tower", ui->checkBoxAirportTowerSearch, tr("Tower"))).
@@ -254,10 +255,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   using namespace std::placeholders;
 
   controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setFormatCallback(std::bind(&AirportSearch::modelFormatHandler, this, _1, _2, _3));
-
-  controller->setHandlerRoles({ /*Qt::CheckStateRole, */ Qt::DisplayRole, Qt::BackgroundRole,
-                                                         Qt::TextAlignmentRole, Qt::DecorationRole});
+  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
 }
 
 AirportSearch::~AirportSearch()
@@ -391,7 +389,9 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                           const QVariant& dataValue) const
 {
-  if(numberColumns.contains(col->getColumnName()))
+  if(col->getColumnName() == "mag_var")
+    return formatter::formatDoubleUnit(value.toDouble(), QString(), 1);
+  else if(numberColumns.contains(col->getColumnName()))
     return dataValue.toInt() > 0 ? dataValue.toString() : QString();
   else if(boolColumns.contains(col->getColumnName()))
     return QString();

@@ -132,6 +132,12 @@ Column& Column::conditions(const QString& include, const QString& exclude)
   return *this;
 }
 
+Column& Column::condition(const QString& cond)
+{
+  colCondition = cond;
+  return *this;
+}
+
 Column& Column::defaultSortOrder(Qt::SortOrder order)
 {
   colDefaultSortOrd = order;

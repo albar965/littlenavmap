@@ -48,12 +48,13 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
 
   // Avoid stealing of Ctrl-C from other default menus
   parentWidget->getUi()->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
 }
 
 Search::~Search()
 {
-
+  delete boolIcon;
 }
 
 void Search::initViewAndController()
