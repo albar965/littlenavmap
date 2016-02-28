@@ -102,7 +102,9 @@ DISTFILES += \
     CHANGELOG.txt \
     htmltidy.cfg \
     LICENSE.txt \
-    README.txt
+    README.txt \
+    help/en/index.html \
+    help/en/images/gpl-v3-logo.svg
 
 RESOURCES += \
     littlenavmap.qrc
@@ -126,6 +128,9 @@ win32 {
   DEPLOY_DIR_WIN=\"$${WINPWD}\\deploy\\$${DEPLOY_DIR_NAME}\"
   MARBLE_BASE_WIN=\"$${MARBLE_BASE}\"
 
+  copydata.commands = xcopy /i /s /e /f /y $${WINPWD}\\help $${WINOUT_PWD}\\help
+  cleandata.commands = del /s /q $${WINOUT_PWD}\\help
+
   CONFIG(debug, debug|release):DLL_SUFFIX=d
   CONFIG(release, debug|release):DLL_SUFFIX=
 
@@ -135,6 +140,7 @@ win32 {
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy /i /s /e /f /y $${WINPWD}\\help $${DEPLOY_DIR_WIN}\\help &&
   deploy.commands += xcopy $${QT_BIN}\\libgcc*.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_BIN}\\libstdc*.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_BIN}\\libwinpthread*.dll $${DEPLOY_DIR_WIN} &&

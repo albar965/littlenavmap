@@ -104,8 +104,15 @@ void NavMapWidget::restoreState()
 void NavMapWidget::showPoint(double lonX, double latY, int zoom)
 {
   qDebug() << "NavMapWidget::showPoint";
-  setZoom(zoom);
-  centerOn(lonX, latY, false);
+//  GeoDataLookAt lookAt;
+//  lookAt.setLatitude(latY);
+//  lookAt.setLongitude(lonX);
+//  lookAt.setAltitude(1000.);
+//  lookAt.setRange(10);
+//  flyTo(lookAt);
+//  update();
+   setZoom(zoom);
+   centerOn(lonX, latY, false);
 }
 
 void NavMapWidget::mapContextMenu(const QPoint& pos)

@@ -36,6 +36,7 @@ class BglReaderProgressInfo;
 namespace gui {
 class Dialog;
 class ErrorHandler;
+class HelpHandler;
 }
 
 }
@@ -89,6 +90,7 @@ private:
 
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
+  atools::gui::HelpHandler *helpHandler = nullptr;
   void openDatabase();
   void closeDatabase();
 

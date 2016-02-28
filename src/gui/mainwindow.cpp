@@ -52,6 +52,7 @@
 #include "fs/bglreaderprogressinfo.h"
 #include "fs/navdatabase.h"
 #include "table/searchcontroller.h"
+#include "gui/helphandler.h"
 
 #include <sql/sqlutil.h>
 
@@ -62,8 +63,18 @@ MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)
 {
   qDebug() << "MainWindow constructor";
+
+  QString aboutMessage =
+    tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
+         "<p>This software is licensed under "
+           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
+             "<p>The source code for this application is available at "
+               "<a href=\"https://github.com/albar965\">Github</a>.</p>"
+                 "<p><b>Copyright 2015-2016 Alexander Barthel (albar965@mailbox.org).</b></p>");
+
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
+  helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
 
   ui->setupUi(this);
   setupUi();
@@ -134,7 +145,7 @@ void MainWindow::createNavMap()
   // mapWidget->setShowBorders( true );
   // mapWidget->setShowClouds( true );
   // mapWidget->setProjection( Marble::Mercator );
-  mapWidget->setAnimationsEnabled(false);
+  // mapWidget->setAnimationsEnabled(false);
   mapWidget->setShowCrosshairs(false);
   mapWidget->setShowBackground(false);
   mapWidget->setShowAtmosphere(false);
@@ -233,9 +244,12 @@ void MainWindow::loadScenery()
 
   progressDialog = new QProgressDialog(this);
   QLabel *label = new QLabel(progressDialog);
-  label->setAlignment(Qt::AlignLeft);
+  label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+  label->setIndent(10);
+  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+  label->setMinimumWidth(640);
 
-  progressDialog->setWindowModality(Qt::ApplicationModal);
+  progressDialog->setWindowModality(Qt::WindowModal);
   progressDialog->setLabel(label);
   progressDialog->setAutoClose(false);
   progressDialog->setAutoReset(false);
@@ -257,6 +271,12 @@ void MainWindow::loadScenery()
   atools::fs::Navdatabase nd(&opts, &db);
   nd.create();
 
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  if(!progressDialog->wasCanceled())
+  {
+    progressDialog->setCancelButtonText(tr("&OK"));
+    progressDialog->exec();
+  }
   delete progressDialog;
   progressDialog = nullptr;
 
@@ -272,13 +292,62 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
   }
   progressDialog->setValue(progress.getCurrent());
 
-  if(progress.isNewOther())
-    progressDialog->setLabelText("<br/><b>" + progress.getOtherAction() + "</b>");
+  static const QString text(tr("<b>%1</b><br/><br/><br/>"
+                               "<b>Files:</b> %L2<br/>"
+                               "<b>Airports:</b> %L3<br/>"
+                               "<b>VOR:</b> %L4<br/>"
+                               "<b>ILS:</b> %L5<br/>"
+                               "<b>NDB:</b> %L6<br/>"
+                               "<b>Marker:</b> %L7<br/>"
+                               "<b>Boundaries:</b> %L8<br/>"
+                               "<b>Waypoints:</b> %L9"));
 
-  if(progress.isNewSceneryArea() || progress.isNewFile())
-    progressDialog->setLabelText("<br/><b>Scenery:</b> " + progress.getSceneryTitle() +
-                                 "(" + progress.getSceneryPath() + ").<br/>" +
-                                 "<b>File:</b> " + progress.getBglFilepath() + ".");
+  static const QString textWithFile(tr("<b>Scenery:</b> %1 (%2).<br/>"
+                                       "<b>File:</b> %3.<br/><br/>"
+                                       "<b>Files:</b> %L4<br/>"
+                                       "<b>Airports:</b> %L5<br/>"
+                                       "<b>VOR:</b> %L6<br/>"
+                                       "<b>ILS:</b> %L7<br/>"
+                                       "<b>NDB:</b> %L8<br/>"
+                                       "<b>Marker:</b> %L9<br/>"
+                                       "<b>Boundaries:</b> %L10<br/>"
+                                       "<b>Waypoints:</b> %L11"));
+
+  if(progress.isNewOther())
+    progressDialog->setLabelText(
+      text.arg(progress.getOtherAction()).
+      arg(progress.getNumFiles()).
+      arg(progress.getNumAirports()).
+      arg(progress.getNumVors()).
+      arg(progress.getNumIls()).
+      arg(progress.getNumNdbs()).
+      arg(progress.getNumMarker()).
+      arg(progress.getNumBoundaries()).
+      arg(progress.getNumWaypoints()));
+  else if(progress.isNewSceneryArea() || progress.isNewFile())
+    progressDialog->setLabelText(
+      textWithFile.arg(progress.getSceneryTitle()).
+      arg(progress.getSceneryPath()).
+      arg(progress.getBglFilename()).
+      arg(progress.getNumFiles()).
+      arg(progress.getNumAirports()).
+      arg(progress.getNumVors()).
+      arg(progress.getNumIls()).
+      arg(progress.getNumNdbs()).
+      arg(progress.getNumMarker()).
+      arg(progress.getNumBoundaries()).
+      arg(progress.getNumWaypoints()));
+  else if(progress.isLastCall())
+    progressDialog->setLabelText(
+      text.arg(tr("Done")).
+      arg(progress.getNumFiles()).
+      arg(progress.getNumAirports()).
+      arg(progress.getNumVors()).
+      arg(progress.getNumIls()).
+      arg(progress.getNumNdbs()).
+      arg(progress.getNumMarker()).
+      arg(progress.getNumBoundaries()).
+      arg(progress.getNumWaypoints()));
 
   return progressDialog->wasCanceled();
 }
@@ -297,6 +366,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
+
+  connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
+  connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
+  connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 }
 
 void MainWindow::options()
