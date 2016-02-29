@@ -18,13 +18,12 @@
 #ifndef SEARCHPANELIST_H
 #define SEARCHPANELIST_H
 
-#include <QObject>
-
 class MainWindow;
 class Search;
 class ColumnList;
 class QLayout;
 class QAction;
+class QTableView;
 
 namespace atools {
 namespace sql {
@@ -32,17 +31,14 @@ class SqlDatabase;
 }
 }
 
-class SearchController :
-  public QObject
+class SearchController
 {
-  Q_OBJECT
-
 public:
   SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~SearchController();
 
-  void createAirportSearch();
-  void createNavSearch();
+  void createAirportSearch(QTableView *tableView);
+  void createNavSearch(QTableView *tableView);
 
   void preDatabaseLoad();
   void postDatabaseLoad();

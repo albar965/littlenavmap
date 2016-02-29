@@ -17,7 +17,6 @@
 
 #include "mappaintlayer.h"
 
-#include "navmapwidget.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
@@ -35,8 +34,8 @@
 
 using namespace Marble;
 
-MapPaintLayer::MapPaintLayer(MarbleWidget *widget) :
-  m_widget(widget)
+MapPaintLayer::MapPaintLayer(MarbleWidget *widget)
+  : m_widget(widget)
 {
 
 }
@@ -46,6 +45,13 @@ bool MapPaintLayer::render(GeoPainter *painter,
                            const QString& renderPos,
                            GeoSceneLayer *layer)
 {
+  GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
+  painter->mapQuality();
+  painter->setRenderHint(QPainter::Antialiasing, true);
+
+  painter->setPen(QPen(QBrush(QColor::fromRgb(0, 0, 0)), 3.0, Qt::SolidLine, Qt::RoundCap));
+  painter->drawPoint(home);
+
   // qDebug() << ;
   // Have window title reflect the current paint layer
   // GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);

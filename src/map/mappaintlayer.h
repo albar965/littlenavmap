@@ -28,7 +28,7 @@ class ViewportParams;
 }
 
 class MapPaintLayer :
-  public QObject, public Marble::LayerInterface
+  public Marble::LayerInterface
 {
 public:
   MapPaintLayer(Marble::MarbleWidget *widget);

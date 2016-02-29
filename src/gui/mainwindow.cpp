@@ -85,8 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
   createNavMap();
 
   searchPanes = new SearchController(this, &db);
-  searchPanes->createAirportSearch();
-  searchPanes->createNavSearch();
+  searchPanes->createAirportSearch(ui->tableViewAirportSearch);
+  searchPanes->createNavSearch(ui->tableViewNavSearch);
 
   searchPanes->restoreState();
   mapWidget->restoreState();
@@ -441,7 +441,7 @@ void MainWindow::readSettings()
   qDebug() << "readSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.restore({this, ui->statusBar});
+  ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 }
 
 void MainWindow::writeSettings()
@@ -449,9 +449,8 @@ void MainWindow::writeSettings()
   qDebug() << "writeSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.save({this, ui->statusBar});
+  ws.save({this, ui->statusBar, ui->tabWidgetSearch});
   ws.syncSettings();
-
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

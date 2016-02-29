@@ -51,7 +51,8 @@ SOURCES += src/main.cpp\
     src/table/searchcontroller.cpp \
     src/table/search.cpp \
     src/table/airportsearch.cpp \
-    src/table/navsearch.cpp
+    src/table/navsearch.cpp \
+    src/map/mapquery.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/map/navmapwidget.h \
@@ -65,7 +66,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/searchcontroller.h \
     src/table/search.h \
     src/table/airportsearch.h \
-    src/table/navsearch.h
+    src/table/navsearch.h \
+    src/map/mapquery.h
 
 FORMS    += src/gui/mainwindow.ui
 

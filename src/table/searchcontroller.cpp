@@ -21,14 +21,11 @@
 #include "table/columnlist.h"
 #include "table/airportsearch.h"
 #include "navsearch.h"
-#include "ui_mainwindow.h"
 #include "map/navmapwidget.h"
 #include "gui/widgetstate.h"
 
-#include <gui/widgetstate.h>
-
 SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
-  : QObject(parent), db(sqlDb), parentWidget(parent)
+  : db(sqlDb), parentWidget(parent)
 {
 }
 
@@ -45,14 +42,10 @@ void SearchController::saveState()
 {
   airportSearch->saveState();
   navSearch->saveState();
-
-  atools::gui::WidgetState("Search/").save(parentWidget->getUi()->tabWidgetSearch);
 }
 
 void SearchController::restoreState()
 {
-  atools::gui::WidgetState("Search/").restore(parentWidget->getUi()->tabWidgetSearch);
-
   airportSearch->restoreState();
   navSearch->restoreState();
 }
@@ -67,28 +60,28 @@ Search *SearchController::getNavSearch() const
   return navSearch;
 }
 
-void SearchController::createAirportSearch()
+void SearchController::createAirportSearch(QTableView *tableView)
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearch = new AirportSearch(parentWidget, parentWidget->getUi()->tableViewAirportSearch,
+  airportSearch = new AirportSearch(parentWidget, tableView,
                                     airportColumns, db);
   airportSearch->connectSlots();
 
-  connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
-          airportSearch, &Search::markChanged);
+  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
+                                        airportSearch, &Search::markChanged);
 }
 
-void SearchController::createNavSearch()
+void SearchController::createNavSearch(QTableView *tableView)
 {
   navColumns = new ColumnList("nav_search", "nav_search_id");
 
-  navSearch = new NavSearch(parentWidget, parentWidget->getUi()->tableViewNavSearch,
-                                navColumns, db);
+  navSearch = new NavSearch(parentWidget, tableView,
+                            navColumns, db);
   navSearch->connectSlots();
 
-  connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
-          navSearch, &Search::markChanged);
+  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
+                                        navSearch, &Search::markChanged);
 }
 
 void SearchController::preDatabaseLoad()
