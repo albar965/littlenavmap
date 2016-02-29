@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappaintlayer.h"
+#include "mapgui/mappaintlayer.h"
 
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -30,6 +30,7 @@
 #include <marble/LayerInterface.h>
 #include <marble/ViewportParams.h>
 #include <marble/MarbleLocale.h>
+
 #include <QContextMenuEvent>
 
 using namespace Marble;

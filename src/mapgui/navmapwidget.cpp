@@ -15,24 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappaintlayer.h"
-#include "navmapwidget.h"
-#include <marble/MarbleLocale.h>
-#include <QContextMenuEvent>
+#include "mapgui/mappaintlayer.h"
+#include "mapgui/navmapwidget.h"
 #include "settings/settings.h"
+#include "gui/mainwindow.h"
 
+#include <QContextMenuEvent>
 #include <QMenu>
 #include <QSettings>
 
-#include <gui/mainwindow.h>
-#include "ui_mainwindow.h"
-
+#include <marble/MarbleLocale.h>
 #include <marble/GeoDataDocument.h>
 #include <marble/GeoDataIconStyle.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataStyle.h>
 #include <marble/GeoDataTreeModel.h>
 #include <marble/MarbleModel.h>
+
+#include "ui_mainwindow.h"
 
 using namespace Marble;
 
@@ -104,15 +104,15 @@ void NavMapWidget::restoreState()
 void NavMapWidget::showPoint(double lonX, double latY, int zoom)
 {
   qDebug() << "NavMapWidget::showPoint";
-//  GeoDataLookAt lookAt;
-//  lookAt.setLatitude(latY);
-//  lookAt.setLongitude(lonX);
-//  lookAt.setAltitude(1000.);
-//  lookAt.setRange(10);
-//  flyTo(lookAt);
-//  update();
-   setZoom(zoom);
-   centerOn(lonX, latY, false);
+  // GeoDataLookAt lookAt;
+  // lookAt.setLatitude(latY);
+  // lookAt.setLongitude(lonX);
+  // lookAt.setAltitude(1000.);
+  // lookAt.setRange(10);
+  // flyTo(lookAt);
+  // update();
+  setZoom(zoom);
+  centerOn(lonX, latY, false);
 }
 
 void NavMapWidget::mapContextMenu(const QPoint& pos)

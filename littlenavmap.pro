@@ -40,8 +40,6 @@ win32:DEFINES +=_USE_MATH_DEFINES
 
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
-    src/map/navmapwidget.cpp \
-    src/map/mappaintlayer.cpp \
     src/table/columnlist.cpp \
     src/table/controller.cpp \
     src/table/formatter.cpp \
@@ -52,11 +50,11 @@ SOURCES += src/main.cpp\
     src/table/search.cpp \
     src/table/airportsearch.cpp \
     src/table/navsearch.cpp \
-    src/map/mapquery.cpp
+    src/mapgui/mapquery.cpp \
+    src/mapgui/navmapwidget.cpp \
+    src/mapgui/mappaintlayer.cpp
 
 HEADERS  += src/gui/mainwindow.h \
-    src/map/navmapwidget.h \
-    src/map/mappaintlayer.h \
     src/table/columnlist.h \
     src/table/controller.h \
     src/table/formatter.h \
@@ -67,7 +65,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/search.h \
     src/table/airportsearch.h \
     src/table/navsearch.h \
-    src/map/mapquery.h
+    src/mapgui/mapquery.h \
+    src/mapgui/navmapwidget.h \
+    src/mapgui/mappaintlayer.h
 
 FORMS    += src/gui/mainwindow.ui
 

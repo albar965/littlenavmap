@@ -15,8 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "gui/mainwindow.h"
 
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
@@ -27,7 +26,8 @@
 #include "gui/translator.h"
 #include "fs/fspaths.h"
 #include "table/search.h"
-#include "map/navmapwidget.h"
+#include "mapgui/navmapwidget.h"
+
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
@@ -54,7 +54,9 @@
 #include "table/searchcontroller.h"
 #include "gui/helphandler.h"
 
-#include <sql/sqlutil.h>
+#include "sql/sqlutil.h"
+
+#include "ui_mainwindow.h"
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -348,6 +350,8 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
       arg(progress.getNumMarker()).
       arg(progress.getNumBoundaries()).
       arg(progress.getNumWaypoints()));
+
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
   return progressDialog->wasCanceled();
 }

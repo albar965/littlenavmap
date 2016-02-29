@@ -20,8 +20,7 @@
 
 #include <QMainWindow>
 
-#include <geo/pos.h>
-
+#include "geo/pos.h"
 #include "sql/sqldatabase.h"
 
 class QProgressDialog;

@@ -21,7 +21,7 @@
 #include "table/columnlist.h"
 #include "table/airportsearch.h"
 #include "navsearch.h"
-#include "map/navmapwidget.h"
+#include "mapgui/navmapwidget.h"
 #include "gui/widgetstate.h"
 
 SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
