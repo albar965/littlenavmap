@@ -19,6 +19,7 @@
 #define MAPPAINTLAYER_H
 
 #include <marble/LayerInterface.h>
+#include <QPen>
 #include "mapquery.h"
 namespace Marble {
 class MarbleWidget;
@@ -53,10 +54,23 @@ public:
 
   const MapAirport *getAirportAtPos(int xs, int ys);
 
+  void paintMark(Marble::ViewportParams *viewport, Marble::GeoPainter *painter);
+
+  void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int size, int x, int y);
+
 private:
+  QPen textBackgroundPen, textPen, markBackPen, markFillPen;
+  QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
+
   QList<MapAirport> ap;
   NavMapWidget *navMapWidget;
   atools::sql::SqlDatabase *db;
+
+  void textBox(Marble::ViewportParams *viewport, Marble::GeoPainter *painter, const QStringList& texts,
+               const QPen& pen,
+               int x,
+               int y);
+  QColor& colorForAirport(const MapAirport& ap);
 
 };
 

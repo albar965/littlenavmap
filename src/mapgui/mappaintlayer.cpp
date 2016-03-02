@@ -41,7 +41,72 @@ using namespace Marble;
 MapPaintLayer::MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb)
   : navMapWidget(widget), db(sqlDb)
 {
+  markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
+  markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 
+  textBackgroundPen = QPen(QBrush(QColor::fromRgb(255, 255, 255, 200)), 1, Qt::SolidLine, Qt::RoundCap);
+  textPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt::RoundCap);
+
+  airportEmptyColor = QColor::fromRgb(150, 150, 150);
+  toweredAirportColor = QColor::fromRgb(15, 70, 130);
+  unToweredAirportColor = QColor::fromRgb(126, 58, 91);
+}
+
+void MapPaintLayer::textBox(ViewportParams *viewport, GeoPainter *painter, const QStringList& texts,
+                            const QPen& pen, int x, int y)
+{
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
+
+  int yoffset = 0;
+  painter->setPen(textBackgroundPen);
+  for(const QString& t : texts)
+  {
+    int w = metrics.width(t);
+    painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
+    yoffset += h;
+  }
+
+  yoffset = 0;
+  painter->setPen(pen);
+  for(const QString& t : texts)
+  {
+    painter->drawText(x, y + yoffset, t);
+    yoffset += h;
+  }
+}
+
+void MapPaintLayer::paintMark(ViewportParams *viewport, GeoPainter *painter)
+{
+  if(navMapWidget->getMark().isValid())
+  {
+    qreal x, y;
+    bool hidden = false;
+    bool visible = viewport->screenCoordinates(navMapWidget->getMark(), x, y, hidden);
+
+    if(visible && !hidden)
+    {
+      int xc = x, yc = y;
+      painter->setPen(markBackPen);
+
+      painter->drawLine(xc, yc - 10, xc, yc + 10);
+      painter->drawLine(xc - 10, yc, xc + 10, yc);
+
+      painter->setPen(markFillPen);
+      painter->drawLine(xc, yc - 8, xc, yc + 8);
+      painter->drawLine(xc - 8, yc, xc + 8, yc);
+    }
+  }
+}
+
+QColor& MapPaintLayer::colorForAirport(const MapAirport& ap)
+{
+  if(!ap.isSet(SCENERY))
+    return airportEmptyColor;
+  else if(ap.isSet(TOWER))
+    return toweredAirportColor;
+  else
+    return unToweredAirportColor;
 }
 
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
@@ -51,34 +116,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   // qDebug() << "zoom" << marbleWidget->zoom() << "distance" << marbleWidget->distance();
   // qDebug() << "render cur box" << curBox.toString(GeoDataCoordinates::Degree);
 
-  if(navMapWidget->getMark().isValid())
-  {
-    qreal x, y;
-    bool hidden = false;
-    bool visible = viewport->screenCoordinates(navMapWidget->getMark(), x, y, hidden);
-
-    int xc = x, yc = y;
-    if(visible && !hidden)
-    {
-      QPen bigPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-
-      painter->setPen(bigPen);
-
-      painter->drawLine(xc, yc - 10, xc, yc + 10);
-      painter->drawLine(xc - 10, yc, xc + 10, yc);
-
-      QPen smallPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-      painter->setPen(smallPen);
-      painter->drawLine(xc, yc - 8, xc, yc + 8);
-      painter->drawLine(xc - 8, yc, xc + 8, yc);
-    }
-  }
-
   if(navMapWidget->distance() < 500)
   {
     MapQuery mq(db);
 
-    if(navMapWidget->viewContext() == Marble::Still)
+    if(navMapWidget->viewContext() == Marble::Still || navMapWidget->distance() < 100)
     {
       ap.clear();
       mq.getAirports(curBox, ap);
@@ -87,20 +129,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     painter->mapQuality();
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    QPen bigPen(QBrush(QColor::fromRgb(0, 0, 0)), 3, Qt::SolidLine, Qt::RoundCap);
-    QPen smallPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt::RoundCap);
-    QPen backPen(QBrush(QColor::fromRgb(255, 255, 255, 200)), 1, Qt::SolidLine, Qt::RoundCap);
-
-    if(navMapWidget->distance() > 200)
-      painter->setPen(bigPen);
-    else
-      painter->setPen(smallPen);
-
     painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255, 200)));
     QFont f = painter->font();
 
     if(navMapWidget->distance() > 200)
-      f.setPointSizeF(f.pointSizeF() / 1.5f);
+      f.setPointSizeF(f.pointSizeF() / 1.2f);
 
     painter->setFont(f);
     QFontMetrics metrics(f);
@@ -114,37 +147,72 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       int xc = x, yc = y;
       if(visible && !hidden)
       {
-        if(navMapWidget->distance() > 200)
-          painter->drawPoint(xc, yc);
-        else
-          painter->drawEllipse(xc, yc, 5, 5);
-
-        xc += 5;
-        int h = metrics.height();
-        if(navMapWidget->distance() < 200)
-        {
-
-          int w = metrics.width(a.ident);
-          painter->setPen(backPen);
-          painter->drawRoundedRect(xc - 2, yc - h + metrics.descent(), w + 4, h, 5, 5);
-          painter->setPen(smallPen);
-          painter->drawText(xc, yc, a.ident);
-        }
+        painter->setPen(colorForAirport(a));
 
         if(navMapWidget->distance() < 100)
         {
-          yc += h;
-          int w = metrics.width(a.name);
-          painter->setPen(backPen);
-          painter->drawRoundedRect(xc - 2, yc - h + metrics.descent(), w + 4, h, 5, 5);
-          painter->setPen(smallPen);
-          painter->drawText(xc, yc, a.name);
+          airportSymbol(painter, a, 14, xc, yc);
+          xc += 16;
+          textBox(viewport, painter, {a.ident, a.name}, colorForAirport(a), xc, yc);
         }
+        else if(navMapWidget->distance() < 200)
+        {
+          airportSymbol(painter, a, 10, xc, yc);
+          xc += 12;
+          textBox(viewport, painter, {a.ident}, colorForAirport(a), xc, yc);
+        }
+        else if(navMapWidget->distance() < 500)
+          painter->drawEllipse(xc, yc, 4, 4);
       }
     }
   }
 
+  paintMark(viewport, painter);
+
   return true;
+}
+
+void MapPaintLayer::airportSymbol(GeoPainter *painter, const MapAirport& ap, int size, int x, int y)
+{
+  const QBrush localBrush = painter->brush();
+  int radius = size / 2;
+
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED))
+    painter->setBrush(QBrush(colorForAirport(ap)));
+  else
+    painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255)));
+
+  if(ap.isSet(FUEL) && !ap.isSet(MIL) && !ap.isSet(CLOSED))
+  {
+    painter->setPen(QPen(QBrush(colorForAirport(ap)), size / 4, Qt::SolidLine, Qt::FlatCap));
+    painter->drawLine(x, y - radius - 3, x, y + radius + 3);
+    painter->drawLine(x - radius - 3, y, x + radius + 3, y);
+  }
+
+  painter->setPen(QPen(QBrush(colorForAirport(ap)), size / 5, Qt::SolidLine, Qt::FlatCap));
+  painter->drawEllipse(QPoint(x, y), radius, radius);
+
+  if(ap.isSet(MIL))
+    painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(localBrush);
+
+  if(ap.isSet(CLOSED))
+  {
+    painter->setPen(QPen(QBrush(colorForAirport(ap)), size / 7, Qt::SolidLine, Qt::FlatCap));
+    painter->drawLine(x - radius, y - radius, x + radius, y + radius);
+    painter->drawLine(x - radius, y + radius, x + radius, y - radius);
+  }
+
+  if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED))
+  {
+    painter->translate(x, y);
+    painter->rotate(ap.longestRunwayHeading);
+    painter->setPen(QPen(QBrush(QColor::fromRgb(255, 255, 255)), size / 5, Qt::SolidLine, Qt::RoundCap));
+    painter->drawLine(0, -radius + 2, 0, radius - 2);
+    painter->resetTransform();
+  }
 }
 
 const MapAirport *MapPaintLayer::getAirportAtPos(int xs, int ys)

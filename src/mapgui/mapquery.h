@@ -49,11 +49,10 @@ enum MapAirportFlags
   APPR = 0x0020,
   MIL = 0x0040,
   CLOSED = 0x0080,
-  AVGAS = 0x0100,
-  JETFUEL = 0x0200,
-  HARD = 0x0400,
-  SOFT = 0x0800,
-  WATER = 0x1000
+  FUEL = 0x0100,
+  HARD = 0x0200,
+  SOFT = 0x0400,
+  WATER = 0x0800
 };
 
 struct MapAirport
@@ -64,6 +63,12 @@ struct MapAirport
   int longestRunwayHeading;
   int flags;
   Marble::GeoDataCoordinates coords;
+
+  bool isSet(MapAirportFlags flag) const
+  {
+    return (flags & flag) == flag;
+  }
+
 
 };
 

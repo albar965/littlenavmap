@@ -37,13 +37,13 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAir
   SqlQuery query(db);
 
   query.prepare(
-    "select airport_id, ident, name, "
+    "select airport_id, ident, name, rating, "
     "has_avgas, has_jetfuel, has_tower, is_closed, is_military, is_addon,"
     "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
     "longest_runway_length, longest_runway_heading, "
     "lonx, laty "
     "from airport "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy order by longest_runway_length");
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy order by rating asc, longest_runway_length");
 
   query.bindValue(":leftx", rect.west(GeoDataCoordinates::Degree));
   query.bindValue(":rightx", rect.east(GeoDataCoordinates::Degree));
@@ -54,8 +54,9 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAir
   {
   int flags = 0;
 
-  flags |= flag(query, "has_avgas", AVGAS);
-  flags |= flag(query, "has_jetfuel", JETFUEL);
+  flags |= flag(query, "rating", SCENERY);
+  flags |= flag(query, "has_avgas", FUEL);
+  flags |= flag(query, "has_jetfuel", FUEL);
   flags |= flag(query, "has_tower", TOWER);
   flags |= flag(query, "is_closed", CLOSED);
   flags |= flag(query, "is_military", MIL);

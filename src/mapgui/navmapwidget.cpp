@@ -152,6 +152,9 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
 {
+  if(event->buttons() == Qt::NoButton)
+    if(cursor().shape() != Qt::ArrowCursor)
+      setCursor(Qt::ArrowCursor);
 }
 
 bool NavMapWidget::event(QEvent *event)
