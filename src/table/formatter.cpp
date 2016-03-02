@@ -18,6 +18,7 @@
 #include "table/formatter.h"
 
 #include <QDateTime>
+#include <QElapsedTimer>
 #include <QLocale>
 #include <QObject>
 #include <algorithm>
@@ -105,6 +106,22 @@ QString formatDateLong(int timeT)
     return dateTime.toString(Qt::DefaultLocaleLongDate).replace("UTC", "");
   else
     return QObject::tr("Invalid date");
+}
+
+QString formatElapsed(const QElapsedTimer& timer)
+{
+  int secs = static_cast<int>(timer.elapsed() / 1000L);
+  if(secs < 60)
+    return QObject::tr("%L1 %2").arg(secs).arg(secs == 1 ? QObject::tr("second") : QObject::tr("seconds"));
+  else
+  {
+    int mins = secs / 60;
+    secs = secs - mins * 60;
+
+    return QObject::tr("%L1 %2 %L3 %4").
+           arg(mins).arg(mins == 1 ? QObject::tr("minute") : QObject::tr("minutes")).
+           arg(secs).arg(secs == 1 ? QObject::tr("second") : QObject::tr("seconds"));
+  }
 }
 
 } // namespace formatter

@@ -23,6 +23,7 @@
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QSettings>
+#include <QToolTip>
 
 #include <marble/MarbleLocale.h>
 #include <marble/GeoDataDocument.h>
@@ -31,40 +32,30 @@
 #include <marble/GeoDataStyle.h>
 #include <marble/GeoDataTreeModel.h>
 #include <marble/MarbleModel.h>
+#include <marble/MarbleWidgetInputHandler.h>
 
 #include "ui_mainwindow.h"
 
 using namespace Marble;
 
-NavMapWidget::NavMapWidget(MainWindow *parent)
-  : Marble::MarbleWidget(parent), parentWindow(parent)
+NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
+  : Marble::MarbleWidget(parent), parentWindow(parent), db(sqlDb)
 {
-  MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+  installEventFilter(this);
 
+  MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
+  // inputHandler()->setInertialEarthRotationEnabled(false);
   // MarbleLocale::MeasurementSystem distanceUnit;
   // distanceUnit = MarbleGlobal::getInstance()->locale()->measurementSystem();
 
-  MapPaintLayer *layer = new MapPaintLayer(this);
-  addLayer(layer);
+  paintLayer = new MapPaintLayer(this, db);
+  addLayer(paintLayer);
 
-  // MarbleWidgetInputHandler *localInputHandler = inputHandler();
+  // MarbleWidgetInputHandler *handler = inputHandler();
+  // handler->installEventFilter();
   // MarbleAbstractPresenter *pres = new MarbleAbstractPresenter;
   // setInputHandler(nullptr);
   connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
-
-  GeoDataDocument *document = new GeoDataDocument;
-
-  GeoDataIconStyle *style = new GeoDataIconStyle;
-  GeoDataStyle *style2 = new GeoDataStyle;
-  style2->setIconStyle(*style);
-
-  place = new GeoDataPlacemark("Mark");
-  place->setCoordinate(0., 0., 0., GeoDataCoordinates::Degree);
-  document->append(place);
-
-  // Add the document to MarbleWidget's tree model
-  model()->treeModel()->addDocument(document);
-
 }
 
 void NavMapWidget::saveState()
@@ -74,10 +65,8 @@ void NavMapWidget::saveState()
   s->setValue("Map/LonX", centerLongitude());
   s->setValue("Map/LatY", centerLatitude());
 
-  GeoDataCoordinates c = place->coordinate();
-
-  s->setValue("Map/MarkLonX", c.longitude(GeoDataCoordinates::Degree));
-  s->setValue("Map/MarkLatY", c.latitude(GeoDataCoordinates::Degree));
+  s->setValue("Map/MarkLonX", mark.longitude(GeoDataCoordinates::Degree));
+  s->setValue("Map/MarkLatY", mark.latitude(GeoDataCoordinates::Degree));
 }
 
 void NavMapWidget::restoreState()
@@ -91,9 +80,8 @@ void NavMapWidget::restoreState()
 
   if(s->contains("Map/MarkLonX") && s->contains("Map/MarkLatY"))
   {
-    place->setCoordinate(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble(),
-                         0., GeoDataCoordinates::Degree);
-    model()->treeModel()->updateFeature(place);
+    mark.setLongitude(s->value("Map/MarkLonX").toDouble(), GeoDataCoordinates::Degree);
+    mark.setLatitude(s->value("Map/MarkLatY").toDouble(), GeoDataCoordinates::Degree);
 
     atools::geo::Pos newPos(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble());
     qDebug() << "new mark" << newPos;
@@ -104,13 +92,6 @@ void NavMapWidget::restoreState()
 void NavMapWidget::showPoint(double lonX, double latY, int zoom)
 {
   qDebug() << "NavMapWidget::showPoint";
-  // GeoDataLookAt lookAt;
-  // lookAt.setLatitude(latY);
-  // lookAt.setLongitude(lonX);
-  // lookAt.setAltitude(1000.);
-  // lookAt.setRange(10);
-  // flyTo(lookAt);
-  // update();
   setZoom(zoom);
   centerOn(lonX, latY, false);
 }
@@ -130,12 +111,64 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
     qreal lon, lat;
     if(geoCoordinates(pos.x(), pos.y(), lon, lat))
     {
-      place->setCoordinate(lon, lat, 0., GeoDataCoordinates::Degree);
-      model()->treeModel()->updateFeature(place);
+      mark.setLongitude(lon, GeoDataCoordinates::Degree);
+      mark.setLatitude(lat, GeoDataCoordinates::Degree);
 
+      update();
       qDebug() << "new mark" << atools::geo::Pos(lon, lat);
 
       emit markChanged(atools::geo::Pos(lon, lat));
     }
   }
+}
+
+bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
+{
+  if(e->type() == QEvent::MouseButtonDblClick)
+  {
+    e->accept();
+    qDebug() << "eventFilter mouseDoubleClickEvent";
+    event(e);
+    return true;
+  }
+  Marble::MarbleWidget::eventFilter(obj, e);
+  return false;
+}
+
+void NavMapWidget::mousePressEvent(QMouseEvent *event)
+{
+  qDebug() << "mousePressEvent";
+}
+
+void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  qDebug() << "mouseReleaseEvent";
+}
+
+void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+  qDebug() << "mouseDoubleClickEvent";
+}
+
+void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
+{
+}
+
+bool NavMapWidget::event(QEvent *event)
+{
+  if(event->type() == QEvent::ToolTip)
+  {
+    QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+    const MapAirport *ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
+    if(ap != nullptr)
+      QToolTip::showText(helpEvent->globalPos(), QString::number(ap->id) + "\n" + ap->ident + "\n" + ap->name);
+    else
+    {
+      QToolTip::hideText();
+      event->ignore();
+    }
+
+    return true;
+  }
+  return QWidget::event(event);
 }

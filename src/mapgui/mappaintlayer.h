@@ -19,7 +19,7 @@
 #define MAPPAINTLAYER_H
 
 #include <marble/LayerInterface.h>
-
+#include "mapquery.h"
 namespace Marble {
 class MarbleWidget;
 class GeoPainter;
@@ -27,11 +27,19 @@ class GeoSceneLayer;
 class ViewportParams;
 }
 
+namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+}
+
+class NavMapWidget;
+
 class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(Marble::MarbleWidget *widget);
+  MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb);
 
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override
@@ -43,8 +51,13 @@ public:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
+  const MapAirport *getAirportAtPos(int xs, int ys);
+
 private:
-  Marble::MarbleWidget *m_widget;
+  QList<MapAirport> ap;
+  NavMapWidget *navMapWidget;
+  atools::sql::SqlDatabase *db;
+
 };
 
 #endif // MAPPAINTLAYER_H

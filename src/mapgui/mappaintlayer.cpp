@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "mapgui/mappaintlayer.h"
+#include "mapgui/navmapwidget.h"
+#include "mapquery.h"
 
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -30,75 +32,135 @@
 #include <marble/LayerInterface.h>
 #include <marble/ViewportParams.h>
 #include <marble/MarbleLocale.h>
-
+#include <marble/MarbleWidget.h>
+#include <marble/ViewportParams.h>
 #include <QContextMenuEvent>
 
 using namespace Marble;
 
-MapPaintLayer::MapPaintLayer(MarbleWidget *widget)
-  : m_widget(widget)
+MapPaintLayer::MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb)
+  : navMapWidget(widget), db(sqlDb)
 {
 
 }
 
-bool MapPaintLayer::render(GeoPainter *painter,
-                           ViewportParams *viewport,
-                           const QString& renderPos,
-                           GeoSceneLayer *layer)
+bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
+                           const QString& renderPos, GeoSceneLayer *layer)
 {
-  GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
-  painter->mapQuality();
-  painter->setRenderHint(QPainter::Antialiasing, true);
+  const GeoDataLatLonAltBox& curBox = viewport->viewLatLonAltBox();
+  // qDebug() << "zoom" << marbleWidget->zoom() << "distance" << marbleWidget->distance();
+  // qDebug() << "render cur box" << curBox.toString(GeoDataCoordinates::Degree);
 
-  painter->setPen(QPen(QBrush(QColor::fromRgb(0, 0, 0)), 3.0, Qt::SolidLine, Qt::RoundCap));
-  painter->drawPoint(home);
+  if(navMapWidget->getMark().isValid())
+  {
+    qreal x, y;
+    bool hidden = false;
+    bool visible = viewport->screenCoordinates(navMapWidget->getMark(), x, y, hidden);
 
-  // qDebug() << ;
-  // Have window title reflect the current paint layer
-  // GeoDataCoordinates home(8.26589, 50.29824, 0.0, GeoDataCoordinates::Degree);
-  // painter->mapQuality();
-  // painter->setRenderHint(QPainter::Antialiasing, true);
+    int xc = x, yc = y;
+    if(visible && !hidden)
+    {
+      QPen bigPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
 
-  // painter->setPen(QPen(QBrush(QColor::fromRgb(255, 0, 0, 200)), 3.0, Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(bigPen);
 
-  // if(m_widget->viewContext() == Marble::Still)
-  // painter->drawEllipse(home, 10, 5, true);
+      painter->drawLine(xc, yc - 10, xc, yc + 10);
+      painter->drawLine(xc - 10, yc, xc + 10, yc);
 
-  // GeoDataCoordinates France(2.2, 48.52, 0.0, GeoDataCoordinates::Degree);
-  // painter->setPen(QColor(0, 0, 0));
-  // painter->drawText(France, "France");
+      QPen smallPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
+      painter->setPen(smallPen);
+      painter->drawLine(xc, yc - 8, xc, yc + 8);
+      painter->drawLine(xc - 8, yc, xc + 8, yc);
+    }
+  }
 
-  // GeoDataCoordinates Canada(-77.02, 48.52, 0.0, GeoDataCoordinates::Degree);
-  // painter->setPen(QColor(0, 0, 0));
-  // painter->drawText(Canada, "Canada");
+  if(navMapWidget->distance() < 500)
+  {
+    MapQuery mq(db);
 
-  // // A line from France to Canada without tessellation
+    if(navMapWidget->viewContext() == Marble::Still)
+    {
+      ap.clear();
+      mq.getAirports(curBox, ap);
+    }
 
-  // GeoDataLineString shapeNoTessellation(NoTessellation);
-  // shapeNoTessellation << France << Canada;
+    painter->mapQuality();
+    painter->setRenderHint(QPainter::Antialiasing, true);
 
-  // painter->setPen(QColor(255, 0, 0));
-  // painter->drawPolyline(shapeNoTessellation);
+    QPen bigPen(QBrush(QColor::fromRgb(0, 0, 0)), 3, Qt::SolidLine, Qt::RoundCap);
+    QPen smallPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt::RoundCap);
+    QPen backPen(QBrush(QColor::fromRgb(255, 255, 255, 200)), 1, Qt::SolidLine, Qt::RoundCap);
 
-  // // The same line, but with tessellation
+    if(navMapWidget->distance() > 200)
+      painter->setPen(bigPen);
+    else
+      painter->setPen(smallPen);
 
-  // GeoDataLineString shapeTessellate(Tessellate);
-  // shapeTessellate << France << Canada;
+    painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255, 200)));
+    QFont f = painter->font();
 
-  // painter->setPen(QColor(0, 255, 0));
-  // painter->drawPolyline(shapeTessellate);
+    if(navMapWidget->distance() > 200)
+      f.setPointSizeF(f.pointSizeF() / 1.5f);
 
-  // // Now following the latitude circles
+    painter->setFont(f);
+    QFontMetrics metrics(f);
 
-  // GeoDataLineString shapeLatitudeCircle(RespectLatitudeCircle | Tessellate);
-  // shapeLatitudeCircle << France << Canada;
+    for(const MapAirport& a : ap)
+    {
+      qreal x, y;
+      bool hidden = false;
+      bool visible = viewport->screenCoordinates(a.coords, x, y, hidden);
 
-  // painter->setPen(QColor(0, 0, 255));
-  // painter->drawPolyline(shapeLatitudeCircle);
+      int xc = x, yc = y;
+      if(visible && !hidden)
+      {
+        if(navMapWidget->distance() > 200)
+          painter->drawPoint(xc, yc);
+        else
+          painter->drawEllipse(xc, yc, 5, 5);
 
-  // RespectLatitudeCircle = 0x2,
-  // FollowGround = 0x4,
-  // RotationIndicatesFill = 0x8,
-  // SkipLatLonNormalization = 0x10
+        xc += 5;
+        int h = metrics.height();
+        if(navMapWidget->distance() < 200)
+        {
+
+          int w = metrics.width(a.ident);
+          painter->setPen(backPen);
+          painter->drawRoundedRect(xc - 2, yc - h + metrics.descent(), w + 4, h, 5, 5);
+          painter->setPen(smallPen);
+          painter->drawText(xc, yc, a.ident);
+        }
+
+        if(navMapWidget->distance() < 100)
+        {
+          yc += h;
+          int w = metrics.width(a.name);
+          painter->setPen(backPen);
+          painter->drawRoundedRect(xc - 2, yc - h + metrics.descent(), w + 4, h, 5, 5);
+          painter->setPen(smallPen);
+          painter->drawText(xc, yc, a.name);
+        }
+      }
+    }
+  }
+
   return true;
+}
+
+const MapAirport *MapPaintLayer::getAirportAtPos(int xs, int ys)
+{
+  const ViewportParams *vp = navMapWidget->viewport();
+
+  for(const MapAirport& a : ap)
+  {
+    qreal x, y;
+    bool visible = vp->screenCoordinates(a.coords, x, y);
+    int xa = x, ya = y;
+
+    if(visible)
+      if((std::abs(xs - xa) + std::abs(ys - ya)) < 10)
+        return &a;
+  }
+
+  return nullptr;
 }

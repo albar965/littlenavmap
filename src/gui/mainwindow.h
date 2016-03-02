@@ -24,6 +24,7 @@
 #include "sql/sqldatabase.h"
 
 class QProgressDialog;
+class QElapsedTimer;
 class Controller;
 class ColumnList;
 class SearchController;
@@ -104,7 +105,7 @@ private:
   void updateActionStates();
   void setupUi();
   void loadScenery();
-  bool progressCallback(const atools::fs::BglReaderProgressInfo& progress);
+  bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
 
   void createNavMap();
   void options();

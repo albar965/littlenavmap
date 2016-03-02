@@ -27,7 +27,7 @@
 #include "fs/fspaths.h"
 #include "table/search.h"
 #include "mapgui/navmapwidget.h"
-
+#include "table/formatter.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
@@ -41,6 +41,7 @@
 #include <marble/QtMarbleConfigDialog.h>
 
 #include <QCloseEvent>
+#include <QElapsedTimer>
 #include <QProgressDialog>
 #include <QSettings>
 
@@ -95,35 +96,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connectAllSlots();
   updateActionStates();
-
-#if 0
-  GeoDataDocument *document = new GeoDataDocument;
-
-  GeoDataIconStyle *style = new GeoDataIconStyle;
-  // style->setIconPath(":/littlenavmap/resources/icons/checkmark.svg");
-  GeoDataStyle *style2 = new GeoDataStyle;
-  style2->setIconStyle(*style);
-
-  atools::sql::SqlQuery query(db);
-
-  query.exec("select ident, name, lonx, laty, altitude from airport where rating > 0");
-
-  while(query.next())
-  {
-    GeoDataPlacemark *place = new GeoDataPlacemark(query.value("ident").toString() + " " +
-                                                   query.value("name").toString());
-    place->setCoordinate(query.value("lonx").toDouble(), query.value("laty").toDouble(),
-                         query.value("altitude").toDouble(), GeoDataCoordinates::Degree);
-    // place->setDescription("Test place");
-    // place->setCountryCode("Germany");
-    // place->setStyle(style2);
-
-    document->append(place);
-  }
-
-  // Add the document to MarbleWidget's tree model
-  mapWidget->model()->treeModel()->addDocument(document);
-#endif
 }
 
 void MainWindow::createNavMap()
@@ -139,7 +111,7 @@ void MainWindow::createNavMap()
   qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
   // Create a Marble QWidget without a parent
-  mapWidget = new NavMapWidget(this);
+  mapWidget = new NavMapWidget(this, &db);
 
   // Load the OpenStreetMap map
   mapWidget->setMapThemeId("earth/openstreetmap/openstreetmap.dgml");
@@ -249,7 +221,7 @@ void MainWindow::loadScenery()
   label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   label->setIndent(10);
   label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setMinimumWidth(640);
+  label->setMinimumWidth(600);
 
   progressDialog->setWindowModality(Qt::WindowModal);
   progressDialog->setLabel(label);
@@ -265,7 +237,9 @@ void MainWindow::loadScenery()
   opts.setSceneryFile(sceneryFile);
   opts.setBasepath(basepath);
 
-  opts.setProgressCallback(std::bind(&MainWindow::progressCallback, this, std::placeholders::_1));
+  QElapsedTimer timer;
+  using namespace std::placeholders;
+  opts.setProgressCallback(std::bind(&MainWindow::progressCallback, this, _1, timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -276,8 +250,8 @@ void MainWindow::loadScenery()
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   if(!progressDialog->wasCanceled())
   {
-    progressDialog->setCancelButtonText(tr("&OK"));
-    progressDialog->exec();
+  progressDialog->setCancelButtonText(tr("&OK"));
+  progressDialog->exec();
   }
   delete progressDialog;
   progressDialog = nullptr;
@@ -285,39 +259,81 @@ void MainWindow::loadScenery()
   postDatabaseLoad(false);
 }
 
-bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progress)
+bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer)
 {
   if(progress.isFirstCall())
   {
+    timer.start();
     progressDialog->setMinimum(0);
     progressDialog->setMaximum(progress.getTotal());
   }
   progressDialog->setValue(progress.getCurrent());
 
-  static const QString text(tr("<b>%1</b><br/><br/><br/>"
-                               "<b>Files:</b> %L2<br/>"
-                               "<b>Airports:</b> %L3<br/>"
-                               "<b>VOR:</b> %L4<br/>"
-                               "<b>ILS:</b> %L5<br/>"
-                               "<b>NDB:</b> %L6<br/>"
-                               "<b>Marker:</b> %L7<br/>"
-                               "<b>Boundaries:</b> %L8<br/>"
-                               "<b>Waypoints:</b> %L9"));
+  static const QString table(tr("<table>"
+                                  "<tbody>"
+                                    "<tr> "
+                                      "<td width=\"60\"><b>Files:</b>"
+                                      "</td>    "
+                                      "<td width=\"60\">%L5"
+                                      "</td> "
+                                      "<td width=\"60\"><b>VOR:</b>"
+                                      "</td> "
+                                      "<td width=\"60\">%L7"
+                                      "</td> "
+                                      "<td width=\"60\"><b>Marker:</b>"
+                                      "</td>     "
+                                      "<td width=\"60\">%L10"
+                                      "</td>"
+                                    "</tr>"
+                                    "<tr> "
+                                      "<td width=\"60\"><b>Airports:</b>"
+                                      "</td> "
+                                      "<td width=\"60\">%L6"
+                                      "</td> "
+                                      "<td width=\"60\"><b>ILS:</b>"
+                                      "</td> "
+                                      "<td width=\"60\">%L8"
+                                      "</td> "
+                                      "<td width=\"60\"><b>Boundaries:</b>"
+                                      "</td> <td width=\"60\">%L11"
+                                    "</td>"
+                                  "</tr>"
+                                  "<tr> "
+                                    "<td width=\"60\">"
+                                    "</td>"
+                                    "<td width=\"60\">"
+                                    "</td>"
+                                    "<td width=\"60\"><b>NDB:</b>"
+                                    "</td> "
+                                    "<td width=\"60\">%L9"
+                                    "</td> "
+                                    "<td width=\"60\"><b>Waypoints:"
+                                    "</b>"
+                                  "</td>  "
+                                  "<td width=\"60\">%L12"
+                                  "</td>"
+                                "</tr>"
+                              "</tbody>"
+                            "</table>"
+                                ));
 
-  static const QString textWithFile(tr("<b>Scenery:</b> %1 (%2).<br/>"
-                                       "<b>File:</b> %3.<br/><br/>"
-                                       "<b>Files:</b> %L4<br/>"
-                                       "<b>Airports:</b> %L5<br/>"
-                                       "<b>VOR:</b> %L6<br/>"
-                                       "<b>ILS:</b> %L7<br/>"
-                                       "<b>NDB:</b> %L8<br/>"
-                                       "<b>Marker:</b> %L9<br/>"
-                                       "<b>Boundaries:</b> %L10<br/>"
-                                       "<b>Waypoints:</b> %L11"));
+  static const QString text(tr(
+                              "<b>%1</b><br/><br/><br/>"
+                              "<b>Time:</b> %2<br/>%3%4"
+                              ) + table);
+
+  static const QString textWithFile(tr(
+                                      "<b>Scenery:</b> %1 (%2)<br/>"
+                                      "<b>File:</b> %3<br/><br/>"
+                                      "<b>Time:</b> %4<br/>"
+                                      ) + table);
 
   if(progress.isNewOther())
     progressDialog->setLabelText(
       text.arg(progress.getOtherAction()).
+      arg(formatter::formatElapsed(timer)).
+      arg(QString()).
+      arg(QString()).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).
@@ -331,6 +347,7 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
       textWithFile.arg(progress.getSceneryTitle()).
       arg(progress.getSceneryPath()).
       arg(progress.getBglFilename()).
+      arg(formatter::formatElapsed(timer)).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).
@@ -342,6 +359,9 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
   else if(progress.isLastCall())
     progressDialog->setLabelText(
       text.arg(tr("Done")).
+      arg(formatter::formatElapsed(timer)).
+      arg(QString()).
+      arg(QString()).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).

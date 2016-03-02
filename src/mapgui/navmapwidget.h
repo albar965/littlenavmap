@@ -26,10 +26,14 @@ namespace atools {
 namespace geo {
 class Pos;
 }
+namespace sql {
+class SqlDatabase;
+}
 }
 
 class QContextMenuEvent;
 class MainWindow;
+class MapPaintLayer;
 
 class NavMapWidget :
   public Marble::MarbleWidget
@@ -37,23 +41,35 @@ class NavMapWidget :
   Q_OBJECT
 
 public:
-  NavMapWidget(MainWindow *parent);
+  NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
 
   void mapContextMenu(const QPoint& pos);
 
   void saveState();
   void restoreState();
 
-  // QWidget interface
-
   void showPoint(double lonX, double latY, int zoom);
 
-private:
-  MainWindow *parentWindow;
-  Marble::GeoDataPlacemark *place;
+  bool eventFilter(QObject *obj, QEvent *e) override;
+
+  Marble::GeoDataCoordinates getMark() const
+  {
+    return mark;
+  }
 
 signals:
   void markChanged(const atools::geo::Pos& mark);
+
+private:
+  MainWindow *parentWindow;
+  MapPaintLayer *paintLayer;
+  atools::sql::SqlDatabase *db;
+  Marble::GeoDataCoordinates mark;
+  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual bool event(QEvent *event) override;
 
 };
 
