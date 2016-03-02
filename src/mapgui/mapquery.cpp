@@ -30,6 +30,27 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 
 }
 
+void MapQuery::getRunwaysForOverview(QList<int> airportIds, QList<MapRunway>& ap)
+{
+  using atools::sql::SqlQuery;
+  SqlQuery query(db);
+
+  query.prepare("select length, heading, lonx, laty from runway where airport_id = :airportId and length > 8000");
+
+  for(int airportId : airportIds)
+  {
+    query.bindValue(":airportId", airportId);
+    query.exec();
+    while(query.next())
+    {
+      ap.append({query.value("length").toInt(),
+                 static_cast<int>(std::roundf(query.value("heading").toFloat())),
+                 GeoDataCoordinates(query.value("lonx").toDouble(), query.value("laty").toDouble(),
+                                    0, GeoDataCoordinates::Degree)});
+    }
+  }
+}
+
 void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
 {
   using namespace Marble;

@@ -69,7 +69,12 @@ struct MapAirport
     return (flags & flag) == flag;
   }
 
+};
 
+struct MapRunway
+{
+  int length, heading;
+  Marble::GeoDataCoordinates coords;
 };
 
 class MapQuery
@@ -78,6 +83,7 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void getRunwaysForOverview(QList<int> airportIds, QList<MapRunway>& ap);
 
 private:
   int flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag);

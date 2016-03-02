@@ -42,6 +42,9 @@ class MapPaintLayer :
 public:
   MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb);
 
+  const MapAirport *getAirportAtPos(int xs, int ys);
+
+private:
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override
   {
@@ -52,26 +55,24 @@ public:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
-  const MapAirport *getAirportAtPos(int xs, int ys);
-
-  void paintMark(Marble::ViewportParams *viewport, Marble::GeoPainter *painter);
+  QPen textBackgroundPen, textPen, markBackPen, markFillPen;
+  void paintMark(Marble::GeoPainter *painter);
 
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int size, int x, int y);
 
-private:
-  QPen textBackgroundPen, textPen, markBackPen, markFillPen;
+  bool worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y);
+
   QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
 
-  QList<MapAirport> ap;
+  QList<MapAirport> airports;
   NavMapWidget *navMapWidget;
   atools::sql::SqlDatabase *db;
 
-  void textBox(Marble::ViewportParams *viewport, Marble::GeoPainter *painter, const QStringList& texts,
-               const QPen& pen,
-               int x,
-               int y);
+  void textBox(Marble::GeoPainter *painter, const MapAirport& ap, const QStringList& texts,
+               const QPen& pen, int x, int y);
   QColor& colorForAirport(const MapAirport& ap);
 
+  bool screenToWorld(int x, int y, Marble::GeoDataCoordinates& coords);
 };
 
 #endif // MAPPAINTLAYER_H
