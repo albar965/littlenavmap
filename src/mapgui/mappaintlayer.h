@@ -60,6 +60,7 @@ private:
 
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int size, int x, int y);
 
+  bool worldToScreen(const atools::geo::Pos& coords, int& x, int& y);
   bool worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y);
 
   QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
@@ -73,6 +74,10 @@ private:
   QColor& colorForAirport(const MapAirport& ap);
 
   bool screenToWorld(int x, int y, Marble::GeoDataCoordinates& coords);
+
+  void airportDiagram(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
+
+  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects, QList<QRect>& innerRects);
 };
 
 #endif // MAPPAINTLAYER_H

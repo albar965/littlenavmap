@@ -33,6 +33,7 @@
 #include <marble/GeoDataTreeModel.h>
 #include <marble/MarbleModel.h>
 #include <marble/MarbleWidgetInputHandler.h>
+#include <marble/ViewportParams.h>
 
 #include "ui_mainwindow.h"
 
@@ -56,6 +57,13 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   // MarbleAbstractPresenter *pres = new MarbleAbstractPresenter;
   // setInputHandler(nullptr);
   connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
+  connect(this, &MarbleWidget::zoomChanged, this, &NavMapWidget::zoomHasChanged);
+}
+
+void NavMapWidget::zoomHasChanged(int zoom)
+{
+  qDebug() << "zoom" << zoom << "distance" << distanceFromZoom(zoom);
+  qDebug() << viewport()->viewLatLonAltBox().toString();
 }
 
 void NavMapWidget::saveState()
@@ -137,16 +145,19 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
 
 void NavMapWidget::mousePressEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   qDebug() << "mousePressEvent";
 }
 
 void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   qDebug() << "mouseReleaseEvent";
 }
 
 void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
+  Q_UNUSED(event);
   qDebug() << "mouseDoubleClickEvent";
 }
 

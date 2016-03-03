@@ -71,6 +71,7 @@ private:
   virtual void mouseMoveEvent(QMouseEvent *event) override;
   virtual bool event(QEvent *event) override;
 
+  void zoomHasChanged(int zoom);
 };
 
 #endif // NAVMAPWIDGET_H

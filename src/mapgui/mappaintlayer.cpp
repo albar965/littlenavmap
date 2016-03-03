@@ -114,7 +114,7 @@ void MapPaintLayer::paintMark(GeoPainter *painter)
 
 QColor& MapPaintLayer::colorForAirport(const MapAirport& ap)
 {
-  if(!ap.isSet(SCENERY))
+  if(!ap.isSet(SCENERY) && !ap.waterOnly())
     return airportEmptyColor;
   else if(ap.isSet(TOWER))
     return toweredAirportColor;
@@ -125,11 +125,11 @@ QColor& MapPaintLayer::colorForAirport(const MapAirport& ap)
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                            const QString& renderPos, GeoSceneLayer *layer)
 {
+  Q_UNUSED(renderPos);
+  Q_UNUSED(layer);
   const GeoDataLatLonAltBox& curBox = viewport->viewLatLonAltBox();
-  // qDebug() << "zoom" << marbleWidget->zoom() << "distance" << marbleWidget->distance();
-  // qDebug() << "render cur box" << curBox.toString(GeoDataCoordinates::Degree);
 
-  if(navMapWidget->distance() < 500)
+  if(navMapWidget->distance() < 800)
   {
     MapQuery mq(db);
 
@@ -139,8 +139,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       mq.getAirports(curBox, airports);
     }
 
-    painter->mapQuality();
-    painter->setRenderHint(QPainter::Antialiasing, true);
+    if(navMapWidget->viewContext() == Marble::Still)
+      painter->setRenderHint(QPainter::Antialiasing, true);
+    else if(navMapWidget->viewContext() == Marble::Animation)
+      painter->setRenderHint(QPainter::Antialiasing, false);
 
     painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255, 200)));
     QFont f = painter->font();
@@ -154,11 +156,28 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       int x, y;
       bool visible = worldToScreen(a.coords, x, y);
 
+      GeoDataLatLonBox apbox(a.bounding.getNorth(), a.bounding.getSouth(),
+                             a.bounding.getEast(), a.bounding.getWest(),
+                             GeoDataCoordinates::Degree);
+
+      if(!visible)
+        visible = curBox.intersects(apbox);
+
       if(visible)
       {
         painter->setPen(colorForAirport(a));
 
-        if(navMapWidget->distance() < 100)
+        if(navMapWidget->distance() < 5)
+          airportDiagram(painter, a, x, y);
+        // x += 20;
+        // textBox(painter, a, {a.ident, a.name}, colorForAirport(a), x, y);
+        else if(navMapWidget->distance() < 50)
+        {
+          airportSymbol(painter, a, 18, x, y);
+          x += 20;
+          textBox(painter, a, {a.ident, a.name}, colorForAirport(a), x, y);
+        }
+        else if(navMapWidget->distance() < 100)
         {
           airportSymbol(painter, a, 14, x, y);
           x += 16;
@@ -170,8 +189,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
           x += 12;
           textBox(painter, a, {a.ident}, colorForAirport(a), x, y);
         }
-        else if(navMapWidget->distance() < 500)
-          airportSymbol(painter, a, 6, x, y);
+//        else if(navMapWidget->distance() < 800)
+//          if(a.longestRunwayLength > 8000)
+//          {
+//            airportSymbol(painter, a, 10, x, y);
+//            x += 12;
+//            textBox(painter, a, {a.ident}, colorForAirport(a), x, y);
+//          }
       }
     }
   }
@@ -179,6 +203,21 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   paintMark(painter);
 
   return true;
+}
+
+bool MapPaintLayer::worldToScreen(const atools::geo::Pos& coords, int& x, int& y)
+{
+  const ViewportParams *viewport = navMapWidget->viewport();
+
+  qreal xr, yr;
+  bool hidden = false;
+  bool visible = viewport->screenCoordinates(
+    Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0,
+                               GeoDataCoordinates::Degree), xr, yr, hidden);
+
+  x = static_cast<int>(std::round(xr));
+  y = static_cast<int>(std::round(yr));
+  return visible && !hidden;
 }
 
 bool MapPaintLayer::worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y)
@@ -207,6 +246,34 @@ bool MapPaintLayer::screenToWorld(int x, int y, Marble::GeoDataCoordinates& coor
   return visible;
 }
 
+void MapPaintLayer::airportDiagram(GeoPainter *painter, const MapAirport& ap, int x, int y)
+{
+  Q_UNUSED(x);
+  Q_UNUSED(y);
+  const QBrush localBrush = painter->brush();
+  painter->setBackgroundMode(Qt::OpaqueMode);
+
+  QList<MapRunway> rw;
+  MapQuery mq(db);
+  mq.getRunways(ap.id, rw);
+
+  QList<QPoint> centers;
+  QList<QRect> rects, innerRects;
+  runwayCoords(rw, centers, rects, innerRects);
+
+  painter->setBrush(QColor::fromRgb(80, 80, 80));
+  painter->setPen(QPen(QColor::fromRgb(80, 80, 80), 1, Qt::SolidLine, Qt::FlatCap));
+  for(int i = 0; i < centers.size(); i++)
+  {
+    painter->translate(centers.at(i));
+    painter->rotate(rw.at(i).heading);
+    painter->drawRect(rects.at(i));
+    painter->resetTransform();
+  }
+  painter->setBrush(localBrush);
+  painter->setBackgroundMode(Qt::TransparentMode);
+}
+
 void MapPaintLayer::airportSymbol(GeoPainter *painter, const MapAirport& ap, int size, int x, int y)
 {
   QColor apColor = colorForAirport(ap);
@@ -214,81 +281,53 @@ void MapPaintLayer::airportSymbol(GeoPainter *painter, const MapAirport& ap, int
   int radius = size / 2;
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  if(ap.longestRunwayLength >= 8000 && navMapWidget->distance() < 100)
+  if(ap.longestRunwayLength >= 8000 && navMapWidget->distance() < 100 && !ap.isSet(CLOSED) && !ap.waterOnly())
   {
-    QList<MapRunway> rw;
     MapQuery mq(db);
-    mq.getRunwaysForOverview({ap.id}, rw);
+
+    QList<MapRunway> rw;
+    mq.getRunwaysForOverview(ap.id, rw);
+
+    QList<QPoint> centers;
+    QList<QRect> rects, innerRects;
+    runwayCoords(rw, centers, rects, innerRects);
+
     painter->setBrush(QBrush(apColor));
     painter->setPen(QPen(QBrush(apColor), 1, Qt::SolidLine, Qt::FlatCap));
-    for(const MapRunway& r : rw)
+    for(int i = 0; i < centers.size(); i++)
     {
-      double distanceRad = atools::geo::nmToRad(atools::geo::feetToNm(static_cast<double>(r.length)));
-
-      GeoDataCoordinates c1 = r.coords.moveByBearing(
-        atools::geo::toRadians(0.), distanceRad / 2.);
-
-      GeoDataCoordinates c2 = r.coords.moveByBearing(
-        atools::geo::toRadians(180.), distanceRad / 2.);
-
-      int xc, yc;
-      bool visiblec = worldToScreen(r.coords, xc, yc);
-
-      int xr1, yr1;
-      bool visible = worldToScreen(c1, xr1, yr1);
-
-      int xr2, yr2;
-      bool visible2 = worldToScreen(c2, xr2, yr2);
-
-      int length = std::round(sqrt((xr1 - xr2) * (xr1 - xr2) + (yr1 - yr2) * (yr1 - yr2)));
-
-      painter->translate(xc, yc);
-      painter->rotate(r.heading);
-      painter->drawRect(-3, -length / 2, 6, length);
+      painter->translate(centers.at(i));
+      painter->rotate(rw.at(i).heading);
+      painter->drawRect(rects.at(i));
       painter->resetTransform();
     }
 
     painter->setPen(QPen(QBrush(QColor::fromRgb(255, 255, 255)), 1, Qt::SolidLine, Qt::FlatCap));
     painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255)));
-    for(const MapRunway& r : rw)
+    for(int i = 0; i < centers.size(); i++)
     {
-      double distanceRad = atools::geo::nmToRad(atools::geo::feetToNm(static_cast<double>(r.length)));
-
-      GeoDataCoordinates c1 = r.coords.moveByBearing(
-        atools::geo::toRadians(0.), distanceRad / 2.);
-
-      GeoDataCoordinates c2 = r.coords.moveByBearing(
-        atools::geo::toRadians(180.), distanceRad / 2.);
-
-      int xc, yc;
-      bool visiblec = worldToScreen(r.coords, xc, yc);
-
-      int xr1, yr1;
-      bool visible = worldToScreen(c1, xr1, yr1);
-
-      int xr2, yr2;
-      bool visible2 = worldToScreen(c2, xr2, yr2);
-
-      int length = std::round(sqrt((xr1 - xr2) * (xr1 - xr2) + (yr1 - yr2) * (yr1 - yr2)));
-
-      painter->translate(xc, yc);
-      painter->rotate(r.heading);
-      painter->drawRect(-1, -length / 2 + 2, 2, length - 4);
+      painter->translate(centers.at(i));
+      painter->rotate(rw.at(i).heading);
+      painter->drawRect(innerRects.at(i));
       painter->resetTransform();
     }
   }
   else
   {
     if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED))
+      // Use filled circle
       painter->setBrush(QBrush(apColor));
     else
+      // Use white filled circle
       painter->setBrush(QBrush(QColor::fromRgb(255, 255, 255)));
 
     if(ap.isSet(FUEL) && !ap.isSet(MIL) && !ap.isSet(CLOSED) && size > 6)
     {
+      // Draw fuel spikes
+      int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
       painter->setPen(QPen(QBrush(apColor), size / 4, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(x, y - radius - 3, x, y + radius + 3);
-      painter->drawLine(x - radius - 3, y, x + radius + 3, y);
+      painter->drawLine(x, y - fuelRadius, x, y + fuelRadius);
+      painter->drawLine(x - fuelRadius, y, x + fuelRadius, y);
     }
 
     painter->setPen(QPen(QBrush(apColor), size / 5, Qt::SolidLine, Qt::FlatCap));
@@ -297,8 +336,17 @@ void MapPaintLayer::airportSymbol(GeoPainter *painter, const MapAirport& ap, int
     if(ap.isSet(MIL))
       painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
 
+    if(ap.isSet(WATER) && !ap.isSet(HARD) && !ap.isSet(SOFT) && size > 6)
+    {
+      int lineWidth = size / 7;
+      painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
+      painter->drawLine(x - lineWidth / 4, y - radius / 2, x - lineWidth / 4, y + radius / 2);
+      painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
+    }
+
     if(ap.isSet(CLOSED) && size > 6)
     {
+      // Cross out whatever was painted before
       painter->setPen(QPen(QBrush(apColor), size / 7, Qt::SolidLine, Qt::FlatCap));
       painter->drawLine(x - radius, y - radius, x + radius, y + radius);
       painter->drawLine(x - radius, y + radius, x + radius, y - radius);
@@ -331,4 +379,28 @@ const MapAirport *MapPaintLayer::getAirportAtPos(int xs, int ys)
   }
 
   return nullptr;
+}
+
+void MapPaintLayer::runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects,
+                                 QList<QRect>& innerRects)
+{
+  for(const MapRunway& r : rw)
+  {
+    // Get the two endpoints as screen coords
+    int xr1, yr1, xr2, yr2;
+    worldToScreen(r.primary, xr1, yr1);
+    worldToScreen(r.secondary, xr2, yr2);
+
+    // Get the center point as screen coords
+    int xc, yc;
+    worldToScreen(r.center, xc, yc);
+    centers.append(QPoint(xc, yc));
+
+    // Get an approximation of the runway length on the screen
+    int length = static_cast<int>(std::round(sqrt((xr1 - xr2) * (xr1 - xr2) + (yr1 - yr2) * (yr1 - yr2))));
+
+    rects.append(QRect(-3, -length / 2, 6, length));
+    innerRects.append(QRect(-1, -length / 2 + 2, 2, length - 4));
+  }
+
 }

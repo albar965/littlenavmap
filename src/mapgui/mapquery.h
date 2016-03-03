@@ -19,6 +19,7 @@
 #define MAPQUERY_H
 
 #include "geo/pos.h"
+#include "geo/rect.h"
 
 #include <QList>
 
@@ -62,19 +63,37 @@ struct MapAirport
   int longestRunwayLength;
   int longestRunwayHeading;
   int flags;
-  Marble::GeoDataCoordinates coords;
+  int magvar;
+  atools::geo::Pos coords;
+  atools::geo::Rect bounding;
 
   bool isSet(MapAirportFlags flag) const
   {
     return (flags & flag) == flag;
   }
 
+  bool hard() const
+  {
+    return isSet(HARD);
+  }
+
+  bool softOnly() const
+  {
+    return !isSet(HARD) && isSet(SOFT);
+  }
+
+  bool waterOnly() const
+  {
+    return !isSet(HARD) && !isSet(SOFT) && isSet(WATER);
+  }
+
 };
 
 struct MapRunway
 {
-  int length, heading;
-  Marble::GeoDataCoordinates coords;
+  int length, heading, width;
+  QString surface;
+  atools::geo::Pos center, primary, secondary;
 };
 
 class MapQuery
@@ -83,7 +102,8 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-  void getRunwaysForOverview(QList<int> airportIds, QList<MapRunway>& ap);
+  void getRunwaysForOverview(int airportId, QList<MapRunway>& runways);
+  void getRunways(int airportId, QList<MapRunway>& runways);
 
 private:
   int flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag);
