@@ -34,17 +34,22 @@ class SqlDatabase;
 }
 }
 
+class MapLayer;
 class NavMapWidget;
+class MapLayerSettings;
 
 class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
   MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb);
+  virtual ~MapPaintLayer();
 
   const MapAirport *getAirportAtPos(int xs, int ys);
 
 private:
+  MapLayerSettings *layers = nullptr;
+
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override
   {
@@ -58,7 +63,9 @@ private:
   QPen textBackgroundPen, textPen, markBackPen, markFillPen;
   void paintMark(Marble::GeoPainter *painter);
 
-  void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int size, int x, int y);
+  void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
+                     const MapLayer *mapLayer,
+                     bool fast);
 
   bool worldToScreen(const atools::geo::Pos& coords, int& x, int& y);
   bool worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y);
@@ -77,7 +84,11 @@ private:
 
   void airportDiagram(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
 
-  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects, QList<QRect>& innerRects);
+  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects,
+                    QList<QRect>& innerRects);
+
+  void initLayers();
+
 };
 
 #endif // MAPPAINTLAYER_H

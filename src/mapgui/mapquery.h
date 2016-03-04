@@ -62,6 +62,7 @@ struct MapAirport
   QString ident, name;
   int longestRunwayLength;
   int longestRunwayHeading;
+  int altitude;
   int flags;
   int magvar;
   atools::geo::Pos coords;
@@ -102,6 +103,9 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+
   void getRunwaysForOverview(int airportId, QList<MapRunway>& runways);
   void getRunways(int airportId, QList<MapRunway>& runways);
 
@@ -110,6 +114,10 @@ private:
 
   atools::sql::SqlDatabase *db;
 
+  int getFlags(const atools::sql::SqlQuery& query);
+  MapAirport getMapAirport(const atools::sql::SqlQuery& query);
+
+  void bindCoordinateRect(const Marble::GeoDataLatLonAltBox& rect, atools::sql::SqlQuery& query);
 };
 
 #endif // MAPQUERY_H

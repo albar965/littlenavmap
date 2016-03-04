@@ -18,6 +18,7 @@
 #ifndef NAVMAPWIDGET_H
 #define NAVMAPWIDGET_H
 
+#include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
 #include <QWidget>
@@ -72,6 +73,9 @@ private:
   virtual bool event(QEvent *event) override;
 
   void zoomHasChanged(int zoom);
+
+  int curZoom = -1;
+  Marble::GeoDataLatLonAltBox curBox;
 };
 
 #endif // NAVMAPWIDGET_H

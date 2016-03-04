@@ -52,7 +52,9 @@ SOURCES += src/main.cpp\
     src/table/navsearch.cpp \
     src/mapgui/mapquery.cpp \
     src/mapgui/navmapwidget.cpp \
-    src/mapgui/mappaintlayer.cpp
+    src/mapgui/mappaintlayer.cpp \
+    src/mapgui/maplayer.cpp \
+    src/mapgui/maplayersettings.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -67,7 +69,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/navsearch.h \
     src/mapgui/mapquery.h \
     src/mapgui/navmapwidget.h \
-    src/mapgui/mappaintlayer.h
+    src/mapgui/mappaintlayer.h \
+    src/mapgui/maplayer.h \
+    src/mapgui/maplayersettings.h
 
 FORMS    += src/gui/mainwindow.ui
 

@@ -62,8 +62,13 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
 
 void NavMapWidget::zoomHasChanged(int zoom)
 {
-  qDebug() << "zoom" << zoom << "distance" << distanceFromZoom(zoom);
-  qDebug() << viewport()->viewLatLonAltBox().toString();
+  if(zoom != curZoom)
+  {
+    curZoom = zoom;
+    curBox = viewport()->viewLatLonAltBox();
+    qDebug() << "zoom" << curZoom << "distance" << distanceFromZoom(zoom);
+    qDebug() << curBox.toString();
+  }
 }
 
 void NavMapWidget::saveState()

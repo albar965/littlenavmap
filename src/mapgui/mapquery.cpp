@@ -80,9 +80,71 @@ void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
   }
 }
 
-//void MapQuery::getAirportsOverview(int minRunwayLength, QList<MapAirport>& ap)
-//{
-//}
+void MapQuery::getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+{
+  using namespace Marble;
+  using atools::sql::SqlQuery;
+
+  SqlQuery query(db);
+
+  query.prepare(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, has_tower, is_closed, is_military, is_addon,"
+    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "from airport_large "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  bindCoordinateRect(rect, query);
+  query.exec();
+
+  while(query.next())
+    ap.append(getMapAirport(query));
+}
+
+void MapQuery::getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+{
+  using namespace Marble;
+  using atools::sql::SqlQuery;
+
+  SqlQuery query(db);
+
+  query.prepare(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, has_tower, is_closed, is_military, is_addon,"
+    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "from airport_medium "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
+    "order by longest_runway_length");
+
+  bindCoordinateRect(rect, query);
+  query.exec();
+
+  while(query.next())
+    ap.append(getMapAirport(query));
+}
+
+MapAirport MapQuery::getMapAirport(const atools::sql::SqlQuery& query)
+{
+  using atools::geo::Pos;
+  using atools::geo::Rect;
+
+  int flags = getFlags(query);
+  return MapAirport({query.value("airport_id").toInt(),
+                     query.value("ident").toString(),
+                     query.value("name").toString(),
+                     query.value("longest_runway_length").toInt(),
+                     static_cast<int>(std::roundf(query.value("longest_runway_heading").toFloat())),
+                     static_cast<int>(std::roundf(query.value("altitude").toFloat())),
+                     flags,
+                     static_cast<int>(std::roundf(query.value("mag_var").toFloat())),
+                     Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
+                     Rect(query.value("left_lonx").toFloat(), query.value("top_laty").toFloat(),
+                          query.value("right_lonx").toFloat(), query.value("bottom_laty").toFloat())});
+}
 
 void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
 {
@@ -98,20 +160,36 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAir
     "has_avgas, has_jetfuel, has_tower, is_closed, is_military, is_addon,"
     "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
     "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
     "from airport "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
     "order by rating asc, longest_runway_length");
 
+  bindCoordinateRect(rect, query);
+  query.exec();
+  while(query.next())
+    ap.append(getMapAirport(query));
+}
+
+int MapQuery::flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag)
+{
+  if(query.isNull(field))
+    return NONE;
+  else
+    return query.value(field).toInt() > 0 ? flag : NONE;
+}
+
+void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonAltBox& rect, atools::sql::SqlQuery& query)
+{
   query.bindValue(":leftx", rect.west(GeoDataCoordinates::Degree) - 0.1);
   query.bindValue(":rightx", rect.east(GeoDataCoordinates::Degree) + 0.1);
   query.bindValue(":bottomy", rect.south(GeoDataCoordinates::Degree) - 0.1);
   query.bindValue(":topy", rect.north(GeoDataCoordinates::Degree) + 0.1);
-  query.exec();
-  while(query.next())
-  {
-  int flags = 0;
+}
 
+int MapQuery::getFlags(const atools::sql::SqlQuery& query)
+{
+  int flags = 0;
   flags |= flag(query, "rating", SCENERY);
   flags |= flag(query, "has_avgas", FUEL);
   flags |= flag(query, "has_jetfuel", FUEL);
@@ -124,24 +202,5 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAir
   flags |= flag(query, "num_runway_soft", SOFT);
   flags |= flag(query, "num_runway_water", WATER);
   flags |= flag(query, "num_runway_light", LIGHT);
-
-  ap.append({query.value("airport_id").toInt(),
-             query.value("ident").toString(),
-             query.value("name").toString(),
-             query.value("longest_runway_length").toInt(),
-             static_cast<int>(std::roundf(query.value("longest_runway_heading").toFloat())),
-             flags,
-             static_cast<int>(std::roundf(query.value("mag_var").toFloat())),
-             Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
-             Rect(query.value("left_lonx").toFloat(), query.value("top_laty").toFloat(),
-                  query.value("right_lonx").toFloat(), query.value("bottom_laty").toFloat())});
-  }
-}
-
-int MapQuery::flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag)
-{
-  if(query.isNull(field))
-    return NONE;
-  else
-    return query.value(field).toInt() > 0 ? flag : NONE;
+  return flags;
 }
