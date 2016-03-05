@@ -15,11 +15,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "maptypes.h"
+
+#include <QObject>
+#include <QString>
+
 #ifndef SEARCHPANELIST_H
 #define SEARCHPANELIST_H
 
 class MainWindow;
 class Search;
+class AirportSearch;
+class NavSearch;
 class ColumnList;
 class QLayout;
 class QAction;
@@ -31,8 +38,11 @@ class SqlDatabase;
 }
 }
 
-class SearchController
+class SearchController :
+  public QObject
 {
+  Q_OBJECT
+
 public:
   SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~SearchController();
@@ -46,16 +56,18 @@ public:
   void saveState();
   void restoreState();
 
-  Search *getAirportSearch() const;
-  Search *getNavSearch() const;
+  AirportSearch *getAirportSearch() const;
+  NavSearch *getNavSearch() const;
+
+  void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
 
 private:
   atools::sql::SqlDatabase *db;
   ColumnList *airportColumns = nullptr;
-  Search *airportSearch = nullptr;
+  AirportSearch *airportSearch = nullptr;
 
   ColumnList *navColumns = nullptr;
-  Search *navSearch = nullptr;
+  NavSearch *navSearch = nullptr;
 
   MainWindow *parentWidget;
 

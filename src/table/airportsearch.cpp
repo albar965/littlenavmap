@@ -270,6 +270,11 @@ AirportSearch::~AirportSearch()
 {
 }
 
+void AirportSearch::filterByIdent(const QString& ident)
+{
+  controller->filterByIdent(ident);
+}
+
 void AirportSearch::connectSlots()
 {
   Search::connectSlots();

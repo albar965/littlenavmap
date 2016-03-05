@@ -185,12 +185,31 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
   buildQuery();
 }
 
+void SqlModel::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+{
+  filterBy(false, "ident", ident);
+
+  if(!region.isEmpty() && columns->getColumn("region") != nullptr)
+    filterBy(false, "region", region);
+
+  if(!region.isEmpty() && columns->getColumn("airport_ident") != nullptr)
+    filterBy(false, "airportIdent", airportIdent);
+
+  buildQuery();
+}
+
 void SqlModel::filterBy(QModelIndex index, bool exclude)
 {
   QString whereCol = record().field(index.column()).name();
   QVariant whereValue = QSqlQueryModel::data(index);
 
+  filterBy(exclude, whereCol, whereValue);
+}
+
+void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
+{
   // If there is already a filter on the same column remove it
+
   if(whereConditionMap.contains(whereCol))
     whereConditionMap.remove(whereCol);
 

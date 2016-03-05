@@ -28,6 +28,9 @@
 #include "table/search.h"
 #include "mapgui/navmapwidget.h"
 #include "table/formatter.h"
+#include "table/airportsearch.h"
+#include "table/navsearch.h"
+
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
@@ -87,11 +90,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   createNavMap();
 
-  searchPanes = new SearchController(this, &db);
-  searchPanes->createAirportSearch(ui->tableViewAirportSearch);
-  searchPanes->createNavSearch(ui->tableViewNavSearch);
+  searchController = new SearchController(this, &db);
+  searchController->createAirportSearch(ui->tableViewAirportSearch);
+  searchController->createNavSearch(ui->tableViewNavSearch);
 
-  searchPanes->restoreState();
+  searchController->restoreState();
   mapWidget->restoreState();
 
   connectAllSlots();
@@ -169,7 +172,7 @@ void MainWindow::createNavMap()
 
 MainWindow::~MainWindow()
 {
-  delete searchPanes;
+  delete searchController;
   delete ui;
 
   qDebug() << "MainWindow destructor";
@@ -380,8 +383,13 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(searchPanes->getAirportSearch(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
-  connect(searchPanes->getNavSearch(), &Search::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getAirportSearch(), &AirportSearch::showPoint,
+          mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
+          mapWidget, &NavMapWidget::changeMark);
+
+  connect(searchController->getNavSearch(), &NavSearch::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &NavMapWidget::changeMark);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -394,6 +402,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
+
+  connect(mapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
 }
 
 void MainWindow::options()
@@ -491,7 +501,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   if(result != QMessageBox::Yes)
     event->ignore();
   writeSettings();
-  searchPanes->saveState();
+  searchController->saveState();
   mapWidget->saveState();
 }
 
@@ -511,7 +521,7 @@ void MainWindow::preDatabaseLoad()
   if(!hasDatabaseLoadStatus)
   {
     hasDatabaseLoadStatus = true;
-    searchPanes->preDatabaseLoad();
+    searchController->preDatabaseLoad();
   }
   else
     qDebug() << "Already in database loading status";
@@ -521,7 +531,7 @@ void MainWindow::postDatabaseLoad(bool force)
 {
   if(hasDatabaseLoadStatus || force)
   {
-    searchPanes->postDatabaseLoad();
+    searchController->postDatabaseLoad();
     hasDatabaseLoadStatus = false;
   }
   else

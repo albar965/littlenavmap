@@ -109,17 +109,44 @@ void NavMapWidget::showPoint(double lonX, double latY, int zoom)
   centerOn(lonX, latY, false);
 }
 
+void NavMapWidget::changeMark(const atools::geo::Pos& pos)
+{
+  mark.setLongitude(pos.getLonX(), GeoDataCoordinates::Degree);
+  mark.setLatitude(pos.getLatY(), GeoDataCoordinates::Degree);
+
+  update();
+  qDebug() << "new mark" << pos;
+}
+
 void NavMapWidget::mapContextMenu(const QPoint& pos)
 {
   Q_UNUSED(pos);
   qInfo() << "tableContextMenu";
 
+  Ui::MainWindow *ui = parentWindow->getUi();
   QMenu m;
-  m.addAction(parentWindow->getUi()->actionSetMark);
+  m.addAction(ui->actionSetMark);
+
+  QString actionShowInSearchText;
+  actionShowInSearchText = ui->actionShowInSearch->text();
+
+  MapAirport ap = paintLayer->getAirportAtPos(pos.x(), pos.y());
+
+  if(ap.valid)
+  {
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
+    m.addAction(ui->actionShowInSearch);
+  }
 
   QPoint cpos = QCursor::pos();
   QAction *act = m.exec(cpos);
-  if(act == parentWindow->getUi()->actionSetMark)
+  if(act == ui->actionShowInSearch)
+  {
+    qDebug() << "SearchController::objectSelected type" << maptypes::AIRPORT << "ident" << ap.ident;
+
+    emit objectSelected(maptypes::AIRPORT, ap.ident, QString());
+  }
+  else if(act == ui->actionSetMark)
   {
     qreal lon, lat;
     if(geoCoordinates(pos.x(), pos.y(), lon, lat))
@@ -133,6 +160,8 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
       emit markChanged(atools::geo::Pos(lon, lat));
     }
   }
+
+  ui->actionShowInSearch->setText(actionShowInSearchText);
 }
 
 bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
@@ -178,9 +207,9 @@ bool NavMapWidget::event(QEvent *event)
   if(event->type() == QEvent::ToolTip)
   {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-    const MapAirport *ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
-    if(ap != nullptr)
-      QToolTip::showText(helpEvent->globalPos(), QString::number(ap->id) + "\n" + ap->ident + "\n" + ap->name);
+    MapAirport ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
+    if(ap.valid)
+      QToolTip::showText(helpEvent->globalPos(), QString::number(ap.id) + "\n" + ap.ident + "\n" + ap.name);
     else
     {
       QToolTip::hideText();

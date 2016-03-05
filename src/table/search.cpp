@@ -364,6 +364,8 @@ void Search::tableContextMenu(const QPoint& pos)
       controller->filterExcluding(index);
     else if(a == ui->actionSearchTableSelectAll)
       controller->selectAll();
+    else if(a == ui->actionSearchSetMark)
+      emit changeMark(controller->getGeoPos(index));
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action
   }
 

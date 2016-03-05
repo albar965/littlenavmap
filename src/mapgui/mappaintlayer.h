@@ -45,7 +45,7 @@ public:
   MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb);
   virtual ~MapPaintLayer();
 
-  const MapAirport *getAirportAtPos(int xs, int ys);
+  const MapAirport getAirportAtPos(int xs, int ys);
 
 private:
   MapLayerSettings *layers = nullptr;

@@ -85,6 +85,7 @@ protected:
 
 signals:
   void showPoint(double lonX, double latY, int zoom);
+  void changeMark(const atools::geo::Pos& pos);
 
 };
 

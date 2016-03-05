@@ -82,6 +82,19 @@ void Controller::filterExcluding(const QModelIndex& index)
   changed = true;
 }
 
+atools::geo::Pos Controller::getGeoPos(const QModelIndex& index)
+{
+  QModelIndex localIndex = toS(index);
+
+  QVariant lon = getRawData(localIndex.row(), "lonx");
+  QVariant lat = getRawData(localIndex.row(), "laty");
+
+  if(!lon.isNull() && !lat.isNull())
+    return atools::geo::Pos(lon.toFloat(), lat.toFloat());
+  else
+    return atools::geo::Pos();
+}
+
 void Controller::filterByLineEdit(const Column *col, const QString& text)
 {
   Q_ASSERT(model != nullptr);
@@ -97,6 +110,12 @@ void Controller::filterBySpinBox(const Column *col, int value)
   else
     model->filter(col, value);
   changed = true;
+}
+
+void Controller::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+{
+  Q_ASSERT(model != nullptr);
+  model->filterByIdent(ident, region, airportIdent);
 }
 
 void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)

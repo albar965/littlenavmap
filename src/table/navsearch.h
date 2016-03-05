@@ -51,12 +51,12 @@ public:
   virtual void saveState() override;
   virtual void restoreState() override;
 
+  void connectSlots() override;
+
 private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                             const QVariant& dataValue, Qt::ItemDataRole role) const;
   QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
-
-  void connectSlots() override;
 
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;

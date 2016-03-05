@@ -49,6 +49,7 @@ public:
 
   /* Get column descriptor for the given query column name or alias */
   const Column *getColumn(const QString& field) const;
+  const Column *getIdColumn() const;
 
   const Column *getDefaultSortColumn() const;
 

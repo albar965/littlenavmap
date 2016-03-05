@@ -67,6 +67,7 @@ struct MapAirport
   int flags = 0;
   float magvar = 0;
 
+  bool valid = false;
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos coords;
   atools::geo::Rect bounding;

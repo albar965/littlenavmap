@@ -186,6 +186,11 @@ public:
   void setDataCallback(const SqlModel::DataFunctionType& value);
   void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
 
+  void filterByIdent(const QString& ident,
+                     const QString& region = QString(), const QString& airportIdent = QString());
+
+  atools::geo::Pos getGeoPos(const QModelIndex& index);
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 

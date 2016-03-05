@@ -54,7 +54,8 @@ SOURCES += src/main.cpp\
     src/mapgui/navmapwidget.cpp \
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
-    src/mapgui/maplayersettings.cpp
+    src/mapgui/maplayersettings.cpp \
+    src/maptypes.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -71,7 +72,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/navmapwidget.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
-    src/mapgui/maplayersettings.h
+    src/mapgui/maplayersettings.h \
+    src/maptypes.h
 
 FORMS    += src/gui/mainwindow.ui
 

@@ -50,12 +50,12 @@ void SearchController::restoreState()
   navSearch->restoreState();
 }
 
-Search *SearchController::getAirportSearch() const
+AirportSearch *SearchController::getAirportSearch() const
 {
   return airportSearch;
 }
 
-Search *SearchController::getNavSearch() const
+NavSearch *SearchController::getNavSearch() const
 {
   return navSearch;
 }
@@ -100,4 +100,25 @@ void SearchController::postDatabaseLoad()
 
   if(navSearch != nullptr)
     navSearch->postDatabaseLoad();
+}
+
+void SearchController::objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region)
+{
+  qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
+
+  switch(type)
+  {
+    case maptypes::AIRPORT:
+      airportSearch->filterByIdent(ident);
+      break;
+    case maptypes::NDB:
+      break;
+    case maptypes::VOR:
+      break;
+    case maptypes::ILS:
+      break;
+    case maptypes::WAYPOINT:
+      break;
+
+  }
 }

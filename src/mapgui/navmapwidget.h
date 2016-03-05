@@ -18,6 +18,8 @@
 #ifndef NAVMAPWIDGET_H
 #define NAVMAPWIDGET_H
 
+#include "maptypes.h"
+
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
@@ -50,6 +52,7 @@ public:
   void restoreState();
 
   void showPoint(double lonX, double latY, int zoom);
+  void changeMark(const atools::geo::Pos& pos);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -60,6 +63,7 @@ public:
 
 signals:
   void markChanged(const atools::geo::Pos& mark);
+  void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
 
 private:
   MainWindow *parentWindow;

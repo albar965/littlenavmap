@@ -64,6 +64,14 @@ const Column *ColumnList::getColumn(const QString& field) const
     return nullptr;
 }
 
+const Column *ColumnList::getIdColumn() const
+{
+  if(nameColumnMap.contains(idColumn))
+    return nameColumnMap.value(idColumn);
+  else
+    return nullptr;
+}
+
 const Column *ColumnList::getDefaultSortColumn() const
 {
   for(const Column *c : columns)

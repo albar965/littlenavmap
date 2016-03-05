@@ -153,11 +153,15 @@ public:
   void setDataCallback(const DataFunctionType& value);
   void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
 
+  void filterByIdent(const QString& ident, const QString& region, const QString& airportIdent);
+
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
 
 private:
+  void filterBy(bool exclude, QString whereCol, QVariant whereValue);
+
   FormatFunctionType formatFunc = nullptr;
   DataFunctionType dataFunc = nullptr;
 

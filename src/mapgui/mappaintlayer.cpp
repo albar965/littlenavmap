@@ -365,7 +365,7 @@ void MapPaintLayer::airportSymbol(GeoPainter *painter, const MapAirport& ap, int
   painter->setBackgroundMode(Qt::TransparentMode);
 }
 
-const MapAirport *MapPaintLayer::getAirportAtPos(int xs, int ys)
+const MapAirport MapPaintLayer::getAirportAtPos(int xs, int ys)
 {
   for(const MapAirport& a : airports)
   {
@@ -374,10 +374,10 @@ const MapAirport *MapPaintLayer::getAirportAtPos(int xs, int ys)
 
     if(visible)
       if((std::abs(x - xs) + std::abs(y - ys)) < 10)
-        return &a;
+        return a;
   }
 
-  return nullptr;
+  return MapAirport();
 }
 
 void MapPaintLayer::runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects,

@@ -2070,6 +2070,14 @@
     <string>Scenery</string>
    </property>
   </action>
+  <action name="actionShowInSearch">
+   <property name="text">
+    <string>Show &quot;%1&quot; in Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show in Search</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

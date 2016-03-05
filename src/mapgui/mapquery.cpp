@@ -161,6 +161,7 @@ MapAirport MapQuery::getMapAirport(const atools::sql::SqlQuery& query)
   ap.bounding = Rect(query.value("left_lonx").toFloat(), query.value("top_laty").toFloat(),
                      query.value("right_lonx").toFloat(), query.value("bottom_laty").toFloat());
 
+  ap.valid = true;
   return ap;
 }
 
