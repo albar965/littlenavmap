@@ -39,6 +39,8 @@ namespace Marble {
 class GeoDataLatLonAltBox;
 }
 
+class MapLayer;
+
 enum MapAirportFlags
 {
   NONE = 0x0000,
@@ -60,11 +62,12 @@ struct MapAirport
 {
   int id;
   QString ident, name;
-  int longestRunwayLength;
-  int longestRunwayHeading;
-  int altitude;
-  int flags;
-  int magvar;
+  int longestRunwayLength = 0, longestRunwayHeading = 0;
+  int altitude = 0;
+  int flags = 0;
+  float magvar = 0;
+
+  int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos coords;
   atools::geo::Rect bounding;
 
@@ -102,14 +105,17 @@ class MapQuery
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
-  void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-  void getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-  void getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
+                   QList<MapAirport>& airports);
 
   void getRunwaysForOverview(int airportId, QList<MapRunway>& runways);
   void getRunways(int airportId, QList<MapRunway>& runways);
 
 private:
+  void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& airports);
+  void getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+
   int flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag);
 
   atools::sql::SqlDatabase *db;
@@ -118,6 +124,7 @@ private:
   MapAirport getMapAirport(const atools::sql::SqlQuery& query);
 
   void bindCoordinateRect(const Marble::GeoDataLatLonAltBox& rect, atools::sql::SqlQuery& query);
+
 };
 
 #endif // MAPQUERY_H

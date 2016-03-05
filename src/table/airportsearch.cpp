@@ -212,7 +212,15 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("mag_var", tr("Mag\nVar"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas"))).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel"))).
-  append(Column("has_tower", ui->checkBoxAirportTowerSearch, tr("Tower"))).
+
+  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower")).
+         conditions("is not null", "is null")).
+
+  append(Column("atis_frequency", tr("ATIS"))).
+  append(Column("awos_frequency", tr("AWOS"))).
+  append(Column("asos_frequency", tr("ASOS"))).
+  append(Column("unicom_frequency", tr("UNICOM"))).
+
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed"))).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military"))).
   append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Addon"))).
@@ -389,8 +397,17 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                           const QVariant& dataValue) const
 {
-  if(col->getColumnName() == "mag_var")
-    return formatter::formatDoubleUnit(value.toDouble(), QString(), 1);
+  if(col->getColumnName() == "tower_frequency" || col->getColumnName() == "atis_frequency" ||
+     col->getColumnName() == "awos_frequency" || col->getColumnName() == "asos_frequency" ||
+     col->getColumnName() == "unicom_frequency")
+  {
+    if(value.isNull())
+      return QString();
+    else
+      return formatter::formatDoubleUnit(value.toDouble() / 1000, QString(), 2);
+  }
+  else if(col->getColumnName() == "mag_var")
+    return formatter::formatFloatUnit(value.toFloat(), QString(), 1);
   else if(numberColumns.contains(col->getColumnName()))
     return dataValue.toInt() > 0 ? dataValue.toString() : QString();
   else if(boolColumns.contains(col->getColumnName()))

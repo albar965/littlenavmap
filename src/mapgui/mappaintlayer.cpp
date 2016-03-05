@@ -103,24 +103,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     QElapsedTimer t;
     t.start();
 
-    MapQuery mq(db);
-
     if(navMapWidget->viewContext() == Marble::Still || airports.size() < 200)
     {
       airports.clear();
-
-      switch(mapLayer->getDataSource())
-      {
-        case layer::ALL:
-          mq.getAirports(curBox, airports);
-          break;
-        case layer::MEDIUM:
-          mq.getAirportsMedium(curBox, airports);
-          break;
-        case layer::LARGE:
-          mq.getAirportsLarge(curBox, airports);
-          break;
-      }
+      MapQuery mq(db);
+      mq.getAirports(curBox, mapLayer, airports);
     }
 
     if(navMapWidget->viewContext() == Marble::Still)
@@ -164,9 +151,27 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
           texts.append(airport.name + " (" + airport.ident + ")");
 
           if(airport.altitude > 0 || airport.longestRunwayLength > 0 || airport.isSet(LIGHT))
+          {
+            QString tower = (airport.towerFrequency == 0 ? QString() :
+                             "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
+
+            QString autoWeather;
+            if(airport.atisFrequency > 0)
+              autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 2);
+            else if(airport.awosFrequency > 0)
+              autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 2);
+            else if(airport.asosFrequency > 0)
+              autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 2);
+
+            if(!tower.isEmpty() || !autoWeather.isEmpty())
+              texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
+
             texts.append(QString::number(airport.altitude) + " " +
                          (airport.isSet(LIGHT) ? "L " : "- ") +
-                         QString::number(airport.longestRunwayLength / 100));
+                         QString::number(airport.longestRunwayLength / 100) + " " +
+                         (airport.unicomFrequency == 0 ? QString() :
+                          QString::number(airport.unicomFrequency / 1000., 'f', 2)));
+          }
         }
         else if(mapLayer->isAirportIdent())
           texts.append(airport.ident);

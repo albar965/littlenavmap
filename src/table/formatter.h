@@ -45,6 +45,7 @@ QString formatMinutesHoursDaysLong(double time);
 
 /* Format a value to a x:xx nm string where nm is a unit */
 QString formatDoubleUnit(double value, const QString& unit = QString(), int precision = 0);
+QString formatFloatUnit(float value, const QString& unit = QString(), int precision = 0);
 
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
