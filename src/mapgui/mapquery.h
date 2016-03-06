@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 #include "geo/rect.h"
+#include "geo/linestring.h"
 
 #include <QList>
 
@@ -101,21 +102,40 @@ struct MapRunway
   atools::geo::Pos center, primary, secondary;
 };
 
+struct MapApron
+{
+  atools::geo::LineString vertices;
+  QString surface;
+  bool drawSurface;
+};
+
+struct MapTaxiPath
+{
+  atools::geo::Pos start, end;
+  QString surface, name;
+  int width;
+  bool drawSurface;
+};
+
 class MapQuery
 {
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
-                   QList<MapAirport>& airports);
+                   QList<MapAirport>& airportList);
 
   void getRunwaysForOverview(int airportId, QList<MapRunway>& runways);
   void getRunways(int airportId, QList<MapRunway>& runways);
 
+  void getAprons(int airportId, QList<MapApron>& aprons);
+  void getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths);
+
 private:
-  void getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& airports);
-  void getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-  void getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
+                     QList<MapAirport>& fetchAirports);
+  void fetchAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
+  void fetchAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
 
   int flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag);
 

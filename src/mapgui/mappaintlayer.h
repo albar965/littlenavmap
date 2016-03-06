@@ -67,6 +67,7 @@ private:
                      const MapLayer *mapLayer,
                      bool fast);
 
+  QPoint worldToScreen(const Marble::GeoDataCoordinates& coords, bool* visible);
   bool worldToScreen(const atools::geo::Pos& coords, int& x, int& y);
   bool worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y);
 
@@ -84,11 +85,19 @@ private:
 
   void airportDiagram(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
 
-  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint>& centers, QList<QRect>& rects,
-                    QList<QRect>& innerRects);
+  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint> *centers, QList<QRect> *rects,
+                    QList<QRect> *innerRects, QList<QRect> *backRects);
 
   void initLayers();
 
+  QColor colorForSurface(const QString& surface);
+
+  void airportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,
+                             bool fast);
+
+  QPoint worldToScreen(const atools::geo::Pos& coords, bool *visible = nullptr);
+
+  bool worldToScreen(const atools::geo::Pos& coords, float& x, float& y);
 };
 
 #endif // MAPPAINTLAYER_H

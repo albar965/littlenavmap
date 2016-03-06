@@ -97,6 +97,12 @@ MapLayer& MapLayer::airportInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::minRunwayLength(int length)
+{
+  layerMinRunwayLength = length;
+  return *this;
+}
+
 bool MapLayer::operator<(const MapLayer& other) const
 {
   return minRange < other.minRange;

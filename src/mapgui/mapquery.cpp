@@ -33,23 +33,24 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 }
 
 void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
-                           QList<MapAirport>& airports)
+                           QList<MapAirport>& airportList)
 {
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
-      getAirports(rect, airports);
+      fetchAirports(rect, mapLayer, airportList);
       break;
     case layer::MEDIUM:
-      getAirportsMedium(rect, airports);
+      fetchAirportsMedium(rect, airportList);
       break;
     case layer::LARGE:
-      getAirportsLarge(rect, airports);
+      fetchAirportsLarge(rect, airportList);
       break;
   }
 }
 
-void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& airports)
+void MapQuery::fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
+                             QList<MapAirport>& airports)
 {
   using namespace Marble;
   using atools::sql::SqlQuery;
@@ -67,16 +68,18 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, QList<MapAir
     "longest_runway_length, longest_runway_heading, mag_var, "
     "altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
     "from airport "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and "
+    "longest_runway_length >= :minlength "
     "order by rating asc, longest_runway_length");
 
   bindCoordinateRect(rect, query);
+  query.bindValue(":minlength", mapLayer->getMinRunwayLength());
   query.exec();
   while(query.next())
     airports.append(getMapAirport(query));
 }
 
-void MapQuery::getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+void MapQuery::fetchAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
 {
   using namespace Marble;
   using atools::sql::SqlQuery;
@@ -102,7 +105,7 @@ void MapQuery::getAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<
     ap.append(getMapAirport(query));
 }
 
-void MapQuery::getAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+void MapQuery::fetchAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
 {
   using namespace Marble;
   using atools::sql::SqlQuery;
@@ -190,6 +193,70 @@ void MapQuery::getRunwaysForOverview(int airportId, QList<MapRunway>& runways)
   }
 }
 
+void MapQuery::getAprons(int airportId, QList<MapApron>& aprons)
+{
+  using atools::sql::SqlQuery;
+  using atools::geo::Pos;
+  using atools::geo::LineString;
+
+  SqlQuery query(db);
+
+  query.prepare(
+    "select surface, is_draw_surface, vertices "
+    "from apron where airport_id = :airportId");
+  query.bindValue(":airportId", airportId);
+  query.exec();
+
+  while(query.next())
+  {
+    MapApron ap;
+
+    ap.drawSurface = query.value("is_draw_surface").toInt() > 0;
+    ap.surface = query.value("surface").toString();
+
+    QString vertices = query.value("vertices").toString();
+    QStringList vertexList = vertices.split(",");
+    for(QString vertex : vertexList)
+    {
+      QStringList ordinates = vertex.split(" ", QString::SkipEmptyParts);
+
+      if(ordinates.size() == 2)
+        ap.vertices.append(ordinates.at(0).toFloat(), ordinates.at(1).toFloat());
+    }
+    aprons.append(ap);
+  }
+}
+
+void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
+{
+  using atools::sql::SqlQuery;
+  using atools::geo::Pos;
+  using atools::geo::LineString;
+
+  SqlQuery query(db);
+
+  query.prepare("select surface, width, name, is_draw_surface, "
+                "start_lonx, start_laty, end_lonx, end_laty "
+                "from taxi_path where airport_id = :airportId");
+  query.bindValue(":airportId", airportId);
+  query.exec();
+
+  while(query.next())
+  {
+    MapTaxiPath tp;
+
+    tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
+    tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),
+    tp.surface = query.value("surface").toString();
+    tp.name = query.value("name").toString();
+    tp.width = query.value("width").toInt();
+    tp.drawSurface = query.value("is_draw_surface").toInt() > 0;
+
+    taxipaths.append(tp);
+  }
+
+}
+
 void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
 {
   using atools::sql::SqlQuery;
@@ -207,8 +274,8 @@ void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
   {
     runways.append({query.value("length").toInt(),
                     static_cast<int>(std::roundf(query.value("heading").toFloat())),
-                    0,
-                    QString(),
+                    query.value("width").toInt(),
+                    query.value("surface").toString(),
                     Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
                     Pos(query.value("primary_lonx").toFloat(), query.value("primary_laty").toFloat()),
                     Pos(query.value("secondary_lonx").toFloat(), query.value("secondary_laty").toFloat())});

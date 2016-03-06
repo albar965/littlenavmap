@@ -45,17 +45,11 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   installEventFilter(this);
 
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
-  // inputHandler()->setInertialEarthRotationEnabled(false);
-  // MarbleLocale::MeasurementSystem distanceUnit;
-  // distanceUnit = MarbleGlobal::getInstance()->locale()->measurementSystem();
+  inputHandler()->setInertialEarthRotationEnabled(false);
 
   paintLayer = new MapPaintLayer(this, db);
   addLayer(paintLayer);
 
-  // MarbleWidgetInputHandler *handler = inputHandler();
-  // handler->installEventFilter();
-  // MarbleAbstractPresenter *pres = new MarbleAbstractPresenter;
-  // setInputHandler(nullptr);
   connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
   connect(this, &MarbleWidget::zoomChanged, this, &NavMapWidget::zoomHasChanged);
 }

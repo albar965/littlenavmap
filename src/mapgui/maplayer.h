@@ -50,6 +50,7 @@ public:
   MapLayer& airportIdent(bool = true);
   MapLayer& airportName(bool = true);
   MapLayer& airportInfo(bool = true);
+  MapLayer& minRunwayLength(int length);
 
   bool operator<(const MapLayer& other) const;
 
@@ -118,6 +119,11 @@ public:
     return src;
   }
 
+  int getMinRunwayLength() const
+  {
+    return layerMinRunwayLength;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -127,7 +133,7 @@ private:
   bool layerAirport = false, layerAirportDetail = false, layerAirportOverviewRunway = false,
        layerAirportDiagram = false, layerAirportSoft = false, layerAirportNoRating = false,
        layerAirportIdent = false, layerAirportName = false, layerAirportInfo = false;
-  int layerAirportSymbolSize;
+  int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
 
 };
 
