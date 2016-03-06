@@ -1,0 +1,84 @@
+/*****************************************************************************
+* Copyright 2015-2016 Alexander Barthel albar965@mailbox.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#include "coordinateconverter.h"
+#include "mapscale.h"
+#include "geo/pos.h"
+#include "geo/calculations.h"
+
+#include <marble/ViewportParams.h>
+
+using namespace Marble;
+using namespace atools::geo;
+
+MapScale::MapScale()
+{
+
+}
+
+void MapScale::update(ViewportParams *viewport, double distance)
+{
+  CoordinateConverter converter(viewport);
+
+  if(distance != lastDistance ||
+     viewport->centerLatitude() != lastCenterLatY || viewport->centerLongitude() != lastCenterLonX)
+  {
+    lastDistance = distance;
+    lastCenterLonX =  viewport->centerLongitude();
+    lastCenterLatY = viewport->centerLatitude();
+
+    scales.clear();
+    Pos center(lastCenterLonX, lastCenterLatY);
+    center.toDeg();
+    double screenCenterX, screenCenterY;
+    converter.wToS(center, screenCenterX, screenCenterY);
+
+    for(int i = 0; i <= 360; i += 45)
+    {
+      double screenEndX, screenEndY;
+      converter.wToS(center.endpoint(1000., i), screenEndX, screenEndY);
+
+      scales.append(sqrt((screenCenterX - screenEndX) * (screenCenterX - screenEndX) +
+                         (screenCenterY - screenEndY) * (screenCenterY - screenEndY)));
+    }
+  }
+}
+
+int MapScale::getPixelInt(float meter, float directionDeg)
+{
+  return static_cast<int>(std::round(getPixel(meter, directionDeg)));
+}
+
+float MapScale::getPixel(float meter, float directionDeg)
+{
+  while(directionDeg >= 360.f)
+    directionDeg -= 360.f;
+  while(directionDeg < 0.f)
+    directionDeg += 360.f;
+
+  int octant = static_cast<int>(directionDeg / 45);
+  int lowerDeg = octant * 45;
+  int upperDeg = (octant + 1) * 45;
+  double lowerScale = scales.at(octant);
+  double upperScale = scales.at(octant + 1);
+
+  // Screen pixel per km
+  double interpolatedScale = lowerScale + (upperScale - lowerScale) *
+                             (directionDeg - lowerDeg) /
+                             (upperDeg - lowerDeg);
+  return static_cast<float>(interpolatedScale * static_cast<double>(meter) / 1000.);
+}

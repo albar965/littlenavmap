@@ -37,6 +37,7 @@ class SqlDatabase;
 class QContextMenuEvent;
 class MainWindow;
 class MapPaintLayer;
+class MapQuery;
 
 class NavMapWidget :
   public Marble::MarbleWidget
@@ -45,6 +46,7 @@ class NavMapWidget :
 
 public:
   NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
+  virtual ~NavMapWidget();
 
   void mapContextMenu(const QPoint& pos);
 
@@ -68,6 +70,7 @@ signals:
 private:
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
+  MapQuery *mapQuery;
   atools::sql::SqlDatabase *db;
   Marble::GeoDataCoordinates mark;
   virtual void mousePressEvent(QMouseEvent *event) override;

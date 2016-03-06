@@ -33,9 +33,9 @@ enum AirportSource
 class MapLayer
 {
 public:
-  MapLayer(int minimumRange, int maximumRange);
+  MapLayer(int maximumRange);
 
-  MapLayer clone(int minimumRange, int maximumRange) const;
+  MapLayer clone(int maximumRange) const;
 
   MapLayer& airports(bool value = true);
 
@@ -53,11 +53,6 @@ public:
   MapLayer& minRunwayLength(int length);
 
   bool operator<(const MapLayer& other) const;
-
-  int getMinRange() const
-  {
-    return minRange;
-  }
 
   int getMaxRange() const
   {
@@ -127,7 +122,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
-  int minRange = -1, maxRange = -1;
+  int maxRange = -1;
 
   layer::AirportSource src;
   bool layerAirport = false, layerAirportDetail = false, layerAirportOverviewRunway = false,

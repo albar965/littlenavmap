@@ -28,26 +28,23 @@ class GeoSceneLayer;
 class ViewportParams;
 }
 
-namespace atools {
-namespace sql {
-class SqlDatabase;
-}
-}
-
+class MapPainter;
 class MapLayer;
 class NavMapWidget;
 class MapLayerSettings;
+class MapScale;
 
 class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(NavMapWidget *widget, atools::sql::SqlDatabase *sqlDb);
+  MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries);
   virtual ~MapPaintLayer();
 
-  const MapAirport getAirportAtPos(int xs, int ys);
-
 private:
+  QList<MapPainter *> mapPainters;
+  MapQuery *mapQuery = nullptr;
+  MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
 
   // Implemented from LayerInterface
@@ -60,44 +57,10 @@ private:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
-  QPen textBackgroundPen, textPen, markBackPen, markFillPen;
-  void paintMark(Marble::GeoPainter *painter);
-
-  void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
-                     const MapLayer *mapLayer,
-                     bool fast);
-
-  QPoint worldToScreen(const Marble::GeoDataCoordinates& coords, bool* visible);
-  bool worldToScreen(const atools::geo::Pos& coords, int& x, int& y);
-  bool worldToScreen(const Marble::GeoDataCoordinates& coords, int& x, int& y);
-
-  QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
-
-  QList<MapAirport> airports;
-  NavMapWidget *navMapWidget;
-  atools::sql::SqlDatabase *db;
-
-  void textBox(Marble::GeoPainter *painter, const MapAirport& ap, const QStringList& texts,
-               const QPen& pen, int x, int y);
-  QColor& colorForAirport(const MapAirport& ap);
-
-  bool screenToWorld(int x, int y, Marble::GeoDataCoordinates& coords);
-
-  void airportDiagram(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
-
-  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint> *centers, QList<QRect> *rects,
-                    QList<QRect> *innerRects, QList<QRect> *backRects);
-
   void initLayers();
 
-  QColor colorForSurface(const QString& surface);
+  NavMapWidget *navMapWidget;
 
-  void airportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,
-                             bool fast);
-
-  QPoint worldToScreen(const atools::geo::Pos& coords, bool *visible = nullptr);
-
-  bool worldToScreen(const atools::geo::Pos& coords, float& x, float& y);
 };
 
 #endif // MAPPAINTLAYER_H

@@ -65,7 +65,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
   airportColumns = new ColumnList("airport", "airport_id");
 
   airportSearch = new AirportSearch(parentWidget, tableView,
-                                    airportColumns, db);
+                                    airportColumns, db, 0);
   airportSearch->connectSlots();
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
@@ -77,7 +77,7 @@ void SearchController::createNavSearch(QTableView *tableView)
   navColumns = new ColumnList("nav_search", "nav_search_id");
 
   navSearch = new NavSearch(parentWidget, tableView,
-                            navColumns, db);
+                            navColumns, db, 1);
   navSearch->connectSlots();
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,

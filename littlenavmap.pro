@@ -55,7 +55,12 @@ SOURCES += src/main.cpp\
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
     src/mapgui/maplayersettings.cpp \
-    src/maptypes.cpp
+    src/maptypes.cpp \
+    src/mapgui/mappainter.cpp \
+    src/mapgui/mappainterairport.cpp \
+    src/mapgui/mappaintermark.cpp \
+    src/mapgui/mapscale.cpp \
+    src/mapgui/coordinateconverter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -73,7 +78,12 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
     src/mapgui/maplayersettings.h \
-    src/maptypes.h
+    src/maptypes.h \
+    src/mapgui/mappainter.h \
+    src/mapgui/mappainterairport.h \
+    src/mapgui/mappaintermark.h \
+    src/mapgui/mapscale.h \
+    src/mapgui/coordinateconverter.h
 
 FORMS    += src/gui/mainwindow.ui
 

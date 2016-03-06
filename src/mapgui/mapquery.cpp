@@ -32,6 +32,21 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 
 }
 
+const MapAirport MapQuery::getAirportAtPos(int xs, int ys)
+{
+  // for(const MapAirport& a : airports)
+  // {
+  // int x, y;
+  // bool visible = worldToScreen(a.coords, x, y);
+
+  // if(visible)
+  // if((std::abs(x - xs) + std::abs(y - ys)) < 10)
+  // return a;
+  // }
+
+  return MapAirport();
+}
+
 void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
                            QList<MapAirport>& airportList)
 {
@@ -235,7 +250,7 @@ void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
 
   SqlQuery query(db);
 
-  query.prepare("select surface, width, name, is_draw_surface, "
+  query.prepare("select type, surface, width, name, is_draw_surface, "
                 "start_lonx, start_laty, end_lonx, end_laty "
                 "from taxi_path where airport_id = :airportId");
   query.bindValue(":airportId", airportId);
@@ -244,15 +259,18 @@ void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
   while(query.next())
   {
     MapTaxiPath tp;
+    QString type = query.value("type").toString();
+    if(type != "RUNWAY")
+    {
+      tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
+      tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),
+      tp.surface = query.value("surface").toString();
+      tp.name = query.value("name").toString();
+      tp.width = query.value("width").toInt();
+      tp.drawSurface = query.value("is_draw_surface").toInt() > 0;
 
-    tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
-    tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),
-    tp.surface = query.value("surface").toString();
-    tp.name = query.value("name").toString();
-    tp.width = query.value("width").toInt();
-    tp.drawSurface = query.value("is_draw_surface").toInt() > 0;
-
-    taxipaths.append(tp);
+      taxipaths.append(tp);
+    }
   }
 
 }

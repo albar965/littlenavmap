@@ -43,7 +43,7 @@ class Search :
 
 public:
   explicit Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  atools::sql::SqlDatabase *sqlDb);
+                  atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex);
   virtual ~Search();
 
   void preDatabaseLoad();
@@ -56,7 +56,6 @@ public:
   virtual void saveState() = 0;
   virtual void restoreState() = 0;
 
-public slots:
   void resetView();
   void resetSearch();
   void tableCopyCipboard();
@@ -78,6 +77,7 @@ protected:
   ColumnList *columns;
   QTableView *view;
   MainWindow *parentWidget;
+  int tabIndex;
 
   void doubleClick(const QModelIndex& index);
 

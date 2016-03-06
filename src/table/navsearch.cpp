@@ -62,8 +62,8 @@ const QHash<QString, QString> NavSearch::navTypeNames(
   });
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                     atools::sql::SqlDatabase *sqlDb)
-  : Search(parent, tableView, columnList, sqlDb)
+                     atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
+  : Search(parent, tableView, columnList, sqlDb, tabWidgetIndex)
 {
   Ui::MainWindow *ui = parentWidget->getUi();
 

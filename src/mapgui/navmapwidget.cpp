@@ -47,11 +47,18 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  paintLayer = new MapPaintLayer(this, db);
+  mapQuery = new MapQuery(db);
+  paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
   connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
   connect(this, &MarbleWidget::zoomChanged, this, &NavMapWidget::zoomHasChanged);
+}
+
+NavMapWidget::~NavMapWidget()
+{
+  delete paintLayer;
+  delete mapQuery;
 }
 
 void NavMapWidget::zoomHasChanged(int zoom)
@@ -124,14 +131,14 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
   QString actionShowInSearchText;
   actionShowInSearchText = ui->actionShowInSearch->text();
 
-  MapAirport ap = paintLayer->getAirportAtPos(pos.x(), pos.y());
+  MapAirport ap = mapQuery->getAirportAtPos(pos.x(), pos.y());
 
   if(ap.valid)
-  {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
-    m.addAction(ui->actionShowInSearch);
-  }
+  else
+    ui->actionShowInSearch->setDisabled(true);
 
+  m.addAction(ui->actionShowInSearch);
   QPoint cpos = QCursor::pos();
   QAction *act = m.exec(cpos);
   if(act == ui->actionShowInSearch)
@@ -201,7 +208,7 @@ bool NavMapWidget::event(QEvent *event)
   if(event->type() == QEvent::ToolTip)
   {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-    MapAirport ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
+    MapAirport ap = mapQuery->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
     if(ap.valid)
       QToolTip::showText(helpEvent->globalPos(), QString::number(ap.id) + "\n" + ap.ident + "\n" + ap.name);
     else

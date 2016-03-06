@@ -17,16 +17,14 @@
 
 #include "maplayer.h"
 
-MapLayer::MapLayer(int minimumRange, int maximumRange)
+MapLayer::MapLayer(int maximumRange)
 {
-  minRange = minimumRange;
   maxRange = maximumRange;
 }
 
-MapLayer MapLayer::clone(int minimumRange, int maximumRange) const
+MapLayer MapLayer::clone(int maximumRange) const
 {
   MapLayer retval = *this;
-  retval.minRange = minimumRange;
   retval.maxRange = maximumRange;
   return retval;
 }
@@ -105,15 +103,14 @@ MapLayer& MapLayer::minRunwayLength(int length)
 
 bool MapLayer::operator<(const MapLayer& other) const
 {
-  return minRange < other.minRange;
+  return maxRange < other.maxRange;
 }
 
 QDebug operator<<(QDebug out, const MapLayer& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "MapLayer["
-  << record.minRange << "-" << record.maxRange << "]";
+  out.nospace().noquote() << "MapLayer[" << record.maxRange << "]";
 
   return out;
 }

@@ -122,6 +122,8 @@ class MapQuery
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
 
+  const MapAirport getAirportAtPos(int xs, int ys);
+
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
                    QList<MapAirport>& airportList);
 

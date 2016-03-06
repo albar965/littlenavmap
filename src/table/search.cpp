@@ -35,8 +35,9 @@
 #include <QLineEdit>
 
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-               atools::sql::SqlDatabase *sqlDb)
-  : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent)
+               atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
+  : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent),
+    tabIndex(tabWidgetIndex)
 {
   /* Alternating colors */
   rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
@@ -252,24 +253,32 @@ void Search::postDatabaseLoad()
 
 void Search::resetView()
 {
-  atools::gui::Dialog dlg(parentWidget);
-  int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
-                                      tr("Reset sort order, column order and column sizes to default?"),
-                                      tr("Do not &show this dialog again."),
-                                      QMessageBox::Yes | QMessageBox::No,
-                                      QMessageBox::Yes, QMessageBox::Yes);
-
-  if(result == QMessageBox::Yes)
+  Ui::MainWindow *ui = parentWidget->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
-    controller->resetView();
-    parentWidget->getUi()->statusBar->showMessage(tr("View reset to default."));
+    atools::gui::Dialog dlg(parentWidget);
+    int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
+                                        tr("Reset sort order, column order and column sizes to default?"),
+                                        tr("Do not &show this dialog again."),
+                                        QMessageBox::Yes | QMessageBox::No,
+                                        QMessageBox::Yes, QMessageBox::Yes);
+
+    if(result == QMessageBox::Yes)
+    {
+      controller->resetView();
+      parentWidget->getUi()->statusBar->showMessage(tr("View reset to default."));
+    }
   }
 }
 
 void Search::resetSearch()
 {
-  controller->resetSearch();
-  parentWidget->getUi()->statusBar->showMessage(tr("Search filters cleared."));
+  Ui::MainWindow *ui = parentWidget->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  {
+    controller->resetSearch();
+    parentWidget->getUi()->statusBar->showMessage(tr("Search filters cleared."));
+  }
 }
 
 void Search::tableCopyCipboard()
