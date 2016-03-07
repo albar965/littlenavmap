@@ -21,6 +21,7 @@
 #include <marble/LayerInterface.h>
 #include <QPen>
 #include "mapquery.h"
+
 namespace Marble {
 class MarbleWidget;
 class GeoPainter;
@@ -33,6 +34,7 @@ class MapLayer;
 class NavMapWidget;
 class MapLayerSettings;
 class MapScale;
+class MapPainterAirport;
 
 class MapPaintLayer :
   public Marble::LayerInterface
@@ -41,11 +43,16 @@ public:
   MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries);
   virtual ~MapPaintLayer();
 
+  MapAirport getAirportAtPos(int xs, int ys);
+
 private:
   QList<MapPainter *> mapPainters;
+  MapPainterAirport *mapPainterAirport;
+
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
+  NavMapWidget *navMapWidget;
 
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override
@@ -58,8 +65,6 @@ private:
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
   void initLayers();
-
-  NavMapWidget *navMapWidget;
 
 };
 

@@ -33,9 +33,9 @@ enum AirportSource
 class MapLayer
 {
 public:
-  MapLayer(int maximumRange);
+  MapLayer(float maximumRange);
 
-  MapLayer clone(int maximumRange) const;
+  MapLayer clone(float maximumRange) const;
 
   MapLayer& airports(bool value = true);
 
@@ -44,6 +44,7 @@ public:
   MapLayer& airportSource(layer::AirportSource source);
   MapLayer& airportOverviewRunway(bool value = true);
   MapLayer& airportDiagram(bool value = true);
+  MapLayer& airportDiagramDetail(bool value = true);
   MapLayer& airportSoft(bool value = true);
   MapLayer& airportNoRating(bool value = true);
   MapLayer& airportSymbolSize(int size);
@@ -54,7 +55,7 @@ public:
 
   bool operator<(const MapLayer& other) const;
 
-  int getMaxRange() const
+  float getMaxRange() const
   {
     return maxRange;
   }
@@ -77,6 +78,11 @@ public:
   bool isAirportDiagram() const
   {
     return layerAirportDiagram;
+  }
+
+  bool isAirportDiagramDetail() const
+  {
+    return layerAirportDiagramDetail;
   }
 
   bool isAirportSoft() const
@@ -122,12 +128,13 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
-  int maxRange = -1;
+  float maxRange = -1.;
 
   layer::AirportSource src;
   bool layerAirport = false, layerAirportDetail = false, layerAirportOverviewRunway = false,
-       layerAirportDiagram = false, layerAirportSoft = false, layerAirportNoRating = false,
-       layerAirportIdent = false, layerAirportName = false, layerAirportInfo = false;
+       layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportSoft = false,
+       layerAirportNoRating = false, layerAirportIdent = false, layerAirportName = false,
+       layerAirportInfo = false;
   int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
 
 };

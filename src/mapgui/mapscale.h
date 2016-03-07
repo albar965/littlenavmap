@@ -35,13 +35,18 @@ class MapScale
 public:
   MapScale();
 
-  void update(Marble::ViewportParams *viewport, double distance);
+  void update(Marble::ViewportParams *viewportParams, double distance);
 
-  float getPixel(float meter, float directionDeg);
-  int getPixelInt(float meter, float directionDeg);
+  float getPixelForMeter(float meter, float directionDeg = 45.f) const;
+  float getPixelForFeet(int feet, float directionDeg = 45.f) const;
+  int getPixelIntForMeter(float meter, float directionDeg = 45.f) const;
+  int getPixelIntForFeet(int feet, float directionDeg = 45.f) const;
+
+  float getDegreePerPixel(int px) const;
 
 private:
   double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
+  Marble::ViewportParams *viewport;
 
   /* Screen pixel per km for eight directions */
   QVector<double> scales;

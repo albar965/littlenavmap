@@ -30,16 +30,18 @@ MapScale::MapScale()
 
 }
 
-void MapScale::update(ViewportParams *viewport, double distance)
+void MapScale::update(ViewportParams *viewportParams, double distance)
 {
-  CoordinateConverter converter(viewport);
+  viewport = viewportParams;
+  CoordinateConverter converter(viewportParams);
 
   if(distance != lastDistance ||
-     viewport->centerLatitude() != lastCenterLatY || viewport->centerLongitude() != lastCenterLonX)
+     viewportParams->centerLatitude() != lastCenterLatY || viewportParams->centerLongitude() !=
+     lastCenterLonX)
   {
     lastDistance = distance;
-    lastCenterLonX =  viewport->centerLongitude();
-    lastCenterLatY = viewport->centerLatitude();
+    lastCenterLonX = viewportParams->centerLongitude();
+    lastCenterLatY = viewportParams->centerLatitude();
 
     scales.clear();
     Pos center(lastCenterLonX, lastCenterLatY);
@@ -58,12 +60,22 @@ void MapScale::update(ViewportParams *viewport, double distance)
   }
 }
 
-int MapScale::getPixelInt(float meter, float directionDeg)
+float MapScale::getDegreePerPixel(int px) const
 {
-  return static_cast<int>(std::round(getPixel(meter, directionDeg)));
+  return static_cast<float>(toDegree(viewport->angularResolution()) * static_cast<double>(px));
 }
 
-float MapScale::getPixel(float meter, float directionDeg)
+int MapScale::getPixelIntForMeter(float meter, float directionDeg) const
+{
+  return static_cast<int>(std::round(getPixelForMeter(meter, directionDeg)));
+}
+
+int MapScale::getPixelIntForFeet(int feet, float directionDeg) const
+{
+  return getPixelIntForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
+}
+
+float MapScale::getPixelForMeter(float meter, float directionDeg) const
 {
   while(directionDeg >= 360.f)
     directionDeg -= 360.f;
@@ -81,4 +93,9 @@ float MapScale::getPixel(float meter, float directionDeg)
                              (directionDeg - lowerDeg) /
                              (upperDeg - lowerDeg);
   return static_cast<float>(interpolatedScale * static_cast<double>(meter) / 1000.);
+}
+
+float MapScale::getPixelForFeet(int feet, float directionDeg) const
+{
+  return getPixelForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
 }

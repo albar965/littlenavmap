@@ -32,21 +32,6 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 
 }
 
-const MapAirport MapQuery::getAirportAtPos(int xs, int ys)
-{
-  // for(const MapAirport& a : airports)
-  // {
-  // int x, y;
-  // bool visible = worldToScreen(a.coords, x, y);
-
-  // if(visible)
-  // if((std::abs(x - xs) + std::abs(y - ys)) < 10)
-  // return a;
-  // }
-
-  return MapAirport();
-}
-
 void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
                            QList<MapAirport>& airportList)
 {
@@ -76,12 +61,12 @@ void MapQuery::fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapL
 
   query.prepare(
     "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, "
+    "has_avgas, has_jetfuel, has_tower_object, "
     "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
     "is_closed, is_military, is_addon,"
     "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
     "longest_runway_length, longest_runway_heading, mag_var, "
-    "altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
     "from airport "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy and "
     "longest_runway_length >= :minlength "
@@ -158,6 +143,9 @@ MapAirport MapQuery::getMapAirport(const atools::sql::SqlQuery& query)
   ap.name = query.value("name").toString();
   ap.longestRunwayLength = query.value("longest_runway_length").toInt();
   ap.longestRunwayHeading = static_cast<int>(std::roundf(query.value("longest_runway_heading").toFloat()));
+
+  if(rec.contains("has_tower_object"))
+    ap.towerCoords = Pos(query.value("tower_lonx").toFloat(), query.value("tower_laty").toFloat());
 
   if(rec.contains("tower_frequency"))
     ap.towerFrequency = query.value("tower_frequency").toInt();
@@ -242,6 +230,41 @@ void MapQuery::getAprons(int airportId, QList<MapApron>& aprons)
   }
 }
 
+void MapQuery::getParking(int airportId, QList<MapParking>& parkings)
+{
+  using atools::sql::SqlQuery;
+  using atools::geo::Pos;
+  using atools::geo::LineString;
+
+  SqlQuery query(db);
+
+  query.prepare("select type, name, number, radius, heading, has_jetway, lonx, laty "
+                "from parking where airport_id = :airportId");
+  query.bindValue(":airportId", airportId);
+  query.exec();
+
+  while(query.next())
+  {
+    MapParking p;
+
+    QString type = query.value("type").toString();
+    if(type != "VEHICLES")
+    {
+      p.type = type;
+      p.name = query.value("name").toString();
+
+      p.pos = Pos(query.value("lonx").toFloat(), query.value("laty").toFloat());
+      p.jetway = query.value("has_jetway").toInt() > 0;
+      p.number = query.value("number").toInt();
+
+      p.heading = static_cast<int>(std::roundf(query.value("heading").toFloat()));
+      p.radius = static_cast<int>(std::roundf(query.value("radius").toFloat()));
+
+      parkings.append(p);
+    }
+  }
+}
+
 void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
 {
   using atools::sql::SqlQuery;
@@ -260,7 +283,7 @@ void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
   {
     MapTaxiPath tp;
     QString type = query.value("type").toString();
-    if(type != "RUNWAY")
+    if(type != "RUNWAY" && type != "VEHICLE")
     {
       tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
       tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),

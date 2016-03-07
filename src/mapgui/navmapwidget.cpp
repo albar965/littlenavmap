@@ -19,6 +19,7 @@
 #include "mapgui/navmapwidget.h"
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
+#include "mapgui/mapscale.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -35,6 +36,7 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/ViewportParams.h>
 
+#include "coordinateconverter.h"
 #include "ui_mainwindow.h"
 
 using namespace Marble;
@@ -131,7 +133,7 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
   QString actionShowInSearchText;
   actionShowInSearchText = ui->actionShowInSearch->text();
 
-  MapAirport ap = mapQuery->getAirportAtPos(pos.x(), pos.y());
+  MapAirport ap = paintLayer->getAirportAtPos(pos.x(), pos.y());
 
   if(ap.valid)
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
@@ -208,7 +210,7 @@ bool NavMapWidget::event(QEvent *event)
   if(event->type() == QEvent::ToolTip)
   {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-    MapAirport ap = mapQuery->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
+    MapAirport ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
     if(ap.valid)
       QToolTip::showText(helpEvent->globalPos(), QString::number(ap.id) + "\n" + ap.ident + "\n" + ap.name);
     else

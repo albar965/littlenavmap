@@ -124,3 +124,19 @@ bool CoordinateConverter::sToW(int x, int y, Marble::GeoDataCoordinates& coords)
   coords.setLatitude(lat, GeoDataCoordinates::Degree);
   return visible;
 }
+
+atools::geo::Pos CoordinateConverter::sToW(int x, int y)
+{
+  qreal lon, lat;
+
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, GeoDataCoordinates::Degree);
+  if(visible)
+    return atools::geo::Pos(lon, lat);
+  else
+    return atools::geo::Pos();
+}
+
+Pos CoordinateConverter::sToW(const QPoint& point)
+{
+  return sToW(point.x(), point.y());
+}

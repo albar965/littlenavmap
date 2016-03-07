@@ -44,6 +44,8 @@ public:
   bool wToS(const atools::geo::Pos& coords, double& x, double& y);
 
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords);
+  atools::geo::Pos sToW(int x, int y);
+  atools::geo::Pos sToW(const QPoint& point);
 
 private:
   const Marble::ViewportParams *viewport;

@@ -35,7 +35,7 @@ void MapLayerSettings::finishAppend()
   std::sort(layers.begin(), layers.end());
 }
 
-const MapLayer *MapLayerSettings::getLayer(int distance) const
+const MapLayer *MapLayerSettings::getLayer(float distance) const
 {
   using namespace std::placeholders;
 
@@ -49,7 +49,7 @@ const MapLayer *MapLayerSettings::getLayer(int distance) const
     return nullptr;
 }
 
-bool MapLayerSettings::compare(const MapLayer& ml, int distance) const
+bool MapLayerSettings::compare(const MapLayer& ml, float distance) const
 {
   // The value returned indicates whether the first argument is considered to go before the second.
   return ml.getMaxRange() < distance;

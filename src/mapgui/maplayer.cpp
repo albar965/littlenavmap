@@ -17,12 +17,12 @@
 
 #include "maplayer.h"
 
-MapLayer::MapLayer(int maximumRange)
+MapLayer::MapLayer(float maximumRange)
 {
   maxRange = maximumRange;
 }
 
-MapLayer MapLayer::clone(int maximumRange) const
+MapLayer MapLayer::clone(float maximumRange) const
 {
   MapLayer retval = *this;
   retval.maxRange = maximumRange;
@@ -56,6 +56,12 @@ MapLayer& MapLayer::airportOverviewRunway(bool value)
 MapLayer& MapLayer::airportDiagram(bool value)
 {
   layerAirportDiagram = value;
+  return *this;
+}
+
+MapLayer&MapLayer::airportDiagramDetail(bool value)
+{
+  layerAirportDiagramDetail = value;
   return *this;
 }
 

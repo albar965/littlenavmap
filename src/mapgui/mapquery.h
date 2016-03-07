@@ -70,7 +70,7 @@ struct MapAirport
 
   bool valid = false;
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
-  atools::geo::Pos coords;
+  atools::geo::Pos coords, towerCoords;
   atools::geo::Rect bounding;
 
   bool isSet(MapAirportFlags flag) const
@@ -117,12 +117,18 @@ struct MapTaxiPath
   bool drawSurface;
 };
 
+struct MapParking
+{
+  atools::geo::Pos pos;
+  QString type, name;
+  int number, radius, heading;
+  bool jetway;
+};
+
 class MapQuery
 {
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
-
-  const MapAirport getAirportAtPos(int xs, int ys);
 
   void getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
                    QList<MapAirport>& airportList);
@@ -132,6 +138,8 @@ public:
 
   void getAprons(int airportId, QList<MapApron>& aprons);
   void getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths);
+
+  void getParking(int airportId, QList<MapParking>& parkings);
 
 private:
   void fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,

@@ -30,12 +30,12 @@ public:
   MapLayerSettings& append(const MapLayer& layer);
   void finishAppend();
 
-  const MapLayer *getLayer(int distance) const;
+  const MapLayer *getLayer(float distance) const;
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);
 
-  bool compare(const MapLayer& ml, int distance) const;
+  bool compare(const MapLayer& ml, float distance) const;
 
   QList<MapLayer> layers;
 };

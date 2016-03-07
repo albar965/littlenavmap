@@ -54,7 +54,8 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   initLayers();
 
   mapScale = new MapScale();
-  mapPainters.append(new MapPainterAirport(navMapWidget, mapQuery, mapScale));
+  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
+  mapPainters.append(mapPainterAirport);
   mapPainters.append(new MapPainterMark(navMapWidget, mapQuery, mapScale));
 }
 
@@ -64,6 +65,11 @@ MapPaintLayer::~MapPaintLayer()
   mapPainters.clear();
   delete layers;
   delete mapScale;
+}
+
+MapAirport MapPaintLayer::getAirportAtPos(int xs, int ys)
+{
+  return mapPainterAirport->getAirportAtPos(xs, ys);
 }
 
 void MapPaintLayer::initLayers()
@@ -76,19 +82,20 @@ void MapPaintLayer::initLayers()
   MapLayer defApLayer = MapLayer(0).airports().airportName().airportIdent().
                         airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL);
   layers->
-  append(defApLayer.clone(5).airportDiagram().airportSymbolSize(20).airportInfo()).
+  append(defApLayer.clone(0.7f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
+  append(defApLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo()).
 
-  append(defApLayer.clone(50).airportSymbolSize(18).airportInfo()).
+  append(defApLayer.clone(50.f).airportSymbolSize(18).airportInfo()).
 
-  append(defApLayer.clone(100).airportSymbolSize(14)).
+  append(defApLayer.clone(100.f).airportSymbolSize(14)).
 
-  append(defApLayer.clone(150).airportSymbolSize(10).minRunwayLength(2500).
+  append(defApLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false)).
 
-  append(defApLayer.clone(300).airportSymbolSize(10).
+  append(defApLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM)).
 
-  append(defApLayer.clone(1200).airportSymbolSize(10).
+  append(defApLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE));
 
   layers->finishAppend();
@@ -103,8 +110,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
   mapScale->update(viewport, navMapWidget->distance());
 
-  int dist = static_cast<int>(navMapWidget->distance());
-  const MapLayer *mapLayer = layers->getLayer(dist);
+  const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 
   if(mapLayer != nullptr)
     for(MapPainter *mapPainter : mapPainters)
