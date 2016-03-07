@@ -137,8 +137,8 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
 
   if(ap.valid)
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
-  else
-    ui->actionShowInSearch->setDisabled(true);
+
+  ui->actionShowInSearch->setDisabled(!ap.valid);
 
   m.addAction(ui->actionShowInSearch);
   QPoint cpos = QCursor::pos();

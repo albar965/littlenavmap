@@ -189,7 +189,14 @@ void MapQuery::getRunwaysForOverview(int airportId, QList<MapRunway>& runways)
     runways.append({query.value("length").toInt(),
                     static_cast<int>(std::roundf(query.value("heading").toFloat())),
                     0,
+                    0,
+                    0,
                     QString(),
+                    QString(),
+                    QString(),
+                    QString(),
+                    false,
+                    false,
                     Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
                     Pos(query.value("primary_lonx").toFloat(), query.value("primary_laty").toFloat()),
                     Pos(query.value("secondary_lonx").toFloat(), query.value("secondary_laty").toFloat())});
@@ -273,7 +280,7 @@ void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
 
   SqlQuery query(db);
 
-  query.prepare("select type, surface, width, name, is_draw_surface, "
+  query.prepare("select type, surface, width, name, is_draw_surface, start_type, end_type, "
                 "start_lonx, start_laty, end_lonx, end_laty "
                 "from taxi_path where airport_id = :airportId");
   query.bindValue(":airportId", airportId);
@@ -287,6 +294,8 @@ void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
     {
       tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
       tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),
+      tp.startType = query.value("start_type").toString();
+      tp.endType = query.value("end_type").toString();
       tp.surface = query.value("surface").toString();
       tp.name = query.value("name").toString();
       tp.width = query.value("width").toInt();
@@ -306,8 +315,15 @@ void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
   SqlQuery query(db);
 
   query.prepare(
-    "select length, heading, width, surface, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId");
+    "select length, heading, width, surface, lonx, laty, p.name as primary_name, s.name as secondary_name, "
+    "edge_light, "
+    "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
+    "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
+    "primary_lonx, primary_laty, secondary_lonx, secondary_laty "
+    "from runway "
+    "join runway_end p on primary_end_id = p.runway_end_id "
+    "join runway_end s on secondary_end_id = s.runway_end_id "
+    "where airport_id = :airportId");
   query.bindValue(":airportId", airportId);
   query.exec();
 
@@ -316,7 +332,14 @@ void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
     runways.append({query.value("length").toInt(),
                     static_cast<int>(std::roundf(query.value("heading").toFloat())),
                     query.value("width").toInt(),
+                    query.value("primary_offset_threshold").toInt(),
+                    query.value("secondary_offset_threshold").toInt(),
                     query.value("surface").toString(),
+                    query.value("primary_name").toString(),
+                    query.value("secondary_name").toString(),
+                    query.value("edge_light").toString(),
+                    query.value("primary_closed_markings").toInt() > 0,
+                    query.value("secondary_closed_markings").toInt() > 0,
                     Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
                     Pos(query.value("primary_lonx").toFloat(), query.value("primary_laty").toFloat()),
                     Pos(query.value("secondary_lonx").toFloat(), query.value("secondary_laty").toFloat())});

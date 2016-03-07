@@ -97,8 +97,9 @@ struct MapAirport
 
 struct MapRunway
 {
-  int length, heading, width;
-  QString surface;
+  int length, heading, width, primOffset, secOffset;
+  QString surface, primName, secName, edgeLight;
+  bool secClosed, primClosed;
   atools::geo::Pos center, primary, secondary;
 };
 
@@ -112,7 +113,7 @@ struct MapApron
 struct MapTaxiPath
 {
   atools::geo::Pos start, end;
-  QString surface, name;
+  QString surface, name, startType, endType;
   int width;
   bool drawSurface;
 };
