@@ -39,15 +39,17 @@ private:
 
   QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
 
+  QColor airportDetailBackColor;
+
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
                      const MapLayer *mapLayer,
                      bool fast);
   void textBox(Marble::GeoPainter *painter, const MapAirport& ap, const QStringList& texts,
                const QPen& pen, int x, int y, bool transparent);
 
-  void airportDiagram(const MapLayer* mapLayer, Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
+  void airportDiagram(const MapLayer *mapLayer, Marble::GeoPainter *painter, const MapAirport& airport);
 
-  void runwayCoords(const QList<MapRunway>* rw, QList<QPoint> *centers, QList<QRect> *rects,
+  void runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *backRects);
 
   void airportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,
@@ -56,6 +58,9 @@ private:
   QList<MapAirport> airports;
 
   QString parkingName(const QString& name);
+
+  QColor colorForParkingType(const QString& type);
+  QStringList airportTexts(const MapLayer *mapLayer, const MapAirport& airport);
 
 };
 

@@ -45,6 +45,7 @@ public:
   MapLayer& airportOverviewRunway(bool value = true);
   MapLayer& airportDiagram(bool value = true);
   MapLayer& airportDiagramDetail(bool value = true);
+  MapLayer& airportDiagramDetail2(bool value = true);
   MapLayer& airportSoft(bool value = true);
   MapLayer& airportNoRating(bool value = true);
   MapLayer& airportSymbolSize(int size);
@@ -83,6 +84,11 @@ public:
   bool isAirportDiagramDetail() const
   {
     return layerAirportDiagramDetail;
+  }
+
+  bool isAirportDiagramDetail2() const
+  {
+    return layerAirportDiagramDetail2;
   }
 
   bool isAirportSoft() const
@@ -127,9 +133,7 @@ public:
 
   bool hasSameQueryParameters(const MapLayer *other) const
   {
-    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength &&
-           layerAirportDiagram == other->layerAirportDiagram &&
-           layerAirportOverviewRunway == other->layerAirportOverviewRunway;
+    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
   }
 
 private:
@@ -139,9 +143,9 @@ private:
 
   layer::AirportSource src;
   bool layerAirport = false, layerAirportDetail = false, layerAirportOverviewRunway = false,
-       layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportSoft = false,
-       layerAirportNoRating = false, layerAirportIdent = false, layerAirportName = false,
-       layerAirportInfo = false;
+       layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
+       layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
+       layerAirportName = false, layerAirportInfo = false;
   int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
 
 };

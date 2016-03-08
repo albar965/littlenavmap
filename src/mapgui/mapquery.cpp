@@ -20,7 +20,8 @@
 #include "sql/sqlquery.h"
 #include "geo/rect.h"
 #include "maplayer.h"
-
+#include <algorithm>
+#include <functional>
 #include <QSqlRecord>
 #include <marble/GeoDataLatLonBox.h>
 
@@ -28,7 +29,8 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 
-#define RECT_INFLATION_FACTOR 0.5
+#define RECT_INFLATION_FACTOR 0.3
+#define RECT_INFLATION_ADD 0.1
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -45,7 +47,7 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer 
                            QList<MapAirport>& airportList)
 {
   GeoDataLatLonBox cur(curRect);
-  inflateRect(cur, cur.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR);
+  inflateRect(cur, cur.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
 
   if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
      !curMapLayer->hasSameQueryParameters(mapLayer))
@@ -59,18 +61,19 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
-      fetchAirports(rect, mapLayer, airportList);
+      airportQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
+      fetchAirports(rect, airportQuery, airportList);
       break;
     case layer::MEDIUM:
-      fetchAirportsMedium(rect, airportList);
+      fetchAirports(rect, airportMediumQuery, airportList);
       break;
     case layer::LARGE:
-      fetchAirportsLarge(rect, airportList);
+      fetchAirports(rect, airportLargeQuery, airportList);
       break;
   }
 }
 
-void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                              QList<MapAirport>& airportList)
 {
   if(!airports.isEmpty())
@@ -78,50 +81,11 @@ void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, const MapLaye
   else
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, airportQuery);
-      airportQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      airportQuery->exec();
-      while(airportQuery->next())
+      bindCoordinateRect(r, query);
+      query->exec();
+      while(query->next())
       {
-        MapAirport a = fillMapAirport(airportQuery);
-        airports.append(a);
-        airportList.append(a);
-      }
-    }
-}
-
-void MapQuery::fetchAirportsMedium(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList)
-{
-  if(!airports.isEmpty())
-    airportList = airports;
-  else
-    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
-    {
-      bindCoordinateRect(r, airportMediumQuery);
-      airportMediumQuery->exec();
-
-      while(airportMediumQuery->next())
-      {
-        MapAirport a = fillMapAirport(airportMediumQuery);
-        airports.append(a);
-        airportList.append(a);
-      }
-    }
-}
-
-void MapQuery::fetchAirportsLarge(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList)
-{
-  if(!airports.isEmpty())
-    airportList = airports;
-  else
-    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
-    {
-      bindCoordinateRect(r, airportLargeQuery);
-      airportLargeQuery->exec();
-
-      while(airportLargeQuery->next())
-      {
-        MapAirport a = fillMapAirport(airportLargeQuery);
+        MapAirport a = fillMapAirport(query);
         airports.append(a);
         airportList.append(a);
       }
@@ -377,9 +341,24 @@ const QList<MapRunway> *MapQuery::getRunways(int airportId)
       };
       rs->append(r);
     }
+
+    // Sort to draw the hard runways last
+    using namespace std::placeholders;
+    std::sort(rs->begin(), rs->end(), std::bind(&MapQuery::runwayCompare, this, _1, _2));
+
     runwayCache.insert(airportId, rs);
     return rs;
   }
+}
+
+bool MapQuery::runwayCompare(const MapRunway& r1, const MapRunway& r2)
+{
+  // The value returned indicates whether the element passed as first argument is
+  // considered to go before the second
+  if(r1.isHard() && r2.isHard())
+    return r1.length < r2.length;
+  else
+    return r1.isSoft() && r2.isHard();
 }
 
 int MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag)
@@ -401,7 +380,7 @@ void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::
 QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect)
 {
   GeoDataLatLonBox newRect = rect;
-  inflateRect(newRect, newRect.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR);
+  inflateRect(newRect, newRect.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
 
   if(newRect.crossesDateLine())
   {

@@ -109,6 +109,22 @@ struct MapRunway
   QString surface, primName, secName, edgeLight;
   bool secClosed, primClosed;
   atools::geo::Pos center, primary, secondary;
+
+  bool isHard() const
+  {
+    return surface == "CONCRETE" || surface == "ASPHALT" || surface == "BITUMINOUS" || surface == "TARMAC";
+  }
+
+  bool isWater() const
+  {
+    return surface == "WATER";
+  }
+
+  bool isSoft() const
+  {
+    return !isWater() && !isHard();
+  }
+
 };
 
 struct MapApron
@@ -187,10 +203,8 @@ private:
   *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *helipadQuery = nullptr,
   *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
 
-  void fetchAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+  void fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                      QList<MapAirport>& airportList);
-  void fetchAirportsMedium(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList);
-  void fetchAirportsLarge(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList);
 
   int flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag);
 
@@ -202,6 +216,9 @@ private:
   QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
 
   void inflateRect(Marble::GeoDataLatLonBox& rect, double degree);
+
+  bool runwayCompare(const MapRunway& r1, const MapRunway& r2);
+
 };
 
 #endif // MAPQUERY_H

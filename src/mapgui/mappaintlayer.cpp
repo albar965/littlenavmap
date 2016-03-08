@@ -92,7 +92,11 @@ void MapPaintLayer::initLayers()
   MapLayer defApLayer = MapLayer(0).airports().airportName().airportIdent().
                         airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL);
   layers->
-  append(defApLayer.clone(0.7f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
+  append(defApLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
+         airportSymbolSize(20).airportInfo()).
+
+  append(defApLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
+
   append(defApLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo()).
 
   append(defApLayer.clone(50.f).airportSymbolSize(18).airportInfo()).
