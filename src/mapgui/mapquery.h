@@ -22,9 +22,11 @@
 #include "geo/rect.h"
 #include "geo/linestring.h"
 
+#include <QCache>
 #include <QList>
 
 #include <marble/GeoDataCoordinates.h>
+#include <marble/GeoDataLatLonBox.h>
 
 namespace atools {
 namespace geo {
@@ -37,7 +39,7 @@ class SqlQuery;
 }
 
 namespace Marble {
-class GeoDataLatLonAltBox;
+class GeoDataLatLonBox;
 }
 
 class MapLayer;
@@ -56,7 +58,8 @@ enum MapAirportFlags
   FUEL = 0x0100,
   HARD = 0x0200,
   SOFT = 0x0400,
-  WATER = 0x0800
+  WATER = 0x0800,
+  HELIPORT = 0x1000
 };
 
 struct MapAirport
@@ -93,6 +96,11 @@ struct MapAirport
     return !isSet(HARD) && !isSet(SOFT) && isSet(WATER);
   }
 
+  bool isHeliport() const
+  {
+    return !isSet(HARD) && !isSet(SOFT) && !isSet(WATER) && isSet(HELIPORT);
+  }
+
 };
 
 struct MapRunway
@@ -126,37 +134,74 @@ struct MapParking
   bool jetway;
 };
 
+struct MapHelipad
+{
+  QString surface, type;
+  atools::geo::Pos pos;
+  int length, width, heading;
+  bool closed;
+};
+
 class MapQuery
 {
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
+  virtual ~MapQuery();
 
-  void getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
+  void getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                    QList<MapAirport>& airportList);
 
-  void getRunwaysForOverview(int airportId, QList<MapRunway>& runways);
-  void getRunways(int airportId, QList<MapRunway>& runways);
+  const QList<MapRunway> *getRunwaysForOverview(int airportId);
 
-  void getAprons(int airportId, QList<MapApron>& aprons);
-  void getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths);
+  const QList<MapRunway> *getRunways(int airportId);
 
-  void getParking(int airportId, QList<MapParking>& parkings);
+  const QList<MapApron> *getAprons(int airportId);
+
+  const QList<MapTaxiPath> *getTaxiPaths(int airportId);
+
+  const QList<MapParking> *getParking(int airportId);
+
+  const QList<MapHelipad> *getHelipads(int airportId);
+
+  void initQueries();
+  void deInitQueries();
 
 private:
-  void fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
-                     QList<MapAirport>& fetchAirports);
-  void fetchAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-  void fetchAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap);
-
-  int flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag);
+  template<typename TYPE>
+  bool handleCache(QMultiMap<int, TYPE>& cache, int id, QList<MapRunway>& runwayList);
 
   atools::sql::SqlDatabase *db;
+  Marble::GeoDataLatLonBox curRect;
+  const MapLayer *curMapLayer;
 
-  int getFlags(const atools::sql::SqlQuery& query);
-  MapAirport getMapAirport(const atools::sql::SqlQuery& query);
+  QList<MapAirport> airports;
 
-  void bindCoordinateRect(const Marble::GeoDataLatLonAltBox& rect, atools::sql::SqlQuery& query);
+  QCache<int, QList<MapRunway> > runwayCache;
+  QCache<int, QList<MapRunway> > runwayOverwiewCache;
+  QCache<int, QList<MapApron> > apronCache;
+  QCache<int, QList<MapTaxiPath> > taxipathCache;
+  QCache<int, QList<MapParking> > parkingCache;
+  QCache<int, QList<MapHelipad> > helipadCache;
 
+  atools::sql::SqlQuery *airportQuery = nullptr, *airportMediumQuery = nullptr, *airportLargeQuery = nullptr,
+  *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *helipadQuery = nullptr,
+  *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
+
+  void fetchAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                     QList<MapAirport>& airportList);
+  void fetchAirportsMedium(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList);
+  void fetchAirportsLarge(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList);
+
+  int flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag);
+
+  int getFlags(const atools::sql::SqlQuery *query);
+  MapAirport fillMapAirport(const atools::sql::SqlQuery *query);
+
+  void bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query);
+
+  QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
+
+  void inflateRect(Marble::GeoDataLatLonBox& rect, double degree);
 };
 
 #endif // MAPQUERY_H

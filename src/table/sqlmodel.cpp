@@ -488,9 +488,22 @@ QString SqlModel::buildWhere()
 
   if(boundingRect.isValid())
   {
-    QString rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
-                       arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
-                       arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
+    QString rectCond;
+    if(boundingRect.crossesAntiMeridian())
+    {
+      QList<atools::geo::Rect> split = boundingRect.splitAtAntiMeridian();
+
+      rectCond = QString("((lonx between %1 and %2 and laty between %3 and %4) or "
+                         "(lonx between %5 and %6 and laty between %7 and %8))").
+                 arg(split.at(0).getTopLeft().getLonX()).arg(split.at(0).getBottomRight().getLonX()).
+                 arg(split.at(0).getBottomRight().getLatY()).arg(split.at(0).getTopLeft().getLatY()).
+                 arg(split.at(1).getTopLeft().getLonX()).arg(split.at(1).getBottomRight().getLonX()).
+                 arg(split.at(1).getBottomRight().getLatY()).arg(split.at(1).getTopLeft().getLatY());
+    }
+    else
+      rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
+                 arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
+                 arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
 
     if(numCond > 0)
       queryWhere += " " + whereOperator + " ";

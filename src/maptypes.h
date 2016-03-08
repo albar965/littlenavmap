@@ -18,6 +18,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <QString>
+
 namespace maptypes {
 
 enum ObjectType
@@ -28,6 +30,10 @@ enum ObjectType
   ILS,
   WAYPOINT
 };
+
+QString surfaceName(const QString& surface);
+QString parkingGateName(const QString& gate);
+QString parkingRampName(const QString& ramp);
 
 } // namespace types
 

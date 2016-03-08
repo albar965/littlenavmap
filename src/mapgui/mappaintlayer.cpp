@@ -67,6 +67,16 @@ MapPaintLayer::~MapPaintLayer()
   delete mapScale;
 }
 
+void MapPaintLayer::preDatabaseLoad()
+{
+  databaseLoadStatus = true;
+}
+
+void MapPaintLayer::postDatabaseLoad()
+{
+  databaseLoadStatus = true;
+}
+
 MapAirport MapPaintLayer::getAirportAtPos(int xs, int ys)
 {
   return mapPainterAirport->getAirportAtPos(xs, ys);
@@ -108,13 +118,16 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   Q_UNUSED(renderPos);
   Q_UNUSED(layer);
 
-  mapScale->update(viewport, navMapWidget->distance());
+  if(!databaseLoadStatus)
+  {
+    mapScale->update(viewport, navMapWidget->distance());
 
-  const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
+    const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 
-  if(mapLayer != nullptr)
-    for(MapPainter *mapPainter : mapPainters)
-      mapPainter->paint(mapLayer, painter, viewport);
+    if(mapLayer != nullptr)
+      for(MapPainter *mapPainter : mapPainters)
+        mapPainter->paint(mapLayer, painter, viewport);
+  }
 
   return true;
 }

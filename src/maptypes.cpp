@@ -17,3 +17,85 @@
 
 #include "maptypes.h"
 
+#include <QHash>
+#include <QObject>
+
+namespace maptypes {
+
+const QHash<QString, QString> surfaceMap(
+  {
+    {"CONCRETE", QObject::tr("Concrete")},
+    {"GRASS", QObject::tr("Grass")},
+    {"WATER", QObject::tr("Water")},
+    {"ASPHALT", QObject::tr("Asphalt")},
+    {"CEMENT", QObject::tr("Cement")},
+    {"CLAY", QObject::tr("Clay")},
+    {"SNOW", QObject::tr("Snow")},
+    {"ICE", QObject::tr("Ice")},
+    {"DIRT", QObject::tr("Dirt")},
+    {"CORAL", QObject::tr("Coral")},
+    {"GRAVEL", QObject::tr("Gravel")},
+    {"OIL_TREATED", QObject::tr("Oil treated")},
+    {"STEEL_MATS", QObject::tr("Steel Mats")},
+    {"BITUMINOUS", QObject::tr("Bituminous")},
+    {"BRICK", QObject::tr("Brick")},
+    {"MACADAM", QObject::tr("Macadam")},
+    {"PLANKS", QObject::tr("Planks")},
+    {"SAND", QObject::tr("Sand")},
+    {"SHALE", QObject::tr("Shale")},
+    {"TARMAC", QObject::tr("Tarmac")},
+    {"UNKNOWN", QObject::tr("Unknown")}
+  });
+
+const QHash<QString, QString> parkingMapGate(
+  {
+    {"UNKNOWN", QObject::tr("Unknown")},
+    {"RAMP_GA", QObject::tr("Ramp GA")},
+    {"RAMP_GA_SMALL", QObject::tr("Ramp GA Small")},
+    {"RAMP_GA_MEDIUM", QObject::tr("Ramp GA Medium")},
+    {"RAMP_GA_LARGE", QObject::tr("Ramp GA Large")},
+    {"RAMP_CARGO", QObject::tr("Ramp Cargo")},
+    {"RAMP_MIL_CARGO", QObject::tr("Ramp Mil Cargo")},
+    {"RAMP_MIL_COMBAT", QObject::tr("Ramp Mil Combat")},
+    {"GATE_SMALL", QObject::tr("Small")},
+    {"GATE_MEDIUM", QObject::tr("Medium")},
+    {"GATE_HEAVY", QObject::tr("Heavy")},
+    {"DOCK_GA", QObject::tr("Dock GA")},
+    {"FUEL", QObject::tr("Fuel")},
+    {"VEHICLES", QObject::tr("Vehicles")}
+  });
+
+const QHash<QString, QString> parkingMapRamp(
+  {
+    {"UNKNOWN", QObject::tr("Unknown")},
+    {"RAMP_GA", QObject::tr("Ramp GA")},
+    {"RAMP_GA_SMALL", QObject::tr("Small")},
+    {"RAMP_GA_MEDIUM", QObject::tr("Medium")},
+    {"RAMP_GA_LARGE", QObject::tr("Large")},
+    {"RAMP_CARGO", QObject::tr("Ramp Cargo")},
+    {"RAMP_MIL_CARGO", QObject::tr("Ramp Mil Cargo")},
+    {"RAMP_MIL_COMBAT", QObject::tr("Ramp Mil Combat")},
+    {"GATE_SMALL", QObject::tr("Gate Small")},
+    {"GATE_MEDIUM", QObject::tr("Gate Medium")},
+    {"GATE_HEAVY", QObject::tr("Gate Heavy")},
+    {"DOCK_GA", QObject::tr("Dock GA")},
+    {"FUEL", QObject::tr("Fuel")},
+    {"VEHICLES", QObject::tr("Vehicles")}
+  });
+
+QString surfaceName(const QString& surface)
+{
+  return surfaceMap.value(surface);
+}
+
+QString parkingGateName(const QString& gate)
+{
+  return parkingMapGate.value(gate);
+}
+
+QString parkingRampName(const QString& ramp)
+{
+  return parkingMapRamp.value(ramp);
+}
+
+} // namespace types

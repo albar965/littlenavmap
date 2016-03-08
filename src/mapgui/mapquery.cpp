@@ -22,9 +22,13 @@
 #include "maplayer.h"
 
 #include <QSqlRecord>
-#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 
 using namespace Marble;
+using namespace atools::sql;
+using namespace atools::geo;
+
+#define RECT_INFLATION_FACTOR 0.5
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -32,9 +36,26 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 
 }
 
-void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
+MapQuery::~MapQuery()
+{
+  deInitQueries();
+}
+
+void MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                            QList<MapAirport>& airportList)
 {
+  GeoDataLatLonBox cur(curRect);
+  inflateRect(cur, cur.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR);
+
+  if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
+     !curMapLayer->hasSameQueryParameters(mapLayer))
+  {
+    airports.clear();
+    curRect = rect;
+    curMapLayer = mapLayer;
+    qDebug() << "MapQuery airports cache miss";
+  }
+
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
@@ -49,322 +70,371 @@ void MapQuery::getAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLay
   }
 }
 
-void MapQuery::fetchAirports(const Marble::GeoDataLatLonAltBox& rect, const MapLayer *mapLayer,
-                             QList<MapAirport>& airports)
+void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                             QList<MapAirport>& airportList)
 {
-  using namespace Marble;
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-  using atools::geo::Rect;
-
-  SqlQuery query(db);
-
-  query.prepare(
-    "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, has_tower_object, "
-    "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
-    "is_closed, is_military, is_addon,"
-    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light,"
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and "
-    "longest_runway_length >= :minlength "
-    "order by rating asc, longest_runway_length");
-
-  bindCoordinateRect(rect, query);
-  query.bindValue(":minlength", mapLayer->getMinRunwayLength());
-  query.exec();
-  while(query.next())
-    airports.append(getMapAirport(query));
+  if(!airports.isEmpty())
+    airportList = airports;
+  else
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, airportQuery);
+      airportQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
+      airportQuery->exec();
+      while(airportQuery->next())
+      {
+        MapAirport a = fillMapAirport(airportQuery);
+        airports.append(a);
+        airportList.append(a);
+      }
+    }
 }
 
-void MapQuery::fetchAirportsMedium(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+void MapQuery::fetchAirportsMedium(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList)
 {
-  using namespace Marble;
-  using atools::sql::SqlQuery;
+  if(!airports.isEmpty())
+    airportList = airports;
+  else
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, airportMediumQuery);
+      airportMediumQuery->exec();
 
-  SqlQuery query(db);
-
-  query.prepare(
-    "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon,"
-    "num_runway_hard, num_runway_soft, num_runway_water, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_medium "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
-    "order by longest_runway_length");
-
-  bindCoordinateRect(rect, query);
-  query.exec();
-
-  while(query.next())
-    ap.append(getMapAirport(query));
+      while(airportMediumQuery->next())
+      {
+        MapAirport a = fillMapAirport(airportMediumQuery);
+        airports.append(a);
+        airportList.append(a);
+      }
+    }
 }
 
-void MapQuery::fetchAirportsLarge(const Marble::GeoDataLatLonAltBox& rect, QList<MapAirport>& ap)
+void MapQuery::fetchAirportsLarge(const Marble::GeoDataLatLonBox& rect, QList<MapAirport>& airportList)
 {
-  using namespace Marble;
-  using atools::sql::SqlQuery;
+  if(!airports.isEmpty())
+    airportList = airports;
+  else
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, airportLargeQuery);
+      airportLargeQuery->exec();
 
-  SqlQuery query(db);
-
-  query.prepare(
-    "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon,"
-    "num_runway_hard, num_runway_soft, num_runway_water, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_large "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
-
-  bindCoordinateRect(rect, query);
-  query.exec();
-
-  while(query.next())
-    ap.append(getMapAirport(query));
+      while(airportLargeQuery->next())
+      {
+        MapAirport a = fillMapAirport(airportLargeQuery);
+        airports.append(a);
+        airportList.append(a);
+      }
+    }
 }
 
-MapAirport MapQuery::getMapAirport(const atools::sql::SqlQuery& query)
+MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
 {
-  using atools::geo::Pos;
-  using atools::geo::Rect;
-
   MapAirport ap;
-  QSqlRecord rec = query.record();
+  QSqlRecord rec = query->record();
 
-  ap.id = query.value("airport_id").toInt();
-  ap.ident = query.value("ident").toString();
-  ap.name = query.value("name").toString();
-  ap.longestRunwayLength = query.value("longest_runway_length").toInt();
-  ap.longestRunwayHeading = static_cast<int>(std::roundf(query.value("longest_runway_heading").toFloat()));
+  ap.id = query->value("airport_id").toInt();
+  ap.ident = query->value("ident").toString();
+  ap.name = query->value("name").toString();
+  ap.longestRunwayLength = query->value("longest_runway_length").toInt();
+  ap.longestRunwayHeading = static_cast<int>(std::roundf(query->value("longest_runway_heading").toFloat()));
 
   if(rec.contains("has_tower_object"))
-    ap.towerCoords = Pos(query.value("tower_lonx").toFloat(), query.value("tower_laty").toFloat());
+    ap.towerCoords = Pos(query->value("tower_lonx").toFloat(), query->value("tower_laty").toFloat());
 
   if(rec.contains("tower_frequency"))
-    ap.towerFrequency = query.value("tower_frequency").toInt();
+    ap.towerFrequency = query->value("tower_frequency").toInt();
   if(rec.contains("atis_frequency"))
-    ap.atisFrequency = query.value("atis_frequency").toInt();
+    ap.atisFrequency = query->value("atis_frequency").toInt();
   if(rec.contains("awos_frequency"))
-    ap.awosFrequency = query.value("awos_frequency").toInt();
+    ap.awosFrequency = query->value("awos_frequency").toInt();
   if(rec.contains("asos_frequency"))
-    ap.asosFrequency = query.value("asos_frequency").toInt();
+    ap.asosFrequency = query->value("asos_frequency").toInt();
   if(rec.contains("unicom_frequency"))
-    ap.unicomFrequency = query.value("unicom_frequency").toInt();
+    ap.unicomFrequency = query->value("unicom_frequency").toInt();
 
   if(rec.contains("altitude"))
-    ap.altitude = static_cast<int>(std::roundf(query.value("altitude").toFloat()));
+    ap.altitude = static_cast<int>(std::roundf(query->value("altitude").toFloat()));
 
   ap.flags = getFlags(query);
-  ap.magvar = query.value("mag_var").toFloat();
-  ap.coords = Pos(query.value("lonx").toFloat(), query.value("laty").toFloat());
-  ap.bounding = Rect(query.value("left_lonx").toFloat(), query.value("top_laty").toFloat(),
-                     query.value("right_lonx").toFloat(), query.value("bottom_laty").toFloat());
+  ap.magvar = query->value("mag_var").toFloat();
+  ap.coords = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
+  ap.bounding = Rect(query->value("left_lonx").toFloat(), query->value("top_laty").toFloat(),
+                     query->value("right_lonx").toFloat(), query->value("bottom_laty").toFloat());
 
   ap.valid = true;
   return ap;
 }
 
-void MapQuery::getRunwaysForOverview(int airportId, QList<MapRunway>& runways)
+const QList<MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 {
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-
-  SqlQuery query(db);
-
-  query.prepare(
-    "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId and length > 4000");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  while(query.next())
+  if(runwayOverwiewCache.contains(airportId))
+    return runwayOverwiewCache.object(airportId);
+  else
   {
-    runways.append({query.value("length").toInt(),
-                    static_cast<int>(std::roundf(query.value("heading").toFloat())),
-                    0,
-                    0,
-                    0,
-                    QString(),
-                    QString(),
-                    QString(),
-                    QString(),
-                    false,
-                    false,
-                    Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
-                    Pos(query.value("primary_lonx").toFloat(), query.value("primary_laty").toFloat()),
-                    Pos(query.value("secondary_lonx").toFloat(), query.value("secondary_laty").toFloat())});
-  }
-}
+    qDebug() << "runwaysOverwiew cache miss";
+    using atools::geo::Pos;
 
-void MapQuery::getAprons(int airportId, QList<MapApron>& aprons)
-{
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-  using atools::geo::LineString;
+    runwayOverviewQuery->bindValue(":airportId", airportId);
+    runwayOverviewQuery->exec();
 
-  SqlQuery query(db);
-
-  query.prepare(
-    "select surface, is_draw_surface, vertices "
-    "from apron where airport_id = :airportId");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  while(query.next())
-  {
-    MapApron ap;
-
-    ap.drawSurface = query.value("is_draw_surface").toInt() > 0;
-    ap.surface = query.value("surface").toString();
-
-    QString vertices = query.value("vertices").toString();
-    QStringList vertexList = vertices.split(",");
-    for(QString vertex : vertexList)
+    QList<MapRunway> *rws = new QList<MapRunway>;
+    while(runwayOverviewQuery->next())
     {
-      QStringList ordinates = vertex.split(" ", QString::SkipEmptyParts);
-
-      if(ordinates.size() == 2)
-        ap.vertices.append(ordinates.at(0).toFloat(), ordinates.at(1).toFloat());
+      MapRunway r =
+      {
+        runwayOverviewQuery->value("length").toInt(),
+        static_cast<int>(std::roundf(runwayOverviewQuery->value("heading").toFloat())),
+        0,
+        0,
+        0,
+        QString(),
+        QString(),
+        QString(),
+        QString(),
+        false,
+        false,
+        Pos(runwayOverviewQuery->value("lonx").toFloat(),
+            runwayOverviewQuery->value("laty").toFloat()),
+        Pos(runwayOverviewQuery->value("primary_lonx").toFloat(),
+            runwayOverviewQuery->value("primary_laty").toFloat()),
+        Pos(runwayOverviewQuery->value("secondary_lonx").toFloat(),
+            runwayOverviewQuery->value("secondary_laty").toFloat())
+      };
+      rws->append(r);
     }
-    aprons.append(ap);
+    runwayOverwiewCache.insert(airportId, rws);
+    return rws;
   }
 }
 
-void MapQuery::getParking(int airportId, QList<MapParking>& parkings)
+const QList<MapApron> *MapQuery::getAprons(int airportId)
 {
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-  using atools::geo::LineString;
-
-  SqlQuery query(db);
-
-  query.prepare("select type, name, number, radius, heading, has_jetway, lonx, laty "
-                "from parking where airport_id = :airportId");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  while(query.next())
+  if(apronCache.contains(airportId))
+    return apronCache.object(airportId);
+  else
   {
-    MapParking p;
+    qDebug() << "aprons cache miss";
+    apronQuery->bindValue(":airportId", airportId);
+    apronQuery->exec();
 
-    QString type = query.value("type").toString();
-    if(type != "VEHICLES")
+    QList<MapApron> *aps = new QList<MapApron>;
+    while(apronQuery->next())
     {
-      p.type = type;
-      p.name = query.value("name").toString();
+      MapApron ap;
 
-      p.pos = Pos(query.value("lonx").toFloat(), query.value("laty").toFloat());
-      p.jetway = query.value("has_jetway").toInt() > 0;
-      p.number = query.value("number").toInt();
+      ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
+      ap.surface = apronQuery->value("surface").toString();
 
-      p.heading = static_cast<int>(std::roundf(query.value("heading").toFloat()));
-      p.radius = static_cast<int>(std::roundf(query.value("radius").toFloat()));
+      QString vertices = apronQuery->value("vertices").toString();
+      QStringList vertexList = vertices.split(",");
+      for(QString vertex : vertexList)
+      {
+        QStringList ordinates = vertex.split(" ", QString::SkipEmptyParts);
 
-      parkings.append(p);
+        if(ordinates.size() == 2)
+          ap.vertices.append(ordinates.at(0).toFloat(), ordinates.at(1).toFloat());
+      }
+      aps->append(ap);
     }
+    apronCache.insert(airportId, aps);
+    return aps;
   }
 }
 
-void MapQuery::getTaxiPaths(int airportId, QList<MapTaxiPath>& taxipaths)
+const QList<MapParking> *MapQuery::getParking(int airportId)
 {
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-  using atools::geo::LineString;
-
-  SqlQuery query(db);
-
-  query.prepare("select type, surface, width, name, is_draw_surface, start_type, end_type, "
-                "start_lonx, start_laty, end_lonx, end_laty "
-                "from taxi_path where airport_id = :airportId");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  while(query.next())
+  if(parkingCache.contains(airportId))
+    return parkingCache.object(airportId);
+  else
   {
-    MapTaxiPath tp;
-    QString type = query.value("type").toString();
-    if(type != "RUNWAY" && type != "VEHICLE")
+    qDebug() << "parkings cache miss";
+    parkingQuery->bindValue(":airportId", airportId);
+    parkingQuery->exec();
+
+    QList<MapParking> *ps = new QList<MapParking>;
+    while(parkingQuery->next())
     {
-      tp.start = Pos(query.value("start_lonx").toFloat(), query.value("start_laty").toFloat()),
-      tp.end = Pos(query.value("end_lonx").toFloat(), query.value("end_laty").toFloat()),
-      tp.startType = query.value("start_type").toString();
-      tp.endType = query.value("end_type").toString();
-      tp.surface = query.value("surface").toString();
-      tp.name = query.value("name").toString();
-      tp.width = query.value("width").toInt();
-      tp.drawSurface = query.value("is_draw_surface").toInt() > 0;
+      MapParking p;
 
-      taxipaths.append(tp);
+      QString type = parkingQuery->value("type").toString();
+      if(type != "VEHICLES")
+      {
+        p.type = type;
+        p.name = parkingQuery->value("name").toString();
+
+        p.pos = Pos(parkingQuery->value("lonx").toFloat(), parkingQuery->value("laty").toFloat());
+        p.jetway = parkingQuery->value("has_jetway").toInt() > 0;
+        p.number = parkingQuery->value("number").toInt();
+
+        p.heading = static_cast<int>(std::roundf(parkingQuery->value("heading").toFloat()));
+        p.radius = static_cast<int>(std::roundf(parkingQuery->value("radius").toFloat()));
+
+        ps->append(p);
+      }
     }
+    parkingCache.insert(airportId, ps);
+    return ps;
   }
-
 }
 
-void MapQuery::getRunways(int airportId, QList<MapRunway>& runways)
+const QList<MapHelipad> *MapQuery::getHelipads(int airportId)
 {
-  using atools::sql::SqlQuery;
-  using atools::geo::Pos;
-
-  SqlQuery query(db);
-
-  query.prepare(
-    "select length, heading, width, surface, lonx, laty, p.name as primary_name, s.name as secondary_name, "
-    "edge_light, "
-    "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
-    "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
-    "primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway "
-    "join runway_end p on primary_end_id = p.runway_end_id "
-    "join runway_end s on secondary_end_id = s.runway_end_id "
-    "where airport_id = :airportId");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  while(query.next())
+  if(helipadCache.contains(airportId))
+    return helipadCache.object(airportId);
+  else
   {
-    runways.append({query.value("length").toInt(),
-                    static_cast<int>(std::roundf(query.value("heading").toFloat())),
-                    query.value("width").toInt(),
-                    query.value("primary_offset_threshold").toInt(),
-                    query.value("secondary_offset_threshold").toInt(),
-                    query.value("surface").toString(),
-                    query.value("primary_name").toString(),
-                    query.value("secondary_name").toString(),
-                    query.value("edge_light").toString(),
-                    query.value("primary_closed_markings").toInt() > 0,
-                    query.value("secondary_closed_markings").toInt() > 0,
-                    Pos(query.value("lonx").toFloat(), query.value("laty").toFloat()),
-                    Pos(query.value("primary_lonx").toFloat(), query.value("primary_laty").toFloat()),
-                    Pos(query.value("secondary_lonx").toFloat(), query.value("secondary_laty").toFloat())});
+    qDebug() << "helipads cache miss";
+    helipadQuery->bindValue(":airportId", airportId);
+    helipadQuery->exec();
+
+    QList<MapHelipad> *hs = new QList<MapHelipad>;
+    while(helipadQuery->next())
+    {
+      MapHelipad hp;
+
+      hp.pos = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat()),
+      hp.width = helipadQuery->value("width").toInt();
+      hp.length = helipadQuery->value("length").toInt();
+      hp.heading = static_cast<int>(std::roundf(helipadQuery->value("heading").toFloat()));
+      hp.surface = helipadQuery->value("surface").toString();
+      hp.type = helipadQuery->value("type").toString();
+      hp.closed = helipadQuery->value("is_closed").toInt() > 0;
+
+      hs->append(hp);
+    }
+    helipadCache.insert(airportId, hs);
+    return hs;
   }
 }
 
-int MapQuery::flag(const atools::sql::SqlQuery& query, const QString& field, MapAirportFlags flag)
+const QList<MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
 {
-  if(!query.record().contains(field) || query.isNull(field))
+  if(taxipathCache.contains(airportId))
+    return taxipathCache.object(airportId);
+  else
+  {
+    qDebug() << "taxipaths cache miss";
+    taxiparthQuery->bindValue(":airportId", airportId);
+    taxiparthQuery->exec();
+
+    QList<MapTaxiPath> *tps = new QList<MapTaxiPath>;
+    while(taxiparthQuery->next())
+    {
+      MapTaxiPath tp;
+      QString type = taxiparthQuery->value("type").toString();
+      if(type != "RUNWAY" && type != "VEHICLE")
+      {
+        tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
+                         "start_laty").toFloat()),
+        tp.end = Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat()),
+        tp.startType = taxiparthQuery->value("start_type").toString();
+        tp.endType = taxiparthQuery->value("end_type").toString();
+        tp.surface = taxiparthQuery->value("surface").toString();
+        tp.name = taxiparthQuery->value("name").toString();
+        tp.width = taxiparthQuery->value("width").toInt();
+        tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
+
+        tps->append(tp);
+      }
+    }
+    taxipathCache.insert(airportId, tps);
+    return tps;
+  }
+}
+
+const QList<MapRunway> *MapQuery::getRunways(int airportId)
+{
+  if(runwayCache.contains(airportId))
+    return runwayCache.object(airportId);
+  else
+  {
+    qDebug() << "runways cache miss";
+    runwaysQuery->bindValue(":airportId", airportId);
+    runwaysQuery->exec();
+
+    QList<MapRunway> *rs = new QList<MapRunway>;
+    while(runwaysQuery->next())
+    {
+      MapRunway r =
+      {
+        runwaysQuery->value("length").toInt(),
+        static_cast<int>(std::roundf(runwaysQuery->value("heading").toFloat())),
+        runwaysQuery->value("width").toInt(),
+        runwaysQuery->value("primary_offset_threshold").toInt(),
+        runwaysQuery->value("secondary_offset_threshold").toInt(),
+        runwaysQuery->value("surface").toString(),
+        runwaysQuery->value("primary_name").toString(),
+        runwaysQuery->value("secondary_name").toString(),
+        runwaysQuery->value("edge_light").toString(),
+        runwaysQuery->value("primary_closed_markings").toInt() > 0,
+        runwaysQuery->value("secondary_closed_markings").toInt() > 0,
+        Pos(runwaysQuery->value("lonx").toFloat(), runwaysQuery->value("laty").toFloat()),
+        Pos(runwaysQuery->value("primary_lonx").toFloat(),
+            runwaysQuery->value("primary_laty").toFloat()),
+        Pos(runwaysQuery->value("secondary_lonx").toFloat(),
+            runwaysQuery->value("secondary_laty").toFloat())
+      };
+      rs->append(r);
+    }
+    runwayCache.insert(airportId, rs);
+    return rs;
+  }
+}
+
+int MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag)
+{
+  if(!query->record().contains(field) || query->isNull(field))
     return NONE;
   else
-    return query.value(field).toInt() > 0 ? flag : NONE;
+    return query->value(field).toInt() > 0 ? flag : NONE;
 }
 
-void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonAltBox& rect, atools::sql::SqlQuery& query)
+void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query)
 {
-  query.bindValue(":leftx", rect.west(GeoDataCoordinates::Degree) - 0.1);
-  query.bindValue(":rightx", rect.east(GeoDataCoordinates::Degree) + 0.1);
-  query.bindValue(":bottomy", rect.south(GeoDataCoordinates::Degree) - 0.1);
-  query.bindValue(":topy", rect.north(GeoDataCoordinates::Degree) + 0.1);
+  query->bindValue(":leftx", rect.west(GeoDataCoordinates::Degree));
+  query->bindValue(":rightx", rect.east(GeoDataCoordinates::Degree));
+  query->bindValue(":bottomy", rect.south(GeoDataCoordinates::Degree));
+  query->bindValue(":topy", rect.north(GeoDataCoordinates::Degree));
 }
 
-int MapQuery::getFlags(const atools::sql::SqlQuery& query)
+QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect)
+{
+  GeoDataLatLonBox newRect = rect;
+  inflateRect(newRect, newRect.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR);
+
+  if(newRect.crossesDateLine())
+  {
+    GeoDataLatLonBox westOf;
+    westOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree),
+                         newRect.south(GeoDataCoordinates::Degree),
+                         180.,
+                         newRect.west(GeoDataCoordinates::Degree), GeoDataCoordinates::Degree);
+
+    GeoDataLatLonBox eastOf;
+    eastOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree),
+                         newRect.south(GeoDataCoordinates::Degree),
+                         newRect.east(GeoDataCoordinates::Degree),
+                         -180., GeoDataCoordinates::Degree);
+
+    return QList<GeoDataLatLonBox>({westOf, eastOf});
+  }
+  else
+    return QList<GeoDataLatLonBox>({newRect});
+}
+
+void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double degree)
+{
+  rect.setWest(rect.west(GeoDataCoordinates::Degree) - degree, GeoDataCoordinates::Degree);
+  rect.setEast(rect.east(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
+  rect.setSouth(rect.south(GeoDataCoordinates::Degree) - degree, GeoDataCoordinates::Degree);
+  rect.setNorth(rect.north(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
+}
+
+int MapQuery::getFlags(const atools::sql::SqlQuery *query)
 {
   int flags = 0;
+  flags |= flag(query, "num_helipad", HELIPORT);
   flags |= flag(query, "rating", SCENERY);
   flags |= flag(query, "has_avgas", FUEL);
   flags |= flag(query, "has_jetfuel", FUEL);
@@ -378,4 +448,109 @@ int MapQuery::getFlags(const atools::sql::SqlQuery& query)
   flags |= flag(query, "num_runway_water", WATER);
   flags |= flag(query, "num_runway_light", LIGHT);
   return flags;
+}
+
+void MapQuery::initQueries()
+{
+  deInitQueries();
+  airportQuery = new SqlQuery(db);
+  airportQuery->prepare(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, has_tower_object, "
+    "tower_frequency, atis_frequency, awos_frequency, asos_frequency, unicom_frequency, "
+    "is_closed, is_military, is_addon,"
+    "num_approach, num_runway_hard, num_runway_soft, num_runway_water, num_runway_light, num_helipad, "
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "from airport "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and "
+    "longest_runway_length >= :minlength "
+    "order by rating asc, longest_runway_length");
+
+  airportMediumQuery = new SqlQuery(db);
+  airportMediumQuery->prepare(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, "
+    "tower_frequency, "
+    "is_closed, is_military, is_addon,"
+    "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "from airport_medium "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
+    "order by longest_runway_length");
+
+  airportLargeQuery = new SqlQuery(db);
+  airportLargeQuery->prepare(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, "
+    "tower_frequency, "
+    "is_closed, is_military, is_addon,"
+    "num_runway_hard, num_runway_soft, num_runway_water, "
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
+    "from airport_large "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  runwayOverviewQuery = new SqlQuery(db);
+  runwayOverviewQuery->prepare(
+    "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
+    "from runway where airport_id = :airportId and length > 4000");
+
+  apronQuery = new SqlQuery(db);
+  apronQuery->prepare(
+    "select surface, is_draw_surface, vertices "
+    "from apron where airport_id = :airportId");
+
+  parkingQuery = new SqlQuery(db);
+  parkingQuery->prepare(
+    "select type, name, number, radius, heading, has_jetway, lonx, laty "
+    "from parking where airport_id = :airportId");
+
+  helipadQuery = new SqlQuery(db);
+  helipadQuery->prepare(
+    "select surface, type, length, width, heading, is_closed, lonx, laty "
+    "from helipad where airport_id = :airportId");
+
+  taxiparthQuery = new SqlQuery(db);
+  taxiparthQuery->prepare(
+    "select type, surface, width, name, is_draw_surface, start_type, end_type, "
+    "start_lonx, start_laty, end_lonx, end_laty "
+    "from taxi_path where airport_id = :airportId");
+
+  runwaysQuery = new SqlQuery(db);
+  runwaysQuery->prepare(
+    "select length, heading, width, surface, lonx, laty, p.name as primary_name, s.name as secondary_name, "
+    "edge_light, "
+    "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
+    "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
+    "primary_lonx, primary_laty, secondary_lonx, secondary_laty "
+    "from runway "
+    "join runway_end p on primary_end_id = p.runway_end_id "
+    "join runway_end s on secondary_end_id = s.runway_end_id "
+    "where airport_id = :airportId");
+
+}
+
+void MapQuery::deInitQueries()
+{
+  delete airportQuery;
+  airportQuery = nullptr;
+  delete airportMediumQuery;
+  airportMediumQuery = nullptr;
+  delete airportLargeQuery;
+  airportLargeQuery = nullptr;
+
+  delete runwayOverviewQuery;
+  runwayOverviewQuery = nullptr;
+  delete apronQuery;
+  apronQuery = nullptr;
+  delete parkingQuery;
+  parkingQuery = nullptr;
+  delete helipadQuery;
+  helipadQuery = nullptr;
+  delete taxiparthQuery;
+  taxiparthQuery = nullptr;
+  delete runwaysQuery;
+  runwaysQuery = nullptr;
 }

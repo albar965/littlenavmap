@@ -29,6 +29,7 @@
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
 #include "table/formatter.h"
+#include "maptypes.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -48,67 +49,6 @@ const QSet<QString> AirportSearch::numberColumns(
    "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo",
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
-
-const QHash<QString, QString> AirportSearch::surfaceMap(
-  {
-    {"CONCRETE", QObject::tr("Concrete")},
-    {"GRASS", "Grass"},
-    {"WATER", "Water"},
-    {"ASPHALT", "Asphalt"},
-    {"CEMENT", "Cement"},
-    {"CLAY", "Clay"},
-    {"SNOW", "Snow"},
-    {"ICE", "Ice"},
-    {"DIRT", "Dirt"},
-    {"CORAL", "Coral"},
-    {"GRAVEL", "Gravel"},
-    {"OIL_TREATED", "Oil treated"},
-    {"STEEL_MATS", "Seel Mats"},
-    {"BITUMINOUS", "Bituminous"},
-    {"BRICK", "Brick"},
-    {"MACADAM", "Macadam"},
-    {"PLANKS", "Planks"},
-    {"SAND", "Sand"},
-    {"SHALE", "Shale"},
-    {"TARMAC", "Tarmac"},
-    {"UNKNOWN", "Unknown"}
-  });
-
-const QHash<QString, QString> AirportSearch::parkingMapGate(
-  {
-    {"UNKNOWN", "Unknown"},
-    {"RAMP_GA", "Ramp GA"},
-    {"RAMP_GA_SMALL", "Ramp GA Small"},
-    {"RAMP_GA_MEDIUM", "Ramp GA Medium"},
-    {"RAMP_GA_LARGE", "Ramp GA Large"},
-    {"RAMP_CARGO", "Ramp Cargo"},
-    {"RAMP_MIL_CARGO", "Ramp Mil Cargo"},
-    {"RAMP_MIL_COMBAT", "Ramp Mil Combat"},
-    {"GATE_SMALL", "Small"},
-    {"GATE_MEDIUM", "Medium"},
-    {"GATE_HEAVY", "Heavy"},
-    {"DOCK_GA", "Dock GA"},
-    {"FUEL", "Fuel"},
-    {"VEHICLES", "Vehicles"}
-  });
-
-const QHash<QString, QString> AirportSearch::parkingMapRamp(
-  {
-    {"UNKNOWN", "Unknown"},
-    {"RAMP_GA", "Ramp GA"},
-    {"RAMP_GA_SMALL", "Small"},
-    {"RAMP_GA_MEDIUM", "Medium"},
-    {"RAMP_GA_LARGE", "Large"},
-    {"RAMP_CARGO", "Ramp Cargo"},
-    {"RAMP_MIL_CARGO", "Ramp Mil Cargo"},
-    {"RAMP_MIL_COMBAT", "Ramp Mil Combat"},
-    {"GATE_SMALL", "Gate Small"},
-    {"GATE_MEDIUM", "Gate Medium"},
-    {"GATE_HEAVY", "Gate Heavy"},
-    {"DOCK_GA", "Dock GA"},
-    {"FUEL", "Fuel"},
-    {"VEHICLES", "Vehicles"}
-  });
 
 AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                              atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
@@ -195,6 +135,12 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
             << "num_runway_soft > 0 and num_runway_hard = 0 and num_runway_water = 0"
             << "num_runway_water > 0 and num_runway_hard = 0 and num_runway_soft = 0";
 
+  QStringList helipadCondMap;
+  helipadCondMap << QString()
+                 << "num_helipad > 0"
+                 << "num_helipad > 0 and num_runway_hard = 0  and "
+     "num_runway_soft = 0 and num_runway_water = 0";
+
   // Default view column descriptors
   columns->
   append(Column("distance", tr("Distance")).virtualCol()).
@@ -240,13 +186,14 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
          includesName().indexCondMap(rampCondMap)).
   append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).
          indexCondMap(gateCondMap)).
+  append(Column("num_helipad", ui->comboBoxAirportHelipadSearch, tr("Helipads")).
+         includesName().indexCondMap(helipadCondMap)).
 
   append(Column("num_parking_gate", tr("Gates"))).
   append(Column("num_parking_ga_ramp", tr("Ramps\nGA"))).
   append(Column("num_parking_cargo", tr("Ramps\nCargo"))).
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo"))).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat"))).
-  append(Column("num_helipad", tr("Helipads"))).
 
   append(Column("longest_runway_length", tr("Longest\nRunway Length"))).
   append(Column("longest_runway_width", tr("Longest\nRunway Width"))).
@@ -418,11 +365,11 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
   else if(boolColumns.contains(col->getColumnName()))
     return QString();
   else if(col->getColumnName() == "longest_runway_surface")
-    return surfaceMap.value(dataValue.toString());
+    return maptypes::surfaceName(dataValue.toString());
   else if(col->getColumnName() == "largest_parking_ramp")
-    return parkingMapRamp.value(dataValue.toString());
+    return maptypes::parkingRampName(dataValue.toString());
   else if(col->getColumnName() == "largest_parking_gate")
-    return parkingMapGate.value(dataValue.toString());
+    return maptypes::parkingGateName(dataValue.toString());
   else if(col->getColumnName() == "rating")
     return ratings.at(dataValue.toInt());
   else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)

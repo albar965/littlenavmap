@@ -521,7 +521,9 @@ void MainWindow::preDatabaseLoad()
   if(!hasDatabaseLoadStatus)
   {
     hasDatabaseLoadStatus = true;
+
     searchController->preDatabaseLoad();
+    mapWidget->preDatabaseLoad();
   }
   else
     qDebug() << "Already in database loading status";
@@ -532,6 +534,7 @@ void MainWindow::postDatabaseLoad(bool force)
   if(hasDatabaseLoadStatus || force)
   {
     searchController->postDatabaseLoad();
+    mapWidget->postDatabaseLoad();
     hasDatabaseLoadStatus = false;
   }
   else

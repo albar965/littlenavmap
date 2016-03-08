@@ -63,6 +63,9 @@ public:
     return mark;
   }
 
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);

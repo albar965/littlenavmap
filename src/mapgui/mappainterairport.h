@@ -47,7 +47,7 @@ private:
 
   void airportDiagram(const MapLayer* mapLayer, Marble::GeoPainter *painter, const MapAirport& ap, int x, int y);
 
-  void runwayCoords(const QList<MapRunway>& rw, QList<QPoint> *centers, QList<QRect> *rects,
+  void runwayCoords(const QList<MapRunway>* rw, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *backRects);
 
   void airportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,

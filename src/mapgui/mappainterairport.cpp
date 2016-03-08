@@ -21,6 +21,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
+#include "maptypes.h"
 
 #include <QElapsedTimer>
 
@@ -156,21 +157,16 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   painter->save();
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  QList<MapRunway> rw;
-  query->getRunways(ap.id, rw);
-
-  QList<MapApron> aprons;
-  query->getAprons(ap.id, aprons);
+  const QList<MapRunway> *rw = query->getRunways(ap.id);
+  const QList<MapApron> *aprons = query->getAprons(ap.id);
 
   QList<QPoint> centers;
   QList<QRect> rects, backRects;
   runwayCoords(rw, &centers, &rects, nullptr, &backRects);
 
-  QList<MapTaxiPath> taxipaths;
-  query->getTaxiPaths(ap.id, taxipaths);
-
-  QList<MapParking> parkings;
-  query->getParking(ap.id, parkings);
+  const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(ap.id);
+  const QList<MapParking> *parkings = query->getParking(ap.id);
+  const QList<MapHelipad> *helipads = query->getHelipads(ap.id);
 
   int back = scale->getPixelIntForMeter(200.f);
   painter->setBrush(QColor::fromRgb(250, 250, 250));
@@ -178,10 +174,10 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
 
   // Draw white background ---------------------------------
   for(int i = 0; i < centers.size(); i++)
-    if(rw.at(i).surface != "WATER")
+    if(rw->at(i).surface != "WATER")
     {
       painter->translate(centers.at(i));
-      painter->rotate(rw.at(i).heading);
+      painter->rotate(rw->at(i).heading);
 
       const QRect backRect = backRects.at(i);
       painter->drawRect(backRect);
@@ -189,7 +185,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
       painter->resetTransform();
     }
 
-  for(const MapTaxiPath& tp : taxipaths)
+  for(const MapTaxiPath& tp : *taxipaths)
   {
     bool visible;
 
@@ -199,7 +195,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   }
 
   QVector<QPoint> points;
-  for(const MapApron& apron : aprons)
+  for(const MapApron& apron : *aprons)
   {
     points.clear();
     bool visible;
@@ -210,7 +206,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   }
 
   // Draw aprons ---------------------------------
-  for(const MapApron& apron : aprons)
+  for(const MapApron& apron : *aprons)
   {
     points.clear();
     bool visible;
@@ -223,7 +219,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   }
 
   // Draw taxiways ---------------------------------
-  for(const MapTaxiPath& tp : taxipaths)
+  for(const MapTaxiPath& tp : *taxipaths)
   {
     bool visible;
     painter->setBrush(colorForSurface(tp.surface));
@@ -240,25 +236,25 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   if(mapLayer->isAirportDiagramDetail())
   {
     painter->save();
-  painter->setBackgroundMode(Qt::TransparentMode);
+    painter->setBackgroundMode(Qt::TransparentMode);
 
-  QFont f = painter->font();
-  f.setBold(true);
-  f.setPixelSize(16);
-  painter->setFont(f);
+    QFont f = painter->font();
+    f.setBold(true);
+    f.setPixelSize(16);
+    painter->setFont(f);
 
-  painter->setPen(QPen(QColor(Qt::black), 2, Qt::SolidLine, Qt::FlatCap));
+    painter->setPen(QPen(QColor(Qt::black), 2, Qt::SolidLine, Qt::FlatCap));
 
     f.setPixelSize(12);
     painter->setFont(f);
 
     QMultiMap<QString, MapTaxiPath> map;
-    for(const MapTaxiPath& tp : taxipaths)
+    for(const MapTaxiPath& tp : *taxipaths)
       if(!tp.name.isEmpty())
       {
         bool visible;
-        QPoint start = wToS(tp.start, &visible);
-        QPoint end = wToS(tp.end, &visible);
+        wToS(tp.start, &visible);
+        wToS(tp.end, &visible);
         if(visible)
           map.insert(tp.name, tp);
       }
@@ -298,7 +294,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   for(int i = 0; i < centers.size(); i++)
   {
     painter->translate(centers.at(i));
-    painter->rotate(rw.at(i).heading);
+    painter->rotate(rw->at(i).heading);
 
     painter->drawRect(rects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
 
@@ -309,10 +305,10 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   for(int i = 0; i < centers.size(); i++)
   {
     painter->translate(centers.at(i));
-    painter->rotate(rw.at(i).heading);
+    painter->rotate(rw->at(i).heading);
 
-    painter->setBrush(colorForSurface(rw.at(i).surface));
-    painter->setPen(QPen(colorForSurface(rw.at(i).surface), 1, Qt::SolidLine, Qt::FlatCap));
+    painter->setBrush(colorForSurface(rw->at(i).surface));
+    painter->setPen(QPen(colorForSurface(rw->at(i).surface), 1, Qt::SolidLine, Qt::FlatCap));
     painter->drawRect(rects.at(i));
     painter->resetTransform();
   }
@@ -329,7 +325,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   painter->setPen(QPen(QColor(Qt::black), 2, Qt::SolidLine, Qt::FlatCap));
   for(int i = 0; i < centers.size(); i++)
   {
-    const MapRunway r = rw.at(i);
+    const MapRunway r = rw->at(i);
 
     painter->translate(centers.at(i));
     if(r.heading > 180)
@@ -340,9 +336,16 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
     QString text = QString::number(r.length) + " x " + QString::number(r.width);
 
     if(!r.edgeLight.isEmpty())
-      text += " L";
+      text += " / L";
+    text += " / " + maptypes::surfaceName(r.surface);
 
-    painter->drawText(-rects.at(i).height() / 4, -rects.at(i).width() / 2 - painter->fontMetrics().descent(),
+    int textW = painter->fontMetrics().width(text);
+    if(textW > rects.at(i).height())
+      textW = rects.at(i).height();
+    text = painter->fontMetrics().elidedText(text, Qt::ElideRight, rects.at(i).height());
+
+    painter->drawText(-textW / 2,
+                      -rects.at(i).width() / 2 - painter->fontMetrics().descent(),
                       text);
     painter->resetTransform();
   }
@@ -352,7 +355,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
 
   for(int i = 0; i < centers.size(); i++)
   {
-    const MapRunway r = rw.at(i);
+    const MapRunway r = rw->at(i);
     bool pvisible, svisible;
     QPoint prim = wToS(r.primary, &pvisible);
     QPoint sec = wToS(r.secondary, &svisible);
@@ -394,9 +397,9 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   painter->restore();
 
   // Draw parking --------------------------------
-  if(!parkings.isEmpty())
+  if(!parkings->isEmpty())
     painter->setPen(QPen(QColor::fromRgb(80, 80, 80), 2, Qt::SolidLine, Qt::FlatCap));
-  for(const MapParking& p : parkings)
+  for(const MapParking& p : *parkings)
   {
 
     bool visible;
@@ -424,9 +427,33 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
 
       painter->translate(pt);
       painter->rotate(p.heading);
-      painter->drawLine(0, 0, 0, h);
+      painter->drawLine(0, h * 2 / 3, 0, h);
       painter->resetTransform();
+    }
+  }
 
+  if(!helipads->isEmpty())
+    painter->setPen(QPen(QColor(Qt::black), 2, Qt::SolidLine, Qt::FlatCap));
+  // Draw helipads
+  for(const MapHelipad& p : *helipads)
+  {
+    bool visible;
+    QPoint pt = wToS(p.pos, &visible);
+    if(visible)
+    {
+      painter->setBrush(colorForSurface(p.surface));
+
+      int w = scale->getPixelIntForFeet(p.width, 90) / 2;
+      int h = scale->getPixelIntForFeet(p.length, 0) / 2;
+
+      painter->drawEllipse(pt, w, h);
+
+      painter->translate(pt);
+      painter->rotate(p.heading);
+      painter->drawLine(-w / 3, -h / 2, -w / 3, h / 2);
+      painter->drawLine(-w / 3, 0, w / 3, 0);
+      painter->drawLine(w / 3, -h / 2, w / 3, h / 2);
+      painter->resetTransform();
     }
   }
 
@@ -455,7 +482,7 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
     f.setBold(true);
     painter->setFont(f);
 
-    for(const MapParking& p : parkings)
+    for(const MapParking& p : *parkings)
     {
       bool visible;
       QPoint pt = wToS(p.pos, &visible);
@@ -495,36 +522,6 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   painter->restore();
 }
 
-QString MapPainterAirport::parkingName(const QString& name)
-{
-  if(name == "PARKING")
-    return "P";
-  else if(name == "N_PARKING")
-    return "N";
-  else if(name == "NE_PARKING")
-    return "NE";
-  else if(name == "E_PARKING")
-    return "E";
-  else if(name == "SE_PARKING")
-    return "SE";
-  else if(name == "S_PARKING")
-    return "S";
-  else if(name == "SW_PARKING")
-    return "SW";
-  else if(name == "W_PARKING")
-    return "W";
-  else if(name == "NW_PARKING")
-    return "NW";
-  else if(name == "GATE")
-    return QString();
-  else if(name == "DOCK")
-    return "D";
-  else if(name.startsWith("GATE_"))
-    return name.right(1);
-  else
-    return QString();
-}
-
 void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirport& ap,
                                               const MapLayer *mapLayer, bool fast)
 {
@@ -536,8 +533,7 @@ void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirp
     QColor apColor = colorForAirport(ap);
     painter->setBackgroundMode(Qt::OpaqueMode);
 
-    QList<MapRunway> rw;
-    query->getRunwaysForOverview(ap.id, rw);
+    const QList<MapRunway> *rw = query->getRunwaysForOverview(ap.id);
 
     QList<QPoint> centers;
     QList<QRect> rects, innerRects;
@@ -548,7 +544,7 @@ void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirp
     for(int i = 0; i < centers.size(); i++)
     {
       painter->translate(centers.at(i));
-      painter->rotate(rw.at(i).heading);
+      painter->rotate(rw->at(i).heading);
       painter->drawRect(rects.at(i));
       painter->resetTransform();
     }
@@ -560,7 +556,7 @@ void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirp
       for(int i = 0; i < centers.size(); i++)
       {
         painter->translate(centers.at(i));
-        painter->rotate(rw.at(i).heading);
+        painter->rotate(rw->at(i).heading);
         painter->drawRect(innerRects.at(i));
         painter->resetTransform();
       }
@@ -607,12 +603,26 @@ void MapPainterAirport::airportSymbol(GeoPainter *painter, const MapAirport& ap,
       if(ap.isSet(MIL))
         painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
 
-      if(ap.isSet(WATER) && !ap.isSet(HARD) && !ap.isSet(SOFT) && size > 6)
+      if(ap.waterOnly() && size > 6)
       {
         int lineWidth = size / 7;
         painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
         painter->drawLine(x - lineWidth / 4, y - radius / 2, x - lineWidth / 4, y + radius / 2);
         painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
+      }
+
+      if(ap.isHeliport() && size > 6)
+      {
+        int lineWidth = size / 7;
+        painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
+        painter->drawLine(x - lineWidth / 4 - size / 5, y - radius / 2,
+                          x - lineWidth / 4 - size / 5, y + radius / 2);
+
+        painter->drawLine(x - lineWidth / 4 - size / 5, y,
+                          x - lineWidth / 4 + size / 5, y);
+
+        painter->drawLine(x - lineWidth / 4 + size / 5, y - radius / 2,
+                          x - lineWidth / 4 + size / 5, y + radius / 2);
       }
 
       if(ap.isSet(CLOSED) && size > 6)
@@ -638,10 +648,10 @@ void MapPainterAirport::airportSymbol(GeoPainter *painter, const MapAirport& ap,
   }
 }
 
-void MapPainterAirport::runwayCoords(const QList<MapRunway>& rw, QList<QPoint> *centers, QList<QRect> *rects,
+void MapPainterAirport::runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
                                      QList<QRect> *innerRects, QList<QRect> *backRects)
 {
-  for(const MapRunway& r : rw)
+  for(const MapRunway& r : *rw)
   {
     // Get the two endpoints as screen coords
     float xr1, yr1, xr2, yr2;
@@ -776,4 +786,34 @@ QColor MapPainterAirport::colorForSurface(const QString& surface)
 
   // else if(rw.surface == "UNKNOWN")
   return QColor(Qt::black);
+}
+
+QString MapPainterAirport::parkingName(const QString& name)
+{
+  if(name == "PARKING")
+    return "P";
+  else if(name == "N_PARKING")
+    return "N";
+  else if(name == "NE_PARKING")
+    return "NE";
+  else if(name == "E_PARKING")
+    return "E";
+  else if(name == "SE_PARKING")
+    return "SE";
+  else if(name == "S_PARKING")
+    return "S";
+  else if(name == "SW_PARKING")
+    return "SW";
+  else if(name == "W_PARKING")
+    return "W";
+  else if(name == "NW_PARKING")
+    return "NW";
+  else if(name == "GATE")
+    return QString();
+  else if(name == "DOCK")
+    return "D";
+  else if(name.startsWith("GATE_"))
+    return name.right(1);
+  else
+    return QString();
 }

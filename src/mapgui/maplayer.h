@@ -125,6 +125,13 @@ public:
     return layerMinRunwayLength;
   }
 
+  bool hasSameQueryParameters(const MapLayer *other) const
+  {
+    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength &&
+           layerAirportDiagram == other->layerAirportDiagram &&
+           layerAirportOverviewRunway == other->layerAirportOverviewRunway;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 

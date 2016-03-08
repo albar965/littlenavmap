@@ -50,6 +50,7 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   inputHandler()->setInertialEarthRotationEnabled(false);
 
   mapQuery = new MapQuery(db);
+  mapQuery->initQueries();
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
@@ -61,6 +62,18 @@ NavMapWidget::~NavMapWidget()
 {
   delete paintLayer;
   delete mapQuery;
+}
+
+void NavMapWidget::preDatabaseLoad()
+{
+  paintLayer->preDatabaseLoad();
+  mapQuery->deInitQueries();
+}
+
+void NavMapWidget::postDatabaseLoad()
+{
+  paintLayer->postDatabaseLoad();
+  mapQuery->initQueries();
 }
 
 void NavMapWidget::zoomHasChanged(int zoom)

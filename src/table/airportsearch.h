@@ -66,10 +66,6 @@ private:
   static const QStringList ratings;
   static const QSet<QString> boolColumns;
   static const QSet<QString> numberColumns;
-  static const QHash<QString, QString> surfaceMap;
-  static const QHash<QString, QString> parkingMapGate;
-  static const QHash<QString, QString> parkingMapRamp;
-
 };
 
 #endif // APSEARCHPANE_H

@@ -45,7 +45,11 @@ public:
 
   MapAirport getAirportAtPos(int xs, int ys);
 
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
 private:
+  bool databaseLoadStatus = false;
   QList<MapPainter *> mapPainters;
   MapPainterAirport *mapPainterAirport;
 

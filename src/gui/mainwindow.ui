@@ -382,10 +382,10 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
+             <item row="1" column="3">
+              <widget class="QCheckBox" name="checkBoxAirportMilSearch">
                <property name="text">
-                <string>Tower</string>
+                <string>Military</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -402,10 +402,10 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
-              <widget class="QCheckBox" name="checkBoxAirportMilSearch">
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
                <property name="text">
-                <string>Military</string>
+                <string>Tower</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -511,6 +511,25 @@
                <item>
                 <property name="text">
                  <string>At least Gate Heavy</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxAirportHelipadSearch">
+               <item>
+                <property name="text">
+                 <string>Any or no Helipad</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>At least one Helipad</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only Helipads</string>
                 </property>
                </item>
               </widget>
