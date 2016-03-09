@@ -98,7 +98,7 @@ public:
 
   Column& includesName(bool value = true);
 
-  Column& virtualCol(bool value = true);
+  Column& distanceCol(bool value = true);
 
   Column& condition(const QString& cond);
 
@@ -202,9 +202,9 @@ public:
     return colIsHiddenColumn;
   }
 
-  bool isVirtual() const
+  bool isDistance() const
   {
-    return colIsVirtual;
+    return colIsDistance;
   }
 
   bool isDefaultSort() const
@@ -252,7 +252,14 @@ public:
     return !colIndexConditionMap.isEmpty();
   }
 
+  int getIndex() const
+  {
+    return index;
+  }
+
 private:
+  friend class ColumnList;
+
   QString colName;
   QString colDisplayName;
   QWidget *colWidget = nullptr, *colMaxWidget = nullptr, *colMinWidget = nullptr;
@@ -267,6 +274,8 @@ private:
   /* Condition list used for combo boxes */
   QStringList colIndexConditionMap;
 
+  int index = -1;
+
   bool colGroupByShow = false;
   bool colGroupByMin = false;
   bool colGroupByMax = false;
@@ -279,7 +288,7 @@ private:
   bool colIsAlwaysAndColumn = false;
   bool colIsHiddenColumn = false;
   bool colQueryIncludesName = false;
-  bool colIsVirtual = false;
+  bool colIsDistance = false;
 
   Qt::SortOrder colDefaultSortOrd = Qt::SortOrder::AscendingOrder;
 };

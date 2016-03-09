@@ -51,6 +51,7 @@ void ColumnList::clear()
 ColumnList& ColumnList::append(const Column& col)
 {
   Column *c = new Column(col);
+  c->index = columns.size();
   columns.append(c);
   nameColumnMap.insert(col.getColumnName(), c);
   return *this;
@@ -62,6 +63,11 @@ const Column *ColumnList::getColumn(const QString& field) const
     return nameColumnMap.value(field);
   else
     return nullptr;
+}
+
+const Column *ColumnList::getColumn(int index) const
+{
+  return columns.at(index);
 }
 
 const Column *ColumnList::getIdColumn() const

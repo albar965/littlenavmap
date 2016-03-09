@@ -66,6 +66,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
 
   airportSearch = new AirportSearch(parentWidget, tableView,
                                     airportColumns, db, 0);
+
   airportSearch->connectSlots();
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
@@ -109,6 +110,7 @@ void SearchController::objectSelected(maptypes::ObjectType type, const QString& 
   switch(type)
   {
     case maptypes::AIRPORT:
+      airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);
       break;
     case maptypes::NDB:
@@ -119,6 +121,5 @@ void SearchController::objectSelected(maptypes::ObjectType type, const QString& 
       break;
     case maptypes::WAYPOINT:
       break;
-
   }
 }

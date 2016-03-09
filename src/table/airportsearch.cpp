@@ -29,6 +29,7 @@
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
 #include "table/formatter.h"
+#include "airporticondelegate.h"
 #include "maptypes.h"
 
 #include <QMessageBox>
@@ -37,6 +38,8 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QLineEdit>
+#include <QStyledItemDelegate>
+#include <QMouseEvent>
 
 const QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
 
@@ -143,8 +146,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
 
   // Default view column descriptors
   columns->
-  append(Column("distance", tr("Distance")).virtualCol()).
-  append(Column("airport_id", tr("ID")).hidden()).
+  append(Column("airport_id").hidden()).
+  append(Column("distance", tr("Distance")).distanceCol()).
   append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -198,6 +201,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("longest_runway_length", tr("Longest\nRunway Length"))).
   append(Column("longest_runway_width", tr("Longest\nRunway Width"))).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface"))).
+  append(Column("longest_runway_heading").hidden()).
 
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).

@@ -156,9 +156,9 @@ Column& Column::includesName(bool value)
   return *this;
 }
 
-Column& Column::virtualCol(bool value)
+Column& Column::distanceCol(bool value)
 {
-  colIsVirtual = value;
+  colIsDistance = value;
   return *this;
 }
 
@@ -191,3 +191,5 @@ QSpinBox *Column::getMaxSpinBoxWidget() const
 {
   return dynamic_cast<QSpinBox *>(colMaxWidget);
 }
+
+

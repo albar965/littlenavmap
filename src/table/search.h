@@ -31,6 +31,9 @@ class QAction;
 class MainWindow;
 
 namespace atools {
+namespace geo {
+class Rect;
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -84,7 +87,8 @@ protected:
   void initViewAndController();
 
 signals:
-  void showPoint(double lonX, double latY, int zoom);
+  void showPos(const atools::geo::Pos& pos, int zoom);
+  void showRect(const atools::geo::Rect& rect);
   void changeMark(const atools::geo::Pos& pos);
 
 };

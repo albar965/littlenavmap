@@ -21,6 +21,7 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "settings/settings.h"
+#include "airporticondelegate.h"
 #include "column.h"
 #include "sqlproxymodel.h"
 #include "table/sqlmodel.h"
@@ -43,6 +44,8 @@ Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnL
                        QTableView *tableView)
   : parentWidget(parent), db(sqlDb), view(tableView), columns(cols)
 {
+  // TODO delete old and new delegate
+  view->setItemDelegateForColumn(2, new AirportIconDelegate(columns));
 }
 
 Controller::~Controller()
@@ -186,6 +189,7 @@ void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel:
       proxyModel->setSourceModel(model);
 
       viewSetModel(proxyModel);
+
     }
 
     proxyModel->setDistanceFilter(center, dir, minDistance, maxDistance);
@@ -438,7 +442,7 @@ void Controller::processViewColumns()
     QString field = rec.fieldName(i);
     const Column *cd = columns->getColumn(field);
 
-    if(!currentDistanceCenter.isValid() && cd->isVirtual())
+    if(!currentDistanceCenter.isValid() && cd->isDistance())
     {
       qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
@@ -485,7 +489,7 @@ void Controller::processViewColumns()
     if(sort->isHidden())
       view->sortByColumn(idx, c->getDefaultSortOrder());
     else if(!currentDistanceCenter.isValid())
-      if(sort->isVirtual())
+      if(sort->isDistance())
         view->sortByColumn(idx, c->getDefaultSortOrder());
   }
 }

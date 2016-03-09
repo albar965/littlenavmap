@@ -22,11 +22,14 @@
 
 #include "mapquery.h"
 
+class SymbolPainter;
+
 class MapPainterAirport :
   public MapPainter
 {
 public:
   MapPainterAirport(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  virtual ~MapPainterAirport();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                      Marble::ViewportParams *viewport) override;
@@ -37,9 +40,10 @@ private:
   QColor colorForSurface(const QString& surface);
   QColor& colorForAirport(const MapAirport& ap);
 
-  QColor toweredAirportColor, unToweredAirportColor, airportEmptyColor;
-
-  QColor airportDetailBackColor;
+  QColor airportDetailBackColor, taxiwayNameColor, runwayOutlineColor, runwayOffsetColor, parkingOutlineColor,
+         helipadOutlineColor, activeTowerColor, activeTowerOutlineColor, inactiveTowerColor,
+         inactiveTowerOutlineColor, darkParkingTextColor, brightParkingTextColor, towerTextColor,
+         runwayDimsTextColor, airportSymbolFillColor, transparentTextBoxColor, textBoxColor;
 
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
                      const MapLayer *mapLayer,
@@ -62,6 +66,7 @@ private:
   QColor colorForParkingType(const QString& type);
   QStringList airportTexts(const MapLayer *mapLayer, const MapAirport& airport);
 
+  SymbolPainter *symbolPainter;
 };
 
 #endif // MAPPAINTERAIRPORT_H

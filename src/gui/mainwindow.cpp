@@ -383,12 +383,12 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(searchController->getAirportSearch(), &AirportSearch::showPoint,
-          mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
+          mapWidget, &NavMapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
           mapWidget, &NavMapWidget::changeMark);
 
-  connect(searchController->getNavSearch(), &NavSearch::showPoint, mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &NavMapWidget::showPoint);
   connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &NavMapWidget::changeMark);
 
   // Use this event to show path dialog after main windows is shown

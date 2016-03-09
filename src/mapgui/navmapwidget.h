@@ -28,6 +28,7 @@
 namespace atools {
 namespace geo {
 class Pos;
+class Rect;
 }
 namespace sql {
 class SqlDatabase;
@@ -53,7 +54,9 @@ public:
   void saveState();
   void restoreState();
 
-  void showPoint(double lonX, double latY, int zoom);
+  void showPoint(const atools::geo::Pos& pos, int zoom);
+  void showRect(const atools::geo::Rect& rect);
+
   void changeMark(const atools::geo::Pos& pos);
 
   bool eventFilter(QObject *obj, QEvent *e) override;

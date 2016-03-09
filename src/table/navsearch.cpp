@@ -122,7 +122,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
 
   // Default view column descriptors
   columns->
-  append(Column("distance", tr("Distance")).virtualCol()).
+  append(Column("distance", tr("Distance")).distanceCol()).
   append(Column("nav_search_id").hidden()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).indexCondMap(navTypeCondMap)).

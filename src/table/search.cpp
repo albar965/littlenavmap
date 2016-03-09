@@ -61,6 +61,8 @@ Search::~Search()
 void Search::initViewAndController()
 {
   view->horizontalHeader()->setSectionsMovable(true);
+  view->verticalHeader()->setSectionsMovable(false);
+  view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
@@ -223,13 +225,44 @@ void Search::doubleClick(const QModelIndex& index)
   {
     int id = controller->getIdForRow(index);
 
+    QSqlRecord rec = db->record(columns->getTablename());
+
+    bool hasBounding = rec.contains("left_lonx") &&
+                       rec.contains("top_laty") &&
+                       rec.contains("right_lonx") &&
+                       rec.contains("bottom_laty");
+
     atools::sql::SqlQuery query(db);
-    query.prepare("select lonx, laty from " + columns->getTablename() +
-                  " where " + columns->getIdColumnName() + " = :id");
+    if(hasBounding)
+      // Has bounding rectangle
+      query.prepare("select left_lonx, top_laty, right_lonx, bottom_laty "
+                    "from " + columns->getTablename() +
+                    " where " + columns->getIdColumnName() + " = :id");
+
+    else
+      query.prepare("select lonx, laty from " + columns->getTablename() +
+                    " where " + columns->getIdColumnName() + " = :id");
+
     query.bindValue(":id", id);
     query.exec();
+
     if(query.next())
-      emit showPoint(query.value("lonx").toDouble(), query.value("laty").toDouble(), 2700);
+    {
+      if(hasBounding)
+      {
+        qDebug() << "emit showRect";
+        emit showRect(atools::geo::Rect(query.value("left_lonx").toFloat(),
+                                        query.value("top_laty").toFloat(),
+                                        query.value("right_lonx").toFloat(),
+                                        query.value("bottom_laty").toFloat()));
+      }
+      else
+      {
+        qDebug() << "emit showPos";
+        emit showPos(atools::geo::Pos(query.value("lonx").toFloat(),
+                                      query.value("laty").toFloat()), 2700);
+      }
+    }
     qDebug() << "id" << id;
   }
 }

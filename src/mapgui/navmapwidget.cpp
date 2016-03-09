@@ -118,11 +118,18 @@ void NavMapWidget::restoreState()
   }
 }
 
-void NavMapWidget::showPoint(double lonX, double latY, int zoom)
+void NavMapWidget::showPoint(const atools::geo::Pos& pos, int zoom)
 {
-  qDebug() << "NavMapWidget::showPoint";
+  qDebug() << "NavMapWidget::showPoint" << pos;
   setZoom(zoom);
-  centerOn(lonX, latY, false);
+  centerOn(pos.getLonX(), pos.getLatY(), false);
+}
+
+void NavMapWidget::showRect(const atools::geo::Rect& rect)
+{
+  qDebug() << "NavMapWidget::showRect" << rect;
+  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                            GeoDataCoordinates::Degree), false);
 }
 
 void NavMapWidget::changeMark(const atools::geo::Pos& pos)
@@ -150,6 +157,8 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
 
   if(ap.valid)
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
+  else
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(tr("Map Object")));
 
   ui->actionShowInSearch->setDisabled(!ap.valid);
 

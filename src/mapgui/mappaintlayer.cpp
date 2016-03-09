@@ -128,9 +128,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
     const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 
-    if(mapLayer != nullptr)
-      for(MapPainter *mapPainter : mapPainters)
-        mapPainter->paint(mapLayer, painter, viewport);
+    for(MapPainter *mapPainter : mapPainters)
+      mapPainter->paint(mapLayer, painter, viewport);
   }
 
   return true;

@@ -333,7 +333,7 @@ void SqlModel::fillHeaderData()
 
     Q_ASSERT_X(cd != nullptr, "fillHeaderData", QString("field \"" + field + "\" is null").toLocal8Bit());
 
-    if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isVirtual()))
+    if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isDistance()))
     {
       qDebug() << "Header" << i << "display" << cd->getDisplayName();
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
@@ -381,8 +381,12 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
 
 void SqlModel::sort(int column, Qt::SortOrder order)
 {
+  QString colname = record().field(column).name();
+  if(columns->getColumn(colname)->isNoSort())
+    return;
+
   orderByColIndex = column;
-  orderByCol = record().field(column).name();
+  orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
 
   if(groupByCol.isEmpty())
@@ -399,7 +403,7 @@ QString SqlModel::buildColumnList()
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(col->isVirtual())
+    if(col->isDistance())
       colNames.append("null as " + col->getColumnName());
     else if(groupByCol.isEmpty())
       // Not grouping - default view
@@ -539,7 +543,7 @@ void SqlModel::buildQuery()
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
-  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isVirtual())
+  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isDistance())
   {
     Q_ASSERT(col != nullptr);
 

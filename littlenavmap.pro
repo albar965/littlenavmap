@@ -60,7 +60,9 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainterairport.cpp \
     src/mapgui/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
-    src/mapgui/coordinateconverter.cpp
+    src/mapgui/coordinateconverter.cpp \
+    src/table/airporticondelegate.cpp \
+    src/mapgui/symbolpainter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -83,7 +85,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainterairport.h \
     src/mapgui/mappaintermark.h \
     src/mapgui/mapscale.h \
-    src/mapgui/coordinateconverter.h
+    src/mapgui/coordinateconverter.h \
+    src/table/airporticondelegate.h \
+    src/mapgui/symbolpainter.h
 
 FORMS    += src/gui/mainwindow.ui
 
