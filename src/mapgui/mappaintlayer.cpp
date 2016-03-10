@@ -65,6 +65,7 @@ MapPaintLayer::~MapPaintLayer()
   mapPainters.clear();
   delete layers;
   delete mapScale;
+  delete mapFont;
 }
 
 void MapPaintLayer::preDatabaseLoad()
@@ -125,6 +126,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   if(!databaseLoadStatus)
   {
     mapScale->update(viewport, navMapWidget->distance());
+
+    if(mapFont == nullptr)
+      mapFont = new QFont("Helvetica", painter->font().pointSize());
+
+    painter->setFont(*mapFont);
 
     const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 

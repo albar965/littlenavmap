@@ -193,7 +193,7 @@ void SqlModel::filterByIdent(const QString& ident, const QString& region, const 
     filterBy(false, "region", region);
 
   if(!region.isEmpty() && columns->getColumn("airport_ident") != nullptr)
-    filterBy(false, "airportIdent", airportIdent);
+    filterBy(false, "airport_ident", airportIdent);
 
   buildQuery();
 }
@@ -334,10 +334,7 @@ void SqlModel::fillHeaderData()
     Q_ASSERT_X(cd != nullptr, "fillHeaderData", QString("field \"" + field + "\" is null").toLocal8Bit());
 
     if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isDistance()))
-    {
-      qDebug() << "Header" << i << "display" << cd->getDisplayName();
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
-    }
   }
 }
 

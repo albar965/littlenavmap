@@ -39,9 +39,6 @@ private:
   const ColumnList *cols;
   SymbolPainter *symbolPainter;
 
-  /* Alternating colors for normal display and display of sorted column */
-  QColor rowBgColor, rowAltBgColor, rowSortBgColor, rowSortAltBgColor;
-
   QVariant value(const SqlModel *sqlModel, int row, const QString& name) const;
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;

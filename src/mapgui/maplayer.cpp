@@ -59,14 +59,13 @@ MapLayer& MapLayer::airportDiagram(bool value)
   return *this;
 }
 
-MapLayer&MapLayer::airportDiagramDetail(bool value)
+MapLayer& MapLayer::airportDiagramDetail(bool value)
 {
   layerAirportDiagramDetail = value;
   return *this;
 }
 
-MapLayer&MapLayer::airportDiagramDetail2(bool value)
-
+MapLayer& MapLayer::airportDiagramDetail2(bool value)
 {
   layerAirportDiagramDetail2 = value;
   return *this;

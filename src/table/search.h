@@ -67,9 +67,6 @@ public:
 protected:
   QIcon *boolIcon = nullptr;
 
-  /* Alternating colors for normal display and display of sorted column */
-  QColor rowBgColor, rowAltBgColor, rowSortBgColor, rowSortAltBgColor;
-
   void connectSearchWidgets();
   virtual void tableContextMenu(const QPoint& pos);
 

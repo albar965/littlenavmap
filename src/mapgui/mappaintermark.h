@@ -26,7 +26,7 @@ class MapPainterMark :
   public MapPainter
 {
 public:
-  MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale* mapScale);
+  MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterMark();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
@@ -34,7 +34,6 @@ public:
 
 private:
   NavMapWidget *navMapWidget;
-  QPen markBackPen, markFillPen;
   void paintMark(Marble::GeoPainter *painter);
 
 };

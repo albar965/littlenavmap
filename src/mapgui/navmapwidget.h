@@ -18,7 +18,7 @@
 #ifndef NAVMAPWIDGET_H
 #define NAVMAPWIDGET_H
 
-#include "maptypes.h"
+#include "common/maptypes.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>

@@ -30,7 +30,8 @@
 #include "gui/widgetstate.h"
 #include "table/formatter.h"
 #include "airporticondelegate.h"
-#include "maptypes.h"
+#include "common/maptypes.h"
+#include "common/mapcolors.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -209,6 +210,9 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
+  // TODO delete old and new delegate
+  view->setItemDelegateForColumn(2, new AirportIconDelegate(columns));
+
   Search::initViewAndController();
 
   using namespace std::placeholders;
@@ -316,12 +320,8 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
       break;
     case Qt::BackgroundRole:
       if(colIndex == controller->getSortColumnIndex())
-      {
-        if(rowIndex != -1)
-          return (rowIndex % 2) == 0 ? rowSortBgColor : rowSortAltBgColor;
-        else
-          return rowSortAltBgColor;
-      }
+        return mapcolors::alternatingRowColor(rowIndex, true);
+
       break;
     case Qt::CheckStateRole:
       // if(boolColumns.contains(col->getColumnName()))

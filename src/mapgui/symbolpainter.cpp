@@ -1,22 +1,18 @@
 #include "mapquery.h"
 #include "symbolpainter.h"
+#include "common/mapcolors.h"
 
 #include <QPainter>
 
 SymbolPainter::SymbolPainter()
 {
-  airportSymbolFillColor = QColor(Qt::white);
-
-  airportEmptyColor = QColor::fromRgb(150, 150, 150);
-  toweredAirportColor = QColor::fromRgb(15, 70, 130);
-  unToweredAirportColor = QColor::fromRgb(126, 58, 91);
 }
 
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, int x, int y, int size,
                                       bool isAirportDiagram, bool fast)
 {
   painter->save();
-  QColor apColor = colorForAirport(ap);
+  QColor apColor = mapcolors::colorForAirport(ap);
 
   int radius = size / 2;
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -26,7 +22,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
     painter->setBrush(QBrush(apColor));
   else
     // Use white filled circle
-    painter->setBrush(QBrush(airportSymbolFillColor));
+    painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
   if(!fast || isAirportDiagram)
     if(ap.isSet(FUEL) && !ap.isSet(MIL) && !ap.isSet(CLOSED) && size > 6)
@@ -84,20 +80,10 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
     {
       painter->translate(x, y);
       painter->rotate(ap.longestRunwayHeading);
-      painter->setPen(QPen(QBrush(airportSymbolFillColor), size / 5, Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), size / 5, Qt::SolidLine, Qt::RoundCap));
       painter->drawLine(0, -radius + 2, 0, radius - 2);
       painter->resetTransform();
     }
 
   painter->restore();
-}
-
-QColor& SymbolPainter::colorForAirport(const MapAirport& ap)
-{
-  if(!ap.isSet(SCENERY) && !ap.waterOnly())
-    return airportEmptyColor;
-  else if(ap.isSet(TOWER))
-    return toweredAirportColor;
-  else
-    return unToweredAirportColor;
 }

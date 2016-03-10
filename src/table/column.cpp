@@ -191,5 +191,3 @@ QSpinBox *Column::getMaxSpinBoxWidget() const
 {
   return dynamic_cast<QSpinBox *>(colMaxWidget);
 }
-
-

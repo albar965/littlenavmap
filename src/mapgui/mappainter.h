@@ -45,7 +45,6 @@ public:
                      Marble::ViewportParams *viewport) = 0;
 
 protected:
-  QPen textBackgroundPen, textPen;
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;

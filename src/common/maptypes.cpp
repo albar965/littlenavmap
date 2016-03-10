@@ -83,6 +83,40 @@ const QHash<QString, QString> parkingMapRamp(
     {"VEHICLES", QObject::tr("Vehicles")}
   });
 
+const QHash<QString, QString> typeNames(
+  {
+    {"HIGH", "High"},
+    {"LOW", "Low"},
+    {"TERMINAL", "Terminal"},
+    {"HH", "HH"},
+    {"H", "H"},
+    {"MH", "MH"},
+    {"COMPASS_POINT", "Compass Point"},
+    {"NAMED", "Named"},
+    {"UNNAMED", "Unnamed"},
+    {"VOR", "VOR"},
+    {"NDB", "NDB"}
+  });
+
+const QHash<QString, QString> navTypeNames(
+  {
+    {"VORDME", "VORDME"},
+    {"VOR", "VOR"},
+    {"DME", "DME"},
+    {"NDB", "NDB"},
+    {"WAYPOINT", "Waypoint"}
+  });
+
+QString navTypeName(const QString& type)
+{
+  return typeNames.value(type);
+}
+
+QString navName(const QString& type)
+{
+  return navTypeNames.value(type);
+}
+
 QString surfaceName(const QString& surface)
 {
   return surfaceMap.value(surface);

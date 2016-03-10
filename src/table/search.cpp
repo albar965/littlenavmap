@@ -39,18 +39,10 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
   : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent),
     tabIndex(tabWidgetIndex)
 {
-  /* Alternating colors */
-  rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
-
-  /* Slightly darker background for sort column */
-  rowSortBgColor = rowBgColor.darker(106);
-  rowSortAltBgColor = rowAltBgColor.darker(106);
 
   // Avoid stealing of Ctrl-C from other default menus
   parentWidget->getUi()->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
-
 }
 
 Search::~Search()
@@ -216,11 +208,6 @@ void Search::connectSlots()
 
 void Search::doubleClick(const QModelIndex& index)
 {
-  qDebug() << "double click";
-
-  qDebug() << "total" << controller->getTotalRowCount() << "visible"
-           << controller->getVisibleRowCount();
-
   if(index.isValid())
   {
     int id = controller->getIdForRow(index);

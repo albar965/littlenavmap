@@ -29,6 +29,8 @@
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
 #include "table/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptypes.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -36,30 +38,6 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QLineEdit>
-
-const QHash<QString, QString> NavSearch::typeNames(
-  {
-    {"HIGH", "High"},
-    {"LOW", "Low"},
-    {"TERMINAL", "Terminal"},
-    {"HH", "HH"},
-    {"H", "H"},
-    {"MH", "MH"},
-    {"COMPASS_POINT", "Compass Point"},
-    {"NAMED", "Named"},
-    {"UNNAMED", "Unnamed"},
-    {"VOR", "VOR"},
-    {"NDB", "NDB"}
-  });
-
-const QHash<QString, QString> NavSearch::navTypeNames(
-  {
-    {"VORDME", "VORDME"},
-    {"VOR", "VOR"},
-    {"DME", "DME"},
-    {"NDB", "NDB"},
-    {"WAYPOINT", "Waypoint"}
-  });
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                      atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
@@ -213,12 +191,8 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
       break;
     case Qt::BackgroundRole:
       if(colIndex == controller->getSortColumnIndex())
-      {
-        if(rowIndex != -1)
-          return (rowIndex % 2) == 0 ? rowSortBgColor : rowSortAltBgColor;
-        else
-          return rowSortAltBgColor;
-      }
+        return mapcolors::alternatingRowColor(rowIndex, true);
+
       break;
     case Qt::CheckStateRole:
     case Qt::DecorationRole:
@@ -248,9 +222,9 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                       const QVariant& dataValue) const
 {
   if(col->getColumnName() == "type")
-    return typeNames.value(value.toString());
+    return maptypes::navName(value.toString());
   else if(col->getColumnName() == "nav_type")
-    return navTypeNames.value(value.toString());
+    return maptypes::navTypeName(value.toString());
   else if(col->getColumnName() == "frequency" && !value.isNull())
   {
     double freq = value.toDouble();

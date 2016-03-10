@@ -31,6 +31,9 @@ enum ObjectType
   WAYPOINT
 };
 
+QString navTypeName(const QString& type);
+QString navName(const QString& type);
+
 QString surfaceName(const QString& surface);
 QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);

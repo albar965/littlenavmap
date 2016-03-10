@@ -56,7 +56,8 @@ private:
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
-  NavMapWidget *navMapWidget;
+  NavMapWidget *navMapWidget = nullptr;
+  QFont *mapFont = nullptr;
 
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override

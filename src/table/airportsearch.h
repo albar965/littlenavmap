@@ -69,6 +69,4 @@ private:
 
 };
 
-
-
 #endif // APSEARCHPANE_H

@@ -23,6 +23,7 @@
 #include "logging/loggingdefs.h"
 #include "mapgui/mapquery.h"
 #include "mapgui/symbolpainter.h"
+#include "common/mapcolors.h"
 
 #include <QPainter>
 #include <QSqlQueryModel>
@@ -32,14 +33,6 @@ AirportIconDelegate::AirportIconDelegate(const ColumnList *columns)
   : cols(columns)
 {
   symbolPainter = new SymbolPainter();
-
-  // TODO copy from search
-  rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
-
-  /* Slightly darker background for sort column */
-  rowSortBgColor = rowBgColor.darker(106);
-  rowSortAltBgColor = rowAltBgColor.darker(106);
 }
 
 AirportIconDelegate::~AirportIconDelegate()
@@ -75,20 +68,13 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   if(idx.column() == sqlModel->getSortColumnIndex() &&
      (option.state & QStyle::State_Selected) == 0)
-  {
-    const QColor *bg;
-    if(idx.row() != -1)
-      bg = (idx.row() % 2) == 0 ? &rowSortBgColor : &rowSortAltBgColor;
-    else
-      bg = &rowSortAltBgColor;
-    painter->fillRect(option.rect, *bg);
-  }
+    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
 
   QRect textRect = option.rect;
   textRect.setWidth(textRect.width() - 1);
   painter->drawText(textRect, Qt::AlignRight, text);
 
-int symSize = option.rect.height() - 4;
+  int symSize = option.rect.height() - 4;
   int w = painter->fontMetrics().maxWidth();
   symbolPainter->drawAirportSymbol(painter, ap,
                                    option.rect.x() + (option.rect.width() - w) / 2,

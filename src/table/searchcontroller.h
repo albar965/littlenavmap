@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maptypes.h"
+#include "common/maptypes.h"
 
 #include <QObject>
 #include <QString>

@@ -55,14 +55,15 @@ SOURCES += src/main.cpp\
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
     src/mapgui/maplayersettings.cpp \
-    src/maptypes.cpp \
     src/mapgui/mappainter.cpp \
     src/mapgui/mappainterairport.cpp \
     src/mapgui/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
     src/mapgui/coordinateconverter.cpp \
     src/table/airporticondelegate.cpp \
-    src/mapgui/symbolpainter.cpp
+    src/mapgui/symbolpainter.cpp \
+    src/common/maptypes.cpp \
+    src/common/mapcolors.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -80,14 +81,15 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
     src/mapgui/maplayersettings.h \
-    src/maptypes.h \
     src/mapgui/mappainter.h \
     src/mapgui/mappainterairport.h \
     src/mapgui/mappaintermark.h \
     src/mapgui/mapscale.h \
     src/mapgui/coordinateconverter.h \
     src/table/airporticondelegate.h \
-    src/mapgui/symbolpainter.h
+    src/mapgui/symbolpainter.h \
+    src/common/maptypes.h \
+    src/common/mapcolors.h
 
 FORMS    += src/gui/mainwindow.ui
 

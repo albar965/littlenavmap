@@ -44,8 +44,6 @@ Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnL
                        QTableView *tableView)
   : parentWidget(parent), db(sqlDb), view(tableView), columns(cols)
 {
-  // TODO delete old and new delegate
-  view->setItemDelegateForColumn(2, new AirportIconDelegate(columns));
 }
 
 Controller::~Controller()

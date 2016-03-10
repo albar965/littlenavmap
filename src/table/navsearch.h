@@ -60,7 +60,6 @@ private:
 
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;
-  static const QHash<QString, QString> typeNames, navTypeNames;
 
 };
 

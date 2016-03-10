@@ -19,6 +19,7 @@
 #include "navmapwidget.h"
 
 #include "mapgui/mapquery.h"
+#include "common/mapcolors.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
@@ -28,8 +29,6 @@ using namespace Marble;
 MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(widget, mapQuery, mapScale), navMapWidget(widget)
 {
-  markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-  markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 }
 
 MapPainterMark::~MapPainterMark()
@@ -57,12 +56,12 @@ void MapPainterMark::paintMark(GeoPainter *painter)
   {
     painter->save();
     int xc = x, yc = y;
-    painter->setPen(markBackPen);
+    painter->setPen(mapcolors::markBackPen);
 
     painter->drawLine(xc, yc - 10, xc, yc + 10);
     painter->drawLine(xc - 10, yc, xc + 10, yc);
 
-    painter->setPen(markFillPen);
+    painter->setPen(mapcolors::markFillPen);
     painter->drawLine(xc, yc - 8, xc, yc + 8);
     painter->drawLine(xc - 8, yc, xc + 8, yc);
     painter->restore();
