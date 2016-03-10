@@ -84,7 +84,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   for(const MapAirport& airport : airports)
   {
     int x, y;
-    bool visible = wToS(airport.coords, x, y);
+    bool visible = wToS(airport.pos, x, y);
 
     if(!visible)
     {
@@ -115,20 +115,6 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   }
   if(widget->viewContext() == Marble::Still)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
-}
-
-MapAirport MapPainterAirport::getAirportAtPos(int xs, int ys)
-{
-  for(int i = airports.size() - 1; i >= 0; i--)
-  {
-    int x, y;
-    bool visible = wToS(airports.at(i).coords, x, y);
-
-    if(visible)
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < 10)
-        return airports.at(i);
-  }
-  return MapAirport();
 }
 
 void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *painter,
@@ -377,6 +363,14 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
       painter->drawLine(-w / 3, -h / 2, -w / 3, h / 2);
       painter->drawLine(-w / 3, 0, w / 3, 0);
       painter->drawLine(w / 3, -h / 2, w / 3, h / 2);
+
+      if(helipad.closed)
+      {
+        // Cross out runway number
+        painter->drawLine(-w, -w, w, w);
+        painter->drawLine(-w, w, w, -w);
+      }
+
       painter->resetTransform();
     }
   }

@@ -43,10 +43,13 @@ public:
   MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries);
   virtual ~MapPaintLayer();
 
-  MapAirport getAirportAtPos(int xs, int ys);
-
   void preDatabaseLoad();
   void postDatabaseLoad();
+
+  const MapLayer *getMapLayer() const
+  {
+    return mapLayer;
+  }
 
 private:
   bool databaseLoadStatus = false;
@@ -58,6 +61,7 @@ private:
   MapLayerSettings *layers = nullptr;
   NavMapWidget *navMapWidget = nullptr;
   QFont *mapFont = nullptr;
+  const MapLayer *mapLayer = nullptr;
 
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override

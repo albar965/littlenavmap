@@ -100,8 +100,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
 
   // Default view column descriptors
   columns->
-  append(Column("distance", tr("Distance")).distanceCol()).
   append(Column("nav_search_id").hidden()).
+  append(Column("distance", tr("Distance")).distanceCol()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).indexCondMap(navTypeCondMap)).
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap)).
@@ -222,9 +222,9 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                       const QVariant& dataValue) const
 {
   if(col->getColumnName() == "type")
-    return maptypes::navName(value.toString());
-  else if(col->getColumnName() == "nav_type")
     return maptypes::navTypeName(value.toString());
+  else if(col->getColumnName() == "nav_type")
+    return maptypes::navName(value.toString());
   else if(col->getColumnName() == "frequency" && !value.isNull())
   {
     double freq = value.toDouble();

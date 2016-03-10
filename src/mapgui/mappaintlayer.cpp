@@ -78,11 +78,6 @@ void MapPaintLayer::postDatabaseLoad()
   databaseLoadStatus = true;
 }
 
-MapAirport MapPaintLayer::getAirportAtPos(int xs, int ys)
-{
-  return mapPainterAirport->getAirportAtPos(xs, ys);
-}
-
 void MapPaintLayer::initLayers()
 {
   if(layers != nullptr)
@@ -132,7 +127,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
     painter->setFont(*mapFont);
 
-    const MapLayer *mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
+    mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 
     for(MapPainter *mapPainter : mapPainters)
       mapPainter->paint(mapLayer, painter, viewport);

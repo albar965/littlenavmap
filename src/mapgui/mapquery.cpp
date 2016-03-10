@@ -19,11 +19,15 @@
 
 #include "sql/sqlquery.h"
 #include "geo/rect.h"
+#include "geo/calculations.h"
+#include "coordinateconverter.h"
 #include "maplayer.h"
+
 #include <algorithm>
 #include <functional>
 #include <QSqlRecord>
 #include <marble/GeoDataLatLonBox.h>
+#include <algorithm>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -31,6 +35,38 @@ using namespace atools::geo;
 
 #define RECT_INFLATION_FACTOR 0.3
 #define RECT_INFLATION_ADD 0.1
+
+template<typename TYPE>
+void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, int xs, int ys,
+                            const TYPE *type)
+{
+  auto it = std::lower_bound(list.begin(), list.end(), type,
+                             [ = ](const TYPE * a1, const TYPE * a2)->bool
+                             {
+                               int x1, y1, x2, y2;
+                               conv.wToS(a1->pos, x1, y1);
+                               conv.wToS(a2->pos, x2, y2);
+                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
+                               atools::geo::manhattanDistance(x2, y2, xs, ys);
+                             });
+  list.insert(it, type);
+}
+
+void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<const MapAirport *>& list, int xs,
+                                 int ys,
+                                 const MapAirport *type)
+{
+  auto it = std::lower_bound(list.begin(), list.end(), type,
+                             [ = ](const MapAirport * a1, const MapAirport * a2)->bool
+                             {
+                               int x1, y1, x2, y2;
+                               conv.wToS(a1->towerCoords, x1, y1);
+                               conv.wToS(a2->towerCoords, x2, y2);
+                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
+                               atools::geo::manhattanDistance(x2, y2, xs, ys);
+                             });
+  list.insert(it, type);
+}
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -41,6 +77,55 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
 MapQuery::~MapQuery()
 {
   deInitQueries();
+}
+
+void MapQuery::getNearestObjects(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
+                                 MapSearchResult& result)
+{
+  for(int i = airports.size() - 1; i >= 0; i--)
+  {
+    const MapAirport& ap = airports.at(i);
+
+    int x, y;
+    bool visible = conv.wToS(ap.pos, x, y);
+
+    if(visible)
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+        insertSortedByDistance(conv, result.airports, xs, ys, &ap);
+
+    visible = conv.wToS(ap.towerCoords, x, y);
+    if(visible)
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+        insertSortedByTowerDistance(conv, result.towers, xs, ys, &ap);
+  }
+
+  for(int id : parkingCache.keys())
+  {
+    QList<MapParking> *parkings = parkingCache.object(id);
+    for(const MapParking& p : *parkings)
+    {
+      int x, y;
+      bool visible = conv.wToS(p.pos, x, y);
+
+      if(visible)
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.parkings, xs, ys, &p);
+    }
+  }
+
+  for(int id : helipadCache.keys())
+  {
+    QList<MapHelipad> *helipads = helipadCache.object(id);
+    for(const MapHelipad& p : *helipads)
+    {
+      int x, y;
+      bool visible = conv.wToS(p.pos, x, y);
+
+      if(visible)
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.helipads, xs, ys, &p);
+    }
+  }
 }
 
 void MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -122,7 +207,7 @@ MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
 
   ap.flags = getFlags(query);
   ap.magvar = query->value("mag_var").toFloat();
-  ap.coords = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
+  ap.pos = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
   ap.bounding = Rect(query->value("left_lonx").toFloat(), query->value("top_laty").toFloat(),
                      query->value("right_lonx").toFloat(), query->value("bottom_laty").toFloat());
 

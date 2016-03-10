@@ -20,6 +20,7 @@
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
+#include "table/formatter.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -37,6 +38,7 @@
 #include <marble/ViewportParams.h>
 
 #include "coordinateconverter.h"
+#include "maplayer.h"
 #include "ui_mainwindow.h"
 
 using namespace Marble;
@@ -153,14 +155,21 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
   QString actionShowInSearchText;
   actionShowInSearchText = ui->actionShowInSearch->text();
 
-  MapAirport ap = paintLayer->getAirportAtPos(pos.x(), pos.y());
+  CoordinateConverter conv(viewport());
+  MapSearchResult res;
+  mapQuery->getNearestObjects(conv, pos.x(), pos.y(), 20, res);
+
+  MapAirport ap;
+  if(!res.airports.isEmpty())
+    ap = *res.airports.first();
 
   if(ap.valid)
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(ap.name + " (" + ap.ident + ")"));
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().
+                                    arg(ap.name + " (" + ap.ident + ")"));
   else
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(tr("Map Object")));
 
-  ui->actionShowInSearch->setDisabled(!ap.valid);
+  ui->actionShowInSearch->setDisabled(ap.valid);
 
   m.addAction(ui->actionShowInSearch);
   QPoint cpos = QCursor::pos();
@@ -232,9 +241,77 @@ bool NavMapWidget::event(QEvent *event)
   if(event->type() == QEvent::ToolTip)
   {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-    MapAirport ap = paintLayer->getAirportAtPos(helpEvent->pos().x(), helpEvent->pos().y());
-    if(ap.valid)
-      QToolTip::showText(helpEvent->globalPos(), QString::number(ap.id) + "\n" + ap.ident + "\n" + ap.name);
+
+    CoordinateConverter conv(viewport());
+    MapSearchResult res;
+    mapQuery->getNearestObjects(conv, helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
+
+    const MapLayer *mapLayer = paintLayer->getMapLayer();
+
+    QString text;
+    if(mapLayer != nullptr && mapLayer->isAirportDiagram())
+    {
+      if(!res.towers.isEmpty())
+      {
+        const MapAirport& ap = *res.towers.first();
+
+        if(ap.towerFrequency > 0)
+          text += "Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2) + "\n";
+        else
+          text += "Tower\n";
+      }
+      if(!res.parkings.isEmpty())
+      {
+        const MapParking& p = *res.parkings.first();
+
+        text += "Parking " + QString::number(p.number) + "\n" +
+                p.name + "\n" +
+                p.type + "\n" +
+                QString::number(p.radius * 2) + " ft diameter\n" +
+                (p.jetway ? "Has Jetway\n" : "");
+
+      }
+      if(!res.helipads.isEmpty())
+      {
+        const MapHelipad& p = *res.helipads.first();
+
+        text += "Helipad\n" +
+                p.surface + "\n" +
+                p.type + "\n" +
+                QString::number(p.width) + " ft diameter\n" +
+                (p.closed ? "Is Closed\n" : "");
+
+      }
+    }
+
+    if(!res.airports.isEmpty())
+    {
+      MapAirport ap = *res.airports.first();
+      text = ap.name + " (" + ap.ident + ")\n" +
+             "Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft\n" +
+             "Altitude: " + QLocale().toString(ap.altitude) + " ft\n";
+
+      if(ap.hard())
+        text += "Has Hard Runways\n";
+      if(ap.soft())
+        text += "Has Soft Runways\n";
+      if(ap.water())
+        text += "Has Water Runways\n";
+
+      if(ap.towerFrequency > 0)
+        text += "Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2) + "\n";
+      if(ap.atisFrequency > 0)
+        text += "ATIS: " + formatter::formatDoubleUnit(ap.atisFrequency / 1000., QString(), 2) + "\n";
+      if(ap.awosFrequency > 0)
+        text += "AWOS: " + formatter::formatDoubleUnit(ap.awosFrequency / 1000., QString(), 2) + "\n";
+      if(ap.asosFrequency > 0)
+        text += "ASOS: " + formatter::formatDoubleUnit(ap.asosFrequency / 1000., QString(), 2) + "\n";
+      if(ap.unicomFrequency > 0)
+        text += "Unicom: " + formatter::formatDoubleUnit(ap.unicomFrequency / 1000., QString(), 2) + "\n";
+    }
+
+    if(!text.isEmpty())
+      QToolTip::showText(helpEvent->globalPos(), text.trimmed());
     else
     {
       QToolTip::hideText();
@@ -243,5 +320,6 @@ bool NavMapWidget::event(QEvent *event)
 
     return true;
   }
+
   return QWidget::event(event);
 }

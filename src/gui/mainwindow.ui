@@ -16,108 +16,6 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_10">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayoutMap">
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>40</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>&lt;&lt;</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>40</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>&gt;&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>40</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Home</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QComboBox" name="comboBox_2">
-        <item>
-         <property name="text">
-          <string>Globe</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Flat</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="comboBox">
-        <item>
-         <property name="text">
-          <string>Openstreetmap</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Blue Marble</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <widget class="QWidget" name="mapWidgetDummy" native="true"/>
     </item>
    </layout>
@@ -1689,6 +1587,25 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="mapToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapHome"/>
+   <addaction name="actionMapMark"/>
+   <addaction name="actionMapBack"/>
+   <addaction name="actionMapNext"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapMoreDetails"/>
+   <addaction name="actionMapLessDetails"/>
+   <addaction name="separator"/>
+  </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -2023,6 +1940,10 @@
    </property>
   </action>
   <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settings.svg</normaloff>:/littlenavmap/resources/icons/settings.svg</iconset>
+   </property>
    <property name="text">
     <string>Options ...</string>
    </property>
@@ -2095,6 +2016,60 @@
    </property>
    <property name="toolTip">
     <string>Show in Search</string>
+   </property>
+  </action>
+  <action name="actionMapMoreDetails">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+   </property>
+   <property name="text">
+    <string>More Details</string>
+   </property>
+  </action>
+  <action name="actionMapLessDetails">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/lessdetails.svg</normaloff>:/littlenavmap/resources/icons/lessdetails.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Less Details</string>
+   </property>
+  </action>
+  <action name="actionMapHome">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Home</string>
+   </property>
+  </action>
+  <action name="actionMapBack">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/back.svg</normaloff>:/littlenavmap/resources/icons/back.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Map Back</string>
+   </property>
+  </action>
+  <action name="actionMapNext">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/next.svg</normaloff>:/littlenavmap/resources/icons/next.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Map Next</string>
+   </property>
+  </action>
+  <action name="actionMapMark">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Map Mark</string>
    </property>
   </action>
  </widget>

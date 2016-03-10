@@ -34,8 +34,6 @@ public:
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                      Marble::ViewportParams *viewport) override;
 
-  MapAirport getAirportAtPos(int xs, int ys);
-
 private:
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
                      const MapLayer *mapLayer,

@@ -36,16 +36,16 @@ class CoordinateConverter
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
 
-  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible);
-  QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr);
-  bool wToS(const atools::geo::Pos& coords, int& x, int& y);
-  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y);
-  bool wToS(const atools::geo::Pos& coords, float& x, float& y);
-  bool wToS(const atools::geo::Pos& coords, double& x, double& y);
+  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible) const;
+  QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, int& x, int& y) const;
+  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y) const;
+  bool wToS(const atools::geo::Pos& coords, float& x, float& y) const;
+  bool wToS(const atools::geo::Pos& coords, double& x, double& y) const;
 
-  bool sToW(int x, int y, Marble::GeoDataCoordinates& coords);
-  atools::geo::Pos sToW(int x, int y);
-  atools::geo::Pos sToW(const QPoint& point);
+  bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
+  atools::geo::Pos sToW(int x, int y) const;
+  atools::geo::Pos sToW(const QPoint& point) const;
 
 private:
   const Marble::ViewportParams *viewport;

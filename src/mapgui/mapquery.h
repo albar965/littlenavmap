@@ -43,6 +43,7 @@ class GeoDataLatLonBox;
 }
 
 class MapLayer;
+class CoordinateConverter;
 
 enum MapAirportFlags
 {
@@ -73,7 +74,7 @@ struct MapAirport
 
   bool valid = false;
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
-  atools::geo::Pos coords, towerCoords;
+  atools::geo::Pos pos, towerCoords;
   atools::geo::Rect bounding;
 
   bool isSet(MapAirportFlags flag) const
@@ -86,9 +87,19 @@ struct MapAirport
     return isSet(HARD);
   }
 
+  bool soft() const
+  {
+    return isSet(SOFT);
+  }
+
   bool softOnly() const
   {
     return !isSet(HARD) && isSet(SOFT);
+  }
+
+  bool water() const
+  {
+    return isSet(WATER);
   }
 
   bool waterOnly() const
@@ -158,11 +169,23 @@ struct MapHelipad
   bool closed;
 };
 
+struct MapSearchResult
+{
+  QList<const MapAirport *> airports;
+  QList<const MapAirport *> towers;
+  QList<const MapParking *> parkings;
+  QList<const MapHelipad *> helipads;
+};
+
 class MapQuery
 {
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
   virtual ~MapQuery();
+
+  /* Result is only valid until the next paint is called */
+  void getNearestObjects(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
+                         MapSearchResult& result);
 
   void getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                    QList<MapAirport>& airportList);
@@ -183,9 +206,6 @@ public:
   void deInitQueries();
 
 private:
-  template<typename TYPE>
-  bool handleCache(QMultiMap<int, TYPE>& cache, int id, QList<MapRunway>& runwayList);
-
   atools::sql::SqlDatabase *db;
   Marble::GeoDataLatLonBox curRect;
   const MapLayer *curMapLayer;
