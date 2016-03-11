@@ -53,19 +53,18 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   initLayers();
 
   mapScale = new MapScale();
-  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
-  mapPainters.append(mapPainterAirport);
-
   mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale);
-  mapPainters.append(mapPainterNav);
 
-  mapPainters.append(new MapPainterMark(navMapWidget, mapQuery, mapScale));
+  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
+
+  mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale);
 }
 
 MapPaintLayer::~MapPaintLayer()
 {
-  qDeleteAll(mapPainters);
-  mapPainters.clear();
+  delete mapPainterNav;
+  delete mapPainterAirport;
+  delete mapPainterMark;
   delete layers;
   delete mapScale;
   delete mapFont;
@@ -94,23 +93,40 @@ void MapPaintLayer::initLayers()
   layers->
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
-         waypointSymbolSize(14).vorSymbolSize(20).ndbSymbolSize(20)).
+         waypointSymbolSize(14).waypointName().
+         vorSymbolSize(24).vorIdent().vorInfo().
+         ndbSymbolSize(24).ndbIdent().ndbInfo()).
 
   append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo().
-         waypointSymbolSize(14).vorSymbolSize(20).ndbSymbolSize(20)).
+         waypointSymbolSize(14).waypointName().
+         vorSymbolSize(24).vorIdent().vorInfo().
+         ndbSymbolSize(24).ndbIdent().ndbInfo()).
 
   append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
-         waypointSymbolSize(10).vorSymbolSize(20).ndbSymbolSize(20)).
+         waypointSymbolSize(10).waypointName().
+         vorSymbolSize(24).vorIdent().vorInfo().
+         ndbSymbolSize(24).ndbIdent().ndbInfo()).
 
-  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().waypoint(false).
-         vorSymbolSize(18).ndbSymbolSize(18)).
+  append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
+         waypointSymbolSize(8).
+         vorSymbolSize(22).vorIdent().vorInfo().
+         ndbSymbolSize(22).ndbIdent().ndbInfo()).
 
-  append(defLayer.clone(100.f).airportSymbolSize(14).waypoint(false).
-         vorSymbolSize(14).ndbSymbolSize(14)).
+  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
+         waypoint(false).
+         vorSymbolSize(20).vorIdent().vorInfo().
+         ndbSymbolSize(20).ndbIdent().ndbInfo()).
+
+  append(defLayer.clone(100.f).airportSymbolSize(14).
+         waypoint(false).
+         vorSymbolSize(16).vorIdent().
+         ndbSymbolSize(14)).
 
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
-         airportOverviewRunway(false).airportName(false).waypoint(false).
-         vorSymbolSize(10).ndbSymbolSize(10)).
+         airportOverviewRunway(false).airportName(false).
+         waypoint(false).
+         vorSymbolSize(10).
+         ndbSymbolSize(10)).
 
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
@@ -135,14 +151,29 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     mapScale->update(viewport, navMapWidget->distance());
 
     if(mapFont == nullptr)
+#if defined(Q_OS_WIN32)
+      mapFont = new QFont("Arial", painter->font().pointSize());
+#else
       mapFont = new QFont("Helvetica", painter->font().pointSize());
-
+#endif
     painter->setFont(*mapFont);
 
     mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
 
-    for(MapPainter *mapPainter : mapPainters)
-      mapPainter->paint(mapLayer, painter, viewport);
+    if(mapLayer != nullptr)
+    {
+      if(mapLayer->isAirportDiagram())
+      {
+        mapPainterAirport->paint(mapLayer, painter, viewport);
+        mapPainterNav->paint(mapLayer, painter, viewport);
+      }
+      else
+      {
+        mapPainterNav->paint(mapLayer, painter, viewport);
+        mapPainterAirport->paint(mapLayer, painter, viewport);
+      }
+      mapPainterMark->paint(mapLayer, painter, viewport);
+    }
   }
 
   return true;

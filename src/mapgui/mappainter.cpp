@@ -17,7 +17,7 @@
 
 #include "mappainter.h"
 #include "mapscale.h"
-
+#include "common/mapcolors.h"
 #include "geo/pos.h"
 
 #include <marble/GeoPainter.h>
@@ -33,7 +33,6 @@ MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, M
 
 MapPainter::~MapPainter()
 {
-
 }
 
 void MapPainter::setRenderHints(GeoPainter *painter)
@@ -48,5 +47,63 @@ void MapPainter::setRenderHints(GeoPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::TextAntialiasing, false);
   }
+}
 
+void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+                         bool bold, bool italic, bool right, int transparency)
+{
+  if(texts.isEmpty())
+    return;
+
+  painter->save();
+
+  if(transparency != 255)
+  {
+    if(transparency == 0)
+      painter->setBrush(Qt::NoBrush);
+    else
+    {
+      QColor col(mapcolors::textBoxColor);
+      col.setAlpha(transparency);
+      painter->setBrush(col);
+    }
+  }
+  else
+    painter->setBrush(mapcolors::textBoxColor);
+
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
+
+  int yoffset = 0;
+  if(transparency != 0)
+  {
+    painter->setPen(mapcolors::textBackgroundPen);
+    for(const QString& t : texts)
+    {
+      int w = metrics.width(t);
+      painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
+      yoffset += h;
+    }
+  }
+
+  QFont f = painter->font();
+  if(bold || italic)
+  {
+    f.setBold(bold);
+    f.setItalic(italic);
+    painter->setFont(f);
+  }
+
+  yoffset = 0;
+  painter->setPen(textPen);
+  for(const QString& t : texts)
+  {
+    int newx = x;
+    if(right)
+      newx -= metrics.width(t);
+
+    painter->drawText(newx, y + yoffset, t);
+    yoffset += h;
+  }
+  painter->restore();
 }

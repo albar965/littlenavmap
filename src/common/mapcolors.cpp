@@ -44,7 +44,7 @@ const QColor darkParkingTextColor = QColor(Qt::black);
 const QColor brightParkingTextColor = QColor(Qt::white);
 const QColor towerTextColor = QColor(Qt::black);
 const QColor runwayDimsTextColor = QColor(Qt::black);
-const QColor transparentTextBoxColor = QColor::fromRgb(255, 255, 255, 180);
+
 const QColor textBoxColor = QColor(Qt::white);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);

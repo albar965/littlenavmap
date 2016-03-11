@@ -38,8 +38,6 @@ private:
   void airportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
                      const MapLayer *mapLayer,
                      bool fast);
-  void textBox(Marble::GeoPainter *painter, const MapAirport& ap, const QStringList& texts,
-               const QPen& pen, int x, int y, bool transparent);
 
   void airportDiagram(const MapLayer *mapLayer, Marble::GeoPainter *painter, const MapAirport& airport,
                       bool fast);

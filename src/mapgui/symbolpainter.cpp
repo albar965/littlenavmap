@@ -91,18 +91,24 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
 void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& wp, int x, int y, int size,
                                        bool fast)
 {
+  Q_UNUSED(wp);
   painter->save();
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QColor(Qt::magenta), 1.5, Qt::SolidLine, Qt::SquareCap));
   painter->setBackgroundMode(Qt::TransparentMode);
 
-  int radius = size / 2;
-  QPolygon polygon;
-  polygon << QPoint(x, y - radius)
-          << QPoint(x + radius, y + radius)
-          << QPoint(x - radius, y + radius);
+  if(!fast)
+  {
+    int radius = size / 2;
+    QPolygon polygon;
+    polygon << QPoint(x, y - radius)
+            << QPoint(x + radius, y + radius)
+            << QPoint(x - radius, y + radius);
 
-  painter->drawConvexPolygon(polygon);
+    painter->drawConvexPolygon(polygon);
+  }
+  else
+    painter->drawPoint(x, y);
 
   painter->restore();
 }
@@ -146,16 +152,17 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, i
 
 void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ndb, int x, int y, int size, bool fast)
 {
+  Q_UNUSED(ndb);
   painter->save();
   int radius = size / 2;
 
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QColor(Qt::darkRed), 1.5, size > 14 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
+  painter->setPen(QPen(QColor(Qt::darkRed), 1.5, size > 10 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
 
   if(!fast)
     painter->drawEllipse(QPoint(x, y), radius, radius);
-  if(size > 14)
+  if(size > 10)
   {
     if(!fast)
       painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);

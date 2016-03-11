@@ -82,6 +82,9 @@ MapQuery::~MapQuery()
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                  int xs, int ys, int screenDistance, MapSearchResult& result)
 {
+  if(mapLayer == nullptr)
+    return;
+
   if(mapLayer->isAirport())
     for(int i = airports.list.size() - 1; i >= 0; i--)
     {
@@ -165,6 +168,9 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
 const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                bool lazy)
 {
+  if(mapLayer == nullptr)
+    return nullptr;
+
   if(airports.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery airports cache miss";
 
@@ -187,6 +193,9 @@ const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& r
 const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
+  if(mapLayer == nullptr)
+    return nullptr;
+
   if(waypoints.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery waypoints cache miss";
 
@@ -214,6 +223,9 @@ const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, c
 
 const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
+  if(mapLayer == nullptr)
+    return nullptr;
+
   if(vors.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery vor cache miss";
 
@@ -246,6 +258,9 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
 
 const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
+  if(mapLayer == nullptr)
+    return nullptr;
+
   if(ndbs.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery ndb cache miss";
 

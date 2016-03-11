@@ -23,6 +23,7 @@
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "table/column.h"
+#include "navicondelegate.h"
 #include "ui_mainwindow.h"
 #include "table/columnlist.h"
 #include "geo/pos.h"
@@ -117,6 +118,9 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("lonx").hidden()).
   append(Column("laty").hidden())
   ;
+
+  // TODO delete old and new delegate
+  view->setItemDelegateForColumn(2, new NavIconDelegate(columns));
 
   Search::initViewAndController();
 

@@ -98,8 +98,13 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
       QStringList texts = airportTexts(mapLayer, airport);
 
       if(!texts.isEmpty())
-        textBox(painter, airport, texts, mapcolors::colorForAirport(
-                  airport), x, y, mapLayer->isAirportDiagram());
+      {
+        bool bold = airport.isSet(ADDON);
+        int transparency = mapLayer->isAirportDiagram() ? 180 : 255;
+        if(!airport.isSet(SCENERY))
+          transparency = 0;
+        textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, bold, bold, false, transparency);
+      }
     }
   }
   if(widget->viewContext() == Marble::Still)
@@ -614,51 +619,6 @@ void MapPainterAirport::runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *
     if(innerRects != nullptr)
       innerRects->append(QRect(-(width / 6), -length / 2 + 2, width - 4, length - 4));
   }
-}
-
-void MapPainterAirport::textBox(GeoPainter *painter, const MapAirport& ap, const QStringList& texts,
-                                const QPen& pen, int x, int y, bool transparent)
-{
-  painter->save();
-
-  if(transparent)
-    painter->setBrush(QBrush(mapcolors::transparentTextBoxColor));
-  else
-    painter->setBrush(QBrush(mapcolors::textBoxColor));
-
-  QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
-
-  int yoffset = 0;
-  painter->setPen(mapcolors::textBackgroundPen);
-  for(const QString& t : texts)
-  {
-    int w = metrics.width(t);
-    painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
-    yoffset += h;
-  }
-
-  QFont f = painter->font();
-  if(ap.isSet(ADDON))
-  {
-    f.setBold(true);
-    painter->setFont(f);
-  }
-
-  yoffset = 0;
-  painter->setPen(pen);
-  for(const QString& t : texts)
-  {
-    painter->drawText(x, y + yoffset, t);
-    yoffset += h;
-  }
-
-  if(ap.isSet(ADDON))
-  {
-    f.setBold(false);
-    painter->setFont(f);
-  }
-  painter->restore();
 }
 
 QString MapPainterAirport::parkingName(const QString& name)

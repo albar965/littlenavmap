@@ -41,7 +41,6 @@ extern const QColor darkParkingTextColor;
 extern const QColor brightParkingTextColor;
 extern const QColor towerTextColor;
 extern const QColor runwayDimsTextColor;
-extern const QColor transparentTextBoxColor;
 extern const QColor textBoxColor;
 extern const QColor airportSymbolFillColor;
 extern const QPen markBackPen;

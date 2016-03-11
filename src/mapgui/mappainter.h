@@ -50,6 +50,9 @@ protected:
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;
+  void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+               bool bold = false, bool italic = false, bool right = false, int transparency = 255);
+
 };
 
 #endif // MAPPAINTER_H

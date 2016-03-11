@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "airporticondelegate.h"
+#include "navicondelegate.h"
 #include "column.h"
 #include "columnlist.h"
 #include "sqlmodel.h"
@@ -29,19 +29,19 @@
 #include <QSqlQueryModel>
 #include <QApplication>
 
-AirportIconDelegate::AirportIconDelegate(const ColumnList *columns)
+NavIconDelegate::NavIconDelegate(const ColumnList *columns)
   : cols(columns)
 {
   symbolPainter = new SymbolPainter();
 }
 
-AirportIconDelegate::~AirportIconDelegate()
+NavIconDelegate::~NavIconDelegate()
 {
   delete symbolPainter;
 }
 
-void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
-                                const QModelIndex& index) const
+void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
+                            const QModelIndex& index) const
 {
   QModelIndex idx(index);
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());
@@ -58,13 +58,9 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   painter->setRenderHint(QPainter::Antialiasing);
 
   QString text = idx.data().toString();
-  MapAirport ap = mapAirport(sqlModel, idx.row());
-  if(ap.isSet(ADDON))
-  {
-    QFont font(painter->font());
-    font.setBold(true);
-    painter->setFont(font);
-  }
+
+  QString type = value(sqlModel, idx.row(), "type").toString();
+  QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
 
   if(idx.column() == sqlModel->getSortColumnIndex() &&
      (option.state & QStyle::State_Selected) == 0)
@@ -76,22 +72,42 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   int symSize = option.rect.height() - 4;
   int w = painter->fontMetrics().maxWidth();
-  symbolPainter->drawAirportSymbol(painter, ap,
-                                   option.rect.x() + (option.rect.width() - w) / 2,
-                                   option.rect.y() + symSize / 2 + 2,
-                                   symSize,
-                                   false, false);
+
+  if(navtype == "WAYPOINT")
+    symbolPainter->drawWaypointSymbol(painter, MapWaypoint(),
+                                      option.rect.x() + (option.rect.width() - w) / 2,
+                                      option.rect.y() + symSize / 2 + 2,
+                                      symSize,
+                                      false);
+  else if(navtype == "NDB")
+    symbolPainter->drawNdbSymbol(painter, MapNdb(),
+                                 option.rect.x() + (option.rect.width() - w) / 2,
+                                 option.rect.y() + symSize / 2 + 2,
+                                 symSize,
+                                 false);
+  else if(navtype == "VOR" || navtype == "VORDME" || navtype == "DME")
+  {
+    MapVor vor;
+    vor.dmeOnly = navtype == "DME";
+    vor.hasDme = navtype == "VORDME" || navtype == "DME";
+
+    symbolPainter->drawVorSymbol(painter, vor,
+                                 option.rect.x() + (option.rect.width() - w) / 2,
+                                 option.rect.y() + symSize / 2 + 2,
+                                 symSize,
+                                 false);
+  }
 
   painter->restore();
 }
 
-QSize AirportIconDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize NavIconDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   Q_UNUSED(index);
   return QSize(option.fontMetrics.maxWidth() + option.rect.height() - 4, option.rect.height() - 4);
 }
 
-QVariant AirportIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const
+QVariant NavIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const
 {
   const Column *col = cols->getColumn(name);
   Q_ASSERT(col != nullptr);
@@ -104,36 +120,4 @@ QVariant AirportIconDelegate::value(const SqlModel *sqlModel, int row, const QSt
     qCritical() << "sibling for column" << name << "not found";
 
   return QVariant();
-}
-
-MapAirport AirportIconDelegate::mapAirport(const SqlModel *sqlModel, int row) const
-{
-  MapAirport ap;
-  ap.longestRunwayHeading =
-    static_cast<int>(std::roundf(value(sqlModel, row, "longest_runway_heading").toFloat()));
-
-  ap.flags |= flag(sqlModel, row, "num_helipad", HELIPORT);
-  ap.flags |= flag(sqlModel, row, "rating", SCENERY);
-  ap.flags |= flag(sqlModel, row, "has_avgas", FUEL);
-  ap.flags |= flag(sqlModel, row, "has_jetfuel", FUEL);
-  ap.flags |= flag(sqlModel, row, "tower_frequency", TOWER);
-  ap.flags |= flag(sqlModel, row, "is_closed", CLOSED);
-  ap.flags |= flag(sqlModel, row, "is_military", MIL);
-  ap.flags |= flag(sqlModel, row, "is_addon", ADDON);
-  ap.flags |= flag(sqlModel, row, "num_approach", APPR);
-  ap.flags |= flag(sqlModel, row, "num_runway_hard", HARD);
-  ap.flags |= flag(sqlModel, row, "num_runway_soft", SOFT);
-  ap.flags |= flag(sqlModel, row, "num_runway_water", WATER);
-  ap.flags |= flag(sqlModel, row, "num_runway_light", LIGHT);
-
-  return ap;
-}
-
-int AirportIconDelegate::flag(const SqlModel *sqlModel, int row, const QString& field, int flag) const
-{
-  QVariant val = value(sqlModel, row, field);
-  if(val.isNull())
-    return NONE;
-  else
-    return val.toInt() > 0 ? flag : NONE;
 }

@@ -58,73 +58,124 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
   setRenderHints(painter);
 
-  const QList<MapVor> *vors = query->getVors(curBox, mapLayer, drawFast);
-  if(vors != nullptr)
+  if(mapLayer->isWaypoint())
   {
-    if(widget->viewContext() == Marble::Still)
+    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, mapLayer, drawFast);
+    if(waypoints != nullptr)
     {
-      qDebug() << "Number of vors" << vors->size();
-      qDebug() << "Time for query" << t.elapsed() << " ms";
-      qDebug() << curBox.toString();
-      qDebug() << *mapLayer;
-      t.restart();
-    }
+      if(widget->viewContext() == Marble::Still)
+      {
+        qDebug() << "Number of waypoints" << waypoints->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *mapLayer;
+        t.restart();
+      }
 
-    for(const MapVor& vor : *vors)
-    {
-      int x, y;
-      bool visible = wToS(vor.pos, x, y);
+      for(const MapWaypoint& waypoint : *waypoints)
+      {
+        int x, y;
+        bool visible = wToS(waypoint.pos, x, y);
 
-      if(visible)
-        if(mapLayer->isVor())
-          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), drawFast);
-    }
-  }
-
-  const QList<MapNdb> *ndbs = query->getNdbs(curBox, mapLayer, drawFast);
-  if(ndbs != nullptr)
-  {
-    if(widget->viewContext() == Marble::Still)
-    {
-      qDebug() << "Number of ndbs" << vors->size();
-      qDebug() << "Time for query" << t.elapsed() << " ms";
-      qDebug() << curBox.toString();
-      qDebug() << *mapLayer;
-      t.restart();
-    }
-
-    for(const MapNdb& ndb : *ndbs)
-    {
-      int x, y;
-      bool visible = wToS(ndb.pos, x, y);
-
-      if(visible)
-        if(mapLayer->isNdb())
-          symbolPainter->drawNdbSymbol(painter, ndb, x, y, mapLayer->getNdbSymbolSize(), drawFast);
-    }
-  }
-
-  const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, mapLayer, drawFast);
-  if(waypoints != nullptr)
-  {
-    if(widget->viewContext() == Marble::Still)
-    {
-      qDebug() << "Number of waypoints" << vors->size();
-      qDebug() << "Time for query" << t.elapsed() << " ms";
-      qDebug() << curBox.toString();
-      qDebug() << *mapLayer;
-      t.restart();
-    }
-
-    for(const MapWaypoint& waypoint : *waypoints)
-    {
-      int x, y;
-      bool visible = wToS(waypoint.pos, x, y);
-
-      if(visible)
-        if(mapLayer->isWaypoint())
+        if(visible)
           symbolPainter->drawWaypointSymbol(painter, waypoint, x, y,
                                             mapLayer->getWaypointSymbolSize(), drawFast);
+        QStringList texts;
+
+        if(mapLayer->isWaypointName())
+          texts.append(waypoint.ident);
+
+        x -= mapLayer->getNdbSymbolSize() / 2 + 2;
+        textBox(painter, texts, QColor(Qt::magenta), x, y, false, false, true, 0);
+      }
+    }
+  }
+
+  if(mapLayer->isVor())
+  {
+    const QList<MapVor> *vors = query->getVors(curBox, mapLayer, drawFast);
+    if(vors != nullptr)
+    {
+      if(widget->viewContext() == Marble::Still)
+      {
+        qDebug() << "Number of vors" << vors->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *mapLayer;
+        t.restart();
+      }
+
+      for(const MapVor& vor : *vors)
+      {
+        int x, y;
+        bool visible = wToS(vor.pos, x, y);
+
+        if(visible)
+        {
+          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), drawFast);
+
+          QStringList texts;
+
+          if(mapLayer->isVorInfo())
+          {
+            QString range;
+            if(vor.range < 40)
+              range = "T";
+            else if(vor.range < 62)
+              range = "L";
+            else if(vor.range < 200)
+              range = "H";
+            texts.append(vor.ident + " (" + range + ")");
+            texts.append(QString::number(vor.frequency / 1000., 'f', 2));
+          }
+          else if(mapLayer->isVorIdent())
+            texts.append(vor.ident);
+
+          x -= mapLayer->getVorSymbolSize() / 2 + 2;
+          textBox(painter, texts, QColor(Qt::darkBlue), x, y, false, false, true, 0);
+        }
+      }
+    }
+  }
+
+  if(mapLayer->isNdb())
+  {
+    const QList<MapNdb> *ndbs = query->getNdbs(curBox, mapLayer, drawFast);
+    if(ndbs != nullptr)
+    {
+      if(widget->viewContext() == Marble::Still)
+      {
+        qDebug() << "Number of ndbs" << ndbs->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *mapLayer;
+        t.restart();
+      }
+
+      for(const MapNdb& ndb : *ndbs)
+      {
+        int x, y;
+        bool visible = wToS(ndb.pos, x, y);
+
+        if(visible)
+        {
+          symbolPainter->drawNdbSymbol(painter, ndb, x, y, mapLayer->getNdbSymbolSize(), drawFast);
+
+          QStringList texts;
+
+          if(mapLayer->isNdbInfo())
+          {
+            QString type = ndb.type == "COMPASS_POINT" ? "CP" : ndb.type;
+            texts.append(ndb.ident + " (" + type + ")");
+            texts.append(QString::number(ndb.frequency / 100., 'f', 1));
+          }
+          else if(mapLayer->isNdbIdent())
+            texts.append(ndb.ident);
+
+          x -= mapLayer->getNdbSymbolSize() / 2 + 2;
+          textBox(painter, texts, QColor(Qt::darkRed), x, y, false, false, true, 0);
+        }
+      }
     }
   }
 

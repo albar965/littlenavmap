@@ -64,7 +64,8 @@ SOURCES += src/main.cpp\
     src/mapgui/symbolpainter.cpp \
     src/common/maptypes.cpp \
     src/common/mapcolors.cpp \
-    src/mapgui/mappainternav.cpp
+    src/mapgui/mappainternav.cpp \
+    src/table/navicondelegate.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -91,7 +92,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/symbolpainter.h \
     src/common/maptypes.h \
     src/common/mapcolors.h \
-    src/mapgui/mappainternav.h
+    src/mapgui/mappainternav.h \
+    src/table/navicondelegate.h
 
 FORMS    += src/gui/mainwindow.ui
 
