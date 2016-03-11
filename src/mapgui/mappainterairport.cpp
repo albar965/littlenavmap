@@ -36,7 +36,6 @@ using namespace atools::geo;
 MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(widget, mapQuery, mapScale)
 {
-
   symbolPainter = new SymbolPainter();
 }
 
@@ -51,37 +50,29 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   if(mapLayer == nullptr)
     return;
 
+  bool drawFast = widget->viewContext() == Marble::Animation;
+  // || airports.size() < 100
+
   const GeoDataLatLonAltBox& curBox = viewport->viewLatLonAltBox();
   QElapsedTimer t;
   t.start();
 
-  if(widget->viewContext() == Marble::Still || airports.size() < 100)
-  {
-    airports.clear();
-    query->getAirports(curBox, mapLayer, airports);
-  }
+  const QList<MapAirport> *airports = query->getAirports(curBox, mapLayer, drawFast);
+  if(airports == nullptr)
+    return;
 
-  if(widget->viewContext() == Marble::Still)
+  if(drawFast)
   {
-    qDebug() << "Number of aiports" << airports.size();
+    qDebug() << "Number of aiports" << airports->size();
     qDebug() << "Time for query" << t.elapsed() << " ms";
     qDebug() << curBox.toString();
     qDebug() << *mapLayer;
     t.restart();
   }
 
-  if(widget->viewContext() == Marble::Still)
-  {
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setRenderHint(QPainter::TextAntialiasing, true);
-  }
-  else if(widget->viewContext() == Marble::Animation)
-  {
-    painter->setRenderHint(QPainter::Antialiasing, false);
-    painter->setRenderHint(QPainter::TextAntialiasing, false);
-  }
+  setRenderHints(painter);
 
-  for(const MapAirport& airport : airports)
+  for(const MapAirport& airport : *airports)
   {
     int x, y;
     bool visible = wToS(airport.pos, x, y);
@@ -96,8 +87,6 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
     if(visible)
     {
-      bool drawFast = widget->viewContext() == Marble::Animation;
-
       if(mapLayer->isAirportDiagram())
         airportDiagram(mapLayer, painter, airport, false);
       else

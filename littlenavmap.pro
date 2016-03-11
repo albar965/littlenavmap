@@ -63,7 +63,8 @@ SOURCES += src/main.cpp\
     src/table/airporticondelegate.cpp \
     src/mapgui/symbolpainter.cpp \
     src/common/maptypes.cpp \
-    src/common/mapcolors.cpp
+    src/common/mapcolors.cpp \
+    src/mapgui/mappainternav.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -89,7 +90,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/airporticondelegate.h \
     src/mapgui/symbolpainter.h \
     src/common/maptypes.h \
-    src/common/mapcolors.h
+    src/common/mapcolors.h \
+    src/mapgui/mappainternav.h
 
 FORMS    += src/gui/mainwindow.ui
 

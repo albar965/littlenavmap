@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 
+#include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
 
@@ -32,5 +33,20 @@ MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, M
 
 MapPainter::~MapPainter()
 {
+
+}
+
+void MapPainter::setRenderHints(GeoPainter *painter)
+{
+  if(widget->viewContext() == Marble::Still)
+  {
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::TextAntialiasing, true);
+  }
+  else if(widget->viewContext() == Marble::Animation)
+  {
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    painter->setRenderHint(QPainter::TextAntialiasing, false);
+  }
 
 }

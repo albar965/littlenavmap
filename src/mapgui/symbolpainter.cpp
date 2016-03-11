@@ -87,3 +87,31 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
 
   painter->restore();
 }
+
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& ap, int x, int y, int size,
+                                       bool fast)
+{
+  painter->save();
+  painter->setBrush(QColor(Qt::green));
+  painter->setPen(QPen(QColor(Qt::green), size, Qt::SolidLine, Qt::RoundCap));
+  painter->drawPoint(x, y);
+  painter->restore();
+}
+
+void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& ap, int x, int y, int size, bool fast)
+{
+  painter->save();
+  painter->setBrush(QColor(Qt::blue));
+  painter->setPen(QPen(QColor(Qt::blue), size, Qt::SolidLine, Qt::RoundCap));
+  painter->drawPoint(x, y);
+  painter->restore();
+}
+
+void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ap, int x, int y, int size, bool fast)
+{
+  painter->save();
+  painter->setBrush(QColor(Qt::darkRed));
+  painter->setPen(QPen(QColor(Qt::darkRed), size, Qt::SolidLine, Qt::RoundCap));
+  painter->drawPoint(x, y);
+  painter->restore();
+}

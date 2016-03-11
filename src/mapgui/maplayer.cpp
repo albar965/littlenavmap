@@ -118,6 +118,90 @@ bool MapLayer::operator<(const MapLayer& other) const
   return maxRange < other.maxRange;
 }
 
+MapLayer& MapLayer::waypoint(bool value)
+{
+  layerWaypoint = value;
+  return *this;
+}
+
+MapLayer& MapLayer::waypointName(bool value)
+{
+  layerWaypointName = value;
+  return *this;
+}
+
+MapLayer& MapLayer::vor(bool value)
+{
+  layerVor = value;
+  return *this;
+}
+
+MapLayer& MapLayer::vorIdent(bool value)
+{
+  layerVorIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::vorInfo(bool value)
+{
+  layerVorInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ndb(bool value)
+{
+  layerNdb = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ndbIdent(bool value)
+{
+  layerNdbIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ndbInfo(bool value)
+{
+  layerNdbInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ils(bool value)
+{
+  layerIls = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ilsIdent(bool value)
+{
+  layerIlsIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ilsInfo(bool value)
+{
+  layerIlsInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::waypointSymbolSize(int size)
+{
+  layerWaypointSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::vorSymbolSize(int size)
+{
+  layerVorSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::ndbSymbolSize(int size)
+{
+  layerNdbSymbolSize = size;
+  return *this;
+}
+
 QDebug operator<<(QDebug out, const MapLayer& record)
 {
   QDebugStateSaver saver(out);

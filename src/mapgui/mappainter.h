@@ -45,6 +45,8 @@ public:
                      Marble::ViewportParams *viewport) = 0;
 
 protected:
+  void setRenderHints(Marble::GeoPainter *painter);
+
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;

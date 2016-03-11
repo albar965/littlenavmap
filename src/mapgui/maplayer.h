@@ -54,6 +54,22 @@ public:
   MapLayer& airportInfo(bool = true);
   MapLayer& minRunwayLength(int length);
 
+  MapLayer& waypoint(bool value = true);
+  MapLayer& waypointName(bool value = true);
+  MapLayer& vor(bool value = true);
+  MapLayer& vorIdent(bool value = true);
+  MapLayer& vorInfo(bool value = true);
+  MapLayer& ndb(bool value = true);
+  MapLayer& ndbIdent(bool value = true);
+  MapLayer& ndbInfo(bool value = true);
+  MapLayer& ils(bool value = true);
+  MapLayer& ilsIdent(bool value = true);
+  MapLayer& ilsInfo(bool value = true);
+
+  MapLayer& waypointSymbolSize(int size);
+  MapLayer& vorSymbolSize(int size);
+  MapLayer& ndbSymbolSize(int size);
+
   bool operator<(const MapLayer& other) const;
 
   float getMaxRange() const
@@ -131,9 +147,79 @@ public:
     return layerMinRunwayLength;
   }
 
+  bool isWaypoint() const
+  {
+    return layerWaypoint;
+  }
+
+  bool isWaypointName() const
+  {
+    return layerWaypointName;
+  }
+
+  bool isVor() const
+  {
+    return layerVor;
+  }
+
+  bool isVorIdent() const
+  {
+    return layerVorIdent;
+  }
+
+  bool isVorInfo() const
+  {
+    return layerVorInfo;
+  }
+
+  bool isNdb() const
+  {
+    return layerNdb;
+  }
+
+  bool isNdbIdent() const
+  {
+    return layerNdbIdent;
+  }
+
+  bool isNdbInfo() const
+  {
+    return layerNdbInfo;
+  }
+
+  bool isIls() const
+  {
+    return layerIls;
+  }
+
+  bool isIlsIdent() const
+  {
+    return layerIlsIdent;
+  }
+
+  bool isIlsInfo() const
+  {
+    return layerIlsInfo;
+  }
+
   bool hasSameQueryParameters(const MapLayer *other) const
   {
     return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
+  }
+
+  int getWaypointSymbolSize() const
+  {
+    return layerWaypointSymbolSize;
+  }
+
+  int getVorSymbolSize() const
+  {
+    return layerVorSymbolSize;
+  }
+
+  int getNdbSymbolSize() const
+  {
+    return layerNdbSymbolSize;
   }
 
 private:
@@ -147,6 +233,12 @@ private:
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false;
   int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
+
+  bool layerWaypoint = false, layerWaypointName = false,
+       layerVor = false, layerVorIdent = false, layerVorInfo = false,
+       layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
+       layerIls = false, layerIlsIdent = false, layerIlsInfo = false;
+  int layerWaypointSymbolSize = 10, layerVorSymbolSize = 10, layerNdbSymbolSize = 10;
 
 };
 

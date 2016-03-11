@@ -35,6 +35,7 @@ class NavMapWidget;
 class MapLayerSettings;
 class MapScale;
 class MapPainterAirport;
+class MapPainterNav;
 
 class MapPaintLayer :
   public Marble::LayerInterface
@@ -55,6 +56,7 @@ private:
   bool databaseLoadStatus = false;
   QList<MapPainter *> mapPainters;
   MapPainterAirport *mapPainterAirport;
+  MapPainterNav *mapPainterNav;
 
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;

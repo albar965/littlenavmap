@@ -33,9 +33,6 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 
-#define RECT_INFLATION_FACTOR 0.3
-#define RECT_INFLATION_ADD 0.1
-
 template<typename TYPE>
 void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, int xs, int ys,
                             const TYPE *type)
@@ -128,42 +125,120 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, int xs, int ys
   }
 }
 
-void MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                           QList<MapAirport>& airportList)
+const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                               bool lazy)
 {
-  GeoDataLatLonBox cur(curRect);
-  inflateRect(cur, cur.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
-
-  if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
-     !curMapLayer->hasSameQueryParameters(mapLayer))
-  {
-    airports.clear();
-    curRect = rect;
-    curMapLayer = mapLayer;
+  if(handleCache(rect, mapLayer, airports, lazy))
     qDebug() << "MapQuery airports cache miss";
-  }
 
   switch(mapLayer->getDataSource())
   {
     case layer::ALL:
       airportQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      fetchAirports(rect, airportQuery, airportList);
-      break;
+      return fetchAirports(rect, airportQuery, lazy);
+
     case layer::MEDIUM:
-      fetchAirports(rect, airportMediumQuery, airportList);
-      break;
+      return fetchAirports(rect, airportMediumQuery, lazy);
+
     case layer::LARGE:
-      fetchAirports(rect, airportLargeQuery, airportList);
-      break;
+      return fetchAirports(rect, airportLargeQuery, lazy);
+
   }
+  return nullptr;
 }
 
-void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                             QList<MapAirport>& airportList)
+const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                 bool lazy)
 {
-  if(!airports.isEmpty())
-    airportList = airports;
-  else
+  if(handleCache(rect, mapLayer, waypoints, lazy))
+    qDebug() << "MapQuery waypoints cache miss";
+
+  if(waypoints.isEmpty() && !lazy)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, waypointsQuery);
+      waypointsQuery->exec();
+      while(waypointsQuery->next())
+      {
+        MapWaypoint wp;
+
+        wp.id = waypointsQuery->value("waypoint_id").toInt();
+        wp.ident = waypointsQuery->value("ident").toString();
+        wp.region = waypointsQuery->value("region").toString();
+        wp.type = waypointsQuery->value("type").toString();
+        wp.magvar = static_cast<int>(std::roundf(waypointsQuery->value("mag_var").toFloat()));
+        wp.pos = Pos(waypointsQuery->value("lonx").toFloat(), waypointsQuery->value("laty").toFloat());
+
+        waypoints.append(wp);
+      }
+    }
+  return &waypoints;
+}
+
+const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+{
+  if(handleCache(rect, mapLayer, vors, lazy))
+    qDebug() << "MapQuery vor cache miss";
+
+  if(vors.isEmpty() && !lazy)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, vorsQuery);
+      vorsQuery->exec();
+      while(vorsQuery->next())
+      {
+        MapVor vor;
+
+        vor.id = vorsQuery->value("vor_id").toInt();
+        vor.ident = vorsQuery->value("ident").toString();
+        vor.region = vorsQuery->value("region").toString();
+        vor.type = vorsQuery->value("type").toString();
+        vor.frequency = vorsQuery->value("frequency").toInt();
+        vor.range = vorsQuery->value("range").toInt();
+        vor.dmeOnly = vorsQuery->value("dme_only").toInt() > 0;
+        vor.hasDme = !vorsQuery->value("dme_altitude").isNull();
+        vor.magvar = static_cast<int>(std::roundf(vorsQuery->value("mag_var").toFloat()));
+        vor.pos = Pos(vorsQuery->value("lonx").toFloat(), vorsQuery->value("laty").toFloat());
+
+        vors.append(vor);
+      }
+    }
+  return &vors;
+}
+
+const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+{
+  if(handleCache(rect, mapLayer, ndbs, lazy))
+    qDebug() << "MapQuery ndb cache miss";
+
+  if(ndbs.isEmpty() && !lazy)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, ndbsQuery);
+      ndbsQuery->exec();
+      while(ndbsQuery->next())
+      {
+        MapNdb ndb;
+
+        ndb.id = ndbsQuery->value("ndb_id").toInt();
+        ndb.ident = ndbsQuery->value("ident").toString();
+        ndb.region = ndbsQuery->value("region").toString();
+        ndb.type = ndbsQuery->value("type").toString();
+        ndb.frequency = ndbsQuery->value("frequency").toInt();
+        ndb.range = ndbsQuery->value("range").toInt();
+        ndb.magvar = static_cast<int>(std::roundf(ndbsQuery->value("mag_var").toFloat()));
+        ndb.pos = Pos(ndbsQuery->value("lonx").toFloat(), ndbsQuery->value("laty").toFloat());
+
+        ndbs.append(ndb);
+      }
+    }
+  return &ndbs;
+}
+
+const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
+                                                 atools::sql::SqlQuery *query, bool lazy)
+{
+  if(airports.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinateRect(r, query);
@@ -172,9 +247,9 @@ void MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::
       {
         MapAirport a = fillMapAirport(query);
         airports.append(a);
-        airportList.append(a);
       }
     }
+  return &airports;
 }
 
 MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
@@ -594,6 +669,24 @@ void MapQuery::initQueries()
     "join runway_end s on secondary_end_id = s.runway_end_id "
     "where airport_id = :airportId");
 
+  waypointsQuery = new SqlQuery(db);
+  waypointsQuery->prepare(
+    "select waypoint_id, ident, region, type, mag_var, lonx, laty "
+    "from waypoint "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  vorsQuery = new SqlQuery(db);
+  vorsQuery->prepare(
+    "select vor_id, ident, name, region, type, frequency,range, dme_only, dme_altitude, "
+    "mag_var, lonx, laty  "
+    "from vor "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  ndbsQuery = new SqlQuery(db);
+  ndbsQuery->prepare(
+    "select ndb_id, ident, name, region, type, frequency, range, mag_var, lonx, laty "
+    "from ndb "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 }
 
 void MapQuery::deInitQueries()
@@ -617,4 +710,11 @@ void MapQuery::deInitQueries()
   taxiparthQuery = nullptr;
   delete runwaysQuery;
   runwaysQuery = nullptr;
+
+  delete waypointsQuery;
+  waypointsQuery = nullptr;
+  delete vorsQuery;
+  vorsQuery = nullptr;
+  delete ndbsQuery;
+  ndbsQuery = nullptr;
 }

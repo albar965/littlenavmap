@@ -22,6 +22,8 @@
 #include "geo/rect.h"
 #include "geo/linestring.h"
 
+#include "maplayer.h"
+
 #include <QCache>
 #include <QList>
 
@@ -38,11 +40,6 @@ class SqlQuery;
 }
 }
 
-namespace Marble {
-class GeoDataLatLonBox;
-}
-
-class MapLayer;
 class CoordinateConverter;
 
 enum MapAirportFlags
@@ -169,12 +166,43 @@ struct MapHelipad
   bool closed;
 };
 
+struct MapWaypoint
+{
+  int id;
+  QString ident, region, type;
+  float magvar;
+  atools::geo::Pos pos;
+};
+
+struct MapVor
+{
+  int id;
+  QString ident, region, type;
+  float magvar;
+  int frequency, range;
+  bool dmeOnly, hasDme;
+  atools::geo::Pos pos;
+};
+
+struct MapNdb
+{
+  int id;
+  QString ident, region, type;
+  float magvar;
+  int frequency, range;
+  atools::geo::Pos pos;
+};
+
 struct MapSearchResult
 {
   QList<const MapAirport *> airports;
   QList<const MapAirport *> towers;
   QList<const MapParking *> parkings;
   QList<const MapHelipad *> helipads;
+
+  QList<const MapWaypoint *> waypoints;
+  QList<const MapVor *> vors;
+  QList<const MapNdb *> ndbs;
 };
 
 class MapQuery
@@ -187,8 +215,17 @@ public:
   void getNearestObjects(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
                          MapSearchResult& result);
 
-  void getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                   QList<MapAirport>& airportList);
+  const QList<MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                       bool lazy);
+
+  const QList<MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                         bool lazy);
+
+  const QList<MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                               bool lazy);
+
+  const QList<MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                               bool lazy);
 
   const QList<MapRunway> *getRunwaysForOverview(int airportId);
 
@@ -211,6 +248,9 @@ private:
   const MapLayer *curMapLayer;
 
   QList<MapAirport> airports;
+  QList<MapWaypoint> waypoints;
+  QList<MapVor> vors;
+  QList<MapNdb> ndbs;
 
   QCache<int, QList<MapRunway> > runwayCache;
   QCache<int, QList<MapRunway> > runwayOverwiewCache;
@@ -221,10 +261,11 @@ private:
 
   atools::sql::SqlQuery *airportQuery = nullptr, *airportMediumQuery = nullptr, *airportLargeQuery = nullptr,
   *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *helipadQuery = nullptr,
-  *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
+  *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
+  *waypointsQuery = nullptr, *vorsQuery = nullptr, *ndbsQuery = nullptr;
 
-  void fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                     QList<MapAirport>& airportList);
+  const QList<MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
+                                         bool lazy);
 
   int flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag);
 
@@ -239,6 +280,34 @@ private:
 
   bool runwayCompare(const MapRunway& r1, const MapRunway& r2);
 
+  template<typename TYPE>
+  bool handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, QList<TYPE>& list,
+                   bool lazy);
+
+  const double RECT_INFLATION_FACTOR = 0.3;
+  const double RECT_INFLATION_ADD = 0.1;
 };
+
+// ---------------------------------------------------------------------------------
+template<typename TYPE>
+bool MapQuery::handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                           QList<TYPE>& list, bool lazy)
+{
+  if(lazy)
+    return false;
+
+  Marble::GeoDataLatLonBox cur(curRect);
+  inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
+
+  if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
+     !curMapLayer->hasSameQueryParameters(mapLayer))
+  {
+    list.clear();
+    curRect = rect;
+    curMapLayer = mapLayer;
+    return true;
+  }
+  return false;
+}
 
 #endif // MAPQUERY_H

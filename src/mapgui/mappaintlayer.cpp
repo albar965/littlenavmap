@@ -20,6 +20,7 @@
 #include "maplayersettings.h"
 #include "mappainterairport.h"
 #include "mappaintermark.h"
+#include "mappainternav.h"
 #include "mapquery.h"
 #include "mapscale.h"
 #include "geo/calculations.h"
@@ -49,13 +50,15 @@ using namespace atools::geo;
 MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   : mapQuery(mapQueries), navMapWidget(widget)
 {
-  delete layers;
-
   initLayers();
 
   mapScale = new MapScale();
   mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
   mapPainters.append(mapPainterAirport);
+
+  mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale);
+  mapPainters.append(mapPainterNav);
+
   mapPainters.append(new MapPainterMark(navMapWidget, mapQuery, mapScale));
 }
 
@@ -85,28 +88,31 @@ void MapPaintLayer::initLayers()
 
   layers = new MapLayerSettings();
 
-  MapLayer defApLayer = MapLayer(0).airports().airportName().airportIdent().
-                        airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL);
+  MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
+                      airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
+                      vor().ndb().waypoint();
   layers->
-  append(defApLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
+  append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo()).
 
-  append(defApLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
+  append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
 
-  append(defApLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo()).
+  append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo()).
 
-  append(defApLayer.clone(50.f).airportSymbolSize(18).airportInfo()).
+  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().waypoint(false)).
 
-  append(defApLayer.clone(100.f).airportSymbolSize(14)).
+  append(defLayer.clone(100.f).airportSymbolSize(14).waypoint(false)).
 
-  append(defApLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
-         airportOverviewRunway(false).airportName(false)).
+  append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
+         airportOverviewRunway(false).airportName(false).waypoint(false)).
 
-  append(defApLayer.clone(300.f).airportSymbolSize(10).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM)).
+  append(defLayer.clone(300.f).airportSymbolSize(10).
+         airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         vor(false).ndb(false).waypoint(false)).
 
-  append(defApLayer.clone(1200.f).airportSymbolSize(10).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE));
+  append(defLayer.clone(1200.f).airportSymbolSize(10).
+         airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         vor(false).ndb(false).waypoint(false));
 
   layers->finishAppend();
   qDebug() << *layers;
