@@ -157,7 +157,7 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
 
   CoordinateConverter conv(viewport());
   MapSearchResult res;
-  mapQuery->getNearestObjects(conv, pos.x(), pos.y(), 20, res);
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), pos.x(), pos.y(), 20, res);
 
   MapAirport ap;
   if(!res.airports.isEmpty())
@@ -244,9 +244,9 @@ bool NavMapWidget::event(QEvent *event)
 
     CoordinateConverter conv(viewport());
     MapSearchResult res;
-    mapQuery->getNearestObjects(conv, helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
 
     const MapLayer *mapLayer = paintLayer->getMapLayer();
+    mapQuery->getNearestObjects(conv, mapLayer, helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
 
     QString text;
     if(mapLayer != nullptr && mapLayer->isAirportDiagram())
@@ -275,7 +275,7 @@ bool NavMapWidget::event(QEvent *event)
       {
         const MapHelipad& p = *res.helipads.first();
 
-        text += "Helipad\n" +
+        text += "Helipad:\n" +
                 p.surface + "\n" +
                 p.type + "\n" +
                 QString::number(p.width) + " ft diameter\n" +
@@ -287,9 +287,9 @@ bool NavMapWidget::event(QEvent *event)
     if(!res.airports.isEmpty())
     {
       MapAirport ap = *res.airports.first();
-      text = ap.name + " (" + ap.ident + ")\n" +
-             "Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft\n" +
-             "Altitude: " + QLocale().toString(ap.altitude) + " ft\n";
+      text += ap.name + " (" + ap.ident + ")\n" +
+              "Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft\n" +
+              "Altitude: " + QLocale().toString(ap.altitude) + " ft\n";
 
       if(ap.hard())
         text += "Has Hard Runways\n";
@@ -308,6 +308,24 @@ bool NavMapWidget::event(QEvent *event)
         text += "ASOS: " + formatter::formatDoubleUnit(ap.asosFrequency / 1000., QString(), 2) + "\n";
       if(ap.unicomFrequency > 0)
         text += "Unicom: " + formatter::formatDoubleUnit(ap.unicomFrequency / 1000., QString(), 2) + "\n";
+    }
+
+    if(!res.vors.isEmpty())
+    {
+      MapVor vor = *res.vors.first();
+      text += "VOR: " + vor.name + " (" + vor.ident + ")\n";
+    }
+
+    if(!res.ndbs.isEmpty())
+    {
+      MapNdb ndb = *res.ndbs.first();
+      text += "NDB: " + ndb.name + " (" + ndb.ident + ")\n";
+    }
+
+    if(!res.waypoints.isEmpty())
+    {
+      MapWaypoint wp = *res.waypoints.first();
+      text += "Waypoint: " + wp.ident + "\n";
     }
 
     if(!text.isEmpty())

@@ -88,30 +88,83 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
   painter->restore();
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& ap, int x, int y, int size,
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& wp, int x, int y, int size,
                                        bool fast)
 {
   painter->save();
-  painter->setBrush(QColor(Qt::green));
-  painter->setPen(QPen(QColor(Qt::green), size, Qt::SolidLine, Qt::RoundCap));
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QColor(Qt::magenta), 1.5, Qt::SolidLine, Qt::SquareCap));
+  painter->setBackgroundMode(Qt::TransparentMode);
+
+  int radius = size / 2;
+  QPolygon polygon;
+  polygon << QPoint(x, y - radius)
+          << QPoint(x + radius, y + radius)
+          << QPoint(x - radius, y + radius);
+
+  painter->drawConvexPolygon(polygon);
+
+  painter->restore();
+}
+
+void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, int y, int size, bool fast)
+{
+  painter->save();
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QColor(Qt::darkBlue), 1.5, Qt::SolidLine, Qt::SquareCap));
+  painter->setBackgroundMode(Qt::TransparentMode);
+
+  if(!fast)
+  {
+    if(vor.hasDme)
+      painter->drawRect(x - size / 2, y - size / 2, size, size);
+    if(!vor.dmeOnly)
+    {
+      int radius = size / 2;
+      int corner = 2;
+      QPolygon polygon;
+      polygon << QPoint(x - radius / corner, y - radius)
+              << QPoint(x + radius / corner, y - radius)
+              << QPoint(x + radius, y)
+              << QPoint(x + radius / corner, y + radius)
+              << QPoint(x - radius / corner, y + radius)
+              << QPoint(x - radius, y);
+
+      painter->drawConvexPolygon(polygon);
+    }
+  }
+
+  if(size > 14)
+    painter->setPen(QPen(QColor(Qt::darkBlue), size / 4, Qt::SolidLine, Qt::RoundCap));
+  else
+    painter->setPen(QPen(QColor(Qt::darkBlue), size / 3, Qt::SolidLine, Qt::RoundCap));
+  painter->drawPoint(x, y);
+
   painter->drawPoint(x, y);
   painter->restore();
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& ap, int x, int y, int size, bool fast)
+void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ndb, int x, int y, int size, bool fast)
 {
   painter->save();
-  painter->setBrush(QColor(Qt::blue));
-  painter->setPen(QPen(QColor(Qt::blue), size, Qt::SolidLine, Qt::RoundCap));
-  painter->drawPoint(x, y);
-  painter->restore();
-}
+  int radius = size / 2;
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ap, int x, int y, int size, bool fast)
-{
-  painter->save();
-  painter->setBrush(QColor(Qt::darkRed));
-  painter->setPen(QPen(QColor(Qt::darkRed), size, Qt::SolidLine, Qt::RoundCap));
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QColor(Qt::darkRed), 1.5, size > 14 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
+
+  if(!fast)
+    painter->drawEllipse(QPoint(x, y), radius, radius);
+  if(size > 14)
+  {
+    if(!fast)
+      painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
+    painter->setPen(QPen(QColor(Qt::darkRed), size / 4, Qt::SolidLine, Qt::RoundCap));
+  }
+  else
+    painter->setPen(QPen(QColor(Qt::darkRed), size / 3, Qt::SolidLine, Qt::RoundCap));
+
   painter->drawPoint(x, y);
+
   painter->restore();
 }

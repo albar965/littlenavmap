@@ -33,6 +33,9 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 
+const double MapQuery::RECT_INFLATION_FACTOR = 0.3;
+const double MapQuery::RECT_INFLATION_ADD = 0.1;
+
 template<typename TYPE>
 void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, int xs, int ys,
                             const TYPE *type)
@@ -76,51 +79,85 @@ MapQuery::~MapQuery()
   deInitQueries();
 }
 
-void MapQuery::getNearestObjects(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                                 MapSearchResult& result)
+void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
+                                 int xs, int ys, int screenDistance, MapSearchResult& result)
 {
-  for(int i = airports.size() - 1; i >= 0; i--)
-  {
-    const MapAirport& ap = airports.at(i);
-
-    int x, y;
-    bool visible = conv.wToS(ap.pos, x, y);
-
-    if(visible)
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, result.airports, xs, ys, &ap);
-
-    visible = conv.wToS(ap.towerCoords, x, y);
-    if(visible)
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByTowerDistance(conv, result.towers, xs, ys, &ap);
-  }
-
-  for(int id : parkingCache.keys())
-  {
-    QList<MapParking> *parkings = parkingCache.object(id);
-    for(const MapParking& p : *parkings)
+  if(mapLayer->isAirport())
+    for(int i = airports.list.size() - 1; i >= 0; i--)
     {
+      const MapAirport& airport = airports.list.at(i);
+
       int x, y;
-      bool visible = conv.wToS(p.pos, x, y);
+      bool visible = conv.wToS(airport.pos, x, y);
 
       if(visible)
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.parkings, xs, ys, &p);
+          insertSortedByDistance(conv, result.airports, xs, ys, &airport);
+
+      visible = conv.wToS(airport.towerCoords, x, y);
+      if(visible)
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
     }
-  }
 
-  for(int id : helipadCache.keys())
-  {
-    QList<MapHelipad> *helipads = helipadCache.object(id);
-    for(const MapHelipad& p : *helipads)
+  if(mapLayer->isVor())
+    for(int i = vors.list.size() - 1; i >= 0; i--)
     {
+      const MapVor& vor = vors.list.at(i);
       int x, y;
-      bool visible = conv.wToS(p.pos, x, y);
-
-      if(visible)
+      if(conv.wToS(vor.pos, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.helipads, xs, ys, &p);
+          insertSortedByDistance(conv, result.vors, xs, ys, &vor);
+    }
+
+  if(mapLayer->isNdb())
+    for(int i = ndbs.list.size() - 1; i >= 0; i--)
+    {
+      const MapNdb& ndb = ndbs.list.at(i);
+      int x, y;
+      if(conv.wToS(ndb.pos, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.ndbs, xs, ys, &ndb);
+    }
+
+  if(mapLayer->isWaypoint())
+    for(int i = waypoints.list.size() - 1; i >= 0; i--)
+    {
+      const MapWaypoint& wp = waypoints.list.at(i);
+      int x, y;
+      if(conv.wToS(wp.pos, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.waypoints, xs, ys, &wp);
+    }
+
+  if(mapLayer->isAirportDiagram())
+  {
+    for(int id : parkingCache.keys())
+    {
+      QList<MapParking> *parkings = parkingCache.object(id);
+      for(const MapParking& p : *parkings)
+      {
+        int x, y;
+        bool visible = conv.wToS(p.pos, x, y);
+
+        if(visible)
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+            insertSortedByDistance(conv, result.parkings, xs, ys, &p);
+      }
+    }
+
+    for(int id : helipadCache.keys())
+    {
+      QList<MapHelipad> *helipads = helipadCache.object(id);
+      for(const MapHelipad& p : *helipads)
+      {
+        int x, y;
+        bool visible = conv.wToS(p.pos, x, y);
+
+        if(visible)
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+            insertSortedByDistance(conv, result.helipads, xs, ys, &p);
+      }
     }
   }
 }
@@ -128,7 +165,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, int xs, int ys
 const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                bool lazy)
 {
-  if(handleCache(rect, mapLayer, airports, lazy))
+  if(airports.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery airports cache miss";
 
   switch(mapLayer->getDataSource())
@@ -150,10 +187,10 @@ const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& r
 const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
-  if(handleCache(rect, mapLayer, waypoints, lazy))
+  if(waypoints.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery waypoints cache miss";
 
-  if(waypoints.isEmpty() && !lazy)
+  if(waypoints.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinateRect(r, waypointsQuery);
@@ -169,18 +206,18 @@ const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, c
         wp.magvar = static_cast<int>(std::roundf(waypointsQuery->value("mag_var").toFloat()));
         wp.pos = Pos(waypointsQuery->value("lonx").toFloat(), waypointsQuery->value("laty").toFloat());
 
-        waypoints.append(wp);
+        waypoints.list.append(wp);
       }
     }
-  return &waypoints;
+  return &waypoints.list;
 }
 
 const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
-  if(handleCache(rect, mapLayer, vors, lazy))
+  if(vors.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery vor cache miss";
 
-  if(vors.isEmpty() && !lazy)
+  if(vors.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinateRect(r, vorsQuery);
@@ -192,6 +229,7 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
         vor.id = vorsQuery->value("vor_id").toInt();
         vor.ident = vorsQuery->value("ident").toString();
         vor.region = vorsQuery->value("region").toString();
+        vor.name = vorsQuery->value("name").toString();
         vor.type = vorsQuery->value("type").toString();
         vor.frequency = vorsQuery->value("frequency").toInt();
         vor.range = vorsQuery->value("range").toInt();
@@ -200,18 +238,18 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
         vor.magvar = static_cast<int>(std::roundf(vorsQuery->value("mag_var").toFloat()));
         vor.pos = Pos(vorsQuery->value("lonx").toFloat(), vorsQuery->value("laty").toFloat());
 
-        vors.append(vor);
+        vors.list.append(vor);
       }
     }
-  return &vors;
+  return &vors.list;
 }
 
 const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
-  if(handleCache(rect, mapLayer, ndbs, lazy))
+  if(ndbs.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery ndb cache miss";
 
-  if(ndbs.isEmpty() && !lazy)
+  if(ndbs.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinateRect(r, ndbsQuery);
@@ -223,22 +261,23 @@ const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLa
         ndb.id = ndbsQuery->value("ndb_id").toInt();
         ndb.ident = ndbsQuery->value("ident").toString();
         ndb.region = ndbsQuery->value("region").toString();
+        ndb.name = ndbsQuery->value("name").toString();
         ndb.type = ndbsQuery->value("type").toString();
         ndb.frequency = ndbsQuery->value("frequency").toInt();
         ndb.range = ndbsQuery->value("range").toInt();
         ndb.magvar = static_cast<int>(std::roundf(ndbsQuery->value("mag_var").toFloat()));
         ndb.pos = Pos(ndbsQuery->value("lonx").toFloat(), ndbsQuery->value("laty").toFloat());
 
-        ndbs.append(ndb);
+        ndbs.list.append(ndb);
       }
     }
-  return &ndbs;
+  return &ndbs.list;
 }
 
 const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                  atools::sql::SqlQuery *query, bool lazy)
 {
-  if(airports.isEmpty() && !lazy)
+  if(airports.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinateRect(r, query);
@@ -246,10 +285,10 @@ const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox&
       while(query->next())
       {
         MapAirport a = fillMapAirport(query);
-        airports.append(a);
+        airports.list.append(a);
       }
     }
-  return &airports;
+  return &airports.list;
 }
 
 MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
@@ -677,14 +716,14 @@ void MapQuery::initQueries()
 
   vorsQuery = new SqlQuery(db);
   vorsQuery->prepare(
-    "select vor_id, ident, name, region, type, frequency,range, dme_only, dme_altitude, "
+    "select vor_id, ident, name, region, type, name, frequency,range, dme_only, dme_altitude, "
     "mag_var, lonx, laty  "
     "from vor "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   ndbsQuery = new SqlQuery(db);
   ndbsQuery->prepare(
-    "select ndb_id, ident, name, region, type, frequency, range, mag_var, lonx, laty "
+    "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, lonx, laty "
     "from ndb "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 }

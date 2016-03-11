@@ -93,18 +93,24 @@ void MapPaintLayer::initLayers()
                       vor().ndb().waypoint();
   layers->
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
-         airportSymbolSize(20).airportInfo()).
+         airportSymbolSize(20).airportInfo().
+         waypointSymbolSize(14).vorSymbolSize(20).ndbSymbolSize(20)).
 
-  append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo()).
+  append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo().
+         waypointSymbolSize(14).vorSymbolSize(20).ndbSymbolSize(20)).
 
-  append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo()).
+  append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
+         waypointSymbolSize(10).vorSymbolSize(20).ndbSymbolSize(20)).
 
-  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().waypoint(false)).
+  append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().waypoint(false).
+         vorSymbolSize(18).ndbSymbolSize(18)).
 
-  append(defLayer.clone(100.f).airportSymbolSize(14).waypoint(false)).
+  append(defLayer.clone(100.f).airportSymbolSize(14).waypoint(false).
+         vorSymbolSize(14).ndbSymbolSize(14)).
 
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
-         airportOverviewRunway(false).airportName(false).waypoint(false)).
+         airportOverviewRunway(false).airportName(false).waypoint(false).
+         vorSymbolSize(10).ndbSymbolSize(10)).
 
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).

@@ -177,7 +177,7 @@ struct MapWaypoint
 struct MapVor
 {
   int id;
-  QString ident, region, type;
+  QString ident, region, type, name;
   float magvar;
   int frequency, range;
   bool dmeOnly, hasDme;
@@ -187,7 +187,7 @@ struct MapVor
 struct MapNdb
 {
   int id;
-  QString ident, region, type;
+  QString ident, region, type, name;
   float magvar;
   int frequency, range;
   atools::geo::Pos pos;
@@ -212,8 +212,8 @@ public:
   virtual ~MapQuery();
 
   /* Result is only valid until the next paint is called */
-  void getNearestObjects(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                         MapSearchResult& result);
+  void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
+                         int xs, int ys, int screenDistance, MapSearchResult& result);
 
   const QList<MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                        bool lazy);
@@ -243,14 +243,25 @@ public:
   void deInitQueries();
 
 private:
-  atools::sql::SqlDatabase *db;
-  Marble::GeoDataLatLonBox curRect;
-  const MapLayer *curMapLayer;
+  template<typename TYPE>
+  struct SimpleCache
+  {
+    bool handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
-  QList<MapAirport> airports;
-  QList<MapWaypoint> waypoints;
-  QList<MapVor> vors;
-  QList<MapNdb> ndbs;
+    Marble::GeoDataLatLonBox curRect;
+    const MapLayer *curMapLayer = nullptr;
+    QList<TYPE> list;
+  };
+
+  atools::sql::SqlDatabase *db;
+
+  // Marble::GeoDataLatLonBox curRect;
+  // const MapLayer *curMapLayer;
+
+  SimpleCache<MapAirport> airports;
+  SimpleCache<MapWaypoint> waypoints;
+  SimpleCache<MapVor> vors;
+  SimpleCache<MapNdb> ndbs;
 
   QCache<int, QList<MapRunway> > runwayCache;
   QCache<int, QList<MapRunway> > runwayOverwiewCache;
@@ -276,28 +287,25 @@ private:
 
   QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
 
-  void inflateRect(Marble::GeoDataLatLonBox& rect, double degree);
+  static void inflateRect(Marble::GeoDataLatLonBox& rect, double degree);
 
   bool runwayCompare(const MapRunway& r1, const MapRunway& r2);
 
-  template<typename TYPE>
-  bool handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, QList<TYPE>& list,
-                   bool lazy);
-
-  const double RECT_INFLATION_FACTOR = 0.3;
-  const double RECT_INFLATION_ADD = 0.1;
+  const static double RECT_INFLATION_FACTOR;
+  const static double RECT_INFLATION_ADD;
 };
 
 // ---------------------------------------------------------------------------------
 template<typename TYPE>
-bool MapQuery::handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                           QList<TYPE>& list, bool lazy)
+bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                              bool lazy)
 {
   if(lazy)
     return false;
 
   Marble::GeoDataLatLonBox cur(curRect);
-  inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
+  MapQuery::inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) *
+                        MapQuery::RECT_INFLATION_FACTOR + MapQuery::RECT_INFLATION_ADD);
 
   if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
      !curMapLayer->hasSameQueryParameters(mapLayer))
