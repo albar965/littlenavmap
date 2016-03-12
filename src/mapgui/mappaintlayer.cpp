@@ -19,6 +19,7 @@
 #include "mapgui/navmapwidget.h"
 #include "maplayersettings.h"
 #include "mappainterairport.h"
+#include "mappainterils.h"
 #include "mappaintermark.h"
 #include "mappainternav.h"
 #include "mapquery.h"
@@ -54,6 +55,7 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
 
   mapScale = new MapScale();
   mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale);
+  mapPainterIls = new MapPainterIls(navMapWidget, mapQuery, mapScale);
 
   mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
 
@@ -62,6 +64,7 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
 
 MapPaintLayer::~MapPaintLayer()
 {
+  delete mapPainterIls;
   delete mapPainterNav;
   delete mapPainterAirport;
   delete mapPainterMark;
@@ -89,31 +92,35 @@ void MapPaintLayer::initLayers()
 
   MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
-                      vor().ndb().waypoint().marker();
+                      vor().ndb().waypoint().marker().ils();
   layers->
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
          waypointSymbolSize(14).waypointName().
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo().
          waypointSymbolSize(14).waypointName().
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
          waypointSymbolSize(10).waypointName().
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
          markerSymbolSize(24)).
 
   append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
@@ -123,7 +130,7 @@ void MapPaintLayer::initLayers()
          marker(false)).
 
   append(defLayer.clone(100.f).airportSymbolSize(14).
-         waypoint(false).
+         airportOverviewRunway(false).waypoint(false).
          vorSymbolSize(16).vorIdent().
          ndbSymbolSize(14).ndbIdent().
          marker(false)).
@@ -133,15 +140,15 @@ void MapPaintLayer::initLayers()
          waypoint(false).
          vorSymbolSize(10).
          ndbSymbolSize(10).
-         marker(false)).
+         marker(false).ils(false)).
 
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         vor(false).ndb(false).waypoint(false).marker(false)).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false)).
 
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         vor(false).ndb(false).waypoint(false).marker(false));
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false));
 
   layers->finishAppend();
   qDebug() << *layers;
@@ -172,11 +179,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     {
       if(mapLayer->isAirportDiagram())
       {
+        mapPainterIls->paint(mapLayer, painter, viewport);
         mapPainterAirport->paint(mapLayer, painter, viewport);
         mapPainterNav->paint(mapLayer, painter, viewport);
       }
       else
       {
+        mapPainterIls->paint(mapLayer, painter, viewport);
         mapPainterNav->paint(mapLayer, painter, viewport);
         mapPainterAirport->paint(mapLayer, painter, viewport);
       }

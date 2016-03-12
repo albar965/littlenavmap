@@ -36,6 +36,7 @@ class MapLayerSettings;
 class MapScale;
 class MapPainterAirport;
 class MapPainterNav;
+class MapPainterIls;
 class MapPainterMark;
 
 class MapPaintLayer :
@@ -57,6 +58,7 @@ private:
   bool databaseLoadStatus = false;
   MapPainterAirport *mapPainterAirport;
   MapPainterNav *mapPainterNav;
+  MapPainterIls *mapPainterIls;
   MapPainterMark *mapPainterMark;
 
   MapQuery *mapQuery = nullptr;

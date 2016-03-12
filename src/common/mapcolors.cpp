@@ -55,6 +55,7 @@ const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::Solid
 const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);
+const QColor ilsSymbolColor = QColor(Qt::darkGreen);
 const QColor waypointSymbolColor = QColor(Qt::magenta);
 
 const QColor& colorForAirport(const MapAirport& ap)

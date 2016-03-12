@@ -88,11 +88,11 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
     if(visible)
     {
       if(mapLayer->isAirportDiagram())
-        airportDiagram(mapLayer, painter, airport, false);
+        drawAirportDiagram(mapLayer, painter, airport, false);
       else
-        airportSymbolOverview(painter, airport, mapLayer, drawFast);
+        drawAirportSymbolOverview(painter, airport, mapLayer, drawFast);
 
-      airportSymbol(painter, airport, x, y, mapLayer, drawFast);
+      drawAirportSymbol(painter, airport, x, y, mapLayer, drawFast);
       x += mapLayer->getAirportSymbolSize() + 2;
 
       QStringList texts = airportTexts(mapLayer, airport);
@@ -111,8 +111,8 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
-void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *painter,
-                                       const MapAirport& airport, bool fast)
+void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter *painter,
+                                           const MapAirport& airport, bool fast)
 {
   painter->save();
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -521,8 +521,8 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   painter->restore();
 }
 
-void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirport& ap,
-                                              const MapLayer *mapLayer, bool fast)
+void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const MapAirport& ap,
+                                                  const MapLayer *mapLayer, bool fast)
 {
   if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() && !ap.isSet(CLOSED) &&
      !ap.waterOnly())
@@ -564,8 +564,8 @@ void MapPainterAirport::airportSymbolOverview(GeoPainter *painter, const MapAirp
   }
 }
 
-void MapPainterAirport::airportSymbol(GeoPainter *painter, const MapAirport& ap, int x, int y,
-                                      const MapLayer *mapLayer, bool fast)
+void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const MapAirport& ap, int x, int y,
+                                          const MapLayer *mapLayer, bool fast)
 {
   if(!mapLayer->isAirportOverviewRunway() || ap.isSet(CLOSED) || ap.waterOnly() ||
      ap.longestRunwayLength < 8000 || mapLayer->isAirportDiagram())

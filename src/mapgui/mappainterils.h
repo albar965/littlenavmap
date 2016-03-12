@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERAIRPORT_H
-#define MAPPAINTERAIRPORT_H
+#ifndef MAPPAINTERILS_H
+#define MAPPAINTERILS_H
 
 #include "mapgui/mappainter.h"
 
@@ -24,33 +24,21 @@
 
 class SymbolPainter;
 
-class MapPainterAirport :
+class MapPainterIls :
   public MapPainter
 {
 public:
-  MapPainterAirport(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
-  virtual ~MapPainterAirport();
+  MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  virtual ~MapPainterIls();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                      Marble::ViewportParams *viewport) override;
 
 private:
-  void drawAirportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
-                         const MapLayer *mapLayer,
-                         bool fast);
-
-  void drawAirportDiagram(const MapLayer *mapLayer, Marble::GeoPainter *painter, const MapAirport& airport,
-                          bool fast);
-
-  void drawAirportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,
-                                 bool fast);
-
-  void runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
-                    QList<QRect> *innerRects, QList<QRect> *backRects);
-  QString parkingName(const QString& name);
-  QStringList airportTexts(const MapLayer *mapLayer, const MapAirport& airport);
-
   SymbolPainter *symbolPainter;
+  void drawIlsSymbol(Marble::GeoPainter *painter, const MapIls& ils, int x, int y, const MapLayer* mapLayer,
+                     bool fast);
+
 };
 
 #endif // MAPPAINTERAIRPORT_H

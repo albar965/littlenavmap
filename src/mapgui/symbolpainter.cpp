@@ -158,7 +158,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, i
           painter->drawLine(0, 0, 0, -radius * 5);
         else if((i % 90) == 0)
           painter->drawLine(0, static_cast<int>(-radius * 4), 0, -radius * 5);
-        painter->drawLine(0, static_cast<int>(-radius * 4.5), 0, -radius * 5);
+        else
+          painter->drawLine(0, static_cast<int>(-radius * 4.5), 0, -radius * 5);
         painter->rotate(10);
       }
     }

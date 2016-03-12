@@ -50,6 +50,7 @@ extern const QColor vorSymbolColor;
 extern const QColor ndbSymbolColor;
 extern const QColor waypointSymbolColor;
 extern const QColor markerSymbolColor;
+extern const QColor ilsSymbolColor;
 
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);

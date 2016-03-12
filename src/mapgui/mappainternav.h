@@ -36,6 +36,7 @@ public:
 
 private:
   SymbolPainter *symbolPainter;
+
 };
 
 #endif // MAPPAINTERAIRPORT_H
