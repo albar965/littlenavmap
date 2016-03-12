@@ -59,12 +59,13 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   QString text = idx.data().toString();
   MapAirport ap = mapAirport(sqlModel, idx.row());
-  if(ap.isSet(ADDON))
-  {
-    QFont font(painter->font());
+
+  QFont font(painter->font());
+  if(ap.isSet(SCENERY))
     font.setBold(true);
-    painter->setFont(font);
-  }
+  if(ap.isSet(ADDON))
+    font.setItalic(true);
+  painter->setFont(font);
 
   if(idx.column() == sqlModel->getSortColumnIndex() &&
      (option.state & QStyle::State_Selected) == 0)

@@ -193,6 +193,14 @@ struct MapNdb
   atools::geo::Pos pos;
 };
 
+struct MapMarker
+{
+  int id;
+  QString type;
+  int heading;
+  atools::geo::Pos pos;
+};
+
 struct MapSearchResult
 {
   QList<const MapAirport *> airports;
@@ -203,6 +211,7 @@ struct MapSearchResult
   QList<const MapWaypoint *> waypoints;
   QList<const MapVor *> vors;
   QList<const MapNdb *> ndbs;
+  QList<const MapMarker *> markers;
 };
 
 class MapQuery
@@ -226,6 +235,9 @@ public:
 
   const QList<MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                bool lazy);
+
+  const QList<MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                     bool lazy);
 
   const QList<MapRunway> *getRunwaysForOverview(int airportId);
 
@@ -262,6 +274,7 @@ private:
   SimpleCache<MapWaypoint> waypoints;
   SimpleCache<MapVor> vors;
   SimpleCache<MapNdb> ndbs;
+  SimpleCache<MapMarker> markers;
 
   QCache<int, QList<MapRunway> > runwayCache;
   QCache<int, QList<MapRunway> > runwayOverwiewCache;
@@ -273,7 +286,7 @@ private:
   atools::sql::SqlQuery *airportQuery = nullptr, *airportMediumQuery = nullptr, *airportLargeQuery = nullptr,
   *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *helipadQuery = nullptr,
   *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-  *waypointsQuery = nullptr, *vorsQuery = nullptr, *ndbsQuery = nullptr;
+  *waypointsQuery = nullptr, *vorsQuery = nullptr, *ndbsQuery = nullptr, *markersQuery = nullptr;
 
   const QList<MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                          bool lazy);

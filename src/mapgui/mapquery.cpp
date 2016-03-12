@@ -133,6 +133,16 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.waypoints, xs, ys, &wp);
     }
 
+  if(mapLayer->isMarker())
+    for(int i = markers.list.size() - 1; i >= 0; i--)
+    {
+      const MapMarker& wp = markers.list.at(i);
+      int x, y;
+      if(conv.wToS(wp.pos, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.markers, xs, ys, &wp);
+    }
+
   if(mapLayer->isAirportDiagram())
   {
     for(int id : parkingCache.keys())
@@ -287,6 +297,33 @@ const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLa
       }
     }
   return &ndbs.list;
+}
+
+const QList<MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                             bool lazy)
+{
+  if(mapLayer == nullptr)
+    return nullptr;
+
+  if(markers.handleCache(rect, mapLayer, lazy))
+    qDebug() << "MapQuery marker cache miss";
+
+  if(markers.list.isEmpty() && !lazy)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinateRect(r, markersQuery);
+      markersQuery->exec();
+      while(markersQuery->next())
+      {
+        MapMarker marker;
+        marker.id = markersQuery->value("marker_id").toInt();
+        marker.type = markersQuery->value("type").toString();
+        marker.heading = static_cast<int>(std::roundf(markersQuery->value("heading").toFloat()));
+        marker.pos = Pos(markersQuery->value("lonx").toFloat(), markersQuery->value("laty").toFloat());
+        markers.list.append(marker);
+      }
+    }
+  return &markers.list;
 }
 
 const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
@@ -741,6 +778,12 @@ void MapQuery::initQueries()
     "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, lonx, laty "
     "from ndb "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  markersQuery = new SqlQuery(db);
+  markersQuery->prepare(
+    "select marker_id, type, heading, lonx, laty "
+    "from marker "
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 }
 
 void MapQuery::deInitQueries()
@@ -771,4 +814,6 @@ void MapQuery::deInitQueries()
   vorsQuery = nullptr;
   delete ndbsQuery;
   ndbsQuery = nullptr;
+  delete markersQuery;
+  markersQuery = nullptr;
 }

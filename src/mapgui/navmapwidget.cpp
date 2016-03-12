@@ -328,6 +328,12 @@ bool NavMapWidget::event(QEvent *event)
       text += "Waypoint: " + wp.ident + "\n";
     }
 
+    if(!res.markers.isEmpty())
+    {
+      MapMarker wp = *res.markers.first();
+      text += "Marker: " + wp.type + "\n";
+    }
+
     if(!text.isEmpty())
       QToolTip::showText(helpEvent->globalPos(), text.trimmed());
     else

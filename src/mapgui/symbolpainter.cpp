@@ -94,7 +94,8 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& wp,
   Q_UNUSED(wp);
   painter->save();
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QColor(Qt::magenta), 1.5, Qt::SolidLine, Qt::SquareCap));
+
+  painter->setPen(QPen(mapcolors::waypointSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
   painter->setBackgroundMode(Qt::TransparentMode);
 
   if(!fast)
@@ -117,7 +118,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, i
 {
   painter->save();
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QColor(Qt::darkBlue), 1.5, Qt::SolidLine, Qt::SquareCap));
+  painter->setPen(QPen(mapcolors::vorSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
   painter->setBackgroundMode(Qt::TransparentMode);
 
   if(!fast)
@@ -141,9 +142,9 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, i
   }
 
   if(size > 14)
-    painter->setPen(QPen(QColor(Qt::darkBlue), size / 4, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
   else
-    painter->setPen(QPen(QColor(Qt::darkBlue), size / 3, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
   painter->drawPoint(x, y);
 
   painter->drawPoint(x, y);
@@ -158,18 +159,44 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ndb, int x, i
 
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QColor(Qt::darkRed), 1.5, size > 10 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
+  painter->setPen(QPen(mapcolors::ndbSymbolColor, 1.5, size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
 
   if(!fast)
     painter->drawEllipse(QPoint(x, y), radius, radius);
-  if(size > 10)
+  if(size > 12)
   {
     if(!fast)
       painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
-    painter->setPen(QPen(QColor(Qt::darkRed), size / 4, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
   }
   else
-    painter->setPen(QPen(QColor(Qt::darkRed), size / 3, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
+
+  painter->drawPoint(x, y);
+
+  painter->restore();
+}
+
+void SymbolPainter::drawMarkerSymbol(QPainter *painter, const MapMarker& marker, int x, int y, int size,
+                                     bool fast)
+{
+  Q_UNUSED(marker);
+  painter->save();
+  int radius = size / 2;
+
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(mapcolors::markerSymbolColor, 1.5, Qt::SolidLine, Qt::RoundCap));
+
+  if(!fast)
+  {
+    painter->translate(x, y);
+    painter->rotate(marker.heading);
+    painter->drawEllipse(QPoint(0, 0), radius, radius / 2);
+    painter->resetTransform();
+  }
+
+  painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(x, y);
 

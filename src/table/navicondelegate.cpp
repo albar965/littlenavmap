@@ -58,13 +58,15 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   painter->setRenderHint(QPainter::Antialiasing);
 
   QString text = idx.data().toString();
-
-  QString type = value(sqlModel, idx.row(), "type").toString();
   QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
 
   if(idx.column() == sqlModel->getSortColumnIndex() &&
      (option.state & QStyle::State_Selected) == 0)
     painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
+
+  QFont font(painter->font());
+  font.setBold(true);
+  painter->setFont(font);
 
   QRect textRect = option.rect;
   textRect.setWidth(textRect.width() - 1);

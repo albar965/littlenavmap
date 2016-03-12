@@ -62,6 +62,8 @@ public:
   MapLayer& ndb(bool value = true);
   MapLayer& ndbIdent(bool value = true);
   MapLayer& ndbInfo(bool value = true);
+  MapLayer& marker(bool value = true);
+  MapLayer& markerInfo(bool value = true);
   MapLayer& ils(bool value = true);
   MapLayer& ilsIdent(bool value = true);
   MapLayer& ilsInfo(bool value = true);
@@ -69,6 +71,7 @@ public:
   MapLayer& waypointSymbolSize(int size);
   MapLayer& vorSymbolSize(int size);
   MapLayer& ndbSymbolSize(int size);
+  MapLayer& markerSymbolSize(int size);
 
   bool operator<(const MapLayer& other) const;
 
@@ -187,6 +190,16 @@ public:
     return layerNdbInfo;
   }
 
+  bool isMarker() const
+  {
+    return layerMarker;
+  }
+
+  bool isMarkerInfo() const
+  {
+    return layerMarkerInfo;
+  }
+
   bool isIls() const
   {
     return layerIls;
@@ -222,6 +235,11 @@ public:
     return layerNdbSymbolSize;
   }
 
+  int getMarkerSymbolSize() const
+  {
+    return layerMarkerSymbolSize;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
@@ -237,8 +255,10 @@ private:
   bool layerWaypoint = false, layerWaypointName = false,
        layerVor = false, layerVorIdent = false, layerVorInfo = false,
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
+       layerMarker = false, layerMarkerInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false;
-  int layerWaypointSymbolSize = 10, layerVorSymbolSize = 10, layerNdbSymbolSize = 10;
+  int layerWaypointSymbolSize = 10, layerVorSymbolSize = 10, layerNdbSymbolSize = 10,
+      layerMarkerSymbolSize = 10;
 
 };
 

@@ -166,6 +166,18 @@ MapLayer& MapLayer::ndbInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::marker(bool value)
+{
+  layerMarker = value;
+  return *this;
+}
+
+MapLayer& MapLayer::markerInfo(bool value)
+{
+  layerMarkerInfo = value;
+  return *this;
+}
+
 MapLayer& MapLayer::ils(bool value)
 {
   layerIls = value;
@@ -199,6 +211,12 @@ MapLayer& MapLayer::vorSymbolSize(int size)
 MapLayer& MapLayer::ndbSymbolSize(int size)
 {
   layerNdbSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::markerSymbolSize(int size)
+{
+  layerMarkerSymbolSize = size;
   return *this;
 }
 

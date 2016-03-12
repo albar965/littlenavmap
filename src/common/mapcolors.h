@@ -46,6 +46,11 @@ extern const QColor airportSymbolFillColor;
 extern const QPen markBackPen;
 extern const QPen markFillPen;
 
+extern const QColor vorSymbolColor;
+extern const QColor ndbSymbolColor;
+extern const QColor waypointSymbolColor;
+extern const QColor markerSymbolColor;
+
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const MapAirport& ap);

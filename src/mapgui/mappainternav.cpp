@@ -86,7 +86,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
           texts.append(waypoint.ident);
 
         x -= mapLayer->getNdbSymbolSize() / 2 + 2;
-        textBox(painter, texts, QColor(Qt::magenta), x, y, false, false, true, 0);
+        textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, false, false, true, 0);
       }
     }
   }
@@ -132,7 +132,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             texts.append(vor.ident);
 
           x -= mapLayer->getVorSymbolSize() / 2 + 2;
-          textBox(painter, texts, QColor(Qt::darkBlue), x, y, false, false, true, 0);
+          textBox(painter, texts, mapcolors::vorSymbolColor, x, y, false, false, true, 0);
         }
       }
     }
@@ -173,7 +173,42 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             texts.append(ndb.ident);
 
           x -= mapLayer->getNdbSymbolSize() / 2 + 2;
-          textBox(painter, texts, QColor(Qt::darkRed), x, y, false, false, true, 0);
+          textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, false, false, true, 0);
+        }
+      }
+    }
+  }
+
+  if(mapLayer->isMarker())
+  {
+    const QList<MapMarker> *markers = query->getMarkers(curBox, mapLayer, drawFast);
+    if(markers != nullptr)
+    {
+      if(widget->viewContext() == Marble::Still)
+      {
+        qDebug() << "Number of marker" << markers->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *mapLayer;
+        t.restart();
+      }
+
+      for(const MapMarker& marker : *markers)
+      {
+        int x, y;
+        bool visible = wToS(marker.pos, x, y);
+
+        if(visible)
+        {
+          symbolPainter->drawMarkerSymbol(painter, marker, x, y, mapLayer->getNdbSymbolSize(), drawFast);
+
+          if(mapLayer->isMarkerInfo())
+          {
+            QString type = marker.type.toLower();
+            type[0] = type.at(0).toUpper();
+            x -= mapLayer->getMarkerSymbolSize() / 2 + 2;
+            textBox(painter, {type}, mapcolors::markerSymbolColor, x, y, false, false, true, 0);
+          }
         }
       }
     }

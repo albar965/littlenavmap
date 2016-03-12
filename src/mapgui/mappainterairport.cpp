@@ -61,7 +61,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   if(airports == nullptr)
     return;
 
-  if(drawFast)
+  if(!drawFast)
   {
     qDebug() << "Number of aiports" << airports->size();
     qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -398,11 +398,6 @@ void MapPainterAirport::airportDiagram(const MapLayer *mapLayer, GeoPainter *pai
   // Draw parking and tower texts -------------------------------------------------
   if(!fast && mapLayer->isAirportDiagramDetail())
   {
-
-    QFont f = painter->font();
-    f.setBold(true);
-    painter->setFont(f);
-
     for(const MapParking& parking : *parkings)
       if(mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
       {
