@@ -21,7 +21,7 @@ public:
                          bool isAirportDiagram, bool fast);
 
   void drawWaypointSymbol(QPainter *painter, const MapWaypoint& wp, int x, int y, int size, bool fast);
-  void drawVorSymbol(QPainter *painter, const MapVor& vor, int x, int y, int size, bool fast);
+  void drawVorSymbol(QPainter *painter, const MapVor& vor, int x, int y, int size, bool fast, int largeSize);
   void drawNdbSymbol(QPainter *painter, const MapNdb& ndb, int x, int y, int size, bool fast);
   void drawMarkerSymbol(QPainter *painter, const MapMarker& marker, int x, int y, int size, bool fast);
 

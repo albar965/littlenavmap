@@ -97,7 +97,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
                                  option.rect.x() + (option.rect.width() - w) / 2,
                                  option.rect.y() + symSize / 2 + 2,
                                  symSize,
-                                 false);
+                                 false, 0);
   }
 
   painter->restore();

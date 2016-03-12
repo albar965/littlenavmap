@@ -85,8 +85,8 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
         if(mapLayer->isWaypointName())
           texts.append(waypoint.ident);
 
-        x -= mapLayer->getNdbSymbolSize() / 2 + 2;
-        textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, false, false, true, 0);
+        x += mapLayer->getNdbSymbolSize() / 2 + 2;
+        textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, false, false, false, 0);
       }
     }
   }
@@ -112,7 +112,8 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
         if(visible)
         {
-          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), drawFast);
+          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), drawFast,
+                                       mapLayer->isVorLarge() ? mapLayer->getVorSymbolSize() * 5 : 0);
 
           QStringList texts;
 

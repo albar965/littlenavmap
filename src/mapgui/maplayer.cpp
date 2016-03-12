@@ -148,6 +148,12 @@ MapLayer& MapLayer::vorInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::vorLarge(bool value)
+{
+  layerVorLarge = value;
+  return *this;
+}
+
 MapLayer& MapLayer::ndb(bool value)
 {
   layerNdb = value;

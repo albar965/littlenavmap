@@ -78,6 +78,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
   if(!fast || isAirportDiagram)
     if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED) && size > 6)
     {
+      // Draw line inside circle
       painter->translate(x, y);
       painter->rotate(ap.longestRunwayHeading);
       painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), size / 5, Qt::SolidLine, Qt::RoundCap));
@@ -114,7 +115,8 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const MapWaypoint& wp,
   painter->restore();
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, int y, int size, bool fast)
+void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, int y, int size, bool fast,
+                                  int largeSize)
 {
   painter->save();
   painter->setBrush(Qt::NoBrush);
@@ -123,22 +125,45 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const MapVor& vor, int x, i
 
   if(!fast)
   {
+    painter->translate(x, y);
+
+    if(largeSize > 0 && !vor.dmeOnly)
+      painter->rotate(-vor.magvar);
+
+    int radius = size / 2;
     if(vor.hasDme)
-      painter->drawRect(x - size / 2, y - size / 2, size, size);
+      painter->drawRect(-size / 2, -size / 2, size, size);
     if(!vor.dmeOnly)
     {
-      int radius = size / 2;
       int corner = 2;
       QPolygon polygon;
-      polygon << QPoint(x - radius / corner, y - radius)
-              << QPoint(x + radius / corner, y - radius)
-              << QPoint(x + radius, y)
-              << QPoint(x + radius / corner, y + radius)
-              << QPoint(x - radius / corner, y + radius)
-              << QPoint(x - radius, y);
+      polygon << QPoint(-radius / corner, -radius)
+              << QPoint(radius / corner, -radius)
+              << QPoint(radius, 0)
+              << QPoint(radius / corner, radius)
+              << QPoint(-radius / corner, radius)
+              << QPoint(-radius, 0);
 
       painter->drawConvexPolygon(polygon);
     }
+
+    if(largeSize > 0 && !vor.dmeOnly)
+    {
+      painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
+      painter->drawEllipse(QPoint(0, 0), radius * 5, radius * 5);
+
+      for(int i = 0; i < 360; i += 10)
+      {
+        if(i == 0)
+          painter->drawLine(0, 0, 0, -radius * 5);
+        else if((i % 90) == 0)
+          painter->drawLine(0, static_cast<int>(-radius * 4), 0, -radius * 5);
+        painter->drawLine(0, static_cast<int>(-radius * 4.5), 0, -radius * 5);
+        painter->rotate(10);
+      }
+    }
+    painter->resetTransform();
+
   }
 
   if(size > 14)
@@ -162,10 +187,13 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const MapNdb& ndb, int x, i
   painter->setPen(QPen(mapcolors::ndbSymbolColor, 1.5, size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
 
   if(!fast)
+    // Draw outer dotted circle
     painter->drawEllipse(QPoint(x, y), radius, radius);
+
   if(size > 12)
   {
     if(!fast)
+      // If big enought draw inner dotted circle
       painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
     painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
   }
@@ -190,6 +218,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const MapMarker& marker,
 
   if(!fast)
   {
+    // Draw rotated lens / ellipse
     painter->translate(x, y);
     painter->rotate(marker.heading);
     painter->drawEllipse(QPoint(0, 0), radius, radius / 2);

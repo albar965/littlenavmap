@@ -57,6 +57,7 @@ public:
   MapLayer& waypoint(bool value = true);
   MapLayer& waypointName(bool value = true);
   MapLayer& vor(bool value = true);
+  MapLayer& vorLarge(bool value = true);
   MapLayer& vorIdent(bool value = true);
   MapLayer& vorInfo(bool value = true);
   MapLayer& ndb(bool value = true);
@@ -165,6 +166,11 @@ public:
     return layerVor;
   }
 
+  bool isVorLarge() const
+  {
+    return layerVorLarge;
+  }
+
   bool isVorIdent() const
   {
     return layerVorIdent;
@@ -253,7 +259,7 @@ private:
   int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
 
   bool layerWaypoint = false, layerWaypointName = false,
-       layerVor = false, layerVorIdent = false, layerVorInfo = false,
+       layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
        layerMarker = false, layerMarkerInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false;

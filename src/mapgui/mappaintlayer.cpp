@@ -94,31 +94,31 @@ void MapPaintLayer::initLayers()
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().
+         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo().
          waypointSymbolSize(14).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().
+         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
          waypointSymbolSize(10).waypointName().
-         vorSymbolSize(24).vorIdent().vorInfo().
+         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).
-         vorSymbolSize(22).vorIdent().vorInfo().
+         vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          markerSymbolSize(24)).
 
   append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
          waypoint(false).
-         vorSymbolSize(20).vorIdent().vorInfo().
+         vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(20).ndbIdent().ndbInfo().
          marker(false)).
 
