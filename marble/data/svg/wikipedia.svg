@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.0"
+   width="136.79189"
+   height="116.30306"
+   id="svg2">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3162">
+      <stop
+         id="stop3186"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3442"
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0.45731688" />
+      <stop
+         id="stop3440"
+         style="stop-color:#efefef;stop-opacity:1"
+         offset="0.65027088" />
+      <stop
+         id="stop3174"
+         style="stop-color:#808080;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <radialGradient
+       cx="210.52946"
+       cy="405.19409"
+       r="42.608421"
+       fx="210.52946"
+       fy="405.19409"
+       id="radialGradient3475"
+       xlink:href="#linearGradient3162"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.4550661,3.5539503e-7,-3.5810583e-7,1.4661647,-95.804658,-188.69577)" />
+  </defs>
+  <g
+     transform="translate(-80.551858,-365.66569)"
+     id="layer1">
+    <g
+       id="g3477">
+      <path
+         d="M 269.20565,415.96606 A 41.163715,40.406101 0 1 1 186.87822,415.96606 A 41.163715,40.406101 0 1 1 269.20565,415.96606 z"
+         transform="matrix(1.3843655,0,0,1.3843655,-157.35199,-151.80178)"
+         id="path2387"
+         style="fill:url(#radialGradient3475);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.88941026;stroke-linecap:round;stroke-linejoin:round;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         d="M 186.5,373.15625 C 187.88103,375.36666 189.1249,377.66361 190.1875,380.0625 C 204.19335,389.84431 213.3125,405.92307 213.3125,424.0625 C 213.31249,453.83723 188.70635,478 158.3125,478 C 138.22525,478.00001 120.6883,467.44316 111.09375,451.6875 C 108.77894,450.47419 106.57934,449.12918 104.46875,447.625 C 113.67388,467.86083 134.33136,481.96875 158.3125,481.96875 C 190.83077,481.96874 217.34374,456.04203 217.34375,424.0625 C 217.34375,402.10126 204.85852,382.97836 186.5,373.15625 z"
+         id="path3444"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:2.88941026;stroke-linecap:round;stroke-linejoin:round;marker:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         d="M 178.12576,365.66569 L 178.12576,368.19091 C 174.74473,368.52765 172.41188,370.68253 171.12722,374.65549 L 150.84158,435.46294 L 148.10302,435.46294 L 130.7588,387.28162 L 111.89316,435.46294 L 109.05318,435.46294 L 87.550402,374.65549 C 86.671342,372.16398 85.826122,370.54783 85.014692,369.80706 C 84.203258,369.06638 82.715648,368.52765 80.551858,368.19091 L 80.551858,365.66569 L 110.37173,365.66569 L 110.37173,368.19091 C 107.73458,368.39298 105.9765,368.79701 105.09747,369.40302 C 104.28602,369.94177 103.88032,370.95187 103.88034,372.43329 C 103.88032,373.17407 104.11697,374.28517 104.59033,375.76659 L 116.76171,412.53389 L 128.73024,381.4231 L 125.18025,371.72623 C 124.16592,369.57143 121.73165,368.39298 117.87743,368.19091 L 117.87743,365.66569 L 149.52301,365.66569 L 149.52301,368.19091 C 149.11722,368.25831 148.67772,368.29198 148.20446,368.29193 C 145.97296,368.42664 144.41774,368.76336 143.53876,369.30201 C 142.65965,369.84077 142.22012,370.71619 142.22019,371.92825 C 142.22012,372.66902 142.69345,374.55453 143.64019,377.58475 L 154.59441,411.52379 L 165.95438,376.87769 C 166.42762,375.53096 166.6643,374.11683 166.66437,372.63531 C 166.6643,371.08657 166.15716,370.00912 165.14295,369.40302 C 164.19619,368.72966 162.37048,368.32563 159.66583,368.19091 L 159.66583,365.66569 L 178.12576,365.66569"
+         id="text2383"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans" />
+    </g>
+  </g>
+</svg>

@@ -441,37 +441,25 @@ void Controller::processViewColumns()
     const Column *cd = columns->getColumn(field);
 
     if(!currentDistanceCenter.isValid() && cd->isDistance())
-    {
-      qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
-    }
     else
     // Hide or show column
     if(cd->isHidden())
-    {
-      qDebug() << "hide" << i << "name" << field;
       view->hideColumn(i);
-    }
     else
-    {
-      qDebug() << "show" << i << "name" << field;
       view->showColumn(i);
-    }
 
     // Set sort column
     if(model->getSortColumn().isEmpty())
     {
-      qDebug() << "default sort" << i << "name" << field;
       if(cd->isDefaultSort())
       {
-        qDebug() << "default sort" << i << "name" << field;
         view->sortByColumn(i, cd->getDefaultSortOrder());
         sort = cd;
       }
     }
     else if(field == model->getSortColumn())
     {
-      qDebug() << "sort" << i << "name" << field;
       view->sortByColumn(i, model->getSortOrder());
       sort = cd;
     }
@@ -479,7 +467,6 @@ void Controller::processViewColumns()
 
   const Column *c = columns->getDefaultSortColumn();
   int idx = rec.indexOf(c->getColumnName());
-  qDebug() << "sort to default " << idx << " name" << c->getColumnName();
   if(sort == nullptr)
     view->sortByColumn(idx, c->getDefaultSortOrder());
   else

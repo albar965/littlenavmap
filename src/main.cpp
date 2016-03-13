@@ -26,6 +26,9 @@
 
 #include <QSettings>
 #include <QApplication>
+#include <marble/MarbleGlobal.h>
+#include <marble/MarbleDirs.h>
+#include <marble/MarbleDebug.h>
 
 int main(int argc, char *argv[])
 {
@@ -60,6 +63,28 @@ int main(int argc, char *argv[])
     // Load local and Qt system translations from various places
     Translator::load(s->value("Options/Language", QString()).toString());
 
+    using namespace Marble;
+    MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
+    MarbleGlobal::getInstance()->setProfiles(profiles);
+
+    qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
+    qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+    qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+    qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+    qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
+    qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+
+    MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+    MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+    MarbleDebug::setEnabled(true);
+
+    qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
+    qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+    qDebug() << "New Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+    qDebug() << "New Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+    qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
+    qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+
     // Write version to configuration file
     QString oldVersion = s->value("Options/Language").toString();
     qInfo() << "Found version" << oldVersion << "in configuration file";
@@ -76,8 +101,8 @@ int main(int argc, char *argv[])
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(nullptr).handleException(e);
-    retval = 1;
+  atools::gui::ErrorHandler(nullptr).handleException(e);
+  retval = 1;
   }
   catch(...)
   {

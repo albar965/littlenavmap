@@ -62,6 +62,11 @@ void Search::initViewAndController()
   controller->prepareModel();
 }
 
+void Search::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+{
+  controller->filterByIdent(ident, region, airportIdent);
+}
+
 void Search::markChanged(const atools::geo::Pos& mark)
 {
   mapMark = mark;

@@ -109,6 +109,8 @@ void SearchController::objectSelected(maptypes::ObjectType type, const QString& 
 
   switch(type)
   {
+    case maptypes::MARKER:
+      break;
     case maptypes::AIRPORT:
       airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);

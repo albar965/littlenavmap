@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.0"
+   width="128"
+   height="128"
+   id="svg1655"
+   sodipodi:version="0.32"
+   inkscape:version="0.45"
+   sodipodi:docname="trackturtle.svg"
+   sodipodi:docbase="/home/tackat/marble/data/svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
+  <metadata
+     id="metadata1372">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:window-height="581"
+     inkscape:window-width="749"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="2.921875"
+     inkscape:cx="72.061724"
+     inkscape:cy="64"
+     inkscape:window-x="0"
+     inkscape:window-y="109"
+     inkscape:current-layer="svg1655" />
+  <defs
+     id="defs1658" />
+  <g
+     id="layer4" />
+  <g
+     style="display:inline"
+     id="layer2" />
+  <path
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.75767469;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="M 64,9.0625 C 63.014684,9.0642107 62.132384,9.6731221 61.78125,10.59375 L 21.3125,115.90625 C 20.94308,116.87728 21.246478,117.97573 22.061914,118.61949 C 22.877351,119.26326 24.016218,119.30344 24.875,118.71875 L 64,92.25 L 103.125,118.71875 C 103.98378,119.30344 105.12265,119.26326 105.93809,118.61949 C 106.75352,117.97573 107.05692,116.87728 106.6875,115.90625 L 66.21875,10.59375 C 65.867616,9.6731221 64.985316,9.0642107 64,9.0625 z M 64,18.09375 L 99.53125,110.5625 L 65.34375,87.40625 C 64.533703,86.851811 63.466297,86.851811 62.65625,87.40625 L 28.46875,110.5625 L 64,18.09375 z "
+     id="path2224" />
+</svg>

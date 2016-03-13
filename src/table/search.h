@@ -64,6 +64,9 @@ public:
   void tableCopyCipboard();
   void loadAllRowsIntoView();
 
+  void filterByIdent(const QString& ident, const QString& region = QString(),
+                     const QString& airportIdent = QString());
+
 protected:
   QIcon *boolIcon = nullptr;
 

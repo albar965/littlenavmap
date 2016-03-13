@@ -28,6 +28,7 @@ class QElapsedTimer;
 class Controller;
 class ColumnList;
 class SearchController;
+class QComboBox;
 
 namespace atools {
 namespace fs {
@@ -74,6 +75,8 @@ signals:
 
 private:
   SearchController *searchController;
+
+  QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */

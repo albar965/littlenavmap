@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+    <document>
+        <head>
+            <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+            <license short="Public Domain">Source: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com., License: Public Domain</license>
+            <name>Political Map</name>
+            <target>earth</target>
+            <theme>political</theme>
+            <icon pixmap="political-preview.png"/>
+
+            <!-- describes whether the map theme item will be hidden (e.g.
+                for a clouds layer): -->
+            <visible> true </visible>
+
+            <!-- The description allows for rich text of course: -->
+            <description><![CDATA[<p>A <i>Political Map</i>.</p><p>The theme displays various countries.</p>]]></description>
+
+            <zoom>
+                <minimum>   900  </minimum>
+                <maximum>  3200  </maximum>
+
+                <!-- describes whether you can zoom trough the levels
+                    continuously -->
+                <discrete> false </discrete>
+            </zoom>
+        </head>
+
+            <!-- Now we create the layer structure that gets handled by the
+    layer management class -->
+
+        <map bgcolor="#d3d7cf" highlightBrush="#007880" highlightPen="#00484d">
+            <canvas/>
+            <target/>
+
+            <layer name="rivers" backend="geodata">
+                <geodata name="rivers" property="water">
+                    <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
+                    <pen color="#3474df" />
+                </geodata>
+            </layer>
+
+            <!-- This layer draws the boundaries for different geographical regions -->
+            <layer name="coutries" backend="geodata">
+                <geodata name="country-borders" property="borders">
+                    <sourcefile>naturalearth/ne_50m_admin_0_countries.pn2 </sourcefile>
+                    <brush colorMap="#ec7331,#ffeb55,#77b753,#c173b0,#6193cf,#e85752,#b3925d,#f2bb88,#b1d28f,#8e79b9,#fff299,#f08682,#debc85" alpha="0.60" />
+                    <pen color="#57401e" style="solidline"/>
+                </geodata>
+                <geodata name="breakawaydisputed" property="borders">
+                    <sourcefile> naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2 </sourcefile>
+                    <pen color="#cccbca" width="1" style="dotline"/>
+                    <brush color="#cccbca" alpha="0.20" />
+                </geodata>
+            </layer>
+            <layer name="standardplaces" backend="geodata">
+                <geodata name="boundaryplacemarks">
+                    <sourcefile>boundaryplacemarks.cache</sourcefile>
+                </geodata>
+            </layer>
+        </map>
+
+        <settings>
+             <group name="Places">
+                <property name="cities">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+                <property name="terrain">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+            </group>
+            <group name="Boundaries">
+                <property name="borders">
+                    <value>true</value>
+                    <available>true</available>
+                </property>
+            </group>
+            <group name="WaterBodies">
+                <property name="water">
+                    <available>true</available>
+                    <value>true</value>
+                </property>
+            </group>
+             <property name="coordinate-grid">
+                <value>true</value>
+                <available>true</available>
+            </property>
+        </settings>
+
+        <legend>
+            <section name="borders-section" checkable="true" connect="borders" spacing="12">
+                <heading>Boundaries</heading>
+
+                <item name="international-boundary-item">
+                    <icon color="#cccbca" pixmap="bitmaps/border_1.png"/>
+                    <text>International</text>
+                </item>
+                <item name="disputed-areas-item">
+                    <icon color="#cccbca" pixmap="bitmaps/border_disputed.png"/>
+                    <text>Disputed Areas</text>
+                </item>
+            </section>
+            <section name="waterbodies-section" checkable="true" connect="water" spacing="12">
+                <heading>Water Bodies</heading>
+
+                    <item name="rivers-item">
+                        <icon color="#99b3cc" pixmap="bitmaps/river.png"/>
+                        <text>Rivers</text>
+                    </item>
+            </section>
+            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+                <heading>Coordinate Grid</heading>
+            </section>
+        </legend>
+    </document>
+</dgml>

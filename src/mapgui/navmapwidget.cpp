@@ -36,7 +36,7 @@
 #include <marble/MarbleModel.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/ViewportParams.h>
-
+#include <marble/MarbleModel.h>
 #include "coordinateconverter.h"
 #include "maplayer.h"
 #include "ui_mainwindow.h"
@@ -47,6 +47,10 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   : Marble::MarbleWidget(parent), parentWindow(parent), db(sqlDb)
 {
   installEventFilter(this);
+
+  // Set the map quality to gain speed
+  setMapQualityForViewContext(NormalQuality, Still);
+  setMapQualityForViewContext(LowQuality, Animation);
 
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
@@ -64,6 +68,36 @@ NavMapWidget::~NavMapWidget()
 {
   delete paintLayer;
   delete mapQuery;
+}
+
+void NavMapWidget::setTheme(const QString& theme, int index)
+{
+  // mapWidget->setAnimationsEnabled(false);
+  // mapWidget->setShowCrosshairs(false);
+  // mapWidget->setShowBackground(false);
+  // mapWidget->setShowAtmosphere(false);
+  // mapWidget->setShowGrid(true);
+
+  setMapThemeId(theme);
+
+  if(index == 1)
+  {
+    setShowTerrain(true);
+    setShowRelief(true);
+  }
+  else
+  {
+    setShowTerrain(false);
+    setShowRelief(false);
+  }
+  setShowClouds(false);
+  setShowBorders(true);
+  setShowPlaces(false);
+  setShowCities(true);
+  setShowIceLayer(true);
+  setShowLakes(true);
+  setShowOtherPlaces(false);
+  setShowRivers(true);
 }
 
 void NavMapWidget::preDatabaseLoad()
@@ -98,6 +132,7 @@ void NavMapWidget::saveState()
 
   s->setValue("Map/MarkLonX", mark.longitude(GeoDataCoordinates::Degree));
   s->setValue("Map/MarkLatY", mark.latitude(GeoDataCoordinates::Degree));
+
 }
 
 void NavMapWidget::restoreState()
@@ -157,7 +192,8 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
 
   CoordinateConverter conv(viewport());
   MapSearchResult res;
-  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), pos.x(), pos.y(), 20, res);
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), QList<maptypes::ObjectType>(),
+                              pos.x(), pos.y(), 20, res);
 
   MapAirport ap;
   if(!res.airports.isEmpty())
@@ -225,8 +261,15 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  Q_UNUSED(event);
   qDebug() << "mouseDoubleClickEvent";
+
+  CoordinateConverter conv(viewport());
+  MapSearchResult res;
+  const MapLayer *mapLayer = paintLayer->getMapLayer();
+  mapQuery->getNearestObjects(conv, mapLayer, {maptypes::AIRPORT},
+                              event->pos().x(), event->pos().y(), 20, res);
+  if(!res.airports.isEmpty())
+    showRect(res.airports.at(0)->bounding);
 }
 
 void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
@@ -246,7 +289,8 @@ bool NavMapWidget::event(QEvent *event)
     MapSearchResult res;
 
     const MapLayer *mapLayer = paintLayer->getMapLayer();
-    mapQuery->getNearestObjects(conv, mapLayer, helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
+    mapQuery->getNearestObjects(conv, mapLayer, QList<maptypes::ObjectType>(),
+                                helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
 
     QString text;
     if(mapLayer != nullptr && mapLayer->isAirportDiagram())

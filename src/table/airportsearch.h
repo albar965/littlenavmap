@@ -53,8 +53,6 @@ public:
 
   void connectSlots() override;
 
-  void filterByIdent(const QString& ident);
-
 private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                             const QVariant& dataValue, Qt::ItemDataRole role) const;

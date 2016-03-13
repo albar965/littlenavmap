@@ -21,7 +21,7 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 #include "geo/linestring.h"
-
+#include "common/maptypes.h"
 #include "maplayer.h"
 
 #include <QCache>
@@ -231,7 +231,9 @@ public:
 
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                         int xs, int ys, int screenDistance, MapSearchResult& result);
+                         const QList<maptypes::ObjectType> types,
+                         int xs, int ys, int screenDistance,
+                         MapSearchResult& result);
 
   const QList<MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                        bool lazy);

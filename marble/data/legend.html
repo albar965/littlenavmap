@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Marble: Legend</title>
+  %!{bootstrap}%
+  <link href="legend.css" rel="stylesheet" type="text/css" />
+</head>
+<body onload="1">
+
+<!-- 
+    To add a custom checkbox that can be monitored through 
+    LegendBrowser's API use this syntax:
+
+<a href="checkbox:checkboxid"><span style="text-decoration: none"><img src="checkbox:checkboxid">&nbsp;</span></a> 
+
+    where "checkboxid" needs to be replaced by a unique identifier 
+    string of your choice.
+-->
+
+<div class="well well-small well-legend">
+  <label class="section-head"><a href="checkbox:cities"/><span>Populated Places</span></label>
+  <div>
+    <i>Population:</i>
+  </div>
+  <div>
+    <img src="./bitmaps/city_1_red.png">
+    <img src="./bitmaps/city_1_orange.png">
+    <img src="./bitmaps/city_1_yellow.png">
+    <img src="./bitmaps/city_1_white.png">
+  </div>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="left" valign="top" width="10"> 
+        &nbsp;
+      </td>
+      <td align="left" valign="top"> 
+        &gt; 1&nbsp;000&nbsp;000
+      </td>
+    </tr>
+  </table>
+  <div>
+    <img src="./bitmaps/city_2_red.png">
+    <img src="./bitmaps/city_2_orange.png">
+    <img src="./bitmaps/city_2_yellow.png">
+    <img src="./bitmaps/city_2_white.png">
+  </div>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="left" valign="top" width="10"> 
+        &nbsp;
+      </td>
+      <td align="left" valign="top"> 
+        &ge; 100&nbsp;000
+      </td>
+    </tr>
+  </table>
+  <div>
+    <img src="./bitmaps/city_3_red.png">
+    <img src="./bitmaps/city_3_orange.png">
+    <img src="./bitmaps/city_3_yellow.png">
+    <img src="./bitmaps/city_3_white.png">
+  </div>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="left" valign="top" width="10"> 
+        &nbsp;
+      </td>
+      <td align="left" valign="top"> 
+        &ge; 10&nbsp;000
+      </td>
+    </tr>
+  </table>
+  <div>
+    <img src="./bitmaps/city_4_red.png">
+    <img src="./bitmaps/city_4_orange.png">
+    <img src="./bitmaps/city_4_yellow.png">
+    <img src="./bitmaps/city_4_white.png">
+  </div>
+  <table border="0" cellpadding="0" cellspacing="0" width="100%">
+    <tr>
+      <td align="left" valign="top" width="10"> 
+        &nbsp;
+      </td>
+      <td align="left" valign="top"> 
+        &lt; 10&nbsp;000
+      </td>
+    </tr>
+  </table>
+<br/>
+  <div>
+    <i>Capitals:</i>
+  </div>
+  <div>
+    Red:&nbsp;Nation
+  </div>
+  <div>
+    Orange:&nbsp;State
+  </div>
+  <div>
+    Yellow:&nbsp;County
+  </div>
+  <div>
+    White:&nbsp;None
+  </div>
+</div>
+<!-- The following comment gives a hint to the MarbleLegendBrowser where further 
+     legend items which get generated from DGML should get inserted.
+     So DO NOT DELETE this comment: -->
+
+<!-- ##customLegendEntries:all## -->
+
+<!-- You can still appendfurther html and Marble-specific html attributes here: -->
+
+<br>
+</body>

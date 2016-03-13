@@ -25,6 +25,8 @@
 #include "mapquery.h"
 #include "mapscale.h"
 #include "geo/calculations.h"
+#include "logging/loggingdefs.h"
+
 #include <cmath>
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -163,6 +165,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   if(!databaseLoadStatus)
   {
     mapScale->update(viewport, navMapWidget->distance());
+
+    // if(navMapWidget->viewContext() == Marble::Animation)
+    // navMapWidget->model()->setWorkOffline(false);
+    // else
+    // navMapWidget->model()->setWorkOffline(true);
 
     if(mapFont == nullptr)
 #if defined(Q_OS_WIN32)

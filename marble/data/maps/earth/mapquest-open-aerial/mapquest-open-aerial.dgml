@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+    <document>
+        <head>
+            <name>MapQuest Open Aerial</name>
+            <license short="Tiles courtesy of MapQuest and others">Tiles courtesy of MapQuest and portions courtesy of NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency</license>
+            <target radius="650">earth</target>
+            <theme>mapquest-open-aerial</theme>
+            <icon pixmap="preview.png"/>
+            <visible>true</visible>
+            <description><![CDATA[<p>A <i>global roadmap</i> provided by MapQuest and portions courtesy of NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency</p>]]></description>
+            <zoom>
+                <discrete> true </discrete>
+                <minimum> 900 </minimum>
+                <maximum> 3200 </maximum>
+            </zoom>
+        </head>
+        <map bgcolor="#000000">
+            <canvas/>
+            <target/>
+            <layer name="mapquest-open-aerial" backend="texture" >
+                <!-- OpenStreetMap mapnik rendered tiles expire after seven days
+                     or 604800 seconds -->
+                <texture name="mapnik_data" expire="604800" >
+                    <sourcedir format="JPG"> earth/mapquest-open-aerial </sourcedir>
+                    <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="18" mode="OpenStreetMap" />
+                    <projection name="Mercator" />
+                    <downloadUrl protocol="http" host="otile1.mqcdn.com" path="/tiles/1.0.0/sat/" />
+                    <downloadUrl protocol="http" host="otile2.mqcdn.com" path="/tiles/1.0.0/sat/" />
+                    <downloadUrl protocol="http" host="otile3.mqcdn.com" path="/tiles/1.0.0/sat/" />
+                    <downloadUrl protocol="http" host="otile4.mqcdn.com" path="/tiles/1.0.0/sat/" />
+                    <downloadPolicy usage="Browse" maximumConnections="20" />
+                    <downloadPolicy usage="Bulk" maximumConnections="2" />
+                </texture>
+            </layer>
+            <layer name="standardplaces" backend="geodata">
+               <geodata name="cityplacemarks">
+                    <sourcefile format="KML">cityplacemarks.kml</sourcefile>
+                    <pick>placemark</pick>
+                </geodata>
+                <geodata name="baseplacemarks">
+                    <sourcefile format="KML">baseplacemarks.kml</sourcefile>
+                    <pick>placemark</pick>
+                </geodata>
+                <geodata name="elevplacemarks">
+                    <sourcefile format="KML">elevplacemarks.kml</sourcefile>
+                    <pick>placemark</pick>
+                </geodata>
+                <geodata name="otherplacemarks">
+                    <sourcefile
+                    format="KML">otherplacemarks.kml</sourcefile>
+                    <pick>placemark</pick>
+                </geodata>
+                <geodata name="boundaryplacemarks">
+                    <sourcefile format="KML">boundaryplacemarks</sourcefile>
+                    <pick>placemark</pick>
+                </geodata>
+            </layer>            
+        </map>
+        <settings>
+            <property name="coordinate-grid">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="overviewmap">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="compass">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="scalebar">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <group name="Places">
+                <property name="places">
+                    <value>true</value>
+                    <available>false</available>
+                </property>
+                <property name="otherplaces">
+                    <value>false</value>
+                    <available>false</available>
+                </property>
+            </group>
+        </settings>
+        <legend>
+            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+                <heading>Coordinate Grid</heading>
+            </section>
+        </legend>
+    </document>
+</dgml>

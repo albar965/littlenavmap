@@ -141,9 +141,40 @@ RESOURCES += \
 
 # Create additional makefile targets to copy help files
 unix {
-  copydata.commands = cp -avf $$PWD/help $$OUT_PWD
-  cleandata.commands = rm -Rvf $$OUT_PWD/help
+  copydata.commands = mkdir -p $$OUT_PWD/plugins &&
+  copydata.commands += cp -avfu $${MARBLE_BASE}/lib/marble/plugins/libAprsPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libCompassFloatItem.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libElevationProfileFloatItem.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libElevationProfileMarker.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libGpxPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libGraticulePlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libJsonPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libKmlPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libLatLonPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libLicense.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libLocalDatabasePlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libLogPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libMapQuestPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libMapScaleFloatItem.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libMonavPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libNavigationFloatItem.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOpenCachingComPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOpenDesktopPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOpenRouteServicePlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOsmPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOSRMPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libOverviewMap.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libPositionMarker.so \
+                                $${MARBLE_BASE}/lib/marble/plugins/libProgressFloatItem.so  $$OUT_PWD/plugins &&
+  copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD
+
+  cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }
+
 
 # Windows specific deploy target
 win32 {
@@ -158,14 +189,43 @@ win32 {
   DEPLOY_DIR_WIN=\"$${WINPWD}\\deploy\\$${DEPLOY_DIR_NAME}\"
   MARBLE_BASE_WIN=\"$${MARBLE_BASE}\"
 
-  copydata.commands = xcopy /i /s /e /f /y $${WINPWD}\\help $${WINOUT_PWD}\\help
+  copydata.commands = xcopy /i /s /e /f /y $${WINPWD}\\help $${WINOUT_PWD}\\help &&
+  copydata.commands =+ xcopy /i /s /e /f /y $${WINPWD}\\marble\\data $${WINOUT_PWD}\\data
   cleandata.commands = del /s /q $${WINOUT_PWD}\\help
 
   CONFIG(debug, debug|release):DLL_SUFFIX=d
   CONFIG(release, debug|release):DLL_SUFFIX=
 
   deploy.commands = rmdir /s /q $${DEPLOY_DIR_WIN} &
-  deploy.commands += mkdir $${DEPLOY_DIR_WIN} &
+  deploy.commands += mkdir $${DEPLOY_DIR_WIN} &&
+  deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy /i /s /e /f /y $${MARBLE_BASE_WIN}/lib/marble/plugins/libAprsPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libCachePlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libCompassFloatItem.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libElevationProfileFloatItem.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libElevationProfileMarker.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libGpxPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libGraticulePlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libJsonPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libKmlPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libLatLonPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libLicense.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libLocalDatabasePlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libLogPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libMapQuestPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libMapScaleFloatItem.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libMonavPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libNavigationFloatItem.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOpenCachingComPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOpenDesktopPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOpenRouteServicePlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOsmPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOSRMPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libOverviewMap.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libPn2Plugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libPntPlugin.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libPositionMarker.dll \
+         $${MARBLE_BASE_WIN}\\plugins\\libProgressFloatItem.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${WINOUT_PWD}\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
@@ -194,8 +254,6 @@ win32 {
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy /i /s /e /f /y $${MARBLE_BASE_WIN}\\data $${DEPLOY_DIR_WIN}\\data &&
-  deploy.commands += xcopy /i /s /e /f /y $${MARBLE_BASE_WIN}\\plugins $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += $${QT_BIN}\\windeployqt --compiler-runtime $${DEPLOY_DIR_WIN}
 }
 

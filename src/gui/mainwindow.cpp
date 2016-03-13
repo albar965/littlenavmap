@@ -42,6 +42,7 @@
 #include <marble/RenderPlugin.h>
 #include <marble/MarbleDirs.h>
 #include <marble/QtMarbleConfigDialog.h>
+#include <marble/MarbleDebug.h>
 
 #include <QCloseEvent>
 #include <QElapsedTimer>
@@ -85,7 +86,6 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setupUi();
 
-  readSettings();
   openDatabase();
 
   createNavMap();
@@ -98,37 +98,38 @@ MainWindow::MainWindow(QWidget *parent) :
   mapWidget->restoreState();
 
   connectAllSlots();
+  readSettings();
   updateActionStates();
+
+  mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+}
+
+MainWindow::~MainWindow()
+{
+  delete searchController;
+  delete ui;
+
+  qDebug() << "MainWindow destructor";
+
+  delete dialog;
+  delete errorHandler;
+  delete progressDialog;
+
+  atools::settings::Settings::shutdown();
+  atools::gui::Translator::unload();
+
+  closeDatabase();
+
+  qDebug() << "MainWindow destructor about to shut down logging";
+  atools::logging::LoggingHandler::shutdown();
+
 }
 
 void MainWindow::createNavMap()
 {
-  MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
-  MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
-
-  qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
-  qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
-  qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
-  qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
-  qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
-  qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
-
   // Create a Marble QWidget without a parent
   mapWidget = new NavMapWidget(this, &db);
 
-  // Load the OpenStreetMap map
-  mapWidget->setMapThemeId("earth/openstreetmap/openstreetmap.dgml");
-  // mapWidget->setMapThemeId("earth/bluemarble/bluemarble.dgml");
-  // mapWidget->setShowBorders( true );
-  // mapWidget->setShowClouds( true );
-  // mapWidget->setProjection( Marble::Mercator );
-  // mapWidget->setAnimationsEnabled(false);
-  mapWidget->setShowCrosshairs(false);
-  mapWidget->setShowBackground(false);
-  mapWidget->setShowAtmosphere(false);
-  mapWidget->setShowGrid(true);
-  // mapWidget->setShowTerrain(true);place marks
-  mapWidget->setShowRelief(true);
   mapWidget->setVolatileTileCacheLimit(512 * 1024);
 
   // mapWidget->setShowSunShading(true);
@@ -155,48 +156,105 @@ void MainWindow::createNavMap()
   // "Postal Codes" << "Download Progress Indicator" << "Routing" << "Satellites" << "Speedometer" << "Stars" <<
   // "Sun" << "Weather" << "Wikipedia Articles";
 
-  QList<RenderPlugin *> localRenderPlugins = mapWidget->renderPlugins();
-  for(RenderPlugin *p : localRenderPlugins)
-    if(!pluginEnable.contains(p->name()))
-    {
-      qDebug() << "Disabled plugin" << p->name();
-      p->setEnabled(false);
-    }
-    else
-      qDebug() << "Found plugin" << p->name();
+  // QList<RenderPlugin *> localRenderPlugins = mapWidget->renderPlugins();
+  // for(RenderPlugin *p : localRenderPlugins)
+  // if(!pluginEnable.contains(p->name()))
+  // {
+  // qDebug() << "Disabled plugin" << p->name();
+  // p->setEnabled(false);
+  // }
+  // else
+  // qDebug() << "Found plugin" << p->name();
 
   // MarbleWidgetPopupMenu *menu = mapWidget->popupMenu();
   // QAction tst(QString("Menu"), mapWidget);
   // menu->addAction(Qt::RightButton, &tst);
 }
 
-MainWindow::~MainWindow()
-{
-  delete searchController;
-  delete ui;
-
-  qDebug() << "MainWindow destructor";
-
-  delete dialog;
-  delete errorHandler;
-  delete progressDialog;
-
-  atools::settings::Settings::shutdown();
-  atools::gui::Translator::unload();
-
-  closeDatabase();
-
-  qDebug() << "MainWindow destructor about to shut down logging";
-  atools::logging::LoggingHandler::shutdown();
-
-}
-
 void MainWindow::setupUi()
 {
+  mapProjectionComboBox = new QComboBox(this);
+  mapProjectionComboBox->setObjectName("mapProjectionComboBox");
+  QString helpText = tr("Select Map Theme");
+  mapProjectionComboBox->setToolTip(helpText);
+  mapProjectionComboBox->setStatusTip(helpText);
+  mapProjectionComboBox->addItem(tr("Spherical Projection"), Marble::Spherical);
+  mapProjectionComboBox->addItem(tr("Mercator Projection"), Marble::Mercator);
+  ui->mapToolBar->addWidget(mapProjectionComboBox);
+
+  mapThemeComboBox = new QComboBox(this);
+  mapThemeComboBox->setObjectName("mapThemeComboBox");
+  helpText = tr("Select Map Theme");
+  mapThemeComboBox->setToolTip(helpText);
+  mapThemeComboBox->setStatusTip(helpText);
+  mapThemeComboBox->addItem(tr("OpenStreenMap Theme"),
+                            "earth/openstreetmap/openstreetmap.dgml");
+  mapThemeComboBox->addItem(tr("OpenStreenMap Theme with Elevation"),
+                            "earth/openstreetmap/openstreetmap.dgml");
+  mapThemeComboBox->addItem(tr("Atlas Theme"),
+                            "earth/srtm/srtm.dgml");
+  mapThemeComboBox->addItem(tr("Blue Marble Theme"),
+                            "earth/bluemarble/bluemarble.dgml");
+  mapThemeComboBox->addItem(tr("Simple Theme (fast)"),
+                            "earth/plain/plain.dgml");
+  mapThemeComboBox->addItem(tr("Political Theme (fast)"),
+                            "earth/political/political.dgml");
+  // mapThemeComboBox->addItem(tr("MapQuest Open Aerial"),
+  // "earth/mapquest-open-aerial/mapquest-open-aerial.dgml");
+  mapThemeComboBox->addItem(tr("MapQuest OpenStreenMap"),
+                            "earth/mapquest-osm/mapquest-osm.dgml");
+  // mapThemeComboBox->addItem(tr("Natural Earth")
+  // "earth/naturalearth2shading/naturalearth2shading.dgml");
+  ui->mapToolBar->addWidget(mapThemeComboBox);
+
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
+}
+
+void MainWindow::connectAllSlots()
+{
+  qDebug() << "Connecting slots";
+
+  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
+          mapWidget, &NavMapWidget::showRect);
+  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
+          mapWidget, &NavMapWidget::changeMark);
+
+  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &NavMapWidget::showPoint);
+  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &NavMapWidget::changeMark);
+
+  // Use this event to show path dialog after main windows is shown
+  connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
+
+  connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
+  connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
+  connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
+  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
+
+  connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
+  connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
+  connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
+
+  connect(mapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
+
+  void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
+
+  connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)
+          {
+            Marble::Projection proj =
+              static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
+            qDebug() << "Changing projection to" << proj;
+            mapWidget->setProjection(proj);
+          });
+
+  connect(mapThemeComboBox, indexChangedPtr, mapWidget, [ = ](int index)
+          {
+            QString theme = mapThemeComboBox->currentData().toString();
+            qDebug() << "Changing theme to" << theme << "index" << index;
+            mapWidget->setTheme(theme, index);
+          });
 }
 
 void MainWindow::createEmptySchema()
@@ -379,33 +437,6 @@ bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progr
   return progressDialog->wasCanceled();
 }
 
-void MainWindow::connectAllSlots()
-{
-  qDebug() << "Connecting slots";
-
-  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
-          mapWidget, &NavMapWidget::showRect);
-  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
-          mapWidget, &NavMapWidget::changeMark);
-
-  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &NavMapWidget::showPoint);
-  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &NavMapWidget::changeMark);
-
-  // Use this event to show path dialog after main windows is shown
-  connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
-
-  connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
-  connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
-  connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
-
-  connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
-  connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
-  connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
-
-  connect(mapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
-}
-
 void MainWindow::options()
 {
   // QtMarbleConfigDialog dlg(mapWidget);
@@ -475,7 +506,7 @@ void MainWindow::readSettings()
   qDebug() << "readSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
+  ws.restore({this, ui->statusBar, ui->tabWidgetSearch, mapProjectionComboBox, mapThemeComboBox});
 }
 
 void MainWindow::writeSettings()
@@ -483,7 +514,7 @@ void MainWindow::writeSettings()
   qDebug() << "writeSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.save({this, ui->statusBar, ui->tabWidgetSearch});
+  ws.save({this, ui->statusBar, ui->tabWidgetSearch, mapProjectionComboBox, mapThemeComboBox});
   ws.syncSettings();
 }
 

@@ -28,6 +28,7 @@ enum ObjectType
   NDB,
   VOR,
   ILS,
+  MARKER,
   WAYPOINT
 };
 

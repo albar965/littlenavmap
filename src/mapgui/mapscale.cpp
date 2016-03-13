@@ -30,7 +30,7 @@ MapScale::MapScale()
 
 }
 
-void MapScale::update(ViewportParams *viewportParams, double distance)
+bool MapScale::update(ViewportParams *viewportParams, double distance)
 {
   viewport = viewportParams;
   CoordinateConverter converter(viewportParams);
@@ -52,12 +52,14 @@ void MapScale::update(ViewportParams *viewportParams, double distance)
     for(int i = 0; i <= 360; i += 45)
     {
       double screenEndX, screenEndY;
-      converter.wToS(center.endpoint(1000., i), screenEndX, screenEndY);
+      converter.wToS(center.endpoint(1000., i).normalize(), screenEndX, screenEndY);
 
       scales.append(sqrt((screenCenterX - screenEndX) * (screenCenterX - screenEndX) +
                          (screenCenterY - screenEndY) * (screenCenterY - screenEndY)));
     }
+    return true;
   }
+  return false;
 }
 
 float MapScale::getDegreePerPixel(int px) const
@@ -98,4 +100,16 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
 float MapScale::getPixelForFeet(int feet, float directionDeg) const
 {
   return getPixelForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
+}
+
+QDebug operator<<(QDebug out, const MapScale& scale)
+{
+  QDebugStateSaver saver(out);
+
+  out << "Scale["
+  << "lastDistance" << scale.lastDistance
+  << "lastCenterLonX" << scale.lastCenterLonX
+  << "lastCenterLatY" << scale.lastCenterLatY
+  << scale.scales << "]";
+  return out;
 }

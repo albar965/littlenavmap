@@ -69,6 +69,7 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void setTheme(const QString& theme, int index);
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);

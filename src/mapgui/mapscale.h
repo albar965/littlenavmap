@@ -35,7 +35,7 @@ class MapScale
 public:
   MapScale();
 
-  void update(Marble::ViewportParams *viewportParams, double distance);
+  bool update(Marble::ViewportParams *viewportParams, double distance);
 
   float getPixelForMeter(float meter, float directionDeg = 45.f) const;
   float getPixelForFeet(int feet, float directionDeg = 45.f) const;
@@ -45,6 +45,8 @@ public:
   float getDegreePerPixel(int px) const;
 
 private:
+  friend QDebug operator<<(QDebug out, const MapScale& scale);
+
   double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
   Marble::ViewportParams *viewport;
 
