@@ -55,6 +55,7 @@ public:
   }
 
   void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+  void setDetailFactor(int factor);
 
   maptypes::ObjectTypes getShownMapFeatures() const
   {
@@ -63,6 +64,8 @@ public:
 
 private:
   maptypes::ObjectTypes objectTypes;
+  int detailFactor = 10;
+
   bool databaseLoadStatus = false;
   MapPainterAirport *mapPainterAirport;
   MapPainterNav *mapPainterNav;

@@ -35,12 +35,16 @@ void MapLayerSettings::finishAppend()
   std::sort(layers.begin(), layers.end());
 }
 
-const MapLayer *MapLayerSettings::getLayer(float distance) const
+const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) const
 {
   using namespace std::placeholders;
 
+  // 5 - less 15 more 10 default
+  float newDistance = distance * std::pow((10.f / detailFactor), 6.f);
+  qDebug() << "distance" << distance << "new distance" << newDistance << "detail factor" << detailFactor;
+
   QList<MapLayer>::const_iterator it =
-    std::lower_bound(layers.begin(), layers.end(), distance,
+    std::lower_bound(layers.begin(), layers.end(), newDistance,
                      std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   if(it != layers.end())

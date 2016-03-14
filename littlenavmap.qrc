@@ -12,8 +12,8 @@
         <file>resources/icons/export.svg</file>
         <file>resources/icons/fileopen.svg</file>
         <file>resources/icons/filesave.svg</file>
-        <file>resources/icons/filter-add.svg</file>
-        <file>resources/icons/filter-remove.svg</file>
+        <file>resources/icons/detailmore.svg</file>
+        <file>resources/icons/detailless.svg</file>
         <file>resources/icons/globals.svg</file>
         <file>resources/icons/group-by.svg</file>
         <file>resources/icons/help.svg</file>
@@ -47,5 +47,6 @@
         <file>resources/icons/airport.svg</file>
         <file>resources/icons/cities.svg</file>
         <file>resources/icons/mark.svg</file>
+        <file>resources/icons/detaildefault.svg</file>
     </qresource>
 </RCC>

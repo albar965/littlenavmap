@@ -90,6 +90,7 @@ public:
 
   void setShowMapPois(bool show);
   void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+  void setDetailFactor(int factor);
 
 signals:
   void markChanged(const atools::geo::Pos& mark);

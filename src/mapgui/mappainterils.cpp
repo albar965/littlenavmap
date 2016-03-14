@@ -124,7 +124,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const MapIls& ils, int x,
   {
     text = ils.ident + " / " +
            QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-           QString::number(ils.heading, 'f', 0) + "°";
+           QString::number(ils.heading + ils.magvar, 'f', 0) + "°";
 
     if(ils.slope > 0)
       text += " / GS " + QString::number(ils.slope, 'f', 1) + "°";

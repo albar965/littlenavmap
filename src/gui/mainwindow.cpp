@@ -66,6 +66,10 @@
 using namespace Marble;
 using atools::settings::Settings;
 
+const int MAP_DEFAULT_DETAIL_FACTOR = 10;
+const int MAP_MAX_DETAIL_FACTOR = 15;
+const int MAP_MIN_DETAIL_FACTOR = 5;
+
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -100,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   navMapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
   navMapWidget->setProjection(mapProjectionComboBox->currentIndex());
+  setMapDetail(mapDetailFactor);
 
   // Wait until everything is set up
   updateMapShowFeatures();
@@ -179,8 +184,8 @@ void MainWindow::setupUi()
   QString helpText = tr("Select Map Theme");
   mapProjectionComboBox->setToolTip(helpText);
   mapProjectionComboBox->setStatusTip(helpText);
-  mapProjectionComboBox->addItem(tr("Spherical Projection"), Marble::Spherical);
-  mapProjectionComboBox->addItem(tr("Mercator Projection"), Marble::Mercator);
+  mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
+  mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
   ui->mapToolBar->addWidget(mapProjectionComboBox);
 
   mapThemeComboBox = new QComboBox(this);
@@ -188,17 +193,17 @@ void MainWindow::setupUi()
   helpText = tr("Select Map Theme");
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
-  mapThemeComboBox->addItem(tr("OpenStreenMap Theme"),
+  mapThemeComboBox->addItem(tr("OpenStreenMap"),
                             "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenStreenMap Theme with Elevation"),
+  mapThemeComboBox->addItem(tr("OpenStreenMap with Elevation"),
                             "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("Atlas Theme"),
+  mapThemeComboBox->addItem(tr("Atlas"),
                             "earth/srtm/srtm.dgml");
-  mapThemeComboBox->addItem(tr("Blue Marble Theme"),
+  mapThemeComboBox->addItem(tr("Blue Marble"),
                             "earth/bluemarble/bluemarble.dgml");
-  mapThemeComboBox->addItem(tr("Simple Theme (fast)"),
+  mapThemeComboBox->addItem(tr("Simple"),
                             "earth/plain/plain.dgml");
-  mapThemeComboBox->addItem(tr("Political Theme (fast)"),
+  mapThemeComboBox->addItem(tr("Political"),
                             "earth/political/political.dgml");
   // mapThemeComboBox->addItem(tr("MapQuest Open Aerial"),
   // "earth/mapquest-open-aerial/mapquest-open-aerial.dgml");
@@ -271,9 +276,46 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &NavMapWidget::showHome);
   connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &NavMapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &NavMapWidget::historyNext);
+  connect(ui->actionMapMoreDetails, &QAction::triggered, this, &MainWindow::increaseMapDetail);
+  connect(ui->actionMapLessDetails, &QAction::triggered, this, &MainWindow::decreaseMapDetail);
+  connect(ui->actionMapDefaultDetails, &QAction::triggered, this, &MainWindow::defaultMapDetail);
 
   connect(navMapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
 
+}
+
+void MainWindow::defaultMapDetail()
+{
+  mapDetailFactor = MAP_DEFAULT_DETAIL_FACTOR;
+  setMapDetail(mapDetailFactor);
+}
+
+void MainWindow::increaseMapDetail()
+{
+  if(mapDetailFactor < MAP_MAX_DETAIL_FACTOR)
+  {
+    mapDetailFactor++;
+    setMapDetail(mapDetailFactor);
+  }
+}
+
+void MainWindow::decreaseMapDetail()
+{
+  if(mapDetailFactor > MAP_MIN_DETAIL_FACTOR)
+  {
+    mapDetailFactor--;
+    setMapDetail(mapDetailFactor);
+  }
+}
+
+void MainWindow::setMapDetail(int factor)
+{
+  mapDetailFactor = factor;
+  navMapWidget->setDetailFactor(mapDetailFactor);
+  ui->actionMapMoreDetails->setEnabled(mapDetailFactor < MAP_MAX_DETAIL_FACTOR);
+  ui->actionMapLessDetails->setEnabled(mapDetailFactor > MAP_MIN_DETAIL_FACTOR);
+  ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MAP_DEFAULT_DETAIL_FACTOR);
+  navMapWidget->update();
 }
 
 void MainWindow::updateMapShowFeatures()

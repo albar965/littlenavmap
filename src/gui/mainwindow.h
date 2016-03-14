@@ -77,7 +77,7 @@ private:
   SearchController *searchController;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
-
+  int mapDetailFactor = 10;
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
   virtual void closeEvent(QCloseEvent *event) override;
@@ -119,6 +119,11 @@ private:
   void updateHistActions(int minIndex, int curIndex, int maxIndex);
 
   void updateMapShowFeatures();
+
+  void increaseMapDetail();
+  void decreaseMapDetail();
+  void defaultMapDetail();
+  void setMapDetail(int factor);
 };
 
 #endif // MAINWINDOW_H

@@ -110,6 +110,12 @@ void NavMapWidget::setShowMapFeatures(maptypes::ObjectTypes type, bool show)
   paintLayer->setShowMapFeatures(type, show);
 }
 
+void NavMapWidget::setDetailFactor(int factor)
+{
+  qDebug() << "setDetailFactor" << factor;
+  paintLayer->setDetailFactor(factor);
+}
+
 void NavMapWidget::preDatabaseLoad()
 {
   paintLayer->preDatabaseLoad();

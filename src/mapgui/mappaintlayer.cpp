@@ -95,6 +95,11 @@ void MapPaintLayer::setShowMapFeatures(maptypes::ObjectTypes type, bool show)
     objectTypes &= ~type;
 }
 
+void MapPaintLayer::setDetailFactor(int factor)
+{
+  detailFactor = factor;
+}
+
 void MapPaintLayer::initLayers()
 {
   if(layers != nullptr)
@@ -190,7 +195,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     mapFont->setBold(true);
     painter->setFont(*mapFont);
 
-    mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()));
+    mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()), detailFactor);
 
     if(mapLayer != nullptr)
     {
