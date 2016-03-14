@@ -44,7 +44,7 @@ private:
                      const QModelIndex& index) const override;
   virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-  int flag(const SqlModel *sqlModel, int row, const QString& field, int flag) const;
+  MapAirportFlags flag(const SqlModel *sqlModel, int row, const QString& field, MapAirportFlags flag) const;
   MapAirport mapAirport(const SqlModel *sqlModel, int row) const;
 
 };

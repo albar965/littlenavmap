@@ -28,11 +28,12 @@ class MapPainterAirport :
   public MapPainter
 {
 public:
-  MapPainterAirport(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterAirport(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale,
+                    bool verboseMsg);
   virtual ~MapPainterAirport();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport) override;
+                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
 
 private:
   void drawAirportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,

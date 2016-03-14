@@ -17,7 +17,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
   int radius = size / 2;
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED))
+  if(ap.flags.testFlag(HARD) && !ap.flags.testFlag(MIL) && !ap.flags.testFlag(CLOSED))
     // Use filled circle
     painter->setBrush(QBrush(apColor));
   else
@@ -25,7 +25,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
   if(!fast || isAirportDiagram)
-    if(ap.isSet(FUEL) && !ap.isSet(MIL) && !ap.isSet(CLOSED) && size > 6)
+    if(ap.flags.testFlag(FUEL) && !ap.flags.testFlag(MIL) && !ap.flags.testFlag(CLOSED) && size > 6)
     {
       // Draw fuel spikes
       int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
@@ -41,7 +41,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
 
   if(!fast || isAirportDiagram)
   {
-    if(ap.isSet(MIL))
+    if(ap.flags.testFlag(MIL))
       painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
 
     if(ap.waterOnly() && size > 6)
@@ -66,7 +66,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
                         x - lineWidth / 4 + size / 5, y + radius / 2);
     }
 
-    if(ap.isSet(CLOSED) && size > 6)
+    if(ap.flags.testFlag(CLOSED) && size > 6)
     {
       // Cross out whatever was painted before
       painter->setPen(QPen(QBrush(apColor), size / 7, Qt::SolidLine, Qt::FlatCap));
@@ -76,7 +76,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const MapAirport& ap, i
   }
 
   if(!fast || isAirportDiagram)
-    if(ap.isSet(HARD) && !ap.isSet(MIL) && !ap.isSet(CLOSED) && size > 6)
+    if(ap.flags.testFlag(HARD) && !ap.flags.testFlag(MIL) && !ap.flags.testFlag(CLOSED) && size > 6)
     {
       // Draw line inside circle
       painter->translate(x, y);

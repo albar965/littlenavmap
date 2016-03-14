@@ -26,8 +26,10 @@
 
 using namespace Marble;
 
-MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : CoordinateConverter(marbleWidget->viewport()), widget(marbleWidget), query(mapQuery), scale(mapScale)
+MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale,
+                       bool verboseMsg)
+  : CoordinateConverter(marbleWidget->viewport()), widget(marbleWidget), query(mapQuery), scale(mapScale),
+    verbose(verboseMsg)
 {
 }
 
@@ -50,7 +52,7 @@ void MapPainter::setRenderHints(GeoPainter *painter)
 }
 
 void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-                         bool bold, bool italic, bool right, int transparency)
+                         bool bold, bool italic, bool alignRight, int transparency)
 {
   if(texts.isEmpty())
     return;
@@ -86,9 +88,9 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
     }
   }
 
-  QFont f = painter->font();
   if(bold || italic)
   {
+    QFont f = painter->font();
     f.setBold(bold);
     f.setItalic(italic);
     painter->setFont(f);
@@ -99,7 +101,7 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
   for(const QString& t : texts)
   {
     int newx = x;
-    if(right)
+    if(alignRight)
       newx -= metrics.width(t);
 
     painter->drawText(newx, y + yoffset, t);

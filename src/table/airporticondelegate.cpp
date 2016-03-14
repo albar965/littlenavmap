@@ -61,9 +61,9 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   MapAirport ap = mapAirport(sqlModel, idx.row());
 
   QFont font(painter->font());
-  if(ap.isSet(SCENERY))
+  if(ap.flags.testFlag(SCENERY))
     font.setBold(true);
-  if(ap.isSet(ADDON))
+  if(ap.flags.testFlag(ADDON))
     font.setItalic(true);
   painter->setFont(font);
 
@@ -130,7 +130,8 @@ MapAirport AirportIconDelegate::mapAirport(const SqlModel *sqlModel, int row) co
   return ap;
 }
 
-int AirportIconDelegate::flag(const SqlModel *sqlModel, int row, const QString& field, int flag) const
+MapAirportFlags AirportIconDelegate::flag(const SqlModel *sqlModel, int row, const QString& field,
+                                          MapAirportFlags flag) const
 {
   QVariant val = value(sqlModel, row, field);
   if(val.isNull())

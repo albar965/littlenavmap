@@ -42,7 +42,7 @@ class SqlQuery;
 
 class CoordinateConverter;
 
-enum MapAirportFlags
+enum MapAirportFlag
 {
   NONE = 0x0000,
   SCENERY = 0x0001,
@@ -57,8 +57,12 @@ enum MapAirportFlags
   HARD = 0x0200,
   SOFT = 0x0400,
   WATER = 0x0800,
-  HELIPORT = 0x1000
+  HELIPORT = 0x1000,
+  ALL = 0xffff
 };
+
+Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(MapAirportFlags);
 
 struct MapAirport
 {
@@ -66,7 +70,7 @@ struct MapAirport
   QString ident, name;
   int longestRunwayLength = 0, longestRunwayHeading = 0;
   int altitude = 0;
-  int flags = 0;
+  MapAirportFlags flags = 0;
   float magvar = 0;
 
   bool valid = false;
@@ -74,39 +78,35 @@ struct MapAirport
   atools::geo::Pos pos, towerCoords;
   atools::geo::Rect bounding;
 
-  bool isSet(MapAirportFlags flag) const
-  {
-    return (flags & flag) == flag;
-  }
-
   bool hard() const
   {
-    return isSet(HARD);
+    return flags.testFlag(HARD);
   }
 
   bool soft() const
   {
-    return isSet(SOFT);
+    return flags.testFlag(SOFT);
   }
 
   bool softOnly() const
   {
-    return !isSet(HARD) && isSet(SOFT);
+    return !flags.testFlag(HARD) && flags.testFlag(SOFT);
   }
 
   bool water() const
   {
-    return isSet(WATER);
+    return flags.testFlag(WATER);
   }
 
   bool waterOnly() const
   {
-    return !isSet(HARD) && !isSet(SOFT) && isSet(WATER);
+    return !flags.testFlag(HARD) && !flags.testFlag(SOFT) && flags.testFlag(WATER);
   }
 
   bool isHeliport() const
   {
-    return !isSet(HARD) && !isSet(SOFT) && !isSet(WATER) && isSet(HELIPORT);
+    return !flags.testFlag(HARD) && !flags.testFlag(SOFT) &&
+           !flags.testFlag(WATER) && flags.testFlag(HELIPORT);
   }
 
 };
@@ -231,7 +231,7 @@ public:
 
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                         const QList<maptypes::ObjectType> types,
+                         maptypes::ObjectTypes types,
                          int xs, int ys, int screenDistance,
                          MapSearchResult& result);
 
@@ -307,9 +307,9 @@ private:
   const QList<MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                          bool lazy);
 
-  int flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag);
+  MapAirportFlags flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag);
 
-  int getFlags(const atools::sql::SqlQuery *query);
+  MapAirportFlags getFlags(const atools::sql::SqlQuery *query);
   MapAirport fillMapAirport(const atools::sql::SqlQuery *query);
 
   void bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query);

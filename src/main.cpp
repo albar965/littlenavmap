@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 
     MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
     MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
-    MarbleDebug::setEnabled(true);
+    MarbleDebug::setEnabled(false);
 
     qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
     qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();

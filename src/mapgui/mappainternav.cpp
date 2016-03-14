@@ -33,8 +33,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterNav::MapPainterNav(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(widget, mapQuery, mapScale)
+MapPainterNav::MapPainterNav(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+                             bool verboseMsg)
+  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -45,7 +46,7 @@ MapPainterNav::~MapPainterNav()
 }
 
 void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                          Marble::ViewportParams *viewport)
+                          Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
   if(mapLayer == nullptr)
     return;
@@ -58,12 +59,12 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
   setRenderHints(painter);
 
-  if(mapLayer->isWaypoint())
+  if(mapLayer->isWaypoint() && objectTypes.testFlag(maptypes::WAYPOINT))
   {
     const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, mapLayer, drawFast);
     if(waypoints != nullptr)
     {
-      if(widget->viewContext() == Marble::Still)
+      if(widget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of waypoints" << waypoints->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -91,12 +92,12 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
     }
   }
 
-  if(mapLayer->isVor())
+  if(mapLayer->isVor() && objectTypes.testFlag(maptypes::VOR))
   {
     const QList<MapVor> *vors = query->getVors(curBox, mapLayer, drawFast);
     if(vors != nullptr)
     {
-      if(widget->viewContext() == Marble::Still)
+      if(widget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of vors" << vors->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -139,12 +140,12 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
     }
   }
 
-  if(mapLayer->isNdb())
+  if(mapLayer->isNdb() && objectTypes.testFlag(maptypes::NDB))
   {
     const QList<MapNdb> *ndbs = query->getNdbs(curBox, mapLayer, drawFast);
     if(ndbs != nullptr)
     {
-      if(widget->viewContext() == Marble::Still)
+      if(widget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of ndbs" << ndbs->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -180,12 +181,12 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
     }
   }
 
-  if(mapLayer->isMarker())
+  if(mapLayer->isMarker() && objectTypes.testFlag(maptypes::ILS))
   {
     const QList<MapMarker> *markers = query->getMarkers(curBox, mapLayer, drawFast);
     if(markers != nullptr)
     {
-      if(widget->viewContext() == Marble::Still)
+      if(widget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of marker" << markers->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -215,6 +216,6 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
     }
   }
 
-  if(widget->viewContext() == Marble::Still)
+  if(widget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }

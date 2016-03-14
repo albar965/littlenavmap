@@ -64,9 +64,9 @@ const QColor& colorForAirport(const MapAirport& ap)
   static QColor toweredAirportColor = QColor::fromRgb(15, 70, 130);
   static QColor unToweredAirportColor = QColor::fromRgb(126, 58, 91);
 
-  if(!ap.isSet(SCENERY) && !ap.waterOnly())
+  if(!ap.flags.testFlag(SCENERY) && !ap.waterOnly())
     return airportEmptyColor;
-  else if(ap.isSet(TOWER))
+  else if(ap.flags.testFlag(TOWER))
     return toweredAirportColor;
   else
     return unToweredAirportColor;

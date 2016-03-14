@@ -94,14 +94,16 @@ MainWindow::MainWindow(QWidget *parent) :
   searchController->createAirportSearch(ui->tableViewAirportSearch);
   searchController->createNavSearch(ui->tableViewNavSearch);
 
-  searchController->restoreState();
-  mapWidget->restoreState();
-
   connectAllSlots();
   readSettings();
   updateActionStates();
 
-  mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+  navMapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+  navMapWidget->setProjection(mapProjectionComboBox->currentIndex());
+
+  // Wait until everything is set up
+  updateMapShowFeatures();
+  navMapWidget->showSavedPos();
 }
 
 MainWindow::~MainWindow()
@@ -128,21 +130,21 @@ MainWindow::~MainWindow()
 void MainWindow::createNavMap()
 {
   // Create a Marble QWidget without a parent
-  mapWidget = new NavMapWidget(this, &db);
+  navMapWidget = new NavMapWidget(this, &db);
 
-  mapWidget->setVolatileTileCacheLimit(512 * 1024);
+  navMapWidget->setVolatileTileCacheLimit(512 * 1024);
 
   // mapWidget->setShowSunShading(true);
 
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
 
-  MarbleWidgetInputHandler *inputHandler = mapWidget->inputHandler();
+  MarbleWidgetInputHandler *inputHandler = navMapWidget->inputHandler();
   inputHandler->setMouseButtonPopupEnabled(Qt::RightButton, false);
   inputHandler->setMouseButtonPopupEnabled(Qt::LeftButton, false);
-  mapWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+  navMapWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
+  ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, navMapWidget);
 
   QSet<QString> pluginEnable;
   pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation"
@@ -166,13 +168,12 @@ void MainWindow::createNavMap()
   // else
   // qDebug() << "Found plugin" << p->name();
 
-  // MarbleWidgetPopupMenu *menu = mapWidget->popupMenu();
-  // QAction tst(QString("Menu"), mapWidget);
-  // menu->addAction(Qt::RightButton, &tst);
 }
 
 void MainWindow::setupUi()
 {
+  ui->mapToolBar->addSeparator();
+
   mapProjectionComboBox = new QComboBox(this);
   mapProjectionComboBox->setObjectName("mapProjectionComboBox");
   QString helpText = tr("Select Map Theme");
@@ -217,13 +218,15 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
-          mapWidget, &NavMapWidget::showRect);
-  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
-          mapWidget, &NavMapWidget::changeMark);
+  connect(ui->actionMapSetHome, &QAction::triggered, navMapWidget, &NavMapWidget::changeHome);
 
-  connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &NavMapWidget::showPoint);
-  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &NavMapWidget::changeMark);
+  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
+          navMapWidget, &NavMapWidget::showRect);
+  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
+          navMapWidget, &NavMapWidget::changeMark);
+
+  connect(searchController->getNavSearch(), &NavSearch::showPos, navMapWidget, &NavMapWidget::showPos);
+  connect(searchController->getNavSearch(), &NavSearch::changeMark, navMapWidget, &NavMapWidget::changeMark);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -237,7 +240,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
-  connect(mapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
+  // Map widget related connections
+  connect(navMapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
 
@@ -246,15 +250,49 @@ void MainWindow::connectAllSlots()
             Marble::Projection proj =
               static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
             qDebug() << "Changing projection to" << proj;
-            mapWidget->setProjection(proj);
+            navMapWidget->setProjection(proj);
           });
 
-  connect(mapThemeComboBox, indexChangedPtr, mapWidget, [ = ](int index)
+  connect(mapThemeComboBox, indexChangedPtr, navMapWidget, [ = ](int index)
           {
             QString theme = mapThemeComboBox->currentData().toString();
             qDebug() << "Changing theme to" << theme << "index" << index;
-            mapWidget->setTheme(theme, index);
+            navMapWidget->setTheme(theme, index);
           });
+
+  connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+
+  connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &NavMapWidget::showMark);
+  connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &NavMapWidget::showHome);
+  connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &NavMapWidget::historyBack);
+  connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &NavMapWidget::historyNext);
+
+  connect(navMapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
+
+}
+
+void MainWindow::updateMapShowFeatures()
+{
+  navMapWidget->setShowMapPois(ui->actionMapShowCities->isChecked());
+
+  navMapWidget->setShowMapFeatures(maptypes::AIRPORT, ui->actionMapShowAirports->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
+  navMapWidget->update();
+}
+
+void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
+{
+  qDebug() << "History changed min" << minIndex << "cur" << curIndex << "max" << maxIndex;
+  ui->actionMapBack->setEnabled(curIndex > minIndex);
+  ui->actionMapNext->setEnabled(curIndex < maxIndex);
 }
 
 void MainWindow::createEmptySchema()
@@ -506,7 +544,14 @@ void MainWindow::readSettings()
   qDebug() << "readSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.restore({this, ui->statusBar, ui->tabWidgetSearch, mapProjectionComboBox, mapThemeComboBox});
+  ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
+
+  searchController->restoreState();
+  navMapWidget->restoreState();
+
+  ws.restore({mapProjectionComboBox, mapThemeComboBox,
+              ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+              ui->actionMapShowIls, ui->actionMapShowCities});
 }
 
 void MainWindow::writeSettings()
@@ -514,7 +559,15 @@ void MainWindow::writeSettings()
   qDebug() << "writeSettings";
 
   atools::gui::WidgetState ws("MainWindow/Widget");
-  ws.save({this, ui->statusBar, ui->tabWidgetSearch, mapProjectionComboBox, mapThemeComboBox});
+  ws.save({this, ui->statusBar, ui->tabWidgetSearch});
+
+  searchController->saveState();
+  navMapWidget->saveState();
+
+  ws.save({mapProjectionComboBox, mapThemeComboBox,
+           ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+           ui->actionMapShowIls, ui->actionMapShowCities});
+
   ws.syncSettings();
 }
 
@@ -532,8 +585,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
   if(result != QMessageBox::Yes)
     event->ignore();
   writeSettings();
-  searchController->saveState();
-  mapWidget->saveState();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -554,7 +605,7 @@ void MainWindow::preDatabaseLoad()
     hasDatabaseLoadStatus = true;
 
     searchController->preDatabaseLoad();
-    mapWidget->preDatabaseLoad();
+    navMapWidget->preDatabaseLoad();
   }
   else
     qDebug() << "Already in database loading status";
@@ -565,7 +616,7 @@ void MainWindow::postDatabaseLoad(bool force)
   if(hasDatabaseLoadStatus || force)
   {
     searchController->postDatabaseLoad();
-    mapWidget->postDatabaseLoad();
+    navMapWidget->postDatabaseLoad();
     hasDatabaseLoadStatus = false;
   }
   else

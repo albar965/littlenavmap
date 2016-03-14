@@ -33,8 +33,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterIls::MapPainterIls(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(widget, mapQuery, mapScale)
+MapPainterIls::MapPainterIls(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+                             bool verboseMsg)
+  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -45,9 +46,9 @@ MapPainterIls::~MapPainterIls()
 }
 
 void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                          Marble::ViewportParams *viewport)
+                          Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
-  if(mapLayer == nullptr)
+  if(mapLayer == nullptr || !objectTypes.testFlag(maptypes::ILS))
     return;
 
   if(mapLayer->isIls())
@@ -62,7 +63,7 @@ void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
     if(ilss != nullptr)
     {
       setRenderHints(painter);
-      if(widget->viewContext() == Marble::Still)
+      if(widget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of ils" << ilss->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -88,7 +89,7 @@ void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
           drawIlsSymbol(painter, ils, x, y, mapLayer, drawFast);
       }
     }
-    if(widget->viewContext() == Marble::Still)
+    if(widget->viewContext() == Marble::Still && verbose)
       qDebug() << "Time for paint" << t.elapsed() << " ms";
   }
 }

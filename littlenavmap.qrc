@@ -40,5 +40,12 @@
         <file>resources/icons/README.txt</file>
         <file>resources/icons/settings.svg</file>
         <file>resources/icons/next.svg</file>
+        <file>resources/icons/vor.svg</file>
+        <file>resources/icons/ndb.svg</file>
+        <file>resources/icons/waypoint.svg</file>
+        <file>resources/icons/ils.svg</file>
+        <file>resources/icons/airport.svg</file>
+        <file>resources/icons/cities.svg</file>
+        <file>resources/icons/mark.svg</file>
     </qresource>
 </RCC>

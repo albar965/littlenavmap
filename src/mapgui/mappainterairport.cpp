@@ -33,8 +33,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(widget, mapQuery, mapScale)
+MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+                                     bool verboseMsg)
+  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -45,9 +46,9 @@ MapPainterAirport::~MapPainterAirport()
 }
 
 void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                              Marble::ViewportParams *viewport)
+                              Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
-  if(mapLayer == nullptr)
+  if(mapLayer == nullptr || !objectTypes.testFlag(maptypes::AIRPORT))
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -61,7 +62,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   if(airports == nullptr)
     return;
 
-  if(!drawFast)
+  if(!drawFast && verbose)
   {
     qDebug() << "Number of aiports" << airports->size();
     qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -99,15 +100,15 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
       if(!texts.isEmpty())
       {
-        bool bold = airport.isSet(ADDON);
+        bool bold = airport.flags.testFlag(ADDON);
         int transparency = mapLayer->isAirportDiagram() ? 180 : 255;
-        if(!airport.isSet(SCENERY))
+        if(!airport.flags.testFlag(SCENERY))
           transparency = 0;
         textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, bold, bold, false, transparency);
       }
     }
   }
-  if(widget->viewContext() == Marble::Still)
+  if(widget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
@@ -524,7 +525,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
 void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const MapAirport& ap,
                                                   const MapLayer *mapLayer, bool fast)
 {
-  if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() && !ap.isSet(CLOSED) &&
+  if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() && !ap.flags.testFlag(CLOSED) &&
      !ap.waterOnly())
   {
     painter->save();
@@ -567,7 +568,7 @@ void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const Map
 void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const MapAirport& ap, int x, int y,
                                           const MapLayer *mapLayer, bool fast)
 {
-  if(!mapLayer->isAirportOverviewRunway() || ap.isSet(CLOSED) || ap.waterOnly() ||
+  if(!mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(CLOSED) || ap.waterOnly() ||
      ap.longestRunwayLength < 8000 || mapLayer->isAirportDiagram())
   {
 
@@ -654,7 +655,7 @@ QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const MapA
   {
     texts.append(airport.name + " (" + airport.ident + ")");
 
-    if(airport.altitude > 0 || airport.longestRunwayLength > 0 || airport.isSet(LIGHT))
+    if(airport.altitude > 0 || airport.longestRunwayLength > 0 || airport.flags.testFlag(LIGHT))
     {
       QString tower = (airport.towerFrequency == 0 ? QString() :
                        "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
@@ -671,7 +672,7 @@ QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const MapA
         texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
 
       texts.append(QString::number(airport.altitude) + " " +
-                   (airport.isSet(LIGHT) ? "L " : "- ") +
+                   (airport.flags.testFlag(LIGHT) ? "L " : "- ") +
                    QString::number(airport.longestRunwayLength / 100) + " " +
                    (airport.unicomFrequency == 0 ? QString() :
                     QString::number(airport.unicomFrequency / 1000., 'f', 2)));

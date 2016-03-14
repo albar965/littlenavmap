@@ -60,8 +60,7 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
-  connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::mapContextMenu);
-  connect(this, &MarbleWidget::zoomChanged, this, &NavMapWidget::zoomHasChanged);
+  connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::contextMenu);
 }
 
 NavMapWidget::~NavMapWidget()
@@ -92,12 +91,23 @@ void NavMapWidget::setTheme(const QString& theme, int index)
   }
   setShowClouds(false);
   setShowBorders(true);
-  setShowPlaces(false);
-  setShowCities(true);
-  setShowIceLayer(true);
+  setShowIceLayer(false);
   setShowLakes(true);
-  setShowOtherPlaces(false);
   setShowRivers(true);
+}
+
+void NavMapWidget::setShowMapPois(bool show)
+{
+  qDebug() << "setShowMapPois" << show;
+  setShowPlaces(show);
+  setShowCities(show);
+  setShowOtherPlaces(show);
+}
+
+void NavMapWidget::setShowMapFeatures(maptypes::ObjectTypes type, bool show)
+{
+  qDebug() << "setShowMapFeatures" << type << "show" << show;
+  paintLayer->setShowMapFeatures(type, show);
 }
 
 void NavMapWidget::preDatabaseLoad()
@@ -112,53 +122,73 @@ void NavMapWidget::postDatabaseLoad()
   mapQuery->initQueries();
 }
 
-void NavMapWidget::zoomHasChanged(int zoom)
+void NavMapWidget::historyNext()
 {
-  if(zoom != curZoom)
+  const MapPosHistoryEntry& entry = history.next();
+  if(entry.pos.isValid())
   {
-    curZoom = zoom;
-    curBox = viewport()->viewLatLonAltBox();
-    qDebug() << "zoom" << curZoom << "distance" << distanceFromZoom(zoom);
-    qDebug() << curBox.toString();
+    setZoom(entry.zoom);
+    centerOn(entry.pos.getLonX(), entry.pos.getLatY(), false);
+  }
+}
+
+void NavMapWidget::historyBack()
+{
+  const MapPosHistoryEntry& entry = history.back();
+  if(entry.pos.isValid())
+  {
+    setZoom(entry.zoom);
+    centerOn(entry.pos.getLonX(), entry.pos.getLatY(), false);
   }
 }
 
 void NavMapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  s->setValue("Map/Zoom", zoom());
-  s->setValue("Map/LonX", centerLongitude());
-  s->setValue("Map/LatY", centerLatitude());
 
-  s->setValue("Map/MarkLonX", mark.longitude(GeoDataCoordinates::Degree));
-  s->setValue("Map/MarkLatY", mark.latitude(GeoDataCoordinates::Degree));
+  s->setValue("Map/MarkLonX", static_cast<double>(markPos.getLonX()));
+  s->setValue("Map/MarkLatY", static_cast<double>(markPos.getLatY()));
 
+  s->setValue("Map/HomeLonX", static_cast<double>(homePos.getLonX()));
+  s->setValue("Map/HomeLatY", static_cast<double>(homePos.getLatY()));
+  s->setValue("Map/HomeZoom", homeZoom);
+  history.saveState("Map/History");
 }
 
 void NavMapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  if(s->contains("Map/Zoom"))
-    setZoom(s->value("Map/Zoom").toInt());
-
-  if(s->contains("Map/LonX") && s->contains("Map/LatY"))
-    centerOn(s->value("Map/LonX").toDouble(), s->value("Map/LatY").toDouble(), true);
 
   if(s->contains("Map/MarkLonX") && s->contains("Map/MarkLatY"))
   {
-    mark.setLongitude(s->value("Map/MarkLonX").toDouble(), GeoDataCoordinates::Degree);
-    mark.setLatitude(s->value("Map/MarkLatY").toDouble(), GeoDataCoordinates::Degree);
-
-    atools::geo::Pos newPos(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble());
-    qDebug() << "new mark" << newPos;
-    emit markChanged(newPos);
+    markPos = atools::geo::Pos(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble());
+    emit markChanged(markPos);
   }
+
+  if(s->contains("Map/HomeLonX") && s->contains("Map/HomeLatY") && s->contains("Map/HomeZoom"))
+  {
+    homePos = atools::geo::Pos(s->value("Map/HomeLonX").toDouble(), s->value("Map/HomeLatY").toDouble());
+    homeZoom = s->value("Map/HomeZoom").toInt();
+    emit homeChanged(markPos);
+  }
+  history.restoreState("Map/History");
 }
 
-void NavMapWidget::showPoint(const atools::geo::Pos& pos, int zoom)
+void NavMapWidget::showSavedPos()
+{
+  const MapPosHistoryEntry& currentPos = history.current();
+
+  if(currentPos.pos.isValid())
+    centerOn(currentPos.pos.getLonX(), currentPos.pos.getLatY(), false);
+
+  if(currentPos.zoom != -1)
+    setZoom(currentPos.zoom);
+}
+
+void NavMapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
-  setZoom(zoom);
+  setZoom(zoomValue);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 
@@ -169,31 +199,55 @@ void NavMapWidget::showRect(const atools::geo::Rect& rect)
                             GeoDataCoordinates::Degree), false);
 }
 
-void NavMapWidget::changeMark(const atools::geo::Pos& pos)
+void NavMapWidget::showMark()
 {
-  mark.setLongitude(pos.getLonX(), GeoDataCoordinates::Degree);
-  mark.setLatitude(pos.getLatY(), GeoDataCoordinates::Degree);
-
-  update();
-  qDebug() << "new mark" << pos;
+  qDebug() << "NavMapWidget::showMark" << markPos;
+  if(markPos.isValid())
+  {
+    setZoom(2700);
+    centerOn(markPos.getLonX(), markPos.getLatY(), false);
+  }
 }
 
-void NavMapWidget::mapContextMenu(const QPoint& pos)
+void NavMapWidget::showHome()
+{
+  qDebug() << "NavMapWidget::showHome" << markPos;
+  if(homeZoom != -1)
+    setZoom(homeZoom);
+
+  if(homePos.isValid())
+    centerOn(homePos.getLonX(), homePos.getLatY(), false);
+}
+
+void NavMapWidget::changeMark(const atools::geo::Pos& pos)
+{
+  markPos = pos;
+  update();
+}
+
+void NavMapWidget::changeHome()
+{
+  homePos = atools::geo::Pos(centerLongitude(), centerLatitude());
+  homeZoom = zoom();
+  update();
+}
+
+void NavMapWidget::contextMenu(const QPoint& pos)
 {
   Q_UNUSED(pos);
   qInfo() << "tableContextMenu";
 
   Ui::MainWindow *ui = parentWindow->getUi();
   QMenu m;
-  m.addAction(ui->actionSetMark);
+  m.addAction(ui->actionMapSetMark);
+  m.addAction(ui->actionMapSetHome);
 
   QString actionShowInSearchText;
   actionShowInSearchText = ui->actionShowInSearch->text();
 
   CoordinateConverter conv(viewport());
   MapSearchResult res;
-  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), QList<maptypes::ObjectType>(),
-                              pos.x(), pos.y(), 20, res);
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), maptypes::ALL, pos.x(), pos.y(), 20, res);
 
   MapAirport ap;
   if(!res.airports.isEmpty())
@@ -216,13 +270,12 @@ void NavMapWidget::mapContextMenu(const QPoint& pos)
 
     emit objectSelected(maptypes::AIRPORT, ap.ident, QString());
   }
-  else if(act == ui->actionSetMark)
+  else if(act == ui->actionMapSetMark)
   {
     qreal lon, lat;
     if(geoCoordinates(pos.x(), pos.y(), lon, lat))
     {
-      mark.setLongitude(lon, GeoDataCoordinates::Degree);
-      mark.setLatitude(lat, GeoDataCoordinates::Degree);
+      markPos = atools::geo::Pos(lon, lat);
 
       update();
       qDebug() << "new mark" << atools::geo::Pos(lon, lat);
@@ -266,8 +319,7 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   CoordinateConverter conv(viewport());
   MapSearchResult res;
   const MapLayer *mapLayer = paintLayer->getMapLayer();
-  mapQuery->getNearestObjects(conv, mapLayer, {maptypes::AIRPORT},
-                              event->pos().x(), event->pos().y(), 20, res);
+  mapQuery->getNearestObjects(conv, mapLayer, maptypes::AIRPORT, event->pos().x(), event->pos().y(), 20, res);
   if(!res.airports.isEmpty())
     showRect(res.airports.at(0)->bounding);
 }
@@ -289,7 +341,7 @@ bool NavMapWidget::event(QEvent *event)
     MapSearchResult res;
 
     const MapLayer *mapLayer = paintLayer->getMapLayer();
-    mapQuery->getNearestObjects(conv, mapLayer, QList<maptypes::ObjectType>(),
+    mapQuery->getNearestObjects(conv, mapLayer, paintLayer->getShownMapFeatures(),
                                 helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
 
     QString text;
@@ -390,4 +442,20 @@ bool NavMapWidget::event(QEvent *event)
   }
 
   return QWidget::event(event);
+}
+
+void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
+{
+  const GeoDataLatLonAltBox visibleLatLonAltBox = viewport()->viewLatLonAltBox();
+  if(viewContext() == Marble::Still && (zoom() != curZoom || visibleLatLonAltBox != curBox))
+  {
+    curZoom = zoom();
+    curBox = visibleLatLonAltBox;
+
+    qDebug() << "paintEvent map view has changed zoom" << curZoom << "distance" << distanceFromZoom(zoom());
+    qDebug() << curBox.toString();
+    history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), zoom());
+  }
+
+  MarbleWidget::paintEvent(paintEvent);
 }

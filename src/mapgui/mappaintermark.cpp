@@ -26,8 +26,8 @@
 
 using namespace Marble;
 
-MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale)
-  : MapPainter(widget, mapQuery, mapScale), navMapWidget(widget)
+MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
+  : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
 {
 }
 
@@ -36,7 +36,7 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport)
+void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
   Q_UNUSED(mapLayer);
   Q_UNUSED(viewport);
@@ -48,11 +48,7 @@ void MapPainterMark::paintMark(GeoPainter *painter)
 {
   int x, y;
 
-  GeoDataCoordinates mark = navMapWidget->getMark();
-
-  bool visible = wToS(mark, x, y);
-
-  if(visible)
+  if(wToS(navMapWidget->getMarkPos(), x, y))
   {
     painter->save();
     int xc = x, yc = y;

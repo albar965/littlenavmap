@@ -80,7 +80,7 @@ MapQuery::~MapQuery()
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                 const QList<maptypes::ObjectType> types,
+                                 maptypes::ObjectTypes types,
                                  int xs, int ys, int screenDistance,
                                  MapSearchResult& result)
 {
@@ -88,7 +88,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     return;
 
   int x, y;
-  if(mapLayer->isAirport() && (types.isEmpty() || types.contains(maptypes::AIRPORT)))
+  if(mapLayer->isAirport() && types.testFlag(maptypes::AIRPORT))
     for(int i = airportCache.list.size() - 1; i >= 0; i--)
     {
       const MapAirport& airport = airportCache.list.at(i);
@@ -102,7 +102,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
     }
 
-  if(mapLayer->isVor() && (types.isEmpty() || types.contains(maptypes::VOR)))
+  if(mapLayer->isVor() && types.testFlag(maptypes::VOR))
     for(int i = vorCache.list.size() - 1; i >= 0; i--)
     {
       const MapVor& vor = vorCache.list.at(i);
@@ -111,7 +111,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.vors, xs, ys, &vor);
     }
 
-  if(mapLayer->isNdb() && (types.isEmpty() || types.contains(maptypes::NDB)))
+  if(mapLayer->isNdb() && types.testFlag(maptypes::NDB))
     for(int i = ndbCache.list.size() - 1; i >= 0; i--)
     {
       const MapNdb& ndb = ndbCache.list.at(i);
@@ -120,7 +120,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.ndbs, xs, ys, &ndb);
     }
 
-  if(mapLayer->isWaypoint() && (types.isEmpty() || types.contains(maptypes::WAYPOINT)))
+  if(mapLayer->isWaypoint() && types.testFlag(maptypes::WAYPOINT))
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
       const MapWaypoint& wp = waypointCache.list.at(i);
@@ -129,7 +129,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.waypoints, xs, ys, &wp);
     }
 
-  if(mapLayer->isMarker() && (types.isEmpty() || types.contains(maptypes::MARKER)))
+  if(mapLayer->isMarker() && types.testFlag(maptypes::MARKER))
     for(int i = markerCache.list.size() - 1; i >= 0; i--)
     {
       const MapMarker& wp = markerCache.list.at(i);
@@ -138,7 +138,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.markers, xs, ys, &wp);
     }
 
-  if(mapLayer->isIls() && (types.isEmpty() || types.contains(maptypes::ILS)))
+  if(mapLayer->isIls() && types.testFlag(maptypes::ILS))
     for(int i = ilsCache.list.size() - 1; i >= 0; i--)
     {
       const MapIls& wp = ilsCache.list.at(i);
@@ -643,7 +643,7 @@ bool MapQuery::runwayCompare(const MapRunway& r1, const MapRunway& r2)
     return r1.isSoft() && r2.isHard();
 }
 
-int MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag)
+MapAirportFlags MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag)
 {
   if(!query->record().contains(field) || query->isNull(field))
     return NONE;
@@ -692,9 +692,9 @@ void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double degree)
   rect.setNorth(rect.north(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
 }
 
-int MapQuery::getFlags(const atools::sql::SqlQuery *query)
+MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)
 {
-  int flags = 0;
+  MapAirportFlags flags = 0;
   flags |= flag(query, "num_helipad", HELIPORT);
   flags |= flag(query, "rating", SCENERY);
   flags |= flag(query, "has_avgas", FUEL);

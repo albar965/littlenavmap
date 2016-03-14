@@ -1597,14 +1597,20 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionMapHome"/>
-   <addaction name="actionMapMark"/>
+   <addaction name="actionMapShowHome"/>
+   <addaction name="actionMapShowMark"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
    <addaction name="separator"/>
    <addaction name="actionMapMoreDetails"/>
    <addaction name="actionMapLessDetails"/>
    <addaction name="separator"/>
+   <addaction name="actionMapShowAirports"/>
+   <addaction name="actionMapShowVor"/>
+   <addaction name="actionMapShowNdb"/>
+   <addaction name="actionMapShowWp"/>
+   <addaction name="actionMapShowIls"/>
+   <addaction name="actionMapShowCities"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -1962,16 +1968,16 @@
   <action name="actionSearchSetMark">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
     <string>Set Mark</string>
    </property>
   </action>
-  <action name="actionSetMark">
+  <action name="actionMapSetMark">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/checkmark.svg</normaloff>:/littlenavmap/resources/icons/checkmark.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
     <string>Set Mark</string>
@@ -2021,7 +2027,7 @@
   <action name="actionMapMoreDetails">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/moredetails.svg</normaloff>:/littlenavmap/resources/icons/moredetails.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/filter-add.svg</normaloff>:/littlenavmap/resources/icons/filter-add.svg</iconset>
    </property>
    <property name="text">
     <string>More Details</string>
@@ -2030,13 +2036,13 @@
   <action name="actionMapLessDetails">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/lessdetails.svg</normaloff>:/littlenavmap/resources/icons/lessdetails.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/filter-remove.svg</normaloff>:/littlenavmap/resources/icons/filter-remove.svg</iconset>
    </property>
    <property name="text">
     <string>Less Details</string>
    </property>
   </action>
-  <action name="actionMapHome">
+  <action name="actionMapShowHome">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
@@ -2063,13 +2069,112 @@
     <string>Map Next</string>
    </property>
   </action>
-  <action name="actionMapMark">
+  <action name="actionMapShowMark">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
     <string>Map Mark</string>
+   </property>
+  </action>
+  <action name="actionMapSetHome">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set Home</string>
+   </property>
+  </action>
+  <action name="actionMapShowAirports">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airport.svg</normaloff>:/littlenavmap/resources/icons/airport.svg</iconset>
+   </property>
+   <property name="text">
+    <string>AP</string>
+   </property>
+  </action>
+  <action name="actionMapShowVor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/vor.svg</normaloff>:/littlenavmap/resources/icons/vor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>VOR</string>
+   </property>
+  </action>
+  <action name="actionMapShowNdb">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/ndb.svg</normaloff>:/littlenavmap/resources/icons/ndb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>NDB</string>
+   </property>
+  </action>
+  <action name="actionMapShowWp">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/waypoint.svg</normaloff>:/littlenavmap/resources/icons/waypoint.svg</iconset>
+   </property>
+   <property name="text">
+    <string>WP</string>
+   </property>
+  </action>
+  <action name="actionMapShowCities">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cities.svg</normaloff>:/littlenavmap/resources/icons/cities.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Cities</string>
+   </property>
+  </action>
+  <action name="actionMapShowIls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/ils.svg</normaloff>:/littlenavmap/resources/icons/ils.svg</iconset>
+   </property>
+   <property name="text">
+    <string>ILS</string>
    </property>
   </action>
  </widget>

@@ -20,10 +20,14 @@
 
 #include "common/maptypes.h"
 
+#include "mapposhistory.h"
+
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
 #include <QWidget>
+
+#include <geo/pos.h>
 
 namespace atools {
 namespace geo {
@@ -49,29 +53,47 @@ public:
   NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~NavMapWidget();
 
-  void mapContextMenu(const QPoint& pos);
+  void contextMenu(const QPoint& pos);
 
   void saveState();
   void restoreState();
 
-  void showPoint(const atools::geo::Pos& pos, int zoom);
+  void showPos(const atools::geo::Pos& pos, int zoomValue);
   void showRect(const atools::geo::Rect& rect);
 
+  void showMark();
+  void showHome();
   void changeMark(const atools::geo::Pos& pos);
+  void changeHome();
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
-  Marble::GeoDataCoordinates getMark() const
+  atools::geo::Pos getMarkPos() const
   {
-    return mark;
+    return markPos;
   }
 
   void preDatabaseLoad();
   void postDatabaseLoad();
 
   void setTheme(const QString& theme, int index);
+
+  void historyNext();
+  void historyBack();
+
+  MapPosHistory *getHistory()
+  {
+    return &history;
+  }
+
+  void showSavedPos();
+
+  void setShowMapPois(bool show);
+  void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
+  void homeChanged(const atools::geo::Pos& mark);
   void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
 
 private:
@@ -79,17 +101,22 @@ private:
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
   atools::sql::SqlDatabase *db;
-  Marble::GeoDataCoordinates mark;
+  int homeZoom = -1;
+  bool showMapPois = true;
+  atools::geo::Pos markPos, homePos;
+  MapPosHistory history;
+
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
   virtual void mouseMoveEvent(QMouseEvent *event) override;
   virtual bool event(QEvent *event) override;
 
-  void zoomHasChanged(int zoom);
-
   int curZoom = -1;
   Marble::GeoDataLatLonAltBox curBox;
+
+  virtual void paintEvent(QPaintEvent *paintEvent) override;
+
 };
 
 #endif // NAVMAPWIDGET_H

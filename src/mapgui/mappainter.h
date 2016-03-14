@@ -19,7 +19,7 @@
 #define MAPPAINTER_H
 
 #include "coordinateconverter.h"
-
+#include "common/maptypes.h"
 #include <marble/MarbleWidget.h>
 
 #include <QPen>
@@ -38,11 +38,11 @@ class MapPainter :
   public CoordinateConverter
 {
 public:
-  MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainter();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport) = 0;
+                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) = 0;
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);
@@ -50,8 +50,9 @@ protected:
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;
+  bool verbose = false;
   void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               bool bold = false, bool italic = false, bool right = false, int transparency = 255);
+               bool bold = false, bool italic = false, bool alignRight = false, int transparency = 255);
 
 };
 

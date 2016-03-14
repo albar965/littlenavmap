@@ -56,12 +56,13 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   initLayers();
 
   mapScale = new MapScale();
-  mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale);
-  mapPainterIls = new MapPainterIls(navMapWidget, mapQuery, mapScale);
+  mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale, false);
+  mapPainterIls = new MapPainterIls(navMapWidget, mapQuery, mapScale, false);
+  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale, false);
+  mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale, false);
 
-  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale);
-
-  mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale);
+  objectTypes = maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::ILS | maptypes::MARKER |
+                maptypes::WAYPOINT;
 }
 
 MapPaintLayer::~MapPaintLayer()
@@ -70,6 +71,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterNav;
   delete mapPainterAirport;
   delete mapPainterMark;
+
   delete layers;
   delete mapScale;
   delete mapFont;
@@ -83,6 +85,14 @@ void MapPaintLayer::preDatabaseLoad()
 void MapPaintLayer::postDatabaseLoad()
 {
   databaseLoadStatus = true;
+}
+
+void MapPaintLayer::setShowMapFeatures(maptypes::ObjectTypes type, bool show)
+{
+  if(show)
+    objectTypes |= type;
+  else
+    objectTypes &= ~type;
 }
 
 void MapPaintLayer::initLayers()
@@ -186,17 +196,17 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     {
       if(mapLayer->isAirportDiagram())
       {
-        mapPainterIls->paint(mapLayer, painter, viewport);
-        mapPainterAirport->paint(mapLayer, painter, viewport);
-        mapPainterNav->paint(mapLayer, painter, viewport);
+        mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
       }
       else
       {
-        mapPainterIls->paint(mapLayer, painter, viewport);
-        mapPainterNav->paint(mapLayer, painter, viewport);
-        mapPainterAirport->paint(mapLayer, painter, viewport);
+        mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
       }
-      mapPainterMark->paint(mapLayer, painter, viewport);
+      mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
     }
   }
 

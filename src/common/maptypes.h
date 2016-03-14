@@ -24,13 +24,18 @@ namespace maptypes {
 
 enum ObjectType
 {
-  AIRPORT,
-  NDB,
-  VOR,
-  ILS,
-  MARKER,
-  WAYPOINT
+  NONE = 0x00,
+  AIRPORT = 0x01,
+  VOR = 0x02,
+  NDB = 0x04,
+  ILS = 0x08,
+  MARKER = 0x10,
+  WAYPOINT = 0x20,
+  ALL = 0xff
 };
+
+Q_DECLARE_FLAGS(ObjectTypes, ObjectType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::ObjectTypes);
 
 QString navTypeName(const QString& type);
 QString navName(const QString& type);

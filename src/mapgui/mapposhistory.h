@@ -15,27 +15,47 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERMARK_H
-#define MAPPAINTERMARK_H
+#ifndef MAPPOSHISTORY_H
+#define MAPPOSHISTORY_H
 
-#include "mappainter.h"
+#include "geo/pos.h"
 
-class NavMapWidget;
+#include <QObject>
 
-class MapPainterMark :
-  public MapPainter
+struct MapPosHistoryEntry
 {
-public:
-  MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
-  virtual ~MapPainterMark();
+  atools::geo::Pos pos;
+  int zoom;
+  qint64 timestamp;
+};
 
-  virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
+class MapPosHistory :
+  public QObject
+{
+  Q_OBJECT
+
+public:
+  explicit MapPosHistory(QObject *parent = 0);
+  virtual ~MapPosHistory();
+
+  const MapPosHistoryEntry& next();
+  const MapPosHistoryEntry& back();
+  const MapPosHistoryEntry& current() const;
+
+  void addEntry(atools::geo::Pos pos, int zoom);
+
+  void saveState(const QString& keyPrefix);
+  void restoreState(const QString& keyPrefix);
 
 private:
-  NavMapWidget *navMapWidget;
-  void paintMark(Marble::GeoPainter *painter);
+  QList<MapPosHistoryEntry> entries;
+  int currentIndex = -1;
+
+  MapPosHistoryEntry empty;
+
+signals:
+  void historyChanged(int minIndex, int curIndex, int maxIndex);
 
 };
 
-#endif // MAPPAINTERMARK_H
+#endif // MAPPOSHISTORY_H

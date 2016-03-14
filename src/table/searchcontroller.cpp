@@ -109,6 +109,10 @@ void SearchController::objectSelected(maptypes::ObjectType type, const QString& 
 
   switch(type)
   {
+    case maptypes::NONE:
+      break;
+    case maptypes::ALL:
+      break;
     case maptypes::MARKER:
       break;
     case maptypes::AIRPORT:

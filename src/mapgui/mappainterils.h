@@ -28,15 +28,15 @@ class MapPainterIls :
   public MapPainter
 {
 public:
-  MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterIls();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport) override;
+                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
 
 private:
   SymbolPainter *symbolPainter;
-  void drawIlsSymbol(Marble::GeoPainter *painter, const MapIls& ils, int x, int y, const MapLayer* mapLayer,
+  void drawIlsSymbol(Marble::GeoPainter *painter, const MapIls& ils, int x, int y, const MapLayer *mapLayer,
                      bool fast);
 
 };

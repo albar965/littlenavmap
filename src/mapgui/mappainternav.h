@@ -28,11 +28,11 @@ class MapPainterNav :
   public MapPainter
 {
 public:
-  MapPainterNav(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
+  MapPainterNav(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterNav();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport) override;
+                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
 
 private:
   SymbolPainter *symbolPainter;

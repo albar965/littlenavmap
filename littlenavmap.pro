@@ -66,7 +66,8 @@ SOURCES += src/main.cpp\
     src/common/mapcolors.cpp \
     src/mapgui/mappainternav.cpp \
     src/table/navicondelegate.cpp \
-    src/mapgui/mappainterils.cpp
+    src/mapgui/mappainterils.cpp \
+    src/mapgui/mapposhistory.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -95,7 +96,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/mapcolors.h \
     src/mapgui/mappainternav.h \
     src/table/navicondelegate.h \
-    src/mapgui/mappainterils.h
+    src/mapgui/mappainterils.h \
+    src/mapgui/mapposhistory.h
 
 FORMS    += src/gui/mainwindow.ui
 

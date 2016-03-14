@@ -54,7 +54,15 @@ public:
     return mapLayer;
   }
 
+  void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+
+  maptypes::ObjectTypes getShownMapFeatures() const
+  {
+    return objectTypes;
+  }
+
 private:
+  maptypes::ObjectTypes objectTypes;
   bool databaseLoadStatus = false;
   MapPainterAirport *mapPainterAirport;
   MapPainterNav *mapPainterNav;

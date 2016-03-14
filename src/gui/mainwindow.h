@@ -66,7 +66,7 @@ public:
 
   NavMapWidget *getMapWidget() const
   {
-    return mapWidget;
+    return navMapWidget;
   }
 
 signals:
@@ -86,7 +86,7 @@ private:
   virtual void showEvent(QShowEvent *event) override;
 
   Ui::MainWindow *ui;
-  NavMapWidget *mapWidget = nullptr;
+  NavMapWidget *navMapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
   bool hasDatabaseLoadStatus = false;
@@ -116,6 +116,9 @@ private:
   void postDatabaseLoad(bool force);
   void createEmptySchema();
 
+  void updateHistActions(int minIndex, int curIndex, int maxIndex);
+
+  void updateMapShowFeatures();
 };
 
 #endif // MAINWINDOW_H
