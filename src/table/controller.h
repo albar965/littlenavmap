@@ -18,13 +18,14 @@
 #ifndef LITTLENAVMAP_CONTROLLER_H
 #define LITTLENAVMAP_CONTROLLER_H
 
-#include <QItemSelectionModel>
-#include <QObject>
-#include <functional>
-
+#include "common/maptypes.h"
 #include "table/sqlmodel.h"
 #include "geo/pos.h"
 #include "table/sqlproxymodel.h"
+
+#include <QItemSelectionModel>
+#include <QObject>
+#include <functional>
 
 namespace atools {
 namespace geo {
@@ -195,10 +196,8 @@ public:
     return proxyModel;
   }
 
-  void getSelectedObjectIds(QList<int>& ids);
-
-  void getSelectedObjectPositions(QList<atools::geo::Pos>& positions, const QString& lonxColName = "lonx",
-                                  const QString& latyColName = "laty");
+  void getSelectedMapObjects(QList<maptypes::MapObject>& mapObjects, const QString& lonxColName = "lonx",
+                             const QString& latyColName = "laty");
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

@@ -611,28 +611,27 @@ int Controller::getSortColumnIndex() const
   return model->getSortColumnIndex();
 }
 
-void Controller::getSelectedObjectIds(QList<int>& ids)
+void Controller::getSelectedMapObjects(QList<maptypes::MapObject>& mapObjects,
+                                       const QString& lonxColName, const QString& latyColName)
 {
-  const QString idColumnName = columns->getIdColumnName();
-  const QItemSelection sel = getSelection();
+  int idcol = model->record().indexOf(columns->getIdColumnName());
+  int lonxcol = model->record().indexOf(lonxColName);
+  int latycol = model->record().indexOf(latyColName);
 
-  for(const QItemSelectionRange& rng : sel)
-    for(int row = rng.top(); row <= rng.bottom(); ++row)
-      ids.append(getRawData(row, idColumnName).toInt());
-}
-
-void Controller::getSelectedObjectPositions(QList<atools::geo::Pos>& positions,
-                                            const QString& lonxColName, const QString& latyColName)
-{
-  const QItemSelection sel = getSelection();
-
-  for(const QItemSelectionRange& rng : sel)
+  for(const QItemSelectionRange& rng :  getSelection())
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
       int srow = row;
       if(proxyModel != nullptr)
         srow = toS(proxyModel->index(row, 0)).row();
-      positions.append(atools::geo::Pos(getRawData(srow, lonxColName).toFloat(),
-                                        getRawData(srow, latyColName).toFloat()));
+
+      maptypes::MapObject obj;
+
+      if(lonxcol != -1 && latycol != -1)
+        obj.position = atools::geo::Pos(getRawData(srow, lonxcol).toFloat(),
+                                        getRawData(srow, latycol).toFloat());
+      obj.id = getRawData(srow, idcol).toInt();
+      obj.type = maptypes::NONE;
+      mapObjects.append(obj);
     }
 }

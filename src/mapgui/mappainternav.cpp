@@ -76,7 +76,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       for(const MapWaypoint& waypoint : *waypoints)
       {
         int x, y;
-        bool visible = wToS(waypoint.pos, x, y);
+        bool visible = wToS(waypoint.position, x, y);
 
         if(visible)
           symbolPainter->drawWaypointSymbol(painter, waypoint, x, y,
@@ -109,7 +109,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       for(const MapVor& vor : *vors)
       {
         int x, y;
-        bool visible = wToS(vor.pos, x, y);
+        bool visible = wToS(vor.position, x, y);
 
         if(visible)
         {
@@ -157,7 +157,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       for(const MapNdb& ndb : *ndbs)
       {
         int x, y;
-        bool visible = wToS(ndb.pos, x, y);
+        bool visible = wToS(ndb.position, x, y);
 
         if(visible)
         {
@@ -198,7 +198,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       for(const MapMarker& marker : *markers)
       {
         int x, y;
-        bool visible = wToS(marker.pos, x, y);
+        bool visible = wToS(marker.position, x, y);
 
         if(visible)
         {

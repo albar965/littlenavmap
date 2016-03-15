@@ -44,8 +44,8 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>
                              [ = ](const TYPE * a1, const TYPE * a2)->bool
                              {
                                int x1, y1, x2, y2;
-                               conv.wToS(a1->pos, x1, y1);
-                               conv.wToS(a2->pos, x2, y2);
+                               conv.wToS(a1->position, x1, y1);
+                               conv.wToS(a2->position, x2, y2);
                                return atools::geo::manhattanDistance(x1, y1, xs, ys) <
                                atools::geo::manhattanDistance(x2, y2, xs, ys);
                              });
@@ -93,7 +93,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     {
       const MapAirport& airport = airportCache.list.at(i);
 
-      if(conv.wToS(airport.pos, x, y))
+      if(conv.wToS(airport.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.airports, xs, ys, &airport);
 
@@ -106,7 +106,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = vorCache.list.size() - 1; i >= 0; i--)
     {
       const MapVor& vor = vorCache.list.at(i);
-      if(conv.wToS(vor.pos, x, y))
+      if(conv.wToS(vor.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.vors, xs, ys, &vor);
     }
@@ -115,7 +115,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = ndbCache.list.size() - 1; i >= 0; i--)
     {
       const MapNdb& ndb = ndbCache.list.at(i);
-      if(conv.wToS(ndb.pos, x, y))
+      if(conv.wToS(ndb.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.ndbs, xs, ys, &ndb);
     }
@@ -124,7 +124,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
       const MapWaypoint& wp = waypointCache.list.at(i);
-      if(conv.wToS(wp.pos, x, y))
+      if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.waypoints, xs, ys, &wp);
     }
@@ -133,7 +133,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = markerCache.list.size() - 1; i >= 0; i--)
     {
       const MapMarker& wp = markerCache.list.at(i);
-      if(conv.wToS(wp.pos, x, y))
+      if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.markers, xs, ys, &wp);
     }
@@ -142,7 +142,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = ilsCache.list.size() - 1; i >= 0; i--)
     {
       const MapIls& wp = ilsCache.list.at(i);
-      if(conv.wToS(wp.pos, x, y))
+      if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.ils, xs, ys, &wp);
     }
@@ -153,7 +153,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     {
       QList<MapParking> *parkings = parkingCache.object(id);
       for(const MapParking& p : *parkings)
-        if(conv.wToS(p.pos, x, y))
+        if(conv.wToS(p.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
             insertSortedByDistance(conv, result.parkings, xs, ys, &p);
     }
@@ -162,7 +162,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     {
       QList<MapHelipad> *helipads = helipadCache.object(id);
       for(const MapHelipad& p : *helipads)
-        if(conv.wToS(p.pos, x, y))
+        if(conv.wToS(p.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
             insertSortedByDistance(conv, result.helipads, xs, ys, &p);
     }
@@ -216,7 +216,7 @@ const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, c
         wp.ident = waypointsQuery->value("ident").toString();
         wp.region = waypointsQuery->value("region").toString();
         wp.type = waypointsQuery->value("type").toString();
-        wp.pos = Pos(waypointsQuery->value("lonx").toFloat(), waypointsQuery->value("laty").toFloat());
+        wp.position = Pos(waypointsQuery->value("lonx").toFloat(), waypointsQuery->value("laty").toFloat());
 
         waypointCache.list.append(wp);
       }
@@ -250,7 +250,7 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
         vor.dmeOnly = vorsQuery->value("dme_only").toInt() > 0;
         vor.hasDme = !vorsQuery->value("dme_altitude").isNull();
         vor.magvar = static_cast<int>(std::roundf(vorsQuery->value("mag_var").toFloat()));
-        vor.pos = Pos(vorsQuery->value("lonx").toFloat(), vorsQuery->value("laty").toFloat());
+        vor.position = Pos(vorsQuery->value("lonx").toFloat(), vorsQuery->value("laty").toFloat());
 
         vorCache.list.append(vor);
       }
@@ -282,7 +282,7 @@ const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLa
         ndb.frequency = ndbsQuery->value("frequency").toInt();
         ndb.range = ndbsQuery->value("range").toInt();
         ndb.magvar = static_cast<int>(std::roundf(ndbsQuery->value("mag_var").toFloat()));
-        ndb.pos = Pos(ndbsQuery->value("lonx").toFloat(), ndbsQuery->value("laty").toFloat());
+        ndb.position = Pos(ndbsQuery->value("lonx").toFloat(), ndbsQuery->value("laty").toFloat());
 
         ndbCache.list.append(ndb);
       }
@@ -310,7 +310,7 @@ const QList<MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const
         marker.id = markersQuery->value("marker_id").toInt();
         marker.type = markersQuery->value("type").toString();
         marker.heading = static_cast<int>(std::roundf(markersQuery->value("heading").toFloat()));
-        marker.pos = Pos(markersQuery->value("lonx").toFloat(), markersQuery->value("laty").toFloat());
+        marker.position = Pos(markersQuery->value("lonx").toFloat(), markersQuery->value("laty").toFloat());
         markerCache.list.append(marker);
       }
     }
@@ -346,12 +346,12 @@ const QList<MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLay
         ils.range = ilsQuery->value("range").toInt();
         ils.dme = ilsQuery->value("dme_range").toInt() > 0;
 
-        ils.pos = Pos(ilsQuery->value("lonx").toFloat(), ilsQuery->value("laty").toFloat());
+        ils.position = Pos(ilsQuery->value("lonx").toFloat(), ilsQuery->value("laty").toFloat());
         ils.pos1 = Pos(ilsQuery->value("end1_lonx").toFloat(), ilsQuery->value("end1_laty").toFloat());
         ils.pos2 = Pos(ilsQuery->value("end2_lonx").toFloat(), ilsQuery->value("end2_laty").toFloat());
         ils.posmid = Pos(ilsQuery->value("end_mid_lonx").toFloat(), ilsQuery->value("end_mid_laty").toFloat());
 
-        ils.bounding = Rect(ils.pos);
+        ils.bounding = Rect(ils.position);
         ils.bounding.extend(ils.pos1);
         ils.bounding.extend(ils.pos2);
 
@@ -408,7 +408,7 @@ MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
 
   ap.flags = getFlags(query);
   ap.magvar = query->value("mag_var").toFloat();
-  ap.pos = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
+  ap.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
   ap.bounding = Rect(query->value("left_lonx").toFloat(), query->value("top_laty").toFloat(),
                      query->value("right_lonx").toFloat(), query->value("bottom_laty").toFloat());
 
@@ -512,7 +512,7 @@ const QList<MapParking> *MapQuery::getParking(int airportId)
         p.type = type;
         p.name = parkingQuery->value("name").toString();
 
-        p.pos = Pos(parkingQuery->value("lonx").toFloat(), parkingQuery->value("laty").toFloat());
+        p.position = Pos(parkingQuery->value("lonx").toFloat(), parkingQuery->value("laty").toFloat());
         p.jetway = parkingQuery->value("has_jetway").toInt() > 0;
         p.number = parkingQuery->value("number").toInt();
 
@@ -542,7 +542,7 @@ const QList<MapHelipad> *MapQuery::getHelipads(int airportId)
     {
       MapHelipad hp;
 
-      hp.pos = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat()),
+      hp.position = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat()),
       hp.width = helipadQuery->value("width").toInt();
       hp.length = helipadQuery->value("length").toInt();
       hp.heading = static_cast<int>(std::roundf(helipadQuery->value("heading").toFloat()));
@@ -555,6 +555,31 @@ const QList<MapHelipad> *MapQuery::getHelipads(int airportId)
     helipadCache.insert(airportId, hs);
     return hs;
   }
+}
+
+Rect MapQuery::getAirportRect(int airportId)
+{
+  SqlQuery query;
+  query.prepare("select left_lonx, top_laty, right_lonx, bottom_laty from airport where airport_id = :id");
+  query.bindValue(":id", airportId);
+  query.exec();
+  if(query.next())
+    return atools::geo::Rect(query.value("left_lonx").toFloat(), query.value("top_laty").toFloat(),
+                             query.value("right_lonx").toFloat(), query.value("bottom_laty").toFloat());
+
+  return atools::geo::Rect();
+}
+
+Pos MapQuery::getNavTypePos(int navSearchId)
+{
+  SqlQuery query;
+  query.prepare("select lonx, laty from nav_search where nav_search_id = :id");
+  query.bindValue(":id", navSearchId);
+  query.exec();
+  if(query.next())
+    return atools::geo::Pos(query.value("lonx").toFloat(), query.value("laty").toFloat());
+
+  return atools::geo::Pos();
 }
 
 const QList<MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)

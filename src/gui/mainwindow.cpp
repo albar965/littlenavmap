@@ -344,7 +344,7 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
   // selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   selectionLabel->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
 
-  navMapWidget->changeHighlight(searchController->getSelectedObjectPos());
+  navMapWidget->changeHighlight(searchController->getSelectedMapObjects());
 }
 
 void MainWindow::updateMapShowFeatures()
@@ -623,6 +623,10 @@ void MainWindow::readSettings()
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
               ui->actionMapShowIls, ui->actionMapShowCities});
+
+  mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
+                                                                  MAP_DEFAULT_DETAIL_FACTOR).toInt();
+
 }
 
 void MainWindow::writeSettings()
@@ -638,6 +642,8 @@ void MainWindow::writeSettings()
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
            ui->actionMapShowIls, ui->actionMapShowCities});
+
+  atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 
   ws.syncSettings();
 }

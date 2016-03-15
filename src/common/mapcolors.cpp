@@ -55,9 +55,9 @@ const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::Solid
 const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
 
-const QPen highlightBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 7, Qt::SolidLine, Qt::FlatCap);
-const QPen highlightPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 5, Qt::SolidLine, Qt::FlatCap);
-const QPen highlightPenFast = QPen(QBrush(QColor(Qt::darkYellow)), 5, Qt::SolidLine, Qt::FlatCap);
+const QColor highlightBackColor = QColor(Qt::black);
+const QColor highlightColor = QColor(Qt::yellow);
+const QColor highlightColorFast = QColor(Qt::darkYellow);
 
 const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);

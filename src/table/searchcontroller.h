@@ -64,11 +64,11 @@ public:
   AirportSearch *getAirportSearch() const;
   NavSearch *getNavSearch() const;
 
-  void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
+  void objectSelected(maptypes::MapObjectType type, const QString& ident, const QString& region);
 
   void tabChanged(int index);
 
-  QList<atools::geo::Pos> getSelectedObjectPos();
+  QList<maptypes::MapObject> getSelectedMapObjects() const;
 
   void updateTableSelection();
 
@@ -77,6 +77,7 @@ private:
   ColumnList *airportColumns = nullptr;
   AirportSearch *airportSearch = nullptr;
   QList<Search *> allSearchTabs;
+  QList<maptypes::MapObjectType> allMapObjectTypes;
 
   ColumnList *navColumns = nullptr;
   NavSearch *navSearch = nullptr;

@@ -76,7 +76,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
   for(const MapAirport& airport : *airports)
   {
     int x, y;
-    bool visible = wToS(airport.pos, x, y);
+    bool visible = wToS(airport.position, x, y);
 
     if(!visible)
     {
@@ -317,7 +317,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   for(const MapParking& parking : *parkings)
   {
     bool visible;
-    QPoint pt = wToS(parking.pos, &visible);
+    QPoint pt = wToS(parking.position, &visible);
     if(visible)
     {
       int w = scale->getPixelIntForFeet(parking.radius, 90);
@@ -343,7 +343,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   for(const MapHelipad& helipad : *helipads)
   {
     bool visible;
-    QPoint pt = wToS(helipad.pos, &visible);
+    QPoint pt = wToS(helipad.position, &visible);
     if(visible)
     {
       painter->setBrush(mapcolors::colorForSurface(helipad.surface));
@@ -403,7 +403,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       if(mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
       {
         bool visible;
-        QPoint pt = wToS(parking.pos, &visible);
+        QPoint pt = wToS(parking.position, &visible);
         if(visible)
         {
           if(parking.type.startsWith("RAMP_GA") || parking.type.startsWith("DOCK_GA") ||
@@ -456,7 +456,10 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
     else
       painter->rotate(runway.heading - 90);
 
-    QString text = QString::number(runway.length) + " x " + QString::number(runway.width);
+    QString text = QString::number(runway.length);
+
+    if(runway.width > 8)
+      text += " x " + QString::number(runway.width);
 
     if(!runway.edgeLight.isEmpty())
       text += " / L";
@@ -591,7 +594,7 @@ void MapPainterAirport::runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *
 
     // Get the center point as screen coords
     float xc, yc;
-    wToS(r.center, xc, yc);
+    wToS(r.position, xc, yc);
     if(centers != nullptr)
       centers->append(QPoint(static_cast<int>(std::round(xc)), static_cast<int>(std::round(yc))));
 

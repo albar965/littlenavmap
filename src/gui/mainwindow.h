@@ -79,7 +79,7 @@ private:
   SearchController *searchController;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
-  int mapDetailFactor = 10;
+  int mapDetailFactor;
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
   virtual void closeEvent(QCloseEvent *event) override;

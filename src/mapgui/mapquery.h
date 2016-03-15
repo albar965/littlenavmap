@@ -75,7 +75,7 @@ struct MapAirport
 
   bool valid = false;
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
-  atools::geo::Pos pos, towerCoords;
+  atools::geo::Pos position, towerCoords;
   atools::geo::Rect bounding;
 
   bool hard() const
@@ -116,7 +116,7 @@ struct MapRunway
   int length, heading, width, primOffset, secOffset;
   QString surface, primName, secName, edgeLight;
   bool secClosed, primClosed;
-  atools::geo::Pos center, primary, secondary;
+  atools::geo::Pos position, primary, secondary;
 
   bool isHard() const
   {
@@ -150,7 +150,7 @@ struct MapTaxiPath
 
 struct MapParking
 {
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
   QString type, name;
   int number, radius, heading;
   bool jetway;
@@ -159,7 +159,7 @@ struct MapParking
 struct MapHelipad
 {
   QString surface, type;
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
   int length, width, heading;
   bool closed;
 };
@@ -168,7 +168,7 @@ struct MapWaypoint
 {
   int id;
   QString ident, region, type;
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
 };
 
 struct MapVor
@@ -178,7 +178,7 @@ struct MapVor
   float magvar;
   int frequency, range;
   bool dmeOnly, hasDme;
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
 };
 
 struct MapNdb
@@ -187,7 +187,7 @@ struct MapNdb
   QString ident, type, name;
   float magvar;
   int frequency, range;
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
 };
 
 struct MapMarker
@@ -195,7 +195,7 @@ struct MapMarker
   int id;
   QString type;
   int heading;
-  atools::geo::Pos pos;
+  atools::geo::Pos position;
 };
 
 struct MapIls
@@ -205,7 +205,7 @@ struct MapIls
   float magvar, slope, heading, width;
   int frequency, range;
   bool dme;
-  atools::geo::Pos pos, pos1, pos2, posmid;
+  atools::geo::Pos position, pos1, pos2, posmid;
   atools::geo::Rect bounding;
 };
 
@@ -265,8 +265,12 @@ public:
 
   const QList<MapHelipad> *getHelipads(int airportId);
 
+  atools::geo::Rect getAirportRect(int airportId);
+  atools::geo::Pos getNavTypePos(int navSearchId);
+
   void initQueries();
   void deInitQueries();
+
 
 private:
   template<typename TYPE>

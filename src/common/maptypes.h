@@ -18,11 +18,13 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include "geo/pos.h"
+
 #include <QString>
 
 namespace maptypes {
 
-enum ObjectType
+enum MapObjectType
 {
   NONE = 0x00,
   AIRPORT = 0x01,
@@ -31,11 +33,19 @@ enum ObjectType
   ILS = 0x08,
   MARKER = 0x10,
   WAYPOINT = 0x20,
+  ALL_NAV = VOR | NDB | ILS | WAYPOINT,
   ALL = 0xff
 };
 
-Q_DECLARE_FLAGS(ObjectTypes, ObjectType);
+Q_DECLARE_FLAGS(ObjectTypes, MapObjectType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::ObjectTypes);
+
+struct MapObject
+{
+  int id = -1;
+  ObjectTypes type;
+  atools::geo::Pos position;
+};
 
 QString navTypeName(const QString& type);
 QString navName(const QString& type);

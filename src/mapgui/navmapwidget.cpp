@@ -21,6 +21,7 @@
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
 #include "table/formatter.h"
+#include "geo/calculations.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -231,10 +232,9 @@ void NavMapWidget::changeMark(const atools::geo::Pos& pos)
   update();
 }
 
-void NavMapWidget::changeHighlight(const QList<atools::geo::Pos>& positions)
+void NavMapWidget::changeHighlight(const QList<maptypes::MapObject>& positions)
 {
-//  qDebug() << "changeHighlight" << positions.size();
-  highlightPos = positions;
+  highlightMapObjects = positions;
   update();
 }
 
@@ -332,9 +332,26 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   CoordinateConverter conv(viewport());
   MapSearchResult res;
   const MapLayer *mapLayer = paintLayer->getMapLayer();
-  mapQuery->getNearestObjects(conv, mapLayer, maptypes::AIRPORT, event->pos().x(), event->pos().y(), 20, res);
+  mapQuery->getNearestObjects(conv, mapLayer,
+                              maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT,
+                              event->pos().x(), event->pos().y(), 10, res);
   if(!res.airports.isEmpty())
     showRect(res.airports.at(0)->bounding);
+  else if(!res.vors.isEmpty())
+    showPos(res.vors.at(0)->position, 3000);
+  else if(!res.ndbs.isEmpty())
+    showPos(res.ndbs.at(0)->position, 3000);
+  else if(!res.waypoints.isEmpty())
+    showPos(res.waypoints.at(0)->position, 3000);
+  else
+  {
+    const maptypes::MapObject& obj = getNearestHighlightMapObjects(event->x(), event->y(), 10);
+    if(obj.id != -1 && obj.type == maptypes::AIRPORT)
+      showRect(mapQuery->getAirportRect(obj.id));
+    else if(obj.id != -1 &&
+            (obj.type & maptypes::VOR || obj.type & maptypes::NDB || obj.type & maptypes::WAYPOINT))
+      showPos(mapQuery->getNavTypePos(obj.id), 3000);
+  }
 }
 
 void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
@@ -353,11 +370,19 @@ bool NavMapWidget::event(QEvent *event)
     CoordinateConverter conv(viewport());
     MapSearchResult res;
 
+    QString text;
+
+    const maptypes::MapObject& obj = getNearestHighlightMapObjects(helpEvent->pos().x(),
+                                                                   helpEvent->pos().y(), 10);
+
+    if(obj.id != -1)
+      text += QString("Marking ") + QString::number(obj.id);
+    // showRect(mapQuery->getAirportRect(obj.id));
+
     const MapLayer *mapLayer = paintLayer->getMapLayer();
     mapQuery->getNearestObjects(conv, mapLayer, paintLayer->getShownMapFeatures(),
-                                helpEvent->pos().x(), helpEvent->pos().y(), 20, res);
+                                helpEvent->pos().x(), helpEvent->pos().y(), 10, res);
 
-    QString text;
     if(mapLayer != nullptr && mapLayer->isAirportDiagram())
     {
       if(!res.towers.isEmpty())
@@ -471,4 +496,19 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
   }
 
   MarbleWidget::paintEvent(paintEvent);
+}
+
+const maptypes::MapObject& NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance)
+{
+  static maptypes::MapObject empty;
+
+  CoordinateConverter conv(viewport());
+  int x, y;
+
+  for(maptypes::MapObject& obj : highlightMapObjects)
+    if(conv.wToS(obj.position, x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+        return obj;
+
+  return empty;
 }

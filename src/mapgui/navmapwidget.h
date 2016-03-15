@@ -65,7 +65,7 @@ public:
   void showHome();
   void changeMark(const atools::geo::Pos& pos);
   void changeHome();
-  void changeHighlight(const QList<atools::geo::Pos>& positions);
+  void changeHighlight(const QList<maptypes::MapObject>& positions);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -79,9 +79,9 @@ public:
     return homePos;
   }
 
-  const QList<atools::geo::Pos>& getHighlightPos() const
+  const QList<maptypes::MapObject>& getHighlightMapObjects() const
   {
-    return highlightPos;
+    return highlightMapObjects;
   }
 
   void preDatabaseLoad();
@@ -106,7 +106,7 @@ public:
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
-  void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
+  void objectSelected(maptypes::MapObjectType type, const QString& ident, const QString& region);
 
 private:
   MainWindow *parentWindow;
@@ -116,7 +116,7 @@ private:
   int homeZoom = -1;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
-  QList<atools::geo::Pos> highlightPos;
+  QList<maptypes::MapObject> highlightMapObjects;
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
@@ -129,6 +129,8 @@ private:
   Marble::GeoDataLatLonAltBox curBox;
 
   virtual void paintEvent(QPaintEvent *paintEvent) override;
+
+  const maptypes::MapObject& getNearestHighlightMapObjects(int xs, int ys, int screenDistance);
 
 };
 

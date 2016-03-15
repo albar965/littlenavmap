@@ -75,7 +75,7 @@ void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       for(const MapIls& ils : *ilss)
       {
         int x, y;
-        bool visible = wToS(ils.pos, x, y);
+        bool visible = wToS(ils.position, x, y);
 
         if(!visible)
         {
@@ -124,7 +124,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const MapIls& ils, int x,
   {
     text = ils.ident + " / " +
            QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-           QString::number(ils.heading + ils.magvar, 'f', 0) + "°";
+           QString::number(ils.heading + ils.magvar, 'f', 0) + "°M";
 
     if(ils.slope > 0)
       text += " / GS " + QString::number(ils.slope, 'f', 1) + "°";

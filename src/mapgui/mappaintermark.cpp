@@ -46,7 +46,7 @@ void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, Viewpo
   bool drawFast = widget->viewContext() == Marble::Animation;
 
   painter->save();
-  paintHighlights(painter, drawFast);
+  paintHighlights(mapLayer, painter, drawFast);
   paintMark(painter);
   paintHome(painter);
   painter->restore();
@@ -84,25 +84,29 @@ void MapPainterMark::paintHome(GeoPainter *painter)
   }
 }
 
-void MapPainterMark::paintHighlights(GeoPainter *painter, bool fast)
+void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
 {
-  const QList<atools::geo::Pos>& highlightPos = navMapWidget->getHighlightPos();
+  const QList<maptypes::MapObject>& highlightPos = navMapWidget->getHighlightMapObjects();
+  int size = 6;
+
+  if(mapLayer != nullptr)
+    if(mapLayer->isAirport())
+      size = std::max(size, mapLayer->getAirportSymbolSize());
 
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(mapcolors::highlightPenFast);
-  for(const atools::geo::Pos& pos : highlightPos)
+  painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  for(const maptypes::MapObject& obj : highlightPos)
   {
     int x, y;
-    if(wToS(pos, x, y))
+    if(wToS(obj.position, x, y))
     {
       if(!fast)
       {
-        painter->setPen(mapcolors::highlightBackPen);
-        painter->drawEllipse(QPoint(x, y), 10, 10);
-
-        painter->setPen(mapcolors::highlightPen);
+        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
       }
-      painter->drawEllipse(QPoint(x, y), 10, 10);
+      painter->drawEllipse(QPoint(x, y), size, size);
     }
   }
 }

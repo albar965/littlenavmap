@@ -48,9 +48,9 @@ extern const QPen markBackPen;
 extern const QPen markFillPen;
 extern const QPen homeBackPen;
 extern const QColor homeFillColor;
-extern const QPen highlightPenFast;
-extern const QPen highlightPen;
-extern const QPen highlightBackPen;
+extern const QColor highlightColorFast;
+extern const QColor highlightColor;
+extern const QColor highlightBackColor;
 
 extern const QColor vorSymbolColor;
 extern const QColor ndbSymbolColor;

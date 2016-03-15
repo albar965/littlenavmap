@@ -42,10 +42,15 @@ SearchController::~SearchController()
   delete navColumns;
 }
 
-QList<atools::geo::Pos> SearchController::getSelectedObjectPos()
+QList<maptypes::MapObject> SearchController::getSelectedMapObjects() const
 {
-  QList<atools::geo::Pos> retval;
-  allSearchTabs.at(tabWidget->currentIndex())->getController()->getSelectedObjectPositions(retval);
+  QList<maptypes::MapObject> retval;
+  Search *const search = allSearchTabs.at(tabWidget->currentIndex());
+  search->getController()->getSelectedMapObjects(retval);
+
+  const maptypes::MapObjectType type = allMapObjectTypes.at(tabWidget->currentIndex());
+  for(maptypes::MapObject& obj : retval)
+    obj.type = type;
   return retval;
 }
 
@@ -62,14 +67,14 @@ void SearchController::tabChanged(int index)
 
 void SearchController::saveState()
 {
-  airportSearch->saveState();
-  navSearch->saveState();
+  for(Search *s : allSearchTabs)
+    s->saveState();
 }
 
 void SearchController::restoreState()
 {
-  airportSearch->restoreState();
-  navSearch->restoreState();
+  for(Search *s : allSearchTabs)
+    s->restoreState();
 }
 
 AirportSearch *SearchController::getAirportSearch() const
@@ -95,6 +100,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
                                         airportSearch, &Search::markChanged);
 
   allSearchTabs.append(airportSearch);
+  allMapObjectTypes.append(maptypes::AIRPORT);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
@@ -109,6 +115,7 @@ void SearchController::createNavSearch(QTableView *tableView)
                                         navSearch, &Search::markChanged);
 
   allSearchTabs.append(navSearch);
+  allMapObjectTypes.append(maptypes::ALL_NAV);
 }
 
 void SearchController::preDatabaseLoad()
@@ -129,12 +136,15 @@ void SearchController::postDatabaseLoad()
     navSearch->postDatabaseLoad();
 }
 
-void SearchController::objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region)
+void SearchController::objectSelected(maptypes::MapObjectType type, const QString& ident,
+                                      const QString& region)
 {
   qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
 
   switch(type)
   {
+    case maptypes::ALL_NAV:
+      break;
     case maptypes::NONE:
       break;
     case maptypes::ALL:
