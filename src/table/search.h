@@ -29,6 +29,7 @@ class Controller;
 class ColumnList;
 class QAction;
 class MainWindow;
+class QItemSelection;
 
 namespace atools {
 namespace geo {
@@ -67,6 +68,12 @@ public:
   void filterByIdent(const QString& ident, const QString& region = QString(),
                      const QString& airportIdent = QString());
 
+  Controller *getController() const
+  {
+    return controller;
+  }
+
+  void tableSelectionChanged();
 protected:
   QIcon *boolIcon = nullptr;
 
@@ -85,11 +92,15 @@ protected:
   void doubleClick(const QModelIndex& index);
 
   void initViewAndController();
+  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
+  void reconnectSelectionModel();
 
 signals:
   void showPos(const atools::geo::Pos& pos, int zoom);
   void showRect(const atools::geo::Rect& rect);
   void changeMark(const atools::geo::Pos& pos);
+  void selectionChanged(const Search *source, int selected, int visible, int total);
 
 };
 

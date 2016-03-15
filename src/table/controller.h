@@ -105,12 +105,6 @@ public:
   /* Use "and" or "or" to combine searches */
   void filterOperator(bool useAnd);
 
-  /* Connect model reset signal */
-  void connectModelReset(std::function<void(void)> func);
-
-  /* Connect signal that is emitted if more data is fetched */
-  void connectFetchedMore(std::function<void(void)> func);
-
   bool isGrouped() const;
   const QItemSelection getSelection() const;
 
@@ -191,6 +185,21 @@ public:
 
   atools::geo::Pos getGeoPos(const QModelIndex& index);
 
+  SqlModel *getModel() const
+  {
+    return model;
+  }
+
+  SqlProxyModel *getProxyModel() const
+  {
+    return proxyModel;
+  }
+
+  void getSelectedObjectIds(QList<int>& ids);
+
+  void getSelectedObjectPositions(QList<atools::geo::Pos>& positions, const QString& lonxColName = "lonx",
+                                  const QString& latyColName = "laty");
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 
@@ -204,10 +213,10 @@ private:
   void restoreViewState();
 
   SqlProxyModel *proxyModel = nullptr;
+  SqlModel *model = nullptr;
   QWidget *parentWidget = nullptr;
   atools::sql::SqlDatabase *db = nullptr;
   QTableView *view = nullptr;
-  SqlModel *model = nullptr;
   ColumnList *columns = nullptr;
   QByteArray viewState;
 

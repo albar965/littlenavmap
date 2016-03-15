@@ -67,9 +67,11 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
     font.setItalic(true);
   painter->setFont(font);
 
-  if(idx.column() == sqlModel->getSortColumnIndex() &&
-     (option.state & QStyle::State_Selected) == 0)
-    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
+  if(idx.column() == sqlModel->getSortColumnIndex())
+    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true, option.state));
+
+  if(option.state.testFlag(QStyle::State_Selected) && option.state.testFlag(QStyle::State_Active))
+    painter->setPen(QApplication::palette().color(QPalette::Active, QPalette::HighlightedText));
 
   QRect textRect = option.rect;
   textRect.setWidth(textRect.width() - 1);

@@ -65,12 +65,23 @@ public:
   void showHome();
   void changeMark(const atools::geo::Pos& pos);
   void changeHome();
+  void changeHighlight(const QList<atools::geo::Pos>& positions);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
-  atools::geo::Pos getMarkPos() const
+  const atools::geo::Pos& getMarkPos() const
   {
     return markPos;
+  }
+
+  const atools::geo::Pos& getHomePos() const
+  {
+    return homePos;
+  }
+
+  const QList<atools::geo::Pos>& getHighlightPos() const
+  {
+    return highlightPos;
   }
 
   void preDatabaseLoad();
@@ -105,6 +116,7 @@ private:
   int homeZoom = -1;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
+  QList<atools::geo::Pos> highlightPos;
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;

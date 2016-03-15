@@ -36,30 +36,73 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
+void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
+                           maptypes::ObjectTypes objectTypes)
 {
   Q_UNUSED(mapLayer);
   Q_UNUSED(viewport);
+  Q_UNUSED(objectTypes);
 
+  bool drawFast = widget->viewContext() == Marble::Animation;
+
+  painter->save();
+  paintHighlights(painter, drawFast);
   paintMark(painter);
+  paintHome(painter);
+  painter->restore();
 }
 
 void MapPainterMark::paintMark(GeoPainter *painter)
 {
   int x, y;
-
   if(wToS(navMapWidget->getMarkPos(), x, y))
   {
-    painter->save();
-    int xc = x, yc = y;
     painter->setPen(mapcolors::markBackPen);
 
-    painter->drawLine(xc, yc - 10, xc, yc + 10);
-    painter->drawLine(xc - 10, yc, xc + 10, yc);
+    painter->drawLine(x, y - 10, x, y + 10);
+    painter->drawLine(x - 10, y, x + 10, y);
 
     painter->setPen(mapcolors::markFillPen);
-    painter->drawLine(xc, yc - 8, xc, yc + 8);
-    painter->drawLine(xc - 8, yc, xc + 8, yc);
-    painter->restore();
+    painter->drawLine(x, y - 8, x, y + 8);
+    painter->drawLine(x - 8, y, x + 8, y);
+  }
+}
+
+void MapPainterMark::paintHome(GeoPainter *painter)
+{
+  int x, y;
+  if(wToS(navMapWidget->getHomePos(), x, y))
+  {
+    painter->setPen(mapcolors::homeBackPen);
+    painter->setBrush(mapcolors::homeFillColor);
+
+    QPolygon roof;
+    painter->drawRect(x - 5, y - 5, 10, 10);
+    roof << QPoint(x, y - 10) << QPoint(x + 7, y - 3) << QPoint(x - 7, y - 3);
+    painter->drawConvexPolygon(roof);
+    painter->drawPoint(x, y);
+  }
+}
+
+void MapPainterMark::paintHighlights(GeoPainter *painter, bool fast)
+{
+  const QList<atools::geo::Pos>& highlightPos = navMapWidget->getHighlightPos();
+
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(mapcolors::highlightPenFast);
+  for(const atools::geo::Pos& pos : highlightPos)
+  {
+    int x, y;
+    if(wToS(pos, x, y))
+    {
+      if(!fast)
+      {
+        painter->setPen(mapcolors::highlightBackPen);
+        painter->drawEllipse(QPoint(x, y), 10, 10);
+
+        painter->setPen(mapcolors::highlightPen);
+      }
+      painter->drawEllipse(QPoint(x, y), 10, 10);
+    }
   }
 }

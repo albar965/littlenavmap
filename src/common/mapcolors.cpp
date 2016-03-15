@@ -52,6 +52,13 @@ const QColor airportSymbolFillColor = QColor(Qt::white);
 const QPen markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
 const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 
+const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
+const QColor homeFillColor = QColor(Qt::yellow);
+
+const QPen highlightBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 7, Qt::SolidLine, Qt::FlatCap);
+const QPen highlightPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 5, Qt::SolidLine, Qt::FlatCap);
+const QPen highlightPenFast = QPen(QBrush(QColor(Qt::darkYellow)), 5, Qt::SolidLine, Qt::FlatCap);
+
 const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);
@@ -72,9 +79,10 @@ const QColor& colorForAirport(const MapAirport& ap)
     return unToweredAirportColor;
 }
 
-const QColor& alternatingRowColor(int row, bool isSort)
+const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state)
 {
   /* Alternating colors */
+  static QColor rowBgColorHighlight = QApplication::palette().color(QPalette::Active, QPalette::Highlight);
   static QColor rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   static QColor rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
 
@@ -82,10 +90,15 @@ const QColor& alternatingRowColor(int row, bool isSort)
   static QColor rowSortBgColor = rowBgColor.darker(106);
   static QColor rowSortAltBgColor = rowAltBgColor.darker(106);
 
-  if((row % 2) == 0)
-    return isSort ? rowSortBgColor : rowBgColor;
+  if(state.testFlag(QStyle::State_Selected) && state.testFlag(QStyle::State_Active))
+    return rowBgColorHighlight;
   else
-    return isSort ? rowSortAltBgColor : rowAltBgColor;
+  {
+    if((row % 2) == 0)
+      return isSort ? rowSortBgColor : rowBgColor;
+    else
+      return isSort ? rowSortAltBgColor : rowAltBgColor;
+  }
 }
 
 const QColor& colorForParkingType(const QString& type)
@@ -118,20 +131,20 @@ const QColor& colorForSurface(const QString& surface)
   static QColor water(133, 133, 255);
   static QColor asphalt(Qt::darkGray);
   static QColor cement(Qt::lightGray);
-  static QColor clay(Qt::lightGray);
+  static QColor clay("#DEB887");
   static QColor snow("#f0f0f0");
   static QColor ice("#f0f0ff");
-  static QColor dirt(Qt::lightGray);
-  static QColor coral(Qt::lightGray);
+  static QColor dirt("#CD853F");
+  static QColor coral("#FFE4C4");
   static QColor gravel(Qt::lightGray);
-  static QColor oilTreated("#b0b0b0");
+  static QColor oilTreated("#2F4F4F");
   static QColor steelMats(Qt::lightGray);
   static QColor bituminous(Qt::darkGray);
-  static QColor brick(Qt::lightGray);
+  static QColor brick("#A0522D");
   static QColor macadam(Qt::lightGray);
-  static QColor planks(Qt::lightGray);
-  static QColor sand(Qt::lightGray);
-  static QColor shale(Qt::lightGray);
+  static QColor planks("#8B4513");
+  static QColor sand("#F4A460");
+  static QColor shale("#F5DEB3");
   static QColor tarmac(Qt::gray);
   static QColor unknown(Qt::black);
 

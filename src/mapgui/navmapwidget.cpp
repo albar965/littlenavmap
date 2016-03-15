@@ -231,6 +231,13 @@ void NavMapWidget::changeMark(const atools::geo::Pos& pos)
   update();
 }
 
+void NavMapWidget::changeHighlight(const QList<atools::geo::Pos>& positions)
+{
+//  qDebug() << "changeHighlight" << positions.size();
+  highlightPos = positions;
+  update();
+}
+
 void NavMapWidget::changeHome()
 {
   homePos = atools::geo::Pos(centerLongitude(), centerLatitude());

@@ -41,7 +41,6 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
 
   // 5 - less 15 more 10 default
   float newDistance = distance * std::pow((10.f / detailFactor), 6.f);
-  qDebug() << "distance" << distance << "new distance" << newDistance << "detail factor" << detailFactor;
 
   QList<MapLayer>::const_iterator it =
     std::lower_bound(layers.begin(), layers.end(), newDistance,

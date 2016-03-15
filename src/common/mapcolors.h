@@ -20,6 +20,7 @@
 
 #include <QColor>
 #include <QPen>
+#include <QStyle>
 
 class MapAirport;
 
@@ -45,6 +46,11 @@ extern const QColor textBoxColor;
 extern const QColor airportSymbolFillColor;
 extern const QPen markBackPen;
 extern const QPen markFillPen;
+extern const QPen homeBackPen;
+extern const QColor homeFillColor;
+extern const QPen highlightPenFast;
+extern const QPen highlightPen;
+extern const QPen highlightBackPen;
 
 extern const QColor vorSymbolColor;
 extern const QColor ndbSymbolColor;
@@ -55,7 +61,7 @@ extern const QColor ilsSymbolColor;
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const MapAirport& ap);
-const QColor& alternatingRowColor(int row, bool isSort);
+const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state = QStyle::State_None);
 
 } // namespace mapcolors
 

@@ -94,7 +94,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   createNavMap();
 
-  searchController = new SearchController(this, &db);
+  // Have to create searches in the same order as the tabs
+  searchController = new SearchController(this, &db, ui->tabWidgetSearch);
   searchController->createAirportSearch(ui->tableViewAirportSearch);
   searchController->createNavSearch(ui->tableViewNavSearch);
 
@@ -109,6 +110,7 @@ MainWindow::MainWindow(QWidget *parent) :
   // Wait until everything is set up
   updateMapShowFeatures();
   navMapWidget->showSavedPos();
+  searchController->updateTableSelection();
 }
 
 MainWindow::~MainWindow()
@@ -207,8 +209,8 @@ void MainWindow::setupUi()
                             "earth/political/political.dgml");
   // mapThemeComboBox->addItem(tr("MapQuest Open Aerial"),
   // "earth/mapquest-open-aerial/mapquest-open-aerial.dgml");
-  mapThemeComboBox->addItem(tr("MapQuest OpenStreenMap"),
-                            "earth/mapquest-osm/mapquest-osm.dgml");
+  // mapThemeComboBox->addItem(tr("MapQuest OpenStreenMap"),
+  // "earth/mapquest-osm/mapquest-osm.dgml");
   // mapThemeComboBox->addItem(tr("Natural Earth")
   // "earth/naturalearth2shading/naturalearth2shading.dgml");
   ui->mapToolBar->addWidget(mapThemeComboBox);
@@ -217,6 +219,15 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
+
+  // Create labels for the statusbar
+  mapPosLabelText = tr("%1 %2. Distance %3.");
+  mapPosLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(mapPosLabel);
+
+  selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  selectionLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(selectionLabel);
 }
 
 void MainWindow::connectAllSlots()
@@ -282,6 +293,10 @@ void MainWindow::connectAllSlots()
 
   connect(navMapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
 
+  connect(searchController->getAirportSearch(), &Search::selectionChanged,
+          this, &MainWindow::selectionChanged);
+  connect(searchController->getNavSearch(), &Search::selectionChanged,
+          this, &MainWindow::selectionChanged);
 }
 
 void MainWindow::defaultMapDetail()
@@ -316,6 +331,20 @@ void MainWindow::setMapDetail(int factor)
   ui->actionMapLessDetails->setEnabled(mapDetailFactor > MAP_MIN_DETAIL_FACTOR);
   ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MAP_DEFAULT_DETAIL_FACTOR);
   navMapWidget->update();
+}
+
+void MainWindow::selectionChanged(const Search *source, int selected, int visible, int total)
+{
+  QString type;
+  if(source == searchController->getAirportSearch())
+    type = tr("Airports");
+  else if(source == searchController->getNavSearch())
+    type = tr("Navaids");
+
+  // selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
+  selectionLabel->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+
+  navMapWidget->changeHighlight(searchController->getSelectedObjectPos());
 }
 
 void MainWindow::updateMapShowFeatures()

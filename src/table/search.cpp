@@ -203,12 +203,39 @@ void Search::connectSlots()
   connect(view, &QTableView::doubleClicked, this, &Search::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &Search::tableContextMenu);
 
-  Ui::MainWindow *ui = parentWidget->getUi();
-  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &Search::resetSearch);
-  connect(ui->actionSearchResetView, &QAction::triggered, this, &Search::resetView);
-  connect(ui->actionSearchTableCopy, &QAction::triggered, this, &Search::tableCopyCipboard);
-  connect(ui->actionSearchShowAll, &QAction::triggered, this, &Search::loadAllRowsIntoView);
+  reconnectSelectionModel();
 
+  connect(controller->getModel(), &SqlModel::modelReset, this, &Search::reconnectSelectionModel);
+
+  void (Search::*selChangedPtr)() = &Search::tableSelectionChanged;
+  connect(controller->getModel(), &SqlModel::fetchedMore, this, selChangedPtr);
+}
+
+void Search::reconnectSelectionModel()
+{
+  void (Search::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+    &Search::tableSelectionChanged;
+  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged,
+          this, selChangedPtr);
+}
+
+void Search::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+  Q_UNUSED(selected);
+  Q_UNUSED(deselected);
+
+  tableSelectionChanged();
+}
+
+void Search::tableSelectionChanged()
+{
+  QItemSelectionModel *sm = view->selectionModel();
+
+  int selectedRows = 0;
+  if(sm != nullptr && sm->hasSelection())
+    selectedRows = sm->selectedRows().size();
+
+  emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }
 
 void Search::doubleClick(const QModelIndex& index)
@@ -392,7 +419,15 @@ void Search::tableContextMenu(const QPoint& pos)
   if(a != nullptr)
   {
     // A menu item was selected
-    if(a == ui->actionSearchFilterIncluding)
+    if(a == ui->actionSearchResetSearch)
+      resetSearch();
+    else if(a == ui->actionSearchResetView)
+      resetView();
+    else if(a == ui->actionSearchTableCopy)
+      tableCopyCipboard();
+    else if(a == ui->actionSearchShowAll)
+      loadAllRowsIntoView();
+    else if(a == ui->actionSearchFilterIncluding)
       controller->filterIncluding(index);
     else if(a == ui->actionSearchFilterExcluding)
       controller->filterExcluding(index);
@@ -400,7 +435,7 @@ void Search::tableContextMenu(const QPoint& pos)
       controller->selectAll();
     else if(a == ui->actionSearchSetMark)
       emit changeMark(controller->getGeoPos(index));
-    // else if(a == ui->actionTableCopy) this is alread covered by the connected action
+    // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
 
   // Restore old menu texts
@@ -409,5 +444,4 @@ void Search::tableContextMenu(const QPoint& pos)
 
   ui->actionSearchFilterExcluding->setText(actionFilterExcludingText);
   ui->actionSearchFilterExcluding->setEnabled(true);
-
 }

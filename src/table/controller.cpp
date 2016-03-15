@@ -290,8 +290,10 @@ void Controller::selectAll()
 
 const QItemSelection Controller::getSelection() const
 {
-  Q_ASSERT(view->selectionModel() != nullptr);
-  return view->selectionModel()->selection();
+  if(view->selectionModel() != nullptr)
+    return view->selectionModel()->selection();
+  else
+    return QItemSelection();
 }
 
 int Controller::getVisibleRowCount() const
@@ -306,8 +308,9 @@ int Controller::getVisibleRowCount() const
 
 int Controller::getTotalRowCount() const
 {
-  // TODO not accurate when filtering with proxy
-  if(model != nullptr)
+  if(proxyModel != nullptr)
+    return proxyModel->rowCount();
+  else if(model != nullptr)
     return model->getTotalRowCount();
   else
     return 0;
@@ -558,18 +561,6 @@ void Controller::loadAllRows()
   QGuiApplication::restoreOverrideCursor();
 }
 
-void Controller::connectModelReset(std::function<void(void)> func)
-{
-  if(model != nullptr)
-    connect(model, &SqlModel::modelReset, func);
-}
-
-void Controller::connectFetchedMore(std::function<void(void)> func)
-{
-  if(model != nullptr)
-    connect(model, &SqlModel::fetchedMore, func);
-}
-
 QVector<const Column *> Controller::getCurrentColumns() const
 {
   QVector<const Column *> cols;
@@ -618,4 +609,30 @@ QString Controller::getSortColumn() const
 int Controller::getSortColumnIndex() const
 {
   return model->getSortColumnIndex();
+}
+
+void Controller::getSelectedObjectIds(QList<int>& ids)
+{
+  const QString idColumnName = columns->getIdColumnName();
+  const QItemSelection sel = getSelection();
+
+  for(const QItemSelectionRange& rng : sel)
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+      ids.append(getRawData(row, idColumnName).toInt());
+}
+
+void Controller::getSelectedObjectPositions(QList<atools::geo::Pos>& positions,
+                                            const QString& lonxColName, const QString& latyColName)
+{
+  const QItemSelection sel = getSelection();
+
+  for(const QItemSelectionRange& rng : sel)
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+    {
+      int srow = row;
+      if(proxyModel != nullptr)
+        srow = toS(proxyModel->index(row, 0)).row();
+      positions.append(atools::geo::Pos(getRawData(srow, lonxColName).toFloat(),
+                                        getRawData(srow, latyColName).toFloat()));
+    }
 }

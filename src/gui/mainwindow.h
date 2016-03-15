@@ -29,6 +29,8 @@ class Controller;
 class ColumnList;
 class SearchController;
 class QComboBox;
+class QLabel;
+class Search;
 
 namespace atools {
 namespace fs {
@@ -88,6 +90,8 @@ private:
   Ui::MainWindow *ui;
   NavMapWidget *navMapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
+  QLabel *selectionLabel, *mapPosLabel;
+  QString selectionLabelText, mapPosLabelText;
 
   bool hasDatabaseLoadStatus = false;
 
@@ -124,6 +128,8 @@ private:
   void decreaseMapDetail();
   void defaultMapDetail();
   void setMapDetail(int factor);
+  void selectionChanged(const Search *source, int selected, int visible, int total);
+
 };
 
 #endif // MAINWINDOW_H

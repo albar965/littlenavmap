@@ -31,8 +31,13 @@ class ColumnList;
 class QLayout;
 class QAction;
 class QTableView;
+class QTabWidget;
 
 namespace atools {
+namespace geo {
+class Pos;
+}
+
 namespace sql {
 class SqlDatabase;
 }
@@ -44,7 +49,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
+  SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb, QTabWidget *tabWidgetSearch);
   virtual ~SearchController();
 
   void createAirportSearch(QTableView *tableView);
@@ -61,15 +66,23 @@ public:
 
   void objectSelected(maptypes::ObjectType type, const QString& ident, const QString& region);
 
+  void tabChanged(int index);
+
+  QList<atools::geo::Pos> getSelectedObjectPos();
+
+  void updateTableSelection();
+
 private:
   atools::sql::SqlDatabase *db;
   ColumnList *airportColumns = nullptr;
   AirportSearch *airportSearch = nullptr;
+  QList<Search *> allSearchTabs;
 
   ColumnList *navColumns = nullptr;
   NavSearch *navSearch = nullptr;
 
   MainWindow *parentWidget;
+  QTabWidget *tabWidget = nullptr;
 
 };
 

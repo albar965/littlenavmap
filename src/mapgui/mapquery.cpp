@@ -713,6 +713,9 @@ MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)
 
 void MapQuery::initQueries()
 {
+  static QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
+  static QString whereLimit("limit 2000");
+
   deInitQueries();
   airportQuery = new SqlQuery(db);
   airportQuery->prepare(
@@ -724,9 +727,8 @@ void MapQuery::initQueries()
     "longest_runway_length, longest_runway_heading, mag_var, "
     "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
     "from airport "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and "
-    "longest_runway_length >= :minlength "
-    "order by rating asc, longest_runway_length");
+    "where " + whereRect +
+    " and longest_runway_length >= :minlength order by rating asc, longest_runway_length " + whereLimit);
 
   airportMediumQuery = new SqlQuery(db);
   airportMediumQuery->prepare(
@@ -737,9 +739,7 @@ void MapQuery::initQueries()
     "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
     "longest_runway_length, longest_runway_heading, mag_var, "
     "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_medium "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy "
-    "order by longest_runway_length");
+    "from airport_medium where " + whereRect + " order by longest_runway_length" + "  " + whereLimit);
 
   airportLargeQuery = new SqlQuery(db);
   airportLargeQuery->prepare(
@@ -750,13 +750,12 @@ void MapQuery::initQueries()
     "num_runway_hard, num_runway_soft, num_runway_water, "
     "longest_runway_length, longest_runway_heading, mag_var, "
     "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_large "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "from airport_large where " + whereRect + " " + whereLimit);
 
   runwayOverviewQuery = new SqlQuery(db);
   runwayOverviewQuery->prepare(
     "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId and length > 4000");
+    "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
 
   apronQuery = new SqlQuery(db);
   apronQuery->prepare(
@@ -794,34 +793,30 @@ void MapQuery::initQueries()
   waypointsQuery = new SqlQuery(db);
   waypointsQuery->prepare(
     "select waypoint_id, ident, region, type, mag_var, lonx, laty "
-    "from waypoint "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "from waypoint where " + whereRect + " " + whereLimit);
 
   vorsQuery = new SqlQuery(db);
   vorsQuery->prepare(
     "select vor_id, ident, name, region, type, name, frequency,range, dme_only, dme_altitude, "
     "mag_var, lonx, laty  "
-    "from vor "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "from vor where " + whereRect + " " + whereLimit);
 
   ndbsQuery = new SqlQuery(db);
   ndbsQuery->prepare(
     "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, lonx, laty "
-    "from ndb "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "from ndb where " + whereRect + " " + whereLimit);
 
   markersQuery = new SqlQuery(db);
   markersQuery->prepare(
     "select marker_id, type, heading, lonx, laty "
     "from marker "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "where " + whereRect + " " + whereLimit);
 
   ilsQuery = new SqlQuery(db);
   ilsQuery->prepare(
     "select ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, lonx, laty "
-    "from ils "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+    "from ils where " + whereRect + " " + whereLimit);
 }
 
 void MapQuery::deInitQueries()

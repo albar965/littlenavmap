@@ -211,8 +211,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
         mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
       }
-      mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
     }
+    mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
   }
 
   return true;

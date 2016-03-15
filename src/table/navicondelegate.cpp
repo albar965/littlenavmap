@@ -60,9 +60,11 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   QString text = idx.data().toString();
   QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
 
-  if(idx.column() == sqlModel->getSortColumnIndex() &&
-     (option.state & QStyle::State_Selected) == 0)
-    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
+  if(idx.column() == sqlModel->getSortColumnIndex())
+    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true, option.state));
+
+  if(option.state.testFlag(QStyle::State_Selected) && option.state.testFlag(QStyle::State_Active))
+    painter->setPen(QApplication::palette().color(QPalette::Active, QPalette::HighlightedText));
 
   QFont font(painter->font());
   font.setBold(true);

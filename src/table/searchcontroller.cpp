@@ -23,10 +23,14 @@
 #include "navsearch.h"
 #include "mapgui/navmapwidget.h"
 #include "gui/widgetstate.h"
+#include "table/controller.h"
 
-SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
-  : db(sqlDb), parentWidget(parent)
+SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb,
+                                   QTabWidget *tabWidgetSearch)
+  : db(sqlDb), parentWidget(parent), tabWidget(tabWidgetSearch)
 {
+  connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
+
 }
 
 SearchController::~SearchController()
@@ -36,6 +40,24 @@ SearchController::~SearchController()
 
   delete navSearch;
   delete navColumns;
+}
+
+QList<atools::geo::Pos> SearchController::getSelectedObjectPos()
+{
+  QList<atools::geo::Pos> retval;
+  allSearchTabs.at(tabWidget->currentIndex())->getController()->getSelectedObjectPositions(retval);
+  return retval;
+}
+
+void SearchController::updateTableSelection()
+{
+  // Force signal to display correct status bar indication
+  allSearchTabs.at(tabWidget->currentIndex())->tableSelectionChanged();
+}
+
+void SearchController::tabChanged(int index)
+{
+  allSearchTabs.at(index)->tableSelectionChanged();
 }
 
 void SearchController::saveState()
@@ -71,6 +93,8 @@ void SearchController::createAirportSearch(QTableView *tableView)
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
                                         airportSearch, &Search::markChanged);
+
+  allSearchTabs.append(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
@@ -83,6 +107,8 @@ void SearchController::createNavSearch(QTableView *tableView)
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
                                         navSearch, &Search::markChanged);
+
+  allSearchTabs.append(navSearch);
 }
 
 void SearchController::preDatabaseLoad()
