@@ -22,12 +22,12 @@
 #include "geo/calculations.h"
 #include "coordinateconverter.h"
 #include "maplayer.h"
+#include "common/maptools.h"
 
 #include <algorithm>
 #include <functional>
 #include <QSqlRecord>
 #include <marble/GeoDataLatLonBox.h>
-#include <algorithm>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -35,38 +35,6 @@ using namespace atools::geo;
 
 const double MapQuery::RECT_INFLATION_FACTOR = 0.3;
 const double MapQuery::RECT_INFLATION_ADD = 0.1;
-
-template<typename TYPE>
-void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, int xs, int ys,
-                            const TYPE *type)
-{
-  auto it = std::lower_bound(list.begin(), list.end(), type,
-                             [ = ](const TYPE * a1, const TYPE * a2)->bool
-                             {
-                               int x1, y1, x2, y2;
-                               conv.wToS(a1->position, x1, y1);
-                               conv.wToS(a2->position, x2, y2);
-                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-                               atools::geo::manhattanDistance(x2, y2, xs, ys);
-                             });
-  list.insert(it, type);
-}
-
-void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<const MapAirport *>& list, int xs,
-                                 int ys,
-                                 const MapAirport *type)
-{
-  auto it = std::lower_bound(list.begin(), list.end(), type,
-                             [ = ](const MapAirport * a1, const MapAirport * a2)->bool
-                             {
-                               int x1, y1, x2, y2;
-                               conv.wToS(a1->towerCoords, x1, y1);
-                               conv.wToS(a2->towerCoords, x2, y2);
-                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-                               atools::geo::manhattanDistance(x2, y2, xs, ys);
-                             });
-  list.insert(it, type);
-}
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -84,6 +52,9 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
                                  int xs, int ys, int screenDistance,
                                  MapSearchResult& result)
 {
+  using maptools::insertSortedByDistance;
+  using maptools::insertSortedByTowerDistance;
+
   if(mapLayer == nullptr)
     return;
 

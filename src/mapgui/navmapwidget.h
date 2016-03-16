@@ -58,7 +58,7 @@ public:
   void saveState();
   void restoreState();
 
-  void showPos(const atools::geo::Pos& pos, int zoomValue);
+  void showPos(const atools::geo::Pos& pos, int zoomValue = 3000);
   void showRect(const atools::geo::Rect& rect);
 
   void showMark();
@@ -130,7 +130,8 @@ private:
 
   virtual void paintEvent(QPaintEvent *paintEvent) override;
 
-  const maptypes::MapObject& getNearestHighlightMapObjects(int xs, int ys, int screenDistance);
+  void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
+                                     QList<const maptypes::MapObject *>& mapobjects);
 
 };
 

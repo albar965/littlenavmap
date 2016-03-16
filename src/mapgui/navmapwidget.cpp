@@ -22,7 +22,7 @@
 #include "mapgui/mapscale.h"
 #include "table/formatter.h"
 #include "geo/calculations.h"
-
+#include "common/maptools.h"
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QSettings>
@@ -338,19 +338,25 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(!res.airports.isEmpty())
     showRect(res.airports.at(0)->bounding);
   else if(!res.vors.isEmpty())
-    showPos(res.vors.at(0)->position, 3000);
+    showPos(res.vors.at(0)->position);
   else if(!res.ndbs.isEmpty())
-    showPos(res.ndbs.at(0)->position, 3000);
+    showPos(res.ndbs.at(0)->position);
   else if(!res.waypoints.isEmpty())
-    showPos(res.waypoints.at(0)->position, 3000);
+    showPos(res.waypoints.at(0)->position);
   else
   {
-    const maptypes::MapObject& obj = getNearestHighlightMapObjects(event->x(), event->y(), 10);
-    if(obj.id != -1 && obj.type == maptypes::AIRPORT)
-      showRect(mapQuery->getAirportRect(obj.id));
-    else if(obj.id != -1 &&
-            (obj.type & maptypes::VOR || obj.type & maptypes::NDB || obj.type & maptypes::WAYPOINT))
-      showPos(mapQuery->getNavTypePos(obj.id), 3000);
+    QList<const maptypes::MapObject *> mapobjects;
+    getNearestHighlightMapObjects(event->x(), event->y(), 10, mapobjects);
+
+    if(!mapobjects.isEmpty())
+    {
+      const maptypes::MapObject *obj = mapobjects.first();
+      if(obj->id != -1 && obj->type == maptypes::AIRPORT)
+        showRect(mapQuery->getAirportRect(obj->id));
+      else if(obj->id != -1 &&
+              (obj->type & maptypes::VOR || obj->type & maptypes::NDB || obj->type & maptypes::WAYPOINT))
+        showPos(mapQuery->getNavTypePos(obj->id));
+    }
   }
 }
 
@@ -368,108 +374,137 @@ bool NavMapWidget::event(QEvent *event)
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
     CoordinateConverter conv(viewport());
-    MapSearchResult res;
 
     QString text;
 
-    const maptypes::MapObject& obj = getNearestHighlightMapObjects(helpEvent->pos().x(),
-                                                                   helpEvent->pos().y(), 10);
+    QList<const maptypes::MapObject *> mapobjects;
+    getNearestHighlightMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapobjects);
 
-    if(obj.id != -1)
-      text += QString("Marking ") + QString::number(obj.id);
-    // showRect(mapQuery->getAirportRect(obj.id));
+    if(!mapobjects.isEmpty())
+      for(const maptypes::MapObject *obj : mapobjects)
+        if(obj->id != -1)
+        {
+          if(!text.isEmpty())
+            text += "<hr/>";
+          text += QString("Marking ") + QString::number(obj->id) +
+                  " type " + QString::number(obj->type) + "<br/>";
+        }
 
     const MapLayer *mapLayer = paintLayer->getMapLayer();
+    MapSearchResult mapSearchResult;
     mapQuery->getNearestObjects(conv, mapLayer, paintLayer->getShownMapFeatures(),
-                                helpEvent->pos().x(), helpEvent->pos().y(), 10, res);
+                                helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
 
     if(mapLayer != nullptr && mapLayer->isAirportDiagram())
     {
-      if(!res.towers.isEmpty())
+      for(const MapAirport *ap : mapSearchResult.towers)
       {
-        const MapAirport& ap = *res.towers.first();
+        if(!text.isEmpty())
+          text += "<hr/>";
 
-        if(ap.towerFrequency > 0)
-          text += "Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2) + "\n";
+        if(ap->towerFrequency > 0)
+          text += "Tower: " + formatter::formatDoubleUnit(ap->towerFrequency / 1000., QString(), 2) + "<br/>";
         else
-          text += "Tower\n";
+          text += "Tower<br/>";
       }
-      if(!res.parkings.isEmpty())
+      for(const MapParking *p : mapSearchResult.parkings)
       {
-        const MapParking& p = *res.parkings.first();
+        if(!text.isEmpty())
+          text += "<hr/>";
 
-        text += "Parking " + QString::number(p.number) + "\n" +
-                p.name + "\n" +
-                p.type + "\n" +
-                QString::number(p.radius * 2) + " ft diameter\n" +
-                (p.jetway ? "Has Jetway\n" : "");
+        text += "Parking " + QString::number(p->number) + "<br/>" +
+                p->name + "<br/>" +
+                p->type + "<br/>" +
+                QString::number(p->radius * 2) + " ft<br/>" +
+                (p->jetway ? "Has Jetway<br/>" : "");
 
       }
-      if(!res.helipads.isEmpty())
+      for(const MapHelipad *p : mapSearchResult.helipads)
       {
-        const MapHelipad& p = *res.helipads.first();
+        if(!text.isEmpty())
+          text += "<hr/>";
 
-        text += "Helipad:\n" +
-                p.surface + "\n" +
-                p.type + "\n" +
-                QString::number(p.width) + " ft diameter\n" +
-                (p.closed ? "Is Closed\n" : "");
+        text += "Helipad:<br/>" +
+                p->surface + "<br/>" +
+                p->type + "<br/>" +
+                QString::number(p->width) + " ft diameter<br/>" +
+                (p->closed ? "Is Closed<br/>" : "");
 
       }
     }
 
-    if(!res.airports.isEmpty())
+    for(const MapAirport *ap : mapSearchResult.airports)
     {
-      MapAirport ap = *res.airports.first();
-      text += ap.name + " (" + ap.ident + ")\n" +
-              "Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft\n" +
-              "Altitude: " + QLocale().toString(ap.altitude) + " ft\n";
+      if(!text.isEmpty())
+        text += "<hr/>";
 
-      if(ap.hard())
-        text += "Has Hard Runways\n";
-      if(ap.soft())
-        text += "Has Soft Runways\n";
-      if(ap.water())
-        text += "Has Water Runways\n";
+      text += ap->name + " (" + ap->ident + ")<br/>" +
+              "Longest Runway: " + QLocale().toString(ap->longestRunwayLength) + " ft<br/>" +
+              "Altitude: " + QLocale().toString(ap->altitude) + " ft<br/>";
 
-      if(ap.towerFrequency > 0)
-        text += "Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2) + "\n";
-      if(ap.atisFrequency > 0)
-        text += "ATIS: " + formatter::formatDoubleUnit(ap.atisFrequency / 1000., QString(), 2) + "\n";
-      if(ap.awosFrequency > 0)
-        text += "AWOS: " + formatter::formatDoubleUnit(ap.awosFrequency / 1000., QString(), 2) + "\n";
-      if(ap.asosFrequency > 0)
-        text += "ASOS: " + formatter::formatDoubleUnit(ap.asosFrequency / 1000., QString(), 2) + "\n";
-      if(ap.unicomFrequency > 0)
-        text += "Unicom: " + formatter::formatDoubleUnit(ap.unicomFrequency / 1000., QString(), 2) + "\n";
+      if(ap->hard())
+        text += "Has Hard Runways<br/>";
+      if(ap->soft())
+        text += "Has Soft Runways<br/>";
+      if(ap->water())
+        text += "Has Water Runways<br/>";
+
+      if(ap->towerFrequency > 0)
+        text += "Tower: " + formatter::formatDoubleUnit(ap->towerFrequency / 1000., QString(), 2) + "<br/>";
+      if(ap->atisFrequency > 0)
+        text += "ATIS: " + formatter::formatDoubleUnit(ap->atisFrequency / 1000., QString(), 2) + "<br/>";
+      if(ap->awosFrequency > 0)
+        text += "AWOS: " + formatter::formatDoubleUnit(ap->awosFrequency / 1000., QString(), 2) + "<br/>";
+      if(ap->asosFrequency > 0)
+        text += "ASOS: " + formatter::formatDoubleUnit(ap->asosFrequency / 1000., QString(), 2) + "<br/>";
+      if(ap->unicomFrequency > 0)
+        text += "Unicom: " + formatter::formatDoubleUnit(ap->unicomFrequency / 1000., QString(), 2) + "<br/>";
     }
 
-    if(!res.vors.isEmpty())
+    for(const MapVor *vor : mapSearchResult.vors)
     {
-      MapVor vor = *res.vors.first();
-      text += "VOR: " + vor.name + " (" + vor.ident + ")\n";
+      if(!text.isEmpty())
+        text += "<hr/>";
+      QString type;
+      if(vor->dmeOnly)
+        type = "DME";
+      else if(vor->hasDme)
+        type = "VORDME";
+      else
+        type = "VOR";
+
+      text += type + ": " + vor->name + " (" + vor->ident + ")<br/>";
+      text += "Freq: " + formatter::formatDoubleUnit(vor->frequency / 1000., QString(), 2) + " MHz<br/>";
+      text += "Magvar: " + formatter::formatDoubleUnit(vor->magvar, QString(), 1) + " °<br/>";
+      text += "Range: " + QString::number(vor->range) + " nm<br/>";
     }
 
-    if(!res.ndbs.isEmpty())
+    for(const MapNdb *ndb : mapSearchResult.ndbs)
     {
-      MapNdb ndb = *res.ndbs.first();
-      text += "NDB: " + ndb.name + " (" + ndb.ident + ")\n";
+      if(!text.isEmpty())
+        text += "<hr/>";
+      text += "NDB: " + ndb->name + " (" + ndb->ident + ")<br/>";
+      text += "Freq: " + formatter::formatDoubleUnit(ndb->frequency / 100., QString(), 2) + " kHz<br/>";
+      text += "Magvar: " + formatter::formatDoubleUnit(ndb->magvar, QString(), 1) + " °<br/>";
+      text += "Range: " + QString::number(ndb->range) + " nm<br/>";
     }
 
-    if(!res.waypoints.isEmpty())
+    for(const MapWaypoint *wp : mapSearchResult.waypoints)
     {
-      MapWaypoint wp = *res.waypoints.first();
-      text += "Waypoint: " + wp.ident + "\n";
+      if(!text.isEmpty())
+        text += "<hr/>";
+      text += "Waypoint: " + wp->ident + "<br/>";
     }
 
-    if(!res.markers.isEmpty())
+    for(const MapMarker *m : mapSearchResult.markers)
     {
-      MapMarker wp = *res.markers.first();
-      text += "Marker: " + wp.type + "\n";
+      if(!text.isEmpty())
+        text += "<hr/>";
+      text += "Marker: " + m->type + "<br/>";
     }
 
     if(!text.isEmpty())
-      QToolTip::showText(helpEvent->globalPos(), text.trimmed());
+      QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
     else
     {
       QToolTip::hideText();
@@ -498,17 +533,18 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
   MarbleWidget::paintEvent(paintEvent);
 }
 
-const maptypes::MapObject& NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance)
+void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
+                                                 QList<const maptypes::MapObject *>& mapobjects)
 {
   static maptypes::MapObject empty;
 
   CoordinateConverter conv(viewport());
   int x, y;
 
-  for(maptypes::MapObject& obj : highlightMapObjects)
+  using maptools::insertSortedByDistance;
+
+  for(const maptypes::MapObject& obj : highlightMapObjects)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        return obj;
-
-  return empty;
+        insertSortedByDistance(conv, mapobjects, xs, ys, &obj);
 }

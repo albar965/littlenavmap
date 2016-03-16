@@ -159,6 +159,10 @@ void MapPaintLayer::initLayers()
          ndbSymbolSize(10).
          marker(false).ils(false)).
 
+  append(defLayer.clone(200.f).airportSymbolSize(10).
+         airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
+
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false)).
