@@ -132,4 +132,30 @@ QString parkingRampName(const QString& ramp)
   return parkingMapRamp.value(ramp);
 }
 
+MapSearchResult::~MapSearchResult()
+{
+  if(needsDelete)
+  {
+    qDeleteAll(airports);
+    qDeleteAll(towers);
+    qDeleteAll(parkings);
+    qDeleteAll(helipads);
+    qDeleteAll(waypoints);
+    qDeleteAll(vors);
+    qDeleteAll(ndbs);
+    qDeleteAll(markers);
+    qDeleteAll(ils);
+
+    airports.clear();
+    towers.clear();
+    parkings.clear();
+    helipads.clear();
+    waypoints.clear();
+    vors.clear();
+    ndbs.clear();
+    markers.clear();
+    ils.clear();
+  }
+}
+
 } // namespace types

@@ -68,7 +68,7 @@ public:
 
   void tabChanged(int index);
 
-  QList<maptypes::MapObject> getSelectedMapObjects() const;
+  void getSelectedMapObjects(maptypes::MapSearchResult& result) const;
 
   void updateTableSelection();
 
@@ -77,7 +77,6 @@ private:
   ColumnList *airportColumns = nullptr;
   AirportSearch *airportSearch = nullptr;
   QList<Search *> allSearchTabs;
-  QList<maptypes::MapObjectType> allMapObjectTypes;
 
   ColumnList *navColumns = nullptr;
   NavSearch *navSearch = nullptr;

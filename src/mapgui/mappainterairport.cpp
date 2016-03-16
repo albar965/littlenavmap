@@ -48,6 +48,8 @@ MapPainterAirport::~MapPainterAirport()
 void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                               Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
+  using namespace maptypes;
+
   if(mapLayer == nullptr || !objectTypes.testFlag(maptypes::AIRPORT))
     return;
 
@@ -64,11 +66,11 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
   if(!drawFast && verbose)
   {
-    qDebug() << "Number of aiports" << airports->size();
-    qDebug() << "Time for query" << t.elapsed() << " ms";
-    qDebug() << curBox.toString();
-    qDebug() << *mapLayer;
-    t.restart();
+  qDebug() << "Number of aiports" << airports->size();
+  qDebug() << "Time for query" << t.elapsed() << " ms";
+  qDebug() << curBox.toString();
+  qDebug() << *mapLayer;
+  t.restart();
   }
 
   setRenderHints(painter);
@@ -100,11 +102,14 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
       if(!texts.isEmpty())
       {
-        bool bold = airport.flags.testFlag(ADDON);
+        textatt::TextAttributes atts = textatt::BOLD;
+        if(airport.flags.testFlag(AP_ADDON))
+          atts |= textatt::BOLD | textatt::ITALIC | textatt::UNDERLINE;
+
         int transparency = mapLayer->isAirportDiagram() ? 180 : 255;
-        if(!airport.flags.testFlag(SCENERY))
+        if(!airport.flags.testFlag(AP_SCENERY))
           transparency = 0;
-        textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, bold, bold, false, transparency);
+        textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
       }
     }
   }
@@ -113,8 +118,10 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 }
 
 void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter *painter,
-                                           const MapAirport& airport, bool fast)
+                                           const maptypes::MapAirport& airport, bool fast)
 {
+  using namespace maptypes;
+
   painter->save();
   painter->setBackgroundMode(Qt::OpaqueMode);
 
@@ -135,13 +142,13 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   for(int i = 0; i < runwayCenters.size(); i++)
     if(runways->at(i).surface != "WATER")
     {
-      painter->translate(runwayCenters.at(i));
-      painter->rotate(runways->at(i).heading);
+    painter->translate(runwayCenters.at(i));
+    painter->rotate(runways->at(i).heading);
 
-      const QRect backRect = runwayBackRects.at(i);
-      painter->drawRect(backRect);
+    const QRect backRect = runwayBackRects.at(i);
+    painter->drawRect(backRect);
 
-      painter->resetTransform();
+    painter->resetTransform();
     }
 
   const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
@@ -525,18 +532,18 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   painter->restore();
 }
 
-void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const MapAirport& ap,
+void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const maptypes::MapAirport& ap,
                                                   const MapLayer *mapLayer, bool fast)
 {
-  if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() && !ap.flags.testFlag(CLOSED) &&
-     !ap.waterOnly())
+  if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() &&
+     !ap.flags.testFlag(maptypes::AP_CLOSED) && !ap.waterOnly())
   {
     painter->save();
 
     QColor apColor = mapcolors::colorForAirport(ap);
     painter->setBackgroundMode(Qt::OpaqueMode);
 
-    const QList<MapRunway> *rw = query->getRunwaysForOverview(ap.id);
+    const QList<maptypes::MapRunway> *rw = query->getRunwaysForOverview(ap.id);
 
     QList<QPoint> centers;
     QList<QRect> rects, innerRects;
@@ -568,10 +575,10 @@ void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const Map
   }
 }
 
-void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const MapAirport& ap, int x, int y,
+void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const maptypes::MapAirport& ap, int x, int y,
                                           const MapLayer *mapLayer, bool fast)
 {
-  if(!mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(CLOSED) || ap.waterOnly() ||
+  if(!mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) || ap.waterOnly() ||
      ap.longestRunwayLength < 8000 || mapLayer->isAirportDiagram())
   {
 
@@ -582,10 +589,10 @@ void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const MapAirport&
   }
 }
 
-void MapPainterAirport::runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
-                                     QList<QRect> *innerRects, QList<QRect> *backRects)
+void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *rw, QList<QPoint> *centers,
+                                     QList<QRect> *rects, QList<QRect> *innerRects, QList<QRect> *backRects)
 {
-  for(const MapRunway& r : *rw)
+  for(const maptypes::MapRunway& r : *rw)
   {
     // Get the two endpoints as screen coords
     float xr1, yr1, xr2, yr2;
@@ -650,7 +657,7 @@ QString MapPainterAirport::parkingName(const QString& name)
     return QString();
 }
 
-QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const MapAirport& airport)
+QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const maptypes::MapAirport& airport)
 {
   QStringList texts;
 
@@ -658,7 +665,8 @@ QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const MapA
   {
     texts.append(airport.name + " (" + airport.ident + ")");
 
-    if(airport.altitude > 0 || airport.longestRunwayLength > 0 || airport.flags.testFlag(LIGHT))
+    if(airport.altitude > 0 || airport.longestRunwayLength > 0 ||
+       airport.flags.testFlag(maptypes::AP_LIGHT))
     {
       QString tower = (airport.towerFrequency == 0 ? QString() :
                        "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
@@ -675,7 +683,7 @@ QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const MapA
         texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
 
       texts.append(QString::number(airport.altitude) + " " +
-                   (airport.flags.testFlag(LIGHT) ? "L " : "- ") +
+                   (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
                    QString::number(airport.longestRunwayLength / 100) + " " +
                    (airport.unicomFrequency == 0 ? QString() :
                     QString::number(airport.unicomFrequency / 1000., 'f', 2)));

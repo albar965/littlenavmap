@@ -78,20 +78,20 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   int w = painter->fontMetrics().maxWidth();
 
   if(navtype == "WAYPOINT")
-    symbolPainter->drawWaypointSymbol(painter, MapWaypoint(),
+    symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(),
                                       option.rect.x() + (option.rect.width() - w) / 2,
                                       option.rect.y() + symSize / 2 + 2,
                                       symSize,
                                       false);
   else if(navtype == "NDB")
-    symbolPainter->drawNdbSymbol(painter, MapNdb(),
+    symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(),
                                  option.rect.x() + (option.rect.width() - w) / 2,
                                  option.rect.y() + symSize / 2 + 2,
                                  symSize,
                                  false);
   else if(navtype == "VOR" || navtype == "VORDME" || navtype == "DME")
   {
-    MapVor vor;
+    maptypes::MapVor vor;
     vor.dmeOnly = navtype == "DME";
     vor.hasDme = navtype == "VORDME" || navtype == "DME";
 

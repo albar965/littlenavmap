@@ -36,8 +36,8 @@ public:
 
 private:
   SymbolPainter *symbolPainter;
-  void drawIlsSymbol(Marble::GeoPainter *painter, const MapIls& ils, int x, int y, const MapLayer *mapLayer,
-                     bool fast);
+  void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
+                     const MapLayer *mapLayer, bool fast);
 
 };
 

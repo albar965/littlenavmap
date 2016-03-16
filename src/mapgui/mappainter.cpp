@@ -52,7 +52,7 @@ void MapPainter::setRenderHints(GeoPainter *painter)
 }
 
 void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-                         bool bold, bool italic, bool alignRight, int transparency)
+                         textatt::TextAttributes atts, int transparency)
 {
   if(texts.isEmpty())
     return;
@@ -88,11 +88,12 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
     }
   }
 
-  if(bold || italic)
+  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
   {
     QFont f = painter->font();
-    f.setBold(bold);
-    f.setItalic(italic);
+    f.setBold(atts.testFlag(textatt::BOLD));
+    f.setItalic(atts.testFlag(textatt::ITALIC));
+    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
     painter->setFont(f);
   }
 
@@ -101,7 +102,7 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
   for(const QString& t : texts)
   {
     int newx = x;
-    if(alignRight)
+    if(atts.testFlag(textatt::RIGHT))
       newx -= metrics.width(t);
 
     painter->drawText(newx, y + yoffset, t);

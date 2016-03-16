@@ -27,6 +27,8 @@
 #include "table/sqlmodel.h"
 #include "table/columnlist.h"
 
+#include <functional>
+#include <algorithm>
 #include <QTableView>
 #include <QHeaderView>
 #include <QSettings>
@@ -611,12 +613,12 @@ int Controller::getSortColumnIndex() const
   return model->getSortColumnIndex();
 }
 
-void Controller::getSelectedMapObjects(QList<maptypes::MapObject>& mapObjects,
-                                       const QString& lonxColName, const QString& latyColName)
+void Controller::getSelectedObjects(const QStringList& cols,
+                                    std::function<void(const QVariantList&)> fillfunc)
 {
-  int idcol = model->record().indexOf(columns->getIdColumnName());
-  int lonxcol = model->record().indexOf(lonxColName);
-  int latycol = model->record().indexOf(latyColName);
+  QVector<int> indexes;
+  for(const QString& c : cols)
+    indexes.append(model->record().indexOf(c));
 
   for(const QItemSelectionRange& rng :  getSelection())
     for(int row = rng.top(); row <= rng.bottom(); ++row)
@@ -625,13 +627,11 @@ void Controller::getSelectedMapObjects(QList<maptypes::MapObject>& mapObjects,
       if(proxyModel != nullptr)
         srow = toS(proxyModel->index(row, 0)).row();
 
-      maptypes::MapObject obj;
+      QVariantList vars;
 
-      if(lonxcol != -1 && latycol != -1)
-        obj.position = atools::geo::Pos(getRawData(srow, lonxcol).toFloat(),
-                                        getRawData(srow, latycol).toFloat());
-      obj.id = getRawData(srow, idcol).toInt();
-      obj.type = maptypes::NONE;
-      mapObjects.append(obj);
+      for(int idx : indexes)
+        vars.append(getRawData(srow, idx));
+
+      fillfunc(vars);
     }
 }

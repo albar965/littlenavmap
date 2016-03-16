@@ -48,6 +48,8 @@ MapPainterNav::~MapPainterNav()
 void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                           Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
+  using namespace maptypes;
+
   if(mapLayer == nullptr)
     return;
 
@@ -61,35 +63,35 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
   if(mapLayer->isWaypoint() && objectTypes.testFlag(maptypes::WAYPOINT))
   {
-    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, mapLayer, drawFast);
-    if(waypoints != nullptr)
+  const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, mapLayer, drawFast);
+  if(waypoints != nullptr)
+  {
+    if(widget->viewContext() == Marble::Still && verbose)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
-      {
-        qDebug() << "Number of waypoints" << waypoints->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *mapLayer;
-        t.restart();
-      }
-
-      for(const MapWaypoint& waypoint : *waypoints)
-      {
-        int x, y;
-        bool visible = wToS(waypoint.position, x, y);
-
-        if(visible)
-          symbolPainter->drawWaypointSymbol(painter, waypoint, x, y,
-                                            mapLayer->getWaypointSymbolSize(), drawFast);
-        QStringList texts;
-
-        if(mapLayer->isWaypointName())
-          texts.append(waypoint.ident);
-
-        x += mapLayer->getNdbSymbolSize() / 2 + 2;
-        textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, false, false, false, 0);
-      }
+      qDebug() << "Number of waypoints" << waypoints->size();
+      qDebug() << "Time for query" << t.elapsed() << " ms";
+      qDebug() << curBox.toString();
+      qDebug() << *mapLayer;
+      t.restart();
     }
+
+    for(const MapWaypoint& waypoint : *waypoints)
+    {
+      int x, y;
+      bool visible = wToS(waypoint.position, x, y);
+
+      if(visible)
+        symbolPainter->drawWaypointSymbol(painter, waypoint, x, y,
+                                          mapLayer->getWaypointSymbolSize(), drawFast);
+      QStringList texts;
+
+      if(mapLayer->isWaypointName())
+        texts.append(waypoint.ident);
+
+      x += mapLayer->getNdbSymbolSize() / 2 + 2;
+      textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textatt::BOLD | textatt::LEFT, 0);
+    }
+  }
   }
 
   if(mapLayer->isVor() && objectTypes.testFlag(maptypes::VOR))
@@ -134,7 +136,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             texts.append(vor.ident);
 
           x -= mapLayer->getVorSymbolSize() / 2 + 2;
-          textBox(painter, texts, mapcolors::vorSymbolColor, x, y, false, false, true, 0);
+          textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
         }
       }
     }
@@ -175,7 +177,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             texts.append(ndb.ident);
 
           x -= mapLayer->getNdbSymbolSize() / 2 + 2;
-          textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, false, false, true, 0);
+          textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
         }
       }
     }
@@ -209,7 +211,7 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             QString type = marker.type.toLower();
             type[0] = type.at(0).toUpper();
             x -= mapLayer->getMarkerSymbolSize() / 2 + 2;
-            textBox(painter, {type}, mapcolors::markerSymbolColor, x, y, false, false, true, 0);
+            textBox(painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
           }
         }
       }

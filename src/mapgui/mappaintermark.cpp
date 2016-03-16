@@ -86,8 +86,21 @@ void MapPainterMark::paintHome(GeoPainter *painter)
 
 void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
 {
-  const QList<maptypes::MapObject>& highlightPos = navMapWidget->getHighlightMapObjects();
+  using namespace maptypes;
+
+  const MapSearchResult& highlightResults = navMapWidget->getHighlightMapObjects();
   int size = 6;
+
+  QList<atools::geo::Pos> positions;
+
+  for(const MapAirport *ap : highlightResults.airports)
+    positions.append(ap->position);
+  for(const MapWaypoint *wp : highlightResults.waypoints)
+    positions.append(wp->position);
+  for(const MapVor *vor : highlightResults.vors)
+    positions.append(vor->position);
+  for(const MapNdb *ndb : highlightResults.ndbs)
+    positions.append(ndb->position);
 
   if(mapLayer != nullptr)
     if(mapLayer->isAirport())
@@ -95,18 +108,18 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
-  for(const maptypes::MapObject& obj : highlightPos)
+  for(const atools::geo::Pos& pos : positions)
   {
-    int x, y;
-    if(wToS(obj.position, x, y))
+  int x, y;
+  if(wToS(pos, x, y))
+  {
+    if(!fast)
     {
-      if(!fast)
-      {
-        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
-        painter->drawEllipse(QPoint(x, y), size, size);
-        painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
-      }
+      painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
       painter->drawEllipse(QPoint(x, y), size, size);
+      painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
     }
+    painter->drawEllipse(QPoint(x, y), size, size);
+  }
   }
 }

@@ -61,8 +61,9 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale, false);
   mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale, false);
 
-  objectTypes = maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::ILS | maptypes::MARKER |
-                maptypes::WAYPOINT;
+  objectTypes = maptypes::ObjectTypes(
+    maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
+    maptypes::WAYPOINT);
 }
 
 MapPaintLayer::~MapPaintLayer()

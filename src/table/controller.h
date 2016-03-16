@@ -25,6 +25,7 @@
 
 #include <QItemSelectionModel>
 #include <QObject>
+#include <QSqlRecord>
 #include <functional>
 
 namespace atools {
@@ -196,8 +197,7 @@ public:
     return proxyModel;
   }
 
-  void getSelectedMapObjects(QList<maptypes::MapObject>& mapObjects, const QString& lonxColName = "lonx",
-                             const QString& latyColName = "laty");
+  void getSelectedObjects(const QStringList& cols, std::function<void(const QVariantList&)> fillfunc);
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

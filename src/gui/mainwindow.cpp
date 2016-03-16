@@ -344,7 +344,9 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
   // selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   selectionLabel->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
 
-  navMapWidget->changeHighlight(searchController->getSelectedMapObjects());
+  maptypes::MapSearchResult result;
+  searchController->getSelectedMapObjects(result);
+  navMapWidget->changeHighlight(result);
 }
 
 void MainWindow::updateMapShowFeatures()

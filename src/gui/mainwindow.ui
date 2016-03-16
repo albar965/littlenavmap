@@ -2190,6 +2190,33 @@
     <string>Default Details</string>
    </property>
   </action>
+  <action name="actionMapMeasureDistance">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Measure Distance</string>
+   </property>
+  </action>
+  <action name="actionMapRangeRings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Range Rings</string>
+   </property>
+  </action>
+  <action name="actionMapNavaidRange">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/navrange.svg</normaloff>:/littlenavmap/resources/icons/navrange.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Navaid Range</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

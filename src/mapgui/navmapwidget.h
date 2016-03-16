@@ -65,7 +65,7 @@ public:
   void showHome();
   void changeMark(const atools::geo::Pos& pos);
   void changeHome();
-  void changeHighlight(const QList<maptypes::MapObject>& positions);
+  void changeHighlight(const maptypes::MapSearchResult& positions);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -79,7 +79,7 @@ public:
     return homePos;
   }
 
-  const QList<maptypes::MapObject>& getHighlightMapObjects() const
+  const maptypes::MapSearchResult& getHighlightMapObjects() const
   {
     return highlightMapObjects;
   }
@@ -116,7 +116,11 @@ private:
   int homeZoom = -1;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
-  QList<maptypes::MapObject> highlightMapObjects;
+  maptypes::MapSearchResult highlightMapObjects;
+
+  maptypes::MapSearchResult rangeRingMapObjects;
+  QList<int> rangeRingMapObjectRanges;
+
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
@@ -131,7 +135,7 @@ private:
   virtual void paintEvent(QPaintEvent *paintEvent) override;
 
   void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
-                                     QList<const maptypes::MapObject *>& mapobjects);
+                                     maptypes::MapSearchResult& mapobjects);
 
 };
 

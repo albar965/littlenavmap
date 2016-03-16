@@ -48,5 +48,8 @@
         <file>resources/icons/cities.svg</file>
         <file>resources/icons/mark.svg</file>
         <file>resources/icons/detaildefault.svg</file>
+        <file>resources/icons/navrange.svg</file>
+        <file>resources/icons/rangerings.svg</file>
+        <file>resources/icons/distancemeasure.svg</file>
     </qresource>
 </RCC>

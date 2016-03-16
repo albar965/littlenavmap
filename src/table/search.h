@@ -40,6 +40,11 @@ class SqlDatabase;
 }
 }
 
+namespace maptypes {
+struct MapSearchResult;
+
+}
+
 class Search :
   public QObject
 {
@@ -60,6 +65,8 @@ public:
   virtual void saveState() = 0;
   virtual void restoreState() = 0;
 
+  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const = 0;
+
   void resetView();
   void resetSearch();
   void tableCopyCipboard();
@@ -74,6 +81,7 @@ public:
   }
 
   void tableSelectionChanged();
+
 protected:
   QIcon *boolIcon = nullptr;
 

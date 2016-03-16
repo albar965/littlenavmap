@@ -42,16 +42,11 @@ SearchController::~SearchController()
   delete navColumns;
 }
 
-QList<maptypes::MapObject> SearchController::getSelectedMapObjects() const
+void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
-  QList<maptypes::MapObject> retval;
-  Search *const search = allSearchTabs.at(tabWidget->currentIndex());
-  search->getController()->getSelectedMapObjects(retval);
+  allSearchTabs.at(tabWidget->currentIndex())->getSelectedMapObjects(result);
 
-  const maptypes::MapObjectType type = allMapObjectTypes.at(tabWidget->currentIndex());
-  for(maptypes::MapObject& obj : retval)
-    obj.type = type;
-  return retval;
+  // TODO MapSearchResult have to be freed
 }
 
 void SearchController::updateTableSelection()
@@ -91,8 +86,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearch = new AirportSearch(parentWidget, tableView,
-                                    airportColumns, db, 0);
+  airportSearch = new AirportSearch(parentWidget, tableView, airportColumns, db, 0);
 
   airportSearch->connectSlots();
 
@@ -100,22 +94,19 @@ void SearchController::createAirportSearch(QTableView *tableView)
                                         airportSearch, &Search::markChanged);
 
   allSearchTabs.append(airportSearch);
-  allMapObjectTypes.append(maptypes::AIRPORT);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
   navColumns = new ColumnList("nav_search", "nav_search_id");
 
-  navSearch = new NavSearch(parentWidget, tableView,
-                            navColumns, db, 1);
+  navSearch = new NavSearch(parentWidget, tableView, navColumns, db, 1);
   navSearch->connectSlots();
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
                                         navSearch, &Search::markChanged);
 
   allSearchTabs.append(navSearch);
-  allMapObjectTypes.append(maptypes::ALL_NAV);
 }
 
 void SearchController::preDatabaseLoad()

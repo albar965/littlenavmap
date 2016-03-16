@@ -20,9 +20,14 @@
 
 #include "mapgui/mappainter.h"
 
-#include "mapquery.h"
-
 class SymbolPainter;
+
+namespace maptypes {
+struct MapAirport;
+
+struct MapRunway;
+
+}
 
 class MapPainterAirport :
   public MapPainter
@@ -36,20 +41,19 @@ public:
                      Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
 
 private:
-  void drawAirportSymbol(Marble::GeoPainter *painter, const MapAirport& ap, int x, int y,
-                         const MapLayer *mapLayer,
-                         bool fast);
+  void drawAirportSymbol(Marble::GeoPainter *painter, const maptypes::MapAirport& ap, int x, int y,
+                         const MapLayer *mapLayer, bool fast);
 
-  void drawAirportDiagram(const MapLayer *mapLayer, Marble::GeoPainter *painter, const MapAirport& airport,
-                          bool fast);
+  void drawAirportDiagram(const MapLayer *mapLayer, Marble::GeoPainter *painter,
+                          const maptypes::MapAirport& airport, bool fast);
 
-  void drawAirportSymbolOverview(Marble::GeoPainter *painter, const MapAirport& ap, const MapLayer *mapLayer,
-                                 bool fast);
+  void drawAirportSymbolOverview(Marble::GeoPainter *painter, const maptypes::MapAirport& ap,
+                                 const MapLayer *mapLayer, bool fast);
 
-  void runwayCoords(const QList<MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
+  void runwayCoords(const QList<maptypes::MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *backRects);
   QString parkingName(const QString& name);
-  QStringList airportTexts(const MapLayer *mapLayer, const MapAirport& airport);
+  QStringList airportTexts(const MapLayer *mapLayer, const maptypes::MapAirport& airport);
 
   SymbolPainter *symbolPainter;
 };

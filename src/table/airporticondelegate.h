@@ -20,7 +20,7 @@
 
 #include <QStyledItemDelegate>
 
-#include <mapgui/mapquery.h>
+#include "common/maptypes.h"
 
 class ColumnList;
 class SqlModel;
@@ -44,8 +44,9 @@ private:
                      const QModelIndex& index) const override;
   virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-  MapAirportFlags flag(const SqlModel *sqlModel, int row, const QString& field, MapAirportFlags flag) const;
-  MapAirport mapAirport(const SqlModel *sqlModel, int row) const;
+  maptypes::MapAirportFlags flag(const SqlModel *sqlModel, int row, const QString& field,
+                                 maptypes::MapAirportFlags flag) const;
+  maptypes::MapAirport mapAirport(const SqlModel *sqlModel, int row) const;
 
 };
 

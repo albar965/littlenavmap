@@ -50,10 +50,11 @@ MapQuery::~MapQuery()
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                  maptypes::ObjectTypes types,
                                  int xs, int ys, int screenDistance,
-                                 MapSearchResult& result)
+                                 maptypes::MapSearchResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
+  using namespace maptypes;
 
   if(mapLayer == nullptr)
     return;
@@ -62,15 +63,15 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
   if(mapLayer->isAirport() && types.testFlag(maptypes::AIRPORT))
     for(int i = airportCache.list.size() - 1; i >= 0; i--)
     {
-      const MapAirport& airport = airportCache.list.at(i);
+    const MapAirport& airport = airportCache.list.at(i);
 
-      if(conv.wToS(airport.position, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.airports, xs, ys, &airport);
+    if(conv.wToS(airport.position, x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+        insertSortedByDistance(conv, result.airports, xs, ys, &airport);
 
-      if(conv.wToS(airport.towerCoords, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
+    if(conv.wToS(airport.towerCoords, x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+        insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
     }
 
   if(mapLayer->isVor() && types.testFlag(maptypes::VOR))
@@ -140,8 +141,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
   }
 }
 
-const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                               bool lazy)
+const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
+                                                         const MapLayer *mapLayer, bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -165,8 +166,8 @@ const QList<MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& r
   return nullptr;
 }
 
-const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                 bool lazy)
+const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
+                                                           const MapLayer *mapLayer, bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -181,7 +182,7 @@ const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, c
       waypointsQuery->exec();
       while(waypointsQuery->next())
       {
-        MapWaypoint wp;
+        maptypes::MapWaypoint wp;
 
         wp.id = waypointsQuery->value("waypoint_id").toInt();
         wp.ident = waypointsQuery->value("ident").toString();
@@ -195,7 +196,8 @@ const QList<MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect, c
   return &waypointCache.list;
 }
 
-const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                 bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -210,7 +212,7 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
       vorsQuery->exec();
       while(vorsQuery->next())
       {
-        MapVor vor;
+        maptypes::MapVor vor;
 
         vor.id = vorsQuery->value("vor_id").toInt();
         vor.ident = vorsQuery->value("ident").toString();
@@ -229,7 +231,8 @@ const QList<MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLa
   return &vorCache.list;
 }
 
-const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                 bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -244,7 +247,7 @@ const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLa
       ndbsQuery->exec();
       while(ndbsQuery->next())
       {
-        MapNdb ndb;
+        maptypes::MapNdb ndb;
 
         ndb.id = ndbsQuery->value("ndb_id").toInt();
         ndb.ident = ndbsQuery->value("ident").toString();
@@ -261,8 +264,8 @@ const QList<MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLa
   return &ndbCache.list;
 }
 
-const QList<MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                             bool lazy)
+const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                       bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -277,7 +280,7 @@ const QList<MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const
       markersQuery->exec();
       while(markersQuery->next())
       {
-        MapMarker marker;
+        maptypes::MapMarker marker;
         marker.id = markersQuery->value("marker_id").toInt();
         marker.type = markersQuery->value("type").toString();
         marker.heading = static_cast<int>(std::roundf(markersQuery->value("heading").toFloat()));
@@ -288,7 +291,8 @@ const QList<MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const
   return &markerCache.list;
 }
 
-const QList<MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                bool lazy)
 {
   if(mapLayer == nullptr)
     return nullptr;
@@ -303,7 +307,7 @@ const QList<MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLay
       ilsQuery->exec();
       while(ilsQuery->next())
       {
-        MapIls ils;
+        maptypes::MapIls ils;
 
         ils.id = ilsQuery->value("ils_id").toInt();
         ils.ident = ilsQuery->value("ident").toString();
@@ -332,8 +336,8 @@ const QList<MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLay
   return &ilsCache.list;
 }
 
-const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                 atools::sql::SqlQuery *query, bool lazy)
+const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
+                                                           atools::sql::SqlQuery *query, bool lazy)
 {
   if(airportCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
@@ -342,16 +346,16 @@ const QList<MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox&
       query->exec();
       while(query->next())
       {
-        MapAirport a = fillMapAirport(query);
+        maptypes::MapAirport a = fillMapAirport(query);
         airportCache.list.append(a);
       }
     }
   return &airportCache.list;
 }
 
-MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
+maptypes::MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
 {
-  MapAirport ap;
+  maptypes::MapAirport ap;
   QSqlRecord rec = query->record();
 
   ap.id = query->value("airport_id").toInt();
@@ -387,7 +391,7 @@ MapAirport MapQuery::fillMapAirport(const atools::sql::SqlQuery *query)
   return ap;
 }
 
-const QList<MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
+const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 {
   if(runwayOverwiewCache.contains(airportId))
     return runwayOverwiewCache.object(airportId);
@@ -399,10 +403,10 @@ const QList<MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     runwayOverviewQuery->bindValue(":airportId", airportId);
     runwayOverviewQuery->exec();
 
-    QList<MapRunway> *rws = new QList<MapRunway>;
+    QList<maptypes::MapRunway> *rws = new QList<maptypes::MapRunway>;
     while(runwayOverviewQuery->next())
     {
-      MapRunway r =
+      maptypes::MapRunway r =
       {
         runwayOverviewQuery->value("length").toInt(),
         static_cast<int>(std::roundf(runwayOverviewQuery->value("heading").toFloat())),
@@ -429,7 +433,7 @@ const QList<MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
   }
 }
 
-const QList<MapApron> *MapQuery::getAprons(int airportId)
+const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
 {
   if(apronCache.contains(airportId))
     return apronCache.object(airportId);
@@ -439,10 +443,10 @@ const QList<MapApron> *MapQuery::getAprons(int airportId)
     apronQuery->bindValue(":airportId", airportId);
     apronQuery->exec();
 
-    QList<MapApron> *aps = new QList<MapApron>;
+    QList<maptypes::MapApron> *aps = new QList<maptypes::MapApron>;
     while(apronQuery->next())
     {
-      MapApron ap;
+      maptypes::MapApron ap;
 
       ap.surface = apronQuery->value("surface").toString();
 
@@ -462,7 +466,7 @@ const QList<MapApron> *MapQuery::getAprons(int airportId)
   }
 }
 
-const QList<MapParking> *MapQuery::getParking(int airportId)
+const QList<maptypes::MapParking> *MapQuery::getParking(int airportId)
 {
   if(parkingCache.contains(airportId))
     return parkingCache.object(airportId);
@@ -472,10 +476,10 @@ const QList<MapParking> *MapQuery::getParking(int airportId)
     parkingQuery->bindValue(":airportId", airportId);
     parkingQuery->exec();
 
-    QList<MapParking> *ps = new QList<MapParking>;
+    QList<maptypes::MapParking> *ps = new QList<maptypes::MapParking>;
     while(parkingQuery->next())
     {
-      MapParking p;
+      maptypes::MapParking p;
 
       QString type = parkingQuery->value("type").toString();
       if(type != "VEHICLES")
@@ -498,7 +502,7 @@ const QList<MapParking> *MapQuery::getParking(int airportId)
   }
 }
 
-const QList<MapHelipad> *MapQuery::getHelipads(int airportId)
+const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
 {
   if(helipadCache.contains(airportId))
     return helipadCache.object(airportId);
@@ -508,10 +512,10 @@ const QList<MapHelipad> *MapQuery::getHelipads(int airportId)
     helipadQuery->bindValue(":airportId", airportId);
     helipadQuery->exec();
 
-    QList<MapHelipad> *hs = new QList<MapHelipad>;
+    QList<maptypes::MapHelipad> *hs = new QList<maptypes::MapHelipad>;
     while(helipadQuery->next())
     {
-      MapHelipad hp;
+      maptypes::MapHelipad hp;
 
       hp.position = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat()),
       hp.width = helipadQuery->value("width").toInt();
@@ -553,7 +557,7 @@ Pos MapQuery::getNavTypePos(int navSearchId)
   return atools::geo::Pos();
 }
 
-const QList<MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
+const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
 {
   if(taxipathCache.contains(airportId))
     return taxipathCache.object(airportId);
@@ -563,10 +567,10 @@ const QList<MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
     taxiparthQuery->bindValue(":airportId", airportId);
     taxiparthQuery->exec();
 
-    QList<MapTaxiPath> *tps = new QList<MapTaxiPath>;
+    QList<maptypes::MapTaxiPath> *tps = new QList<maptypes::MapTaxiPath>;
     while(taxiparthQuery->next())
     {
-      MapTaxiPath tp;
+      maptypes::MapTaxiPath tp;
       QString type = taxiparthQuery->value("type").toString();
       if(type != "RUNWAY" && type != "VEHICLE")
       {
@@ -585,7 +589,7 @@ const QList<MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
   }
 }
 
-const QList<MapRunway> *MapQuery::getRunways(int airportId)
+const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
 {
   if(runwayCache.contains(airportId))
     return runwayCache.object(airportId);
@@ -595,10 +599,10 @@ const QList<MapRunway> *MapQuery::getRunways(int airportId)
     runwaysQuery->bindValue(":airportId", airportId);
     runwaysQuery->exec();
 
-    QList<MapRunway> *rs = new QList<MapRunway>;
+    QList<maptypes::MapRunway> *rs = new QList<maptypes::MapRunway>;
     while(runwaysQuery->next())
     {
-      MapRunway r =
+      maptypes::MapRunway r =
       {
         runwaysQuery->value("length").toInt(),
         static_cast<int>(std::roundf(runwaysQuery->value("heading").toFloat())),
@@ -629,7 +633,7 @@ const QList<MapRunway> *MapQuery::getRunways(int airportId)
   }
 }
 
-bool MapQuery::runwayCompare(const MapRunway& r1, const MapRunway& r2)
+bool MapQuery::runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2)
 {
   // The value returned indicates whether the element passed as first argument is
   // considered to go before the second
@@ -639,12 +643,13 @@ bool MapQuery::runwayCompare(const MapRunway& r1, const MapRunway& r2)
     return r1.isSoft() && r2.isHard();
 }
 
-MapAirportFlags MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field, MapAirportFlags flag)
+maptypes::MapAirportFlags MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field,
+                                         maptypes::MapAirportFlags flag)
 {
   if(!query->record().contains(field) || query->isNull(field))
-    return NONE;
+    return maptypes::AP_NONE;
   else
-    return query->value(field).toInt() > 0 ? flag : NONE;
+    return query->value(field).toInt() > 0 ? flag : maptypes::AP_NONE;
 }
 
 void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query)
@@ -688,22 +693,24 @@ void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double degree)
   rect.setNorth(rect.north(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
 }
 
-MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)
+maptypes::MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)
 {
+  using namespace maptypes;
+
   MapAirportFlags flags = 0;
-  flags |= flag(query, "num_helipad", HELIPORT);
-  flags |= flag(query, "rating", SCENERY);
-  flags |= flag(query, "has_avgas", FUEL);
-  flags |= flag(query, "has_jetfuel", FUEL);
-  flags |= flag(query, "tower_frequency", TOWER);
-  flags |= flag(query, "is_closed", CLOSED);
-  flags |= flag(query, "is_military", MIL);
-  flags |= flag(query, "is_addon", ADDON);
-  flags |= flag(query, "num_approach", APPR);
-  flags |= flag(query, "num_runway_hard", HARD);
-  flags |= flag(query, "num_runway_soft", SOFT);
-  flags |= flag(query, "num_runway_water", WATER);
-  flags |= flag(query, "num_runway_light", LIGHT);
+  flags |= flag(query, "num_helipad", AP_HELIPORT);
+  flags |= flag(query, "rating", AP_SCENERY);
+  flags |= flag(query, "has_avgas", AP_FUEL);
+  flags |= flag(query, "has_jetfuel", AP_FUEL);
+  flags |= flag(query, "tower_frequency", AP_TOWER);
+  flags |= flag(query, "is_closed", AP_CLOSED);
+  flags |= flag(query, "is_military", AP_MIL);
+  flags |= flag(query, "is_addon", AP_ADDON);
+  flags |= flag(query, "num_approach", AP_APPR);
+  flags |= flag(query, "num_runway_hard", AP_HARD);
+  flags |= flag(query, "num_runway_soft", AP_SOFT);
+  flags |= flag(query, "num_runway_water", AP_WATER);
+  flags |= flag(query, "num_runway_light", AP_LIGHT);
   return flags;
 }
 

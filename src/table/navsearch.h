@@ -50,8 +50,9 @@ public:
 
   virtual void saveState() override;
   virtual void restoreState() override;
+  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
 
-  void connectSlots() override;
+  virtual void connectSlots() override;
 
 private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
@@ -60,6 +61,8 @@ private:
 
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;
+
+  void fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const;
 
 };
 

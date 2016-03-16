@@ -252,3 +252,52 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
 
   return value.toString();
 }
+
+void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+{
+  using namespace std::placeholders;
+  QStringList cols;
+  cols << columns->getIdColumnName() << "vor_id" << "ndb_id" << "waypoint_id"
+       << "nav_type" << "lonx" << "laty";
+  controller->getSelectedObjects(cols, std::bind(&NavSearch::fillSearchResult, this, _1, &result));
+}
+
+void NavSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const
+{
+  QString type = data.at(4).toString();
+  if(type == "WAYPOINT")
+  {
+    maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
+    obj->id = data.at(3).toInt();
+    obj->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+    result->waypoints.append(obj);
+  }
+  else if(type == "NDB")
+  {
+    maptypes::MapNdb *obj = new maptypes::MapNdb;
+    obj->id = data.at(2).toInt();
+    obj->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+    result->ndbs.append(obj);
+  }
+  else if(type == "DME")
+  {
+    maptypes::MapVor *obj = new maptypes::MapVor;
+    obj->id = data.at(1).toInt();
+    obj->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+    result->vors.append(obj);
+  }
+  else if(type == "VORDME")
+  {
+    maptypes::MapVor *obj = new maptypes::MapVor;
+    obj->id = data.at(1).toInt();
+    obj->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+    result->vors.append(obj);
+  }
+  else if(type == "VOR")
+  {
+    maptypes::MapVor *obj = new maptypes::MapVor;
+    obj->id = data.at(1).toInt();
+    obj->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+    result->vors.append(obj);
+  }
+}

@@ -25,6 +25,7 @@
 #include "table/column.h"
 #include "ui_mainwindow.h"
 #include "table/columnlist.h"
+#include "geo/rect.h"
 #include "geo/pos.h"
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
@@ -32,6 +33,8 @@
 #include "airporticondelegate.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
+#include <algorithm>
+#include <functional>
 
 #include <QMessageBox>
 #include <QWidget>
@@ -206,6 +209,12 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
 
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).
+
+  append(Column("left_lonx").hidden()).
+  append(Column("top_laty").hidden()).
+  append(Column("right_lonx").hidden()).
+  append(Column("bottom_laty").hidden()).
+
   append(Column("lonx", tr("Longitude")).hidden()).
   append(Column("laty", tr("Latitude")).hidden())
   ;
@@ -379,4 +388,23 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
     return QLocale().toString(dataValue.toDouble());
 
   return value.toString();
+}
+
+void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+{
+  using namespace std::placeholders;
+  QStringList cols;
+  cols << columns->getIdColumnName()
+       << "left_lonx" << "top_laty" << "right_lonx" << "bottom_laty" << "lonx" << "laty";
+  controller->getSelectedObjects(cols, std::bind(&AirportSearch::fillSearchResult, this, _1, &result));
+}
+
+void AirportSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const
+{
+  maptypes::MapAirport *ap = new maptypes::MapAirport;
+  ap->id = data.at(0).toInt();
+  ap->bounding = atools::geo::Rect(data.at(1).toFloat(), data.at(2).toFloat(),
+                                   data.at(3).toFloat(), data.at(4).toFloat());
+  ap->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+  result->airports.append(ap);
 }

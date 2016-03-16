@@ -48,53 +48,55 @@ MapPainterIls::~MapPainterIls()
 void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                           Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
 {
-  if(mapLayer == nullptr || !objectTypes.testFlag(maptypes::ILS))
+  using namespace maptypes;
+
+  if(mapLayer == nullptr || !objectTypes.testFlag(ILS))
     return;
 
   if(mapLayer->isIls())
   {
-    bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = widget->viewContext() == Marble::Animation;
 
-    const GeoDataLatLonBox& curBox = viewport->viewLatLonAltBox();
-    QElapsedTimer t;
-    t.start();
+  const GeoDataLatLonBox& curBox = viewport->viewLatLonAltBox();
+  QElapsedTimer t;
+  t.start();
 
-    const QList<MapIls> *ilss = query->getIls(curBox, mapLayer, drawFast);
-    if(ilss != nullptr)
-    {
-      setRenderHints(painter);
-      if(widget->viewContext() == Marble::Still && verbose)
-      {
-        qDebug() << "Number of ils" << ilss->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *mapLayer;
-        t.restart();
-      }
-
-      for(const MapIls& ils : *ilss)
-      {
-        int x, y;
-        bool visible = wToS(ils.position, x, y);
-
-        if(!visible)
-        {
-          GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                  ils.bounding.getEast(), ils.bounding.getWest(),
-                                  GeoDataCoordinates::Degree);
-          visible = ilsbox.intersects(curBox);
-        }
-
-        if(visible)
-          drawIlsSymbol(painter, ils, x, y, mapLayer, drawFast);
-      }
-    }
+  const QList<MapIls> *ilss = query->getIls(curBox, mapLayer, drawFast);
+  if(ilss != nullptr)
+  {
+    setRenderHints(painter);
     if(widget->viewContext() == Marble::Still && verbose)
-      qDebug() << "Time for paint" << t.elapsed() << " ms";
+    {
+      qDebug() << "Number of ils" << ilss->size();
+      qDebug() << "Time for query" << t.elapsed() << " ms";
+      qDebug() << curBox.toString();
+      qDebug() << *mapLayer;
+      t.restart();
+    }
+
+    for(const MapIls& ils : *ilss)
+    {
+      int x, y;
+      bool visible = wToS(ils.position, x, y);
+
+      if(!visible)
+      {
+        GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
+                                ils.bounding.getEast(), ils.bounding.getWest(),
+                                GeoDataCoordinates::Degree);
+        visible = ilsbox.intersects(curBox);
+      }
+
+      if(visible)
+        drawIlsSymbol(painter, ils, x, y, mapLayer, drawFast);
+    }
+  }
+  if(widget->viewContext() == Marble::Still && verbose)
+    qDebug() << "Time for paint" << t.elapsed() << " ms";
   }
 }
 
-void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const MapIls& ils, int x, int y,
+void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
                                   const MapLayer *mapLayer, bool fast)
 {
   painter->save();

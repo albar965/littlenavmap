@@ -34,6 +34,21 @@ class MapLayer;
 class MapQuery;
 class MapScale;
 
+namespace textatt {
+enum TextAttribute
+{
+  NONE = 0x00,
+  BOLD = 0x01,
+  ITALIC = 0x02,
+  UNDERLINE = 0x04,
+  RIGHT = 0x08,
+  LEFT = 0x10
+};
+
+Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
+}
+
 class MapPainter :
   public CoordinateConverter
 {
@@ -52,7 +67,7 @@ protected:
   MapScale *scale;
   bool verbose = false;
   void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               bool bold = false, bool italic = false, bool alignRight = false, int transparency = 255);
+               textatt::TextAttributes atts, int transparency = 255);
 
 };
 

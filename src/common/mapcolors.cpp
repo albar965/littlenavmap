@@ -65,15 +65,15 @@ const QColor markerSymbolColor = QColor(Qt::darkMagenta);
 const QColor ilsSymbolColor = QColor(Qt::darkGreen);
 const QColor waypointSymbolColor = QColor(Qt::magenta);
 
-const QColor& colorForAirport(const MapAirport& ap)
+const QColor& colorForAirport(const maptypes::MapAirport& ap)
 {
   static QColor airportEmptyColor = QColor::fromRgb(150, 150, 150);
   static QColor toweredAirportColor = QColor::fromRgb(15, 70, 130);
   static QColor unToweredAirportColor = QColor::fromRgb(126, 58, 91);
 
-  if(!ap.flags.testFlag(SCENERY) && !ap.waterOnly())
+  if(!ap.flags.testFlag(maptypes::AP_SCENERY) && !ap.waterOnly())
     return airportEmptyColor;
-  else if(ap.flags.testFlag(TOWER))
+  else if(ap.flags.testFlag(maptypes::AP_TOWER))
     return toweredAirportColor;
   else
     return unToweredAirportColor;

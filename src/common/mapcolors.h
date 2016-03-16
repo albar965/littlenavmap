@@ -22,7 +22,9 @@
 #include <QPen>
 #include <QStyle>
 
+namespace maptypes {
 class MapAirport;
+}
 
 namespace mapcolors {
 
@@ -60,7 +62,7 @@ extern const QColor ilsSymbolColor;
 
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
-const QColor& colorForAirport(const MapAirport& ap);
+const QColor& colorForAirport(const maptypes::MapAirport& ap);
 const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state = QStyle::State_None);
 
 } // namespace mapcolors

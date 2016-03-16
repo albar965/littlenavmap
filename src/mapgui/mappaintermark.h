@@ -35,8 +35,9 @@ public:
 private:
   NavMapWidget *navMapWidget;
   void paintMark(Marble::GeoPainter *painter);
-  void paintHome(Marble::GeoPainter* painter);
-  void paintHighlights(const MapLayer* mapLayer, Marble::GeoPainter* painter, bool fast);
+  void paintHome(Marble::GeoPainter *painter);
+  void paintHighlights(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
+
 };
 
 #endif // MAPPAINTERMARK_H
