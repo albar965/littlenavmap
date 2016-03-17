@@ -40,7 +40,7 @@ MapPainterMark::~MapPainterMark()
 }
 
 void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
-                           maptypes::ObjectTypes objectTypes)
+                           maptypes::MapObjectTypes objectTypes)
 {
   Q_UNUSED(mapLayer);
   Q_UNUSED(viewport);
@@ -151,13 +151,30 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
 
       atools::geo::Rect rect(rings.position, atools::geo::nmToMeter(maxDiameter / 2 * 5 / 4));
 
+      QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
+      if(rings.type == maptypes::VOR)
+      {
+        color = mapcolors::vorSymbolColor;
+        textColor = mapcolors::vorSymbolColor;
+      }
+      else if(rings.type == maptypes::NDB)
+      {
+        color = mapcolors::ndbSymbolColor;
+        textColor = mapcolors::ndbSymbolColor;
+      }
+      else if(rings.type == maptypes::ILS)
+      {
+        color = mapcolors::ilsSymbolColor;
+        textColor = mapcolors::ilsSymbolColor;
+      }
+
       if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                                              GeoDataCoordinates::Degree)) /* && !fast*/)
       {
-        painter->setPen(QPen(QBrush(mapcolors::rangeRingTextColor), 4, Qt::SolidLine, Qt::RoundCap,
+        painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap,
                              Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
-        painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap,
+        painter->setPen(QPen(QBrush(color), 2, Qt::SolidLine, Qt::RoundCap,
                              Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
 
@@ -168,14 +185,19 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
 
           if(xt != -1 && yt != -1)
           {
-            painter->setPen(mapcolors::rangeRingTextColor);
+            painter->setPen(textColor);
 
-            QString txt = QString::number(diameter) + " nm";
+            QString txt;
+            if(rings.text.isEmpty())
+              txt = QString::number(diameter) + " nm";
+            else
+              txt = rings.text;
+
             xt -= painter->fontMetrics().width(txt) / 2;
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
             painter->drawText(xt, yt, txt);
-            painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap,
+            painter->setPen(QPen(QBrush(color), 2, Qt::SolidLine, Qt::RoundCap,
                                  Qt::MiterJoin));
           }
         }

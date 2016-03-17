@@ -57,7 +57,7 @@ public:
   virtual ~MapPainter();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) = 0;
+                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) = 0;
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);

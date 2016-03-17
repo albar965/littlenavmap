@@ -38,7 +38,7 @@ public:
   virtual ~MapPainterAirport();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
+                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
 
 private:
   void drawAirportSymbol(Marble::GeoPainter *painter, const maptypes::MapAirport& ap, int x, int y,

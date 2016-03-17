@@ -105,7 +105,7 @@ void NavMapWidget::setShowMapPois(bool show)
   setShowOtherPlaces(show);
 }
 
-void NavMapWidget::setShowMapFeatures(maptypes::ObjectTypes type, bool show)
+void NavMapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
   qDebug() << "setShowMapFeatures" << type << "show" << show;
   paintLayer->setShowMapFeatures(type, show);
@@ -264,24 +264,69 @@ void NavMapWidget::contextMenu(const QPoint& point)
   actionShowInSearchText = ui->actionShowInSearch->text();
 
   CoordinateConverter conv(viewport());
-  maptypes::MapSearchResult res;
-  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), maptypes::ALL, point.x(), point.y(), 20, res);
+  maptypes::MapSearchResult result;
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(),
+                              paintLayer->getShownMapFeatures(),
+                              point.x(), point.y(), 20, result);
 
+  ui->actionMapHideRangeRings->setEnabled(!rangeRings.isEmpty());
+
+  maptypes::MapObjectTypes selectedType = maptypes::NONE;
+  // Create copies since the cache might be emptied by draw events after showing the menu
   maptypes::MapAirport ap;
-  if(!res.airports.isEmpty())
-    ap = *res.airports.first();
+  maptypes::MapVor vor;
+  maptypes::MapNdb ndb;
+  maptypes::MapWaypoint wp;
+  maptypes::MapIls ils;
 
-  if(ap.valid)
+  ui->actionMapNavaidRange->setEnabled(false);
+  if(!result.airports.isEmpty())
+  {
+    ap = *result.airports.first();
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().
-                                    arg(ap.name + " (" + ap.ident + ")"));
+                                    arg("Airport " + ap.name + " (" + ap.ident + ")"));
+    selectedType = maptypes::AIRPORT;
+    ui->actionShowInSearch->setEnabled(true);
+  }
+  else if(!result.vors.isEmpty())
+  {
+    vor = *result.vors.first();
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().
+                                    arg("VOR " + vor.name + " (" + vor.ident + ")"));
+    selectedType = maptypes::VOR;
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionMapNavaidRange->setEnabled(true);
+  }
+  else if(!result.ndbs.isEmpty())
+  {
+    ndb = *result.ndbs.first();
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().
+                                    arg("NDB " + ndb.name + " (" + ndb.ident + ")"));
+    selectedType = maptypes::NDB;
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionMapNavaidRange->setEnabled(true);
+  }
+  else if(!result.waypoints.isEmpty())
+  {
+    wp = *result.waypoints.first();
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().
+                                    arg("Waypoint " + wp.ident));
+    selectedType = maptypes::WAYPOINT;
+    ui->actionShowInSearch->setEnabled(true);
+  }
   else
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(tr("Map Object")));
+  {
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+    ui->actionShowInSearch->setEnabled(false);
+  }
 
-  ui->actionShowInSearch->setDisabled(ap.valid);
+  if(!result.ils.isEmpty())
+    ils = *result.ils.first();
 
   menu.addAction(ui->actionShowInSearch);
   QPoint cpos = QCursor::pos();
   QAction *act = menu.exec(cpos);
+
   if(act != nullptr)
   {
     qreal lon, lat;
@@ -289,9 +334,47 @@ void NavMapWidget::contextMenu(const QPoint& point)
 
     if(act == ui->actionShowInSearch)
     {
-      qDebug() << "SearchController::objectSelected type" << maptypes::AIRPORT << "ident" << ap.ident;
-
-      emit objectSelected(maptypes::AIRPORT, ap.ident, QString());
+      if(visible)
+      {
+        if(selectedType == maptypes::AIRPORT)
+        {
+          ui->tabWidgetSearch->setCurrentIndex(0);
+          emit objectSelected(selectedType, ap.ident, QString(), QString());
+        }
+        else if(selectedType == maptypes::VOR)
+        {
+          ui->tabWidgetSearch->setCurrentIndex(1);
+          emit objectSelected(selectedType, vor.ident, vor.region, vor.apIdent);
+        }
+        else if(selectedType == maptypes::NDB)
+        {
+          ui->tabWidgetSearch->setCurrentIndex(1);
+          emit objectSelected(selectedType, ndb.ident, ndb.region, ndb.apIdent);
+        }
+        else if(selectedType == maptypes::WAYPOINT)
+        {
+          ui->tabWidgetSearch->setCurrentIndex(1);
+          emit objectSelected(selectedType, wp.ident, wp.region, wp.apIdent);
+        }
+      }
+    }
+    else if(act == ui->actionMapNavaidRange)
+    {
+      if(visible)
+      {
+        atools::geo::Pos center(lon, lat);
+        if(selectedType == maptypes::VOR)
+          addNavRangeRing(center, selectedType, vor.ident, vor.frequency, vor.range);
+        else if(selectedType == maptypes::NDB)
+          addNavRangeRing(center, selectedType, ndb.ident, ndb.frequency, ndb.range);
+        else if(selectedType == maptypes::ILS)
+          addNavRangeRing(center, selectedType, ils.ident, ils.frequency, ils.range);
+      }
+    }
+    else if(act == ui->actionMapRangeRings)
+    {
+      if(visible)
+        addRangeRing(atools::geo::Pos(lon, lat));
     }
     else if(act == ui->actionMapSetMark)
     {
@@ -303,38 +386,49 @@ void NavMapWidget::contextMenu(const QPoint& point)
         emit markChanged(markPos);
       }
     }
-    else if(act == ui->actionMapRangeRings)
-    {
-      if(visible)
-      {
-        maptypes::RangeRings rings;
-        rings.position = atools::geo::Pos(lon, lat);
-        rings.ranges = {50, 100, 200, 500};
-        rangeRings.append(rings);
-
-        qDebug() << "range rings" << rings.position;
-        update();
-      }
-    }
-    else if(act == ui->actionMapNavaidRange)
-    {
-      if(visible)
-      {
-        atools::geo::Pos pos(lon, lat);
-        qDebug() << "navaid range" << pos;
-        update();
-      }
-    }
     else if(act == ui->actionMapHideRangeRings)
       if(visible)
-      {
-        qDebug() << "range rings hide";
-        rangeRings.clear();
-        update();
-      }
+        clearRangeRings();
   }
 
   ui->actionShowInSearch->setText(actionShowInSearchText);
+}
+
+void NavMapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type,
+                                   const QString& ident, int frequency, int range)
+{
+  maptypes::RangeRings ring;
+  ring.type = type;
+  ring.position = pos;
+
+  if(type == maptypes::VOR || type == maptypes::ILS)
+    ring.text = ident + " " + formatter::formatDoubleUnit(frequency / 1000., QString(), 2);
+  else if(type == maptypes::NDB)
+    ring.text = ident + " " + formatter::formatDoubleUnit(frequency / 100., QString(), 2);
+
+  ring.ranges.append(range);
+  rangeRings.append(ring);
+  qDebug() << "navaid range" << ring.position;
+  update();
+}
+
+void NavMapWidget::addRangeRing(const atools::geo::Pos& pos)
+{
+  maptypes::RangeRings rings;
+  rings.type = maptypes::NONE;
+  rings.position = pos;
+  rings.ranges = {50, 100, 200, 500};
+  rangeRings.append(rings);
+
+  qDebug() << "range rings" << rings.position;
+  update();
+}
+
+void NavMapWidget::clearRangeRings()
+{
+  qDebug() << "range rings hide";
+  rangeRings.clear();
+  update();
 }
 
 bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)

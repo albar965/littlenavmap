@@ -54,16 +54,16 @@ public:
     return mapLayer;
   }
 
-  void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+  void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
   void setDetailFactor(int factor);
 
-  maptypes::ObjectTypes getShownMapFeatures() const
+  maptypes::MapObjectTypes getShownMapFeatures() const
   {
     return objectTypes;
   }
 
 private:
-  maptypes::ObjectTypes objectTypes;
+  maptypes::MapObjectTypes objectTypes;
   int detailFactor = 10;
 
   bool databaseLoadStatus = false;

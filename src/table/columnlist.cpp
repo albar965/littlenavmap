@@ -65,6 +65,11 @@ const Column *ColumnList::getColumn(const QString& field) const
     return nullptr;
 }
 
+bool ColumnList::hasColumn(const QString& field) const
+{
+  return nameColumnMap.contains(field);
+}
+
 const Column *ColumnList::getColumn(int index) const
 {
   return columns.at(index);

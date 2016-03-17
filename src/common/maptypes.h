@@ -39,8 +39,8 @@ enum MapObjectType
   ALL = 0xff
 };
 
-Q_DECLARE_FLAGS(ObjectTypes, MapObjectType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::ObjectTypes);
+Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
 
 enum MapAirportFlag
 {
@@ -167,14 +167,14 @@ struct MapHelipad
 struct MapWaypoint
 {
   int id;
-  QString ident, region, type;
+  QString ident, region, type, apIdent;
   atools::geo::Pos position;
 };
 
 struct MapVor
 {
   int id;
-  QString ident, type, name;
+  QString ident, region, type, name, apIdent;
   float magvar;
   int frequency, range;
   bool dmeOnly, hasDme;
@@ -184,7 +184,7 @@ struct MapVor
 struct MapNdb
 {
   int id;
-  QString ident, type, name;
+  QString ident, region, type, name, apIdent;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -230,8 +230,10 @@ struct MapSearchResult
 
 struct RangeRings
 {
-  atools::geo::Pos position;
+  QString text;
+  MapObjectTypes type;
   QVector<int> ranges;
+  atools::geo::Pos position;
 };
 
 QString navTypeName(const QString& type);

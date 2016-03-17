@@ -30,7 +30,7 @@ public:
   virtual ~MapPainterMark();
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes) override;
+                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
 
 private:
   NavMapWidget *navMapWidget;

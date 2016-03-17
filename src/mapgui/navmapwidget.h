@@ -89,6 +89,12 @@ public:
     return rangeRings;
   }
 
+  void addRangeRing(const atools::geo::Pos& pos);
+  void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
+                       int frequency, int range);
+
+  void clearRangeRings();
+
   void preDatabaseLoad();
   void postDatabaseLoad();
 
@@ -105,13 +111,14 @@ public:
   void showSavedPos();
 
   void setShowMapPois(bool show);
-  void setShowMapFeatures(maptypes::ObjectTypes type, bool show);
+  void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
   void setDetailFactor(int factor);
 
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
-  void objectSelected(maptypes::MapObjectType type, const QString& ident, const QString& region);
+  void objectSelected(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
+                      const QString& airportIdent);
 
 private:
   MainWindow *parentWindow;

@@ -48,7 +48,7 @@ MapQuery::~MapQuery()
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                 maptypes::ObjectTypes types,
+                                 maptypes::MapObjectTypes types,
                                  int xs, int ys, int screenDistance,
                                  maptypes::MapSearchResult& result)
 {
@@ -216,6 +216,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
 
         vor.id = vorsQuery->value("vor_id").toInt();
         vor.ident = vorsQuery->value("ident").toString();
+        vor.region = vorsQuery->value("region").toString();
         vor.name = vorsQuery->value("name").toString();
         vor.type = vorsQuery->value("type").toString();
         vor.frequency = vorsQuery->value("frequency").toInt();
@@ -251,6 +252,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
 
         ndb.id = ndbsQuery->value("ndb_id").toInt();
         ndb.ident = ndbsQuery->value("ident").toString();
+        ndb.region= ndbsQuery->value("region").toString();
         ndb.name = ndbsQuery->value("name").toString();
         ndb.type = ndbsQuery->value("type").toString();
         ndb.frequency = ndbsQuery->value("frequency").toInt();
@@ -800,7 +802,7 @@ void MapQuery::initQueries()
 
   vorsQuery = new SqlQuery(db);
   vorsQuery->prepare(
-    "select vor_id, ident, name, region, type, name, frequency,range, dme_only, dme_altitude, "
+    "select vor_id, ident, name, region, type, name, frequency, range, dme_only, dme_altitude, "
     "mag_var, lonx, laty  "
     "from vor where " + whereRect + " " + whereLimit);
 

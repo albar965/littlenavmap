@@ -45,8 +45,6 @@ SearchController::~SearchController()
 void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   allSearchTabs.at(tabWidget->currentIndex())->getSelectedMapObjects(result);
-
-  // TODO MapSearchResult have to be freed
 }
 
 void SearchController::updateTableSelection()
@@ -127,32 +125,28 @@ void SearchController::postDatabaseLoad()
     navSearch->postDatabaseLoad();
 }
 
-void SearchController::objectSelected(maptypes::MapObjectType type, const QString& ident,
-                                      const QString& region)
+void SearchController::objectSelected(maptypes::MapObjectTypes type, const QString& ident,
+                                      const QString& region, const QString& airportIdent)
 {
   qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
 
   switch(type)
   {
-    case maptypes::ALL_NAV:
-      break;
-    case maptypes::NONE:
-      break;
-    case maptypes::ALL:
-      break;
-    case maptypes::MARKER:
-      break;
     case maptypes::AIRPORT:
       airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);
       break;
     case maptypes::NDB:
-      break;
     case maptypes::VOR:
-      break;
     case maptypes::ILS:
-      break;
     case maptypes::WAYPOINT:
+      navSearch->resetSearch();
+      navSearch->filterByIdent(ident, region, airportIdent);
+      break;
+    case maptypes::MARKER:
+    case maptypes::NONE:
+    case maptypes::ALL_NAV:
+    case maptypes::ALL:
       break;
   }
 }

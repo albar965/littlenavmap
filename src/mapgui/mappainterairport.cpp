@@ -46,7 +46,7 @@ MapPainterAirport::~MapPainterAirport()
 }
 
 void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                              Marble::ViewportParams *viewport, maptypes::ObjectTypes objectTypes)
+                              Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes)
 {
   using namespace maptypes;
 

@@ -50,7 +50,7 @@ public:
 
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                         maptypes::ObjectTypes types,
+                         maptypes::MapObjectTypes types,
                          int xs, int ys, int screenDistance,
                          maptypes::MapSearchResult& result);
 

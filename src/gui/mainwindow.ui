@@ -2019,7 +2019,7 @@
   </action>
   <action name="actionShowInSearch">
    <property name="text">
-    <string>Show &quot;%1&quot; in Search</string>
+    <string>Show %1 in Search</string>
    </property>
    <property name="toolTip">
     <string>Show in Search</string>

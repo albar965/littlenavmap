@@ -26,6 +26,7 @@
 #include "ui_mainwindow.h"
 #include "table/columnlist.h"
 #include "geo/pos.h"
+#include "mapgui/navmapwidget.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -242,47 +243,26 @@ void Search::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
   {
-    int id = controller->getIdForRow(index);
+    // Check if the used table has bounding rectangle columns
+    bool hasBounding = columns->hasColumn("left_lonx") &&
+                       columns->hasColumn("top_laty") &&
+                       columns->hasColumn("right_lonx") &&
+                       columns->hasColumn("bottom_laty");
 
-    QSqlRecord rec = db->record(columns->getTablename());
-
-    bool hasBounding = rec.contains("left_lonx") &&
-                       rec.contains("top_laty") &&
-                       rec.contains("right_lonx") &&
-                       rec.contains("bottom_laty");
-
-    atools::sql::SqlQuery query(db);
     if(hasBounding)
-      // Has bounding rectangle
-      query.prepare("select left_lonx, top_laty, right_lonx, bottom_laty "
-                    "from " + columns->getTablename() +
-                    " where " + columns->getIdColumnName() + " = :id");
-
-    else
-      query.prepare("select lonx, laty from " + columns->getTablename() +
-                    " where " + columns->getIdColumnName() + " = :id");
-
-    query.bindValue(":id", id);
-    query.exec();
-
-    if(query.next())
     {
-      if(hasBounding)
-      {
-        qDebug() << "emit showRect";
-        emit showRect(atools::geo::Rect(query.value("left_lonx").toFloat(),
-                                        query.value("top_laty").toFloat(),
-                                        query.value("right_lonx").toFloat(),
-                                        query.value("bottom_laty").toFloat()));
-      }
-      else
-      {
-        qDebug() << "emit showPos";
-        emit showPos(atools::geo::Pos(query.value("lonx").toFloat(),
-                                      query.value("laty").toFloat()), 2700);
-      }
+      qDebug() << "emit showRect";
+      emit showRect(atools::geo::Rect(controller->getRawData(index.row(), "left_lonx").toFloat(),
+                                      controller->getRawData(index.row(), "top_laty").toFloat(),
+                                      controller->getRawData(index.row(), "right_lonx").toFloat(),
+                                      controller->getRawData(index.row(), "bottom_laty").toFloat()));
     }
-    qDebug() << "id" << id;
+    else
+    {
+      qDebug() << "emit showPos";
+      emit showPos(atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
+                                    controller->getRawData(index.row(), "laty").toFloat()), 2700);
+    }
   }
 }
 
@@ -356,11 +336,13 @@ void Search::tableContextMenu(const QPoint& pos)
   Ui::MainWindow *ui = parentWidget->getUi();
   QString header, fieldData;
   bool columnCanFilter = false, columnCanGroup = false;
+  QString navType;
 
+  atools::geo::Pos position;
   QModelIndex index = controller->getModelIndexAt(pos);
   if(index.isValid())
   {
-    const Column *columnDescriptor = controller->getColumn(index.column());
+    const Column *columnDescriptor = columns->getColumn(index.column());
     Q_ASSERT(columnDescriptor != nullptr);
     columnCanFilter = columnDescriptor->isFilter();
     columnCanGroup = columnDescriptor->isGroup();
@@ -376,9 +358,30 @@ void Search::tableContextMenu(const QPoint& pos)
     if(columnCanFilter)
       // Disabled menu items don't need any content
       fieldData = controller->getFieldDataAt(index);
+
+    // Check if the used table has all that is needed to display a navaid range ring
+
+    position = atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
+                                controller->getRawData(index.row(), "laty").toFloat());
+
+    if(columns->hasColumn("nav_type"))
+      navType = controller->getRawData(index.row(), "nav_type").toString();
   }
   else
     qDebug() << "Invalid index at" << pos;
+
+  // Add data to menu item text
+  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().arg(fieldData));
+  ui->actionSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
+
+  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(fieldData));
+  ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
+
+  ui->actionMapNavaidRange->setEnabled(navType == "VOR" || navType == "VORDME" ||
+                                       navType == "DME" || navType == "NDB");
+
+  ui->actionMapRangeRings->setEnabled(true);
+  ui->actionMapHideRangeRings->setEnabled(!parentWidget->getMapWidget()->getRangeRings().isEmpty());
 
   // Build the menu
   QMenu menu;
@@ -392,33 +395,23 @@ void Search::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchTableSelectAll);
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
 
+  QString actionFilterIncludingText, actionFilterExcludingText;
+  actionFilterIncludingText = ui->actionSearchFilterIncluding->text();
+  actionFilterExcludingText = ui->actionSearchFilterExcluding->text();
+
   menu.addSeparator();
   menu.addAction(ui->actionSearchResetView);
   menu.addAction(ui->actionSearchResetSearch);
   menu.addAction(ui->actionSearchShowAll);
 
   menu.addSeparator();
+  menu.addAction(ui->actionSearchFilterIncluding);
+  menu.addAction(ui->actionSearchFilterExcluding);
+
+  menu.addSeparator();
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideRangeRings);
-
-  QString actionFilterIncludingText, actionFilterExcludingText;
-  actionFilterIncludingText = ui->actionSearchFilterIncluding->text();
-  actionFilterExcludingText = ui->actionSearchFilterExcluding->text();
-
-  // Add data to menu item text
-  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().arg(
-                                             fieldData));
-  ui->actionSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
-
-  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(
-                                             fieldData));
-  ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
-
-  menu.addSeparator();
-  menu.addAction(ui->actionSearchFilterIncluding);
-  menu.addAction(ui->actionSearchFilterExcluding);
-  menu.addSeparator();
 
   QAction *action = menu.exec(QCursor::pos());
   if(action != nullptr)
@@ -440,6 +433,31 @@ void Search::tableContextMenu(const QPoint& pos)
       controller->selectAll();
     else if(action == ui->actionSearchSetMark)
       emit changeMark(controller->getGeoPos(index));
+    else if(action == ui->actionMapRangeRings)
+      parentWidget->getMapWidget()->addRangeRing(position);
+    else if(action == ui->actionMapNavaidRange)
+    {
+
+      maptypes::MapObjectTypes type;
+      int frequency = controller->getRawData(index.row(), "frequency").toInt();
+
+      QString navType = controller->getRawData(index.row(), "nav_type").toString();
+      if(navType == "VOR" || navType == "VORDME" || navType == "DME")
+      {
+        type = maptypes::VOR;
+        // Adapt scaled frequency from nav_search table
+        frequency /= 10;
+      }
+      else if(navType == "NDB")
+        type = maptypes::NDB;
+
+      parentWidget->getMapWidget()->addNavRangeRing(position, type,
+                                                    controller->getRawData(index.row(), "ident").toString(),
+                                                    frequency,
+                                                    controller->getRawData(index.row(), "range").toInt());
+    }
+    else if(action == ui->actionMapHideRangeRings)
+      parentWidget->getMapWidget()->clearRangeRings();
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
 
