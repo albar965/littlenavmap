@@ -397,6 +397,11 @@ void Search::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetSearch);
   menu.addAction(ui->actionSearchShowAll);
 
+  menu.addSeparator();
+  menu.addAction(ui->actionMapRangeRings);
+  menu.addAction(ui->actionMapNavaidRange);
+  menu.addAction(ui->actionMapHideRangeRings);
+
   QString actionFilterIncludingText, actionFilterExcludingText;
   actionFilterIncludingText = ui->actionSearchFilterIncluding->text();
   actionFilterExcludingText = ui->actionSearchFilterExcluding->text();
@@ -415,25 +420,25 @@ void Search::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchFilterExcluding);
   menu.addSeparator();
 
-  QAction *a = menu.exec(QCursor::pos());
-  if(a != nullptr)
+  QAction *action = menu.exec(QCursor::pos());
+  if(action != nullptr)
   {
     // A menu item was selected
-    if(a == ui->actionSearchResetSearch)
+    if(action == ui->actionSearchResetSearch)
       resetSearch();
-    else if(a == ui->actionSearchResetView)
+    else if(action == ui->actionSearchResetView)
       resetView();
-    else if(a == ui->actionSearchTableCopy)
+    else if(action == ui->actionSearchTableCopy)
       tableCopyCipboard();
-    else if(a == ui->actionSearchShowAll)
+    else if(action == ui->actionSearchShowAll)
       loadAllRowsIntoView();
-    else if(a == ui->actionSearchFilterIncluding)
+    else if(action == ui->actionSearchFilterIncluding)
       controller->filterIncluding(index);
-    else if(a == ui->actionSearchFilterExcluding)
+    else if(action == ui->actionSearchFilterExcluding)
       controller->filterExcluding(index);
-    else if(a == ui->actionSearchTableSelectAll)
+    else if(action == ui->actionSearchTableSelectAll)
       controller->selectAll();
-    else if(a == ui->actionSearchSetMark)
+    else if(action == ui->actionSearchSetMark)
       emit changeMark(controller->getGeoPos(index));
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }

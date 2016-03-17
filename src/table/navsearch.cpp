@@ -260,6 +260,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
   cols << columns->getIdColumnName() << "vor_id" << "ndb_id" << "waypoint_id"
        << "nav_type" << "lonx" << "laty";
   controller->getSelectedObjects(cols, std::bind(&NavSearch::fillSearchResult, this, _1, &result));
+  result.needsDelete = true;
 }
 
 void NavSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const

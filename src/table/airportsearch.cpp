@@ -397,6 +397,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
   cols << columns->getIdColumnName()
        << "left_lonx" << "top_laty" << "right_lonx" << "bottom_laty" << "lonx" << "laty";
   controller->getSelectedObjects(cols, std::bind(&AirportSearch::fillSearchResult, this, _1, &result));
+  result.needsDelete = true;
 }
 
 void AirportSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const

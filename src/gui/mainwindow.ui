@@ -2217,6 +2217,15 @@
     <string>Show Navaid Range</string>
    </property>
   </action>
+  <action name="actionMapHideRangeRings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hide Range Rings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

@@ -17,12 +17,15 @@
 
 #include "mappaintermark.h"
 #include "navmapwidget.h"
-
+#include "mapscale.h"
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
+#include "geo/calculations.h"
 
+#include <algorithm>
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
+#include <marble/ViewportParams.h>
 
 using namespace Marble;
 
@@ -49,6 +52,7 @@ void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, Viewpo
   paintHighlights(mapLayer, painter, drawFast);
   paintMark(painter);
   paintHome(painter);
+  paintRangeRings(mapLayer, painter, viewport, drawFast);
   painter->restore();
 }
 
@@ -121,5 +125,61 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
     }
     painter->drawEllipse(QPoint(x, y), size, size);
   }
+  }
+}
+
+void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
+                                     bool fast)
+{
+  Q_UNUSED(mapLayer);
+  Q_UNUSED(fast);
+  const QList<maptypes::RangeRings>& rangeRings = navMapWidget->getRangeRings();
+  const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
+
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+
+  for(const maptypes::RangeRings& rings : rangeRings)
+  {
+    auto maxIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+    if(maxIter != rings.ranges.end())
+    {
+      bool visible;
+      QPoint center = wToS(rings.position, &visible);
+
+      int maxDiameter = *maxIter;
+
+      atools::geo::Rect rect(rings.position, atools::geo::nmToMeter(maxDiameter / 2 * 5 / 4));
+
+      if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                                             GeoDataCoordinates::Degree)) /* && !fast*/)
+      {
+        painter->setPen(QPen(QBrush(mapcolors::rangeRingTextColor), 4, Qt::SolidLine, Qt::RoundCap,
+                             Qt::MiterJoin));
+        painter->drawEllipse(center, 4, 4);
+        painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap,
+                             Qt::MiterJoin));
+        painter->drawEllipse(center, 4, 4);
+
+        for(int diameter : rings.ranges)
+        {
+          int xt, yt;
+          paintCircle(painter, rings.position, diameter, fast, xt, yt);
+
+          if(xt != -1 && yt != -1)
+          {
+            painter->setPen(mapcolors::rangeRingTextColor);
+
+            QString txt = QString::number(diameter) + " nm";
+            xt -= painter->fontMetrics().width(txt) / 2;
+            yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+
+            painter->drawText(xt, yt, txt);
+            painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap,
+                                 Qt::MiterJoin));
+          }
+        }
+      }
+    }
   }
 }

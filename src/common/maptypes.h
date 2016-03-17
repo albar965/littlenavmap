@@ -211,8 +211,6 @@ struct MapIls
 
 struct MapSearchResult
 {
-  ~MapSearchResult();
-
   QList<const MapAirport *> airports;
   QList<const MapAirport *> towers;
   QList<const MapParking *> parkings;
@@ -225,6 +223,9 @@ struct MapSearchResult
   QList<const MapIls *> ils;
 
   bool needsDelete = false;
+
+  void  deleteAllObjects();
+
 };
 
 struct RangeRings

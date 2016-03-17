@@ -234,6 +234,7 @@ void NavMapWidget::changeMark(const atools::geo::Pos& pos)
 
 void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
+  highlightMapObjects.deleteAllObjects();
   highlightMapObjects = positions;
   update();
 }
@@ -245,25 +246,26 @@ void NavMapWidget::changeHome()
   update();
 }
 
-void NavMapWidget::contextMenu(const QPoint& pos)
+void NavMapWidget::contextMenu(const QPoint& point)
 {
-  Q_UNUSED(pos);
+  Q_UNUSED(point);
   qInfo() << "tableContextMenu";
 
   Ui::MainWindow *ui = parentWindow->getUi();
-  QMenu m;
-  m.addAction(ui->actionMapSetMark);
-  m.addAction(ui->actionMapSetHome);
-  m.addAction(ui->actionMapMeasureDistance);
-  m.addAction(ui->actionMapRangeRings);
-  m.addAction(ui->actionMapNavaidRange);
+  QMenu menu;
+  menu.addAction(ui->actionMapSetMark);
+  menu.addAction(ui->actionMapSetHome);
+  menu.addAction(ui->actionMapMeasureDistance);
+  menu.addAction(ui->actionMapRangeRings);
+  menu.addAction(ui->actionMapNavaidRange);
+  menu.addAction(ui->actionMapHideRangeRings);
 
   QString actionShowInSearchText;
   actionShowInSearchText = ui->actionShowInSearch->text();
 
   CoordinateConverter conv(viewport());
   maptypes::MapSearchResult res;
-  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), maptypes::ALL, pos.x(), pos.y(), 20, res);
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), maptypes::ALL, point.x(), point.y(), 20, res);
 
   maptypes::MapAirport ap;
   if(!res.airports.isEmpty())
@@ -277,27 +279,59 @@ void NavMapWidget::contextMenu(const QPoint& pos)
 
   ui->actionShowInSearch->setDisabled(ap.valid);
 
-  m.addAction(ui->actionShowInSearch);
+  menu.addAction(ui->actionShowInSearch);
   QPoint cpos = QCursor::pos();
-  QAction *act = m.exec(cpos);
-  if(act == ui->actionShowInSearch)
-  {
-    qDebug() << "SearchController::objectSelected type" << maptypes::AIRPORT << "ident" << ap.ident;
-
-    emit objectSelected(maptypes::AIRPORT, ap.ident, QString());
-  }
-  else if(act == ui->actionMapSetMark)
+  QAction *act = menu.exec(cpos);
+  if(act != nullptr)
   {
     qreal lon, lat;
-    if(geoCoordinates(pos.x(), pos.y(), lon, lat))
+    bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
+
+    if(act == ui->actionShowInSearch)
     {
-      markPos = atools::geo::Pos(lon, lat);
+      qDebug() << "SearchController::objectSelected type" << maptypes::AIRPORT << "ident" << ap.ident;
 
-      update();
-      qDebug() << "new mark" << atools::geo::Pos(lon, lat);
-
-      emit markChanged(atools::geo::Pos(lon, lat));
+      emit objectSelected(maptypes::AIRPORT, ap.ident, QString());
     }
+    else if(act == ui->actionMapSetMark)
+    {
+      if(visible)
+      {
+        markPos = atools::geo::Pos(lon, lat);
+        qDebug() << "new mark" << markPos;
+        update();
+        emit markChanged(markPos);
+      }
+    }
+    else if(act == ui->actionMapRangeRings)
+    {
+      if(visible)
+      {
+        maptypes::RangeRings rings;
+        rings.position = atools::geo::Pos(lon, lat);
+        rings.ranges = {50, 100, 200, 500};
+        rangeRings.append(rings);
+
+        qDebug() << "range rings" << rings.position;
+        update();
+      }
+    }
+    else if(act == ui->actionMapNavaidRange)
+    {
+      if(visible)
+      {
+        atools::geo::Pos pos(lon, lat);
+        qDebug() << "navaid range" << pos;
+        update();
+      }
+    }
+    else if(act == ui->actionMapHideRangeRings)
+      if(visible)
+      {
+        qDebug() << "range rings hide";
+        rangeRings.clear();
+        update();
+      }
   }
 
   ui->actionShowInSearch->setText(actionShowInSearchText);

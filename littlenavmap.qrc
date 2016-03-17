@@ -51,5 +51,6 @@
         <file>resources/icons/navrange.svg</file>
         <file>resources/icons/rangerings.svg</file>
         <file>resources/icons/distancemeasure.svg</file>
+        <file>resources/icons/rangeringsoff.svg</file>
     </qresource>
 </RCC>

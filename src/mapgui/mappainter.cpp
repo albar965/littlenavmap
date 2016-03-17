@@ -19,10 +19,14 @@
 #include "mapscale.h"
 #include "common/mapcolors.h"
 #include "geo/pos.h"
+#include "geo/calculations.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
+
+const int CIRCLE_MIN_POINTS = 16;
+const int CIRCLE_MAX_POINTS = 72;
 
 using namespace Marble;
 
@@ -109,4 +113,67 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
     yoffset += h;
   }
   painter->restore();
+}
+
+void MapPainter::paintCircle(GeoPainter *painter, atools::geo::Pos pos, int radiusNm, bool fast,
+                             int& xtext, int& ytext)
+{
+  // Calculate the number of points to use depending in screen resolution
+  int pixel = scale->getPixelIntForMeter(atools::geo::nmToMeter(radiusNm));
+  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+
+  int radiusMeter = atools::geo::nmToMeter(radiusNm);
+
+  int step = 360 / numPoints;
+  int x1, y1, x2 = -1, y2 = -1, xfirst = -1, yfirst = -1;
+  xtext = -1;
+  ytext = -1;
+
+  QVector<int> xtexts;
+  QVector<int> ytexts;
+
+  atools::geo::Pos p1 = pos.endpoint(radiusMeter, 0);
+  bool h1 = true, h2 = true, hfirst = true;
+  bool v1 = wToS(p1, x1, y1, &h1);
+
+  // Remember first position to close the circle
+  xfirst = x1;
+  yfirst = y1;
+  hfirst = h1;
+
+  for(int i = 0; i <= 360; i += step)
+  {
+    atools::geo::Pos p2 = pos.endpoint(radiusMeter, i);
+    bool v2 = wToS(p2, x2, y2, &h2);
+
+    if((v1 || v2) && !h1 && !h2)
+    {
+      painter->drawLine(x1, y1, x2, y2);
+      if(v1 && v2)
+      {
+        // Remember visible positions for the text
+        xtexts.append((x1 + x2) / 2);
+        ytexts.append((y1 + y2) / 2);
+      }
+    }
+    x1 = x2;
+    y1 = y2;
+    v1 = v2;
+    h1 = h2;
+  }
+
+  if(x2 != -1 && y2 != -1 && xfirst != -1 && yfirst != -1 && !h2 && !hfirst)
+    painter->drawLine(x2, y2, xfirst, yfirst);
+
+  if(!xtexts.isEmpty() && !ytexts.isEmpty())
+  {
+    // Take the position at one third
+    xtext = xtexts.at(xtexts.size() / 3);
+    ytext = ytexts.at(ytexts.size() / 3);
+  }
+  else
+  {
+    xtext = -1;
+    ytext = -1;
+  }
 }

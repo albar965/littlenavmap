@@ -61,13 +61,14 @@ public:
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);
+  void paintCircle(Marble::GeoPainter *painter, atools::geo::Pos pos, int radiusNm, bool fast, int& xtext, int& ytext);
+  void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+               textatt::TextAttributes atts, int transparency = 255);
 
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;
   bool verbose = false;
-  void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts, int transparency = 255);
 
 };
 

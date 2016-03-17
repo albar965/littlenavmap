@@ -36,16 +36,19 @@ class CoordinateConverter
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
 
-  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible) const;
-  QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr) const;
-  bool wToS(const atools::geo::Pos& coords, int& x, int& y) const;
-  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y) const;
-  bool wToS(const atools::geo::Pos& coords, float& x, float& y) const;
-  bool wToS(const atools::geo::Pos& coords, double& x, double& y) const;
+  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible, bool *isHidden = nullptr) const;
+  QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr, bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, int& x, int& y, bool *isHidden = nullptr) const;
+
+  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, float& x, float& y, bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, double& x, double& y, bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
   atools::geo::Pos sToW(int x, int y) const;
   atools::geo::Pos sToW(const QPoint& point) const;
+
+  bool isHidden(const atools::geo::Pos& coords) const;
 
 private:
   const Marble::ViewportParams *viewport;

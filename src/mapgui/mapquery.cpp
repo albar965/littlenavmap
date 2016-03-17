@@ -222,7 +222,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
         vor.range = vorsQuery->value("range").toInt();
         vor.dmeOnly = vorsQuery->value("dme_only").toInt() > 0;
         vor.hasDme = !vorsQuery->value("dme_altitude").isNull();
-        vor.magvar = static_cast<int>(std::roundf(vorsQuery->value("mag_var").toFloat()));
+        vor.magvar = vorsQuery->value("mag_var").toFloat();
         vor.position = Pos(vorsQuery->value("lonx").toFloat(), vorsQuery->value("laty").toFloat());
 
         vorCache.list.append(vor);
@@ -255,7 +255,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
         ndb.type = ndbsQuery->value("type").toString();
         ndb.frequency = ndbsQuery->value("frequency").toInt();
         ndb.range = ndbsQuery->value("range").toInt();
-        ndb.magvar = static_cast<int>(std::roundf(ndbsQuery->value("mag_var").toFloat()));
+        ndb.magvar = ndbsQuery->value("mag_var").toFloat();
         ndb.position = Pos(ndbsQuery->value("lonx").toFloat(), ndbsQuery->value("laty").toFloat());
 
         ndbCache.list.append(ndb);

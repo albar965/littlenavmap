@@ -54,6 +54,9 @@ extern const QColor highlightColorFast;
 extern const QColor highlightColor;
 extern const QColor highlightBackColor;
 
+extern const QColor rangeRingColor;
+extern const QColor rangeRingTextColor;
+
 extern const QColor vorSymbolColor;
 extern const QColor ndbSymbolColor;
 extern const QColor waypointSymbolColor;

@@ -53,7 +53,7 @@ public:
   NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~NavMapWidget();
 
-  void contextMenu(const QPoint& pos);
+  void contextMenu(const QPoint& point);
 
   void saveState();
   void restoreState();
@@ -82,6 +82,11 @@ public:
   const maptypes::MapSearchResult& getHighlightMapObjects() const
   {
     return highlightMapObjects;
+  }
+
+  const QList<maptypes::RangeRings>& getRangeRings() const
+  {
+    return rangeRings;
   }
 
   void preDatabaseLoad();
@@ -117,10 +122,7 @@ private:
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
-
-  maptypes::MapSearchResult rangeRingMapObjects;
-  QList<int> rangeRingMapObjectRanges;
-
+  QList<maptypes::RangeRings> rangeRings;
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;

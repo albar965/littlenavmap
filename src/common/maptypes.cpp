@@ -132,7 +132,7 @@ QString parkingRampName(const QString& ramp)
   return parkingMapRamp.value(ramp);
 }
 
-MapSearchResult::~MapSearchResult()
+void MapSearchResult::deleteAllObjects()
 {
   if(needsDelete)
   {
