@@ -331,6 +331,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   {
     qreal lon, lat;
     bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
+    atools::geo::Pos pos(lon, lat);
 
     if(act == ui->actionShowInSearch)
     {
@@ -362,33 +363,43 @@ void NavMapWidget::contextMenu(const QPoint& point)
     {
       if(visible)
       {
-        atools::geo::Pos center(lon, lat);
         if(selectedType == maptypes::VOR)
-          addNavRangeRing(center, selectedType, vor.ident, vor.frequency, vor.range);
+          addNavRangeRing(pos, selectedType, vor.ident, vor.frequency, vor.range);
         else if(selectedType == maptypes::NDB)
-          addNavRangeRing(center, selectedType, ndb.ident, ndb.frequency, ndb.range);
+          addNavRangeRing(pos, selectedType, ndb.ident, ndb.frequency, ndb.range);
         else if(selectedType == maptypes::ILS)
-          addNavRangeRing(center, selectedType, ils.ident, ils.frequency, ils.range);
+          addNavRangeRing(pos, selectedType, ils.ident, ils.frequency, ils.range);
       }
     }
     else if(act == ui->actionMapRangeRings)
     {
       if(visible)
-        addRangeRing(atools::geo::Pos(lon, lat));
+        addRangeRing(pos);
     }
     else if(act == ui->actionMapSetMark)
     {
       if(visible)
       {
-        markPos = atools::geo::Pos(lon, lat);
+        markPos = pos;
         qDebug() << "new mark" << markPos;
         update();
         emit markChanged(markPos);
       }
     }
     else if(act == ui->actionMapHideRangeRings)
+    {
       if(visible)
         clearRangeRings();
+    }
+    else if(act == ui->actionMapMeasureDistance)
+    {
+      mouseState = DISTANCE_DRAG;
+      maptypes::DistanceMarker dm;
+      dm.from = pos;
+      dm.to = pos;
+      dm.rhumbLine = false;
+      distanceMarkers.append(dm);
+    }
   }
 
   ui->actionShowInSearch->setText(actionShowInSearchText);
@@ -444,9 +455,41 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
+void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
+{
+  if(mouseState == DISTANCE_DRAG)
+  {
+    if(cursor().shape() != Qt::CrossCursor)
+      setCursor(Qt::CrossCursor);
+
+    qreal lon, lat;
+    bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+    if(visible)
+    {
+      atools::geo::Pos p(lon, lat);
+      distanceMarkers.last().to = p;
+    }
+    setViewContext(Marble::Animation);
+    update();
+  }
+  else if(event->buttons() == Qt::NoButton)
+    if(cursor().shape() != Qt::ArrowCursor)
+      setCursor(Qt::ArrowCursor);
+}
+
 void NavMapWidget::mousePressEvent(QMouseEvent *event)
 {
-  Q_UNUSED(event);
+  if(mouseState == DISTANCE_DRAG)
+  {
+    mouseState = NONE;
+    setCursor(Qt::ArrowCursor);
+
+    qreal lon, lat;
+    bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+    if(visible)
+      distanceMarkers.last().to = atools::geo::Pos(lon, lat);
+    update();
+  }
   qDebug() << "mousePressEvent";
 }
 
@@ -479,13 +522,6 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     showPos(res.ndbs.at(0)->position);
   else if(!res.waypoints.isEmpty())
     showPos(res.waypoints.at(0)->position);
-}
-
-void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
-{
-  if(event->buttons() == Qt::NoButton)
-    if(cursor().shape() != Qt::ArrowCursor)
-      setCursor(Qt::ArrowCursor);
 }
 
 bool NavMapWidget::event(QEvent *event)

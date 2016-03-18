@@ -236,6 +236,12 @@ struct RangeRings
   atools::geo::Pos position;
 };
 
+struct DistanceMarker
+{
+  atools::geo::Pos from, to;
+  bool rhumbLine;
+};
+
 QString navTypeName(const QString& type);
 QString navName(const QString& type);
 

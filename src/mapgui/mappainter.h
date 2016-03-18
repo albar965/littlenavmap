@@ -30,6 +30,11 @@ class Pos;
 }
 }
 
+namespace Marble {
+class GeoDataLineString;
+class GeoPainter;
+}
+
 class MapLayer;
 class MapQuery;
 class MapScale;
@@ -42,7 +47,8 @@ enum TextAttribute
   ITALIC = 0x02,
   UNDERLINE = 0x04,
   RIGHT = 0x08,
-  LEFT = 0x10
+  LEFT = 0x10,
+  CENTER = 0x20
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
@@ -61,9 +67,12 @@ public:
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);
-  void paintCircle(Marble::GeoPainter *painter, atools::geo::Pos pos, int radiusNm, bool fast, int& xtext, int& ytext);
+  void paintCircle(Marble::GeoPainter *painter, atools::geo::Pos pos, int radiusNm, bool fast,
+                   int& xtext, int& ytext);
   void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts, int transparency = 255);
+               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+  bool findTextPos(const Marble::GeoDataLineString& line, Marble::GeoPainter *painter,
+                   int w, int h, int& x, int& y);
 
   Marble::MarbleWidget *widget;
   MapQuery *query;

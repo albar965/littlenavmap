@@ -92,8 +92,12 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
   void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
                        int frequency, int range);
-
   void clearRangeRings();
+
+  const QList<maptypes::DistanceMarker>& getDistanceMarkers() const
+  {
+    return distanceMarkers;
+  }
 
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -121,6 +125,13 @@ signals:
                       const QString& airportIdent);
 
 private:
+  enum MouseState
+  {
+    NONE,
+    DISTANCE_DRAG
+  };
+
+  MouseState mouseState = NONE;
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
@@ -130,6 +141,7 @@ private:
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
   QList<maptypes::RangeRings> rangeRings;
+  QList<maptypes::DistanceMarker> distanceMarkers;
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;

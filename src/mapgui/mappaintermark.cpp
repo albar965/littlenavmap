@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 
 #include <algorithm>
+#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
@@ -47,12 +48,14 @@ void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, Viewpo
   Q_UNUSED(objectTypes);
 
   bool drawFast = widget->viewContext() == Marble::Animation;
+  setRenderHints(painter);
 
   painter->save();
   paintHighlights(mapLayer, painter, drawFast);
   paintMark(painter);
   paintHome(painter);
   paintRangeRings(mapLayer, painter, viewport, drawFast);
+  paintDistanceMarkers(mapLayer, painter);
   painter->restore();
 }
 
@@ -137,7 +140,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
   const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+  painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
   for(const maptypes::RangeRings& rings : rangeRings)
   {
@@ -174,7 +177,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
         painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap,
                              Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
-        painter->setPen(QPen(QBrush(color), 2, Qt::SolidLine, Qt::RoundCap,
+        painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap,
                              Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
 
@@ -196,12 +199,50 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
             xt -= painter->fontMetrics().width(txt) / 2;
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
-            painter->drawText(xt, yt, txt);
-            painter->setPen(QPen(QBrush(color), 2, Qt::SolidLine, Qt::RoundCap,
-                                 Qt::MiterJoin));
+            textBox(painter, {txt}, painter->pen(), xt, yt);
+            painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
       }
     }
+  }
+}
+
+void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *painter)
+{
+  Q_UNUSED(mapLayer);
+
+  QFontMetrics metrics = painter->fontMetrics();
+  painter->setBrush(QColor(Qt::white));
+  painter->setPen(QPen(QBrush(Qt::black), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+
+  const QList<maptypes::DistanceMarker>& distanceMarkers = navMapWidget->getDistanceMarkers();
+
+  for(const maptypes::DistanceMarker& m : distanceMarkers)
+  {
+    int dist = static_cast<int>(std::roundf(atools::geo::meterToNm(m.from.distanceMeterTo(m.to))));
+
+    GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
+    GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
+    GeoDataLineString line;
+    line.append(from);
+    line.append(to);
+    line.setTessellate(true);
+
+    painter->drawPolyline(line);
+
+    qreal initBearing = atools::geo::normalizeCourse(
+      from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::InitialBearing));
+    qreal finalBearing = atools::geo::normalizeCourse(
+      from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::FinalBearing));
+
+    QStringList texts;
+    texts.append(QString::number(initBearing, 'f', 0) + "° -> " +
+                 QString::number(finalBearing, 'f', 0) + "°");
+    texts.append(QString::number(dist) + " nm");
+
+    int xt = -1, yt = -1;
+    if(findTextPos(line, painter, metrics.width(texts.at(0)), metrics.height() * 2, xt, yt))
+      textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
   }
 }

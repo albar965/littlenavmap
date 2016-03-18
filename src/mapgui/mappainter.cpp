@@ -21,6 +21,7 @@
 #include "geo/pos.h"
 #include "geo/calculations.h"
 
+#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
@@ -87,7 +88,16 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
     for(const QString& t : texts)
     {
       int w = metrics.width(t);
-      painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
+      int newx = x - 2;
+      // if(atts.testFlag(textatt::LEFT))
+      // newx = x;
+      if(atts.testFlag(textatt::RIGHT))
+        newx -= w;
+      else if(atts.testFlag(textatt::CENTER))
+        newx -= w / 2;
+
+      // painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
+      painter->drawRect(newx, y - h + metrics.descent() + yoffset, w + 4, h);
       yoffset += h;
     }
   }
@@ -105,9 +115,14 @@ void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QP
   painter->setPen(textPen);
   for(const QString& t : texts)
   {
+    int w = metrics.width(t);
     int newx = x;
+    // if(atts.testFlag(textatt::LEFT))
+    // newx = x;
     if(atts.testFlag(textatt::RIGHT))
-      newx -= metrics.width(t);
+      newx -= w;
+    else if(atts.testFlag(textatt::CENTER))
+      newx -= w / 2;
 
     painter->drawText(newx, y + yoffset, t);
     yoffset += h;
@@ -176,4 +191,28 @@ void MapPainter::paintCircle(GeoPainter *painter, atools::geo::Pos pos, int radi
     xtext = -1;
     ytext = -1;
   }
+}
+
+bool MapPainter::findTextPos(const GeoDataLineString& line, GeoPainter *painter, int w, int h,
+                             int& x, int& y)
+{
+  GeoDataCoordinates center = line.first().interpolate(line.last(), 0.5);
+  bool visible = wToS(center, x, y);
+  if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+    return true;
+  else
+    // Check for 20 positions along the line starting below and above the center position
+    for(double i = 0.; i < 0.5; i += 0.05)
+    {
+      center = line.first().interpolate(line.last(), 0.5 - i);
+      visible = wToS(center, x, y);
+      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+        return true;
+
+      center = line.first().interpolate(line.last(), 0.5 + i);
+      visible = wToS(center, x, y);
+      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+        return true;
+    }
+  return false;
 }
