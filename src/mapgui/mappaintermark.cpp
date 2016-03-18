@@ -29,6 +29,7 @@
 #include <marble/ViewportParams.h>
 
 using namespace Marble;
+using namespace atools::geo;
 
 MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
@@ -55,7 +56,7 @@ void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, Viewpo
   paintMark(painter);
   paintHome(painter);
   paintRangeRings(mapLayer, painter, viewport, drawFast);
-  paintDistanceMarkers(mapLayer, painter);
+  paintDistanceMarkers(mapLayer, painter, drawFast);
   painter->restore();
 }
 
@@ -98,7 +99,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
   const MapSearchResult& highlightResults = navMapWidget->getHighlightMapObjects();
   int size = 6;
 
-  QList<atools::geo::Pos> positions;
+  QList<Pos> positions;
 
   for(const MapAirport *ap : highlightResults.airports)
     positions.append(ap->position);
@@ -115,7 +116,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
-  for(const atools::geo::Pos& pos : positions)
+  for(const Pos& pos : positions)
   {
   int x, y;
   if(wToS(pos, x, y))
@@ -152,7 +153,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
 
       int maxDiameter = *maxIter;
 
-      atools::geo::Rect rect(rings.position, atools::geo::nmToMeter(maxDiameter / 2 * 5 / 4));
+      Rect rect(rings.position, nmToMeter(maxDiameter / 2 * 5 / 4));
 
       QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
       if(rings.type == maptypes::VOR)
@@ -208,7 +209,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
   }
 }
 
-void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *painter)
+void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
 {
   Q_UNUSED(mapLayer);
 
@@ -220,29 +221,80 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
-    int dist = static_cast<int>(std::roundf(atools::geo::meterToNm(m.from.distanceMeterTo(m.to))));
+    if(!m.rhumbLine)
+    {
+      // Draw great circle route
+      float distanceMeter = m.from.distanceMeterTo(m.to);
 
-    GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
-    GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
-    GeoDataLineString line;
-    line.append(from);
-    line.append(to);
-    line.setTessellate(true);
+      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
+      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
 
-    painter->drawPolyline(line);
+      GeoDataLineString line;
+      line.append(from);
+      line.append(to);
+      line.setTessellate(true);
+      painter->drawPolyline(line);
 
-    qreal initBearing = atools::geo::normalizeCourse(
-      from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::InitialBearing));
-    qreal finalBearing = atools::geo::normalizeCourse(
-      from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::FinalBearing));
+      qreal initBearing = normalizeCourse(
+        from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::InitialBearing));
+      qreal finalBearing = normalizeCourse(
+        from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::FinalBearing));
 
-    QStringList texts;
-    texts.append(QString::number(initBearing, 'f', 0) + "° -> " +
-                 QString::number(finalBearing, 'f', 0) + "°");
-    texts.append(QString::number(dist) + " nm");
+      QStringList texts;
+      texts.append(QString::number(initBearing, 'f', 0) + "°T -> " +
+                   QString::number(finalBearing, 'f', 0) + "°T");
+      texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
-    int xt = -1, yt = -1;
-    if(findTextPos(line, painter, metrics.width(texts.at(0)), metrics.height() * 2, xt, yt))
-      textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+      int xt = -1, yt = -1;
+      if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)), metrics.height() * 2,
+                     xt, yt))
+        textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+    }
+    else
+    {
+      // Draw a rhumb line with constant course
+      float bearing = m.from.angleDegToRhumb(m.to);
+      float distanceMeter = m.from.distanceMeterToRhumb(m.to);
+
+      int pixel = scale->getPixelIntForMeter(distanceMeter);
+      int numPoints = std::min(std::max(pixel / (fast ? 2000 : 200), 16), 72);
+
+      bool hidden1;
+      int x2, y2, x1, y1;
+      bool visible1 = wToS(m.from, x1, y1, &hidden1);
+
+      for(float d = 0.f; d < distanceMeter; d += distanceMeter / numPoints)
+      {
+        Pos p = m.from.endpointRhumb(d, bearing);
+
+        bool hidden2;
+        bool visible2 = wToS(p, x2, y2, &hidden2);
+
+        if((visible1 || visible2) && !hidden1 && !hidden2)
+          painter->drawLine(x1, y1, x2, y2);
+
+        x1 = x2;
+        y1 = y2;
+        visible1 = visible2;
+        hidden1 = hidden2;
+      }
+      Pos p = m.from.endpointRhumb(distanceMeter, bearing);
+      bool hidden2;
+      bool visible2 = wToS(p, x2, y2, &hidden2);
+      if((visible1 || visible2) && !hidden1 && !hidden2)
+        painter->drawLine(x1, y1, x2, y2);
+
+      QStringList texts;
+      if(!m.text.isEmpty())
+        texts.append(m.text);
+      texts.append(QString::number(bearing, 'f', 0) + "°T");
+      texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
+
+      int xt = -1, yt = -1;
+      if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
+                          metrics.height() * 2, xt, yt))
+        textBox(painter, texts, painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
+
+    }
   }
 }

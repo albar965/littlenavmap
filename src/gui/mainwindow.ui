@@ -2196,7 +2196,10 @@
      <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
    </property>
    <property name="text">
-    <string>Measure Distance</string>
+    <string>Measure GC Distance from here</string>
+   </property>
+   <property name="toolTip">
+    <string>Measure Great Circle Distance</string>
    </property>
   </action>
   <action name="actionMapRangeRings">
@@ -2224,6 +2227,18 @@
    </property>
    <property name="text">
     <string>Hide Range Rings</string>
+   </property>
+  </action>
+  <action name="actionMapMeasureRhumbDistance">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</normaloff>:/littlenavmap/resources/icons/distancemeasurerhumb.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Measure Rhumb Distance from here</string>
+   </property>
+   <property name="toolTip">
+    <string>Measure Great Circle Distance</string>
    </property>
   </action>
  </widget>

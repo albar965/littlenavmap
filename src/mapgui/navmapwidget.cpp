@@ -256,6 +256,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
   menu.addAction(ui->actionMapSetMark);
   menu.addAction(ui->actionMapSetHome);
   menu.addAction(ui->actionMapMeasureDistance);
+  menu.addAction(ui->actionMapMeasureRhumbDistance);
+  menu.addSeparator();
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideRangeRings);
@@ -398,6 +400,36 @@ void NavMapWidget::contextMenu(const QPoint& point)
       dm.from = pos;
       dm.to = pos;
       dm.rhumbLine = false;
+      distanceMarkers.append(dm);
+    }
+    else if(act == ui->actionMapMeasureRhumbDistance)
+    {
+      mouseState = DISTANCE_DRAG;
+      maptypes::DistanceMarker dm;
+
+      if(selectedType == maptypes::VOR)
+      {
+        dm.from = vor.position;
+        dm.text = vor.ident + " " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2);
+        dm.magvar = vor.magvar;
+      }
+      else if(selectedType == maptypes::NDB)
+      {
+        dm.text = ndb.ident + " " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2);
+        dm.from = ndb.position;
+        dm.magvar = ndb.magvar;
+      }
+      else if(selectedType == maptypes::WAYPOINT)
+      {
+        dm.text = wp.ident;
+        dm.from = wp.position;
+//        dm.magvar = wp.magvar;
+      }
+      else
+        dm.from = pos;
+
+      dm.to = pos;
+      dm.rhumbLine = true;
       distanceMarkers.append(dm);
     }
   }

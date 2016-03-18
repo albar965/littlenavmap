@@ -43,7 +43,7 @@ private:
   void paintHighlights(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
   void paintRangeRings(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                        Marble::ViewportParams *viewport, bool fast);
-  void paintDistanceMarkers(const MapLayer *mapLayer, Marble::GeoPainter *painter);
+  void paintDistanceMarkers(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
 
 };
 

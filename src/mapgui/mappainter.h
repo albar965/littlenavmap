@@ -67,12 +67,15 @@ public:
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);
-  void paintCircle(Marble::GeoPainter *painter, atools::geo::Pos pos, int radiusNm, bool fast,
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos, int radiusNm, bool fast,
                    int& xtext, int& ytext);
   void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
-  bool findTextPos(const Marble::GeoDataLineString& line, Marble::GeoPainter *painter,
-                   int w, int h, int& x, int& y);
+
+  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
+                   float distance, int w, int h, int& x, int& y);
+  bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
+                        Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
 
   Marble::MarbleWidget *widget;
   MapQuery *query;
