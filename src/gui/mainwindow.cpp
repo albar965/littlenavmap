@@ -146,7 +146,6 @@ void MainWindow::createNavMap()
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
 
-
   ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, navMapWidget);
 
   QSet<QString> pluginEnable;
@@ -234,6 +233,8 @@ void MainWindow::connectAllSlots()
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
           navMapWidget, &NavMapWidget::showRect);
+  connect(searchController->getAirportSearch(), &AirportSearch::showPos,
+          navMapWidget, &NavMapWidget::showPos);
   connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
           navMapWidget, &NavMapWidget::changeMark);
 
@@ -274,6 +275,8 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowEmptyAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -349,7 +352,18 @@ void MainWindow::updateMapShowFeatures()
 {
   navMapWidget->setShowMapPois(ui->actionMapShowCities->isChecked());
 
-  navMapWidget->setShowMapFeatures(maptypes::AIRPORT, ui->actionMapShowAirports->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_HARD,
+                                   ui->actionMapShowAirports->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_SOFT,
+                                   ui->actionMapShowSoftAirports->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_EMPTY,
+                                   ui->actionMapShowEmptyAirports->isChecked());
+
+  navMapWidget->setShowMapFeatures(maptypes::AIRPORT,
+                                   ui->actionMapShowAirports->isChecked() ||
+                                   ui->actionMapShowSoftAirports->isChecked() ||
+                                   ui->actionMapShowEmptyAirports->isChecked());
+
   navMapWidget->setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
   navMapWidget->setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
   navMapWidget->setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
@@ -619,7 +633,8 @@ void MainWindow::readSettings()
   navMapWidget->restoreState();
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
-              ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+              ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+              ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
               ui->actionMapShowIls, ui->actionMapShowCities});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
@@ -638,8 +653,9 @@ void MainWindow::writeSettings()
   navMapWidget->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
-           ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-           ui->actionMapShowIls, ui->actionMapShowCities});
+           ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+           ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+           ui->actionMapShowCities});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 

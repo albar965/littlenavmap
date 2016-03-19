@@ -1607,6 +1607,8 @@
    <addaction name="actionMapLessDetails"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowAirports"/>
+   <addaction name="actionMapShowSoftAirports"/>
+   <addaction name="actionMapShowEmptyAirports"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
@@ -2239,6 +2241,36 @@
    </property>
    <property name="toolTip">
     <string>Measure Great Circle Distance</string>
+   </property>
+  </action>
+  <action name="actionMapShowSoftAirports">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportsoft.svg</normaloff>:/littlenavmap/resources/icons/airportsoft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>AP Soft</string>
+   </property>
+  </action>
+  <action name="actionMapShowEmptyAirports">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportempty.svg</normaloff>:/littlenavmap/resources/icons/airportempty.svg</iconset>
+   </property>
+   <property name="text">
+    <string>AP Empty</string>
    </property>
   </action>
  </widget>

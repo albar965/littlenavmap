@@ -251,17 +251,30 @@ void Search::doubleClick(const QModelIndex& index)
 
     if(hasBounding)
     {
-      qDebug() << "emit showRect";
-      emit showRect(atools::geo::Rect(controller->getRawData(index.row(), "left_lonx").toFloat(),
-                                      controller->getRawData(index.row(), "top_laty").toFloat(),
-                                      controller->getRawData(index.row(), "right_lonx").toFloat(),
-                                      controller->getRawData(index.row(), "bottom_laty").toFloat()));
+      float leftLon = controller->getRawData(index.row(), "left_lonx").toFloat();
+      float topLat = controller->getRawData(index.row(), "top_laty").toFloat();
+      float rightLon = controller->getRawData(index.row(), "right_lonx").toFloat();
+      float bottomLat = controller->getRawData(index.row(), "bottom_laty").toFloat();
+
+      if(leftLon == rightLon && topLat == bottomLat)
+      {
+        atools::geo::Pos p(leftLon, topLat);
+        qDebug() << "emit showPos" << p;
+        emit showPos(p, 2700);
+      }
+      else
+      {
+        atools::geo::Rect r(leftLon, topLat, rightLon, bottomLat);
+        qDebug() << "emit showRect" << r;
+        emit showRect(r);
+      }
     }
     else
     {
-      qDebug() << "emit showPos";
-      emit showPos(atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
-                                    controller->getRawData(index.row(), "laty").toFloat()), 2700);
+      atools::geo::Pos p(controller->getRawData(index.row(), "lonx").toFloat(),
+                         controller->getRawData(index.row(), "laty").toFloat());
+      qDebug() << "emit showPos" << p;
+      emit showPos(p, 2700);
     }
   }
 }

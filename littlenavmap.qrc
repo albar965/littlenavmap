@@ -53,5 +53,7 @@
         <file>resources/icons/distancemeasure.svg</file>
         <file>resources/icons/rangeringsoff.svg</file>
         <file>resources/icons/distancemeasurerhumb.svg</file>
+        <file>resources/icons/airportsoft.svg</file>
+        <file>resources/icons/airportempty.svg</file>
     </qresource>
 </RCC>

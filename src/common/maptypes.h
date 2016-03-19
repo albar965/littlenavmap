@@ -29,15 +29,18 @@ namespace maptypes {
 
 enum MapObjectType
 {
-  NONE = 0x00,
-  AIRPORT = 0x01,
-  VOR = 0x02,
-  NDB = 0x04,
-  ILS = 0x08,
-  MARKER = 0x10,
-  WAYPOINT = 0x20,
+  NONE = 0x0000,
+  AIRPORT = 0x0001,
+  AIRPORT_HARD = 0x0002,
+  AIRPORT_SOFT = 0x0004,
+  AIRPORT_EMPTY = 0x0008,
+  VOR = 0x0010,
+  NDB = 0x0020,
+  ILS = 0x0040,
+  MARKER = 0x0080,
+  WAYPOINT = 0x0100,
   ALL_NAV = VOR | NDB | WAYPOINT,
-  ALL = 0xff
+  ALL = 0xffff
 };
 
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
@@ -108,6 +111,11 @@ struct MapAirport
   {
     return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
            !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPORT);
+  }
+
+  bool noRunways() const
+  {
+    return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
   }
 
 };

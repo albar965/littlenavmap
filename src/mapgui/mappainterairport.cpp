@@ -77,6 +77,17 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
   for(const MapAirport& airport : *airports)
   {
+    if(!airport.flags.testFlag(maptypes::AP_SCENERY) &&
+       !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+      continue;
+
+    if(airport.hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
+      continue;
+
+    if((airport.softOnly() || airport.noRunways()) &&
+       !airport.waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+      continue;
+
     int x, y;
     bool visible = wToS(airport.position, x, y);
 

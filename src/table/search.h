@@ -105,8 +105,8 @@ protected:
   void reconnectSelectionModel();
 
 signals:
-  void showPos(const atools::geo::Pos& pos, int zoom);
   void showRect(const atools::geo::Rect& rect);
+  void showPos(const atools::geo::Pos& pos, int zoom);
   void changeMark(const atools::geo::Pos& pos);
   void selectionChanged(const Search *source, int selected, int visible, int total);
 
