@@ -215,12 +215,13 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
 
   QFontMetrics metrics = painter->fontMetrics();
   painter->setBrush(QColor(Qt::white));
-  painter->setPen(QPen(QBrush(Qt::black), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = navMapWidget->getDistanceMarkers();
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
+    painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+
     if(!m.rhumbLine)
     {
       // Draw great circle route
@@ -241,6 +242,8 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
         from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::FinalBearing));
 
       QStringList texts;
+      if(!m.text.isEmpty())
+        texts.append(m.text);
       texts.append(QString::number(initBearing, 'f', 0) + "°T -> " +
                    QString::number(finalBearing, 'f', 0) + "°T");
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
@@ -254,47 +257,44 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
     {
       // Draw a rhumb line with constant course
       float bearing = m.from.angleDegToRhumb(m.to);
+      float magBearing = m.hasMagvar ? bearing + m.magvar : bearing;
+
       float distanceMeter = m.from.distanceMeterToRhumb(m.to);
 
+      // Approximate the needed number of line segments
       int pixel = scale->getPixelIntForMeter(distanceMeter);
       int numPoints = std::min(std::max(pixel / (fast ? 2000 : 200), 16), 72);
 
-      bool hidden1;
-      int x2, y2, x1, y1;
-      bool visible1 = wToS(m.from, x1, y1, &hidden1);
+      Pos p1 = m.from, p2;
 
       for(float d = 0.f; d < distanceMeter; d += distanceMeter / numPoints)
       {
-        Pos p = m.from.endpointRhumb(d, bearing);
-
-        bool hidden2;
-        bool visible2 = wToS(p, x2, y2, &hidden2);
-
-        if((visible1 || visible2) && !hidden1 && !hidden2)
-          painter->drawLine(x1, y1, x2, y2);
-
-        x1 = x2;
-        y1 = y2;
-        visible1 = visible2;
-        hidden1 = hidden2;
+        p2 = m.from.endpointRhumb(d, bearing);
+        GeoDataLineString line;
+        line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
+        line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+        line.setTessellate(true);
+        painter->drawPolyline(line);
+        p1 = p2;
       }
-      Pos p = m.from.endpointRhumb(distanceMeter, bearing);
-      bool hidden2;
-      bool visible2 = wToS(p, x2, y2, &hidden2);
-      if((visible1 || visible2) && !hidden1 && !hidden2)
-        painter->drawLine(x1, y1, x2, y2);
+
+      p2 = m.from.endpointRhumb(distanceMeter, bearing);
+      GeoDataLineString line;
+      line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
+      line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+      line.setTessellate(true);
+      painter->drawPolyline(line);
 
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QString::number(bearing, 'f', 0) + "°T");
+      texts.append(QString::number(magBearing, 'f', 0) + (m.hasMagvar ? "°M" : "°T"));
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
       int xt = -1, yt = -1;
       if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
                           metrics.height() * 2, xt, yt))
         textBox(painter, texts, painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
-
     }
   }
 }

@@ -142,7 +142,7 @@ private:
 
   QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
 
-  static void inflateRect(Marble::GeoDataLatLonBox& rect, double degree);
+  static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
 
   bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
 
@@ -160,6 +160,8 @@ bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& re
 
   Marble::GeoDataLatLonBox cur(curRect);
   MapQuery::inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) *
+                        MapQuery::RECT_INFLATION_FACTOR + MapQuery::RECT_INFLATION_ADD,
+                        cur.height(Marble::GeoDataCoordinates::Degree) *
                         MapQuery::RECT_INFLATION_FACTOR + MapQuery::RECT_INFLATION_ADD);
 
   if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||

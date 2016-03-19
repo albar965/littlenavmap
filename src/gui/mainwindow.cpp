@@ -146,10 +146,6 @@ void MainWindow::createNavMap()
   // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
 
-  MarbleWidgetInputHandler *inputHandler = navMapWidget->inputHandler();
-  inputHandler->setMouseButtonPopupEnabled(Qt::RightButton, false);
-  inputHandler->setMouseButtonPopupEnabled(Qt::LeftButton, false);
-  navMapWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
   ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, navMapWidget);
 

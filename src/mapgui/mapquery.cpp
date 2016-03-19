@@ -188,6 +188,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
         wp.ident = waypointsQuery->value("ident").toString();
         wp.region = waypointsQuery->value("region").toString();
         wp.type = waypointsQuery->value("type").toString();
+        wp.magvar = waypointsQuery->value("mag_var").toFloat();
         wp.position = Pos(waypointsQuery->value("lonx").toFloat(), waypointsQuery->value("laty").toFloat());
 
         waypointCache.list.append(wp);
@@ -252,7 +253,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
 
         ndb.id = ndbsQuery->value("ndb_id").toInt();
         ndb.ident = ndbsQuery->value("ident").toString();
-        ndb.region= ndbsQuery->value("region").toString();
+        ndb.region = ndbsQuery->value("region").toString();
         ndb.name = ndbsQuery->value("name").toString();
         ndb.type = ndbsQuery->value("type").toString();
         ndb.frequency = ndbsQuery->value("frequency").toInt();
@@ -665,7 +666,9 @@ void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::
 QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect)
 {
   GeoDataLatLonBox newRect = rect;
-  inflateRect(newRect, newRect.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
+  inflateRect(newRect,
+              newRect.width(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD,
+              newRect.height(GeoDataCoordinates::Degree) * RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
 
   if(newRect.crossesDateLine())
   {
@@ -687,12 +690,12 @@ QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoD
     return QList<GeoDataLatLonBox>({newRect});
 }
 
-void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double degree)
+void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height)
 {
-  rect.setWest(rect.west(GeoDataCoordinates::Degree) - degree, GeoDataCoordinates::Degree);
-  rect.setEast(rect.east(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
-  rect.setSouth(rect.south(GeoDataCoordinates::Degree) - degree, GeoDataCoordinates::Degree);
-  rect.setNorth(rect.north(GeoDataCoordinates::Degree) + degree, GeoDataCoordinates::Degree);
+  rect.setNorth(std::min(rect.north(GeoDataCoordinates::Degree) + height, 89.), GeoDataCoordinates::Degree);
+  rect.setSouth(std::max(rect.south(GeoDataCoordinates::Degree) - height, -89.), GeoDataCoordinates::Degree);
+  rect.setWest(std::max(rect.west(GeoDataCoordinates::Degree) - width, -179.), GeoDataCoordinates::Degree);
+  rect.setEast(std::min(rect.east(GeoDataCoordinates::Degree) + width, 179.), GeoDataCoordinates::Degree);
 }
 
 maptypes::MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)

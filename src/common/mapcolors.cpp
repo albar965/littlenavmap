@@ -62,6 +62,9 @@ const QColor highlightColorFast = QColor(Qt::darkYellow);
 const QColor rangeRingColor = QColor(Qt::red);
 const QColor rangeRingTextColor = QColor(Qt::black);
 
+const QColor distanceColor = QColor(Qt::black);
+const QColor distanceRhumbColor = QColor::fromRgb(80, 80, 80);
+
 const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);

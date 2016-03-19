@@ -22,6 +22,7 @@
 #include "geo/rect.h"
 #include "geo/linestring.h"
 
+#include <QColor>
 #include <QString>
 
 namespace maptypes {
@@ -167,6 +168,7 @@ struct MapHelipad
 struct MapWaypoint
 {
   int id;
+  float magvar;
   QString ident, region, type, apIdent;
   atools::geo::Pos position;
 };
@@ -239,8 +241,9 @@ struct RangeRings
 struct DistanceMarker
 {
   QString text;
+  QColor color;
   atools::geo::Pos from, to;
-  bool rhumbLine;
+  bool rhumbLine, hasMagvar;
   float magvar;
   maptypes::MapObjectTypes type;
 };

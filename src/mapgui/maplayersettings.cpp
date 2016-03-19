@@ -40,16 +40,24 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
   using namespace std::placeholders;
 
   // 5 - less 15 more 10 default
-  float newDistance = distance * std::pow((10.f / detailFactor), 6.f);
+  // float newDistance = distance * std::pow((10.f / detailFactor), 6.f);
 
   QList<MapLayer>::const_iterator it =
-    std::lower_bound(layers.begin(), layers.end(), newDistance,
+    std::lower_bound(layers.begin(), layers.end(), distance,
                      std::bind(&MapLayerSettings::compare, this, _1, _2));
 
-  if(it != layers.end())
-    return &(*it);
-  else
+  if(detailFactor > 10)
+    it -= detailFactor - 10;
+  else if(detailFactor < 10)
+    it += 10 - detailFactor;
+
+  if(it >= layers.end())
     return nullptr;
+
+  if(it < layers.begin())
+    return &(*(layers.begin()));
+
+  return &(*it);
 }
 
 bool MapLayerSettings::compare(const MapLayer& ml, float distance) const
