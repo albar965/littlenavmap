@@ -517,8 +517,8 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
 {
   if(e->type() == QEvent::MouseButtonDblClick)
   {
-    e->accept();
     qDebug() << "eventFilter mouseDoubleClickEvent";
+    e->accept();
     event(e);
     return true;
   }
@@ -542,6 +542,7 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
         distanceMarkers.last().to = p;
     }
     setViewContext(Marble::Animation);
+    event->accept();
     update();
   }
   else if(event->buttons() == Qt::NoButton)
@@ -551,6 +552,7 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
 
 void NavMapWidget::mousePressEvent(QMouseEvent *event)
 {
+    qDebug() << "mousePressEvent";
   if(mouseState == DISTANCE_DRAG && !distanceMarkers.isEmpty())
   {
     setCursor(Qt::ArrowCursor);
@@ -564,9 +566,10 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
     else if(event->button() == Qt::RightButton)
       distanceMarkers.removeLast();
 
-    update();
+    event->accept();
   }
-  qDebug() << "mousePressEvent";
+  if(mouseState != DISTANCE_DRAG)
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -576,8 +579,9 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
 
   if(mouseState == DISTANCE_DRAG)
   {
+    setViewContext(Marble::Still);
     mouseState = NONE;
-    setContextMenuPolicy(Qt::CustomContextMenu);
+    event->accept();
     update();
   }
 }
@@ -735,11 +739,14 @@ bool NavMapWidget::event(QEvent *event)
   }
 
   if(!text.isEmpty())
-    QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
+  {
+      QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
+      event->accept();
+  }
   else
   {
     QToolTip::hideText();
-    event->ignore();
+    event->accept();
   }
 
   return true;
