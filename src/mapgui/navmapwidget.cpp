@@ -616,7 +616,7 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     event->accept();
     update();
   }
-  else if(mouseState == NONE)
+  else if(mouseState == NONE && event->button() == Qt::LeftButton)
   {
     currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10);
     if(currentDistanceMarkerIndex != -1)
