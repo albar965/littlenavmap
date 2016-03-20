@@ -211,7 +211,7 @@ bool MapAirport::noRunways() const
 
 bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
 {
-  if(!scenery() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+  if(!scenery() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
     return false;
 
   if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))

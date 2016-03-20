@@ -184,7 +184,8 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       points.append(wToS(pos, &visible));
 
     QColor col = mapcolors::colorForSurface(apron.surface);
-    painter->setBrush(QBrush(col, Qt::Dense2Pattern));
+    col = col.darker(110);
+    painter->setBrush(QBrush(col));
     painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
     painter->QPainter::drawPolygon(points.data(), points.size());
   }
@@ -336,7 +337,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       painter->setBrush(mapcolors::colorForParkingType(parking.type));
       painter->drawEllipse(pt, w, h);
 
-      if(parking.jetway && !parking.type.startsWith("FUEL"))
+      if(parking.jetway)
         painter->drawEllipse(pt, w * 3 / 4, h * 3 / 4);
 
       painter->translate(pt);
@@ -499,6 +500,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
     QPoint prim = wToS(runway.primary, &primaryVisible);
     QPoint sec = wToS(runway.secondary, &secondaryVisible);
 
+    // TODO why is primary and secondary reversed
     if(primaryVisible)
     {
       painter->translate(prim);
@@ -519,9 +521,9 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
     if(secondaryVisible)
     {
       painter->translate(sec);
-      painter->rotate(runway.heading - 180);
+      painter->rotate(runway.heading);
       painter->drawText(-painter->fontMetrics().width(runway.primName) / 2,
-                        -painter->fontMetrics().descent() - 2, runway.primName);
+                        painter->fontMetrics().ascent(), runway.primName);
 
       if(runway.primClosed)
       {
