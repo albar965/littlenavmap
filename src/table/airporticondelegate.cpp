@@ -61,9 +61,9 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   maptypes::MapAirport ap = mapAirport(sqlModel, idx.row());
 
   QFont font(painter->font());
-  if(ap.flags.testFlag(maptypes::AP_SCENERY))
+  if(ap.scenery())
     font.setBold(true);
-  if(ap.flags.testFlag(maptypes::AP_ADDON))
+  if(ap.addon())
     font.setItalic(true);
   painter->setFont(font);
 

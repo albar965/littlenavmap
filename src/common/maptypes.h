@@ -34,6 +34,7 @@ enum MapObjectType
   AIRPORT_HARD = 0x0002,
   AIRPORT_SOFT = 0x0004,
   AIRPORT_EMPTY = 0x0008,
+  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY,
   VOR = 0x0010,
   NDB = 0x0020,
   ILS = 0x0040,
@@ -82,41 +83,18 @@ struct MapAirport
   atools::geo::Pos position, towerCoords;
   atools::geo::Rect bounding;
 
-  bool hard() const
-  {
-    return flags.testFlag(AP_HARD);
-  }
+  bool hard() const;
+  bool soft() const;
+  bool softOnly() const;
+  bool water() const;
+  bool waterOnly() const;
+  bool isHeliport() const;
+  bool noRunways() const;
+  bool scenery() const;
+  bool tower() const;
+  bool addon() const;
 
-  bool soft() const
-  {
-    return flags.testFlag(AP_SOFT);
-  }
-
-  bool softOnly() const
-  {
-    return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
-  }
-
-  bool water() const
-  {
-    return flags.testFlag(AP_WATER);
-  }
-
-  bool waterOnly() const
-  {
-    return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && flags.testFlag(AP_WATER);
-  }
-
-  bool isHeliport() const
-  {
-    return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
-           !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPORT);
-  }
-
-  bool noRunways() const
-  {
-    return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
-  }
+  bool isVisible(maptypes::MapObjectTypes objectTypes) const;
 
 };
 
@@ -238,7 +216,7 @@ struct MapSearchResult
 
 };
 
-struct RangeRings
+struct RangeMarker
 {
   QString text;
   MapObjectTypes type;
@@ -250,7 +228,7 @@ struct DistanceMarker
 {
   QString text;
   QColor color;
-  atools::geo::Pos from, to;
+  atools::geo::Pos from, position;
   bool rhumbLine, hasMagvar;
   float magvar;
   maptypes::MapObjectTypes type;

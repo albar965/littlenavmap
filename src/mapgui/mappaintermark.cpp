@@ -137,13 +137,13 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
 {
   Q_UNUSED(mapLayer);
   Q_UNUSED(fast);
-  const QList<maptypes::RangeRings>& rangeRings = navMapWidget->getRangeRings();
+  const QList<maptypes::RangeMarker>& rangeRings = navMapWidget->getRangeRings();
   const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
-  for(const maptypes::RangeRings& rings : rangeRings)
+  for(const maptypes::RangeMarker& rings : rangeRings)
   {
     auto maxIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
     if(maxIter != rings.ranges.end())
@@ -222,13 +222,24 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
   {
     painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
+    const int SYMBOL_SIZE = 4;
+    int x, y;
+    if(wToS(m.from, x, y))
+      painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
+
+    if(wToS(m.position, x, y))
+    {
+      painter->drawLine(x - SYMBOL_SIZE, y, x + SYMBOL_SIZE, y);
+      painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
+    }
+
     if(!m.rhumbLine)
     {
       // Draw great circle route
-      float distanceMeter = m.from.distanceMeterTo(m.to);
+      float distanceMeter = m.from.distanceMeterTo(m.position);
 
       GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
-      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
+      GeoDataCoordinates to(m.position.getLonX(), m.position.getLatY(), 0, GeoDataCoordinates::Degree);
 
       GeoDataLineString line;
       line.append(from);
@@ -249,21 +260,22 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
       int xt = -1, yt = -1;
-      if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)), metrics.height() * 2,
+      if(findTextPos(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
+                     metrics.height() * 2,
                      xt, yt))
         textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
     }
     else
     {
       // Draw a rhumb line with constant course
-      float bearing = m.from.angleDegToRhumb(m.to);
+      float bearing = m.from.angleDegToRhumb(m.position);
       float magBearing = m.hasMagvar ? bearing + m.magvar : bearing;
 
-      float distanceMeter = m.from.distanceMeterToRhumb(m.to);
+      float distanceMeter = m.from.distanceMeterToRhumb(m.position);
 
       // Approximate the needed number of line segments
       int pixel = scale->getPixelIntForMeter(distanceMeter);
-      int numPoints = std::min(std::max(pixel / (fast ? 2000 : 200), 16), 72);
+      int numPoints = std::min(std::max(pixel / (fast ? 200 : 20), 4), 72);
 
       Pos p1 = m.from, p2;
 
@@ -273,7 +285,6 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
         GeoDataLineString line;
         line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
         line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
-        line.setTessellate(true);
         painter->drawPolyline(line);
         p1 = p2;
       }
@@ -282,7 +293,6 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       GeoDataLineString line;
       line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
       line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
-      line.setTessellate(true);
       painter->drawPolyline(line);
 
       QStringList texts;
@@ -292,7 +302,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
       int xt = -1, yt = -1;
-      if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
+      if(findTextPosRhumb(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
                           metrics.height() * 2, xt, yt))
         textBox(painter, texts, painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
     }

@@ -158,4 +158,69 @@ void MapSearchResult::deleteAllObjects()
   }
 }
 
+bool MapAirport::hard() const
+{
+  return flags.testFlag(AP_HARD);
+}
+
+bool MapAirport::scenery() const
+{
+  return flags.testFlag(AP_SCENERY);
+}
+
+bool MapAirport::tower() const
+{
+  return flags.testFlag(AP_TOWER);
+}
+
+bool MapAirport::addon() const
+{
+  return flags.testFlag(AP_ADDON);
+}
+
+bool MapAirport::soft() const
+{
+  return flags.testFlag(AP_SOFT);
+}
+
+bool MapAirport::softOnly() const
+{
+  return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
+}
+
+bool MapAirport::water() const
+{
+  return flags.testFlag(AP_WATER);
+}
+
+bool MapAirport::waterOnly() const
+{
+  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && flags.testFlag(AP_WATER);
+}
+
+bool MapAirport::isHeliport() const
+{
+  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
+         !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPORT);
+}
+
+bool MapAirport::noRunways() const
+{
+  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
+}
+
+bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
+{
+  if(!scenery() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+    return false;
+
+  if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
+    return false;
+
+  if((softOnly() || noRunways()) && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+    return false;
+
+  return true;
+}
+
 } // namespace types

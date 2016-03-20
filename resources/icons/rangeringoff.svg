@@ -14,7 +14,7 @@
    height="300"
    id="svg2"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="rangeringsoff.svg">
+   sodipodi:docname="rangeringoff.svg">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -94,13 +94,8 @@
        ry="61.784077" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 259.72375,22.110868 39.994741,254.88635"
+       d="M 259.72375,254.88635 39.994741,22.110868"
        id="path8078"
-       inkscape:connector-curvature="0" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:30;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 257.01188,251.24228 37.282877,18.466801"
-       id="path8078-7"
        inkscape:connector-curvature="0" />
   </g>
 </svg>

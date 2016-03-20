@@ -77,15 +77,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
   for(const MapAirport& airport : *airports)
   {
-    if(!airport.flags.testFlag(maptypes::AP_SCENERY) &&
-       !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
-      continue;
-
-    if(airport.hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
-      continue;
-
-    if((airport.softOnly() || airport.noRunways()) &&
-       !airport.waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+    if(!airport.isVisible(objectTypes))
       continue;
 
     int x, y;
@@ -118,7 +110,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
           atts |= textatt::BOLD | textatt::ITALIC | textatt::UNDERLINE;
 
         int transparency = mapLayer->isAirportDiagram() ? 180 : 255;
-        if(!airport.flags.testFlag(AP_SCENERY))
+        if(!airport.scenery())
           transparency = 0;
         textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
       }

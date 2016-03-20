@@ -84,9 +84,9 @@ public:
     return highlightMapObjects;
   }
 
-  const QList<maptypes::RangeRings>& getRangeRings() const
+  const QList<maptypes::RangeMarker>& getRangeRings() const
   {
-    return rangeRings;
+    return rangeMarkers;
   }
 
   void addRangeRing(const atools::geo::Pos& pos);
@@ -128,7 +128,8 @@ private:
   enum MouseState
   {
     NONE,
-    DISTANCE_DRAG
+    DISTANCE_DRAG,
+    DISTANCE_DRAG_CHANGE
   };
 
   MouseState mouseState = NONE;
@@ -140,8 +141,10 @@ private:
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
-  QList<maptypes::RangeRings> rangeRings;
+  QList<maptypes::RangeMarker> rangeMarkers;
   QList<maptypes::DistanceMarker> distanceMarkers;
+  int currentDistanceMarkerIndex = -1;
+  maptypes::DistanceMarker distanceMarkerBackup;
   MapPosHistory history;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
@@ -157,6 +160,9 @@ private:
 
   void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
                                      maptypes::MapSearchResult& mapobjects);
+
+  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
+  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
 
 };
 

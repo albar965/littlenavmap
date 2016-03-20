@@ -2228,7 +2228,7 @@
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Hide All Range Rings and Distances</string>
+    <string>Hide All Range Rings and Distance Markers</string>
    </property>
   </action>
   <action name="actionMapMeasureRhumbDistance">
@@ -2271,6 +2271,27 @@
    </property>
    <property name="text">
     <string>AP Empty</string>
+   </property>
+  </action>
+  <action name="actionMapHideOneRangeRing">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hide Range Ring</string>
+   </property>
+  </action>
+  <action name="actionMapHideDistanceMarker">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hide Distance Line</string>
+   </property>
+   <property name="toolTip">
+    <string>Measure Great Circle Distance</string>
    </property>
   </action>
  </widget>

@@ -65,13 +65,16 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     {
     const MapAirport& airport = airportCache.list.at(i);
 
-    if(conv.wToS(airport.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, result.airports, xs, ys, &airport);
+    if(airport.isVisible(types))
+    {
+      if(conv.wToS(airport.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.airports, xs, ys, &airport);
 
-    if(conv.wToS(airport.towerCoords, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
+      if(conv.wToS(airport.towerCoords, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
+    }
     }
 
   if(mapLayer->isVor() && types.testFlag(maptypes::VOR))

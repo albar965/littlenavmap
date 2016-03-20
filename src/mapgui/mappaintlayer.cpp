@@ -147,17 +147,17 @@ void MapPaintLayer::initLayers()
          ndbSymbolSize(20).ndbIdent().ndbInfo().
          marker(false)).
 
-  append(defLayer.clone(100.f).airportSymbolSize(14).
+  append(defLayer.clone(100.f).airportSymbolSize(12).
          airportOverviewRunway(false).waypoint(false).
          vorSymbolSize(16).vorIdent().
-         ndbSymbolSize(14).ndbIdent().
+         ndbSymbolSize(16).ndbIdent().
          marker(false)).
 
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
          waypoint(false).
-         vorSymbolSize(10).
-         ndbSymbolSize(10).
+         vorSymbolSize(12).
+         ndbSymbolSize(12).
          marker(false).ils(false)).
 
   append(defLayer.clone(200.f).airportSymbolSize(10).
