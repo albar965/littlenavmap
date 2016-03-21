@@ -85,10 +85,9 @@ const QColor& colorForAirport(const maptypes::MapAirport& ap)
     return unToweredAirportColor;
 }
 
-const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state)
+const QColor& alternatingRowColor(int row, bool isSort)
 {
   /* Alternating colors */
-  static QColor rowBgColorHighlight = QApplication::palette().color(QPalette::Active, QPalette::Highlight);
   static QColor rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   static QColor rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
 
@@ -96,15 +95,10 @@ const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state)
   static QColor rowSortBgColor = rowBgColor.darker(106);
   static QColor rowSortAltBgColor = rowAltBgColor.darker(106);
 
-  if(state.testFlag(QStyle::State_Selected) && state.testFlag(QStyle::State_Active))
-    return rowBgColorHighlight;
+  if((row % 2) == 0)
+    return isSort ? rowSortBgColor : rowBgColor;
   else
-  {
-    if((row % 2) == 0)
-      return isSort ? rowSortBgColor : rowBgColor;
-    else
-      return isSort ? rowSortAltBgColor : rowAltBgColor;
-  }
+    return isSort ? rowSortAltBgColor : rowAltBgColor;
 }
 
 const QColor& colorForParkingType(const QString& type)

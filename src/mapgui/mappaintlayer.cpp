@@ -22,6 +22,7 @@
 #include "mappainterils.h"
 #include "mappaintermark.h"
 #include "mappainternav.h"
+#include "mappainterroute.h"
 #include "mapquery.h"
 #include "mapscale.h"
 #include "geo/calculations.h"
@@ -60,6 +61,8 @@ MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   mapPainterIls = new MapPainterIls(navMapWidget, mapQuery, mapScale, false);
   mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale, false);
   mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale, false);
+  mapPainterRoute = new MapPainterRoute(navMapWidget, mapQuery, mapScale,
+                                        navMapWidget->getRouteController(), false);
 
   objectTypes = maptypes::MapObjectTypes(
     maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
@@ -72,6 +75,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterNav;
   delete mapPainterAirport;
   delete mapPainterMark;
+  delete mapPainterRoute;
 
   delete layers;
   delete mapScale;
@@ -217,6 +221,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
       }
     }
+    mapPainterRoute->paint(mapLayer, painter, viewport, objectTypes);
     mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
   }
 

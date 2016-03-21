@@ -33,8 +33,10 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpenRoute"/>
-    <addaction name="actionSaveRoute"/>
+    <addaction name="actionRouteNew"/>
+    <addaction name="actionRouteOpen"/>
+    <addaction name="actionRouteSave"/>
+    <addaction name="actionRouteSaveAs"/>
     <addaction name="separator"/>
     <addaction name="actionReloadScenery"/>
     <addaction name="separator"/>
@@ -75,8 +77,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionOpenRoute"/>
-   <addaction name="actionSaveRoute"/>
+   <addaction name="actionRouteNew"/>
+   <addaction name="actionRouteOpen"/>
+   <addaction name="actionRouteSave"/>
    <addaction name="separator"/>
    <addaction name="actionReloadScenery"/>
   </widget>
@@ -922,6 +925,13 @@
              </attribute>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="labelAirportSearchStatus">
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -932,513 +942,527 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutNavNameSearch">
-           <property name="topMargin">
+          <layout class="QVBoxLayout" name="verticalLayoutNavSearch">
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
-            <widget class="QLineEdit" name="lineEditNavIcaoSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayoutNavNameSearch">
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="sizeIncrement">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavIcaoSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="sizeIncrement">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maxLength">
+                <number>6</number>
+               </property>
+               <property name="placeholderText">
+                <string>Ident</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavNameSearch">
+               <property name="placeholderText">
+                <string>Name</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavRegionSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maxLength">
+                <number>5</number>
+               </property>
+               <property name="placeholderText">
+                <string>Region</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavAirportIcaoSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maxLength">
+                <number>8</number>
+               </property>
+               <property name="placeholderText">
+                <string>Airport ICAO Code</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButtonNavSearch">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>10</width>
+                 <height>16</height>
+                </size>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::InstantPopup</enum>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonFollowStyle</enum>
+               </property>
+               <property name="arrowType">
+                <enum>Qt::NoArrow</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="lineNavDistSearch">
+             <property name="lineWidth">
+              <number>4</number>
              </property>
-             <property name="maxLength">
-              <number>6</number>
+             <property name="midLineWidth">
+              <number>2</number>
              </property>
-             <property name="placeholderText">
-              <string>Ident</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEditNavNameSearch">
-             <property name="placeholderText">
-              <string>Name</string>
+            <layout class="QHBoxLayout" name="horizontalLayoutNavExtSearch">
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
+             <item>
+              <widget class="QLabel" name="labelNavMaxRangeSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Min Range:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxNavMaxRangeSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="suffix">
+                <string> nm</string>
+               </property>
+               <property name="minimum">
+                <number>0</number>
+               </property>
+               <property name="maximum">
+                <number>200</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+               <property name="value">
+                <number>0</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxNavTypeSearch">
+               <item>
+                <property name="text">
+                 <string>All Types</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>VOR - High</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>VOR - Low</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>VOR - Terminal</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>NDB - HH</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>NDB - H</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>NDB - MH</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>NDB - Compass Point</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Waypoint - Named</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Waypoint - Unnamed</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Waypoint - VOR</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Waypoint - NDB</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxNavNavAidSearch">
+               <item>
+                <property name="text">
+                 <string>All Nav Aids</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>All VOR</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>All VOR and NDB</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only VOR-DME</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only VOR</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Only DME</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>All NDB</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>All Waypoints</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="Line" name="lineNavScenerySearch">
+             <property name="lineWidth">
+              <number>4</number>
+             </property>
+             <property name="midLineWidth">
+              <number>2</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEditNavRegionSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="maxLength">
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QCheckBox" name="checkBoxNavDistSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Distance</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelNavDistMinSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Min:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxNavDistMinSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
+               <property name="suffix">
+                <string> nm</string>
+               </property>
+               <property name="maximum">
+                <number>5000</number>
+               </property>
+               <property name="singleStep">
+                <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelNavDistMaxSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Max:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxNavDistMaxSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
+               <property name="suffix">
+                <string> nm</string>
+               </property>
+               <property name="minimum">
+                <number>100</number>
+               </property>
+               <property name="maximum">
+                <number>5000</number>
+               </property>
+               <property name="singleStep">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoxNavDistDirectionSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Any Direction</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>North</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>East</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>South</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>West</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButtonNavDistSearch">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Update</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavScenerySearch">
+               <property name="placeholderText">
+                <string>Scenery Path</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditNavFileSearch">
+               <property name="placeholderText">
+                <string>Filename</string>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTableView" name="tableViewNavSearch">
+             <property name="font">
+              <font>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+             <property name="contextMenuPolicy">
+              <enum>Qt::CustomContextMenu</enum>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="tabKeyNavigation">
+              <bool>false</bool>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::ExtendedSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="horizontalScrollMode">
+              <enum>QAbstractItemView::ScrollPerPixel</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderMinimumSectionSize">
               <number>5</number>
-             </property>
-             <property name="placeholderText">
-              <string>Region</string>
-             </property>
-             <property name="clearButtonEnabled">
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>true</bool>
-             </property>
+             </attribute>
+             <attribute name="verticalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="lineEditNavAirportIcaoSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="maxLength">
-              <number>8</number>
-             </property>
-             <property name="placeholderText">
-              <string>Airport ICAO Code</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="toolButtonNavSearch">
+            <widget class="QLabel" name="labelNavSearchStatus">
              <property name="text">
-              <string/>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>10</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonFollowStyle</enum>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
+              <string>TextLabel</string>
              </property>
             </widget>
            </item>
           </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutNavExtSearch">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="labelNavMaxRangeSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Min Range:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxNavMaxRangeSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="suffix">
-              <string> nm</string>
-             </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
-             <property name="maximum">
-              <number>200</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-             <property name="value">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBoxNavTypeSearch">
-             <item>
-              <property name="text">
-               <string>All Types</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>VOR - High</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>VOR - Low</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>VOR - Terminal</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NDB - HH</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NDB - H</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NDB - MH</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>NDB - Compass Point</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Waypoint - Named</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Waypoint - Unnamed</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Waypoint - VOR</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Waypoint - NDB</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBoxNavNavAidSearch">
-             <item>
-              <property name="text">
-               <string>All Nav Aids</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>All VOR</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>All VOR and NDB</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Only VOR-DME</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Only VOR</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Only DME</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>All NDB</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>All Waypoints</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="Line" name="lineNavDistSearch">
-           <property name="lineWidth">
-            <number>4</number>
-           </property>
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QCheckBox" name="checkBoxNavDistSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Distance</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelNavDistMinSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Min:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxNavDistMinSearch">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> nm</string>
-             </property>
-             <property name="maximum">
-              <number>5000</number>
-             </property>
-             <property name="singleStep">
-              <number>10</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelNavDistMaxSearch">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Max:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="spinBoxNavDistMaxSearch">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="specialValueText">
-              <string/>
-             </property>
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> nm</string>
-             </property>
-             <property name="minimum">
-              <number>100</number>
-             </property>
-             <property name="maximum">
-              <number>5000</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-             <property name="value">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBoxNavDistDirectionSearch">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>Any Direction</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>North</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>East</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>South</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>West</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButtonNavDistSearch">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Update</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="Line" name="lineNavScenerySearch">
-           <property name="lineWidth">
-            <number>4</number>
-           </property>
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLineEdit" name="lineEditNavScenerySearch">
-             <property name="placeholderText">
-              <string>Scenery Path</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEditNavFileSearch">
-             <property name="placeholderText">
-              <string>Filename</string>
-             </property>
-             <property name="clearButtonEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QTableView" name="tableViewNavSearch">
-           <property name="font">
-            <font>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
-           <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
-           </property>
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="tabKeyNavigation">
-            <bool>false</bool>
-           </property>
-           <property name="showDropIndicator" stdset="0">
-            <bool>false</bool>
-           </property>
-           <property name="dragDropOverwriteMode">
-            <bool>false</bool>
-           </property>
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
-           </property>
-           <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
-           </property>
-           <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="wordWrap">
-            <bool>false</bool>
-           </property>
-           <attribute name="horizontalHeaderMinimumSectionSize">
-            <number>5</number>
-           </attribute>
-           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderCascadingSectionResizes">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-            <bool>false</bool>
-           </attribute>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -1454,10 +1478,10 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
+   <widget class="QWidget" name="dockWidgetContentsRoute">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="labelRouteInfo">
        <property name="text">
         <string>299 nm, 50 minutes</string>
        </property>
@@ -1472,7 +1496,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QSpinBox" name="spinBox">
+        <widget class="QSpinBox" name="spinBoxRouteSpeed">
          <property name="suffix">
           <string> kts</string>
          </property>
@@ -1488,7 +1512,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_2">
+        <widget class="QSpinBox" name="spinBoxRouteAlt">
          <property name="suffix">
           <string> ft</string>
          </property>
@@ -1507,7 +1531,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_3">
+        <widget class="QComboBox" name="comboBoxRouteType">
          <item>
           <property name="text">
            <string>IFR</string>
@@ -1523,22 +1547,68 @@
       </layout>
      </item>
      <item>
-      <widget class="QTableView" name="tableViewRoute"/>
+      <widget class="QTableView" name="tableViewRoute">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="tabKeyNavigation">
+        <bool>false</bool>
+       </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="dragEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="dragDropOverwriteMode">
+        <bool>false</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::NoDragDrop</enum>
+       </property>
+       <property name="defaultDropAction">
+        <enum>Qt::IgnoreAction</enum>
+       </property>
+       <property name="alternatingRowColors">
+        <bool>true</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectRows</enum>
+       </property>
+       <property name="horizontalScrollMode">
+        <enum>QAbstractItemView::ScrollPerPixel</enum>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>false</bool>
+       </property>
+       <attribute name="horizontalHeaderMinimumSectionSize">
+        <number>5</number>
+       </attribute>
+       <attribute name="verticalHeaderCascadingSectionResizes">
+        <bool>true</bool>
+       </attribute>
+      </widget>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidgetAirportInfo">
+  <widget class="QDockWidget" name="dockWidgetInformation">
    <property name="windowTitle">
-    <string>Airport Information</string>
+    <string>Information</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
+   <widget class="QWidget" name="dockWidgetContentsInfo">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QTabWidget" name="tabWidget_2">
+      <widget class="QTabWidget" name="tabWidgetInformation">
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -1582,6 +1652,11 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Map Legend</string>
+        </attribute>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -1621,7 +1696,7 @@
      <normaloff>:/littlenavmap/resources/icons/filter-add.svg</normaloff>:/littlenavmap/resources/icons/filter-add.svg</iconset>
    </property>
    <property name="text">
-    <string>Filter by Entries &amp;including &quot;%1&quot;</string>
+    <string>Filter by Entries &amp;including %1</string>
    </property>
    <property name="toolTip">
     <string>Filter by logbook entries including text</string>
@@ -1636,7 +1711,7 @@
      <normaloff>:/littlenavmap/resources/icons/filter-remove.svg</normaloff>:/littlenavmap/resources/icons/filter-remove.svg</iconset>
    </property>
    <property name="text">
-    <string>Filter by Entries e&amp;xcluding &quot;%1&quot;</string>
+    <string>Filter by Entries e&amp;xcluding %1</string>
    </property>
    <property name="toolTip">
     <string>Filter by logbook entries excluding text</string>
@@ -1805,7 +1880,7 @@
     <string>Ctrl+Shift+A</string>
    </property>
   </action>
-  <action name="actionOpenRoute">
+  <action name="actionRouteOpen">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
@@ -1814,7 +1889,7 @@
     <string>Open Route ...</string>
    </property>
   </action>
-  <action name="actionSaveRoute">
+  <action name="actionRouteSave">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/filesave.svg</normaloff>:/littlenavmap/resources/icons/filesave.svg</iconset>
@@ -2292,6 +2367,24 @@
    </property>
    <property name="toolTip">
     <string>Measure Great Circle Distance</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAs">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Route as ...</string>
+   </property>
+  </action>
+  <action name="actionRouteNew">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filenew.svg</normaloff>:/littlenavmap/resources/icons/filenew.svg</iconset>
+   </property>
+   <property name="text">
+    <string>New Route</string>
    </property>
   </action>
  </widget>

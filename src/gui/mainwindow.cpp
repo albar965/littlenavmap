@@ -30,7 +30,7 @@
 #include "table/formatter.h"
 #include "table/airportsearch.h"
 #include "table/navsearch.h"
-
+#include "mapgui/mapquery.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
@@ -63,6 +63,8 @@
 
 #include "ui_mainwindow.h"
 
+#include <route/routecontroller.h>
+
 using namespace Marble;
 using atools::settings::Settings;
 
@@ -92,6 +94,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   openDatabase();
 
+  mapQuery = new MapQuery(&db);
+  mapQuery->initQueries();
+
+  routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
+
   createNavMap();
 
   // Have to create searches in the same order as the tabs
@@ -115,7 +122,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+  delete routeController;
   delete searchController;
+  delete mapQuery;
   delete ui;
 
   qDebug() << "MainWindow destructor";
@@ -137,7 +146,7 @@ MainWindow::~MainWindow()
 void MainWindow::createNavMap()
 {
   // Create a Marble QWidget without a parent
-  navMapWidget = new NavMapWidget(this, &db);
+  navMapWidget = new NavMapWidget(this, mapQuery);
 
   navMapWidget->setVolatileTileCacheLimit(512 * 1024);
 
@@ -213,7 +222,7 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->menuView->addAction(ui->dockWidgetAirportInfo->toggleViewAction());
+  ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
 
   // Create labels for the statusbar
   mapPosLabelText = tr("%1 %2. Distance %3.");
@@ -248,6 +257,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
+
+  connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
+  connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
+  connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
+  connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
 
   connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
@@ -298,6 +312,42 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::selectionChanged);
 }
 
+void MainWindow::routeNew()
+{
+  routeController->newFlightplan();
+  navMapWidget->update();
+}
+
+void MainWindow::routeOpen()
+{
+  QString routeFile = dialog->openFileDialog(tr("Open Flightplan"),
+                                             tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
+                                             "Route/",
+                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+
+  if(!routeFile.isEmpty())
+  {
+    routeController->loadFlightplan(routeFile);
+    navMapWidget->update();
+  }
+}
+
+void MainWindow::routeSave()
+{
+  routeController->saveFlightplan();
+}
+
+void MainWindow::routeSaveAs()
+{
+  QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
+                                             tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
+                                             "pln", "Route/",
+                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+
+  if(!routeFile.isEmpty())
+    routeController->saveFlighplanAs(routeFile);
+}
+
 void MainWindow::defaultMapDetail()
 {
   mapDetailFactor = MAP_DEFAULT_DETAIL_FACTOR;
@@ -336,12 +386,15 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
 {
   QString type;
   if(source == searchController->getAirportSearch())
+  {
     type = tr("Airports");
+    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+  }
   else if(source == searchController->getNavSearch())
+  {
     type = tr("Navaids");
-
-  // selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
-  selectionLabel->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
+  }
 
   maptypes::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
@@ -631,6 +684,7 @@ void MainWindow::readSettings()
 
   searchController->restoreState();
   navMapWidget->restoreState();
+  routeController->restoreState();
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
@@ -651,6 +705,7 @@ void MainWindow::writeSettings()
 
   searchController->saveState();
   navMapWidget->saveState();
+  routeController->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
@@ -697,6 +752,7 @@ void MainWindow::preDatabaseLoad()
 
     searchController->preDatabaseLoad();
     navMapWidget->preDatabaseLoad();
+    mapQuery->deInitQueries();
   }
   else
     qDebug() << "Already in database loading status";
@@ -706,6 +762,7 @@ void MainWindow::postDatabaseLoad(bool force)
 {
   if(hasDatabaseLoadStatus || force)
   {
+    mapQuery->initQueries();
     searchController->postDatabaseLoad();
     navMapWidget->postDatabaseLoad();
     hasDatabaseLoadStatus = false;

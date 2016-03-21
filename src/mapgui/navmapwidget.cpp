@@ -48,8 +48,8 @@
 
 using namespace Marble;
 
-NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
-  : Marble::MarbleWidget(parent), parentWindow(parent), db(sqlDb)
+NavMapWidget::NavMapWidget(MainWindow *parent, MapQuery *query)
+  : Marble::MarbleWidget(parent), parentWindow(parent), mapQuery(query)
 {
   installEventFilter(this);
 
@@ -60,8 +60,6 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  mapQuery = new MapQuery(db);
-  mapQuery->initQueries();
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
@@ -76,7 +74,7 @@ NavMapWidget::NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb)
 NavMapWidget::~NavMapWidget()
 {
   delete paintLayer;
-  delete mapQuery;
+  highlightMapObjects.deleteAllObjects();
 }
 
 void NavMapWidget::setTheme(const QString& theme, int index)
@@ -126,16 +124,19 @@ void NavMapWidget::setDetailFactor(int factor)
   paintLayer->setDetailFactor(factor);
 }
 
+RouteController *NavMapWidget::getRouteController() const
+{
+  return parentWindow->getRouteController();
+}
+
 void NavMapWidget::preDatabaseLoad()
 {
   paintLayer->preDatabaseLoad();
-  mapQuery->deInitQueries();
 }
 
 void NavMapWidget::postDatabaseLoad()
 {
   paintLayer->postDatabaseLoad();
-  mapQuery->initQueries();
 }
 
 void NavMapWidget::historyNext()

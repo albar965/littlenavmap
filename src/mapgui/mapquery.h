@@ -48,6 +48,9 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
   virtual ~MapQuery();
 
+  void getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+                    const QString& ident, const QString& region = QString());
+
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                          maptypes::MapObjectTypes types,
@@ -122,21 +125,21 @@ private:
   QCache<int, QList<maptypes::MapParking> > parkingCache;
   QCache<int, QList<maptypes::MapHelipad> > helipadCache;
 
-  atools::sql::SqlQuery *airportQuery = nullptr, *airportMediumQuery = nullptr, *airportLargeQuery = nullptr,
-  *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *helipadQuery = nullptr,
-  *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-  *waypointsQuery = nullptr, *vorsQuery = nullptr, *ndbsQuery = nullptr, *markersQuery = nullptr,
-  *ilsQuery = nullptr;
+  atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
+  *airportLargeByRectQuery = nullptr;
+
+  atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
+  *parkingQuery = nullptr, *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
+
+  atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
+  *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr;
+
+  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
+  *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                    atools::sql::SqlQuery *query,
                                                    bool lazy);
-
-  maptypes::MapAirportFlags flag(const atools::sql::SqlQuery *query, const QString& field,
-                                 maptypes::MapAirportFlags flag);
-
-  maptypes::MapAirportFlags getFlags(const atools::sql::SqlQuery *query);
-  maptypes::MapAirport fillMapAirport(const atools::sql::SqlQuery *query);
 
   void bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query);
 
@@ -148,6 +151,16 @@ private:
 
   const static double RECT_INFLATION_FACTOR;
   const static double RECT_INFLATION_ADD;
+
+  void fillMapAirport(const atools::sql::SqlQuery *query, maptypes::MapAirport& ap);
+  void fillMapVor(const atools::sql::SqlQuery *query, maptypes::MapVor& vor);
+  void fillMapNdb(const atools::sql::SqlQuery *query, maptypes::MapNdb& ndb);
+  void fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::MapWaypoint& wp);
+  maptypes::MapAirportFlags flag(const atools::sql::SqlQuery *query, const QString& field,
+                                 maptypes::MapAirportFlags flag);
+
+  maptypes::MapAirportFlags getFlags(const atools::sql::SqlQuery *query);
+
 };
 
 // ---------------------------------------------------------------------------------

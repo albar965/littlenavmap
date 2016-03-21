@@ -38,6 +38,7 @@ class MapPainterAirport;
 class MapPainterNav;
 class MapPainterIls;
 class MapPainterMark;
+class MapPainterRoute;
 
 class MapPaintLayer :
   public Marble::LayerInterface
@@ -71,6 +72,7 @@ private:
   MapPainterNav *mapPainterNav;
   MapPainterIls *mapPainterIls;
   MapPainterMark *mapPainterMark;
+  MapPainterRoute *mapPainterRoute;
 
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;

@@ -34,15 +34,13 @@ namespace geo {
 class Pos;
 class Rect;
 }
-namespace sql {
-class SqlDatabase;
-}
 }
 
 class QContextMenuEvent;
 class MainWindow;
 class MapPaintLayer;
 class MapQuery;
+class RouteController;
 
 class NavMapWidget :
   public Marble::MarbleWidget
@@ -50,7 +48,7 @@ class NavMapWidget :
   Q_OBJECT
 
 public:
-  NavMapWidget(MainWindow *parent, atools::sql::SqlDatabase *sqlDb);
+  NavMapWidget(MainWindow *parent, MapQuery *query);
   virtual ~NavMapWidget();
 
   void contextMenu(const QPoint& point);
@@ -118,6 +116,8 @@ public:
   void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
   void setDetailFactor(int factor);
 
+  RouteController *getRouteController() const;
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -136,7 +136,6 @@ private:
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
-  atools::sql::SqlDatabase *db;
   int homeZoom = -1;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;

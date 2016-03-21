@@ -28,6 +28,7 @@ class QElapsedTimer;
 class Controller;
 class ColumnList;
 class SearchController;
+class RouteController;
 class QComboBox;
 class QLabel;
 class Search;
@@ -49,6 +50,7 @@ class MainWindow;
 }
 
 class NavMapWidget;
+class MapQuery;
 
 class MainWindow :
   public QMainWindow
@@ -71,12 +73,18 @@ public:
     return navMapWidget;
   }
 
+  RouteController *getRouteController() const
+  {
+    return routeController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
 
 private:
   SearchController *searchController;
+  RouteController *routeController;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
   int mapDetailFactor;
@@ -102,6 +110,7 @@ private:
   void closeDatabase();
 
   atools::sql::SqlDatabase db;
+  MapQuery *mapQuery;
   QString databaseFile;
   void connectAllSlots();
   void mainWindowShown();
@@ -129,6 +138,11 @@ private:
   void defaultMapDetail();
   void setMapDetail(int factor);
   void selectionChanged(const Search *source, int selected, int visible, int total);
+
+  void routeNew();
+  void routeOpen();
+  void routeSave();
+  void routeSaveAs();
 
 };
 

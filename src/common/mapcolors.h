@@ -69,7 +69,7 @@ extern const QColor ilsSymbolColor;
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const maptypes::MapAirport& ap);
-const QColor& alternatingRowColor(int row, bool isSort, QStyle::State state = QStyle::State_None);
+const QColor& alternatingRowColor(int row, bool isSort);
 
 } // namespace mapcolors
 

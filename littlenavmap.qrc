@@ -57,5 +57,7 @@
         <file>resources/icons/airportempty.svg</file>
         <file>resources/icons/rangeringoff.svg</file>
         <file>resources/icons/distancemeasureoff.svg</file>
+        <file>resources/icons/filenew.svg</file>
+        <file>resources/icons/filesaveas.svg</file>
     </qresource>
 </RCC>

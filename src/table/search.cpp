@@ -35,6 +35,8 @@
 #include <QMenu>
 #include <QLineEdit>
 
+#include <gui/actiontextsaver.h>
+
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
   : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent),
@@ -347,9 +349,12 @@ void Search::tableContextMenu(const QPoint& pos)
   qDebug() << localSender->metaObject()->className() << localSender->objectName();
 
   Ui::MainWindow *ui = parentWidget->getUi();
-  QString header, fieldData;
+  QString header, fieldData = "Data";
   bool columnCanFilter = false, columnCanGroup = false;
   QString navType;
+
+  atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding});
+  Q_UNUSED(saver);
 
   atools::geo::Pos position;
   QModelIndex index = controller->getModelIndexAt(pos);
@@ -384,10 +389,12 @@ void Search::tableContextMenu(const QPoint& pos)
     qDebug() << "Invalid index at" << pos;
 
   // Add data to menu item text
-  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().arg(fieldData));
+  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().
+                                           arg("\"" + fieldData + "\""));
   ui->actionSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
 
-  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg(fieldData));
+  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().
+                                           arg("\"" + fieldData + "\""));
   ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
 
   ui->actionMapNavaidRange->setEnabled(navType == "VOR" || navType == "VORDME" ||
@@ -407,10 +414,6 @@ void Search::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionSearchTableSelectAll);
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
-
-  QString actionFilterIncludingText, actionFilterExcludingText;
-  actionFilterIncludingText = ui->actionSearchFilterIncluding->text();
-  actionFilterExcludingText = ui->actionSearchFilterExcluding->text();
 
   menu.addSeparator();
   menu.addAction(ui->actionSearchResetView);
@@ -473,11 +476,4 @@ void Search::tableContextMenu(const QPoint& pos)
       parentWidget->getMapWidget()->clearRangeRings();
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
-
-  // Restore old menu texts
-  ui->actionSearchFilterIncluding->setText(actionFilterIncludingText);
-  ui->actionSearchFilterIncluding->setEnabled(true);
-
-  ui->actionSearchFilterExcluding->setText(actionFilterExcludingText);
-  ui->actionSearchFilterExcluding->setEnabled(true);
 }
