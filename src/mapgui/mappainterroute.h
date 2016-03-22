@@ -43,6 +43,11 @@ private:
   NavMapWidget *navMapWidget;
   void paintRoute(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
 
+  void paintAirport(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y, const maptypes::MapAirport& obj);
+  void paintVor(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y, const maptypes::MapVor& obj);
+  void paintNdb(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y, const maptypes::MapNdb& obj);
+  void paintWaypoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y, const maptypes::MapWaypoint& obj);
+
 };
 
 #endif // MAPPAINTERROUTE_H

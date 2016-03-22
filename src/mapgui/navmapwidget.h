@@ -29,6 +29,8 @@
 
 #include <geo/pos.h>
 
+#include <route/routemapobject.h>
+
 namespace atools {
 namespace geo {
 class Pos;
@@ -64,6 +66,7 @@ public:
   void changeMark(const atools::geo::Pos& pos);
   void changeHome();
   void changeHighlight(const maptypes::MapSearchResult& positions);
+  void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -80,6 +83,11 @@ public:
   const maptypes::MapSearchResult& getHighlightMapObjects() const
   {
     return highlightMapObjects;
+  }
+
+  const QList<RouteMapObject>& getRouteHighlightMapObjects() const
+  {
+    return routeHighlightMapObjects;
   }
 
   const QList<maptypes::RangeMarker>& getRangeRings() const
@@ -140,6 +148,7 @@ private:
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
+  QList<RouteMapObject> routeHighlightMapObjects;
   QList<maptypes::RangeMarker> rangeMarkers;
   QList<maptypes::DistanceMarker> distanceMarkers;
   int currentDistanceMarkerIndex = -1;
@@ -162,6 +171,10 @@ private:
 
   int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
   int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
+
+  void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
+                                 const QList<RouteMapObject>& routeMapObjects,
+                                 maptypes::MapSearchResult& mapobjects);
 
 };
 

@@ -35,25 +35,10 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
+class SymbolPainter;
 class MapLayer;
 class MapQuery;
 class MapScale;
-
-namespace textatt {
-enum TextAttribute
-{
-  NONE = 0x00,
-  BOLD = 0x01,
-  ITALIC = 0x02,
-  UNDERLINE = 0x04,
-  RIGHT = 0x08,
-  LEFT = 0x10,
-  CENTER = 0x20
-};
-
-Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
-Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
-}
 
 class MapPainter :
   public CoordinateConverter
@@ -69,14 +54,13 @@ protected:
   void setRenderHints(Marble::GeoPainter *painter);
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos, int radiusNm, bool fast,
                    int& xtext, int& ytext);
-  void textBox(Marble::GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
 
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
                    float distance, int w, int h, int& x, int& y);
   bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                         Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
 
+  SymbolPainter *symbolPainter;
   Marble::MarbleWidget *widget;
   MapQuery *query;
   MapScale *scale;

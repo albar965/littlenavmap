@@ -22,6 +22,10 @@
 
 #include <QPainter>
 
+#include <marble/GeoPainter.h>
+
+using namespace Marble;
+
 SymbolPainter::SymbolPainter()
 {
 }
@@ -110,14 +114,17 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
 }
 
 void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
-                                       int size, bool fast)
+                                       int size, bool fill, bool fast)
 {
   Q_UNUSED(wp);
   painter->save();
-  painter->setBrush(Qt::NoBrush);
+  painter->setBackgroundMode(Qt::TransparentMode);
+  if(fill)
+    painter->setBrush(QColor(Qt::white));
+  else
+    painter->setBrush(Qt::NoBrush);
 
   painter->setPen(QPen(mapcolors::waypointSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
-  painter->setBackgroundMode(Qt::TransparentMode);
 
   if(!fast)
   {
@@ -136,12 +143,16 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
 }
 
 void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size,
-                                  bool fast, int largeSize)
+                                  bool fill, bool fast, int largeSize)
 {
   painter->save();
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(mapcolors::vorSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
   painter->setBackgroundMode(Qt::TransparentMode);
+  if(fill)
+    painter->setBrush(QColor(Qt::white));
+  else
+    painter->setBrush(Qt::NoBrush);
+
+  painter->setPen(QPen(mapcolors::vorSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -198,15 +209,19 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 }
 
 void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size,
-                                  bool fast)
+                                  bool fill, bool fast)
 {
   Q_UNUSED(ndb);
   painter->save();
-  int radius = size / 2;
 
   painter->setBackgroundMode(Qt::TransparentMode);
-  painter->setBrush(Qt::NoBrush);
+  if(fill)
+    painter->setBrush(QColor(Qt::white));
+  else
+    painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::ndbSymbolColor, 1.5, size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
+
+  int radius = size / 2;
 
   if(!fast)
     // Draw outer dotted circle
@@ -252,4 +267,209 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
   painter->drawPoint(x, y);
 
   painter->restore();
+}
+
+void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y,
+                                textflags::TextFlags flags, int size, bool fill, bool fast)
+{
+  QStringList texts;
+
+  if(flags & textflags::IDENT && flags & textflags::TYPE)
+    texts.append(ndb.ident + " (" + (ndb.type == "COMPASS_POINT" ? "CP" : ndb.type) + ")");
+  else if(flags & textflags::IDENT)
+    texts.append(ndb.ident);
+
+  if(flags & textflags::FREQ)
+    texts.append(QString::number(ndb.frequency / 100., 'f', 1));
+
+  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::CENTER;
+  if(flags & textflags::ROUTE_TEXT)
+    textAttrs |= textatt::ROUTE_BG_COLOR;
+
+  y += size + 2;
+  int transparency = fill ? 255 : 0;
+  textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
+}
+
+void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y,
+                                textflags::TextFlags flags, int size, bool fill, bool fast)
+{
+  QStringList texts;
+
+  if(flags & textflags::IDENT && flags & textflags::TYPE)
+  {
+    QString range;
+    if(vor.range < 40)
+      range = "T";
+    else if(vor.range < 62)
+      range = "L";
+    else if(vor.range < 200)
+      range = "H";
+    texts.append(vor.ident + " (" + range + ")");
+  }
+  else if(flags & textflags::IDENT)
+    texts.append(vor.ident);
+
+  if(flags & textflags::FREQ)
+    texts.append(QString::number(vor.frequency / 1000., 'f', 2));
+
+  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::RIGHT;
+  if(flags & textflags::ROUTE_TEXT)
+    textAttrs |= textatt::ROUTE_BG_COLOR;
+
+  x -= size / 2 + 2;
+  int transparency = fill ? 255 : 0;
+  textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
+}
+
+void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
+                                     textflags::TextFlags flags, int size, bool fill, bool fast)
+{
+  QStringList texts;
+
+  if(flags & textflags::IDENT)
+    texts.append(wp.ident);
+
+  x += size / 2 + 2;
+  int transparency = fill ? 255 : 0;
+
+  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::LEFT;
+  if(flags & textflags::ROUTE_TEXT)
+    textAttrs |= textatt::ROUTE_BG_COLOR;
+
+  textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
+}
+
+void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+                            textatt::TextAttributes atts, int transparency)
+{
+  if(texts.isEmpty())
+    return;
+
+  painter->save();
+
+  QColor backColor = atts & textatt::ROUTE_BG_COLOR ? mapcolors::routeTextBoxColor : mapcolors::textBoxColor;
+
+  if(transparency != 255)
+  {
+    if(transparency == 0)
+      painter->setBrush(Qt::NoBrush);
+    else
+    {
+      backColor.setAlpha(transparency);
+      painter->setBrush(backColor);
+    }
+  }
+  else
+    painter->setBrush(backColor);
+
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
+
+  int yoffset = 0;
+  if(transparency != 0)
+  {
+    painter->setPen(mapcolors::textBackgroundPen);
+    for(const QString& t : texts)
+    {
+      int w = metrics.width(t);
+      int newx = x - 2;
+      // if(atts.testFlag(textatt::LEFT))
+      // newx = x;
+      if(atts.testFlag(textatt::RIGHT))
+        newx -= w;
+      else if(atts.testFlag(textatt::CENTER))
+        newx -= w / 2;
+
+      // painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
+      painter->drawRect(newx, y - h + metrics.descent() + yoffset, w + 4, h);
+      yoffset += h;
+    }
+  }
+
+  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
+  {
+    QFont f = painter->font();
+    f.setBold(atts.testFlag(textatt::BOLD));
+    f.setItalic(atts.testFlag(textatt::ITALIC));
+    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
+    painter->setFont(f);
+  }
+
+  yoffset = 0;
+  painter->setPen(textPen);
+  for(const QString& t : texts)
+  {
+    int w = metrics.width(t);
+    int newx = x;
+    // if(atts.testFlag(textatt::LEFT))
+    // newx = x;
+    if(atts.testFlag(textatt::RIGHT))
+      newx -= w;
+    else if(atts.testFlag(textatt::CENTER))
+      newx -= w / 2;
+
+    painter->drawText(newx, y + yoffset, t);
+    yoffset += h;
+  }
+  painter->restore();
+}
+
+void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
+                                    textflags::TextFlags flags, int size, bool diagram, bool fill, bool fast)
+{
+  QStringList texts = airportTexts(flags, airport);
+  if(!texts.isEmpty())
+  {
+    textatt::TextAttributes atts = textatt::BOLD;
+    if(airport.flags.testFlag(maptypes::AP_ADDON))
+      atts |= textatt::ITALIC | textatt::UNDERLINE;
+
+    if(flags & textflags::ROUTE_TEXT)
+      atts |= textatt::ROUTE_BG_COLOR;
+
+    int transparency = diagram ? 180 : 255;
+    if(!airport.scenery())
+      transparency = 0;
+
+    x += size + 2;
+
+    textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
+  }
+}
+
+QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport)
+{
+  QStringList texts;
+
+  if(flags & textflags::IDENT && flags & textflags::NAME)
+    texts.append(airport.name + " (" + airport.ident + ")");
+  else if(flags & textflags::IDENT)
+    texts.append(airport.ident);
+  else if(flags & textflags::NAME)
+    texts.append(airport.name);
+
+  if(flags & textflags::INFO)
+  {
+    QString tower = (airport.towerFrequency == 0 ? QString() :
+                     "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
+
+    QString autoWeather;
+    if(airport.atisFrequency > 0)
+      autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 2);
+    else if(airport.awosFrequency > 0)
+      autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 2);
+    else if(airport.asosFrequency > 0)
+      autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 2);
+
+    if(!tower.isEmpty() || !autoWeather.isEmpty())
+      texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
+
+    texts.append(QString::number(airport.altitude) + " " +
+                 (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
+                 QString::number(airport.longestRunwayLength / 100) + " " +
+                 (airport.unicomFrequency == 0 ? QString() :
+                  QString::number(airport.unicomFrequency / 1000., 'f', 2)));
+  }
+  return texts;
 }

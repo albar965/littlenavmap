@@ -240,6 +240,10 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapSetHome, &QAction::triggered, navMapWidget, &NavMapWidget::changeHome);
 
+  connect(routeController, &RouteController::showRect, navMapWidget, &NavMapWidget::showRect);
+  connect(routeController, &RouteController::showPos, navMapWidget, &NavMapWidget::showPos);
+  connect(routeController, &RouteController::changeMark, navMapWidget, &NavMapWidget::changeMark);
+
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
           navMapWidget, &NavMapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::showPos,
@@ -258,6 +262,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
 
+  connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
@@ -306,10 +311,17 @@ void MainWindow::connectAllSlots()
 
   connect(navMapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
 
+  connect(routeController, &RouteController::routeSelectionChanged,
+          this, &MainWindow::routeSelectionChanged);
   connect(searchController->getAirportSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
   connect(searchController->getNavSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
+}
+
+void MainWindow::routeCenter()
+{
+  navMapWidget->showRect(routeController->getBoundingRect());
 }
 
 void MainWindow::routeNew()
@@ -382,8 +394,19 @@ void MainWindow::setMapDetail(int factor)
   navMapWidget->update();
 }
 
+void MainWindow::routeSelectionChanged(int selected, int total)
+{
+  Q_UNUSED(selected);
+  Q_UNUSED(total);
+  qDebug() << "routeSelectionChanged";
+  QList<RouteMapObject> result;
+  routeController->getSelectedRouteMapObjects(result);
+  navMapWidget->changeRouteHighlight(result);
+}
+
 void MainWindow::selectionChanged(const Search *source, int selected, int visible, int total)
 {
+  qDebug() << "selectionChanged";
   QString type;
   if(source == searchController->getAirportSearch())
   {
@@ -445,7 +468,10 @@ void MainWindow::loadScenery()
 {
   preDatabaseLoad();
   using atools::fs::BglReaderOptions;
+
   QString config = Settings::getOverloadedPath(":/littlenavmap/resources/config/navdatareader.cfg");
+  qInfo() << "loadScenery: Config file" << config;
+
   QSettings settings(config, QSettings::IniFormat);
 
   BglReaderOptions opts;
@@ -467,14 +493,16 @@ void MainWindow::loadScenery()
 
   atools::fs::fstype::SimulatorType type = atools::fs::fstype::FSX;
   QString sceneryFile = atools::fs::FsPaths::getSceneryLibraryPath(type);
+  qInfo() << "loadScenery: Scenery file" << sceneryFile;
+
   QString basepath = atools::fs::FsPaths::getBasePath(type);
+  qInfo() << "loadScenery: Base path" << basepath;
 
   opts.setSceneryFile(sceneryFile);
   opts.setBasepath(basepath);
 
   QElapsedTimer timer;
-  using namespace std::placeholders;
-  opts.setProgressCallback(std::bind(&MainWindow::progressCallback, this, _1, timer));
+  opts.setProgressCallback(std::bind(&MainWindow::progressCallback, this, std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -485,8 +513,8 @@ void MainWindow::loadScenery()
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   if(!progressDialog->wasCanceled())
   {
-  progressDialog->setCancelButtonText(tr("&OK"));
-  progressDialog->exec();
+    progressDialog->setCancelButtonText(tr("&OK"));
+    progressDialog->exec();
   }
   delete progressDialog;
   progressDialog = nullptr;

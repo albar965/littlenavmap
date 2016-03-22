@@ -45,6 +45,7 @@ extern const QColor brightParkingTextColor;
 extern const QColor towerTextColor;
 extern const QColor runwayDimsTextColor;
 extern const QColor textBoxColor;
+extern const QColor routeTextBoxColor;
 extern const QColor airportSymbolFillColor;
 extern const QPen markBackPen;
 extern const QPen markFillPen;
@@ -53,6 +54,9 @@ extern const QColor homeFillColor;
 extern const QColor highlightColorFast;
 extern const QColor highlightColor;
 extern const QColor highlightBackColor;
+extern const QColor routeHighlightColorFast;
+extern const QColor routeHighlightColor;
+extern const QColor routeHighlightBackColor;
 
 extern const QColor rangeRingColor;
 extern const QColor rangeRingTextColor;
@@ -65,6 +69,7 @@ extern const QColor ndbSymbolColor;
 extern const QColor waypointSymbolColor;
 extern const QColor markerSymbolColor;
 extern const QColor ilsSymbolColor;
+extern const QColor ilsTextColor;
 
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);

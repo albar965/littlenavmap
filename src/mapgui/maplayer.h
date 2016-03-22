@@ -56,15 +56,24 @@ public:
 
   MapLayer& waypoint(bool value = true);
   MapLayer& waypointName(bool value = true);
+  MapLayer& waypointRouteName(bool value = true);
+
   MapLayer& vor(bool value = true);
   MapLayer& vorLarge(bool value = true);
   MapLayer& vorIdent(bool value = true);
   MapLayer& vorInfo(bool value = true);
+  MapLayer& vorRouteIdent(bool value = true);
+  MapLayer& vorRouteInfo(bool value = true);
+
   MapLayer& ndb(bool value = true);
   MapLayer& ndbIdent(bool value = true);
   MapLayer& ndbInfo(bool value = true);
+  MapLayer& ndbRouteIdent(bool value = true);
+  MapLayer& ndbRouteInfo(bool value = true);
+
   MapLayer& marker(bool value = true);
   MapLayer& markerInfo(bool value = true);
+
   MapLayer& ils(bool value = true);
   MapLayer& ilsIdent(bool value = true);
   MapLayer& ilsInfo(bool value = true);
@@ -161,6 +170,11 @@ public:
     return layerWaypointName;
   }
 
+  bool isWaypointRouteName() const
+  {
+    return layerWaypointRouteName;
+  }
+
   bool isVor() const
   {
     return layerVor;
@@ -181,6 +195,16 @@ public:
     return layerVorInfo;
   }
 
+  bool isVorRouteIdent() const
+  {
+    return layerVorRouteIdent;
+  }
+
+  bool isVorRouteInfo() const
+  {
+    return layerVorRouteInfo;
+  }
+
   bool isNdb() const
   {
     return layerNdb;
@@ -194,6 +218,16 @@ public:
   bool isNdbInfo() const
   {
     return layerNdbInfo;
+  }
+
+  bool isNdbRouteIdent() const
+  {
+    return layerNdbRouteIdent;
+  }
+
+  bool isNdbRouteInfo() const
+  {
+    return layerNdbRouteInfo;
   }
 
   bool isMarker() const
@@ -263,6 +297,11 @@ private:
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
        layerMarker = false, layerMarkerInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false;
+
+  bool layerVorRouteIdent = false, layerVorRouteInfo = false;
+  bool layerNdbRouteIdent = false, layerNdbRouteInfo = false;
+  bool layerWaypointRouteName = false;
+
   int layerWaypointSymbolSize = 10, layerVorSymbolSize = 10, layerNdbSymbolSize = 10,
       layerMarkerSymbolSize = 10;
 

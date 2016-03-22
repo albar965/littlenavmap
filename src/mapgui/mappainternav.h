@@ -33,10 +33,6 @@ public:
 
   virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                      Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
-
-private:
-  SymbolPainter *symbolPainter;
-
 };
 
 #endif // MAPPAINTERAIRPORT_H

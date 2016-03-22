@@ -21,6 +21,7 @@
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
+#include "mapgui/symbolpainter.h"
 
 #include <algorithm>
 #include <marble/GeoDataLineString.h>
@@ -130,6 +131,30 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
     painter->drawEllipse(QPoint(x, y), size, size);
   }
   }
+
+  const QList<RouteMapObject>& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
+  positions.clear();
+  for(const RouteMapObject& rmo : routeHighlightResults)
+    positions.append(rmo.getPosition());
+
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QBrush(mapcolors::routeHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  for(const Pos& pos : positions)
+  {
+    int x, y;
+    if(wToS(pos, x, y))
+    {
+      if(!fast)
+      {
+        painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
+                             Qt::FlatCap));
+        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->setPen(QPen(QBrush(mapcolors::routeHighlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+      }
+      painter->drawEllipse(QPoint(x, y), size, size);
+    }
+  }
+
 }
 
 void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
@@ -169,7 +194,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
       else if(rings.type == maptypes::ILS)
       {
         color = mapcolors::ilsSymbolColor;
-        textColor = mapcolors::ilsSymbolColor;
+        textColor = mapcolors::ilsTextColor;
       }
 
       if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
@@ -200,7 +225,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
             xt -= painter->fontMetrics().width(txt) / 2;
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
-            textBox(painter, {txt}, painter->pen(), xt, yt);
+            symbolPainter->textBox(painter, {txt}, painter->pen(), xt, yt);
             painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
@@ -263,7 +288,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       if(findTextPos(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
                      metrics.height() * 2,
                      xt, yt))
-        textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
     }
     else
     {
@@ -304,7 +329,8 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       int xt = -1, yt = -1;
       if(findTextPosRhumb(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
                           metrics.height() * 2, xt, yt))
-        textBox(painter, texts, painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
+        symbolPainter->textBox(painter, texts,
+                               painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
     }
   }
 }

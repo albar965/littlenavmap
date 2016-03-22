@@ -17,9 +17,10 @@
 
 #include "routecontroller.h"
 #include "fs/pln/flightplan.h"
-
+#include "table/formatter.h"
+#include "geo/calculations.h"
 #include "gui/mainwindow.h"
-
+#include "mapgui/navmapwidget.h"
 #include <QStandardItemModel>
 #include <QTableView>
 #include <QHeaderView>
@@ -29,9 +30,11 @@
 #include <gui/tablezoomhandler.h>
 #include <gui/widgetstate.h>
 #include <mapgui/mapquery.h>
+#include <QSpinBox>
 
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
+#include <gui/actiontextsaver.h>
 
 using namespace atools::fs::pln;
 
@@ -41,6 +44,15 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
 
+  Ui::MainWindow *ui = parentWindow->getUi();
+
+  view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
+  connect(ui->spinBoxRouteSpeed, valueChangedPtr, this, &RouteController::updateLabel);
+  connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
+  connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
+
   view->horizontalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setHighlightSections(true);
@@ -48,10 +60,15 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
   view->setDragDropOverwriteMode(false);
-  Ui::MainWindow *ui = parentWindow->getUi();
   dockWindowTitle = ui->dockWidgetRoute->windowTitle();
   model = new QStandardItemModel();
+  QItemSelectionModel *m = view->selectionModel();
   view->setModel(model);
+  delete m;
+
+  void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+    &RouteController::tableSelectionChanged;
+  connect(tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 }
 
 RouteController::~RouteController()
@@ -62,8 +79,10 @@ RouteController::~RouteController()
 
 void RouteController::saveState()
 {
+  Ui::MainWindow *ui = parentWindow->getUi();
+
   atools::gui::WidgetState saver("Route/View");
-  saver.save(tableView);
+  saver.save({tableView, ui->spinBoxRouteSpeed});
 
   atools::settings::Settings::instance()->setValue("Route/Filename", routeFilename);
 }
@@ -83,8 +102,17 @@ void RouteController::restoreState()
     }
   }
 
+  Ui::MainWindow *ui = parentWindow->getUi();
   atools::gui::WidgetState saver("Route/View");
-  saver.restore(tableView);
+  saver.restore({tableView, ui->spinBoxRouteSpeed});
+}
+
+void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const
+{
+  QItemSelection sm = tableView->selectionModel()->selection();
+  for(const QItemSelectionRange& rng : sm)
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+      selRouteMapObjects.append(routeMapObjects.at(row));
 }
 
 void RouteController::newFlightplan()
@@ -96,7 +124,7 @@ void RouteController::newFlightplan()
   changed = false;
   flightplanToView();
   updateWindowTitle();
-
+  updateLabel();
 }
 
 void RouteController::loadFlightplan(const QString& filename)
@@ -111,6 +139,7 @@ void RouteController::loadFlightplan(const QString& filename)
   flightplan->load(filename);
   flightplanToView();
   updateWindowTitle();
+  updateLabel();
 }
 
 void RouteController::saveFlighplanAs(const QString& filename)
@@ -133,49 +162,56 @@ void RouteController::saveFlightplan()
 void RouteController::flightplanToView()
 {
   model->removeRows(0, model->rowCount());
-  model->setHorizontalHeaderLabels({"Ident", "Region", "Airway", "Type", "Frequency", "Course"});
+  model->setHorizontalHeaderLabels({"Ident", "Region", "Name", "Airway", "Type", "Freq.", "Course\n°M",
+                                    "Distance\nnm"});
   if(flightplan != nullptr)
   {
-    Ui::MainWindow *ui = parentWindow->getUi();
-
-    ui->spinBoxRouteAlt->setValue(flightplan->getCruisingAlt());
-
-    if(flightplan->getFlightplanType() == atools::fs::pln::IFR)
-      ui->comboBoxRouteType->setCurrentIndex(0);
-    else if(flightplan->getFlightplanType() == atools::fs::pln::VFR)
-      ui->comboBoxRouteType->setCurrentIndex(1);
-
-    ui->labelRouteInfo->setText(flightplan->getDepartureAiportName() +
-                                " (" + flightplan->getDepartureIdent() + ") to " +
-                                flightplan->getDestinationAiportName() +
-                                " (" + flightplan->getDestinationIdent() + ")");
-
     RouteMapObject last;
     QList<QStandardItem *> items;
     bool first = true;
+    totalDistance = 0.f;
     for(const FlightplanEntry& entry : flightplan->getEntries())
     {
-      RouteMapObject mapObj(entry, query);
+      RouteMapObject mapobj(entry, query);
 
-      if(!mapObj.isValid())
+      if(!mapobj.isValid())
         qWarning() << "Entry for ident" << entry.getIcaoIdent() <<
         "region" << entry.getIcaoRegion() << "is not valid";
 
-      routeMapObjects.append(mapObj);
+      routeMapObjects.append(mapobj);
 
       items.clear();
-      items.append(new QStandardItem(mapObj.getFlightplanEntry().getIcaoIdent()));
-      items.append(new QStandardItem(mapObj.getFlightplanEntry().getIcaoRegion()));
-      items.append(new QStandardItem(mapObj.getFlightplanEntry().getAirway()));
-      items.append(new QStandardItem(mapObj.getFlightplanEntry().getWaypointTypeAsString()));
+      items.append(new QStandardItem(mapobj.getFlightplanEntry().getIcaoIdent()));
+      items.append(new QStandardItem(mapobj.getFlightplanEntry().getIcaoRegion()));
+      items.append(new QStandardItem(mapobj.getName()));
+      items.append(new QStandardItem(mapobj.getFlightplanEntry().getAirway()));
+
+      if(mapobj.getMapObjectType() == maptypes::VOR)
+      {
+        QString type = mapobj.getVor().type.at(0);
+
+        if(mapobj.getVor().dmeOnly)
+          items.append(new QStandardItem("DME (" + type + ")"));
+        else if(mapobj.getVor().hasDme)
+          items.append(new QStandardItem("VORDME (" + type + ")"));
+        else
+          items.append(new QStandardItem("VOR (" + type + ")"));
+      }
+      else if(mapobj.getMapObjectType() == maptypes::NDB)
+      {
+        QString type = mapobj.getNdb().type == "COMPASS_POINT" ? "CP" : mapobj.getNdb().type;
+        items.append(new QStandardItem("NDB (" + type + ")"));
+      }
+      else
+        items.append(new QStandardItem());
 
       QStandardItem *item;
-      if(mapObj.getFrequency() > 0)
+      if(mapobj.getFrequency() > 0)
       {
-        if(mapObj.getMapObjectType() == maptypes::VOR)
-          item = new QStandardItem(QString::number(mapObj.getFrequency() / 1000.f, 'f', 2) + " MHz");
-        else if(mapObj.getMapObjectType() == maptypes::NDB)
-          item = new QStandardItem(QString::number(mapObj.getFrequency() / 100.f, 'f', 1) + " kHz");
+        if(mapobj.getMapObjectType() == maptypes::VOR)
+          item = new QStandardItem(QString::number(mapobj.getFrequency() / 1000.f, 'f', 2) + " MHz");
+        else if(mapobj.getMapObjectType() == maptypes::NDB)
+          item = new QStandardItem(QString::number(mapobj.getFrequency() / 100.f, 'f', 1) + " kHz");
         else
           item = new QStandardItem();
         item->setTextAlignment(Qt::AlignRight);
@@ -186,24 +222,57 @@ void RouteController::flightplanToView()
 
       if(!first)
       {
-        float course = last.getPosition().angleDegTo(mapObj.getPosition());
-        item = new QStandardItem(QString::number(course, 'f', 1));
+        float course = atools::geo::normalizeCourse(last.getPosition().angleDegTo(mapobj.getPosition()));
+        item = new QStandardItem(QString::number(course + mapobj.getMagvar(), 'f', 1));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
+
+        float distance = atools::geo::meterToNm(last.getPosition().distanceMeterTo(mapobj.getPosition()));
+        totalDistance += distance;
+        item = new QStandardItem(QString::number(distance, 'f', 1));
+        item->setTextAlignment(Qt::AlignRight);
+        items.append(item);
+
+        boundingRect.extend(mapobj.getPosition());
       }
       else
       {
         first = false;
         items.append(new QStandardItem());
+        items.append(new QStandardItem());
+
+        boundingRect = atools::geo::Rect(mapobj.getPosition());
       }
 
       model->appendRow(items);
 
-      last = mapObj;
+      last = mapobj;
     }
 
-  }
+    Ui::MainWindow *ui = parentWindow->getUi();
 
+    ui->spinBoxRouteAlt->setValue(flightplan->getCruisingAlt());
+
+    if(flightplan->getFlightplanType() == atools::fs::pln::IFR)
+      ui->comboBoxRouteType->setCurrentIndex(0);
+    else if(flightplan->getFlightplanType() == atools::fs::pln::VFR)
+      ui->comboBoxRouteType->setCurrentIndex(1);
+  }
+}
+
+void RouteController::updateLabel()
+{
+  Ui::MainWindow *ui = parentWindow->getUi();
+  if(flightplan != nullptr)
+    ui->labelRouteInfo->setText(flightplan->getDepartureAiportName() +
+                                " (" + flightplan->getDepartureIdent() + ") to " +
+                                flightplan->getDestinationAiportName() +
+                                " (" + flightplan->getDestinationIdent() + "), " +
+                                QString::number(totalDistance, 'f', 0) + " nm, " +
+                                formatter::formatMinutesHoursLong(
+                                  totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value())));
+  else
+    ui->labelRouteInfo->setText(tr("No Flightplan loaded"));
 }
 
 void RouteController::updateWindowTitle()
@@ -212,4 +281,112 @@ void RouteController::updateWindowTitle()
   ui->dockWidgetRoute->setWindowTitle(dockWindowTitle + " - " +
                                       QFileInfo(routeFilename).fileName() +
                                       (changed ? " *" : QString()));
+}
+
+void RouteController::doubleClick(const QModelIndex& index)
+{
+  if(index.isValid())
+  {
+    qDebug() << "mouseDoubleClickEvent";
+
+    const RouteMapObject& mo = routeMapObjects.at(index.row());
+
+    if(mo.getMapObjectType() == maptypes::AIRPORT)
+    {
+      if(mo.getAirport().bounding.isPoint())
+        emit showPos(mo.getPosition(), 2700);
+      else
+        emit showRect(mo.getAirport().bounding);
+    }
+    else
+      emit showPos(mo.getPosition(), 2700);
+  }
+}
+
+void RouteController::tableContextMenu(const QPoint& pos)
+{
+  qDebug() << "tableContextMenu";
+
+  Ui::MainWindow *ui = parentWindow->getUi();
+
+  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
+
+  atools::geo::Pos position;
+  QModelIndex index = tableView->indexAt(pos);
+  if(index.isValid())
+  {
+    const RouteMapObject& mo = routeMapObjects.at(index.row());
+
+    QMenu menu;
+
+    menu.addAction(ui->actionSearchSetMark);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchTableCopy);
+    ui->actionSearchTableCopy->setEnabled(index.isValid());
+
+    ui->actionMapRangeRings->setEnabled(true);
+    ui->actionMapHideRangeRings->setEnabled(!parentWindow->getMapWidget()->getRangeRings().isEmpty());
+
+    ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+    ui->actionMapNavaidRange->setEnabled(
+      mo.getMapObjectType() == maptypes::VOR || mo.getMapObjectType() == maptypes::NDB);
+
+    menu.addAction(ui->actionSearchTableSelectAll);
+
+    menu.addSeparator();
+    menu.addAction(ui->actionSearchResetView);
+
+    menu.addSeparator();
+    menu.addAction(ui->actionMapRangeRings);
+    menu.addAction(ui->actionMapNavaidRange);
+    menu.addAction(ui->actionMapHideRangeRings);
+
+    QAction *action = menu.exec(QCursor::pos());
+    if(action != nullptr)
+    {
+      if(action == ui->actionSearchResetView)
+      {
+        // Reorder columns to match model order
+        QHeaderView *header = tableView->horizontalHeader();
+        for(int i = 0; i < header->count(); ++i)
+          header->moveSection(header->visualIndex(i), i);
+
+        tableView->resizeColumnsToContents();
+      }
+      else if(action == ui->actionSearchTableSelectAll)
+        tableView->selectAll();
+      else if(action == ui->actionSearchSetMark)
+        emit changeMark(mo.getPosition());
+      else if(action == ui->actionMapRangeRings)
+        parentWindow->getMapWidget()->addRangeRing(mo.getPosition());
+      else if(action == ui->actionMapNavaidRange)
+        parentWindow->getMapWidget()->addNavRangeRing(mo.getPosition(), mo.getMapObjectType(),
+                                                      mo.getIdent(), mo.getFrequency(),
+                                                      mo.getRange());
+      else if(action == ui->actionMapHideRangeRings)
+        parentWindow->getMapWidget()->clearRangeRings();
+
+    }
+
+  }
+}
+
+void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+  Q_UNUSED(selected);
+  Q_UNUSED(deselected);
+
+  tableSelectionChanged();
+}
+
+void RouteController::tableSelectionChanged()
+{
+  QItemSelectionModel *sm = tableView->selectionModel();
+
+  int selectedRows = 0;
+  if(sm != nullptr && sm->hasSelection())
+    selectedRows = sm->selectedRows().size();
+
+  emit routeSelectionChanged(selectedRows, model->rowCount());
 }

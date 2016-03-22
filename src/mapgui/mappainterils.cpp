@@ -37,12 +37,10 @@ MapPainterIls::MapPainterIls(Marble::MarbleWidget *widget, MapQuery *mapQuery, M
                              bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
-  symbolPainter = new SymbolPainter();
 }
 
 MapPainterIls::~MapPainterIls()
 {
-  delete symbolPainter;
 }
 
 void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
@@ -135,6 +133,8 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   }
   else if(mapLayer->isIlsIdent())
     text = ils.ident;
+
+  painter->setPen(QPen(mapcolors::ilsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   if(!text.isEmpty() && !fast)
   {

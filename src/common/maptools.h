@@ -37,8 +37,8 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>
                              [ = ](const TYPE * a1, const TYPE * a2)->bool
                              {
                                int x1, y1, x2, y2;
-                               conv.wToS(a1->position, x1, y1);
-                               conv.wToS(a2->position, x2, y2);
+                               conv.wToS(a1->getPosition(), x1, y1);
+                               conv.wToS(a2->getPosition(), x2, y2);
                                return atools::geo::manhattanDistance(x1, y1, xs, ys) <
                                atools::geo::manhattanDistance(x2, y2, xs, ys);
                              });

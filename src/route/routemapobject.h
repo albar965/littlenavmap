@@ -36,6 +36,8 @@ public:
   const QString& getRegion() const;
   const QString& getName() const;
   int getFrequency() const;
+  float getMagvar() const;
+  int getRange() const;
 
   atools::fs::pln::FlightplanEntry getFlightplanEntry() const
   {

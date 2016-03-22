@@ -114,7 +114,9 @@ void MapPaintLayer::initLayers()
 
   MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
-                      vor().ndb().waypoint().marker().ils();
+                      vor().ndb().waypoint().marker().ils().
+                      vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName();
+
   layers->
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
@@ -170,11 +172,13 @@ void MapPaintLayer::initLayers()
 
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false)).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).
+         vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false));
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).
+         vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 
   layers->finishAppend();
   qDebug() << *layers;
@@ -204,24 +208,39 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     mapFont->setBold(true);
     painter->setFont(*mapFont);
 
-    mapLayer = layers->getLayer(static_cast<float>(navMapWidget->distance()), detailFactor);
+    float dist = static_cast<float>(navMapWidget->distance());
+
+    mapLayer = layers->getLayer(dist, detailFactor);
+
+    // Get the uncorrected layer - route painting is independent of declutter
+    const MapLayer *mapLayerOriginal = layers->getLayer(dist, 10);
+
+    // Adjust airport layer to draw diagrams always independent of declutter
+    const MapLayer *airportLayer = nullptr;
+    if(mapLayerOriginal != nullptr)
+    {
+      if(mapLayerOriginal->isAirportDiagram())
+        airportLayer = mapLayerOriginal;
+      else
+        airportLayer = mapLayer;
+    }
 
     if(mapLayer != nullptr)
     {
       if(mapLayer->isAirportDiagram())
       {
         mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
-        mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterAirport->paint(airportLayer, painter, viewport, objectTypes);
         mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
       }
       else
       {
         mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
         mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
-        mapPainterAirport->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterAirport->paint(airportLayer, painter, viewport, objectTypes);
       }
     }
-    mapPainterRoute->paint(mapLayer, painter, viewport, objectTypes);
+    mapPainterRoute->paint(mapLayerOriginal, painter, viewport, objectTypes);
     mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
   }
 

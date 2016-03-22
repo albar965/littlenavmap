@@ -37,12 +37,10 @@ MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *map
                                      bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
-  symbolPainter = new SymbolPainter();
 }
 
 MapPainterAirport::~MapPainterAirport()
 {
-  delete symbolPainter;
 }
 
 void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
@@ -50,7 +48,10 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 {
   using namespace maptypes;
 
-  if(mapLayer == nullptr || !objectTypes.testFlag(maptypes::AIRPORT))
+  if(mapLayer == nullptr)
+    return;
+
+  if(!objectTypes.testFlag(maptypes::AIRPORT) && !mapLayer->isAirportDiagram())
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -77,7 +78,7 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
   for(const MapAirport& airport : *airports)
   {
-    if(!airport.isVisible(objectTypes))
+    if(!airport.isVisible(objectTypes) && !mapLayer->isAirportDiagram())
       continue;
 
     int x, y;
@@ -99,23 +100,23 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
         drawAirportSymbolOverview(painter, airport, mapLayer, drawFast);
 
       drawAirportSymbol(painter, airport, x, y, mapLayer, drawFast);
-      x += mapLayer->getAirportSymbolSize() + 2;
 
-      QStringList texts = airportTexts(mapLayer, airport);
+      textflags::TextFlags flags;
 
-      if(!texts.isEmpty())
-      {
-        textatt::TextAttributes atts = textatt::BOLD;
-        if(airport.flags.testFlag(AP_ADDON))
-          atts |= textatt::BOLD | textatt::ITALIC | textatt::UNDERLINE;
+      if(mapLayer->isAirportInfo())
+        flags = textflags::IDENT | textflags::NAME | textflags::INFO;
 
-        int transparency = mapLayer->isAirportDiagram() ? 180 : 255;
-        if(!airport.scenery())
-          transparency = 0;
-        textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
-      }
+      if(mapLayer->isAirportIdent())
+        flags |= textflags::IDENT;
+      else if(mapLayer->isAirportName())
+        flags |= textflags::NAME;
+
+      symbolPainter->drawAirportText(painter, airport, x, y, flags,
+                                     mapLayer->getAirportSymbolSize(),
+                                     mapLayer->isAirportDiagram(), true, drawFast);
     }
   }
+
   if(widget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
@@ -455,7 +456,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   painter->setFont(rwTextFont);
 
   // Draw dimensions at runway side
-  painter->setPen(QPen(mapcolors::runwayDimsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
+  painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
   for(int i = 0; i < runwayCenters.size(); i++)
   {
     const MapRunway& runway = runways->at(i);
@@ -528,8 +529,8 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       if(runway.primClosed)
       {
         // Cross out runway number
-        painter->drawLine(-crossSize, -crossSize - 10, crossSize, crossSize - 10);
-        painter->drawLine(-crossSize, crossSize - 10, crossSize, -crossSize - 10);
+        painter->drawLine(-crossSize, -crossSize + 10, crossSize, crossSize + 10);
+        painter->drawLine(-crossSize, crossSize + 10, crossSize, -crossSize + 10);
       }
       painter->resetTransform();
     }
@@ -660,43 +661,4 @@ QString MapPainterAirport::parkingName(const QString& name)
     return name.right(1);
   else
     return QString();
-}
-
-QStringList MapPainterAirport::airportTexts(const MapLayer *mapLayer, const maptypes::MapAirport& airport)
-{
-  QStringList texts;
-
-  if(mapLayer->isAirportInfo())
-  {
-    texts.append(airport.name + " (" + airport.ident + ")");
-
-    if(airport.altitude > 0 || airport.longestRunwayLength > 0 ||
-       airport.flags.testFlag(maptypes::AP_LIGHT))
-    {
-      QString tower = (airport.towerFrequency == 0 ? QString() :
-                       "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
-
-      QString autoWeather;
-      if(airport.atisFrequency > 0)
-        autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 2);
-      else if(airport.awosFrequency > 0)
-        autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 2);
-      else if(airport.asosFrequency > 0)
-        autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 2);
-
-      if(!tower.isEmpty() || !autoWeather.isEmpty())
-        texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
-
-      texts.append(QString::number(airport.altitude) + " " +
-                   (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
-                   QString::number(airport.longestRunwayLength / 100) + " " +
-                   (airport.unicomFrequency == 0 ? QString() :
-                    QString::number(airport.unicomFrequency / 1000., 'f', 2)));
-    }
-  }
-  else if(mapLayer->isAirportIdent())
-    texts.append(airport.ident);
-  else if(mapLayer->isAirportName())
-    texts.append(airport.name);
-  return texts;
 }

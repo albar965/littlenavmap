@@ -24,7 +24,7 @@
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
-
+#include "route/routecontroller.h"
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QSettings>
@@ -239,6 +239,15 @@ void NavMapWidget::showHome()
 void NavMapWidget::changeMark(const atools::geo::Pos& pos)
 {
   markPos = pos;
+  emit markChanged(markPos);
+
+  update();
+}
+
+void NavMapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighlight)
+{
+  routeHighlightMapObjects.clear();
+  routeHighlightMapObjects = routeHighlight;
   update();
 }
 
@@ -419,12 +428,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
     else if(action == ui->actionMapRangeRings)
       addRangeRing(pos);
     else if(action == ui->actionMapSetMark)
-    {
-      markPos = pos;
-      qDebug() << "new mark" << markPos;
-      update();
-      emit markChanged(markPos);
-    }
+      changeMark(pos);
     else if(action == ui->actionMapHideOneRangeRing)
     {
       rangeMarkers.removeAt(rangeMarkerIndex);
@@ -637,28 +641,30 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   qDebug() << "mouseDoubleClickEvent";
 
   CoordinateConverter conv(viewport());
-  MapSearchResult res;
+  MapSearchResult mapSearchResult;
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   mapQuery->getNearestObjects(conv, mapLayer,
                               paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT),
-                              event->pos().x(), event->pos().y(), 10, res);
+                              event->pos().x(), event->pos().y(), 10, mapSearchResult);
 
-  getNearestHighlightMapObjects(event->x(), event->y(), 10, res);
+  getNearestHighlightMapObjects(event->x(), event->y(), 10, mapSearchResult);
+  getNearestRouteMapObjects(event->x(), event->y(), 10,
+                            parentWindow->getRouteController()->getRouteMapObjects(), mapSearchResult);
 
-  if(!res.airports.isEmpty())
+  if(!mapSearchResult.airports.isEmpty())
   {
-  if(res.airports.at(0)->bounding.isPoint())
-    showPos(res.airports.at(0)->bounding.getTopLeft());
+  if(mapSearchResult.airports.at(0)->bounding.isPoint())
+    showPos(mapSearchResult.airports.at(0)->bounding.getTopLeft());
   else
-    showRect(res.airports.at(0)->bounding);
+    showRect(mapSearchResult.airports.at(0)->bounding);
   }
-  else if(!res.vors.isEmpty())
-    showPos(res.vors.at(0)->position);
-  else if(!res.ndbs.isEmpty())
-    showPos(res.ndbs.at(0)->position);
-  else if(!res.waypoints.isEmpty())
-    showPos(res.waypoints.at(0)->position);
+  else if(!mapSearchResult.vors.isEmpty())
+    showPos(mapSearchResult.vors.at(0)->position);
+  else if(!mapSearchResult.ndbs.isEmpty())
+    showPos(mapSearchResult.ndbs.at(0)->position);
+  else if(!mapSearchResult.waypoints.isEmpty())
+    showPos(mapSearchResult.waypoints.at(0)->position);
 }
 
 bool NavMapWidget::event(QEvent *event)
@@ -679,6 +685,8 @@ bool NavMapWidget::event(QEvent *event)
                               helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
 
   getNearestHighlightMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
+  getNearestRouteMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10,
+                            parentWindow->getRouteController()->getRouteMapObjects(), mapSearchResult);
 
   for(const MapAirport *ap : mapSearchResult.airports)
   {
@@ -822,6 +830,37 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
   }
 
   MarbleWidget::paintEvent(paintEvent);
+}
+
+void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
+                                             const QList<RouteMapObject>& routeMapObjects,
+                                             maptypes::MapSearchResult& mapobjects)
+{
+  using maptools::insertSortedByDistance;
+
+  CoordinateConverter conv(viewport());
+  int x, y;
+
+  for(const RouteMapObject& obj : routeMapObjects)
+    if(conv.wToS(obj.getPosition(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+      {
+        switch(obj.getMapObjectType())
+        {
+          case maptypes::VOR :
+            insertSortedByDistance(conv, mapobjects.vors, xs, ys, &obj.getVor());
+            break;
+          case maptypes::WAYPOINT:
+            insertSortedByDistance(conv, mapobjects.waypoints, xs, ys, &obj.getWaypoint());
+            break;
+          case maptypes::NDB:
+            insertSortedByDistance(conv, mapobjects.ndbs, xs, ys, &obj.getNdb());
+            break;
+          case maptypes::AIRPORT:
+            insertSortedByDistance(conv, mapobjects.airports, xs, ys, &obj.getAirport());
+            break;
+        }
+      }
 }
 
 void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,

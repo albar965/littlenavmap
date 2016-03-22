@@ -158,9 +158,11 @@ void MapSearchResult::deleteAllObjects()
   }
 }
 
+
+
 bool MapAirport::hard() const
 {
-  return flags.testFlag(AP_HARD);
+    return flags.testFlag(AP_HARD);
 }
 
 bool MapAirport::scenery() const
@@ -222,5 +224,7 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
 
   return true;
 }
+
+
 
 } // namespace types

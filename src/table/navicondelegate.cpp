@@ -83,14 +83,12 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(),
                                       option.rect.x() + (option.rect.width() - w) / 2,
                                       option.rect.y() + symSize / 2 + 2,
-                                      symSize,
-                                      false);
+                                      symSize, false, false);
   else if(navtype == "NDB")
     symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(),
                                  option.rect.x() + (option.rect.width() - w) / 2,
                                  option.rect.y() + symSize / 2 + 2,
-                                 symSize,
-                                 false);
+                                 symSize, false, false);
   else if(navtype == "VOR" || navtype == "VORDME" || navtype == "DME")
   {
     maptypes::MapVor vor;
@@ -100,8 +98,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     symbolPainter->drawVorSymbol(painter, vor,
                                  option.rect.x() + (option.rect.width() - w) / 2,
                                  option.rect.y() + symSize / 2 + 2,
-                                 symSize,
-                                 false, 0);
+                                 symSize, false, false, 0);
   }
 
   painter->restore();

@@ -19,6 +19,7 @@
 #define MAPPAINTERAIRPORT_H
 
 #include "mapgui/mappainter.h"
+#include "mapgui/symbolpainter.h"
 
 class SymbolPainter;
 
@@ -53,9 +54,7 @@ private:
   void runwayCoords(const QList<maptypes::MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *backRects);
   QString parkingName(const QString& name);
-  QStringList airportTexts(const MapLayer *mapLayer, const maptypes::MapAirport& airport);
 
-  SymbolPainter *symbolPainter;
 };
 
 #endif // MAPPAINTERAIRPORT_H

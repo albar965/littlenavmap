@@ -35,7 +35,6 @@ public:
                      Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
 
 private:
-  SymbolPainter *symbolPainter;
   void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
                      const MapLayer *mapLayer, bool fast);
 

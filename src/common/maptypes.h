@@ -96,6 +96,11 @@ struct MapAirport
 
   bool isVisible(maptypes::MapObjectTypes objectTypes) const;
 
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapRunway
@@ -120,6 +125,11 @@ struct MapRunway
     return !isWater() && !isHard();
   }
 
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapApron
@@ -141,6 +151,11 @@ struct MapParking
   QString type, name;
   int number, radius, heading;
   bool jetway;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapHelipad
@@ -149,6 +164,11 @@ struct MapHelipad
   atools::geo::Pos position;
   int length, width, heading;
   bool closed;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapWaypoint
@@ -157,6 +177,11 @@ struct MapWaypoint
   float magvar;
   QString ident, region, type, apIdent;
   atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapVor
@@ -167,6 +192,11 @@ struct MapVor
   int frequency, range;
   bool dmeOnly, hasDme;
   atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapNdb
@@ -176,6 +206,11 @@ struct MapNdb
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapMarker
@@ -184,6 +219,11 @@ struct MapMarker
   QString type;
   int heading;
   atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapIls
@@ -195,6 +235,11 @@ struct MapIls
   bool dme;
   atools::geo::Pos position, pos1, pos2, posmid;
   atools::geo::Rect bounding;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct MapSearchResult
@@ -222,6 +267,11 @@ struct RangeMarker
   MapObjectTypes type;
   QVector<int> ranges;
   atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 struct DistanceMarker
@@ -232,6 +282,11 @@ struct DistanceMarker
   bool rhumbLine, hasMagvar;
   float magvar;
   maptypes::MapObjectTypes type;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
 };
 
 QString navTypeName(const QString& type);

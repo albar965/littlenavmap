@@ -17,6 +17,7 @@
 
 #include "mappainter.h"
 #include "mapscale.h"
+#include "symbolpainter.h"
 #include "common/mapcolors.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
@@ -37,10 +38,12 @@ MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, M
   : CoordinateConverter(marbleWidget->viewport()), widget(marbleWidget), query(mapQuery), scale(mapScale),
     verbose(verboseMsg)
 {
+  symbolPainter = new SymbolPainter();
 }
 
 MapPainter::~MapPainter()
 {
+  delete symbolPainter;
 }
 
 void MapPainter::setRenderHints(GeoPainter *painter)
@@ -55,80 +58,6 @@ void MapPainter::setRenderHints(GeoPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::TextAntialiasing, false);
   }
-}
-
-void MapPainter::textBox(GeoPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-                         textatt::TextAttributes atts, int transparency)
-{
-  if(texts.isEmpty())
-    return;
-
-  painter->save();
-
-  if(transparency != 255)
-  {
-    if(transparency == 0)
-      painter->setBrush(Qt::NoBrush);
-    else
-    {
-      QColor col(mapcolors::textBoxColor);
-      col.setAlpha(transparency);
-      painter->setBrush(col);
-    }
-  }
-  else
-    painter->setBrush(mapcolors::textBoxColor);
-
-  QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
-
-  int yoffset = 0;
-  if(transparency != 0)
-  {
-    painter->setPen(mapcolors::textBackgroundPen);
-    for(const QString& t : texts)
-    {
-      int w = metrics.width(t);
-      int newx = x - 2;
-      // if(atts.testFlag(textatt::LEFT))
-      // newx = x;
-      if(atts.testFlag(textatt::RIGHT))
-        newx -= w;
-      else if(atts.testFlag(textatt::CENTER))
-        newx -= w / 2;
-
-      // painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
-      painter->drawRect(newx, y - h + metrics.descent() + yoffset, w + 4, h);
-      yoffset += h;
-    }
-  }
-
-  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
-  {
-    QFont f = painter->font();
-    f.setBold(atts.testFlag(textatt::BOLD));
-    f.setItalic(atts.testFlag(textatt::ITALIC));
-    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
-    painter->setFont(f);
-  }
-
-  yoffset = 0;
-  painter->setPen(textPen);
-  for(const QString& t : texts)
-  {
-    int w = metrics.width(t);
-    int newx = x;
-    // if(atts.testFlag(textatt::LEFT))
-    // newx = x;
-    if(atts.testFlag(textatt::RIGHT))
-      newx -= w;
-    else if(atts.testFlag(textatt::CENTER))
-      newx -= w / 2;
-
-    painter->drawText(newx, y + yoffset, t);
-    yoffset += h;
-  }
-  painter->restore();
 }
 
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, bool fast,

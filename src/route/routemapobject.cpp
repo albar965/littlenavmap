@@ -149,6 +149,54 @@ int RouteMapObject::getId() const
   return -1;
 }
 
+float RouteMapObject::getMagvar() const
+{
+  if(!valid)
+    return -1;
+
+  switch(entry.getWaypointType())
+  {
+    case atools::fs::pln::entry::UNKNOWN:
+      return 0.f;
+
+    case atools::fs::pln::entry::AIRPORT:
+      return airport.magvar;
+
+    case atools::fs::pln::entry::INTERSECTION:
+      return waypoint.magvar;
+
+    case atools::fs::pln::entry::VOR:
+      return vor.magvar;
+
+    case atools::fs::pln::entry::NDB:
+      return ndb.magvar;
+
+    case atools::fs::pln::entry::USER:
+      return 0.f;
+  }
+  return 0.f;
+}
+
+int RouteMapObject::getRange() const
+{
+  if(!valid)
+    return -1;
+
+  switch(entry.getWaypointType())
+  {
+    case atools::fs::pln::entry::UNKNOWN:
+    case atools::fs::pln::entry::AIRPORT:
+    case atools::fs::pln::entry::INTERSECTION:
+    case atools::fs::pln::entry::VOR:
+    case atools::fs::pln::entry::USER:
+      return vor.range;
+
+    case atools::fs::pln::entry::NDB:
+      return ndb.range;
+  }
+  return -1;
+}
+
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {
   if(!valid)

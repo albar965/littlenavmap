@@ -138,11 +138,14 @@ private:
   void defaultMapDetail();
   void setMapDetail(int factor);
   void selectionChanged(const Search *source, int selected, int visible, int total);
+  void routeSelectionChanged(int selected, int total);
 
   void routeNew();
   void routeOpen();
   void routeSave();
   void routeSaveAs();
+
+  void routeCenter();
 
 };
 

@@ -36,6 +36,7 @@ class MapQuery;
 class QTableView;
 class QStandardItemModel;
 class QStandardItem;
+class QItemSelection;
 
 class RouteController :
   public QObject
@@ -59,9 +60,17 @@ public:
     return routeMapObjects;
   }
 
+  void getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const;
+
+  const atools::geo::Rect& getBoundingRect() const
+  {
+    return boundingRect;
+  }
+
 private:
   bool changed = false;
   atools::fs::pln::Flightplan *flightplan = nullptr;
+  atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;
   QString routeFilename, dockWindowTitle;
   MainWindow *parentWindow;
@@ -70,6 +79,22 @@ private:
   QStandardItemModel *model;
   void flightplanToView();
   void updateWindowTitle();
+
+  float totalDistance = 0.f;
+
+  void updateLabel();
+
+  void doubleClick(const QModelIndex& index);
+  void tableContextMenu(const QPoint& pos);
+
+  void tableSelectionChanged();
+  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
+signals:
+  void showRect(const atools::geo::Rect& rect);
+  void showPos(const atools::geo::Pos& pos, int zoom);
+  void changeMark(const atools::geo::Pos& pos);
+  void routeSelectionChanged(int selected, int total);
 
 };
 

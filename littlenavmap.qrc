@@ -59,5 +59,6 @@
         <file>resources/icons/distancemeasureoff.svg</file>
         <file>resources/icons/filenew.svg</file>
         <file>resources/icons/filesaveas.svg</file>
+        <file>resources/icons/centerroute.svg</file>
     </qresource>
 </RCC>

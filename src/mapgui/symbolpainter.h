@@ -21,6 +21,11 @@
 #include <QColor>
 
 class QPainter;
+class QPen;
+
+namespace Marble {
+class GeoPainter;
+}
 
 namespace maptypes {
 struct MapAirport;
@@ -35,6 +40,41 @@ struct MapMarker;
 
 }
 
+namespace textflags {
+enum TextFlag
+{
+  NONE = 0x00,
+  IDENT = 0x01,
+  TYPE = 0x02,
+  FREQ = 0x04,
+  NAME = 0x08,
+  MORSE = 0x10,
+  INFO = 0x20,
+  ROUTE_TEXT = 0x40,
+  ALL = 0xff
+};
+
+Q_DECLARE_FLAGS(TextFlags, TextFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
+}
+
+namespace textatt {
+enum TextAttribute
+{
+  NONE = 0x00,
+  BOLD = 0x01,
+  ITALIC = 0x02,
+  UNDERLINE = 0x04,
+  RIGHT = 0x08,
+  LEFT = 0x10,
+  CENTER = 0x20,
+  ROUTE_BG_COLOR = 0x40
+};
+
+Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
+}
+
 class SymbolPainter
 {
 public:
@@ -44,14 +84,35 @@ public:
                          bool isAirportDiagram, bool fast);
 
   void drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y, int size,
+                          bool fill,
                           bool fast);
-  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool fast,
+  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool fill,
+                     bool fast,
                      int largeSize);
-  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool fast);
+  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool fill,
+                     bool fast);
   void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
                         bool fast);
 
+  void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+
+  void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
+                        textflags::TextFlags flags, int size, bool fill, bool fast);
+
+  void drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y, textflags::TextFlags flags,
+                   int size, bool fill, bool fast);
+
+  void drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, textflags::TextFlags flags,
+                   int size, bool fill, bool fast);
+
+  void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
+                       textflags::TextFlags flags, int size, bool diagram, bool fill,
+                       bool fast);
+
 private:
+  QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);
+
 };
 
 #endif // SYMBOLPAINTER_H

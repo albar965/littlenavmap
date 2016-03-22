@@ -415,6 +415,8 @@ void Search::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchTableSelectAll);
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
 
+  ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+
   menu.addSeparator();
   menu.addAction(ui->actionSearchResetView);
   menu.addAction(ui->actionSearchResetSearch);

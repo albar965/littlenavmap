@@ -130,6 +130,12 @@ MapLayer& MapLayer::waypointName(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::waypointRouteName(bool value)
+{
+  layerWaypointRouteName = value;
+  return *this;
+}
+
 MapLayer& MapLayer::vor(bool value)
 {
   layerVor = value;
@@ -145,6 +151,18 @@ MapLayer& MapLayer::vorIdent(bool value)
 MapLayer& MapLayer::vorInfo(bool value)
 {
   layerVorInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::vorRouteIdent(bool value)
+{
+  layerVorRouteIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::vorRouteInfo(bool value)
+{
+  layerVorRouteInfo = value;
   return *this;
 }
 
@@ -169,6 +187,18 @@ MapLayer& MapLayer::ndbIdent(bool value)
 MapLayer& MapLayer::ndbInfo(bool value)
 {
   layerNdbInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ndbRouteIdent(bool value)
+{
+  layerNdbRouteIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::ndbRouteInfo(bool value)
+{
+  layerNdbRouteInfo = value;
   return *this;
 }
 

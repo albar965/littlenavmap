@@ -1483,7 +1483,13 @@
      <item>
       <widget class="QLabel" name="labelRouteInfo">
        <property name="text">
-        <string>299 nm, 50 minutes</string>
+        <string/>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
      </item>
@@ -1674,6 +1680,8 @@
    </attribute>
    <addaction name="actionMapShowHome"/>
    <addaction name="actionMapShowMark"/>
+   <addaction name="actionRouteCenter"/>
+   <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
    <addaction name="separator"/>
@@ -2385,6 +2393,15 @@
    </property>
    <property name="text">
     <string>New Route</string>
+   </property>
+  </action>
+  <action name="actionRouteCenter">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/centerroute.svg</normaloff>:/littlenavmap/resources/icons/centerroute.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Center Route</string>
    </property>
   </action>
  </widget>

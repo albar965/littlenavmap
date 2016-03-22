@@ -37,12 +37,10 @@ MapPainterNav::MapPainterNav(Marble::MarbleWidget *widget, MapQuery *mapQuery, M
                              bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg)
 {
-  symbolPainter = new SymbolPainter();
 }
 
 MapPainterNav::~MapPainterNav()
 {
-  delete symbolPainter;
 }
 
 void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
@@ -82,14 +80,12 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
       if(visible)
         symbolPainter->drawWaypointSymbol(painter, waypoint, x, y,
-                                          mapLayer->getWaypointSymbolSize(), drawFast);
-      QStringList texts;
+                                          mapLayer->getWaypointSymbolSize(), false, drawFast);
 
       if(mapLayer->isWaypointName())
-        texts.append(waypoint.ident);
-
-      x += mapLayer->getNdbSymbolSize() / 2 + 2;
-      textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textatt::BOLD | textatt::LEFT, 0);
+        symbolPainter->drawWaypointText(painter, waypoint, x, y, textflags::IDENT,
+                                        mapLayer->getWaypointSymbolSize(),
+                                        false, drawFast);
     }
   }
   }
@@ -115,28 +111,18 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
         if(visible)
         {
-          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), drawFast,
+          symbolPainter->drawVorSymbol(painter, vor, x, y, mapLayer->getVorSymbolSize(), false, drawFast,
                                        mapLayer->isVorLarge() ? mapLayer->getVorSymbolSize() * 5 : 0);
 
-          QStringList texts;
+          textflags::TextFlags flags;
 
           if(mapLayer->isVorInfo())
-          {
-            QString range;
-            if(vor.range < 40)
-              range = "T";
-            else if(vor.range < 62)
-              range = "L";
-            else if(vor.range < 200)
-              range = "H";
-            texts.append(vor.ident + " (" + range + ")");
-            texts.append(QString::number(vor.frequency / 1000., 'f', 2));
-          }
+            flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
           else if(mapLayer->isVorIdent())
-            texts.append(vor.ident);
+            flags = textflags::IDENT;
 
-          x -= mapLayer->getVorSymbolSize() / 2 + 2;
-          textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
+          symbolPainter->drawVorText(painter, vor, x, y,
+                                     flags, mapLayer->getVorSymbolSize(), false, drawFast);
         }
       }
     }
@@ -163,21 +149,17 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
 
         if(visible)
         {
-          symbolPainter->drawNdbSymbol(painter, ndb, x, y, mapLayer->getNdbSymbolSize(), drawFast);
+          symbolPainter->drawNdbSymbol(painter, ndb, x, y, mapLayer->getNdbSymbolSize(), false, drawFast);
 
-          QStringList texts;
+          textflags::TextFlags flags;
 
           if(mapLayer->isNdbInfo())
-          {
-            QString type = ndb.type == "COMPASS_POINT" ? "CP" : ndb.type;
-            texts.append(ndb.ident + " (" + type + ")");
-            texts.append(QString::number(ndb.frequency / 100., 'f', 1));
-          }
+            flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
           else if(mapLayer->isNdbIdent())
-            texts.append(ndb.ident);
+            flags = textflags::IDENT;
 
-          x -= mapLayer->getNdbSymbolSize() / 2 + 2;
-          textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
+          symbolPainter->drawNdbText(painter, ndb, x, y,
+                                     flags, mapLayer->getNdbSymbolSize(), false, drawFast);
         }
       }
     }
@@ -211,7 +193,8 @@ void MapPainterNav::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
             QString type = marker.type.toLower();
             type[0] = type.at(0).toUpper();
             x -= mapLayer->getMarkerSymbolSize() / 2 + 2;
-            textBox(painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::BOLD | textatt::RIGHT, 0);
+            symbolPainter->textBox(painter, {type}, mapcolors::markerSymbolColor, x, y,
+                                   textatt::BOLD | textatt::RIGHT, 0);
           }
         }
       }
