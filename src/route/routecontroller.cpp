@@ -32,6 +32,7 @@
 #include <mapgui/mapquery.h>
 #include <QSpinBox>
 
+#include "routeicondelegate.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
@@ -65,6 +66,9 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(model);
   delete m;
+
+  // TODO delete old and new delegate
+  view->setItemDelegateForColumn(0, new RouteIconDelegate(routeMapObjects));
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
@@ -162,7 +166,8 @@ void RouteController::saveFlightplan()
 void RouteController::flightplanToView()
 {
   model->removeRows(0, model->rowCount());
-  model->setHorizontalHeaderLabels({"Ident", "Region", "Name", "Airway", "Type", "Freq.", "Course\n°M",
+  model->setHorizontalHeaderLabels({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
+                                    "Course\n°M", "Direct\n°M",
                                     "Distance\nnm"});
   if(flightplan != nullptr)
   {
@@ -223,7 +228,13 @@ void RouteController::flightplanToView()
       if(!first)
       {
         float course = atools::geo::normalizeCourse(last.getPosition().angleDegTo(mapobj.getPosition()));
-        item = new QStandardItem(QString::number(course + mapobj.getMagvar(), 'f', 1));
+        item = new QStandardItem(QString::number(course + mapobj.getMagvar(), 'f', 0));
+        item->setTextAlignment(Qt::AlignRight);
+        items.append(item);
+
+        float courseDirect =
+          atools::geo::normalizeCourse(last.getPosition().angleDegToRhumb(mapobj.getPosition()));
+        item = new QStandardItem(QString::number(courseDirect + mapobj.getMagvar(), 'f', 0));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 

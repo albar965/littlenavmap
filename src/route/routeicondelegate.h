@@ -15,42 +15,33 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPSCALE_H
-#define MAPSCALE_H
+#ifndef NAVICONDELEGATE_H
+#define NAVICONDELEGATE_H
 
-#include <QVector>
+#include "routemapobject.h"
 
-#include <marble/ViewportParams.h>
+#include <QStyledItemDelegate>
 
-namespace atools {
-namespace geo {
-class Pos;
-}
-}
+class SymbolPainter;
 
-class MapScale
+class RouteIconDelegate :
+  public QStyledItemDelegate
 {
+  Q_OBJECT
+
 public:
-  MapScale();
-
-  bool update(Marble::ViewportParams *viewportParams, double distance);
-
-  float getPixelForMeter(float meter, float directionDeg = 45.f) const;
-  float getPixelForFeet(int feet, float directionDeg = 45.f) const;
-  int getPixelIntForMeter(float meter, float directionDeg = 45.f) const;
-  int getPixelIntForFeet(int feet, float directionDeg = 45.f) const;
-
-  float getDegreePerPixel(int px) const;
+  RouteIconDelegate(const QList<RouteMapObject>& routeMapObjects);
+  virtual ~RouteIconDelegate();
 
 private:
-  friend QDebug operator<<(QDebug out, const MapScale& scale);
+  SymbolPainter *symbolPainter;
 
-  double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
-  Marble::ViewportParams *viewport;
-  Marble::Projection lastProjection;
+  const QList<RouteMapObject>& routeObjects;
 
-  /* Screen pixel per km for eight directions */
-  QVector<double> scales;
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) const override;
+  virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
 };
 
-#endif // MAPSCALE_H
+#endif // NAVICONDELEGATE_H

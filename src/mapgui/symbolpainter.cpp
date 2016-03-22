@@ -286,7 +286,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
-  y += size + 2;
+  y += size / 2 + painter->fontMetrics().ascent();
   int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
 }

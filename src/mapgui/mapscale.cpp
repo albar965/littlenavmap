@@ -36,12 +36,13 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
   CoordinateConverter converter(viewportParams);
 
   if(distance != lastDistance ||
-     viewportParams->centerLatitude() != lastCenterLatY || viewportParams->centerLongitude() !=
-     lastCenterLonX)
+     viewport->centerLatitude() != lastCenterLatY || viewport->centerLongitude() !=
+     lastCenterLonX || viewport->projection() != lastProjection)
   {
     lastDistance = distance;
     lastCenterLonX = viewportParams->centerLongitude();
     lastCenterLatY = viewportParams->centerLatitude();
+    lastProjection = viewport->projection();
 
     scales.clear();
     Pos center(lastCenterLonX, lastCenterLatY);
