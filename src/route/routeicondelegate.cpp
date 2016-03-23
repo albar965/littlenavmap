@@ -39,59 +39,39 @@ RouteIconDelegate::~RouteIconDelegate()
 void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
                               const QModelIndex& index) const
 {
-  painter->save();
-  painter->setRenderHint(QPainter::Antialiasing);
-  painter->fillRect(option.rect, option.backgroundBrush);
+  int symSize = option.rect.height() - 4;
+  int x = option.rect.x() + symSize;
+  int y = option.rect.y() + symSize / 2 + 2;
+
+  // Create a style copy
+  QStyleOptionViewItem opt(option);
+  opt.font.setBold(true);
+  opt.displayAlignment = Qt::AlignRight;
 
   const RouteMapObject& mapObj = routeObjects.at(index.row());
-
-  QFont font(painter->font());
-  font.setBold(true);
-
-  int symSize = option.rect.height() - 4;
-  int w = painter->fontMetrics().maxWidth();
-
-  if(mapObj.getMapObjectType() == maptypes::AIRPORT)
-  {
-    if(mapObj.getAirport().flags.testFlag(maptypes::AP_ADDON))
-      font.setItalic(true);
-
-    symbolPainter->drawAirportSymbol(painter, mapObj.getAirport(),
-                                     option.rect.x() + (option.rect.width() - w) / 2,
-                                     option.rect.y() + symSize / 2 + 2,
-                                     symSize,
-                                     false, false);
-  }
-  else if(mapObj.getMapObjectType() == maptypes::VOR)
-    symbolPainter->drawVorSymbol(painter, mapObj.getVor(),
-                                 option.rect.x() + (option.rect.width() - w) / 2,
-                                 option.rect.y() + symSize / 2 + 2,
-                                 symSize, false, false, 0);
-
-  else if(mapObj.getMapObjectType() == maptypes::NDB)
-    symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(),
-                                 option.rect.x() + (option.rect.width() - w) / 2,
-                                 option.rect.y() + symSize / 2 + 2,
-                                 symSize, false, false);
-  else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
-    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(),
-                                      option.rect.x() + (option.rect.width() - w) / 2,
-                                      option.rect.y() + symSize / 2 + 2,
-                                      symSize, false, false);
-
-  painter->setFont(font);
+  if(mapObj.getMapObjectType() == maptypes::AIRPORT && mapObj.getAirport().addon())
+    // Italic for addons
+    opt.font.setItalic(true);
 
   if(!mapObj.isValid())
-    painter->setPen(QColor(Qt::red));
+  {
+    // Used red for invalid entriess
+    opt.palette.setColor(QPalette::Active, QPalette::Text, QColor(Qt::red));
+    opt.palette.setColor(QPalette::Inactive, QPalette::Text, QColor(Qt::red));
+    opt.palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::red));
+  }
 
-  QRect textRect = option.rect;
-  textRect.setWidth(textRect.width() - 1);
-  painter->drawText(textRect, Qt::AlignRight, index.data(Qt::DisplayRole).toString());
-  painter->restore();
-}
+  // Draw the text
+  QStyledItemDelegate::paint(painter, opt, index);
 
-QSize RouteIconDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-  Q_UNUSED(index);
-  return QSize(option.fontMetrics.maxWidth() + option.rect.height() - 4, option.rect.height() - 4);
+  // Draw the icon
+  painter->setRenderHint(QPainter::Antialiasing);
+  if(mapObj.getMapObjectType() == maptypes::AIRPORT)
+    symbolPainter->drawAirportSymbol(painter, mapObj.getAirport(), x, y, symSize, false, false);
+  else if(mapObj.getMapObjectType() == maptypes::VOR)
+    symbolPainter->drawVorSymbol(painter, mapObj.getVor(), x, y, symSize, false, false, 0);
+  else if(mapObj.getMapObjectType() == maptypes::NDB)
+    symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symSize, false, false);
+  else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
+    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), x, y, symSize, false, false);
 }

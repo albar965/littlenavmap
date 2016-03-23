@@ -54,46 +54,26 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   }
   Q_ASSERT(sqlModel != nullptr);
 
-  painter->save();
-  painter->setRenderHint(QPainter::Antialiasing);
-
-  QString text = idx.data().toString();
   maptypes::MapAirport ap = mapAirport(sqlModel, idx.row());
 
-  QFont font(painter->font());
+  // Create a style copy
+  QStyleOptionViewItem opt(option);
+  opt.displayAlignment = Qt::AlignRight;
   if(ap.scenery())
-    font.setBold(true);
+    opt.font.setBold(true);
   if(ap.addon())
-    font.setItalic(true);
-  painter->setFont(font);
+    opt.font.setItalic(true);
 
-  if(!option.state.testFlag(QStyle::State_Selected) && idx.column() == sqlModel->getSortColumnIndex())
-    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
-  else
-    painter->fillRect(option.rect, option.backgroundBrush);
+  // Draw the text
+  QStyledItemDelegate::paint(painter, opt, index);
 
-  if(option.state.testFlag(QStyle::State_Selected) && option.state.testFlag(QStyle::State_Active))
-    painter->setPen(QApplication::palette().color(QPalette::Active, QPalette::HighlightedText));
-
-  QRect textRect = option.rect;
-  textRect.setWidth(textRect.width() - 1);
-  painter->drawText(textRect, Qt::AlignRight, text);
-
+  painter->setRenderHint(QPainter::Antialiasing);
   int symSize = option.rect.height() - 4;
-  int w = painter->fontMetrics().maxWidth();
   symbolPainter->drawAirportSymbol(painter, ap,
-                                   option.rect.x() + (option.rect.width() - w) / 2,
+                                   option.rect.x() + symSize,
                                    option.rect.y() + symSize / 2 + 2,
                                    symSize,
                                    false, false);
-
-  painter->restore();
-}
-
-QSize AirportIconDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-  Q_UNUSED(index);
-  return QSize(option.fontMetrics.maxWidth() + option.rect.height() - 4, option.rect.height() - 4);
 }
 
 QVariant AirportIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const
@@ -127,11 +107,9 @@ maptypes::MapAirport AirportIconDelegate::mapAirport(const SqlModel *sqlModel, i
   ap.flags |= flag(sqlModel, row, "is_closed", AP_CLOSED);
   ap.flags |= flag(sqlModel, row, "is_military", AP_MIL);
   ap.flags |= flag(sqlModel, row, "is_addon", AP_ADDON);
-  ap.flags |= flag(sqlModel, row, "num_approach", AP_APPR);
   ap.flags |= flag(sqlModel, row, "num_runway_hard", AP_HARD);
   ap.flags |= flag(sqlModel, row, "num_runway_soft", AP_SOFT);
   ap.flags |= flag(sqlModel, row, "num_runway_water", AP_WATER);
-  ap.flags |= flag(sqlModel, row, "num_runway_light", AP_LIGHT);
 
   return ap;
 }

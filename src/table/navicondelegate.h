@@ -42,7 +42,6 @@ private:
   QVariant value(const SqlModel *sqlModel, int row, const QString& name) const;
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;
-  virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
 };
 

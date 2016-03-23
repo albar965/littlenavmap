@@ -54,60 +54,30 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   }
   Q_ASSERT(sqlModel != nullptr);
 
-  painter->save();
-  painter->setRenderHint(QPainter::Antialiasing);
-
-  QString text = idx.data().toString();
-  QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
-
-  QFont font(painter->font());
-  font.setBold(true);
-  painter->setFont(font);
-
-  if(!option.state.testFlag(QStyle::State_Selected) && idx.column() == sqlModel->getSortColumnIndex())
-    painter->fillRect(option.rect, mapcolors::alternatingRowColor(idx.row(), true));
-  else
-    painter->fillRect(option.rect, option.backgroundBrush);
-
-  if(option.state.testFlag(QStyle::State_Selected) && option.state.testFlag(QStyle::State_Active))
-    painter->setPen(QApplication::palette().color(QPalette::Active, QPalette::HighlightedText));
-
-  QRect textRect = option.rect;
-  textRect.setWidth(textRect.width() - 1);
-  painter->drawText(textRect, Qt::AlignRight, text);
+  // Create a style copy
+  QStyleOptionViewItem opt(option);
+  opt.displayAlignment = Qt::AlignRight;
+  opt.font.setBold(true);
+  // Draw the text
+  QStyledItemDelegate::paint(painter, opt, index);
 
   int symSize = option.rect.height() - 4;
-  int w = painter->fontMetrics().maxWidth();
+  int x = option.rect.x() + symSize;
+  int y = option.rect.y() + symSize / 2 + 2;
 
+  painter->setRenderHint(QPainter::Antialiasing);
+  QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
   if(navtype == "WAYPOINT")
-    symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(),
-                                      option.rect.x() + (option.rect.width() - w) / 2,
-                                      option.rect.y() + symSize / 2 + 2,
-                                      symSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(), x, y, symSize, false, false);
   else if(navtype == "NDB")
-    symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(),
-                                 option.rect.x() + (option.rect.width() - w) / 2,
-                                 option.rect.y() + symSize / 2 + 2,
-                                 symSize, false, false);
+    symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(), x, y, symSize, false, false);
   else if(navtype == "VOR" || navtype == "VORDME" || navtype == "DME")
   {
     maptypes::MapVor vor;
     vor.dmeOnly = navtype == "DME";
     vor.hasDme = navtype == "VORDME" || navtype == "DME";
-
-    symbolPainter->drawVorSymbol(painter, vor,
-                                 option.rect.x() + (option.rect.width() - w) / 2,
-                                 option.rect.y() + symSize / 2 + 2,
-                                 symSize, false, false, 0);
+    symbolPainter->drawVorSymbol(painter, vor, x, y, symSize, false, false, 0);
   }
-
-  painter->restore();
-}
-
-QSize NavIconDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-  Q_UNUSED(index);
-  return QSize(option.fontMetrics.maxWidth() + option.rect.height() - 4, option.rect.height() - 4);
 }
 
 QVariant NavIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const

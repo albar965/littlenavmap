@@ -398,7 +398,6 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected);
   Q_UNUSED(total);
-  qDebug() << "routeSelectionChanged";
   QList<RouteMapObject> result;
   routeController->getSelectedRouteMapObjects(result);
   navMapWidget->changeRouteHighlight(result);
@@ -406,7 +405,6 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 
 void MainWindow::selectionChanged(const Search *source, int selected, int visible, int total)
 {
-  qDebug() << "selectionChanged";
   QString type;
   if(source == searchController->getAirportSearch())
   {
