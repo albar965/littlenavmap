@@ -107,6 +107,12 @@ MapLayer& MapLayer::airportInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airportRouteInfo(bool value)
+{
+  layerAirportRouteInfo = value;
+  return *this;
+}
+
 MapLayer& MapLayer::minRunwayLength(int length)
 {
   layerMinRunwayLength = length;

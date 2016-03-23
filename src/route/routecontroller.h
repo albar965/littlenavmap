@@ -95,6 +95,7 @@ signals:
   void showPos(const atools::geo::Pos& pos, int zoom);
   void changeMark(const atools::geo::Pos& pos);
   void routeSelectionChanged(int selected, int total);
+  void routeChanged();
 
 };
 

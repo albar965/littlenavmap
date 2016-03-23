@@ -243,6 +243,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showRect, navMapWidget, &NavMapWidget::showRect);
   connect(routeController, &RouteController::showPos, navMapWidget, &NavMapWidget::showPos);
   connect(routeController, &RouteController::changeMark, navMapWidget, &NavMapWidget::changeMark);
+  connect(routeController, &RouteController::routeChanged, navMapWidget, &NavMapWidget::routeChanged);
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
           navMapWidget, &NavMapWidget::showRect);

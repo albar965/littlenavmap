@@ -180,6 +180,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 
     if(largeSize > 0 && !vor.dmeOnly)
     {
+      painter->setBrush(Qt::NoBrush);
       painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPoint(0, 0), radius * 5, radius * 5);
 

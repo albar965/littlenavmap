@@ -31,8 +31,7 @@ public:
   MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterIls();
 
-  virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
+  virtual void paint(const PaintContext *context) override;
 
 private:
   void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,

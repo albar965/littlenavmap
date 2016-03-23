@@ -31,8 +31,8 @@ public:
   MapPainterNav(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterNav();
 
-  virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
+  virtual void paint(const PaintContext *context) override;
+
 };
 
 #endif // MAPPAINTERAIRPORT_H

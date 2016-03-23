@@ -21,6 +21,7 @@
 #include <marble/LayerInterface.h>
 #include <QPen>
 #include "mapquery.h"
+#include "mappainter.h"
 
 namespace Marble {
 class MarbleWidget;
@@ -63,7 +64,11 @@ public:
     return objectTypes;
   }
 
+  void routeChanged();
+
 private:
+  QSet<ForcePaintType> forcePaint;
+
   maptypes::MapObjectTypes objectTypes;
   int detailFactor = 10;
 

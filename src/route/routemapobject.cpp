@@ -17,6 +17,7 @@
 
 #include "routemapobject.h"
 #include "mapgui/mapquery.h"
+#include "geo/calculations.h"
 
 static QString EMPTY_STR;
 
@@ -49,7 +50,8 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
   return nullptr;
 }
 
-RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query)
+RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
+                               const RouteMapObject *predRouteMapObj)
   : entry(planEntry)
 {
   maptypes::MapSearchResult res;
@@ -114,6 +116,23 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
   }
 
   res.deleteAllObjects();
+
+  if(predRouteMapObj != nullptr)
+  {
+    predecessor = true;
+    using namespace atools::geo;
+
+    distanceTo = meterToNm(getPosition().distanceMeterTo(predRouteMapObj->getPosition()));
+    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(predRouteMapObj->getPosition()));
+
+    float magvar = getMagvar();
+    if(magvar == 0.f)
+      magvar = predRouteMapObj->getMagvar();
+
+    course = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
+    courseRhumb = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
+  }
+
 }
 
 RouteMapObject::~RouteMapObject()

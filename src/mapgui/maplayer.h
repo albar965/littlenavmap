@@ -52,6 +52,7 @@ public:
   MapLayer& airportIdent(bool = true);
   MapLayer& airportName(bool = true);
   MapLayer& airportInfo(bool = true);
+  MapLayer& airportRouteInfo(bool = true);
   MapLayer& minRunwayLength(int length);
 
   MapLayer& waypoint(bool value = true);
@@ -148,6 +149,11 @@ public:
   bool isAirportInfo() const
   {
     return layerAirportInfo;
+  }
+
+  bool isAirportRouteInfo() const
+  {
+    return layerAirportRouteInfo;
   }
 
   layer::AirportSource getDataSource() const
@@ -298,6 +304,7 @@ private:
        layerMarker = false, layerMarkerInfo = false,
        layerIls = false, layerIlsIdent = false, layerIlsInfo = false;
 
+  bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;
   bool layerNdbRouteIdent = false, layerNdbRouteInfo = false;
   bool layerWaypointRouteName = false;

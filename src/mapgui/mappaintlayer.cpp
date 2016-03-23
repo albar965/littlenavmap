@@ -27,7 +27,7 @@
 #include "mapscale.h"
 #include "geo/calculations.h"
 #include "logging/loggingdefs.h"
-
+#include "route/routecontroller.h"
 #include <cmath>
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -105,6 +105,16 @@ void MapPaintLayer::setDetailFactor(int factor)
   detailFactor = factor;
 }
 
+void MapPaintLayer::routeChanged()
+{
+  qDebug() << "route changed";
+  const QList<RouteMapObject>& routeMapObjects = navMapWidget->getRouteController()->getRouteMapObjects();
+
+  forcePaint.clear();
+  for(const RouteMapObject& obj : routeMapObjects)
+    forcePaint.insert(ForcePaintType(obj.getId(), obj.getMapObjectType()));
+}
+
 void MapPaintLayer::initLayers()
 {
   if(layers != nullptr)
@@ -114,8 +124,11 @@ void MapPaintLayer::initLayers()
 
   MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
+
                       vor().ndb().waypoint().marker().ils().
-                      vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName();
+
+                      vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName().
+                      airportRouteInfo();
 
   layers->
   append(defLayer.clone(0.3f).airportDiagram().airportDiagramDetail().airportDiagramDetail2().
@@ -173,12 +186,12 @@ void MapPaintLayer::initLayers()
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).
-         vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
+         airportRouteInfo(false).waypointRouteName(false)).
 
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).
-         vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
+         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 
   layers->finishAppend();
   qDebug() << *layers;
@@ -212,36 +225,32 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
     mapLayer = layers->getLayer(dist, detailFactor);
 
-    // Get the uncorrected layer - route painting is independent of declutter
-    const MapLayer *mapLayerOriginal = layers->getLayer(dist, 10);
-
-    // Adjust airport layer to draw diagrams always independent of declutter
-    const MapLayer *airportLayer = nullptr;
-    if(mapLayerOriginal != nullptr)
-    {
-      if(mapLayerOriginal->isAirportDiagram())
-        airportLayer = mapLayerOriginal;
-      else
-        airportLayer = mapLayer;
-    }
+    PaintContext context;
+    context.mapLayer = mapLayer;
+    // Get the uncorrected effective layer - route painting is independent of declutter
+    context.mapLayerEffective = layers->getLayer(dist, 10);
+    context.painter = painter;
+    context.viewport = viewport;
+    context.objectTypes = objectTypes;
+    context.forcePaintObjects = &forcePaint;
 
     if(mapLayer != nullptr)
     {
       if(mapLayer->isAirportDiagram())
       {
-        mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
-        mapPainterAirport->paint(airportLayer, painter, viewport, objectTypes);
-        mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
+        mapPainterIls->paint(&context);
+        mapPainterAirport->paint(&context);
+        mapPainterNav->paint(&context);
       }
       else
       {
-        mapPainterIls->paint(mapLayer, painter, viewport, objectTypes);
-        mapPainterNav->paint(mapLayer, painter, viewport, objectTypes);
-        mapPainterAirport->paint(airportLayer, painter, viewport, objectTypes);
+        mapPainterIls->paint(&context);
+        mapPainterNav->paint(&context);
+        mapPainterAirport->paint(&context);
       }
     }
-    mapPainterRoute->paint(mapLayerOriginal, painter, viewport, objectTypes);
-    mapPainterMark->paint(mapLayer, painter, viewport, objectTypes);
+    mapPainterRoute->paint(&context);
+    mapPainterMark->paint(&context);
   }
 
   return true;

@@ -33,14 +33,13 @@ public:
   MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterMark();
 
-  virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) override;
+  virtual void paint(const PaintContext *context) override;
 
 private:
   NavMapWidget *navMapWidget;
   void paintMark(Marble::GeoPainter *painter);
   void paintHome(Marble::GeoPainter *painter);
-  void paintHighlights(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
+  void paintHighlights(const MapLayer *mapLayer, const MapLayer* mapLayerEff, Marble::GeoPainter *painter, bool fast);
   void paintRangeRings(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                        Marble::ViewportParams *viewport, bool fast);
   void paintDistanceMarkers(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);

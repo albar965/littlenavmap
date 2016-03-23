@@ -32,6 +32,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
+using namespace maptypes;
 
 MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                                      bool verboseMsg)
@@ -43,42 +44,49 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
-void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                              Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes)
+void MapPainterAirport::paint(const PaintContext *context)
 {
-  using namespace maptypes;
 
-  if(mapLayer == nullptr)
+  if(context->mapLayer == nullptr)
     return;
 
-  if(!objectTypes.testFlag(maptypes::AIRPORT) && !mapLayer->isAirportDiagram())
+  if(!context->objectTypes.testFlag(maptypes::AIRPORT) && context->forcePaintObjects->isEmpty())
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
-  // || airports.size() < 100
 
-  const GeoDataLatLonAltBox& curBox = viewport->viewLatLonAltBox();
+  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
   t.start();
 
-  const QList<MapAirport> *airports = query->getAirports(curBox, mapLayer, drawFast);
+  // Ignore declutter if anything is forced
+  const MapLayer *queryLayer = context->mapLayer;
+  if(!context->forcePaintObjects->isEmpty())
+    queryLayer = context->mapLayerEffective;
+
+  const QList<MapAirport> *airports = query->getAirports(curBox, queryLayer, drawFast);
   if(airports == nullptr)
     return;
 
   if(!drawFast && verbose)
   {
-  qDebug() << "Number of aiports" << airports->size();
-  qDebug() << "Time for query" << t.elapsed() << " ms";
-  qDebug() << curBox.toString();
-  qDebug() << *mapLayer;
-  t.restart();
+    qDebug() << "Number of aiports" << airports->size();
+    qDebug() << "Time for query" << t.elapsed() << " ms";
+    qDebug() << curBox.toString();
+    qDebug() << *context->mapLayer;
+    t.restart();
   }
 
-  setRenderHints(painter);
+  setRenderHints(context->painter);
 
   for(const MapAirport& airport : *airports)
   {
-    if(!airport.isVisible(objectTypes) && !mapLayer->isAirportDiagram())
+    const MapLayer *layer = context->mapLayer;
+    bool forcedPaint = context->forcePaintObjects->contains(ForcePaintType(airport.id, maptypes::AIRPORT));
+    if(forcedPaint)
+      layer = context->mapLayerEffective;
+
+    if(!airport.isVisible(context->objectTypes) && !forcedPaint)
       continue;
 
     int x, y;
@@ -94,26 +102,26 @@ void MapPainterAirport::paint(const MapLayer *mapLayer, Marble::GeoPainter *pain
 
     if(visible)
     {
-      if(mapLayer->isAirportDiagram())
-        drawAirportDiagram(mapLayer, painter, airport, false);
+      if(layer->isAirportDiagram())
+        drawAirportDiagram(layer, context->painter, airport, false);
       else
-        drawAirportSymbolOverview(painter, airport, mapLayer, drawFast);
+        drawAirportSymbolOverview(context->painter, airport, layer, drawFast);
 
-      drawAirportSymbol(painter, airport, x, y, mapLayer, drawFast);
+      drawAirportSymbol(context->painter, airport, x, y, layer, drawFast);
 
       textflags::TextFlags flags;
 
-      if(mapLayer->isAirportInfo())
+      if(layer->isAirportInfo())
         flags = textflags::IDENT | textflags::NAME | textflags::INFO;
 
-      if(mapLayer->isAirportIdent())
+      if(layer->isAirportIdent())
         flags |= textflags::IDENT;
-      else if(mapLayer->isAirportName())
+      else if(layer->isAirportName())
         flags |= textflags::NAME;
 
-      symbolPainter->drawAirportText(painter, airport, x, y, flags,
-                                     mapLayer->getAirportSymbolSize(),
-                                     mapLayer->isAirportDiagram(), true, drawFast);
+      symbolPainter->drawAirportText(context->painter, airport, x, y, flags,
+                                     layer->getAirportSymbolSize(),
+                                     layer->isAirportDiagram(), true, drawFast);
     }
   }
 

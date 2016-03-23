@@ -129,6 +129,7 @@ void RouteController::newFlightplan()
   flightplanToView();
   updateWindowTitle();
   updateLabel();
+  emit routeChanged();
 }
 
 void RouteController::loadFlightplan(const QString& filename)
@@ -144,6 +145,7 @@ void RouteController::loadFlightplan(const QString& filename)
   flightplanToView();
   updateWindowTitle();
   updateLabel();
+  emit routeChanged();
 }
 
 void RouteController::saveFlighplanAs(const QString& filename)
@@ -173,11 +175,11 @@ void RouteController::flightplanToView()
   {
     RouteMapObject last;
     QList<QStandardItem *> items;
-    bool first = true;
     totalDistance = 0.f;
+    int row = 0;
     for(const FlightplanEntry& entry : flightplan->getEntries())
     {
-      RouteMapObject mapobj(entry, query);
+      RouteMapObject mapobj(entry, query, row == 0 ? nullptr : &last);
 
       if(!mapobj.isValid())
         qWarning() << "Entry for ident" << entry.getIcaoIdent() <<
@@ -208,7 +210,7 @@ void RouteController::flightplanToView()
         items.append(new QStandardItem("NDB (" + type + ")"));
       }
       else
-        items.append(new QStandardItem());
+        items.append(nullptr);
 
       QStandardItem *item;
       if(mapobj.getFrequency() > 0)
@@ -223,22 +225,21 @@ void RouteController::flightplanToView()
         items.append(item);
       }
       else
-        items.append(new QStandardItem());
+        items.append(nullptr);
 
-      if(!first)
+      if(row == 0)
+        boundingRect = atools::geo::Rect(mapobj.getPosition());
+      else
       {
-        float course = atools::geo::normalizeCourse(last.getPosition().angleDegTo(mapobj.getPosition()));
-        item = new QStandardItem(QString::number(course + mapobj.getMagvar(), 'f', 0));
+        item = new QStandardItem(QString::number(mapobj.getCourse(), 'f', 0));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
-        float courseDirect =
-          atools::geo::normalizeCourse(last.getPosition().angleDegToRhumb(mapobj.getPosition()));
-        item = new QStandardItem(QString::number(courseDirect + mapobj.getMagvar(), 'f', 0));
+        item = new QStandardItem(QString::number(mapobj.getCourseRhumb(), 'f', 0));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
-        float distance = atools::geo::meterToNm(last.getPosition().distanceMeterTo(mapobj.getPosition()));
+        float distance = mapobj.getDistanceTo();
         totalDistance += distance;
         item = new QStandardItem(QString::number(distance, 'f', 1));
         item->setTextAlignment(Qt::AlignRight);
@@ -246,18 +247,11 @@ void RouteController::flightplanToView()
 
         boundingRect.extend(mapobj.getPosition());
       }
-      else
-      {
-        first = false;
-        items.append(new QStandardItem());
-        items.append(new QStandardItem());
-
-        boundingRect = atools::geo::Rect(mapobj.getPosition());
-      }
 
       model->appendRow(items);
 
       last = mapobj;
+      row++;
     }
 
     Ui::MainWindow *ui = parentWindow->getUi();

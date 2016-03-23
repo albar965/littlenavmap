@@ -27,7 +27,8 @@ class RouteMapObject
 {
 public:
   RouteMapObject();
-  RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query);
+  RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
+                 const RouteMapObject *predRouteMapObj);
   ~RouteMapObject();
 
   int getId() const;
@@ -84,6 +85,31 @@ public:
     return waypoint;
   }
 
+  bool hasPredecessor() const
+  {
+    return predecessor;
+  }
+
+  float getDistanceTo() const
+  {
+    return distanceTo;
+  }
+
+  float getDistanceToRhumb() const
+  {
+    return distanceToRhumb;
+  }
+
+  float getCourse() const
+  {
+    return course;
+  }
+
+  float getCourseRhumb() const
+  {
+    return courseRhumb;
+  }
+
 private:
   atools::fs::pln::FlightplanEntry entry;
   maptypes::MapObjectTypes type = maptypes::NONE;
@@ -91,8 +117,9 @@ private:
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;
-  bool valid = false, selected = false;
+  bool valid = false, selected = false, predecessor = false;
 
+  float distanceTo, distanceToRhumb, course, courseRhumb;
 };
 
 #endif // ROUTEMAPOBJECT_H

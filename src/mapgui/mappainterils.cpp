@@ -43,32 +43,31 @@ MapPainterIls::~MapPainterIls()
 {
 }
 
-void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                          Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes)
+void MapPainterIls::paint(const PaintContext *context)
 {
   using namespace maptypes;
 
-  if(mapLayer == nullptr || !objectTypes.testFlag(ILS))
+  if(context->mapLayer == nullptr || !context->objectTypes.testFlag(ILS))
     return;
 
-  if(mapLayer->isIls())
+  if(context->mapLayer->isIls())
   {
   bool drawFast = widget->viewContext() == Marble::Animation;
 
-  const GeoDataLatLonBox& curBox = viewport->viewLatLonAltBox();
+  const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
   t.start();
 
-  const QList<MapIls> *ilss = query->getIls(curBox, mapLayer, drawFast);
+  const QList<MapIls> *ilss = query->getIls(curBox, context->mapLayer, drawFast);
   if(ilss != nullptr)
   {
-    setRenderHints(painter);
+    setRenderHints(context->painter);
     if(widget->viewContext() == Marble::Still && verbose)
     {
       qDebug() << "Number of ils" << ilss->size();
       qDebug() << "Time for query" << t.elapsed() << " ms";
       qDebug() << curBox.toString();
-      qDebug() << *mapLayer;
+      qDebug() << *context->mapLayer;
       t.restart();
     }
 
@@ -86,7 +85,7 @@ void MapPainterIls::paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
       }
 
       if(visible)
-        drawIlsSymbol(painter, ils, x, y, mapLayer, drawFast);
+        drawIlsSymbol(context->painter, ils, x, y, context->mapLayer, drawFast);
     }
   }
   if(widget->viewContext() == Marble::Still && verbose)

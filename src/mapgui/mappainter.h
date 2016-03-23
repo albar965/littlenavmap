@@ -40,6 +40,18 @@ class MapLayer;
 class MapQuery;
 class MapScale;
 
+typedef QPair<int, maptypes::MapObjectTypes> ForcePaintType;
+
+struct PaintContext
+{
+  const MapLayer *mapLayer;
+  const MapLayer *mapLayerEffective;
+  Marble::GeoPainter *painter;
+  Marble::ViewportParams *viewport;
+  maptypes::MapObjectTypes objectTypes;
+  QSet<ForcePaintType> *forcePaintObjects;
+};
+
 class MapPainter :
   public CoordinateConverter
 {
@@ -47,8 +59,7 @@ public:
   MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainter();
 
-  virtual void paint(const MapLayer *mapLayer, Marble::GeoPainter *painter,
-                     Marble::ViewportParams *viewport, maptypes::MapObjectTypes objectTypes) = 0;
+  virtual void paint(const PaintContext *context) = 0;
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);

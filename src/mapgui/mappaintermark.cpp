@@ -31,6 +31,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
+using namespace maptypes;
 
 MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
@@ -42,23 +43,18 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::paint(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
-                           maptypes::MapObjectTypes objectTypes)
+void MapPainterMark::paint(const PaintContext *context)
 {
-  Q_UNUSED(mapLayer);
-  Q_UNUSED(viewport);
-  Q_UNUSED(objectTypes);
-
   bool drawFast = widget->viewContext() == Marble::Animation;
-  setRenderHints(painter);
+  setRenderHints(context->painter);
 
-  painter->save();
-  paintHighlights(mapLayer, painter, drawFast);
-  paintMark(painter);
-  paintHome(painter);
-  paintRangeRings(mapLayer, painter, viewport, drawFast);
-  paintDistanceMarkers(mapLayer, painter, drawFast);
-  painter->restore();
+  context->painter->save();
+  paintHighlights(context->mapLayer, context->mapLayerEffective, context->painter, drawFast);
+  paintMark(context->painter);
+  paintHome(context->painter);
+  paintRangeRings(context->mapLayer, context->painter, context->viewport, drawFast);
+  paintDistanceMarkers(context->mapLayer, context->painter, drawFast);
+  context->painter->restore();
 }
 
 void MapPainterMark::paintMark(GeoPainter *painter)
@@ -93,10 +89,9 @@ void MapPainterMark::paintHome(GeoPainter *painter)
   }
 }
 
-void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
+void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *mapLayerEff,
+                                     GeoPainter *painter, bool fast)
 {
-  using namespace maptypes;
-
   const MapSearchResult& highlightResults = navMapWidget->getHighlightMapObjects();
   int size = 6;
 
@@ -119,18 +114,22 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, GeoPainter *paint
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
   for(const Pos& pos : positions)
   {
-  int x, y;
-  if(wToS(pos, x, y))
-  {
-    if(!fast)
+    int x, y;
+    if(wToS(pos, x, y))
     {
-      painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+      if(!fast)
+      {
+        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+      }
       painter->drawEllipse(QPoint(x, y), size, size);
-      painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
     }
-    painter->drawEllipse(QPoint(x, y), size, size);
   }
-  }
+
+  if(mapLayerEff != nullptr)
+    if(mapLayerEff->isAirport())
+      size = std::max(size, mapLayerEff->getAirportSymbolSize());
 
   const QList<RouteMapObject>& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
   positions.clear();

@@ -251,6 +251,11 @@ void NavMapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighli
   update();
 }
 
+void NavMapWidget::routeChanged()
+{
+  paintLayer->routeChanged();
+}
+
 void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
   highlightMapObjects.deleteAllObjects();
