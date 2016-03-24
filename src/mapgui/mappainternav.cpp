@@ -60,33 +60,33 @@ void MapPainterNav::paint(const PaintContext *context)
 
   if(context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT))
   {
-  const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, drawFast);
-  if(waypoints != nullptr)
-  {
-    if(widget->viewContext() == Marble::Still && verbose)
+    const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, drawFast);
+    if(waypoints != nullptr)
     {
-      qDebug() << "Number of waypoints" << waypoints->size();
-      qDebug() << "Time for query" << t.elapsed() << " ms";
-      qDebug() << curBox.toString();
-      qDebug() << *context->mapLayer;
-      t.restart();
+      if(widget->viewContext() == Marble::Still && verbose)
+      {
+        qDebug() << "Number of waypoints" << waypoints->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *context->mapLayer;
+        t.restart();
+      }
+
+      for(const MapWaypoint& waypoint : *waypoints)
+      {
+        int x, y;
+        bool visible = wToS(waypoint.position, x, y);
+
+        if(visible)
+          symbolPainter->drawWaypointSymbol(context->painter, waypoint, x, y,
+                                            context->mapLayer->getWaypointSymbolSize(), false, drawFast);
+
+        if(context->mapLayer->isWaypointName())
+          symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
+                                          context->mapLayer->getWaypointSymbolSize(),
+                                          false, drawFast);
+      }
     }
-
-    for(const MapWaypoint& waypoint : *waypoints)
-    {
-      int x, y;
-      bool visible = wToS(waypoint.position, x, y);
-
-      if(visible)
-        symbolPainter->drawWaypointSymbol(context->painter, waypoint, x, y,
-                                          context->mapLayer->getWaypointSymbolSize(), false, drawFast);
-
-      if(context->mapLayer->isWaypointName())
-        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
-                                        context->mapLayer->getWaypointSymbolSize(),
-                                        false, drawFast);
-    }
-  }
   }
 
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(maptypes::VOR))

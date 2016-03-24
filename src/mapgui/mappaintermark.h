@@ -39,7 +39,8 @@ private:
   NavMapWidget *navMapWidget;
   void paintMark(Marble::GeoPainter *painter);
   void paintHome(Marble::GeoPainter *painter);
-  void paintHighlights(const MapLayer *mapLayer, const MapLayer* mapLayerEff, Marble::GeoPainter *painter, bool fast);
+  void paintHighlights(const MapLayer *mapLayer, const MapLayer *mapLayerEff, Marble::GeoPainter *painter,
+                       bool fast);
   void paintRangeRings(const MapLayer *mapLayer, Marble::GeoPainter *painter,
                        Marble::ViewportParams *viewport, bool fast);
   void paintDistanceMarkers(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
