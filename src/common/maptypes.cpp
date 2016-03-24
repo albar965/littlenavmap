@@ -83,6 +83,67 @@ const QHash<QString, QString> parkingMapRamp(
     {"VEHICLES", QObject::tr("Vehicles")}
   });
 
+const QHash<QString, QString> parkingTypeMap(
+  {
+    {"UNKNOWN", QObject::tr("Unknown")},
+    {"RAMP_GA", QObject::tr("Ramp GA")},
+    {"RAMP_GA_SMALL", QObject::tr("Ramp GA Small")},
+    {"RAMP_GA_MEDIUM", QObject::tr("Ramp GA Medium")},
+    {"RAMP_GA_LARGE", QObject::tr("Ramp GA Large")},
+    {"RAMP_CARGO", QObject::tr("Ramp Cargo")},
+    {"RAMP_MIL_CARGO", QObject::tr("Ramp Mil Cargo")},
+    {"RAMP_MIL_COMBAT", QObject::tr("Ramp Mil Combat")},
+    {"GATE_SMALL", QObject::tr("Gate Small")},
+    {"GATE_MEDIUM", QObject::tr("Gate Medium")},
+    {"GATE_HEAVY", QObject::tr("Gate Heavy")},
+    {"DOCK_GA", QObject::tr("Dock GA")},
+    {"FUEL", QObject::tr("Fuel")},
+    {"VEHICLES", QObject::tr("Vehicles")}
+  });
+
+const QHash<QString, QString> parkingNameMap(
+  {
+    {"UNKNOWN", QObject::tr("Unknown")},
+    {"NO_PARKING", QObject::tr("No Parking")},
+    {"PARKING", QObject::tr("Parking")},
+    {"N_PARKING", QObject::tr("N Parking")},
+    {"NE_PARKING", QObject::tr("NE Parking")},
+    {"E_PARKING", QObject::tr("E Parking")},
+    {"SE_PARKING", QObject::tr("SE Parking")},
+    {"S_PARKING", QObject::tr("S Parking")},
+    {"SW_PARKING", QObject::tr("SW Parking")},
+    {"W_PARKING", QObject::tr("W Parking")},
+    {"NW_PARKING", QObject::tr("NW Parking")},
+    {"GATE", QObject::tr("Gate")},
+    {"DOCK", QObject::tr("Dock")},
+    {"GATE_A", QObject::tr("Gate A")},
+    {"GATE_B", QObject::tr("Gate B")},
+    {"GATE_C", QObject::tr("Gate C")},
+    {"GATE_D", QObject::tr("Gate D")},
+    {"GATE_E", QObject::tr("Gate E")},
+    {"GATE_F", QObject::tr("Gate F")},
+    {"GATE_G", QObject::tr("Gate G")},
+    {"GATE_H", QObject::tr("Gate H")},
+    {"GATE_I", QObject::tr("Gate I")},
+    {"GATE_J", QObject::tr("Gate J")},
+    {"GATE_K", QObject::tr("Gate K")},
+    {"GATE_L", QObject::tr("Gate L")},
+    {"GATE_M", QObject::tr("Gate M")},
+    {"GATE_N", QObject::tr("Gate N")},
+    {"GATE_O", QObject::tr("Gate O")},
+    {"GATE_P", QObject::tr("Gate P")},
+    {"GATE_Q", QObject::tr("Gate Q")},
+    {"GATE_R", QObject::tr("Gate R")},
+    {"GATE_S", QObject::tr("Gate S")},
+    {"GATE_T", QObject::tr("Gate T")},
+    {"GATE_U", QObject::tr("Gate U")},
+    {"GATE_V", QObject::tr("Gate V")},
+    {"GATE_W", QObject::tr("Gate W")},
+    {"GATE_X", QObject::tr("Gate X")},
+    {"GATE_Y", QObject::tr("Gate Y")},
+    {"GATE_Z", QObject::tr("Gate Z")}
+  });
+
 const QHash<QString, QString> typeNames(
   {
     {"HIGH", "High"},
@@ -130,6 +191,16 @@ QString parkingGateName(const QString& gate)
 QString parkingRampName(const QString& ramp)
 {
   return parkingMapRamp.value(ramp);
+}
+
+QString parkingTypeName(const QString& ramp)
+{
+  return parkingTypeMap.value(ramp);
+}
+
+QString parkingName(const QString& ramp)
+{
+  return parkingNameMap.value(ramp);
 }
 
 void MapSearchResult::deleteAllObjects()

@@ -436,7 +436,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
           if(parking.type.startsWith("FUEL"))
             text = "F";
           else
-            text = QString::number(parking.number) + " " + parkingName(parking.name);
+            text = QString::number(parking.number) + " " + parkingTypeName(parking.name);
           pt.setY(pt.y() + painter->fontMetrics().ascent() / 2);
           pt.setX(pt.x() - painter->fontMetrics().width(text) / 2);
 

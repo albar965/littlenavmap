@@ -43,6 +43,7 @@ class MainWindow;
 class MapPaintLayer;
 class MapQuery;
 class RouteController;
+class MapTooltip;
 
 class NavMapWidget :
   public Marble::MarbleWidget
@@ -155,6 +156,7 @@ private:
   int currentDistanceMarkerIndex = -1;
   maptypes::DistanceMarker distanceMarkerBackup;
   MapPosHistory history;
+  MapTooltip *mapTooltip;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

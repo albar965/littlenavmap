@@ -72,7 +72,8 @@ SOURCES += src/main.cpp\
     src/route/routecontroller.cpp \
     src/route/routemapobject.cpp \
     src/mapgui/mappainterroute.cpp \
-    src/route/routeicondelegate.cpp
+    src/route/routeicondelegate.cpp \
+    src/mapgui/maptooltip.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -107,7 +108,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routecontroller.h \
     src/route/routemapobject.h \
     src/mapgui/mappainterroute.h \
-    src/route/routeicondelegate.h
+    src/route/routeicondelegate.h \
+    src/mapgui/maptooltip.h
 
 FORMS    += src/gui/mainwindow.ui
 

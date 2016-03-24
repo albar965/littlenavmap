@@ -363,6 +363,8 @@ QString navName(const QString& type);
 QString surfaceName(const QString& surface);
 QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
+QString parkingTypeName(const QString& ramp);
+QString parkingName(const QString& ramp);
 
 } // namespace types
 
