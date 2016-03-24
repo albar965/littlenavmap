@@ -100,10 +100,8 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
     else
       first = false;
 
-    if(wToS(obj.getPosition(), x, y))
-      startPoints.append(QPoint(x, y));
-    else
-      startPoints.append(QPoint());
+    wToS(obj.getPosition(), x, y);
+    startPoints.append(QPoint(x, y));
 
     last = obj;
   }
@@ -130,6 +128,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       {
         QPoint p1 = startPoints.at(i);
         QPoint p2 = startPoints.at(i + 1);
+
         int lineLength = atools::geo::simpleDistance(p1.x(), p1.y(), p2.x(), p2.y());
 
         if(lineLength > 40)
@@ -141,13 +140,13 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
           qreal rotate, brg = textBearing.at(i);
           if(brg > 180.)
           {
-            text = "<< " + text;
+            text = "<<  " + text;
             elide = Qt::ElideRight;
             rotate = brg + 90.;
           }
           else
           {
-            text += " >>";
+            text += "  >>";
             elide = Qt::ElideLeft;
             rotate = brg - 90.;
           }
@@ -156,7 +155,8 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 
           painter->translate(x, y);
           painter->rotate(rotate);
-          painter->drawText(-painter->fontMetrics().width(text) / 2, -painter->fontMetrics().descent(), text);
+          painter->drawText(-painter->fontMetrics().width(text) / 2,
+                            -painter->fontMetrics().descent(), text);
           painter->resetTransform();
         }
       }

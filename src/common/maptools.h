@@ -22,6 +22,7 @@
 #include "geo/calculations.h"
 
 #include <QList>
+#include <QSet>
 #include <algorithm>
 #include <functional>
 
@@ -29,20 +30,31 @@ class CoordinateConverter;
 
 namespace maptools {
 
+const int MAX_LIST_ENTRIES = 5;
+
 template<typename TYPE>
-void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, int xs, int ys,
-                            const TYPE *type)
+void insertSortedByDistance(const CoordinateConverter& conv, QList<const TYPE *>& list, QSet<int> *ids,
+                            int xs, int ys, const TYPE *type)
 {
-  auto it = std::lower_bound(list.begin(), list.end(), type,
-                             [ = ](const TYPE * a1, const TYPE * a2)->bool
-                             {
-                               int x1, y1, x2, y2;
-                               conv.wToS(a1->getPosition(), x1, y1);
-                               conv.wToS(a2->getPosition(), x2, y2);
-                               return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-                               atools::geo::manhattanDistance(x2, y2, xs, ys);
-                             });
-  list.insert(it, type);
+  if(type == nullptr || list.size() > MAX_LIST_ENTRIES)
+    return;
+
+  if(ids == nullptr || !ids->contains(type->getId()))
+  {
+    auto it = std::lower_bound(list.begin(), list.end(), type,
+                               [ = ](const TYPE * a1, const TYPE * a2)->bool
+                               {
+                                 int x1, y1, x2, y2;
+                                 conv.wToS(a1->getPosition(), x1, y1);
+                                 conv.wToS(a2->getPosition(), x2, y2);
+                                 return atools::geo::manhattanDistance(x1, y1, xs, ys) <
+                                 atools::geo::manhattanDistance(x2, y2, xs, ys);
+                               });
+    list.insert(it, type);
+
+    if(ids != nullptr)
+      ids->insert(type->getId());
+  }
 }
 
 template<typename TYPE>

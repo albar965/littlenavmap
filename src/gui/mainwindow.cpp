@@ -43,6 +43,7 @@
 #include <marble/MarbleDirs.h>
 #include <marble/QtMarbleConfigDialog.h>
 #include <marble/MarbleDebug.h>
+#include "mapgui/maplayersettings.h"
 
 #include <QCloseEvent>
 #include <QElapsedTimer>
@@ -67,10 +68,6 @@
 
 using namespace Marble;
 using atools::settings::Settings;
-
-const int MAP_DEFAULT_DETAIL_FACTOR = 10;
-const int MAP_MAX_DETAIL_FACTOR = 15;
-const int MAP_MIN_DETAIL_FACTOR = 5;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)

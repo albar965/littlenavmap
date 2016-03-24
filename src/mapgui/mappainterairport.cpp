@@ -500,8 +500,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   painter->setFont(rwTextFont);
 
   // Draw numbers at end
-  const int crossSize = 10;
-
+  const int CROSS_SIZE = 10;
   for(int i = 0; i < runwayCenters.size(); i++)
   {
     const MapRunway& runway = runways->at(i);
@@ -521,8 +520,8 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       if(runway.secClosed)
       {
         // Cross out runway number
-        painter->drawLine(-crossSize, -crossSize + 10, crossSize, crossSize + 10);
-        painter->drawLine(-crossSize, crossSize + 10, crossSize, -crossSize + 10);
+        painter->drawLine(-CROSS_SIZE, -CROSS_SIZE + 10, CROSS_SIZE, CROSS_SIZE + 10);
+        painter->drawLine(-CROSS_SIZE, CROSS_SIZE + 10, CROSS_SIZE, -CROSS_SIZE + 10);
       }
       painter->resetTransform();
     }
@@ -537,8 +536,8 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
       if(runway.primClosed)
       {
         // Cross out runway number
-        painter->drawLine(-crossSize, -crossSize + 10, crossSize, crossSize + 10);
-        painter->drawLine(-crossSize, crossSize + 10, crossSize, -crossSize + 10);
+        painter->drawLine(-CROSS_SIZE, -CROSS_SIZE + 10, CROSS_SIZE, CROSS_SIZE + 10);
+        painter->drawLine(-CROSS_SIZE, CROSS_SIZE + 10, CROSS_SIZE, -CROSS_SIZE + 10);
       }
       painter->resetTransform();
     }

@@ -170,12 +170,15 @@ private:
   void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
                                      maptypes::MapSearchResult& mapobjects);
 
-  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
-  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
-
   void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
                                  const QList<RouteMapObject>& routeMapObjects,
                                  maptypes::MapSearchResult& mapobjects);
+
+  void getAllNearestMapObjects(int xs, int ys, int screenDistance,
+                               maptypes::MapSearchResult& mapSearchResult);
+
+  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
+  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
 
 };
 

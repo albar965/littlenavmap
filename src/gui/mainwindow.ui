@@ -326,7 +326,7 @@
              <item row="2" column="4">
               <widget class="QCheckBox" name="checkBoxAirportJetASearch">
                <property name="text">
-                <string>JetA</string>
+                <string>Jetfuel</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>

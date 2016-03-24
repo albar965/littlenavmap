@@ -49,7 +49,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
   if(!fast || isAirportDiagram)
-    if(ap.flags.testFlag(AP_FUEL) && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
+    if(ap.anyFuel() && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
     {
     // Draw fuel spikes
     int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
@@ -76,7 +76,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
       painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
     }
 
-    if(ap.isHeliport() && size > 6)
+    if(ap.helipadOnly() && size > 6)
     {
       int lineWidth = size / 7;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));

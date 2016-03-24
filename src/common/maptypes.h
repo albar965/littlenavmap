@@ -58,11 +58,13 @@ enum MapAirportFlag
   AP_APPR = 0x0020,
   AP_MIL = 0x0040,
   AP_CLOSED = 0x0080,
-  AP_FUEL = 0x0100,
-  AP_HARD = 0x0200,
-  AP_SOFT = 0x0400,
-  AP_WATER = 0x0800,
-  AP_HELIPORT = 0x1000,
+  AP_AVGAS = 0x0100,
+  AP_JETFUEL = 0x0200,
+  AP_HARD = 0x0400,
+  AP_SOFT = 0x0800,
+  AP_WATER = 0x1000,
+  AP_HELIPAD = 0x2000,
+  AP_COMPLETE = 0x4000, // Struct completely loaded?
   AP_ALL = 0xffff
 };
 
@@ -75,7 +77,7 @@ struct MapAirport
   QString ident, name;
   int longestRunwayLength = 0, longestRunwayHeading = 0;
   int altitude = 0;
-  MapAirportFlags flags = 0;
+  MapAirportFlags flags = AP_NONE;
   float magvar = 0;
 
   bool valid = false;
@@ -85,20 +87,28 @@ struct MapAirport
 
   bool hard() const;
   bool soft() const;
-  bool softOnly() const;
   bool water() const;
+  bool helipad() const;
+  bool softOnly() const;
   bool waterOnly() const;
-  bool isHeliport() const;
+  bool helipadOnly() const;
   bool noRunways() const;
   bool scenery() const;
   bool tower() const;
   bool addon() const;
+  bool anyFuel() const;
+  bool complete() const;
 
   bool isVisible(maptypes::MapObjectTypes objectTypes) const;
 
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  int getId() const
+  {
+    return id;
   }
 
 };
@@ -130,12 +140,22 @@ struct MapRunway
     return position;
   }
 
+  int getId() const
+  {
+    return -1;
+  }
+
 };
 
 struct MapApron
 {
   atools::geo::LineString vertices;
   QString surface;
+  int getId() const
+  {
+    return -1;
+  }
+
 };
 
 struct MapTaxiPath
@@ -143,6 +163,11 @@ struct MapTaxiPath
   atools::geo::Pos start, end;
   QString surface, name;
   int width;
+  int getId() const
+  {
+    return -1;
+  }
+
 };
 
 struct MapParking
@@ -154,6 +179,11 @@ struct MapParking
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  int getId() const
+  {
+    return -1;
   }
 
 };
@@ -169,6 +199,11 @@ struct MapHelipad
     return position;
   }
 
+  int getId() const
+  {
+    return -1;
+  }
+
 };
 
 struct MapWaypoint
@@ -180,6 +215,11 @@ struct MapWaypoint
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  int getId() const
+  {
+    return id;
   }
 
 };
@@ -197,6 +237,11 @@ struct MapVor
     return position;
   }
 
+  int getId() const
+  {
+    return id;
+  }
+
 };
 
 struct MapNdb
@@ -211,6 +256,11 @@ struct MapNdb
     return position;
   }
 
+  int getId() const
+  {
+    return id;
+  }
+
 };
 
 struct MapMarker
@@ -222,6 +272,11 @@ struct MapMarker
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  int getId() const
+  {
+    return id;
   }
 
 };
@@ -240,18 +295,31 @@ struct MapIls
     return position;
   }
 
+  int getId() const
+  {
+    return id;
+  }
+
 };
 
 struct MapSearchResult
 {
   QList<const MapAirport *> airports;
+  QSet<int> airportIds;
+
   QList<const MapAirport *> towers;
   QList<const MapParking *> parkings;
   QList<const MapHelipad *> helipads;
 
   QList<const MapWaypoint *> waypoints;
+  QSet<int> waypointIds;
+
   QList<const MapVor *> vors;
+  QSet<int> vorIds;
+
   QList<const MapNdb *> ndbs;
+  QSet<int> ndbIds;
+
   QList<const MapMarker *> markers;
   QList<const MapIls *> ils;
 

@@ -48,6 +48,8 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
   virtual ~MapQuery();
 
+  void getAirportById(maptypes::MapAirport& airport, int id);
+
   void getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
                     const QString& ident, const QString& region = QString());
 
@@ -137,9 +139,11 @@ private:
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
+  atools::sql::SqlQuery *airportByIdQuery = nullptr;
+
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                    atools::sql::SqlQuery *query,
-                                                   bool lazy);
+                                                   bool lazy, bool complete);
 
   void bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query);
 
@@ -152,7 +156,7 @@ private:
   const static double RECT_INFLATION_FACTOR;
   const static double RECT_INFLATION_ADD;
 
-  void fillMapAirport(const atools::sql::SqlQuery *query, maptypes::MapAirport& ap);
+  void fillMapAirport(const atools::sql::SqlQuery *query, maptypes::MapAirport& ap, bool complete);
   void fillMapVor(const atools::sql::SqlQuery *query, maptypes::MapVor& vor);
   void fillMapNdb(const atools::sql::SqlQuery *query, maptypes::MapNdb& ndb);
   void fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::MapWaypoint& wp);

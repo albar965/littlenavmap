@@ -158,11 +158,9 @@ void MapSearchResult::deleteAllObjects()
   }
 }
 
-
-
 bool MapAirport::hard() const
 {
-    return flags.testFlag(AP_HARD);
+  return flags.testFlag(AP_HARD);
 }
 
 bool MapAirport::scenery() const
@@ -180,6 +178,16 @@ bool MapAirport::addon() const
   return flags.testFlag(AP_ADDON);
 }
 
+bool MapAirport::anyFuel() const
+{
+  return flags.testFlag(AP_AVGAS) || flags.testFlag(AP_JETFUEL);
+}
+
+bool MapAirport::complete() const
+{
+  return flags.testFlag(AP_COMPLETE);
+}
+
 bool MapAirport::soft() const
 {
   return flags.testFlag(AP_SOFT);
@@ -195,15 +203,20 @@ bool MapAirport::water() const
   return flags.testFlag(AP_WATER);
 }
 
+bool MapAirport::helipad() const
+{
+  return flags.testFlag(AP_HELIPAD);
+}
+
 bool MapAirport::waterOnly() const
 {
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isHeliport() const
+bool MapAirport::helipadOnly() const
 {
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
-         !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPORT);
+         !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
 }
 
 bool MapAirport::noRunways() const
@@ -224,7 +237,5 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
 
   return true;
 }
-
-
 
 } // namespace types

@@ -22,6 +22,10 @@
 
 #include <QList>
 
+const int MAP_DEFAULT_DETAIL_FACTOR = 10;
+const int MAP_MAX_DETAIL_FACTOR = 15;
+const int MAP_MIN_DETAIL_FACTOR = 5;
+
 class MapLayerSettings
 {
 public:

@@ -99,10 +99,11 @@ maptypes::MapAirport AirportIconDelegate::mapAirport(const SqlModel *sqlModel, i
   ap.longestRunwayHeading =
     static_cast<int>(std::roundf(value(sqlModel, row, "longest_runway_heading").toFloat()));
 
-  ap.flags |= flag(sqlModel, row, "num_helipad", AP_HELIPORT);
+  // TODO duplicated from map query
+  ap.flags |= flag(sqlModel, row, "num_helipad", AP_HELIPAD);
   ap.flags |= flag(sqlModel, row, "rating", AP_SCENERY);
-  ap.flags |= flag(sqlModel, row, "has_avgas", AP_FUEL);
-  ap.flags |= flag(sqlModel, row, "has_jetfuel", AP_FUEL);
+  ap.flags |= flag(sqlModel, row, "has_avgas", AP_AVGAS);
+  ap.flags |= flag(sqlModel, row, "has_jetfuel", AP_JETFUEL);
   ap.flags |= flag(sqlModel, row, "tower_frequency", AP_TOWER);
   ap.flags |= flag(sqlModel, row, "is_closed", AP_CLOSED);
   ap.flags |= flag(sqlModel, row, "is_military", AP_MIL);

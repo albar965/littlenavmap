@@ -402,10 +402,21 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 
 void AirportSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const
 {
+  enum ColIds
+  {
+    ID = 0,
+    LEFT_LONX = 1,
+    TOP_LATY = 2,
+    RIGHT_LONX = 3,
+    BOTTOM_LATY = 4,
+    LONX = 5,
+    LATY = 6
+  };
+
   maptypes::MapAirport *ap = new maptypes::MapAirport;
-  ap->id = data.at(0).toInt();
-  ap->bounding = atools::geo::Rect(data.at(1).toFloat(), data.at(2).toFloat(),
-                                   data.at(3).toFloat(), data.at(4).toFloat());
-  ap->position = atools::geo::Pos(data.at(5).toFloat(), data.at(6).toFloat());
+  ap->id = data.at(ID).toInt();
+  ap->bounding = atools::geo::Rect(data.at(LEFT_LONX).toFloat(), data.at(TOP_LATY).toFloat(),
+                                   data.at(RIGHT_LONX).toFloat(), data.at(BOTTOM_LATY).toFloat());
+  ap->position = atools::geo::Pos(data.at(LONX).toFloat(), data.at(LATY).toFloat());
   result->airports.append(ap);
 }
