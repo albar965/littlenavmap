@@ -58,6 +58,9 @@ private:
   void paintVorText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
                     const maptypes::MapVor& obj);
 
+  void paintAirportText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+                        const maptypes::MapAirport& obj);
+
 };
 
 #endif // MAPPAINTERROUTE_H
