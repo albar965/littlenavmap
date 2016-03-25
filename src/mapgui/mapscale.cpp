@@ -39,9 +39,6 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
      viewport->centerLatitude() != lastCenterLatY || viewport->centerLongitude() !=
      lastCenterLonX || viewport->projection() != lastProjection)
   {
-//    qDebug() << "Updating scale distance" << distance << "lastDistance" << lastDistance
-//             << viewport->projection() << "lastProjection" << lastProjection;
-
     lastDistance = distance;
     lastCenterLonX = viewportParams->centerLongitude();
     lastCenterLatY = viewportParams->centerLatitude();

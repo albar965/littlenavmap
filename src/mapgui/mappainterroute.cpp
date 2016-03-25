@@ -46,6 +46,8 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::paint(const PaintContext *context)
 {
+  if(!context->objectTypes.testFlag(maptypes::ROUTE))
+    return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
@@ -59,6 +61,7 @@ void MapPainterRoute::paint(const PaintContext *context)
 void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
 {
   Q_UNUSED(fast);
+
   const QList<RouteMapObject> routeMapObjects = routeController->getRouteMapObjects();
 
   painter->setBrush(Qt::NoBrush);

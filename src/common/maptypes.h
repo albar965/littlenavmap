@@ -40,6 +40,9 @@ enum MapObjectType
   ILS = 0x0040,
   MARKER = 0x0080,
   WAYPOINT = 0x0100,
+  AIRWAYV = 0x0200,
+  AIRWAYJ = 0x0400,
+  ROUTE = 0x0800,
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffff
 };
@@ -302,6 +305,25 @@ struct MapIls
 
 };
 
+struct MapAirway
+{
+  int id;
+  QString name, type;
+  int minalt, sequence, fragment;
+  atools::geo::Pos from, to;
+  atools::geo::Rect bounding;
+  atools::geo::Pos getPosition() const
+  {
+    return bounding.getCenter();
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
 struct MapSearchResult
 {
   QList<const MapAirport *> airports;
@@ -322,6 +344,8 @@ struct MapSearchResult
 
   QList<const MapMarker *> markers;
   QList<const MapIls *> ils;
+
+  QList<const MapAirway *> airways;
 
   bool needsDelete = false;
 

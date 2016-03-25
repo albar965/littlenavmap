@@ -246,7 +246,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
   if(waypointCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, waypointsByRectQuery);
+      bindCoordinatePointInRect(r, waypointsByRectQuery);
       waypointsByRectQuery->exec();
       while(waypointsByRectQuery->next())
       {
@@ -270,7 +270,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
   if(vorCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, vorsByRectQuery);
+      bindCoordinatePointInRect(r, vorsByRectQuery);
       vorsByRectQuery->exec();
       while(vorsByRectQuery->next())
       {
@@ -294,7 +294,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
   if(ndbCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, ndbsByRectQuery);
+      bindCoordinatePointInRect(r, ndbsByRectQuery);
       ndbsByRectQuery->exec();
       while(ndbsByRectQuery->next())
       {
@@ -318,7 +318,7 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
   if(markerCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, markersByRectQuery);
+      bindCoordinatePointInRect(r, markersByRectQuery);
       markersByRectQuery->exec();
       while(markersByRectQuery->next())
       {
@@ -346,7 +346,7 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
   if(ilsCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, ilsByRectQuery);
+      bindCoordinatePointInRect(r, ilsByRectQuery);
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
       {
@@ -382,6 +382,44 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
   return &ilsCache.list;
 }
 
+const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                       bool lazy)
+{
+  if(mapLayer == nullptr)
+    return nullptr;
+
+  if(airwayCache.handleCache(rect, mapLayer, lazy))
+    qDebug() << "MapQuery airway cache miss";
+
+  if(airwayCache.list.isEmpty() && !lazy)
+    for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
+    {
+      bindCoordinatePointInRect(r, airwayByRectQuery);
+      airwayByRectQuery->exec();
+      while(airwayByRectQuery->next())
+      {
+        maptypes::MapAirway airway;
+
+        airway.id = airwayByRectQuery->value("route_id").toInt();
+        airway.type = airwayByRectQuery->value("route_type").toString();
+        airway.name = airwayByRectQuery->value("route_name").toString();
+        airway.minalt = airwayByRectQuery->value("minimum_altitude").toInt();
+        airway.fragment = airwayByRectQuery->value("route_fragment_no").toInt();
+        airway.sequence = airwayByRectQuery->value("sequence_no").toInt();
+
+        airway.from = Pos(airwayByRectQuery->value("from_lonx").toFloat(), airwayByRectQuery->value(
+                            "from_laty").toFloat());
+        airway.to = Pos(airwayByRectQuery->value("to_lonx").toFloat(), airwayByRectQuery->value(
+                          "to_laty").toFloat());
+        airway.bounding = Rect(airway.from);
+        airway.bounding.extend(airway.to);
+
+        airwayCache.list.append(airway);
+      }
+    }
+  return &airwayCache.list;
+}
+
 const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                            atools::sql::SqlQuery *query, bool lazy,
                                                            bool complete)
@@ -389,7 +427,7 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
   if(airportCache.list.isEmpty() && !lazy)
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
-      bindCoordinateRect(r, query);
+      bindCoordinatePointInRect(r, query);
       query->exec();
       while(query->next())
       {
@@ -702,12 +740,13 @@ maptypes::MapAirportFlags MapQuery::flag(const atools::sql::SqlQuery *query, con
     return query->value(field).toInt() > 0 ? flag : maptypes::AP_NONE;
 }
 
-void MapQuery::bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query)
+void MapQuery::bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
+                                         const QString& prefix)
 {
-  query->bindValue(":leftx", rect.west(GeoDataCoordinates::Degree));
-  query->bindValue(":rightx", rect.east(GeoDataCoordinates::Degree));
-  query->bindValue(":bottomy", rect.south(GeoDataCoordinates::Degree));
-  query->bindValue(":topy", rect.north(GeoDataCoordinates::Degree));
+  query->bindValue(":" + prefix + "leftx", rect.west(GeoDataCoordinates::Degree));
+  query->bindValue(":" + prefix + "rightx", rect.east(GeoDataCoordinates::Degree));
+  query->bindValue(":" + prefix + "bottomy", rect.south(GeoDataCoordinates::Degree));
+  query->bindValue(":" + prefix + "topy", rect.north(GeoDataCoordinates::Degree));
 }
 
 QList<Marble::GeoDataLatLonBox> MapQuery::splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect)
@@ -899,6 +938,13 @@ void MapQuery::initQueries()
     "select ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, lonx, laty "
     "from ils where " + whereRect + " " + whereLimit);
+
+  airwayByRectQuery = new SqlQuery(db);
+  airwayByRectQuery->prepare(
+    "select route_id, route_name, route_type, route_fragment_no, sequence_no, minimum_altitude, "
+    "from_lonx, from_laty, to_lonx, to_laty "
+    "from route where "
+    "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
 }
 
 void MapQuery::deInitQueries()
@@ -933,6 +979,8 @@ void MapQuery::deInitQueries()
   markersByRectQuery = nullptr;
   delete ilsByRectQuery;
   ilsByRectQuery = nullptr;
+  delete airwayByRectQuery;
+  airwayByRectQuery = nullptr;
 
   delete airportByIdQuery;
   airportByIdQuery = nullptr;

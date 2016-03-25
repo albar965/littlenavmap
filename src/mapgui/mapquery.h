@@ -79,6 +79,9 @@ public:
   const QList<maptypes::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                         bool lazy);
 
+  const QList<maptypes::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                               bool lazy);
+
   const QList<maptypes::MapRunway> *getRunwaysForOverview(int airportId);
 
   const QList<maptypes::MapRunway> *getRunways(int airportId);
@@ -119,6 +122,7 @@ private:
   SimpleCache<maptypes::MapNdb> ndbCache;
   SimpleCache<maptypes::MapMarker> markerCache;
   SimpleCache<maptypes::MapIls> ilsCache;
+  SimpleCache<maptypes::MapAirway> airwayCache;
 
   QCache<int, QList<maptypes::MapRunway> > runwayCache;
   QCache<int, QList<maptypes::MapRunway> > runwayOverwiewCache;
@@ -134,7 +138,8 @@ private:
   *parkingQuery = nullptr, *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
-  *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr;
+  *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,
+  *airwayByRectQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
@@ -145,7 +150,8 @@ private:
                                                    atools::sql::SqlQuery *query,
                                                    bool lazy, bool complete);
 
-  void bindCoordinateRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query);
+  void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
+                          const QString& prefix = QString());
 
   QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
 

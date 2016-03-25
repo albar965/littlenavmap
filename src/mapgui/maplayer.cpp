@@ -238,6 +238,24 @@ MapLayer& MapLayer::ilsInfo(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::airway(bool value)
+{
+  layerAirway = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airwayIdent(bool value)
+{
+  layerAirwayIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airwayInfo(bool value)
+{
+  layerAirwayInfo = value;
+  return *this;
+}
+
 MapLayer& MapLayer::waypointSymbolSize(int size)
 {
   layerWaypointSymbolSize = size;

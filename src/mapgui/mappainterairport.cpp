@@ -50,7 +50,8 @@ void MapPainterAirport::paint(const PaintContext *context)
   if(context->mapLayer == nullptr)
     return;
 
-  if(!context->objectTypes.testFlag(maptypes::AIRPORT) && context->forcePaintObjects->isEmpty())
+  if(!context->objectTypes.testFlag(maptypes::AIRPORT) &&
+     (context->forcePaintObjects == nullptr || context->forcePaintObjects->isEmpty()))
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -61,7 +62,7 @@ void MapPainterAirport::paint(const PaintContext *context)
 
   // Ignore declutter if anything is forced
   const MapLayer *queryLayer = context->mapLayer;
-  if(!context->forcePaintObjects->isEmpty())
+  if(context->forcePaintObjects != nullptr && !context->forcePaintObjects->isEmpty())
     queryLayer = context->mapLayerEffective;
 
   const QList<MapAirport> *airports = query->getAirports(curBox, queryLayer, drawFast);
@@ -82,7 +83,8 @@ void MapPainterAirport::paint(const PaintContext *context)
   for(const MapAirport& airport : *airports)
   {
     const MapLayer *layer = context->mapLayer;
-    bool forcedPaint = context->forcePaintObjects->contains(ForcePaintType(airport.id, maptypes::AIRPORT));
+    bool forcedPaint = context->forcePaintObjects != nullptr && context->forcePaintObjects->contains(
+      ForcePaintType(airport.id, maptypes::AIRPORT));
     if(forcedPaint)
       layer = context->mapLayerEffective;
 

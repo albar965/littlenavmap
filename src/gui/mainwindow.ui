@@ -1704,6 +1704,9 @@
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
    <addaction name="actionMapShowIls"/>
+   <addaction name="actionMapShowVictorAirways"/>
+   <addaction name="actionMapShowJetAirways"/>
+   <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowCities"/>
   </widget>
   <action name="actionSearchFilterIncluding">
@@ -2410,6 +2413,51 @@
    </property>
    <property name="text">
     <string>Center Route</string>
+   </property>
+  </action>
+  <action name="actionMapShowVictorAirways">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</iconset>
+   </property>
+   <property name="text">
+    <string>V</string>
+   </property>
+  </action>
+  <action name="actionMapShowJetAirways">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airwayjet.svg</normaloff>:/littlenavmap/resources/icons/airwayjet.svg</iconset>
+   </property>
+   <property name="text">
+    <string>J</string>
+   </property>
+   <property name="toolTip">
+    <string>J</string>
+   </property>
+  </action>
+  <action name="actionMapShowRoute">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
+   </property>
+   <property name="text">
+    <string>R</string>
+   </property>
+   <property name="toolTip">
+    <string>R</string>
    </property>
   </action>
  </widget>

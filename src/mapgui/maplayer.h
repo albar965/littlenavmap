@@ -79,6 +79,10 @@ public:
   MapLayer& ilsIdent(bool value = true);
   MapLayer& ilsInfo(bool value = true);
 
+  MapLayer& airway(bool value = true);
+  MapLayer& airwayIdent(bool value = true);
+  MapLayer& airwayInfo(bool value = true);
+
   MapLayer& waypointSymbolSize(int size);
   MapLayer& vorSymbolSize(int size);
   MapLayer& ndbSymbolSize(int size);
@@ -261,6 +265,21 @@ public:
     return layerIlsInfo;
   }
 
+  bool isAirway() const
+  {
+    return layerAirway;
+  }
+
+  bool isAirwayIdent() const
+  {
+    return layerAirwayIdent;
+  }
+
+  bool isAirwayInfo() const
+  {
+    return layerAirwayInfo;
+  }
+
   bool hasSameQueryParameters(const MapLayer *other) const
   {
     return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
@@ -302,7 +321,8 @@ private:
        layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,
        layerNdb = false, layerNdbIdent = false, layerNdbInfo = false,
        layerMarker = false, layerMarkerInfo = false,
-       layerIls = false, layerIlsIdent = false, layerIlsInfo = false;
+       layerIls = false, layerIlsIdent = false, layerIlsInfo = false,
+       layerAirway = false, layerAirwayIdent = false, layerAirwayInfo = false;
 
   bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;

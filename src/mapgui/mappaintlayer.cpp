@@ -125,7 +125,7 @@ void MapPaintLayer::initLayers()
   MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
-                      vor().ndb().waypoint().marker().ils().
+                      vor().ndb().waypoint().marker().ils().airway().
 
                       vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName().
                       airportRouteInfo();
@@ -137,6 +137,7 @@ void MapPaintLayer::initLayers()
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         airwayIdent().airwayInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(1.f).airportDiagram().airportDiagramDetail().airportSymbolSize(20).airportInfo().
@@ -144,6 +145,7 @@ void MapPaintLayer::initLayers()
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         airwayIdent().airwayInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(5.f).airportDiagram().airportSymbolSize(20).airportInfo().
@@ -151,6 +153,7 @@ void MapPaintLayer::initLayers()
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         airwayIdent().airwayInfo().
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
@@ -158,12 +161,14 @@ void MapPaintLayer::initLayers()
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         airwayIdent().
          markerSymbolSize(24)).
 
   append(defLayer.clone(50.f).airportSymbolSize(18).airportInfo().
          waypoint(false).
          vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(20).ndbIdent().ndbInfo().
+         airwayIdent().
          marker(false)).
 
   append(defLayer.clone(100.f).airportSymbolSize(12).
@@ -181,16 +186,16 @@ void MapPaintLayer::initLayers()
 
   append(defLayer.clone(200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false)).
+         vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).airway(false)).
 
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).waypointRouteName(false)).
 
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 
   layers->finishAppend();
@@ -232,7 +237,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     context.painter = painter;
     context.viewport = viewport;
     context.objectTypes = objectTypes;
-    context.forcePaintObjects = &forcePaint;
+
+    if(objectTypes.testFlag(maptypes::ROUTE))
+      context.forcePaintObjects = &forcePaint;
+    else
+      context.forcePaintObjects = nullptr;
 
     if(mapLayer != nullptr)
     {

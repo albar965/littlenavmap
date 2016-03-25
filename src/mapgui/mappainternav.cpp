@@ -27,6 +27,7 @@
 
 #include <QElapsedTimer>
 
+#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -57,6 +58,108 @@ void MapPainterNav::paint(const PaintContext *context)
   t.start();
 
   setRenderHints(context->painter);
+
+  if(context->mapLayer->isAirway() &&
+     (context->objectTypes.testFlag(maptypes::AIRWAYJ) || context->objectTypes.testFlag(maptypes::AIRWAYV)))
+  {
+    const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, drawFast);
+    if(airways != nullptr)
+    {
+      if(widget->viewContext() == Marble::Still && verbose)
+      {
+        qDebug() << "Number of airways" << airways->size();
+        qDebug() << "Time for query" << t.elapsed() << " ms";
+        qDebug() << curBox.toString();
+        qDebug() << *context->mapLayer;
+        t.restart();
+      }
+
+      QList<GeoDataCoordinates> textCoords;
+      QList<qreal> textBearing;
+
+      for(const MapAirway& airway : *airways)
+      {
+        if(airway.type == "JET" && !context->objectTypes.testFlag(maptypes::AIRWAYJ))
+          continue;
+        if(airway.type == "VICTOR" && !context->objectTypes.testFlag(maptypes::AIRWAYV))
+          continue;
+
+        if(airway.type == "VICTOR")
+          context->painter->setPen(QPen(QColor::fromRgb(150, 150, 150), 1.5));
+        else
+          context->painter->setPen(QPen(QColor::fromRgb(100, 100, 100), 1.5));
+
+        int x1, y1, x2, y2;
+        bool visible1 = wToS(airway.from, x1, y1);
+        bool visible2 = wToS(airway.to, x2, y2);
+
+        if(!visible1 && !visible2)
+        {
+          GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
+                                     airway.bounding.getEast(), airway.bounding.getWest(),
+                                     GeoDataCoordinates::Degree);
+          visible1 = airwaybox.intersects(curBox);
+        }
+
+        if(visible1 || visible2)
+        {
+          GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0,
+                                  GeoDataCoordinates::Degree);
+          GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0,
+                                GeoDataCoordinates::Degree);
+          GeoDataLineString line;
+          line.setTessellate(true);
+          line << from << to;
+
+          qreal init = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
+                                                    GeoDataCoordinates::InitialBearing));
+          qreal final = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
+                                                     GeoDataCoordinates::FinalBearing));
+          textBearing.append((init + final) / 2.);
+          textCoords.append(from.interpolate(to, 0.5));
+          context->painter->drawPolyline(line);
+        }
+        else
+        {
+          textBearing.append(0.);
+          textCoords.append(GeoDataCoordinates());
+        }
+      }
+
+      int x, y;
+      // Draw airway text along lines
+      context->painter->setPen(QColor::fromRgb(80, 80, 80));
+      int i = 0;
+      for(const GeoDataCoordinates& coord : textCoords)
+      {
+        if(textCoords.at(i).isValid() && wToS(coord, x, y))
+        {
+          const MapAirway& airway = airways->at(i);
+          QString text;
+
+          if(context->mapLayer->isAirwayIdent())
+            text += airway.name;
+
+          if(context->mapLayer->isAirwayInfo())
+            text += QString("/") + airway.type.at(0) + "/" +
+                    QString::number(airway.fragment) + "/" + QString::number(airway.sequence);
+
+          qreal rotate, brg = textBearing.at(i);
+          if(brg > 180.)
+            rotate = brg + 90.;
+          else
+            rotate = brg - 90.;
+
+          context->painter->translate(x, y);
+          context->painter->rotate(rotate);
+          context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
+                                     context->painter->fontMetrics().ascent(), text);
+          context->painter->resetTransform();
+        }
+        i++;
+      }
+    }
+  }
 
   if(context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT))
   {

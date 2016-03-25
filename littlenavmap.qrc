@@ -60,5 +60,8 @@
         <file>resources/icons/filenew.svg</file>
         <file>resources/icons/filesaveas.svg</file>
         <file>resources/icons/centerroute.svg</file>
+        <file>resources/icons/route.svg</file>
+        <file>resources/icons/airwayvictor.svg</file>
+        <file>resources/icons/airwayjet.svg</file>
     </qresource>
 </RCC>

@@ -298,6 +298,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
 
   connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &NavMapWidget::showMark);
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &NavMapWidget::showHome);
@@ -423,6 +426,14 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
 void MainWindow::updateMapShowFeatures()
 {
   navMapWidget->setShowMapPois(ui->actionMapShowCities->isChecked());
+
+  navMapWidget->setShowMapFeatures(maptypes::AIRWAYV,
+                                   ui->actionMapShowVictorAirways->isChecked());
+  navMapWidget->setShowMapFeatures(maptypes::AIRWAYJ,
+                                   ui->actionMapShowJetAirways->isChecked());
+
+  navMapWidget->setShowMapFeatures(maptypes::ROUTE,
+                                   ui->actionMapShowRoute->isChecked());
 
   navMapWidget->setShowMapFeatures(maptypes::AIRPORT_HARD,
                                    ui->actionMapShowAirports->isChecked());
@@ -712,8 +723,10 @@ void MainWindow::readSettings()
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-              ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-              ui->actionMapShowIls, ui->actionMapShowCities});
+              ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+              ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+              ui->actionMapShowRoute,
+              ui->actionMapShowCities});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
@@ -734,6 +747,8 @@ void MainWindow::writeSettings()
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+           ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+           ui->actionMapShowRoute,
            ui->actionMapShowCities});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
