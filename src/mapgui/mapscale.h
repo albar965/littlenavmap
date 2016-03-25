@@ -45,9 +45,9 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const MapScale& scale);
 
-  double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
   Marble::ViewportParams *viewport;
-  Marble::Projection lastProjection;
+  double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
+  Marble::Projection lastProjection = Marble::VerticalPerspective; // never used
 
   /* Screen pixel per km for eight directions */
   QVector<double> scales;

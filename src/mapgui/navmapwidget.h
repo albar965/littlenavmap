@@ -128,6 +128,11 @@ public:
 
   RouteController *getRouteController() const;
 
+  Marble::Projection getCurrentProjection() const
+  {
+    return currentProjection;
+  }
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -157,6 +162,7 @@ private:
   maptypes::DistanceMarker distanceMarkerBackup;
   MapPosHistory history;
   MapTooltip *mapTooltip;
+  Marble::Projection currentProjection;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

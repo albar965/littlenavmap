@@ -63,58 +63,42 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 
   painter->setBrush(Qt::NoBrush);
 
-  QList<GeoDataLineString> lines;
   QList<GeoDataCoordinates> textCoords;
   QList<qreal> textBearing;
 
   // Collect coordinates for text placement and lines first
-  bool first = true;
-  RouteMapObject last;
   int x, y;
   QList<QPoint> startPoints;
+  GeoDataLineString linestring;
+  linestring.setTessellate(true);
+
   for(const RouteMapObject& obj : routeMapObjects)
   {
-    if(!first)
+    GeoDataCoordinates to(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0,
+                          GeoDataCoordinates::Degree);
+    if(!linestring.isEmpty())
     {
-      GeoDataCoordinates from(last.getPosition().getLonX(),
-                              last.getPosition().getLatY(), 0, GeoDataCoordinates::Degree);
-      GeoDataCoordinates to(obj.getPosition().getLonX(),
-                            obj.getPosition().getLatY(), 0, GeoDataCoordinates::Degree);
-
-      qreal init =
-        atools::geo::normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                  GeoDataCoordinates::InitialBearing));
-      qreal final =
-        atools::geo::normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                  GeoDataCoordinates::FinalBearing));
+      const GeoDataCoordinates& from = linestring.last();
+      qreal init = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
+                                                GeoDataCoordinates::InitialBearing));
+      qreal final = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
+                                                 GeoDataCoordinates::FinalBearing));
       textBearing.append((init + final) / 2.);
-
       textCoords.append(from.interpolate(to, 0.5));
-
-      GeoDataLineString line;
-      line.append(from);
-      line.append(to);
-      line.setTessellate(true);
-      lines.append(line);
     }
-    else
-      first = false;
 
+    linestring.append(to);
     wToS(obj.getPosition(), x, y);
     startPoints.append(QPoint(x, y));
-
-    last = obj;
   }
 
   // Draw outer line
   painter->setPen(QPen(QColor(Qt::black), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  for(const GeoDataLineString& line : lines)
-    painter->drawPolyline(line);
+  painter->drawPolyline(linestring);
 
   // Draw innner line
   painter->setPen(QPen(QColor(Qt::yellow), 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  for(const GeoDataLineString& line : lines)
-    painter->drawPolyline(line);
+  painter->drawPolyline(linestring);
 
   // Draw text along lines
   painter->setPen(QColor(Qt::black));
@@ -129,7 +113,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
         QPoint p1 = startPoints.at(i);
         QPoint p2 = startPoints.at(i + 1);
 
-        int lineLength = atools::geo::simpleDistance(p1.x(), p1.y(), p2.x(), p2.y());
+        int lineLength = simpleDistance(p1.x(), p1.y(), p2.x(), p2.y());
 
         if(lineLength > 40)
         {

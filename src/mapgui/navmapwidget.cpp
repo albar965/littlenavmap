@@ -717,7 +717,8 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   const MapLayer *mapLayer = paintLayer->getMapLayer();
 
   mapQuery->getNearestObjects(conv, mapLayer, paintLayer->getShownMapFeatures() &
-                              (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT | maptypes::MARKER),
+                              (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT |
+                               maptypes::MARKER),
                               xs, ys, screenDistance, mapSearchResult);
 
   getNearestRouteMapObjects(xs, ys, screenDistance, parentWindow->getRouteController()->getRouteMapObjects(),

@@ -108,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent) :
   updateActionStates();
 
   navMapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
-  navMapWidget->setProjection(mapProjectionComboBox->currentIndex());
+  navMapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
   setMapDetail(mapDetailFactor);
 
   // Wait until everything is set up
@@ -154,10 +154,10 @@ void MainWindow::createNavMap()
 
   ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, navMapWidget);
 
-  QSet<QString> pluginEnable;
-  pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation"
-               << "Overview Map" << "Position Marker" << "Elevation Profile" << "Elevation Profile Marker"
-               << "Download Progress Indicator";
+  // QSet<QString> pluginEnable;
+  // pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation"
+  // << "Overview Map" << "Position Marker" << "Elevation Profile" << "Elevation Profile Marker"
+  // << "Download Progress Indicator";
 
   // pluginDisable << "Annotation" << "Amateur Radio Aprs Plugin" << "Atmosphere" << "Compass" <<
   // "Crosshairs" << "Earthquakes" << "Eclipses" << "Elevation Profile" << "Elevation Profile Marker" <<
