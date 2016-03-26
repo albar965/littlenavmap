@@ -61,7 +61,7 @@ NavMapWidget::NavMapWidget(MainWindow *parent, MapQuery *query)
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  mapTooltip = new MapTooltip(this);
+  mapTooltip = new MapTooltip(this, mapQuery);
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
@@ -325,67 +325,77 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionMapHideOneRangeRing->setEnabled(visible && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visible && distMarkerIndex != -1);
 
-  maptypes::MapObjectTypes selectedType = maptypes::NONE;
+  maptypes::MapObjectTypes selectedSearchType = maptypes::NONE, selectedRangeType = maptypes::NONE;
   // Create copies since the cache might be emptied by draw events after showing the menu
   maptypes::MapAirport ap;
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint wp;
-  maptypes::MapIls ils;
 
-  QString text;
+  QString searchText;
   ui->actionMapNavaidRange->setEnabled(false);
+  ui->actionShowInSearch->setEnabled(false);
+
+  // Update "Show in search" menu items
   if(!result.airports.isEmpty())
   {
     ap = *result.airports.first();
-    text = "Airport " + ap.name + " (" + ap.ident + ")";
-    selectedType = maptypes::AIRPORT;
+    searchText = "Airport " + ap.name + " (" + ap.ident + ")";
+    selectedSearchType = maptypes::AIRPORT;
     ui->actionShowInSearch->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(text));
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else if(!result.vors.isEmpty())
   {
     vor = *result.vors.first();
-    text = "VOR " + vor.name + " (" + vor.ident + ")";
-    selectedType = maptypes::VOR;
+    searchText = "VOR " + vor.name + " (" + vor.ident + ")";
+    selectedSearchType = maptypes::VOR;
     ui->actionShowInSearch->setEnabled(true);
-    ui->actionMapNavaidRange->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(text));
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(text));
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else if(!result.ndbs.isEmpty())
   {
     ndb = *result.ndbs.first();
-    text = "NDB " + ndb.name + " (" + ndb.ident + ")";
-    selectedType = maptypes::NDB;
+    searchText = "NDB " + ndb.name + " (" + ndb.ident + ")";
+    selectedSearchType = maptypes::NDB;
     ui->actionShowInSearch->setEnabled(true);
-    ui->actionMapNavaidRange->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(text));
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(text));
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else if(!result.waypoints.isEmpty())
   {
     wp = *result.waypoints.first();
-    text = "Waypoint " + wp.ident;
-    selectedType = maptypes::WAYPOINT;
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
+    searchText = "Waypoint " + wp.ident;
+    selectedSearchType = maptypes::WAYPOINT;
     ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(text));
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else
-  {
-    text = "here";
-    ui->actionShowInSearch->setEnabled(false);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+
+  // Update "show range rings for Navaid"
+  if(!result.vors.isEmpty())
+  {
+    vor = *result.vors.first();
+    QString rangeText = "VOR " + vor.name + " (" + vor.ident + ")";
+    selectedRangeType = maptypes::VOR;
+    ui->actionMapNavaidRange->setEnabled(true);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(rangeText));
   }
+  else if(!result.ndbs.isEmpty())
+  {
+    ndb = *result.ndbs.first();
+    QString rangeText = "NDB " + ndb.name + " (" + ndb.ident + ")";
+    selectedRangeType = maptypes::NDB;
+    ui->actionMapNavaidRange->setEnabled(true);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(rangeText));
+  }
+  else
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(text));
-  ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(text));
-
-  if(!result.ils.isEmpty())
-    ils = *result.ils.first();
+  ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(
+                                          searchText.isEmpty() ? "here" : searchText));
+  ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(
+                                               searchText.isEmpty() ? "here" : searchText));
 
   menu.addAction(ui->actionShowInSearch);
   QAction *action = menu.exec(QCursor::pos());
@@ -402,35 +412,33 @@ void NavMapWidget::contextMenu(const QPoint& point)
   {
     if(action == ui->actionShowInSearch)
     {
-      if(selectedType == maptypes::AIRPORT)
+      if(selectedSearchType == maptypes::AIRPORT)
       {
         ui->tabWidgetSearch->setCurrentIndex(0);
-        emit objectSelected(selectedType, ap.ident, QString(), QString());
+        emit objectSelected(selectedSearchType, ap.ident, QString(), QString());
       }
-      else if(selectedType == maptypes::VOR)
+      else if(selectedSearchType == maptypes::VOR)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(selectedType, vor.ident, vor.region, vor.apIdent);
+        emit objectSelected(selectedSearchType, vor.ident, vor.region, vor.apIdent);
       }
-      else if(selectedType == maptypes::NDB)
+      else if(selectedSearchType == maptypes::NDB)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(selectedType, ndb.ident, ndb.region, ndb.apIdent);
+        emit objectSelected(selectedSearchType, ndb.ident, ndb.region, ndb.apIdent);
       }
-      else if(selectedType == maptypes::WAYPOINT)
+      else if(selectedSearchType == maptypes::WAYPOINT)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(selectedType, wp.ident, wp.region, wp.apIdent);
+        emit objectSelected(selectedSearchType, wp.ident, wp.region, wp.apIdent);
       }
     }
     else if(action == ui->actionMapNavaidRange)
     {
-      if(selectedType == maptypes::VOR)
-        addNavRangeRing(vor.position, selectedType, vor.ident, vor.frequency, vor.range);
-      else if(selectedType == maptypes::NDB)
-        addNavRangeRing(ndb.position, selectedType, ndb.ident, ndb.frequency, ndb.range);
-      else if(selectedType == maptypes::ILS)
-        addNavRangeRing(ils.position, selectedType, ils.ident, ils.frequency, ils.range);
+      if(selectedRangeType == maptypes::VOR)
+        addNavRangeRing(vor.position, selectedRangeType, vor.ident, vor.frequency, vor.range);
+      else if(selectedRangeType == maptypes::NDB)
+        addNavRangeRing(ndb.position, selectedRangeType, ndb.ident, ndb.frequency, ndb.range);
     }
     else if(action == ui->actionMapRangeRings)
       addRangeRing(pos);
@@ -450,9 +458,9 @@ void NavMapWidget::contextMenu(const QPoint& point)
     {
       // Distance line
       maptypes::DistanceMarker dm;
-      dm.type = selectedType;
+      dm.type = selectedSearchType;
 
-      if(selectedType == maptypes::VOR)
+      if(selectedSearchType == maptypes::VOR)
       {
         dm.text = vor.ident + " " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2);
         dm.from = vor.position;
@@ -460,7 +468,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
         dm.hasMagvar = true;
         dm.color = mapcolors::vorSymbolColor;
       }
-      else if(selectedType == maptypes::NDB)
+      else if(selectedSearchType == maptypes::NDB)
       {
         dm.text = ndb.ident + " " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2);
         dm.from = ndb.position;
@@ -468,7 +476,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
         dm.hasMagvar = true;
         dm.color = mapcolors::ndbSymbolColor;
       }
-      else if(selectedType == maptypes::WAYPOINT)
+      else if(selectedSearchType == maptypes::WAYPOINT)
       {
         dm.text = wp.ident;
         dm.from = wp.position;
@@ -476,7 +484,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
         dm.hasMagvar = true;
         dm.color = mapcolors::waypointSymbolColor;
       }
-      else if(selectedType == maptypes::AIRPORT)
+      else if(selectedSearchType == maptypes::AIRPORT)
       {
         dm.text = ap.name + " (" + ap.ident + ")";
         dm.from = ap.position;

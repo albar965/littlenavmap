@@ -26,6 +26,7 @@ struct MapSearchResult;
 }
 
 class MapLayer;
+class MapQuery;
 
 class MapTooltip :
   public QObject
@@ -33,10 +34,13 @@ class MapTooltip :
   Q_OBJECT
 
 public:
-  explicit MapTooltip(QObject *parent = 0);
+  MapTooltip(QObject *parent, MapQuery *mapQuery);
+  virtual ~MapTooltip();
 
   QString buildTooltip(maptypes::MapSearchResult& mapSearchResult, const MapLayer *mapLayer);
 
+private:
+  MapQuery *query;
 };
 
 #endif // MAPTOOLTIP_H

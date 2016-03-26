@@ -209,24 +209,6 @@ struct MapHelipad
 
 };
 
-struct MapWaypoint
-{
-  int id;
-  float magvar;
-  QString ident, region, type, apIdent;
-  atools::geo::Pos position;
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-  int getId() const
-  {
-    return id;
-  }
-
-};
-
 struct MapVor
 {
   int id;
@@ -266,6 +248,44 @@ struct MapNdb
 
 };
 
+struct MapWaypoint
+{
+  int id;
+  float magvar;
+  QString ident, region, type, apIdent;
+  atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
+struct MapAirway
+{
+  int id, fromWpId, toWpId;
+  QString name, type;
+  int minalt, sequence, fragment;
+  atools::geo::Pos from, to;
+  atools::geo::Rect bounding;
+
+  atools::geo::Pos getPosition() const
+  {
+    return bounding.getCenter();
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
 struct MapMarker
 {
   int id;
@@ -296,25 +316,6 @@ struct MapIls
   const atools::geo::Pos& getPosition() const
   {
     return position;
-  }
-
-  int getId() const
-  {
-    return id;
-  }
-
-};
-
-struct MapAirway
-{
-  int id;
-  QString name, type;
-  int minalt, sequence, fragment;
-  atools::geo::Pos from, to;
-  atools::geo::Rect bounding;
-  atools::geo::Pos getPosition() const
-  {
-    return bounding.getCenter();
   }
 
   int getId() const

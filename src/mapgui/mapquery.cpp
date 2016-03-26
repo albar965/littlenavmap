@@ -56,6 +56,18 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
     fillMapAirport(airportByIdQuery, airport, true);
 }
 
+void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways)
+{
+  airwayByWaypointIdQuery->bindValue(":id", waypointId);
+  airwayByWaypointIdQuery->exec();
+  while(airwayByWaypointIdQuery->next())
+  {
+    maptypes::MapAirway airway;
+    fillAirway(airwayByWaypointIdQuery, airway);
+    airways.append(airway);
+  }
+}
+
 void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
                             const QString& ident, const QString& region)
 {
@@ -399,21 +411,7 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
       while(airwayByRectQuery->next())
       {
         maptypes::MapAirway airway;
-
-        airway.id = airwayByRectQuery->value("route_id").toInt();
-        airway.type = airwayByRectQuery->value("route_type").toString();
-        airway.name = airwayByRectQuery->value("route_name").toString();
-        airway.minalt = airwayByRectQuery->value("minimum_altitude").toInt();
-        airway.fragment = airwayByRectQuery->value("route_fragment_no").toInt();
-        airway.sequence = airwayByRectQuery->value("sequence_no").toInt();
-
-        airway.from = Pos(airwayByRectQuery->value("from_lonx").toFloat(), airwayByRectQuery->value(
-                            "from_laty").toFloat());
-        airway.to = Pos(airwayByRectQuery->value("to_lonx").toFloat(), airwayByRectQuery->value(
-                          "to_laty").toFloat());
-        airway.bounding = Rect(airway.from);
-        airway.bounding.extend(airway.to);
-
+        fillAirway(airwayByRectQuery, airway);
         airwayCache.list.append(airway);
       }
     }
@@ -824,6 +822,11 @@ void MapQuery::initQueries()
     "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
     "from airport ");
 
+  QString airwayQueryBase(
+    "select route_id, route_name, route_type, route_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
+    "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty "
+    "from route ");
+
   static QString waypointQueryBase("select waypoint_id, ident, region, type, mag_var, lonx, laty "
                                    "from waypoint");
 
@@ -941,10 +944,11 @@ void MapQuery::initQueries()
 
   airwayByRectQuery = new SqlQuery(db);
   airwayByRectQuery->prepare(
-    "select route_id, route_name, route_type, route_fragment_no, sequence_no, minimum_altitude, "
-    "from_lonx, from_laty, to_lonx, to_laty "
-    "from route where "
+    airwayQueryBase + " where " +
     "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
+
+  airwayByWaypointIdQuery = new SqlQuery(db);
+  airwayByWaypointIdQuery->prepare(airwayQueryBase + " where from_waypoint_id = :id or to_waypoint_id = :id");
 }
 
 void MapQuery::deInitQueries()
@@ -984,6 +988,9 @@ void MapQuery::deInitQueries()
 
   delete airportByIdQuery;
   airportByIdQuery = nullptr;
+  delete airwayByWaypointIdQuery;
+  airwayByWaypointIdQuery = nullptr;
+
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
   delete vorByIdentQuery;
@@ -1030,4 +1037,22 @@ void MapQuery::fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::Map
   wp.type = query->value("type").toString();
   wp.magvar = query->value("mag_var").toFloat();
   wp.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
+}
+
+void MapQuery::fillAirway(const atools::sql::SqlQuery *query, maptypes::MapAirway& airway)
+{
+  airway.id = query->value("route_id").toInt();
+  airway.type = query->value("route_type").toString();
+  airway.name = query->value("route_name").toString();
+  airway.minalt = query->value("minimum_altitude").toInt();
+  airway.fragment = query->value("route_fragment_no").toInt();
+  airway.sequence = query->value("sequence_no").toInt();
+  airway.fromWpId = query->value("from_waypoint_id").toInt();
+  airway.toWpId = query->value("to_waypoint_id").toInt();
+  airway.from = Pos(query->value("from_lonx").toFloat(),
+                    query->value("from_laty").toFloat());
+  airway.to = Pos(query->value("to_lonx").toFloat(),
+                  query->value("to_laty").toFloat());
+  airway.bounding = Rect(airway.from);
+  airway.bounding.extend(airway.to);
 }

@@ -82,6 +82,8 @@ public:
   const QList<maptypes::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                bool lazy);
 
+  void getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways);
+
   const QList<maptypes::MapRunway> *getRunwaysForOverview(int airportId);
 
   const QList<maptypes::MapRunway> *getRunways(int airportId);
@@ -145,13 +147,14 @@ private:
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr;
+  atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                    atools::sql::SqlQuery *query,
                                                    bool lazy, bool complete);
 
   void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                          const QString& prefix = QString());
+                                 const QString& prefix = QString());
 
   QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
 
@@ -166,6 +169,7 @@ private:
   void fillMapVor(const atools::sql::SqlQuery *query, maptypes::MapVor& vor);
   void fillMapNdb(const atools::sql::SqlQuery *query, maptypes::MapNdb& ndb);
   void fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::MapWaypoint& wp);
+  void fillAirway(const atools::sql::SqlQuery *query, maptypes::MapAirway& airway);
   maptypes::MapAirportFlags flag(const atools::sql::SqlQuery *query, const QString& field,
                                  maptypes::MapAirportFlags flag);
 

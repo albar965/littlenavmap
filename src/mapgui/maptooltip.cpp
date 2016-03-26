@@ -18,12 +18,18 @@
 #include "maplayer.h"
 #include "maptooltip.h"
 #include "common/maptypes.h"
+#include "mapgui/mapquery.h"
 #include "table/formatter.h"
 
 using namespace maptypes;
 
-MapTooltip::MapTooltip(QObject *parent)
-  : QObject(parent)
+MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery)
+  : QObject(parent), query(mapQuery)
+{
+
+}
+
+MapTooltip::~MapTooltip()
 {
 
 }
@@ -121,6 +127,26 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
     text += "<br/>Type: " + maptypes::navTypeName(wp->type);
     text += "<br/>Region: " + wp->region;
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(wp->magvar, QString(), 1) + " °";
+
+    QList<MapAirway> airways;
+    query->getAirwaysForWaypoint(wp->id, airways);
+
+    QStringList airwayTexts;
+    if(!airways.isEmpty())
+    {
+      for(const MapAirway& aw : airways)
+      {
+        QString txt("<br/>" + aw.name + ", " + aw.type);
+        if(aw.minalt > 0)
+          txt += ", " + QString::number(aw.minalt) + " ft";
+        airwayTexts.append(txt);
+      }
+      airwayTexts.sort();
+      airwayTexts.removeDuplicates();
+
+      text += "<br/><b>Airways:</b>";
+      text += airwayTexts.join("");
+    }
   }
 
   for(const MapMarker *m : mapSearchResult.markers)
