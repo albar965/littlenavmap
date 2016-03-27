@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "coordinateconverter.h"
+#include "common/coordinateconverter.h"
 #include "mapscale.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"

@@ -20,7 +20,7 @@
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
@@ -40,7 +40,7 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/ViewportParams.h>
 #include <marble/MarbleModel.h>
-#include "coordinateconverter.h"
+#include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "maptooltip.h"
 #include "ui_mainwindow.h"

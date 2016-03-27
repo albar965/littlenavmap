@@ -64,7 +64,6 @@ private:
   void paintText(const MapLayer *mapLayer, Marble::GeoPainter *painter, const QColor& color, int x, int y,
                  const QString& text);
 
-
   void paintUserpoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y);
 
 };

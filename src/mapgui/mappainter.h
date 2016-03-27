@@ -18,7 +18,7 @@
 #ifndef MAPPAINTER_H
 #define MAPPAINTER_H
 
-#include "coordinateconverter.h"
+#include "common/coordinateconverter.h"
 #include "common/maptypes.h"
 #include <marble/MarbleWidget.h>
 

@@ -17,7 +17,7 @@
 
 #include "routecontroller.h"
 #include "fs/pln/flightplan.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 #include "geo/calculations.h"
 #include "gui/mainwindow.h"
 #include "mapgui/navmapwidget.h"

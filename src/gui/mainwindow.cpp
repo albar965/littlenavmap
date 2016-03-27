@@ -27,7 +27,7 @@
 #include "fs/fspaths.h"
 #include "table/search.h"
 #include "mapgui/navmapwidget.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 #include "table/airportsearch.h"
 #include "table/navsearch.h"
 #include "mapgui/mapquery.h"

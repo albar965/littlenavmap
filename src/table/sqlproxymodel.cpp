@@ -18,7 +18,7 @@
 #include "table/sqlproxymodel.h"
 #include "geo/calculations.h"
 #include "table/sqlmodel.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 
 #include <QApplication>
 

@@ -20,7 +20,7 @@
 #include "sql/sqlquery.h"
 #include "geo/rect.h"
 #include "geo/calculations.h"
-#include "coordinateconverter.h"
+#include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "common/maptools.h"
 

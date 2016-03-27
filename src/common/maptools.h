@@ -18,7 +18,7 @@
 #ifndef MAPTOOLS_H
 #define MAPTOOLS_H
 
-#include "mapgui/coordinateconverter.h"
+#include "common/coordinateconverter.h"
 #include "geo/calculations.h"
 
 #include <QList>

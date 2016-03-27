@@ -22,8 +22,8 @@
 #include <QSettings>
 #include <QDateTime>
 
-const int MAX_MS_FOR_NEW_ENTRY = 1000;
-const int MAX_NUMBER_OF_ENTRIES = 20;
+const int MAX_MS_FOR_NEW_ENTRY = 200;
+const int MAX_NUMBER_OF_ENTRIES = 50;
 
 MapPosHistory::MapPosHistory(QObject *parent)
   : QObject(parent)

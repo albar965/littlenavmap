@@ -42,7 +42,6 @@ SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
     src/table/columnlist.cpp \
     src/table/controller.cpp \
-    src/table/formatter.cpp \
     src/table/sqlmodel.cpp \
     src/table/column.cpp \
     src/table/sqlproxymodel.cpp \
@@ -59,7 +58,6 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainterairport.cpp \
     src/mapgui/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
-    src/mapgui/coordinateconverter.cpp \
     src/table/airporticondelegate.cpp \
     src/mapgui/symbolpainter.cpp \
     src/common/maptypes.cpp \
@@ -73,12 +71,13 @@ SOURCES += src/main.cpp\
     src/route/routemapobject.cpp \
     src/mapgui/mappainterroute.cpp \
     src/route/routeicondelegate.cpp \
-    src/mapgui/maptooltip.cpp
+    src/mapgui/maptooltip.cpp \
+    src/common/formatter.cpp \
+    src/common/coordinateconverter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
     src/table/controller.h \
-    src/table/formatter.h \
     src/table/sqlmodel.h \
     src/table/column.h \
     src/table/sqlproxymodel.h \
@@ -95,7 +94,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainterairport.h \
     src/mapgui/mappaintermark.h \
     src/mapgui/mapscale.h \
-    src/mapgui/coordinateconverter.h \
     src/table/airporticondelegate.h \
     src/mapgui/symbolpainter.h \
     src/common/maptypes.h \
@@ -109,7 +107,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routemapobject.h \
     src/mapgui/mappainterroute.h \
     src/route/routeicondelegate.h \
-    src/mapgui/maptooltip.h
+    src/mapgui/maptooltip.h \
+    src/common/formatter.h \
+    src/common/coordinateconverter.h
 
 FORMS    += src/gui/mainwindow.ui
 

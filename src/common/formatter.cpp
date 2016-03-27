@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/formatter.h"
+#include "common/formatter.h"
 
 #include <QDateTime>
 #include <QElapsedTimer>

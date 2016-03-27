@@ -29,7 +29,7 @@
 #include "geo/pos.h"
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 #include "airporticondelegate.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"

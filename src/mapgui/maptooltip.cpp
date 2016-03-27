@@ -19,7 +19,7 @@
 #include "maptooltip.h"
 #include "common/maptypes.h"
 #include "mapgui/mapquery.h"
-#include "table/formatter.h"
+#include "common/formatter.h"
 
 using namespace maptypes;
 
