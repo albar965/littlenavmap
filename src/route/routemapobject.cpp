@@ -61,7 +61,7 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
 
   if(region == "KK") // Invalid route finder stuff
     region.clear();
-
+  bool valid = false;
   switch(entry.getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
@@ -113,9 +113,13 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
       }
     case atools::fs::pln::entry::USER:
       valid = true;
+      type = maptypes::USER;
       userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
       break;
   }
+
+  if(!valid)
+    type = maptypes::INVALID;
 
   res.deleteAllObjects();
 
@@ -143,7 +147,7 @@ RouteMapObject::~RouteMapObject()
 
 int RouteMapObject::getId() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return -1;
 
   switch(entry.getWaypointType())
@@ -171,7 +175,7 @@ int RouteMapObject::getId() const
 
 float RouteMapObject::getMagvar() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return -1;
 
   switch(entry.getWaypointType())
@@ -199,7 +203,7 @@ float RouteMapObject::getMagvar() const
 
 int RouteMapObject::getRange() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return -1;
 
   switch(entry.getWaypointType())
@@ -221,7 +225,7 @@ int RouteMapObject::getRange() const
 
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
   {
     if(entry.getPosition().isValid())
       return entry.getPosition();
@@ -254,7 +258,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
 
 const QString& RouteMapObject::getIdent() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return entry.getIcaoIdent();
 
   switch(entry.getWaypointType())
@@ -282,7 +286,7 @@ const QString& RouteMapObject::getIdent() const
 
 const QString& RouteMapObject::getRegion() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return entry.getIcaoRegion();
 
   switch(entry.getWaypointType())
@@ -306,7 +310,7 @@ const QString& RouteMapObject::getRegion() const
 
 const QString& RouteMapObject::getName() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return EMPTY_STR;
 
   switch(entry.getWaypointType())
@@ -330,7 +334,7 @@ const QString& RouteMapObject::getName() const
 
 int RouteMapObject::getFrequency() const
 {
-  if(!valid)
+  if(type == maptypes::INVALID)
     return 0;
 
   switch(entry.getWaypointType())

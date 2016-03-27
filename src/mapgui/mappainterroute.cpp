@@ -163,11 +163,11 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
-        case maptypes::NONE:
-          if(!obj.isValid())
-            paintWaypoint(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getWaypoint());
-          else
-            paintUserpoint(mapLayer, painter, x, y);
+        case maptypes::INVALID:
+          paintWaypoint(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getWaypoint());
+          break;
+        case maptypes::USER:
+          paintUserpoint(mapLayer, painter, x, y);
           break;
         case maptypes::AIRPORT:
           paintAirport(mapLayer, painter, x, y, obj.getAirport());
@@ -198,11 +198,11 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
-        case maptypes::NONE:
-          if(!obj.isValid())
-            paintText(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
-          else
-            paintText(mapLayer, painter, mapcolors::routeUserPointColor, x, y, obj.getIdent());
+        case maptypes::INVALID:
+          paintText(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
+          break;
+        case maptypes::USER:
+          paintText(mapLayer, painter, mapcolors::routeUserPointColor, x, y, obj.getIdent());
           break;
         case maptypes::AIRPORT:
           paintAirportText(mapLayer, painter, x, y, obj.getAirport());

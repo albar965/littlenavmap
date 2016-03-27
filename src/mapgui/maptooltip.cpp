@@ -192,5 +192,13 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
 
     }
   }
+  for(const MapUserpoint& up : mapSearchResult.userPoints)
+  {
+    if(!text.isEmpty())
+      text += "<hr/>";
+
+    text += QString("<b>Routepoint:</b>") +
+            "<br/>" + up.name;
+  }
   return text;
 }

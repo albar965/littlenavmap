@@ -43,6 +43,8 @@ enum MapObjectType
   AIRWAYV = 0x0200,
   AIRWAYJ = 0x0400,
   ROUTE = 0x0800,
+  USER = 0x1000,
+  INVALID = 0x2000,
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffff
 };
@@ -269,6 +271,23 @@ struct MapWaypoint
 
 };
 
+struct MapUserpoint
+{
+  QString name;
+  int id;
+  atools::geo::Pos position;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
 struct MapAirway
 {
   QString name, type;
@@ -353,6 +372,8 @@ struct MapSearchResult
 
   QList<const MapAirway *> airways;
 
+  QList<MapUserpoint> userPoints;
+
   bool needsDelete = false;
 
   void  deleteAllObjects();
@@ -415,5 +436,6 @@ Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 
 #endif // TYPES_H

@@ -53,7 +53,7 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
     // Italic for addons
     opt.font.setItalic(true);
 
-  if(!mapObj.isValid())
+  if(mapObj.getMapObjectType() == maptypes::INVALID)
   {
     // Used red for invalid entriess
     opt.palette.setColor(QPalette::Active, QPalette::Text, QColor(Qt::red));
@@ -74,12 +74,10 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
     symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
     symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), QColor(), x, y, symSize, false, false);
-  else if(mapObj.getMapObjectType() == maptypes::NONE)
-  {
-    if(mapObj.getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
-      symbolPainter->drawUserpointSymbol(painter, x, y, symSize, false, false);
-    else if(!mapObj.isValid())
-      symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), mapcolors::routeInvalidPointColor,
-                                        x, y, symSize, false, false);
-  }
+  else if(mapObj.getMapObjectType() == maptypes::USER)
+    symbolPainter->drawUserpointSymbol(painter, x, y, symSize, false, false);
+  else if(mapObj.getMapObjectType() == maptypes::INVALID)
+    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), mapcolors::routeInvalidPointColor,
+                                      x, y, symSize, false, false);
+
 }

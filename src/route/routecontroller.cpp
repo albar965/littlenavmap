@@ -185,7 +185,7 @@ void RouteController::flightplanToView()
     {
       RouteMapObject mapobj(entry, query, row == 0 ? nullptr : &last, userIdentIndex);
 
-      if(!mapobj.isValid())
+      if(mapobj.getMapObjectType() == maptypes::INVALID)
         qWarning() << "Entry for ident" << entry.getIcaoIdent() <<
         "region" << entry.getIcaoRegion() << "is not valid";
 

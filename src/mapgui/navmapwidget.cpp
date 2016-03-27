@@ -671,32 +671,32 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     showPos(mapSearchResult.ndbs.at(0)->position);
   else if(!mapSearchResult.waypoints.isEmpty())
     showPos(mapSearchResult.waypoints.at(0)->position);
+  else if(!mapSearchResult.userPoints.isEmpty())
+    showPos(mapSearchResult.userPoints.at(0).position);
 }
 
 bool NavMapWidget::event(QEvent *event)
 {
-  using namespace maptypes;
-
   if(event->type() == QEvent::ToolTip)
   {
-  QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+    QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-  MapSearchResult mapSearchResult;
-  getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
-  QString text = mapTooltip->buildTooltip(mapSearchResult, paintLayer->getMapLayer());
+    maptypes::MapSearchResult mapSearchResult;
+    getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
+    QString text = mapTooltip->buildTooltip(mapSearchResult, paintLayer->getMapLayer());
 
-  if(!text.isEmpty())
-  {
-    QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
-    event->accept();
-  }
-  else
-  {
-    QToolTip::hideText();
-    event->accept();
-  }
+    if(!text.isEmpty())
+    {
+      QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
+      event->accept();
+    }
+    else
+    {
+      QToolTip::hideText();
+      event->accept();
+    }
 
-  return true;
+    return true;
   }
 
   return QWidget::event(event);
@@ -771,6 +771,22 @@ void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
           case maptypes::AIRPORT:
             insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, &obj.getAirport());
             break;
+          case maptypes::INVALID:
+            {
+              maptypes::MapUserpoint up;
+              up.name = obj.getIdent() + " (not found)";
+              up.position = obj.getPosition();
+              mapobjects.userPoints.append(up);
+              break;
+            }
+          case maptypes::USER:
+            {
+              maptypes::MapUserpoint up;
+              up.name = obj.getIdent();
+              up.position = obj.getPosition();
+              mapobjects.userPoints.append(up);
+              break;
+            }
         }
       }
 }

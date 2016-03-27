@@ -50,24 +50,9 @@ public:
     return type;
   }
 
-  bool isValid() const
-  {
-    return valid;
-  }
-
-  bool isSelected() const
-  {
-    return selected;
-  }
-
   bool isUser()
   {
     return entry.getWaypointType() == atools::fs::pln::entry::USER;
-  }
-
-  void setSelected(bool sel)
-  {
-    selected = sel;
   }
 
   const maptypes::MapAirport& getAirport() const
@@ -123,7 +108,7 @@ private:
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;
-  bool valid = false, selected = false, predecessor = false;
+  bool predecessor = false;
 
   float distanceTo, distanceToRhumb, course, courseRhumb;
 };
