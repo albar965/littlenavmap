@@ -48,7 +48,7 @@ private:
                 const maptypes::MapVor& obj);
   void paintNdb(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
                 const maptypes::MapNdb& obj);
-  void paintWaypoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintWaypoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, const QColor& col, int x, int y,
                      const maptypes::MapWaypoint& obj);
 
   void paintWaypointText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
@@ -60,6 +60,12 @@ private:
 
   void paintAirportText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
                         const maptypes::MapAirport& obj);
+
+  void paintText(const MapLayer *mapLayer, Marble::GeoPainter *painter, const QColor& color, int x, int y,
+                 const QString& text);
+
+
+  void paintUserpoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y);
 
 };
 

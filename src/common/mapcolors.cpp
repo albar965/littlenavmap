@@ -64,6 +64,9 @@ const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);
 const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
 
+const QColor routeUserPointColor = QColor(Qt::darkYellow);
+const QColor routeInvalidPointColor = QColor(Qt::red);
+
 const QColor rangeRingColor = QColor(Qt::red);
 const QColor rangeRingTextColor = QColor(Qt::black);
 

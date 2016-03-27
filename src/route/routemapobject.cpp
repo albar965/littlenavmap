@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 
 static QString EMPTY_STR;
+static QString UNKNOWN_STR("Unknown");
 
 RouteMapObject::RouteMapObject()
 {
@@ -51,7 +52,7 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
 }
 
 RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
-                               const RouteMapObject *predRouteMapObj)
+                               const RouteMapObject *predRouteMapObj, int& userIdentIndex)
   : entry(planEntry)
 {
   maptypes::MapSearchResult res;
@@ -112,6 +113,7 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
       }
     case atools::fs::pln::entry::USER:
       valid = true;
+      userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
       break;
   }
 
@@ -132,7 +134,6 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
     course = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
     courseRhumb = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
   }
-
 }
 
 RouteMapObject::~RouteMapObject()
@@ -206,8 +207,10 @@ int RouteMapObject::getRange() const
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
     case atools::fs::pln::entry::INTERSECTION:
-    case atools::fs::pln::entry::VOR:
     case atools::fs::pln::entry::USER:
+      return -1;
+
+    case atools::fs::pln::entry::VOR:
       return vor.range;
 
     case atools::fs::pln::entry::NDB:
@@ -252,13 +255,15 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
 const QString& RouteMapObject::getIdent() const
 {
   if(!valid)
-    return EMPTY_STR;
+    return entry.getIcaoIdent();
 
   switch(entry.getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
+      return UNKNOWN_STR;
+
     case atools::fs::pln::entry::USER:
-      return EMPTY_STR;
+      return userIdent;
 
     case atools::fs::pln::entry::AIRPORT:
       return airport.ident;
@@ -278,14 +283,14 @@ const QString& RouteMapObject::getIdent() const
 const QString& RouteMapObject::getRegion() const
 {
   if(!valid)
-    return EMPTY_STR;
+    return entry.getIcaoRegion();
 
   switch(entry.getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
     case atools::fs::pln::entry::USER:
-      return EMPTY_STR;
+      return entry.getIcaoRegion();
 
     case atools::fs::pln::entry::INTERSECTION:
       return waypoint.region;

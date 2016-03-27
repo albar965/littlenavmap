@@ -164,6 +164,10 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       switch(type)
       {
         case maptypes::NONE:
+          if(!obj.isValid())
+            paintWaypoint(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getWaypoint());
+          else
+            paintUserpoint(mapLayer, painter, x, y);
           break;
         case maptypes::AIRPORT:
           paintAirport(mapLayer, painter, x, y, obj.getAirport());
@@ -175,7 +179,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
           paintNdb(mapLayer, painter, x, y, obj.getNdb());
           break;
         case maptypes::WAYPOINT:
-          paintWaypoint(mapLayer, painter, x, y, obj.getWaypoint());
+          paintWaypoint(mapLayer, painter, QColor(), x, y, obj.getWaypoint());
           break;
       }
     }
@@ -195,6 +199,10 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       switch(type)
       {
         case maptypes::NONE:
+          if(!obj.isValid())
+            paintText(mapLayer, painter, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
+          else
+            paintText(mapLayer, painter, mapcolors::routeUserPointColor, x, y, obj.getIdent());
           break;
         case maptypes::AIRPORT:
           paintAirportText(mapLayer, painter, x, y, obj.getAirport());
@@ -276,11 +284,11 @@ void MapPainterRoute::paintNdbText(const MapLayer *mapLayer, GeoPainter *painter
   symbolPainter->drawNdbText(painter, obj, x, y, flags, size, true, false);
 }
 
-void MapPainterRoute::paintWaypoint(const MapLayer *mapLayer, GeoPainter *painter, int x, int y,
-                                    const maptypes::MapWaypoint& obj)
+void MapPainterRoute::paintWaypoint(const MapLayer *mapLayer, GeoPainter *painter, const QColor& col,
+                                    int x, int y, const maptypes::MapWaypoint& obj)
 {
   int size = mapLayer != nullptr ? mapLayer->getWaypointSymbolSize() : 10;
-  symbolPainter->drawWaypointSymbol(painter, obj, x, y, size, true, false);
+  symbolPainter->drawWaypointSymbol(painter, obj, col, x, y, size, true, false);
 }
 
 void MapPainterRoute::paintWaypointText(const MapLayer *mapLayer, GeoPainter *painter, int x, int y,
@@ -292,4 +300,21 @@ void MapPainterRoute::paintWaypointText(const MapLayer *mapLayer, GeoPainter *pa
 
   int size = mapLayer != nullptr ? mapLayer->getWaypointSymbolSize() : 10;
   symbolPainter->drawWaypointText(painter, obj, x, y, flags, size, true, false);
+}
+
+void MapPainterRoute::paintUserpoint(const MapLayer *mapLayer, GeoPainter *painter, int x, int y)
+{
+  int size = mapLayer != nullptr ? mapLayer->getWaypointSymbolSize() : 10;
+  symbolPainter->drawUserpointSymbol(painter, x, y, size, true, false);
+}
+
+void MapPainterRoute::paintText(const MapLayer *mapLayer, GeoPainter *painter, const QColor& color,
+                                int x, int y, const QString& text)
+{
+  if(text.isEmpty())
+    return;
+
+  int size = mapLayer != nullptr ? mapLayer->getWaypointSymbolSize() : 10;
+  Q_UNUSED(mapLayer);
+  symbolPainter->textBox(painter, {text}, color, x + size / 2 + 2, y, textatt::BOLD, 255);
 }

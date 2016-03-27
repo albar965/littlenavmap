@@ -76,17 +76,18 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(MapAirportFlags);
 
 struct MapAirport
 {
-  int id;
   QString ident, name;
+  int id;
   int longestRunwayLength = 0, longestRunwayHeading = 0;
   int altitude = 0;
   MapAirportFlags flags = AP_NONE;
   float magvar = 0;
 
-  bool valid = false;
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos position, towerCoords;
   atools::geo::Rect bounding;
+
+  bool valid = false;
 
   bool hard() const;
   bool soft() const;
@@ -118,10 +119,10 @@ struct MapAirport
 
 struct MapRunway
 {
-  int length, heading, width, primOffset, secOffset;
   QString surface, primName, secName, edgeLight;
-  bool secClosed, primClosed;
+  int length, heading, width, primOffset, secOffset;
   atools::geo::Pos position, primary, secondary;
+  bool secClosed, primClosed;
 
   bool isHard() const
   {
@@ -197,6 +198,7 @@ struct MapHelipad
   atools::geo::Pos position;
   int length, width, heading;
   bool closed;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -211,12 +213,13 @@ struct MapHelipad
 
 struct MapVor
 {
-  int id;
   QString ident, region, type, name, apIdent;
+  int id;
   float magvar;
   int frequency, range;
-  bool dmeOnly, hasDme;
   atools::geo::Pos position;
+  bool dmeOnly, hasDme;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -231,8 +234,8 @@ struct MapVor
 
 struct MapNdb
 {
-  int id;
   QString ident, region, type, name, apIdent;
+  int id;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -268,8 +271,8 @@ struct MapWaypoint
 
 struct MapAirway
 {
-  int id, fromWpId, toWpId;
   QString name, type;
+  int id, fromWpId, toWpId;
   int minalt, sequence, fragment;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding;
@@ -288,10 +291,11 @@ struct MapAirway
 
 struct MapMarker
 {
-  int id;
   QString type;
+  int id;
   int heading;
   atools::geo::Pos position;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -306,13 +310,14 @@ struct MapMarker
 
 struct MapIls
 {
-  int id;
   QString ident, name;
+  int id;
   float magvar, slope, heading, width;
   int frequency, range;
-  bool dme;
   atools::geo::Pos position, pos1, pos2, posmid;
   atools::geo::Rect bounding;
+  bool dme;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -357,9 +362,10 @@ struct MapSearchResult
 struct RangeMarker
 {
   QString text;
-  MapObjectTypes type;
   QVector<int> ranges;
   atools::geo::Pos position;
+  MapObjectTypes type;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -372,9 +378,11 @@ struct DistanceMarker
   QString text;
   QColor color;
   atools::geo::Pos from, position;
-  bool rhumbLine, hasMagvar;
   float magvar;
+
   maptypes::MapObjectTypes type;
+  bool rhumbLine, hasMagvar;
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -392,5 +400,20 @@ QString parkingTypeName(const QString& ramp);
 QString parkingName(const QString& ramp);
 
 } // namespace types
+
+Q_DECLARE_TYPEINFO(maptypes::MapAirport, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapRunway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApron, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapTaxiPath, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapParking, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapHelipad, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapVor, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapNdb, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
 
 #endif // TYPES_H

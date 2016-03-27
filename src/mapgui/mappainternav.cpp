@@ -181,7 +181,7 @@ void MapPainterNav::paint(const PaintContext *context)
         bool visible = wToS(waypoint.position, x, y);
 
         if(visible)
-          symbolPainter->drawWaypointSymbol(context->painter, waypoint, x, y,
+          symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
                                             context->mapLayer->getWaypointSymbolSize(), false, drawFast);
 
         if(context->mapLayer->isWaypointName())

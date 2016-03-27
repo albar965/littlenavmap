@@ -28,7 +28,7 @@ class RouteMapObject
 public:
   RouteMapObject();
   RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
-                 const RouteMapObject *predRouteMapObj);
+                 const RouteMapObject *predRouteMapObj, int& userIdentIndex);
   ~RouteMapObject();
 
   int getId() const;
@@ -40,7 +40,7 @@ public:
   float getMagvar() const;
   int getRange() const;
 
-  atools::fs::pln::FlightplanEntry getFlightplanEntry() const
+  const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const
   {
     return entry;
   }
@@ -58,6 +58,11 @@ public:
   bool isSelected() const
   {
     return selected;
+  }
+
+  bool isUser()
+  {
+    return entry.getWaypointType() == atools::fs::pln::entry::USER;
   }
 
   void setSelected(bool sel)
@@ -112,6 +117,7 @@ public:
 
 private:
   atools::fs::pln::FlightplanEntry entry;
+  QString userIdent;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
   maptypes::MapVor vor;

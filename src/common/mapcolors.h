@@ -54,9 +54,12 @@ extern const QColor homeFillColor;
 extern const QColor highlightColorFast;
 extern const QColor highlightColor;
 extern const QColor highlightBackColor;
+
 extern const QColor routeHighlightColorFast;
 extern const QColor routeHighlightColor;
 extern const QColor routeHighlightBackColor;
+extern const QColor routeUserPointColor;
+extern const QColor routeInvalidPointColor;
 
 extern const QColor rangeRingColor;
 extern const QColor rangeRingTextColor;

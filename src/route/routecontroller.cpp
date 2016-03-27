@@ -170,26 +170,39 @@ void RouteController::flightplanToView()
   model->removeRows(0, model->rowCount());
   model->setHorizontalHeaderLabels({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
                                     "Course\n°M", "Direct\n°M",
-                                    "Distance\nnm"});
+                                    "Distance\nnm", "Remaining\nnm"});
+
   if(flightplan != nullptr)
   {
     RouteMapObject last;
-    QList<QStandardItem *> items;
     totalDistance = 0.f;
+    // Used to number user waypoints
+    int userIdentIndex = 1;
     int row = 0;
+
+    // Create map objects first and calculate total distance
     for(const FlightplanEntry& entry : flightplan->getEntries())
     {
-      RouteMapObject mapobj(entry, query, row == 0 ? nullptr : &last);
+      RouteMapObject mapobj(entry, query, row == 0 ? nullptr : &last, userIdentIndex);
 
       if(!mapobj.isValid())
         qWarning() << "Entry for ident" << entry.getIcaoIdent() <<
         "region" << entry.getIcaoRegion() << "is not valid";
 
+      totalDistance += mapobj.getDistanceTo();
       routeMapObjects.append(mapobj);
+      last = mapobj;
+      row++;
+    }
 
+    row = 0;
+    float cumulatedDistance = 0.f;
+    QList<QStandardItem *> items;
+    for(const RouteMapObject& mapobj : routeMapObjects)
+    {
       items.clear();
-      items.append(new QStandardItem(mapobj.getFlightplanEntry().getIcaoIdent()));
-      items.append(new QStandardItem(mapobj.getFlightplanEntry().getIcaoRegion()));
+      items.append(new QStandardItem(mapobj.getIdent()));
+      items.append(new QStandardItem(mapobj.getRegion()));
       items.append(new QStandardItem(mapobj.getName()));
       items.append(new QStandardItem(mapobj.getFlightplanEntry().getAirway()));
 
@@ -227,8 +240,16 @@ void RouteController::flightplanToView()
       else
         items.append(nullptr);
 
+      float distance = mapobj.getDistanceTo();
+      cumulatedDistance += distance;
+
       if(row == 0)
+      {
         boundingRect = atools::geo::Rect(mapobj.getPosition());
+        items.append(nullptr);
+        items.append(nullptr);
+        items.append(nullptr);
+      }
       else
       {
         item = new QStandardItem(QString::number(mapobj.getCourse(), 'f', 0));
@@ -239,8 +260,6 @@ void RouteController::flightplanToView()
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
-        float distance = mapobj.getDistanceTo();
-        totalDistance += distance;
         item = new QStandardItem(QString::number(distance, 'f', 1));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
@@ -248,9 +267,11 @@ void RouteController::flightplanToView()
         boundingRect.extend(mapobj.getPosition());
       }
 
-      model->appendRow(items);
+      item = new QStandardItem(QString::number(totalDistance - cumulatedDistance, 'f', 1));
+      item->setTextAlignment(Qt::AlignRight);
+      items.append(item);
 
-      last = mapobj;
+      model->appendRow(items);
       row++;
     }
 

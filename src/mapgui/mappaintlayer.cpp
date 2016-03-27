@@ -51,6 +51,8 @@
 using namespace Marble;
 using namespace atools::geo;
 
+const double DISTANCE_CUT_OFF_LIMIT = 2000.;
+
 MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   : mapQuery(mapQueries), navMapWidget(widget)
 {
@@ -210,6 +212,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
   if(!databaseLoadStatus)
   {
+    if(navMapWidget->distance() > DISTANCE_CUT_OFF_LIMIT)
+      return true;
+
     mapScale->update(viewport, navMapWidget->distance());
 
     // if(navMapWidget->viewContext() == Marble::Animation)

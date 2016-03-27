@@ -73,5 +73,13 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   else if(mapObj.getMapObjectType() == maptypes::NDB)
     symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
-    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), x, y, symSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), QColor(), x, y, symSize, false, false);
+  else if(mapObj.getMapObjectType() == maptypes::NONE)
+  {
+    if(mapObj.getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
+      symbolPainter->drawUserpointSymbol(painter, x, y, symSize, false, false);
+    else if(!mapObj.isValid())
+      symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), mapcolors::routeInvalidPointColor,
+                                        x, y, symSize, false, false);
+  }
 }

@@ -35,7 +35,7 @@ using namespace atools::geo;
 
 const double MapQuery::RECT_INFLATION_FACTOR = 0.3;
 const double MapQuery::RECT_INFLATION_ADD = 0.1;
-const int QUERY_ROW_LIMIT = 2000;
+const int QUERY_ROW_LIMIT = 5000;
 
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -494,23 +494,23 @@ const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     {
       maptypes::MapRunway r =
       {
+        QString(),
+        QString(),
+        QString(),
+        QString(),
         runwayOverviewQuery->value("length").toInt(),
         static_cast<int>(std::roundf(runwayOverviewQuery->value("heading").toFloat())),
         0,
         0,
         0,
-        QString(),
-        QString(),
-        QString(),
-        QString(),
-        false,
-        false,
         Pos(runwayOverviewQuery->value("lonx").toFloat(),
             runwayOverviewQuery->value("laty").toFloat()),
         Pos(runwayOverviewQuery->value("primary_lonx").toFloat(),
             runwayOverviewQuery->value("primary_laty").toFloat()),
         Pos(runwayOverviewQuery->value("secondary_lonx").toFloat(),
-            runwayOverviewQuery->value("secondary_laty").toFloat())
+            runwayOverviewQuery->value("secondary_laty").toFloat()),
+        false,
+        false
       };
       rws->append(r);
     }
@@ -620,7 +620,7 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
 
 Rect MapQuery::getAirportRect(int airportId)
 {
-  SqlQuery query;
+  SqlQuery query(db);
   query.prepare("select left_lonx, top_laty, right_lonx, bottom_laty from airport where airport_id = :id");
   query.bindValue(":id", airportId);
   query.exec();
@@ -633,7 +633,7 @@ Rect MapQuery::getAirportRect(int airportId)
 
 Pos MapQuery::getNavTypePos(int navSearchId)
 {
-  SqlQuery query;
+  SqlQuery query(db);
   query.prepare("select lonx, laty from nav_search where nav_search_id = :id");
   query.bindValue(":id", navSearchId);
   query.exec();
@@ -690,22 +690,22 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
     {
       maptypes::MapRunway r =
       {
+        runwaysQuery->value("surface").toString(),
+        runwaysQuery->value("primary_name").toString(),
+        runwaysQuery->value("secondary_name").toString(),
+        runwaysQuery->value("edge_light").toString(),
         runwaysQuery->value("length").toInt(),
         static_cast<int>(std::roundf(runwaysQuery->value("heading").toFloat())),
         runwaysQuery->value("width").toInt(),
         runwaysQuery->value("primary_offset_threshold").toInt(),
         runwaysQuery->value("secondary_offset_threshold").toInt(),
-        runwaysQuery->value("surface").toString(),
-        runwaysQuery->value("primary_name").toString(),
-        runwaysQuery->value("secondary_name").toString(),
-        runwaysQuery->value("edge_light").toString(),
-        runwaysQuery->value("primary_closed_markings").toInt() > 0,
-        runwaysQuery->value("secondary_closed_markings").toInt() > 0,
         Pos(runwaysQuery->value("lonx").toFloat(), runwaysQuery->value("laty").toFloat()),
         Pos(runwaysQuery->value("primary_lonx").toFloat(),
             runwaysQuery->value("primary_laty").toFloat()),
         Pos(runwaysQuery->value("secondary_lonx").toFloat(),
-            runwaysQuery->value("secondary_laty").toFloat())
+            runwaysQuery->value("secondary_laty").toFloat()),
+        runwaysQuery->value("primary_closed_markings").toInt() > 0,
+        runwaysQuery->value("secondary_closed_markings").toInt() > 0
       };
       rs->append(r);
     }

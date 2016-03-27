@@ -35,12 +35,15 @@ class CoordinateConverter
 {
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
+  ~CoordinateConverter();
 
-  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible, bool *isHidden = nullptr) const;
+  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible = nullptr,
+              bool *isHidden = nullptr) const;
+  bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, bool *isHidden) const;
+  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, bool *isHidden = nullptr) const;
+
   QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr, bool *isHidden = nullptr) const;
   bool wToS(const atools::geo::Pos& coords, int& x, int& y, bool *isHidden = nullptr) const;
-
-  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, bool *isHidden = nullptr) const;
   bool wToS(const atools::geo::Pos& coords, float& x, float& y, bool *isHidden = nullptr) const;
   bool wToS(const atools::geo::Pos& coords, double& x, double& y, bool *isHidden = nullptr) const;
 
