@@ -63,5 +63,11 @@
         <file>resources/icons/route.svg</file>
         <file>resources/icons/airwayvictor.svg</file>
         <file>resources/icons/airwayjet.svg</file>
+        <file>resources/icons/airportroutedest.svg</file>
+        <file>resources/icons/airportroutestart.svg</file>
+        <file>resources/icons/routeadd.svg</file>
+        <file>resources/icons/routedeleteleg.svg</file>
+        <file>resources/icons/routelegdown.svg</file>
+        <file>resources/icons/routelegup.svg</file>
     </qresource>
 </RCC>

@@ -197,7 +197,7 @@ public:
     return proxyModel;
   }
 
-  void getSelectedObjects(const QStringList& cols, std::function<void(const QVariantList&)> fillfunc);
+  void getSelectedObjects(std::function<void(const QSqlRecord&)> fillfunc);
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

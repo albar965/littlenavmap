@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QSqlQueryModel>
 #include <QApplication>
+#include <QSqlRecord>
 
 NavIconDelegate::NavIconDelegate(const ColumnList *columns)
   : cols(columns)
@@ -66,7 +67,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   int y = option.rect.y() + symSize / 2 + 2;
 
   painter->setRenderHint(QPainter::Antialiasing);
-  QString navtype = value(sqlModel, idx.row(), "nav_type").toString();
+  QString navtype = sqlModel->record(idx.row()).value("nav_type").toString();
   if(navtype == "WAYPOINT")
     symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(), QColor(), x, y, symSize, false, false);
   else if(navtype == "NDB")
@@ -78,19 +79,4 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     vor.hasDme = navtype == "VORDME" || navtype == "DME";
     symbolPainter->drawVorSymbol(painter, vor, x, y, symSize, false, false, 0);
   }
-}
-
-QVariant NavIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const
-{
-  const Column *col = cols->getColumn(name);
-  Q_ASSERT(col != nullptr);
-
-  QVariant data = sqlModel->getRawData(row, col->getIndex());
-
-  if(data.isValid())
-    return data;
-  else
-    qCritical() << "sibling for column" << name << "not found";
-
-  return QVariant();
 }

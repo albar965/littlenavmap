@@ -90,6 +90,9 @@ private:
   void tableSelectionChanged();
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
+  void moveLegsDown();
+  void moveLegsUp();
+  void deleteLegs();
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);

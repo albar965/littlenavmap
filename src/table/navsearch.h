@@ -31,6 +31,7 @@ class ColumnList;
 class QAction;
 class MainWindow;
 class Column;
+class QSqlRecord;
 
 namespace atools {
 namespace sql {
@@ -62,7 +63,7 @@ private:
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;
 
-  void fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const;
+  void fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResult *result) const;
 
 };
 

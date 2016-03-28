@@ -285,7 +285,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
 
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                          ui->actionShowInSearch});
+                                          ui->actionShowInSearch, ui->actionRouteAdd,
+                                          ui->actionRouteAirportStart, ui->actionRouteAirportDest});
   Q_UNUSED(textSaver);
 
   QMenu menu;
@@ -300,6 +301,12 @@ void NavMapWidget::contextMenu(const QPoint& point)
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideOneRangeRing);
   menu.addAction(ui->actionMapHideRangeRings);
+  menu.addSeparator();
+  menu.addAction(ui->actionRouteAdd);
+  menu.addAction(ui->actionRouteAirportStart);
+  menu.addAction(ui->actionRouteAirportDest);
+  menu.addSeparator();
+  menu.addAction(ui->actionShowInSearch);
 
   CoordinateConverter conv(viewport());
   maptypes::MapSearchResult result;
@@ -397,7 +404,6 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(
                                                searchText.isEmpty() ? "here" : searchText));
 
-  menu.addAction(ui->actionShowInSearch);
   QAction *action = menu.exec(QCursor::pos());
 
   if(action == ui->actionMapHideRangeRings)

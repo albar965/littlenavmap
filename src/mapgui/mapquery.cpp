@@ -28,6 +28,7 @@
 #include <functional>
 #include <QSqlRecord>
 #include <marble/GeoDataLatLonBox.h>
+#include <common/maptypesfactory.h>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -40,12 +41,13 @@ const int QUERY_ROW_LIMIT = 5000;
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
-
+  mapTypesFactory = new MapTypesFactory();
 }
 
 MapQuery::~MapQuery()
 {
   deInitQueries();
+  delete mapTypesFactory;
 }
 
 void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
@@ -53,7 +55,7 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
   airportByIdQuery->bindValue(":id", airportId);
   airportByIdQuery->exec();
   while(airportByIdQuery->next())
-    fillMapAirport(airportByIdQuery, airport, true);
+    mapTypesFactory->fillAirport(airportByIdQuery->record(), airport, true);
 }
 
 void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways)
@@ -63,7 +65,7 @@ void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>&
   while(airwayByWaypointIdQuery->next())
   {
     maptypes::MapAirway airway;
-    fillAirway(airwayByWaypointIdQuery, airway);
+    mapTypesFactory->fillAirway(airwayByWaypointIdQuery->record(), airway);
     airways.append(airway);
   }
 }
@@ -78,7 +80,7 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
     while(airportByIdentQuery->next())
     {
       maptypes::MapAirport *ap = new maptypes::MapAirport;
-      fillMapAirport(airportByIdentQuery, *ap, true);
+      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true);
       result.airports.append(ap);
       result.needsDelete = true;
     }
@@ -91,7 +93,7 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
     while(vorByIdentQuery->next())
     {
       maptypes::MapVor *vor = new maptypes::MapVor;
-      fillMapVor(vorByIdentQuery, *vor);
+      mapTypesFactory->fillVor(vorByIdentQuery->record(), *vor);
       result.vors.append(vor);
       result.needsDelete = true;
     }
@@ -104,7 +106,7 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
     while(ndbByIdentQuery->next())
     {
       maptypes::MapNdb *ndb = new maptypes::MapNdb;
-      fillMapNdb(ndbByIdentQuery, *ndb);
+      mapTypesFactory->fillNdb(ndbByIdentQuery->record(), *ndb);
       result.ndbs.append(ndb);
       result.needsDelete = true;
     }
@@ -117,7 +119,7 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
     while(waypointByIdentQuery->next())
     {
       maptypes::MapWaypoint *wp = new maptypes::MapWaypoint;
-      fillMapWaypoint(waypointByIdentQuery, *wp);
+      mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), *wp);
       result.waypoints.append(wp);
       result.needsDelete = true;
     }
@@ -263,7 +265,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
       while(waypointsByRectQuery->next())
       {
         maptypes::MapWaypoint wp;
-        fillMapWaypoint(waypointsByRectQuery, wp);
+        mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp);
         waypointCache.list.append(wp);
       }
     }
@@ -287,7 +289,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
       while(vorsByRectQuery->next())
       {
         maptypes::MapVor vor;
-        fillMapVor(vorsByRectQuery, vor);
+        mapTypesFactory->fillVor(vorsByRectQuery->record(), vor);
         vorCache.list.append(vor);
       }
     }
@@ -311,7 +313,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
       while(ndbsByRectQuery->next())
       {
         maptypes::MapNdb ndb;
-        fillMapNdb(ndbsByRectQuery, ndb);
+        mapTypesFactory->fillNdb(ndbsByRectQuery->record(), ndb);
         ndbCache.list.append(ndb);
       }
     }
@@ -335,11 +337,7 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
       while(markersByRectQuery->next())
       {
         maptypes::MapMarker marker;
-        marker.id = markersByRectQuery->value("marker_id").toInt();
-        marker.type = markersByRectQuery->value("type").toString();
-        marker.heading = static_cast<int>(std::roundf(markersByRectQuery->value("heading").toFloat()));
-        marker.position = Pos(markersByRectQuery->value("lonx").toFloat(), markersByRectQuery->value(
-                                "laty").toFloat());
+        mapTypesFactory->fillMarker(markersByRectQuery->record(), marker);
         markerCache.list.append(marker);
       }
     }
@@ -363,31 +361,7 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
       while(ilsByRectQuery->next())
       {
         maptypes::MapIls ils;
-
-        ils.id = ilsByRectQuery->value("ils_id").toInt();
-        ils.ident = ilsByRectQuery->value("ident").toString();
-        ils.name = ilsByRectQuery->value("name").toString();
-        ils.heading = ilsByRectQuery->value("loc_heading").toFloat();
-        ils.width = ilsByRectQuery->value("loc_width").toFloat();
-        ils.magvar = ilsByRectQuery->value("mag_var").toFloat();
-        ils.slope = ilsByRectQuery->value("gs_pitch").toFloat();
-
-        ils.frequency = ilsByRectQuery->value("frequency").toInt();
-        ils.range = ilsByRectQuery->value("range").toInt();
-        ils.dme = ilsByRectQuery->value("dme_range").toInt() > 0;
-
-        ils.position = Pos(ilsByRectQuery->value("lonx").toFloat(), ilsByRectQuery->value("laty").toFloat());
-        ils.pos1 = Pos(ilsByRectQuery->value("end1_lonx").toFloat(), ilsByRectQuery->value(
-                         "end1_laty").toFloat());
-        ils.pos2 = Pos(ilsByRectQuery->value("end2_lonx").toFloat(), ilsByRectQuery->value(
-                         "end2_laty").toFloat());
-        ils.posmid =
-          Pos(ilsByRectQuery->value("end_mid_lonx").toFloat(), ilsByRectQuery->value("end_mid_laty").toFloat());
-
-        ils.bounding = Rect(ils.position);
-        ils.bounding.extend(ils.pos1);
-        ils.bounding.extend(ils.pos2);
-
+        mapTypesFactory->fillIls(ilsByRectQuery->record(), ils);
         ilsCache.list.append(ils);
       }
     }
@@ -411,7 +385,7 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
       while(airwayByRectQuery->next())
       {
         maptypes::MapAirway airway;
-        fillAirway(airwayByRectQuery, airway);
+        mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
         airwayCache.list.append(airway);
       }
     }
@@ -430,51 +404,11 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
       while(query->next())
       {
         maptypes::MapAirport ap;
-        fillMapAirport(query, ap, complete);
+        mapTypesFactory->fillAirport(query->record(), ap, complete);
         airportCache.list.append(ap);
       }
     }
   return &airportCache.list;
-}
-
-void MapQuery::fillMapAirport(const atools::sql::SqlQuery *query, maptypes::MapAirport& ap, bool complete)
-{
-  QSqlRecord rec = query->record();
-
-  ap.id = query->value("airport_id").toInt();
-  ap.ident = query->value("ident").toString();
-  ap.name = query->value("name").toString();
-  ap.longestRunwayLength = query->value("longest_runway_length").toInt();
-  ap.longestRunwayHeading = static_cast<int>(std::roundf(query->value("longest_runway_heading").toFloat()));
-
-  if(rec.contains("has_tower_object"))
-    ap.towerCoords = Pos(query->value("tower_lonx").toFloat(), query->value("tower_laty").toFloat());
-
-  if(rec.contains("tower_frequency"))
-    ap.towerFrequency = query->value("tower_frequency").toInt();
-  if(rec.contains("atis_frequency"))
-    ap.atisFrequency = query->value("atis_frequency").toInt();
-  if(rec.contains("awos_frequency"))
-    ap.awosFrequency = query->value("awos_frequency").toInt();
-  if(rec.contains("asos_frequency"))
-    ap.asosFrequency = query->value("asos_frequency").toInt();
-  if(rec.contains("unicom_frequency"))
-    ap.unicomFrequency = query->value("unicom_frequency").toInt();
-
-  if(rec.contains("altitude"))
-    ap.altitude = static_cast<int>(std::roundf(query->value("altitude").toFloat()));
-
-  ap.flags = getFlags(query);
-
-  if(complete)
-    ap.flags |= maptypes::AP_COMPLETE;
-
-  ap.magvar = query->value("mag_var").toFloat();
-  ap.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
-  ap.bounding = Rect(query->value("left_lonx").toFloat(), query->value("top_laty").toFloat(),
-                     query->value("right_lonx").toFloat(), query->value("bottom_laty").toFloat());
-
-  ap.valid = true;
 }
 
 const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
@@ -729,15 +663,6 @@ bool MapQuery::runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapR
     return r1.isSoft() && r2.isHard();
 }
 
-maptypes::MapAirportFlags MapQuery::flag(const atools::sql::SqlQuery *query, const QString& field,
-                                         maptypes::MapAirportFlags flag)
-{
-  if(!query->record().contains(field) || query->isNull(field))
-    return maptypes::AP_NONE;
-  else
-    return query->value(field).toInt() > 0 ? flag : maptypes::AP_NONE;
-}
-
 void MapQuery::bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                          const QString& prefix)
 {
@@ -780,29 +705,6 @@ void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double width, double 
   rect.setSouth(std::max(rect.south(GeoDataCoordinates::Degree) - height, -89.), GeoDataCoordinates::Degree);
   rect.setWest(std::max(rect.west(GeoDataCoordinates::Degree) - width, -179.), GeoDataCoordinates::Degree);
   rect.setEast(std::min(rect.east(GeoDataCoordinates::Degree) + width, 179.), GeoDataCoordinates::Degree);
-}
-
-maptypes::MapAirportFlags MapQuery::getFlags(const atools::sql::SqlQuery *query)
-{
-  using namespace maptypes;
-
-  MapAirportFlags flags = 0;
-  flags |= flag(query, "num_helipad", AP_HELIPAD);
-  flags |= flag(query, "rating", AP_SCENERY);
-  flags |= flag(query, "has_avgas", AP_AVGAS);
-  flags |= flag(query, "has_jetfuel", AP_JETFUEL);
-  flags |= flag(query, "tower_frequency", AP_TOWER);
-  flags |= flag(query, "is_closed", AP_CLOSED);
-  flags |= flag(query, "is_military", AP_MIL);
-  flags |= flag(query, "is_addon", AP_ADDON);
-  flags |= flag(query, "num_approach", AP_APPR);
-  flags |= flag(query, "num_runway_hard", AP_HARD);
-  flags |= flag(query, "num_runway_soft", AP_SOFT);
-  flags |= flag(query, "num_runway_water", AP_WATER);
-  flags |= flag(query, "num_runway_light", AP_LIGHT);
-  flags |= flag(query, "num_runway_end_ils", AP_ILS);
-
-  return flags;
 }
 
 void MapQuery::initQueries()
@@ -999,60 +901,4 @@ void MapQuery::deInitQueries()
   ndbByIdentQuery = nullptr;
   delete waypointByIdentQuery;
   waypointByIdentQuery = nullptr;
-}
-
-void MapQuery::fillMapVor(const atools::sql::SqlQuery *query, maptypes::MapVor& vor)
-{
-  vor.id = query->value("vor_id").toInt();
-  vor.ident = query->value("ident").toString();
-  vor.region = query->value("region").toString();
-  vor.name = query->value("name").toString();
-  vor.type = query->value("type").toString();
-  vor.frequency = query->value("frequency").toInt();
-  vor.range = query->value("range").toInt();
-  vor.dmeOnly = query->value("dme_only").toInt() > 0;
-  vor.hasDme = !query->value("dme_altitude").isNull();
-  vor.magvar = query->value("mag_var").toFloat();
-  vor.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
-}
-
-void MapQuery::fillMapNdb(const atools::sql::SqlQuery *query, maptypes::MapNdb& ndb)
-{
-  ndb.id = query->value("ndb_id").toInt();
-  ndb.ident = query->value("ident").toString();
-  ndb.region = query->value("region").toString();
-  ndb.name = query->value("name").toString();
-  ndb.type = query->value("type").toString();
-  ndb.frequency = query->value("frequency").toInt();
-  ndb.range = query->value("range").toInt();
-  ndb.magvar = query->value("mag_var").toFloat();
-  ndb.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
-}
-
-void MapQuery::fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::MapWaypoint& wp)
-{
-  wp.id = query->value("waypoint_id").toInt();
-  wp.ident = query->value("ident").toString();
-  wp.region = query->value("region").toString();
-  wp.type = query->value("type").toString();
-  wp.magvar = query->value("mag_var").toFloat();
-  wp.position = Pos(query->value("lonx").toFloat(), query->value("laty").toFloat());
-}
-
-void MapQuery::fillAirway(const atools::sql::SqlQuery *query, maptypes::MapAirway& airway)
-{
-  airway.id = query->value("route_id").toInt();
-  airway.type = query->value("route_type").toString();
-  airway.name = query->value("route_name").toString();
-  airway.minalt = query->value("minimum_altitude").toInt();
-  airway.fragment = query->value("route_fragment_no").toInt();
-  airway.sequence = query->value("sequence_no").toInt();
-  airway.fromWpId = query->value("from_waypoint_id").toInt();
-  airway.toWpId = query->value("to_waypoint_id").toInt();
-  airway.from = Pos(query->value("from_lonx").toFloat(),
-                    query->value("from_laty").toFloat());
-  airway.to = Pos(query->value("to_lonx").toFloat(),
-                  query->value("to_laty").toFloat());
-  airway.bounding = Rect(airway.from);
-  airway.bounding.extend(airway.to);
 }

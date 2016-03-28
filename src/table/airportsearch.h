@@ -31,6 +31,7 @@ class ColumnList;
 class QAction;
 class MainWindow;
 class Column;
+class QSqlRecord;
 
 namespace atools {
 namespace sql {
@@ -66,7 +67,7 @@ private:
   static const QSet<QString> boolColumns;
   static const QSet<QString> numberColumns;
 
-  void fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const;
+  void fillSearchResult(const QSqlRecord& record, maptypes::MapSearchResult *result) const;
 
 };
 

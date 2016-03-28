@@ -351,6 +351,7 @@ struct MapIls
 
 struct MapSearchResult
 {
+  // TODO needs fixed memory management
   QList<const MapAirport *> airports;
   QSet<int> airportIds;
 

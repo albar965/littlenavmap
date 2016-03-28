@@ -86,7 +86,7 @@ protected:
   QIcon *boolIcon = nullptr;
 
   void connectSearchWidgets();
-  virtual void tableContextMenu(const QPoint& pos);
+  void contextMenu(const QPoint& pos);
 
   atools::sql::SqlDatabase *db;
   atools::geo::Pos mapMark;

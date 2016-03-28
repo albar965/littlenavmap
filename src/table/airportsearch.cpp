@@ -45,6 +45,8 @@
 #include <QStyledItemDelegate>
 #include <QMouseEvent>
 
+#include <common/maptypesfactory.h>
+
 const QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
 
 const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
@@ -393,30 +395,15 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
 void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   using namespace std::placeholders;
-  QStringList cols;
-  cols << columns->getIdColumnName()
-       << "left_lonx" << "top_laty" << "right_lonx" << "bottom_laty" << "lonx" << "laty";
-  controller->getSelectedObjects(cols, std::bind(&AirportSearch::fillSearchResult, this, _1, &result));
+  controller->getSelectedObjects(std::bind(&AirportSearch::fillSearchResult, this, _1, &result));
   result.needsDelete = true;
 }
 
-void AirportSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const
+void AirportSearch::fillSearchResult(const QSqlRecord& record, maptypes::MapSearchResult *result) const
 {
-  enum ColIds
-  {
-    ID = 0,
-    LEFT_LONX = 1,
-    TOP_LATY = 2,
-    RIGHT_LONX = 3,
-    BOTTOM_LATY = 4,
-    LONX = 5,
-    LATY = 6
-  };
-
+  MapTypesFactory factory;
   maptypes::MapAirport *ap = new maptypes::MapAirport;
-  ap->id = data.at(ID).toInt();
-  ap->bounding = atools::geo::Rect(data.at(LEFT_LONX).toFloat(), data.at(TOP_LATY).toFloat(),
-                                   data.at(RIGHT_LONX).toFloat(), data.at(BOTTOM_LATY).toFloat());
-  ap->position = atools::geo::Pos(data.at(LONX).toFloat(), data.at(LATY).toFloat());
+  // Not fully populated
+  factory.fillAirport(record, *ap, false);
   result->airports.append(ap);
 }

@@ -43,9 +43,12 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
     tabIndex(tabWidgetIndex)
 {
 
+  Ui::MainWindow *ui = parentWidget->getUi();
   // Avoid stealing of Ctrl-C from other default menus
-  parentWidget->getUi()->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
+
+  tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
 }
 
 Search::~Search()
@@ -204,7 +207,7 @@ void Search::connectSearchWidgets()
 void Search::connectSlots()
 {
   connect(view, &QTableView::doubleClicked, this, &Search::doubleClick);
-  connect(view, &QTableView::customContextMenuRequested, this, &Search::tableContextMenu);
+  connect(view, &QTableView::customContextMenuRequested, this, &Search::contextMenu);
 
   reconnectSelectionModel();
 
@@ -212,6 +215,11 @@ void Search::connectSlots()
 
   void (Search::*selChangedPtr)() = &Search::tableSelectionChanged;
   connect(controller->getModel(), &SqlModel::fetchedMore, this, selChangedPtr);
+
+  Ui::MainWindow *ui = parentWidget->getUi();
+
+  connect(ui->actionSearchShowAll, &QAction::triggered, this, &Search::loadAllRowsIntoView);
+  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &Search::resetSearch);
 }
 
 void Search::reconnectSelectionModel()
@@ -241,46 +249,6 @@ void Search::tableSelectionChanged()
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }
 
-void Search::doubleClick(const QModelIndex& index)
-{
-  if(index.isValid())
-  {
-    // Check if the used table has bounding rectangle columns
-    bool hasBounding = columns->hasColumn("left_lonx") &&
-                       columns->hasColumn("top_laty") &&
-                       columns->hasColumn("right_lonx") &&
-                       columns->hasColumn("bottom_laty");
-
-    if(hasBounding)
-    {
-      float leftLon = controller->getRawData(index.row(), "left_lonx").toFloat();
-      float topLat = controller->getRawData(index.row(), "top_laty").toFloat();
-      float rightLon = controller->getRawData(index.row(), "right_lonx").toFloat();
-      float bottomLat = controller->getRawData(index.row(), "bottom_laty").toFloat();
-
-      if(leftLon == rightLon && topLat == bottomLat)
-      {
-        atools::geo::Pos p(leftLon, topLat);
-        qDebug() << "emit showPos" << p;
-        emit showPos(p, 2700);
-      }
-      else
-      {
-        atools::geo::Rect r(leftLon, topLat, rightLon, bottomLat);
-        qDebug() << "emit showRect" << r;
-        emit showRect(r);
-      }
-    }
-    else
-    {
-      atools::geo::Pos p(controller->getRawData(index.row(), "lonx").toFloat(),
-                         controller->getRawData(index.row(), "laty").toFloat());
-      qDebug() << "emit showPos" << p;
-      emit showPos(p, 2700);
-    }
-  }
-}
-
 void Search::preDatabaseLoad()
 {
   // controller->resetSearch();
@@ -290,6 +258,7 @@ void Search::preDatabaseLoad()
 void Search::postDatabaseLoad()
 {
   controller->prepareModel();
+  // TODO fix after reload database
   // connectControllerSlots();
   // assignSearchFieldsToController();
 
@@ -339,11 +308,55 @@ void Search::tableCopyCipboard()
 
 void Search::loadAllRowsIntoView()
 {
-  controller->loadAllRows();
-  parentWidget->getUi()->statusBar->showMessage(tr("All logbook entries read."));
+  Ui::MainWindow *ui = parentWidget->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  {
+    controller->loadAllRows();
+    parentWidget->getUi()->statusBar->showMessage(tr("All logbook entries read."));
+  }
 }
 
-void Search::tableContextMenu(const QPoint& pos)
+void Search::doubleClick(const QModelIndex& index)
+{
+  if(index.isValid())
+  {
+    // Check if the used table has bounding rectangle columns
+    bool hasBounding = columns->hasColumn("left_lonx") &&
+                       columns->hasColumn("top_laty") &&
+                       columns->hasColumn("right_lonx") &&
+                       columns->hasColumn("bottom_laty");
+
+    if(hasBounding)
+    {
+      float leftLon = controller->getRawData(index.row(), "left_lonx").toFloat();
+      float topLat = controller->getRawData(index.row(), "top_laty").toFloat();
+      float rightLon = controller->getRawData(index.row(), "right_lonx").toFloat();
+      float bottomLat = controller->getRawData(index.row(), "bottom_laty").toFloat();
+
+      if(leftLon == rightLon && topLat == bottomLat)
+      {
+        atools::geo::Pos p(leftLon, topLat);
+        qDebug() << "emit showPos" << p;
+        emit showPos(p, 2700);
+      }
+      else
+      {
+        atools::geo::Rect r(leftLon, topLat, rightLon, bottomLat);
+        qDebug() << "emit showRect" << r;
+        emit showRect(r);
+      }
+    }
+    else
+    {
+      atools::geo::Pos p(controller->getRawData(index.row(), "lonx").toFloat(),
+                         controller->getRawData(index.row(), "laty").toFloat());
+      qDebug() << "emit showPos" << p;
+      emit showPos(p, 2700);
+    }
+  }
+}
+
+void Search::contextMenu(const QPoint& pos)
 {
   QObject *localSender = sender();
   qDebug() << localSender->metaObject()->className() << localSender->objectName();
@@ -353,7 +366,9 @@ void Search::tableContextMenu(const QPoint& pos)
   bool columnCanFilter = false, columnCanGroup = false;
   QString navType;
 
-  atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding});
+  atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
+                                      ui->actionRouteAirportDest, ui->actionRouteAirportStart,
+                                      ui->actionRouteAdd});
   Q_UNUSED(saver);
 
   atools::geo::Pos position;
@@ -400,6 +415,12 @@ void Search::tableContextMenu(const QPoint& pos)
   ui->actionMapNavaidRange->setEnabled(navType == "VOR" || navType == "VORDME" ||
                                        navType == "DME" || navType == "NDB");
 
+  ui->actionRouteAdd->setEnabled(navType == "VOR" || navType == "VORDME" ||
+                                 navType == "DME" || navType == "NDB" || navType == "WAYPOINT");
+
+  ui->actionRouteAirportDest->setEnabled(columns->getTablename() == "airport");
+  ui->actionRouteAirportStart->setEnabled(columns->getTablename() == "airport");
+
   ui->actionMapRangeRings->setEnabled(true);
   ui->actionMapHideRangeRings->setEnabled(!parentWidget->getMapWidget()->getRangeRings().isEmpty());
 
@@ -416,6 +437,9 @@ void Search::tableContextMenu(const QPoint& pos)
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+  ui->actionRouteAdd->setText(tr("Add to Route"));
+  ui->actionRouteAirportStart->setText(tr("Set as Route Start"));
+  ui->actionRouteAirportDest->setText(tr("Set as Route Destination"));
 
   menu.addSeparator();
   menu.addAction(ui->actionSearchResetView);
@@ -431,18 +455,20 @@ void Search::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideRangeRings);
 
+  menu.addSeparator();
+  menu.addAction(ui->actionRouteAdd);
+  menu.addAction(ui->actionRouteAirportStart);
+  menu.addAction(ui->actionRouteAirportDest);
+
   QAction *action = menu.exec(QCursor::pos());
   if(action != nullptr)
   {
     // A menu item was selected
-    if(action == ui->actionSearchResetSearch)
-      resetSearch();
-    else if(action == ui->actionSearchResetView)
+    // Other actions with shortcuts are connectied directly to methods
+    if(action == ui->actionSearchResetView)
       resetView();
     else if(action == ui->actionSearchTableCopy)
       tableCopyCipboard();
-    else if(action == ui->actionSearchShowAll)
-      loadAllRowsIntoView();
     else if(action == ui->actionSearchFilterIncluding)
       controller->filterIncluding(index);
     else if(action == ui->actionSearchFilterExcluding)
@@ -455,11 +481,9 @@ void Search::tableContextMenu(const QPoint& pos)
       parentWidget->getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
     {
-
       maptypes::MapObjectTypes type;
       int frequency = controller->getRawData(index.row(), "frequency").toInt();
 
-      QString navType = controller->getRawData(index.row(), "nav_type").toString();
       if(navType == "VOR" || navType == "VORDME" || navType == "DME")
       {
         type = maptypes::VOR;

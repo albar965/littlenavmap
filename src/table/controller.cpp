@@ -590,12 +590,19 @@ QVariantList Controller::getRawModelData(int row) const
 
 QVariant Controller::getRawData(int row, const QString& colname) const
 {
-  return model->getRawData(row, colname);
+  int colIdx = model->record().indexOf(colname);
+  int srow = row;
+  if(proxyModel != nullptr)
+    srow = toS(proxyModel->index(row, 0)).row();
+  return model->getRawData(srow, colIdx);
 }
 
 QVariant Controller::getRawData(int row, int col) const
 {
-  return model->getRawData(row, col);
+  int srow = row;
+  if(proxyModel != nullptr)
+    srow = toS(proxyModel->index(row, 0)).row();
+  return model->getRawData(srow, col);
 }
 
 QStringList Controller::getRawModelColumns() const
@@ -613,13 +620,8 @@ int Controller::getSortColumnIndex() const
   return model->getSortColumnIndex();
 }
 
-void Controller::getSelectedObjects(const QStringList& cols,
-                                    std::function<void(const QVariantList&)> fillfunc)
+void Controller::getSelectedObjects(std::function<void(const QSqlRecord&)> fillfunc)
 {
-  QVector<int> indexes;
-  for(const QString& c : cols)
-    indexes.append(model->record().indexOf(c));
-
   for(const QItemSelectionRange& rng :  getSelection())
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
@@ -627,11 +629,6 @@ void Controller::getSelectedObjects(const QStringList& cols,
       if(proxyModel != nullptr)
         srow = toS(proxyModel->index(row, 0)).row();
 
-      QVariantList vars;
-
-      for(int idx : indexes)
-        vars.append(getRawData(srow, idx));
-
-      fillfunc(vars);
+      fillfunc(model->record(srow));
     }
 }

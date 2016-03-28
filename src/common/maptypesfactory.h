@@ -15,36 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef AIRPORTICONDELEGATE_H
-#define AIRPORTICONDELEGATE_H
+#ifndef MAPTYPESFACTORY_H
+#define MAPTYPESFACTORY_H
 
-#include <QStyledItemDelegate>
+#include "maptypes.h"
 
-#include "common/maptypes.h"
-
-class ColumnList;
-class SqlModel;
-class SymbolPainter;
 class QSqlRecord;
-class MapTypesFactory;
 
-class AirportIconDelegate :
-  public QStyledItemDelegate
+class MapTypesFactory
 {
-  Q_OBJECT
-
 public:
-  AirportIconDelegate(const ColumnList *columns);
-  virtual ~AirportIconDelegate();
+  MapTypesFactory();
+  ~MapTypesFactory();
 
-private:
-  const ColumnList *cols;
-  SymbolPainter *symbolPainter;
-  MapTypesFactory *mapTypesFactory;
-
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const override;
+  void fillAirport(const QSqlRecord& record, maptypes::MapAirport& ap, bool complete);
+  void fillVor(const QSqlRecord& record, maptypes::MapVor& vor);
+  void fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb);
+  void fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoint& wp);
+  void fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway);
+  void fillMarker(const QSqlRecord& record, maptypes::MapMarker& marker);
+  void fillIls(const QSqlRecord& record, maptypes::MapIls& ils);
+  maptypes::MapAirportFlags flag(const QSqlRecord& record, const QString& field,
+                                 maptypes::MapAirportFlags flag);
+  maptypes::MapAirportFlags getFlags(const QSqlRecord& record);
 
 };
 
-#endif // AIRPORTICONDELEGATE_H
+#endif // MAPTYPESFACTORY_H

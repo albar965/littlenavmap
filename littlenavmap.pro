@@ -73,7 +73,8 @@ SOURCES += src/main.cpp\
     src/route/routeicondelegate.cpp \
     src/mapgui/maptooltip.cpp \
     src/common/formatter.cpp \
-    src/common/coordinateconverter.cpp
+    src/common/coordinateconverter.cpp \
+    src/common/maptypesfactory.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -109,7 +110,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routeicondelegate.h \
     src/mapgui/maptooltip.h \
     src/common/formatter.h \
-    src/common/coordinateconverter.h
+    src/common/coordinateconverter.h \
+    src/common/maptypesfactory.h
 
 FORMS    += src/gui/mainwindow.ui
 

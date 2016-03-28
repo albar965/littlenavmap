@@ -39,7 +39,6 @@ private:
   const ColumnList *cols;
   SymbolPainter *symbolPainter;
 
-  QVariant value(const SqlModel *sqlModel, int row, const QString& name) const;
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;
 

@@ -68,17 +68,43 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   delete m;
 
   // TODO delete old and new delegate
-  view->setItemDelegateForColumn(0, new RouteIconDelegate(routeMapObjects));
+  tableView->setItemDelegateForColumn(0, new RouteIconDelegate(routeMapObjects));
+
+  // Avoid stealing of keys from other default menus
+  ui->actionRouteLegDown->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
+  tableView->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
   connect(tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+
+  connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveLegsDown);
+  connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveLegsUp);
+  connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteLegs);
 }
 
 RouteController::~RouteController()
 {
   delete model;
   delete flightplan;
+}
+
+void RouteController::moveLegsDown()
+{
+  qDebug() << "Leg down";
+}
+
+void RouteController::moveLegsUp()
+{
+  qDebug() << "Leg up";
+}
+
+void RouteController::deleteLegs()
+{
+  qDebug() << "Leg delete";
 }
 
 void RouteController::saveState()
@@ -126,6 +152,8 @@ void RouteController::newFlightplan()
   routeMapObjects.clear();
   routeFilename.clear();
   changed = false;
+  totalDistance = 0.f;
+
   flightplanToView();
   updateWindowTitle();
   updateLabel();
@@ -139,6 +167,7 @@ void RouteController::loadFlightplan(const QString& filename)
   routeFilename = filename;
   changed = false;
   routeMapObjects.clear();
+  totalDistance = 0.f;
 
   flightplan = new Flightplan();
   flightplan->load(filename);
@@ -240,9 +269,6 @@ void RouteController::flightplanToView()
       else
         items.append(nullptr);
 
-      float distance = mapobj.getDistanceTo();
-      cumulatedDistance += distance;
-
       if(row == 0)
       {
         boundingRect = atools::geo::Rect(mapobj.getPosition());
@@ -260,13 +286,15 @@ void RouteController::flightplanToView()
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
-        item = new QStandardItem(QString::number(distance, 'f', 1));
+        item = new QStandardItem(QString::number(mapobj.getDistanceTo(), 'f', 1));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
         boundingRect.extend(mapobj.getPosition());
       }
 
+      // Remaining
+      cumulatedDistance += mapobj.getDistanceTo();
       item = new QStandardItem(QString::number(totalDistance - cumulatedDistance, 'f', 1));
       item->setTextAlignment(Qt::AlignRight);
       items.append(item);
@@ -345,6 +373,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     QMenu menu;
 
+    menu.addAction(ui->actionRouteLegUp);
+    menu.addAction(ui->actionRouteLegDown);
+    menu.addAction(ui->actionRouteDeleteLeg);
+
+    menu.addSeparator();
     menu.addAction(ui->actionSearchSetMark);
     menu.addSeparator();
 
@@ -392,7 +425,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                                       mo.getRange());
       else if(action == ui->actionMapHideRangeRings)
         parentWindow->getMapWidget()->clearRangeRings();
-
     }
 
   }

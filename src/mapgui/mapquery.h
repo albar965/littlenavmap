@@ -41,12 +41,14 @@ class SqlQuery;
 }
 
 class CoordinateConverter;
+class QSqlRecord;
+class MapTypesFactory;
 
 class MapQuery
 {
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
-  virtual ~MapQuery();
+  ~MapQuery();
 
   void getAirportById(maptypes::MapAirport& airport, int id);
 
@@ -113,6 +115,7 @@ private:
     QList<TYPE> list;
   };
 
+  MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
   // Marble::GeoDataLatLonBox curRect;
@@ -164,17 +167,6 @@ private:
 
   const static double RECT_INFLATION_FACTOR;
   const static double RECT_INFLATION_ADD;
-
-  void fillMapAirport(const atools::sql::SqlQuery *query, maptypes::MapAirport& ap, bool complete);
-  void fillMapVor(const atools::sql::SqlQuery *query, maptypes::MapVor& vor);
-  void fillMapNdb(const atools::sql::SqlQuery *query, maptypes::MapNdb& ndb);
-  void fillMapWaypoint(const atools::sql::SqlQuery *query, maptypes::MapWaypoint& wp);
-  void fillAirway(const atools::sql::SqlQuery *query, maptypes::MapAirway& airway);
-  maptypes::MapAirportFlags flag(const atools::sql::SqlQuery *query, const QString& field,
-                                 maptypes::MapAirportFlags flag);
-
-  maptypes::MapAirportFlags getFlags(const atools::sql::SqlQuery *query);
-
 };
 
 // ---------------------------------------------------------------------------------

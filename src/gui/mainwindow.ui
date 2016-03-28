@@ -1550,6 +1550,19 @@
          </item>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Route ...</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -2114,6 +2127,10 @@
    </property>
   </action>
   <action name="actionShowInSearch">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/search.svg</normaloff>:/littlenavmap/resources/icons/search.svg</iconset>
+   </property>
    <property name="text">
     <string>Show %1 in Search</string>
    </property>
@@ -2458,6 +2475,78 @@
    </property>
    <property name="toolTip">
     <string>R</string>
+   </property>
+  </action>
+  <action name="actionRouteAirportStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as Route Start</string>
+   </property>
+  </action>
+  <action name="actionRouteAirportDest">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as Route Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Airport as Route Destination</string>
+   </property>
+  </action>
+  <action name="actionRouteAdd">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 to Route</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Airport as Route Destination</string>
+   </property>
+  </action>
+  <action name="actionRouteDeleteLeg">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete selected Legs</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionRouteLegUp">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routelegup.svg</normaloff>:/littlenavmap/resources/icons/routelegup.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Move Leg Up</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Up</string>
+   </property>
+  </action>
+  <action name="actionRouteLegDown">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routelegdown.svg</normaloff>:/littlenavmap/resources/icons/routelegdown.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Move Leg Down</string>
+   </property>
+   <property name="toolTip">
+    <string>Move Leg Down</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Down</string>
    </property>
   </action>
  </widget>

@@ -40,6 +40,8 @@
 #include <QMenu>
 #include <QLineEdit>
 
+#include <common/maptypesfactory.h>
+
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                      atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
   : Search(parent, tableView, columnList, sqlDb, tabWidgetIndex)
@@ -260,74 +262,34 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
 void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   using namespace std::placeholders;
-  QStringList cols;
-  cols << columns->getIdColumnName() << "vor_id" << "ndb_id" << "waypoint_id"
-       << "type" << "nav_type" << "ident" << "region" << "name" << "mag_var"
-       << "range" << "frequency" << "lonx" << "laty";
-  controller->getSelectedObjects(cols, std::bind(&NavSearch::fillSearchResult, this, _1, &result));
+  controller->getSelectedObjects(std::bind(&NavSearch::fillSearchResult, this, _1, &result));
   result.needsDelete = true;
 }
 
-void NavSearch::fillSearchResult(const QVariantList& data, maptypes::MapSearchResult *result) const
+void NavSearch::fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResult *result) const
 {
-  enum ColIds
-  {
-    ID = 0,
-    VOR_ID = 1,
-    NDB_ID = 2,
-    WP_ID = 3,
-    TYPE = 4,
-    NAVTYPE = 5,
-    IDENT = 6,
-    REGION = 7,
-    NAME = 8,
-    MAGVAR = 9,
-    RANGE = 10,
-    FREQ = 11,
-    LONX = 12,
-    LATY = 13
-  };
+  MapTypesFactory factory;
 
   // All objects are fully populated
-  QString type = data.at(NAVTYPE).toString();
+  QString type = data.value("nav_type").toString();
   if(type == "WAYPOINT")
   {
     maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
-    obj->id = data.at(WP_ID).toInt();
-    obj->type = data.at(TYPE).toString();
-    obj->ident = data.at(IDENT).toString();
-    obj->region = data.at(REGION).toString();
-    obj->magvar = data.at(MAGVAR).toFloat();
-    obj->position = atools::geo::Pos(data.at(LONX).toFloat(), data.at(LATY).toFloat());
+    factory.fillWaypoint(data, *obj);
     result->waypoints.append(obj);
   }
   else if(type == "NDB")
   {
     maptypes::MapNdb *obj = new maptypes::MapNdb;
-    obj->id = data.at(NDB_ID).toInt();
-    obj->type = data.at(TYPE).toString();
-    obj->ident = data.at(IDENT).toString();
-    obj->region = data.at(REGION).toString();
-    obj->name = data.at(NAME).toString();
-    obj->magvar = data.at(MAGVAR).toFloat();
-    obj->range = data.at(RANGE).toInt();
-    obj->frequency = data.at(FREQ).toInt();
-    obj->position = atools::geo::Pos(data.at(LONX).toFloat(), data.at(LATY).toFloat());
+    factory.fillNdb(data, *obj);
     result->ndbs.append(obj);
   }
   else if(type == "DME" || type == "VORDME" || type == "VOR")
   {
     maptypes::MapVor *obj = new maptypes::MapVor;
-    obj->id = data.at(VOR_ID).toInt();
-    obj->dmeOnly = type == "DME";
-    obj->hasDme = type == "VORDME" || type == "DME";
-    obj->ident = data.at(IDENT).toString();
-    obj->region = data.at(REGION).toString();
-    obj->name = data.at(NAME).toString();
-    obj->magvar = data.at(MAGVAR).toFloat();
-    obj->range = data.at(RANGE).toInt();
-    obj->frequency = data.at(FREQ).toInt() / 10;
-    obj->position = atools::geo::Pos(data.at(LONX).toFloat(), data.at(LATY).toFloat());
+    factory.fillVor(data, *obj);
+    // Adapt to nav_search table frequency scaling
+    obj->frequency /= 10;
     result->vors.append(obj);
   }
 }

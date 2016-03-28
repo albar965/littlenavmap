@@ -28,16 +28,21 @@
 #include <QPainter>
 #include <QSqlQueryModel>
 #include <QApplication>
+#include <QSqlRecord>
+
+#include <common/maptypesfactory.h>
 
 AirportIconDelegate::AirportIconDelegate(const ColumnList *columns)
   : cols(columns)
 {
   symbolPainter = new SymbolPainter();
+  mapTypesFactory = new MapTypesFactory();
 }
 
 AirportIconDelegate::~AirportIconDelegate()
 {
   delete symbolPainter;
+  delete mapTypesFactory;
 }
 
 void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
@@ -54,7 +59,8 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   }
   Q_ASSERT(sqlModel != nullptr);
 
-  maptypes::MapAirport ap = mapAirport(sqlModel, idx.row());
+  maptypes::MapAirport ap;
+  mapTypesFactory->fillAirport(sqlModel->record(idx.row()), ap, true);
 
   // Create a style copy
   QStyleOptionViewItem opt(option);
@@ -74,53 +80,4 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
                                    option.rect.y() + symSize / 2 + 2,
                                    symSize,
                                    false, false);
-}
-
-QVariant AirportIconDelegate::value(const SqlModel *sqlModel, int row, const QString& name) const
-{
-  const Column *col = cols->getColumn(name);
-  Q_ASSERT(col != nullptr);
-
-  QVariant data = sqlModel->getRawData(row, col->getIndex());
-
-  if(data.isValid())
-    return data;
-  else
-    qCritical() << "sibling for column" << name << "not found";
-
-  return QVariant();
-}
-
-maptypes::MapAirport AirportIconDelegate::mapAirport(const SqlModel *sqlModel, int row) const
-{
-  using namespace maptypes;
-
-  MapAirport ap;
-  ap.longestRunwayHeading =
-    static_cast<int>(std::roundf(value(sqlModel, row, "longest_runway_heading").toFloat()));
-
-  // TODO duplicated from map query
-  ap.flags |= flag(sqlModel, row, "num_helipad", AP_HELIPAD);
-  ap.flags |= flag(sqlModel, row, "rating", AP_SCENERY);
-  ap.flags |= flag(sqlModel, row, "has_avgas", AP_AVGAS);
-  ap.flags |= flag(sqlModel, row, "has_jetfuel", AP_JETFUEL);
-  ap.flags |= flag(sqlModel, row, "tower_frequency", AP_TOWER);
-  ap.flags |= flag(sqlModel, row, "is_closed", AP_CLOSED);
-  ap.flags |= flag(sqlModel, row, "is_military", AP_MIL);
-  ap.flags |= flag(sqlModel, row, "is_addon", AP_ADDON);
-  ap.flags |= flag(sqlModel, row, "num_runway_hard", AP_HARD);
-  ap.flags |= flag(sqlModel, row, "num_runway_soft", AP_SOFT);
-  ap.flags |= flag(sqlModel, row, "num_runway_water", AP_WATER);
-
-  return ap;
-}
-
-maptypes::MapAirportFlags AirportIconDelegate::flag(const SqlModel *sqlModel, int row, const QString& field,
-                                                    maptypes::MapAirportFlags flag) const
-{
-  QVariant val = value(sqlModel, row, field);
-  if(val.isNull())
-    return maptypes::AP_NONE;
-  else
-    return val.toInt() > 0 ? flag : maptypes::AP_NONE;
 }
