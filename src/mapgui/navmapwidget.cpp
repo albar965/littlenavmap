@@ -82,29 +82,40 @@ NavMapWidget::~NavMapWidget()
 
 void NavMapWidget::setTheme(const QString& theme, int index)
 {
-  // mapWidget->setAnimationsEnabled(false);
-  // mapWidget->setShowCrosshairs(false);
-  // mapWidget->setShowBackground(false);
-  // mapWidget->setShowAtmosphere(false);
-  // mapWidget->setShowGrid(true);
+  enum MapThemeIndex
+  {
+    OSM,
+    OSM_HILLSHADING,
+    ATLAS,
+    BLUE_MARBLE,
+    SIMPLE,
+    POLITICAL
+  };
 
   setMapThemeId(theme);
 
-  if(index == 1)
+  if(index == OSM_HILLSHADING)
   {
     setShowTerrain(true);
     setShowRelief(true);
+    setPropertyValue("hillshading", true);
   }
   else
   {
     setShowTerrain(false);
     setShowRelief(false);
+    setPropertyValue("hillshading", false);
   }
-  setShowClouds(false);
-  setShowBorders(true);
-  setShowIceLayer(false);
-  setShowLakes(true);
-  setShowRivers(true);
+
+  if(index == SIMPLE || index == POLITICAL || index == BLUE_MARBLE || index == ATLAS)
+  {
+    setPropertyValue("places", true);
+    setPropertyValue("cities", true);
+    setPropertyValue("otherplaces", false);
+    setPropertyValue("terrain", false);
+    setPropertyValue("urbanareas", false);
+    setPropertyValue("borders", true);
+  }
 }
 
 void NavMapWidget::setShowMapPois(bool show)

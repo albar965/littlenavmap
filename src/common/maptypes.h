@@ -216,7 +216,7 @@ struct MapHelipad
 struct MapVor
 {
   QString ident, region, type, name, apIdent;
-  int id;
+  int id, altitude;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -237,7 +237,7 @@ struct MapVor
 struct MapNdb
 {
   QString ident, region, type, name, apIdent;
-  int id;
+  int id, altitude;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -330,7 +330,7 @@ struct MapMarker
 struct MapIls
 {
   QString ident, name;
-  int id;
+  int id, altitude;
   float magvar, slope, heading, width;
   int frequency, range;
   atools::geo::Pos position, pos1, pos2, posmid;

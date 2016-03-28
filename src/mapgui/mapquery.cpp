@@ -734,10 +734,10 @@ void MapQuery::initQueries()
 
   static QString vorQueryBase(
     "select vor_id, ident, name, region, type, name, frequency, range, dme_only, dme_altitude, "
-    "mag_var, lonx, laty "
+    "mag_var, altitude, lonx, laty "
     "from vor ");
   static QString ndbQueryBase(
-    "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, lonx, laty "
+    "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty "
     "from ndb ");
 
   deInitQueries();
@@ -841,7 +841,7 @@ void MapQuery::initQueries()
   ilsByRectQuery = new SqlQuery(db);
   ilsByRectQuery->prepare(
     "select ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
-    "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, lonx, laty "
+    "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty "
     "from ils where " + whereRect + " " + whereLimit);
 
   airwayByRectQuery = new SqlQuery(db);

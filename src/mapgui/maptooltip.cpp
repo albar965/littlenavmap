@@ -104,6 +104,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
     text += "<br/>Freq: " + formatter::formatDoubleUnit(vor->frequency / 1000., QString(), 2) + " MHz";
     if(!vor->dmeOnly)
       text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor->magvar, QString(), 1) + " °";
+    text += "<br/>Altitude: " + QLocale().toString(vor->altitude) + " ft";
     text += "<br/>Range: " + QString::number(vor->range) + " nm";
   }
 
@@ -116,6 +117,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
     text += "<br/>Region: " + ndb->region;
     text += "<br/>Freq: " + formatter::formatDoubleUnit(ndb->frequency / 100., QString(), 2) + " kHz";
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb->magvar, QString(), 1) + " °";
+    text += "<br/>Altitude: " + QLocale().toString(ndb->altitude) + " ft";
     text += "<br/>Range: " + QString::number(ndb->range) + " nm";
   }
 
