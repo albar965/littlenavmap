@@ -52,6 +52,9 @@ enum MapObjectType
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
 
+/* Convert nav_search type */
+maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
+
 enum MapAirportFlag
 {
   AP_NONE = 0x0000,
@@ -385,12 +388,12 @@ struct RangeMarker
 {
   QString text;
   QVector<int> ranges;
-  atools::geo::Pos position;
+  atools::geo::Pos center;
   MapObjectTypes type;
 
   const atools::geo::Pos& getPosition() const
   {
-    return position;
+    return center;
   }
 
 };
@@ -399,7 +402,7 @@ struct DistanceMarker
 {
   QString text;
   QColor color;
-  atools::geo::Pos from, position;
+  atools::geo::Pos from, to;
   float magvar;
 
   maptypes::MapObjectTypes type;
@@ -407,7 +410,7 @@ struct DistanceMarker
 
   const atools::geo::Pos& getPosition() const
   {
-    return position;
+    return to;
   }
 
 };

@@ -104,20 +104,20 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   // Default view column descriptors
   columns->
   append(Column("nav_search_id").hidden()).
-  append(Column("distance", tr("Distance")).distanceCol()).
+  append(Column("distance", tr("Distance\nnm")).distanceCol()).
+  append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).indexCondMap(navTypeCondMap)).
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap)).
   append(Column("name", ui->lineEditNavNameSearch, tr("Name")).filter()).
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
   append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).
-  append(Column("frequency", tr("Frequency"))).
-  append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range")).filter().condition(">")).
-  append(Column("mag_var", tr("Mag\nVar"))).
-  append(Column("altitude", tr("Altitude"))).
+  append(Column("frequency", tr("Frequency\nkHz/MHz"))).
+  append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\nnm")).filter().condition(">")).
+  append(Column("mag_var", tr("Mag\nVar °"))).
+  append(Column("altitude", tr("Altitude\nft"))).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("File")).filter()).
-  append(Column("range").hidden()).
   append(Column("vor_id").hidden()).
   append(Column("ndb_id").hidden()).
   append(Column("waypoint_id").hidden()).
@@ -125,8 +125,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("laty").hidden())
   ;
 
-  // TODO delete old and new delegate
-  view->setItemDelegateForColumn(2, new NavIconDelegate(columns));
+  iconDelegate = new NavIconDelegate(columns);
+  view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
   Search::initViewAndController();
 
@@ -138,6 +138,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
 
 NavSearch::~NavSearch()
 {
+  delete iconDelegate;
 }
 
 void NavSearch::connectSlots()
@@ -271,20 +272,22 @@ void NavSearch::fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResu
   MapTypesFactory factory;
 
   // All objects are fully populated
-  QString type = data.value("nav_type").toString();
-  if(type == "WAYPOINT")
+  QString navType = data.value("nav_type").toString();
+  maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navType);
+
+  if(type == maptypes::WAYPOINT)
   {
     maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
     factory.fillWaypoint(data, *obj);
     result->waypoints.append(obj);
   }
-  else if(type == "NDB")
+  else if(type == maptypes::NDB)
   {
     maptypes::MapNdb *obj = new maptypes::MapNdb;
     factory.fillNdb(data, *obj);
     result->ndbs.append(obj);
   }
-  else if(type == "DME" || type == "VORDME" || type == "VOR")
+  else if(type == maptypes::VOR)
   {
     maptypes::MapVor *obj = new maptypes::MapVor;
     factory.fillVor(data, *obj);

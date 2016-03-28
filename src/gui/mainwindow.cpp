@@ -222,13 +222,14 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
 
   // Create labels for the statusbar
-  mapPosLabelText = tr("%1 %2. Distance %3.");
+  renderStatusLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(renderStatusLabel);
+
+  mapDistanceLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(mapDistanceLabel);
+
   mapPosLabel = new QLabel();
   ui->statusBar->addPermanentWidget(mapPosLabel);
-
-  selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
-  selectionLabel = new QLabel();
-  ui->statusBar->addPermanentWidget(selectionLabel);
 }
 
 void MainWindow::connectAllSlots()
@@ -272,9 +273,12 @@ void MainWindow::connectAllSlots()
 
   // Map widget related connections
   connect(navMapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
+  // Connect the map widget to the position label.
+  QObject::connect(navMapWidget, &NavMapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
+  QObject::connect(navMapWidget, &NavMapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
+  QObject::connect(navMapWidget, &NavMapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
-
   connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)
           {
             Marble::Projection proj =
@@ -318,6 +322,26 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::selectionChanged);
   connect(searchController->getNavSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
+}
+
+void MainWindow::renderStatusChanged(RenderStatus status)
+{
+  switch(status)
+  {
+    case Marble::Complete:
+      renderStatusLabel->setText("Done.");
+      break;
+    case Marble::WaitingForUpdate:
+      renderStatusLabel->setText("Waiting for Update ...");
+      break;
+    case Marble::WaitingForData:
+      renderStatusLabel->setText("Waiting for Data ...");
+      break;
+    case Marble::Incomplete:
+      renderStatusLabel->setText("Incomplete.");
+      break;
+
+  }
 }
 
 void MainWindow::routeCenter()
@@ -406,6 +430,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 
 void MainWindow::selectionChanged(const Search *source, int selected, int visible, int total)
 {
+  static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;
   if(source == searchController->getAirportSearch())
   {
@@ -794,7 +819,7 @@ void MainWindow::preDatabaseLoad()
     mapQuery->deInitQueries();
   }
   else
-    qDebug() << "Already in database loading status";
+    qWarning() << "Already in database loading status";
 }
 
 void MainWindow::postDatabaseLoad(bool force)
@@ -807,5 +832,5 @@ void MainWindow::postDatabaseLoad(bool force)
     hasDatabaseLoadStatus = false;
   }
   else
-    qDebug() << "Not in database loading status";
+    qWarning() << "Not in database loading status";
 }

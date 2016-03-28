@@ -192,7 +192,7 @@ void SqlModel::filterByIdent(const QString& ident, const QString& region, const 
   if(!region.isEmpty() && columns->getColumn("region") != nullptr)
     filterBy(false, "region", region);
 
-  if(!region.isEmpty() && columns->getColumn("airport_ident") != nullptr)
+  if(!airportIdent.isEmpty() && columns->getColumn("airport_ident") != nullptr)
     filterBy(false, "airport_ident", airportIdent);
 
   buildQuery();
@@ -556,20 +556,6 @@ void SqlModel::buildQuery()
     }
     else
       queryOrder += "order by " + orderByCol + " " + orderByOrder;
-  }
-
-  if(boundingRect.isValid())
-  {
-    atools::geo::Pos center = boundingRect.getCenter();
-
-    QString srt("(lonx - %1) * (lonx - %1) + (laty - %2) * (laty - %2)");
-
-    if(queryOrder.isEmpty())
-      queryOrder += "order by ";
-    else
-      queryOrder += ",";
-
-    queryOrder += srt.arg(center.getLonX()).arg(center.getLatY()) + orderByOrder;
   }
 
   currentSqlQuery = "select " + queryCols + " from " + columns->getTablename() +

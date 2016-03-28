@@ -22,6 +22,8 @@
 
 #include <QApplication>
 
+using namespace atools::geo;
+
 SqlProxyModel::SqlProxyModel(QObject *parent, SqlModel *parentSqlModel)
   : QSortFilterProxyModel(parent), sqlModel(parentSqlModel)
 {
@@ -32,7 +34,7 @@ SqlProxyModel::~SqlProxyModel()
 
 }
 
-void SqlProxyModel::setDistanceFilter(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
+void SqlProxyModel::setDistanceFilter(const Pos& center, sqlproxymodel::SearchDirection dir,
                                       int minDistance, int maxDistance)
 {
   minDist = minDistance;
@@ -43,54 +45,51 @@ void SqlProxyModel::setDistanceFilter(const atools::geo::Pos& center, sqlproxymo
 
 void SqlProxyModel::clearDistanceFilter()
 {
-  centerPos = atools::geo::Pos();
+  centerPos = Pos();
 }
 
 bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   Q_UNUSED(sourceParent);
-  using namespace atools::geo;
 
-  float lonx = sqlModel->getRawData(sourceRow, "lonx").toFloat();
-  float laty = sqlModel->getRawData(sourceRow, "laty").toFloat();
+  Pos pos = buildPos(sourceRow);
+  float heading = normalizeCourse(centerPos.angleDegTo(pos));
 
   switch(direction)
   {
-  case sqlproxymodel::ALL:
-    return matchDist(lonx, laty);
+    case sqlproxymodel::ALL:
+      return matchDist(pos);
 
-  case sqlproxymodel::NORTH:
-    if(laty > centerPos.getLatY())
-      return matchDist(lonx, laty);
-    else
-      return false;
+    case sqlproxymodel::NORTH:
+      if(292.5f <= heading || heading <= 67.5f)
+        return matchDist(pos);
+      else
+        return false;
 
-  case sqlproxymodel::EAST:
-    if(lonx > centerPos.getLonX())
-      return matchDist(lonx, laty);
-    else
-      return false;
+    case sqlproxymodel::EAST:
+      if(22.5f <= heading && heading <= 157.5f)
+        return matchDist(pos);
+      else
+        return false;
 
-  case sqlproxymodel::SOUTH:
-    if(laty < centerPos.getLatY())
-      return matchDist(lonx, laty);
-    else
-      return false;
+    case sqlproxymodel::SOUTH:
+      if(112.5f <= heading && heading <= 247.5f)
+        return matchDist(pos);
+      else
+        return false;
 
-  case sqlproxymodel::WEST:
-    if(lonx < centerPos.getLonX())
-      return matchDist(lonx, laty);
-    else
-      return false;
+    case sqlproxymodel::WEST:
+      if(202.5f <= heading && heading <= 337.5f)
+        return matchDist(pos);
+      else
+        return false;
   }
   return true;
 }
 
-bool SqlProxyModel::matchDist(float lonx, float laty) const
+bool SqlProxyModel::matchDist(const Pos& pos) const
 {
-  using namespace atools::geo;
-
-  float dist = meterToNm(Pos(lonx, laty).distanceMeterTo(centerPos));
+  float dist = meterToNm(pos.distanceMeterTo(centerPos));
   return dist >= minDist && dist <= maxDist;
 }
 
@@ -115,14 +114,16 @@ bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& s
   if(sqlModel->getColumnName(sourceLeft.column()) == "distance" &&
      sqlModel->getColumnName(sourceRight.column()) == "distance")
   {
-    float lonxLeft = sqlModel->getRawData(sourceLeft.row(), "lonx").toFloat();
-    float latyLeft = sqlModel->getRawData(sourceLeft.row(), "laty").toFloat();
-    float distLeft = atools::geo::Pos(lonxLeft, latyLeft).distanceMeterTo(centerPos);
-
-    float lonxRight = sqlModel->getRawData(sourceRight.row(), "lonx").toFloat();
-    float latyRight = sqlModel->getRawData(sourceRight.row(), "laty").toFloat();
-    float distRight = atools::geo::Pos(lonxRight, latyRight).distanceMeterTo(centerPos);
+    float distLeft = buildPos(sourceLeft.row()).distanceMeterTo(centerPos);
+    float distRight = buildPos(sourceRight.row()).distanceMeterTo(centerPos);
     return distLeft < distRight;
+  }
+  else if(sqlModel->getColumnName(sourceLeft.column()) == "heading" &&
+          sqlModel->getColumnName(sourceRight.column()) == "heading")
+  {
+    float headingLeft = normalizeCourse(centerPos.angleDegTo(buildPos(sourceLeft.row())));
+    float headingRight = normalizeCourse(centerPos.angleDegTo(buildPos(sourceRight.row())));
+    return headingLeft < headingRight;
   }
   else
     return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
@@ -134,16 +135,28 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
   {
     if(role == Qt::DisplayRole)
     {
-      QModelIndex i = mapToSource(index);
-      float lonxLeft = sqlModel->getRawData(i.row(), "lonx").toFloat();
-      float latyLeft = sqlModel->getRawData(i.row(), "laty").toFloat();
-      float dist = atools::geo::meterToNm(atools::geo::Pos(lonxLeft, latyLeft).distanceMeterTo(centerPos));
-
-      return formatter::formatDoubleUnit(dist, QString(), 2);
+      float dist = meterToNm(buildPos(mapToSource(index).row()).distanceMeterTo(centerPos));
+      return formatter::formatDoubleUnit(dist, QString(), 1);
+    }
+    else if(role == Qt::TextAlignmentRole)
+      return Qt::AlignRight;
+  }
+  else if(sqlModel->getColumnName(index.column()) == "heading")
+  {
+    if(role == Qt::DisplayRole)
+    {
+      float heading = normalizeCourse(centerPos.angleDegTo(buildPos(mapToSource(index).row())));
+      return formatter::formatDoubleUnit(heading, QString(), 0);
     }
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;
   }
 
   return QSortFilterProxyModel::data(index, role);
+}
+
+Pos SqlProxyModel::buildPos(int row) const
+{
+  return Pos(sqlModel->getRawData(row, "lonx").toFloat(),
+             sqlModel->getRawData(row, "laty").toFloat());
 }

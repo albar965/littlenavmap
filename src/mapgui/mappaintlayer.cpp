@@ -51,8 +51,6 @@
 using namespace Marble;
 using namespace atools::geo;
 
-const double DISTANCE_CUT_OFF_LIMIT = 2000.;
-
 MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
   : mapQuery(mapQueries), navMapWidget(widget)
 {

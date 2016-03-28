@@ -19,6 +19,7 @@
 #define SEARCHPANE_H
 
 #include "geo/pos.h"
+#include "common/maptypes.h"
 
 #include <QColor>
 #include <QObject>
@@ -109,6 +110,10 @@ signals:
   void showPos(const atools::geo::Pos& pos, int zoom);
   void changeMark(const atools::geo::Pos& pos);
   void selectionChanged(const Search *source, int selected, int visible, int total);
+
+  void routeSetStart(int airportId);
+  void routeSetDest(int airportId);
+  void routeAdd(int id, maptypes::MapObjectTypes type);
 
 };
 

@@ -34,10 +34,6 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 
-const double MapQuery::RECT_INFLATION_FACTOR = 0.3;
-const double MapQuery::RECT_INFLATION_ADD = 0.1;
-const int QUERY_ROW_LIMIT = 5000;
-
 MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {

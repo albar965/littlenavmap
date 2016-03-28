@@ -68,11 +68,13 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
 
   painter->setRenderHint(QPainter::Antialiasing);
   QString navtype = sqlModel->record(idx.row()).value("nav_type").toString();
-  if(navtype == "WAYPOINT")
+  maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
+
+  if(type == maptypes::WAYPOINT)
     symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(), QColor(), x, y, symSize, false, false);
-  else if(navtype == "NDB")
+  else if(type == maptypes::NDB)
     symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(), x, y, symSize, false, false);
-  else if(navtype == "VOR" || navtype == "VORDME" || navtype == "DME")
+  else if(type == maptypes::VOR)
   {
     maptypes::MapVor vor;
     vor.dmeOnly = navtype == "DME";

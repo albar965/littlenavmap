@@ -32,6 +32,7 @@ class QAction;
 class MainWindow;
 class Column;
 class QSqlRecord;
+class NavIconDelegate;
 
 namespace atools {
 namespace sql {
@@ -64,6 +65,8 @@ private:
   QList<QAction *> navSearchMenuActions;
 
   void fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResult *result) const;
+
+  NavIconDelegate *iconDelegate = nullptr;
 
 };
 

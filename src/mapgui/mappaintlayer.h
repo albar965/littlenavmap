@@ -67,6 +67,8 @@ public:
   void routeChanged();
 
 private:
+  const double DISTANCE_CUT_OFF_LIMIT = 2000.;
+
   QSet<ForcePaintType> forcePaint;
 
   maptypes::MapObjectTypes objectTypes;

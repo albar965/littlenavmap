@@ -309,4 +309,17 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
   return true;
 }
 
+/* Convert nav_search type */
+maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType)
+{
+  maptypes::MapObjectTypes type = NONE;
+  if(navType == "VOR" || navType == "VORDME" || navType == "DME")
+    type = maptypes::VOR;
+  else if(navType == "NDB")
+    type = maptypes::NDB;
+  else if(navType == "WAYPOINT")
+    type = maptypes::WAYPOINT;
+  return type;
+}
+
 } // namespace types

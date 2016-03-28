@@ -44,6 +44,10 @@ class CoordinateConverter;
 class QSqlRecord;
 class MapTypesFactory;
 
+const double RECT_INFLATION_FACTOR = 0.3;
+const double RECT_INFLATION_ADD = 0.1;
+const int QUERY_ROW_LIMIT = 5000;
+
 class MapQuery
 {
 public:
@@ -165,8 +169,6 @@ private:
 
   bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
 
-  const static double RECT_INFLATION_FACTOR;
-  const static double RECT_INFLATION_ADD;
 };
 
 // ---------------------------------------------------------------------------------
@@ -179,9 +181,9 @@ bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& re
 
   Marble::GeoDataLatLonBox cur(curRect);
   MapQuery::inflateRect(cur, cur.width(Marble::GeoDataCoordinates::Degree) *
-                        MapQuery::RECT_INFLATION_FACTOR + MapQuery::RECT_INFLATION_ADD,
+                        RECT_INFLATION_FACTOR + RECT_INFLATION_ADD,
                         cur.height(Marble::GeoDataCoordinates::Degree) *
-                        MapQuery::RECT_INFLATION_FACTOR + MapQuery::RECT_INFLATION_ADD);
+                        RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
 
   if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
      !curMapLayer->hasSameQueryParameters(mapLayer))

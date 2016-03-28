@@ -32,6 +32,7 @@ class QAction;
 class MainWindow;
 class Column;
 class QSqlRecord;
+class AirportIconDelegate;
 
 namespace atools {
 namespace sql {
@@ -68,6 +69,8 @@ private:
   static const QSet<QString> numberColumns;
 
   void fillSearchResult(const QSqlRecord& record, maptypes::MapSearchResult *result) const;
+
+  AirportIconDelegate *iconDelegate = nullptr;
 
 };
 

@@ -139,12 +139,26 @@ signals:
   void objectSelected(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
                       const QString& airportIdent);
 
+  void routeSetStart(int airportId);
+  void routeSetDest(int airportId);
+  void routeAdd(int id, maptypes::MapObjectTypes type);
+
 private:
   enum MouseState
   {
     NONE,
     DISTANCE_DRAG,
     DISTANCE_DRAG_CHANGE
+  };
+
+  enum MapThemeComboIndex
+  {
+    OSM,
+    OSM_HILLSHADING,
+    ATLAS,
+    BLUE_MARBLE,
+    SIMPLE,
+    POLITICAL
   };
 
   MouseState mouseState = NONE;

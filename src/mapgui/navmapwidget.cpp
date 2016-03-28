@@ -40,6 +40,7 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/ViewportParams.h>
 #include <marble/MarbleModel.h>
+#include <marble/ElevationModel.h>
 #include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "maptooltip.h"
@@ -82,16 +83,6 @@ NavMapWidget::~NavMapWidget()
 
 void NavMapWidget::setTheme(const QString& theme, int index)
 {
-  enum MapThemeIndex
-  {
-    OSM,
-    OSM_HILLSHADING,
-    ATLAS,
-    BLUE_MARBLE,
-    SIMPLE,
-    POLITICAL
-  };
-
   setMapThemeId(theme);
 
   if(index == OSM_HILLSHADING)
@@ -442,6 +433,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
       else if(selectedSearchType == maptypes::NDB)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
+        // TODO check airport ident (probably not loaded)
         emit objectSelected(selectedSearchType, ndb.ident, ndb.region, ndb.apIdent);
       }
       else if(selectedSearchType == maptypes::WAYPOINT)
@@ -517,13 +509,22 @@ void NavMapWidget::contextMenu(const QPoint& point)
       }
 
       dm.rhumbLine = action == ui->actionMapMeasureRhumbDistance;
-      dm.position = pos;
+      dm.to = pos;
       distanceMarkers.append(dm);
 
       mouseState = DISTANCE_DRAG;
       setContextMenuPolicy(Qt::NoContextMenu);
       currentDistanceMarkerIndex = distanceMarkers.size() - 1;
     }
+    // select CL elwha in search bug
+
+    // else if(action == ui->actionRouteAdd)
+    // emit routeAdd(controller->getIdForRow(index), navType);
+    // else if(action == ui->actionRouteAirportStart)
+    // emit routeSetStart(controller->getIdForRow(index));
+    // else if(action == ui->actionRouteAirportDest)
+    // emit routeSetDest(controller->getIdForRow(index));
+
   }
 }
 
@@ -532,7 +533,7 @@ void NavMapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObj
 {
   maptypes::RangeMarker ring;
   ring.type = type;
-  ring.position = pos;
+  ring.center = pos;
 
   if(type == maptypes::VOR || type == maptypes::ILS)
     ring.text = ident + " " + formatter::formatDoubleUnit(frequency / 1000., QString(), 2);
@@ -541,7 +542,7 @@ void NavMapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObj
 
   ring.ranges.append(range);
   rangeMarkers.append(ring);
-  qDebug() << "navaid range" << ring.position;
+  qDebug() << "navaid range" << ring.center;
   update();
 }
 
@@ -549,11 +550,11 @@ void NavMapWidget::addRangeRing(const atools::geo::Pos& pos)
 {
   maptypes::RangeMarker rings;
   rings.type = maptypes::NONE;
-  rings.position = pos;
+  rings.center = pos;
   rings.ranges = {50, 100, 200, 500};
   rangeMarkers.append(rings);
 
-  qDebug() << "range rings" << rings.position;
+  qDebug() << "range rings" << rings.center;
   update();
 }
 
@@ -590,7 +591,7 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       atools::geo::Pos p(lon, lat);
       if(!distanceMarkers.isEmpty())
-        distanceMarkers[currentDistanceMarkerIndex].position = p;
+        distanceMarkers[currentDistanceMarkerIndex].to = p;
     }
     setViewContext(Marble::Animation);
     event->accept();
@@ -621,7 +622,17 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
-          distanceMarkers[currentDistanceMarkerIndex].position = atools::geo::Pos(lon, lat);
+          distanceMarkers[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
+
+        // atools::geo::Pos from = distanceMarkers[currentDistanceMarkerIndex].from;
+        // atools::geo::Pos to = distanceMarkers[currentDistanceMarkerIndex].to;
+        // const ElevationModel *localElevationModel = model()->elevationModel();
+        // QList<GeoDataCoordinates> elev = localElevationModel->heightProfile(from.getLonX(), from.getLatY(),
+        // to.getLonX(), to.getLatY());
+        // for(const GeoDataCoordinates& e : elev)
+        // qDebug() << e.altitude();
+        // qDebug() << "from height" << localElevationModel->height(from.getLonX(), from.getLatY());
+        // qDebug() << "to height" << localElevationModel->height(to.getLonX(), to.getLatY());
       }
       else if(event->button() == Qt::RightButton)
       {
@@ -633,7 +644,6 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
           distanceMarkers[currentDistanceMarkerIndex] = distanceMarkerBackup;
         currentDistanceMarkerIndex = -1;
       }
-
       event->accept();
     }
   if(mouseState == NONE && event->button() == Qt::RightButton)
@@ -846,7 +856,7 @@ int NavMapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistan
   int x, y;
   for(const maptypes::DistanceMarker& marker : distanceMarkers)
   {
-    if(conv.wToS(marker.position, x, y))
+    if(conv.wToS(marker.to, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         return index;
 
@@ -862,7 +872,7 @@ int NavMapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)
   int x, y;
   for(const maptypes::RangeMarker& marker : rangeMarkers)
   {
-    if(conv.wToS(marker.position, x, y))
+    if(conv.wToS(marker.center, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         return index;
 

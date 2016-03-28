@@ -48,6 +48,9 @@ public:
   void restoreState(const QString& keyPrefix);
 
 private:
+  const int MAX_MS_FOR_NEW_ENTRY = 200;
+  const int MAX_NUMBER_OF_ENTRIES = 50;
+
   QList<MapPosHistoryEntry> entries;
   int currentIndex = -1;
 

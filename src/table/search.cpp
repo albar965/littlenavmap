@@ -46,6 +46,8 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
   Ui::MainWindow *ui = parentWidget->getUi();
   // Avoid stealing of Ctrl-C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchResetSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
   tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
@@ -364,7 +366,8 @@ void Search::contextMenu(const QPoint& pos)
   Ui::MainWindow *ui = parentWidget->getUi();
   QString header, fieldData = "Data";
   bool columnCanFilter = false, columnCanGroup = false;
-  QString navType;
+  maptypes::MapObjectTypes navType = maptypes::NONE;
+  bool isAirport = false;
 
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
@@ -393,12 +396,12 @@ void Search::contextMenu(const QPoint& pos)
       fieldData = controller->getFieldDataAt(index);
 
     // Check if the used table has all that is needed to display a navaid range ring
-
     position = atools::geo::Pos(controller->getRawData(index.row(), "lonx").toFloat(),
                                 controller->getRawData(index.row(), "laty").toFloat());
 
-    if(columns->hasColumn("nav_type"))
-      navType = controller->getRawData(index.row(), "nav_type").toString();
+    navType = maptypes::navTypeToMapObjectType(controller->getRawData(index.row(), "nav_type").toString());
+
+    isAirport = columns->getTablename() == "airport";
   }
   else
     qDebug() << "Invalid index at" << pos;
@@ -412,17 +415,18 @@ void Search::contextMenu(const QPoint& pos)
                                            arg("\"" + fieldData + "\""));
   ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
 
-  ui->actionMapNavaidRange->setEnabled(navType == "VOR" || navType == "VORDME" ||
-                                       navType == "DME" || navType == "NDB");
+  ui->actionMapNavaidRange->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB);
 
-  ui->actionRouteAdd->setEnabled(navType == "VOR" || navType == "VORDME" ||
-                                 navType == "DME" || navType == "NDB" || navType == "WAYPOINT");
+  ui->actionRouteAdd->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
+                                 navType == maptypes::WAYPOINT || isAirport);
 
-  ui->actionRouteAirportDest->setEnabled(columns->getTablename() == "airport");
-  ui->actionRouteAirportStart->setEnabled(columns->getTablename() == "airport");
+  ui->actionRouteAirportDest->setEnabled(isAirport);
+  ui->actionRouteAirportStart->setEnabled(isAirport);
 
-  ui->actionMapRangeRings->setEnabled(true);
+  ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionMapHideRangeRings->setEnabled(!parentWidget->getMapWidget()->getRangeRings().isEmpty());
+
+  ui->actionSearchSetMark->setEnabled(index.isValid());
 
   // Build the menu
   QMenu menu;
@@ -481,25 +485,24 @@ void Search::contextMenu(const QPoint& pos)
       parentWidget->getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
     {
-      maptypes::MapObjectTypes type;
       int frequency = controller->getRawData(index.row(), "frequency").toInt();
-
-      if(navType == "VOR" || navType == "VORDME" || navType == "DME")
-      {
-        type = maptypes::VOR;
+      if(navType == maptypes::VOR)
         // Adapt scaled frequency from nav_search table
         frequency /= 10;
-      }
-      else if(navType == "NDB")
-        type = maptypes::NDB;
 
-      parentWidget->getMapWidget()->addNavRangeRing(position, type,
+      parentWidget->getMapWidget()->addNavRangeRing(position, navType,
                                                     controller->getRawData(index.row(), "ident").toString(),
                                                     frequency,
                                                     controller->getRawData(index.row(), "range").toInt());
     }
     else if(action == ui->actionMapHideRangeRings)
       parentWidget->getMapWidget()->clearRangeRings();
+    else if(action == ui->actionRouteAdd)
+      emit routeAdd(controller->getIdForRow(index), navType);
+    else if(action == ui->actionRouteAirportStart)
+      emit routeSetStart(controller->getIdForRow(index));
+    else if(action == ui->actionRouteAirportDest)
+      emit routeSetDest(controller->getIdForRow(index));
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
 }

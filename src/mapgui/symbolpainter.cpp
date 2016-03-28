@@ -93,7 +93,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     if(ap.flags.testFlag(AP_CLOSED) && size > 6)
     {
       // Cross out whatever was painted before
-      painter->setPen(QPen(QBrush(apColor), size / 7, Qt::SolidLine, Qt::FlatCap));
+      painter->setPen(QPen(QBrush(apColor), size / 6.f, Qt::SolidLine, Qt::FlatCap));
       painter->drawLine(x - radius, y - radius, x + radius, y + radius);
       painter->drawLine(x - radius, y + radius, x + radius, y - radius);
     }

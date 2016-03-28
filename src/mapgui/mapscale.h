@@ -27,6 +27,7 @@ namespace geo {
 class Pos;
 }
 }
+const float DEFAULT_ANGLE = 45.f;
 
 class MapScale
 {
@@ -35,10 +36,10 @@ public:
 
   bool update(Marble::ViewportParams *viewportParams, double distance);
 
-  float getPixelForMeter(float meter, float directionDeg = 45.f) const;
-  float getPixelForFeet(int feet, float directionDeg = 45.f) const;
-  int getPixelIntForMeter(float meter, float directionDeg = 45.f) const;
-  int getPixelIntForFeet(int feet, float directionDeg = 45.f) const;
+  float getPixelForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
+  float getPixelForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
+  int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
+  int getPixelIntForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
 
   float getDegreePerPixel(int px) const;
 

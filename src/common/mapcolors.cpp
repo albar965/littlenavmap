@@ -26,60 +26,6 @@
 
 namespace mapcolors {
 
-const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);
-const QPen textPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt::FlatCap);
-
-const QColor airportDetailBackColor = QColor(Qt::white);
-
-const QColor taxiwayNameColor = QColor(Qt::black);
-const QColor runwayOutlineColor = QColor(Qt::black);
-const QColor runwayOffsetColor = QColor(Qt::white);
-const QColor parkingOutlineColor = QColor::fromRgb(80, 80, 80);
-const QColor helipadOutlineColor = QColor(Qt::black);
-const QColor activeTowerColor = QColor(Qt::red);
-const QColor activeTowerOutlineColor = QColor(Qt::black);
-const QColor inactiveTowerColor = QColor(Qt::lightGray);
-const QColor inactiveTowerOutlineColor = QColor(Qt::darkGray);
-const QColor darkParkingTextColor = QColor(Qt::black);
-const QColor brightParkingTextColor = QColor(Qt::white);
-const QColor towerTextColor = QColor(Qt::black);
-const QColor runwayDimsTextColor = QColor(Qt::black);
-
-const QColor textBoxColor = QColor(Qt::white);
-const QColor routeTextBoxColor = QColor::fromRgb(255, 255, 150);
-
-const QColor airportSymbolFillColor = QColor(Qt::white);
-
-const QPen markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-
-const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
-const QColor homeFillColor = QColor(Qt::yellow);
-
-const QColor highlightBackColor = QColor(Qt::black);
-const QColor highlightColor = QColor(Qt::yellow);
-const QColor highlightColorFast = QColor(Qt::darkYellow);
-
-const QColor routeHighlightBackColor = QColor(Qt::black);
-const QColor routeHighlightColor = QColor(Qt::green);
-const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
-
-const QColor routeUserPointColor = QColor(Qt::darkYellow);
-const QColor routeInvalidPointColor = QColor(Qt::red);
-
-const QColor rangeRingColor = QColor(Qt::red);
-const QColor rangeRingTextColor = QColor(Qt::black);
-
-const QColor distanceColor = QColor(Qt::black);
-const QColor distanceRhumbColor = QColor::fromRgb(80, 80, 80);
-
-const QColor vorSymbolColor = QColor(Qt::darkBlue);
-const QColor ndbSymbolColor = QColor(Qt::darkRed);
-const QColor markerSymbolColor = QColor(Qt::darkMagenta);
-const QColor ilsSymbolColor = QColor(Qt::darkGreen);
-const QColor ilsTextColor = QColor::fromRgb(0, 70, 0);
-const QColor waypointSymbolColor = QColor(Qt::magenta);
-
 const QColor& colorForAirport(const maptypes::MapAirport& ap)
 {
   static QColor airportEmptyColor = QColor::fromRgb(150, 150, 150);

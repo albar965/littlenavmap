@@ -63,8 +63,10 @@ private:
 
   virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 
-  bool matchDist(float lonx, float laty) const;
+  bool matchDist(const atools::geo::Pos& pos) const;
   virtual QVariant data(const QModelIndex& index, int role) const override;
+
+  atools::geo::Pos buildPos(int row) const;
 
 };
 

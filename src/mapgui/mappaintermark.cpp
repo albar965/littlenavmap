@@ -173,11 +173,11 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
     if(maxIter != rings.ranges.end())
     {
       bool visible;
-      QPoint center = wToS(rings.position, &visible);
+      QPoint center = wToS(rings.center, &visible);
 
       int maxDiameter = *maxIter;
 
-      Rect rect(rings.position, nmToMeter(maxDiameter / 2 * 5 / 4));
+      Rect rect(rings.center, nmToMeter(maxDiameter / 2 * 5 / 4));
 
       QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
       if(rings.type == maptypes::VOR)
@@ -209,7 +209,7 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
         for(int diameter : rings.ranges)
         {
           int xt, yt;
-          paintCircle(painter, rings.position, diameter, fast, xt, yt);
+          paintCircle(painter, rings.center, diameter, fast, xt, yt);
 
           if(xt != -1 && yt != -1)
           {
@@ -251,7 +251,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
     if(wToS(m.from, x, y))
       painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
 
-    if(wToS(m.position, x, y))
+    if(wToS(m.to, x, y))
     {
       painter->drawLine(x - SYMBOL_SIZE, y, x + SYMBOL_SIZE, y);
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
@@ -260,10 +260,10 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
     if(!m.rhumbLine)
     {
       // Draw great circle route
-      float distanceMeter = m.from.distanceMeterTo(m.position);
+      float distanceMeter = m.from.distanceMeterTo(m.to);
 
       GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
-      GeoDataCoordinates to(m.position.getLonX(), m.position.getLatY(), 0, GeoDataCoordinates::Degree);
+      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
 
       GeoDataLineString line;
       line.append(from);
@@ -284,7 +284,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
       int xt = -1, yt = -1;
-      if(findTextPos(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
+      if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
                      metrics.height() * 2,
                      xt, yt))
         symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
@@ -292,10 +292,10 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
     else
     {
       // Draw a rhumb line with constant course
-      float bearing = m.from.angleDegToRhumb(m.position);
+      float bearing = m.from.angleDegToRhumb(m.to);
       float magBearing = m.hasMagvar ? bearing + m.magvar : bearing;
 
-      float distanceMeter = m.from.distanceMeterToRhumb(m.position);
+      float distanceMeter = m.from.distanceMeterToRhumb(m.to);
 
       // Approximate the needed number of line segments
       int pixel = scale->getPixelIntForMeter(distanceMeter);
@@ -326,7 +326,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
       int xt = -1, yt = -1;
-      if(findTextPosRhumb(m.from, m.position, painter, distanceMeter, metrics.width(texts.at(0)),
+      if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
                           metrics.height() * 2, xt, yt))
         symbolPainter->textBox(painter, texts,
                                painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);

@@ -153,7 +153,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   // Default view column descriptors
   columns->
   append(Column("airport_id").hidden()).
-  append(Column("distance", tr("Distance")).distanceCol()).
+  append(Column("distance", tr("Distance\nnm")).distanceCol()).
+  append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -163,18 +164,18 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("rating", ui->checkBoxAirportScenerySearch,
                 tr("Scenery\nRating")).conditions("> 0", "== 0")).
 
-  append(Column("altitude", tr("Altitude"))).
-  append(Column("mag_var", tr("Mag\nVar"))).
+  append(Column("altitude", tr("Altitude\nft"))).
+  append(Column("mag_var", tr("Mag\nVar °"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas"))).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel"))).
 
-  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower")).
+  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower\nMHz")).
          conditions("is not null", "is null")).
 
-  append(Column("atis_frequency", tr("ATIS"))).
-  append(Column("awos_frequency", tr("AWOS"))).
-  append(Column("asos_frequency", tr("ASOS"))).
-  append(Column("unicom_frequency", tr("UNICOM"))).
+  append(Column("atis_frequency", tr("ATIS\nMHz"))).
+  append(Column("awos_frequency", tr("AWOS\nMHz"))).
+  append(Column("asos_frequency", tr("ASOS\nMHz"))).
+  append(Column("unicom_frequency", tr("UNICOM\nMHz"))).
 
   append(Column("is_closed", ui->checkBoxAirportClosedSearch, tr("Closed"))).
   append(Column("is_military", ui->checkBoxAirportMilSearch, tr("Military"))).
@@ -204,8 +205,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo"))).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat"))).
 
-  append(Column("longest_runway_length", tr("Longest\nRunway Length"))).
-  append(Column("longest_runway_width", tr("Longest\nRunway Width"))).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length ft"))).
+  append(Column("longest_runway_width", tr("Longest\nRunway Width ft"))).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface"))).
   append(Column("longest_runway_heading").hidden()).
 
@@ -221,8 +222,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
-  // TODO delete old and new delegate
-  view->setItemDelegateForColumn(2, new AirportIconDelegate(columns));
+  iconDelegate = new AirportIconDelegate(columns);
+  view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
   Search::initViewAndController();
 
@@ -234,6 +235,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
 
 AirportSearch::~AirportSearch()
 {
+  delete iconDelegate;
 }
 
 void AirportSearch::connectSlots()

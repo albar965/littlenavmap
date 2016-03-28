@@ -22,6 +22,7 @@
 
 #include "geo/pos.h"
 #include "sql/sqldatabase.h"
+#include "marble/MarbleGlobal.h"
 
 class QProgressDialog;
 class QElapsedTimer;
@@ -98,8 +99,7 @@ private:
   Ui::MainWindow *ui;
   NavMapWidget *navMapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
-  QLabel *selectionLabel, *mapPosLabel;
-  QString selectionLabelText, mapPosLabelText;
+  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel;
 
   bool hasDatabaseLoadStatus = false;
 
@@ -146,6 +146,8 @@ private:
   void routeSaveAs();
 
   void routeCenter();
+
+  void renderStatusChanged(Marble::RenderStatus status);
 
 };
 
