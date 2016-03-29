@@ -21,17 +21,19 @@
 #include "mapgui/mapquery.h"
 #include "common/formatter.h"
 
+#include <common/morsecode.h>
+
 using namespace maptypes;
 
 MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery)
   : QObject(parent), query(mapQuery)
 {
-
+  morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
 
 MapTooltip::~MapTooltip()
 {
-
+  delete morse;
 }
 
 QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram)
@@ -112,6 +114,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor->magvar, QString(), 1) + " °";
     text += "<br/>Altitude: " + QLocale().toString(vor->altitude) + " ft";
     text += "<br/>Range: " + QString::number(vor->range) + " nm";
+    text += "<br/><b>" + morse->getCode(vor->ident)+"</b>";
   }
 
   for(const MapNdb *ndb : mapSearchResult.ndbs)
@@ -128,6 +131,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb->magvar, QString(), 1) + " °";
     text += "<br/>Altitude: " + QLocale().toString(ndb->altitude) + " ft";
     text += "<br/>Range: " + QString::number(ndb->range) + " nm";
+    text += "<br/><b>" + morse->getCode(ndb->ident)+"</b>";
   }
 
   for(const MapWaypoint *wp : mapSearchResult.waypoints)

@@ -74,7 +74,8 @@ SOURCES += src/main.cpp\
     src/mapgui/maptooltip.cpp \
     src/common/formatter.cpp \
     src/common/coordinateconverter.cpp \
-    src/common/maptypesfactory.cpp
+    src/common/maptypesfactory.cpp \
+    src/common/morsecode.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -111,7 +112,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/maptooltip.h \
     src/common/formatter.h \
     src/common/coordinateconverter.h \
-    src/common/maptypesfactory.h
+    src/common/maptypesfactory.h \
+    src/common/morsecode.h
 
 FORMS    += src/gui/mainwindow.ui
 

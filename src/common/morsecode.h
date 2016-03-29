@@ -15,38 +15,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTOOLTIP_H
-#define MAPTOOLTIP_H
+#ifndef MORSECODE_H
+#define MORSECODE_H
 
-#include <QObject>
+#include <QString>
 
-namespace maptypes {
-struct MapSearchResult;
-
-}
-
-class MorseCode;
-class MapLayer;
-class MapQuery;
-
-class MapTooltip :
-  public QObject
+class MorseCode
 {
-  Q_OBJECT
-
 public:
-  MapTooltip(QObject *parent, MapQuery *mapQuery);
-  virtual ~MapTooltip();
+  MorseCode(const QString& signSeparator = QString(), const QString& charSeparator = "\n");
+  ~MorseCode();
 
-  QString buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram);
+  QString getCode(const QString& text);
 
 private:
-  const int MAXLINES = 30;
-  MapQuery *query;
-  bool checkText(QStringList& text);
-
-  MorseCode *morse;
-
+  QString signSep, charSep;
 };
 
-#endif // MAPTOOLTIP_H
+#endif // MORSECODE_H
