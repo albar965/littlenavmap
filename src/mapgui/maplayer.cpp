@@ -29,7 +29,7 @@ MapLayer MapLayer::clone(float maximumRange) const
   return retval;
 }
 
-MapLayer& MapLayer::airports(bool value)
+MapLayer& MapLayer::airport(bool value)
 {
   layerAirport = value;
   return *this;

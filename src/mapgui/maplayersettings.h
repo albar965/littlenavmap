@@ -34,7 +34,7 @@ public:
   MapLayerSettings& append(const MapLayer& layer);
   void finishAppend();
 
-  const MapLayer *getLayer(float distance, int detailFactor) const;
+  const MapLayer *getLayer(float distance, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);

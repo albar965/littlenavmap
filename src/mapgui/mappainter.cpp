@@ -52,11 +52,13 @@ void MapPainter::setRenderHints(GeoPainter *painter)
   {
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::TextAntialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
   }
   else if(widget->viewContext() == Marble::Animation)
   {
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::TextAntialiasing, false);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
   }
 }
 

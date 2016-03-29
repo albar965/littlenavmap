@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain("abarthel.org");
   QCoreApplication::setApplicationVersion("1.5.0.develop");
 
+#ifdef Q_WS_WIN
+  QApplication::addLibraryPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+#endif
+
   try
   {
     using atools::logging::LoggingHandler;

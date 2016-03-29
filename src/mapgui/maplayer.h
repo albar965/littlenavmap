@@ -37,7 +37,7 @@ public:
 
   MapLayer clone(float maximumRange) const;
 
-  MapLayer& airports(bool value = true);
+  MapLayer& airport(bool value = true);
 
   /* Draw fuel ticks, etc. */
   MapLayer& airportDetail(bool value = true);
@@ -315,7 +315,7 @@ private:
        layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false;
-  int layerAirportSymbolSize = 10, layerMinRunwayLength = 0;
+  int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
 
   bool layerWaypoint = false, layerWaypointName = false,
        layerVor = false, layerVorIdent = false, layerVorInfo = false, layerVorLarge = false,
@@ -329,8 +329,8 @@ private:
   bool layerNdbRouteIdent = false, layerNdbRouteInfo = false;
   bool layerWaypointRouteName = false;
 
-  int layerWaypointSymbolSize = 10, layerVorSymbolSize = 10, layerNdbSymbolSize = 10,
-      layerMarkerSymbolSize = 10;
+  int layerWaypointSymbolSize = 8, layerVorSymbolSize = 8, layerNdbSymbolSize = 8,
+      layerMarkerSymbolSize = 8;
 
 };
 

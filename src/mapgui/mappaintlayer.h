@@ -56,6 +56,11 @@ public:
     return mapLayer;
   }
 
+  const MapLayer *getMapLayerEffective() const
+  {
+    return mapLayerEffective;
+  }
+
   void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
   void setDetailFactor(int factor);
 
@@ -67,7 +72,7 @@ public:
   void routeChanged();
 
 private:
-  const double DISTANCE_CUT_OFF_LIMIT = 2000.;
+  const float DISTANCE_CUT_OFF_LIMIT = 2000.f;
 
   QSet<ForcePaintType> forcePaint;
 
@@ -86,7 +91,7 @@ private:
   MapLayerSettings *layers = nullptr;
   NavMapWidget *navMapWidget = nullptr;
   QFont *mapFont = nullptr;
-  const MapLayer *mapLayer = nullptr;
+  const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
 
   // Implemented from LayerInterface
   virtual QStringList renderPosition() const override

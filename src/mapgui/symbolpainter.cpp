@@ -279,7 +279,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::markerSymbolColor, 1.5, Qt::SolidLine, Qt::RoundCap));
 
-  if(!fast)
+  if(!fast && size > 5)
   {
     // Draw rotated lens / ellipse
     painter->translate(x, y);
@@ -371,81 +371,6 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
   textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-                            textatt::TextAttributes atts, int transparency)
-{
-  if(texts.isEmpty())
-    return;
-
-  painter->save();
-
-  QColor backColor = atts & textatt::ROUTE_BG_COLOR ? mapcolors::routeTextBoxColor : mapcolors::textBoxColor;
-
-  if(transparency != 255)
-  {
-    if(transparency == 0)
-      painter->setBrush(Qt::NoBrush);
-    else
-    {
-      backColor.setAlpha(transparency);
-      painter->setBrush(backColor);
-    }
-  }
-  else
-    painter->setBrush(backColor);
-
-  QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
-
-  int yoffset = 0;
-  if(transparency != 0)
-  {
-    painter->setPen(mapcolors::textBackgroundPen);
-    for(const QString& t : texts)
-    {
-      int w = metrics.width(t);
-      int newx = x - 2;
-      // if(atts.testFlag(textatt::LEFT))
-      // newx = x;
-      if(atts.testFlag(textatt::RIGHT))
-        newx -= w;
-      else if(atts.testFlag(textatt::CENTER))
-        newx -= w / 2;
-
-      // painter->drawRoundedRect(x - 2, y - h + metrics.descent() + yoffset, w + 4, h, 5, 5);
-      painter->drawRect(newx, y - h + metrics.descent() + yoffset, w + 4, h);
-      yoffset += h;
-    }
-  }
-
-  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
-  {
-    QFont f = painter->font();
-    f.setBold(atts.testFlag(textatt::BOLD));
-    f.setItalic(atts.testFlag(textatt::ITALIC));
-    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
-    painter->setFont(f);
-  }
-
-  yoffset = 0;
-  painter->setPen(textPen);
-  for(const QString& t : texts)
-  {
-    int w = metrics.width(t);
-    int newx = x;
-    // if(atts.testFlag(textatt::LEFT))
-    // newx = x;
-    if(atts.testFlag(textatt::RIGHT))
-      newx -= w;
-    else if(atts.testFlag(textatt::CENTER))
-      newx -= w / 2;
-
-    painter->drawText(newx, y + yoffset, t);
-    yoffset += h;
-  }
-  painter->restore();
-}
-
 void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
                                     textflags::TextFlags flags, int size, bool diagram, bool fill, bool fast)
 {
@@ -506,4 +431,76 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
                   QString::number(airport.unicomFrequency / 1000., 'f', 2)));
   }
   return texts;
+}
+
+void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+                            textatt::TextAttributes atts, int transparency)
+{
+  if(texts.isEmpty())
+    return;
+
+  painter->save();
+
+  QColor backColor = atts & textatt::ROUTE_BG_COLOR ? mapcolors::routeTextBoxColor : mapcolors::textBoxColor;
+
+  if(transparency != 255)
+  {
+    if(transparency == 0)
+      painter->setBrush(Qt::NoBrush);
+    else
+    {
+      backColor.setAlpha(transparency);
+      painter->setBrush(backColor);
+    }
+  }
+  else
+    painter->setBrush(backColor);
+
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
+
+  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
+  {
+    QFont f = painter->font();
+    f.setBold(atts.testFlag(textatt::BOLD));
+    f.setItalic(atts.testFlag(textatt::ITALIC));
+    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
+    painter->setFont(f);
+  }
+
+  int yoffset = 0;
+  if(transparency != 0)
+  {
+    painter->setPen(mapcolors::textBackgroundPen);
+    for(const QString& text : texts)
+    {
+      QRect rect = metrics.boundingRect(text);
+
+      int newx = x;
+      if(atts.testFlag(textatt::RIGHT))
+        newx -= rect.width();
+      else if(atts.testFlag(textatt::CENTER))
+        newx -= rect.width() / 2;
+
+      rect.moveTo(newx, y - metrics.ascent() + yoffset - 1);
+      painter->drawRect(rect);
+      yoffset += h;
+    }
+  }
+
+  yoffset = 0;
+  painter->setPen(textPen);
+  for(const QString& t : texts)
+  {
+    int w = metrics.width(t);
+    int newx = x;
+    if(atts.testFlag(textatt::RIGHT))
+      newx -= w;
+    else if(atts.testFlag(textatt::CENTER))
+      newx -= w / 2;
+
+    painter->drawText(newx, y + yoffset, t);
+    yoffset += h;
+  }
+  painter->restore();
 }

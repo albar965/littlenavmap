@@ -47,10 +47,6 @@ MapPainterNav::~MapPainterNav()
 
 void MapPainterNav::paint(const PaintContext *context)
 {
-
-  if(context->mapLayer == nullptr)
-    return;
-
   bool drawFast = widget->viewContext() == Marble::Animation;
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
@@ -62,6 +58,7 @@ void MapPainterNav::paint(const PaintContext *context)
   if(context->mapLayer->isAirway() &&
      (context->objectTypes.testFlag(maptypes::AIRWAYJ) || context->objectTypes.testFlag(maptypes::AIRWAYV)))
   {
+    // Draw airway lines
     const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, drawFast);
     if(airways != nullptr)
     {
@@ -182,11 +179,12 @@ void MapPainterNav::paint(const PaintContext *context)
 
         if(visible)
           symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
-                                            context->mapLayer->getWaypointSymbolSize(), false, drawFast);
+                                            context->mapLayerEffective->getWaypointSymbolSize(), false,
+                                            drawFast);
 
         if(context->mapLayer->isWaypointName())
           symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
-                                          context->mapLayer->getWaypointSymbolSize(),
+                                          context->mapLayerEffective->getWaypointSymbolSize(),
                                           false, drawFast);
       }
     }
@@ -214,9 +212,9 @@ void MapPainterNav::paint(const PaintContext *context)
         if(visible)
         {
           symbolPainter->drawVorSymbol(context->painter, vor, x, y,
-                                       context->mapLayer->getVorSymbolSize(), false, drawFast,
-                                       context->mapLayer->isVorLarge() ? context->mapLayer->getVorSymbolSize()
-                                       * 5 : 0);
+                                       context->mapLayerEffective->getVorSymbolSize(), false, drawFast,
+                                       context->mapLayerEffective->isVorLarge() ?
+                                       context->mapLayerEffective->getVorSymbolSize() * 5 : 0);
 
           textflags::TextFlags flags;
 
@@ -226,7 +224,7 @@ void MapPainterNav::paint(const PaintContext *context)
             flags = textflags::IDENT;
 
           symbolPainter->drawVorText(context->painter, vor, x, y,
-                                     flags, context->mapLayer->getVorSymbolSize(), false, drawFast);
+                                     flags, context->mapLayerEffective->getVorSymbolSize(), false, drawFast);
         }
       }
     }
@@ -254,7 +252,7 @@ void MapPainterNav::paint(const PaintContext *context)
         if(visible)
         {
           symbolPainter->drawNdbSymbol(context->painter, ndb, x, y,
-                                       context->mapLayer->getNdbSymbolSize(), false, drawFast);
+                                       context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
 
           textflags::TextFlags flags;
 
@@ -264,7 +262,7 @@ void MapPainterNav::paint(const PaintContext *context)
             flags = textflags::IDENT;
 
           symbolPainter->drawNdbText(context->painter, ndb, x, y,
-                                     flags, context->mapLayer->getNdbSymbolSize(), false, drawFast);
+                                     flags, context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
         }
       }
     }
@@ -292,13 +290,13 @@ void MapPainterNav::paint(const PaintContext *context)
         if(visible)
         {
           symbolPainter->drawMarkerSymbol(context->painter, marker, x, y,
-                                          context->mapLayer->getNdbSymbolSize(), drawFast);
+                                          context->mapLayerEffective->getMarkerSymbolSize(), drawFast);
 
           if(context->mapLayer->isMarkerInfo())
           {
             QString type = marker.type.toLower();
             type[0] = type.at(0).toUpper();
-            x -= context->mapLayer->getMarkerSymbolSize() / 2 + 2;
+            x -= context->mapLayerEffective->getMarkerSymbolSize() / 2 + 2;
             symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
                                    textatt::BOLD | textatt::RIGHT, 0);
           }

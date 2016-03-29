@@ -34,11 +34,14 @@ MapTooltip::~MapTooltip()
 
 }
 
-QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, const MapLayer *mapLayer)
+QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram)
 {
-  QString text;
+  QStringList text;
   for(const MapAirport *ap : mapSearchResult.airports)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
 
@@ -88,6 +91,9 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
 
   for(const MapVor *vor : mapSearchResult.vors)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
     QString type;
@@ -110,6 +116,9 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
 
   for(const MapNdb *ndb : mapSearchResult.ndbs)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
     text += "<b>NDB: " + ndb->name + " (" + ndb->ident + ")</b>";
@@ -123,6 +132,9 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
 
   for(const MapWaypoint *wp : mapSearchResult.waypoints)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
     text += "<b>Waypoint: " + wp->ident + "</b>";
@@ -133,35 +145,48 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
     QList<MapAirway> airways;
     query->getAirwaysForWaypoint(wp->id, airways);
 
-    QStringList airwayTexts;
     if(!airways.isEmpty())
     {
+      QStringList airwayTexts;
       for(const MapAirway& aw : airways)
       {
+        if(checkText(text))
+          break;
+
         QString txt("<br/>" + aw.name + ", " + aw.type);
         if(aw.minalt > 0)
           txt += ", " + QString::number(aw.minalt) + " ft";
         airwayTexts.append(txt);
       }
-      airwayTexts.sort();
-      airwayTexts.removeDuplicates();
 
-      text += "<br/><b>Airways:</b>";
-      text += airwayTexts.join("");
+      if(!airwayTexts.isEmpty())
+      {
+        airwayTexts.sort();
+        airwayTexts.removeDuplicates();
+
+        text += "<br/><b>Airways:</b>";
+        text += airwayTexts.join("");
+      }
     }
   }
 
   for(const MapMarker *m : mapSearchResult.markers)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
     text += "<b>Marker: " + m->type + "</b>";
   }
 
-  if(mapLayer != nullptr && mapLayer->isAirportDiagram())
+  if(airportDiagram)
   {
     for(const MapAirport *ap : mapSearchResult.towers)
     {
+      if(checkText(text))
+        break;
+
       if(!text.isEmpty())
         text += "<hr/>";
 
@@ -172,6 +197,9 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
     }
     for(const MapParking *p : mapSearchResult.parkings)
     {
+      if(checkText(text))
+        break;
+
       if(!text.isEmpty())
         text += "<hr/>";
 
@@ -196,11 +224,29 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, con
   }
   for(const MapUserpoint& up : mapSearchResult.userPoints)
   {
+    if(checkText(text))
+      break;
+
     if(!text.isEmpty())
       text += "<hr/>";
 
     text += QString("<b>Routepoint:</b>") +
             "<br/>" + up.name;
   }
-  return text;
+  return text.join("");
+}
+
+bool MapTooltip::checkText(QStringList& text)
+{
+  static QString dotText(tr("<b>More ...</b>"));
+  if(text.size() > MAXLINES)
+  {
+    if(text.last() != dotText)
+    {
+      text += "<hr/>";
+      text += dotText;
+    }
+    return true;
+  }
+  return false;
 }

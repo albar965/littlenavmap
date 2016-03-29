@@ -37,10 +37,13 @@ public:
   MapTooltip(QObject *parent, MapQuery *mapQuery);
   virtual ~MapTooltip();
 
-  QString buildTooltip(maptypes::MapSearchResult& mapSearchResult, const MapLayer *mapLayer);
+  QString buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram);
 
 private:
+  const int MAXLINES = 30;
   MapQuery *query;
+  bool checkText(QStringList& text);
+
 };
 
 #endif // MAPTOOLTIP_H

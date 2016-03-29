@@ -56,7 +56,8 @@ NavMapWidget::NavMapWidget(MainWindow *parent, MapQuery *query)
   installEventFilter(this);
 
   // Set the map quality to gain speed
-  setMapQualityForViewContext(NormalQuality, Still);
+  // TODO configuration option
+  setMapQualityForViewContext(HighQuality, Still);
   setMapQualityForViewContext(LowQuality, Animation);
 
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
@@ -743,6 +744,16 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
   }
 
   MarbleWidget::paintEvent(paintEvent);
+
+  // if(viewContext() == Marble::Still)
+  // {
+  // model()->setWorkOffline(false);
+  // qDebug() << "Offline false";
+  // // update();
+  // }
+  // else
+  // model()->setWorkOffline(true);
+
 }
 
 void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
@@ -750,8 +761,10 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
 {
   CoordinateConverter conv(viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
+  const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
-  mapQuery->getNearestObjects(conv, mapLayer, paintLayer->getShownMapFeatures() &
+  mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
+                              paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT |
                                maptypes::MARKER),
                               xs, ys, screenDistance, mapSearchResult);

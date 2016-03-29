@@ -47,7 +47,7 @@ void MapPainterIls::paint(const PaintContext *context)
 {
   using namespace maptypes;
 
-  if(context->mapLayer == nullptr || !context->objectTypes.testFlag(ILS))
+  if(!context->objectTypes.testFlag(ILS))
     return;
 
   if(context->mapLayer->isIls())

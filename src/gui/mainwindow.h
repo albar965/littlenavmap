@@ -99,7 +99,7 @@ private:
   Ui::MainWindow *ui;
   NavMapWidget *navMapWidget = nullptr;
   QProgressDialog *progressDialog = nullptr;
-  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel;
+  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel;
 
   bool hasDatabaseLoadStatus = false;
 

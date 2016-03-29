@@ -106,9 +106,8 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
   for(const MapNdb *ndb : highlightResults.ndbs)
     positions.append(ndb->position);
 
-  if(mapLayer != nullptr)
-    if(mapLayer->isAirport())
-      size = std::max(size, mapLayer->getAirportSymbolSize());
+  if(mapLayer->isAirport())
+    size = std::max(size, mapLayer->getAirportSymbolSize());
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -127,9 +126,8 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
     }
   }
 
-  if(mapLayerEff != nullptr)
-    if(mapLayerEff->isAirport())
-      size = std::max(size, mapLayerEff->getAirportSymbolSize());
+  if(mapLayerEff->isAirport())
+    size = std::max(size, mapLayerEff->getAirportSymbolSize());
 
   const QList<RouteMapObject>& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
   positions.clear();

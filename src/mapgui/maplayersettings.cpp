@@ -48,7 +48,7 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
     it += MAP_DEFAULT_DETAIL_FACTOR - detailFactor;
 
   if(it >= layers.end())
-    return nullptr;
+    return &layers.last();
 
   if(it < layers.begin())
     return &(*(layers.begin()));

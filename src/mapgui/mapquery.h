@@ -60,7 +60,7 @@ public:
                     const QString& ident, const QString& region = QString());
 
   /* Result is only valid until the next paint is called */
-  void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
+  void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
                          maptypes::MapObjectTypes types,
                          int xs, int ys, int screenDistance,
                          maptypes::MapSearchResult& result);
@@ -185,7 +185,7 @@ bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& re
                         cur.height(Marble::GeoDataCoordinates::Degree) *
                         RECT_INFLATION_FACTOR + RECT_INFLATION_ADD);
 
-  if(curRect.isEmpty() || !cur.contains(rect) || curMapLayer == nullptr ||
+  if(curRect.isEmpty() || !cur.contains(rect) ||
      !curMapLayer->hasSameQueryParameters(mapLayer))
   {
     list.clear();

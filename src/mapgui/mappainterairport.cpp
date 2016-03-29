@@ -46,12 +46,9 @@ MapPainterAirport::~MapPainterAirport()
 
 void MapPainterAirport::paint(const PaintContext *context)
 {
-
-  if(context->mapLayer == nullptr)
-    return;
-
-  if(!context->objectTypes.testFlag(maptypes::AIRPORT) &&
-     (context->forcePaintObjects == nullptr || context->forcePaintObjects->isEmpty()))
+  if((!context->objectTypes.testFlag(maptypes::AIRPORT) || !context->mapLayer->isAirport()) &&
+     (!context->mapLayerEffective->isAirportDiagram() || context->forcePaintObjects == nullptr ||
+      context->forcePaintObjects->isEmpty()))
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -60,12 +57,11 @@ void MapPainterAirport::paint(const PaintContext *context)
   QElapsedTimer t;
   t.start();
 
-  // Ignore declutter if anything is forced
-  const MapLayer *queryLayer = context->mapLayer;
-  if(context->forcePaintObjects != nullptr && !context->forcePaintObjects->isEmpty())
-    queryLayer = context->mapLayerEffective;
-
-  const QList<MapAirport> *airports = query->getAirports(curBox, queryLayer, drawFast);
+  const QList<MapAirport> *airports = nullptr;
+  if(context->mapLayerEffective->isAirportDiagram())
+    airports = query->getAirports(curBox, context->mapLayerEffective, drawFast);
+  else
+    airports = query->getAirports(curBox, context->mapLayer, drawFast);
   if(airports == nullptr)
     return;
 
@@ -79,7 +75,7 @@ void MapPainterAirport::paint(const PaintContext *context)
   }
 
   if(airports->size() > 2000)
-    qDebug() << "Number of aiports" << airports->size();
+    qDebug() << "Excessive number of aiports" << airports->size();
 
   setRenderHints(context->painter);
 
@@ -88,8 +84,6 @@ void MapPainterAirport::paint(const PaintContext *context)
     const MapLayer *layer = context->mapLayer;
     bool forcedPaint = context->forcePaintObjects != nullptr && context->forcePaintObjects->contains(
       ForcePaintType(airport.id, maptypes::AIRPORT));
-    if(forcedPaint)
-      layer = context->mapLayerEffective;
 
     if(!airport.isVisible(context->objectTypes) && !forcedPaint)
       continue;
@@ -107,12 +101,12 @@ void MapPainterAirport::paint(const PaintContext *context)
 
     if(visible)
     {
-      if(layer->isAirportDiagram())
-        drawAirportDiagram(layer, context->painter, airport, false);
+      if(context->mapLayerEffective->isAirportDiagram())
+        drawAirportDiagram(context, airport, false);
       else
-        drawAirportSymbolOverview(context->painter, airport, layer, drawFast);
+        drawAirportSymbolOverview(context, airport, drawFast);
 
-      drawAirportSymbol(context->painter, airport, x, y, layer, drawFast);
+      drawAirportSymbol(context, airport, x, y, drawFast);
 
       textflags::TextFlags flags;
 
@@ -125,8 +119,8 @@ void MapPainterAirport::paint(const PaintContext *context)
         flags |= textflags::NAME;
 
       symbolPainter->drawAirportText(context->painter, airport, x, y, flags,
-                                     layer->getAirportSymbolSize(),
-                                     layer->isAirportDiagram(), true, drawFast);
+                                     context->mapLayerEffective->getAirportSymbolSize(),
+                                     context->mapLayerEffective->isAirportDiagram(), true, drawFast);
     }
   }
 
@@ -134,11 +128,10 @@ void MapPainterAirport::paint(const PaintContext *context)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
-void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter *painter,
-                                           const maptypes::MapAirport& airport, bool fast)
+void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport,
+                                           bool fast)
 {
-  using namespace maptypes;
-
+  Marble::GeoPainter *painter = context->painter;
   painter->save();
   painter->setBackgroundMode(Qt::OpaqueMode);
 
@@ -159,13 +152,13 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   for(int i = 0; i < runwayCenters.size(); i++)
     if(runways->at(i).surface != "WATER")
     {
-    painter->translate(runwayCenters.at(i));
-    painter->rotate(runways->at(i).heading);
+      painter->translate(runwayCenters.at(i));
+      painter->rotate(runways->at(i).heading);
 
-    const QRect backRect = runwayBackRects.at(i);
-    painter->drawRect(backRect);
+      const QRect backRect = runwayBackRects.at(i);
+      painter->drawRect(backRect);
 
-    painter->resetTransform();
+      painter->resetTransform();
     }
 
   const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
@@ -220,7 +213,7 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
 
   // Draw taxiway names ---------------------------------
   // TODO workaround - add nameplacement hints in compiler
-  if(!fast && mapLayer->isAirportDiagramDetail())
+  if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
     painter->setBackgroundMode(Qt::TransparentMode);
 
@@ -422,10 +415,10 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   painter->setBackgroundMode(Qt::TransparentMode);
 
   // Draw parking and tower texts -------------------------------------------------
-  if(!fast && mapLayer->isAirportDiagramDetail())
+  if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
     for(const MapParking& parking : *parkings)
-      if(mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
+      if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
       {
         bool visible;
         QPoint pt = wToS(parking.position, &visible);
@@ -550,10 +543,12 @@ void MapPainterAirport::drawAirportDiagram(const MapLayer *mapLayer, GeoPainter 
   painter->restore();
 }
 
-void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const maptypes::MapAirport& ap,
-                                                  const MapLayer *mapLayer, bool fast)
+void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap,
+                                                  bool fast)
 {
-  if(ap.longestRunwayLength >= 8000 && mapLayer->isAirportOverviewRunway() &&
+  Marble::GeoPainter *painter = context->painter;
+
+  if(ap.longestRunwayLength >= 8000 && context->mapLayerEffective->isAirportOverviewRunway() &&
      !ap.flags.testFlag(maptypes::AP_CLOSED) && !ap.waterOnly())
   {
     painter->save();
@@ -577,7 +572,7 @@ void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const map
       painter->resetTransform();
     }
 
-    if(!fast || mapLayer->isAirportDiagram())
+    if(!fast || context->mapLayerEffective->isAirportDiagram())
     {
       painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), 1, Qt::SolidLine, Qt::FlatCap));
       painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
@@ -593,17 +588,16 @@ void MapPainterAirport::drawAirportSymbolOverview(GeoPainter *painter, const map
   }
 }
 
-void MapPainterAirport::drawAirportSymbol(GeoPainter *painter, const maptypes::MapAirport& ap, int x, int y,
-                                          const MapLayer *mapLayer, bool fast)
+void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap,
+                                          int x, int y, bool fast)
 {
-  if(!mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) || ap.waterOnly() ||
-     ap.longestRunwayLength < 8000 || mapLayer->isAirportDiagram())
+  if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) ||
+     ap.waterOnly() || ap.longestRunwayLength < 8000 || context->mapLayerEffective->isAirportDiagram())
   {
+    int size = context->mapLayerEffective->getAirportSymbolSize();
+    bool isAirportDiagram = context->mapLayerEffective->isAirportDiagram();
 
-    int size = mapLayer->getAirportSymbolSize();
-    bool isAirportDiagram = mapLayer->isAirportDiagram();
-
-    symbolPainter->drawAirportSymbol(painter, ap, x, y, size, isAirportDiagram, fast);
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, fast);
   }
 }
 

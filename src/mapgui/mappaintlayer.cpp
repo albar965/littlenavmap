@@ -122,7 +122,7 @@ void MapPaintLayer::initLayers()
 
   layers = new MapLayerSettings();
 
-  MapLayer defLayer = MapLayer(0).airports().airportName().airportIdent().
+  MapLayer defLayer = MapLayer(0).airport().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       vor().ndb().waypoint().marker().ils().airway().
@@ -196,6 +196,17 @@ void MapPaintLayer::initLayers()
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
+
+  append(defLayer.clone(DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
+         airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
+         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
+
+  // Make sure that there is always an layer
+  append(defLayer.clone(100000.f).airportSymbolSize(5).
+         airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 
   layers->finishAppend();
@@ -210,33 +221,26 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
   if(!databaseLoadStatus)
   {
-    if(navMapWidget->distance() > DISTANCE_CUT_OFF_LIMIT)
-      return true;
-
     mapScale->update(viewport, navMapWidget->distance());
-
-    // if(navMapWidget->viewContext() == Marble::Animation)
-    // navMapWidget->model()->setWorkOffline(false);
-    // else
-    // navMapWidget->model()->setWorkOffline(true);
 
     if(mapFont == nullptr)
 #if defined(Q_OS_WIN32)
-      mapFont = new QFont("Arial", painter->font().pointSize());
+      mapFont = new QFont("Arial", painter->font().pointSize() - 1);
 #else
-      mapFont = new QFont("Helvetica", painter->font().pointSize());
+      mapFont = new QFont("Helvetica", painter->font().pointSize() - 1);
 #endif
     mapFont->setBold(true);
     painter->setFont(*mapFont);
 
     float dist = static_cast<float>(navMapWidget->distance());
 
+    // Get the uncorrected effective layer - route painting is independent of declutter
+    mapLayerEffective = layers->getLayer(dist);
     mapLayer = layers->getLayer(dist, detailFactor);
 
     PaintContext context;
     context.mapLayer = mapLayer;
-    // Get the uncorrected effective layer - route painting is independent of declutter
-    context.mapLayerEffective = layers->getLayer(dist, 10);
+    context.mapLayerEffective = mapLayerEffective;
     context.painter = painter;
     context.viewport = viewport;
     context.objectTypes = objectTypes;
@@ -246,9 +250,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     else
       context.forcePaintObjects = nullptr;
 
-    if(mapLayer != nullptr)
+    if(navMapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
     {
-      if(mapLayer->isAirportDiagram())
+      if(context.mapLayerEffective->isAirportDiagram())
       {
         mapPainterIls->paint(&context);
         mapPainterAirport->paint(&context);
@@ -260,8 +264,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         mapPainterNav->paint(&context);
         mapPainterAirport->paint(&context);
       }
+      mapPainterRoute->paint(&context);
     }
-    mapPainterRoute->paint(&context);
     mapPainterMark->paint(&context);
   }
 

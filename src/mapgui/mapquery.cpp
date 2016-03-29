@@ -123,16 +123,13 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                 maptypes::MapObjectTypes types,
+                                 bool airportDiagram, maptypes::MapObjectTypes types,
                                  int xs, int ys, int screenDistance,
                                  maptypes::MapSearchResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
   using namespace maptypes;
-
-  if(mapLayer == nullptr)
-    return;
 
   int x, y;
   if(mapLayer->isAirport() && types.testFlag(maptypes::AIRPORT))
@@ -146,9 +143,10 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, &airport);
 
-      if(conv.wToS(airport.towerCoords, x, y))
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
+      if(airportDiagram)
+        if(conv.wToS(airport.towerCoords, x, y))
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+            insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
     }
     }
 
@@ -197,7 +195,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
           insertSortedByDistance(conv, result.ils, nullptr, xs, ys, &wp);
     }
 
-  if(mapLayer->isAirportDiagram())
+  if(airportDiagram)
   {
     for(int id : parkingCache.keys())
     {
@@ -222,9 +220,6 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
 const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
                                                          const MapLayer *mapLayer, bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(airportCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery airports cache miss";
 
@@ -247,9 +242,6 @@ const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLa
 const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
                                                            const MapLayer *mapLayer, bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(waypointCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery waypoints cache miss";
 
@@ -271,9 +263,6 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
 const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(vorCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery vor cache miss";
 
@@ -295,9 +284,6 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
 const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(ndbCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery ndb cache miss";
 
@@ -319,9 +305,6 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
 const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                        bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(markerCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery marker cache miss";
 
@@ -343,9 +326,6 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
 const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                 bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(ilsCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery ils cache miss";
 
@@ -367,9 +347,6 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
 const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                        bool lazy)
 {
-  if(mapLayer == nullptr)
-    return nullptr;
-
   if(airwayCache.handleCache(rect, mapLayer, lazy))
     qDebug() << "MapQuery airway cache miss";
 

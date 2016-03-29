@@ -222,6 +222,9 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
 
   // Create labels for the statusbar
+  detailLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(detailLabel);
+
   renderStatusLabel = new QLabel();
   ui->statusBar->addPermanentWidget(renderStatusLabel);
 
@@ -417,6 +420,17 @@ void MainWindow::setMapDetail(int factor)
   ui->actionMapLessDetails->setEnabled(mapDetailFactor > MAP_MIN_DETAIL_FACTOR);
   ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MAP_DEFAULT_DETAIL_FACTOR);
   navMapWidget->update();
+
+  int det = mapDetailFactor - MAP_DEFAULT_DETAIL_FACTOR;
+  QString detStr;
+  if(det == 0)
+    detStr = tr("Normal");
+  else if(det > 0)
+    detStr = "+" + QString::number(det);
+  else if(det < 0)
+    detStr = QString::number(det);
+
+  detailLabel->setText(tr("Detail %1").arg(detStr));
 }
 
 void MainWindow::routeSelectionChanged(int selected, int total)
