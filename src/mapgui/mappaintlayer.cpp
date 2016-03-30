@@ -225,7 +225,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
     if(mapFont == nullptr)
 #if defined(Q_OS_WIN32)
-      mapFont = new QFont("Arial", painter->font().pointSize() - 1);
+      mapFont = new QFont("Arial", painter->font().pointSize());
 #else
       mapFont = new QFont("Helvetica", painter->font().pointSize() - 1);
 #endif

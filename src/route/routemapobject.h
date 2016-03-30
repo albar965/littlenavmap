@@ -110,7 +110,7 @@ private:
   maptypes::MapWaypoint waypoint;
   bool predecessor = false;
 
-  float distanceTo, distanceToRhumb, course, courseRhumb;
+  float distanceTo = 0.f, distanceToRhumb = 0.f, course = 0.f, courseRhumb = 0.f;
 };
 
 #endif // ROUTEMAPOBJECT_H

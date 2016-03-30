@@ -456,9 +456,6 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   else
     painter->setBrush(backColor);
 
-  QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
-
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
   {
     QFont f = painter->font();
@@ -467,6 +464,9 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
     f.setUnderline(atts.testFlag(textatt::UNDERLINE));
     painter->setFont(f);
   }
+
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
 
   int yoffset = 0;
   if(transparency != 0)
