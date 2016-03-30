@@ -46,6 +46,18 @@ MapQuery::~MapQuery()
   delete mapTypesFactory;
 }
 
+void MapQuery::getAirportAdminById(int airportId, QString& city, QString& state, QString& country)
+{
+  airportAdminByIdQuery->bindValue(":id", airportId);
+  airportAdminByIdQuery->exec();
+  while(airportAdminByIdQuery->next())
+  {
+    city = airportAdminByIdQuery->value("city").toString();
+    state = airportAdminByIdQuery->value("state").toString();
+    country = airportAdminByIdQuery->value("country").toString();
+  }
+}
+
 void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
 {
   airportByIdQuery->bindValue(":id", airportId);
@@ -177,6 +189,16 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, &wp);
+    }
+
+  if(mapLayer->isAirway())
+    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
+    {
+      const MapWaypoint& wp = waypointCache.list.at(i);
+      if(wp.hasRoute)
+        if(conv.wToS(wp.position, x, y))
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+            insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, &wp);
     }
 
   if(mapLayer->isMarker() && types.testFlag(maptypes::MARKER))
@@ -721,7 +743,7 @@ void MapQuery::initQueries()
     "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty "
     "from route ");
 
-  static QString waypointQueryBase("select waypoint_id, ident, region, type, mag_var, lonx, laty "
+  static QString waypointQueryBase("select waypoint_id, ident, region, type, num_route, mag_var, lonx, laty "
                                    "from waypoint");
 
   static QString vorQueryBase(
@@ -736,6 +758,9 @@ void MapQuery::initQueries()
 
   airportByIdQuery = new SqlQuery(db);
   airportByIdQuery->prepare(airportQueryBase + " where airport_id = :id ");
+
+  airportAdminByIdQuery = new SqlQuery(db);
+  airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare(airportQueryBase + " where ident = :ident ");
@@ -882,6 +907,8 @@ void MapQuery::deInitQueries()
 
   delete airportByIdQuery;
   airportByIdQuery = nullptr;
+  delete airportAdminByIdQuery;
+  airportAdminByIdQuery = nullptr;
   delete airwayByWaypointIdQuery;
   airwayByWaypointIdQuery = nullptr;
 

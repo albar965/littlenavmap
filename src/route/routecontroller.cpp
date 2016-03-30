@@ -295,7 +295,6 @@ void RouteController::flightplanToView()
 
       cumulatedDistance += mapobj.getDistanceTo();
       // Remaining
-      qDebug() << "cumulatedDistance" << cumulatedDistance << "togo" << (totalDistance - cumulatedDistance);
 
       item = new QStandardItem(QString::number(totalDistance - cumulatedDistance, 'f', 1));
       item->setTextAlignment(Qt::AlignRight);

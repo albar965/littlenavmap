@@ -263,6 +263,7 @@ struct MapWaypoint
   float magvar;
   QString ident, region, type, apIdent;
   atools::geo::Pos position;
+  bool hasRoute = false;
   const atools::geo::Pos& getPosition() const
   {
     return position;

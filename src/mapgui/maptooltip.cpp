@@ -48,6 +48,13 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       text += "<hr/>";
 
     text += "<b>" + ap->name + " (" + ap->ident + ")</b>";
+    QString city, state, country;
+    query->getAirportAdminById(ap->id, city, state, country);
+    text += "<br/><b>" + city;
+    if(!state.isEmpty())
+      text += ", " + state;
+    text += ", " + country + "</b>";
+
     text += "<br/>Longest Runway: " + QLocale().toString(ap->longestRunwayLength) + " ft";
     text += "<br/>Altitude: " + QLocale().toString(ap->altitude) + " ft";
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ap->magvar, QString(), 1) + " °";
@@ -114,7 +121,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor->magvar, QString(), 1) + " °";
     text += "<br/>Altitude: " + QLocale().toString(vor->altitude) + " ft";
     text += "<br/>Range: " + QString::number(vor->range) + " nm";
-    text += "<br/><b>" + morse->getCode(vor->ident)+"</b>";
+    text += "<br/><b>" + morse->getCode(vor->ident) + "</b>";
   }
 
   for(const MapNdb *ndb : mapSearchResult.ndbs)
@@ -131,7 +138,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb->magvar, QString(), 1) + " °";
     text += "<br/>Altitude: " + QLocale().toString(ndb->altitude) + " ft";
     text += "<br/>Range: " + QString::number(ndb->range) + " nm";
-    text += "<br/><b>" + morse->getCode(ndb->ident)+"</b>";
+    text += "<br/><b>" + morse->getCode(ndb->ident) + "</b>";
   }
 
   for(const MapWaypoint *wp : mapSearchResult.waypoints)

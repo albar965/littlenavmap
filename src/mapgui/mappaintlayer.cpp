@@ -157,7 +157,7 @@ void MapPaintLayer::initLayers()
          markerSymbolSize(24).markerInfo()).
 
   append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
-         waypointSymbolSize(8).
+         waypointSymbolSize(8).waypointName().
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().

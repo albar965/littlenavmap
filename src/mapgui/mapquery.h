@@ -57,6 +57,8 @@ public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
   ~MapQuery();
 
+  void getAirportAdminById(int airportId, QString& city, QString& state, QString& country);
+
   void getAirportById(maptypes::MapAirport& airport, int id);
 
   void getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
@@ -64,17 +66,14 @@ public:
 
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
-                         maptypes::MapObjectTypes types,
-                         int xs, int ys, int screenDistance,
+                         maptypes::MapObjectTypes types, int xs, int ys, int screenDistance,
                          maptypes::MapSearchResult& result);
 
   const QList<maptypes::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                 const MapLayer *mapLayer,
-                                                 bool lazy);
+                                                 const MapLayer *mapLayer, bool lazy);
 
   const QList<maptypes::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect,
-                                                   const MapLayer *mapLayer,
-                                                   bool lazy);
+                                                   const MapLayer *mapLayer, bool lazy);
 
   const QList<maptypes::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                          bool lazy);
@@ -155,7 +154,7 @@ private:
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdQuery = nullptr;
+  atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,

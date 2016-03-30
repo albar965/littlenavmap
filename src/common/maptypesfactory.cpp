@@ -138,6 +138,7 @@ void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoi
   wp.region = record.value("region").toString();
   wp.type = record.value("type").toString();
   wp.magvar = record.value("mag_var").toFloat();
+  wp.hasRoute = record.value("num_route").toInt() > 0;
   wp.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
 }
 
@@ -177,7 +178,7 @@ void MapTypesFactory::fillIls(const QSqlRecord& record, maptypes::MapIls& ils)
   ils.width = record.value("loc_width").toFloat();
   ils.magvar = record.value("mag_var").toFloat();
   ils.slope = record.value("gs_pitch").toFloat();
-  ils.altitude= record.value("altitude").toInt();
+  ils.altitude = record.value("altitude").toInt();
 
   ils.frequency = record.value("frequency").toInt();
   ils.range = record.value("range").toInt();

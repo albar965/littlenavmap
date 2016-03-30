@@ -82,6 +82,11 @@ const QColor ilsSymbolColor = QColor(Qt::darkGreen);
 const QColor ilsTextColor = QColor::fromRgb(0, 70, 0);
 const QColor waypointSymbolColor = QColor(Qt::magenta);
 
+const QColor airwayVictorColor = QColor::fromRgb(150, 150, 150);
+const QColor airwayJetColor = QColor::fromRgb(100, 100, 100);
+const QColor airwayBothColor = QColor::fromRgb(100, 100, 100);
+const QColor airwayTextColor = QColor::fromRgb(80, 80, 80);
+
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const maptypes::MapAirport& ap);

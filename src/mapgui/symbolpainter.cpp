@@ -35,6 +35,9 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
 {
   using namespace maptypes;
 
+  if(ap.longestRunwayLength == 0)
+    size = size * 3 / 4;
+
   painter->save();
   QColor apColor = mapcolors::colorForAirport(ap);
 
@@ -424,11 +427,12 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
     if(!tower.isEmpty() || !autoWeather.isEmpty())
       texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
 
-    texts.append(QString::number(airport.altitude) + " " +
-                 (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
-                 QString::number(airport.longestRunwayLength / 100) + " " +
-                 (airport.unicomFrequency == 0 ? QString() :
-                  QString::number(airport.unicomFrequency / 1000., 'f', 2)));
+    if(airport.longestRunwayLength != 0 || airport.altitude != 0)
+      texts.append(QString::number(airport.altitude) + " " +
+                   (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
+                   QString::number(airport.longestRunwayLength / 100) + " " +
+                   (airport.unicomFrequency == 0 ? QString() :
+                    QString::number(airport.unicomFrequency / 1000., 'f', 2)));
   }
   return texts;
 }

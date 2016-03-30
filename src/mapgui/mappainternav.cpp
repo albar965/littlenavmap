@@ -55,8 +55,10 @@ void MapPainterNav::paint(const PaintContext *context)
 
   setRenderHints(context->painter);
 
-  if(context->mapLayer->isAirway() &&
-     (context->objectTypes.testFlag(maptypes::AIRWAYJ) || context->objectTypes.testFlag(maptypes::AIRWAYV)))
+  bool drawAirway = context->mapLayer->isAirway() &&
+                    (context->objectTypes.testFlag(maptypes::AIRWAYJ) ||
+                     context->objectTypes.testFlag(maptypes::AIRWAYV));
+  if(drawAirway)
   {
     // Draw airway lines
     const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, drawFast);
@@ -82,9 +84,11 @@ void MapPainterNav::paint(const PaintContext *context)
           continue;
 
         if(airway.type == "VICTOR")
-          context->painter->setPen(QPen(QColor::fromRgb(150, 150, 150), 1.5));
-        else
-          context->painter->setPen(QPen(QColor::fromRgb(100, 100, 100), 1.5));
+          context->painter->setPen(QPen(mapcolors::airwayVictorColor, 1.5));
+        else if(airway.type == "JET")
+          context->painter->setPen(QPen(mapcolors::airwayJetColor, 1.5));
+        else if(airway.type == "BOTH")
+          context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
 
         int x1, y1, x2, y2;
         bool visible1 = wToS(airway.from, x1, y1);
@@ -112,6 +116,7 @@ void MapPainterNav::paint(const PaintContext *context)
                                                     GeoDataCoordinates::InitialBearing));
           qreal final = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
                                                      GeoDataCoordinates::FinalBearing));
+
           textBearing.append((init + final) / 2.);
           textCoords.append(from.interpolate(to, 0.5));
           context->painter->drawPolyline(line);
@@ -125,7 +130,7 @@ void MapPainterNav::paint(const PaintContext *context)
 
       int x, y;
       // Draw airway text along lines
-      context->painter->setPen(QColor::fromRgb(80, 80, 80));
+      context->painter->setPen(mapcolors::airwayTextColor);
       int i = 0;
       for(const GeoDataCoordinates& coord : textCoords)
       {
@@ -158,7 +163,9 @@ void MapPainterNav::paint(const PaintContext *context)
     }
   }
 
-  if(context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT))
+  bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT);
+
+  if(drawWaypoint || drawAirway)
   {
     const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, drawFast);
     if(waypoints != nullptr)
@@ -174,6 +181,9 @@ void MapPainterNav::paint(const PaintContext *context)
 
       for(const MapWaypoint& waypoint : *waypoints)
       {
+        if(!(drawWaypoint || (drawAirway && waypoint.hasRoute)))
+          continue;
+
         int x, y;
         bool visible = wToS(waypoint.position, x, y);
 
