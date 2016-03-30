@@ -36,6 +36,7 @@
 #include <QSortFilterProxyModel>
 #include <QApplication>
 #include <QEventLoop>
+#include <QSqlField>
 
 #include <geo/rect.h>
 
@@ -588,6 +589,26 @@ QVariantList Controller::getRawModelData(int row) const
   return model->getRawRowData(row);
 }
 
+void Controller::initRecord(QSqlRecord& rec)
+{
+  QSqlRecord from = model->record();
+  for(int i = 0; i < from.count(); i++)
+  {
+    const QSqlField& f = from.field(i);
+    rec.append(QSqlField(f.name(), f.type()));
+  }
+}
+
+void Controller::fillRecord(int row, QSqlRecord& rec)
+{
+  int srow = row;
+  if(proxyModel != nullptr)
+    srow = toS(proxyModel->index(row, 0)).row();
+
+  for(int i = 0; i < rec.count(); i++)
+    rec.setValue(i, model->getRawData(srow, i));
+}
+
 QVariant Controller::getRawData(int row, const QString& colname) const
 {
   int colIdx = model->record().indexOf(colname);
@@ -618,17 +639,4 @@ QString Controller::getSortColumn() const
 int Controller::getSortColumnIndex() const
 {
   return model->getSortColumnIndex();
-}
-
-void Controller::getSelectedObjects(std::function<void(const QSqlRecord&)> fillfunc)
-{
-  for(const QItemSelectionRange& rng :  getSelection())
-    for(int row = rng.top(); row <= rng.bottom(); ++row)
-    {
-      int srow = row;
-      if(proxyModel != nullptr)
-        srow = toS(proxyModel->index(row, 0)).row();
-
-      fillfunc(model->record(srow));
-    }
 }

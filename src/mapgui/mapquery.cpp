@@ -66,6 +66,7 @@ void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>&
   }
 }
 
+// TODO no delete needed here
 void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
                             const QString& ident, const QString& region)
 {
@@ -122,6 +123,7 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
   }
 }
 
+// TODO no delete needed here
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                  bool airportDiagram, maptypes::MapObjectTypes types,
                                  int xs, int ys, int screenDistance,
@@ -227,13 +229,13 @@ const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLa
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, true);
+      return fetchAirports(rect, airportByRectQuery, true, lazy, true);
 
     case layer::MEDIUM:
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, false);
+      return fetchAirports(rect, airportMediumByRectQuery, false, lazy, false);
 
     case layer::LARGE:
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, false);
+      return fetchAirports(rect, airportLargeByRectQuery, false, lazy, false);
 
   }
   return nullptr;
@@ -246,6 +248,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
     qDebug() << "MapQuery waypoints cache miss";
 
   if(waypointCache.list.isEmpty() && !lazy)
+  {
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, waypointsByRectQuery);
@@ -257,6 +260,8 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
         waypointCache.list.append(wp);
       }
     }
+    checkOverflow(waypointCache.list, maptypes::WAYPOINT);
+  }
   return &waypointCache.list;
 }
 
@@ -267,6 +272,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
     qDebug() << "MapQuery vor cache miss";
 
   if(vorCache.list.isEmpty() && !lazy)
+  {
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, vorsByRectQuery);
@@ -278,6 +284,8 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
         vorCache.list.append(vor);
       }
     }
+    checkOverflow(vorCache.list, maptypes::VOR);
+  }
   return &vorCache.list;
 }
 
@@ -288,6 +296,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
     qDebug() << "MapQuery ndb cache miss";
 
   if(ndbCache.list.isEmpty() && !lazy)
+  {
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, ndbsByRectQuery);
@@ -299,6 +308,8 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
         ndbCache.list.append(ndb);
       }
     }
+    checkOverflow(ndbCache.list, maptypes::NDB);
+  }
   return &ndbCache.list;
 }
 
@@ -351,6 +362,7 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
     qDebug() << "MapQuery airway cache miss";
 
   if(airwayCache.list.isEmpty() && !lazy)
+  {
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, airwayByRectQuery);
@@ -362,14 +374,17 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
         airwayCache.list.append(airway);
       }
     }
+    checkOverflow(airwayCache.list, maptypes::AIRWAY);
+  }
   return &airwayCache.list;
 }
 
 const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                           atools::sql::SqlQuery *query, bool lazy,
-                                                           bool complete)
+                                                           atools::sql::SqlQuery *query, bool reverse,
+                                                           bool lazy, bool complete)
 {
   if(airportCache.list.isEmpty() && !lazy)
+  {
     for(const GeoDataLatLonBox& r : splitAtAntiMeridian(rect))
     {
       bindCoordinatePointInRect(r, query);
@@ -378,9 +393,15 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
       {
         maptypes::MapAirport ap;
         mapTypesFactory->fillAirport(query->record(), ap, complete);
-        airportCache.list.append(ap);
+
+        if(reverse)
+          airportCache.list.prepend(ap);
+        else
+          airportCache.list.append(ap);
       }
     }
+    checkOverflow(airportCache.list, maptypes::AIRPORT);
+  }
   return &airportCache.list;
 }
 
@@ -538,18 +559,6 @@ Rect MapQuery::getAirportRect(int airportId)
   return atools::geo::Rect();
 }
 
-Pos MapQuery::getNavTypePos(int navSearchId)
-{
-  SqlQuery query(db);
-  query.prepare("select lonx, laty from nav_search where nav_search_id = :id");
-  query.bindValue(":id", navSearchId);
-  query.exec();
-  if(query.next())
-    return atools::geo::Pos(query.value("lonx").toFloat(), query.value("laty").toFloat());
-
-  return atools::geo::Pos();
-}
-
 const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
 {
   if(taxipathCache.contains(airportId))
@@ -592,6 +601,7 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
     runwaysQuery->bindValue(":airportId", airportId);
     runwaysQuery->exec();
 
+    // TODO delete
     QList<maptypes::MapRunway> *rs = new QList<maptypes::MapRunway>;
     while(runwaysQuery->next())
     {
@@ -680,6 +690,15 @@ void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double width, double 
   rect.setEast(std::min(rect.east(GeoDataCoordinates::Degree) + width, 179.), GeoDataCoordinates::Degree);
 }
 
+template<typename TYPE>
+void MapQuery::checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type)
+{
+  if(list.size() >= QUERY_ROW_LIMIT)
+    emit resultTruncated(type, QUERY_ROW_LIMIT);
+  else
+    emit resultTruncated(type, 0);
+}
+
 void MapQuery::initQueries()
 {
   static QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
@@ -733,7 +752,7 @@ void MapQuery::initQueries()
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
     airportQueryBase + " where " + whereRect +
-    " and longest_runway_length >= :minlength order by rating asc, longest_runway_length "
+    " and longest_runway_length >= :minlength order by rating desc, longest_runway_length desc "
     + whereLimit);
 
   airportMediumByRectQuery = new SqlQuery(db);

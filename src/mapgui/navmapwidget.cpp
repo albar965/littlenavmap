@@ -738,9 +738,11 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
     curZoom = zoom();
     curBox = visibleLatLonAltBox;
 
-    qDebug() << "paintEvent map view has changed zoom" << curZoom << "distance" << distanceFromZoom(zoom());
+    qDebug() << "paintEvent map view has changed zoom" << curZoom
+             << "distance" << distance() << " (" << atools::geo::meterToNm(distance() * 1000.) << " km)";
     qDebug() << "pole" << curBox.containsPole() << curBox.toString(GeoDataCoordinates::Degree);
     history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), zoom());
+    parentWindow->clearMessageText();
   }
 
   MarbleWidget::paintEvent(paintEvent);
@@ -763,15 +765,18 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
+  // Get objects from cache - no need to delete
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT |
                                maptypes::MARKER),
                               xs, ys, screenDistance, mapSearchResult);
 
+  // Get copies from route - no need to delete
   getNearestRouteMapObjects(xs, ys, screenDistance, parentWindow->getRouteController()->getRouteMapObjects(),
                             mapSearchResult);
 
+  // Get copies from highlightMapObjects - no need to delete
   getNearestHighlightMapObjects(xs, ys, screenDistance, mapSearchResult);
 
   for(const maptypes::MapAirport *obj : mapSearchResult.airports)

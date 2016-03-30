@@ -72,7 +72,7 @@ public:
   void routeChanged();
 
 private:
-  const float DISTANCE_CUT_OFF_LIMIT = 2000.f;
+  const float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   QSet<ForcePaintType> forcePaint;
 

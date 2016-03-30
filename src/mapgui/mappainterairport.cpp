@@ -74,9 +74,6 @@ void MapPainterAirport::paint(const PaintContext *context)
     t.restart();
   }
 
-  if(airports->size() > 2000)
-    qDebug() << "Excessive number of aiports" << airports->size();
-
   setRenderHints(context->painter);
 
   for(const MapAirport& airport : *airports)

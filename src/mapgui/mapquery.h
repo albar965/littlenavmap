@@ -46,10 +46,13 @@ class MapTypesFactory;
 
 const double RECT_INFLATION_FACTOR = 0.3;
 const double RECT_INFLATION_ADD = 0.1;
-const int QUERY_ROW_LIMIT = 5000;
+const int QUERY_ROW_LIMIT = 2000;
 
 class MapQuery
+  : public QObject
 {
+  Q_OBJECT
+
 public:
   MapQuery(atools::sql::SqlDatabase *sqlDb);
   ~MapQuery();
@@ -103,10 +106,12 @@ public:
   const QList<maptypes::MapHelipad> *getHelipads(int airportId);
 
   atools::geo::Rect getAirportRect(int airportId);
-  atools::geo::Pos getNavTypePos(int navSearchId);
 
   void initQueries();
   void deInitQueries();
+
+signals:
+  void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
 
 private:
   template<typename TYPE>
@@ -121,9 +126,6 @@ private:
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
-
-  // Marble::GeoDataLatLonBox curRect;
-  // const MapLayer *curMapLayer;
 
   SimpleCache<maptypes::MapAirport> airportCache;
   SimpleCache<maptypes::MapWaypoint> waypointCache;
@@ -157,7 +159,7 @@ private:
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                   atools::sql::SqlQuery *query,
+                                                   atools::sql::SqlQuery *query, bool reverse,
                                                    bool lazy, bool complete);
 
   void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
@@ -168,6 +170,9 @@ private:
   static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
 
   bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
+
+  template<typename TYPE>
+  void checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type);
 
 };
 

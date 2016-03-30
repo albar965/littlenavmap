@@ -23,6 +23,7 @@
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 
+#include <QBitArray>
 #include <algorithm>
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -72,9 +73,11 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   // Collect coordinates for text placement and lines first
   int x, y;
   QList<QPoint> startPoints;
+  QBitArray visible(routeMapObjects.size());
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
+  int i = 0;
   for(const RouteMapObject& obj : routeMapObjects)
   {
     GeoDataCoordinates to(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0,
@@ -91,8 +94,10 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
     }
 
     linestring.append(to);
-    wToS(obj.getPosition(), x, y);
+    visible.setBit(i, wToS(obj.getPosition(), x, y));
     startPoints.append(QPoint(x, y));
+
+    i++;
   }
 
   // Draw outer line
@@ -105,7 +110,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 
   // Draw text along lines
   painter->setPen(QColor(Qt::black));
-  int i = 0;
+  i = 0;
   for(const GeoDataCoordinates& coord : textCoords)
   {
     if(wToS(coord, x, y))
@@ -155,7 +160,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   i = 0;
   for(const QPoint& pt : startPoints)
   {
-    if(!pt.isNull())
+    if(visible.testBit(i))
     {
       x = pt.x();
       y = pt.y();
@@ -190,7 +195,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   i = 0;
   for(const QPoint& pt : startPoints)
   {
-    if(!pt.isNull())
+    if(visible.testBit(i))
     {
       x = pt.x();
       y = pt.y();

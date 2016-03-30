@@ -216,16 +216,22 @@ void MapSearchResult::deleteAllObjects()
     qDeleteAll(ndbs);
     qDeleteAll(markers);
     qDeleteAll(ils);
+    qDeleteAll(airways);
 
     airports.clear();
+    airportIds.clear();
     towers.clear();
     parkings.clear();
     helipads.clear();
     waypoints.clear();
+    waypointIds.clear();
     vors.clear();
+    vorIds.clear();
     ndbs.clear();
+    ndbIds.clear();
     markers.clear();
     ils.clear();
+    userPoints.clear();
   }
 }
 

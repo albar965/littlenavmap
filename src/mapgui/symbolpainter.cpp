@@ -48,7 +48,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     // Use white filled circle
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
-  if(!fast || isAirportDiagram)
+  if((!fast || isAirportDiagram) && size > 5)
     if(ap.anyFuel() && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
     {
     // Draw fuel spikes
@@ -63,7 +63,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   painter->setPen(QPen(QBrush(apColor), size / 5, Qt::SolidLine, Qt::FlatCap));
   painter->drawEllipse(QPoint(x, y), radius, radius);
 
-  if(!fast || isAirportDiagram)
+  if((!fast || isAirportDiagram) && size > 5)
   {
     if(ap.flags.testFlag(AP_MIL))
       painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
@@ -99,7 +99,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     }
   }
 
-  if(!fast || isAirportDiagram)
+  if((!fast || isAirportDiagram) && size > 5)
     if(ap.flags.testFlag(AP_HARD) && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
     {
       // Draw line inside circle
@@ -129,7 +129,7 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
   else
     painter->setPen(QPen(mapcolors::waypointSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
 
-  if(!fast)
+  if(!fast && size > 5)
   {
     int radius = size / 2;
     QPolygon polygon;

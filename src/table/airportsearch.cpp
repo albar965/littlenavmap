@@ -44,6 +44,7 @@
 #include <QLineEdit>
 #include <QStyledItemDelegate>
 #include <QMouseEvent>
+#include <QSqlField>
 
 #include <common/maptypesfactory.h>
 
@@ -396,16 +397,27 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
 
 void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
-  using namespace std::placeholders;
-  controller->getSelectedObjects(std::bind(&AirportSearch::fillSearchResult, this, _1, &result));
-  result.needsDelete = true;
-}
+  const QString idColumnName = columns->getIdColumnName();
 
-void AirportSearch::fillSearchResult(const QSqlRecord& record, maptypes::MapSearchResult *result) const
-{
+  QSqlRecord rec;
+  rec.append(QSqlField(idColumnName, QVariant::Int));
+  rec.append(QSqlField("lonx", QVariant::Double));
+  rec.append(QSqlField("laty", QVariant::Double));
+
   MapTypesFactory factory;
-  maptypes::MapAirport *ap = new maptypes::MapAirport;
-  // Not fully populated
-  factory.fillAirport(record, *ap, false);
-  result->airports.append(ap);
+
+  const QItemSelection& selection = controller->getSelection();
+  for(const QItemSelectionRange& rng :  selection)
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+    {
+      maptypes::MapAirport *ap = new maptypes::MapAirport;
+      rec.setValue(0, controller->getRawData(row, idColumnName));
+      rec.setValue(1, controller->getRawData(row, "lonx"));
+      rec.setValue(2, controller->getRawData(row, "laty"));
+
+      // Not fully populated
+      factory.fillAirport(rec, *ap, false);
+      result.airports.append(ap);
+    }
+  result.needsDelete = true;
 }

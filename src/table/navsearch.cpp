@@ -39,6 +39,7 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QLineEdit>
+#include <QSqlField>
 
 #include <common/maptypesfactory.h>
 
@@ -262,37 +263,43 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
 
 void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
-  using namespace std::placeholders;
-  controller->getSelectedObjects(std::bind(&NavSearch::fillSearchResult, this, _1, &result));
-  result.needsDelete = true;
-}
+  const QString idColumnName = columns->getIdColumnName();
 
-void NavSearch::fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResult *result) const
-{
+  QSqlRecord rec;
+  controller->initRecord(rec);
+
   MapTypesFactory factory;
 
-  // All objects are fully populated
-  QString navType = data.value("nav_type").toString();
-  maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navType);
+  const QItemSelection& selection = controller->getSelection();
+  for(const QItemSelectionRange& rng :  selection)
+    for(int row = rng.top(); row <= rng.bottom(); ++row)
+    {
+      controller->fillRecord(row, rec);
 
-  if(type == maptypes::WAYPOINT)
-  {
-    maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
-    factory.fillWaypoint(data, *obj);
-    result->waypoints.append(obj);
-  }
-  else if(type == maptypes::NDB)
-  {
-    maptypes::MapNdb *obj = new maptypes::MapNdb;
-    factory.fillNdb(data, *obj);
-    result->ndbs.append(obj);
-  }
-  else if(type == maptypes::VOR)
-  {
-    maptypes::MapVor *obj = new maptypes::MapVor;
-    factory.fillVor(data, *obj);
-    // Adapt to nav_search table frequency scaling
-    obj->frequency /= 10;
-    result->vors.append(obj);
-  }
+      // All objects are fully populated
+      QString navType = rec.value("nav_type").toString();
+      maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navType);
+
+      if(type == maptypes::WAYPOINT)
+      {
+        maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
+        factory.fillWaypoint(rec, *obj);
+        result.waypoints.append(obj);
+      }
+      else if(type == maptypes::NDB)
+      {
+        maptypes::MapNdb *obj = new maptypes::MapNdb;
+        factory.fillNdb(rec, *obj);
+        result.ndbs.append(obj);
+      }
+      else if(type == maptypes::VOR)
+      {
+        maptypes::MapVor *obj = new maptypes::MapVor;
+        factory.fillVor(rec, *obj);
+        // Adapt to nav_search table frequency scaling
+        obj->frequency /= 10;
+        result.vors.append(obj);
+      }
+    }
+  result.needsDelete = true;
 }

@@ -68,8 +68,6 @@ private:
   static const QSet<QString> boolColumns;
   static const QSet<QString> numberColumns;
 
-  void fillSearchResult(const QSqlRecord& record, maptypes::MapSearchResult *result) const;
-
   AirportIconDelegate *iconDelegate = nullptr;
 
 };

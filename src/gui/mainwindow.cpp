@@ -222,16 +222,24 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
 
   // Create labels for the statusbar
+  messageLabel = new QLabel();
+  messageLabel->setMinimumWidth(100);
+  ui->statusBar->addPermanentWidget(messageLabel);
+
   detailLabel = new QLabel();
+  detailLabel->setMinimumWidth(100);
   ui->statusBar->addPermanentWidget(detailLabel);
 
   renderStatusLabel = new QLabel();
+  renderStatusLabel->setMinimumWidth(120);
   ui->statusBar->addPermanentWidget(renderStatusLabel);
 
   mapDistanceLabel = new QLabel();
+  mapDistanceLabel->setMinimumWidth(80);
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
   mapPosLabel = new QLabel();
+  mapPosLabel->setMinimumWidth(200);
   ui->statusBar->addPermanentWidget(mapPosLabel);
 }
 
@@ -325,6 +333,22 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::selectionChanged);
   connect(searchController->getNavSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
+
+  connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
+}
+
+void MainWindow::clearMessageText()
+{
+  messageLabel->clear();
+}
+
+void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
+{
+  qDebug() << "resultTruncated" << type << "num" << truncatedTo;
+  if(truncatedTo > 0)
+    messageLabel->setText(tr("Too many objects."));
+  else
+    messageLabel->clear();
 }
 
 void MainWindow::renderStatusChanged(RenderStatus status)

@@ -197,7 +197,8 @@ public:
     return proxyModel;
   }
 
-  void getSelectedObjects(std::function<void(const QSqlRecord&)> fillfunc);
+  void initRecord(QSqlRecord& rec);
+  void fillRecord(int row, QSqlRecord& rec);
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);
