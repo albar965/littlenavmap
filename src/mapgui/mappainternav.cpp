@@ -155,15 +155,6 @@ void MapPainterNav::paint(const PaintContext *context)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
-namespace Marble {
-uint qHash(const Marble::GeoDataLineString key)
-{
-  return Marble::qHash(key.first()) ^
-         Marble::qHash(key.last());
-}
-
-}
-
 void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAirway> *airways,
                                  const GeoDataLatLonAltBox& curBox, bool fast)
 {
