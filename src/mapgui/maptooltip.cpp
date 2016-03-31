@@ -164,7 +164,7 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
         if(checkText(text))
           break;
 
-        QString txt("<br/>" + aw.name + ", " + aw.type);
+        QString txt("<br/>" + aw.name + ", " + maptypes::airwayTypeToString(aw.type));
         if(aw.minalt > 0)
           txt += ", " + QString::number(aw.minalt) + " ft";
         airwayTexts.append(txt);

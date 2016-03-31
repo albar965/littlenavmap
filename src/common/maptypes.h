@@ -263,7 +263,7 @@ struct MapWaypoint
   float magvar;
   QString ident, region, type, apIdent;
   atools::geo::Pos position;
-  bool hasRoute = false;
+  bool hasVictor = false, hasJet = false;
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -293,9 +293,18 @@ struct MapUserpoint
 
 };
 
+enum MapAirwayType
+{
+  NO_AIRWAY,
+  VICTOR,
+  JET,
+  BOTH
+};
+
 struct MapAirway
 {
-  QString name, type;
+  QString name;
+  maptypes::MapAirwayType type;
   int id, fromWpId, toWpId;
   int minalt, sequence, fragment;
   atools::geo::Pos from, to;
@@ -424,6 +433,9 @@ QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
 QString parkingTypeName(const QString& ramp);
 QString parkingName(const QString& ramp);
+QString airwayTypeToShortString(maptypes::MapAirwayType type);
+QString airwayTypeToString(maptypes::MapAirwayType type);
+MapAirwayType  airwayTypeFromString(const QString& typeStr);
 
 } // namespace types
 

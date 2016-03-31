@@ -328,4 +328,54 @@ maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType)
   return type;
 }
 
+QString airwayTypeToShortString(MapAirwayType type)
+{
+  switch(type)
+  {
+    case maptypes::NO_AIRWAY:
+      break;
+    case maptypes::VICTOR:
+      return "V";
+
+    case maptypes::JET:
+      return "J";
+
+    case maptypes::BOTH:
+      return "B";
+
+  }
+  return QString();
+}
+
+QString airwayTypeToString(MapAirwayType type)
+{
+  switch(type)
+  {
+    case maptypes::NO_AIRWAY:
+      break;
+    case maptypes::VICTOR:
+      return "VICTOR";
+
+    case maptypes::JET:
+      return "JET";
+
+    case maptypes::BOTH:
+      return "BOTH";
+
+  }
+  return QString();
+}
+
+MapAirwayType airwayTypeFromString(const QString& typeStr)
+{
+  if(typeStr == "VICTOR")
+    return maptypes::VICTOR;
+  else if(typeStr == "JET")
+    return maptypes::JET;
+  else if(typeStr == "BOTH")
+    return maptypes::BOTH;
+  else
+    return maptypes::NO_AIRWAY;
+}
+
 } // namespace types

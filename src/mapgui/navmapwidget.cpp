@@ -769,7 +769,7 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT |
-                               maptypes::MARKER),
+                               maptypes::MARKER | maptypes::AIRWAYJ | maptypes::AIRWAYV),
                               xs, ys, screenDistance, mapSearchResult);
 
   // Get copies from route - no need to delete

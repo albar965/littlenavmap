@@ -125,28 +125,49 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   }
 }
 
-bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2,
-                             GeoPainter *painter, float distance, int w, int h, int& x, int& y)
+bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter,
+                             int w, int h, int& x, int& y, float *bearing)
+{
+  return findTextPos(pos1, pos2, painter, pos1.distanceMeterTo(pos2), w, h, x, y, bearing);
+}
+
+bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter, float distance,
+                             int w, int h, int& x, int& y, float *bearing)
 {
   using namespace atools::geo;
 
   Pos center = pos1.interpolate(pos2, distance, 0.5);
   bool visible = wToS(center, x, y);
   if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
-    return true;
+  {
+  if(bearing != nullptr)
+    *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
+                normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
+  return true;
+  }
   else
     // Check for 20 positions along the line starting below and above the center position
     for(float i = 0.; i <= 0.5; i += 0.05)
     {
-    center = pos1.interpolate(pos2, distance, 0.5f - i);
-    visible = wToS(center, x, y);
-    if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
-      return true;
+      center = pos1.interpolate(pos2, distance, 0.5f - i);
+      visible = wToS(center, x, y);
+      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+      {
+        if(bearing != nullptr)
+          *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
+                      normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
+        return true;
+      }
 
-    center = pos1.interpolate(pos2, distance, 0.5f + i);
-    visible = wToS(center, x, y);
-    if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
-      return true;
+      center = pos1.interpolate(pos2, distance, 0.5f + i);
+      visible = wToS(center, x, y);
+      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+      {
+        if(bearing != nullptr)
+          *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
+                      normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
+        return true;
+      }
     }
   return false;
 }

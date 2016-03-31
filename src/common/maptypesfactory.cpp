@@ -138,14 +138,15 @@ void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoi
   wp.region = record.value("region").toString();
   wp.type = record.value("type").toString();
   wp.magvar = record.value("mag_var").toFloat();
-  wp.hasRoute = record.value("num_route").toInt() > 0;
+  wp.hasVictor = record.value("num_victor_route").toInt() > 0;
+  wp.hasJet = record.value("num_jet_route").toInt() > 0;
   wp.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
 }
 
 void MapTypesFactory::fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway)
 {
   airway.id = record.value("route_id").toInt();
-  airway.type = record.value("route_type").toString();
+  airway.type = maptypes::airwayTypeFromString(record.value("route_type").toString());
   airway.name = record.value("route_name").toString();
   airway.minalt = record.value("minimum_altitude").toInt();
   airway.fragment = record.value("route_fragment_no").toInt();

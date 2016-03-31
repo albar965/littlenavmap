@@ -284,7 +284,7 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       int xt = -1, yt = -1;
       if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
                      metrics.height() * 2,
-                     xt, yt))
+                     xt, yt, nullptr))
         symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
     }
     else

@@ -230,13 +230,13 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
     if(entry.getPosition().isValid())
       return entry.getPosition();
     else
-      return atools::geo::Pos::EMPTY_POS;
+      return atools::geo::EMPTY_POS;
   }
 
   switch(entry.getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
-      return atools::geo::Pos::EMPTY_POS;
+      return atools::geo::EMPTY_POS;
 
     case atools::fs::pln::entry::AIRPORT:
       return airport.position;
@@ -253,7 +253,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
     case atools::fs::pln::entry::USER:
       return entry.getPosition();
   }
-  return atools::geo::Pos::EMPTY_POS;
+  return atools::geo::EMPTY_POS;
 }
 
 const QString& RouteMapObject::getIdent() const

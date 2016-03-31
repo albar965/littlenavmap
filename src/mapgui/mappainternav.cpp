@@ -73,93 +73,7 @@ void MapPainterNav::paint(const PaintContext *context)
         t.restart();
       }
 
-      QList<GeoDataCoordinates> textCoords;
-      QList<qreal> textBearing;
-
-      for(const MapAirway& airway : *airways)
-      {
-        if(airway.type == "JET" && !context->objectTypes.testFlag(maptypes::AIRWAYJ))
-          continue;
-        if(airway.type == "VICTOR" && !context->objectTypes.testFlag(maptypes::AIRWAYV))
-          continue;
-
-        if(airway.type == "VICTOR")
-          context->painter->setPen(QPen(mapcolors::airwayVictorColor, 1.5));
-        else if(airway.type == "JET")
-          context->painter->setPen(QPen(mapcolors::airwayJetColor, 1.5));
-        else if(airway.type == "BOTH")
-          context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
-
-        int x1, y1, x2, y2;
-        bool visible1 = wToS(airway.from, x1, y1);
-        bool visible2 = wToS(airway.to, x2, y2);
-
-        if(!visible1 && !visible2)
-        {
-          GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
-                                     airway.bounding.getEast(), airway.bounding.getWest(),
-                                     GeoDataCoordinates::Degree);
-          visible1 = airwaybox.intersects(curBox);
-        }
-
-        if(visible1 || visible2)
-        {
-          GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0,
-                                  GeoDataCoordinates::Degree);
-          GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0,
-                                GeoDataCoordinates::Degree);
-          GeoDataLineString line;
-          line.setTessellate(true);
-          line << from << to;
-
-          qreal init = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                    GeoDataCoordinates::InitialBearing));
-          qreal final = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                     GeoDataCoordinates::FinalBearing));
-
-          textBearing.append((init + final) / 2.);
-          textCoords.append(from.interpolate(to, 0.5));
-          context->painter->drawPolyline(line);
-        }
-        else
-        {
-          textBearing.append(0.);
-          textCoords.append(GeoDataCoordinates());
-        }
-      }
-
-      int x, y;
-      // Draw airway text along lines
-      context->painter->setPen(mapcolors::airwayTextColor);
-      int i = 0;
-      for(const GeoDataCoordinates& coord : textCoords)
-      {
-        if(textCoords.at(i).isValid() && wToS(coord, x, y))
-        {
-          const MapAirway& airway = airways->at(i);
-          QString text;
-
-          if(context->mapLayer->isAirwayIdent())
-            text += airway.name;
-
-          if(context->mapLayer->isAirwayInfo())
-            text += QString("/") + airway.type.at(0) + "/" +
-                    QString::number(airway.fragment) + "/" + QString::number(airway.sequence);
-
-          qreal rotate, brg = textBearing.at(i);
-          if(brg > 180.)
-            rotate = brg + 90.;
-          else
-            rotate = brg - 90.;
-
-          context->painter->translate(x, y);
-          context->painter->rotate(rotate);
-          context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
-                                     context->painter->fontMetrics().ascent(), text);
-          context->painter->resetTransform();
-        }
-        i++;
-      }
+      paintAirways(context, airways, curBox, drawFast);
     }
   }
 
@@ -179,24 +93,7 @@ void MapPainterNav::paint(const PaintContext *context)
         t.restart();
       }
 
-      for(const MapWaypoint& waypoint : *waypoints)
-      {
-        if(!(drawWaypoint || (drawAirway && waypoint.hasRoute)))
-          continue;
-
-        int x, y;
-        bool visible = wToS(waypoint.position, x, y);
-
-        if(visible)
-          symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
-                                            context->mapLayerEffective->getWaypointSymbolSize(), false,
-                                            drawFast);
-
-        if(context->mapLayer->isWaypointName())
-          symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
-                                          context->mapLayerEffective->getWaypointSymbolSize(),
-                                          false, drawFast);
-      }
+      paintWaypoints(context, waypoints, drawWaypoint, drawFast);
     }
   }
 
@@ -214,29 +111,7 @@ void MapPainterNav::paint(const PaintContext *context)
         t.restart();
       }
 
-      for(const MapVor& vor : *vors)
-      {
-        int x, y;
-        bool visible = wToS(vor.position, x, y);
-
-        if(visible)
-        {
-          symbolPainter->drawVorSymbol(context->painter, vor, x, y,
-                                       context->mapLayerEffective->getVorSymbolSize(), false, drawFast,
-                                       context->mapLayerEffective->isVorLarge() ?
-                                       context->mapLayerEffective->getVorSymbolSize() * 5 : 0);
-
-          textflags::TextFlags flags;
-
-          if(context->mapLayer->isVorInfo())
-            flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
-          else if(context->mapLayer->isVorIdent())
-            flags = textflags::IDENT;
-
-          symbolPainter->drawVorText(context->painter, vor, x, y,
-                                     flags, context->mapLayerEffective->getVorSymbolSize(), false, drawFast);
-        }
-      }
+      paintVors(context, vors, drawFast);
     }
   }
 
@@ -254,27 +129,7 @@ void MapPainterNav::paint(const PaintContext *context)
         t.restart();
       }
 
-      for(const MapNdb& ndb : *ndbs)
-      {
-        int x, y;
-        bool visible = wToS(ndb.position, x, y);
-
-        if(visible)
-        {
-          symbolPainter->drawNdbSymbol(context->painter, ndb, x, y,
-                                       context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
-
-          textflags::TextFlags flags;
-
-          if(context->mapLayer->isNdbInfo())
-            flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
-          else if(context->mapLayer->isNdbIdent())
-            flags = textflags::IDENT;
-
-          symbolPainter->drawNdbText(context->painter, ndb, x, y,
-                                     flags, context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
-        }
-      }
+      paintNdbs(context, ndbs, drawFast);
     }
   }
 
@@ -292,29 +147,234 @@ void MapPainterNav::paint(const PaintContext *context)
         t.restart();
       }
 
-      for(const MapMarker& marker : *markers)
+      paintMarkers(context, markers, drawFast);
+    }
+  }
+
+  if(widget->viewContext() == Marble::Still && verbose)
+    qDebug() << "Time for paint" << t.elapsed() << " ms";
+}
+
+namespace Marble {
+uint qHash(const Marble::GeoDataLineString key)
+{
+  return Marble::qHash(key.first()) ^
+         Marble::qHash(key.last());
+}
+
+}
+
+void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAirway> *airways,
+                                 const GeoDataLatLonAltBox& curBox, bool fast)
+{
+  QFontMetrics metrics = context->painter->fontMetrics();
+  // Line as text (avoid floating point compare) and index into texts
+  QHash<QString, int> lines;
+  QList<QString> texts;
+  QList<int> awIndex;
+
+  for(int i = 0; i < airways->size(); i++)
+  {
+    const MapAirway& airway = airways->at(i);
+
+    if(airway.type == maptypes::JET && !context->objectTypes.testFlag(maptypes::AIRWAYJ))
+      continue;
+    if(airway.type == maptypes::VICTOR && !context->objectTypes.testFlag(maptypes::AIRWAYV))
+      continue;
+
+    if(airway.type == maptypes::VICTOR)
+      context->painter->setPen(QPen(mapcolors::airwayVictorColor, 1.5));
+    else if(airway.type == maptypes::JET)
+      context->painter->setPen(QPen(mapcolors::airwayJetColor, 1.5));
+    else if(airway.type == maptypes::BOTH)
+      context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
+
+    int x1, y1, x2, y2;
+    bool visible1 = wToS(airway.from, x1, y1);
+    bool visible2 = wToS(airway.to, x2, y2);
+
+    if(!visible1 && !visible2)
+    {
+      GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
+                                 airway.bounding.getEast(), airway.bounding.getWest(), DEG);
+      visible1 = airwaybox.intersects(curBox);
+    }
+
+    if(visible1 || visible2)
+    {
+      GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0, DEG);
+      GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0, DEG);
+      GeoDataLineString line;
+      line.setTessellate(true);
+      line << from << to;
+
+      context->painter->drawPolyline(line);
+
+      if(!fast)
       {
-        int x, y;
-        bool visible = wToS(marker.position, x, y);
-
-        if(visible)
+        QString text;
+        if(context->mapLayer->isAirwayIdent())
+          text += airway.name;
+        if(context->mapLayer->isAirwayInfo())
         {
-          symbolPainter->drawMarkerSymbol(context->painter, marker, x, y,
-                                          context->mapLayerEffective->getMarkerSymbolSize(), drawFast);
+          text += QString(" / ") + maptypes::airwayTypeToShortString(airway.type);
+          if(airway.minalt)
+            text += QString(" / ") + QString::number(airway.minalt) + " ft";
+        }
 
-          if(context->mapLayer->isMarkerInfo())
+        if(!text.isEmpty())
+        {
+          QString lineText = line.first().toString(GeoDataCoordinates::Decimal, 3) + "|" +
+                             line.last().toString(GeoDataCoordinates::Decimal, 3);
+          int index = lines.value(lineText, -1);
+          if(index == -1)
+            index = lines.value(line.last().toString(GeoDataCoordinates::Decimal, 3) + "|" +
+                                line.first().toString(GeoDataCoordinates::Decimal, 3), -1);
+
+          if(index != -1)
           {
-            QString type = marker.type.toLower();
-            type[0] = type.at(0).toUpper();
-            x -= context->mapLayerEffective->getMarkerSymbolSize() / 2 + 2;
-            symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                                   textatt::BOLD | textatt::RIGHT, 0);
+            QString oldTxt(texts.at(index));
+            if(oldTxt != text)
+              texts[index] = texts.at(index) + ", " + text;
+          }
+          else if(!text.isEmpty())
+          {
+            texts.append(text);
+            lines.insert(lineText, texts.size() - 1);
+            awIndex.append(i);
           }
         }
       }
     }
   }
 
-  if(widget->viewContext() == Marble::Still && verbose)
-    qDebug() << "Time for paint" << t.elapsed() << " ms";
+  int i = 0;
+  context->painter->setPen(mapcolors::airwayTextColor);
+  for(const QString& text : texts)
+  {
+    const MapAirway& airway = airways->at(awIndex.at(i));
+    int xt = -1, yt = -1;
+    float textBearing;
+    if(findTextPos(airway.from, airway.to, context->painter, metrics.width(text), metrics.height() * 2,
+                   xt, yt, &textBearing))
+    {
+      float rotate;
+      if(textBearing > 180.f)
+        rotate = textBearing + 90.f;
+      else
+        rotate = textBearing - 90.f;
+
+      context->painter->translate(xt, yt);
+      context->painter->rotate(rotate);
+      context->painter->drawText(-context->painter->fontMetrics().width(text) / 2,
+                                 context->painter->fontMetrics().ascent(), text);
+      context->painter->resetTransform();
+    }
+    i++;
+  }
+}
+
+void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapWaypoint> *waypoints,
+                                   bool drawWaypoint, bool drawFast)
+{
+  bool drawAirwayV = context->mapLayer->isAirway() && context->objectTypes.testFlag(maptypes::AIRWAYV);
+  bool drawAirwayJ = context->mapLayer->isAirway() && context->objectTypes.testFlag(maptypes::AIRWAYJ);
+
+  for(const MapWaypoint& waypoint : *waypoints)
+  {
+    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictor) || (drawAirwayJ && waypoint.hasJet)))
+      continue;
+
+    int x, y;
+    bool visible = wToS(waypoint.position, x, y);
+
+    if(visible)
+    {
+      symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
+                                        context->mapLayerEffective->getWaypointSymbolSize(), false,
+                                        drawFast);
+
+      if(context->mapLayer->isWaypointName() ||
+         (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
+        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
+                                        context->mapLayerEffective->getWaypointSymbolSize(),
+                                        false, drawFast);
+    }
+  }
+}
+
+void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *vors, bool drawFast)
+{
+  for(const MapVor& vor : *vors)
+  {
+    int x, y;
+    bool visible = wToS(vor.position, x, y);
+
+    if(visible)
+    {
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y,
+                                   context->mapLayerEffective->getVorSymbolSize(), false, drawFast,
+                                   context->mapLayerEffective->isVorLarge() ?
+                                   context->mapLayerEffective->getVorSymbolSize() * 5 : 0);
+
+      textflags::TextFlags flags;
+
+      if(context->mapLayer->isVorInfo())
+        flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
+      else if(context->mapLayer->isVorIdent())
+        flags = textflags::IDENT;
+
+      symbolPainter->drawVorText(context->painter, vor, x, y,
+                                 flags, context->mapLayerEffective->getVorSymbolSize(), false, drawFast);
+    }
+  }
+}
+
+void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
+{
+  for(const MapNdb& ndb : *ndbs)
+  {
+    int x, y;
+    bool visible = wToS(ndb.position, x, y);
+
+    if(visible)
+    {
+      symbolPainter->drawNdbSymbol(context->painter, ndb, x, y,
+                                   context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
+
+      textflags::TextFlags flags;
+
+      if(context->mapLayer->isNdbInfo())
+        flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
+      else if(context->mapLayer->isNdbIdent())
+        flags = textflags::IDENT;
+
+      symbolPainter->drawNdbText(context->painter, ndb, x, y,
+                                 flags, context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
+    }
+  }
+}
+
+void MapPainterNav::paintMarkers(const PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
+{
+  for(const MapMarker& marker : *markers)
+  {
+    int x, y;
+    bool visible = wToS(marker.position, x, y);
+
+    if(visible)
+    {
+      symbolPainter->drawMarkerSymbol(context->painter, marker, x, y,
+                                      context->mapLayerEffective->getMarkerSymbolSize(), drawFast);
+
+      if(context->mapLayer->isMarkerInfo())
+      {
+        QString type = marker.type.toLower();
+        type[0] = type.at(0).toUpper();
+        x -= context->mapLayerEffective->getMarkerSymbolSize() / 2 + 2;
+        symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
+                               textatt::BOLD | textatt::RIGHT, 0);
+      }
+    }
+  }
 }

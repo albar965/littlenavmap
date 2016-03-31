@@ -63,12 +63,18 @@ public:
   virtual void paint(const PaintContext *context) = 0;
 
 protected:
+  const Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
+  const Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
+  const Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
+
   void setRenderHints(Marble::GeoPainter *painter);
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos, int radiusNm, bool fast,
                    int& xtext, int& ytext);
 
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   float distance, int w, int h, int& x, int& y);
+                   int w, int h, int& x, int& y, float* bearing);
+  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
+                   float distance, int w, int h, int& x, int& y, float* bearing);
   bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                         Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
 
