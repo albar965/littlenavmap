@@ -17,6 +17,7 @@
 
 #include "gui/mainwindow.h"
 
+#include "db/databaseloader.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "sql/sqldatabase.h"
@@ -91,6 +92,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   openDatabase();
 
+  databaseLoader = new DatabaseLoader(this, &db);
+
   mapQuery = new MapQuery(&db);
   mapQuery->initQueries();
 
@@ -128,7 +131,7 @@ MainWindow::~MainWindow()
 
   delete dialog;
   delete errorHandler;
-  delete progressDialog;
+  delete databaseLoader;
 
   atools::settings::Settings::shutdown();
   atools::gui::Translator::unload();
@@ -269,7 +272,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, this, &MainWindow::loadScenery);
+  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseLoader::exec);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
@@ -335,6 +338,9 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::selectionChanged);
 
   connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
+
+  connect(databaseLoader, &DatabaseLoader::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
+  connect(databaseLoader, &DatabaseLoader::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 }
 
 void MainWindow::clearMessageText()
@@ -534,181 +540,6 @@ void MainWindow::createEmptySchema()
   }
 }
 
-void MainWindow::loadScenery()
-{
-  preDatabaseLoad();
-  using atools::fs::BglReaderOptions;
-
-  QString config = Settings::getOverloadedPath(":/littlenavmap/resources/config/navdatareader.cfg");
-  qInfo() << "loadScenery: Config file" << config;
-
-  QSettings settings(config, QSettings::IniFormat);
-
-  BglReaderOptions opts;
-  opts.loadFromSettings(settings);
-
-  progressDialog = new QProgressDialog(this);
-  QLabel *label = new QLabel(progressDialog);
-  label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-  label->setIndent(10);
-  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setMinimumWidth(600);
-
-  progressDialog->setWindowModality(Qt::WindowModal);
-  progressDialog->setLabel(label);
-  progressDialog->setAutoClose(false);
-  progressDialog->setAutoReset(false);
-  progressDialog->setMinimumDuration(0);
-  progressDialog->show();
-
-  atools::fs::fstype::SimulatorType type = atools::fs::fstype::FSX;
-  QString sceneryFile = atools::fs::FsPaths::getSceneryLibraryPath(type);
-  qInfo() << "loadScenery: Scenery file" << sceneryFile;
-
-  QString basepath = atools::fs::FsPaths::getBasePath(type);
-  qInfo() << "loadScenery: Base path" << basepath;
-
-  opts.setSceneryFile(sceneryFile);
-  opts.setBasepath(basepath);
-
-  QElapsedTimer timer;
-  opts.setProgressCallback(std::bind(&MainWindow::progressCallback, this, std::placeholders::_1, timer));
-
-  // Let the dialog close and show the busy pointer
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-  atools::fs::Navdatabase nd(&opts, &db);
-  nd.create();
-
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-  if(!progressDialog->wasCanceled())
-  {
-    progressDialog->setCancelButtonText(tr("&OK"));
-    progressDialog->exec();
-  }
-  delete progressDialog;
-  progressDialog = nullptr;
-
-  postDatabaseLoad(false);
-}
-
-bool MainWindow::progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer)
-{
-  if(progress.isFirstCall())
-  {
-    timer.start();
-    progressDialog->setMinimum(0);
-    progressDialog->setMaximum(progress.getTotal());
-  }
-  progressDialog->setValue(progress.getCurrent());
-
-  static const QString table(tr("<table>"
-                                  "<tbody>"
-                                    "<tr> "
-                                      "<td width=\"60\"><b>Files:</b>"
-                                      "</td>    "
-                                      "<td width=\"60\">%L5"
-                                      "</td> "
-                                      "<td width=\"60\"><b>VOR:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L7"
-                                      "</td> "
-                                      "<td width=\"60\"><b>Marker:</b>"
-                                      "</td>     "
-                                      "<td width=\"60\">%L10"
-                                      "</td>"
-                                    "</tr>"
-                                    "<tr> "
-                                      "<td width=\"60\"><b>Airports:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L6"
-                                      "</td> "
-                                      "<td width=\"60\"><b>ILS:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L8"
-                                      "</td> "
-                                      "<td width=\"60\"><b>Boundaries:</b>"
-                                      "</td> <td width=\"60\">%L11"
-                                    "</td>"
-                                  "</tr>"
-                                  "<tr> "
-                                    "<td width=\"60\">"
-                                    "</td>"
-                                    "<td width=\"60\">"
-                                    "</td>"
-                                    "<td width=\"60\"><b>NDB:</b>"
-                                    "</td> "
-                                    "<td width=\"60\">%L9"
-                                    "</td> "
-                                    "<td width=\"60\"><b>Waypoints:"
-                                    "</b>"
-                                  "</td>  "
-                                  "<td width=\"60\">%L12"
-                                  "</td>"
-                                "</tr>"
-                              "</tbody>"
-                            "</table>"
-                                ));
-
-  static const QString text(tr(
-                              "<b>%1</b><br/><br/><br/>"
-                              "<b>Time:</b> %2<br/>%3%4"
-                              ) + table);
-
-  static const QString textWithFile(tr(
-                                      "<b>Scenery:</b> %1 (%2)<br/>"
-                                      "<b>File:</b> %3<br/><br/>"
-                                      "<b>Time:</b> %4<br/>"
-                                      ) + table);
-
-  if(progress.isNewOther())
-    progressDialog->setLabelText(
-      text.arg(progress.getOtherAction()).
-      arg(formatter::formatElapsed(timer)).
-      arg(QString()).
-      arg(QString()).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
-      arg(progress.getNumWaypoints()));
-  else if(progress.isNewSceneryArea() || progress.isNewFile())
-    progressDialog->setLabelText(
-      textWithFile.arg(progress.getSceneryTitle()).
-      arg(progress.getSceneryPath()).
-      arg(progress.getBglFilename()).
-      arg(formatter::formatElapsed(timer)).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
-      arg(progress.getNumWaypoints()));
-  else if(progress.isLastCall())
-    progressDialog->setLabelText(
-      text.arg(tr("Done")).
-      arg(formatter::formatElapsed(timer)).
-      arg(QString()).
-      arg(QString()).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
-      arg(progress.getNumWaypoints()));
-
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-  return progressDialog->wasCanceled();
-}
-
 void MainWindow::options()
 {
   // QtMarbleConfigDialog dlg(mapWidget);
@@ -794,6 +625,8 @@ void MainWindow::readSettings()
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
 
+  databaseLoader->restoreState();
+
 }
 
 void MainWindow::writeSettings()
@@ -815,6 +648,8 @@ void MainWindow::writeSettings()
            ui->actionMapShowCities});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
+
+  databaseLoader->saveState();
 
   ws.syncSettings();
 }
@@ -860,9 +695,9 @@ void MainWindow::preDatabaseLoad()
     qWarning() << "Already in database loading status";
 }
 
-void MainWindow::postDatabaseLoad(bool force)
+void MainWindow::postDatabaseLoad()
 {
-  if(hasDatabaseLoadStatus || force)
+  if(hasDatabaseLoadStatus)
   {
     mapQuery->initQueries();
     searchController->postDatabaseLoad();

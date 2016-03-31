@@ -75,7 +75,10 @@ SOURCES += src/main.cpp\
     src/common/formatter.cpp \
     src/common/coordinateconverter.cpp \
     src/common/maptypesfactory.cpp \
-    src/common/morsecode.cpp
+    src/common/morsecode.cpp \
+    src/db/databaseloader.cpp \
+    src/db/databasedialog.cpp \
+    src/db/databasemeta.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -113,9 +116,13 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/formatter.h \
     src/common/coordinateconverter.h \
     src/common/maptypesfactory.h \
-    src/common/morsecode.h
+    src/common/morsecode.h \
+    src/db/databaseloader.h \
+    src/db/databasedialog.h \
+    src/db/databasemeta.h
 
-FORMS    += src/gui/mainwindow.ui
+FORMS    += src/gui/mainwindow.ui \
+    src/db/databasedialog.ui
 
 # Marble dependencies
 win32 {

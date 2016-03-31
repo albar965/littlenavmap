@@ -25,7 +25,6 @@
 #include "marble/MarbleGlobal.h"
 #include "common/maptypes.h"
 
-class QProgressDialog;
 class QElapsedTimer;
 class Controller;
 class ColumnList;
@@ -34,11 +33,9 @@ class RouteController;
 class QComboBox;
 class QLabel;
 class Search;
+class DatabaseLoader;
 
 namespace atools {
-namespace fs {
-class BglReaderProgressInfo;
-}
 namespace gui {
 class Dialog;
 class ErrorHandler;
@@ -101,7 +98,6 @@ private:
 
   Ui::MainWindow *ui;
   NavMapWidget *navMapWidget = nullptr;
-  QProgressDialog *progressDialog = nullptr;
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
 
   bool hasDatabaseLoadStatus = false;
@@ -109,6 +105,8 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+  DatabaseLoader *databaseLoader = nullptr;
+
   void openDatabase();
   void closeDatabase();
 
@@ -123,13 +121,11 @@ private:
   void readSettings();
   void updateActionStates();
   void setupUi();
-  void loadScenery();
-  bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
 
   void createNavMap();
   void options();
   void preDatabaseLoad();
-  void postDatabaseLoad(bool force);
+  void postDatabaseLoad();
   void createEmptySchema();
 
   void updateHistActions(int minIndex, int curIndex, int maxIndex);
