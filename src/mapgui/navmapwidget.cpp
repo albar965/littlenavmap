@@ -176,6 +176,18 @@ void NavMapWidget::saveState()
   s->setValue("Map/HomeLatY", static_cast<double>(homePos.getLatY()));
   s->setValue("Map/HomeZoom", homeZoom);
   history.saveState("Map/History");
+
+  QByteArray bytesDistMarker;
+  QDataStream ds(&bytesDistMarker, QIODevice::WriteOnly);
+  ds.setVersion(QDataStream::Qt_5_5);
+  ds << distanceMarkers;
+  s->setValue("Map/DistanceMarkers", bytesDistMarker);
+
+  QByteArray bytesRangeMarker;
+  QDataStream ds2(&bytesRangeMarker, QIODevice::WriteOnly);
+  ds2.setVersion(QDataStream::Qt_5_5);
+  ds2 << rangeMarkers;
+  s->setValue("Map/RangeMarkers", bytesRangeMarker);
 }
 
 void NavMapWidget::restoreState()
@@ -195,6 +207,16 @@ void NavMapWidget::restoreState()
     emit homeChanged(markPos);
   }
   history.restoreState("Map/History");
+
+  QByteArray bytesDistMark(s->value("Map/DistanceMarkers").toByteArray());
+  QDataStream ds(&bytesDistMark, QIODevice::ReadOnly);
+  ds.setVersion(QDataStream::Qt_5_5);
+  ds >> distanceMarkers;
+
+  QByteArray bytesRangeMark(s->value("Map/RangeMarkers").toByteArray());
+  QDataStream ds2(&bytesRangeMark, QIODevice::ReadOnly);
+  ds2.setVersion(QDataStream::Qt_5_5);
+  ds2 >> rangeMarkers;
 }
 
 void NavMapWidget::showSavedPos()

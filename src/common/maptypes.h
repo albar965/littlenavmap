@@ -406,6 +406,9 @@ struct RangeMarker
     return center;
   }
 
+  QDataStream& operator>>(QDataStream& dataStream);
+  QDataStream& operator<<(QDataStream& dataStream) const;
+
 };
 
 struct DistanceMarker
@@ -424,6 +427,11 @@ struct DistanceMarker
   }
 
 };
+
+QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj);
+QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj);
 
 QString navTypeName(const QString& type);
 QString navName(const QString& type);

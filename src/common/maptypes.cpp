@@ -17,6 +17,7 @@
 
 #include "maptypes.h"
 
+#include <QDataStream>
 #include <QHash>
 #include <QObject>
 
@@ -376,6 +377,58 @@ MapAirwayType airwayTypeFromString(const QString& typeStr)
     return maptypes::BOTH;
   else
     return maptypes::NO_AIRWAY;
+}
+
+QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj)
+{
+  dataStream >> obj.text >> obj.ranges;
+
+  float lon, lat;
+  dataStream >> lon >> lat;
+  obj.center = atools::geo::Pos(lon, lat);
+
+  qint32 t;
+  dataStream >> t;
+  obj.type = static_cast<maptypes::MapObjectTypes>(t);
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj)
+{
+  dataStream << obj.text
+  << obj.ranges
+  << obj.center.getLonX() << obj.center.getLatY()
+  << static_cast<qint32>(obj.type);
+  return dataStream;
+}
+
+QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj)
+{
+  dataStream >> obj.text >> obj.color;
+
+  float lon, lat;
+  dataStream >> lon >> lat;
+  obj.from = atools::geo::Pos(lon, lat);
+  dataStream >> lon >> lat;
+  obj.to = atools::geo::Pos(lon, lat);
+
+  dataStream >> obj.magvar;
+  qint32 t;
+  dataStream >> t;
+  obj.type = static_cast<maptypes::MapObjectTypes>(t);
+  dataStream >> obj.rhumbLine >> obj.hasMagvar;
+
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj)
+{
+  dataStream << obj.text << obj.color
+  << obj.from.getLonX() << obj.from.getLatY() << obj.to.getLonX() << obj.to.getLatY();
+
+  dataStream << obj.magvar << static_cast<qint32>(obj.type) << obj.rhumbLine << obj.hasMagvar;
+
+  return dataStream;
 }
 
 } // namespace types
