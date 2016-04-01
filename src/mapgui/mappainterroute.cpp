@@ -67,37 +67,49 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 
   painter->setBrush(Qt::NoBrush);
 
-  QList<GeoDataCoordinates> textCoords;
-  QList<qreal> textBearing;
-
   // Collect coordinates for text placement and lines first
-  int x, y;
+  QList<QPoint> textCoords;
+  QList<float> textBearing;
+  QStringList texts;
+
+  // Collect start and end points of legs and visibility
   QList<QPoint> startPoints;
-  QBitArray visible(routeMapObjects.size());
+  QBitArray visibleStartPoints(routeMapObjects.size(), false);
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
-  int i = 0;
-  for(const RouteMapObject& obj : routeMapObjects)
+  for(int i = 0; i < routeMapObjects.size(); i++)
   {
-    GeoDataCoordinates to(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0,
-                          GeoDataCoordinates::Degree);
-    if(!linestring.isEmpty())
+    const RouteMapObject& obj = routeMapObjects.at(i);
+    linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
+
+    int x, y;
+    visibleStartPoints.setBit(i, wToS(obj.getPosition(), x, y));
+
+    if(i > 0 && !fast)
     {
-      const GeoDataCoordinates& from = linestring.last();
-      qreal init = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                GeoDataCoordinates::InitialBearing));
-      qreal final = normalizeCourse(from.bearing(to, GeoDataCoordinates::Degree,
-                                                 GeoDataCoordinates::FinalBearing));
-      textBearing.append((init + final) / 2.);
-      textCoords.append(from.interpolate(to, 0.5));
+      int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
+      if(lineLength > 40)
+      {
+        QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm" + " / " +
+                     QString::number(obj.getCourseToRhumb(), 'f', 0) + "°M");
+
+        int textw = painter->fontMetrics().width(text);
+        if(textw < lineLength)
+          lineLength = textw;
+
+        int xt, yt;
+        float bearingt;
+        if(findTextPos(obj.getPosition(), routeMapObjects.at(i - 1).getPosition(), painter,
+                       lineLength, painter->fontMetrics().height(), xt, yt, &bearingt))
+        {
+          textCoords.append(QPoint(xt, yt));
+          textBearing.append(bearingt);
+          texts.append(text);
+        }
+      }
     }
-
-    linestring.append(to);
-    visible.setBit(i, wToS(obj.getPosition(), x, y));
     startPoints.append(QPoint(x, y));
-
-    i++;
   }
 
   // Draw outer line
@@ -108,62 +120,51 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   painter->setPen(QPen(QColor(Qt::yellow), 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   painter->drawPolyline(linestring);
 
-  // Draw text along lines
-  painter->setPen(QColor(Qt::black));
-  i = 0;
-  for(const GeoDataCoordinates& coord : textCoords)
+  if(!fast)
   {
-    if(wToS(coord, x, y))
+    // Draw text along lines
+    painter->setPen(QColor(Qt::black));
+    int i = 0;
+    for(const QPoint& textCoord : textCoords)
     {
-      const RouteMapObject& obj = routeMapObjects.at(i + 1);
-      if(obj.hasPredecessor())
+      QString text = texts.at(i);
+
+      Qt::TextElideMode elide = Qt::ElideRight;
+      qreal rotate, brg = textBearing.at(i);
+      if(brg > 180.)
       {
-        QPoint p1 = startPoints.at(i);
-        QPoint p2 = startPoints.at(i + 1);
-
-        int lineLength = simpleDistance(p1.x(), p1.y(), p2.x(), p2.y());
-
-        if(lineLength > 40)
-        {
-          QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm" + " / " +
-                       QString::number(obj.getCourseToRhumb(), 'f', 0) + "°M");
-
-          Qt::TextElideMode elide = Qt::ElideRight;
-          qreal rotate, brg = textBearing.at(i);
-          if(brg > 180.)
-          {
-            text = "<<  " + text;
-            elide = Qt::ElideRight;
-            rotate = brg + 90.;
-          }
-          else
-          {
-            text += "  >>";
-            elide = Qt::ElideLeft;
-            rotate = brg - 90.;
-          }
-
-          text = painter->fontMetrics().elidedText(text, elide, lineLength);
-
-          painter->translate(x, y);
-          painter->rotate(rotate);
-          painter->drawText(-painter->fontMetrics().width(text) / 2,
-                            -painter->fontMetrics().descent(), text);
-          painter->resetTransform();
-        }
+        text += "  >>";
+        elide = Qt::ElideLeft;
+        rotate = brg + 90.;
       }
+      else
+      {
+        text = "<<  " + text;
+        elide = Qt::ElideRight;
+        rotate = brg - 90.;
+      }
+
+      int lineLength = simpleDistance(startPoints.at(i).x(), startPoints.at(i).y(),
+                                      startPoints.at(i + 1).x(), startPoints.at(i + 1).y());
+      text = painter->fontMetrics().elidedText(text, elide, lineLength);
+
+      painter->translate(textCoord.x(), textCoord.y());
+      painter->rotate(rotate);
+      painter->drawText(-painter->fontMetrics().width(text) / 2,
+                        -painter->fontMetrics().descent(), text);
+      painter->resetTransform();
+      i++;
     }
-    i++;
   }
 
   // Draw symbols
-  i = 0;
+  int i = 0;
   for(const QPoint& pt : startPoints)
   {
-    if(visible.testBit(i))
+    if(visibleStartPoints.testBit(i))
     {
-      x = pt.x();
-      y = pt.y();
+      int x = pt.x();
+      int y = pt.y();
       const RouteMapObject& obj = routeMapObjects.at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
@@ -195,10 +196,10 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   i = 0;
   for(const QPoint& pt : startPoints)
   {
-    if(visible.testBit(i))
+    if(visibleStartPoints.testBit(i))
     {
-      x = pt.x();
-      y = pt.y();
+      int x = pt.x();
+      int y = pt.y();
       const RouteMapObject& obj = routeMapObjects.at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)

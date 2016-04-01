@@ -59,6 +59,8 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
 {
   maptypes::MapSearchResult res;
 
+  predecessor = predRouteMapObj != nullptr;
+
   QString region = entry.getIcaoRegion();
 
   if(region == "KK") // Invalid route finder stuff

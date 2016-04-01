@@ -146,8 +146,8 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
   return true;
   }
   else
-    // Check for 20 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += 0.05)
+    // Check for 50 positions along the line starting below and above the center position
+    for(float i = 0.; i <= 0.5; i += 0.02)
     {
       center = pos1.interpolate(pos2, distance, 0.5f - i);
       visible = wToS(center, x, y);
@@ -182,8 +182,8 @@ bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
   if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
     return true;
   else
-    // Check for 20 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += 0.05)
+    // Check for 50 positions along the line starting below and above the center position
+    for(float i = 0.; i <= 0.5; i += 0.02)
     {
     center = pos1.interpolateRhumb(pos2, distance, 0.5f - i);
     visible = wToS(center, x, y);
