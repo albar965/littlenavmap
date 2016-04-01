@@ -19,8 +19,10 @@
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 
-static QString EMPTY_STR;
-static QString UNKNOWN_STR("Unknown");
+using namespace atools::geo;
+
+const QString EMPTY_STR;
+const QString UNKNOWN_STR("Unknown");
 
 RouteMapObject::RouteMapObject()
 {
@@ -114,7 +116,7 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
     case atools::fs::pln::entry::USER:
       valid = true;
       type = maptypes::USER;
-      userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
+      setUserIdent(userIdentIndex);
       break;
   }
 
@@ -122,11 +124,30 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
     type = maptypes::INVALID;
 
   res.deleteAllObjects();
+  updateDistAndCourse(predRouteMapObj);
+}
 
+RouteMapObject::~RouteMapObject()
+{
+
+}
+
+void RouteMapObject::update(const RouteMapObject *predRouteMapObj, int& userIdentIndex)
+{
+  setUserIdent(userIdentIndex);
+  updateDistAndCourse(predRouteMapObj);
+}
+
+void RouteMapObject::setUserIdent(int& userIdentIndex)
+{
+  if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+    userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
+}
+
+void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)
+{
   if(predRouteMapObj != nullptr)
   {
-    predecessor = true;
-    using namespace atools::geo;
 
     distanceTo = meterToNm(getPosition().distanceMeterTo(predRouteMapObj->getPosition()));
     distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(predRouteMapObj->getPosition()));
@@ -135,14 +156,17 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
     if(magvar == 0.f)
       magvar = predRouteMapObj->getMagvar();
 
-    course = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
-    courseRhumb = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
+    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
+    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
   }
-}
-
-RouteMapObject::~RouteMapObject()
-{
-
+  else
+  {
+    predecessor = false;
+    distanceTo = 0.f;
+    distanceToRhumb = 0.f;
+    courseTo = 0.f;
+    courseRhumbTo = 0.f;
+  }
 }
 
 int RouteMapObject::getId() const

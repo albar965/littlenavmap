@@ -31,6 +31,8 @@ public:
                  const RouteMapObject *predRouteMapObj, int& userIdentIndex);
   ~RouteMapObject();
 
+  void update(const RouteMapObject *predRouteMapObj, int& userIdentIndex);
+
   int getId() const;
   const atools::geo::Pos& getPosition() const;
   const QString& getIdent() const;
@@ -90,14 +92,14 @@ public:
     return distanceToRhumb;
   }
 
-  float getCourse() const
+  float getCourseTo() const
   {
-    return course;
+    return courseTo;
   }
 
-  float getCourseRhumb() const
+  float getCourseToRhumb() const
   {
-    return courseRhumb;
+    return courseRhumbTo;
   }
 
 private:
@@ -110,7 +112,10 @@ private:
   maptypes::MapWaypoint waypoint;
   bool predecessor = false;
 
-  float distanceTo = 0.f, distanceToRhumb = 0.f, course = 0.f, courseRhumb = 0.f;
+  float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f;
+  void setUserIdent(int& userIdentIndex);
+  void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
+
 };
 
 #endif // ROUTEMAPOBJECT_H

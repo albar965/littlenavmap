@@ -1609,10 +1609,13 @@
         <bool>false</bool>
        </property>
        <property name="cornerButtonEnabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <attribute name="horizontalHeaderMinimumSectionSize">
         <number>5</number>
+       </attribute>
+       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+        <bool>false</bool>
        </attribute>
        <attribute name="verticalHeaderCascadingSectionResizes">
         <bool>true</bool>
@@ -2528,7 +2531,7 @@
      <normaloff>:/littlenavmap/resources/icons/routelegup.svg</normaloff>:/littlenavmap/resources/icons/routelegup.svg</iconset>
    </property>
    <property name="text">
-    <string>Move Leg Up</string>
+    <string>Move selected Legs Up</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Up</string>
@@ -2540,7 +2543,7 @@
      <normaloff>:/littlenavmap/resources/icons/routelegdown.svg</normaloff>:/littlenavmap/resources/icons/routelegdown.svg</iconset>
    </property>
    <property name="text">
-    <string>Move Leg Down</string>
+    <string>Move selected Legs Down</string>
    </property>
    <property name="toolTip">
     <string>Move Leg Down</string>

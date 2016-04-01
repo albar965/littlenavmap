@@ -37,6 +37,7 @@ class QTableView;
 class QStandardItemModel;
 class QStandardItem;
 class QItemSelection;
+class RouteIconDelegate;
 
 class RouteController :
   public QObject
@@ -44,7 +45,7 @@ class RouteController :
   Q_OBJECT
 
 public:
-  RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *view);
+  RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView);
   virtual ~RouteController();
 
   void newFlightplan();
@@ -74,9 +75,11 @@ private:
   QList<RouteMapObject> routeMapObjects;
   QString routeFilename, dockWindowTitle;
   MainWindow *parentWindow;
-  QTableView *tableView;
+  QTableView *view;
   MapQuery *query;
   QStandardItemModel *model;
+  RouteIconDelegate *iconDelegate;
+
   void flightplanToView();
   void updateWindowTitle();
 
@@ -93,6 +96,14 @@ private:
   void moveLegsDown();
   void moveLegsUp();
   void deleteLegs();
+  void selectedRows(QList<int>& rows, bool reverse);
+  void updateView();
+
+  void select(QList<int>& rows, int offset);
+  void moveLegs(int dir);
+
+  void updateMoveAndDeleteActions();
+
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);

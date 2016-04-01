@@ -126,7 +126,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
         if(lineLength > 40)
         {
           QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm" + " / " +
-                       QString::number(obj.getCourseRhumb(), 'f', 0) + "°M");
+                       QString::number(obj.getCourseToRhumb(), 'f', 0) + "°M");
 
           Qt::TextElideMode elide = Qt::ElideRight;
           qreal rotate, brg = textBearing.at(i);

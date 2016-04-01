@@ -37,10 +37,33 @@
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
 
+// TODO tr
+const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
+                                    "Course\n°M", "Direct\n°M",
+                                    "Distance\nnm", "Remaining\nnm"});
+namespace rc {
+enum RouteColumns
+{
+  FIRST_COL,
+  IDENT = FIRST_COL,
+  REGION,
+  NAME,
+  AIRWAY,
+  TYPE,
+  FREQ,
+  COURSE,
+  DIRECT,
+  DIST,
+  REMAINING,
+  LAST_COL = REMAINING
+};
+
+}
+
 using namespace atools::fs::pln;
 
-RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *view)
-  : QObject(parent), parentWindow(parent), tableView(view), query(mapQuery)
+RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView)
+  : QObject(parent), parentWindow(parent), view(tableView), query(mapQuery)
 {
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
@@ -54,32 +77,29 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
 
-  view->horizontalHeader()->setSectionsMovable(false);
+  view->horizontalHeader()->setSectionsMovable(true);
   view->verticalHeader()->setSectionsMovable(false);
-  view->verticalHeader()->setHighlightSections(true);
-  view->verticalHeader()->setSectionsClickable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  view->setDragDropOverwriteMode(false);
   dockWindowTitle = ui->dockWidgetRoute->windowTitle();
   model = new QStandardItemModel();
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(model);
   delete m;
 
-  // TODO delete old and new delegate
-  tableView->setItemDelegateForColumn(0, new RouteIconDelegate(routeMapObjects));
+  iconDelegate = new RouteIconDelegate(routeMapObjects);
+  view->setItemDelegateForColumn(0, iconDelegate);
 
   // Avoid stealing of keys from other default menus
   ui->actionRouteLegDown->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  tableView->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg});
+  view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
-  connect(tableView->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
   connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveLegsDown);
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveLegsUp);
@@ -89,22 +109,8 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
 RouteController::~RouteController()
 {
   delete model;
+  delete iconDelegate;
   delete flightplan;
-}
-
-void RouteController::moveLegsDown()
-{
-  qDebug() << "Leg down";
-}
-
-void RouteController::moveLegsUp()
-{
-  qDebug() << "Leg up";
-}
-
-void RouteController::deleteLegs()
-{
-  qDebug() << "Leg delete";
 }
 
 void RouteController::saveState()
@@ -112,7 +118,7 @@ void RouteController::saveState()
   Ui::MainWindow *ui = parentWindow->getUi();
 
   atools::gui::WidgetState saver("Route/View");
-  saver.save({tableView, ui->spinBoxRouteSpeed});
+  saver.save({view, ui->spinBoxRouteSpeed});
 
   atools::settings::Settings::instance()->setValue("Route/Filename", routeFilename);
 }
@@ -134,12 +140,12 @@ void RouteController::restoreState()
 
   Ui::MainWindow *ui = parentWindow->getUi();
   atools::gui::WidgetState saver("Route/View");
-  saver.restore({tableView, ui->spinBoxRouteSpeed});
+  saver.restore({view, ui->spinBoxRouteSpeed});
 }
 
 void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const
 {
-  QItemSelection sm = tableView->selectionModel()->selection();
+  QItemSelection sm = view->selectionModel()->selection();
   for(const QItemSelectionRange& rng : sm)
     for(int row = rng.top(); row <= rng.bottom(); ++row)
       selRouteMapObjects.append(routeMapObjects.at(row));
@@ -194,12 +200,66 @@ void RouteController::saveFlightplan()
   }
 }
 
+void RouteController::updateView()
+{
+  if(flightplan != nullptr)
+  {
+    float cumulatedDistance = 0.f;
+
+    totalDistance = 0.f;
+    // Used to number user waypoints
+    int userIdentIndex = 1;
+    for(int i = 0; i < routeMapObjects.size(); i++)
+    {
+      RouteMapObject *last = nullptr;
+      RouteMapObject& mapobj = routeMapObjects[i];
+      if(i == 0)
+        boundingRect = atools::geo::Rect(mapobj.getPosition());
+      else
+      {
+        boundingRect.extend(mapobj.getPosition());
+        last = &routeMapObjects[i - 1];
+      }
+
+      mapobj.update(last, userIdentIndex);
+      totalDistance += mapobj.getDistanceTo();
+    }
+
+    QStandardItem *item;
+    for(int i = 0; i < routeMapObjects.size(); i++)
+    {
+      const RouteMapObject& mapobj = routeMapObjects.at(i);
+
+      if(i > 0)
+      {
+        item = new QStandardItem(QString::number(mapobj.getCourseTo(), 'f', 0));
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(i, rc::COURSE, item);
+
+        item = new QStandardItem(QString::number(mapobj.getCourseToRhumb(), 'f', 0));
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(i, rc::DIRECT, item);
+
+        item = new QStandardItem(QString::number(mapobj.getDistanceTo(), 'f', 1));
+        item->setTextAlignment(Qt::AlignRight);
+        model->setItem(i, rc::DIST, item);
+      }
+
+      cumulatedDistance += mapobj.getDistanceTo();
+      // Remaining
+
+      item = new QStandardItem(QString::number(totalDistance - cumulatedDistance, 'f', 1));
+      item->setTextAlignment(Qt::AlignRight);
+      model->setItem(i, rc::REMAINING, item);
+    }
+  }
+}
+
 void RouteController::flightplanToView()
 {
   model->removeRows(0, model->rowCount());
-  model->setHorizontalHeaderLabels({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
-                                    "Course\n°M", "Direct\n°M",
-                                    "Distance\nnm", "Remaining\nnm"});
+
+  model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
 
   if(flightplan != nullptr)
   {
@@ -278,11 +338,11 @@ void RouteController::flightplanToView()
       }
       else
       {
-        item = new QStandardItem(QString::number(mapobj.getCourse(), 'f', 0));
+        item = new QStandardItem(QString::number(mapobj.getCourseTo(), 'f', 0));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
-        item = new QStandardItem(QString::number(mapobj.getCourseRhumb(), 'f', 0));
+        item = new QStandardItem(QString::number(mapobj.getCourseToRhumb(), 'f', 0));
         item->setTextAlignment(Qt::AlignRight);
         items.append(item);
 
@@ -358,6 +418,49 @@ void RouteController::doubleClick(const QModelIndex& index)
   }
 }
 
+void RouteController::updateMoveAndDeleteActions()
+{
+  Ui::MainWindow *ui = parentWindow->getUi();
+
+  QItemSelectionModel *sm = view->selectionModel();
+  if(model->rowCount() <= 3)
+  {
+    // Only start and destination and maybe one waypoint - nothing to move
+    ui->actionRouteLegUp->setEnabled(false);
+    ui->actionRouteLegDown->setEnabled(false);
+  }
+  else
+  {
+    ui->actionRouteLegUp->setEnabled(sm->hasSelection() &&
+                                     !sm->isRowSelected(0, QModelIndex()) &&
+                                     !sm->isRowSelected(1, QModelIndex()));
+
+    ui->actionRouteLegDown->setEnabled(sm->hasSelection() &&
+                                       !sm->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
+                                       !sm->isRowSelected(model->rowCount() - 2, QModelIndex()));
+
+    if(sm->selectedRows().size() == 1 && (sm->isRowSelected(0, QModelIndex()) ||
+                                          sm->isRowSelected(model->rowCount() - 1, QModelIndex())))
+    {
+      // If single selection on start or destination then disable action
+      ui->actionRouteLegUp->setEnabled(false);
+      ui->actionRouteLegDown->setEnabled(false);
+    }
+  }
+
+  if(model->rowCount() <= 2)
+    ui->actionRouteDeleteLeg->setEnabled(false);
+  else
+  {
+    // If single selection on start or destination then disable action
+    if(sm->selectedRows().size() == 1 && (sm->isRowSelected(0, QModelIndex()) ||
+                                          sm->isRowSelected(model->rowCount() - 1, QModelIndex())))
+      ui->actionRouteDeleteLeg->setEnabled(false);
+    else
+      ui->actionRouteDeleteLeg->setEnabled(view->selectionModel()->hasSelection());
+  }
+}
+
 void RouteController::tableContextMenu(const QPoint& pos)
 {
   qDebug() << "tableContextMenu";
@@ -365,9 +468,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   Ui::MainWindow *ui = parentWindow->getUi();
 
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
+  Q_UNUSED(saver);
 
-  atools::geo::Pos position;
-  QModelIndex index = tableView->indexAt(pos);
+  QModelIndex index = view->indexAt(pos);
   if(index.isValid())
   {
     const RouteMapObject& mo = routeMapObjects.at(index.row());
@@ -383,6 +486,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addSeparator();
 
     menu.addAction(ui->actionSearchTableCopy);
+
+    updateMoveAndDeleteActions();
+
     ui->actionSearchTableCopy->setEnabled(index.isValid());
 
     ui->actionMapRangeRings->setEnabled(true);
@@ -408,14 +514,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
       if(action == ui->actionSearchResetView)
       {
         // Reorder columns to match model order
-        QHeaderView *header = tableView->horizontalHeader();
+        QHeaderView *header = view->horizontalHeader();
         for(int i = 0; i < header->count(); ++i)
           header->moveSection(header->visualIndex(i), i);
 
-        tableView->resizeColumnsToContents();
+        view->resizeColumnsToContents();
       }
       else if(action == ui->actionSearchTableSelectAll)
-        tableView->selectAll();
+        view->selectAll();
       else if(action == ui->actionSearchSetMark)
         emit changeMark(mo.getPosition());
       else if(action == ui->actionMapRangeRings)
@@ -436,16 +542,110 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
 
+  updateMoveAndDeleteActions();
   tableSelectionChanged();
 }
 
 void RouteController::tableSelectionChanged()
 {
-  QItemSelectionModel *sm = tableView->selectionModel();
+  QItemSelectionModel *sm = view->selectionModel();
 
   int selectedRows = 0;
   if(sm != nullptr && sm->hasSelection())
     selectedRows = sm->selectedRows().size();
 
   emit routeSelectionChanged(selectedRows, model->rowCount());
+}
+
+void RouteController::moveLegsDown()
+{
+  qDebug() << "Leg down";
+  moveLegs(1);
+}
+
+void RouteController::moveLegsUp()
+{
+  qDebug() << "Leg up";
+  moveLegs(-1);
+}
+
+void RouteController::moveLegs(int dir)
+{
+  QList<int> rows;
+  selectedRows(rows, dir > 0);
+
+  if(!rows.isEmpty())
+  {
+    QModelIndex curIdx = view->currentIndex();
+    view->selectionModel()->clear();
+    for(int row : rows)
+    {
+      flightplan->getEntries().move(row, row + dir);
+      routeMapObjects.move(row, row + dir);
+      model->insertRow(row + dir, model->takeRow(row));
+    }
+    changed = true;
+    updateView();
+    updateLabel();
+    updateWindowTitle();
+    view->setCurrentIndex(model->index(curIdx.row() + dir, curIdx.column()));
+    select(rows, dir);
+    updateMoveAndDeleteActions();
+    emit routeChanged();
+  }
+}
+
+void RouteController::deleteLegs()
+{
+  qDebug() << "Leg delete";
+  QList<int> rows;
+  selectedRows(rows, true);
+
+  if(!rows.isEmpty())
+  {
+    QModelIndex curIdx = view->currentIndex();
+    view->selectionModel()->clear();
+    for(int row : rows)
+    {
+      flightplan->getEntries().removeAt(row);
+      routeMapObjects.removeAt(row);
+      model->removeRow(row);
+    }
+    changed = true;
+    updateView();
+    updateLabel();
+    updateWindowTitle();
+    view->setCurrentIndex(curIdx);
+    updateMoveAndDeleteActions();
+    emit routeChanged();
+  }
+}
+
+void RouteController::selectedRows(QList<int>& rows, bool reverse)
+{
+  QItemSelection sm = view->selectionModel()->selection();
+  for(const QItemSelectionRange& rng : sm)
+    for(int row = rng.top(); row <= rng.bottom(); row++)
+      // Do no delete start and destination
+      if(row > 0 && row < model->rowCount() - 1)
+        rows.append(row);
+
+  if(!rows.isEmpty())
+  {
+    // Remove from bottom to top - otherwise model creates a mess
+    std::sort(rows.begin(), rows.end());
+    if(reverse)
+      std::reverse(rows.begin(), rows.end());
+  }
+}
+
+void RouteController::select(QList<int>& rows, int offset)
+{
+  QItemSelection newSel;
+
+  for(int row : rows)
+    newSel.append(QItemSelectionRange(model->index(row + offset, rc::FIRST_COL),
+                                      model->index(row + offset, rc::LAST_COL)));
+
+  view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
