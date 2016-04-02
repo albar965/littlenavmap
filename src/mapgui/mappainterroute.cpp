@@ -131,22 +131,25 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 
       Qt::TextElideMode elide = Qt::ElideRight;
       qreal rotate, brg = textBearing.at(i);
-      if(brg > 180.)
+      if(brg < 180.)
       {
         text += "  >>";
         elide = Qt::ElideLeft;
-        rotate = brg + 90.;
+        rotate = brg - 90.;
       }
       else
       {
         text = "<<  " + text;
         elide = Qt::ElideRight;
-        rotate = brg - 90.;
+        rotate = brg + 90.;
       }
 
-      int lineLength = simpleDistance(startPoints.at(i).x(), startPoints.at(i).y(),
-                                      startPoints.at(i + 1).x(), startPoints.at(i + 1).y());
-      text = painter->fontMetrics().elidedText(text, elide, lineLength);
+      if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
+      {
+        int lineLength = simpleDistance(startPoints.at(i).x(), startPoints.at(i).y(),
+                                        startPoints.at(i + 1).x(), startPoints.at(i + 1).y());
+        text = painter->fontMetrics().elidedText(text, elide, lineLength);
+      }
 
       painter->translate(textCoord.x(), textCoord.y());
       painter->rotate(rotate);

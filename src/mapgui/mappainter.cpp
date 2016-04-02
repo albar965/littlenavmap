@@ -134,41 +134,43 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
 bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter, float distance,
                              int w, int h, int& x, int& y, float *bearing)
 {
-  using namespace atools::geo;
-
   Pos center = pos1.interpolate(pos2, distance, 0.5);
   bool visible = wToS(center, x, y);
   if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
   {
-  if(bearing != nullptr)
-    *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
-                normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
-  return true;
+    if(bearing != nullptr)
+      *bearing = normalizeCourse(center.angleDegTo(pos1));
+    return true;
   }
   else
+  {
+    int x1, y1, x2, y2;
     // Check for 50 positions along the line starting below and above the center position
     for(float i = 0.; i <= 0.5; i += 0.02)
     {
       center = pos1.interpolate(pos2, distance, 0.5f - i);
-      visible = wToS(center, x, y);
-      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+      visible = wToS(center, x1, y1);
+      if(visible && painter->window().contains(QRect(x1 - w / 2, y1 - h / 2, w, h)))
       {
         if(bearing != nullptr)
-          *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
-                      normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
+          *bearing = normalizeCourse(center.angleDegTo(pos1));
+        x = x1;
+        y = y1;
         return true;
       }
 
       center = pos1.interpolate(pos2, distance, 0.5f + i);
-      visible = wToS(center, x, y);
-      if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+      visible = wToS(center, x2, y2);
+      if(visible && painter->window().contains(QRect(x2 - w / 2, y2 - h / 2, w, h)))
       {
         if(bearing != nullptr)
-          *bearing = (normalizeCourse(pos1.angleDegTo(pos2)) +
-                      normalizeCourse(opposedCourseDeg(pos2.angleDegTo(pos1)))) / 2.f;
+          *bearing = normalizeCourse(center.angleDegTo(pos1));
+        x = x2;
+        y = y2;
         return true;
       }
     }
+  }
   return false;
 }
 

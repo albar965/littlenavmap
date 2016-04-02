@@ -145,8 +145,10 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
     else
       rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
 
-    int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(8.f), rotate)));
+    int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(ILS_FEATHER_LEN_METER), rotate)));
     int texth = painter->fontMetrics().descent();
+
+    text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
     int textw = painter->fontMetrics().width(text);
 
     int textpos;

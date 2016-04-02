@@ -34,6 +34,8 @@ public:
   virtual void paint(const PaintContext *context) override;
 
 private:
+  const float ILS_FEATHER_LEN_METER = 8.f;
+
   void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
                      const MapLayer *mapLayer, bool fast);
 
