@@ -68,6 +68,10 @@ public:
     return boundingRect;
   }
 
+  void routeSetStart(int airportId);
+  void routeSetDest(int airportId);
+  void routeAdd(int id, maptypes::MapObjectTypes type);
+
 private:
   bool changed = false;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -103,6 +107,9 @@ private:
   void moveLegs(int dir);
 
   void updateMoveAndDeleteActions();
+
+  void buildFlightplanEntry(int id, maptypes::MapObjectTypes type, atools::fs::pln::FlightplanEntry& entry);
+  int nearestLeg(const atools::geo::Pos& pos);
 
 signals:
   void showRect(const atools::geo::Rect& rect);

@@ -282,6 +282,7 @@ void NavMapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighli
 void NavMapWidget::routeChanged()
 {
   paintLayer->routeChanged();
+  update();
 }
 
 void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
@@ -333,7 +334,6 @@ void NavMapWidget::contextMenu(const QPoint& point)
   menu.addSeparator();
   menu.addAction(ui->actionShowInSearch);
 
-  CoordinateConverter conv(viewport());
   maptypes::MapSearchResult result;
 
   getAllNearestMapObjects(point.x(), point.y(), 10, result);
@@ -364,45 +364,56 @@ void NavMapWidget::contextMenu(const QPoint& point)
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint wp;
 
-  QString searchText;
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
 
-  // Update "Show in search" menu items
+  ui->actionRouteAdd->setEnabled(false);
+  ui->actionRouteAirportStart->setEnabled(false);
+  ui->actionRouteAirportDest->setEnabled(false);
+
+  QString searchText;
+  // Update menu items
   if(!result.airports.isEmpty())
   {
     ap = *result.airports.first();
     searchText = "Airport " + ap.name + " (" + ap.ident + ")";
     selectedSearchType = maptypes::AIRPORT;
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+
+    ui->actionRouteAirportStart->setEnabled(true);
+    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(searchText));
+    ui->actionRouteAirportDest->setEnabled(true);
+    ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(searchText));
   }
   else if(!result.vors.isEmpty())
   {
     vor = *result.vors.first();
     searchText = "VOR " + vor.name + " (" + vor.ident + ")";
     selectedSearchType = maptypes::VOR;
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else if(!result.ndbs.isEmpty())
   {
     ndb = *result.ndbs.first();
     searchText = "NDB " + ndb.name + " (" + ndb.ident + ")";
     selectedSearchType = maptypes::NDB;
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else if(!result.waypoints.isEmpty())
   {
     wp = *result.waypoints.first();
     searchText = "Waypoint " + wp.ident;
     selectedSearchType = maptypes::WAYPOINT;
-    ui->actionShowInSearch->setEnabled(true);
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
   }
   else
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+
+  // Update "show in search" and "add to route"
+  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
+     !result.airports.isEmpty())
+  {
+    ui->actionShowInSearch->setEnabled(true);
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+    ui->actionRouteAdd->setEnabled(true);
+    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(searchText));
+  }
 
   // Update "show range rings for Navaid"
   if(!result.vors.isEmpty())
@@ -539,15 +550,29 @@ void NavMapWidget::contextMenu(const QPoint& point)
       setContextMenuPolicy(Qt::NoContextMenu);
       currentDistanceMarkerIndex = distanceMarkers.size() - 1;
     }
-    // select CL elwha in search bug
+    else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart || action ==
+            ui->actionRouteAirportDest)
+    {
+      int id = -1;
+      if(selectedSearchType == maptypes::AIRPORT)
+        id = ap.id;
+      else if(selectedSearchType == maptypes::VOR)
+        id = vor.id;
+      else if(selectedSearchType == maptypes::NDB)
+        id = ndb.id;
+      else if(selectedSearchType == maptypes::WAYPOINT)
+        id = wp.id;
 
-    // else if(action == ui->actionRouteAdd)
-    // emit routeAdd(controller->getIdForRow(index), navType);
-    // else if(action == ui->actionRouteAirportStart)
-    // emit routeSetStart(controller->getIdForRow(index));
-    // else if(action == ui->actionRouteAirportDest)
-    // emit routeSetDest(controller->getIdForRow(index));
-
+      if(id != -1)
+      {
+        if(action == ui->actionRouteAdd)
+          emit routeAdd(id, selectedSearchType);
+        else if(action == ui->actionRouteAirportStart)
+          emit routeSetStart(id);
+        else if(action == ui->actionRouteAirportDest)
+          emit routeSetDest(id);
+      }
+    }
   }
 }
 

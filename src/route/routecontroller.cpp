@@ -36,6 +36,7 @@
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
+#include <QVector2D>
 
 // TODO tr
 const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
@@ -61,6 +62,7 @@ enum RouteColumns
 }
 
 using namespace atools::fs::pln;
+using namespace atools::geo;
 
 RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView)
   : QObject(parent), parentWindow(parent), view(tableView), query(mapQuery)
@@ -214,7 +216,7 @@ void RouteController::updateView()
       RouteMapObject *last = nullptr;
       RouteMapObject& mapobj = routeMapObjects[i];
       if(i == 0)
-        boundingRect = atools::geo::Rect(mapobj.getPosition());
+        boundingRect = Rect(mapobj.getPosition());
       else
       {
         boundingRect.extend(mapobj.getPosition());
@@ -263,6 +265,8 @@ void RouteController::flightplanToView()
 
   if(flightplan != nullptr)
   {
+    routeMapObjects.clear();
+
     RouteMapObject last;
     totalDistance = 0.f;
     // Used to number user waypoints
@@ -270,9 +274,9 @@ void RouteController::flightplanToView()
     int row = 0;
 
     // Create map objects first and calculate total distance
-    for(const FlightplanEntry& entry : flightplan->getEntries())
+    for(FlightplanEntry& entry : flightplan->getEntries())
     {
-      RouteMapObject mapobj(entry, query, row == 0 ? nullptr : &last, userIdentIndex);
+      RouteMapObject mapobj(&entry, query, row == 0 ? nullptr : &last, userIdentIndex);
 
       if(mapobj.getMapObjectType() == maptypes::INVALID)
         qWarning() << "Entry for ident" << entry.getIcaoIdent() <<
@@ -293,7 +297,7 @@ void RouteController::flightplanToView()
       items.append(new QStandardItem(mapobj.getIdent()));
       items.append(new QStandardItem(mapobj.getRegion()));
       items.append(new QStandardItem(mapobj.getName()));
-      items.append(new QStandardItem(mapobj.getFlightplanEntry().getAirway()));
+      items.append(new QStandardItem(mapobj.getFlightplanEntry()->getAirway()));
 
       if(mapobj.getMapObjectType() == maptypes::VOR)
       {
@@ -331,7 +335,7 @@ void RouteController::flightplanToView()
 
       if(row == 0)
       {
-        boundingRect = atools::geo::Rect(mapobj.getPosition());
+        boundingRect = Rect(mapobj.getPosition());
         items.append(nullptr);
         items.append(nullptr);
         items.append(nullptr);
@@ -648,4 +652,118 @@ void RouteController::select(QList<int>& rows, int offset)
                                       model->index(row + offset, rc::LAST_COL)));
 
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+}
+
+void RouteController::routeSetStart(int airportId)
+{
+  qDebug() << "route set start id" << airportId;
+
+  FlightplanEntry entry;
+  buildFlightplanEntry(airportId, maptypes::AIRPORT, entry);
+}
+
+void RouteController::routeSetDest(int airportId)
+{
+  qDebug() << "route set dest id" << airportId;
+
+  FlightplanEntry entry;
+  buildFlightplanEntry(airportId, maptypes::AIRPORT, entry);
+}
+
+void RouteController::routeAdd(int id, maptypes::MapObjectTypes type)
+{
+  qDebug() << "route add id" << id << "type" << type;
+
+  FlightplanEntry entry;
+  buildFlightplanEntry(id, type, entry);
+
+  int leg = nearestLeg(entry.getPosition());
+  qDebug() << "nearestLeg" << leg;
+
+  int insertIndex = leg != -1 ? leg : flightplan->getEntries().size() - 1;
+  flightplan->getEntries().insert(insertIndex, entry);
+
+  const RouteMapObject& rmoPred = routeMapObjects.at(insertIndex - 1);
+  int userIdIndex = 0; // Will be updated later
+  RouteMapObject rmo(&flightplan->getEntries()[insertIndex], query, &rmoPred, userIdIndex);
+
+  routeMapObjects.insert(insertIndex, rmo);
+
+  changed = true;
+  flightplanToView();
+  updateWindowTitle();
+  updateLabel();
+  emit routeChanged();
+}
+
+int RouteController::nearestLeg(const atools::geo::Pos& pos)
+{
+  int nearest = -1;
+  float minDistance = std::numeric_limits<float>::max();
+  for(int i = 1; i < routeMapObjects.size(); i++)
+  {
+    bool valid;
+    float distance = std::abs(pos.distanceMeterToLine(routeMapObjects.at(i - 1).getPosition(),
+                                                      routeMapObjects.at(i).getPosition(), valid));
+
+    if(valid && distance < minDistance)
+    {
+      minDistance = distance;
+      nearest = i;
+    }
+  }
+  for(int i = 0; i < routeMapObjects.size(); i++)
+  {
+    float distance = routeMapObjects.at(i).getPosition().distanceMeterTo(pos);
+    if(distance < minDistance)
+    {
+      minDistance = distance;
+      nearest = i + 1;
+    }
+  }
+  Q_ASSERT(nearest != -1);
+  return nearest;
+}
+
+void RouteController::buildFlightplanEntry(int id, maptypes::MapObjectTypes type, FlightplanEntry& entry)
+{
+  maptypes::MapSearchResult result;
+  query->getMapObjectById(result, type, id);
+
+  if(type == maptypes::AIRPORT)
+  {
+    const maptypes::MapAirport *ap = result.airports.first();
+    entry.setIcaoIdent(ap->ident);
+    entry.setPosition(ap->position);
+    entry.setWaypointType(entry::AIRPORT);
+  }
+  else if(type == maptypes::WAYPOINT)
+  {
+    const maptypes::MapWaypoint *wp = result.waypoints.first();
+    entry.setIcaoIdent(wp->ident);
+    entry.setPosition(wp->position);
+    entry.setWaypointType(entry::INTERSECTION);
+  }
+  else if(type == maptypes::VOR)
+  {
+    const maptypes::MapVor *vor = result.vors.first();
+    entry.setIcaoIdent(vor->ident);
+    entry.setPosition(vor->position);
+    entry.setWaypointType(entry::VOR);
+  }
+  else if(type == maptypes::NDB)
+  {
+    const maptypes::MapNdb *ndb = result.ndbs.first();
+    entry.setIcaoIdent(ndb->ident);
+    entry.setPosition(ndb->position);
+    entry.setWaypointType(entry::NDB);
+  }
+  else if(type == maptypes::USER)
+  {
+    // TODO
+  }
+  else
+    qWarning() << "Unknown Map object type" << type;
+
+  entry.setWaypointId(entry.getIcaoIdent());
 }

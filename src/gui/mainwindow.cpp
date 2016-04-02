@@ -337,6 +337,23 @@ void MainWindow::connectAllSlots()
   connect(searchController->getNavSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
 
+  connect(navMapWidget, &NavMapWidget::routeSetStart,
+          routeController, &RouteController::routeSetStart);
+  connect(navMapWidget, &NavMapWidget::routeSetDest,
+          routeController, &RouteController::routeSetDest);
+  connect(navMapWidget, &NavMapWidget::routeAdd,
+          routeController, &RouteController::routeAdd);
+
+  connect(searchController->getAirportSearch(), &Search::routeSetStart,
+          routeController, &RouteController::routeSetStart);
+  connect(searchController->getAirportSearch(), &Search::routeSetDest,
+          routeController, &RouteController::routeSetDest);
+  connect(searchController->getAirportSearch(), &Search::routeAdd,
+          routeController, &RouteController::routeAdd);
+
+  connect(searchController->getNavSearch(), &Search::routeAdd,
+          routeController, &RouteController::routeAdd);
+
   connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
 
   connect(databaseLoader, &DatabaseLoader::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);

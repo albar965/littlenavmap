@@ -79,8 +79,8 @@ void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>&
 }
 
 // TODO no delete needed here
-void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
-                            const QString& ident, const QString& region)
+void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+                                   const QString& ident, const QString& region)
 {
   if(type == maptypes::AIRPORT)
   {
@@ -129,6 +129,58 @@ void MapQuery::getMapObject(maptypes::MapSearchResult& result, maptypes::MapObje
     {
       maptypes::MapWaypoint *wp = new maptypes::MapWaypoint;
       mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), *wp);
+      result.waypoints.append(wp);
+      result.needsDelete = true;
+    }
+  }
+}
+
+void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id)
+{
+  if(type == maptypes::AIRPORT)
+  {
+    airportByIdQuery->bindValue(":id", id);
+    airportByIdQuery->exec();
+    while(airportByIdQuery->next())
+    {
+      maptypes::MapAirport *ap = new maptypes::MapAirport;
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true);
+      result.airports.append(ap);
+      result.needsDelete = true;
+    }
+  }
+  else if(type == maptypes::VOR)
+  {
+    vorByIdQuery->bindValue(":id", id);
+    vorByIdQuery->exec();
+    while(vorByIdQuery->next())
+    {
+      maptypes::MapVor *vor = new maptypes::MapVor;
+      mapTypesFactory->fillVor(vorByIdQuery->record(), *vor);
+      result.vors.append(vor);
+      result.needsDelete = true;
+    }
+  }
+  else if(type == maptypes::NDB)
+  {
+    ndbByIdQuery->bindValue(":id", id);
+    ndbByIdQuery->exec();
+    while(ndbByIdQuery->next())
+    {
+      maptypes::MapNdb *ndb = new maptypes::MapNdb;
+      mapTypesFactory->fillNdb(ndbByIdQuery->record(), *ndb);
+      result.ndbs.append(ndb);
+      result.needsDelete = true;
+    }
+  }
+  else if(type == maptypes::WAYPOINT)
+  {
+    waypointByIdQuery->bindValue(":id", id);
+    waypointByIdQuery->exec();
+    while(waypointByIdQuery->next())
+    {
+      maptypes::MapWaypoint *wp = new maptypes::MapWaypoint;
+      mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), *wp);
       result.waypoints.append(wp);
       result.needsDelete = true;
     }
@@ -777,6 +829,15 @@ void MapQuery::initQueries()
   waypointByIdentQuery = new SqlQuery(db);
   waypointByIdentQuery->prepare(waypointQueryBase + " where " + whereIdentRegion);
 
+  vorByIdQuery = new SqlQuery(db);
+  vorByIdQuery->prepare(vorQueryBase + " where vor_id = :id");
+
+  ndbByIdQuery = new SqlQuery(db);
+  ndbByIdQuery->prepare(ndbQueryBase + " where ndb_id = :id");
+
+  waypointByIdQuery = new SqlQuery(db);
+  waypointByIdQuery->prepare(waypointQueryBase + " where waypoint_id = :id");
+
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
     airportQueryBase + " where " + whereRect +
@@ -917,10 +978,18 @@ void MapQuery::deInitQueries()
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
+
   delete vorByIdentQuery;
   vorByIdentQuery = nullptr;
   delete ndbByIdentQuery;
   ndbByIdentQuery = nullptr;
   delete waypointByIdentQuery;
   waypointByIdentQuery = nullptr;
+
+  delete vorByIdQuery;
+  vorByIdQuery = nullptr;
+  delete ndbByIdQuery;
+  ndbByIdQuery = nullptr;
+  delete waypointByIdQuery;
+  waypointByIdQuery = nullptr;
 }

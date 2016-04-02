@@ -30,7 +30,7 @@ RouteMapObject::RouteMapObject()
 }
 
 template<typename TYPE>
-const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs::pln::FlightplanEntry& entry)
+const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs::pln::FlightplanEntry *entry)
 {
   if(!waypoints.isEmpty())
   {
@@ -40,7 +40,7 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
       float distance = 99999999.f;
       for(const TYPE *obj : waypoints)
       {
-        float d = entry.getPosition().distanceSimpleTo(obj->position);
+        float d = entry->getPosition().distanceSimpleTo(obj->position);
         if(d < distance)
         {
           distance = d;
@@ -53,7 +53,7 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
   return nullptr;
 }
 
-RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
+RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
                                const RouteMapObject *predRouteMapObj, int& userIdentIndex)
   : entry(planEntry)
 {
@@ -61,17 +61,17 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
 
   predecessor = predRouteMapObj != nullptr;
 
-  QString region = entry.getIcaoRegion();
+  QString region = entry->getIcaoRegion();
 
   if(region == "KK") // Invalid route finder stuff
     region.clear();
   bool valid = false;
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       break;
     case atools::fs::pln::entry::AIRPORT:
-      query->getMapObject(res, maptypes::AIRPORT, entry.getIcaoIdent());
+      query->getMapObjectByIdent(res, maptypes::AIRPORT, entry->getIcaoIdent());
       if(!res.airports.isEmpty())
       {
         type = maptypes::AIRPORT;
@@ -81,37 +81,37 @@ RouteMapObject::RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry
       break;
     case atools::fs::pln::entry::INTERSECTION:
       {
-        query->getMapObject(res, maptypes::WAYPOINT, entry.getIcaoIdent(), region);
+        query->getMapObjectByIdent(res, maptypes::WAYPOINT, entry->getIcaoIdent(), region);
         const maptypes::MapWaypoint *obj = findMapObject(res.waypoints, planEntry);
         if(obj != nullptr)
         {
           type = maptypes::WAYPOINT;
           waypoint = *obj;
-          valid = waypoint.position.distanceMeterTo(entry.getPosition()) < 10000.f;
+          valid = waypoint.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
       }
     case atools::fs::pln::entry::VOR:
       {
-        query->getMapObject(res, maptypes::VOR, entry.getIcaoIdent(), region);
+        query->getMapObjectByIdent(res, maptypes::VOR, entry->getIcaoIdent(), region);
         const maptypes::MapVor *obj = findMapObject(res.vors, planEntry);
         if(obj != nullptr)
         {
           type = maptypes::VOR;
           vor = *obj;
-          valid = vor.position.distanceMeterTo(entry.getPosition()) < 10000.f;
+          valid = vor.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
       }
     case atools::fs::pln::entry::NDB:
       {
-        query->getMapObject(res, maptypes::NDB, entry.getIcaoIdent(), region);
+        query->getMapObjectByIdent(res, maptypes::NDB, entry->getIcaoIdent(), region);
         const maptypes::MapNdb *obj = findMapObject(res.ndbs, planEntry);
         if(obj != nullptr)
         {
           type = maptypes::NDB;
           ndb = *obj;
-          valid = ndb.position.distanceMeterTo(entry.getPosition()) < 10000.f;
+          valid = ndb.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
       }
@@ -142,7 +142,7 @@ void RouteMapObject::update(const RouteMapObject *predRouteMapObj, int& userIden
 
 void RouteMapObject::setUserIdent(int& userIdentIndex)
 {
-  if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+  if(entry->getWaypointType() == atools::fs::pln::entry::USER)
     userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
 }
 
@@ -176,7 +176,7 @@ int RouteMapObject::getId() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return -1;
@@ -204,7 +204,7 @@ float RouteMapObject::getMagvar() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return 0.f;
@@ -232,7 +232,7 @@ int RouteMapObject::getRange() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
@@ -253,13 +253,13 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
 {
   if(type == maptypes::INVALID)
   {
-    if(entry.getPosition().isValid())
-      return entry.getPosition();
+    if(entry->getPosition().isValid())
+      return entry->getPosition();
     else
       return atools::geo::EMPTY_POS;
   }
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return atools::geo::EMPTY_POS;
@@ -277,7 +277,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
       return ndb.position;
 
     case atools::fs::pln::entry::USER:
-      return entry.getPosition();
+      return entry->getPosition();
   }
   return atools::geo::EMPTY_POS;
 }
@@ -285,9 +285,9 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
 const QString& RouteMapObject::getIdent() const
 {
   if(type == maptypes::INVALID)
-    return entry.getIcaoIdent();
+    return entry->getIcaoIdent();
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return UNKNOWN_STR;
@@ -313,14 +313,14 @@ const QString& RouteMapObject::getIdent() const
 const QString& RouteMapObject::getRegion() const
 {
   if(type == maptypes::INVALID)
-    return entry.getIcaoRegion();
+    return entry->getIcaoRegion();
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
     case atools::fs::pln::entry::USER:
-      return entry.getIcaoRegion();
+      return entry->getIcaoRegion();
 
     case atools::fs::pln::entry::INTERSECTION:
       return waypoint.region;
@@ -339,7 +339,7 @@ const QString& RouteMapObject::getName() const
   if(type == maptypes::INVALID)
     return EMPTY_STR;
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
@@ -363,7 +363,7 @@ int RouteMapObject::getFrequency() const
   if(type == maptypes::INVALID)
     return 0;
 
-  switch(entry.getWaypointType())
+  switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:

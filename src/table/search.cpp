@@ -498,7 +498,20 @@ void Search::contextMenu(const QPoint& pos)
     else if(action == ui->actionMapHideRangeRings)
       parentWidget->getMapWidget()->clearRangeRings();
     else if(action == ui->actionRouteAdd)
-      emit routeAdd(controller->getIdForRow(index), navType);
+    {
+      int id = -1;
+      if(isAirport)
+        emit routeAdd(controller->getIdForRow(index), maptypes::AIRPORT);
+      else if(navType == maptypes::VOR)
+        id = controller->getRawData(index.row(), "vor_id").toInt();
+      else if(navType == maptypes::NDB)
+        id = controller->getRawData(index.row(), "ndb_id").toInt();
+      else if(navType == maptypes::WAYPOINT)
+        id = controller->getRawData(index.row(), "waypoint_id").toInt();
+
+      if(id != -1)
+        emit routeAdd(id, navType);
+    }
     else if(action == ui->actionRouteAirportStart)
       emit routeSetStart(controller->getIdForRow(index));
     else if(action == ui->actionRouteAirportDest)

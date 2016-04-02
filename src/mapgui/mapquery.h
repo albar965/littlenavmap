@@ -61,8 +61,10 @@ public:
 
   void getAirportById(maptypes::MapAirport& airport, int id);
 
-  void getMapObject(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
-                    const QString& ident, const QString& region = QString());
+  void getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+                           const QString& ident, const QString& region = QString());
+
+  void getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id);
 
   /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
@@ -153,6 +155,8 @@ private:
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
+
+  atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *waypointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;

@@ -27,7 +27,7 @@ class RouteMapObject
 {
 public:
   RouteMapObject();
-  RouteMapObject(const atools::fs::pln::FlightplanEntry& planEntry, MapQuery *query,
+  RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
                  const RouteMapObject *predRouteMapObj, int& userIdentIndex);
   ~RouteMapObject();
 
@@ -42,7 +42,7 @@ public:
   float getMagvar() const;
   int getRange() const;
 
-  const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const
+  const atools::fs::pln::FlightplanEntry *getFlightplanEntry() const
   {
     return entry;
   }
@@ -54,7 +54,7 @@ public:
 
   bool isUser()
   {
-    return entry.getWaypointType() == atools::fs::pln::entry::USER;
+    return entry->getWaypointType() == atools::fs::pln::entry::USER;
   }
 
   const maptypes::MapAirport& getAirport() const
@@ -103,7 +103,7 @@ public:
   }
 
 private:
-  atools::fs::pln::FlightplanEntry entry;
+  atools::fs::pln::FlightplanEntry *entry;
   QString userIdent;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
