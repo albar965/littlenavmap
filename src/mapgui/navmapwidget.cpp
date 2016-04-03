@@ -367,7 +367,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
 
-  ui->actionRouteAdd->setEnabled(false);
+  ui->actionRouteAdd->setEnabled(true);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
 
@@ -403,7 +403,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
     selectedSearchType = maptypes::WAYPOINT;
   }
   else
-    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+    selectedSearchType = maptypes::USER;
 
   // Update "show in search" and "add to route"
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
@@ -411,8 +411,18 @@ void NavMapWidget::contextMenu(const QPoint& point)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
-    ui->actionRouteAdd->setEnabled(true);
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(searchText));
+  }
+  else
+  {
+    ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
+    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg("Position"));
+  }
+
+  if(result.airports.isEmpty())
+  {
+    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
+    ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
 
   // Update "show range rings for Navaid"
@@ -553,6 +563,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart || action ==
             ui->actionRouteAirportDest)
     {
+      atools::geo::Pos position;
+
       int id = -1;
       if(selectedSearchType == maptypes::AIRPORT)
         id = ap.id;
@@ -562,16 +574,17 @@ void NavMapWidget::contextMenu(const QPoint& point)
         id = ndb.id;
       else if(selectedSearchType == maptypes::WAYPOINT)
         id = wp.id;
+      else if(selectedSearchType == maptypes::USER)
+        position = pos;
 
-      if(id != -1)
-      {
-        if(action == ui->actionRouteAdd)
-          emit routeAdd(id, selectedSearchType);
-        else if(action == ui->actionRouteAirportStart)
-          emit routeSetStart(id);
-        else if(action == ui->actionRouteAirportDest)
-          emit routeSetDest(id);
-      }
+      if(action == ui->actionRouteAdd)
+        emit routeAdd(id, position, selectedSearchType);
+      if(action == ui->actionRouteDeleteWaypoint)
+        emit routeDelete(id, position, selectedSearchType);
+      else if(action == ui->actionRouteAirportStart)
+        emit routeSetStart(id);
+      else if(action == ui->actionRouteAirportDest)
+        emit routeSetDest(id);
     }
   }
 }

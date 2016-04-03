@@ -501,7 +501,7 @@ void Search::contextMenu(const QPoint& pos)
     {
       int id = -1;
       if(isAirport)
-        emit routeAdd(controller->getIdForRow(index), maptypes::AIRPORT);
+        emit routeAdd(controller->getIdForRow(index), atools::geo::EMPTY_POS, maptypes::AIRPORT);
       else if(navType == maptypes::VOR)
         id = controller->getRawData(index.row(), "vor_id").toInt();
       else if(navType == maptypes::NDB)
@@ -510,7 +510,7 @@ void Search::contextMenu(const QPoint& pos)
         id = controller->getRawData(index.row(), "waypoint_id").toInt();
 
       if(id != -1)
-        emit routeAdd(id, navType);
+        emit routeAdd(id, atools::geo::EMPTY_POS, navType);
     }
     else if(action == ui->actionRouteAirportStart)
       emit routeSetStart(controller->getIdForRow(index));

@@ -343,6 +343,8 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::routeSetDest);
   connect(navMapWidget, &NavMapWidget::routeAdd,
           routeController, &RouteController::routeAdd);
+  connect(navMapWidget, &NavMapWidget::routeDelete,
+          routeController, &RouteController::routeDelete);
 
   connect(searchController->getAirportSearch(), &Search::routeSetStart,
           routeController, &RouteController::routeSetStart);

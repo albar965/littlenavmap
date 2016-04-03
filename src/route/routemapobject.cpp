@@ -54,7 +54,7 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
 }
 
 RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
-                               const RouteMapObject *predRouteMapObj, int& userIdentIndex)
+                               const RouteMapObject *predRouteMapObj, int *userIdentIndex)
   : entry(planEntry)
 {
   maptypes::MapSearchResult res;
@@ -134,16 +134,21 @@ RouteMapObject::~RouteMapObject()
 
 }
 
-void RouteMapObject::update(const RouteMapObject *predRouteMapObj, int& userIdentIndex)
+void RouteMapObject::update(const RouteMapObject *predRouteMapObj, int *userIdentIndex)
 {
   setUserIdent(userIdentIndex);
   updateDistAndCourse(predRouteMapObj);
 }
 
-void RouteMapObject::setUserIdent(int& userIdentIndex)
+void RouteMapObject::setUserIdent(int *userIdentIndex)
 {
   if(entry->getWaypointType() == atools::fs::pln::entry::USER)
-    userIdent = QString(QObject::tr("User ")) + QString::number(userIdentIndex++);
+  {
+    if(userIdentIndex == nullptr)
+      userIdent = QString(QObject::tr("User "));
+    else
+      userIdent = QString(QObject::tr("User ")) + QString::number((*userIdentIndex)++);
+  }
 }
 
 void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)

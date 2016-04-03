@@ -70,7 +70,8 @@ public:
 
   void routeSetStart(int airportId);
   void routeSetDest(int airportId);
-  void routeAdd(int id, maptypes::MapObjectTypes type);
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
+  void routeDelete(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
 
 private:
   bool changed = false;
@@ -108,8 +109,11 @@ private:
 
   void updateMoveAndDeleteActions();
 
-  void buildFlightplanEntry(int id, maptypes::MapObjectTypes type, atools::fs::pln::FlightplanEntry& entry);
+  void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
+                            atools::fs::pln::FlightplanEntry& entry);
   int nearestLeg(const atools::geo::Pos& pos);
+
+  void updateFlightplanData();
 
 signals:
   void showRect(const atools::geo::Rect& rect);

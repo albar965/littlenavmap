@@ -1551,16 +1551,22 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Route ...</string>
-         </property>
+        <widget class="QComboBox" name="comboBoxRoutingType">
+         <item>
+          <property name="text">
+           <string>User</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Radionavs</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Airways</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -2550,6 +2556,18 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Down</string>
+   </property>
+  </action>
+  <action name="actionRouteDeleteWaypoint">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Delete %1 from Route</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete from Route</string>
    </property>
   </action>
  </widget>

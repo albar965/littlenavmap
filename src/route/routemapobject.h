@@ -28,10 +28,10 @@ class RouteMapObject
 public:
   RouteMapObject();
   RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
-                 const RouteMapObject *predRouteMapObj, int& userIdentIndex);
+                 const RouteMapObject *predRouteMapObj, int *userIdentIndex = nullptr);
   ~RouteMapObject();
 
-  void update(const RouteMapObject *predRouteMapObj, int& userIdentIndex);
+  void update(const RouteMapObject *predRouteMapObj, int *userIdentIndex = nullptr);
 
   int getId() const;
   const atools::geo::Pos& getPosition() const;
@@ -113,7 +113,7 @@ private:
   bool predecessor = false;
 
   float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f;
-  void setUserIdent(int& userIdentIndex);
+  void setUserIdent(int *userIdentIndex);
   void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
 
 };
