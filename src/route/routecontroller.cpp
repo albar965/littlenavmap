@@ -583,43 +583,19 @@ void RouteController::moveLegs(int dir)
   }
 }
 
-void RouteController::routeDelete(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type)
+void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
 {
-  qDebug() << "route delete id" << id << "type" << type;
+  qDebug() << "route delete routeIndex" << routeIndex << "type" << type;
 
-  bool deleted = false;
-  for(int i = 0; i < routeMapObjects.size(); i++)
-  {
-    const RouteMapObject& rmo = routeMapObjects.at(i);
-    if(rmo.getMapObjectType() == type)
-    {
-      if(type == maptypes::USER)
-      {
-        if(userPos == rmo.getPosition())
-        {
-          flightplan->getEntries().removeAt(i);
-          routeMapObjects.removeAt(i);
-          deleted = true;
-        }
-      }
-      else if(rmo.getId() == id)
-      {
-        flightplan->getEntries().removeAt(i);
-        routeMapObjects.removeAt(i);
-        deleted = true;
-      }
-    }
-  }
+  flightplan->getEntries().removeAt(routeIndex);
+  routeMapObjects.removeAt(routeIndex);
 
-  if(deleted)
-  {
-    changed = true;
-    updateFlightplanData();
-    flightplanToView();
-    updateWindowTitle();
-    updateLabel();
-    emit routeChanged();
-  }
+  changed = true;
+  updateFlightplanData();
+  flightplanToView();
+  updateWindowTitle();
+  updateLabel();
+  emit routeChanged();
 }
 
 void RouteController::deleteLegs()

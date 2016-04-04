@@ -36,7 +36,9 @@ MapTooltip::~MapTooltip()
   delete morse;
 }
 
-QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram)
+QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
+                                 const QList<RouteMapObject>& routeMapObjects,
+                                 bool airportDiagram)
 {
   QStringList text;
   for(const MapAirport& ap : mapSearchResult.airports)
@@ -54,6 +56,13 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     if(!state.isEmpty())
       text += ", " + state;
     text += ", " + country + "</b>";
+
+    if(ap.routeIndex == 0)
+      text += "<br/>Route start airport";
+    else if(ap.routeIndex == routeMapObjects.size() - 1)
+      text += "<br/>Route destination airport";
+    else if(ap.routeIndex != -1)
+      text += "<br/>Route position " + QString::number(ap.routeIndex + 1);
 
     text += "<br/>Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft";
     text += "<br/>Altitude: " + QLocale().toString(ap.altitude) + " ft";
@@ -114,6 +123,10 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       type = "VOR";
 
     text += "<b>" + type + ": " + vor.name + " (" + vor.ident + ")</b>";
+
+    if(vor.routeIndex >= 0)
+      text += "<br/>Route position " + QString::number(vor.routeIndex + 1);
+
     text += "<br/>Type: " + maptypes::navTypeName(vor.type);
     text += "<br/>Region: " + vor.region;
     text += "<br/>Freq: " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2) + " MHz";
@@ -132,6 +145,8 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     if(!text.isEmpty())
       text += "<hr/>";
     text += "<b>NDB: " + ndb.name + " (" + ndb.ident + ")</b>";
+    if(ndb.routeIndex >= 0)
+      text += "<br/>Route position " + QString::number(ndb.routeIndex + 1);
     text += "<br/>Type: " + maptypes::navTypeName(ndb.type);
     text += "<br/>Region: " + ndb.region;
     text += "<br/>Freq: " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2) + " kHz";
@@ -149,6 +164,8 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     if(!text.isEmpty())
       text += "<hr/>";
     text += "<b>Waypoint: " + wp.ident + "</b>";
+    if(wp.routeIndex >= 0)
+      text += "<br/>Route position " + QString::number(wp.routeIndex + 1);
     text += "<br/>Type: " + maptypes::navTypeName(wp.type);
     text += "<br/>Region: " + wp.region;
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(wp.magvar, QString(), 1) + " °";

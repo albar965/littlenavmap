@@ -25,6 +25,7 @@ struct MapSearchResult;
 
 }
 
+class RouteMapObject;
 class MorseCode;
 class MapLayer;
 class MapQuery;
@@ -38,7 +39,9 @@ public:
   MapTooltip(QObject *parent, MapQuery *mapQuery);
   virtual ~MapTooltip();
 
-  QString buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram);
+  QString buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
+                       const QList<RouteMapObject>& routeMapObjects,
+                       bool airportDiagram);
 
 private:
   const int MAXLINES = 30;
