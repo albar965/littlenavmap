@@ -72,11 +72,13 @@ protected:
                    int& xtext, int& ytext);
 
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   int w, int h, int& x, int& y, float* bearing);
+                   int w, int h, int& x, int& y, float *bearing);
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   float distance, int w, int h, int& x, int& y, float* bearing);
+                   float distance, int w, int h, int& x, int& y, float *bearing);
   bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                         Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
+
+  const float FIND_TEXT_POS_STEP = 0.02f;
 
   SymbolPainter *symbolPainter;
   Marble::MarbleWidget *widget;

@@ -312,7 +312,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAdd,
-                                          ui->actionRouteAirportStart, ui->actionRouteAirportDest});
+                                          ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
+                                          ui->actionRouteAirportDest});
   Q_UNUSED(textSaver);
 
   QMenu menu;
@@ -331,6 +332,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   menu.addAction(ui->actionRouteAdd);
   menu.addAction(ui->actionRouteAirportStart);
   menu.addAction(ui->actionRouteAirportDest);
+  menu.addAction(ui->actionRouteDeleteWaypoint);
   menu.addSeparator();
   menu.addAction(ui->actionShowInSearch);
 
@@ -370,9 +372,10 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionRouteAdd->setEnabled(true);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
+  ui->actionRouteDeleteWaypoint->setEnabled(false);
 
   QString searchText;
-  // Update menu items
+  // Update menu items for airport and create text for others
   if(!result.airports.isEmpty())
   {
     ap = *result.airports.first();

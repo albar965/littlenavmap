@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
@@ -67,12 +68,13 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
 {
   // Calculate the number of points to use depending in screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
+
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
 
   int radiusMeter = nmToMeter(radiusNm);
 
   int step = 360 / numPoints;
-  int x1, y1, x2 = -1, y2 = -1, xfirst = -1, yfirst = -1;
+  int x1, y1, x2 = -1, y2 = -1;
   xtext = -1;
   ytext = -1;
 
@@ -80,37 +82,34 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   QVector<int> ytexts;
 
   Pos p1 = pos.endpoint(radiusMeter, 0);
-  bool h1 = true, h2 = true, hfirst = true;
+  bool h1 = true, h2 = true;
   bool v1 = wToS(p1, x1, y1, &h1);
 
   // Remember first position to close the circle
-  xfirst = x1;
-  yfirst = y1;
-  hfirst = h1;
 
+  GeoDataLinearRing ellipse;
+  ellipse.setTessellate(true);
   for(int i = 0; i <= 360; i += step)
   {
-    Pos p2 = pos.endpoint(radiusMeter, i);
+    Pos p2 = pos.endpoint(radiusMeter, i).normalize();
+    ellipse.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+
     bool v2 = wToS(p2, x2, y2, &h2);
 
     if((v1 || v2) && !h1 && !h2)
-    {
-      painter->drawLine(x1, y1, x2, y2);
       if(v1 && v2)
       {
         // Remember visible positions for the text
         xtexts.append((x1 + x2) / 2);
         ytexts.append((y1 + y2) / 2);
       }
-    }
     x1 = x2;
     y1 = y2;
     v1 = v2;
     h1 = h2;
   }
 
-  if(x2 != -1 && y2 != -1 && xfirst != -1 && yfirst != -1 && !h2 && !hfirst)
-    painter->drawLine(x2, y2, xfirst, yfirst);
+  painter->drawPolygon(ellipse);
 
   if(!xtexts.isEmpty() && !ytexts.isEmpty())
   {

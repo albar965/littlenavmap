@@ -71,6 +71,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   QList<QPoint> textCoords;
   QList<float> textBearing;
   QStringList texts;
+  QList<int> textLineLengths;
 
   // Collect start and end points of legs and visibility
   QList<QPoint> startPoints;
@@ -91,22 +92,31 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
       if(lineLength > 40)
       {
-        QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm" + " / " +
+        QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm  / " +
                      QString::number(obj.getCourseToRhumb(), 'f', 0) + "°M");
 
         int textw = painter->fontMetrics().width(text);
-        if(textw < lineLength)
-          lineLength = textw;
+        if(textw > lineLength)
+          textw = lineLength;
 
         int xt, yt;
-        float bearingt;
-        if(findTextPos(obj.getPosition(), routeMapObjects.at(i - 1).getPosition(), painter,
-                       lineLength, painter->fontMetrics().height(), xt, yt, &bearingt))
+        float brg;
+        Pos p1(obj.getPosition()), p2(routeMapObjects.at(i - 1).getPosition());
+        if(findTextPos(p1, p2, painter,
+                       textw, painter->fontMetrics().height(), xt, yt, &brg))
         {
           textCoords.append(QPoint(xt, yt));
-          textBearing.append(bearingt);
+          textBearing.append(brg);
           texts.append(text);
+          textLineLengths.append(lineLength);
         }
+      }
+      else
+      {
+        textCoords.append(QPoint());
+        textBearing.append(0.f);
+        texts.append(QString());
+        textLineLengths.append(0);
       }
     }
     startPoints.append(QPoint(x, y));
@@ -128,34 +138,32 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
     for(const QPoint& textCoord : textCoords)
     {
       QString text = texts.at(i);
-
-      Qt::TextElideMode elide = Qt::ElideRight;
-      qreal rotate, brg = textBearing.at(i);
-      if(brg < 180.)
+      if(!text.isEmpty())
       {
-        text += "  >>";
-        elide = Qt::ElideLeft;
-        rotate = brg - 90.;
-      }
-      else
-      {
-        text = "<<  " + text;
-        elide = Qt::ElideRight;
-        rotate = brg + 90.;
-      }
+        Qt::TextElideMode elide = Qt::ElideRight;
+        float rotate, brg = textBearing.at(i);
+        if(brg < 180.)
+        {
+          text += "  −>";
+          elide = Qt::ElideLeft;
+          rotate = brg - 90.f;
+        }
+        else
+        {
+          text = "<−  " + text;
+          elide = Qt::ElideRight;
+          rotate = brg + 90.f;
+        }
 
-      if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
-      {
-        int lineLength = simpleDistance(startPoints.at(i).x(), startPoints.at(i).y(),
-                                        startPoints.at(i + 1).x(), startPoints.at(i + 1).y());
-        text = painter->fontMetrics().elidedText(text, elide, lineLength);
-      }
+        if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
+          text = painter->fontMetrics().elidedText(text, elide, textLineLengths.at(i));
 
-      painter->translate(textCoord.x(), textCoord.y());
-      painter->rotate(rotate);
-      painter->drawText(-painter->fontMetrics().width(text) / 2,
-                        -painter->fontMetrics().descent(), text);
-      painter->resetTransform();
+        painter->translate(textCoord.x(), textCoord.y());
+        painter->rotate(rotate);
+        painter->drawText(-painter->fontMetrics().width(text) / 2,
+                          -painter->fontMetrics().descent(), text);
+        painter->resetTransform();
+      }
       i++;
     }
   }
