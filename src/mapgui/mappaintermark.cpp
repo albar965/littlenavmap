@@ -281,11 +281,13 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
                    QString::number(finalBearing, 'f', 0) + "°T");
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
-      int xt = -1, yt = -1;
-      if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
-                     metrics.height() * 2,
-                     xt, yt, nullptr))
-        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+      if(m.from != m.to)
+      {
+        int xt = -1, yt = -1;
+        if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
+                       metrics.height() * 2, xt, yt, nullptr))
+          symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
+      }
     }
     else
     {
@@ -323,11 +325,14 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       texts.append(QString::number(magBearing, 'f', 0) + (m.hasMagvar ? "°M" : "°T"));
       texts.append(QString::number(meterToNm(distanceMeter), 'f', 0) + " nm");
 
-      int xt = -1, yt = -1;
-      if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
-                          metrics.height() * 2, xt, yt))
-        symbolPainter->textBox(painter, texts,
-                               painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
+      if(m.from != m.to)
+      {
+        int xt = -1, yt = -1;
+        if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
+                            metrics.height() * 2, xt, yt))
+          symbolPainter->textBox(painter, texts,
+                                 painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
+      }
     }
   }
 }
