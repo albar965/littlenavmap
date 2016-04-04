@@ -264,8 +264,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         mapPainterNav->paint(&context);
         mapPainterAirport->paint(&context);
       }
-      mapPainterRoute->paint(&context);
     }
+    mapPainterRoute->paint(&context);
     mapPainterMark->paint(&context);
   }
 

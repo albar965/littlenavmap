@@ -85,8 +85,6 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   bool h1 = true, h2 = true;
   bool v1 = wToS(p1, x1, y1, &h1);
 
-  // Remember first position to close the circle
-
   GeoDataLinearRing ellipse;
   ellipse.setTessellate(true);
   for(int i = 0; i <= 360; i += step)
@@ -133,26 +131,40 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
 bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter, float distance,
                              int w, int h, int& x, int& y, float *bearing)
 {
+  int size = std::max(w, h);
   Pos center = pos1.interpolate(pos2, distance, 0.5);
   bool visible = wToS(center, x, y);
-  if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+  if(visible && painter->window().contains(QRect(x - size / 2, y - size / 2, size, size)))
   {
     if(bearing != nullptr)
-      *bearing = normalizeCourse(center.angleDegTo(pos1));
+    {
+      float xtp1, ytp1, xtp2, ytp2;
+      wToS(pos1.interpolate(pos2, 0.5f - FIND_TEXT_POS_STEP), xtp1, ytp1);
+      wToS(pos1.interpolate(pos2, 0.5f + FIND_TEXT_POS_STEP), xtp2, ytp2);
+      QLineF lineF(xtp1, ytp1, xtp2, ytp2);
+
+      *bearing = static_cast<float>(normalizeCourse(-lineF.angle() + 270.f));
+    }
     return true;
   }
   else
   {
     int x1, y1, x2, y2;
     // Check for 50 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += 0.02)
+    for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
     {
       center = pos1.interpolate(pos2, distance, 0.5f - i);
       visible = wToS(center, x1, y1);
-      if(visible && painter->window().contains(QRect(x1 - w / 2, y1 - h / 2, w, h)))
+      if(visible && painter->window().contains(QRect(x1 - size / 2, y1 - size / 2, size, size)))
       {
         if(bearing != nullptr)
-          *bearing = normalizeCourse(center.angleDegTo(pos1));
+        {
+          float xtp1, ytp1, xtp2, ytp2;
+          wToS(pos1.interpolate(pos2, 0.5f - i - FIND_TEXT_POS_STEP), xtp1, ytp1);
+          wToS(pos1.interpolate(pos2, 0.5f - i + FIND_TEXT_POS_STEP), xtp2, ytp2);
+          QLineF lineF(xtp1, ytp1, xtp2, ytp2);
+          *bearing = static_cast<float>(normalizeCourse(-lineF.angle() + 270.f));
+        }
         x = x1;
         y = y1;
         return true;
@@ -160,10 +172,16 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
 
       center = pos1.interpolate(pos2, distance, 0.5f + i);
       visible = wToS(center, x2, y2);
-      if(visible && painter->window().contains(QRect(x2 - w / 2, y2 - h / 2, w, h)))
+      if(visible && painter->window().contains(QRect(x2 - size / 2, y2 - size / 2, size, size)))
       {
         if(bearing != nullptr)
-          *bearing = normalizeCourse(center.angleDegTo(pos1));
+        {
+          float xtp1, ytp1, xtp2, ytp2;
+          wToS(pos1.interpolate(pos2, 0.5f + i - FIND_TEXT_POS_STEP), xtp1, ytp1);
+          wToS(pos1.interpolate(pos2, 0.5f + i + FIND_TEXT_POS_STEP), xtp2, ytp2);
+          QLineF lineF(xtp1, ytp1, xtp2, ytp2);
+          *bearing = static_cast<float>(normalizeCourse(-lineF.angle() + 270.f));
+        }
         x = x2;
         y = y2;
         return true;
@@ -184,7 +202,7 @@ bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
     return true;
   else
     // Check for 50 positions along the line starting below and above the center position
-    for(float i = 0.; i <= 0.5; i += 0.02)
+    for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
     {
     center = pos1.interpolateRhumb(pos2, distance, 0.5f - i);
     visible = wToS(center, x, y);
