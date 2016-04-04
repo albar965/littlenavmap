@@ -39,7 +39,7 @@ MapTooltip::~MapTooltip()
 QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, bool airportDiagram)
 {
   QStringList text;
-  for(const MapAirport *ap : mapSearchResult.airports)
+  for(const MapAirport& ap : mapSearchResult.airports)
   {
     if(checkText(text))
       break;
@@ -47,58 +47,58 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     if(!text.isEmpty())
       text += "<hr/>";
 
-    text += "<b>" + ap->name + " (" + ap->ident + ")</b>";
+    text += "<b>" + ap.name + " (" + ap.ident + ")</b>";
     QString city, state, country;
-    query->getAirportAdminById(ap->id, city, state, country);
+    query->getAirportAdminById(ap.id, city, state, country);
     text += "<br/><b>" + city;
     if(!state.isEmpty())
       text += ", " + state;
     text += ", " + country + "</b>";
 
-    text += "<br/>Longest Runway: " + QLocale().toString(ap->longestRunwayLength) + " ft";
-    text += "<br/>Altitude: " + QLocale().toString(ap->altitude) + " ft";
-    text += "<br/>Magvar: " + formatter::formatDoubleUnit(ap->magvar, QString(), 1) + " °";
+    text += "<br/>Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft";
+    text += "<br/>Altitude: " + QLocale().toString(ap.altitude) + " ft";
+    text += "<br/>Magvar: " + formatter::formatDoubleUnit(ap.magvar, QString(), 1) + " °";
 
-    if(ap->towerFrequency > 0)
-      text += "<br/>Tower: " + formatter::formatDoubleUnit(ap->towerFrequency / 1000., QString(), 2);
-    if(ap->atisFrequency > 0)
-      text += "<br/>ATIS: " + formatter::formatDoubleUnit(ap->atisFrequency / 1000., QString(), 2);
-    if(ap->awosFrequency > 0)
-      text += "<br/>AWOS: " + formatter::formatDoubleUnit(ap->awosFrequency / 1000., QString(), 2);
-    if(ap->asosFrequency > 0)
-      text += "<br/>ASOS: " + formatter::formatDoubleUnit(ap->asosFrequency / 1000., QString(), 2);
-    if(ap->unicomFrequency > 0)
-      text += "<br/>Unicom: " + formatter::formatDoubleUnit(ap->unicomFrequency / 1000., QString(), 2);
+    if(ap.towerFrequency > 0)
+      text += "<br/>Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2);
+    if(ap.atisFrequency > 0)
+      text += "<br/>ATIS: " + formatter::formatDoubleUnit(ap.atisFrequency / 1000., QString(), 2);
+    if(ap.awosFrequency > 0)
+      text += "<br/>AWOS: " + formatter::formatDoubleUnit(ap.awosFrequency / 1000., QString(), 2);
+    if(ap.asosFrequency > 0)
+      text += "<br/>ASOS: " + formatter::formatDoubleUnit(ap.asosFrequency / 1000., QString(), 2);
+    if(ap.unicomFrequency > 0)
+      text += "<br/>Unicom: " + formatter::formatDoubleUnit(ap.unicomFrequency / 1000., QString(), 2);
 
-    if(ap->addon())
+    if(ap.addon())
       text += "<br/>Add-on Airport";
-    if(ap->flags.testFlag(AP_MIL))
+    if(ap.flags.testFlag(AP_MIL))
       text += "<br/>Military Airport";
-    if(ap->scenery())
+    if(ap.scenery())
       text += "<br/>Has some Scenery Elements";
 
-    if(ap->hard())
+    if(ap.hard())
       text += "<br/>Has Hard Runways";
-    if(ap->soft())
+    if(ap.soft())
       text += "<br/>Has Soft Runways";
-    if(ap->water())
+    if(ap.water())
       text += "<br/>Has Water Runways";
-    if(ap->helipad())
+    if(ap.helipad())
       text += "<br/>Has Helipads";
-    if(ap->flags.testFlag(AP_LIGHT))
+    if(ap.flags.testFlag(AP_LIGHT))
       text += "<br/>Has Lighted Runways";
-    if(ap->flags.testFlag(AP_AVGAS))
+    if(ap.flags.testFlag(AP_AVGAS))
       text += "<br/>Has Avgas";
-    if(ap->flags.testFlag(AP_JETFUEL))
+    if(ap.flags.testFlag(AP_JETFUEL))
       text += "<br/>Has Jetfuel";
 
-    if(ap->flags.testFlag(AP_ILS))
+    if(ap.flags.testFlag(AP_ILS))
       text += "<br/>Has ILS";
-    if(ap->flags.testFlag(AP_APPR))
+    if(ap.flags.testFlag(AP_APPR))
       text += "<br/>Has Approaches";
   }
 
-  for(const MapVor *vor : mapSearchResult.vors)
+  for(const MapVor& vor : mapSearchResult.vors)
   {
     if(checkText(text))
       break;
@@ -106,55 +106,55 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     if(!text.isEmpty())
       text += "<hr/>";
     QString type;
-    if(vor->dmeOnly)
+    if(vor.dmeOnly)
       type = "DME";
-    else if(vor->hasDme)
+    else if(vor.hasDme)
       type = "VORDME";
     else
       type = "VOR";
 
-    text += "<b>" + type + ": " + vor->name + " (" + vor->ident + ")</b>";
-    text += "<br/>Type: " + maptypes::navTypeName(vor->type);
-    text += "<br/>Region: " + vor->region;
-    text += "<br/>Freq: " + formatter::formatDoubleUnit(vor->frequency / 1000., QString(), 2) + " MHz";
-    if(!vor->dmeOnly)
-      text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor->magvar, QString(), 1) + " °";
-    text += "<br/>Altitude: " + QLocale().toString(vor->altitude) + " ft";
-    text += "<br/>Range: " + QString::number(vor->range) + " nm";
-    text += "<br/><b>" + morse->getCode(vor->ident) + "</b>";
+    text += "<b>" + type + ": " + vor.name + " (" + vor.ident + ")</b>";
+    text += "<br/>Type: " + maptypes::navTypeName(vor.type);
+    text += "<br/>Region: " + vor.region;
+    text += "<br/>Freq: " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2) + " MHz";
+    if(!vor.dmeOnly)
+      text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor.magvar, QString(), 1) + " °";
+    text += "<br/>Altitude: " + QLocale().toString(vor.altitude) + " ft";
+    text += "<br/>Range: " + QString::number(vor.range) + " nm";
+    text += "<br/><b>" + morse->getCode(vor.ident) + "</b>";
   }
 
-  for(const MapNdb *ndb : mapSearchResult.ndbs)
+  for(const MapNdb& ndb : mapSearchResult.ndbs)
   {
     if(checkText(text))
       break;
 
     if(!text.isEmpty())
       text += "<hr/>";
-    text += "<b>NDB: " + ndb->name + " (" + ndb->ident + ")</b>";
-    text += "<br/>Type: " + maptypes::navTypeName(ndb->type);
-    text += "<br/>Region: " + ndb->region;
-    text += "<br/>Freq: " + formatter::formatDoubleUnit(ndb->frequency / 100., QString(), 2) + " kHz";
-    text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb->magvar, QString(), 1) + " °";
-    text += "<br/>Altitude: " + QLocale().toString(ndb->altitude) + " ft";
-    text += "<br/>Range: " + QString::number(ndb->range) + " nm";
-    text += "<br/><b>" + morse->getCode(ndb->ident) + "</b>";
+    text += "<b>NDB: " + ndb.name + " (" + ndb.ident + ")</b>";
+    text += "<br/>Type: " + maptypes::navTypeName(ndb.type);
+    text += "<br/>Region: " + ndb.region;
+    text += "<br/>Freq: " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2) + " kHz";
+    text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb.magvar, QString(), 1) + " °";
+    text += "<br/>Altitude: " + QLocale().toString(ndb.altitude) + " ft";
+    text += "<br/>Range: " + QString::number(ndb.range) + " nm";
+    text += "<br/><b>" + morse->getCode(ndb.ident) + "</b>";
   }
 
-  for(const MapWaypoint *wp : mapSearchResult.waypoints)
+  for(const MapWaypoint& wp : mapSearchResult.waypoints)
   {
     if(checkText(text))
       break;
 
     if(!text.isEmpty())
       text += "<hr/>";
-    text += "<b>Waypoint: " + wp->ident + "</b>";
-    text += "<br/>Type: " + maptypes::navTypeName(wp->type);
-    text += "<br/>Region: " + wp->region;
-    text += "<br/>Magvar: " + formatter::formatDoubleUnit(wp->magvar, QString(), 1) + " °";
+    text += "<b>Waypoint: " + wp.ident + "</b>";
+    text += "<br/>Type: " + maptypes::navTypeName(wp.type);
+    text += "<br/>Region: " + wp.region;
+    text += "<br/>Magvar: " + formatter::formatDoubleUnit(wp.magvar, QString(), 1) + " °";
 
     QList<MapAirway> airways;
-    query->getAirwaysForWaypoint(wp->id, airways);
+    query->getAirwaysForWaypoint(wp.id, airways);
 
     if(!airways.isEmpty())
     {
@@ -181,19 +181,19 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
     }
   }
 
-  for(const MapMarker *m : mapSearchResult.markers)
+  for(const MapMarker& m : mapSearchResult.markers)
   {
     if(checkText(text))
       break;
 
     if(!text.isEmpty())
       text += "<hr/>";
-    text += "<b>Marker: " + m->type + "</b>";
+    text += "<b>Marker: " + m.type + "</b>";
   }
 
   if(airportDiagram)
   {
-    for(const MapAirport *ap : mapSearchResult.towers)
+    for(const MapAirport& ap : mapSearchResult.towers)
     {
       if(checkText(text))
         break;
@@ -201,12 +201,12 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       if(!text.isEmpty())
         text += "<hr/>";
 
-      if(ap->towerFrequency > 0)
-        text += "Tower: " + formatter::formatDoubleUnit(ap->towerFrequency / 1000., QString(), 2);
+      if(ap.towerFrequency > 0)
+        text += "Tower: " + formatter::formatDoubleUnit(ap.towerFrequency / 1000., QString(), 2);
       else
         text += "Tower";
     }
-    for(const MapParking *p : mapSearchResult.parkings)
+    for(const MapParking& p : mapSearchResult.parkings)
     {
       if(checkText(text))
         break;
@@ -214,22 +214,22 @@ QString MapTooltip::buildTooltip(maptypes::MapSearchResult& mapSearchResult, boo
       if(!text.isEmpty())
         text += "<hr/>";
 
-      text += maptypes::parkingName(p->name) + " " + QString::number(p->number) +
-              "<br/>" + maptypes::parkingTypeName(p->type) +
-              "<br/>" + QString::number(p->radius * 2) + " ft" +
-              (p->jetway ? "<br/>Has Jetway" : "");
+      text += maptypes::parkingName(p.name) + " " + QString::number(p.number) +
+              "<br/>" + maptypes::parkingTypeName(p.type) +
+              "<br/>" + QString::number(p.radius * 2) + " ft" +
+              (p.jetway ? "<br/>Has Jetway" : "");
 
     }
-    for(const MapHelipad *p : mapSearchResult.helipads)
+    for(const MapHelipad& p : mapSearchResult.helipads)
     {
       if(!text.isEmpty())
         text += "<hr/>";
 
       text += QString("Helipad:") +
-              "<br/>Surface: " + maptypes::surfaceName(p->surface) +
-              "<br/>Type: " + p->type +
-              "<br/>" + QString::number(p->width) + " ft" +
-              (p->closed ? "<br/>Is Closed" : "");
+              "<br/>Surface: " + maptypes::surfaceName(p.surface) +
+              "<br/>Type: " + p.type +
+              "<br/>" + QString::number(p.width) + " ft" +
+              (p.closed ? "<br/>Is Closed" : "");
 
     }
   }

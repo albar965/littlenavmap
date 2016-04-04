@@ -204,38 +204,6 @@ QString parkingName(const QString& ramp)
   return parkingNameMap.value(ramp);
 }
 
-void MapSearchResult::deleteAllObjects()
-{
-  if(needsDelete)
-  {
-    qDeleteAll(airports);
-    qDeleteAll(towers);
-    qDeleteAll(parkings);
-    qDeleteAll(helipads);
-    qDeleteAll(waypoints);
-    qDeleteAll(vors);
-    qDeleteAll(ndbs);
-    qDeleteAll(markers);
-    qDeleteAll(ils);
-    qDeleteAll(airways);
-
-    airports.clear();
-    airportIds.clear();
-    towers.clear();
-    parkings.clear();
-    helipads.clear();
-    waypoints.clear();
-    waypointIds.clear();
-    vors.clear();
-    vorIds.clear();
-    ndbs.clear();
-    ndbIds.clear();
-    markers.clear();
-    ils.clear();
-    userPoints.clear();
-  }
-}
-
 bool MapAirport::hard() const
 {
   return flags.testFlag(AP_HARD);

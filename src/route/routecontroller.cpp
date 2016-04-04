@@ -630,7 +630,7 @@ void RouteController::deleteLegs()
 
   if(!rows.isEmpty())
   {
-    QModelIndex curIdx = view->currentIndex();
+    int firstRow = rows.last();
     view->selectionModel()->clear();
     for(int row : rows)
     {
@@ -644,10 +644,7 @@ void RouteController::deleteLegs()
     updateLabel();
     updateWindowTitle();
 
-    if(curIdx.row() >= model->rowCount() && model->rowCount() >= 1)
-      view->setCurrentIndex(model->index(curIdx.row() - 1, curIdx.column()));
-    else
-      view->setCurrentIndex(curIdx);
+    view->setCurrentIndex(model->index(firstRow, 0));
     updateMoveAndDeleteActions();
     emit routeChanged();
   }
@@ -814,30 +811,33 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
 
   if(type == maptypes::AIRPORT)
   {
-    const maptypes::MapAirport *ap = result.airports.first();
-    entry.setIcaoIdent(ap->ident);
-    entry.setPosition(ap->position);
+    const maptypes::MapAirport& ap = result.airports.first();
+    entry.setIcaoIdent(ap.ident);
+    entry.setPosition(ap.position);
     entry.setWaypointType(entry::AIRPORT);
   }
   else if(type == maptypes::WAYPOINT)
   {
-    const maptypes::MapWaypoint *wp = result.waypoints.first();
-    entry.setIcaoIdent(wp->ident);
-    entry.setPosition(wp->position);
+    const maptypes::MapWaypoint& wp = result.waypoints.first();
+    entry.setIcaoIdent(wp.ident);
+    entry.setPosition(wp.position);
+    entry.setIcaoRegion(wp.region);
     entry.setWaypointType(entry::INTERSECTION);
   }
   else if(type == maptypes::VOR)
   {
-    const maptypes::MapVor *vor = result.vors.first();
-    entry.setIcaoIdent(vor->ident);
-    entry.setPosition(vor->position);
+    const maptypes::MapVor& vor = result.vors.first();
+    entry.setIcaoIdent(vor.ident);
+    entry.setPosition(vor.position);
+    entry.setIcaoRegion(vor.region);
     entry.setWaypointType(entry::VOR);
   }
   else if(type == maptypes::NDB)
   {
-    const maptypes::MapNdb *ndb = result.ndbs.first();
-    entry.setIcaoIdent(ndb->ident);
-    entry.setPosition(ndb->position);
+    const maptypes::MapNdb& ndb = result.ndbs.first();
+    entry.setIcaoIdent(ndb.ident);
+    entry.setPosition(ndb.position);
+    entry.setIcaoRegion(ndb.region);
     entry.setWaypointType(entry::NDB);
   }
   else if(type == maptypes::USER)

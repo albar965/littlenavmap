@@ -92,6 +92,7 @@ struct MapAirport
   int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
   atools::geo::Pos position, towerCoords;
   atools::geo::Rect bounding;
+  int routeIndex = -1;
 
   bool valid = false;
 
@@ -203,6 +204,7 @@ struct MapHelipad
   QString surface, type;
   atools::geo::Pos position;
   int length, width, heading;
+  int routeIndex = -1;
   bool closed;
 
   const atools::geo::Pos& getPosition() const
@@ -224,6 +226,7 @@ struct MapVor
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
+  int routeIndex = -1;
   bool dmeOnly, hasDme;
 
   const atools::geo::Pos& getPosition() const
@@ -245,6 +248,7 @@ struct MapNdb
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
+  int routeIndex = -1;
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -263,6 +267,7 @@ struct MapWaypoint
   float magvar;
   QString ident, region, type, apIdent;
   atools::geo::Pos position;
+  int routeIndex = -1;
   bool hasVictor = false, hasJet = false;
   const atools::geo::Pos& getPosition() const
   {
@@ -281,6 +286,7 @@ struct MapUserpoint
   QString name;
   int id;
   atools::geo::Pos position;
+  int routeIndex = -1;
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -365,33 +371,28 @@ struct MapIls
 
 struct MapSearchResult
 {
-  QList<const MapAirport *> airports;
+  QList<MapAirport> airports;
   QSet<int> airportIds;
 
-  QList<const MapAirport *> towers;
-  QList<const MapParking *> parkings;
-  QList<const MapHelipad *> helipads;
+  QList<MapAirport> towers;
+  QList<MapParking> parkings;
+  QList<MapHelipad> helipads;
 
-  QList<const MapWaypoint *> waypoints;
+  QList<MapWaypoint> waypoints;
   QSet<int> waypointIds;
 
-  QList<const MapVor *> vors;
+  QList<MapVor> vors;
   QSet<int> vorIds;
 
-  QList<const MapNdb *> ndbs;
+  QList<MapNdb> ndbs;
   QSet<int> ndbIds;
 
-  QList<const MapMarker *> markers;
-  QList<const MapIls *> ils;
+  QList<MapMarker> markers;
+  QList<MapIls> ils;
 
-  QList<const MapAirway *> airways;
+  QList<MapAirway> airways;
 
   QList<MapUserpoint> userPoints;
-
-  bool needsDelete = false;
-
-  void  deleteAllObjects();
-
 };
 
 struct RangeMarker
@@ -462,5 +463,6 @@ Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 
 #endif // TYPES_H

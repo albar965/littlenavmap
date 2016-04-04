@@ -79,7 +79,7 @@ NavMapWidget::~NavMapWidget()
 {
   delete paintLayer;
   delete mapTooltip;
-  highlightMapObjects.deleteAllObjects();
+  // highlightMapObjects.deleteAllObjects();
 }
 
 void NavMapWidget::setTheme(const QString& theme, int index)
@@ -287,7 +287,7 @@ void NavMapWidget::routeChanged()
 
 void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
-  highlightMapObjects.deleteAllObjects();
+  // highlightMapObjects.deleteAllObjects();
   highlightMapObjects = positions;
   update();
 }
@@ -378,7 +378,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   // Update menu items for airport and create text for others
   if(!result.airports.isEmpty())
   {
-    ap = *result.airports.first();
+    ap = result.airports.first();
     searchText = "Airport " + ap.name + " (" + ap.ident + ")";
     selectedSearchType = maptypes::AIRPORT;
 
@@ -389,19 +389,19 @@ void NavMapWidget::contextMenu(const QPoint& point)
   }
   else if(!result.vors.isEmpty())
   {
-    vor = *result.vors.first();
+    vor = result.vors.first();
     searchText = "VOR " + vor.name + " (" + vor.ident + ")";
     selectedSearchType = maptypes::VOR;
   }
   else if(!result.ndbs.isEmpty())
   {
-    ndb = *result.ndbs.first();
+    ndb = result.ndbs.first();
     searchText = "NDB " + ndb.name + " (" + ndb.ident + ")";
     selectedSearchType = maptypes::NDB;
   }
   else if(!result.waypoints.isEmpty())
   {
-    wp = *result.waypoints.first();
+    wp = result.waypoints.first();
     searchText = "Waypoint " + wp.ident;
     selectedSearchType = maptypes::WAYPOINT;
   }
@@ -431,7 +431,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   // Update "show range rings for Navaid"
   if(!result.vors.isEmpty())
   {
-    vor = *result.vors.first();
+    vor = result.vors.first();
     QString rangeText = "VOR " + vor.name + " (" + vor.ident + ")";
     selectedRangeType = maptypes::VOR;
     ui->actionMapNavaidRange->setEnabled(true);
@@ -439,7 +439,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   }
   else if(!result.ndbs.isEmpty())
   {
-    ndb = *result.ndbs.first();
+    ndb = result.ndbs.first();
     QString rangeText = "NDB " + ndb.name + " (" + ndb.ident + ")";
     selectedRangeType = maptypes::NDB;
     ui->actionMapNavaidRange->setEnabled(true);
@@ -751,17 +751,17 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   if(!mapSearchResult.airports.isEmpty())
   {
-  if(mapSearchResult.airports.at(0)->bounding.isPoint())
-    showPos(mapSearchResult.airports.at(0)->bounding.getTopLeft());
+  if(mapSearchResult.airports.at(0).bounding.isPoint())
+    showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
   else
-    showRect(mapSearchResult.airports.at(0)->bounding);
+    showRect(mapSearchResult.airports.at(0).bounding);
   }
   else if(!mapSearchResult.vors.isEmpty())
-    showPos(mapSearchResult.vors.at(0)->position);
+    showPos(mapSearchResult.vors.at(0).position);
   else if(!mapSearchResult.ndbs.isEmpty())
-    showPos(mapSearchResult.ndbs.at(0)->position);
+    showPos(mapSearchResult.ndbs.at(0).position);
   else if(!mapSearchResult.waypoints.isEmpty())
-    showPos(mapSearchResult.waypoints.at(0)->position);
+    showPos(mapSearchResult.waypoints.at(0).position);
   else if(!mapSearchResult.userPoints.isEmpty())
     showPos(mapSearchResult.userPoints.at(0).position);
 }
@@ -842,12 +842,9 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   // Get copies from highlightMapObjects - no need to delete
   getNearestHighlightMapObjects(xs, ys, screenDistance, mapSearchResult);
 
-  for(const maptypes::MapAirport *obj : mapSearchResult.airports)
-    // Airports coming from the search panel or overview map are not complete
-    // Cast the const away and overwrite the original
-    // TODO too dangerous write into the cache
-    if(!obj->complete())
-      mapQuery->getAirportById(*(const_cast<maptypes::MapAirport *>(obj)), obj->getId());
+  for(maptypes::MapAirport& obj : mapSearchResult.airports)
+    if(!obj.complete())
+      mapQuery->getAirportById(obj, obj.getId());
 
 }
 
@@ -860,28 +857,43 @@ void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
   CoordinateConverter conv(viewport());
   int x, y;
 
+  int i = 0;
   for(const RouteMapObject& obj : routeMapObjects)
+  {
     if(conv.wToS(obj.getPosition(), x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
       {
         switch(obj.getMapObjectType())
         {
           case maptypes::VOR :
-            insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, &obj.getVor());
-            break;
+            {
+              maptypes::MapVor vor = obj.getVor();
+              vor.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+            } break;
           case maptypes::WAYPOINT:
-            insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys,
-                                   &obj.getWaypoint());
-            break;
+            {
+              maptypes::MapWaypoint wp = obj.getWaypoint();
+              wp.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+            } break;
           case maptypes::NDB:
-            insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, &obj.getNdb());
-            break;
+            {
+              maptypes::MapNdb ndb = obj.getNdb();
+              ndb.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+            }           break;
           case maptypes::AIRPORT:
-            insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, &obj.getAirport());
-            break;
+            {
+              maptypes::MapAirport ap = obj.getAirport();
+              ap.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys,
+                                     obj.getAirport());
+            }           break;
           case maptypes::INVALID:
             {
               maptypes::MapUserpoint up;
+              up.routeIndex = i;
               up.name = obj.getIdent() + " (not found)";
               up.position = obj.getPosition();
               mapobjects.userPoints.append(up);
@@ -890,6 +902,7 @@ void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
           case maptypes::USER:
             {
               maptypes::MapUserpoint up;
+              up.routeIndex = i;
               up.name = obj.getIdent();
               up.position = obj.getPosition();
               mapobjects.userPoints.append(up);
@@ -897,6 +910,8 @@ void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
             }
         }
       }
+    i++;
+  }
 }
 
 void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
@@ -909,23 +924,23 @@ void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDista
 
   using maptools::insertSortedByDistance;
 
-  for(const maptypes::MapAirport *obj : highlightMapObjects.airports)
-    if(conv.wToS(obj->position, x, y))
+  for(const maptypes::MapAirport& obj : highlightMapObjects.airports)
+    if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, obj);
 
-  for(const maptypes::MapVor *obj : highlightMapObjects.vors)
-    if(conv.wToS(obj->position, x, y))
+  for(const maptypes::MapVor& obj : highlightMapObjects.vors)
+    if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, obj);
 
-  for(const maptypes::MapNdb *obj : highlightMapObjects.ndbs)
-    if(conv.wToS(obj->position, x, y))
+  for(const maptypes::MapNdb& obj : highlightMapObjects.ndbs)
+    if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, obj);
 
-  for(const maptypes::MapWaypoint *obj : highlightMapObjects.waypoints)
-    if(conv.wToS(obj->position, x, y))
+  for(const maptypes::MapWaypoint& obj : highlightMapObjects.waypoints)
+    if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
         insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, obj);
 }

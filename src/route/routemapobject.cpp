@@ -30,17 +30,17 @@ RouteMapObject::RouteMapObject()
 }
 
 template<typename TYPE>
-const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs::pln::FlightplanEntry *entry)
+TYPE findMapObject(const QList<TYPE>& waypoints, const atools::fs::pln::FlightplanEntry *entry, bool& found)
 {
   if(!waypoints.isEmpty())
   {
-    const TYPE *nearest = waypoints.first();
+    TYPE nearest = waypoints.first();
     if(waypoints.size() > 1)
     {
       float distance = 99999999.f;
-      for(const TYPE *obj : waypoints)
+      for(const TYPE& obj : waypoints)
       {
-        float d = entry->getPosition().distanceSimpleTo(obj->position);
+        float d = entry->getPosition().distanceSimpleTo(obj.position);
         if(d < distance)
         {
           distance = d;
@@ -48,9 +48,11 @@ const TYPE *findMapObject(const QList<const TYPE *> waypoints, const atools::fs:
         }
       }
     }
+    found = true;
     return nearest;
   }
-  return nullptr;
+  found = false;
+  return TYPE();
 }
 
 RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
@@ -66,6 +68,7 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
   if(region == "KK") // Invalid route finder stuff
     region.clear();
   bool valid = false;
+  bool found;
   switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
@@ -75,18 +78,18 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
       if(!res.airports.isEmpty())
       {
         type = maptypes::AIRPORT;
-        airport = *res.airports.first();
+        airport = res.airports.first();
         valid = true;
       }
       break;
     case atools::fs::pln::entry::INTERSECTION:
       {
         query->getMapObjectByIdent(res, maptypes::WAYPOINT, entry->getIcaoIdent(), region);
-        const maptypes::MapWaypoint *obj = findMapObject(res.waypoints, planEntry);
-        if(obj != nullptr)
+        const maptypes::MapWaypoint& obj = findMapObject(res.waypoints, planEntry, found);
+        if(found)
         {
           type = maptypes::WAYPOINT;
-          waypoint = *obj;
+          waypoint = obj;
           valid = waypoint.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
@@ -94,11 +97,11 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
     case atools::fs::pln::entry::VOR:
       {
         query->getMapObjectByIdent(res, maptypes::VOR, entry->getIcaoIdent(), region);
-        const maptypes::MapVor *obj = findMapObject(res.vors, planEntry);
-        if(obj != nullptr)
+        const maptypes::MapVor& obj = findMapObject(res.vors, planEntry, found);
+        if(found)
         {
           type = maptypes::VOR;
-          vor = *obj;
+          vor = obj;
           valid = vor.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
@@ -106,11 +109,11 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
     case atools::fs::pln::entry::NDB:
       {
         query->getMapObjectByIdent(res, maptypes::NDB, entry->getIcaoIdent(), region);
-        const maptypes::MapNdb *obj = findMapObject(res.ndbs, planEntry);
-        if(obj != nullptr)
+        const maptypes::MapNdb& obj = findMapObject(res.ndbs, planEntry, found);
+        if(found)
         {
           type = maptypes::NDB;
-          ndb = *obj;
+          ndb = obj;
           valid = ndb.position.distanceMeterTo(entry->getPosition()) < 10000.f;
         }
         break;
@@ -125,7 +128,7 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
   if(!valid)
     type = maptypes::INVALID;
 
-  res.deleteAllObjects();
+  // res.deleteAllObjects();
   updateDistAndCourse(predRouteMapObj);
 }
 

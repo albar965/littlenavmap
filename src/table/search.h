@@ -41,11 +41,6 @@ class SqlDatabase;
 }
 }
 
-namespace maptypes {
-struct MapSearchResult;
-
-}
-
 class Search :
   public QObject
 {

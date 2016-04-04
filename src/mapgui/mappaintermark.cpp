@@ -97,14 +97,14 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
 
   QList<Pos> positions;
 
-  for(const MapAirport *ap : highlightResults.airports)
-    positions.append(ap->position);
-  for(const MapWaypoint *wp : highlightResults.waypoints)
-    positions.append(wp->position);
-  for(const MapVor *vor : highlightResults.vors)
-    positions.append(vor->position);
-  for(const MapNdb *ndb : highlightResults.ndbs)
-    positions.append(ndb->position);
+  for(const MapAirport& ap : highlightResults.airports)
+    positions.append(ap.position);
+  for(const MapWaypoint& wp : highlightResults.waypoints)
+    positions.append(wp.position);
+  for(const MapVor& vor : highlightResults.vors)
+    positions.append(vor.position);
+  for(const MapNdb& ndb : highlightResults.ndbs)
+    positions.append(ndb.position);
 
   if(mapLayer->isAirport())
     size = std::max(size, mapLayer->getAirportSymbolSize());

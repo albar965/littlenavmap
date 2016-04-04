@@ -64,8 +64,6 @@ private:
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;
 
-  void fillSearchResult(const QSqlRecord& data, maptypes::MapSearchResult *result) const;
-
   NavIconDelegate *iconDelegate = nullptr;
 
 };

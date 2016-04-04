@@ -66,7 +66,6 @@ public:
 
   void getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id);
 
-  /* Result is only valid until the next paint is called */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
                          maptypes::MapObjectTypes types, int xs, int ys, int screenDistance,
                          maptypes::MapSearchResult& result);

@@ -410,14 +410,13 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
   for(const QItemSelectionRange& rng :  selection)
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      maptypes::MapAirport *ap = new maptypes::MapAirport;
+      maptypes::MapAirport ap;
       rec.setValue(0, controller->getRawData(row, idColumnName));
       rec.setValue(1, controller->getRawData(row, "lonx"));
       rec.setValue(2, controller->getRawData(row, "laty"));
 
       // Not fully populated
-      factory.fillAirport(rec, *ap, false);
+      factory.fillAirport(rec, ap, false);
       result.airports.append(ap);
     }
-  result.needsDelete = true;
 }

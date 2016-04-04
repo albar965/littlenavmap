@@ -88,10 +88,9 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     airportByIdentQuery->exec();
     while(airportByIdentQuery->next())
     {
-      maptypes::MapAirport *ap = new maptypes::MapAirport;
-      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true);
+      maptypes::MapAirport ap;
+      mapTypesFactory->fillAirport(airportByIdentQuery->record(), ap, true);
       result.airports.append(ap);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::VOR)
@@ -101,10 +100,9 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     vorByIdentQuery->exec();
     while(vorByIdentQuery->next())
     {
-      maptypes::MapVor *vor = new maptypes::MapVor;
-      mapTypesFactory->fillVor(vorByIdentQuery->record(), *vor);
+      maptypes::MapVor vor;
+      mapTypesFactory->fillVor(vorByIdentQuery->record(), vor);
       result.vors.append(vor);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::NDB)
@@ -114,10 +112,9 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     ndbByIdentQuery->exec();
     while(ndbByIdentQuery->next())
     {
-      maptypes::MapNdb *ndb = new maptypes::MapNdb;
-      mapTypesFactory->fillNdb(ndbByIdentQuery->record(), *ndb);
+      maptypes::MapNdb ndb;
+      mapTypesFactory->fillNdb(ndbByIdentQuery->record(), ndb);
       result.ndbs.append(ndb);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::WAYPOINT)
@@ -127,10 +124,9 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     waypointByIdentQuery->exec();
     while(waypointByIdentQuery->next())
     {
-      maptypes::MapWaypoint *wp = new maptypes::MapWaypoint;
-      mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), *wp);
+      maptypes::MapWaypoint wp;
+      mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp);
       result.waypoints.append(wp);
-      result.needsDelete = true;
     }
   }
 }
@@ -143,10 +139,9 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
     airportByIdQuery->exec();
     while(airportByIdQuery->next())
     {
-      maptypes::MapAirport *ap = new maptypes::MapAirport;
-      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true);
+      maptypes::MapAirport ap;
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), ap, true);
       result.airports.append(ap);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::VOR)
@@ -155,10 +150,9 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
     vorByIdQuery->exec();
     while(vorByIdQuery->next())
     {
-      maptypes::MapVor *vor = new maptypes::MapVor;
-      mapTypesFactory->fillVor(vorByIdQuery->record(), *vor);
+      maptypes::MapVor vor;
+      mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
       result.vors.append(vor);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::NDB)
@@ -167,10 +161,9 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
     ndbByIdQuery->exec();
     while(ndbByIdQuery->next())
     {
-      maptypes::MapNdb *ndb = new maptypes::MapNdb;
-      mapTypesFactory->fillNdb(ndbByIdQuery->record(), *ndb);
+      maptypes::MapNdb ndb;
+      mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
       result.ndbs.append(ndb);
-      result.needsDelete = true;
     }
   }
   else if(type == maptypes::WAYPOINT)
@@ -179,10 +172,9 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
     waypointByIdQuery->exec();
     while(waypointByIdQuery->next())
     {
-      maptypes::MapWaypoint *wp = new maptypes::MapWaypoint;
-      mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), *wp);
+      maptypes::MapWaypoint wp;
+      mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
       result.waypoints.append(wp);
-      result.needsDelete = true;
     }
   }
 }
@@ -207,12 +199,12 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     {
       if(conv.wToS(airport.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, &airport);
+          insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, airport);
 
       if(airportDiagram)
         if(conv.wToS(airport.towerCoords, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByTowerDistance(conv, result.towers, xs, ys, &airport);
+            insertSortedByTowerDistance(conv, result.towers, xs, ys, airport);
     }
     }
 
@@ -222,7 +214,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       const MapVor& vor = vorCache.list.at(i);
       if(conv.wToS(vor.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, &vor);
+          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
     }
 
   if(mapLayer->isNdb() && types.testFlag(maptypes::NDB))
@@ -231,7 +223,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       const MapNdb& ndb = ndbCache.list.at(i);
       if(conv.wToS(ndb.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, &ndb);
+          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
     }
 
   if(mapLayer->isWaypoint() && types.testFlag(maptypes::WAYPOINT))
@@ -240,7 +232,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       const MapWaypoint& wp = waypointCache.list.at(i);
       if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, &wp);
+          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
   if(mapLayer->isAirway())
@@ -251,7 +243,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
          (wp.hasJet && types.testFlag(maptypes::AIRWAYJ)))
         if(conv.wToS(wp.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, &wp);
+            insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
   if(mapLayer->isMarker() && types.testFlag(maptypes::MARKER))
@@ -260,7 +252,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       const MapMarker& wp = markerCache.list.at(i);
       if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.markers, nullptr, xs, ys, &wp);
+          insertSortedByDistance(conv, result.markers, nullptr, xs, ys, wp);
     }
 
   if(mapLayer->isIls() && types.testFlag(maptypes::ILS))
@@ -269,7 +261,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       const MapIls& wp = ilsCache.list.at(i);
       if(conv.wToS(wp.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, &wp);
+          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, wp);
     }
 
   if(airportDiagram)
@@ -280,7 +272,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       for(const MapParking& p : *parkings)
         if(conv.wToS(p.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByDistance(conv, result.parkings, nullptr, xs, ys, &p);
+            insertSortedByDistance(conv, result.parkings, nullptr, xs, ys, p);
     }
 
     for(int id : helipadCache.keys())
@@ -289,7 +281,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
       for(const MapHelipad& p : *helipads)
         if(conv.wToS(p.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-            insertSortedByDistance(conv, result.helipads, nullptr, xs, ys, &p);
+            insertSortedByDistance(conv, result.helipads, nullptr, xs, ys, p);
     }
   }
 }

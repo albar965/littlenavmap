@@ -282,24 +282,23 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 
       if(type == maptypes::WAYPOINT)
       {
-        maptypes::MapWaypoint *obj = new maptypes::MapWaypoint;
-        factory.fillWaypoint(rec, *obj);
+        maptypes::MapWaypoint obj;
+        factory.fillWaypoint(rec, obj);
         result.waypoints.append(obj);
       }
       else if(type == maptypes::NDB)
       {
-        maptypes::MapNdb *obj = new maptypes::MapNdb;
-        factory.fillNdb(rec, *obj);
+        maptypes::MapNdb obj;
+        factory.fillNdb(rec, obj);
         result.ndbs.append(obj);
       }
       else if(type == maptypes::VOR)
       {
-        maptypes::MapVor *obj = new maptypes::MapVor;
-        factory.fillVor(rec, *obj);
+        maptypes::MapVor obj;
+        factory.fillVor(rec, obj);
         // Adapt to nav_search table frequency scaling
-        obj->frequency /= 10;
+        obj.frequency /= 10;
         result.vors.append(obj);
       }
     }
-  result.needsDelete = true;
 }
