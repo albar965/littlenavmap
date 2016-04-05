@@ -45,7 +45,8 @@ enum MapObjectType
   AIRWAYJ = 0x0800,
   ROUTE = 0x1000,
   USER = 0x2000,
-  INVALID = 0x4000,
+  PARKING = 0x4000,
+  INVALID = 0x8000,
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffff
 };
@@ -183,8 +184,9 @@ struct MapTaxiPath
 
 struct MapParking
 {
-  atools::geo::Pos position;
   QString type, name;
+  int id, airportId;
+  atools::geo::Pos position;
   int number, radius, heading;
   bool jetway;
   const atools::geo::Pos& getPosition() const
@@ -440,11 +442,19 @@ QString navName(const QString& type);
 QString surfaceName(const QString& surface);
 QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
-QString parkingTypeName(const QString& ramp);
-QString parkingName(const QString& ramp);
+QString parkingTypeName(const QString& type);
+QString parkingName(const QString& name);
+QString parkingNameForFlightplan(const QString& name);
 QString airwayTypeToShortString(maptypes::MapAirwayType type);
 QString airwayTypeToString(maptypes::MapAirwayType type);
 MapAirwayType  airwayTypeFromString(const QString& typeStr);
+
+QString airportText(const maptypes::MapAirport& airport);
+QString vorText(const maptypes::MapVor& vor);
+QString vorType(const maptypes::MapVor& vor);
+QString ndbText(const maptypes::MapNdb& ndb);
+QString waypointText(const maptypes::MapWaypoint& waypoint);
+QString userpointText(const maptypes::MapUserpoint& userpoint);
 
 } // namespace types
 

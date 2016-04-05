@@ -44,8 +44,8 @@
 #include <common/maptypesfactory.h>
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                     atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
-  : Search(parent, tableView, columnList, sqlDb, tabWidgetIndex)
+                     MapQuery *mapQuery, int tabWidgetIndex)
+  : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = parentWidget->getUi();
 

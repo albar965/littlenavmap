@@ -47,7 +47,7 @@ class AirportSearch :
 
 public:
   explicit AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                         atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex);
+                         MapQuery* mapQuery, int tabWidgetIndex);
   virtual ~AirportSearch();
 
   virtual void saveState() override;

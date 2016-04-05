@@ -110,6 +110,11 @@ public:
   void initQueries();
   void deInitQueries();
 
+  atools::sql::SqlDatabase *getDatabase() const
+  {
+    return db;
+  }
+
 signals:
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
 

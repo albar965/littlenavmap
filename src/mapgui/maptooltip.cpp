@@ -114,14 +114,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     if(!text.isEmpty())
       text += "<hr/>";
-    QString type;
-    if(vor.dmeOnly)
-      type = "DME";
-    else if(vor.hasDme)
-      type = "VORDME";
-    else
-      type = "VOR";
-
+    QString type = maptypes::vorType(vor);
     text += "<b>" + type + ": " + vor.name + " (" + vor.ident + ")</b>";
 
     if(vor.routeIndex >= 0)

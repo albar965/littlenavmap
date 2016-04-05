@@ -37,9 +37,11 @@
 
 #include <gui/actiontextsaver.h>
 
+#include <mapgui/mapquery.h>
+
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-               atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex)
-  : QObject(parent), db(sqlDb), columns(columnList), view(tableView), parentWidget(parent),
+               MapQuery *query, int tabWidgetIndex)
+  : QObject(parent), mapQuery(query), columns(columnList), view(tableView), parentWidget(parent),
     tabIndex(tabWidgetIndex)
 {
 
@@ -66,7 +68,7 @@ void Search::initViewAndController()
 
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
-  controller = new Controller(parentWidget, db, columns, view);
+  controller = new Controller(parentWidget, mapQuery->getDatabase(), columns, view);
   controller->prepareModel();
 }
 
@@ -513,9 +515,17 @@ void Search::contextMenu(const QPoint& pos)
         emit routeAdd(id, atools::geo::EMPTY_POS, navType);
     }
     else if(action == ui->actionRouteAirportStart)
-      emit routeSetStart(controller->getIdForRow(index));
+    {
+      maptypes::MapAirport ap;
+      mapQuery->getAirportById(ap, controller->getIdForRow(index));
+      emit routeSetStart(ap);
+    }
     else if(action == ui->actionRouteAirportDest)
-      emit routeSetDest(controller->getIdForRow(index));
+    {
+      maptypes::MapAirport ap;
+      mapQuery->getAirportById(ap, controller->getIdForRow(index));
+      emit routeSetDest(ap);
+    }
     // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
 }

@@ -197,3 +197,18 @@ void MapTypesFactory::fillIls(const QSqlRecord& record, maptypes::MapIls& ils)
   ils.bounding.extend(ils.pos1);
   ils.bounding.extend(ils.pos2);
 }
+
+void MapTypesFactory::fillParking(const QSqlRecord& record, maptypes::MapParking& parking)
+{
+  parking.id = record.value("parking_id").toInt();
+  parking.airportId = record.value("airport_id").toInt();
+  parking.type = record.value("type").toString();
+  parking.name = record.value("name").toString();
+
+  parking.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+  parking.jetway = record.value("has_jetway").toInt() > 0;
+  parking.number = record.value("number").toInt();
+
+  parking.heading = static_cast<int>(std::roundf(record.value("heading").toFloat()));
+  parking.radius = static_cast<int>(std::roundf(record.value("radius").toFloat()));
+}

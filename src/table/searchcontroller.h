@@ -32,6 +32,7 @@ class QLayout;
 class QAction;
 class QTableView;
 class QTabWidget;
+class MapQuery;
 
 namespace atools {
 namespace geo {
@@ -49,7 +50,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb, QTabWidget *tabWidgetSearch);
+  SearchController(MainWindow *parent, MapQuery *mQuery, QTabWidget *tabWidgetSearch);
   virtual ~SearchController();
 
   void createAirportSearch(QTableView *tableView);
@@ -74,7 +75,7 @@ public:
   void updateTableSelection();
 
 private:
-  atools::sql::SqlDatabase *db;
+  MapQuery *mapQuery;
   ColumnList *airportColumns = nullptr;
   AirportSearch *airportSearch = nullptr;
   QList<Search *> allSearchTabs;

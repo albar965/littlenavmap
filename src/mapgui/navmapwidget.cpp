@@ -311,7 +311,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAdd,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                          ui->actionRouteAirportDest});
+                                          ui->actionRouteAirportDest, ui->actionRouteParkingStart});
   Q_UNUSED(textSaver);
 
   QMenu menu;
@@ -328,15 +328,13 @@ void NavMapWidget::contextMenu(const QPoint& point)
   menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
   menu.addAction(ui->actionRouteAdd);
-  menu.addAction(ui->actionRouteAirportStart);
-  menu.addAction(ui->actionRouteAirportDest);
   menu.addAction(ui->actionRouteDeleteWaypoint);
   menu.addSeparator();
+  menu.addAction(ui->actionRouteAirportStart);
+  menu.addAction(ui->actionRouteParkingStart);
+  menu.addAction(ui->actionRouteAirportDest);
+  menu.addSeparator();
   menu.addAction(ui->actionShowInSearch);
-
-  maptypes::MapSearchResult result;
-
-  getAllNearestMapObjects(point.x(), point.y(), 10, result);
 
   int distMarkerIndex = getNearestDistanceMarkerIndex(point.x(), point.y(), 10);
   int rangeMarkerIndex = getNearestRangeMarkerIndex(point.x(), point.y(), 10);
@@ -357,84 +355,112 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionMapHideOneRangeRing->setEnabled(visible && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visible && distMarkerIndex != -1);
 
-  maptypes::MapObjectTypes selectedSearchType = maptypes::NONE, selectedRangeType = maptypes::NONE;
-  // Create copies since the cache might be emptied by draw events after showing the menu
-  maptypes::MapAirport ap;
-  maptypes::MapVor vor;
-  maptypes::MapNdb ndb;
-  maptypes::MapWaypoint wp;
-  maptypes::MapUserpoint up;
-
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
-
   ui->actionRouteAdd->setEnabled(true);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
+  ui->actionRouteParkingStart->setEnabled(false);
 
-  int routeIndex = -1;
-  QString searchText;
-  // Collecti information from the search result
+  maptypes::MapSearchResult result;
+  getAllNearestMapObjects(point.x(), point.y(), 10, result);
+  // maptypes::MapObjectTypes selectedSearchType = maptypes::NONE, selectedRangeType = maptypes::NONE;
+  maptypes::MapAirport *airport = nullptr;
+  maptypes::MapVor *vor = nullptr;
+  maptypes::MapNdb *ndb = nullptr;
+  maptypes::MapWaypoint *waypoint = nullptr;
+  maptypes::MapUserpoint *userpoint = nullptr;
+  maptypes::MapParking *parking = nullptr;
+
   if(!result.airports.isEmpty())
-  {
-    ap = result.airports.first();
-    searchText = "Airport " + ap.name + " (" + ap.ident + ")";
-    selectedSearchType = maptypes::AIRPORT;
-    routeIndex = ap.routeIndex;
-  }
-  else if(!result.vors.isEmpty())
-  {
-    vor = result.vors.first();
+    airport = &result.airports.first();
+  if(!result.parkings.isEmpty() && result.parkings.first().type != "FUEL")
+    parking = &result.parkings.first();
+  if(!result.vors.isEmpty())
+    vor = &result.vors.first();
+  if(!result.ndbs.isEmpty())
+    ndb = &result.ndbs.first();
+  if(!result.waypoints.isEmpty())
+    waypoint = &result.waypoints.first();
+  if(!result.userPoints.isEmpty())
+    userpoint = &result.userPoints.first();
 
-    QString type;
-    if(vor.dmeOnly)
-      type = "DME";
-    else if(vor.hasDme)
-      type = "VORDME";
-    else
-      type = "VOR";
+  QString searchText;
+  // Collect information from the search result
+  if(airport != nullptr)
+    searchText = maptypes::airportText(*airport);
+  else if(parking != nullptr)
+    searchText = maptypes::parkingName(parking->name) + " " + QString::number(parking->number);
+  else if(vor != nullptr)
+    searchText = maptypes::vorText(*vor);
+  else if(ndb != nullptr)
+    searchText = maptypes::ndbText(*ndb);
+  else if(waypoint != nullptr)
+    searchText = maptypes::waypointText(*waypoint);
+  else if(userpoint != nullptr)
+    searchText = maptypes::userpointText(*userpoint);
 
-    searchText = type + " " + vor.name + " (" + vor.ident + ")";
-    selectedSearchType = maptypes::VOR;
-    routeIndex = vor.routeIndex;
-  }
-  else if(!result.ndbs.isEmpty())
+  int delRouteIndex = -1;
+  maptypes::MapObjectTypes delType = maptypes::NONE;
+  QString delSearchText;
+  // Collect information from the search result
+  if(airport != nullptr && airport->routeIndex != -1)
   {
-    ndb = result.ndbs.first();
-    searchText = "NDB " + ndb.name + " (" + ndb.ident + ")";
-    selectedSearchType = maptypes::NDB;
-    routeIndex = ndb.routeIndex;
+    delSearchText = maptypes::airportText(*airport);
+    delRouteIndex = airport->routeIndex;
+    delType = maptypes::AIRPORT;
   }
-  else if(!result.waypoints.isEmpty())
+  else if(vor != nullptr && vor->routeIndex != -1)
   {
-    wp = result.waypoints.first();
-    searchText = "Waypoint " + wp.ident;
-    selectedSearchType = maptypes::WAYPOINT;
-    routeIndex = wp.routeIndex;
+    delSearchText = maptypes::vorText(*vor);
+    delRouteIndex = vor->routeIndex;
+    delType = maptypes::VOR;
   }
-  else if(!result.userPoints.isEmpty())
+  else if(ndb != nullptr && ndb->routeIndex != -1)
   {
-    up = result.userPoints.first();
-    searchText = "User point " + up.name;
-    selectedSearchType = maptypes::USER;
-    routeIndex = up.routeIndex;
+    delSearchText = maptypes::ndbText(*ndb);
+    delRouteIndex = ndb->routeIndex;
+    delType = maptypes::NDB;
   }
-  else
-    selectedSearchType = maptypes::USER;
+  else if(waypoint != nullptr && waypoint->routeIndex != -1)
+  {
+    delSearchText = maptypes::waypointText(*waypoint);
+    delRouteIndex = waypoint->routeIndex;
+    delType = maptypes::WAYPOINT;
+  }
+  else if(userpoint != nullptr && userpoint->routeIndex != -1)
+  {
+    delSearchText = maptypes::userpointText(*userpoint);
+    delRouteIndex = userpoint->routeIndex;
+    delType = maptypes::USER;
+  }
 
   // Update "set airport as start/dest"
-  if(!result.airports.isEmpty())
+  if(airport != nullptr)
   {
     ui->actionRouteAirportStart->setEnabled(true);
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(searchText));
     ui->actionRouteAirportDest->setEnabled(true);
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(searchText));
   }
+  else
+  {
+    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
+    ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
+  }
+
+  // Update "set parking start"
+  if(parking != nullptr)
+  {
+    ui->actionRouteParkingStart->setEnabled(true);
+    ui->actionRouteParkingStart->setText(ui->actionRouteParkingStart->text().arg(searchText));
+  }
+  else
+    ui->actionRouteParkingStart->setText(ui->actionRouteParkingStart->text().arg(QString()));
 
   // Update "show in search" and "add to route"
-  if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
-     !result.airports.isEmpty())
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
@@ -447,42 +473,44 @@ void NavMapWidget::contextMenu(const QPoint& point)
   }
 
   // Update "delete in route"
-  if(routeIndex != -1)
+  if(delRouteIndex != -1)
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
-    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(searchText));
+    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(delSearchText));
   }
   else
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
 
-  if(result.airports.isEmpty())
+  if(airport != nullptr)
   {
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
 
   // Update "show range rings for Navaid"
-  if(!result.vors.isEmpty())
+  if(vor != nullptr)
   {
-    vor = result.vors.first();
-    selectedRangeType = maptypes::VOR;
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(searchText));
   }
-  else if(!result.ndbs.isEmpty())
+  else if(ndb != nullptr)
   {
-    ndb = result.ndbs.first();
-    selectedRangeType = maptypes::NDB;
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(searchText));
   }
   else
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(
-                                          searchText.isEmpty() ? "here" : searchText));
-  ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(
-                                               searchText.isEmpty() ? "here" : searchText));
+  if(parking == nullptr && !searchText.isEmpty())
+  {
+    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(searchText));
+    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(searchText));
+  }
+  else
+  {
+    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg("here"));
+    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg("here"));
+  }
 
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(QCursor::pos());
@@ -499,34 +527,38 @@ void NavMapWidget::contextMenu(const QPoint& point)
   {
     if(action == ui->actionShowInSearch)
     {
-      if(selectedSearchType == maptypes::AIRPORT)
+      if(airport != nullptr)
       {
+        ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(0);
-        emit objectSelected(selectedSearchType, ap.ident, QString(), QString());
+        emit objectSelected(maptypes::AIRPORT, airport->ident, QString(), QString());
       }
-      else if(selectedSearchType == maptypes::VOR)
+      else if(vor != nullptr)
       {
+        ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(selectedSearchType, vor.ident, vor.region, vor.apIdent);
+        emit objectSelected(maptypes::VOR, vor->ident, vor->region, vor->apIdent);
       }
-      else if(selectedSearchType == maptypes::NDB)
+      else if(ndb != nullptr)
       {
+        ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
         // TODO check airport ident (probably not loaded)
-        emit objectSelected(selectedSearchType, ndb.ident, ndb.region, ndb.apIdent);
+        emit objectSelected(maptypes::NDB, ndb->ident, ndb->region, ndb->apIdent);
       }
-      else if(selectedSearchType == maptypes::WAYPOINT)
+      else if(waypoint != nullptr)
       {
+        ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(selectedSearchType, wp.ident, wp.region, wp.apIdent);
+        emit objectSelected(maptypes::WAYPOINT, waypoint->ident, waypoint->region, waypoint->apIdent);
       }
     }
     else if(action == ui->actionMapNavaidRange)
     {
-      if(selectedRangeType == maptypes::VOR)
-        addNavRangeRing(vor.position, selectedRangeType, vor.ident, vor.frequency, vor.range);
-      else if(selectedRangeType == maptypes::NDB)
-        addNavRangeRing(ndb.position, selectedRangeType, ndb.ident, ndb.frequency, ndb.range);
+      if(vor != nullptr)
+        addNavRangeRing(vor->position, maptypes::VOR, vor->ident, vor->frequency, vor->range);
+      else if(ndb != nullptr)
+        addNavRangeRing(ndb->position, maptypes::NDB, ndb->ident, ndb->frequency, ndb->range);
     }
     else if(action == ui->actionMapRangeRings)
       addRangeRing(pos);
@@ -546,39 +578,42 @@ void NavMapWidget::contextMenu(const QPoint& point)
     {
       // Distance line
       maptypes::DistanceMarker dm;
-      dm.type = selectedSearchType;
 
-      if(selectedSearchType == maptypes::VOR)
+      if(vor != nullptr)
       {
-        dm.text = vor.ident + " " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2);
-        dm.from = vor.position;
-        dm.magvar = vor.magvar;
+        dm.text = vor->ident + " " + formatter::formatDoubleUnit(vor->frequency / 1000., QString(), 2);
+        dm.from = vor->position;
+        dm.magvar = vor->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::vorSymbolColor;
+        dm.type = maptypes::VOR;
       }
-      else if(selectedSearchType == maptypes::NDB)
+      else if(ndb != nullptr)
       {
-        dm.text = ndb.ident + " " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2);
-        dm.from = ndb.position;
-        dm.magvar = ndb.magvar;
+        dm.text = ndb->ident + " " + formatter::formatDoubleUnit(ndb->frequency / 100., QString(), 2);
+        dm.from = ndb->position;
+        dm.magvar = ndb->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::ndbSymbolColor;
+        dm.type = maptypes::NDB;
       }
-      else if(selectedSearchType == maptypes::WAYPOINT)
+      else if(waypoint != nullptr)
       {
-        dm.text = wp.ident;
-        dm.from = wp.position;
-        dm.magvar = wp.magvar;
+        dm.text = waypoint->ident;
+        dm.from = waypoint->position;
+        dm.magvar = waypoint->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::waypointSymbolColor;
+        dm.type = maptypes::WAYPOINT;
       }
-      else if(selectedSearchType == maptypes::AIRPORT)
+      else if(airport != nullptr)
       {
-        dm.text = ap.name + " (" + ap.ident + ")";
-        dm.from = ap.position;
-        dm.magvar = ap.magvar;
+        dm.text = airport->name + " (" + airport->ident + ")";
+        dm.from = airport->position;
+        dm.magvar = airport->magvar;
         dm.hasMagvar = true;
-        dm.color = mapcolors::colorForAirport(ap);
+        dm.color = mapcolors::colorForAirport(*airport);
+        dm.type = maptypes::AIRPORT;
       }
       else
       {
@@ -595,34 +630,69 @@ void NavMapWidget::contextMenu(const QPoint& point)
       setContextMenuPolicy(Qt::NoContextMenu);
       currentDistanceMarkerIndex = distanceMarkers.size() - 1;
     }
-    else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionRouteDeleteWaypoint)
+    else if(action == ui->actionRouteDeleteWaypoint)
     {
-      atools::geo::Pos position;
+      ui->dockWidgetRoute->raise();
+      emit routeDelete(delRouteIndex, delType);
+    }
+    else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
+            action == ui->actionRouteAirportDest || action == ui->actionRouteParkingStart)
+    {
+      ui->dockWidgetRoute->raise();
+
+      atools::geo::Pos position = pos;
+      maptypes::MapObjectTypes type;
 
       int id = -1;
-      if(selectedSearchType == maptypes::AIRPORT)
-        id = ap.id;
-      else if(selectedSearchType == maptypes::VOR)
-        id = vor.id;
-      else if(selectedSearchType == maptypes::NDB)
-        id = ndb.id;
-      else if(selectedSearchType == maptypes::WAYPOINT)
-        id = wp.id;
-      else if(selectedSearchType == maptypes::USER)
+      if(airport != nullptr)
       {
-        id = up.id;
+        id = airport->id;
+        type = maptypes::AIRPORT;
+      }
+      else if(parking != nullptr)
+      {
+        id = parking->id;
+        type = maptypes::PARKING;
+      }
+      else if(vor != nullptr)
+      {
+        id = vor->id;
+        type = maptypes::VOR;
+      }
+      else if(ndb != nullptr)
+      {
+        id = ndb->id;
+        type = maptypes::NDB;
+      }
+      else if(waypoint != nullptr)
+      {
+        id = waypoint->id;
+        type = maptypes::WAYPOINT;
+      }
+      else
+      {
+        if(userpoint != nullptr)
+          id = userpoint->id;
+        type = maptypes::USER;
         position = pos;
       }
 
-      if(action == ui->actionRouteAdd)
-        emit routeAdd(id, position, selectedSearchType);
-      else if(action == ui->actionRouteDeleteWaypoint)
-        emit routeDelete(routeIndex, selectedSearchType);
+      if(action == ui->actionRouteParkingStart && parking != nullptr)
+        emit routeSetParkingStart(*parking);
+      else if(action == ui->actionRouteAdd)
+      {
+        if(parking != nullptr)
+        {
+          // Adjust values in case user selected add on a parking position
+          type = maptypes::USER;
+          id = -1;
+        }
+        emit routeAdd(id, position, type);
+      }
       else if(action == ui->actionRouteAirportStart)
-        emit routeSetStart(id);
+        emit routeSetStart(*airport);
       else if(action == ui->actionRouteAirportDest)
-        emit routeSetDest(id);
+        emit routeSetDest(*airport);
     }
   }
 }

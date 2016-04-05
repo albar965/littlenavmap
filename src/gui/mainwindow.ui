@@ -1731,6 +1731,23 @@
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowCities"/>
   </widget>
+  <widget class="QToolBar" name="routeToolBar">
+   <property name="windowTitle">
+    <string>Route Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRouteCalcHighAlt"/>
+   <addaction name="actionRouteCalcLowAlt"/>
+   <addaction name="actionRouteReverse"/>
+   <addaction name="actionRouteCalcRadionav"/>
+   <addaction name="actionRouteCalcDirect"/>
+   <addaction name="actionRouteSettings"/>
+  </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
     <iconset>
@@ -2568,6 +2585,69 @@
    </property>
    <property name="toolTip">
     <string>Delete from Route</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcHighAlt">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>High Alt Route</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcLowAlt">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Low Alt Route</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcRadionav">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Radionav Route</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcDirect">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Direct Route</string>
+   </property>
+  </action>
+  <action name="actionRouteReverse">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Rverse Route</string>
+   </property>
+  </action>
+  <action name="actionRouteSettings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settings.svg</normaloff>:/littlenavmap/resources/icons/settings.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Settings Route</string>
+   </property>
+  </action>
+  <action name="actionRouteParkingStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as Route Start Position</string>
    </property>
   </action>
  </widget>

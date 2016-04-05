@@ -562,19 +562,9 @@ const QList<maptypes::MapParking> *MapQuery::getParking(int airportId)
     {
       maptypes::MapParking p;
 
-      QString type = parkingQuery->value("type").toString();
-      if(type != "VEHICLES")
+      if(parkingQuery->value("type").toString() != "VEHICLES")
       {
-        p.type = type;
-        p.name = parkingQuery->value("name").toString();
-
-        p.position = Pos(parkingQuery->value("lonx").toFloat(), parkingQuery->value("laty").toFloat());
-        p.jetway = parkingQuery->value("has_jetway").toInt() > 0;
-        p.number = parkingQuery->value("number").toInt();
-
-        p.heading = static_cast<int>(std::roundf(parkingQuery->value("heading").toFloat()));
-        p.radius = static_cast<int>(std::roundf(parkingQuery->value("radius").toFloat()));
-
+        mapTypesFactory->fillParking(parkingQuery->record(), p);
         ps->append(p);
       }
     }
@@ -870,7 +860,7 @@ void MapQuery::initQueries()
 
   parkingQuery = new SqlQuery(db);
   parkingQuery->prepare(
-    "select type, name, number, radius, heading, has_jetway, lonx, laty "
+    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty "
     "from parking where airport_id = :airportId");
 
   helipadQuery = new SqlQuery(db);
@@ -985,3 +975,5 @@ void MapQuery::deInitQueries()
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
 }
+
+

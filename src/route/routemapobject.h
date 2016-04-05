@@ -27,15 +27,19 @@ class RouteMapObject
 {
 public:
   RouteMapObject();
-  RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
-                 const RouteMapObject *predRouteMapObj, int *userIdentIndex = nullptr);
   ~RouteMapObject();
 
-  void update(const RouteMapObject *predRouteMapObj, int *userIdentIndex = nullptr);
+  void loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
+                               const RouteMapObject *predRouteMapObj);
+  void loadFromAirport(atools::fs::pln::FlightplanEntry *planEntry, const maptypes::MapAirport& newAirport,
+                       const RouteMapObject *predRouteMapObj);
+
+  void update(const RouteMapObject *predRouteMapObj);
+  void updateParking(const maptypes::MapParking& departureParking);
 
   int getId() const;
   const atools::geo::Pos& getPosition() const;
-  const QString& getIdent() const;
+  QString getIdent() const;
   const QString& getRegion() const;
   const QString& getName() const;
   int getFrequency() const;
@@ -60,6 +64,11 @@ public:
   const maptypes::MapAirport& getAirport() const
   {
     return airport;
+  }
+
+  const maptypes::MapParking& getParking() const
+  {
+    return parking;
   }
 
   const maptypes::MapVor& getVor() const
@@ -102,18 +111,29 @@ public:
     return courseRhumbTo;
   }
 
+  bool isValid() const
+  {
+    return valid;
+  }
+
+  int getUserpointNumber() const
+  {
+    return userpointNum;
+  }
+
 private:
-  atools::fs::pln::FlightplanEntry *entry;
-  QString userIdent;
+  atools::fs::pln::FlightplanEntry *entry = nullptr;
+  int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
+  maptypes::MapParking parking;
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;
   bool predecessor = false;
+  bool valid = false;
 
   float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f;
-  void setUserIdent(int *userIdentIndex);
   void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
 
 };

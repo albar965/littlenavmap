@@ -79,6 +79,16 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
+  if(!routeMapObjects.isEmpty())
+  {
+    const RouteMapObject& first = routeMapObjects.at(0);
+    if(first.getMapObjectType() == maptypes::AIRPORT && first.getParking().position.isValid())
+    {
+      const Pos& p = first.getParking().position;
+      linestring.append(GeoDataCoordinates(p.getLonX(), p.getLatY(), 0, DEG));
+    }
+  }
+
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);

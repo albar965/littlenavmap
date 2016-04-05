@@ -35,6 +35,7 @@ public:
   void fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway);
   void fillMarker(const QSqlRecord& record, maptypes::MapMarker& marker);
   void fillIls(const QSqlRecord& record, maptypes::MapIls& ils);
+  void fillParking(const QSqlRecord& record, maptypes::MapParking& parking);
   maptypes::MapAirportFlags flag(const QSqlRecord& record, const QString& field,
                                  maptypes::MapAirportFlags flag);
   maptypes::MapAirportFlags getFlags(const QSqlRecord& record);

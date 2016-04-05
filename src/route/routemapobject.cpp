@@ -19,10 +19,14 @@
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 
+#include <QRegularExpression>
+
 using namespace atools::geo;
 
 const QString EMPTY_STR;
 const QString UNKNOWN_STR("Unknown");
+
+const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
 
 RouteMapObject::RouteMapObject()
 {
@@ -55,10 +59,24 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::fs::pln::Flightpl
   return TYPE();
 }
 
-RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
-                               const RouteMapObject *predRouteMapObj, int *userIdentIndex)
-  : entry(planEntry)
+void RouteMapObject::loadFromAirport(atools::fs::pln::FlightplanEntry *planEntry,
+                                     const maptypes::MapAirport& newAirport,
+                                     const RouteMapObject *predRouteMapObj)
 {
+  entry = planEntry;
+  predecessor = predRouteMapObj != nullptr;
+  type = maptypes::AIRPORT;
+  airport = newAirport;
+
+  updateDistAndCourse(predRouteMapObj);
+  valid = true;
+}
+
+void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
+                                             const RouteMapObject *predRouteMapObj)
+{
+  entry = planEntry;
+
   maptypes::MapSearchResult res;
 
   predecessor = predRouteMapObj != nullptr;
@@ -67,7 +85,7 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
 
   if(region == "KK") // Invalid route finder stuff
     region.clear();
-  bool valid = false;
+
   bool found;
   switch(entry->getWaypointType())
   {
@@ -121,14 +139,13 @@ RouteMapObject::RouteMapObject(atools::fs::pln::FlightplanEntry *planEntry, MapQ
     case atools::fs::pln::entry::USER:
       valid = true;
       type = maptypes::USER;
-      setUserIdent(userIdentIndex);
+      userpointNum = QString(USER_WP_ID.match(entry->getWaypointId()).captured(1)).toInt();
       break;
   }
 
   if(!valid)
     type = maptypes::INVALID;
 
-  // res.deleteAllObjects();
   updateDistAndCourse(predRouteMapObj);
 }
 
@@ -137,28 +154,20 @@ RouteMapObject::~RouteMapObject()
 
 }
 
-void RouteMapObject::update(const RouteMapObject *predRouteMapObj, int *userIdentIndex)
+void RouteMapObject::update(const RouteMapObject *predRouteMapObj)
 {
-  setUserIdent(userIdentIndex);
   updateDistAndCourse(predRouteMapObj);
 }
 
-void RouteMapObject::setUserIdent(int *userIdentIndex)
+void RouteMapObject::updateParking(const maptypes::MapParking& departureParking)
 {
-  if(entry->getWaypointType() == atools::fs::pln::entry::USER)
-  {
-    if(userIdentIndex == nullptr)
-      userIdent = QString(QObject::tr("User "));
-    else
-      userIdent = QString(QObject::tr("User ")) + QString::number((*userIdentIndex)++);
-  }
+  parking = departureParking;
 }
 
 void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)
 {
   if(predRouteMapObj != nullptr)
   {
-
     distanceTo = meterToNm(getPosition().distanceMeterTo(predRouteMapObj->getPosition()));
     distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(predRouteMapObj->getPosition()));
 
@@ -257,6 +266,8 @@ int RouteMapObject::getRange() const
   return -1;
 }
 
+
+
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {
   if(type == maptypes::INVALID)
@@ -290,7 +301,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
   return atools::geo::EMPTY_POS;
 }
 
-const QString& RouteMapObject::getIdent() const
+QString RouteMapObject::getIdent() const
 {
   if(type == maptypes::INVALID)
     return entry->getIcaoIdent();
@@ -301,7 +312,7 @@ const QString& RouteMapObject::getIdent() const
       return UNKNOWN_STR;
 
     case atools::fs::pln::entry::USER:
-      return userIdent;
+      return "User " + QString::number(userpointNum);
 
     case atools::fs::pln::entry::AIRPORT:
       return airport.ident;

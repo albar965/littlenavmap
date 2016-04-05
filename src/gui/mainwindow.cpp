@@ -102,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
   createNavMap();
 
   // Have to create searches in the same order as the tabs
-  searchController = new SearchController(this, &db, ui->tabWidgetSearch);
+  searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
   searchController->createAirportSearch(ui->tableViewAirportSearch);
   searchController->createNavSearch(ui->tableViewNavSearch);
 
@@ -339,6 +339,8 @@ void MainWindow::connectAllSlots()
 
   connect(navMapWidget, &NavMapWidget::routeSetStart,
           routeController, &RouteController::routeSetStart);
+  connect(navMapWidget, &NavMapWidget::routeSetParkingStart,
+          routeController, &RouteController::routeSetParking);
   connect(navMapWidget, &NavMapWidget::routeSetDest,
           routeController, &RouteController::routeSetDest);
   connect(navMapWidget, &NavMapWidget::routeAdd,

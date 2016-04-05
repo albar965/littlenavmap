@@ -25,9 +25,9 @@
 #include "gui/widgetstate.h"
 #include "table/controller.h"
 
-SearchController::SearchController(MainWindow *parent, atools::sql::SqlDatabase *sqlDb,
+SearchController::SearchController(MainWindow *parent, MapQuery* mQuery,
                                    QTabWidget *tabWidgetSearch)
-  : db(sqlDb), parentWidget(parent), tabWidget(tabWidgetSearch)
+  : mapQuery(mQuery), parentWidget(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
 
@@ -84,7 +84,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearch = new AirportSearch(parentWidget, tableView, airportColumns, db, 0);
+  airportSearch = new AirportSearch(parentWidget, tableView, airportColumns, mapQuery, 0);
 
   airportSearch->connectSlots();
 
@@ -98,7 +98,7 @@ void SearchController::createNavSearch(QTableView *tableView)
 {
   navColumns = new ColumnList("nav_search", "nav_search_id");
 
-  navSearch = new NavSearch(parentWidget, tableView, navColumns, db, 1);
+  navSearch = new NavSearch(parentWidget, tableView, navColumns, mapQuery, 1);
   navSearch->connectSlots();
 
   parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,

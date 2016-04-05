@@ -194,14 +194,19 @@ QString parkingRampName(const QString& ramp)
   return parkingMapRamp.value(ramp);
 }
 
-QString parkingTypeName(const QString& ramp)
+QString parkingTypeName(const QString& type)
 {
-  return parkingTypeMap.value(ramp);
+  return parkingTypeMap.value(type);
 }
 
-QString parkingName(const QString& ramp)
+QString parkingName(const QString& name)
 {
-  return parkingNameMap.value(ramp);
+  return parkingNameMap.value(name);
+}
+
+QString parkingNameForFlightplan(const QString& name)
+{
+  return parkingNameMap.value(name).toUpper();
 }
 
 bool MapAirport::hard() const
@@ -397,6 +402,42 @@ QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker&
   dataStream << obj.magvar << static_cast<qint32>(obj.type) << obj.rhumbLine << obj.hasMagvar;
 
   return dataStream;
+}
+
+QString vorType(const MapVor& vor)
+{
+  QString type;
+  if(vor.dmeOnly)
+    return "DME";
+  else if(vor.hasDme)
+    return "VORDME";
+  else
+    return "VOR";
+}
+
+QString vorText(const MapVor& vor)
+{
+  return vorType(vor) + " " + vor.name + " (" + vor.ident + ")";
+}
+
+QString ndbText(const MapNdb& ndb)
+{
+  return "NDB " + ndb.name + " (" + ndb.ident + ")";
+}
+
+QString waypointText(const MapWaypoint& waypoint)
+{
+  return "Waypoint " + waypoint.ident;
+}
+
+QString userpointText(const MapUserpoint& userpoint)
+{
+  return "User point " + userpoint.name;
+}
+
+QString airportText(const MapAirport& airport)
+{
+  return "Airport " + airport.name + " (" + airport.ident + ")";
 }
 
 } // namespace types

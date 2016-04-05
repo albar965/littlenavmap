@@ -47,7 +47,7 @@ class NavSearch :
 
 public:
   explicit NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                     atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex);
+                     MapQuery* mapQuery, int tabWidgetIndex);
   virtual ~NavSearch();
 
   virtual void saveState() override;

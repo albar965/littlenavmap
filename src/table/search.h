@@ -31,6 +31,7 @@ class ColumnList;
 class QAction;
 class MainWindow;
 class QItemSelection;
+class MapQuery;
 
 namespace atools {
 namespace geo {
@@ -48,7 +49,7 @@ class Search :
 
 public:
   explicit Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  atools::sql::SqlDatabase *sqlDb, int tabWidgetIndex);
+                  MapQuery *query, int tabWidgetIndex);
   virtual ~Search();
 
   void preDatabaseLoad();
@@ -84,7 +85,7 @@ protected:
   void connectSearchWidgets();
   void contextMenu(const QPoint& pos);
 
-  atools::sql::SqlDatabase *db;
+  MapQuery *mapQuery;
   atools::geo::Pos mapMark;
 
   Controller *controller;
@@ -106,8 +107,8 @@ signals:
   void changeMark(const atools::geo::Pos& pos);
   void selectionChanged(const Search *source, int selected, int visible, int total);
 
-  void routeSetStart(int airportId);
-  void routeSetDest(int airportId);
+  void routeSetStart(maptypes::MapAirport airport);
+  void routeSetDest(maptypes::MapAirport airport);
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
 
 };

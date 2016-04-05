@@ -139,8 +139,9 @@ signals:
   void objectSelected(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
                       const QString& airportIdent);
 
-  void routeSetStart(int airportId);
-  void routeSetDest(int airportId);
+  void routeSetParkingStart(maptypes::MapParking parking);
+  void routeSetStart(maptypes::MapAirport ap);
+  void routeSetDest(maptypes::MapAirport ap);
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
   void routeDelete(int id, maptypes::MapObjectTypes type);
 

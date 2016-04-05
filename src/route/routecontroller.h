@@ -68,10 +68,11 @@ public:
     return boundingRect;
   }
 
-  void routeSetStart(int airportId);
-  void routeSetDest(int airportId);
+  void routeSetStart(maptypes::MapAirport airport);
+  void routeSetDest(maptypes::MapAirport airport);
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
   void routeDelete(int id, maptypes::MapObjectTypes type);
+  void routeSetParking(maptypes::MapParking parking);
 
 private:
   bool changed = false;
@@ -85,10 +86,10 @@ private:
   QStandardItemModel *model;
   RouteIconDelegate *iconDelegate;
 
-  void flightplanToView();
   void updateWindowTitle();
 
   float totalDistance = 0.f;
+  int curUserpointNumber = 1;
 
   void updateLabel();
 
@@ -102,18 +103,26 @@ private:
   void moveLegsUp();
   void deleteLegs();
   void selectedRows(QList<int>& rows, bool reverse);
-  void updateView();
 
   void select(QList<int>& rows, int offset);
   void moveLegs(int dir);
 
   void updateMoveAndDeleteActions();
 
+  void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
   void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry);
+  void buildFlightplanEntry(const maptypes::MapParking& parking, atools::fs::pln::FlightplanEntry& entry);
   int nearestLeg(const atools::geo::Pos& pos);
 
   void updateFlightplanData();
+
+  void routeStart(const maptypes::MapAirport& airport);
+  void createRouteMapObjects();
+
+  void updateModel();
+
+  void updateRouteMapObjects();
 
 signals:
   void showRect(const atools::geo::Rect& rect);
