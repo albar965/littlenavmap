@@ -112,7 +112,6 @@ private:
   void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
   void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry);
-  void buildFlightplanEntry(const maptypes::MapParking& parking, atools::fs::pln::FlightplanEntry& entry);
   int nearestLeg(const atools::geo::Pos& pos);
 
   void updateFlightplanData();

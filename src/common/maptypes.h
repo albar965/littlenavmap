@@ -86,7 +86,6 @@ struct MapAirport
   QString ident, name;
   int id;
   int longestRunwayLength = 0, longestRunwayHeading = 0;
-  int altitude = 0;
   MapAirportFlags flags = AP_NONE;
   float magvar = 0;
 
@@ -224,7 +223,7 @@ struct MapHelipad
 struct MapVor
 {
   QString ident, region, type, name, apIdent;
-  int id, altitude;
+  int id;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -246,7 +245,7 @@ struct MapVor
 struct MapNdb
 {
   QString ident, region, type, name, apIdent;
-  int id, altitude;
+  int id;
   float magvar;
   int frequency, range;
   atools::geo::Pos position;
@@ -352,7 +351,7 @@ struct MapMarker
 struct MapIls
 {
   QString ident, name;
-  int id, altitude;
+  int id;
   float magvar, slope, heading, width;
   int frequency, range;
   atools::geo::Pos position, pos1, pos2, posmid;
@@ -444,7 +443,7 @@ QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
 QString parkingTypeName(const QString& type);
 QString parkingName(const QString& name);
-QString parkingNameForFlightplan(const QString& name);
+QString parkingNameForFlightplan(const MapParking& parking);
 QString airwayTypeToShortString(maptypes::MapAirwayType type);
 QString airwayTypeToString(maptypes::MapAirwayType type);
 MapAirwayType  airwayTypeFromString(const QString& typeStr);

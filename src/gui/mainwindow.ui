@@ -2650,6 +2650,15 @@
     <string>Set %1 as Route Start Position</string>
    </property>
   </action>
+  <action name="actionRouteSelectParking">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select Parking Position for Departure</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

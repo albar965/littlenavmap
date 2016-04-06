@@ -474,8 +474,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   }
 
   // Update the current airport which is new or the same as the one used by the parking
-  flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking.name) + " " +
-                                      QString::number(parking.number));
+  flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
   routeMapObjects.first().updateParking(parking);
 
   changed = true;
@@ -505,7 +504,7 @@ void RouteController::routeStart(const maptypes::MapAirport& airport)
 
   flightplan->getEntries().prepend(entry);
 
-  RouteMapObject rmo;
+  RouteMapObject rmo(flightplan);
   rmo.loadFromAirport(&flightplan->getEntries().first(), airport, nullptr);
   routeMapObjects.prepend(rmo);
 }
@@ -534,7 +533,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   if(flightplan->getEntries().size() > 1)
     rmoPred = &routeMapObjects.at(routeMapObjects.size() - 1);
 
-  RouteMapObject rmo;
+  RouteMapObject rmo(flightplan);
   rmo.loadFromAirport(&flightplan->getEntries().first(), airport, rmoPred);
   routeMapObjects.append(rmo);
 
@@ -581,7 +580,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   if(flightplan->isEmpty() && insertIndex > 0)
     rmoPred = &routeMapObjects.at(insertIndex - 1);
-  RouteMapObject rmo;
+  RouteMapObject rmo(flightplan);
   rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[insertIndex], query, rmoPred);
 
   routeMapObjects.insert(insertIndex, rmo);
@@ -621,11 +620,6 @@ int RouteController::nearestLeg(const atools::geo::Pos& pos)
     }
   }
   return nearest;
-}
-
-void RouteController::buildFlightplanEntry(const maptypes::MapParking& parking, FlightplanEntry& entry)
-{
-
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)
@@ -697,16 +691,17 @@ void RouteController::updateFlightplanData()
     flightplan->clear();
   else
   {
+    QString departureIcao, destinationIcao;
+
     const RouteMapObject& firstRmo = routeMapObjects.first();
     if(firstRmo.getMapObjectType() == maptypes::AIRPORT)
     {
+      departureIcao = firstRmo.getAirport().ident;
       flightplan->setDepartureAiportName(firstRmo.getAirport().name);
-      flightplan->setDepartureIdent(firstRmo.getAirport().ident);
+      flightplan->setDepartureIdent(departureIcao);
 
       if(!firstRmo.getParking().name.isEmpty())
-        flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(
-                                              firstRmo.getParking().name) + " " +
-                                            QString::number(firstRmo.getParking().number));
+        flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(firstRmo.getParking()));
       flightplan->setDeparturePos(firstRmo.getPosition());
     }
     else
@@ -720,8 +715,9 @@ void RouteController::updateFlightplanData()
     const RouteMapObject& lastRmo = routeMapObjects.last();
     if(lastRmo.getMapObjectType() == maptypes::AIRPORT)
     {
+      destinationIcao = lastRmo.getAirport().ident;
       flightplan->setDestinationAiportName(lastRmo.getAirport().name);
-      flightplan->setDestinationIdent(lastRmo.getAirport().ident);
+      flightplan->setDestinationIdent(destinationIcao);
       flightplan->setDestinationPos(lastRmo.getPosition());
     }
     else
@@ -730,6 +726,20 @@ void RouteController::updateFlightplanData()
       flightplan->setDestinationIdent(QString());
       flightplan->setDestinationPos(Pos());
     }
+
+    Ui::MainWindow *ui = parentWindow->getUi();
+
+    // <Descr>LFHO, EDRJ</Descr>
+    flightplan->setDescription(departureIcao + ", " + destinationIcao);
+    // <FPType>IFR</FPType>
+    flightplan->setRouteType(atools::fs::pln::VOR);
+    // <RouteType>LowAlt</RouteType>
+    flightplan->setFlightplanType(
+      ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
+    // <CruisingAlt>19000</CruisingAlt>
+    flightplan->setCruisingAlt(ui->spinBoxRouteAlt->value());
+    // <Title>LFHO to EDRJ</Title>
+    flightplan->setTitle(departureIcao + " to " + destinationIcao);
   }
 }
 
@@ -768,7 +778,7 @@ void RouteController::createRouteMapObjects()
   {
     FlightplanEntry& entry = flightplan->getEntries()[i];
 
-    RouteMapObject mapobj;
+    RouteMapObject mapobj(flightplan);
     mapobj.loadFromDatabaseByEntry(&entry, query, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 

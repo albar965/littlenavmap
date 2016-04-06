@@ -70,6 +70,9 @@ public:
                          maptypes::MapObjectTypes types, int xs, int ys, int screenDistance,
                          maptypes::MapSearchResult& result);
 
+  void getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, int airportId, const QString& name,
+                                 int number);
+
   const QList<maptypes::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect,
                                                  const MapLayer *mapLayer, bool lazy);
 
@@ -101,7 +104,7 @@ public:
 
   const QList<maptypes::MapTaxiPath> *getTaxiPaths(int airportId);
 
-  const QList<maptypes::MapParking> *getParking(int airportId);
+  const QList<maptypes::MapParking> *getParkingsForAirport(int airportId);
 
   const QList<maptypes::MapHelipad> *getHelipads(int airportId);
 
@@ -151,7 +154,8 @@ private:
   *airportLargeByRectQuery = nullptr;
 
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
-  *parkingQuery = nullptr, *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr;
+  *parkingQuery = nullptr, *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
+  *parkingTypeAndNumberQuery = nullptr;
 
   atools::sql::SqlQuery *waypointsByRectQuery = nullptr, *vorsByRectQuery = nullptr,
   *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr, *ilsByRectQuery = nullptr,

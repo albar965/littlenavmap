@@ -204,9 +204,9 @@ QString parkingName(const QString& name)
   return parkingNameMap.value(name);
 }
 
-QString parkingNameForFlightplan(const QString& name)
+QString parkingNameForFlightplan(const maptypes::MapParking& parking)
 {
-  return parkingNameMap.value(name).toUpper();
+  return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
 
 bool MapAirport::hard() const

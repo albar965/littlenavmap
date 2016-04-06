@@ -326,7 +326,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->setBackgroundMode(Qt::OpaqueMode);
 
   // Draw parking --------------------------------
-  const QList<MapParking> *parkings = query->getParking(airport.id);
+  const QList<MapParking> *parkings = query->getParkingsForAirport(airport.id);
   if(!parkings->isEmpty())
     painter->setPen(QPen(mapcolors::parkingOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
   for(const MapParking& parking : *parkings)

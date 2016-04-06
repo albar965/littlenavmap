@@ -547,7 +547,7 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
   }
 }
 
-const QList<maptypes::MapParking> *MapQuery::getParking(int airportId)
+const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId)
 {
   if(parkingCache.contains(airportId))
     return parkingCache.object(airportId);
@@ -570,6 +570,25 @@ const QList<maptypes::MapParking> *MapQuery::getParking(int airportId)
     }
     parkingCache.insert(airportId, ps);
     return ps;
+  }
+}
+
+void MapQuery::getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, int airportId,
+                                         const QString& name, int number)
+{
+  parkingTypeAndNumberQuery->bindValue(":airportId", airportId);
+  if(name.isEmpty())
+    parkingTypeAndNumberQuery->bindValue(":name", "%");
+  else
+    parkingTypeAndNumberQuery->bindValue(":name", name);
+  parkingTypeAndNumberQuery->bindValue(":number", number);
+  parkingTypeAndNumberQuery->exec();
+
+  while(parkingTypeAndNumberQuery->next())
+  {
+    maptypes::MapParking parking;
+    mapTypesFactory->fillParking(parkingTypeAndNumberQuery->record(), parking);
+    parkings.append(parking);
   }
 }
 
@@ -791,6 +810,10 @@ void MapQuery::initQueries()
     "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty "
     "from ndb ");
 
+  static QString parkingQueryBase =
+    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty "
+    "from parking";
+
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
@@ -859,9 +882,12 @@ void MapQuery::initQueries()
     "from apron where airport_id = :airportId");
 
   parkingQuery = new SqlQuery(db);
-  parkingQuery->prepare(
-    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty "
-    "from parking where airport_id = :airportId");
+  parkingQuery->prepare(parkingQueryBase + " where airport_id = :airportId");
+
+  parkingTypeAndNumberQuery = new SqlQuery(db);
+  parkingTypeAndNumberQuery->prepare(
+    parkingQueryBase +
+    " where airport_id = :airportId and name like :name and number = :number order by radius desc");
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
@@ -931,6 +957,8 @@ void MapQuery::deInitQueries()
   apronQuery = nullptr;
   delete parkingQuery;
   parkingQuery = nullptr;
+  delete parkingTypeAndNumberQuery;
+  parkingTypeAndNumberQuery = nullptr;
   delete helipadQuery;
   helipadQuery = nullptr;
   delete taxiparthQuery;
@@ -975,5 +1003,3 @@ void MapQuery::deInitQueries()
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
 }
-
-

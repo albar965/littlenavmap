@@ -53,16 +53,14 @@ void MapTypesFactory::fillAirport(const QSqlRecord& record, maptypes::MapAirport
   if(record.contains("unicom_frequency"))
     ap.unicomFrequency = record.value("unicom_frequency").toInt();
 
-  if(record.contains("altitude"))
-    ap.altitude = static_cast<int>(std::roundf(record.value("altitude").toFloat()));
-
   ap.flags = getFlags(record);
 
   if(complete)
     ap.flags |= maptypes::AP_COMPLETE;
 
   ap.magvar = record.value("mag_var").toFloat();
-  ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+  ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
+                    record.value("altitude").toFloat());
   ap.bounding = Rect(record.value("left_lonx").toFloat(), record.value("top_laty").toFloat(),
                      record.value("right_lonx").toFloat(), record.value("bottom_laty").toFloat());
 
@@ -108,13 +106,13 @@ void MapTypesFactory::fillVor(const QSqlRecord& record, maptypes::MapVor& vor)
   vor.region = record.value("region").toString();
   vor.name = record.value("name").toString();
   vor.type = record.value("type").toString();
-  vor.altitude = record.value("altitude").toInt();
   vor.frequency = record.value("frequency").toInt();
   vor.range = record.value("range").toInt();
   vor.dmeOnly = record.value("dme_only").toInt() > 0;
   vor.hasDme = !record.value("dme_altitude").isNull();
   vor.magvar = record.value("mag_var").toFloat();
-  vor.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+  vor.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
+                     record.value("altitude").toFloat());
 }
 
 void MapTypesFactory::fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb)
@@ -125,10 +123,10 @@ void MapTypesFactory::fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb)
   ndb.name = record.value("name").toString();
   ndb.type = record.value("type").toString();
   ndb.frequency = record.value("frequency").toInt();
-  ndb.altitude = record.value("altitude").toInt();
   ndb.range = record.value("range").toInt();
   ndb.magvar = record.value("mag_var").toFloat();
-  ndb.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+  ndb.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
+                     record.value("altitude").toFloat());
 }
 
 void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoint& wp)
@@ -179,13 +177,13 @@ void MapTypesFactory::fillIls(const QSqlRecord& record, maptypes::MapIls& ils)
   ils.width = record.value("loc_width").toFloat();
   ils.magvar = record.value("mag_var").toFloat();
   ils.slope = record.value("gs_pitch").toFloat();
-  ils.altitude = record.value("altitude").toInt();
 
   ils.frequency = record.value("frequency").toInt();
   ils.range = record.value("range").toInt();
   ils.dme = record.value("dme_range").toInt() > 0;
 
-  ils.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+  ils.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
+                     record.value("altitude").toFloat());
   ils.pos1 = Pos(record.value("end1_lonx").toFloat(), record.value(
                    "end1_laty").toFloat());
   ils.pos2 = Pos(record.value("end2_lonx").toFloat(), record.value(

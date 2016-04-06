@@ -21,6 +21,8 @@
 
 #include <QRegularExpression>
 
+#include <fs/pln/flightplan.h>
+
 using namespace atools::geo;
 
 const QString EMPTY_STR;
@@ -28,7 +30,15 @@ const QString UNKNOWN_STR("Unknown");
 
 const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
 
-RouteMapObject::RouteMapObject()
+const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
+
+RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan)
+  : flightplan(parentFlightplan)
+{
+
+}
+
+RouteMapObject::~RouteMapObject()
 {
 
 }
@@ -98,6 +108,30 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
         type = maptypes::AIRPORT;
         airport = res.airports.first();
         valid = true;
+
+        if(!flightplan->getDepartureParkingName().isEmpty() && predRouteMapObj == nullptr)
+        {
+          // Resolve parking if first airport
+          QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(flightplan->getDepartureParkingName());
+          QString name = match.captured(1).trimmed().toUpper().replace(" ", "_");
+          int number = QString(match.captured(2)).toInt();
+          QList<maptypes::MapParking> parkings;
+          query->getParkingByNameAndNumber(parkings, airport.id, name, number);
+
+          if(parkings.isEmpty())
+          {
+            qWarning() << "Found no parking spots";
+            flightplan->setDepartureParkingName(QString());
+          }
+          else
+          {
+            if(parkings.size() > 1)
+              qWarning() << "Found multiple parking spots";
+
+            parking = parkings.first();
+            flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+          }
+        }
       }
       break;
     case atools::fs::pln::entry::INTERSECTION:
@@ -109,6 +143,12 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
           type = maptypes::WAYPOINT;
           waypoint = obj;
           valid = waypoint.position.distanceMeterTo(entry->getPosition()) < 10000.f;
+          if(valid)
+          {
+            entry->setIcaoRegion(waypoint.region);
+            entry->setIcaoIdent(waypoint.ident);
+            entry->setPosition(waypoint.position);
+          }
         }
         break;
       }
@@ -121,6 +161,12 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
           type = maptypes::VOR;
           vor = obj;
           valid = vor.position.distanceMeterTo(entry->getPosition()) < 10000.f;
+          if(valid)
+          {
+            entry->setIcaoRegion(vor.region);
+            entry->setIcaoIdent(vor.ident);
+            entry->setPosition(vor.position);
+          }
         }
         break;
       }
@@ -133,6 +179,12 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
           type = maptypes::NDB;
           ndb = obj;
           valid = ndb.position.distanceMeterTo(entry->getPosition()) < 10000.f;
+          if(valid)
+          {
+            entry->setIcaoRegion(ndb.region);
+            entry->setIcaoIdent(ndb.ident);
+            entry->setPosition(ndb.position);
+          }
         }
         break;
       }
@@ -140,6 +192,8 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
       valid = true;
       type = maptypes::USER;
       userpointNum = QString(USER_WP_ID.match(entry->getWaypointId()).captured(1)).toInt();
+      entry->setIcaoIdent(QString());
+      entry->setWaypointId("WP" + QString::number(userpointNum));
       break;
   }
 
@@ -147,11 +201,6 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
     type = maptypes::INVALID;
 
   updateDistAndCourse(predRouteMapObj);
-}
-
-RouteMapObject::~RouteMapObject()
-{
-
 }
 
 void RouteMapObject::update(const RouteMapObject *predRouteMapObj)
@@ -266,7 +315,10 @@ int RouteMapObject::getRange() const
   return -1;
 }
 
-
+bool RouteMapObject::isUser()
+{
+  return entry->getWaypointType() == atools::fs::pln::entry::USER;
+}
 
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {

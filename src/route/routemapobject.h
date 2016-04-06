@@ -19,14 +19,22 @@
 #define ROUTEMAPOBJECT_H
 
 #include "common/maptypes.h"
-#include "fs/pln/flightplanentry.h"
+
+namespace atools {
+namespace fs {
+namespace pln {
+class FlightplanEntry;
+class Flightplan;
+}
+}
+}
 
 class MapQuery;
 
 class RouteMapObject
 {
 public:
-  RouteMapObject();
+  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan);
   ~RouteMapObject();
 
   void loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
@@ -56,10 +64,7 @@ public:
     return type;
   }
 
-  bool isUser()
-  {
-    return entry->getWaypointType() == atools::fs::pln::entry::USER;
-  }
+  bool isUser();
 
   const maptypes::MapAirport& getAirport() const
   {
@@ -122,6 +127,7 @@ public:
   }
 
 private:
+  atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::fs::pln::FlightplanEntry *entry = nullptr;
   int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;

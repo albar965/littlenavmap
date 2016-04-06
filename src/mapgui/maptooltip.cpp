@@ -65,7 +65,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       text += "<br/>Route position " + QString::number(ap.routeIndex + 1);
 
     text += "<br/>Longest Runway: " + QLocale().toString(ap.longestRunwayLength) + " ft";
-    text += "<br/>Altitude: " + QLocale().toString(ap.altitude) + " ft";
+    text += "<br/>Altitude: " + QLocale().toString(ap.getPosition().getAltitude(), 'f', 0) + " ft";
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ap.magvar, QString(), 1) + " °";
 
     if(ap.towerFrequency > 0)
@@ -125,7 +125,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     text += "<br/>Freq: " + formatter::formatDoubleUnit(vor.frequency / 1000., QString(), 2) + " MHz";
     if(!vor.dmeOnly)
       text += "<br/>Magvar: " + formatter::formatDoubleUnit(vor.magvar, QString(), 1) + " °";
-    text += "<br/>Altitude: " + QLocale().toString(vor.altitude) + " ft";
+    text += "<br/>Altitude: " + QLocale().toString(vor.getPosition().getAltitude(), 'f', 0) + " ft";
     text += "<br/>Range: " + QString::number(vor.range) + " nm";
     text += "<br/><b>" + morse->getCode(vor.ident) + "</b>";
   }
@@ -144,7 +144,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     text += "<br/>Region: " + ndb.region;
     text += "<br/>Freq: " + formatter::formatDoubleUnit(ndb.frequency / 100., QString(), 2) + " kHz";
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(ndb.magvar, QString(), 1) + " °";
-    text += "<br/>Altitude: " + QLocale().toString(ndb.altitude) + " ft";
+    text += "<br/>Altitude: " + QLocale().toString(ndb.getPosition().getAltitude(), 'f', 0) + " ft";
     text += "<br/>Range: " + QString::number(ndb.range) + " nm";
     text += "<br/><b>" + morse->getCode(ndb.ident) + "</b>";
   }
