@@ -31,11 +31,13 @@
 #include <gui/widgetstate.h>
 #include <mapgui/mapquery.h>
 #include <QSpinBox>
-
+#include "common/mapcolors.h"
+#include "parkingdialog.h"
 #include "routeicondelegate.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
+#include <QListWidget>
 #include <QVector2D>
 
 // TODO tr
@@ -115,6 +117,21 @@ RouteController::~RouteController()
   delete model;
   delete iconDelegate;
   delete flightplan;
+}
+
+void RouteController::selectDepartureParking()
+{
+  ParkingDialog dialog(parentWindow, query, routeMapObjects.first().getAirport());
+
+  int result = dialog.exec();
+  dialog.hide();
+
+  if(result == QDialog::Accepted)
+  {
+    maptypes::MapParking parking;
+    if(dialog.getSelectedParking(parking))
+      routeSetParking(parking);
+  }
 }
 
 void RouteController::saveState()

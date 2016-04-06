@@ -69,5 +69,11 @@
         <file>resources/icons/routedeleteleg.svg</file>
         <file>resources/icons/routelegdown.svg</file>
         <file>resources/icons/routelegup.svg</file>
+        <file>resources/icons/parkingrampcargo.svg</file>
+        <file>resources/icons/parkingrampga.svg</file>
+        <file>resources/icons/parkinggate.svg</file>
+        <file>resources/icons/parkingrampmil.svg</file>
+        <file>resources/icons/parkingstartset.svg</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

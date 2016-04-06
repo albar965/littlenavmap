@@ -73,6 +73,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void routeSetParking(maptypes::MapParking parking);
+  void selectDepartureParking();
 
 private:
   bool changed = false;

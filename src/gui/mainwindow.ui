@@ -1741,6 +1741,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionRouteSelectParking"/>
    <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcLowAlt"/>
    <addaction name="actionRouteReverse"/>
@@ -2644,7 +2645,7 @@
   <action name="actionRouteParkingStart">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
     <string>Set %1 as Route Start Position</string>
@@ -2653,7 +2654,7 @@
   <action name="actionRouteSelectParking">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
     <string>Select Parking Position for Departure</string>

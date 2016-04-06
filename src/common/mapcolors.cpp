@@ -79,6 +79,26 @@ const QColor& colorForParkingType(const QString& type)
     return unknown;
 }
 
+const QIcon& iconForParkingType(const QString& type)
+{
+  static QIcon cargo(":/littlenavmap/resources/icons/parkingrampcargo.svg");
+  static QIcon ga(":/littlenavmap/resources/icons/parkingrampga.svg");
+  static QIcon mil(":/littlenavmap/resources/icons/parkingrampmil.svg");
+  static QIcon gate(":/littlenavmap/resources/icons/parkinggate.svg");
+  static QIcon empty;
+
+  if(type.startsWith("RAMP_MIL"))
+    return mil;
+  else if(type.startsWith("GATE"))
+    return gate;
+  else if(type.startsWith("RAMP_GA") || type.startsWith("DOCK_GA"))
+    return ga;
+  else if(type.startsWith("RAMP_CARGO"))
+    return cargo;
+
+  return empty;
+}
+
 const QColor& colorForSurface(const QString& surface)
 {
   static QColor concrete(Qt::gray);

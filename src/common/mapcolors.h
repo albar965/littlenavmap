@@ -87,6 +87,7 @@ const QColor airwayJetColor = QColor::fromRgb(100, 100, 100);
 const QColor airwayBothColor = QColor::fromRgb(100, 100, 100);
 const QColor airwayTextColor = QColor::fromRgb(80, 80, 80);
 
+const QIcon& iconForParkingType(const QString& type);
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const maptypes::MapAirport& ap);

@@ -79,7 +79,7 @@ SOURCES += src/main.cpp\
     src/db/databaseloader.cpp \
     src/db/databasedialog.cpp \
     src/db/databasemeta.cpp \
-    src/gui/parkingdialog.cpp
+    src/route/parkingdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -121,11 +121,11 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databaseloader.h \
     src/db/databasedialog.h \
     src/db/databasemeta.h \
-    src/gui/parkingdialog.h
+    src/route/parkingdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
-    src/gui/parkingdialog.ui
+    src/route/parkingdialog.ui
 
 # Marble dependencies
 win32 {

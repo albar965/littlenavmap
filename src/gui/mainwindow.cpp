@@ -337,6 +337,9 @@ void MainWindow::connectAllSlots()
   connect(searchController->getNavSearch(), &Search::selectionChanged,
           this, &MainWindow::selectionChanged);
 
+  connect(ui->actionRouteSelectParking, &QAction::triggered,
+          routeController, &RouteController::selectDepartureParking);
+
   connect(navMapWidget, &NavMapWidget::routeSetStart,
           routeController, &RouteController::routeSetStart);
   connect(navMapWidget, &NavMapWidget::routeSetParkingStart,
