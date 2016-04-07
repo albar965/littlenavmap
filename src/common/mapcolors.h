@@ -62,6 +62,10 @@ const QColor highlightBackColor = QColor(Qt::black);
 const QColor highlightColor = QColor(Qt::yellow);
 const QColor highlightColorFast = QColor(Qt::darkYellow);
 
+const QColor routeOutlineColor = QColor(Qt::black);
+const QColor routeColor = QColor(Qt::yellow);
+const QColor routeDragColor = QColor(Qt::darkYellow);
+
 const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);
 const QColor routeHighlightColorFast = QColor(Qt::darkGreen);

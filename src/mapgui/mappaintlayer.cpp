@@ -245,7 +245,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     context.viewport = viewport;
     context.objectTypes = objectTypes;
 
-    if(objectTypes.testFlag(maptypes::ROUTE))
+    if(objectTypes.testFlag(maptypes::ROUTE) && !forcePaint.isEmpty())
       context.forcePaintObjects = &forcePaint;
     else
       context.forcePaintObjects = nullptr;
@@ -254,19 +254,19 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     {
       if(context.mapLayerEffective->isAirportDiagram())
       {
-        mapPainterIls->paint(&context);
-        mapPainterAirport->paint(&context);
-        mapPainterNav->paint(&context);
+        mapPainterIls->render(&context);
+        mapPainterAirport->render(&context);
+        mapPainterNav->render(&context);
       }
       else
       {
-        mapPainterIls->paint(&context);
-        mapPainterNav->paint(&context);
-        mapPainterAirport->paint(&context);
+        mapPainterIls->render(&context);
+        mapPainterNav->render(&context);
+        mapPainterAirport->render(&context);
       }
     }
-    mapPainterRoute->paint(&context);
-    mapPainterMark->paint(&context);
+    mapPainterRoute->render(&context);
+    mapPainterMark->render(&context);
   }
 
   return true;

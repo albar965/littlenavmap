@@ -31,7 +31,7 @@ public:
   MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterIls();
 
-  virtual void paint(const PaintContext *context) override;
+  virtual void render(const PaintContext *context) override;
 
 private:
   const float ILS_FEATHER_LEN_METER = 8.f;

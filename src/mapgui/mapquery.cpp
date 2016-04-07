@@ -530,6 +530,7 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
       maptypes::MapApron ap;
 
       ap.surface = apronQuery->value("surface").toString();
+      ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
       QString vertices = apronQuery->value("vertices").toString();
       QStringList vertexList = vertices.split(",");
@@ -613,6 +614,7 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
       hp.heading = static_cast<int>(std::roundf(helipadQuery->value("heading").toFloat()));
       hp.surface = helipadQuery->value("surface").toString();
       hp.type = helipadQuery->value("type").toString();
+      hp.transparent = helipadQuery->value("is_transparent").toInt() > 0;
       hp.closed = helipadQuery->value("is_closed").toInt() > 0;
 
       hs->append(hp);
@@ -650,17 +652,15 @@ const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
     {
       maptypes::MapTaxiPath tp;
       QString type = taxiparthQuery->value("type").toString();
-      if(type != "RUNWAY" && type != "VEHICLE")
-      {
-        tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
-                         "start_laty").toFloat()),
-        tp.end = Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat()),
-        tp.surface = taxiparthQuery->value("surface").toString();
-        tp.name = taxiparthQuery->value("name").toString();
-        tp.width = taxiparthQuery->value("width").toInt();
+      tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
+      tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
+                       "start_laty").toFloat()),
+      tp.end = Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat()),
+      tp.surface = taxiparthQuery->value("surface").toString();
+      tp.name = taxiparthQuery->value("name").toString();
+      tp.width = taxiparthQuery->value("width").toInt();
 
-        tps->append(tp);
-      }
+      tps->append(tp);
     }
     taxipathCache.insert(airportId, tps);
     return tps;
@@ -891,14 +891,14 @@ void MapQuery::initQueries()
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
-    "select surface, type, length, width, heading, is_closed, lonx, laty "
+    "select surface, type, length, width, heading, is_transparent, is_closed, lonx, laty "
     "from helipad where airport_id = :airportId");
 
   taxiparthQuery = new SqlQuery(db);
   taxiparthQuery->prepare(
     "select type, surface, width, name, is_draw_surface, start_type, end_type, "
     "start_lonx, start_laty, end_lonx, end_laty "
-    "from taxi_path where airport_id = :airportId");
+    "from taxi_path where airport_id = :airportId and surface not in ('RUNWAY', 'VEHICLE')");
 
   runwaysQuery = new SqlQuery(db);
   runwaysQuery->prepare(

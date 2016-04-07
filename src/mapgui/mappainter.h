@@ -60,7 +60,7 @@ public:
   MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainter();
 
-  virtual void paint(const PaintContext *context) = 0;
+  virtual void render(const PaintContext *context) = 0;
 
 protected:
   const Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;

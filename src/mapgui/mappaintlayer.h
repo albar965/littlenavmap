@@ -69,6 +69,11 @@ public:
     return objectTypes;
   }
 
+  const MapScale *getMapScale() const
+  {
+    return mapScale;
+  }
+
   void routeChanged();
 
 private:

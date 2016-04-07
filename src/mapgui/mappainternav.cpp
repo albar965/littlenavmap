@@ -45,7 +45,7 @@ MapPainterNav::~MapPainterNav()
 {
 }
 
-void MapPainterNav::paint(const PaintContext *context)
+void MapPainterNav::render(const PaintContext *context)
 {
   bool drawFast = widget->viewContext() == Marble::Animation;
 

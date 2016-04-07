@@ -45,6 +45,20 @@ class MapQuery;
 class RouteController;
 class MapTooltip;
 
+enum MouseState
+{
+  NONE = 0x00,
+  DRAG_DISTANCE = 0x01,
+  DRAG_CHANGE_DISTANCE = 0x02,
+  DRAG_ROUTE_LEG = 0x04,
+  DRAG_ROUTE_POINT = 0x08,
+  DRAG_POST = 0x10,
+  DRAG_POST_CANCEL = 0x20
+};
+
+Q_DECLARE_FLAGS(MouseStates, MouseState);
+Q_DECLARE_OPERATORS_FOR_FLAGS(MouseStates);
+
 class NavMapWidget :
   public Marble::MarbleWidget
 {
@@ -97,6 +111,8 @@ public:
     return rangeMarkers;
   }
 
+  void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
+
   void addRangeRing(const atools::geo::Pos& pos);
   void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
                        int frequency, int range);
@@ -146,13 +162,6 @@ signals:
   void routeDelete(int id, maptypes::MapObjectTypes type);
 
 private:
-  enum MouseState
-  {
-    NONE,
-    DISTANCE_DRAG,
-    DISTANCE_DRAG_CHANGE
-  };
-
   enum MapThemeComboIndex
   {
     OSM,
@@ -163,7 +172,7 @@ private:
     POLITICAL
   };
 
-  MouseState mouseState = NONE;
+  MouseStates mouseState = NONE;
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
@@ -174,6 +183,12 @@ private:
   QList<RouteMapObject> routeHighlightMapObjects;
   QList<maptypes::RangeMarker> rangeMarkers;
   QList<maptypes::DistanceMarker> distanceMarkers;
+  QList<std::pair<int, QLine> > routeScreenLines;
+  QList<QPoint> routeScreenPoints;
+  QPoint routeDragCur;
+  atools::geo::Pos routeDragFrom, routeDragTo;
+  int routeDragPoint = -1, routeDragLeg = -1;
+
   int currentDistanceMarkerIndex = -1;
   maptypes::DistanceMarker distanceMarkerBackup;
   MapPosHistory history;
@@ -203,6 +218,12 @@ private:
 
   int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
   int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
+
+  int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
+  int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
+
+  void updateRouteScreenLines();
+  void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
 
 };
 

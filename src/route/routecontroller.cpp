@@ -80,6 +80,11 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
 
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
   connect(ui->spinBoxRouteSpeed, valueChangedPtr, this, &RouteController::updateLabel);
+  connect(ui->spinBoxRouteAlt, valueChangedPtr, this, &RouteController::routeParamsChanged);
+
+  void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
+  connect(ui->comboBoxRouteType, indexChangedPtr, this, &RouteController::routeParamsChanged);
+
   connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
 
@@ -117,6 +122,12 @@ RouteController::~RouteController()
   delete model;
   delete iconDelegate;
   delete flightplan;
+}
+
+void RouteController::routeParamsChanged()
+{
+  changed = true;
+  updateFlightplanData();
 }
 
 void RouteController::selectDepartureParking()
@@ -214,12 +225,9 @@ void RouteController::saveFlighplanAs(const QString& filename)
 
 void RouteController::saveFlightplan()
 {
-  if(changed)
-  {
-    flightplan->save(routeFilename);
-    changed = false;
-    updateWindowTitle();
-  }
+  flightplan->save(routeFilename);
+  changed = false;
+  updateWindowTitle();
 }
 
 void RouteController::doubleClick(const QModelIndex& index)

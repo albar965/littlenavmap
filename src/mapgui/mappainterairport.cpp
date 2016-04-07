@@ -44,11 +44,10 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
-void MapPainterAirport::paint(const PaintContext *context)
+void MapPainterAirport::render(const PaintContext *context)
 {
   if((!context->objectTypes.testFlag(maptypes::AIRPORT) || !context->mapLayer->isAirport()) &&
-     (!context->mapLayerEffective->isAirportDiagram() || context->forcePaintObjects == nullptr ||
-      context->forcePaintObjects->isEmpty()))
+     (!context->mapLayerEffective->isAirportDiagram() || context->forcePaintObjects == nullptr))
     return;
 
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -79,8 +78,8 @@ void MapPainterAirport::paint(const PaintContext *context)
   for(const MapAirport& airport : *airports)
   {
     const MapLayer *layer = context->mapLayer;
-    bool forcedPaint = context->forcePaintObjects != nullptr && context->forcePaintObjects->contains(
-      ForcePaintType(airport.id, maptypes::AIRPORT));
+    bool forcedPaint = context->forcePaintObjects != nullptr &&
+                       context->forcePaintObjects->contains(ForcePaintType(airport.id, maptypes::AIRPORT));
 
     if(!airport.isVisible(context->objectTypes) && !forcedPaint)
       continue;
@@ -101,7 +100,7 @@ void MapPainterAirport::paint(const PaintContext *context)
       if(context->mapLayerEffective->isAirportDiagram())
         drawAirportDiagram(context, airport, drawFast);
       else
-        drawAirportSymbolOverview(context, airport, drawFast);
+        drawAirportSymbolOverview(context, airport, x, y, drawFast);
 
       drawAirportSymbol(context, airport, x, y, drawFast);
 
@@ -189,7 +188,12 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
     QColor col = mapcolors::colorForSurface(apron.surface);
     col = col.darker(110);
+
+    // if(!apron.drawSurface)
+    // col.setAlpha(100);
+
     painter->setBrush(QBrush(col));
+
     painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
     painter->QPainter::drawPolygon(points.data(), points.size());
   }
@@ -199,6 +203,10 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   {
     int pathThickness = scale->getPixelIntForFeet(taxipath.width);
     QColor col = mapcolors::colorForSurface(taxipath.surface);
+
+    // if(!taxipath.drawSurface)
+    // col.setAlpha(100);
+
     painter->setBrush(col);
     painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
 
@@ -553,7 +561,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 }
 
 void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap,
-                                                  bool fast)
+                                                  int x, int y, bool fast)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -593,6 +601,10 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
         painter->resetTransform();
       }
     }
+
+    // painter->setPen(QPen(QBrush(apColor), 3, Qt::SolidLine, Qt::FlatCap));
+    // painter->drawEllipse(QPoint(x, y), 4, 4);
+
     painter->restore();
   }
 }

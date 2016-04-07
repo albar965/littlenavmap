@@ -43,6 +43,11 @@ public:
 
   float getDegreePerPixel(int px) const;
 
+  bool isValid() const
+  {
+    return !scales.isEmpty();
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const MapScale& scale);
 

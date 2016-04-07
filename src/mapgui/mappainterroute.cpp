@@ -45,7 +45,7 @@ MapPainterRoute::~MapPainterRoute()
 
 }
 
-void MapPainterRoute::paint(const PaintContext *context)
+void MapPainterRoute::render(const PaintContext *context)
 {
   if(!context->objectTypes.testFlag(maptypes::ROUTE))
     return;
@@ -133,11 +133,11 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   }
 
   // Draw outer line
-  painter->setPen(QPen(QColor(Qt::black), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  painter->setPen(QPen(mapcolors::routeOutlineColor, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   painter->drawPolyline(linestring);
 
   // Draw innner line
-  painter->setPen(QPen(QColor(Qt::yellow), 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  painter->setPen(QPen(mapcolors::routeColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   painter->drawPolyline(linestring);
 
   if(!fast)
@@ -263,8 +263,8 @@ void MapPainterRoute::paintAirportText(const MapLayer *mapLayer, GeoPainter *pai
   if(mapLayer != nullptr && mapLayer->isAirportRouteInfo())
     flags |= textflags::NAME | textflags::INFO;
 
-  symbolPainter->drawAirportText(painter, obj, x, y, flags,
-                                 mapLayer->getAirportSymbolSize(), false, true, false);
+  symbolPainter->drawAirportText(painter, obj, x, y, flags, mapLayer->getAirportSymbolSize(),
+                                 mapLayer->isAirportDiagram(), true, false);
 }
 
 void MapPainterRoute::paintVor(const MapLayer *mapLayer, GeoPainter *painter, int x, int y,

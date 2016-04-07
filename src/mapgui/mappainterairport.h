@@ -38,12 +38,12 @@ public:
                     bool verboseMsg);
   virtual ~MapPainterAirport();
 
-  virtual void paint(const PaintContext *context) override;
+  virtual void render(const PaintContext *context) override;
 
 private:
   void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y, bool fast);
   void drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport, bool fast);
-  void drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap, bool fast);
+  void drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y, bool fast);
   void runwayCoords(const QList<maptypes::MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *backRects);
   QString parkingName(const QString& name);

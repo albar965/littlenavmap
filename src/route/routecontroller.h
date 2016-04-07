@@ -124,6 +124,8 @@ private:
 
   void updateRouteMapObjects();
 
+  void routeParamsChanged();
+
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);

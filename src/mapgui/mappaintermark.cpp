@@ -43,7 +43,7 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::paint(const PaintContext *context)
+void MapPainterMark::render(const PaintContext *context)
 {
   bool drawFast = widget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
@@ -52,8 +52,9 @@ void MapPainterMark::paint(const PaintContext *context)
   paintHighlights(context->mapLayer, context->mapLayerEffective, context->painter, drawFast);
   paintMark(context->painter);
   paintHome(context->painter);
-  paintRangeRings(context->mapLayer, context->painter, context->viewport, drawFast);
-  paintDistanceMarkers(context->mapLayer, context->painter, drawFast);
+  paintRangeRings(context->painter, context->viewport, drawFast);
+  paintDistanceMarkers(context->painter, drawFast);
+  paintRouteDrag(context->painter);
   context->painter->restore();
 }
 
@@ -154,11 +155,8 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
 
 }
 
-void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *painter, ViewportParams *viewport,
-                                     bool fast)
+void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewport, bool fast)
 {
-  Q_UNUSED(mapLayer);
-  Q_UNUSED(fast);
   const QList<maptypes::RangeMarker>& rangeRings = navMapWidget->getRangeRings();
   const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
@@ -231,10 +229,8 @@ void MapPainterMark::paintRangeRings(const MapLayer *mapLayer, GeoPainter *paint
   }
 }
 
-void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *painter, bool fast)
+void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
 {
-  Q_UNUSED(mapLayer);
-
   QFontMetrics metrics = painter->fontMetrics();
   painter->setBrush(QColor(Qt::white));
 
@@ -335,4 +331,31 @@ void MapPainterMark::paintDistanceMarkers(const MapLayer *mapLayer, GeoPainter *
       }
     }
   }
+}
+
+void MapPainterMark::paintRouteDrag(GeoPainter *painter)
+{
+  atools::geo::Pos from, to;
+  QPoint cur;
+
+  navMapWidget->getRouteDragPoints(from, to, cur);
+  if(!cur.isNull())
+  {
+    GeoDataCoordinates curGeo;
+    if(sToW(cur.x(), cur.y(), curGeo))
+    {
+      GeoDataLineString linestring;
+      linestring.setTessellate(true);
+
+      if(from.isValid())
+        linestring.append(GeoDataCoordinates(from.getLonX(), from.getLatY(), 0, DEG));
+      linestring.append(GeoDataCoordinates(curGeo));
+      if(to.isValid())
+        linestring.append(GeoDataCoordinates(to.getLonX(), to.getLatY(), 0, DEG));
+
+      painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      painter->drawPolyline(linestring);
+    }
+  }
+
 }

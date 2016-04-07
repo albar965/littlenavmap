@@ -162,6 +162,7 @@ struct MapApron
 {
   atools::geo::LineString vertices;
   QString surface;
+  bool drawSurface;
   int getId() const
   {
     return -1;
@@ -174,6 +175,7 @@ struct MapTaxiPath
   atools::geo::Pos start, end;
   QString surface, name;
   int width;
+  bool drawSurface;
   int getId() const
   {
     return -1;
@@ -206,7 +208,7 @@ struct MapHelipad
   atools::geo::Pos position;
   int length, width, heading;
   int routeIndex = -1;
-  bool closed;
+  bool closed, transparent;
 
   const atools::geo::Pos& getPosition() const
   {

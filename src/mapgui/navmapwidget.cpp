@@ -135,6 +135,13 @@ RouteController *NavMapWidget::getRouteController() const
   return parentWindow->getRouteController();
 }
 
+void NavMapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
+{
+  from = routeDragFrom;
+  to = routeDragTo;
+  cur = routeDragCur;
+}
+
 void NavMapWidget::preDatabaseLoad()
 {
   paintLayer->preDatabaseLoad();
@@ -281,6 +288,7 @@ void NavMapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighli
 void NavMapWidget::routeChanged()
 {
   paintLayer->routeChanged();
+  updateRouteScreenLines();
   update();
 }
 
@@ -295,6 +303,42 @@ void NavMapWidget::changeHome()
   homePos = atools::geo::Pos(centerLongitude(), centerLatitude());
   homeZoom = zoom();
   update();
+}
+
+void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
+{
+  qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
+
+  maptypes::MapSearchResult result;
+  getAllNearestMapObjects(newPoint.x(), newPoint.y(), 10, result);
+
+  CoordinateConverter conv(viewport());
+
+  // Get objects from cache - alread present objects will be skipped
+  mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
+                              paintLayer->getShownMapFeatures() &
+                              (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT),
+                              newPoint.x(), newPoint.y(), 10, result);
+
+  int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size();
+
+  atools::geo::Pos pos = conv.sToW(newPoint.x(), newPoint.y());
+  if(totalSize == 0)
+    // Add userpoint
+    qDebug() << "add userpoint";
+  else if(totalSize == 1)
+    // Add single navaid
+    qDebug() << "add navaid";
+  else
+  {
+    qDebug() << "add navaids" << totalSize;
+    QMenu menu;
+    menu.addAction(new QAction("What?", this));
+    menu.addAction(new QAction("Else?", this));
+
+    QAction *action = menu.exec(QCursor::pos());
+  }
+
 }
 
 void NavMapWidget::contextMenu(const QPoint& point)
@@ -626,7 +670,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
       dm.to = pos;
       distanceMarkers.append(dm);
 
-      mouseState = DISTANCE_DRAG;
+      mouseState = DRAG_DISTANCE;
       setContextMenuPolicy(Qt::NoContextMenu);
       currentDistanceMarkerIndex = distanceMarkers.size() - 1;
     }
@@ -738,7 +782,15 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
 {
   if(e->type() == QEvent::MouseButtonDblClick)
   {
+    // Catch the double click event
     qDebug() << "eventFilter mouseDoubleClickEvent";
+    e->accept();
+    event(e);
+    return true;
+  }
+  if(e->type() == QEvent::MouseMove && mouseState != NONE)
+  {
+    // Do not allow mouse scrolling during drag actions
     e->accept();
     event(e);
     return true;
@@ -749,7 +801,10 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
 
 void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
 {
-  if(mouseState == DISTANCE_DRAG || mouseState == DISTANCE_DRAG_CHANGE)
+  if(!isActiveWindow())
+    return;
+
+  if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
     if(cursor().shape() != Qt::CrossCursor)
       setCursor(Qt::CrossCursor);
@@ -763,30 +818,97 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
         distanceMarkers[currentDistanceMarkerIndex].to = p;
     }
     setViewContext(Marble::Animation);
-    event->accept();
+    update();
+
+    // CoordinateConverter conv(viewport());
+    // QPoint origin = conv.wToS(distanceMarkers[currentDistanceMarkerIndex].from);
+    // QRect clipRect(origin, QPoint(event->pos().x(), event->pos().y()));
+    // clipRect = clipRect.normalized();
+    // clipRect = clipRect.marginsAdded(QMargins(100, 100, 100, 100));
+    // update(clipRect.normalized());
+  }
+  else if(mouseState & DRAG_ROUTE_LEG || mouseState & DRAG_ROUTE_POINT)
+  {
+    if(cursor().shape() != Qt::CrossCursor)
+      setCursor(Qt::CrossCursor);
+
+    routeDragCur = QPoint(event->pos().x(), event->pos().y());
+
+    setViewContext(Marble::Animation);
     update();
   }
-  else if(event->buttons() == Qt::NoButton)
-  {
-    if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10) != -1)
+  else if(mouseState == NONE)
+    if(event->buttons() == Qt::NoButton)
     {
-      // Change cursor at the end of an marker
-      if(cursor().shape() != Qt::CrossCursor)
-        setCursor(Qt::CrossCursor);
+      const QList<RouteMapObject>& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+
+      if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10) != -1 && rmos.size() > 1)
+      {
+        // Change cursor at one route point
+        if(cursor().shape() != Qt::CrossCursor)
+          setCursor(Qt::CrossCursor);
+      }
+      else if(getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10) != -1 && rmos.size() > 1)
+      {
+        // Change cursor above a route line
+        if(cursor().shape() != Qt::CrossCursor)
+          setCursor(Qt::CrossCursor);
+      }
+      else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10) != -1)
+      {
+        // Change cursor at the end of an marker
+        if(cursor().shape() != Qt::CrossCursor)
+          setCursor(Qt::CrossCursor);
+      }
+      else if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(Qt::ArrowCursor);
     }
-    else if(cursor().shape() != Qt::ArrowCursor)
-      setCursor(Qt::ArrowCursor);
-  }
 }
 
 void NavMapWidget::mousePressEvent(QMouseEvent *event)
 {
   qDebug() << "mousePressEvent";
-  if(mouseState == DISTANCE_DRAG || mouseState == DISTANCE_DRAG_CHANGE)
+  if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
+     mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
+  {
+    setCursor(Qt::ArrowCursor);
+    if(event->button() == Qt::LeftButton)
+      mouseState |= DRAG_POST;
+    else if(event->button() == Qt::RightButton)
+      mouseState |= DRAG_POST_CANCEL;
+  }
+  else if(mouseState == NONE)
+    if(event->button() == Qt::RightButton)
+      setContextMenuPolicy(Qt::CustomContextMenu);
+}
+
+void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  Q_UNUSED(event);
+  qDebug() << "mouseReleaseEvent";
+
+  if(mouseState & DRAG_ROUTE_POINT || mouseState & DRAG_ROUTE_LEG)
+  {
+    if(mouseState & DRAG_POST)
+      updateRouteFromDrag(routeDragCur, mouseState, routeDragLeg, routeDragPoint);
+
+    // End all other dragging
+    mouseState = NONE;
+    routeDragCur = QPoint();
+    routeDragFrom = atools::geo::EMPTY_POS;
+    routeDragTo = atools::geo::EMPTY_POS;
+    routeDragPoint = -1;
+    routeDragLeg = -1;
+    setViewContext(Marble::Still);
+    update();
+  }
+
+  if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
+  {
     if(!distanceMarkers.isEmpty())
     {
       setCursor(Qt::ArrowCursor);
-      if(event->button() == Qt::LeftButton)
+      if(mouseState & DRAG_POST)
       {
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
@@ -803,63 +925,100 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
         // qDebug() << "from height" << localElevationModel->height(from.getLonX(), from.getLatY());
         // qDebug() << "to height" << localElevationModel->height(to.getLonX(), to.getLatY());
       }
-      else if(event->button() == Qt::RightButton)
+      else if(mouseState & DRAG_POST_CANCEL)
       {
-        if(mouseState == DISTANCE_DRAG)
+        if(mouseState & DRAG_DISTANCE)
           // Remove new one
           distanceMarkers.removeAt(currentDistanceMarkerIndex);
-        else if(mouseState == DISTANCE_DRAG_CHANGE)
+        else if(mouseState & DRAG_CHANGE_DISTANCE)
           // Replace modified one with backup
           distanceMarkers[currentDistanceMarkerIndex] = distanceMarkerBackup;
         currentDistanceMarkerIndex = -1;
       }
-      event->accept();
     }
-  if(mouseState == NONE && event->button() == Qt::RightButton)
-    setContextMenuPolicy(Qt::CustomContextMenu);
-}
-
-void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
-{
-  Q_UNUSED(event);
-  qDebug() << "mouseReleaseEvent";
-
-  if(mouseState == DISTANCE_DRAG || mouseState == DISTANCE_DRAG_CHANGE)
-  {
-    // End dragging
-    setViewContext(Marble::Still);
     mouseState = NONE;
-    event->accept();
+    setViewContext(Marble::Still);
     update();
   }
-  else if(mouseState == NONE && event->button() == Qt::LeftButton)
+  else if(mouseState != NONE)
   {
+    // End all other dragging
+    setViewContext(Marble::Still);
+    mouseState = NONE;
+    update();
+  }
+  else if(event->button() == Qt::LeftButton)
+  {
+    // Start all dragging
     currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10);
     if(currentDistanceMarkerIndex != -1)
     {
       // Found an end - create a backup and start dragging
-      mouseState = DISTANCE_DRAG_CHANGE;
+      mouseState = DRAG_CHANGE_DISTANCE;
       distanceMarkerBackup = distanceMarkers.at(currentDistanceMarkerIndex);
       setContextMenuPolicy(Qt::NoContextMenu);
+    }
+    else
+    {
+      const QList<RouteMapObject>& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+
+      if(rmos.size() > 1)
+      {
+        int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10);
+        if(routePoint != -1)
+        {
+          routeDragPoint = routePoint;
+          qDebug() << "route point" << routePoint;
+
+          // Found a leg - start dragging
+          mouseState = DRAG_ROUTE_POINT;
+
+          routeDragCur = QPoint(event->pos().x(), event->pos().y());
+
+          if(routePoint > 0)
+            routeDragFrom = rmos.at(routePoint - 1).getPosition();
+          else
+            routeDragFrom = atools::geo::EMPTY_POS;
+
+          if(routePoint < rmos.size() - 1)
+            routeDragTo = rmos.at(routePoint + 1).getPosition();
+          else
+            routeDragTo = atools::geo::EMPTY_POS;
+        }
+        else
+        {
+          int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10);
+          if(routeLeg != -1)
+          {
+            routeDragLeg = routeLeg;
+            qDebug() << "route leg" << routeLeg;
+            // Found a leg - start dragging
+            mouseState = DRAG_ROUTE_LEG;
+
+            routeDragCur = QPoint(event->pos().x(), event->pos().y());
+
+            routeDragFrom = rmos.at(routeLeg).getPosition();
+            routeDragTo = rmos.at(routeLeg + 1).getPosition();
+          }
+        }
+      }
     }
   }
 }
 
 void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  using namespace maptypes;
-
   qDebug() << "mouseDoubleClickEvent";
 
-  MapSearchResult mapSearchResult;
+  maptypes::MapSearchResult mapSearchResult;
   getAllNearestMapObjects(event->pos().x(), event->pos().y(), 10, mapSearchResult);
 
   if(!mapSearchResult.airports.isEmpty())
   {
-  if(mapSearchResult.airports.at(0).bounding.isPoint())
-    showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
-  else
-    showRect(mapSearchResult.airports.at(0).bounding);
+    if(mapSearchResult.airports.at(0).bounding.isPoint())
+      showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
+    else
+      showRect(mapSearchResult.airports.at(0).bounding);
   }
   else if(!mapSearchResult.vors.isEmpty())
     showPos(mapSearchResult.vors.at(0).position);
@@ -884,15 +1043,10 @@ bool NavMapWidget::event(QEvent *event)
                                             paintLayer->getMapLayer()->isAirportDiagram());
 
     if(!text.isEmpty())
-    {
       QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
-      event->accept();
-    }
     else
-    {
       QToolTip::hideText();
-      event->accept();
-    }
+    event->accept();
 
     return true;
   }
@@ -902,6 +1056,7 @@ bool NavMapWidget::event(QEvent *event)
 
 void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
 {
+  bool changed = false;
   const GeoDataLatLonAltBox visibleLatLonAltBox = viewport()->viewLatLonAltBox();
   if(viewContext() == Marble::Still && (zoom() != curZoom || visibleLatLonAltBox != curBox))
   {
@@ -913,9 +1068,13 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
     qDebug() << "pole" << curBox.containsPole() << curBox.toString(GeoDataCoordinates::Degree);
     history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), zoom());
     parentWindow->clearMessageText();
+    changed = true;
   }
 
   MarbleWidget::paintEvent(paintEvent);
+
+  if(changed)
+    updateRouteScreenLines();
 
   // if(viewContext() == Marble::Still)
   // {
@@ -926,6 +1085,53 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
   // else
   // model()->setWorkOffline(true);
 
+}
+
+void NavMapWidget::updateRouteScreenLines()
+{
+  using atools::geo::Pos;
+
+  const QList<RouteMapObject>& routeMapObjects = parentWindow->getRouteController()->getRouteMapObjects();
+  CoordinateConverter conv(viewport());
+
+  routeScreenLines.clear();
+  routeScreenPoints.clear();
+
+  const MapScale *scale = paintLayer->getMapScale();
+  if(scale->isValid())
+  {
+    Pos p1;
+
+    for(int i = 0; i < routeMapObjects.size(); i++)
+    {
+      const Pos& p2 = routeMapObjects.at(i).getPosition();
+      int x2, y2;
+      conv.wToS(p2, x2, y2);
+      routeScreenPoints.append(QPoint(x2, y2));
+
+      if(p1.isValid())
+      {
+        float distanceMeter = p2.distanceMeterTo(p1);
+        // Approximate the needed number of line segments
+        int pixel = scale->getPixelIntForMeter(distanceMeter);
+        int numSegments = std::min(std::max(pixel / 20, 4), 72);
+
+        for(int j = 1; j < numSegments - 1; j++)
+        {
+          Pos pa = p1.interpolate(p2, distanceMeter, 1.f / numSegments * (j - 1));
+          Pos pb = p1.interpolate(p2, distanceMeter, 1.f / numSegments * j);
+
+          int xs1, ys1, xs2, ys2;
+          bool va = conv.wToS(pa, xs1, ys1);
+          bool vb = conv.wToS(pb, xs2, ys2);
+
+          if(va || vb)
+            routeScreenLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
+        }
+      }
+      p1 = p2;
+    }
+  }
 }
 
 void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
@@ -1070,6 +1276,46 @@ int NavMapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistan
     index++;
   }
   return -1;
+}
+
+int NavMapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
+{
+  int minIndex = -1;
+  int minDist = std::numeric_limits<int>::max();
+
+  for(int i = 0; i < routeScreenPoints.size(); i++)
+  {
+    const QPoint& point = routeScreenPoints.at(i);
+
+    int dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);
+    if(dist < minDist && dist < screenDistance)
+    {
+      minDist = dist;
+      minIndex = i;
+    }
+  }
+  return minIndex;
+}
+
+int NavMapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
+{
+  int minIndex = -1;
+  float minDist = std::numeric_limits<float>::max();
+
+  for(int i = 0; i < routeScreenLines.size(); i++)
+  {
+    const std::pair<int, QLine>& line = routeScreenLines.at(i);
+    QVector2D vec(line.second.dx(), line.second.dy());
+    QVector2D p(xs - line.second.x1(), ys - line.second.y1());
+
+    float dist = vec.distanceToPoint(p);
+    if(dist < minDist && dist < screenDistance)
+    {
+      minDist = dist;
+      minIndex = line.first;
+    }
+  }
+  return minIndex;
 }
 
 int NavMapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)

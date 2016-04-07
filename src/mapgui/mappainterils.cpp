@@ -43,7 +43,7 @@ MapPainterIls::~MapPainterIls()
 {
 }
 
-void MapPainterIls::paint(const PaintContext *context)
+void MapPainterIls::render(const PaintContext *context)
 {
   using namespace maptypes;
 
@@ -118,49 +118,51 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   if(ils.slope > 0)
     painter->drawLine(p1, p2);
 
-  QString text;
-  if(mapLayer->isIlsInfo())
+  if(!fast)
   {
-    text = ils.ident + " / " +
-           QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-           QString::number(ils.heading + ils.magvar, 'f', 0) + "°M";
+    QString text;
+    if(mapLayer->isIlsInfo())
+    {
+      text = ils.ident + " / " +
+             QString::number(ils.frequency / 1000., 'f', 2) + " / " +
+             QString::number(ils.heading + ils.magvar, 'f', 0) + "°M";
 
-    if(ils.slope > 0)
-      text += " / GS " + QString::number(ils.slope, 'f', 1) + "°";
-    if(ils.dme)
-      text += " / DME";
-  }
-  else if(mapLayer->isIlsIdent())
-    text = ils.ident;
+      if(ils.slope > 0)
+        text += " / GS " + QString::number(ils.slope, 'f', 1) + "°";
+      if(ils.dme)
+        text += " / DME";
+    }
+    else if(mapLayer->isIlsIdent())
+      text = ils.ident;
 
-  painter->setPen(QPen(mapcolors::ilsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
+    if(!text.isEmpty())
+    {
+      painter->setPen(QPen(mapcolors::ilsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
+      painter->translate(x, y);
 
-  if(!text.isEmpty() && !fast)
-  {
-    painter->translate(x, y);
+      float rotate;
+      if(ils.heading > 180)
+        rotate = ils.heading + 90.f - ils.width / 2.f;
+      else
+        rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
 
-    float rotate;
-    if(ils.heading > 180)
-      rotate = ils.heading + 90.f - ils.width / 2.f;
-    else
-      rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
+      int featherLen =
+        static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(ILS_FEATHER_LEN_METER), rotate)));
+      int texth = painter->fontMetrics().descent();
 
-    int featherLen =
-      static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(ILS_FEATHER_LEN_METER), rotate)));
-    int texth = painter->fontMetrics().descent();
+      text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
+      int textw = painter->fontMetrics().width(text);
 
-    text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
-    int textw = painter->fontMetrics().width(text);
+      int textpos;
+      if(ils.heading > 180)
+        textpos = (featherLen - textw) / 2;
+      else
+        textpos = -(featherLen + textw) / 2;
 
-    int textpos;
-    if(ils.heading > 180)
-      textpos = (featherLen - textw) / 2;
-    else
-      textpos = -(featherLen + textw) / 2;
-
-    painter->rotate(rotate);
-    painter->drawText(textpos, -texth, text);
-    painter->resetTransform();
+      painter->rotate(rotate);
+      painter->drawText(textpos, -texth, text);
+      painter->resetTransform();
+    }
   }
   painter->restore();
 }

@@ -31,7 +31,7 @@ public:
   MapPainterNav(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterNav();
 
-  virtual void paint(const PaintContext *context) override;
+  virtual void render(const PaintContext *context) override;
 
 private:
   void paintMarkers(const PaintContext *context, const QList<maptypes::MapMarker> *markers, bool drawFast);

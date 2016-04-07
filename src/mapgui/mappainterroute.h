@@ -35,7 +35,7 @@ public:
                   RouteController *controller, bool verbose);
   virtual ~MapPainterRoute();
 
-  virtual void paint(const PaintContext *context) override;
+  virtual void render(const PaintContext *context) override;
 
 private:
   RouteController *routeController;
