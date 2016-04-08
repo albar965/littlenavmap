@@ -353,8 +353,11 @@ void MapPainterMark::paintRouteDrag(GeoPainter *painter)
       if(to.isValid())
         linestring.append(GeoDataCoordinates(to.getLonX(), to.getLatY(), 0, DEG));
 
-      painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      painter->drawPolyline(linestring);
+      if(linestring.size() > 1)
+      {
+        painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        painter->drawPolyline(linestring);
+      }
     }
   }
 

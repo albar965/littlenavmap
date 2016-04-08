@@ -74,6 +74,6 @@
         <file>resources/icons/parkinggate.svg</file>
         <file>resources/icons/parkingrampmil.svg</file>
         <file>resources/icons/parkingstartset.svg</file>
+        <file>resources/icons/cancel.svg</file>
     </qresource>
-    <qresource prefix="/"/>
 </RCC>

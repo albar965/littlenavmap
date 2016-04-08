@@ -159,6 +159,7 @@ signals:
   void routeSetStart(maptypes::MapAirport ap);
   void routeSetDest(maptypes::MapAirport ap);
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
+  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
 
 private:

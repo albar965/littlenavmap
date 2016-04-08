@@ -348,6 +348,8 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::routeSetDest);
   connect(navMapWidget, &NavMapWidget::routeAdd,
           routeController, &RouteController::routeAdd);
+  connect(navMapWidget, &NavMapWidget::routeReplace,
+          routeController, &RouteController::routeReplace);
   connect(navMapWidget, &NavMapWidget::routeDelete,
           routeController, &RouteController::routeDelete);
 

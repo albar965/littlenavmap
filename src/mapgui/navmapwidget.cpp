@@ -44,9 +44,12 @@
 #include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "maptooltip.h"
+#include "symbolpainter.h"
 #include "ui_mainwindow.h"
 
 #include <gui/actiontextsaver.h>
+
+#include <QPainter>
 
 using namespace Marble;
 
@@ -322,23 +325,115 @@ void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int l
 
   int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size();
 
-  atools::geo::Pos pos = conv.sToW(newPoint.x(), newPoint.y());
+  int id = -1;
+  maptypes::MapObjectTypes type = maptypes::NONE;
+
+  atools::geo::Pos pos = atools::geo::EMPTY_POS;
   if(totalSize == 0)
+  {
     // Add userpoint
     qDebug() << "add userpoint";
+    type = maptypes::USER;
+  }
   else if(totalSize == 1)
+  {
     // Add single navaid
     qDebug() << "add navaid";
+
+    if(!result.airports.isEmpty())
+    {
+      id = result.airports.first().id;
+      type = maptypes::AIRPORT;
+    }
+    else if(!result.vors.isEmpty())
+    {
+      id = result.vors.first().id;
+      type = maptypes::VOR;
+    }
+    else if(!result.ndbs.isEmpty())
+    {
+      id = result.ndbs.first().id;
+      type = maptypes::NDB;
+    }
+    else if(!result.waypoints.isEmpty())
+    {
+      id = result.waypoints.first().id;
+      type = maptypes::WAYPOINT;
+    }
+  }
   else
   {
+    const int ICON_SIZE = 20;
     qDebug() << "add navaids" << totalSize;
     QMenu menu;
-    menu.addAction(new QAction("What?", this));
-    menu.addAction(new QAction("Else?", this));
+    QString menuPrefix("Add "), menuSuffix(" to route");
+    SymbolPainter symbolPainter;
+
+    for(const maptypes::MapAirport& obj : result.airports)
+    {
+      QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
+                                    menuPrefix + maptypes::airportText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, maptypes::AIRPORT}));
+      menu.addAction(action);
+    }
+
+    if(!result.airports.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty() ||
+       !result.waypoints.isEmpty())
+      menu.addSeparator();
+
+    for(const maptypes::MapVor& obj : result.vors)
+    {
+      QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE),
+                                    menuPrefix + maptypes::vorText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, maptypes::VOR}));
+      menu.addAction(action);
+    }
+    for(const maptypes::MapNdb& obj : result.ndbs)
+    {
+      QAction *action = new QAction(symbolPainter.createNdbIcon(obj, ICON_SIZE),
+                                    menuPrefix + maptypes::ndbText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, maptypes::NDB}));
+      menu.addAction(action);
+    }
+    for(const maptypes::MapWaypoint& obj : result.waypoints)
+    {
+      QAction *action = new QAction(symbolPainter.createWaypointIcon(obj, ICON_SIZE),
+                                    menuPrefix + maptypes::waypointText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, maptypes::WAYPOINT}));
+      menu.addAction(action);
+    }
+
+    menu.addSeparator();
+    {
+      QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
+                                    menuPrefix + "Userpoint" + menuSuffix, this);
+      action->setData(QVariantList({-1, maptypes::USER}));
+      menu.addAction(action);
+    }
+
+    menu.addSeparator();
+    menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"),
+                               "Cancel", this));
 
     QAction *action = menu.exec(QCursor::pos());
+    if(action != nullptr && !action->data().isNull())
+    {
+      QVariantList data = action->data().toList();
+      id = data.at(0).toInt();
+      type = maptypes::MapObjectTypes(data.at(1).toInt());
+    }
   }
 
+  if(type == maptypes::USER)
+    pos = conv.sToW(newPoint.x(), newPoint.y());
+
+  if((id != -1 && type != maptypes::NONE) || type == maptypes::USER)
+  {
+    if(leg != -1)
+      emit routeAdd(id, pos, type);
+    else if(point != -1)
+      emit routeReplace(id, pos, type, point);
+  }
 }
 
 void NavMapWidget::contextMenu(const QPoint& point)
@@ -804,6 +899,8 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
   if(!isActiveWindow())
     return;
 
+  // qDebug() << "mouseMoveEvent state" << mouseState;
+
   if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
     if(cursor().shape() != Qt::CrossCursor)
@@ -867,7 +964,8 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
 
 void NavMapWidget::mousePressEvent(QMouseEvent *event)
 {
-  qDebug() << "mousePressEvent";
+  qDebug() << "mousePressEvent state" << mouseState;
+
   if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
      mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
   {
@@ -884,15 +982,14 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
 
 void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  Q_UNUSED(event);
-  qDebug() << "mouseReleaseEvent";
+  qDebug() << "mouseReleaseEvent state" << mouseState;
 
   if(mouseState & DRAG_ROUTE_POINT || mouseState & DRAG_ROUTE_LEG)
   {
     if(mouseState & DRAG_POST)
       updateRouteFromDrag(routeDragCur, mouseState, routeDragLeg, routeDragPoint);
 
-    // End all other dragging
+    // End all dragging
     mouseState = NONE;
     routeDragCur = QPoint();
     routeDragFrom = atools::geo::EMPTY_POS;
@@ -902,8 +999,7 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     setViewContext(Marble::Still);
     update();
   }
-
-  if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
+  else if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
     if(!distanceMarkers.isEmpty())
     {
@@ -938,13 +1034,6 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
     mouseState = NONE;
     setViewContext(Marble::Still);
-    update();
-  }
-  else if(mouseState != NONE)
-  {
-    // End all other dragging
-    setViewContext(Marble::Still);
-    mouseState = NONE;
     update();
   }
   else if(event->button() == Qt::LeftButton)

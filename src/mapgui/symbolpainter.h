@@ -19,6 +19,7 @@
 #define SYMBOLPAINTER_H
 
 #include <QColor>
+#include <QIcon>
 
 class QPainter;
 class QPen;
@@ -80,6 +81,12 @@ class SymbolPainter
 public:
   SymbolPainter();
 
+  QIcon createAirportIcon(const maptypes::MapAirport& airport, int size);
+  QIcon createVorIcon(const maptypes::MapVor& vor, int size);
+  QIcon createNdbIcon(const maptypes::MapNdb& ndb, int size);
+  QIcon createWaypointIcon(const maptypes::MapWaypoint& waypoint, int size);
+  QIcon createUserpointIcon(int size);
+
   void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& ap, int x, int y, int size,
                          bool isAirportDiagram, bool fast);
 
@@ -113,6 +120,7 @@ public:
 private:
   QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);
 
+  QColor iconBackground;
 };
 
 #endif // SYMBOLPAINTER_H

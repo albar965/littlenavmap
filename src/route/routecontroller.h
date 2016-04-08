@@ -74,6 +74,7 @@ public:
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void routeSetParking(maptypes::MapParking parking);
   void selectDepartureParking();
+  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
 
 private:
   bool changed = false;

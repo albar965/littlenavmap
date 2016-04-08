@@ -585,6 +585,34 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
   emit routeChanged();
 }
 
+void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
+                                   int oldIndex)
+{
+  qDebug() << "route replace" << "user pos" << userPos << "id" << id
+           << "type" << type << "old index" << oldIndex;
+
+  FlightplanEntry entry;
+  buildFlightplanEntry(id, userPos, type, entry);
+
+  flightplan->getEntries().replace(oldIndex, entry);
+
+  const RouteMapObject *rmoPred = nullptr;
+
+  RouteMapObject rmo(flightplan);
+  rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[oldIndex], query, rmoPred);
+
+  routeMapObjects.replace(oldIndex, rmo);
+
+  changed = true;
+  updateRouteMapObjects();
+  updateFlightplanData();
+  updateModel();
+  updateWindowTitle();
+  updateLabel();
+  emit routeChanged();
+
+}
+
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type)
 {
   qDebug() << "route add id" << id << "type" << type;

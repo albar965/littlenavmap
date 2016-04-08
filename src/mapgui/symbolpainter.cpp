@@ -21,13 +21,59 @@
 #include "common/mapcolors.h"
 
 #include <QPainter>
-
+#include <QApplication>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
 
 SymbolPainter::SymbolPainter()
 {
+  iconBackground = QApplication::palette().color(QPalette::Active, QPalette::Window);
+}
+
+QIcon SymbolPainter::createAirportIcon(const maptypes::MapAirport& airport, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createVorIcon(const maptypes::MapVor& vor, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  SymbolPainter().drawVorSymbol(&painter, vor, size / 2, size / 2, size * 7 / 10, false, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createNdbIcon(const maptypes::MapNdb& ndb, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  SymbolPainter().drawNdbSymbol(&painter, ndb, size / 2, size / 2, size * 8 / 10, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createWaypointIcon(const maptypes::MapWaypoint& waypoint, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  SymbolPainter().drawWaypointSymbol(&painter, waypoint, QColor(), size / 2, size / 2, size / 2, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createUserpointIcon(int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  SymbolPainter().drawUserpointSymbol(&painter, size / 2, size / 2, size / 2, false, false);
+  return QIcon(pixmap);
 }
 
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& ap, int x, int y,
@@ -36,7 +82,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   using namespace maptypes;
 
   if(ap.longestRunwayLength == 0)
-    size = size * 3 / 4;
+    size = size * 4 / 5;
 
   painter->save();
   QColor apColor = mapcolors::colorForAirport(ap);
@@ -127,10 +173,12 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
   else
     painter->setBrush(Qt::NoBrush);
 
+  float penSize = fast ? 6.f : 1.5f;
+
   if(col.isValid())
-    painter->setPen(QPen(col, 1.5, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(col, penSize, Qt::SolidLine, Qt::SquareCap));
   else
-    painter->setPen(QPen(mapcolors::waypointSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(mapcolors::waypointSymbolColor, penSize, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast && size > 5)
   {
@@ -157,7 +205,9 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
   else
     painter->setBrush(Qt::NoBrush);
 
-  painter->setPen(QPen(mapcolors::routeUserPointColor, 2, Qt::SolidLine, Qt::SquareCap));
+  float penSize = fast ? 6.f : 2.f;
+
+  painter->setPen(QPen(mapcolors::routeUserPointColor, penSize, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -180,7 +230,9 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
   else
     painter->setBrush(Qt::NoBrush);
 
-  painter->setPen(QPen(mapcolors::vorSymbolColor, 1.5, Qt::SolidLine, Qt::SquareCap));
+  float penSize = fast ? 6.f : 1.5f;
+
+  painter->setPen(QPen(mapcolors::vorSymbolColor, penSize, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -227,13 +279,15 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 
   }
 
-  if(size > 14)
-    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
-  else
-    painter->setPen(QPen(mapcolors::vorSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
+  if(!fast)
+  {
+    if(size > 14)
+      painter->setPen(QPen(mapcolors::vorSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
+    else
+      painter->setPen(QPen(mapcolors::vorSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
+  }
   painter->drawPoint(x, y);
 
-  painter->drawPoint(x, y);
   painter->restore();
 }
 
@@ -248,23 +302,28 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb
     painter->setBrush(QColor(Qt::white));
   else
     painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(mapcolors::ndbSymbolColor, 1.5, size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::RoundCap));
+
+  float penSize = fast ? 6.f : 1.5f;
+  painter->setPen(QPen(mapcolors::ndbSymbolColor, penSize,
+                       size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
   int radius = size / 2;
 
   if(!fast)
+  {
     // Draw outer dotted circle
     painter->drawEllipse(QPoint(x, y), radius, radius);
 
-  if(size > 12)
-  {
-    if(!fast)
-      // If big enought draw inner dotted circle
-      painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
+    if(size > 12)
+    {
+      if(!fast)
+        // If big enought draw inner dotted circle
+        painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
+      painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
+    }
+    else
+      painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
   }
-  else
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(x, y);
 
