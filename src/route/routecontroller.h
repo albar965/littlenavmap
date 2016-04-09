@@ -70,11 +70,11 @@ public:
 
   void routeSetStart(maptypes::MapAirport airport);
   void routeSetDest(maptypes::MapAirport airport);
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void routeSetParking(maptypes::MapParking parking);
   void selectDepartureParking();
-  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
 private:
   bool changed = false;

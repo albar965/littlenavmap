@@ -158,7 +158,7 @@ signals:
   void routeSetParkingStart(maptypes::MapParking parking);
   void routeSetStart(maptypes::MapAirport ap);
   void routeSetDest(maptypes::MapAirport ap);
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
 

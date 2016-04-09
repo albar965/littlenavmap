@@ -109,7 +109,7 @@ signals:
 
   void routeSetStart(maptypes::MapAirport airport);
   void routeSetDest(maptypes::MapAirport airport);
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type);
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
 };
 

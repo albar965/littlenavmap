@@ -586,22 +586,22 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                                   int oldIndex)
+                                   int legIndex)
 {
   qDebug() << "route replace" << "user pos" << userPos << "id" << id
-           << "type" << type << "old index" << oldIndex;
+           << "type" << type << "old index" << legIndex;
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
 
-  flightplan->getEntries().replace(oldIndex, entry);
+  flightplan->getEntries().replace(legIndex, entry);
 
   const RouteMapObject *rmoPred = nullptr;
 
   RouteMapObject rmo(flightplan);
-  rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[oldIndex], query, rmoPred);
+  rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[legIndex], query, rmoPred);
 
-  routeMapObjects.replace(oldIndex, rmo);
+  routeMapObjects.replace(legIndex, rmo);
 
   changed = true;
   updateRouteMapObjects();
@@ -613,20 +613,25 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
 }
 
-void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type)
+void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
   qDebug() << "route add id" << id << "type" << type;
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
 
-  int leg = nearestLeg(entry.getPosition());
-  qDebug() << "nearestLeg" << leg;
+  int insertIndex = -1;
+  if(legIndex != -1)
+    insertIndex = legIndex + 1;
+  else
+  {
+    int leg = nearestLeg(entry.getPosition());
+    qDebug() << "nearestLeg" << leg;
 
-  int insertIndex = leg;
-  if(flightplan->isEmpty() || insertIndex == -1)
-    insertIndex = 0;
-
+    insertIndex = leg;
+    if(flightplan->isEmpty() || insertIndex == -1)
+      insertIndex = 0;
+  }
   flightplan->getEntries().insert(insertIndex, entry);
 
   const RouteMapObject *rmoPred = nullptr;

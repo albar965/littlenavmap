@@ -327,7 +327,6 @@ void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int l
 
   int id = -1;
   maptypes::MapObjectTypes type = maptypes::NONE;
-
   atools::geo::Pos pos = atools::geo::EMPTY_POS;
   if(totalSize == 0)
   {
@@ -430,7 +429,7 @@ void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int l
   if((id != -1 && type != maptypes::NONE) || type == maptypes::USER)
   {
     if(leg != -1)
-      emit routeAdd(id, pos, type);
+      emit routeAdd(id, pos, type, leg);
     else if(point != -1)
       emit routeReplace(id, pos, type, point);
   }
@@ -826,7 +825,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
           type = maptypes::USER;
           id = -1;
         }
-        emit routeAdd(id, position, type);
+        emit routeAdd(id, position, type, -1);
       }
       else if(action == ui->actionRouteAirportStart)
         emit routeSetStart(*airport);
@@ -939,13 +938,13 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       const QList<RouteMapObject>& rmos = parentWindow->getRouteController()->getRouteMapObjects();
 
-      if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10) != -1 && rmos.size() > 1)
+      if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
       {
         // Change cursor at one route point
         if(cursor().shape() != Qt::CrossCursor)
           setCursor(Qt::CrossCursor);
       }
-      else if(getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10) != -1 && rmos.size() > 1)
+      else if(getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
       {
         // Change cursor above a route line
         if(cursor().shape() != Qt::CrossCursor)
@@ -1202,13 +1201,16 @@ void NavMapWidget::updateRouteScreenLines()
       {
         float distanceMeter = p2.distanceMeterTo(p1);
         // Approximate the needed number of line segments
-        int pixel = scale->getPixelIntForMeter(distanceMeter);
-        int numSegments = std::min(std::max(pixel / 20, 4), 72);
+        float pixel = scale->getPixelIntForMeter(distanceMeter);
+        float numSegments = std::min(std::max(pixel / 20.f, 4.f), 72.f);
+        float step = 1.f / numSegments;
 
-        for(int j = 1; j < numSegments - 1; j++)
+        for(int j = 0; j < numSegments; j++)
         {
-          Pos pa = p1.interpolate(p2, distanceMeter, 1.f / numSegments * (j - 1));
-          Pos pb = p1.interpolate(p2, distanceMeter, 1.f / numSegments * j);
+          float cur = step * static_cast<float>(j);
+
+          Pos pa = p1.interpolate(p2, distanceMeter, cur);
+          Pos pb = p1.interpolate(p2, distanceMeter, cur + step);
 
           int xs1, ys1, xs2, ys2;
           bool va = conv.wToS(pa, xs1, ys1);
@@ -1394,10 +1396,11 @@ int NavMapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
   for(int i = 0; i < routeScreenLines.size(); i++)
   {
     const std::pair<int, QLine>& line = routeScreenLines.at(i);
-    QVector2D vec(line.second.dx(), line.second.dy());
-    QVector2D p(xs - line.second.x1(), ys - line.second.y1());
 
-    float dist = vec.distanceToPoint(p);
+    QLine l = line.second;
+
+    float dist = atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2());
+
     if(dist < minDist && dist < screenDistance)
     {
       minDist = dist;
