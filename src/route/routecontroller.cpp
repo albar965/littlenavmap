@@ -33,11 +33,13 @@
 #include <QSpinBox>
 #include "common/mapcolors.h"
 #include "parkingdialog.h"
+#include "routecommand.h"
 #include "routeicondelegate.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
 #include <QListWidget>
+#include <QUndoStack>
 #include <QVector2D>
 
 // TODO tr
@@ -77,6 +79,16 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
   flightplan = new Flightplan();
+  undoStack = new QUndoStack(parentWindow);
+
+  QAction *undoAction = undoStack->createUndoAction(parentWindow, "Undo Route Change");
+  undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
+
+  QAction *redoAction = undoStack->createRedoAction(parentWindow, "Redo Route Change");
+  redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
+
+  ui->mainToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
+  ui->mainToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
 
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
   connect(ui->spinBoxRouteSpeed, valueChangedPtr, this, &RouteController::updateLabel);
@@ -122,12 +134,17 @@ RouteController::~RouteController()
   delete model;
   delete iconDelegate;
   delete flightplan;
+  delete undoStack;
 }
 
 void RouteController::routeParamsChanged()
 {
-  changed = true;
+  // TODO merged undo for these parameters
+  // RouteCommand *undoCommand = preChange();
+
   updateFlightplanData();
+
+  // postChange(undoCommand);
 }
 
 void RouteController::selectDepartureParking()
@@ -157,12 +174,12 @@ void RouteController::saveState()
 
 void RouteController::restoreState()
 {
-  routeFilename = atools::settings::Settings::instance()->value("Route/Filename").toString();
+  QString newRouteFilename = atools::settings::Settings::instance()->value("Route/Filename").toString();
 
-  if(!routeFilename.isEmpty())
+  if(!newRouteFilename.isEmpty())
   {
-    if(QFile::exists(routeFilename))
-      loadFlightplan(routeFilename);
+    if(QFile::exists(newRouteFilename))
+      loadFlightplan(newRouteFilename);
     else
     {
       routeFilename.clear();
@@ -186,11 +203,7 @@ void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRoute
 
 void RouteController::newFlightplan()
 {
-  flightplan->clear();
-  routeMapObjects.clear();
-  routeFilename.clear();
-  changed = false;
-  totalDistance = 0.f;
+  clear();
 
   createRouteMapObjects();
   updateModel();
@@ -201,12 +214,9 @@ void RouteController::newFlightplan()
 
 void RouteController::loadFlightplan(const QString& filename)
 {
-  flightplan->clear();
-  routeFilename = filename;
-  changed = false;
-  routeMapObjects.clear();
-  totalDistance = 0.f;
+  clear();
 
+  routeFilename = filename;
   flightplan->load(filename);
   createRouteMapObjects();
   updateModel();
@@ -218,15 +228,15 @@ void RouteController::loadFlightplan(const QString& filename)
 void RouteController::saveFlighplanAs(const QString& filename)
 {
   routeFilename = filename;
+  undoStack->setClean();
   flightplan->save(filename);
-  changed = false;
   updateWindowTitle();
 }
 
 void RouteController::saveFlightplan()
 {
   flightplan->save(routeFilename);
-  changed = false;
+  undoStack->setClean();
   updateWindowTitle();
 }
 
@@ -373,6 +383,18 @@ void RouteController::tableSelectionChanged()
   emit routeSelectionChanged(selectedRows, model->rowCount());
 }
 
+void RouteController::changeRoute(const atools::fs::pln::Flightplan& newFlightplan)
+{
+  *flightplan = newFlightplan;
+
+  createRouteMapObjects();
+  updateModel();
+  updateWindowTitle();
+  updateLabel();
+  updateMoveAndDeleteActions();
+  emit routeChanged();
+}
+
 void RouteController::moveLegsDown()
 {
   qDebug() << "Leg down";
@@ -392,6 +414,8 @@ void RouteController::moveLegs(int dir)
 
   if(!rows.isEmpty())
   {
+    RouteCommand *undoCommand = preChange();
+
     QModelIndex curIdx = view->currentIndex();
     view->selectionModel()->clear();
     for(int row : rows)
@@ -400,7 +424,6 @@ void RouteController::moveLegs(int dir)
       routeMapObjects.move(row, row + dir);
       model->insertRow(row + dir, model->takeRow(row));
     }
-    changed = true;
     updateRouteMapObjects();
     updateFlightplanData();
     updateModel();
@@ -409,6 +432,8 @@ void RouteController::moveLegs(int dir)
     view->setCurrentIndex(model->index(curIdx.row() + dir, curIdx.column()));
     select(rows, dir);
     updateMoveAndDeleteActions();
+
+    postChange(undoCommand);
     emit routeChanged();
   }
 }
@@ -417,15 +442,19 @@ void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
 {
   qDebug() << "route delete routeIndex" << routeIndex << "type" << type;
 
+  RouteCommand *undoCommand = preChange();
+
   flightplan->getEntries().removeAt(routeIndex);
+
   routeMapObjects.removeAt(routeIndex);
 
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
   emit routeChanged();
 }
 
@@ -437,6 +466,8 @@ void RouteController::deleteLegs()
 
   if(!rows.isEmpty())
   {
+    RouteCommand *undoCommand = preChange();
+
     int firstRow = rows.last();
     view->selectionModel()->clear();
     for(int row : rows)
@@ -445,7 +476,6 @@ void RouteController::deleteLegs()
       routeMapObjects.removeAt(row);
       model->removeRow(row);
     }
-    changed = true;
     updateRouteMapObjects();
     updateFlightplanData();
     updateModel();
@@ -454,6 +484,9 @@ void RouteController::deleteLegs()
 
     view->setCurrentIndex(model->index(firstRow, 0));
     updateMoveAndDeleteActions();
+
+    postChange(undoCommand);
+
     emit routeChanged();
   }
 }
@@ -489,6 +522,8 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 {
   qDebug() << "route set parking id" << parking.id;
 
+  RouteCommand *undoCommand = preChange();
+
   if(routeMapObjects.isEmpty() || routeMapObjects.first().getMapObjectType() != maptypes::AIRPORT ||
      routeMapObjects.first().getId() != parking.airportId)
   {
@@ -502,12 +537,14 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
   routeMapObjects.first().updateParking(parking);
 
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
+
   emit routeChanged();
 }
 
@@ -538,6 +575,8 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
 {
   qDebug() << "route set dest id" << airport.id;
 
+  RouteCommand *undoCommand = preChange();
+
   FlightplanEntry entry;
   buildFlightplanEntry(airport, entry);
 
@@ -552,6 +591,8 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
     }
   }
 
+  // TODO undo
+
   flightplan->getEntries().append(entry);
 
   const RouteMapObject *rmoPred = nullptr;
@@ -562,12 +603,13 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   rmo.loadFromAirport(&flightplan->getEntries().first(), airport, rmoPred);
   routeMapObjects.append(rmo);
 
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
   emit routeChanged();
 }
 
@@ -575,13 +617,16 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
 {
   qDebug() << "route set start id" << airport.id;
 
+  RouteCommand *undoCommand = preChange();
+
   routeStart(airport);
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
   emit routeChanged();
 }
 
@@ -590,6 +635,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 {
   qDebug() << "route replace" << "user pos" << userPos << "id" << id
            << "type" << type << "old index" << legIndex;
+
+  RouteCommand *undoCommand = preChange();
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
@@ -603,12 +650,13 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   routeMapObjects.replace(legIndex, rmo);
 
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
   emit routeChanged();
 
 }
@@ -616,6 +664,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
   qDebug() << "route add id" << id << "type" << type;
+
+  RouteCommand *undoCommand = preChange();
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
@@ -643,12 +693,13 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   routeMapObjects.insert(insertIndex, rmo);
 
-  changed = true;
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
   updateWindowTitle();
   updateLabel();
+
+  postChange(undoCommand);
   emit routeChanged();
 }
 
@@ -983,5 +1034,28 @@ void RouteController::updateWindowTitle()
   Ui::MainWindow *ui = parentWindow->getUi();
   ui->dockWidgetRoute->setWindowTitle(dockWindowTitle + " - " +
                                       QFileInfo(routeFilename).fileName() +
-                                      (changed ? " *" : QString()));
+                                      (undoStack->isClean() ? " *" : QString()));
+}
+
+void RouteController::clear()
+{
+  flightplan->clear();
+  routeMapObjects.clear();
+  routeFilename.clear();
+  totalDistance = 0.f;
+  undoStack->clear();
+}
+
+RouteCommand *RouteController::preChange()
+{
+  return new RouteCommand(this, flightplan);
+}
+
+void RouteController::postChange(RouteCommand *undoCommand)
+{
+  if(undoStack != nullptr)
+  {
+    undoCommand->setFlightplanAfter(flightplan);
+    undoStack->push(undoCommand);
+  }
 }

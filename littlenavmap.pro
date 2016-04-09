@@ -79,7 +79,8 @@ SOURCES += src/main.cpp\
     src/db/databaseloader.cpp \
     src/db/databasedialog.cpp \
     src/db/databasemeta.cpp \
-    src/route/parkingdialog.cpp
+    src/route/parkingdialog.cpp \
+    src/route/routecommand.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -121,7 +122,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databaseloader.h \
     src/db/databasedialog.h \
     src/db/databasemeta.h \
-    src/route/parkingdialog.h
+    src/route/parkingdialog.h \
+    src/route/routecommand.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

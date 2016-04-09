@@ -82,6 +82,14 @@
    <addaction name="actionRouteSave"/>
    <addaction name="separator"/>
    <addaction name="actionReloadScenery"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionRouteCalcHighAlt"/>
+   <addaction name="actionRouteCalcLowAlt"/>
+   <addaction name="actionRouteReverse"/>
+   <addaction name="actionRouteCalcRadionav"/>
+   <addaction name="actionRouteCalcDirect"/>
+   <addaction name="actionRouteSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
@@ -89,7 +97,7 @@
     <string>Search</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>1</number>
+    <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsSearch">
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -928,7 +936,7 @@
            <item>
             <widget class="QLabel" name="labelAirportSearchStatus">
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -1458,7 +1466,7 @@
            <item>
             <widget class="QLabel" name="labelNavSearchStatus">
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -1476,7 +1484,7 @@
     <string>Route</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsRoute">
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1639,7 +1647,7 @@
     <string>Information</string>
    </property>
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsInfo">
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -1730,24 +1738,6 @@
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowCities"/>
-  </widget>
-  <widget class="QToolBar" name="routeToolBar">
-   <property name="windowTitle">
-    <string>Route Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionRouteSelectParking"/>
-   <addaction name="actionRouteCalcHighAlt"/>
-   <addaction name="actionRouteCalcLowAlt"/>
-   <addaction name="actionRouteReverse"/>
-   <addaction name="actionRouteCalcRadionav"/>
-   <addaction name="actionRouteCalcDirect"/>
-   <addaction name="actionRouteSettings"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -2658,6 +2648,24 @@
    </property>
    <property name="text">
     <string>Select Parking Position for Departure</string>
+   </property>
+  </action>
+  <action name="actionRouteUndo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Route Undo</string>
+   </property>
+  </action>
+  <action name="actionRouteRedo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Route Redo</string>
    </property>
   </action>
  </widget>

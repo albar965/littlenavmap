@@ -38,6 +38,8 @@ class QStandardItemModel;
 class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
+class QUndoStack;
+class RouteCommand;
 
 class RouteController :
   public QObject
@@ -76,8 +78,10 @@ public:
   void selectDepartureParking();
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
+  /* Used by undo/redo */
+  void changeRoute(const atools::fs::pln::Flightplan& newFlightplan);
+
 private:
-  bool changed = false;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;
@@ -87,6 +91,7 @@ private:
   MapQuery *query;
   QStandardItemModel *model;
   RouteIconDelegate *iconDelegate;
+  QUndoStack *undoStack;
 
   void updateWindowTitle();
 
@@ -126,6 +131,11 @@ private:
   void updateRouteMapObjects();
 
   void routeParamsChanged();
+
+  void clear();
+
+  RouteCommand *preChange();
+  void postChange(RouteCommand *undoCommand);
 
 signals:
   void showRect(const atools::geo::Rect& rect);

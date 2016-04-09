@@ -898,7 +898,7 @@ void MapQuery::initQueries()
   taxiparthQuery->prepare(
     "select type, surface, width, name, is_draw_surface, start_type, end_type, "
     "start_lonx, start_laty, end_lonx, end_laty "
-    "from taxi_path where airport_id = :airportId and surface not in ('RUNWAY', 'VEHICLE')");
+    "from taxi_path where airport_id = :airportId and type not in ('RUNWAY', 'VEHICLE')");
 
   runwaysQuery = new SqlQuery(db);
   runwaysQuery->prepare(

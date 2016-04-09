@@ -75,5 +75,7 @@
         <file>resources/icons/parkingrampmil.svg</file>
         <file>resources/icons/parkingstartset.svg</file>
         <file>resources/icons/cancel.svg</file>
+        <file>resources/icons/undo.svg</file>
+        <file>resources/icons/redo.svg</file>
     </qresource>
 </RCC>
