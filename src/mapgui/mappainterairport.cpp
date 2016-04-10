@@ -100,7 +100,7 @@ void MapPainterAirport::render(const PaintContext *context)
       if(context->mapLayerEffective->isAirportDiagram())
         drawAirportDiagram(context, airport, drawFast);
       else
-        drawAirportSymbolOverview(context, airport, x, y, drawFast);
+        drawAirportSymbolOverview(context, airport, drawFast);
 
       drawAirportSymbol(context, airport, x, y, drawFast);
 
@@ -561,7 +561,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 }
 
 void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap,
-                                                  int x, int y, bool fast)
+                                                  bool fast)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -601,10 +601,6 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
         painter->resetTransform();
       }
     }
-
-    // painter->setPen(QPen(QBrush(apColor), 3, Qt::SolidLine, Qt::FlatCap));
-    // painter->drawEllipse(QPoint(x, y), 4, 4);
-
     painter->restore();
   }
 }

@@ -18,28 +18,44 @@
 #ifndef ROUTECOMMAND_H
 #define ROUTECOMMAND_H
 
-#include <QUndoCommand>
-
 #include <fs/pln/flightplan.h>
 
+#include <QUndoCommand>
+
 class RouteController;
+
+namespace rctype {
+enum RouteCmdType
+{
+  EDIT = -1, /* Unmergeable edit */
+  DELETE = 0,
+  MOVE = 1,
+  ALTITUDE = 2
+};
+
+}
 
 class RouteCommand :
   public QUndoCommand
 {
 public:
-  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan* flightplanBefore);
+  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan *flightplanBefore,
+               const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   virtual ~RouteCommand();
 
   virtual void undo() override;
   virtual void redo() override;
 
-  /* Need to keep both versions in a redundant way since linking is not reliable */
-  void setFlightplanAfter(const atools::fs::pln::Flightplan* flightplanAfter);
+  /* Need to keep both versions in a redundant way since linking between commands is not reliable */
+  void setFlightplanAfter(const atools::fs::pln::Flightplan *flightplanAfter);
 
 private:
+  virtual int id() const override;
+  virtual bool mergeWith(const QUndoCommand *other) override;
+
   bool firstRedoExecuted = false;
   RouteController *controller;
+  rctype::RouteCmdType type;
   atools::fs::pln::Flightplan planBefore, planAfter;
 };
 

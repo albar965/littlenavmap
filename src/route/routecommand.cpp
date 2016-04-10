@@ -19,8 +19,9 @@
 #include "routecontroller.h"
 
 RouteCommand::RouteCommand(RouteController *routeController,
-                           const atools::fs::pln::Flightplan *flightplanBefore)
-  : controller(routeController)
+                           const atools::fs::pln::Flightplan *flightplanBefore, const QString& text,
+                           rctype::RouteCmdType rcType)
+  : QUndoCommand(text), controller(routeController), type(rcType)
 {
   if(flightplanBefore != nullptr)
     planBefore = *flightplanBefore;
@@ -39,20 +40,41 @@ void RouteCommand::setFlightplanAfter(const atools::fs::pln::Flightplan *flightp
 
 void RouteCommand::undo()
 {
-  qDebug() << "undo";
-  controller->changeRoute(planBefore);
+  controller->changeRouteUndoRedo(planBefore);
 }
 
 void RouteCommand::redo()
 {
   if(!firstRedoExecuted)
-  {
-    qDebug() << "first redo ignored";
     firstRedoExecuted = true;
-  }
   else
+    controller->changeRouteUndoRedo(planAfter);
+}
+
+int RouteCommand::id() const
+{
+  return type;
+}
+
+bool RouteCommand::mergeWith(const QUndoCommand *other)
+{
+  if(other->id() != id())
+    return false;
+
+  const RouteCommand *newCmd = dynamic_cast<const RouteCommand *>(other);
+  if(newCmd == nullptr)
+    return false;
+
+  switch(type)
   {
-    qDebug() << "redo";
-    controller->changeRoute(planAfter);
+    case rctype::EDIT:
+      return false;
+
+    case rctype::DELETE:
+    case rctype::MOVE:
+    case rctype::ALTITUDE:
+      planAfter = newCmd->planAfter;
+      return true;
   }
+  return false;
 }

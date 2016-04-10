@@ -107,8 +107,8 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
   for(const MapNdb& ndb : highlightResults.ndbs)
     positions.append(ndb.position);
 
-  if(mapLayer->isAirport())
-    size = std::max(size, mapLayer->getAirportSymbolSize());
+  if(mapLayerEff->isAirport())
+    size = std::max(size, mapLayerEff->getAirportSymbolSize());
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -152,7 +152,6 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *m
       painter->drawEllipse(QPoint(x, y), size, size);
     }
   }
-
 }
 
 void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewport, bool fast)
@@ -195,11 +194,9 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
       if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                                              GeoDataCoordinates::Degree)) /* && !fast*/)
       {
-        painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap,
-                             Qt::MiterJoin));
+        painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
-        painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap,
-                             Qt::MiterJoin));
+        painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
 
         for(int diameter : rings.ranges)

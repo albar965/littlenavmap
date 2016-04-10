@@ -19,6 +19,7 @@
 #define ROUTECONTROLLER_H
 
 #include "routemapobject.h"
+#include "routecommand.h"
 
 #include <QObject>
 
@@ -39,7 +40,6 @@ class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
 class QUndoStack;
-class RouteCommand;
 
 class RouteController :
   public QObject
@@ -79,7 +79,7 @@ public:
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* Used by undo/redo */
-  void changeRoute(const atools::fs::pln::Flightplan& newFlightplan);
+  void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
 private:
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -97,6 +97,7 @@ private:
 
   float totalDistance = 0.f;
   int curUserpointNumber = 1;
+  bool changed = false;
 
   void updateLabel();
 
@@ -108,11 +109,11 @@ private:
 
   void moveLegsDown();
   void moveLegsUp();
+  void moveLegsInternal(int dir);
   void deleteLegs();
   void selectedRows(QList<int>& rows, bool reverse);
 
   void select(QList<int>& rows, int offset);
-  void moveLegs(int dir);
 
   void updateMoveAndDeleteActions();
 
@@ -123,18 +124,19 @@ private:
 
   void updateFlightplanData();
 
-  void routeStart(const maptypes::MapAirport& airport);
+  void routeSetStartInternal(const maptypes::MapAirport& airport);
   void createRouteMapObjects();
 
   void updateModel();
 
   void updateRouteMapObjects();
 
-  void routeParamsChanged();
+  void routeAltChanged();
+  void routeTypeChanged();
 
-  void clear();
+  void clearRoute();
 
-  RouteCommand *preChange();
+  RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
 
 signals:

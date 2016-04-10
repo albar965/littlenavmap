@@ -44,10 +44,6 @@ class CoordinateConverter;
 class QSqlRecord;
 class MapTypesFactory;
 
-const double RECT_INFLATION_FACTOR = 0.3;
-const double RECT_INFLATION_ADD = 0.1;
-const int QUERY_ROW_LIMIT = 2000;
-
 class MapQuery
   : public QObject
 {
@@ -188,6 +184,12 @@ private:
 };
 
 // ---------------------------------------------------------------------------------
+namespace  {
+const double RECT_INFLATION_FACTOR = 0.3;
+const double RECT_INFLATION_ADD = 0.1;
+const int QUERY_ROW_LIMIT = 2000;
+}
+
 template<typename TYPE>
 bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               bool lazy)
