@@ -78,6 +78,14 @@ void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>&
   }
 }
 
+void MapQuery::getAirwayById(int airwayId, maptypes::MapAirway& airway)
+{
+  airwayByIdQuery->bindValue(":id", airwayId);
+  airwayByIdQuery->exec();
+  while(airwayByIdQuery->next())
+    mapTypesFactory->fillAirway(airwayByIdQuery->record(), airway);
+}
+
 // TODO no delete needed here
 void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
                                    const QString& ident, const QString& region)
@@ -940,6 +948,9 @@ void MapQuery::initQueries()
 
   airwayByWaypointIdQuery = new SqlQuery(db);
   airwayByWaypointIdQuery->prepare(airwayQueryBase + " where from_waypoint_id = :id or to_waypoint_id = :id");
+
+  airwayByIdQuery = new SqlQuery(db);
+  airwayByIdQuery->prepare(airwayQueryBase + " where route_id = :id");
 }
 
 void MapQuery::deInitQueries()
@@ -983,8 +994,11 @@ void MapQuery::deInitQueries()
   airportByIdQuery = nullptr;
   delete airportAdminByIdQuery;
   airportAdminByIdQuery = nullptr;
+
   delete airwayByWaypointIdQuery;
   airwayByWaypointIdQuery = nullptr;
+  delete airwayByIdQuery;
+  airwayByIdQuery = nullptr;
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;

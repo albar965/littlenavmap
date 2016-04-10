@@ -191,6 +191,20 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     }
   }
 
+  for(const MapAirway& airway : mapSearchResult.airways)
+  {
+    if(checkText(text))
+      break;
+
+    if(!text.isEmpty())
+      text += "<hr/>";
+    text += "<b>Airway: " + airway.name + "</b>";
+    text += "<br/>Type: " + maptypes::airwayTypeToString(airway.type);
+
+    if(airway.minalt > 0)
+      text += "<br/>" + QString::number(airway.minalt) + " ft";
+  }
+
   for(const MapMarker& m : mapSearchResult.markers)
   {
     if(checkText(text))

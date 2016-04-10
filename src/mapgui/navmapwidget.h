@@ -223,6 +223,7 @@ private:
 
   int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
   int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
+  void getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result);
 
   void updateRouteScreenLines();
   void updateAirwayScreenLines();

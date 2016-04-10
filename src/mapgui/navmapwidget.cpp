@@ -125,12 +125,14 @@ void NavMapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
   qDebug() << "setShowMapFeatures" << type << "show" << show;
   paintLayer->setShowMapFeatures(type, show);
+  updateAirwayScreenLines();
 }
 
 void NavMapWidget::setDetailFactor(int factor)
 {
   qDebug() << "setDetailFactor" << factor;
   paintLayer->setDetailFactor(factor);
+  updateAirwayScreenLines();
 }
 
 RouteController *NavMapWidget::getRouteController() const
@@ -1194,6 +1196,8 @@ void NavMapWidget::updateAirwayScreenLines()
   using atools::geo::Pos;
   using maptypes::MapAirway;
 
+  airwayScreenLines.clear();
+
   CoordinateConverter conv(viewport());
   const MapScale *scale = paintLayer->getMapScale();
 
@@ -1215,20 +1219,15 @@ void NavMapWidget::updateAirwayScreenLines()
       {
         float distanceMeter = airway.from.distanceMeterTo(airway.to);
         // Approximate the needed number of line segments
-        float pixel = scale->getPixelIntForMeter(distanceMeter);
-        float numSegments = std::min(std::max(pixel / 20.f, 4.f), 72.f);
+        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 20.f, 4.f), 72.f);
         float step = 1.f / numSegments;
 
         for(int j = 0; j < numSegments; j++)
         {
           float cur = step * static_cast<float>(j);
-
-          Pos pa = airway.from.interpolate(airway.to, distanceMeter, cur);
-          Pos pb = airway.from.interpolate(airway.to, distanceMeter, cur + step);
-
           int xs1, ys1, xs2, ys2;
-          bool va = conv.wToS(pa, xs1, ys1);
-          bool vb = conv.wToS(pb, xs2, ys2);
+          bool va = conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur), xs1, ys1);
+          bool vb = conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur + step), xs2, ys2);
 
           if(va || vb)
             airwayScreenLines.append(std::make_pair(airway.id, QLine(xs1, ys1, xs2, ys2)));
@@ -1272,22 +1271,17 @@ void NavMapWidget::updateRouteScreenLines()
       {
         float distanceMeter = p2.distanceMeterTo(p1);
         // Approximate the needed number of line segments
-        float pixel = scale->getPixelIntForMeter(distanceMeter);
-        float numSegments = std::min(std::max(pixel / 20.f, 4.f), 72.f);
+        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 20.f, 4.f), 72.f);
         float step = 1.f / numSegments;
 
         for(int j = 0; j < numSegments; j++)
         {
           float cur = step * static_cast<float>(j);
-
-          Pos pa = p1.interpolate(p2, distanceMeter, cur);
-          Pos pb = p1.interpolate(p2, distanceMeter, cur + step);
-
           int xs1, ys1, xs2, ys2;
-          bool va = conv.wToS(pa, xs1, ys1);
-          bool vb = conv.wToS(pb, xs2, ys2);
+          bool visible1 = conv.wToS(p1.interpolate(p2, distanceMeter, cur), xs1, ys1);
+          bool visible2 = conv.wToS(p1.interpolate(p2, distanceMeter, cur + step), xs2, ys2);
 
-          if(va || vb)
+          if(visible1 || visible2)
             routeScreenLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
         }
       }
@@ -1305,6 +1299,9 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   CoordinateConverter conv(viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
+
+  // Airways use a screen coordinate buffer
+  getNearestAirways(xs, ys, screenDistance, mapSearchResult);
 
   // Get copies from route
   getNearestRouteMapObjects(xs, ys, screenDistance, parentWindow->getRouteController()->getRouteMapObjects(),
@@ -1465,6 +1462,27 @@ int NavMapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
     }
   }
   return minIndex;
+}
+
+void NavMapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result)
+{
+  if(!paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ) &&
+     !paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV))
+    return;
+
+  for(int i = 0; i < airwayScreenLines.size(); i++)
+  {
+    const std::pair<int, QLine>& line = airwayScreenLines.at(i);
+
+    QLine l = line.second;
+
+    if(atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2(), true) < screenDistance)
+    {
+      maptypes::MapAirway airway;
+      mapQuery->getAirwayById(line.first, airway);
+      result.airways.append(airway);
+    }
+  }
 }
 
 int NavMapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)

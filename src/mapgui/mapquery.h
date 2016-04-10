@@ -91,6 +91,7 @@ public:
                                                bool lazy);
 
   void getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways);
+  void getAirwayById(int airwayId, maptypes::MapAirway& airway);
 
   const QList<maptypes::MapRunway> *getRunwaysForOverview(int airportId);
 
@@ -164,6 +165,7 @@ private:
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
+  atools::sql::SqlQuery *airwayByIdQuery = nullptr;
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                    atools::sql::SqlQuery *query, bool reverse,
