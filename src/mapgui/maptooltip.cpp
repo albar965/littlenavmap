@@ -224,10 +224,13 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       if(!text.isEmpty())
         text += "<hr/>";
 
-      text += maptypes::parkingName(p.name) + " " + QString::number(p.number) +
-              "<br/>" + maptypes::parkingTypeName(p.type) +
-              "<br/>" + QString::number(p.radius * 2) + " ft" +
-              (p.jetway ? "<br/>Has Jetway" : "");
+      if(p.type != "FUEL")
+        text += maptypes::parkingName(p.name) + " " + QString::number(p.number) +
+                "<br/>" + maptypes::parkingTypeName(p.type) +
+                "<br/>" + QString::number(p.radius * 2) + " ft" +
+                (p.jetway ? "<br/>Has Jetway" : "");
+      else
+        text += "Fuel";
 
     }
     for(const MapHelipad& p : mapSearchResult.helipads)

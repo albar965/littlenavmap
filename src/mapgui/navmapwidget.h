@@ -185,7 +185,8 @@ private:
   QList<maptypes::RangeMarker> rangeMarkers;
   QList<maptypes::DistanceMarker> distanceMarkers;
   QList<std::pair<int, QLine> > routeScreenLines;
-  QList<QPoint> routeScreenPoints;
+  QList<std::pair<int, QLine> > airwayScreenLines;
+  QList<std::pair<int, QPoint> > routeScreenPoints;
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom, routeDragTo;
   int routeDragPoint = -1, routeDragLeg = -1;
@@ -224,6 +225,7 @@ private:
   int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
 
   void updateRouteScreenLines();
+  void updateAirwayScreenLines();
   void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
 
 };
