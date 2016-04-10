@@ -27,6 +27,7 @@
 
 #include <QElapsedTimer>
 
+#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -103,20 +104,16 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
-  bool visible;
-  QPoint pmid = wToS(ils.posmid, &visible);
-  QPoint origin(x, y);
-
-  QPoint p1 = wToS(ils.pos1, &visible);
-  QPoint p2 = wToS(ils.pos2, &visible);
-
-  painter->drawLine(origin, p1);
-  painter->drawLine(p1, pmid);
-  painter->drawLine(pmid, p2);
-  painter->drawLine(p2, origin);
-
+  GeoDataLineString linestring;
+  linestring.append(GeoDataCoordinates(ils.pos1.getLonX(), ils.pos1.getLatY(), 0, DEG));
+  linestring.append(GeoDataCoordinates(ils.position.getLonX(), ils.position.getLatY(), 0, DEG));
+  linestring.append(GeoDataCoordinates(ils.pos2.getLonX(), ils.pos2.getLatY(), 0, DEG));
+  linestring.append(GeoDataCoordinates(ils.posmid.getLonX(), ils.posmid.getLatY(), 0, DEG));
+  linestring.append(GeoDataCoordinates(ils.pos1.getLonX(), ils.pos1.getLatY(), 0, DEG));
   if(ils.slope > 0)
-    painter->drawLine(p1, p2);
+    linestring.append(GeoDataCoordinates(ils.pos2.getLonX(), ils.pos2.getLatY(), 0, DEG));
+
+  painter->drawPolyline(linestring);
 
   if(!fast)
   {
