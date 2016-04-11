@@ -104,17 +104,20 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
-  GeoDataLineString linestring;
-  linestring.setTessellate(true); // Need to set tesselate, otherwise lines are not drawn if only paritally visible
-  linestring.append(GeoDataCoordinates(ils.pos1.getLonX(), ils.pos1.getLatY(), 0, DEG));
-  linestring.append(GeoDataCoordinates(ils.position.getLonX(), ils.position.getLatY(), 0, DEG));
-  linestring.append(GeoDataCoordinates(ils.pos2.getLonX(), ils.pos2.getLatY(), 0, DEG));
-  linestring.append(GeoDataCoordinates(ils.posmid.getLonX(), ils.posmid.getLatY(), 0, DEG));
-  linestring.append(GeoDataCoordinates(ils.pos1.getLonX(), ils.pos1.getLatY(), 0, DEG));
-  if(ils.slope > 0)
-    linestring.append(GeoDataCoordinates(ils.pos2.getLonX(), ils.pos2.getLatY(), 0, DEG));
+  bool visible;
+  QPoint pmid = wToS(ils.posmid, &visible);
+  QPoint origin(x, y);
 
-  painter->drawPolyline(linestring);
+  QPoint p1 = wToS(ils.pos1, &visible);
+  QPoint p2 = wToS(ils.pos2, &visible);
+
+  painter->drawLine(origin, p1);
+  painter->drawLine(p1, pmid);
+  painter->drawLine(pmid, p2);
+  painter->drawLine(p2, origin);
+
+  if(ils.slope > 0)
+    painter->drawLine(p1, p2);
 
   if(!fast)
   {
@@ -146,20 +149,24 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
 
       int featherLen =
         static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(ILS_FEATHER_LEN_METER), rotate)));
-      int texth = painter->fontMetrics().descent();
 
-      text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
-      int textw = painter->fontMetrics().width(text);
+      if(featherLen > 40)
+      {
+        int texth = painter->fontMetrics().descent();
 
-      int textpos;
-      if(ils.heading > 180)
-        textpos = (featherLen - textw) / 2;
-      else
-        textpos = -(featherLen + textw) / 2;
+        text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
+        int textw = painter->fontMetrics().width(text);
 
-      painter->rotate(rotate);
-      painter->drawText(textpos, -texth, text);
-      painter->resetTransform();
+        int textpos;
+        if(ils.heading > 180)
+          textpos = (featherLen - textw) / 2;
+        else
+          textpos = -(featherLen + textw) / 2;
+
+        painter->rotate(rotate);
+        painter->drawText(textpos, -texth, text);
+        painter->resetTransform();
+      }
     }
   }
   painter->restore();

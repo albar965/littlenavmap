@@ -81,7 +81,7 @@ bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, double&
   bool hidden;
   int numPoints;
   qreal xordinates[100];
-  bool visible = viewport->screenCoordinates(coords, xordinates, y, numPoints, QSizeF(), hidden);
+  bool visible = viewport->screenCoordinates(coords, xordinates, y, numPoints, QSizeF(0., 0.), hidden);
 
   if(numPoints == 0)
     visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
