@@ -167,6 +167,7 @@ private:
   {
     OSM,
     OSM_HILLSHADING,
+    OPENTOPOMAP,
     ATLAS,
     BLUE_MARBLE,
     SIMPLE,

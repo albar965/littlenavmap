@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <document>
+    <head>
+      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <!-- The content that this license refers to is not distributed with this package -->
+      <license short="© OpenStreetMap / OpenTopoMap contributors">Map data: © OpenStreetMap contributors, SRTM. Map style: © OpenTopoMap,  License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>OpenTopoMap</name>
+      <target>earth</target>
+      <theme>opentopomap</theme>
+      <icon pixmap="opentopomap-preview.png"/>
+      <visible>true</visible>
+      <description><![CDATA[<p><i>OpenTopoMap</i> is a free topographic map which has been created from OpenStreetMap and SRTM data. The map style is inspired by official maps and focuses on legibility through high contrast and balanced signatures.</p>]]></description>
+      <zoom>
+        <minimum>   900  </minimum>
+        <maximum>  3200  </maximum>
+        <discrete> true </discrete>
+      </zoom>
+    </head>
+    <map bgcolor="#000000">
+      <canvas/>
+      <target/>
+      <layer name="opentopomap" backend="texture">
+        <!-- OpenStreetMap mapnik rendered tiles expire after seven days
+                     or 604800 seconds -->
+        <texture name="opentopomap_data" expire="604800">
+          <sourcedir format="PNG"> earth/opentopomap </sourcedir>
+          <tileSize width="256" height="256"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <projection name="Mercator"/>
+          <downloadUrl protocol="http" host="a.tile.opentopomap.org" path="/"/>
+          <downloadUrl protocol="http" host="b.tile.opentopomap.org" path="/"/>
+          <downloadUrl protocol="http" host="c.tile.opentopomap.org" path="/"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+        </texture>
+      </layer>
+      <layer name="naturalearth" backend="geodata">
+        <geodata name="glacier" property="ice">
+            <sourcefile> naturalearth/ne_50m_glaciated_areas.pn2 </sourcefile>
+            <brush color="#ffffff" alpha="0.9" />
+            <pen color="transparent" style="nopen"/>
+        </geodata>
+        <geodata name="antarciticiceshelves" property="ice">
+            <sourcefile> naturalearth/ne_50m_antarctic_ice_shelves_polys.pn2 </sourcefile>
+            <pen color="#5182b4" style="dashline"/>
+            <brush color="#ffffff" alpha="0.4" />
+        </geodata>
+      </layer>          
+      <layer name="standardplaces" backend="geodata">
+        <geodata name="cityplacemarks">
+          <sourcefile>cityplacemarks.cache</sourcefile>
+        </geodata>
+        <geodata name="baseplacemarks">
+          <sourcefile>baseplacemarks.cache</sourcefile>
+        </geodata>
+        <geodata name="elevplacemarks">
+          <sourcefile>elevplacemarks.cache</sourcefile>
+        </geodata>
+        <geodata name="otherplacemarks">
+          <sourcefile>otherplacemarks.cache</sourcefile>
+        </geodata>
+        <geodata name="boundaryplacemarks">
+          <sourcefile>boundaryplacemarks.cache</sourcefile>
+        </geodata>
+      </layer>
+    </map>
+    <settings>
+        <group name="Places">
+            <property name="places">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="cities">
+                <value>false</value>
+                <available>false</available>
+            </property>
+            <property name="land">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="terrain">
+                <value>true</value>
+                <available>true</available>
+            </property>
+            <property name="otherplaces">
+                <value>true</value>
+                <available>true</available>
+            </property>
+        </group>        
+        <property name="coordinate-grid">
+            <value>true</value>
+            <available>true</available>
+        </property>
+        <property name="overviewmap">
+            <value>true</value>
+            <available>true</available>
+        </property>
+        <property name="compass">
+            <value>true</value>
+            <available>true</available>
+        </property>
+        <property name="scalebar">
+            <value>true</value>
+            <available>true</available>
+        </property>
+
+        <group name="Surface">
+            <property name="ice">
+                <value>true</value>
+                <available>true</available>
+            </property>
+        </group>
+    </settings>
+    <legend>
+      <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+        <heading>Coordinate Grid</heading>
+      </section>
+     <section name="placemarks" spacing="12">
+        <heading>Placemarks</heading>
+        <item name="terrain" checkable="true" connect="terrain">
+            <text>Continents, Terrain</text>
+        </item>
+        <item name="cities" checkable="true" connect="cities">
+            <text>Populated Places, Countries</text>
+        </item>
+     </section>      
+     <section name="areas" checkable="false" spacing="12">
+        <heading>Areas</heading>
+        <item name="deciduous_forest">
+          <icon pixmap="maps/earth/opentopomap/legend/laubwald.png"/>
+          <text>Deciduous Forest</text>
+        </item>
+        <item name="conferous_forest">
+          <icon pixmap="maps/earth/opentopomap/legend/nadelwald.png"/>
+          <text>Coniferous Forest</text>
+        </item>
+        <item name="mixed_forest">
+          <icon pixmap="maps/earth/opentopomap/legend/mischwald.png"/>
+          <text>Mixed Forest</text>
+        </item>
+        <item name="swamp">
+          <icon pixmap="maps/earth/opentopomap/legend/sumpf.png"/>
+          <text>Swamp</text>
+        </item>
+        <item name="moor">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/moor.png"/>
+          <text>Moor</text>
+        </item>
+        <item name="reeds">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/roehricht.png"/>
+          <text>Reeds</text>
+        </item>
+        <item name="watt">
+          <icon  color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/watt.png"/>
+          <text>Watt</text>
+        </item>
+        <item name="sand">
+          <icon pixmap="maps/earth/opentopomap/legend/sand.png"/>
+          <text>Sand</text>
+        </item>
+        <item name="rubble">
+          <icon  color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/geroell.png"/>
+          <text>Rubble</text>
+        </item>
+        <item name="grove">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/gehoelz.png"/>
+          <text>Grove</text>
+        </item>
+        <item name="meadow">
+          <icon  color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/wiese.png"/>
+          <text>Meadow</text>
+        </item>
+        <item name="wine_growing">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/wein.png"/>
+          <text>Wine Growing</text>
+        </item>
+        <item name="cemetery">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/friedhof.png"/>
+          <text>Cemetery</text>
+        </item>
+        <item name="allotments">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/schrebergaerten.png"/>
+          <text>Allotments</text>
+        </item>
+        <item name="restricted_area">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/sperrgebiet.png"/>
+          <text>Restricted Area</text>
+        </item>
+        <item name="mining">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/bergbau.png"/>
+          <text>Mining</text>
+        </item>
+      </section>
+      <section name="lines" checkable="false" spacing="12">
+        <heading>Lines</heading>
+        <item name="power_line">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/stromleitung.png"/>
+          <text>Power Line</text>
+        </item>
+        <item name="funicular">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/seilbahn.png"/>
+          <text>Funicular</text>
+        </item>
+        <item name="embankment">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/boeschung.png"/>
+          <text>Embankment</text>
+        </item>
+        <item name="dike">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/deich.png"/>
+          <text>Dike</text>
+        </item>
+        <item name="fence">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/zaun.png"/>
+          <text>Fence</text>
+        </item>
+        <item name="hedge">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/hecke.png"/>
+          <text>Hedge</text>
+        </item>
+      </section>
+      <section name="places" checkable="false" spacing="12">
+        <heading>Places of Interest</heading>
+        <item name="church">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/kirche.png"/>
+          <text>Church</text>
+        </item>
+        <item name="chapel">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/kapelle.png"/>
+          <text>Chapel</text>
+        </item>
+        <item name="castle">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/burg.png"/>
+          <text>Castle</text>
+        </item>
+        <item name="castle_ruin">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/burgruine.png"/>
+          <text>Castle Ruin</text>
+        </item>
+        <item name="palace">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/schloss.png"/>
+          <text>Palace</text>
+        </item>
+        <item name="palace_ruin">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/schlossruine.png"/>
+          <text>Palace Ruin</text>
+        </item>
+        <item name="tower">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/turm.png"/>
+          <text>Tower</text>
+        </item>
+        <item name="observation_tower">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/aussichtsturm.png"/>
+          <text>Observation Tower</text>
+        </item>
+        <item name="water_tower">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/wasserturm.png"/>
+          <text>Water Tower</text>
+        </item>
+        <item name="telecommunications_tower">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/sendeturm.png"/>
+          <text>Telecommunications Tower</text>
+        </item>
+        <item name="mobile_tower">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/mobilfunkmast.png"/>
+          <text>Mobile Tower</text>
+        </item>
+        <item name="lighthouse">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/leuchtturm.png"/>
+          <text>Lighthouse</text>
+        </item>
+        <item name="viewpoint">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/aussichtspunkt.png"/>
+          <text>Viewpoint</text>
+        </item>
+        <item name="swimming_pool">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/badestelle.png"/>
+          <text>Swimming Pool</text>
+        </item>
+        <item name="campsite">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/camping.png"/>
+          <text>Campsite</text>
+        </item>
+        <item name="mine">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/bergwerk.png"/>
+          <text>Mine</text>
+        </item>
+        <item name="mine_defunct">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/bergwerk_stillgelegt.png"/>
+          <text>Mine (defunct)</text>
+        </item>
+        <item name="mill">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/muehle.png"/>
+          <text>Mill</text>
+        </item>
+        <item name="shelter">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/unterstand.png"/>
+          <text>Shelter</text>
+        </item>
+        <item name="hut">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/huette.png"/>
+          <text>Hut</text>
+        </item>
+        <item name="hut_farms">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/huette_bewirtschaftet.png"/>
+          <text>Hut (farms)</text>
+        </item>
+        <item name="monument">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/denkmal.png"/>
+          <text>Monument</text>
+        </item>
+        <item name="crossroads">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/wegkreuz.png"/>
+          <text>Crossroads</text>
+        </item>
+        <item name="tumulus">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/huegelgrab.png"/>
+          <text>Tumulus</text>
+        </item>
+        <item name="peak">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/gipfel.png"/>
+          <text>Peak</text>
+        </item>
+        <item name="summit_cross">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/gipfelkreuz.png"/>
+          <text>Summit Cross</text>
+        </item>
+        <item name="cave_entrance">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/hoehle.png"/>
+          <text>Cave Entrance</text>
+        </item>
+        <item name="prominent_tree">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/nadelbaum.png"/>
+          <text>Prominent Tree</text>
+        </item>
+        <item name="power_plant">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/kraftwerk.png"/>
+          <text>Power Plant</text>
+        </item>
+        <item name="photovoltaic_system">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/photovoltaikanlage.png"/>
+          <text>Photovoltaic System</text>
+        </item>
+        <item name="wind_turbine">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/windkraftanlage.png"/>
+          <text>Wind Turbine</text>
+        </item>
+        <item name="chimney">
+          <icon color= "#f5f5f5" pixmap="maps/earth/opentopomap/legend/schornstein.png"/>
+          <text>Chimney</text>
+        </item>
+      </section>
+        <section name="ice-section" checkable="true" connect="ice" spacing="12">
+            <heading>Ice and Glaciers</heading>
+            <item name="glaciers-item">
+                <icon color="#ffffff" pixmap="bitmaps/glacier.png"/>
+                <text>Glaciers</text>
+            </item>
+            <item name="antarctic-iceshelves-item">
+                <icon color="#5182b4" pixmap="bitmaps/antarctic_shelves.png"/>
+                <text>Antarctic Iceshelves</text>
+            </item>
+        </section>      
+    </legend>
+  </document>
+</dgml>

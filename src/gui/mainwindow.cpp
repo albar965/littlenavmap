@@ -203,6 +203,8 @@ void MainWindow::setupUi()
                             "earth/openstreetmap/openstreetmap.dgml");
   mapThemeComboBox->addItem(tr("OpenStreenMap with Elevation"),
                             "earth/openstreetmap/openstreetmap.dgml");
+  mapThemeComboBox->addItem(tr("OpenTopoMap"),
+                            "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Atlas"),
                             "earth/srtm/srtm.dgml");
   mapThemeComboBox->addItem(tr("Blue Marble"),

@@ -82,7 +82,6 @@ NavMapWidget::~NavMapWidget()
 {
   delete paintLayer;
   delete mapTooltip;
-  // highlightMapObjects.deleteAllObjects();
 }
 
 void NavMapWidget::setTheme(const QString& theme, int index)
@@ -90,19 +89,18 @@ void NavMapWidget::setTheme(const QString& theme, int index)
   setMapThemeId(theme);
 
   if(index == OSM_HILLSHADING)
-  {
-    setShowTerrain(true);
-    setShowRelief(true);
     setPropertyValue("hillshading", true);
-  }
-  else
+  else if(index == OPENTOPOMAP)
   {
-    setShowTerrain(false);
-    setShowRelief(false);
-    setPropertyValue("hillshading", false);
-  }
+    setPropertyValue("places", false);
+    setPropertyValue("cities", false);
+    setPropertyValue("land", false);
+    setPropertyValue("terrain", false);
+    setPropertyValue("otherplaces", false);
+    setPropertyValue("ice", false);
 
-  if(index == SIMPLE || index == POLITICAL || index == BLUE_MARBLE || index == ATLAS)
+  }
+  else if(index == SIMPLE || index == POLITICAL || index == BLUE_MARBLE || index == ATLAS)
   {
     setPropertyValue("places", true);
     setPropertyValue("cities", true);
@@ -111,6 +109,8 @@ void NavMapWidget::setTheme(const QString& theme, int index)
     setPropertyValue("urbanareas", false);
     setPropertyValue("borders", true);
   }
+
+  setShowMapPois(parentWindow->getUi()->actionMapShowCities->isChecked());
 }
 
 void NavMapWidget::setShowMapPois(bool show)
