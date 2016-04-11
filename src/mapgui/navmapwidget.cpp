@@ -469,7 +469,6 @@ void NavMapWidget::contextMenu(const QPoint& point)
   ui->actionMapMeasureDistance->setEnabled(visible);
   ui->actionMapMeasureRhumbDistance->setEnabled(visible);
   ui->actionMapRangeRings->setEnabled(visible);
-  ui->actionMapNavaidRange->setEnabled(visible);
 
   ui->actionMapHideRangeRings->setEnabled(!rangeMarkers.isEmpty() || !distanceMarkers.isEmpty());
   ui->actionMapHideOneRangeRing->setEnabled(visible && rangeMarkerIndex != -1);
@@ -615,12 +614,7 @@ void NavMapWidget::contextMenu(const QPoint& point)
   }
 
   // Update "show range rings for Navaid"
-  if(vor != nullptr)
-  {
-    ui->actionMapNavaidRange->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(navRingSearchText));
-  }
-  else if(ndb != nullptr)
+  if(vor != nullptr || ndb != nullptr)
   {
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(navRingSearchText));
@@ -964,6 +958,8 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
     else if(event->button() == Qt::RightButton)
       mouseState |= DRAG_POST_CANCEL;
   }
+  else if(mouseState == NONE && event->buttons() & Qt::RightButton)
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -984,7 +980,6 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     routeDragPoint = -1;
     routeDragLeg = -1;
     setViewContext(Marble::Still);
-    setContextMenuPolicy(Qt::CustomContextMenu);
     update();
   }
   else if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
@@ -1023,7 +1018,6 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
     mouseState = NONE;
     setViewContext(Marble::Still);
-    setContextMenuPolicy(Qt::CustomContextMenu);
     update();
   }
   else if(event->button() == Qt::LeftButton)
