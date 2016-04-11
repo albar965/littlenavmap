@@ -79,7 +79,6 @@ MapPaintLayer::~MapPaintLayer()
 
   delete layers;
   delete mapScale;
-  delete mapFont;
 }
 
 void MapPaintLayer::preDatabaseLoad()
@@ -223,16 +222,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   {
     mapScale->update(viewport, navMapWidget->distance());
 
-    if(mapFont == nullptr)
-#if defined(Q_OS_WIN32)
-      mapFont = new QFont("Arial", painter->font().pointSize());
-#else
-      mapFont = new QFont("Helvetica", painter->font().pointSize() - 1);
-#endif
-    mapFont->setBold(true);
-    painter->setFont(*mapFont);
-
     float dist = static_cast<float>(navMapWidget->distance());
+
+    // Set default font to bold and reduce size a bit
+    QFont font = painter->font();
+    font.setBold(true);
+    font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
+    painter->setFont(font);
 
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(dist);

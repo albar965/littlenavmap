@@ -34,6 +34,9 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
+const int RUNWAY_TEXT_FONT_SIZE = 16;
+const int RUNWAY_NUMER_FONT_SIZE = 20;
+
 MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                                      bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg)
@@ -135,10 +138,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->setPen(QPen(mapcolors::airportDetailBackColor, scale->getPixelIntForMeter(200.f),
                        Qt::SolidLine, Qt::RoundCap));
 
-  QFont defaultFont = painter->font();
-  defaultFont.setBold(true);
-  painter->setFont(defaultFont);
-
   const QList<MapRunway> *runways = query->getRunways(airport.id);
   QList<QPoint> runwayCenters;
   QList<QRect> runwayRects, runwayBackRects;
@@ -221,10 +220,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
     painter->setBackgroundMode(Qt::TransparentMode);
-
-    QFont font = painter->font();
-    font.setPixelSize(12);
-    painter->setFont(font);
 
     painter->setPen(QPen(mapcolors::taxiwayNameColor, 2, Qt::SolidLine, Qt::FlatCap));
 
@@ -474,7 +469,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   if(!fast)
   {
     QFont rwTextFont = painter->font();
-    rwTextFont.setPixelSize(16);
+    rwTextFont.setPixelSize(RUNWAY_TEXT_FONT_SIZE);
     painter->setFont(rwTextFont);
 
     // Draw dimensions at runway side
@@ -510,7 +505,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       painter->resetTransform();
     }
 
-    rwTextFont.setPixelSize(20);
+    rwTextFont.setPixelSize(RUNWAY_NUMER_FONT_SIZE);
     painter->setFont(rwTextFont);
 
     // Draw numbers at end

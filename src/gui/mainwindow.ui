@@ -1654,7 +1654,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetInformation">
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <attribute name="title">
@@ -1662,7 +1662,7 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <item>
-          <widget class="QTextEdit" name="textEdit"/>
+          <widget class="QTextEdit" name="textEditAirportInfo"/>
          </item>
         </layout>
        </widget>
@@ -1672,17 +1672,17 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QTextEdit" name="textEdit_2"/>
+          <widget class="QTextEdit" name="textEditRunwayInfo"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tabComInfo">
         <attribute name="title">
          <string>Com</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_11">
          <item>
-          <widget class="QTextEdit" name="textEdit_4"/>
+          <widget class="QTextEdit" name="textEditComInfo"/>
          </item>
         </layout>
        </widget>
@@ -1692,14 +1692,19 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <widget class="QTextEdit" name="textEdit_3"/>
+          <widget class="QTextEdit" name="textEditNavIdInfo"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_3">
+       <widget class="QWidget" name="tabMapLegendInfo">
         <attribute name="title">
          <string>Map Legend</string>
         </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayoutMapLegendInfo"/>
+         </item>
+        </layout>
        </widget>
       </widget>
      </item>
@@ -1737,7 +1742,6 @@
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
-   <addaction name="actionMapShowCities"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">

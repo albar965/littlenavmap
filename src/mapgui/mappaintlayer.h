@@ -95,7 +95,6 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   NavMapWidget *navMapWidget = nullptr;
-  QFont *mapFont = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
 
   // Implemented from LayerInterface

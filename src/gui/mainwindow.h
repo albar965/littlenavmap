@@ -35,6 +35,10 @@ class QLabel;
 class Search;
 class DatabaseLoader;
 
+namespace Marble {
+class LegendWidget;
+}
+
 namespace atools {
 namespace gui {
 class Dialog;
@@ -102,6 +106,7 @@ private:
 
   bool hasDatabaseLoadStatus = false;
 
+  Marble::LegendWidget *legendWidget = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;

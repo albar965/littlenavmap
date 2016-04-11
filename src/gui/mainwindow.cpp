@@ -36,6 +36,7 @@
 #include <marble/GeoDataPlacemark.h>
 #include <marble/GeoDataDocument.h>
 #include <marble/GeoDataTreeModel.h>
+#include <marble/LegendWidget.h>
 #include <marble/MarbleWidgetPopupMenu.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/GeoDataStyle.h>
@@ -101,6 +102,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
   createNavMap();
 
+  legendWidget = new Marble::LegendWidget(this);
+  legendWidget->setMarbleModel(navMapWidget->model());
+  ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
+
   // Have to create searches in the same order as the tabs
   searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
   searchController->createAirportSearch(ui->tableViewAirportSearch);
@@ -125,6 +130,7 @@ MainWindow::~MainWindow()
   delete routeController;
   delete searchController;
   delete mapQuery;
+  delete legendWidget;
   delete ui;
 
   qDebug() << "MainWindow destructor";
@@ -200,8 +206,6 @@ void MainWindow::setupUi()
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
   mapThemeComboBox->addItem(tr("OpenStreenMap"),
-                            "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenStreenMap with Elevation"),
                             "earth/openstreetmap/openstreetmap.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"),
                             "earth/opentopomap/opentopomap.dgml");
@@ -369,6 +373,9 @@ void MainWindow::connectAllSlots()
 
   connect(databaseLoader, &DatabaseLoader::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseLoader, &DatabaseLoader::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
+
+  connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
+          navMapWidget, &NavMapWidget::setPropertyValue);
 }
 
 void MainWindow::clearMessageText()

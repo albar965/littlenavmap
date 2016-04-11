@@ -105,6 +105,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   GeoDataLineString linestring;
+  linestring.setTessellate(true); // Need to set tesselate, otherwise lines are not drawn if only paritally visible
   linestring.append(GeoDataCoordinates(ils.pos1.getLonX(), ils.pos1.getLatY(), 0, DEG));
   linestring.append(GeoDataCoordinates(ils.position.getLonX(), ils.position.getLatY(), 0, DEG));
   linestring.append(GeoDataCoordinates(ils.pos2.getLonX(), ils.pos2.getLatY(), 0, DEG));

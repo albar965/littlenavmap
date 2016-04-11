@@ -86,31 +86,9 @@ NavMapWidget::~NavMapWidget()
 
 void NavMapWidget::setTheme(const QString& theme, int index)
 {
+  Q_UNUSED(index);
   setMapThemeId(theme);
-
-  if(index == OSM_HILLSHADING)
-    setPropertyValue("hillshading", true);
-  else if(index == OPENTOPOMAP)
-  {
-    setPropertyValue("places", false);
-    setPropertyValue("cities", false);
-    setPropertyValue("land", false);
-    setPropertyValue("terrain", false);
-    setPropertyValue("otherplaces", false);
-    setPropertyValue("ice", false);
-
-  }
-  else if(index == SIMPLE || index == POLITICAL || index == BLUE_MARBLE || index == ATLAS)
-  {
-    setPropertyValue("places", true);
-    setPropertyValue("cities", true);
-    setPropertyValue("otherplaces", false);
-    setPropertyValue("terrain", false);
-    setPropertyValue("urbanareas", false);
-    setPropertyValue("borders", true);
-  }
-
-  setShowMapPois(parentWindow->getUi()->actionMapShowCities->isChecked());
+//  setShowMapPois(parentWindow->getUi()->actionMapShowCities->isChecked());
 }
 
 void NavMapWidget::setShowMapPois(bool show)
@@ -180,6 +158,7 @@ void NavMapWidget::historyBack()
 void NavMapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
+  writePluginSettings(*s.getQSettings());
 
   s->setValue("Map/MarkLonX", static_cast<double>(markPos.getLonX()));
   s->setValue("Map/MarkLatY", static_cast<double>(markPos.getLatY()));
@@ -205,6 +184,7 @@ void NavMapWidget::saveState()
 void NavMapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
+  readPluginSettings(*s.getQSettings());
 
   if(s->contains("Map/MarkLonX") && s->contains("Map/MarkLatY"))
   {
