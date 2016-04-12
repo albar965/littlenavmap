@@ -88,7 +88,7 @@ void MapPainterAirport::render(const PaintContext *context)
       continue;
 
     int x, y;
-    bool visible = wToS(airport.position, x, y);
+    bool visible = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding));
 
     if(!visible)
     {
@@ -621,7 +621,6 @@ void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *rw, QList
     Rect bounding(r.primary);
     bounding.extend(r.secondary);
     QSize size = scale->getScreeenSizeForRect(bounding);
-    qDebug() << "rw size" << size;
 
     // Get the two endpoints as screen coords
     float xr1, yr1, xr2, yr2;

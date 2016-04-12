@@ -81,7 +81,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   QVector<int> xtexts;
   QVector<int> ytexts;
 
-  Pos p1 = pos.endpoint(radiusMeter, 0);
+  Pos p1 = pos.endpoint(radiusMeter, 0).normalize();
   bool h1 = true, h2 = true;
   bool v1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &h1);
 

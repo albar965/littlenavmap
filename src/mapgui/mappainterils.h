@@ -36,7 +36,7 @@ public:
 private:
   const float ILS_FEATHER_LEN_METER = 8.f;
 
-  void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
+  void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils,
                      const MapLayer *mapLayer, bool fast);
 
 };

@@ -70,7 +70,7 @@ QSize MapScale::getScreeenSizeForRect(const atools::geo::Rect& rect) const
   int topWidth = getPixelIntForMeter(rect.getTopLeft().distanceMeterTo(rect.getTopRight()), 90.f);
   int bottomWidth = getPixelIntForMeter(rect.getBottomLeft().distanceMeterTo(rect.getBottomRight()), 90.f);
   int height = getPixelIntForMeter(rect.getBottomCenter().distanceMeterTo(rect.getTopCenter()), 180);
-  return QSize(std::max(topWidth, bottomWidth), height);
+  return QSize(std::max(topWidth, bottomWidth) * 2, height * 2);
 }
 
 float MapScale::getDegreePerPixel(int px) const

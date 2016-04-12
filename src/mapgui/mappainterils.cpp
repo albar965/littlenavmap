@@ -78,18 +78,18 @@ void MapPainterIls::render(const PaintContext *context)
     for(const MapIls& ils : *ilss)
     {
       int x, y;
-      bool visible = wToS(ils.position, x, y);
+      bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
 
       if(!visible)
       {
         GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                ils.bounding.getEast(), ils.bounding.getWest(),
-                                GeoDataCoordinates::Degree);
-        visible = ilsbox.intersects(curBox);
+                               ils.bounding.getEast(), ils.bounding.getWest(),
+                               GeoDataCoordinates::Degree);
+        visible = curBox.intersects(ilsbox);
       }
 
       if(visible)
-        drawIlsSymbol(context->painter, ils, x, y, context->mapLayer, drawFast);
+        drawIlsSymbol(context->painter, ils, context->mapLayer, drawFast);
     }
   }
   if(widget->viewContext() == Marble::Still && verbose)
@@ -97,7 +97,7 @@ void MapPainterIls::render(const PaintContext *context)
   }
 }
 
-void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& ils, int x, int y,
+void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& ils,
                                   const MapLayer *mapLayer, bool fast)
 {
   painter->save();
@@ -108,13 +108,13 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
-  qDebug() << "ils size" << size;
   bool visible;
   QPoint pmid = wToS(ils.posmid, size, &visible);
-  QPoint origin(x, y);
+  QPoint origin= wToS(ils.position, size, &visible);
 
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
+
 
   painter->drawLine(origin, p1);
   painter->drawLine(p1, pmid);
@@ -144,7 +144,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
     if(!text.isEmpty())
     {
       painter->setPen(QPen(mapcolors::ilsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-      painter->translate(x, y);
+      painter->translate(origin);
 
       float rotate;
       if(ils.heading > 180)
