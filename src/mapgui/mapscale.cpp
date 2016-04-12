@@ -22,6 +22,8 @@
 
 #include <marble/ViewportParams.h>
 
+#include <geo/rect.h>
+
 using namespace Marble;
 using namespace atools::geo;
 
@@ -61,6 +63,14 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
     return true;
   }
   return false;
+}
+
+QSize MapScale::getScreeenSizeForRect(const atools::geo::Rect& rect) const
+{
+  int topWidth = getPixelIntForMeter(rect.getTopLeft().distanceMeterTo(rect.getTopRight()), 90.f);
+  int bottomWidth = getPixelIntForMeter(rect.getBottomLeft().distanceMeterTo(rect.getBottomRight()), 90.f);
+  int height = getPixelIntForMeter(rect.getBottomCenter().distanceMeterTo(rect.getTopCenter()), 180);
+  return QSize(std::max(topWidth, bottomWidth), height);
 }
 
 float MapScale::getDegreePerPixel(int px) const

@@ -51,6 +51,9 @@ void MapPainterIls::render(const PaintContext *context)
   if(!context->objectTypes.testFlag(ILS))
     return;
 
+  if(context->mapLayerEffective->isAirportDiagram())
+    return;
+
   if(context->mapLayer->isIls())
   {
   bool drawFast = widget->viewContext() == Marble::Animation;
@@ -104,12 +107,14 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
+  QSize size = scale->getScreeenSizeForRect(ils.bounding);
+  qDebug() << "ils size" << size;
   bool visible;
-  QPoint pmid = wToS(ils.posmid, &visible);
+  QPoint pmid = wToS(ils.posmid, size, &visible);
   QPoint origin(x, y);
 
-  QPoint p1 = wToS(ils.pos1, &visible);
-  QPoint p2 = wToS(ils.pos2, &visible);
+  QPoint p1 = wToS(ils.pos1, size, &visible);
+  QPoint p2 = wToS(ils.pos2, size, &visible);
 
   painter->drawLine(origin, p1);
   painter->drawLine(p1, pmid);

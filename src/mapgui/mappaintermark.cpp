@@ -49,7 +49,7 @@ void MapPainterMark::render(const PaintContext *context)
   setRenderHints(context->painter);
 
   context->painter->save();
-  paintHighlights(context->mapLayer, context->mapLayerEffective, context->painter, drawFast);
+  paintHighlights(context->mapLayerEffective, context->painter, drawFast);
   paintMark(context->painter);
   paintHome(context->painter);
   paintRangeRings(context->painter, context->viewport, drawFast);
@@ -90,8 +90,7 @@ void MapPainterMark::paintHome(GeoPainter *painter)
   }
 }
 
-void MapPainterMark::paintHighlights(const MapLayer *mapLayer, const MapLayer *mapLayerEff,
-                                     GeoPainter *painter, bool fast)
+void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *painter, bool fast)
 {
   const MapSearchResult& highlightResults = navMapWidget->getHighlightMapObjects();
   int size = 6;
@@ -168,7 +167,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
     if(maxIter != rings.ranges.end())
     {
       bool visible;
-      QPoint center = wToS(rings.center, &visible);
+      QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &visible);
 
       int maxDiameter = *maxIter;
 

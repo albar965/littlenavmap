@@ -19,6 +19,7 @@
 #define COORDINATECONVERTER_H
 
 #include <QPoint>
+#include <QSize>
 
 namespace Marble {
 class ViewportParams;
@@ -31,21 +32,29 @@ class Pos;
 }
 }
 
+const QSize DEFAULT_WTOS_SIZE(100, 100);
+
 class CoordinateConverter
 {
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
   ~CoordinateConverter();
 
-  QPoint wToS(const Marble::GeoDataCoordinates& coords, bool *visible = nullptr,
-              bool *isHidden = nullptr) const;
-  bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, bool *isHidden) const;
-  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, bool *isHidden = nullptr) const;
+  QPoint wToS(const Marble::GeoDataCoordinates& coords, const QSize& size = DEFAULT_WTOS_SIZE,
+              bool *visible = nullptr, bool *isHidden = nullptr) const;
+  bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y,
+            const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
+  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
+            bool *isHidden = nullptr) const;
 
-  QPoint wToS(const atools::geo::Pos& coords, bool *visible = nullptr, bool *isHidden = nullptr) const;
-  bool wToS(const atools::geo::Pos& coords, int& x, int& y, bool *isHidden = nullptr) const;
-  bool wToS(const atools::geo::Pos& coords, float& x, float& y, bool *isHidden = nullptr) const;
-  bool wToS(const atools::geo::Pos& coords, double& x, double& y, bool *isHidden = nullptr) const;
+  QPoint wToS(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
+              bool *visible = nullptr, bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
+            bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size = DEFAULT_WTOS_SIZE,
+            bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
+            bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
   atools::geo::Pos sToW(int x, int y) const;
@@ -55,6 +64,9 @@ public:
 
 private:
   const Marble::ViewportParams *viewport;
+  bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size,
+                    bool *isHidden) const;
+
 };
 
 #endif // COORDINATECONVERTER_H

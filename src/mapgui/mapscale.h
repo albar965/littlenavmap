@@ -25,6 +25,7 @@
 namespace atools {
 namespace geo {
 class Pos;
+class Rect;
 }
 }
 const float DEFAULT_ANGLE = 45.f;
@@ -42,6 +43,7 @@ public:
   int getPixelIntForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
 
   float getDegreePerPixel(int px) const;
+  QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;
 
   bool isValid() const
   {

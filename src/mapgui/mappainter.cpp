@@ -83,7 +83,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
 
   Pos p1 = pos.endpoint(radiusMeter, 0);
   bool h1 = true, h2 = true;
-  bool v1 = wToS(p1, x1, y1, &h1);
+  bool v1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &h1);
 
   GeoDataLinearRing ellipse;
   ellipse.setTessellate(true);
@@ -92,7 +92,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
     Pos p2 = pos.endpoint(radiusMeter, i).normalize();
     ellipse.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
 
-    bool v2 = wToS(p2, x2, y2, &h2);
+    bool v2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &h2);
 
     if((v1 || v2) && !h1 && !h2)
       if(v1 && v2)

@@ -198,6 +198,7 @@ void MainWindow::setupUi()
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
+//  mapProjectionComboBox->addItem(tr("Flat"), Marble::Equirectangular);
   ui->mapToolBar->addWidget(mapProjectionComboBox);
 
   mapThemeComboBox = new QComboBox(this);

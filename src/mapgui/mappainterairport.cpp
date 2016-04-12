@@ -160,8 +160,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   for(const MapTaxiPath& taxipath : *taxipaths)
   {
     bool visible;
-    QPoint start = wToS(taxipath.start, &visible);
-    QPoint end = wToS(taxipath.end, &visible);
+    QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
+    QPoint end = wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
     painter->drawLine(start, end);
   }
 
@@ -172,7 +172,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     points.clear();
     bool visible;
     for(const Pos& pos : apron.vertices)
-      points.append(wToS(pos, &visible));
+      points.append(wToS(pos, DEFAULT_WTOS_SIZE, &visible));
 
     painter->QPainter::drawPolyline(points.data(), points.size());
   }
@@ -183,7 +183,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     points.clear();
     bool visible;
     for(const Pos& pos : apron.vertices)
-      points.append(wToS(pos, &visible));
+      points.append(wToS(pos, DEFAULT_WTOS_SIZE, &visible));
 
     QColor col = mapcolors::colorForSurface(apron.surface);
     col = col.darker(110);
@@ -210,8 +210,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
 
     bool visible;
-    QPoint start = wToS(taxipath.start, &visible);
-    QPoint end = wToS(taxipath.end, &visible);
+    QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
+    QPoint end = wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
     painter->drawLine(start, end);
   }
 
@@ -228,8 +228,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(!taxipath.name.isEmpty())
       {
         bool visible;
-        wToS(taxipath.start, &visible);
-        wToS(taxipath.end, &visible);
+        wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
+        wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
         if(visible)
           map.insert(taxipath.name, taxipath);
       }
@@ -248,8 +248,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
 
         bool visible;
-        QPoint start = wToS(taxipath.start, &visible);
-        QPoint end = wToS(taxipath.end, &visible);
+        QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
+        QPoint end = wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
 
         int w = painter->fontMetrics().width(taxiname);
         int h = painter->fontMetrics().height();
@@ -338,7 +338,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   for(const MapParking& parking : *parkings)
   {
     bool visible;
-    QPoint pt = wToS(parking.position, &visible);
+    QPoint pt = wToS(parking.position, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
       int w = scale->getPixelIntForFeet(parking.radius, 90);
@@ -367,7 +367,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   for(const MapHelipad& helipad : *helipads)
   {
     bool visible;
-    QPoint pt = wToS(helipad.position, &visible);
+    QPoint pt = wToS(helipad.position, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
       painter->setBrush(mapcolors::colorForSurface(helipad.surface));
@@ -401,7 +401,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   if(airport.towerCoords.isValid())
   {
     bool visible;
-    QPoint pt = wToS(airport.towerCoords, &visible);
+    QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
       if(airport.towerFrequency > 0)
@@ -430,7 +430,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(context->mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 40)
       {
         bool visible;
-        QPoint pt = wToS(parking.position, &visible);
+        QPoint pt = wToS(parking.position, DEFAULT_WTOS_SIZE, &visible);
         if(visible)
         {
           if(parking.type.startsWith("RAMP_GA") || parking.type.startsWith("DOCK_GA") ||
@@ -455,7 +455,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   if(!fast && airport.towerCoords.isValid())
   {
     bool visible;
-    QPoint pt = wToS(airport.towerCoords, &visible);
+    QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
       pt.setY(pt.y() + painter->fontMetrics().ascent() / 2);
@@ -514,8 +514,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     {
       const MapRunway& runway = runways->at(i);
       bool primaryVisible, secondaryVisible;
-      QPoint prim = wToS(runway.primary, &primaryVisible);
-      QPoint sec = wToS(runway.secondary, &secondaryVisible);
+      QPoint prim = wToS(runway.primary, DEFAULT_WTOS_SIZE, &primaryVisible);
+      QPoint sec = wToS(runway.secondary, DEFAULT_WTOS_SIZE, &secondaryVisible);
 
       // TODO why is primary and secondary reversed
       if(primaryVisible)
@@ -618,14 +618,19 @@ void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *rw, QList
 {
   for(const maptypes::MapRunway& r : *rw)
   {
+    Rect bounding(r.primary);
+    bounding.extend(r.secondary);
+    QSize size = scale->getScreeenSizeForRect(bounding);
+    qDebug() << "rw size" << size;
+
     // Get the two endpoints as screen coords
     float xr1, yr1, xr2, yr2;
-    wToS(r.primary, xr1, yr1);
-    wToS(r.secondary, xr2, yr2);
+    wToS(r.primary, xr1, yr1, size);
+    wToS(r.secondary, xr2, yr2, size);
 
     // Get the center point as screen coords
     float xc, yc;
-    wToS(r.position, xc, yc);
+    wToS(r.position, xc, yc, size);
     if(centers != nullptr)
       centers->append(QPoint(static_cast<int>(std::round(xc)), static_cast<int>(std::round(yc))));
 
