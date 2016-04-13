@@ -155,8 +155,16 @@ void MapPaintLayer::initLayers()
          airwayIdent().airwayInfo().
          markerSymbolSize(24).markerInfo()).
 
-  append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
+  append(defLayer.clone(10.f).airportSymbolSize(18).airportInfo().
          waypointSymbolSize(8).waypointName().
+         vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
+         ndbSymbolSize(22).ndbIdent().ndbInfo().
+         ilsIdent().ilsInfo().
+         airwayIdent().
+         markerSymbolSize(24)).
+
+  append(defLayer.clone(25.f).airportSymbolSize(18).airportInfo().
+         waypointSymbolSize(8).
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().

@@ -149,6 +149,8 @@ public:
     return currentProjection;
   }
 
+  void updateMapShowFeatures();
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -167,12 +169,11 @@ private:
   {
     OSM,
     OPENTOPOMAP,
-    ATLAS,
-    BLUE_MARBLE,
-    SIMPLE,
-    POLITICAL
+    POLITICAL,
+    INVALID = -1
   };
 
+  MapThemeComboIndex currentComboIndex = INVALID;
   MouseStates mouseState = NONE;
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;

@@ -112,19 +112,19 @@
     </settings>
     <legend>
 
-    <section name="Tours">
+<!--    <section name="Tours">
         <heading>Explore the Earth</heading>
         <item name="earthlandingsites">
             <text><![CDATA[<a href="tour://earth/openstreetmap/tour.kml">Play a tour of popular places.</a>]]></text>
         </item>
-    </section>
-
+    </section> -->
+<!--
       <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
         <heading>Coordinate Grid</heading>
       </section>
       <section name="hillshading" checkable="true" connect="hillshading" spacing="12">
         <heading>Hillshading</heading>
-      </section>
+      </section> -->
       <section name="traffic" checkable="false" spacing="12">
         <heading>Transportation</heading>
         <item name="motorway">
@@ -291,7 +291,7 @@
           <text>Military area</text>
         </item>
       </section>
-      <section name="places" checkable="true" connect="places" spacing="12">
+      <section name="places" checkable="false" connect="places" spacing="12">
         <heading>Places of Interest</heading>
         <item name="school_university">
           <icon color="#f0f0d8"/>

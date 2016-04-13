@@ -87,8 +87,65 @@ NavMapWidget::~NavMapWidget()
 void NavMapWidget::setTheme(const QString& theme, int index)
 {
   Q_UNUSED(index);
+  qDebug() << "setting map theme to " << theme;
+
+  Ui::MainWindow *ui = parentWindow->getUi();
+  currentComboIndex = NavMapWidget::MapThemeComboIndex(index);
+  switch(index)
+  {
+    case NavMapWidget::OPENTOPOMAP:
+      setPropertyValue("ice", false);
+      ui->actionMapShowCities->setEnabled(false);
+      ui->actionMapShowHillshading->setEnabled(false);
+      break;
+    case NavMapWidget::OSM:
+      ui->actionMapShowCities->setEnabled(false);
+      ui->actionMapShowHillshading->setEnabled(true);
+      break;
+    case NavMapWidget::POLITICAL:
+      ui->actionMapShowCities->setEnabled(true);
+      ui->actionMapShowHillshading->setEnabled(false);
+      break;
+    case NavMapWidget::INVALID:
+      break;
+  }
+
   setMapThemeId(theme);
-//  setShowMapPois(parentWindow->getUi()->actionMapShowCities->isChecked());
+  updateMapShowFeatures();
+}
+
+void NavMapWidget::updateMapShowFeatures()
+{
+  Ui::MainWindow *ui = parentWindow->getUi();
+  setShowMapPois(ui->actionMapShowCities->isChecked() && currentComboIndex == NavMapWidget::POLITICAL);
+  setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
+                   currentComboIndex == NavMapWidget::OSM);
+
+  setShowMapFeatures(maptypes::AIRWAYV,
+                     ui->actionMapShowVictorAirways->isChecked());
+  setShowMapFeatures(maptypes::AIRWAYJ,
+                     ui->actionMapShowJetAirways->isChecked());
+
+  setShowMapFeatures(maptypes::ROUTE,
+                     ui->actionMapShowRoute->isChecked());
+
+  setShowMapFeatures(maptypes::AIRPORT_HARD,
+                     ui->actionMapShowAirports->isChecked());
+  setShowMapFeatures(maptypes::AIRPORT_SOFT,
+                     ui->actionMapShowSoftAirports->isChecked());
+  setShowMapFeatures(maptypes::AIRPORT_EMPTY,
+                     ui->actionMapShowEmptyAirports->isChecked());
+
+  setShowMapFeatures(maptypes::AIRPORT,
+                     ui->actionMapShowAirports->isChecked() ||
+                     ui->actionMapShowSoftAirports->isChecked() ||
+                     ui->actionMapShowEmptyAirports->isChecked());
+
+  setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
+  setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
+  setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
+  update();
 }
 
 void NavMapWidget::setShowMapPois(bool show)

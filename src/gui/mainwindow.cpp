@@ -196,9 +196,8 @@ void MainWindow::setupUi()
   QString helpText = tr("Select Map Theme");
   mapProjectionComboBox->setToolTip(helpText);
   mapProjectionComboBox->setStatusTip(helpText);
-  mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
-//  mapProjectionComboBox->addItem(tr("Flat"), Marble::Equirectangular);
+  mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
   ui->mapToolBar->addWidget(mapProjectionComboBox);
 
   mapThemeComboBox = new QComboBox(this);
@@ -206,24 +205,12 @@ void MainWindow::setupUi()
   helpText = tr("Select Map Theme");
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
-  mapThemeComboBox->addItem(tr("OpenStreenMap"),
+  mapThemeComboBox->addItem(tr("OpenStreetMap"),
                             "earth/openstreetmap/openstreetmap.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"),
                             "earth/opentopomap/opentopomap.dgml");
-  mapThemeComboBox->addItem(tr("Atlas"),
-                            "earth/srtm/srtm.dgml");
-  mapThemeComboBox->addItem(tr("Blue Marble"),
-                            "earth/bluemarble/bluemarble.dgml");
   mapThemeComboBox->addItem(tr("Simple"),
-                            "earth/plain/plain.dgml");
-  mapThemeComboBox->addItem(tr("Political"),
                             "earth/political/political.dgml");
-  // mapThemeComboBox->addItem(tr("MapQuest Open Aerial"),
-  // "earth/mapquest-open-aerial/mapquest-open-aerial.dgml");
-  // mapThemeComboBox->addItem(tr("MapQuest OpenStreenMap"),
-  // "earth/mapquest-osm/mapquest-osm.dgml");
-  // mapThemeComboBox->addItem(tr("Natural Earth")
-  // "earth/naturalearth2shading/naturalearth2shading.dgml");
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
@@ -316,6 +303,7 @@ void MainWindow::connectAllSlots()
           });
 
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowHillshading, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowEmptyAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -530,33 +518,7 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
 
 void MainWindow::updateMapShowFeatures()
 {
-  navMapWidget->setShowMapPois(ui->actionMapShowCities->isChecked());
-
-  navMapWidget->setShowMapFeatures(maptypes::AIRWAYV,
-                                   ui->actionMapShowVictorAirways->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::AIRWAYJ,
-                                   ui->actionMapShowJetAirways->isChecked());
-
-  navMapWidget->setShowMapFeatures(maptypes::ROUTE,
-                                   ui->actionMapShowRoute->isChecked());
-
-  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_HARD,
-                                   ui->actionMapShowAirports->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_SOFT,
-                                   ui->actionMapShowSoftAirports->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::AIRPORT_EMPTY,
-                                   ui->actionMapShowEmptyAirports->isChecked());
-
-  navMapWidget->setShowMapFeatures(maptypes::AIRPORT,
-                                   ui->actionMapShowAirports->isChecked() ||
-                                   ui->actionMapShowSoftAirports->isChecked() ||
-                                   ui->actionMapShowEmptyAirports->isChecked());
-
-  navMapWidget->setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
-  navMapWidget->setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
-  navMapWidget->update();
+  navMapWidget->updateMapShowFeatures();
 }
 
 void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
@@ -656,7 +618,7 @@ void MainWindow::readSettings()
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
               ui->actionMapShowRoute,
-              ui->actionMapShowCities});
+              ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
@@ -681,7 +643,7 @@ void MainWindow::writeSettings()
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
            ui->actionMapShowRoute,
-           ui->actionMapShowCities});
+           ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 

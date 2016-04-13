@@ -13,31 +13,31 @@
             <target>earth</target>
             <theme>plain</theme>
             <icon pixmap="plain-preview.png"/>
-    
+
             <!-- describes whether the map theme item will be hidden (e.g.
                 for a clouds layer): -->
             <visible> true </visible>
-        
+
             <!-- The description allows for rich text of course: -->
             <description><![CDATA[<p>A <i>plain map</i>.</p><p>It uses vector lines to mark coastlines and country borders, etc...</p>]]></description>
-    
+
             <zoom>
                 <minimum>   900  </minimum>
                 <maximum>  3200  </maximum>
-    
+
                 <!-- describes whether you can zoom trough the levels
                     continuously -->
-                <discrete> false </discrete> 
+                <discrete> false </discrete>
             </zoom>
         </head>
-        
+
             <!-- Now we create the layer structure that gets handled by the
     layer management class -->
-        
+
         <map bgcolor="#99b3cc">
             <canvas/>
             <target/>
-        
+
             <layer name="naturalearth" backend="geodata">
                 <geodata name="coast" property="land">
                     <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
@@ -101,7 +101,7 @@
                 </geodata>
 
             </layer>
-        
+
             <layer name="standardplaces" backend="geodata">
                 <geodata name="cityplacemarks">
                     <sourcefile>cityplacemarks.cache</sourcefile>
@@ -147,7 +147,7 @@
 
             <group name="UrbanAreas">
                 <property name="urbanareas">
-                    <value>true</value>
+                    <value>false</value>
                     <available>true</available>
                 </property>
             </group>
@@ -182,9 +182,9 @@
         </settings>
 
         <!-- At last we define some legend properties -->
-        
+
         <legend>
-            <section name="urbanareassection" checkable="true" connect="urbanareas" spacing="12">
+            <section name="urbanareassection" checkable="false" connect="urbanareas" spacing="12">
                 <heading>Urban Areas</heading>
 
                 <item name="urbanareasitem">
@@ -193,7 +193,7 @@
                 </item>
             </section>
 
-            <section name="terrainsection" checkable="true" connect="terrain" spacing="12">
+            <section name="terrainsection" checkable="false" connect="terrain" spacing="12">
                 <heading>Terrain</heading>
 
                 <item name="mountain">
@@ -206,7 +206,7 @@
                 </item>
             </section>
 
-            <section name="otherplacessection" checkable="true" connect="otherplaces" spacing="12">
+            <section name="otherplacessection" checkable="false" connect="otherplaces" spacing="12">
                 <heading>Places of Interest</heading>
 
                 <item name="geographic-pole">
@@ -231,7 +231,7 @@
                 </item>
             </section>
 
-            <section name="borders-section" checkable="true" connect="borders" spacing="12">
+            <section name="borders-section" checkable="false" connect="borders" spacing="12">
                 <heading>Boundaries</heading>
 
                 <item name="international-boundary-item">
@@ -252,7 +252,7 @@
                 </item>
             </section>
 
-            <section name="waterbodies-section" checkable="true" connect="waterbodies" spacing="12">
+            <section name="waterbodies-section" checkable="false" connect="waterbodies" spacing="12">
                 <heading>Water Bodies</heading>
 
                 <item name="lake-item">
@@ -273,7 +273,7 @@
                 </item>
             </section>
 
-            <section name="ice-section" checkable="true" connect="ice" spacing="12">
+            <section name="ice-section" checkable="false" connect="ice" spacing="12">
                 <heading>Ice and Glaciers</heading>
                 <item name="glaciers-item">
                     <icon color="#ffffff" pixmap="bitmaps/glacier.png"/>
@@ -285,9 +285,9 @@
                 </item>
             </section>
 
-            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+<!--            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
                 <heading>Coordinate Grid</heading>
-            </section>
+            </section>-->
         </legend>
     </document>
 </dgml>

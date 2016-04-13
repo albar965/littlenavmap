@@ -59,6 +59,9 @@
                 </geodata>
             </layer>
             <layer name="standardplaces" backend="geodata">
+                <geodata name="cityplacemarks">
+                    <sourcefile>cityplacemarks.cache</sourcefile>
+                </geodata>
                 <geodata name="boundaryplacemarks">
                     <sourcefile>boundaryplacemarks.cache</sourcefile>
                 </geodata>
@@ -66,16 +69,20 @@
         </map>
 
         <settings>
-             <group name="Places">
-                <property name="cities">
-                    <value>true</value>
-                    <available>true</available>
-                </property>
-                <property name="terrain">
-                    <value>true</value>
-                    <available>true</available>
-                </property>
-            </group>
+        <group name="Places">
+           <property name="places">
+               <value>true</value>
+               <available>true</available>
+           </property>
+           <property name="cities">
+               <value>true</value>
+               <available>true</available>
+           </property>
+           <property name="land">
+               <value>true</value>
+               <available>true</available>
+           </property>
+       </group>
             <group name="Boundaries">
                 <property name="borders">
                     <value>true</value>
@@ -95,7 +102,7 @@
         </settings>
 
         <legend>
-            <section name="borders-section" checkable="true" connect="borders" spacing="12">
+            <section name="borders-section" checkable="false" connect="borders" spacing="12">
                 <heading>Boundaries</heading>
 
                 <item name="international-boundary-item">
@@ -107,7 +114,7 @@
                     <text>Disputed Areas</text>
                 </item>
             </section>
-            <section name="waterbodies-section" checkable="true" connect="water" spacing="12">
+            <section name="waterbodies-section" checkable="false" connect="water" spacing="12">
                 <heading>Water Bodies</heading>
 
                     <item name="rivers-item">
@@ -115,9 +122,9 @@
                         <text>Rivers</text>
                     </item>
             </section>
-            <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+<!--            <section name="coordinate-grid" checkable="false" connect="coordinate-grid" spacing="12">
                 <heading>Coordinate Grid</heading>
-            </section>
+            </section>-->
         </legend>
     </document>
 </dgml>

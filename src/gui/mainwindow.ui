@@ -1742,6 +1742,9 @@
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowCities"/>
+   <addaction name="actionMapShowHillshading"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -2670,6 +2673,24 @@
    </property>
    <property name="text">
     <string>Route Redo</string>
+   </property>
+  </action>
+  <action name="actionMapShowHillshading">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/hillshading.svg</normaloff>:/littlenavmap/resources/icons/hillshading.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Hillshading</string>
+   </property>
+   <property name="toolTip">
+    <string>Hillshading</string>
    </property>
   </action>
  </widget>

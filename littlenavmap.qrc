@@ -77,5 +77,6 @@
         <file>resources/icons/cancel.svg</file>
         <file>resources/icons/undo.svg</file>
         <file>resources/icons/redo.svg</file>
+        <file>resources/icons/hillshading.svg</file>
     </qresource>
 </RCC>

@@ -13,31 +13,31 @@
             <target>earth</target>
             <theme>srtm</theme>
             <icon pixmap="srtm-preview.png"/>
-    
+
             <!-- describes whether the map theme item will be hidden (e.g.
                 for a clouds layer): -->
             <visible> true </visible>
-        
+
             <!-- The description allows for rich text of course: -->
             <description><![CDATA[<p>A <i>classic topographic map</i>.</p><p>It uses vector lines to mark coastlines, country borders etc. and bitmap graphics to create the height relief.</p>]]></description>
-    
+
             <zoom>
                 <minimum>   900  </minimum>
                 <maximum>  3200  </maximum>
-    
+
                 <!-- describes whether you can zoom trough the levels
                     continuously -->
-                <discrete> false </discrete> 
+                <discrete> false </discrete>
             </zoom>
         </head>
-        
+
             <!-- Now we create the layer structure that gets handled by the
     layer management class -->
-        
+
         <map bgcolor="#99b3cc">
             <canvas/>
             <target/>
-        
+
             <!-- This layer creates the elevation model -->
             <layer name="srtm" backend="texture" role="dem">
                 <texture name="srtm_data"><!-- type="texture"-->
@@ -54,7 +54,7 @@
                     <palette type="land">landcolors.leg</palette>
                 </filter>
             </layer>
-            
+
             <!-- This layer creates the coastlines that are needed to
                 colorize the elevation model properly -->
             <layer name="naturalearth-canvas" backend="geodata">
@@ -72,8 +72,8 @@
                     <pen color="transparent" style="nopen"/>
                 </geodata>
             </layer>
-        
-        
+
+
             <layer name="naturalearth" backend="geodata">
                 <geodata name="lakeshistoric" property="waterbodies">
                     <sourcefile> naturalearth/ne_50m_lakes_historic.pn2 </sourcefile>
@@ -121,7 +121,7 @@
                     <pen color="#637bff" />
                 </geodata>
             </layer>
-        
+
             <layer name="standardplaces" backend="geodata">
                 <geodata name="cityplacemarks">
                     <sourcefile>cityplacemarks.cache</sourcefile>
@@ -196,11 +196,11 @@
                 <available>true</available>
             </property>
         </settings>
-        
+
         <!-- At last we define some legend properties -->
-        
+
         <legend>
-            <section name="urbanareassection" checkable="true" connect="urbanareas" spacing="12">
+            <section name="urbanareassection" checkable="false" connect="urbanareas" spacing="12">
                 <heading>Urban Areas</heading>
 
                 <item name="urbanareasitem">
@@ -209,7 +209,7 @@
                 </item>
             </section>
 
-            <section name="terrainsection" checkable="true" connect="terrain" spacing="12">
+            <section name="terrainsection" checkable="false" connect="terrain" spacing="12">
                 <heading>Terrain</heading>
 
                 <item name="mountain">
@@ -222,7 +222,7 @@
                 </item>
             </section>
 
-            <section name="otherplacessection" checkable="true" connect="otherplaces" spacing="12">
+            <section name="otherplacessection" checkable="false" connect="otherplaces" spacing="12">
                 <heading>Places of Interest</heading>
 
                 <item name="geographic-pole">
@@ -247,7 +247,7 @@
                 </item>
             </section>
 
-            <section name="borders-section" checkable="true" connect="borders" spacing="12">
+            <section name="borders-section" checkable="false" connect="borders" spacing="12">
                 <heading>Boundaries</heading>
 
                 <item name="international-boundary-item">
@@ -267,8 +267,8 @@
                     <text>Maritime Borders</text>
                 </item>
             </section>
-    
-            <section name="waterbodies-section" checkable="true" connect="waterbodies" spacing="12">
+
+            <section name="waterbodies-section" checkable="false" connect="waterbodies" spacing="12">
                 <heading>Water Bodies</heading>
 
                 <item name="lake-item">
@@ -288,8 +288,8 @@
                     <text>River</text>
                 </item>
             </section>
-    
-            <section name="ice-section" checkable="true" connect="ice" spacing="12">
+
+            <section name="ice-section" checkable="false" connect="ice" spacing="12">
                 <heading>Ice and Glaciers</heading>
                 <item name="glaciers-item">
                     <icon color="#d0dff1" pixmap="bitmaps/glacier.png"/>
@@ -301,7 +301,7 @@
                 </item>
             </section>
 
-            <section name="reliefsection" checkable="true" connect="relief" spacing="12">
+            <section name="reliefsection" checkable="false" connect="relief" spacing="12">
                 <heading>Relief</heading>
             </section>
 
@@ -375,9 +375,9 @@
             </section>
 
 
-            <section name="coordinate-grid-section" checkable="true" connect="coordinate-grid" spacing="12">
+<!--            <section name="coordinate-grid-section" checkable="false" connect="coordinate-grid" spacing="12">
                 <heading>Coordinate Grid</heading>
-            </section>
+            </section>-->
         </legend>
     </document>
 </dgml>

@@ -19,7 +19,7 @@
       <zoom>
         <minimum>   900  </minimum>
         <maximum>  3200  </maximum>
-        <discrete> true </discrete>
+        <discrete> false</discrete>
       </zoom>
     </head>
     <map bgcolor="#000000">
@@ -51,7 +51,7 @@
             <pen color="#5182b4" style="dashline"/>
             <brush color="#ffffff" alpha="0.4" />
         </geodata>
-      </layer>          
+      </layer>
       <layer name="standardplaces" backend="geodata">
         <geodata name="cityplacemarks">
           <sourcefile>cityplacemarks.cache</sourcefile>
@@ -92,7 +92,7 @@
                 <value>true</value>
                 <available>true</available>
             </property>
-        </group>        
+        </group>
         <property name="coordinate-grid">
             <value>true</value>
             <available>true</available>
@@ -112,24 +112,24 @@
 
         <group name="Surface">
             <property name="ice">
-                <value>true</value>
+                <value>false</value>
                 <available>true</available>
             </property>
         </group>
     </settings>
     <legend>
-      <section name="coordinate-grid" checkable="true" connect="coordinate-grid" spacing="12">
+<!--      <section name="coordinate-grid" checkable="false" connect="coordinate-grid" spacing="12">
         <heading>Coordinate Grid</heading>
       </section>
      <section name="placemarks" spacing="12">
         <heading>Placemarks</heading>
-        <item name="terrain" checkable="true" connect="terrain">
+        <item name="terrain" checkable="false" connect="terrain">
             <text>Continents, Terrain</text>
         </item>
-        <item name="cities" checkable="true" connect="cities">
+        <item name="cities" checkable="false" connect="cities">
             <text>Populated Places, Countries</text>
         </item>
-     </section>      
+     </section>-->
      <section name="areas" checkable="false" spacing="12">
         <heading>Areas</heading>
         <item name="deciduous_forest">
@@ -355,7 +355,7 @@
           <text>Chimney</text>
         </item>
       </section>
-        <section name="ice-section" checkable="true" connect="ice" spacing="12">
+        <section name="ice-section" checkable="false" connect="ice" spacing="12">
             <heading>Ice and Glaciers</heading>
             <item name="glaciers-item">
                 <icon color="#ffffff" pixmap="bitmaps/glacier.png"/>
@@ -365,7 +365,7 @@
                 <icon color="#5182b4" pixmap="bitmaps/antarctic_shelves.png"/>
                 <text>Antarctic Iceshelves</text>
             </item>
-        </section>      
+        </section>
     </legend>
   </document>
 </dgml>
