@@ -18,8 +18,8 @@
       <description><![CDATA[<p><i>OpenTopoMap</i> is a free topographic map which has been created from OpenStreetMap and SRTM data. The map style is inspired by official maps and focuses on legibility through high contrast and balanced signatures.</p>]]></description>
       <zoom>
         <minimum>   900  </minimum>
-        <maximum>  3200  </maximum>
-        <discrete> false</discrete>
+        <maximum>  3500  </maximum>
+        <discrete> true</discrete>
       </zoom>
     </head>
     <map bgcolor="#000000">

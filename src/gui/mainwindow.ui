@@ -54,6 +54,7 @@
     </property>
     <addaction name="actionContents"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionAboutMarble"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -2064,7 +2065,7 @@
   <action name="actionAbout">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -2691,6 +2692,18 @@
    </property>
    <property name="toolTip">
     <string>Hillshading</string>
+   </property>
+  </action>
+  <action name="actionAboutMarble">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/marble.svg</normaloff>:/littlenavmap/resources/icons/marble.svg</iconset>
+   </property>
+   <property name="text">
+    <string>About Marble</string>
+   </property>
+   <property name="toolTip">
+    <string>About the Marble Widget</string>
    </property>
   </action>
  </widget>

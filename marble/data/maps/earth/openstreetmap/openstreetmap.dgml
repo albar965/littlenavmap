@@ -18,8 +18,8 @@
       <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
       <zoom>
         <minimum>   900  </minimum>
-        <maximum>  3200  </maximum>
-        <discrete> false </discrete>
+        <maximum>  3500  </maximum>
+        <discrete> true </discrete>
       </zoom>
     </head>
     <map bgcolor="#000000">

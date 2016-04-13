@@ -37,6 +37,7 @@ class DatabaseLoader;
 
 namespace Marble {
 class LegendWidget;
+class MarbleAboutDialog;
 }
 
 namespace atools {
@@ -107,6 +108,7 @@ private:
   bool hasDatabaseLoadStatus = false;
 
   Marble::LegendWidget *legendWidget = nullptr;
+  Marble::MarbleAboutDialog *marbleAbout = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;

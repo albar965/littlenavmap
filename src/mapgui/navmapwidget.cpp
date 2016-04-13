@@ -158,7 +158,6 @@ void NavMapWidget::setShowMapPois(bool show)
 
 void NavMapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
-  qDebug() << "setShowMapFeatures" << type << "show" << show;
   paintLayer->setShowMapFeatures(type, show);
   updateAirwayScreenLines();
 }

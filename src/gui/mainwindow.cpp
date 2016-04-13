@@ -34,6 +34,7 @@
 #include "mapgui/mapquery.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
+#include <marble/MarbleAboutDialog.h>
 #include <marble/GeoDataDocument.h>
 #include <marble/GeoDataTreeModel.h>
 #include <marble/LegendWidget.h>
@@ -87,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
   helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+  marbleAbout = new Marble::MarbleAboutDialog(this);
 
   ui->setupUi(this);
   setupUi();
@@ -131,6 +133,7 @@ MainWindow::~MainWindow()
   delete searchController;
   delete mapQuery;
   delete legendWidget;
+  delete marbleAbout;
   delete ui;
 
   qDebug() << "MainWindow destructor";
@@ -365,6 +368,8 @@ void MainWindow::connectAllSlots()
 
   connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
           navMapWidget, &NavMapWidget::setPropertyValue);
+  connect(ui->actionAboutMarble, &QAction::triggered,
+          marbleAbout, &Marble::MarbleAboutDialog::exec);
 }
 
 void MainWindow::clearMessageText()
