@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
     Settings::logSettingsInformation();
 
     Settings& s = Settings::instance();
+
     // Load local and Qt system translations from various places
     Translator::load(s->value("Options/Language", QString()).toString());
 

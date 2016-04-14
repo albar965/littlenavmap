@@ -163,6 +163,7 @@ signals:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
+  void updateActionStates();
 
 private:
   enum MapThemeComboIndex
@@ -178,7 +179,7 @@ private:
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
-  int homeZoom = -1;
+  double homeDistance = 0.;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
@@ -204,6 +205,7 @@ private:
   virtual void mouseMoveEvent(QMouseEvent *event) override;
   virtual bool event(QEvent *event) override;
 
+  bool changedByHistory = false;
   int curZoom = -1;
   Marble::GeoDataLatLonAltBox curBox;
 

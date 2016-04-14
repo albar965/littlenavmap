@@ -81,6 +81,21 @@ public:
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
+  bool hasChanged() const
+  {
+    return changed;
+  }
+
+  const QString& getRouteFilename() const
+  {
+    return routeFilename;
+  }
+
+  QString getDefaultFilename() const;
+  bool isFlightplanEmpty() const;
+  bool hasValidStart() const;
+  bool hasValidDestination() const;
+
 private:
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;

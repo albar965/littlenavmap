@@ -149,10 +149,12 @@ private:
   void routeNew();
   void routeOpen();
   void routeSave();
-  void routeSaveAs();
+  bool routeSaveAs();
   void routeCenter();
   void renderStatusChanged(Marble::RenderStatus status);
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
+  bool routeCheckForChanges();
+  void routeCheckForStartAndDest();
 
 };
 

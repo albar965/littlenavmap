@@ -18,9 +18,42 @@
 #include "mapposhistory.h"
 #include "settings/settings.h"
 #include "logging/loggingdefs.h"
+#include "geo/calculations.h"
 
 #include <QSettings>
 #include <QDateTime>
+
+MapPosHistoryEntry::MapPosHistoryEntry()
+{
+
+}
+
+MapPosHistoryEntry::MapPosHistoryEntry(atools::geo::Pos position, double mapDistance, qint64 mapTimestamp)
+  : pos(position), distance(mapDistance), timestamp(mapTimestamp)
+{
+
+}
+
+bool MapPosHistoryEntry::operator==(const MapPosHistoryEntry& other) const
+{
+  return std::abs(distance - other.distance) < 0.001 &&
+         pos == other.pos;
+}
+
+bool MapPosHistoryEntry::operator!=(const MapPosHistoryEntry& other) const
+{
+  return !operator==(other);
+}
+
+QDebug operator<<(QDebug debug, const MapPosHistoryEntry& entry)
+{
+  QDebugStateSaver save(debug);
+  debug.nospace() << "MapPosHistoryEntry(" << entry.pos << ","
+  << entry.distance << "," << entry.timestamp << ")";
+  return debug;
+}
+
+// -----------------------------------------------------------------------
 
 MapPosHistory::MapPosHistory(QObject *parent)
   : QObject(parent)
@@ -39,8 +72,7 @@ const MapPosHistoryEntry& MapPosHistory::next()
     emit historyChanged(0, currentIndex, entries.size() - 1);
     return entries.at(currentIndex);
   }
-  else
-    return empty;
+  return EMPTY_MAP_POS;
 }
 
 const MapPosHistoryEntry& MapPosHistory::back()
@@ -51,35 +83,39 @@ const MapPosHistoryEntry& MapPosHistory::back()
     emit historyChanged(0, currentIndex, entries.size() - 1);
     return entries.at(currentIndex);
   }
-  else
-    return empty;
+  return EMPTY_MAP_POS;
 }
 
 const MapPosHistoryEntry& MapPosHistory::current() const
 {
-  if(currentIndex != -1)
+  if(!entries.isEmpty())
     return entries.at(currentIndex);
-  else
-    return empty;
+
+  return EMPTY_MAP_POS;
 }
 
-void MapPosHistory::addEntry(atools::geo::Pos pos, int zoom)
+void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
 {
+  MapPosHistoryEntry newEntry(pos, distance, QDateTime::currentMSecsSinceEpoch());
   const MapPosHistoryEntry& curEntry = current();
-  if(curEntry.pos == pos && curEntry.zoom == zoom)
+
+  if(newEntry == curEntry)
     return;
 
-  qint64 now = QDateTime::currentMSecsSinceEpoch();
-
-  if(curEntry.timestamp > now - MAX_MS_FOR_NEW_ENTRY)
-    entries[currentIndex] = {pos, zoom, now};
+  if(curEntry.getTimestamp() > newEntry.getTimestamp() - MAX_MS_FOR_NEW_ENTRY)
+  {
+    entries[currentIndex] = newEntry;
+  }
   else
   {
     if(currentIndex != -1)
-      for(int i = currentIndex + 1; i < entries.size(); i++)
+    {
+      int size = entries.size();
+      for(int i = currentIndex + 1; i < size; i++)
         entries.removeLast();
+    }
 
-    entries.append({pos, zoom, now});
+    entries.append(newEntry);
     currentIndex++;
 
     while(entries.size() > MAX_NUMBER_OF_ENTRIES)
@@ -99,10 +135,10 @@ void MapPosHistory::saveState(const QString& keyPrefix)
 
   for(const MapPosHistoryEntry& e : entries)
   {
-    list.append(QString::number(e.pos.getLonX(), 'f'));
-    list.append(QString::number(e.pos.getLatY(), 'f'));
-    list.append(QString::number(e.zoom));
-    list.append(QString::number(e.timestamp));
+    list.append(QString::number(e.getPos().getLonX(), 'f'));
+    list.append(QString::number(e.getPos().getLatY(), 'f'));
+    list.append(QString::number(e.getDistance(), 'f'));
+    list.append(QString::number(e.getTimestamp()));
   }
 
   using atools::settings::Settings;
@@ -123,9 +159,12 @@ void MapPosHistory::restoreState(const QString& keyPrefix)
     currentIndex = list.at(0).toInt();
     list.removeFirst();
     for(int i = 0; i < list.size(); i += 4)
-      entries.append({atools::geo::Pos(list.at(i).toFloat(), list.at(i + 1).toFloat()),
-                      list.at(i + 2).toInt(),
-                      list.at(i + 3).toLongLong()});
+    {
+      entries.append(MapPosHistoryEntry(
+                       atools::geo::Pos(list.at(i).toFloat(), list.at(i + 1).toFloat()),
+                       list.at(i + 2).toDouble(),
+                       list.at(i + 3).toLongLong()));
+    }
     emit historyChanged(0, currentIndex, entries.size() - 1);
   }
   else

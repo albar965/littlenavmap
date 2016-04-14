@@ -22,12 +22,45 @@
 
 #include <QObject>
 
-struct MapPosHistoryEntry
+class MapPosHistoryEntry
 {
+public:
+  MapPosHistoryEntry();
+  MapPosHistoryEntry(atools::geo::Pos position, double mapDistance, qint64 mapTimestamp = 0L);
+
+  /* Does not compare the timestamp */
+  bool operator==(const MapPosHistoryEntry& other) const;
+  bool operator!=(const MapPosHistoryEntry& other) const;
+
+  double getDistance() const
+  {
+    return distance;
+  }
+
+  qint64 getTimestamp() const
+  {
+    return timestamp;
+  }
+
+  const atools::geo::Pos& getPos() const
+  {
+    return pos;
+  }
+
+  bool isValid() const
+  {
+    return pos.isValid();
+  }
+
+private:
+  friend QDebug operator<<(QDebug debug, const MapPosHistoryEntry& entry);
+
   atools::geo::Pos pos;
-  int zoom;
-  qint64 timestamp;
+  double distance = 0.;
+  qint64 timestamp = 0L;
 };
+
+const MapPosHistoryEntry EMPTY_MAP_POS;
 
 class MapPosHistory :
   public QObject
@@ -42,7 +75,7 @@ public:
   const MapPosHistoryEntry& back();
   const MapPosHistoryEntry& current() const;
 
-  void addEntry(atools::geo::Pos pos, int zoom);
+  void addEntry(atools::geo::Pos pos, double distance);
 
   void saveState(const QString& keyPrefix);
   void restoreState(const QString& keyPrefix);
@@ -53,8 +86,6 @@ private:
 
   QList<MapPosHistoryEntry> entries;
   int currentIndex = -1;
-
-  MapPosHistoryEntry empty;
 
 signals:
   void historyChanged(int minIndex, int curIndex, int maxIndex);

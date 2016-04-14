@@ -38,6 +38,7 @@
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
+#include <gui/dialog.h>
 #include <QListWidget>
 #include <QUndoStack>
 #include <QVector2D>
@@ -250,6 +251,47 @@ void RouteController::saveFlightplan()
   updateWindowTitle();
 }
 
+QString RouteController::getDefaultFilename() const
+{
+  QString filename;
+
+  if(flightplan->getFlightplanType() == atools::fs::pln::IFR)
+    filename = "IFR ";
+  else if(flightplan->getFlightplanType() == atools::fs::pln::VFR)
+    filename = "VFR ";
+
+  if(flightplan->getDepartureAiportName().isEmpty())
+    filename += flightplan->getEntries().first().getIcaoIdent();
+  else
+    filename += flightplan->getDepartureAiportName() + " (" + flightplan->getDepartureIdent() + ")";
+
+  filename += " to ";
+
+  if(flightplan->getDestinationAiportName().isEmpty())
+    filename += flightplan->getEntries().last().getIcaoIdent();
+  else
+    filename += flightplan->getDestinationAiportName() + " (" + flightplan->getDestinationIdent() + ")";
+  filename += ".pln";
+  return filename;
+}
+
+bool RouteController::isFlightplanEmpty() const
+{
+  return flightplan->isEmpty();
+}
+
+bool RouteController::hasValidStart() const
+{
+  return !flightplan->isEmpty() &&
+         flightplan->getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT;
+}
+
+bool RouteController::hasValidDestination() const
+{
+  return !flightplan->isEmpty() &&
+         flightplan->getEntries().last().getWaypointType() == atools::fs::pln::entry::AIRPORT;
+}
+
 void RouteController::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
@@ -293,7 +335,6 @@ void RouteController::updateMoveAndDeleteActions()
     else if(model->rowCount() == 1)
       // Only one waypoint - nothing to move
       ui->actionRouteDeleteLeg->setEnabled(true);
-
   }
 }
 
@@ -611,7 +652,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
     rmoPred = &routeMapObjects.at(routeMapObjects.size() - 1);
 
   RouteMapObject rmo(flightplan);
-  rmo.loadFromAirport(&flightplan->getEntries().first(), airport, rmoPred);
+  rmo.loadFromAirport(&flightplan->getEntries().last(), airport, rmoPred);
   routeMapObjects.append(rmo);
 
   updateRouteMapObjects();

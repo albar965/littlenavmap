@@ -253,6 +253,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, navMapWidget, &NavMapWidget::showPos);
   connect(routeController, &RouteController::changeMark, navMapWidget, &NavMapWidget::changeMark);
   connect(routeController, &RouteController::routeChanged, navMapWidget, &NavMapWidget::routeChanged);
+  connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
           navMapWidget, &NavMapWidget::showRect);
@@ -288,6 +289,7 @@ void MainWindow::connectAllSlots()
   QObject::connect(navMapWidget, &NavMapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
   QObject::connect(navMapWidget, &NavMapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
   QObject::connect(navMapWidget, &NavMapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  QObject::connect(navMapWidget, &NavMapWidget::updateActionStates, this, &MainWindow::updateActionStates);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)
@@ -411,40 +413,106 @@ void MainWindow::routeCenter()
   navMapWidget->showRect(routeController->getBoundingRect());
 }
 
+void MainWindow::routeCheckForStartAndDest()
+{
+  if(!routeController->hasValidStart() || !routeController->hasValidDestination())
+    dialog->showInfoMsgBox("Actions/ShowRouteWarning",
+                           tr("Route must have an airport as start and destination and "
+                              "will not be usable by the Simulator."),
+                           tr("Do not &show this dialog again."));
+
+}
+
+bool MainWindow::routeCheckForChanges()
+{
+  if(!routeController->hasChanged())
+    return true;
+
+  QMessageBox msgBox;
+  msgBox.setText("Route has been changed.");
+  msgBox.setInformativeText("Save changes?");
+  msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
+
+  int retval = msgBox.exec();
+
+  switch(retval)
+  {
+    case QMessageBox::Save:
+      if(routeController->getRouteFilename().isEmpty())
+        return routeSaveAs();
+      else
+      {
+        routeSave();
+        // ok to erase route
+        return true;
+      }
+
+    case QMessageBox::No:
+      // ok to erase route
+      return true;
+
+    case QMessageBox::Cancel:
+      // stop any route erasing actions
+      return false;
+  }
+  return false;
+}
+
 void MainWindow::routeNew()
 {
-  routeController->newFlightplan();
-  navMapWidget->update();
+  if(routeCheckForChanges())
+  {
+    routeController->newFlightplan();
+    navMapWidget->update();
+  }
 }
 
 void MainWindow::routeOpen()
 {
-  QString routeFile = dialog->openFileDialog(tr("Open Flightplan"),
-                                             tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
-                                             "Route/",
-                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
-
-  if(!routeFile.isEmpty())
+  if(routeCheckForChanges())
   {
-    routeController->loadFlightplan(routeFile);
-    navMapWidget->update();
+    QString routeFile = dialog->openFileDialog(tr("Open Flightplan"),
+                                               tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
+                                               "Route/",
+                                               atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+
+    if(!routeFile.isEmpty())
+    {
+      routeController->loadFlightplan(routeFile);
+      navMapWidget->update();
+    }
   }
 }
 
 void MainWindow::routeSave()
 {
-  routeController->saveFlightplan();
+  if(routeController->getRouteFilename().isEmpty())
+    routeSaveAs();
+  else
+  {
+    routeCheckForStartAndDest();
+    routeController->saveFlightplan();
+    updateActionStates();
+  }
 }
 
-void MainWindow::routeSaveAs()
+bool MainWindow::routeSaveAs()
 {
+  routeCheckForStartAndDest();
+
   QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
                                              tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
                                              "pln", "Route/",
-                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX),
+                                             routeController->getDefaultFilename());
 
   if(!routeFile.isEmpty())
+  {
     routeController->saveFlighplanAs(routeFile);
+    updateActionStates();
+    return true;
+  }
+  return false;
 }
 
 void MainWindow::defaultMapDetail()
@@ -559,6 +627,14 @@ void MainWindow::updateActionStates()
 {
   qDebug() << "Updating action states";
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+
+  ui->actionRouteSave->setEnabled(!routeController->isFlightplanEmpty() && routeController->hasChanged());
+  ui->actionRouteSaveAs->setEnabled(!routeController->isFlightplanEmpty());
+  ui->actionRouteCenter->setEnabled(!routeController->isFlightplanEmpty());
+  ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
+
+  ui->actionMapShowHome->setEnabled(navMapWidget->getHomePos().isValid());
+  ui->actionMapShowMark->setEnabled(navMapWidget->getMarkPos().isValid());
 }
 
 void MainWindow::openDatabase()
@@ -662,14 +738,23 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // Catch all close events like Ctrl-Q or Menu/Exit or clicking on the
   // close button on the window frame
   qDebug() << "closeEvent";
-  int result = dialog->showQuestionMsgBox("Actions/ShowQuit",
-                                          tr("Really Quit?"),
-                                          tr("Do not &show this dialog again."),
-                                          QMessageBox::Yes | QMessageBox::No,
-                                          QMessageBox::No, QMessageBox::Yes);
 
-  if(result != QMessageBox::Yes)
-    event->ignore();
+  if(routeController->hasChanged())
+  {
+    if(!routeCheckForChanges())
+      event->ignore();
+  }
+  else
+  {
+    int result = dialog->showQuestionMsgBox("Actions/ShowQuit",
+                                            tr("Really Quit?"),
+                                            tr("Do not &show this dialog again."),
+                                            QMessageBox::Yes | QMessageBox::No,
+                                            QMessageBox::No, QMessageBox::Yes);
+
+    if(result != QMessageBox::Yes)
+      event->ignore();
+  }
   writeSettings();
 }
 

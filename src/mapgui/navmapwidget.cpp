@@ -154,6 +154,7 @@ void NavMapWidget::setShowMapPois(bool show)
   setShowPlaces(show);
   setShowCities(show);
   setShowOtherPlaces(show);
+  setShowTerrain(show);
 }
 
 void NavMapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
@@ -194,20 +195,22 @@ void NavMapWidget::postDatabaseLoad()
 void NavMapWidget::historyNext()
 {
   const MapPosHistoryEntry& entry = history.next();
-  if(entry.pos.isValid())
+  if(entry.isValid())
   {
-    setZoom(entry.zoom);
-    centerOn(entry.pos.getLonX(), entry.pos.getLatY(), false);
+    setDistance(entry.getDistance());
+    centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
+    changedByHistory = true;
   }
 }
 
 void NavMapWidget::historyBack()
 {
   const MapPosHistoryEntry& entry = history.back();
-  if(entry.pos.isValid())
+  if(entry.isValid())
   {
-    setZoom(entry.zoom);
-    centerOn(entry.pos.getLonX(), entry.pos.getLatY(), false);
+    setDistance(entry.getDistance());
+    centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
+    changedByHistory = true;
   }
 }
 
@@ -221,7 +224,7 @@ void NavMapWidget::saveState()
 
   s->setValue("Map/HomeLonX", static_cast<double>(homePos.getLonX()));
   s->setValue("Map/HomeLatY", static_cast<double>(homePos.getLatY()));
-  s->setValue("Map/HomeZoom", homeZoom);
+  s->setValue("Map/HomeDistance", homeDistance);
   history.saveState("Map/History");
 
   QByteArray bytesDistMarker;
@@ -251,7 +254,7 @@ void NavMapWidget::restoreState()
   if(s->contains("Map/HomeLonX") && s->contains("Map/HomeLatY") && s->contains("Map/HomeZoom"))
   {
     homePos = atools::geo::Pos(s->value("Map/HomeLonX").toDouble(), s->value("Map/HomeLatY").toDouble());
-    homeZoom = s->value("Map/HomeZoom").toInt();
+    homeDistance = s->value("Map/HomeDistance").toDouble();
     emit homeChanged(markPos);
   }
   history.restoreState("Map/History");
@@ -271,11 +274,16 @@ void NavMapWidget::showSavedPos()
 {
   const MapPosHistoryEntry& currentPos = history.current();
 
-  if(currentPos.pos.isValid())
-    centerOn(currentPos.pos.getLonX(), currentPos.pos.getLatY(), false);
-
-  if(currentPos.zoom != -1)
-    setZoom(currentPos.zoom);
+  if(currentPos.isValid())
+  {
+    centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
+    setDistance(currentPos.getDistance());
+  }
+  else
+  {
+    centerOn(0.f, 0.f, false);
+    setDistance(7000);
+  }
 }
 
 void NavMapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
@@ -305,8 +313,8 @@ void NavMapWidget::showMark()
 void NavMapWidget::showHome()
 {
   qDebug() << "NavMapWidget::showHome" << markPos;
-  if(homeZoom != -1)
-    setZoom(homeZoom);
+  if(!atools::geo::almostEqual(homeDistance, 0.))
+    setDistance(homeDistance);
 
   if(homePos.isValid())
     centerOn(homePos.getLonX(), homePos.getLatY(), false);
@@ -316,7 +324,7 @@ void NavMapWidget::changeMark(const atools::geo::Pos& pos)
 {
   markPos = pos;
   emit markChanged(markPos);
-
+  emit updateActionStates();
   update();
 }
 
@@ -342,7 +350,8 @@ void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 void NavMapWidget::changeHome()
 {
   homePos = atools::geo::Pos(centerLongitude(), centerLatitude());
-  homeZoom = zoom();
+  homeDistance = distance();
+  emit updateActionStates();
   update();
 }
 
@@ -1197,7 +1206,10 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
     qDebug() << "paintEvent map view has changed zoom" << curZoom
              << "distance" << distance() << " (" << atools::geo::meterToNm(distance() * 1000.) << " km)";
     qDebug() << "pole" << curBox.containsPole() << curBox.toString(GeoDataCoordinates::Degree);
-    history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), zoom());
+
+    if(!changedByHistory)
+      history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), distance());
+    changedByHistory = false;
     parentWindow->clearMessageText();
     changed = true;
   }

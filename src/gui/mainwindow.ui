@@ -1655,7 +1655,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetInformation">
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <attribute name="title">
@@ -1841,9 +1841,6 @@
    <property name="statusTip">
     <string>Increase font size in table view</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl++</string>
-   </property>
   </action>
   <action name="actionZoomOut">
    <property name="icon">
@@ -1859,9 +1856,6 @@
    <property name="statusTip">
     <string>Decrease font size in table view</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+-</string>
-   </property>
   </action>
   <action name="actionZoomDefault">
    <property name="enabled">
@@ -1875,9 +1869,6 @@
    </property>
    <property name="statusTip">
     <string>Reset font size in table view to default</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+0</string>
    </property>
   </action>
   <action name="actionSearchResetSearch">
@@ -1945,6 +1936,9 @@
    <property name="text">
     <string>Open Route ...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionRouteSave">
    <property name="icon">
@@ -1953,6 +1947,9 @@
    </property>
    <property name="text">
     <string>Save Route ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionReloadScenery">
@@ -2447,6 +2444,9 @@
    <property name="text">
     <string>New Route</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionRouteCenter">
    <property name="icon">
@@ -2681,7 +2681,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
