@@ -190,6 +190,9 @@ void NavMapWidget::preDatabaseLoad()
 void NavMapWidget::postDatabaseLoad()
 {
   paintLayer->postDatabaseLoad();
+  updateAirwayScreenLines();
+  updateRouteScreenLines();
+  update();
 }
 
 void NavMapWidget::historyNext()

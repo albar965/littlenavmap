@@ -38,10 +38,6 @@ namespace atools {
 namespace geo {
 class Pos;
 }
-
-namespace sql {
-class SqlDatabase;
-}
 }
 
 class SearchController :

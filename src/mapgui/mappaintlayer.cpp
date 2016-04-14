@@ -88,7 +88,7 @@ void MapPaintLayer::preDatabaseLoad()
 
 void MapPaintLayer::postDatabaseLoad()
 {
-  databaseLoadStatus = true;
+  databaseLoadStatus = false;
 }
 
 void MapPaintLayer::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)

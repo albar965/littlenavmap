@@ -300,7 +300,6 @@ void AirportSearch::restoreState()
   Ui::MainWindow *ui = parentWidget->getUi();
   atools::gui::WidgetState saver("SearchPaneAirport/Widget");
   saver.restore(airportSearchWidgets);
-  ui->checkBoxAirportDistSearch->setChecked(false);
 }
 
 QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,

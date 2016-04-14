@@ -182,7 +182,6 @@ void NavSearch::restoreState()
   Ui::MainWindow *ui = parentWidget->getUi();
   atools::gui::WidgetState saver("SearchPaneNav/Widget");
   saver.restore(navSearchWidgets);
-  ui->checkBoxNavDistSearch->setChecked(false);
 }
 
 QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,

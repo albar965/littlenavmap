@@ -100,6 +100,7 @@ protected:
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   void reconnectSelectionModel();
+  void connectModelSlots();
 
 signals:
   void showRect(const atools::geo::Rect& rect);

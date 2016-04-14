@@ -213,25 +213,28 @@ void Search::connectSlots()
   connect(view, &QTableView::doubleClicked, this, &Search::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &Search::contextMenu);
 
-  reconnectSelectionModel();
-
-  connect(controller->getModel(), &SqlModel::modelReset, this, &Search::reconnectSelectionModel);
-
-  void (Search::*selChangedPtr)() = &Search::tableSelectionChanged;
-  connect(controller->getModel(), &SqlModel::fetchedMore, this, selChangedPtr);
-
   Ui::MainWindow *ui = parentWidget->getUi();
 
   connect(ui->actionSearchShowAll, &QAction::triggered, this, &Search::loadAllRowsIntoView);
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &Search::resetSearch);
+
+  connectModelSlots();
+}
+
+void Search::connectModelSlots()
+{
+  reconnectSelectionModel();
+
+  connect(controller->getModel(), &SqlModel::modelReset, this, &Search::reconnectSelectionModel);
+  void (Search::*selChangedPtr)() = &Search::tableSelectionChanged;
+  connect(controller->getModel(), &SqlModel::fetchedMore, this, selChangedPtr);
 }
 
 void Search::reconnectSelectionModel()
 {
   void (Search::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &Search::tableSelectionChanged;
-  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged,
-          this, selChangedPtr);
+  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 }
 
 void Search::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -262,6 +265,9 @@ void Search::preDatabaseLoad()
 void Search::postDatabaseLoad()
 {
   controller->prepareModel();
+  connectModelSlots();
+
+
   // TODO fix after reload database
   // connectControllerSlots();
   // assignSearchFieldsToController();
