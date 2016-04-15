@@ -92,9 +92,9 @@ public:
 
   void drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& wp, const QColor& col, int x, int y,
                           int size, bool fill, bool fast);
-  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool fill,
+  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool routeFill,
                      bool fast, int largeSize);
-  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool fill,
+  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool routeFill,
                      bool fast);
   void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
                         bool fast);
@@ -115,7 +115,7 @@ public:
                        textflags::TextFlags flags, int size, bool diagram, bool fill,
                        bool fast);
 
-  void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool fill, bool fast);
+  void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
 private:
   QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);

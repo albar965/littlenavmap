@@ -83,8 +83,8 @@ void MapPainterIls::render(const PaintContext *context)
       if(!visible)
       {
         GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                               ils.bounding.getEast(), ils.bounding.getWest(),
-                               GeoDataCoordinates::Degree);
+                                ils.bounding.getEast(), ils.bounding.getWest(),
+                                GeoDataCoordinates::Degree);
         visible = curBox.intersects(ilsbox);
       }
 
@@ -110,11 +110,10 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
   QPoint pmid = wToS(ils.posmid, size, &visible);
-  QPoint origin= wToS(ils.position, size, &visible);
+  QPoint origin = wToS(ils.position, size, &visible);
 
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
-
 
   painter->drawLine(origin, p1);
   painter->drawLine(p1, pmid);

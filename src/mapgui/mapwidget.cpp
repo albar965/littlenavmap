@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "mapgui/mappaintlayer.h"
-#include "mapgui/navmapwidget.h"
+#include "mapgui/mapwidget.h"
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
@@ -53,7 +53,7 @@
 
 using namespace Marble;
 
-NavMapWidget::NavMapWidget(MainWindow *parent, MapQuery *query)
+MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), parentWindow(parent), mapQuery(query)
 {
   installEventFilter(this);
@@ -75,38 +75,38 @@ NavMapWidget::NavMapWidget(MainWindow *parent, MapQuery *query)
   input->setMouseButtonPopupEnabled(Qt::LeftButton, false);
   setContextMenuPolicy(Qt::CustomContextMenu);
 
-  connect(this, &NavMapWidget::customContextMenuRequested, this, &NavMapWidget::contextMenu);
+  connect(this, &MapWidget::customContextMenuRequested, this, &MapWidget::contextMenu);
 }
 
-NavMapWidget::~NavMapWidget()
+MapWidget::~MapWidget()
 {
   delete paintLayer;
   delete mapTooltip;
 }
 
-void NavMapWidget::setTheme(const QString& theme, int index)
+void MapWidget::setTheme(const QString& theme, int index)
 {
   Q_UNUSED(index);
   qDebug() << "setting map theme to " << theme;
 
   Ui::MainWindow *ui = parentWindow->getUi();
-  currentComboIndex = NavMapWidget::MapThemeComboIndex(index);
+  currentComboIndex = MapWidget::MapThemeComboIndex(index);
   switch(index)
   {
-    case NavMapWidget::OPENTOPOMAP:
+    case MapWidget::OPENTOPOMAP:
       setPropertyValue("ice", false);
       ui->actionMapShowCities->setEnabled(false);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
-    case NavMapWidget::OSM:
+    case MapWidget::OSM:
       ui->actionMapShowCities->setEnabled(false);
       ui->actionMapShowHillshading->setEnabled(true);
       break;
-    case NavMapWidget::POLITICAL:
+    case MapWidget::POLITICAL:
       ui->actionMapShowCities->setEnabled(true);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
-    case NavMapWidget::INVALID:
+    case MapWidget::INVALID:
       break;
   }
 
@@ -114,12 +114,12 @@ void NavMapWidget::setTheme(const QString& theme, int index)
   updateMapShowFeatures();
 }
 
-void NavMapWidget::updateMapShowFeatures()
+void MapWidget::updateMapShowFeatures()
 {
   Ui::MainWindow *ui = parentWindow->getUi();
-  setShowMapPois(ui->actionMapShowCities->isChecked() && currentComboIndex == NavMapWidget::POLITICAL);
+  setShowMapPois(ui->actionMapShowCities->isChecked() && currentComboIndex == MapWidget::POLITICAL);
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
-                   currentComboIndex == NavMapWidget::OSM);
+                   currentComboIndex == MapWidget::OSM);
 
   setShowMapFeatures(maptypes::AIRWAYV,
                      ui->actionMapShowVictorAirways->isChecked());
@@ -148,7 +148,7 @@ void NavMapWidget::updateMapShowFeatures()
   update();
 }
 
-void NavMapWidget::setShowMapPois(bool show)
+void MapWidget::setShowMapPois(bool show)
 {
   qDebug() << "setShowMapPois" << show;
   setShowPlaces(show);
@@ -157,37 +157,37 @@ void NavMapWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void NavMapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
+void MapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
   paintLayer->setShowMapFeatures(type, show);
   updateAirwayScreenLines();
 }
 
-void NavMapWidget::setDetailFactor(int factor)
+void MapWidget::setDetailFactor(int factor)
 {
   qDebug() << "setDetailFactor" << factor;
   paintLayer->setDetailFactor(factor);
   updateAirwayScreenLines();
 }
 
-RouteController *NavMapWidget::getRouteController() const
+RouteController *MapWidget::getRouteController() const
 {
   return parentWindow->getRouteController();
 }
 
-void NavMapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
+void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
 {
   from = routeDragFrom;
   to = routeDragTo;
   cur = routeDragCur;
 }
 
-void NavMapWidget::preDatabaseLoad()
+void MapWidget::preDatabaseLoad()
 {
   paintLayer->preDatabaseLoad();
 }
 
-void NavMapWidget::postDatabaseLoad()
+void MapWidget::postDatabaseLoad()
 {
   paintLayer->postDatabaseLoad();
   updateAirwayScreenLines();
@@ -195,7 +195,7 @@ void NavMapWidget::postDatabaseLoad()
   update();
 }
 
-void NavMapWidget::historyNext()
+void MapWidget::historyNext()
 {
   const MapPosHistoryEntry& entry = history.next();
   if(entry.isValid())
@@ -206,7 +206,7 @@ void NavMapWidget::historyNext()
   }
 }
 
-void NavMapWidget::historyBack()
+void MapWidget::historyBack()
 {
   const MapPosHistoryEntry& entry = history.back();
   if(entry.isValid())
@@ -217,7 +217,7 @@ void NavMapWidget::historyBack()
   }
 }
 
-void NavMapWidget::saveState()
+void MapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
   writePluginSettings(*s.getQSettings());
@@ -243,7 +243,7 @@ void NavMapWidget::saveState()
   s->setValue("Map/RangeMarkers", bytesRangeMarker);
 }
 
-void NavMapWidget::restoreState()
+void MapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
   readPluginSettings(*s.getQSettings());
@@ -273,7 +273,7 @@ void NavMapWidget::restoreState()
   ds2 >> rangeMarkers;
 }
 
-void NavMapWidget::showSavedPos()
+void MapWidget::showSavedPos()
 {
   const MapPosHistoryEntry& currentPos = history.current();
 
@@ -289,21 +289,21 @@ void NavMapWidget::showSavedPos()
   }
 }
 
-void NavMapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
+void MapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
   setZoom(zoomValue);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 
-void NavMapWidget::showRect(const atools::geo::Rect& rect)
+void MapWidget::showRect(const atools::geo::Rect& rect)
 {
   qDebug() << "NavMapWidget::showRect" << rect;
   centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                             GeoDataCoordinates::Degree), false);
 }
 
-void NavMapWidget::showMark()
+void MapWidget::showMark()
 {
   qDebug() << "NavMapWidget::showMark" << markPos;
   if(markPos.isValid())
@@ -313,7 +313,7 @@ void NavMapWidget::showMark()
   }
 }
 
-void NavMapWidget::showHome()
+void MapWidget::showHome()
 {
   qDebug() << "NavMapWidget::showHome" << markPos;
   if(!atools::geo::almostEqual(homeDistance, 0.))
@@ -323,7 +323,7 @@ void NavMapWidget::showHome()
     centerOn(homePos.getLonX(), homePos.getLatY(), false);
 }
 
-void NavMapWidget::changeMark(const atools::geo::Pos& pos)
+void MapWidget::changeMark(const atools::geo::Pos& pos)
 {
   markPos = pos;
   emit markChanged(markPos);
@@ -331,26 +331,26 @@ void NavMapWidget::changeMark(const atools::geo::Pos& pos)
   update();
 }
 
-void NavMapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighlight)
+void MapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighlight)
 {
   routeHighlightMapObjects = routeHighlight;
   update();
 }
 
-void NavMapWidget::routeChanged()
+void MapWidget::routeChanged()
 {
   paintLayer->routeChanged();
   updateRouteScreenLines();
   update();
 }
 
-void NavMapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
+void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
   highlightMapObjects = positions;
   update();
 }
 
-void NavMapWidget::changeHome()
+void MapWidget::changeHome()
 {
   homePos = atools::geo::Pos(centerLongitude(), centerLatitude());
   homeDistance = distance();
@@ -358,7 +358,7 @@ void NavMapWidget::changeHome()
   update();
 }
 
-void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
+void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
 {
   qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
 
@@ -485,7 +485,7 @@ void NavMapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int l
   }
 }
 
-void NavMapWidget::contextMenu(const QPoint& point)
+void MapWidget::contextMenu(const QPoint& point)
 {
   Q_UNUSED(point);
   qInfo() << "tableContextMenu";
@@ -767,6 +767,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
     {
       // Distance line
       maptypes::DistanceMarker dm;
+      dm.rhumbLine = action == ui->actionMapMeasureRhumbDistance;
+      dm.to = pos;
 
       if(vor != nullptr)
       {
@@ -808,11 +810,9 @@ void NavMapWidget::contextMenu(const QPoint& point)
       {
         dm.hasMagvar = false;
         dm.from = pos;
-        dm.color = dm.rhumbLine ? mapcolors::distanceColor : mapcolors::distanceRhumbColor;
+        dm.color = dm.rhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
       }
 
-      dm.rhumbLine = action == ui->actionMapMeasureRhumbDistance;
-      dm.to = pos;
       distanceMarkers.append(dm);
 
       mouseState = DRAG_DISTANCE;
@@ -886,8 +886,8 @@ void NavMapWidget::contextMenu(const QPoint& point)
   }
 }
 
-void NavMapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type,
-                                   const QString& ident, int frequency, int range)
+void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type,
+                                const QString& ident, int frequency, int range)
 {
   maptypes::RangeMarker ring;
   ring.type = type;
@@ -904,7 +904,7 @@ void NavMapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObj
   update();
 }
 
-void NavMapWidget::addRangeRing(const atools::geo::Pos& pos)
+void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 {
   maptypes::RangeMarker rings;
   rings.type = maptypes::NONE;
@@ -916,14 +916,14 @@ void NavMapWidget::addRangeRing(const atools::geo::Pos& pos)
   update();
 }
 
-void NavMapWidget::clearRangeRings()
+void MapWidget::clearRangeRings()
 {
   qDebug() << "range rings hide";
   rangeMarkers.clear();
   update();
 }
 
-bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
+bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 {
   if(e->type() == QEvent::MouseButtonDblClick)
   {
@@ -944,12 +944,13 @@ bool NavMapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
-void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
+void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
   if(!isActiveWindow())
     return;
 
-  // qDebug() << "mouseMoveEvent state" << mouseState;
+  // Ignore any clicks for route drag, etc. if mouse was moved during click
+  mouseMoved = true;
 
   if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
@@ -1012,10 +1013,10 @@ void NavMapWidget::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void NavMapWidget::mousePressEvent(QMouseEvent *event)
+void MapWidget::mousePressEvent(QMouseEvent *event)
 {
   qDebug() << "mousePressEvent state" << mouseState;
-
+  mouseMoved = false;
   if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
      mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
   {
@@ -1030,7 +1031,7 @@ void NavMapWidget::mousePressEvent(QMouseEvent *event)
     setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
-void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
+void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   qDebug() << "mouseReleaseEvent state" << mouseState;
 
@@ -1088,7 +1089,7 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
     setViewContext(Marble::Still);
     update();
   }
-  else if(event->button() == Qt::LeftButton)
+  else if(event->button() == Qt::LeftButton && !mouseMoved)
   {
     // Start all dragging
     currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10);
@@ -1147,9 +1148,10 @@ void NavMapWidget::mouseReleaseEvent(QMouseEvent *event)
       }
     }
   }
+  mouseMoved = false;
 }
 
-void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
+void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << "mouseDoubleClickEvent";
 
@@ -1173,7 +1175,7 @@ void NavMapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     showPos(mapSearchResult.userPoints.at(0).position);
 }
 
-bool NavMapWidget::event(QEvent *event)
+bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
@@ -1197,7 +1199,7 @@ bool NavMapWidget::event(QEvent *event)
   return QWidget::event(event);
 }
 
-void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
+void MapWidget::paintEvent(QPaintEvent *paintEvent)
 {
   bool changed = false;
   const GeoDataLatLonAltBox visibleLatLonAltBox = viewport()->viewLatLonAltBox();
@@ -1236,7 +1238,7 @@ void NavMapWidget::paintEvent(QPaintEvent *paintEvent)
 
 }
 
-void NavMapWidget::updateAirwayScreenLines()
+void MapWidget::updateAirwayScreenLines()
 {
   using atools::geo::Pos;
   using maptypes::MapAirway;
@@ -1282,7 +1284,7 @@ void NavMapWidget::updateAirwayScreenLines()
   }
 }
 
-void NavMapWidget::updateRouteScreenLines()
+void MapWidget::updateRouteScreenLines()
 {
   using atools::geo::Pos;
 
@@ -1338,8 +1340,8 @@ void NavMapWidget::updateRouteScreenLines()
   }
 }
 
-void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
-                                           maptypes::MapSearchResult& mapSearchResult)
+void MapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
+                                        maptypes::MapSearchResult& mapSearchResult)
 {
   CoordinateConverter conv(viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
@@ -1368,9 +1370,9 @@ void NavMapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
       mapQuery->getAirportById(obj, obj.getId());
 }
 
-void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                             const QList<RouteMapObject>& routeMapObjects,
-                                             maptypes::MapSearchResult& mapobjects)
+void MapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
+                                          const QList<RouteMapObject>& routeMapObjects,
+                                          maptypes::MapSearchResult& mapobjects)
 {
   if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
     return;
@@ -1441,8 +1443,8 @@ void NavMapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
   }
 }
 
-void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
-                                                 maptypes::MapSearchResult& mapobjects)
+void MapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
+                                              maptypes::MapSearchResult& mapobjects)
 {
   using namespace maptypes;
 
@@ -1472,7 +1474,7 @@ void NavMapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDista
         insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, obj);
 }
 
-int NavMapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance)
+int MapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance)
 {
   CoordinateConverter conv(viewport());
   int index = 0;
@@ -1488,7 +1490,7 @@ int NavMapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistan
   return -1;
 }
 
-int NavMapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
+int MapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
 {
   if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
     return -1;
@@ -1509,7 +1511,7 @@ int NavMapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
   return minIndex;
 }
 
-void NavMapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result)
+void MapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result)
 {
   if(!paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ) &&
      !paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV))
@@ -1530,7 +1532,7 @@ void NavMapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptype
   }
 }
 
-int NavMapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
+int MapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
 {
   if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
     return -1;
@@ -1555,7 +1557,7 @@ int NavMapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
   return minIndex;
 }
 
-int NavMapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)
+int MapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)
 {
   CoordinateConverter conv(viewport());
   int index = 0;

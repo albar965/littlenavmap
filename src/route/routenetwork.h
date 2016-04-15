@@ -15,37 +15,39 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERMARK_H
-#define MAPPAINTERMARK_H
+#ifndef ROUTENETWORK_H
+#define ROUTENETWORK_H
 
-#include "mappainter.h"
+#include <QList>
 
-namespace Marble {
-class GeoDataLineString;
+namespace  atools {
+namespace sql {
+class SqlDatabase;
+class SqlQuery;
+}
 }
 
-class MapWidget;
+struct Edge;
 
-class MapPainterMark :
-  public MapPainter
+struct Node
 {
-public:
-  MapPainterMark(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
-  virtual ~MapPainterMark();
-
-  virtual void render(const PaintContext *context) override;
-
-private:
-  MapWidget *navMapWidget;
-  void paintMark(Marble::GeoPainter *painter);
-  void paintHome(Marble::GeoPainter *painter);
-  void paintHighlights(const MapLayer *mapLayerEff, Marble::GeoPainter *painter,
-                       bool fast);
-  void paintRangeRings(Marble::GeoPainter *painter,
-                       Marble::ViewportParams *viewport, bool fast);
-  void paintDistanceMarkers(Marble::GeoPainter *painter, bool fast);
-  void paintRouteDrag(Marble::GeoPainter *painter);
-
+  QList<const Edge *> edges;
 };
 
-#endif // MAPPAINTERMARK_H
+struct Edge
+{
+  const Node *from, *to;
+  float cost;
+};
+
+class RouteNetwork
+{
+public:
+  RouteNetwork(atools::sql::SqlDatabase *sqlDb);
+  virtual ~RouteNetwork();
+
+private:
+  atools::sql::SqlDatabase *db;
+};
+
+#endif // ROUTENETWORK_H

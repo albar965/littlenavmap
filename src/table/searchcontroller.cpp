@@ -21,7 +21,7 @@
 #include "table/columnlist.h"
 #include "table/airportsearch.h"
 #include "navsearch.h"
-#include "mapgui/navmapwidget.h"
+#include "mapgui/mapwidget.h"
 #include "gui/widgetstate.h"
 #include "table/controller.h"
 
@@ -88,7 +88,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
 
   airportSearch->connectSlots();
 
-  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
+  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &MapWidget::markChanged,
                                         airportSearch, &Search::markChanged);
 
   allSearchTabs.append(airportSearch);
@@ -101,7 +101,7 @@ void SearchController::createNavSearch(QTableView *tableView)
   navSearch = new NavSearch(parentWidget, tableView, navColumns, mapQuery, 1);
   navSearch->connectSlots();
 
-  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &NavMapWidget::markChanged,
+  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &MapWidget::markChanged,
                                         navSearch, &Search::markChanged);
 
   allSearchTabs.append(navSearch);

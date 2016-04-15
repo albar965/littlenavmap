@@ -27,7 +27,7 @@
 #include "gui/translator.h"
 #include "fs/fspaths.h"
 #include "table/search.h"
-#include "mapgui/navmapwidget.h"
+#include "mapgui/mapwidget.h"
 #include "common/formatter.h"
 #include "table/airportsearch.h"
 #include "table/navsearch.h"
@@ -155,7 +155,7 @@ MainWindow::~MainWindow()
 void MainWindow::createNavMap()
 {
   // Create a Marble QWidget without a parent
-  navMapWidget = new NavMapWidget(this, mapQuery);
+  navMapWidget = new MapWidget(this, mapQuery);
 
   navMapWidget->setVolatileTileCacheLimit(512 * 1024);
 
@@ -247,23 +247,23 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
-  connect(ui->actionMapSetHome, &QAction::triggered, navMapWidget, &NavMapWidget::changeHome);
+  connect(ui->actionMapSetHome, &QAction::triggered, navMapWidget, &MapWidget::changeHome);
 
-  connect(routeController, &RouteController::showRect, navMapWidget, &NavMapWidget::showRect);
-  connect(routeController, &RouteController::showPos, navMapWidget, &NavMapWidget::showPos);
-  connect(routeController, &RouteController::changeMark, navMapWidget, &NavMapWidget::changeMark);
-  connect(routeController, &RouteController::routeChanged, navMapWidget, &NavMapWidget::routeChanged);
+  connect(routeController, &RouteController::showRect, navMapWidget, &MapWidget::showRect);
+  connect(routeController, &RouteController::showPos, navMapWidget, &MapWidget::showPos);
+  connect(routeController, &RouteController::changeMark, navMapWidget, &MapWidget::changeMark);
+  connect(routeController, &RouteController::routeChanged, navMapWidget, &MapWidget::routeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
-          navMapWidget, &NavMapWidget::showRect);
+          navMapWidget, &MapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::showPos,
-          navMapWidget, &NavMapWidget::showPos);
+          navMapWidget, &MapWidget::showPos);
   connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
-          navMapWidget, &NavMapWidget::changeMark);
+          navMapWidget, &MapWidget::changeMark);
 
-  connect(searchController->getNavSearch(), &NavSearch::showPos, navMapWidget, &NavMapWidget::showPos);
-  connect(searchController->getNavSearch(), &NavSearch::changeMark, navMapWidget, &NavMapWidget::changeMark);
+  connect(searchController->getNavSearch(), &NavSearch::showPos, navMapWidget, &MapWidget::showPos);
+  connect(searchController->getNavSearch(), &NavSearch::changeMark, navMapWidget, &MapWidget::changeMark);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -284,12 +284,12 @@ void MainWindow::connectAllSlots()
   connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
   // Map widget related connections
-  connect(navMapWidget, &NavMapWidget::objectSelected, searchController, &SearchController::objectSelected);
+  connect(navMapWidget, &MapWidget::objectSelected, searchController, &SearchController::objectSelected);
   // Connect the map widget to the position label.
-  QObject::connect(navMapWidget, &NavMapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
-  QObject::connect(navMapWidget, &NavMapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
-  QObject::connect(navMapWidget, &NavMapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
-  QObject::connect(navMapWidget, &NavMapWidget::updateActionStates, this, &MainWindow::updateActionStates);
+  QObject::connect(navMapWidget, &MapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
+  QObject::connect(navMapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
+  QObject::connect(navMapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  QObject::connect(navMapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)
@@ -320,10 +320,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
 
-  connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &NavMapWidget::showMark);
-  connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &NavMapWidget::showHome);
-  connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &NavMapWidget::historyBack);
-  connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &NavMapWidget::historyNext);
+  connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &MapWidget::showMark);
+  connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &MapWidget::showHome);
+  connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &MapWidget::historyBack);
+  connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &MapWidget::historyNext);
   connect(ui->actionMapMoreDetails, &QAction::triggered, this, &MainWindow::increaseMapDetail);
   connect(ui->actionMapLessDetails, &QAction::triggered, this, &MainWindow::decreaseMapDetail);
   connect(ui->actionMapDefaultDetails, &QAction::triggered, this, &MainWindow::defaultMapDetail);
@@ -340,17 +340,17 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSelectParking, &QAction::triggered,
           routeController, &RouteController::selectDepartureParking);
 
-  connect(navMapWidget, &NavMapWidget::routeSetStart,
+  connect(navMapWidget, &MapWidget::routeSetStart,
           routeController, &RouteController::routeSetStart);
-  connect(navMapWidget, &NavMapWidget::routeSetParkingStart,
+  connect(navMapWidget, &MapWidget::routeSetParkingStart,
           routeController, &RouteController::routeSetParking);
-  connect(navMapWidget, &NavMapWidget::routeSetDest,
+  connect(navMapWidget, &MapWidget::routeSetDest,
           routeController, &RouteController::routeSetDest);
-  connect(navMapWidget, &NavMapWidget::routeAdd,
+  connect(navMapWidget, &MapWidget::routeAdd,
           routeController, &RouteController::routeAdd);
-  connect(navMapWidget, &NavMapWidget::routeReplace,
+  connect(navMapWidget, &MapWidget::routeReplace,
           routeController, &RouteController::routeReplace);
-  connect(navMapWidget, &NavMapWidget::routeDelete,
+  connect(navMapWidget, &MapWidget::routeDelete,
           routeController, &RouteController::routeDelete);
 
   connect(searchController->getAirportSearch(), &Search::routeSetStart,
@@ -369,7 +369,7 @@ void MainWindow::connectAllSlots()
   connect(databaseLoader, &DatabaseLoader::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
   connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
-          navMapWidget, &NavMapWidget::setPropertyValue);
+          navMapWidget, &MapWidget::setPropertyValue);
   connect(ui->actionAboutMarble, &QAction::triggered,
           marbleAbout, &Marble::MarbleAboutDialog::exec);
 }

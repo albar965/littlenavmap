@@ -56,7 +56,6 @@ public:
 
   virtual void connectSlots() override;
 
-  virtual void preDatabaseLoad() override;
   virtual void postDatabaseLoad() override;
 
 private:

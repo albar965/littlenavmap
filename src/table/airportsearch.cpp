@@ -416,11 +416,6 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
     }
 }
 
-void AirportSearch::preDatabaseLoad()
-{
-  Search::preDatabaseLoad();
-}
-
 void AirportSearch::postDatabaseLoad()
 {
   Search::postDatabaseLoad();

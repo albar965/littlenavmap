@@ -59,14 +59,14 @@ enum MouseState
 Q_DECLARE_FLAGS(MouseStates, MouseState);
 Q_DECLARE_OPERATORS_FOR_FLAGS(MouseStates);
 
-class NavMapWidget :
+class MapWidget :
   public Marble::MarbleWidget
 {
   Q_OBJECT
 
 public:
-  NavMapWidget(MainWindow *parent, MapQuery *query);
-  virtual ~NavMapWidget();
+  MapWidget(MainWindow *parent, MapQuery *query);
+  virtual ~MapWidget();
 
   void contextMenu(const QPoint& point);
 
@@ -176,6 +176,7 @@ private:
 
   MapThemeComboIndex currentComboIndex = INVALID;
   MouseStates mouseState = NONE;
+  bool mouseMoved = false;
   MainWindow *parentWindow;
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;

@@ -50,7 +50,6 @@ SOURCES += src/main.cpp\
     src/table/airportsearch.cpp \
     src/table/navsearch.cpp \
     src/mapgui/mapquery.cpp \
-    src/mapgui/navmapwidget.cpp \
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
     src/mapgui/maplayersettings.cpp \
@@ -80,7 +79,10 @@ SOURCES += src/main.cpp\
     src/db/databasedialog.cpp \
     src/db/databasemeta.cpp \
     src/route/parkingdialog.cpp \
-    src/route/routecommand.cpp
+    src/route/routecommand.cpp \
+    src/route/routenetwork.cpp \
+    src/route/routefinder.cpp \
+    src/mapgui/mapwidget.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -93,7 +95,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/table/airportsearch.h \
     src/table/navsearch.h \
     src/mapgui/mapquery.h \
-    src/mapgui/navmapwidget.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
     src/mapgui/maplayersettings.h \
@@ -123,7 +124,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databasedialog.h \
     src/db/databasemeta.h \
     src/route/parkingdialog.h \
-    src/route/routecommand.h
+    src/route/routecommand.h \
+    src/route/routenetwork.h \
+    src/route/routefinder.h \
+    src/mapgui/mapwidget.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

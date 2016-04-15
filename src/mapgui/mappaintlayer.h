@@ -32,7 +32,7 @@ class ViewportParams;
 
 class MapPainter;
 class MapLayer;
-class NavMapWidget;
+class MapWidget;
 class MapLayerSettings;
 class MapScale;
 class MapPainterAirport;
@@ -45,7 +45,7 @@ class MapPaintLayer :
   public Marble::LayerInterface
 {
 public:
-  MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries);
+  MapPaintLayer(MapWidget *widget, MapQuery *mapQueries);
   virtual ~MapPaintLayer();
 
   void preDatabaseLoad();
@@ -94,7 +94,7 @@ private:
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
-  NavMapWidget *navMapWidget = nullptr;
+  MapWidget *navMapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
 
   // Implemented from LayerInterface

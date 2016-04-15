@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "mappainterroute.h"
-#include "navmapwidget.h"
+#include "mapwidget.h"
 #include "mapscale.h"
 #include "symbolpainter.h"
 #include "mapgui/mapquery.h"
@@ -34,7 +34,7 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterRoute::MapPainterRoute(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterRoute::MapPainterRoute(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                                  RouteController *controller, bool verbose)
   : MapPainter(widget, mapQuery, mapScale, verbose), routeController(controller), navMapWidget(widget)
 {

@@ -24,14 +24,14 @@ namespace Marble {
 class GeoDataLineString;
 }
 
-class NavMapWidget;
+class MapWidget;
 class RouteController;
 
 class MapPainterRoute :
   public MapPainter
 {
 public:
-  MapPainterRoute(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+  MapPainterRoute(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                   RouteController *controller, bool verbose);
   virtual ~MapPainterRoute();
 
@@ -39,7 +39,7 @@ public:
 
 private:
   RouteController *routeController;
-  NavMapWidget *navMapWidget;
+  MapWidget *navMapWidget;
   void paintRoute(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
 
   void paintAirport(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,

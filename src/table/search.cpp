@@ -26,7 +26,7 @@
 #include "ui_mainwindow.h"
 #include "table/columnlist.h"
 #include "geo/pos.h"
-#include "mapgui/navmapwidget.h"
+#include "mapgui/mapwidget.h"
 
 #include <QMessageBox>
 #include <QWidget>

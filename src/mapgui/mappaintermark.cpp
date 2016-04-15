@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "mappaintermark.h"
-#include "navmapwidget.h"
+#include "mapwidget.h"
 #include "mapscale.h"
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
@@ -33,7 +33,7 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterMark::MapPainterMark(NavMapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
+MapPainterMark::MapPainterMark(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
 {
 }
@@ -269,7 +269,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QString::number(initBearing, 'f', 0) + "°T -> " +
+      texts.append(QString::number(initBearing, 'f', 0) + "°T −> " +
                    QString::number(finalBearing, 'f', 0) + "°T");
       texts.append(numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)

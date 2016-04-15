@@ -169,7 +169,7 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
   painter->save();
   painter->setBackgroundMode(Qt::TransparentMode);
   if(fill)
-    painter->setBrush(QColor(Qt::white));
+    painter->setBrush(mapcolors::routeTextBoxColor);
   else
     painter->setBrush(Qt::NoBrush);
 
@@ -196,12 +196,12 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
   painter->restore();
 }
 
-void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool fill, bool fast)
+void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
   painter->save();
   painter->setBackgroundMode(Qt::TransparentMode);
-  if(fill)
-    painter->setBrush(QColor(Qt::white));
+  if(routeFill)
+    painter->setBrush(mapcolors::routeTextBoxColor);
   else
     painter->setBrush(Qt::NoBrush);
 
@@ -221,12 +221,12 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
 }
 
 void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size,
-                                  bool fill, bool fast, int largeSize)
+                                  bool routeFill, bool fast, int largeSize)
 {
   painter->save();
   painter->setBackgroundMode(Qt::TransparentMode);
-  if(fill)
-    painter->setBrush(QColor(Qt::white));
+  if(routeFill)
+    painter->setBrush(mapcolors::routeTextBoxColor);
   else
     painter->setBrush(Qt::NoBrush);
 
@@ -292,14 +292,14 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 }
 
 void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size,
-                                  bool fill, bool fast)
+                                  bool routeFill, bool fast)
 {
   Q_UNUSED(ndb);
   painter->save();
 
   painter->setBackgroundMode(Qt::TransparentMode);
-  if(fill)
-    painter->setBrush(QColor(Qt::white));
+  if(routeFill)
+    painter->setBrush(mapcolors::routeTextBoxColor);
   else
     painter->setBrush(Qt::NoBrush);
 

@@ -300,11 +300,6 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
     }
 }
 
-void NavSearch::preDatabaseLoad()
-{
-  Search::preDatabaseLoad();
-}
-
 void NavSearch::postDatabaseLoad()
 {
   Search::postDatabaseLoad();

@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "mapgui/mappaintlayer.h"
-#include "mapgui/navmapwidget.h"
+#include "mapgui/mapwidget.h"
 #include "maplayersettings.h"
 #include "mappainterairport.h"
 #include "mappainterils.h"
@@ -51,7 +51,7 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPaintLayer::MapPaintLayer(NavMapWidget *widget, MapQuery *mapQueries)
+MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   : mapQuery(mapQueries), navMapWidget(widget)
 {
   initLayers();

@@ -53,7 +53,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class NavMapWidget;
+class MapWidget;
 class MapQuery;
 
 class MainWindow :
@@ -72,7 +72,7 @@ public:
     return ui;
   }
 
-  NavMapWidget *getMapWidget() const
+  MapWidget *getMapWidget() const
   {
     return navMapWidget;
   }
@@ -102,7 +102,7 @@ private:
   virtual void showEvent(QShowEvent *event) override;
 
   Ui::MainWindow *ui;
-  NavMapWidget *navMapWidget = nullptr;
+  MapWidget *navMapWidget = nullptr;
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
 
   bool hasDatabaseLoadStatus = false;
