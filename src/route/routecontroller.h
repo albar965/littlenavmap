@@ -96,6 +96,9 @@ public:
   bool hasValidStart() const;
   bool hasValidDestination() const;
 
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
 private:
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;

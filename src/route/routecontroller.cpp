@@ -292,6 +292,19 @@ bool RouteController::hasValidDestination() const
          flightplan->getEntries().last().getWaypointType() == atools::fs::pln::entry::AIRPORT;
 }
 
+void RouteController::preDatabaseLoad()
+{
+
+}
+
+void RouteController::postDatabaseLoad()
+{
+  createRouteMapObjects();
+  updateModel();
+  updateWindowTitle();
+  updateLabel();
+}
+
 void RouteController::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())

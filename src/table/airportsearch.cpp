@@ -228,10 +228,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
 
   Search::initViewAndController();
 
-  using namespace std::placeholders;
-
-  controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
+  setCallbacks();
 }
 
 AirportSearch::~AirportSearch()
@@ -297,7 +294,6 @@ void AirportSearch::saveState()
 
 void AirportSearch::restoreState()
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
   atools::gui::WidgetState saver("SearchPaneAirport/Widget");
   saver.restore(airportSearchWidgets);
 }
@@ -418,4 +414,22 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
       factory.fillAirport(rec, ap, false);
       result.airports.append(ap);
     }
+}
+
+void AirportSearch::preDatabaseLoad()
+{
+  Search::preDatabaseLoad();
+}
+
+void AirportSearch::postDatabaseLoad()
+{
+  Search::postDatabaseLoad();
+  setCallbacks();
+}
+
+void AirportSearch::setCallbacks()
+{
+  using namespace std::placeholders;
+  controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
+  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
 }

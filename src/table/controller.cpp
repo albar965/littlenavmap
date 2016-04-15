@@ -57,7 +57,7 @@ Controller::~Controller()
 void Controller::clearModel()
 {
   if(!isGrouped())
-    saveViewState();
+    saveTempViewState();
 
   viewSetModel(nullptr);
 
@@ -70,6 +70,24 @@ void Controller::clearModel()
     model->clear();
   delete model;
   model = nullptr;
+}
+
+void Controller::preDatabaseLoad()
+{
+  viewSetModel(nullptr);
+
+  if(model != nullptr)
+    model->clear();
+}
+
+void Controller::postDatabaseLoad()
+{
+  if(proxyModel != nullptr)
+    viewSetModel(proxyModel);
+  else
+    viewSetModel(model);
+  model->resetSqlQuery();
+  model->fillHeaderData();
 }
 
 void Controller::filterIncluding(const QModelIndex& index)
@@ -259,7 +277,7 @@ void Controller::groupByColumn(const QModelIndex& index)
   Q_ASSERT(columns != nullptr);
   Q_ASSERT(!isGrouped());
 
-  saveViewState();
+  saveTempViewState();
 
   columns->clearWidgets();
   // Disable all search widgets except the one for the group by column
@@ -362,7 +380,7 @@ void Controller::resetView()
   processViewColumns();
 
   view->resizeColumnsToContents();
-  saveViewState();
+  saveTempViewState();
 }
 
 void Controller::resetSearch()
@@ -499,7 +517,7 @@ void Controller::prepareModel()
     restoreViewState();
 }
 
-void Controller::saveViewState()
+void Controller::saveTempViewState()
 {
   viewState = view->horizontalHeader()->saveState();
 }

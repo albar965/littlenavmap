@@ -200,6 +200,9 @@ public:
   void initRecord(QSqlRecord& rec);
   void fillRecord(int row, QSqlRecord& rec);
 
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 
@@ -207,7 +210,7 @@ private:
   void processViewColumns();
 
   /* Save view state to settings */
-  void saveViewState();
+  void saveTempViewState();
 
   /* Load view state from settings */
   void restoreViewState();

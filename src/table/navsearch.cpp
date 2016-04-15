@@ -133,8 +133,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
 
   using namespace std::placeholders;
 
-  controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
+  setCallbacks();
 }
 
 NavSearch::~NavSearch()
@@ -179,7 +178,6 @@ void NavSearch::saveState()
 
 void NavSearch::restoreState()
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
   atools::gui::WidgetState saver("SearchPaneNav/Widget");
   saver.restore(navSearchWidgets);
 }
@@ -300,4 +298,23 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
         result.vors.append(obj);
       }
     }
+}
+
+void NavSearch::preDatabaseLoad()
+{
+  Search::preDatabaseLoad();
+}
+
+void NavSearch::postDatabaseLoad()
+{
+  Search::postDatabaseLoad();
+
+  setCallbacks();
+}
+
+void NavSearch::setCallbacks()
+{
+  using namespace std::placeholders;
+  controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
+  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }

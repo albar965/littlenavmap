@@ -52,8 +52,8 @@ public:
                   MapQuery *query, int tabWidgetIndex);
   virtual ~Search();
 
-  void preDatabaseLoad();
-  void postDatabaseLoad();
+  virtual void preDatabaseLoad();
+  virtual void postDatabaseLoad();
 
   void markChanged(const atools::geo::Pos& mark);
 

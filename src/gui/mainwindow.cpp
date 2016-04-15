@@ -776,6 +776,7 @@ void MainWindow::preDatabaseLoad()
     hasDatabaseLoadStatus = true;
 
     searchController->preDatabaseLoad();
+    routeController->preDatabaseLoad();
     navMapWidget->preDatabaseLoad();
     mapQuery->deInitQueries();
   }
@@ -789,6 +790,7 @@ void MainWindow::postDatabaseLoad()
   {
     mapQuery->initQueries();
     searchController->postDatabaseLoad();
+    routeController->postDatabaseLoad();
     navMapWidget->postDatabaseLoad();
     hasDatabaseLoadStatus = false;
   }

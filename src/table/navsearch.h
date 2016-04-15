@@ -47,7 +47,7 @@ class NavSearch :
 
 public:
   explicit NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                     MapQuery* mapQuery, int tabWidgetIndex);
+                     MapQuery *mapQuery, int tabWidgetIndex);
   virtual ~NavSearch();
 
   virtual void saveState() override;
@@ -56,7 +56,11 @@ public:
 
   virtual void connectSlots() override;
 
+  virtual void preDatabaseLoad() override;
+  virtual void postDatabaseLoad() override;
+
 private:
+  void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                             const QVariant& dataValue, Qt::ItemDataRole role) const;
   QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;

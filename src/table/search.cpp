@@ -258,23 +258,14 @@ void Search::tableSelectionChanged()
 
 void Search::preDatabaseLoad()
 {
-  // controller->resetSearch();
-  controller->clearModel();
+  saveState();
+  controller->preDatabaseLoad();
 }
 
 void Search::postDatabaseLoad()
 {
-  controller->prepareModel();
-  connectModelSlots();
-
-
-  // TODO fix after reload database
-  // connectControllerSlots();
-  // assignSearchFieldsToController();
-
-  // updateWidgetsOnSelection();
-  // updateWidgetStatus();
-  // updateGlobalStats();
+  controller->postDatabaseLoad();
+  restoreState();
 }
 
 void Search::resetView()

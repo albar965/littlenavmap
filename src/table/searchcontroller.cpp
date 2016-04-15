@@ -25,7 +25,7 @@
 #include "gui/widgetstate.h"
 #include "table/controller.h"
 
-SearchController::SearchController(MainWindow *parent, MapQuery* mQuery,
+SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
                                    QTabWidget *tabWidgetSearch)
   : mapQuery(mQuery), parentWidget(parent), tabWidget(tabWidgetSearch)
 {
@@ -109,20 +109,14 @@ void SearchController::createNavSearch(QTableView *tableView)
 
 void SearchController::preDatabaseLoad()
 {
-  if(airportSearch != nullptr)
-    airportSearch->preDatabaseLoad();
-
-  if(navSearch != nullptr)
-    navSearch->preDatabaseLoad();
+  for(Search *search : allSearchTabs)
+    search->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  if(airportSearch != nullptr)
-    airportSearch->postDatabaseLoad();
-
-  if(navSearch != nullptr)
-    navSearch->postDatabaseLoad();
+  for(Search *search : allSearchTabs)
+    search->postDatabaseLoad();
 }
 
 void SearchController::objectSelected(maptypes::MapObjectTypes type, const QString& ident,
