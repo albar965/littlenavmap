@@ -1053,9 +1053,11 @@ void RouteController::updateModel()
     }
 
     cumulatedDistance += mapobj.getDistanceTo();
-    // Remaining
 
-    item = new QStandardItem(QString::number(totalDistance - cumulatedDistance, 'f', 1));
+    float remaining = totalDistance - cumulatedDistance;
+    if(remaining < 0.f)
+      remaining = 0.f;  // Catch the -0 case due to rounding errors
+    item = new QStandardItem(QString::number(remaining, 'f', 1));
     item->setTextAlignment(Qt::AlignRight);
     items.append(item);
 

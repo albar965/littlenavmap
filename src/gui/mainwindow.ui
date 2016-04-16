@@ -1219,6 +1219,11 @@
                  <string>All Waypoints</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>All Waypoints on Airways</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>

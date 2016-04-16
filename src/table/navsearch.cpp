@@ -94,13 +94,15 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
-                 << "in ('VOR', 'VORDME', 'DME')"
-                 << "in ('VOR', 'VORDME', 'DME', 'NDB')"
-                 << "= 'VORDME'"
-                 << "= 'VOR'"
-                 << "= 'DME'"
-                 << "= 'NDB'"
-                 << "= 'WAYPOINT'";
+                 << "nav_type in ('VOR', 'VORDME', 'DME')"
+                 << "nav_type in ('VOR', 'VORDME', 'DME', 'NDB')"
+                 << "nav_type = 'VORDME'"
+                 << "nav_type = 'VOR'"
+                 << "nav_type = 'DME'"
+                 << "nav_type = 'NDB'"
+                 << "nav_type = 'WAYPOINT'"
+                 << "nav_type = 'WAYPOINT' and "
+                    "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
   columns->
@@ -108,7 +110,10 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("distance", tr("Distance\nnm")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
-  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).indexCondMap(navTypeCondMap)).
+
+  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).
+         indexCondMap(navTypeCondMap).includesName()).
+
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap)).
   append(Column("name", ui->lineEditNavNameSearch, tr("Name")).filter()).
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
@@ -119,6 +124,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("altitude", tr("Altitude\nft"))).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("File")).filter()).
+  append(Column("waypoint_num_victor_airway").hidden()).
+  append(Column("waypoint_num_jet_airway").hidden()).
   append(Column("vor_id").hidden()).
   append(Column("ndb_id").hidden()).
   append(Column("waypoint_id").hidden()).

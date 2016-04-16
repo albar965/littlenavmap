@@ -801,12 +801,12 @@ void MapQuery::initQueries()
     "from airport ");
 
   QString airwayQueryBase(
-    "select route_id, route_name, route_type, route_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
+    "select airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
     "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty "
-    "from route ");
+    "from airway ");
 
   static QString waypointQueryBase(
-    "select waypoint_id, ident, region, type, num_victor_route, num_jet_route, "
+    "select waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
     "mag_var, lonx, laty "
     "from waypoint");
 
@@ -950,7 +950,7 @@ void MapQuery::initQueries()
   airwayByWaypointIdQuery->prepare(airwayQueryBase + " where from_waypoint_id = :id or to_waypoint_id = :id");
 
   airwayByIdQuery = new SqlQuery(db);
-  airwayByIdQuery->prepare(airwayQueryBase + " where route_id = :id");
+  airwayByIdQuery->prepare(airwayQueryBase + " where airway_id = :id");
 }
 
 void MapQuery::deInitQueries()

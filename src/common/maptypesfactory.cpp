@@ -136,18 +136,18 @@ void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoi
   wp.region = record.value("region").toString();
   wp.type = record.value("type").toString();
   wp.magvar = record.value("mag_var").toFloat();
-  wp.hasVictor = record.value("num_victor_route").toInt() > 0;
-  wp.hasJet = record.value("num_jet_route").toInt() > 0;
+  wp.hasVictor = record.value("num_victor_airway").toInt() > 0;
+  wp.hasJet = record.value("num_jet_airway").toInt() > 0;
   wp.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
 }
 
 void MapTypesFactory::fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway)
 {
-  airway.id = record.value("route_id").toInt();
-  airway.type = maptypes::airwayTypeFromString(record.value("route_type").toString());
-  airway.name = record.value("route_name").toString();
+  airway.id = record.value("airway_id").toInt();
+  airway.type = maptypes::airwayTypeFromString(record.value("airway_type").toString());
+  airway.name = record.value("airway_name").toString();
   airway.minalt = record.value("minimum_altitude").toInt();
-  airway.fragment = record.value("route_fragment_no").toInt();
+  airway.fragment = record.value("airway_fragment_no").toInt();
   airway.sequence = record.value("sequence_no").toInt();
   airway.fromWpId = record.value("from_waypoint_id").toInt();
   airway.toWpId = record.value("to_waypoint_id").toInt();
