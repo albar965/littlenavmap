@@ -19,15 +19,56 @@
 
 #include <sql/sqldatabase.h>
 
+#include <geo/pos.h>
+
 using namespace atools::sql;
+using namespace nw;
 
 RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
-
+  initQueries();
 }
 
 RouteNetwork::~RouteNetwork()
+{
+  deInitQueries();
+}
+
+void RouteNetwork::setMode(nw::Modes routeMode)
+{
+  mode = routeMode;
+}
+
+void RouteNetwork::getNeighbours(const nw::Node& from, QList<nw::Node *>& neighbours)
+{
+
+}
+
+void RouteNetwork::getNeighboursFromArtificial(int idFrom, QList<nw::Node *>& neighbours)
+{
+  const Node *node = nodeIdIndex.value(-idFrom);
+}
+
+void RouteNetwork::addArtificialNode(const atools::geo::Pos& pos, int id)
+{
+  Node node;
+  node.id = -id;
+  node.range = -1;
+  node.type = ARTIFICIAL;
+  node.lonx = pos.getLonX();
+  node.laty = pos.getLatY();
+
+  nodes.append(node);
+  nodeIdIndex.insert(id, &nodes.last());
+}
+
+void RouteNetwork::initQueries()
+{
+
+}
+
+void RouteNetwork::deInitQueries()
 {
 
 }

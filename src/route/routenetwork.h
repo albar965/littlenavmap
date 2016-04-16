@@ -18,27 +18,60 @@
 #ifndef ROUTENETWORK_H
 #define ROUTENETWORK_H
 
+#include <QHash>
 #include <QList>
+#include <QVector>
 
 namespace  atools {
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
 }
+namespace geo {
+class Pos;
+}
 }
 
-struct Edge;
+namespace nw {
+
+enum Mode
+{
+  ROUTE_NONE = 0x00,
+  ROUTE_VOR = 0x01,
+  ROUTE_VORDME = 0x02,
+  ROUTE_DME = 0x04,
+  ROUTE_NDB = 0x08,
+  ROUTE_VICTOR = 0x10,
+  ROUTE_JET = 0x20
+};
+
+Q_DECLARE_FLAGS(Modes, Mode);
+Q_DECLARE_OPERATORS_FOR_FLAGS(nw::Modes);
+
+enum NodeType
+{
+  VOR,
+  VORDME,
+  DME,
+  NDB,
+  WAYPOINT,
+  ARTIFICIAL
+};
+
+struct Node;
 
 struct Node
 {
-  QList<const Edge *> edges;
+  int id;
+  int range;
+  float lonx, laty;
+  QVector<Node *> edges;
+  NodeType type;
 };
 
-struct Edge
-{
-  const Node *from, *to;
-  float cost;
-};
+}
+
+Q_DECLARE_TYPEINFO(nw::Node, Q_MOVABLE_TYPE);
 
 class RouteNetwork
 {
@@ -46,8 +79,20 @@ public:
   RouteNetwork(atools::sql::SqlDatabase *sqlDb);
   virtual ~RouteNetwork();
 
+  void setMode(nw::Modes mode);
+
+  void getNeighbours(const nw::Node& from, QList<nw::Node *>& neighbours);
+  void getNeighboursFromArtificial(int idFrom, QList<nw::Node *>& neighbours);
+  void addArtificialNode(const atools::geo::Pos& pos, int id);
+
+  void initQueries();
+  void deInitQueries();
+
 private:
   atools::sql::SqlDatabase *db;
+  nw::Modes mode;
+  QVector<nw::Node> nodes;
+  QHash<int, nw::Node *> nodeIdIndex;
 };
 
 #endif // ROUTENETWORK_H
