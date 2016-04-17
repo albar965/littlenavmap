@@ -51,6 +51,8 @@
 
 #include <QPainter>
 
+#include <route/routenetwork.h>
+
 using namespace Marble;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
@@ -1144,6 +1146,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             routeDragTo = rmos.at(routeLeg + 1).getPosition();
             setContextMenuPolicy(Qt::NoContextMenu);
           }
+          else if(event->modifiers() & Qt::ControlModifier)
+            debugOnClick(event->pos().x(), event->pos().y());
         }
       }
     }
@@ -1197,6 +1201,75 @@ bool MapWidget::event(QEvent *event)
   }
 
   return QWidget::event(event);
+}
+
+void MapWidget::debugOnClick(int x, int y)
+{
+  qDebug() << "=== DEBUG CLICK";
+
+  maptypes::MapSearchResult mapSearchResult;
+
+  CoordinateConverter conv(viewport());
+  const MapLayer *mapLayer = paintLayer->getMapLayer();
+  const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
+
+  // Get objects from cache - alread present objects will be skipped
+  mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
+                              paintLayer->getShownMapFeatures() &
+                              (maptypes::VOR | maptypes::NDB),
+                              x, y, 10, mapSearchResult);
+
+  RouteNetwork net(mapQuery->getDatabase());
+
+  nw::Node node;
+  if(!mapSearchResult.vors.isEmpty())
+  {
+    maptypes::MapVor vor = mapSearchResult.vors.first();
+    QString type = maptypes::vorType(vor);
+    if(type == "VOR")
+      node = net.getNodeByNavId(vor.id, nw::VOR);
+    else if(type == "DME")
+      node = net.getNodeByNavId(vor.id, nw::DME);
+    else if(type == "VORDME")
+      node = net.getNodeByNavId(vor.id, nw::VORDME);
+
+    qDebug() << "=== node_id" << node.id << "type" << node.type
+             << "VOR nav_id" << mapSearchResult.vors.first().id;
+  }
+
+  if(!mapSearchResult.ndbs.isEmpty())
+  {
+    node = net.getNodeByNavId(mapSearchResult.ndbs.first().id, nw::NDB);
+
+    qDebug() << "=== node_id" << node.id << "type" << node.type
+             << "NDB nav_id" << mapSearchResult.ndbs.first().id;
+  }
+
+  if(node.id == -1)
+    return;
+
+  // atools::geo::Pos pos = conv.sToW(x, y);
+  // const nw::Node *node = net.addArtificialNode(pos);
+
+  highlightMapObjects.airports.clear();
+  maptypes::MapAirport ap;
+  ap.id = node.id;
+  ap.position = atools::geo::Pos(node.lonx, node.laty);
+  highlightMapObjects.airports.append(ap);
+
+  QList<nw::Node> neighbours;
+  net.getNeighbours(node, neighbours);
+
+  qDebug() << "=== num neighbors" << neighbours.size();
+  for(const nw::Node& n : neighbours)
+  {
+    maptypes::MapAirport ap;
+    ap.id = n.id;
+    ap.position = atools::geo::Pos(n.lonx, n.laty);
+    highlightMapObjects.airports.append(ap);
+  }
+
+  update();
 }
 
 void MapWidget::paintEvent(QPaintEvent *paintEvent)

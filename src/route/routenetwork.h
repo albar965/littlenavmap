@@ -22,6 +22,8 @@
 #include <QList>
 #include <QVector>
 
+class QSqlRecord;
+
 namespace  atools {
 namespace sql {
 class SqlDatabase;
@@ -29,6 +31,7 @@ class SqlQuery;
 }
 namespace geo {
 class Pos;
+class Rect;
 }
 }
 
@@ -62,10 +65,10 @@ struct Node;
 
 struct Node
 {
-  int id;
+  int id = -1;
   int range;
   float lonx, laty;
-  QVector<Node *> edges;
+  QVector<int> edges;
   NodeType type;
 };
 
@@ -81,18 +84,26 @@ public:
 
   void setMode(nw::Modes mode);
 
-  void getNeighbours(const nw::Node& from, QList<nw::Node *>& neighbours);
-  void getNeighboursFromArtificial(int idFrom, QList<nw::Node *>& neighbours);
-  void addArtificialNode(const atools::geo::Pos& pos, int id);
+  void getNeighbours(const nw::Node& from, QList<nw::Node>& neighbours);
+  nw::Node addArtificialNode(const atools::geo::Pos& pos);
 
   void initQueries();
   void deInitQueries();
 
+  nw::Node getNodeByNavId(int id, nw::NodeType type);
+
 private:
   atools::sql::SqlDatabase *db;
   nw::Modes mode;
-  QVector<nw::Node> nodes;
-  QHash<int, nw::Node *> nodeIdIndex;
+  QHash<int, nw::Node> nodes;
+  int curArtificialNodeId = -10;
+  void fillNode(const QSqlRecord& rec, nw::Node& node);
+
+  nw::Node fetchNode(int id);
+  nw::Node fetchNode(float lonx, float laty);
+
+  void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery& query);
+
 };
 
 #endif // ROUTENETWORK_H

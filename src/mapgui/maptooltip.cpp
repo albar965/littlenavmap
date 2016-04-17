@@ -43,6 +43,8 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   QStringList text;
   for(const MapAirport& ap : mapSearchResult.airports)
   {
+    qDebug() << "Airport" << ap.ident << "id" << ap.id;
+
     if(checkText(text))
       break;
 
@@ -109,6 +111,8 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapVor& vor : mapSearchResult.vors)
   {
+    qDebug() << "Vor" << vor.ident << "id" << vor.id;
+
     if(checkText(text))
       break;
 
@@ -132,6 +136,8 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapNdb& ndb : mapSearchResult.ndbs)
   {
+    qDebug() << "Ndb" << ndb.ident << "id" << ndb.id;
+
     if(checkText(text))
       break;
 
@@ -151,6 +157,8 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapWaypoint& wp : mapSearchResult.waypoints)
   {
+    qDebug() << "Waypoint" << wp.ident << "id" << wp.id;
+
     if(checkText(text))
       break;
 
@@ -193,6 +201,8 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapAirway& airway : mapSearchResult.airways)
   {
+    qDebug() << "Airway" << airway.name << "id" << airway.id;
+
     if(checkText(text))
       break;
 

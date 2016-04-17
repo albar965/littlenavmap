@@ -233,6 +233,7 @@ private:
   void updateAirwayScreenLines();
   void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
 
+  void debugOnClick(int x, int y);
 };
 
 #endif // NAVMAPWIDGET_H
