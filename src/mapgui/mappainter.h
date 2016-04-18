@@ -41,7 +41,7 @@ class MapQuery;
 class MapScale;
 
 /* Map of id and type */
-typedef QPair<int, maptypes::MapObjectTypes> ForcePaintType;
+typedef maptypes::MapIdType ForcePaintType;
 
 struct PaintContext
 {

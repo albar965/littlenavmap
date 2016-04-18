@@ -82,7 +82,8 @@ SOURCES += src/main.cpp\
     src/route/routecommand.cpp \
     src/route/routenetwork.cpp \
     src/route/routefinder.cpp \
-    src/mapgui/mapwidget.cpp
+    src/mapgui/mapwidget.cpp \
+    src/route/heap.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -127,7 +128,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routecommand.h \
     src/route/routenetwork.h \
     src/route/routefinder.h \
-    src/mapgui/mapwidget.h
+    src/mapgui/mapwidget.h \
+    src/route/heap.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

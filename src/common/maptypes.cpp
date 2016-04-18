@@ -169,6 +169,11 @@ const QHash<QString, QString> navTypeNames(
     {"WAYPOINT", "Waypoint"}
   });
 
+int qHash(const maptypes::MapIdType& type)
+{
+  return type.id ^ type.type;
+}
+
 QString navTypeName(const QString& type)
 {
   return typeNames.value(type);
@@ -438,6 +443,16 @@ QString userpointText(const MapUserpoint& userpoint)
 QString airportText(const MapAirport& airport)
 {
   return "Airport " + airport.name + " (" + airport.ident + ")";
+}
+
+bool MapIdType::operator==(const MapIdType& other) const
+{
+  return id == other.id && type == other.type;
+}
+
+bool MapIdType::operator!=(const MapIdType& other) const
+{
+  return !operator==(other);
 }
 
 } // namespace types

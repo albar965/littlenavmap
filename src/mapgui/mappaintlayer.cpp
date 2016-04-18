@@ -111,7 +111,7 @@ void MapPaintLayer::routeChanged()
 
   forcePaint.clear();
   for(const RouteMapObject& obj : routeMapObjects)
-    forcePaint.insert(ForcePaintType(obj.getId(), obj.getMapObjectType()));
+    forcePaint.insert({obj.getId(), obj.getMapObjectType()});
 }
 
 void MapPaintLayer::initLayers()

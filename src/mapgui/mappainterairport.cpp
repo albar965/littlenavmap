@@ -82,7 +82,7 @@ void MapPainterAirport::render(const PaintContext *context)
   {
     const MapLayer *layer = context->mapLayer;
     bool forcedPaint = context->forcePaintObjects != nullptr &&
-                       context->forcePaintObjects->contains(ForcePaintType(airport.id, maptypes::AIRPORT));
+                       context->forcePaintObjects->contains({airport.id, maptypes::AIRPORT});
 
     if(!airport.isVisible(context->objectTypes) && !forcedPaint)
       continue;

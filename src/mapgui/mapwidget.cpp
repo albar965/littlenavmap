@@ -1220,6 +1220,7 @@ void MapWidget::debugOnClick(int x, int y)
                               x, y, 10, mapSearchResult);
 
   RouteNetwork net(mapQuery->getDatabase());
+  net.setMode( /*nw::ROUTE_DME |*/ nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
 
   nw::Node node;
   if(!mapSearchResult.vors.isEmpty())

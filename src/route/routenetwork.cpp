@@ -28,6 +28,22 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Rect;
+
+int nw::qHash(const nw::Node& node)
+{
+  return node.id;
+}
+
+bool nw::Node::operator==(const nw::Node& other) const
+{
+  return id == other.id && type == other.type;
+}
+
+bool nw::Node::operator!=(const nw::Node& other) const
+{
+  return !operator==(other);
+}
+
 using namespace nw;
 
 RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb)
@@ -62,6 +78,38 @@ void RouteNetwork::getNeighbours(const nw::Node& from, QList<nw::Node>& neighbou
     neighbours.append(fetchNode(id));
 }
 
+nw::Node RouteNetwork::getNodeByNavId(int id, nw::NodeType type)
+{
+  SqlQuery nodeQuery(db);
+  nodeQuery.prepare("select node_id from route_node where nav_id = :id and type = :type");
+  nodeQuery.bindValue(":id", id);
+  nodeQuery.bindValue(":type", type);
+  nodeQuery.exec();
+
+  if(nodeQuery.next())
+    return fetchNode(nodeQuery.value("node_id").toInt());
+
+  return Node();
+}
+
+int RouteNetwork::getNavIdForNode(const Node& node)
+{
+  SqlQuery nodeQuery(db);
+  nodeQuery.prepare("select nav_id from route_node where node_id = :id");
+  nodeQuery.bindValue(":id", node.id);
+  nodeQuery.exec();
+
+  if(nodeQuery.next())
+    return nodeQuery.value("nav_id").toInt();
+
+  return -1;
+}
+
+nw::Node RouteNetwork::getNodeById(int id)
+{
+  return fetchNode(id);
+}
+
 nw::Node RouteNetwork::addArtificialNode(const atools::geo::Pos& pos)
 {
   return fetchNode(pos.getLonX(), pos.getLatY());
@@ -72,10 +120,7 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty)
   SqlQuery nearestStmt(db);
   nearestStmt.prepare(
     "select node_id from route_node "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and type < 4");
-
-  int maxRange = atools::geo::nmToMeter(500);
-  Rect queryRect(Pos(lonx, laty), maxRange);
+    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and type in (:types)");
 
   Node node;
   node.id = curArtificialNodeId--;
@@ -83,6 +128,10 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty)
   node.type = ARTIFICIAL;
   node.lonx = lonx;
   node.laty = laty;
+
+  int maxRange = atools::geo::nmToMeter(500);
+  Rect queryRect(Pos(lonx, laty), maxRange);
+  nearestStmt.bindValue(":types", QVariantList({3}));
 
   for(const Rect& rect : queryRect.splitAtAntiMeridian())
   {
@@ -101,20 +150,6 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty)
   return node;
 }
 
-nw::Node RouteNetwork::getNodeByNavId(int id, nw::NodeType type)
-{
-  SqlQuery nodeQuery(db);
-  nodeQuery.prepare("select node_id from route_node where nav_id = :id and type = :type");
-  nodeQuery.bindValue(":id", id);
-  nodeQuery.bindValue(":type", type);
-  nodeQuery.exec();
-
-  if(nodeQuery.next())
-    return fetchNode(nodeQuery.value("node_id").toInt());
-
-  return Node();
-}
-
 nw::Node RouteNetwork::fetchNode(int id)
 {
   if(nodes.contains(id))
@@ -131,21 +166,42 @@ nw::Node RouteNetwork::fetchNode(int id)
     fillNode(nodeQuery.record(), node);
     node.id = id;
 
-    SqlQuery edgeQuery(db);
-    edgeQuery.prepare("select from_node_id, to_node_id "
-                      "from route_edge where from_node_id = :id or to_node_id = :id and type < 4");
-    edgeQuery.bindValue(":id", id);
-    edgeQuery.exec();
+    SqlQuery edgeQueryTo(db);
+    edgeQueryTo.prepare("select to_node_id, to_node_type "
+                        "from route_edge "
+                        "where from_node_id = :id and to_node_type in (:type1, :type2, :type3, :type4)");
 
-    while(edgeQuery.next())
+    edgeQueryTo.bindValue(":id", id);
+    bindTypes(edgeQueryTo);
+    edgeQueryTo.exec();
+    qDebug() << edgeQueryTo.executedQuery();
+
+    while(edgeQueryTo.next())
     {
-      int from = edgeQuery.value("from_node_id").toInt();
-      if(from != id && !node.edges.contains(from))
-        node.edges.append(from);
+      qDebug() << "to_node_type" << edgeQueryTo.value("to_node_type").toInt();
 
-      int to = edgeQuery.value("to_node_id").toInt();
+      int to = edgeQueryTo.value("to_node_id").toInt();
       if(to != id && !node.edges.contains(to))
         node.edges.append(to);
+    }
+
+    SqlQuery edgeQueryFrom(db);
+    edgeQueryFrom.prepare("select from_node_id, from_node_type "
+                          "from route_edge "
+                          "where to_node_id = :id and from_node_type in (:type1, :type2, :type3, :type4)");
+
+    edgeQueryFrom.bindValue(":id", id);
+    bindTypes(edgeQueryFrom);
+    edgeQueryFrom.exec();
+    qDebug() << edgeQueryFrom.executedQuery();
+
+    while(edgeQueryFrom.next())
+    {
+      qDebug() << "from_node_type" << edgeQueryFrom.value("from_node_type").toInt();
+
+      int from = edgeQueryFrom.value("from_node_id").toInt();
+      if(from != id && !node.edges.contains(from))
+        node.edges.append(from);
     }
 
     nodes.insert(node.id, node);
@@ -161,6 +217,40 @@ void RouteNetwork::fillNode(const QSqlRecord& rec, nw::Node& node)
   node.range = rec.value("range").toInt();
   node.lonx = rec.value("lonx").toFloat();
   node.laty = rec.value("laty").toFloat();
+}
+
+void RouteNetwork::bindTypes(atools::sql::SqlQuery& query)
+{
+  nw::NodeType defType = nw::NONE;
+
+  if(mode & ROUTE_VOR)
+    defType = nw::VOR;
+  else if(mode & ROUTE_VORDME)
+    defType = nw::VORDME;
+  else if(mode & ROUTE_DME)
+    defType = nw::DME;
+  else if(mode & ROUTE_NDB)
+    defType = nw::NDB;
+
+  if(mode & ROUTE_VOR)
+    query.bindValue(":type1", nw::VOR);
+  else
+    query.bindValue(":type1", defType);
+
+  if(mode & ROUTE_VORDME)
+    query.bindValue(":type2", nw::VORDME);
+  else
+    query.bindValue(":type2", defType);
+
+  if(mode & ROUTE_DME)
+    query.bindValue(":type3", nw::DME);
+  else
+    query.bindValue(":type3", defType);
+
+  if(mode & ROUTE_NDB)
+    query.bindValue(":type4", nw::NDB);
+  else
+    query.bindValue(":type4", defType);
 }
 
 void RouteNetwork::bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery& query)

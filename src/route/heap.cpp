@@ -15,36 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEFINDER_H
-#define ROUTEFINDER_H
-
-#include "common/maptypes.h"
 #include "heap.h"
-#include "route/routenetwork.h"
 
-class RouteNetwork;
 
-class RouteFinder
-{
-public:
-  RouteFinder(RouteNetwork *routeNetwork);
-  virtual ~RouteFinder();
 
-  void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                      QVector<maptypes::MapIdType>& route);
-
-private:
-  RouteNetwork *network;
-  void expand(const nw::Node& node, const nw::Node& destNode);
-
-  float cost(const nw::Node& node, const nw::Node& successor);
-
-  Heap<nw::Node> openlistHeap;
-  QSet<int> closedlist;
-  QHash<int, float> g;
-  QHash<int, int> pred;
-  maptypes::MapObjectTypes toMapObjectType(nw::NodeType type);
-
-};
-
-#endif // ROUTEFINDER_H

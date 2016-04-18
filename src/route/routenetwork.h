@@ -22,6 +22,8 @@
 #include <QList>
 #include <QVector>
 
+#include <common/maptypes.h>
+
 class QSqlRecord;
 
 namespace  atools {
@@ -58,10 +60,9 @@ enum NodeType
   DME,
   NDB,
   WAYPOINT,
-  ARTIFICIAL
+  ARTIFICIAL,
+  NONE
 };
-
-struct Node;
 
 struct Node
 {
@@ -69,8 +70,14 @@ struct Node
   int range;
   float lonx, laty;
   QVector<int> edges;
-  NodeType type;
+  nw::NodeType type;
+
+  bool operator==(const nw::Node& other) const;
+  bool operator!=(const nw::Node& other) const;
+
 };
+
+int qHash(const nw::Node& node);
 
 }
 
@@ -84,25 +91,28 @@ public:
 
   void setMode(nw::Modes mode);
 
+  nw::Node getNodeById(int id);
+  nw::Node getNodeByNavId(int id, nw::NodeType type);
+  int getNavIdForNode(const nw::Node& node);
+
   void getNeighbours(const nw::Node& from, QList<nw::Node>& neighbours);
   nw::Node addArtificialNode(const atools::geo::Pos& pos);
 
   void initQueries();
   void deInitQueries();
 
-  nw::Node getNodeByNavId(int id, nw::NodeType type);
-
 private:
-  atools::sql::SqlDatabase *db;
-  nw::Modes mode;
-  QHash<int, nw::Node> nodes;
-  int curArtificialNodeId = -10;
-  void fillNode(const QSqlRecord& rec, nw::Node& node);
-
   nw::Node fetchNode(int id);
   nw::Node fetchNode(float lonx, float laty);
 
   void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery& query);
+  void bindTypes(atools::sql::SqlQuery& query);
+  void fillNode(const QSqlRecord& rec, nw::Node& node);
+
+  atools::sql::SqlDatabase *db;
+  nw::Modes mode;
+  QHash<int, nw::Node> nodes;
+  int curArtificialNodeId = -10;
 
 };
 
