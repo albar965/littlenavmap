@@ -79,5 +79,10 @@
         <file>resources/icons/redo.svg</file>
         <file>resources/icons/hillshading.svg</file>
         <file>resources/icons/marble.svg</file>
+        <file>resources/icons/routeradio.svg</file>
+        <file>resources/icons/routelow.svg</file>
+        <file>resources/icons/routehigh.svg</file>
+        <file>resources/icons/routedirect.svg</file>
+        <file>resources/icons/routereverse.svg</file>
     </qresource>
 </RCC>

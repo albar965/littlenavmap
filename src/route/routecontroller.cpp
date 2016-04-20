@@ -34,7 +34,9 @@
 #include "common/mapcolors.h"
 #include "parkingdialog.h"
 #include "routecommand.h"
+#include "routefinder.h"
 #include "routeicondelegate.h"
+#include "routenetwork.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
@@ -76,9 +78,9 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
 
-  Ui::MainWindow *ui = parentWindow->getUi();
-
   view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  routeNetwork = new RouteNetwork(query->getDatabase());
 
   flightplan = new Flightplan();
   undoStack = new QUndoStack(parentWindow);
@@ -90,6 +92,7 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   QAction *redoAction = undoStack->createRedoAction(parentWindow, "Redo Route");
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
 
+  Ui::MainWindow *ui = parentWindow->getUi();
   ui->mainToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->mainToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
 
@@ -138,6 +141,7 @@ RouteController::~RouteController()
   delete iconDelegate;
   delete flightplan;
   delete undoStack;
+  delete routeNetwork;
 }
 
 void RouteController::routeAltChanged()
@@ -251,6 +255,87 @@ void RouteController::saveFlightplan()
   updateWindowTitle();
 }
 
+void RouteController::calculateDirect()
+{
+  qDebug() << "calculateDirect";
+  RouteCommand *undoCommand = preChange("Direct Route");
+
+  flightplan->setRouteType(atools::fs::pln::DIRECT);
+  flightplan->getEntries().erase(flightplan->getEntries().begin() + 1, flightplan->getEntries().end() - 1);
+
+  createRouteMapObjects();
+  updateModel();
+  updateLabel();
+  postChange(undoCommand);
+  updateWindowTitle();
+  emit routeChanged();
+}
+
+void RouteController::calculateRadionav()
+{
+  qDebug() << "calculateRadionav";
+  routeNetwork->setMode(nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
+
+  RouteFinder routeFinder(routeNetwork);
+
+  QVector<maptypes::MapObjectRef> route;
+
+  routeFinder.calculateRoute(flightplan->getDeparturePos(), flightplan->getDestinationPos(), route);
+
+  if(!route.isEmpty())
+  {
+    RouteCommand *undoCommand = preChange("Radionav Route");
+
+    flightplan->setRouteType(atools::fs::pln::VOR);
+    flightplan->getEntries().erase(flightplan->getEntries().begin() + 1, flightplan->getEntries().end() - 1);
+
+    maptypes::MapSearchResult result;
+    for(maptypes::MapObjectRef mapRef : route)
+    {
+      qDebug() << "Route id" << mapRef.id << "type" << mapRef.type;
+
+      query->getMapObjectById(result, mapRef.type, mapRef.id);
+
+      FlightplanEntry entry;
+      buildFlightplanEntry(mapRef.id, atools::geo::EMPTY_POS, mapRef.type, entry);
+      flightplan->getEntries().insert(1, entry);
+    }
+
+    createRouteMapObjects();
+    updateModel();
+    updateLabel();
+    postChange(undoCommand);
+    updateWindowTitle();
+    emit routeChanged();
+  }
+}
+
+void RouteController::calculateHighAlt()
+{
+  qDebug() << "calculateHighAlt";
+}
+
+void RouteController::calculateLowAlt()
+{
+  qDebug() << "calculateLowAlt";
+}
+
+void RouteController::reverse()
+{
+  qDebug() << "reverse";
+
+  RouteCommand *undoCommand = preChange("Reverse Route", rctype::REVERSE);
+
+  flightplan->reverse();
+
+  createRouteMapObjects();
+  updateModel();
+  updateLabel();
+  postChange(undoCommand);
+  updateWindowTitle();
+  emit routeChanged();
+}
+
 QString RouteController::getDefaultFilename() const
 {
   QString filename;
@@ -290,6 +375,11 @@ bool RouteController::hasValidDestination() const
 {
   return !flightplan->isEmpty() &&
          flightplan->getEntries().last().getWaypointType() == atools::fs::pln::entry::AIRPORT;
+}
+
+bool RouteController::hasEntries() const
+{
+  return flightplan->getEntries().size() > 2;
 }
 
 void RouteController::preDatabaseLoad()

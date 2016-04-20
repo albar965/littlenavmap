@@ -40,6 +40,7 @@ class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
 class QUndoStack;
+class RouteNetwork;
 
 class RouteController :
   public QObject
@@ -95,11 +96,19 @@ public:
   bool isFlightplanEmpty() const;
   bool hasValidStart() const;
   bool hasValidDestination() const;
+  bool hasEntries() const;
 
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void calculateDirect();
+  void calculateRadionav();
+  void calculateHighAlt();
+  void calculateLowAlt();
+  void reverse();
+
 private:
+  RouteNetwork *routeNetwork;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;

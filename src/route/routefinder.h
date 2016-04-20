@@ -31,11 +31,11 @@ public:
   virtual ~RouteFinder();
 
   void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                      QVector<maptypes::MapIdType>& route);
+                      QVector<maptypes::MapObjectRef>& route);
 
 private:
   RouteNetwork *network;
-  void expand(const nw::Node& node, const nw::Node& destNode);
+  void expandNode(const nw::Node& node, const nw::Node& destNode);
 
   float cost(const nw::Node& node, const nw::Node& successor);
 

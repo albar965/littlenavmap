@@ -85,11 +85,11 @@
    <addaction name="actionReloadScenery"/>
    <addaction name="separator"/>
    <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionRouteCalcDirect"/>
+   <addaction name="actionRouteCalcRadionav"/>
    <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcLowAlt"/>
    <addaction name="actionRouteReverse"/>
-   <addaction name="actionRouteCalcRadionav"/>
-   <addaction name="actionRouteCalcDirect"/>
    <addaction name="actionRouteSettings"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -2594,7 +2594,7 @@
   <action name="actionRouteCalcHighAlt">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
    </property>
    <property name="text">
     <string>High Alt Route</string>
@@ -2603,7 +2603,7 @@
   <action name="actionRouteCalcLowAlt">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
    </property>
    <property name="text">
     <string>Low Alt Route</string>
@@ -2612,7 +2612,7 @@
   <action name="actionRouteCalcRadionav">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
    </property>
    <property name="text">
     <string>Radionav Route</string>
@@ -2621,7 +2621,7 @@
   <action name="actionRouteCalcDirect">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/routedirect.svg</normaloff>:/littlenavmap/resources/icons/routedirect.svg</iconset>
    </property>
    <property name="text">
     <string>Direct Route</string>
@@ -2630,7 +2630,7 @@
   <action name="actionRouteReverse">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/routereverse.svg</normaloff>:/littlenavmap/resources/icons/routereverse.svg</iconset>
    </property>
    <property name="text">
     <string>Rverse Route</string>

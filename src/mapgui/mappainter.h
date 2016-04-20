@@ -41,7 +41,7 @@ class MapQuery;
 class MapScale;
 
 /* Map of id and type */
-typedef maptypes::MapIdType ForcePaintType;
+typedef maptypes::MapObjectRef ForcePaintType;
 
 struct PaintContext
 {

@@ -70,6 +70,7 @@ bool RouteCommand::mergeWith(const QUndoCommand *other)
     case rctype::EDIT:
       return false;
 
+    case rctype::REVERSE:
     case rctype::DELETE:
     case rctype::MOVE:
     case rctype::ALTITUDE:

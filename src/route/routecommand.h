@@ -30,7 +30,8 @@ enum RouteCmdType
   EDIT = -1, /* Unmergeable edit */
   DELETE = 0,
   MOVE = 1,
-  ALTITUDE = 2
+  ALTITUDE = 2,
+  REVERSE = 3
 };
 
 }

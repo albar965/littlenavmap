@@ -279,6 +279,17 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
 
+  connect(ui->actionRouteCalcDirect, &QAction::triggered,
+          routeController, &RouteController::calculateDirect);
+  connect(ui->actionRouteCalcRadionav, &QAction::triggered,
+          routeController, &RouteController::calculateRadionav);
+  connect(ui->actionRouteCalcHighAlt, &QAction::triggered,
+          routeController, &RouteController::calculateHighAlt);
+  connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
+          routeController, &RouteController::calculateLowAlt);
+  connect(ui->actionRouteReverse, &QAction::triggered,
+          routeController, &RouteController::reverse);
+
   connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
@@ -628,10 +639,19 @@ void MainWindow::updateActionStates()
   qDebug() << "Updating action states";
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
-  ui->actionRouteSave->setEnabled(!routeController->isFlightplanEmpty() && routeController->hasChanged());
-  ui->actionRouteSaveAs->setEnabled(!routeController->isFlightplanEmpty());
-  ui->actionRouteCenter->setEnabled(!routeController->isFlightplanEmpty());
+  bool hasFlightplan = !routeController->isFlightplanEmpty();
+  bool hasStartAndDest = routeController->hasValidStart() && routeController->hasValidDestination();
+
+  ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
+  ui->actionRouteSaveAs->setEnabled(hasFlightplan);
+  ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
+
+  ui->actionRouteCalcDirect->setEnabled(hasStartAndDest && routeController->hasEntries());
+  ui->actionRouteCalcRadionav->setEnabled(hasStartAndDest);
+  ui->actionRouteCalcHighAlt->setEnabled(hasStartAndDest);
+  ui->actionRouteCalcLowAlt->setEnabled(hasStartAndDest);
+  ui->actionRouteReverse->setEnabled(hasFlightplan);
 
   ui->actionMapShowHome->setEnabled(navMapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(navMapWidget->getMarkPos().isValid());

@@ -169,7 +169,7 @@ const QHash<QString, QString> navTypeNames(
     {"WAYPOINT", "Waypoint"}
   });
 
-int qHash(const maptypes::MapIdType& type)
+int qHash(const maptypes::MapObjectRef& type)
 {
   return type.id ^ type.type;
 }
@@ -445,12 +445,12 @@ QString airportText(const MapAirport& airport)
   return "Airport " + airport.name + " (" + airport.ident + ")";
 }
 
-bool MapIdType::operator==(const MapIdType& other) const
+bool MapObjectRef::operator==(const MapObjectRef& other) const
 {
   return id == other.id && type == other.type;
 }
 
-bool MapIdType::operator!=(const MapIdType& other) const
+bool MapObjectRef::operator!=(const MapObjectRef& other) const
 {
   return !operator==(other);
 }

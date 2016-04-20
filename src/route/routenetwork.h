@@ -59,8 +59,8 @@ enum NodeType
   VORDME,
   DME,
   NDB,
-  WAYPOINT,
-  ARTIFICIAL,
+  START,
+  DESTINATION,
   NONE
 };
 
@@ -93,26 +93,35 @@ public:
 
   nw::Node getNodeById(int id);
   nw::Node getNodeByNavId(int id, nw::NodeType type);
-  int getNavIdForNode(const nw::Node& node);
+  void getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type);
 
   void getNeighbours(const nw::Node& from, QList<nw::Node>& neighbours);
-  nw::Node addArtificialNode(const atools::geo::Pos& pos);
+  void addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
 
   void initQueries();
   void deInitQueries();
 
+  void clear();
+
+  nw::Node getStartNode();
+  nw::Node getDestinationNode();
+
 private:
+  const int START_NODE_ID = -10;
+  const int DESTINATION_NODE_ID = -20;
+
+  atools::geo::Rect startNodeRect, destinationNodeRect;
+
   nw::Node fetchNode(int id);
-  nw::Node fetchNode(float lonx, float laty);
+  nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
 
   void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery& query);
-  void bindTypes(atools::sql::SqlQuery& query);
+  bool checkType(nw::NodeType type);
   void fillNode(const QSqlRecord& rec, nw::Node& node);
 
   atools::sql::SqlDatabase *db;
   nw::Modes mode;
   QHash<int, nw::Node> nodes;
-  int curArtificialNodeId = -10;
 
 };
 

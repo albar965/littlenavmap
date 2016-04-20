@@ -33,37 +33,53 @@ RouteFinder::~RouteFinder()
 }
 
 void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                                 QVector<maptypes::MapIdType>& route)
+                                 QVector<maptypes::MapObjectRef>& route)
 {
-  Node startNode = network->addArtificialNode(from);
-  Node destNode = network->addArtificialNode(to);
+  network->addStartAndDestinationNodes(from, to);
+  Node startNode = network->getStartNode();
+  Node destNode = network->getDestinationNode();
+
+  if(startNode.edges.isEmpty())
+    return;
 
   openlistHeap.push(startNode, cost(startNode, destNode));
-  Node curNode;
-
+  Node currentNode;
+  bool found = false;
   while(!openlistHeap.isEmpty())
   {
     // Contains known nodes
-    openlistHeap.pop(curNode);
+    openlistHeap.pop(currentNode);
 
-    if(Pos(curNode.lonx, curNode.laty) == to)
+    if(currentNode.id == destNode.id)
+    {
+      found = true;
       break;
+    }
 
     // Contains nodes with known shortest path
-    closedlist.insert(curNode.id);
+    closedlist.insert(currentNode.id);
 
-    expand(curNode, destNode);
+    expandNode(currentNode, destNode);
   }
 
-  int predId = curNode.id;
-  while(predId != -1)
+  if(found)
   {
-    route.prepend({network->getNavIdForNode(curNode), toMapObjectType(curNode.type)});
-    predId = pred.value(predId, -1);
+    int predId = currentNode.id;
+    while(predId != -1)
+    {
+      int navId;
+      nw::NodeType type;
+      network->getNavIdAndTypeForNode(predId, navId, type);
+
+      if(type != nw::START && type != nw::DESTINATION)
+        route.prepend({navId, toMapObjectType(type)});
+
+      predId = pred.value(predId, -1);
+    }
   }
 }
 
-void RouteFinder::expand(const nw::Node& currentNode, const nw::Node& destNode)
+void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
 {
   QList<Node> successors;
 
@@ -75,18 +91,18 @@ void RouteFinder::expand(const nw::Node& currentNode, const nw::Node& destNode)
       continue;
 
     // g = all costs from start to current node
-    float tentativeG = g.value(currentNode.id) + cost(currentNode, successor);
+    float newGValue = g.value(currentNode.id) + cost(currentNode, successor);
 
-    if(tentativeG >= g.value(successor.id) && openlistHeap.contains(successor))
+    if(newGValue >= g.value(successor.id) && openlistHeap.contains(successor))
       continue;
 
     pred[successor.id] = currentNode.id;
-    g[successor.id] = tentativeG;
+    g[successor.id] = newGValue;
 
     // h = estimate to destination
     // f = g+h
     float h = cost(successor, destNode);
-    float f = tentativeG + h;
+    float f = newGValue + h;
 
     if(openlistHeap.contains(successor))
       openlistHeap.change(successor, f);
@@ -114,10 +130,8 @@ maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
     case nw::NDB:
       return maptypes::NDB;
 
-    case nw::WAYPOINT:
-      return maptypes::WAYPOINT;
-
-    case nw::ARTIFICIAL:
+    case nw::START:
+    case nw::DESTINATION:
       return maptypes::USER;
 
     case nw::NONE:

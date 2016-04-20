@@ -54,17 +54,17 @@ enum MapObjectType
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
 
-struct MapIdType
+struct MapObjectRef
 {
   int id;
   maptypes::MapObjectTypes type;
 
-  bool operator==(const maptypes::MapIdType& other) const;
-  bool operator!=(const maptypes::MapIdType& other) const;
+  bool operator==(const maptypes::MapObjectRef& other) const;
+  bool operator!=(const maptypes::MapObjectRef& other) const;
 
 };
 
-int qHash(const maptypes::MapIdType& type);
+int qHash(const maptypes::MapObjectRef& type);
 
 /* Convert nav_search type */
 maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
@@ -471,7 +471,7 @@ QString userpointText(const maptypes::MapUserpoint& userpoint);
 
 } // namespace types
 
-Q_DECLARE_TYPEINFO(maptypes::MapIdType, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapObjectRef, Q_PRIMITIVE_TYPE);
 
 Q_DECLARE_TYPEINFO(maptypes::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapRunway, Q_MOVABLE_TYPE);
