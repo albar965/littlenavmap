@@ -1146,12 +1146,13 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             routeDragTo = rmos.at(routeLeg + 1).getPosition();
             setContextMenuPolicy(Qt::NoContextMenu);
           }
-          else if(event->modifiers() & Qt::ControlModifier)
-            debugOnClick(event->pos().x(), event->pos().y());
         }
       }
     }
   }
+
+  if(event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier)
+    debugOnClick(event->pos().x(), event->pos().y());
   mouseMoved = false;
 }
 
@@ -1255,7 +1256,7 @@ void MapWidget::debugOnClick(int x, int y)
   highlightMapObjects.airports.clear();
   maptypes::MapAirport ap;
   ap.id = node.id;
-  ap.position = atools::geo::Pos(node.lonx, node.laty);
+  ap.position = node.pos;
   highlightMapObjects.airports.append(ap);
 
   QList<nw::Node> neighbours;
@@ -1266,7 +1267,7 @@ void MapWidget::debugOnClick(int x, int y)
   {
     maptypes::MapAirport ap;
     ap.id = n.id;
-    ap.position = atools::geo::Pos(n.lonx, n.laty);
+    ap.position = n.pos;
     highlightMapObjects.airports.append(ap);
   }
 

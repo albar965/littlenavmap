@@ -115,7 +115,7 @@ template<typename TYPE>
 bool Heap<TYPE>::compare(const Heap<TYPE>::HeapNode& n1, const Heap<TYPE>::HeapNode& n2)
 {
   // return ​true if the first argument is less than the second.
-  return n1.cost < n2.cost;
+  return n1.cost > n2.cost;
 }
 
 template<typename TYPE>

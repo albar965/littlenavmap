@@ -68,8 +68,8 @@ struct Node
 {
   int id = -1;
   int range;
-  float lonx, laty;
   QVector<int> edges;
+  atools::geo::Pos pos;
   nw::NodeType type;
 
   bool operator==(const nw::Node& other) const;
@@ -111,6 +111,7 @@ private:
   const int DESTINATION_NODE_ID = -20;
 
   atools::geo::Rect startNodeRect, destinationNodeRect;
+  QVector<int> destinationNodePredecessors;
 
   nw::Node fetchNode(int id);
   nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);

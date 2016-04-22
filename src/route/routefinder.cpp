@@ -18,6 +18,11 @@
 #include "routefinder.h"
 #include "routenetwork.h"
 
+const float MAX_COST_FACTOR = 1000000.f;
+const float COST_FACTOR_UNREACHABLE_RADIONAV = 1000000.f;
+const float COST_FACTOR_UNREACHABLE_RADIONAV_SINGLE = 100.f;
+const float COST_FACTOR_NDB = 1.2f;
+
 using nw::Node;
 using atools::geo::Pos;
 
@@ -42,13 +47,15 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   if(startNode.edges.isEmpty())
     return;
 
-  openlistHeap.push(startNode, cost(startNode, destNode));
+  openNodesHeap.push(startNode, costEstimate(startNode, destNode));
+  nodeCosts[startNode.id] = 0.f;
+
   Node currentNode;
   bool found = false;
-  while(!openlistHeap.isEmpty())
+  while(!openNodesHeap.isEmpty())
   {
     // Contains known nodes
-    openlistHeap.pop(currentNode);
+    openNodesHeap.pop(currentNode);
 
     if(currentNode.id == destNode.id)
     {
@@ -57,13 +64,15 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     }
 
     // Contains nodes with known shortest path
-    closedlist.insert(currentNode.id);
+    closedNodes.insert(currentNode.id);
 
+    // Work on successors
     expandNode(currentNode, destNode);
   }
 
   if(found)
   {
+    // Build route
     int predId = currentNode.id;
     while(predId != -1)
     {
@@ -72,9 +81,9 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
       network->getNavIdAndTypeForNode(predId, navId, type);
 
       if(type != nw::START && type != nw::DESTINATION)
-        route.prepend({navId, toMapObjectType(type)});
+        route.append({navId, toMapObjectType(type)});
 
-      predId = pred.value(predId, -1);
+      predId = nodePredecessor.value(predId, -1);
     }
   }
 }
@@ -87,35 +96,46 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 
   for(const Node& successor : successors)
   {
-    if(closedlist.contains(successor.id))
+    if(closedNodes.contains(successor.id))
       continue;
 
-    // g = all costs from start to current node
-    float newGValue = g.value(currentNode.id) + cost(currentNode, successor);
+    // newNodeCosts / g = all costs from start to current node
+    float newNodeCosts = nodeCosts.value(currentNode.id) + cost(currentNode, successor);
 
-    if(newGValue >= g.value(successor.id) && openlistHeap.contains(successor))
+    if(newNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
       continue;
 
-    pred[successor.id] = currentNode.id;
-    g[successor.id] = newGValue;
+    nodePredecessor[successor.id] = currentNode.id;
+    nodeCosts[successor.id] = newNodeCosts;
 
-    // h = estimate to destination
-    // f = g+h
-    float h = cost(successor, destNode);
-    float f = newGValue + h;
+    // Costs from start to successor + estimate to destination = sort order in heap
+    float f = newNodeCosts + costEstimate(successor, destNode);
 
-    if(openlistHeap.contains(successor))
-      openlistHeap.change(successor, f);
+    if(openNodesHeap.contains(successor))
+      openNodesHeap.change(successor, f);
     else
-      openlistHeap.push(successor, f);
+      openNodesHeap.push(successor, f);
   }
 }
 
 float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor)
 {
-  Pos from(currentNode.lonx, currentNode.laty);
-  Pos to(successor.lonx, successor.laty);
-  return from.distanceMeterTo(to);
+  float dist = currentNode.pos.distanceMeterTo(successor.pos);
+
+  if(currentNode.range + successor.range < dist)
+    dist *= COST_FACTOR_UNREACHABLE_RADIONAV;
+  else if(currentNode.range < dist)
+    dist *= COST_FACTOR_UNREACHABLE_RADIONAV_SINGLE;
+
+  if(successor.type == nw::NDB)
+    dist *= COST_FACTOR_NDB;
+  return dist;
+}
+
+float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& successor)
+{
+  // Use largest factor to allow underestimate
+  return currentNode.pos.distanceMeterTo(successor.pos) * MAX_COST_FACTOR;
 }
 
 maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
@@ -139,61 +159,3 @@ maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
   }
   return maptypes::NONE;
 }
-
-/* *INDENT-OFF* */
-
-//declare openlist as PriorityQueue with Nodes // Prioritätenwarteschlange
-//declare closedlist as Set with Nodes
-
-//program a-star
-//    // Initialisierung der Open List, die Closed List ist noch leer
-//    // (die Priorität bzw. der f Wert des Startknotens ist unerheblich)
-//    openlist.enqueue(startknoten, 0)
-//    // diese Schleife wird durchlaufen bis entweder
-//    // - die optimale Lösung gefunden wurde oder
-//    // - feststeht, dass keine Lösung existiert
-//    repeat
-//        // Knoten mit dem geringsten f Wert aus der Open List entfernen
-//        currentNode := openlist.removeMin()
-//        // Wurde das Ziel gefunden?
-//        if currentNode == zielknoten then
-//            return PathFound
-//        // Der aktuelle Knoten soll durch nachfolgende Funktionen
-//        // nicht weiter untersucht werden damit keine Zyklen entstehen
-//        closedlist.add(currentNode)
-//        // Wenn das Ziel noch nicht gefunden wurde: Nachfolgeknoten
-//        // des aktuellen Knotens auf die Open List setzen
-//        expandNode(currentNode)
-//    until openlist.isEmpty()
-//    // die Open List ist leer, es existiert kein Pfad zum Ziel
-//    return NoPathFound
-//end
-
-// überprüft alle Nachfolgeknoten und fügt sie der Open List hinzu, wenn entweder
-// - der Nachfolgeknoten zum ersten Mal gefunden wird oder
-// - ein besserer Weg zu diesem Knoten gefunden wird
-//function expandNode(currentNode)
-//    foreach successor of currentNode
-//        // wenn der Nachfolgeknoten bereits auf der Closed List ist – tue nichts
-//        if closedlist.contains(successor) then
-//            continue
-//        // g Wert für den neuen Weg berechnen: g Wert des Vorgängers plus
-//        // die Kosten der gerade benutzten Kante
-//        tentative_g = g(currentNode) + c(currentNode, successor)
-//        // wenn der Nachfolgeknoten bereits auf der Open List ist,
-//        // aber der neue Weg nicht besser ist als der alte – tue nichts
-//        if openlist.contains(successor) and tentative_g >= g(successor) then
-//            continue
-//        // Vorgängerzeiger setzen und g Wert merken
-//        successor.predecessor := currentNode
-//        g(successor) = tentative_g
-//        // f Wert des Knotens in der Open List aktualisieren
-//        // bzw. Knoten mit f Wert in die Open List einfügen
-//        f := tentative_g + h(successor)
-//        if openlist.contains(successor) then
-//            openlist.decreaseKey(successor, f)
-//        else
-//            openlist.enqueue(successor, f)
-//    end
-//end
-/* *INDENT-ON* */

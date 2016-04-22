@@ -79,6 +79,7 @@ void RouteNetwork::clear()
   startNodeRect = Rect();
   destinationNodeRect = Rect();
   nodes.clear();
+  destinationNodePredecessors.clear();
 }
 
 void RouteNetwork::getNeighbours(const nw::Node& from, QList<nw::Node>& neighbours)
@@ -145,9 +146,30 @@ nw::Node RouteNetwork::getNodeById(int id)
 
 void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
 {
+  // Remove all references to destination node
+  for(int i : destinationNodePredecessors)
+  {
+    if(nodes.contains(i))
+      if(nodes[i].edges.removeAll(DESTINATION_NODE_ID) == 0)
+        qDebug() << "Node destination predecessors deleted";
+  }
+  destinationNodePredecessors.clear();
+
   // Add destination first so it can be added to start successors
   destinationNodeRect = Rect(to, atools::geo::nmToMeter(200));
   fetchNode(to.getLonX(), to.getLatY(), false, DESTINATION_NODE_ID);
+
+  for(int id : nodes.keys())
+  {
+    Node& node = nodes[id];
+    if(destinationNodeRect.contains(node.pos))
+    {
+      // Near destination - add as successor
+      node.edges.append(DESTINATION_NODE_ID);
+      // Remember for later cleanup
+      destinationNodePredecessors.append(node.id);
+    }
+  }
 
   startNodeRect = Rect(from, atools::geo::nmToMeter(200));
   fetchNode(from.getLonX(), from.getLatY(), true, START_NODE_ID);
@@ -165,6 +187,8 @@ nw::Node RouteNetwork::getDestinationNode()
 
 nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
 {
+  nodes.remove(id);
+
   Node node;
   node.id = id;
   node.range = -1;
@@ -176,14 +200,19 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
   else
     node.type = NONE;
 
-  node.lonx = lonx;
-  node.laty = laty;
+  node.pos.setLonX(lonx);
+  node.pos.setLatY(laty);
 
   if(loadSuccessors)
   {
-    if(destinationNodeRect.contains(Pos(node.lonx, node.laty)))
+    if(destinationNodeRect.contains(node.pos))
+    {
       // Near destination - add as successor
       node.edges.append(DESTINATION_NODE_ID);
+
+      // Remember for later cleanup
+      destinationNodePredecessors.append(id);
+    }
 
     SqlQuery nearestStmt(db);
     nearestStmt.prepare(
@@ -200,9 +229,9 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
       while(nearestStmt.next())
       {
         int nodeId = nearestStmt.value("node_id").toInt();
-        if(!node.edges.contains(nodeId) &&
-           checkType(static_cast<nw::NodeType>(nearestStmt.value("type").toInt())))
-          node.edges.append(nodeId);
+        if(checkType(static_cast<nw::NodeType>(nearestStmt.value("type").toInt())))
+          if(!std::binary_search(node.edges.begin(), node.edges.end(), nodeId))
+            node.edges.insert(std::lower_bound(node.edges.begin(), node.edges.end(), nodeId), nodeId);
       }
     }
   }
@@ -228,9 +257,13 @@ nw::Node RouteNetwork::fetchNode(int id)
     fillNode(nodeQuery.record(), node);
     node.id = id;
 
-    if(destinationNodeRect.contains(Pos(node.lonx, node.laty)))
+    if(destinationNodeRect.contains(node.pos))
+    {
       // Near destination - add as successor
       node.edges.append(DESTINATION_NODE_ID);
+      // Remember for later cleanup
+      destinationNodePredecessors.append(id);
+    }
 
     SqlQuery edgeQueryTo(db);
     edgeQueryTo.prepare("select to_node_id, to_node_type from route_edge_radio "
@@ -241,10 +274,10 @@ nw::Node RouteNetwork::fetchNode(int id)
 
     while(edgeQueryTo.next())
     {
-      int to = edgeQueryTo.value("to_node_id").toInt();
-      if(to != id && checkType(static_cast<nw::NodeType>(edgeQueryTo.value("to_node_type").toInt())) &&
-         !node.edges.contains(to))
-        node.edges.append(to);
+      int nodeId = edgeQueryTo.value("to_node_id").toInt();
+      if(nodeId != id && checkType(static_cast<nw::NodeType>(edgeQueryTo.value("to_node_type").toInt())))
+        if(!std::binary_search(node.edges.begin(), node.edges.end(), nodeId))
+          node.edges.insert(std::lower_bound(node.edges.begin(), node.edges.end(), nodeId), nodeId);
     }
 
     SqlQuery edgeQueryFrom(db);
@@ -256,10 +289,10 @@ nw::Node RouteNetwork::fetchNode(int id)
 
     while(edgeQueryFrom.next())
     {
-      int from = edgeQueryFrom.value("from_node_id").toInt();
-      if(from != id && checkType(static_cast<nw::NodeType>(edgeQueryFrom.value("from_node_type").toInt())) &&
-         !node.edges.contains(from))
-        node.edges.append(from);
+      int nodeId = edgeQueryFrom.value("from_node_id").toInt();
+      if(nodeId != id && checkType(static_cast<nw::NodeType>(edgeQueryFrom.value("from_node_type").toInt())))
+        if(!std::binary_search(node.edges.begin(), node.edges.end(), nodeId))
+          node.edges.insert(std::lower_bound(node.edges.begin(), node.edges.end(), nodeId), nodeId);
     }
 
     nodes.insert(node.id, node);
@@ -273,8 +306,8 @@ void RouteNetwork::fillNode(const QSqlRecord& rec, nw::Node& node)
   node.id = rec.value("node_id").toInt();
   node.type = static_cast<nw::NodeType>(rec.value("type").toInt());
   node.range = rec.value("range").toInt();
-  node.lonx = rec.value("lonx").toFloat();
-  node.laty = rec.value("laty").toFloat();
+  node.pos.setLonX(rec.value("lonx").toFloat());
+  node.pos.setLatY(rec.value("laty").toFloat());
 }
 
 bool RouteNetwork::checkType(nw::NodeType type)

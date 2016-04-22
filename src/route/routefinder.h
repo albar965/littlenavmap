@@ -38,11 +38,12 @@ private:
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
   float cost(const nw::Node& node, const nw::Node& successor);
+  float costEstimate(const nw::Node& currentNode, const nw::Node& successor);
 
-  Heap<nw::Node> openlistHeap;
-  QSet<int> closedlist;
-  QHash<int, float> g;
-  QHash<int, int> pred;
+  Heap<nw::Node> openNodesHeap;
+  QSet<int> closedNodes;
+  QHash<int, float> nodeCosts;
+  QHash<int, int> nodePredecessor;
   maptypes::MapObjectTypes toMapObjectType(nw::NodeType type);
 
 };
