@@ -34,10 +34,12 @@ public:
                       QVector<maptypes::MapObjectRef>& route);
 
 private:
+  const float MAX_COST = std::numeric_limits<float>::max();
+
   RouteNetwork *network;
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
-  float cost(const nw::Node& node, const nw::Node& successor);
+  float cost(const nw::Node& node, const nw::Node& successor, int distanceMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& successor);
 
   Heap<nw::Node> openNodesHeap;

@@ -308,6 +308,12 @@ void RouteController::calculateRadionav()
     updateWindowTitle();
     emit routeChanged();
   }
+  else
+  {
+    QMessageBox::information(parentWindow,
+                             QApplication::applicationName(),
+                             "Routing failed. Destination is not reachable using Radio navigation Aids.");
+  }
 }
 
 void RouteController::calculateHighAlt()

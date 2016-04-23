@@ -44,6 +44,11 @@ public:
     return heap.empty();
   }
 
+  int size() const
+  {
+    return heap.size();
+  }
+
 private:
   struct HeapNode
   {

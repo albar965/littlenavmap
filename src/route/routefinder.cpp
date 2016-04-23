@@ -17,11 +17,13 @@
 
 #include "routefinder.h"
 #include "routenetwork.h"
+#include "geo/calculations.h"
 
-const float MAX_COST_FACTOR = 1000000.f;
-const float COST_FACTOR_UNREACHABLE_RADIONAV = 1000000.f;
-const float COST_FACTOR_UNREACHABLE_RADIONAV_SINGLE = 100.f;
-const float COST_FACTOR_NDB = 1.2f;
+const float MAX_COST_FACTOR = 4000.f;
+const float COST_FACTOR_UNREACHABLE_RADIONAV = 1000.f;
+const float COST_FACTOR_NDB = 4.f;
+const float COST_FACTOR_VOR = 4.f;
+const float COST_FACTOR_DME = 100.f;
 
 using nw::Node;
 using atools::geo::Pos;
@@ -43,6 +45,8 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   network->addStartAndDestinationNodes(from, to);
   Node startNode = network->getStartNode();
   Node destNode = network->getDestinationNode();
+
+  int numNodesTotal = network->getNumberOfNodesDatabase();
 
   if(startNode.edges.isEmpty())
     return;
@@ -66,9 +70,16 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     // Contains nodes with known shortest path
     closedNodes.insert(currentNode.id);
 
+    if(closedNodes.size() > numNodesTotal / 4)
+      // If we read too much nodes routing will fail
+      break;
+
     // Work on successors
     expandNode(currentNode, destNode);
   }
+
+  qDebug() << "heap size" << openNodesHeap.size();
+  qDebug() << "close nodes size" << closedNodes.size();
 
   if(found)
   {
@@ -86,30 +97,41 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
       predId = nodePredecessor.value(predId, -1);
     }
   }
+  else
+    qDebug() << "No route found";
+
+  qDebug() << "num nodes database" << network->getNumberOfNodesDatabase()
+           << "num nodes cache" << network->getNumberOfNodesCache();
 }
 
 void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
 {
-  QList<Node> successors;
+  QVector<Node> successors;
+  QVector<int> distancesMeter;
 
-  network->getNeighbours(currentNode, successors);
+  network->getNeighbours(currentNode, successors, distancesMeter);
 
-  for(const Node& successor : successors)
+  for(int i = 0; i < successors.size(); i++)
   {
+    const Node& successor = successors.at(i);
+
     if(closedNodes.contains(successor.id))
       continue;
 
-    // newNodeCosts / g = all costs from start to current node
-    float newNodeCosts = nodeCosts.value(currentNode.id) + cost(currentNode, successor);
+    int distanceMeter = distancesMeter.at(i);
 
-    if(newNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
+    float successorEdgeCosts = cost(currentNode, successor, distanceMeter);
+    float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
+
+    if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
+      // New path is not cheaper
       continue;
 
     nodePredecessor[successor.id] = currentNode.id;
-    nodeCosts[successor.id] = newNodeCosts;
+    nodeCosts[successor.id] = successorNodeCosts;
 
     // Costs from start to successor + estimate to destination = sort order in heap
-    float f = newNodeCosts + costEstimate(successor, destNode);
+    float f = successorNodeCosts + costEstimate(successor, destNode);
 
     if(openNodesHeap.contains(successor))
       openNodesHeap.change(successor, f);
@@ -118,18 +140,21 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
   }
 }
 
-float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor)
+float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, int distanceMeter)
 {
-  float dist = currentNode.pos.distanceMeterTo(successor.pos);
+  float costs = distanceMeter;
 
-  if(currentNode.range + successor.range < dist)
-    dist *= COST_FACTOR_UNREACHABLE_RADIONAV;
-  else if(currentNode.range < dist)
-    dist *= COST_FACTOR_UNREACHABLE_RADIONAV_SINGLE;
+  if(currentNode.range + successor.range < costs)
+    costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
-  if(successor.type == nw::NDB)
-    dist *= COST_FACTOR_NDB;
-  return dist;
+  if(successor.type == nw::DME)
+    costs *= COST_FACTOR_DME;
+  else if(successor.type == nw::VOR)
+    costs *= COST_FACTOR_VOR;
+  else if(successor.type == nw::NDB)
+    costs *= COST_FACTOR_NDB;
+
+  return costs;
 }
 
 float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& successor)

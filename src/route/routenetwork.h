@@ -19,7 +19,6 @@
 #define ROUTENETWORK_H
 
 #include <QHash>
-#include <QList>
 #include <QVector>
 
 #include <common/maptypes.h>
@@ -64,24 +63,57 @@ enum NodeType
   NONE
 };
 
+struct Edge
+{
+  int toNodeId;
+  int distanceMeter;
+
+  bool operator==(const nw::Edge& other) const
+  {
+    return toNodeId == other.toNodeId;
+  }
+
+  bool operator!=(const nw::Edge& other) const
+  {
+    return !operator==(other);
+  }
+
+};
+
+inline int qHash(const nw::Edge& edge)
+{
+  return edge.toNodeId;
+}
+
 struct Node
 {
   int id = -1;
   int range;
-  QVector<int> edges;
+  QVector<Edge> edges;
   atools::geo::Pos pos;
   nw::NodeType type;
 
-  bool operator==(const nw::Node& other) const;
-  bool operator!=(const nw::Node& other) const;
+  bool operator==(const nw::Node& other) const
+  {
+    return id == other.id && type == other.type;
+  }
+
+  bool operator!=(const nw::Node& other) const
+  {
+    return !operator==(other);
+  }
 
 };
 
-int qHash(const nw::Node& node);
+inline int qHash(const nw::Node& node)
+{
+  return node.id;
+}
 
 }
 
 Q_DECLARE_TYPEINFO(nw::Node, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(nw::Edge, Q_PRIMITIVE_TYPE);
 
 class RouteNetwork
 {
@@ -95,7 +127,7 @@ public:
   nw::Node getNodeByNavId(int id, nw::NodeType type);
   void getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type);
 
-  void getNeighbours(const nw::Node& from, QList<nw::Node>& neighbours);
+  void getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours, QVector<int>& distances);
   void addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
 
   void initQueries();
@@ -103,26 +135,38 @@ public:
 
   void clear();
 
-  nw::Node getStartNode();
-  nw::Node getDestinationNode();
+  nw::Node getStartNode() const;
+  nw::Node getDestinationNode() const;
+
+  int getNumberOfNodesDatabase();
+  int getNumberOfNodesCache() const;
 
 private:
   const int START_NODE_ID = -10;
   const int DESTINATION_NODE_ID = -20;
+  int numNodesDb = -1;
 
   atools::geo::Rect startNodeRect, destinationNodeRect;
-  QVector<int> destinationNodePredecessors;
+  atools::geo::Pos startPos, destinationPos;
+  QSet<int> destinationNodePredecessors;
 
   nw::Node fetchNode(int id);
   nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
 
-  void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery& query);
+  void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
   bool checkType(nw::NodeType type);
   void fillNode(const QSqlRecord& rec, nw::Node& node);
 
   atools::sql::SqlDatabase *db;
   nw::Modes mode;
   QHash<int, nw::Node> nodes;
+
+  atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
+  *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
+  *edgeFromQuery = nullptr;
+
+  void addDestNodeEdges(nw::Node& node);
+  void cleanDestNodeEdges();
 
 };
 

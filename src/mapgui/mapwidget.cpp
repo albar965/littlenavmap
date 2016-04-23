@@ -1259,8 +1259,9 @@ void MapWidget::debugOnClick(int x, int y)
   ap.position = node.pos;
   highlightMapObjects.airports.append(ap);
 
-  QList<nw::Node> neighbours;
-  net.getNeighbours(node, neighbours);
+  QVector<nw::Node> neighbours;
+  QVector<int> distancesMeter;
+  net.getNeighbours(node, neighbours, distancesMeter);
 
   qDebug() << "=== num neighbors" << neighbours.size();
   for(const nw::Node& n : neighbours)
