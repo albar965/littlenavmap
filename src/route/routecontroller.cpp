@@ -36,6 +36,7 @@
 #include "routecommand.h"
 #include "routefinder.h"
 #include "routeicondelegate.h"
+#include "routenetworkairway.h"
 #include "routenetworkradio.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
@@ -80,7 +81,8 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  routeNetwork = new RouteNetworkRadio(query->getDatabase());
+  routeNetworkRadio = new RouteNetworkRadio(query->getDatabase());
+  routeNetworkAirway = new RouteNetworkAirway(query->getDatabase());
 
   flightplan = new Flightplan();
   undoStack = new QUndoStack(parentWindow);
@@ -141,7 +143,8 @@ RouteController::~RouteController()
   delete iconDelegate;
   delete flightplan;
   delete undoStack;
-  delete routeNetwork;
+  delete routeNetworkRadio;
+  delete routeNetworkAirway;
 }
 
 void RouteController::routeAltChanged()
@@ -274,31 +277,57 @@ void RouteController::calculateDirect()
 void RouteController::calculateRadionav()
 {
   qDebug() << "calculateRadionav";
-  routeNetwork->setMode(nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
+  routeNetworkRadio->setMode(nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
 
-  RouteFinder routeFinder(routeNetwork);
+  RouteFinder routeFinder(routeNetworkRadio);
 
-  QVector<maptypes::MapObjectRef> route;
+  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav route", false);
+}
 
-  routeFinder.calculateRoute(flightplan->getDeparturePos(), flightplan->getDestinationPos(), route);
+void RouteController::calculateHighAlt()
+{
+  qDebug() << "calculateHighAlt";
+  routeNetworkAirway->setMode(nw::ROUTE_JET);
+
+  RouteFinder routeFinder(routeNetworkAirway);
+
+  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude route", true);
+}
+
+void RouteController::calculateLowAlt()
+{
+  qDebug() << "calculateLowAlt";
+  routeNetworkAirway->setMode(nw::ROUTE_VICTOR);
+
+  RouteFinder routeFinder(routeNetworkAirway);
+
+  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude route", true);
+}
+
+void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+                                             const QString& commandName, bool fetchAirways)
+{
+  QVector<rf::RouteEntry> route;
+
+  routeFinder->calculateRoute(flightplan->getDeparturePos(), flightplan->getDestinationPos(), route);
 
   if(!route.isEmpty())
   {
-    RouteCommand *undoCommand = preChange("Radionav Route");
+    RouteCommand *undoCommand = preChange(commandName);
 
-    flightplan->setRouteType(atools::fs::pln::VOR);
+    flightplan->setRouteType(type);
     flightplan->getEntries().erase(flightplan->getEntries().begin() + 1, flightplan->getEntries().end() - 1);
 
     maptypes::MapSearchResult result;
-    for(maptypes::MapObjectRef mapRef : route)
+    for(rf::RouteEntry entry : route)
     {
-      qDebug() << "Route id" << mapRef.id << "type" << mapRef.type;
+      qDebug() << "Route id" << entry.ref.id << "type" << entry.ref.type;
 
-      query->getMapObjectById(result, mapRef.type, mapRef.id);
+      query->getMapObjectById(result, entry.ref.type, entry.ref.id);
 
-      FlightplanEntry entry;
-      buildFlightplanEntry(mapRef.id, atools::geo::EMPTY_POS, mapRef.type, entry);
-      flightplan->getEntries().insert(1, entry);
+      FlightplanEntry fpentry;
+      buildFlightplanEntry(entry.ref.id, atools::geo::EMPTY_POS, entry.ref.type, fpentry);
+      flightplan->getEntries().insert(1, fpentry);
     }
 
     createRouteMapObjects();
@@ -312,18 +341,8 @@ void RouteController::calculateRadionav()
   {
     QMessageBox::information(parentWindow,
                              QApplication::applicationName(),
-                             "Routing failed. Destination is not reachable using Radio navigation Aids.");
+                             "Routing failed. Start or destination are not reachable.");
   }
-}
-
-void RouteController::calculateHighAlt()
-{
-  qDebug() << "calculateHighAlt";
-}
-
-void RouteController::calculateLowAlt()
-{
-  qDebug() << "calculateLowAlt";
 }
 
 void RouteController::reverse()
@@ -390,12 +409,16 @@ bool RouteController::hasEntries() const
 
 void RouteController::preDatabaseLoad()
 {
-  routeNetwork->deInitQueries();
+  routeNetworkRadio->clear();
+  routeNetworkRadio->deInitQueries();
+  routeNetworkAirway->clear();
+  routeNetworkAirway->deInitQueries();
 }
 
 void RouteController::postDatabaseLoad()
 {
-  routeNetwork->initQueries();
+  routeNetworkRadio->initQueries();
+  routeNetworkAirway->initQueries();
   createRouteMapObjects();
   updateModel();
   updateWindowTitle();

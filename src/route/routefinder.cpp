@@ -16,18 +16,17 @@
 *****************************************************************************/
 
 #include "routefinder.h"
-#include "routenetworkradio.h"
 #include "geo/calculations.h"
 
 const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
-const float COST_FACTOR_NDB = 2.f;
-const float COST_FACTOR_VOR = 2.f;
+const float COST_FACTOR_NDB = 1.5f;
+const float COST_FACTOR_VOR = 1.2f;
 const float COST_FACTOR_DME = 4.f;
 
 using nw::Node;
 using atools::geo::Pos;
 
-RouteFinder::RouteFinder(RouteNetworkRadio *routeNetwork)
+RouteFinder::RouteFinder(RouteNetworkBase *routeNetwork)
   : network(routeNetwork)
 {
 
@@ -39,7 +38,7 @@ RouteFinder::~RouteFinder()
 }
 
 void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                                 QVector<maptypes::MapObjectRef>& route)
+                                 QVector<rf::RouteEntry>& route)
 {
   network->addStartAndDestinationNodes(from, to);
   Node startNode = network->getStartNode();
@@ -87,11 +86,16 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     while(predId != -1)
     {
       int navId;
-      nw::NodeType type;
+      nw::Type type;
       network->getNavIdAndTypeForNode(predId, navId, type);
 
       if(type != nw::START && type != nw::DESTINATION)
-        route.append({navId, toMapObjectType(type)});
+      {
+        rf::RouteEntry entry;
+        entry.ref = {navId, toMapObjectType(type)};
+        entry.airwayId = nodeAirwayId.value(predId, -1);
+        route.append(entry);
+      }
 
       predId = nodePredecessor.value(predId, -1);
     }
@@ -107,8 +111,9 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 {
   QVector<Node> successors;
   QVector<int> distancesMeter;
+  QVector<int> airwayIds;
 
-  network->getNeighbours(currentNode, successors, distancesMeter);
+  network->getNeighbours(currentNode, successors, &distancesMeter, &airwayIds);
 
   for(int i = 0; i < successors.size(); i++)
   {
@@ -118,6 +123,9 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
       continue;
 
     int distanceMeter = distancesMeter.at(i);
+    if(distanceMeter == 0)
+      // No distance given - have to calculate this here
+      distanceMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos) + 0.5f);
 
     float successorEdgeCosts = cost(currentNode, successor, distanceMeter);
     float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
@@ -126,6 +134,7 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
       // New path is not cheaper
       continue;
 
+    nodeAirwayId[successor.id] = airwayIds.at(i);
     nodePredecessor[successor.id] = currentNode.id;
     nodeCosts[successor.id] = successorNodeCosts;
 
@@ -143,7 +152,7 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, 
 {
   float costs = distanceMeter;
 
-  if(currentNode.range + successor.range < distanceMeter)
+  if((currentNode.range != 0 || successor.range != 0) && currentNode.range + successor.range < distanceMeter)
     costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
   if(successor.type == nw::DME)
@@ -163,7 +172,7 @@ float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& suc
   return currentNode.pos.distanceMeterTo(successor.pos);
 }
 
-maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
+maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::Type type)
 {
   switch(type)
   {

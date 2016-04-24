@@ -40,7 +40,8 @@ class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
 class QUndoStack;
-class RouteNetworkRadio;
+class RouteNetworkBase;
+class RouteFinder;
 
 class RouteController :
   public QObject
@@ -108,7 +109,7 @@ public:
   void reverse();
 
 private:
-  RouteNetworkRadio *routeNetwork;
+  RouteNetworkBase *routeNetworkRadio, *routeNetworkAirway;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;
@@ -165,6 +166,8 @@ private:
 
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
+
+  void calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type, const QString& commandName, bool fetchAirways);
 
 signals:
   void showRect(const atools::geo::Rect& rect);

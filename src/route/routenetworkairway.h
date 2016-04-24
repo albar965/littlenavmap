@@ -15,30 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetworkradio.h"
+#ifndef ROUTENETWORKAIRWAY_H
+#define ROUTENETWORKAIRWAY_H
 
-#include <sql/sqldatabase.h>
-#include <sql/sqlquery.h>
-#include <sql/sqlutil.h>
+#include "routenetworkbase.h"
 
-#include "geo/calculations.h"
-#include <geo/pos.h>
-#include <geo/rect.h>
+#include <QHash>
+#include <QVector>
 
-#include <QElapsedTimer>
+#include <common/maptypes.h>
 
-using atools::sql::SqlDatabase;
-using atools::sql::SqlQuery;
-using atools::geo::Pos;
-using atools::geo::Rect;
+class QSqlRecord;
 
-using namespace nw;
-
-RouteNetworkRadio::RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb)
-  : RouteNetworkBase(sqlDb, "route_node_radio", "route_edge_radio", {"range"}, {"distance"})
-{
+namespace  atools {
+namespace sql {
+class SqlDatabase;
+class SqlQuery;
+}
+namespace geo {
+class Pos;
+class Rect;
+}
 }
 
-RouteNetworkRadio::~RouteNetworkRadio()
+class RouteNetworkAirway :
+  public RouteNetworkBase
 {
-}
+public:
+  RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb);
+  virtual ~RouteNetworkAirway();
+
+};
+
+#endif // ROUTENETWORKAIRWAY_H

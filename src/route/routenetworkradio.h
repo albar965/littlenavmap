@@ -45,19 +45,7 @@ public:
   RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb);
   virtual ~RouteNetworkRadio();
 
-  virtual nw::Node getNodeByNavId(int id, nw::NodeType type);
-  virtual void getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type);
 
-  virtual void initQueries();
-  virtual void deInitQueries();
-
-private:
-  virtual nw::Node fetchNode(int id);
-  virtual nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
-
-  atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
-  *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
-  *edgeFromQuery = nullptr;
 
 };
 

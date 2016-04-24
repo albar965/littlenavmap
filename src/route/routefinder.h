@@ -20,23 +20,30 @@
 
 #include "common/maptypes.h"
 #include "heap.h"
-#include "route/routenetworkradio.h"
+#include "route/routenetworkbase.h"
 
-class RouteNetworkRadio;
+namespace rf {
+struct RouteEntry
+{
+  maptypes::MapObjectRef ref;
+  int airwayId;
+};
+
+}
 
 class RouteFinder
 {
 public:
-  RouteFinder(RouteNetworkRadio *routeNetwork);
+  RouteFinder(RouteNetworkBase *routeNetwork);
   virtual ~RouteFinder();
 
   void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                      QVector<maptypes::MapObjectRef>& route);
+                      QVector<rf::RouteEntry>& route);
 
 private:
   const float MAX_COST = std::numeric_limits<float>::max();
 
-  RouteNetworkRadio *network;
+  RouteNetworkBase *network;
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
   float cost(const nw::Node& node, const nw::Node& successor, int distanceMeter);
@@ -46,7 +53,8 @@ private:
   QSet<int> closedNodes;
   QHash<int, float> nodeCosts;
   QHash<int, int> nodePredecessor;
-  maptypes::MapObjectTypes toMapObjectType(nw::NodeType type);
+  QHash<int, int> nodeAirwayId;
+  maptypes::MapObjectTypes toMapObjectType(nw::Type type);
 
 };
 

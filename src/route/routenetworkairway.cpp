@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetworkradio.h"
+#include "routenetworkairway.h"
 
 #include <sql/sqldatabase.h>
 #include <sql/sqlquery.h>
@@ -34,11 +34,11 @@ using atools::geo::Rect;
 
 using namespace nw;
 
-RouteNetworkRadio::RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb)
-  : RouteNetworkBase(sqlDb, "route_node_radio", "route_edge_radio", {"range"}, {"distance"})
+RouteNetworkAirway::RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb)
+  : RouteNetworkBase(sqlDb, "route_node_airway", "route_edge_airway", {}, {"type", "minimum_altitude", "airway_id"})
 {
 }
 
-RouteNetworkRadio::~RouteNetworkRadio()
+RouteNetworkAirway::~RouteNetworkAirway()
 {
 }
