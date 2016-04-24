@@ -40,7 +40,7 @@ class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
 class QUndoStack;
-class RouteNetwork;
+class RouteNetworkRadio;
 
 class RouteController :
   public QObject
@@ -108,7 +108,7 @@ public:
   void reverse();
 
 private:
-  RouteNetwork *routeNetwork;
+  RouteNetworkRadio *routeNetwork;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;

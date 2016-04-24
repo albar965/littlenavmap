@@ -16,19 +16,18 @@
 *****************************************************************************/
 
 #include "routefinder.h"
-#include "routenetwork.h"
+#include "routenetworkradio.h"
 #include "geo/calculations.h"
 
-const float MAX_COST_FACTOR = 4000.f;
-const float COST_FACTOR_UNREACHABLE_RADIONAV = 1000.f;
-const float COST_FACTOR_NDB = 4.f;
-const float COST_FACTOR_VOR = 4.f;
-const float COST_FACTOR_DME = 100.f;
+const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
+const float COST_FACTOR_NDB = 2.f;
+const float COST_FACTOR_VOR = 2.f;
+const float COST_FACTOR_DME = 4.f;
 
 using nw::Node;
 using atools::geo::Pos;
 
-RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
+RouteFinder::RouteFinder(RouteNetworkRadio *routeNetwork)
   : network(routeNetwork)
 {
 
@@ -51,7 +50,7 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   if(startNode.edges.isEmpty())
     return;
 
-  openNodesHeap.push(startNode, costEstimate(startNode, destNode));
+  openNodesHeap.push(startNode, 0.f);
   nodeCosts[startNode.id] = 0.f;
 
   Node currentNode;
@@ -70,7 +69,7 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     // Contains nodes with known shortest path
     closedNodes.insert(currentNode.id);
 
-    if(closedNodes.size() > numNodesTotal / 4)
+    if(closedNodes.size() > numNodesTotal / 2)
       // If we read too much nodes routing will fail
       break;
 
@@ -144,7 +143,7 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, 
 {
   float costs = distanceMeter;
 
-  if(currentNode.range + successor.range < costs)
+  if(currentNode.range + successor.range < distanceMeter)
     costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
   if(successor.type == nw::DME)
@@ -159,14 +158,20 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, 
 
 float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& successor)
 {
+  // return 0.f;
   // Use largest factor to allow underestimate
-  return currentNode.pos.distanceMeterTo(successor.pos) * MAX_COST_FACTOR;
+  return currentNode.pos.distanceMeterTo(successor.pos);
 }
 
 maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
 {
   switch(type)
   {
+    case nw::WAYPOINT_JET:
+    case nw::WAYPOINT_VICTOR:
+    case nw::WAYPOINT_BOTH:
+      return maptypes::WAYPOINT;
+
     case nw::VOR:
     case nw::VORDME:
     case nw::DME:

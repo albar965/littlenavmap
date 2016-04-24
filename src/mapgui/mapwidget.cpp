@@ -51,7 +51,7 @@
 
 #include <QPainter>
 
-#include <route/routenetwork.h>
+#include <route/routenetworkradio.h>
 
 using namespace Marble;
 
@@ -1220,7 +1220,7 @@ void MapWidget::debugOnClick(int x, int y)
                               (maptypes::VOR | maptypes::NDB),
                               x, y, 10, mapSearchResult);
 
-  RouteNetwork net(mapQuery->getDatabase());
+  RouteNetworkRadio net(mapQuery->getDatabase());
   net.setMode( /*nw::ROUTE_DME |*/ nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
 
   nw::Node node;

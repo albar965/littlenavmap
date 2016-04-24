@@ -80,10 +80,11 @@ SOURCES += src/main.cpp\
     src/db/databasemeta.cpp \
     src/route/parkingdialog.cpp \
     src/route/routecommand.cpp \
-    src/route/routenetwork.cpp \
     src/route/routefinder.cpp \
     src/mapgui/mapwidget.cpp \
-    src/route/heap.cpp
+    src/route/heap.cpp \
+    src/route/routenetworkbase.cpp \
+    src/route/routenetworkradio.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -126,10 +127,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databasemeta.h \
     src/route/parkingdialog.h \
     src/route/routecommand.h \
-    src/route/routenetwork.h \
     src/route/routefinder.h \
     src/mapgui/mapwidget.h \
-    src/route/heap.h
+    src/route/heap.h \
+    src/route/routenetworkradio.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

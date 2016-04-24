@@ -20,14 +20,14 @@
 
 #include "common/maptypes.h"
 #include "heap.h"
-#include "route/routenetwork.h"
+#include "route/routenetworkradio.h"
 
-class RouteNetwork;
+class RouteNetworkRadio;
 
 class RouteFinder
 {
 public:
-  RouteFinder(RouteNetwork *routeNetwork);
+  RouteFinder(RouteNetworkRadio *routeNetwork);
   virtual ~RouteFinder();
 
   void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
@@ -36,7 +36,7 @@ public:
 private:
   const float MAX_COST = std::numeric_limits<float>::max();
 
-  RouteNetwork *network;
+  RouteNetworkRadio *network;
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
   float cost(const nw::Node& node, const nw::Node& successor, int distanceMeter);

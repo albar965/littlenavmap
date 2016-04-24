@@ -36,7 +36,7 @@
 #include "routecommand.h"
 #include "routefinder.h"
 #include "routeicondelegate.h"
-#include "routenetwork.h"
+#include "routenetworkradio.h"
 #include "ui_mainwindow.h"
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
@@ -80,7 +80,7 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  routeNetwork = new RouteNetwork(query->getDatabase());
+  routeNetwork = new RouteNetworkRadio(query->getDatabase());
 
   flightplan = new Flightplan();
   undoStack = new QUndoStack(parentWindow);
@@ -390,11 +390,12 @@ bool RouteController::hasEntries() const
 
 void RouteController::preDatabaseLoad()
 {
-
+  routeNetwork->deInitQueries();
 }
 
 void RouteController::postDatabaseLoad()
 {
+  routeNetwork->initQueries();
   createRouteMapObjects();
   updateModel();
   updateWindowTitle();
