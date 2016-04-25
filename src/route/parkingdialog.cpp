@@ -28,6 +28,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 {
   ui->setupUi(this);
 
+  ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
+
   const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(
     departureAirport.id);
 
