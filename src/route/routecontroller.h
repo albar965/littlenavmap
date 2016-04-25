@@ -147,7 +147,7 @@ private:
 
   void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
   void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                            atools::fs::pln::FlightplanEntry& entry);
+                            atools::fs::pln::FlightplanEntry& entry, int airwayId = -1);
   int nearestLeg(const atools::geo::Pos& pos);
 
   void updateFlightplanData();
@@ -167,7 +167,9 @@ private:
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
 
-  void calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type, const QString& commandName, bool fetchAirways);
+  void calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+                              const QString& commandName,
+                              bool fetchAirways);
 
 signals:
   void showRect(const atools::geo::Rect& rect);

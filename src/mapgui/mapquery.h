@@ -55,7 +55,15 @@ public:
 
   void getAirportAdminById(int airportId, QString& city, QString& state, QString& country);
 
-  void getAirportById(maptypes::MapAirport& airport, int id);
+  void getAirportById(maptypes::MapAirport& airport, int airportId);
+
+  void getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId);
+
+  void getAirwayById(maptypes::MapAirway& airway, int airwayId);
+
+  void getVorForWaypoint(maptypes::MapVor& vor, int waypointId);
+
+  void getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId);
 
   void getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
                            const QString& ident, const QString& region = QString());
@@ -89,9 +97,6 @@ public:
 
   const QList<maptypes::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                bool lazy);
-
-  void getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways);
-  void getAirwayById(int airwayId, maptypes::MapAirway& airway);
 
   const QList<maptypes::MapRunway> *getRunwaysForOverview(int airportId);
 
@@ -161,7 +166,8 @@ private:
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
-  atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *waypointByIdQuery = nullptr;
+  atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
+  *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;

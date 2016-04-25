@@ -1564,25 +1564,6 @@
          </item>
         </widget>
        </item>
-       <item>
-        <widget class="QComboBox" name="comboBoxRoutingType">
-         <item>
-          <property name="text">
-           <string>User</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Radionavs</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Airways</string>
-          </property>
-         </item>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>

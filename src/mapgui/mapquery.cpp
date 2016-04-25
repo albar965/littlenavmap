@@ -50,7 +50,7 @@ void MapQuery::getAirportAdminById(int airportId, QString& city, QString& state,
 {
   airportAdminByIdQuery->bindValue(":id", airportId);
   airportAdminByIdQuery->exec();
-  while(airportAdminByIdQuery->next())
+  if(airportAdminByIdQuery->next())
   {
     city = airportAdminByIdQuery->value("city").toString();
     state = airportAdminByIdQuery->value("state").toString();
@@ -62,11 +62,27 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
 {
   airportByIdQuery->bindValue(":id", airportId);
   airportByIdQuery->exec();
-  while(airportByIdQuery->next())
+  if(airportByIdQuery->next())
     mapTypesFactory->fillAirport(airportByIdQuery->record(), airport, true);
 }
 
-void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>& airways)
+void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
+{
+  vorByWaypointIdQuery->bindValue(":id", waypointId);
+  vorByWaypointIdQuery->exec();
+  if(vorByWaypointIdQuery->next())
+    mapTypesFactory->fillVor(vorByWaypointIdQuery->record(), vor);
+}
+
+void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
+{
+  ndbByWaypointIdQuery->bindValue(":id", waypointId);
+  ndbByWaypointIdQuery->exec();
+  if(ndbByWaypointIdQuery->next())
+    mapTypesFactory->fillNdb(ndbByWaypointIdQuery->record(), ndb);
+}
+
+void MapQuery::getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId)
 {
   airwayByWaypointIdQuery->bindValue(":id", waypointId);
   airwayByWaypointIdQuery->exec();
@@ -78,11 +94,11 @@ void MapQuery::getAirwaysForWaypoint(int waypointId, QList<maptypes::MapAirway>&
   }
 }
 
-void MapQuery::getAirwayById(int airwayId, maptypes::MapAirway& airway)
+void MapQuery::getAirwayById(maptypes::MapAirway& airway, int airwayId)
 {
   airwayByIdQuery->bindValue(":id", airwayId);
   airwayByIdQuery->exec();
-  while(airwayByIdQuery->next())
+  if(airwayByIdQuery->next())
     mapTypesFactory->fillAirway(airwayByIdQuery->record(), airway);
 }
 
@@ -145,7 +161,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
   {
     airportByIdQuery->bindValue(":id", id);
     airportByIdQuery->exec();
-    while(airportByIdQuery->next())
+    if(airportByIdQuery->next())
     {
       maptypes::MapAirport ap;
       mapTypesFactory->fillAirport(airportByIdQuery->record(), ap, true);
@@ -156,7 +172,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
   {
     vorByIdQuery->bindValue(":id", id);
     vorByIdQuery->exec();
-    while(vorByIdQuery->next())
+    if(vorByIdQuery->next())
     {
       maptypes::MapVor vor;
       mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
@@ -167,7 +183,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
   {
     ndbByIdQuery->bindValue(":id", id);
     ndbByIdQuery->exec();
-    while(ndbByIdQuery->next())
+    if(ndbByIdQuery->next())
     {
       maptypes::MapNdb ndb;
       mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
@@ -178,7 +194,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
   {
     waypointByIdQuery->bindValue(":id", id);
     waypointByIdQuery->exec();
-    while(waypointByIdQuery->next())
+    if(waypointByIdQuery->next())
     {
       maptypes::MapWaypoint wp;
       mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
@@ -797,63 +813,67 @@ void MapQuery::initQueries()
     "num_approach, num_runway_hard, num_runway_soft, num_runway_water, "
     "num_runway_light, num_runway_end_ils, num_helipad, "
     "longest_runway_length, longest_runway_heading, mag_var, "
-    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport ");
+    "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
 
   QString airwayQueryBase(
     "select airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-    "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty "
-    "from airway ");
+    "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
 
   static QString waypointQueryBase(
     "select waypoint_id, ident, region, type, num_victor_airway, num_jet_airway, "
-    "mag_var, lonx, laty "
-    "from waypoint");
+    "mag_var, lonx, laty ");
 
   static QString vorQueryBase(
     "select vor_id, ident, name, region, type, name, frequency, range, dme_only, dme_altitude, "
-    "mag_var, altitude, lonx, laty "
-    "from vor ");
+    "mag_var, altitude, lonx, laty ");
   static QString ndbQueryBase(
-    "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty "
-    "from ndb ");
+    "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
 
-  static QString parkingQueryBase =
-    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty "
-    "from parking";
+  static QString parkingQueryBase(
+    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty ");
 
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
-  airportByIdQuery->prepare(airportQueryBase + " where airport_id = :id ");
+  airportByIdQuery->prepare(airportQueryBase + " from airport where airport_id = :id ");
 
   airportAdminByIdQuery = new SqlQuery(db);
   airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
 
   airportByIdentQuery = new SqlQuery(db);
-  airportByIdentQuery->prepare(airportQueryBase + " where ident = :ident ");
+  airportByIdentQuery->prepare(airportQueryBase + " from airport where ident = :ident ");
 
   vorByIdentQuery = new SqlQuery(db);
-  vorByIdentQuery->prepare(vorQueryBase + " where " + whereIdentRegion);
+  vorByIdentQuery->prepare(vorQueryBase + " from vor where " + whereIdentRegion);
 
   ndbByIdentQuery = new SqlQuery(db);
-  ndbByIdentQuery->prepare(ndbQueryBase + " where " + whereIdentRegion);
+  ndbByIdentQuery->prepare(ndbQueryBase + " from ndb where " + whereIdentRegion);
 
   waypointByIdentQuery = new SqlQuery(db);
-  waypointByIdentQuery->prepare(waypointQueryBase + " where " + whereIdentRegion);
+  waypointByIdentQuery->prepare(waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
   vorByIdQuery = new SqlQuery(db);
-  vorByIdQuery->prepare(vorQueryBase + " where vor_id = :id");
+  vorByIdQuery->prepare(vorQueryBase + " from vor where vor_id = :id");
 
   ndbByIdQuery = new SqlQuery(db);
-  ndbByIdQuery->prepare(ndbQueryBase + " where ndb_id = :id");
+  ndbByIdQuery->prepare(ndbQueryBase + " from ndb where ndb_id = :id");
+
+  vorByWaypointIdQuery = new SqlQuery(db);
+  vorByWaypointIdQuery->prepare(vorQueryBase +
+                                " from vor where vor_id in "
+                                "(select nav_id from waypoint w where w.waypoint_id = :id)");
+
+  ndbByWaypointIdQuery = new SqlQuery(db);
+  ndbByWaypointIdQuery->prepare(ndbQueryBase +
+                                " from ndb where ndb_id in "
+                                "(select nav_id from waypoint w where w.waypoint_id = :id)");
 
   waypointByIdQuery = new SqlQuery(db);
-  waypointByIdQuery->prepare(waypointQueryBase + " where waypoint_id = :id");
+  waypointByIdQuery->prepare(waypointQueryBase + " from waypoint where waypoint_id = :id");
 
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
-    airportQueryBase + " where " + whereRect +
+    airportQueryBase + " from airport where " + whereRect +
     " and longest_runway_length >= :minlength order by rating desc, longest_runway_length desc "
     + whereLimit);
 
@@ -890,12 +910,12 @@ void MapQuery::initQueries()
     "from apron where airport_id = :airportId");
 
   parkingQuery = new SqlQuery(db);
-  parkingQuery->prepare(parkingQueryBase + " where airport_id = :airportId");
+  parkingQuery->prepare(parkingQueryBase + " from parking where airport_id = :airportId");
 
   parkingTypeAndNumberQuery = new SqlQuery(db);
   parkingTypeAndNumberQuery->prepare(
     parkingQueryBase +
-    " where airport_id = :airportId and name like :name and number = :number order by radius desc");
+    " from parking where airport_id = :airportId and name like :name and number = :number order by radius desc");
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
@@ -921,13 +941,13 @@ void MapQuery::initQueries()
     "where airport_id = :airportId");
 
   waypointsByRectQuery = new SqlQuery(db);
-  waypointsByRectQuery->prepare(waypointQueryBase + " where " + whereRect + " " + whereLimit);
+  waypointsByRectQuery->prepare(waypointQueryBase + " from waypoint where " + whereRect + " " + whereLimit);
 
   vorsByRectQuery = new SqlQuery(db);
-  vorsByRectQuery->prepare(vorQueryBase + " where " + whereRect + " " + whereLimit);
+  vorsByRectQuery->prepare(vorQueryBase + " from vor where " + whereRect + " " + whereLimit);
 
   ndbsByRectQuery = new SqlQuery(db);
-  ndbsByRectQuery->prepare(ndbQueryBase + " where " + whereRect + " " + whereLimit);
+  ndbsByRectQuery->prepare(ndbQueryBase + " from ndb where " + whereRect + " " + whereLimit);
 
   markersByRectQuery = new SqlQuery(db);
   markersByRectQuery->prepare(
@@ -943,14 +963,15 @@ void MapQuery::initQueries()
 
   airwayByRectQuery = new SqlQuery(db);
   airwayByRectQuery->prepare(
-    airwayQueryBase + " where " +
+    airwayQueryBase + " from airway where " +
     "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
 
   airwayByWaypointIdQuery = new SqlQuery(db);
-  airwayByWaypointIdQuery->prepare(airwayQueryBase + " where from_waypoint_id = :id or to_waypoint_id = :id");
+  airwayByWaypointIdQuery->prepare(
+    airwayQueryBase + " from airway where from_waypoint_id = :id or to_waypoint_id = :id");
 
   airwayByIdQuery = new SqlQuery(db);
-  airwayByIdQuery->prepare(airwayQueryBase + " where airway_id = :id");
+  airwayByIdQuery->prepare(airwayQueryBase + " from airway where airway_id = :id");
 }
 
 void MapQuery::deInitQueries()
@@ -1014,6 +1035,12 @@ void MapQuery::deInitQueries()
   vorByIdQuery = nullptr;
   delete ndbByIdQuery;
   ndbByIdQuery = nullptr;
+
+  delete vorByWaypointIdQuery;
+  vorByWaypointIdQuery = nullptr;
+  delete ndbByWaypointIdQuery;
+  ndbByWaypointIdQuery = nullptr;
+
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
 }

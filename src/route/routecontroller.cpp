@@ -167,7 +167,8 @@ void RouteController::routeTypeChanged()
 
 void RouteController::selectDepartureParking()
 {
-  ParkingDialog dialog(parentWindow, query, routeMapObjects.first().getAirport());
+  const maptypes::MapAirport& airport = routeMapObjects.first().getAirport();
+  ParkingDialog dialog(parentWindow, query, airport);
 
   int result = dialog.exec();
   dialog.hide();
@@ -315,8 +316,11 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   {
     RouteCommand *undoCommand = preChange(commandName);
 
+    QList<FlightplanEntry>& entries = flightplan->getEntries();
+
     flightplan->setRouteType(type);
-    flightplan->getEntries().erase(flightplan->getEntries().begin() + 1, flightplan->getEntries().end() - 1);
+    // Erase all but start and destination
+    entries.erase(flightplan->getEntries().begin() + 1, entries.end() - 1);
 
     maptypes::MapSearchResult result;
     for(rf::RouteEntry entry : route)
@@ -325,9 +329,11 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       query->getMapObjectById(result, entry.ref.type, entry.ref.id);
 
-      FlightplanEntry fpentry;
-      buildFlightplanEntry(entry.ref.id, atools::geo::EMPTY_POS, entry.ref.type, fpentry);
-      flightplan->getEntries().insert(1, fpentry);
+      FlightplanEntry flightplanEentry;
+      buildFlightplanEntry(entry.ref.id, atools::geo::EMPTY_POS, entry.ref.type, flightplanEentry,
+                           fetchAirways ? entry.airwayId : -1);
+
+      entries.insert(entries.end() - 1, flightplanEentry);
     }
 
     createRouteMapObjects();
@@ -934,7 +940,7 @@ void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, 
 }
 
 void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                                           FlightplanEntry& entry)
+                                           FlightplanEntry& entry, int airwayId)
 {
   maptypes::MapSearchResult result;
   query->getMapObjectById(result, type, id);
@@ -947,17 +953,53 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
     entry.setWaypointType(entry::AIRPORT);
     entry.setWaypointId(entry.getIcaoIdent());
   }
-  if(type == maptypes::PARKING)
+  else if(type == maptypes::PARKING)
   {
+    // TODO is this ever called with parking
   }
   else if(type == maptypes::WAYPOINT)
   {
+    if(airwayId != -1)
+    {
+      maptypes::MapAirway airway;
+      query->getAirwayById(airway, airwayId);
+      entry.setAirway(airway.name);
+    }
+
     const maptypes::MapWaypoint& wp = result.waypoints.first();
-    entry.setIcaoIdent(wp.ident);
-    entry.setPosition(wp.position);
-    entry.setIcaoRegion(wp.region);
-    entry.setWaypointType(entry::INTERSECTION);
-    entry.setWaypointId(entry.getIcaoIdent());
+
+    if(airwayId != -1 && wp.type == "VOR")
+    {
+      // Convert waypoint to underlying VOR for airway routes
+      maptypes::MapVor vor;
+      query->getVorForWaypoint(vor, wp.id);
+
+      entry.setIcaoIdent(vor.ident);
+      entry.setPosition(vor.position);
+      entry.setIcaoRegion(vor.region);
+      entry.setWaypointType(entry::VOR);
+      entry.setWaypointId(entry.getIcaoIdent());
+    }
+    else if(airwayId != -1 && wp.type == "NDB")
+    {
+      // Convert waypoint to underlying NDB for airway routes
+      maptypes::MapNdb ndb;
+      query->getNdbForWaypoint(ndb, wp.id);
+
+      entry.setIcaoIdent(ndb.ident);
+      entry.setPosition(ndb.position);
+      entry.setIcaoRegion(ndb.region);
+      entry.setWaypointType(entry::NDB);
+      entry.setWaypointId(entry.getIcaoIdent());
+    }
+    else
+    {
+      entry.setIcaoIdent(wp.ident);
+      entry.setPosition(wp.position);
+      entry.setIcaoRegion(wp.region);
+      entry.setWaypointType(entry::INTERSECTION);
+      entry.setWaypointId(entry.getIcaoIdent());
+    }
   }
   else if(type == maptypes::VOR)
   {

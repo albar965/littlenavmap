@@ -1260,7 +1260,8 @@ void MapWidget::debugOnClick(int x, int y)
   highlightMapObjects.airports.append(ap);
 
   QVector<nw::Node> neighbours;
-  net.getNeighbours(node, neighbours, nullptr, nullptr);
+  QVector<nw::Edge> edges;
+  net.getNeighbours(node, neighbours, edges);
 
   qDebug() << "=== num neighbors" << neighbours.size();
   for(const nw::Node& n : neighbours)
@@ -1601,7 +1602,7 @@ void MapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptypes::
     if(atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2(), true) < screenDistance)
     {
       maptypes::MapAirway airway;
-      mapQuery->getAirwayById(line.first, airway);
+      mapQuery->getAirwayById(airway, line.first);
       result.airways.append(airway);
     }
   }

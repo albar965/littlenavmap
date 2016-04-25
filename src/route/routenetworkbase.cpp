@@ -79,15 +79,13 @@ void RouteNetworkBase::clear()
 }
 
 void RouteNetworkBase::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours,
-                                     QVector<int> *distancesMeter, QVector<int> *airwayIds)
+                                     QVector<Edge>& edges)
 {
   for(const Edge& e : from.edges)
   {
+    // TODO single query fetch is expensive
     neighbours.append(fetchNode(e.toNodeId));
-    if(distancesMeter != nullptr)
-      distancesMeter->append(e.distanceMeter);
-    if(airwayIds != nullptr)
-      airwayIds->append(e.airwayId);
+    edges.append(e);
   }
 }
 
@@ -368,6 +366,7 @@ nw::Node RouteNetworkBase::createNode(const QSqlRecord& rec)
 
 nw::Edge RouteNetworkBase::createEdge(const QSqlRecord& rec, int toNodeId)
 {
+  // TODO expensive
   Edge edge;
   edge.toNodeId = toNodeId;
   edge.type = static_cast<nw::Type>(rec.value("type").toInt());

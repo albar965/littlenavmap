@@ -27,9 +27,15 @@ using nw::Node;
 using atools::geo::Pos;
 
 RouteFinder::RouteFinder(RouteNetworkBase *routeNetwork)
-  : network(routeNetwork)
+  : network(routeNetwork), openNodesHeap(5000)
 {
+  closedNodes.reserve(10000);
+  nodeCosts.reserve(10000);
+  nodePredecessor.reserve(10000);
+  nodeAirwayId.reserve(10000);
 
+  successorNodes.reserve(500);
+  successorEdges.reserve(500);
 }
 
 RouteFinder::~RouteFinder()
@@ -81,6 +87,7 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
 
   if(found)
   {
+    route.reserve(500);
     // Build route
     int predId = currentNode.id;
     while(predId != -1)
@@ -94,7 +101,7 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
         rf::RouteEntry entry;
         entry.ref = {navId, toMapObjectType(type)};
         entry.airwayId = nodeAirwayId.value(predId, -1);
-        route.append(entry);
+        route.prepend(entry);
       }
 
       predId = nodePredecessor.value(predId, -1);
@@ -109,22 +116,21 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
 
 void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
 {
-  QVector<Node> successors;
-  QVector<int> distancesMeter;
-  QVector<int> airwayIds;
+  successorNodes.clear();
+  successorEdges.clear();
+  network->getNeighbours(currentNode, successorNodes, successorEdges);
 
-  network->getNeighbours(currentNode, successors, &distancesMeter, &airwayIds);
-
-  for(int i = 0; i < successors.size(); i++)
+  for(int i = 0; i < successorNodes.size(); i++)
   {
-    const Node& successor = successors.at(i);
+    const Node& successor = successorNodes.at(i);
 
     if(closedNodes.contains(successor.id))
       continue;
 
-    int distanceMeter = distancesMeter.at(i);
+    int distanceMeter = successorEdges.at(i).distanceMeter;
+
     if(distanceMeter == 0)
-      // No distance given - have to calculate this here
+      // No distance given for airways - have to calculate this here
       distanceMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos) + 0.5f);
 
     float successorEdgeCosts = cost(currentNode, successor, distanceMeter);
@@ -134,7 +140,7 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
       // New path is not cheaper
       continue;
 
-    nodeAirwayId[successor.id] = airwayIds.at(i);
+    nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
     nodePredecessor[successor.id] = currentNode.id;
     nodeCosts[successor.id] = successorNodeCosts;
 
@@ -152,7 +158,8 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, 
 {
   float costs = distanceMeter;
 
-  if((currentNode.range != 0 || successor.range != 0) && currentNode.range + successor.range < distanceMeter)
+  if((currentNode.range != 0 || successor.range != 0) &&
+     currentNode.range + successor.range < distanceMeter)
     costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
   if(successor.type == nw::DME)

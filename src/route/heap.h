@@ -27,6 +27,11 @@ template<typename TYPE>
 class Heap
 {
 public:
+  Heap(int reserve)
+  {
+    heap.reserve(reserve);
+  }
+
   float pop(TYPE& data);
   void pop(TYPE& data, float& cost);
 
@@ -68,12 +73,23 @@ private:
     float cost;
 
     /* Only data is compared */
-    bool operator==(const HeapNode& other) const;
-    bool operator!=(const HeapNode& other) const;
+    bool operator==(const HeapNode& other) const
+    {
+      return this->data == other.data;
+    }
+
+    bool operator!=(const HeapNode& other) const
+    {
+      return this->data != other.data;
+    }
 
   };
 
-  bool compare(const HeapNode& n1, const HeapNode& n2);
+  bool compare(const Heap<TYPE>::HeapNode& n1, const Heap<TYPE>::HeapNode& n2)
+  {
+    // return ​true if the first argument is less than the second.
+    return n1.cost > n2.cost;
+  }
 
   std::function<bool(const HeapNode& n1, const HeapNode& n2)> compareFunc =
     std::bind(&Heap::compare, this, std::placeholders::_1, std::placeholders::_2);
@@ -114,25 +130,6 @@ void Heap<TYPE>::change(const TYPE& data, float cost)
   if(it != heap.end())
     it->cost = cost;
   std::make_heap(heap.begin(), heap.end(), compareFunc);
-}
-
-template<typename TYPE>
-bool Heap<TYPE>::compare(const Heap<TYPE>::HeapNode& n1, const Heap<TYPE>::HeapNode& n2)
-{
-  // return ​true if the first argument is less than the second.
-  return n1.cost > n2.cost;
-}
-
-template<typename TYPE>
-bool Heap<TYPE>::HeapNode::operator==(const HeapNode& other) const
-{
-  return this->data == other.data;
-}
-
-template<typename TYPE>
-bool Heap<TYPE>::HeapNode::operator!=(const HeapNode& other) const
-{
-  return this->data != other.data;
 }
 
 #endif // HEAP_H

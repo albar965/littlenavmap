@@ -172,7 +172,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     text += "<br/>Magvar: " + formatter::formatDoubleUnit(wp.magvar, QString(), 1) + " °";
 
     QList<MapAirway> airways;
-    query->getAirwaysForWaypoint(wp.id, airways);
+    query->getAirwaysForWaypoint(airways, wp.id);
 
     if(!airways.isEmpty())
     {

@@ -56,6 +56,11 @@ private:
   QHash<int, int> nodeAirwayId;
   maptypes::MapObjectTypes toMapObjectType(nw::Type type);
 
+  QVector<int> airwayAltitudes;
+
+  // For RouteNetwork::getNeighbours
+  QVector<nw::Node> successorNodes;
+  QVector<nw::Edge> successorEdges;
 };
 
 #endif // ROUTEFINDER_H

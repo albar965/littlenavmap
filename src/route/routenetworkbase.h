@@ -18,6 +18,7 @@
 #ifndef ROUTENETWORKBASE_H
 #define ROUTENETWORKBASE_H
 
+#include <QElapsedTimer>
 #include <QHash>
 #include <QVector>
 
@@ -165,7 +166,7 @@ public:
   *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
   *edgeFromQuery = nullptr;
 
-  void getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours, QVector<int>* distances, QVector<int>* airwayIds);
+  void getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours, QVector<nw::Edge>& edges);
   void addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
 
   void clear();
@@ -196,6 +197,7 @@ protected:
   atools::sql::SqlDatabase *db;
   nw::Modes mode;
   QHash<int, nw::Node> nodes;
+  QElapsedTimer timer;
 
   QString nodeTable, edgeTable;
   QStringList nodeExtraCols, edgeExtraCols;
