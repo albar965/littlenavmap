@@ -83,9 +83,24 @@ void RouteNetworkBase::getNeighbours(const nw::Node& from, QVector<nw::Node>& ne
 {
   for(const Edge& e : from.edges)
   {
-    // TODO single query fetch is expensive
-    neighbours.append(fetchNode(e.toNodeId));
-    edges.append(e);
+    bool add = false;
+
+    // Handle airways differently to keep cache for low and high alt routes
+    if(e.type == WAYPOINT_BOTH)
+      add = mode & ROUTE_JET || mode & ROUTE_VICTOR;
+    else if(e.type == WAYPOINT_JET)
+      add = mode & ROUTE_JET;
+    else if(e.type == WAYPOINT_VICTOR)
+      add = mode & ROUTE_VICTOR;
+    else
+      add = true;
+
+    if(add)
+    {
+      // TODO single query fetch is expensive
+      neighbours.append(fetchNode(e.toNodeId));
+      edges.append(e);
+    }
   }
 }
 
@@ -381,11 +396,7 @@ bool RouteNetworkBase::checkType(nw::Type type)
   switch(type)
   {
     case nw::WAYPOINT_VICTOR:
-      return mode & ROUTE_VICTOR;
-
     case nw::WAYPOINT_JET:
-      return mode & ROUTE_JET;
-
     case nw::WAYPOINT_BOTH:
       return mode & ROUTE_JET || mode & ROUTE_VICTOR;
 
