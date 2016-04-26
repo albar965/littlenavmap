@@ -1720,6 +1720,7 @@
    <addaction name="actionMapDefaultDetails"/>
    <addaction name="actionMapLessDetails"/>
    <addaction name="separator"/>
+   <addaction name="actionMapShowAddonAirports"/>
    <addaction name="actionMapShowAirports"/>
    <addaction name="actionMapShowSoftAirports"/>
    <addaction name="actionMapShowEmptyAirports"/>
@@ -2700,6 +2701,21 @@
    </property>
    <property name="text">
     <string>Route based on given Altitude</string>
+   </property>
+  </action>
+  <action name="actionMapShowAddonAirports">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Addon Airports</string>
    </property>
   </action>
  </widget>

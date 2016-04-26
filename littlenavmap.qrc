@@ -85,5 +85,6 @@
         <file>resources/icons/routedirect.svg</file>
         <file>resources/icons/routereverse.svg</file>
         <file>resources/icons/routealt.svg</file>
+        <file>resources/icons/airportaddon.svg</file>
     </qresource>
 </RCC>

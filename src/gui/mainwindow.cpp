@@ -325,6 +325,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowEmptyAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAddonAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -718,6 +719,7 @@ void MainWindow::readSettings()
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+              ui->actionMapShowAddonAirports,
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
               ui->actionMapShowRoute,
@@ -743,6 +745,7 @@ void MainWindow::writeSettings()
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+           ui->actionMapShowAddonAirports,
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
            ui->actionMapShowRoute,

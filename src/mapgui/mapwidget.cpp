@@ -137,11 +137,14 @@ void MapWidget::updateMapShowFeatures()
                      ui->actionMapShowSoftAirports->isChecked());
   setShowMapFeatures(maptypes::AIRPORT_EMPTY,
                      ui->actionMapShowEmptyAirports->isChecked());
+  setShowMapFeatures(maptypes::AIRPORT_ADDON,
+                     ui->actionMapShowAddonAirports->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT,
                      ui->actionMapShowAirports->isChecked() ||
                      ui->actionMapShowSoftAirports->isChecked() ||
-                     ui->actionMapShowEmptyAirports->isChecked());
+                     ui->actionMapShowEmptyAirports->isChecked() ||
+                     ui->actionMapShowAddonAirports->isChecked());
 
   setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
   setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
