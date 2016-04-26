@@ -387,9 +387,10 @@ void MainWindow::connectAllSlots()
           marbleAbout, &Marble::MarbleAboutDialog::exec);
 }
 
-void MainWindow::clearMessageText()
+void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
 {
-  messageLabel->clear();
+  messageLabel->setText(text);
+  messageLabel->setToolTip(tooltipText);
 }
 
 void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
@@ -397,8 +398,6 @@ void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
   qDebug() << "resultTruncated" << type << "num" << truncatedTo;
   if(truncatedTo > 0)
     messageLabel->setText(tr("Too many objects."));
-  else
-    messageLabel->clear();
 }
 
 void MainWindow::renderStatusChanged(RenderStatus status)

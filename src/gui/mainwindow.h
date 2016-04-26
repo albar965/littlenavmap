@@ -82,7 +82,7 @@ public:
     return routeController;
   }
 
-  void clearMessageText();
+  void setMessageText(const QString& text = QString(), const QString& tooltipText = QString());
 
 signals:
   /* Emitted when window is shown the first time */

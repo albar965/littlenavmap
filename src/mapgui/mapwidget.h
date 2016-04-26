@@ -234,6 +234,7 @@ private:
   void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
 
   void debugOnClick(int x, int y);
+  void updateVisibleObjects();
 };
 
 #endif // NAVMAPWIDGET_H

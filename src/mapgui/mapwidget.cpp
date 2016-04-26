@@ -147,6 +147,7 @@ void MapWidget::updateMapShowFeatures()
   setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
   setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
+  updateVisibleObjects();
   update();
 }
 
@@ -169,6 +170,7 @@ void MapWidget::setDetailFactor(int factor)
 {
   qDebug() << "setDetailFactor" << factor;
   paintLayer->setDetailFactor(factor);
+  updateVisibleObjects();
   updateAirwayScreenLines();
 }
 
@@ -1275,6 +1277,78 @@ void MapWidget::debugOnClick(int x, int y)
   update();
 }
 
+void MapWidget::updateVisibleObjects()
+{
+  const MapLayer *layer = paintLayer->getMapLayer();
+
+  if(layer != nullptr)
+  {
+    maptypes::MapObjectTypes shown = paintLayer->getShownMapFeatures();
+
+    QStringList visible;
+    QStringList visibleTooltip;
+
+    if(layer->isAirport() && shown & maptypes::AIRPORT_ALL)
+    {
+      QString ap("AP"), apTooltip("Airports");
+      if(layer->getDataSource() == layer::ALL)
+      {
+        if(layer->getMinRunwayLength() > 0)
+        {
+          ap.append(">" + QString::number(layer->getMinRunwayLength() / 100));
+          apTooltip.append(" with runway length > " + QString::number(layer->getMinRunwayLength()) + " ft");
+        }
+      }
+      else if(layer->getDataSource() == layer::MEDIUM)
+      {
+        ap.append(">40");
+        apTooltip.append(" with runway length > 4000 ft");
+      }
+      else if(layer->getDataSource() == layer::LARGE)
+      {
+        ap.append(">80,H");
+        apTooltip.append(" with runway length > 8000 ft and hard runways");
+      }
+
+      visible.append(ap);
+      visibleTooltip.append(apTooltip);
+    }
+
+    if(layer->isVor() && shown & maptypes::VOR)
+    {
+      visible.append("VOR");
+      visibleTooltip.append("VOR");
+    }
+    if(layer->isNdb() && shown & maptypes::NDB)
+    {
+      visible.append("NDB");
+      visibleTooltip.append("NDB");
+    }
+    if(layer->isIls() && shown & maptypes::ILS)
+    {
+      visible.append("ILS");
+      visibleTooltip.append("ILS");
+    }
+    if(layer->isWaypoint() && shown & maptypes::WAYPOINT)
+    {
+      visible.append("W");
+      visibleTooltip.append("Waypoints");
+    }
+    if(layer->isAirway() && shown & maptypes::AIRWAYJ)
+    {
+      visible.append("J");
+      visibleTooltip.append("Jet airways");
+    }
+    if(layer->isAirway() && shown & maptypes::AIRWAYV)
+    {
+      visible.append("V");
+      visibleTooltip.append("Victor airways");
+    }
+
+    parentWindow->setMessageText(visible.join(","), visibleTooltip.join("\n"));
+  }
+}
+
 void MapWidget::paintEvent(QPaintEvent *paintEvent)
 {
   bool changed = false;
@@ -1291,7 +1365,6 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     if(!changedByHistory)
       history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), distance());
     changedByHistory = false;
-    parentWindow->clearMessageText();
     changed = true;
   }
 
@@ -1299,6 +1372,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 
   if(changed)
   {
+    updateVisibleObjects();
     updateRouteScreenLines();
     updateAirwayScreenLines();
   }
