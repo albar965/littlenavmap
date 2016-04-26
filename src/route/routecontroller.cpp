@@ -528,7 +528,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   QModelIndex index = view->indexAt(pos);
   if(index.isValid())
   {
-    const RouteMapObject& mo = routeMapObjects.at(index.row());
+    const RouteMapObject& routeMapObject = routeMapObjects.at(index.row());
 
     QMenu menu;
 
@@ -549,9 +549,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionMapHideRangeRings->setEnabled(!parentWindow->getMapWidget()->getRangeRings().isEmpty());
 
-    ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
-    ui->actionMapNavaidRange->setEnabled(
-      mo.getMapObjectType() == maptypes::VOR || mo.getMapObjectType() == maptypes::NDB);
+    ui->actionMapNavaidRange->setText(tr("Show Navaid Ranges "));
+    ui->actionMapNavaidRange->setEnabled(false);
+    QList<RouteMapObject> selectedRouteMapObjects;
+    getSelectedRouteMapObjects(selectedRouteMapObjects);
+    for(const RouteMapObject& rmo : selectedRouteMapObjects)
+      if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
+      {
+        ui->actionMapNavaidRange->setEnabled(true);
+        break;
+      }
 
     menu.addAction(ui->actionSearchTableSelectAll);
 
@@ -578,13 +585,21 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else if(action == ui->actionSearchTableSelectAll)
         view->selectAll();
       else if(action == ui->actionSearchSetMark)
-        emit changeMark(mo.getPosition());
+        emit changeMark(routeMapObject.getPosition());
       else if(action == ui->actionMapRangeRings)
-        parentWindow->getMapWidget()->addRangeRing(mo.getPosition());
+        parentWindow->getMapWidget()->addRangeRing(routeMapObject.getPosition());
       else if(action == ui->actionMapNavaidRange)
-        parentWindow->getMapWidget()->addNavRangeRing(mo.getPosition(), mo.getMapObjectType(),
-                                                      mo.getIdent(), mo.getFrequency(),
-                                                      mo.getRange());
+      {
+
+        for(const RouteMapObject& rmo : selectedRouteMapObjects)
+        {
+          if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
+            parentWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
+                                                          rmo.getIdent(), rmo.getFrequency(),
+                                                          rmo.getRange());
+        }
+
+      }
       else if(action == ui->actionMapHideRangeRings)
         parentWindow->getMapWidget()->clearRangeRings();
     }
