@@ -83,9 +83,9 @@ SOURCES += src/main.cpp\
     src/route/routefinder.cpp \
     src/mapgui/mapwidget.cpp \
     src/route/heap.cpp \
-    src/route/routenetworkbase.cpp \
     src/route/routenetworkradio.cpp \
-    src/route/routenetworkairway.cpp
+    src/route/routenetworkairway.cpp \
+    src/route/routenetwork.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -132,7 +132,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mapwidget.h \
     src/route/heap.h \
     src/route/routenetworkradio.h \
-    src/route/routenetworkairway.h
+    src/route/routenetworkairway.h \
+    src/route/routenetwork.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

@@ -35,7 +35,7 @@ using atools::geo::Rect;
 using namespace nw;
 
 RouteNetworkRadio::RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb)
-  : RouteNetworkBase(sqlDb, "route_node_radio", "route_edge_radio", {"range"}, {"distance"})
+  : RouteNetwork(sqlDb, "route_node_radio", "route_edge_radio", {"range"}, {"distance"})
 {
 }
 

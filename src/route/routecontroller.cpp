@@ -283,7 +283,7 @@ void RouteController::calculateRadionav()
 
   RouteFinder routeFinder(routeNetworkRadio);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav route", false);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav route", false, false);
 }
 
 void RouteController::calculateHighAlt()
@@ -293,7 +293,7 @@ void RouteController::calculateHighAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude route", true);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude route", true, false);
 }
 
 void RouteController::calculateLowAlt()
@@ -303,15 +303,40 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude route", true);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude route", true, false);
+}
+
+void RouteController::calculateSetAlt()
+{
+  qDebug() << "calculateSetAlt";
+  routeNetworkAirway->setMode(nw::ROUTE_VICTOR | nw::ROUTE_JET);
+
+  RouteFinder routeFinder(routeNetworkAirway);
+
+  atools::fs::pln::RouteType type;
+  if(flightplan->getCruisingAlt() > 20000)
+    type = atools::fs::pln::HIGH_ALT;
+  else
+    type = atools::fs::pln::LOW_ALT;
+
+  calculateRouteInternal(&routeFinder, type, "Low altitude route", true, true);
 }
 
 void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
-                                             const QString& commandName, bool fetchAirways)
+                                             const QString& commandName, bool fetchAirways,
+                                             bool useSetAltitude)
 {
   QVector<rf::RouteEntry> route;
 
-  routeFinder->calculateRoute(flightplan->getDeparturePos(), flightplan->getDestinationPos(), route);
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  int altitude = 0;
+  if(useSetAltitude)
+    altitude = flightplan->getCruisingAlt();
+
+  routeFinder->calculateRoute(flightplan->getDeparturePos(),
+                              flightplan->getDestinationPos(), route,
+                              altitude);
 
   if(!route.isEmpty())
   {
@@ -323,20 +348,32 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     // Erase all but start and destination
     entries.erase(flightplan->getEntries().begin() + 1, entries.end() - 1);
 
+    int minAltitude = 0;
     maptypes::MapSearchResult result;
-    for(rf::RouteEntry entry : route)
+    for(const rf::RouteEntry& routeEntry : route)
     {
-      qDebug() << "Route id" << entry.ref.id << "type" << entry.ref.type;
+      qDebug() << "Route id" << routeEntry.ref.id << "type" << routeEntry.ref.type;
 
-      query->getMapObjectById(result, entry.ref.type, entry.ref.id);
+      query->getMapObjectById(result, routeEntry.ref.type, routeEntry.ref.id);
 
       FlightplanEntry flightplanEentry;
-      buildFlightplanEntry(entry.ref.id, atools::geo::EMPTY_POS, entry.ref.type, flightplanEentry,
-                           fetchAirways ? entry.airwayId : -1);
+      buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type, flightplanEentry,
+                           fetchAirways);
+
+      if(fetchAirways && routeEntry.airwayId != -1)
+      {
+        int alt = 0;
+        updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEentry, alt);
+        minAltitude = std::max(minAltitude, alt);
+      }
 
       entries.insert(entries.end() - 1, flightplanEentry);
-    }
 
+    }
+    if(minAltitude != 0)
+      flightplan->setCruisingAlt(minAltitude);
+
+    QGuiApplication::restoreOverrideCursor();
     createRouteMapObjects();
     updateModel();
     updateLabel();
@@ -346,6 +383,7 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   }
   else
   {
+    QGuiApplication::restoreOverrideCursor();
     QMessageBox::information(parentWindow,
                              QApplication::applicationName(),
                              "Routing failed. Start or destination are not reachable.");
@@ -940,8 +978,16 @@ void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, 
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
+void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry, int& minAltitude)
+{
+  maptypes::MapAirway airway;
+  query->getAirwayById(airway, airwayId);
+  entry.setAirway(airway.name);
+  minAltitude = airway.minalt;
+}
+
 void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                                           FlightplanEntry& entry, int airwayId)
+                                           FlightplanEntry& entry, bool resolveWaypoints)
 {
   maptypes::MapSearchResult result;
   query->getMapObjectById(result, type, id);
@@ -960,16 +1006,9 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
   }
   else if(type == maptypes::WAYPOINT)
   {
-    if(airwayId != -1)
-    {
-      maptypes::MapAirway airway;
-      query->getAirwayById(airway, airwayId);
-      entry.setAirway(airway.name);
-    }
-
     const maptypes::MapWaypoint& wp = result.waypoints.first();
 
-    if(airwayId != -1 && wp.type == "VOR")
+    if(resolveWaypoints && wp.type == "VOR")
     {
       // Convert waypoint to underlying VOR for airway routes
       maptypes::MapVor vor;
@@ -981,7 +1020,7 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
       entry.setWaypointType(entry::VOR);
       entry.setWaypointId(entry.getIcaoIdent());
     }
-    else if(airwayId != -1 && wp.type == "NDB")
+    else if(resolveWaypoints && wp.type == "NDB")
     {
       // Convert waypoint to underlying NDB for airway routes
       maptypes::MapNdb ndb;
@@ -1263,10 +1302,32 @@ void RouteController::updateLabel()
     if(flightplan->getEntries().last().getWaypointType() == entry::AIRPORT)
       destAirport = flightplan->getDestinationAiportName() +
                     " (" + flightplan->getDestinationIdent() + ")";
+
+    QString routeType;
+    switch(flightplan->getRouteType())
+    {
+      case atools::fs::pln::UNKNOWN_ROUTE:
+        break;
+      case atools::fs::pln::LOW_ALT:
+        routeType = ", Low Altitude";
+        break;
+      case atools::fs::pln::HIGH_ALT:
+        routeType = ", High Altitude";
+        break;
+      case atools::fs::pln::VOR:
+        routeType = ", Radionav";
+        break;
+      case atools::fs::pln::DIRECT:
+        routeType = ", Direct";
+        break;
+
+    }
+    float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
     ui->labelRouteInfo->setText("<b>" + startAirport + "</b> to <b>" + destAirport + "</b>, " +
                                 QString::number(totalDistance, 'f', 0) + " nm, " +
-                                formatter::formatMinutesHoursLong(
-                                  totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value())));
+                                formatter::formatMinutesHoursLong(travelTime) +
+                                routeType
+                                );
   }
   else
     ui->labelRouteInfo->setText(tr("No Flightplan loaded"));

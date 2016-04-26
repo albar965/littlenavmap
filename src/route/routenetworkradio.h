@@ -18,7 +18,7 @@
 #ifndef ROUTENETWORKRADIO_H
 #define ROUTENETWORKRADIO_H
 
-#include "routenetworkbase.h"
+#include "routenetwork.h"
 
 #include <QHash>
 #include <QVector>
@@ -39,7 +39,7 @@ class Rect;
 }
 
 class RouteNetworkRadio :
-  public RouteNetworkBase
+  public RouteNetwork
 {
 public:
   RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb);

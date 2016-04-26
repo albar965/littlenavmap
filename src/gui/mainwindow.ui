@@ -89,6 +89,7 @@
    <addaction name="actionRouteCalcRadionav"/>
    <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcLowAlt"/>
+   <addaction name="actionRouteCalcSetAlt"/>
    <addaction name="actionRouteReverse"/>
    <addaction name="actionRouteSettings"/>
   </widget>
@@ -1537,16 +1538,16 @@
           <string> ft</string>
          </property>
          <property name="minimum">
-          <number>500</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <number>60000</number>
+          <number>80000</number>
          </property>
          <property name="singleStep">
           <number>500</number>
          </property>
          <property name="value">
-          <number>5000</number>
+          <number>10000</number>
          </property>
         </widget>
        </item>
@@ -2690,6 +2691,15 @@
    </property>
    <property name="toolTip">
     <string>About the Marble Widget</string>
+   </property>
+  </action>
+  <action name="actionRouteCalcSetAlt">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Route based on given Altitude</string>
    </property>
   </action>
  </widget>

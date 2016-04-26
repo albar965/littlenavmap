@@ -84,5 +84,6 @@
         <file>resources/icons/routehigh.svg</file>
         <file>resources/icons/routedirect.svg</file>
         <file>resources/icons/routereverse.svg</file>
+        <file>resources/icons/routealt.svg</file>
     </qresource>
 </RCC>

@@ -40,7 +40,7 @@ class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
 class QUndoStack;
-class RouteNetworkBase;
+class RouteNetwork;
 class RouteFinder;
 
 class RouteController :
@@ -106,10 +106,11 @@ public:
   void calculateRadionav();
   void calculateHighAlt();
   void calculateLowAlt();
+  void calculateSetAlt();
   void reverse();
 
 private:
-  RouteNetworkBase *routeNetworkRadio, *routeNetworkAirway;
+  RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
   QList<RouteMapObject> routeMapObjects;
@@ -147,7 +148,7 @@ private:
 
   void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
   void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                            atools::fs::pln::FlightplanEntry& entry, int airwayId = -1);
+                            atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints = -1);
   int nearestLeg(const atools::geo::Pos& pos);
 
   void updateFlightplanData();
@@ -169,7 +170,9 @@ private:
 
   void calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
-                              bool fetchAirways);
+                              bool fetchAirways, bool useSetAltitude);
+
+  void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry, int& minAltitude);
 
 signals:
   void showRect(const atools::geo::Rect& rect);

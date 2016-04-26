@@ -18,7 +18,7 @@
 #ifndef ROUTENETWORKAIRWAY_H
 #define ROUTENETWORKAIRWAY_H
 
-#include "routenetworkbase.h"
+#include "routenetwork.h"
 
 #include <QHash>
 #include <QVector>
@@ -39,7 +39,7 @@ class Rect;
 }
 
 class RouteNetworkAirway :
-  public RouteNetworkBase
+  public RouteNetwork
 {
 public:
   RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb);

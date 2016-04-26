@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetworkbase.h"
+#include "routenetwork.h"
 
 #include <sql/sqldatabase.h>
 #include <sql/sqlquery.h>
@@ -34,9 +34,9 @@ using atools::geo::Rect;
 
 using namespace nw;
 
-RouteNetworkBase::RouteNetworkBase(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
-                                   const QString& edgeTableName, const QStringList& nodeExtraColumns,
-                                   const QStringList& edgeExtraColumns)
+RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
+                           const QString& edgeTableName, const QStringList& nodeExtraColumns,
+                           const QStringList& edgeExtraColumns)
   : db(sqlDb), nodeTable(nodeTableName), edgeTable(edgeTableName), nodeExtraCols(nodeExtraColumns),
     edgeExtraCols(edgeExtraColumns)
 {
@@ -45,29 +45,29 @@ RouteNetworkBase::RouteNetworkBase(atools::sql::SqlDatabase *sqlDb, const QStrin
   initQueries();
 }
 
-RouteNetworkBase::~RouteNetworkBase()
+RouteNetwork::~RouteNetwork()
 {
   deInitQueries();
 }
 
-int RouteNetworkBase::getNumberOfNodesDatabase()
+int RouteNetwork::getNumberOfNodesDatabase()
 {
   if(numNodesDb == -1)
     numNodesDb = atools::sql::SqlUtil(db).rowCount(nodeTable);
   return numNodesDb;
 }
 
-int RouteNetworkBase::getNumberOfNodesCache() const
+int RouteNetwork::getNumberOfNodesCache() const
 {
   return nodes.size();
 }
 
-void RouteNetworkBase::setMode(nw::Modes routeMode)
+void RouteNetwork::setMode(nw::Modes routeMode)
 {
   mode = routeMode;
 }
 
-void RouteNetworkBase::clear()
+void RouteNetwork::clear()
 {
   startNodeRect = atools::geo::EMPTY_RECT;
   destinationNodeRect = atools::geo::EMPTY_RECT;
@@ -78,8 +78,8 @@ void RouteNetworkBase::clear()
   numNodesDb = -1;
 }
 
-void RouteNetworkBase::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours,
-                                     QVector<Edge>& edges)
+void RouteNetwork::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours,
+                                 QVector<Edge>& edges)
 {
   for(const Edge& e : from.edges)
   {
@@ -104,7 +104,7 @@ void RouteNetworkBase::getNeighbours(const nw::Node& from, QVector<nw::Node>& ne
   }
 }
 
-void RouteNetworkBase::addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
+void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
 {
   qDebug() << "adding start and  destination to network";
 
@@ -135,17 +135,17 @@ void RouteNetworkBase::addStartAndDestinationNodes(const atools::geo::Pos& from,
   qDebug() << "adding start and  destination to network done";
 }
 
-nw::Node RouteNetworkBase::getStartNode() const
+nw::Node RouteNetwork::getStartNode() const
 {
   return nodes.value(START_NODE_ID);
 }
 
-nw::Node RouteNetworkBase::getDestinationNode() const
+nw::Node RouteNetwork::getDestinationNode() const
 {
   return nodes.value(DESTINATION_NODE_ID);
 }
 
-void RouteNetworkBase::cleanDestNodeEdges()
+void RouteNetwork::cleanDestNodeEdges()
 {
   // Remove all references to destination node
   for(int i : destinationNodePredecessors)
@@ -161,7 +161,7 @@ void RouteNetworkBase::cleanDestNodeEdges()
   destinationNodePredecessors.clear();
 }
 
-void RouteNetworkBase::addDestNodeEdges(nw::Node& node)
+void RouteNetwork::addDestNodeEdges(nw::Node& node)
 {
   if(destinationNodeRect.contains(node.pos) && !destinationNodePredecessors.contains(node.id) &&
      node.id != DESTINATION_NODE_ID)
@@ -174,7 +174,7 @@ void RouteNetworkBase::addDestNodeEdges(nw::Node& node)
   }
 }
 
-nw::Node RouteNetworkBase::getNodeByNavId(int id, nw::Type type)
+nw::Node RouteNetwork::getNodeByNavId(int id, nw::Type type)
 {
   nodeByNavIdQuery->bindValue(":id", id);
   nodeByNavIdQuery->bindValue(":type", type);
@@ -186,7 +186,7 @@ nw::Node RouteNetworkBase::getNodeByNavId(int id, nw::Type type)
   return Node();
 }
 
-void RouteNetworkBase::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type)
+void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type)
 {
   if(nodeId == START_NODE_ID)
   {
@@ -216,7 +216,7 @@ void RouteNetworkBase::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& 
   }
 }
 
-nw::Node RouteNetworkBase::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
+nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
 {
   const int MAX_RANGE = atools::geo::nmToMeter(200);
 
@@ -266,7 +266,7 @@ nw::Node RouteNetworkBase::fetchNode(float lonx, float laty, bool loadSuccessors
   return node;
 }
 
-nw::Node RouteNetworkBase::fetchNode(int id)
+nw::Node RouteNetwork::fetchNode(int id)
 {
   if(nodes.contains(id))
     return nodes.value(id);
@@ -311,7 +311,7 @@ nw::Node RouteNetworkBase::fetchNode(int id)
   return Node();
 }
 
-void RouteNetworkBase::initQueries()
+void RouteNetwork::initQueries()
 {
   QString nodeCols = nodeExtraCols.join(",");
   if(!nodeExtraCols.isEmpty())
@@ -347,7 +347,7 @@ void RouteNetworkBase::initQueries()
     " where to_node_id = :id");
 }
 
-void RouteNetworkBase::deInitQueries()
+void RouteNetwork::deInitQueries()
 {
   delete nodeByNavIdQuery;
   nodeByNavIdQuery = nullptr;
@@ -368,30 +368,56 @@ void RouteNetworkBase::deInitQueries()
   edgeFromQuery = nullptr;
 }
 
-nw::Node RouteNetworkBase::createNode(const QSqlRecord& rec)
+nw::Node RouteNetwork::createNode(const QSqlRecord& rec)
 {
+  updateNodeIndexes(rec);
   Node node;
-  node.id = rec.value("node_id").toInt();
-  node.type = static_cast<nw::Type>(rec.value("type").toInt());
-  node.range = rec.value("range").toInt();
-  node.pos.setLonX(rec.value("lonx").toFloat());
-  node.pos.setLatY(rec.value("laty").toFloat());
+  node.id = rec.value(nodeIdIndex).toInt();
+  node.type = static_cast<nw::Type>(rec.value(nodeTypeIndex).toInt());
+  node.range = rec.value(nodeRangeIndex).toInt();
+  node.pos.setLonX(rec.value(nodeLonXIndex).toFloat());
+  node.pos.setLatY(rec.value(nodeLatYIndex).toFloat());
   return node;
 }
 
-nw::Edge RouteNetworkBase::createEdge(const QSqlRecord& rec, int toNodeId)
+void RouteNetwork::updateNodeIndexes(const QSqlRecord& rec)
 {
-  // TODO expensive
+  if(!nodeIndexesCreated)
+  {
+    nodeIdIndex = rec.indexOf("node_id");
+    nodeTypeIndex = rec.indexOf("type");
+    nodeRangeIndex = rec.indexOf("range");
+    nodeLonXIndex = rec.indexOf("lonx");
+    nodeLatYIndex = rec.indexOf("laty");
+    nodeIndexesCreated = true;
+  }
+}
+
+nw::Edge RouteNetwork::createEdge(const QSqlRecord& rec, int toNodeId)
+{
+  updateEdgeIndexes(rec);
   Edge edge;
   edge.toNodeId = toNodeId;
-  edge.type = static_cast<nw::Type>(rec.value("type").toInt());
-  edge.minAltFt = rec.value("minimum_altitude").toInt();
-  edge.airwayId = rec.value("airway_id").toInt();
-  edge.distanceMeter = rec.value("distance").toInt();
+  edge.type = static_cast<nw::Type>(rec.value(edgeTypeIndex).toInt());
+  edge.minAltFt = rec.value(edgeMinAltIndex).toInt();
+  edge.airwayId = rec.value(edgeAirwayIdIndex).toInt();
+  edge.distanceMeter = rec.value(edgeDistanceIndex).toInt();
   return edge;
 }
 
-bool RouteNetworkBase::checkType(nw::Type type)
+void RouteNetwork::updateEdgeIndexes(const QSqlRecord& rec)
+{
+  if(!edgeIndexesCreated)
+  {
+    edgeTypeIndex = rec.indexOf("type");
+    edgeMinAltIndex = rec.indexOf("minimum_altitude");
+    edgeAirwayIdIndex = rec.indexOf("airway_id");
+    edgeDistanceIndex = rec.indexOf("distance");
+    edgeIndexesCreated = true;
+  }
+}
+
+bool RouteNetwork::checkType(nw::Type type)
 {
   switch(type)
   {
@@ -423,7 +449,7 @@ bool RouteNetworkBase::checkType(nw::Type type)
   return false;
 }
 
-void RouteNetworkBase::bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)
+void RouteNetwork::bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)
 {
   query->bindValue(":leftx", rect.getWest());
   query->bindValue(":rightx", rect.getEast());

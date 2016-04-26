@@ -287,6 +287,8 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::calculateHighAlt);
   connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
           routeController, &RouteController::calculateLowAlt);
+  connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
+          routeController, &RouteController::calculateSetAlt);
   connect(ui->actionRouteReverse, &QAction::triggered,
           routeController, &RouteController::reverse);
 
@@ -651,6 +653,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteCalcRadionav->setEnabled(hasStartAndDest);
   ui->actionRouteCalcHighAlt->setEnabled(hasStartAndDest);
   ui->actionRouteCalcLowAlt->setEnabled(hasStartAndDest);
+  ui->actionRouteCalcSetAlt->setEnabled(hasStartAndDest && ui->spinBoxRouteAlt->value() > 0);
   ui->actionRouteReverse->setEnabled(hasFlightplan);
 
   ui->actionMapShowHome->setEnabled(navMapWidget->getHomePos().isValid());

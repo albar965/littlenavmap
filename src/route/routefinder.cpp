@@ -18,15 +18,11 @@
 #include "routefinder.h"
 #include "geo/calculations.h"
 
-const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
-const float COST_FACTOR_NDB = 1.5f;
-const float COST_FACTOR_VOR = 1.2f;
-const float COST_FACTOR_DME = 4.f;
-
 using nw::Node;
+using nw::Edge;
 using atools::geo::Pos;
 
-RouteFinder::RouteFinder(RouteNetworkBase *routeNetwork)
+RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
   : network(routeNetwork), openNodesHeap(5000)
 {
   closedNodes.reserve(10000);
@@ -44,8 +40,9 @@ RouteFinder::~RouteFinder()
 }
 
 void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                                 QVector<rf::RouteEntry>& route)
+                                 QVector<rf::RouteEntry>& route, int flownAltitude)
 {
+  altitude = flownAltitude;
   network->addStartAndDestinationNodes(from, to);
   Node startNode = network->getStartNode();
   Node destNode = network->getDestinationNode();
@@ -127,7 +124,12 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     if(closedNodes.contains(successor.id))
       continue;
 
-    int distanceMeter = successorEdges.at(i).distanceMeter;
+    const Edge& edge = successorEdges.at(i);
+
+    if(altitude > 0 && edge.minAltFt > 0 && altitude < edge.minAltFt)
+      continue;
+
+    int distanceMeter = edge.distanceMeter;
 
     if(distanceMeter == 0)
       // No distance given for airways - have to calculate this here
@@ -145,28 +147,31 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     nodeCosts[successor.id] = successorNodeCosts;
 
     // Costs from start to successor + estimate to destination = sort order in heap
-    float f = successorNodeCosts + costEstimate(successor, destNode);
+    float totalCost = successorNodeCosts + costEstimate(successor, destNode);
 
     if(openNodesHeap.contains(successor))
-      openNodesHeap.change(successor, f);
+      openNodesHeap.change(successor, totalCost);
     else
-      openNodesHeap.push(successor, f);
+      openNodesHeap.push(successor, totalCost);
   }
 }
 
-float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successor, int distanceMeter)
+float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNode, int distanceMeter)
 {
   float costs = distanceMeter;
 
-  if((currentNode.range != 0 || successor.range != 0) &&
-     currentNode.range + successor.range < distanceMeter)
+  if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
+    costs *= COST_FACTOR_FORCE_CLOSE_NODES;
+
+  if((currentNode.range != 0 || successorNode.range != 0) &&
+     currentNode.range + successorNode.range < distanceMeter)
     costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
-  if(successor.type == nw::DME)
+  if(successorNode.type == nw::DME)
     costs *= COST_FACTOR_DME;
-  else if(successor.type == nw::VOR)
+  else if(successorNode.type == nw::VOR)
     costs *= COST_FACTOR_VOR;
-  else if(successor.type == nw::NDB)
+  else if(successorNode.type == nw::NDB)
     costs *= COST_FACTOR_NDB;
 
   return costs;

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTENETWORKBASE_H
-#define ROUTENETWORKBASE_H
+#ifndef ROUTENETWORK_H
+#define ROUTENETWORK_H
 
 #include <QElapsedTimer>
 #include <QHash>
@@ -73,8 +73,8 @@ struct Edge
   {
   }
 
-  Edge(int to, int distance = 0, int minimumAltitude = -1, nw::Type edgeType = nw::NONE)
-    : toNodeId(to), distanceMeter(distance), minAltFt(minimumAltitude), type(edgeType)
+  Edge(int to, int distance = 0, int minimumAltitude = 0, nw::Type edgeType = nw::NONE)
+    : toNodeId(to), distanceMeter(distance), minAltFt(minimumAltitude), airwayId(-1), type(edgeType)
   {
 
   }
@@ -139,13 +139,13 @@ inline int qHash(const nw::Node& node)
 Q_DECLARE_TYPEINFO(nw::Node, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(nw::Edge, Q_PRIMITIVE_TYPE);
 
-class RouteNetworkBase
+class RouteNetwork
 {
 public:
-  RouteNetworkBase(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
-                   const QString& edgeTableName, const QStringList& nodeExtraColumns,
-                   const QStringList& edgeExtraColumns);
-  virtual ~RouteNetworkBase();
+  RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
+               const QString& edgeTableName, const QStringList& nodeExtraColumns,
+               const QStringList& edgeExtraColumns);
+  virtual ~RouteNetwork();
 
   void setMode(nw::Modes mode);
 
@@ -177,6 +177,11 @@ public:
   int getNumberOfNodesDatabase();
   int getNumberOfNodesCache() const;
 
+  bool isAirwayRouting() const
+  {
+    return mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
+  }
+
 protected:
   void addDestNodeEdges(nw::Node& node);
   void cleanDestNodeEdges();
@@ -185,6 +190,9 @@ protected:
   bool checkType(nw::Type type);
   nw::Node createNode(const QSqlRecord& rec);
   nw::Edge createEdge(const QSqlRecord& rec, int toNodeId);
+
+  void updateNodeIndexes(const QSqlRecord& rec);
+  void updateEdgeIndexes(const QSqlRecord& rec);
 
   const int START_NODE_ID = -10;
   const int DESTINATION_NODE_ID = -20;
@@ -201,6 +209,13 @@ protected:
 
   QString nodeTable, edgeTable;
   QStringList nodeExtraCols, edgeExtraCols;
+
+  bool nodeIndexesCreated = false;
+  int nodeIdIndex = -1, nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
+
+  bool edgeIndexesCreated = false;
+  int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1, edgeDistanceIndex = -1;
+
 };
 
-#endif // ROUTENETWORKBASE_H
+#endif // ROUTENETWORK_H

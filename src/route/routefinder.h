@@ -20,7 +20,7 @@
 
 #include "common/maptypes.h"
 #include "heap.h"
-#include "route/routenetworkbase.h"
+#include "route/routenetwork.h"
 
 namespace rf {
 struct RouteEntry
@@ -34,19 +34,30 @@ struct RouteEntry
 class RouteFinder
 {
 public:
-  RouteFinder(RouteNetworkBase *routeNetwork);
+  RouteFinder(RouteNetwork *routeNetwork);
   virtual ~RouteFinder();
 
   void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                      QVector<rf::RouteEntry>& route);
+                      QVector<rf::RouteEntry>& route, int flownAltitude);
 
 private:
-  const float MAX_COST = std::numeric_limits<float>::max();
+  // Force algortihm to use close waypoints near start and destination
+  const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5;
+  // Increase costs to force reception of at least one radio navaid along the route
+  const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
+  // Try to avoid NDBs
+  const float COST_FACTOR_NDB = 1.5f;
+  // Try to avoid VORs (no DME)
+  const float COST_FACTOR_VOR = 1.2f;
+  // Avoid DMEs
+  const float COST_FACTOR_DME = 4.f;
 
-  RouteNetworkBase *network;
+  int altitude = 0;
+
+  RouteNetwork *network;
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
-  float cost(const nw::Node& node, const nw::Node& successor, int distanceMeter);
+  float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& successor);
 
   Heap<nw::Node> openNodesHeap;
