@@ -252,8 +252,7 @@ void AirportSearch::connectSlots()
                               ui->spinBoxAirportAltitudeMaxSearch);
 
   // Distance
-  columns->assignDistanceSearchWidgets(ui->pushButtonAirportDistSearch,
-                                       ui->checkBoxAirportDistSearch,
+  columns->assignDistanceSearchWidgets(ui->checkBoxAirportDistSearch,
                                        ui->comboBoxAirportDistDirectionSearch,
                                        ui->spinBoxAirportDistMinSearch,
                                        ui->spinBoxAirportDistMaxSearch);

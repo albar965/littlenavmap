@@ -32,6 +32,7 @@ class QAction;
 class MainWindow;
 class QItemSelection;
 class MapQuery;
+class QTimer;
 
 namespace atools {
 namespace geo {
@@ -81,7 +82,9 @@ public:
 
 protected:
   QIcon *boolIcon = nullptr;
+  void editStarted();
 
+  void editTimeout();
   void connectSearchWidgets();
   void contextMenu(const QPoint& pos);
 
@@ -92,6 +95,7 @@ protected:
   ColumnList *columns;
   QTableView *view;
   MainWindow *parentWidget;
+  QTimer *updateTimer;
   int tabIndex;
 
   void doubleClick(const QModelIndex& index);

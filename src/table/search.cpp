@@ -27,6 +27,7 @@
 #include "table/columnlist.h"
 #include "geo/pos.h"
 #include "mapgui/mapwidget.h"
+#include "geo/calculations.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -34,10 +35,13 @@
 #include <QHeaderView>
 #include <QMenu>
 #include <QLineEdit>
+#include <QTimer>
 
 #include <gui/actiontextsaver.h>
 
 #include <mapgui/mapquery.h>
+
+const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 600;
 
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                MapQuery *query, int tabWidgetIndex)
@@ -53,11 +57,15 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
   tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
+  updateTimer = new QTimer(this);
+  updateTimer->setSingleShot(true);
+  connect(updateTimer, &QTimer::timeout, this, &Search::editTimeout);
 }
 
 Search::~Search()
 {
   delete boolIcon;
+  delete updateTimer;
 }
 
 void Search::initViewAndController()
@@ -106,48 +114,48 @@ void Search::connectSearchWidgets()
     if(col->getLineEditWidget() != nullptr)
     {
       connect(col->getLineEditWidget(), &QLineEdit::textChanged, [=](const QString &text)
-      {controller->filterByLineEdit(col, text); });
-
-      connect(col->getLineEditWidget(), &QLineEdit::editingFinished,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterByLineEdit(col, text);
+        editStarted();
+      });
     }
     else if(col->getComboBoxWidget() != nullptr)
     {
       connect(col->getComboBoxWidget(), curIndexChangedPtr, [=](int index)
-      {controller->filterByComboBox(col, index, index == 0); });
-
-      connect(col->getComboBoxWidget(), curIndexChangedPtr,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterByComboBox(col, index, index == 0);
+        editStarted();
+      });
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
       connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, [=](int state)
-      {controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate()); });
-
-      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
+        editStarted();
+      });
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
       connect(col->getSpinBoxWidget(), valueChangedPtr, [=](int value)
-      {controller->filterBySpinBox(col, value); });
-
-      connect(col->getSpinBoxWidget(), &QSpinBox::editingFinished,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterBySpinBox(col, value);
+        editStarted();
+      });
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [=](int value)
-      {controller->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value()); });
-
-      connect(col->getMinSpinBoxWidget(), &QSpinBox::editingFinished,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value());
+        editStarted();
+      });
 
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [=](int value)
-      {controller->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value); });
-
-      connect(col->getMaxSpinBoxWidget(), &QSpinBox::editingFinished,
-              controller, &Controller::loadAllRowsForRectQuery);
+      {
+        controller->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value);
+        editStarted();
+      });
     }
     /* *INDENT-ON* */
   }
@@ -156,10 +164,9 @@ void Search::connectSearchWidgets()
   QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
   QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
   QCheckBox *distanceCheckBox = columns->getDistanceCheckBox();
-  QPushButton *distanceUpdate = columns->getDistanceUpdateButton();
 
   if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr &&
-     distanceDirWidget != nullptr && distanceCheckBox != nullptr && distanceUpdate != nullptr)
+     distanceDirWidget != nullptr && distanceCheckBox != nullptr)
   {
     /* *INDENT-OFF* */
     connect(distanceCheckBox, &QCheckBox::stateChanged, [=](int state)
@@ -172,7 +179,6 @@ void Search::connectSearchWidgets()
       minDistanceWidget->setEnabled(state == Qt::Checked);
       maxDistanceWidget->setEnabled(state == Qt::Checked);
       distanceDirWidget->setEnabled(state == Qt::Checked);
-      distanceUpdate->setEnabled(state == Qt::Checked);
       if(state == Qt::Checked)
         controller->loadAllRowsForRectQuery();
     });
@@ -183,6 +189,7 @@ void Search::connectSearchWidgets()
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             value, maxDistanceWidget->value());
       maxDistanceWidget->setMinimum(value > 10 ? value : 10);
+      editStarted();
     });
 
     connect(maxDistanceWidget, valueChangedPtr, [=](int value)
@@ -191,6 +198,7 @@ void Search::connectSearchWidgets()
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             minDistanceWidget->value(), value);
       minDistanceWidget->setMaximum(value);
+      editStarted();
     });
 
     connect(distanceDirWidget, curIndexChangedPtr, [=](int index)
@@ -198,14 +206,22 @@ void Search::connectSearchWidgets()
       controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
                                                 minDistanceWidget->value(),
                                                 maxDistanceWidget->value());
-      controller->loadAllRowsForRectQuery();
+      editStarted();
     });
-
-    connect(distanceUpdate, &QPushButton::clicked, controller, &Controller::loadAllRowsForRectQuery);
-    connect(minDistanceWidget, &QSpinBox::editingFinished, controller, &Controller::loadAllRowsForRectQuery);
-    connect(maxDistanceWidget, &QSpinBox::editingFinished, controller, &Controller::loadAllRowsForRectQuery);
     /* *INDENT-ON* */
   }
+}
+
+void Search::editStarted()
+{
+  qDebug() << "editStarted";
+  updateTimer->start(DISTANCE_EDIT_UPDATE_TIMEOUT_MS);
+}
+
+void Search::editTimeout()
+{
+  qDebug() << "editTimeout";
+  controller->loadAllRowsForRectQuery();
 }
 
 void Search::connectSlots()
@@ -334,7 +350,7 @@ void Search::doubleClick(const QModelIndex& index)
       float rightLon = controller->getRawData(index.row(), "right_lonx").toFloat();
       float bottomLat = controller->getRawData(index.row(), "bottom_laty").toFloat();
 
-      if(leftLon == rightLon && topLat == bottomLat)
+      if(atools::geo::almostEqual(leftLon, rightLon) && atools::geo::almostEqual(topLat, bottomLat))
       {
         atools::geo::Pos p(leftLon, topLat);
         qDebug() << "emit showPos" << p;

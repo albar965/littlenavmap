@@ -820,22 +820,6 @@
                </item>
               </widget>
              </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonAirportDistSearch">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Update</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -1369,22 +1353,6 @@
                  <string>West</string>
                 </property>
                </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButtonNavDistSearch">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Update</string>
-               </property>
               </widget>
              </item>
             </layout>

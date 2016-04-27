@@ -45,7 +45,6 @@ void ColumnList::clear()
   maxDistanceWidget = nullptr;
   distanceDirectionWidget = nullptr;
   distanceCheckBox = nullptr;
-  distanceUpdate = nullptr;
 }
 
 ColumnList& ColumnList::append(const Column& col)
@@ -100,7 +99,7 @@ void ColumnList::assignWidget(const QString& field, QWidget *widget)
     qWarning() << "Cannot assign widget to" << field;
 }
 
-void ColumnList::assignDistanceSearchWidgets(QPushButton *updateButton, QCheckBox *checkBox,
+void ColumnList::assignDistanceSearchWidgets(QCheckBox *checkBox,
                                              QComboBox *directionWidget, QSpinBox *minWidget,
                                              QSpinBox *maxWidget)
 {
@@ -108,7 +107,6 @@ void ColumnList::assignDistanceSearchWidgets(QPushButton *updateButton, QCheckBo
   minDistanceWidget = minWidget;
   maxDistanceWidget = maxWidget;
   distanceDirectionWidget = directionWidget;
-  distanceUpdate = updateButton;
 }
 
 void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget)
@@ -173,9 +171,6 @@ void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
     if(!exceptColNames.contains(cd->getColumnName()))
       if(cd->getWidget() != nullptr)
         cd->getWidget()->setEnabled(enabled);
-
-  if(distanceUpdate != nullptr)
-    distanceUpdate->setEnabled(enabled);
 
   if(minDistanceWidget != nullptr)
     minDistanceWidget->setEnabled(enabled);

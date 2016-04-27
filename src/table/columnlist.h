@@ -80,7 +80,7 @@ public:
 
   void clear();
 
-  void assignDistanceSearchWidgets(QPushButton *updateButton, QCheckBox *checkBox, QComboBox *directionWidget,
+  void assignDistanceSearchWidgets(QCheckBox *checkBox, QComboBox *directionWidget,
                                    QSpinBox *minWidget,
                                    QSpinBox *maxWidget);
 
@@ -104,11 +104,6 @@ public:
     return distanceCheckBox;
   }
 
-  QPushButton *getDistanceUpdateButton() const
-  {
-    return distanceUpdate;
-  }
-
   const QString& getIdColumnName() const
   {
     return idColumn;
@@ -117,7 +112,6 @@ public:
 private:
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
   QCheckBox *distanceCheckBox = nullptr;
-  QPushButton *distanceUpdate = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
   QString tablename, idColumn;
   QVector<Column *> columns;

@@ -102,7 +102,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
                  << "nav_type = 'NDB'"
                  << "nav_type = 'WAYPOINT'"
                  << "nav_type = 'WAYPOINT' and "
-                    "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
+     "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
   columns->
@@ -155,8 +155,7 @@ void NavSearch::connectSlots()
   Ui::MainWindow *ui = parentWidget->getUi();
 
   // Distance
-  columns->assignDistanceSearchWidgets(ui->pushButtonNavDistSearch,
-                                       ui->checkBoxNavDistSearch,
+  columns->assignDistanceSearchWidgets(ui->checkBoxNavDistSearch,
                                        ui->comboBoxNavDistDirectionSearch,
                                        ui->spinBoxNavDistMinSearch,
                                        ui->spinBoxNavDistMaxSearch);
