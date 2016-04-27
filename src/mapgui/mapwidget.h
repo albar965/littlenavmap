@@ -82,7 +82,7 @@ public:
   void changeHome();
   void changeHighlight(const maptypes::MapSearchResult& positions);
   void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
-  void routeChanged();
+  void routeChanged(bool geometryChanged);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 

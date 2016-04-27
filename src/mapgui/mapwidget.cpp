@@ -344,11 +344,14 @@ void MapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighlight
   update();
 }
 
-void MapWidget::routeChanged()
+void MapWidget::routeChanged(bool geometryChanged)
 {
-  paintLayer->routeChanged();
-  updateRouteScreenLines();
-  update();
+  if(geometryChanged)
+  {
+    paintLayer->routeChanged();
+    updateRouteScreenLines();
+    update();
+  }
 }
 
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)

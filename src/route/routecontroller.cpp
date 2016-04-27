@@ -154,6 +154,9 @@ void RouteController::routeAltChanged()
   updateFlightplanData();
 
   postChange(undoCommand);
+
+  updateWindowTitle();
+  emit routeChanged(false);
 }
 
 void RouteController::routeTypeChanged()
@@ -163,6 +166,9 @@ void RouteController::routeTypeChanged()
   updateFlightplanData();
 
   postChange(undoCommand);
+
+  updateWindowTitle();
+  emit routeChanged(false);
 }
 
 void RouteController::selectDepartureParking()
@@ -228,7 +234,7 @@ void RouteController::newFlightplan()
   updateModel();
   updateWindowTitle();
   updateLabel();
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::loadFlightplan(const QString& filename)
@@ -241,7 +247,7 @@ void RouteController::loadFlightplan(const QString& filename)
   updateModel();
   updateWindowTitle();
   updateLabel();
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::saveFlighplanAs(const QString& filename)
@@ -272,7 +278,7 @@ void RouteController::calculateDirect()
   updateLabel();
   postChange(undoCommand);
   updateWindowTitle();
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::calculateRadionav()
@@ -379,7 +385,7 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     updateLabel();
     postChange(undoCommand);
     updateWindowTitle();
-    emit routeChanged();
+    emit routeChanged(true);
   }
   else
   {
@@ -403,7 +409,7 @@ void RouteController::reverse()
   updateLabel();
   postChange(undoCommand);
   updateWindowTitle();
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 QString RouteController::getDefaultFilename() const
@@ -636,7 +642,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateWindowTitle();
   updateLabel();
   updateMoveAndDeleteActions();
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::moveLegsDown()
@@ -679,7 +685,7 @@ void RouteController::moveLegsInternal(int dir)
     postChange(undoCommand);
     updateWindowTitle();
 
-    emit routeChanged();
+    emit routeChanged(true);
   }
 }
 
@@ -701,7 +707,7 @@ void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::deleteLegs()
@@ -733,7 +739,7 @@ void RouteController::deleteLegs()
     postChange(undoCommand);
     updateWindowTitle();
 
-    emit routeChanged();
+    emit routeChanged(true);
   }
 }
 
@@ -791,7 +797,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
@@ -856,7 +862,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::routeSetStart(maptypes::MapAirport airport)
@@ -879,7 +885,7 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
@@ -910,7 +916,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 
 }
 
@@ -954,7 +960,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   postChange(undoCommand);
   updateWindowTitle();
 
-  emit routeChanged();
+  emit routeChanged(true);
 }
 
 int RouteController::nearestLeg(const atools::geo::Pos& pos)
