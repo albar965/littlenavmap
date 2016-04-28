@@ -321,6 +321,7 @@ void MainWindow::connectAllSlots()
           });
 
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowHillshading, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -732,7 +733,7 @@ void MainWindow::readSettings()
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
               ui->actionMapShowRoute,
-              ui->actionMapShowCities, ui->actionMapShowHillshading});
+              ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
@@ -758,7 +759,7 @@ void MainWindow::writeSettings()
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
            ui->actionMapShowRoute,
-           ui->actionMapShowCities, ui->actionMapShowHillshading});
+           ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 

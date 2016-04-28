@@ -120,6 +120,7 @@ void MapWidget::updateMapShowFeatures()
 {
   Ui::MainWindow *ui = parentWindow->getUi();
   setShowMapPois(ui->actionMapShowCities->isChecked() && currentComboIndex == MapWidget::POLITICAL);
+  setShowGrid(ui->actionMapShowGrid->isChecked());
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    currentComboIndex == MapWidget::OSM);
 

@@ -1700,12 +1700,13 @@
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="separator"/>
+   <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
    <addaction name="actionMapShowHillshading"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/filter-add.svg</normaloff>:/littlenavmap/resources/icons/filter-add.svg</iconset>
    </property>
    <property name="text">
@@ -1720,7 +1721,7 @@
   </action>
   <action name="actionSearchFilterExcluding">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/filter-remove.svg</normaloff>:/littlenavmap/resources/icons/filter-remove.svg</iconset>
    </property>
    <property name="text">
@@ -2684,6 +2685,24 @@
    </property>
    <property name="text">
     <string>Addon Airports</string>
+   </property>
+  </action>
+  <action name="actionMapShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapgrid.svg</normaloff>:/littlenavmap/resources/icons/mapgrid.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Grid</string>
+   </property>
+   <property name="toolTip">
+    <string>Grid</string>
    </property>
   </action>
  </widget>
