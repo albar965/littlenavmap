@@ -86,5 +86,7 @@
         <file>resources/icons/routereverse.svg</file>
         <file>resources/icons/routealt.svg</file>
         <file>resources/icons/airportaddon.svg</file>
+        <file>resources/icons/filter-remove.svg</file>
+        <file>resources/icons/filter-add.svg</file>
     </qresource>
 </RCC>
