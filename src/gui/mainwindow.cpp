@@ -386,12 +386,21 @@ void MainWindow::connectAllSlots()
           navMapWidget, &MapWidget::setPropertyValue);
   connect(ui->actionAboutMarble, &QAction::triggered,
           marbleAbout, &Marble::MarbleAboutDialog::exec);
+
+  // connect(getElevationModel(), &Marble::ElevationModel::updateAvailable,
+  // routeController, &RouteController::updateElevation);
+
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
 {
   messageLabel->setText(text);
   messageLabel->setToolTip(tooltipText);
+}
+
+const ElevationModel *MainWindow::getElevationModel()
+{
+  return navMapWidget->model()->elevationModel();
 }
 
 void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)

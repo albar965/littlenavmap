@@ -108,6 +108,7 @@ public:
   void calculateLowAlt();
   void calculateSetAlt();
   void reverse();
+  void updateElevation();
 
 private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;

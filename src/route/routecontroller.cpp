@@ -48,9 +48,9 @@
 
 const int ROUTE_UNDO_LIMIT = 50;
 // TODO tr
-const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.",
+const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.\nMHz/kHz",
                                     "Course\n°M", "Direct\n°M",
-                                    "Distance\nnm", "Remaining\nnm"});
+                                    "Distance\nnm", "Remaining\nnm" /*, "Ground Alt\nft"*/});
 namespace rc {
 enum RouteColumns
 {
@@ -65,6 +65,7 @@ enum RouteColumns
   DIRECT,
   DIST,
   REMAINING,
+  // GROUND_ALT,
   LAST_COL = REMAINING
 };
 
@@ -818,7 +819,7 @@ void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
 
   flightplan->getEntries().prepend(entry);
 
-  RouteMapObject rmo(flightplan);
+  RouteMapObject rmo(flightplan, parentWindow->getElevationModel());
   rmo.loadFromAirport(&flightplan->getEntries().first(), airport, nullptr);
   routeMapObjects.prepend(rmo);
 }
@@ -850,7 +851,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   if(flightplan->getEntries().size() > 1)
     rmoPred = &routeMapObjects.at(routeMapObjects.size() - 1);
 
-  RouteMapObject rmo(flightplan);
+  RouteMapObject rmo(flightplan, parentWindow->getElevationModel());
   rmo.loadFromAirport(&flightplan->getEntries().last(), airport, rmoPred);
   routeMapObjects.append(rmo);
 
@@ -903,7 +904,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   const RouteMapObject *rmoPred = nullptr;
 
-  RouteMapObject rmo(flightplan);
+  RouteMapObject rmo(flightplan, parentWindow->getElevationModel());
   rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[legIndex], query, rmoPred);
 
   routeMapObjects.replace(legIndex, rmo);
@@ -947,7 +948,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   if(flightplan->isEmpty() && insertIndex > 0)
     rmoPred = &routeMapObjects.at(insertIndex - 1);
-  RouteMapObject rmo(flightplan);
+  RouteMapObject rmo(flightplan, parentWindow->getElevationModel());
   rmo.loadFromDatabaseByEntry(&flightplan->getEntries()[insertIndex], query, rmoPred);
 
   routeMapObjects.insert(insertIndex, rmo);
@@ -1184,7 +1185,7 @@ void RouteController::createRouteMapObjects()
   {
     FlightplanEntry& entry = flightplan->getEntries()[i];
 
-    RouteMapObject mapobj(flightplan);
+    RouteMapObject mapobj(flightplan, parentWindow->getElevationModel());
     mapobj.loadFromDatabaseByEntry(&entry, query, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
@@ -1242,9 +1243,9 @@ void RouteController::updateModel()
     if(mapobj.getFrequency() > 0)
     {
       if(mapobj.getMapObjectType() == maptypes::VOR)
-        item = new QStandardItem(QString::number(mapobj.getFrequency() / 1000.f, 'f', 2) + " MHz");
+        item = new QStandardItem(QString::number(mapobj.getFrequency() / 1000.f, 'f', 2));
       else if(mapobj.getMapObjectType() == maptypes::NDB)
-        item = new QStandardItem(QString::number(mapobj.getFrequency() / 100.f, 'f', 1) + " kHz");
+        item = new QStandardItem(QString::number(mapobj.getFrequency() / 100.f, 'f', 1));
       else
         item = new QStandardItem();
       item->setTextAlignment(Qt::AlignRight);
@@ -1272,7 +1273,6 @@ void RouteController::updateModel()
       item = new QStandardItem(QString::number(mapobj.getDistanceTo(), 'f', 1));
       item->setTextAlignment(Qt::AlignRight);
       items.append(item);
-
     }
 
     cumulatedDistance += mapobj.getDistanceTo();
@@ -1283,6 +1283,10 @@ void RouteController::updateModel()
     item = new QStandardItem(QString::number(remaining, 'f', 1));
     item->setTextAlignment(Qt::AlignRight);
     items.append(item);
+
+    // item = new QStandardItem(QString::number(mapobj.getGroundAltitude(), 'f', 0));
+    // item->setTextAlignment(Qt::AlignRight);
+    // items.append(item);
 
     model->appendRow(items);
     row++;
@@ -1385,4 +1389,10 @@ void RouteController::postChange(RouteCommand *undoCommand)
     undoCommand->setFlightplanAfter(flightplan);
     undoStack->push(undoCommand);
   }
+}
+
+void RouteController::updateElevation()
+{
+  qDebug() << "updateElevation";
+
 }

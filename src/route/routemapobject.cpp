@@ -23,6 +23,8 @@
 
 #include <fs/pln/flightplan.h>
 
+#include <marble/ElevationModel.h>
+
 using namespace atools::geo;
 
 const QString EMPTY_STR;
@@ -32,8 +34,9 @@ const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
 
 const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 
-RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan)
-  : flightplan(parentFlightplan)
+RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan,
+                               const Marble::ElevationModel *elevationModel)
+  : flightplan(parentFlightplan), elevation(elevationModel)
 {
 
 }
@@ -217,8 +220,10 @@ void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)
 {
   if(predRouteMapObj != nullptr)
   {
-    distanceTo = meterToNm(getPosition().distanceMeterTo(predRouteMapObj->getPosition()));
-    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(predRouteMapObj->getPosition()));
+    const Pos& prevPos = predRouteMapObj->getPosition();
+
+    distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
+    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
 
     float magvar = getMagvar();
     if(magvar == 0.f)
@@ -226,9 +231,23 @@ void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)
 
     courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
     courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
+
+    // QList<Marble::GeoDataCoordinates> elev =
+    // elevation->heightProfile(prevPos.getLonX(), prevPos.getLatY(),
+    // getPosition().getLonX(), getPosition().getLatY());
+
+    // groundAltitude = 0.f;
+    // for(const Marble::GeoDataCoordinates& e : elev)
+    // {
+    // float altFeet = static_cast<float>(atools::geo::meterToFeet(e.altitude()));
+    // if(altFeet > groundAltitude)
+    // groundAltitude = altFeet;
+    // }
   }
   else
   {
+    // groundAltitude = static_cast<float>(atools::geo::meterToFeet(
+    // elevation->height(getPosition().getLonX(), getPosition().getLatY())));
     predecessor = false;
     distanceTo = 0.f;
     distanceToRhumb = 0.f;

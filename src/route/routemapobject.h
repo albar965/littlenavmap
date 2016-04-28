@@ -29,12 +29,16 @@ class Flightplan;
 }
 }
 
+namespace Marble {
+class ElevationModel;
+}
+
 class MapQuery;
 
 class RouteMapObject
 {
 public:
-  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan);
+  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan, const Marble::ElevationModel *elevationModel);
   ~RouteMapObject();
 
   void loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
@@ -126,8 +130,14 @@ public:
     return userpointNum;
   }
 
+  float getGroundAltitude() const
+  {
+    return groundAltitude;
+  }
+
 private:
   atools::fs::pln::Flightplan *flightplan = nullptr;
+  const Marble::ElevationModel *elevation = nullptr;
   atools::fs::pln::FlightplanEntry *entry = nullptr;
   int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;
@@ -139,7 +149,7 @@ private:
   bool predecessor = false;
   bool valid = false;
 
-  float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f;
+  float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f, groundAltitude = 0.f;
   void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
 
 };

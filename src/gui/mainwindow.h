@@ -20,6 +20,8 @@
 
 #include <QMainWindow>
 
+#include <marble/ElevationModel.h>
+
 #include "geo/pos.h"
 #include "sql/sqldatabase.h"
 #include "marble/MarbleGlobal.h"
@@ -83,6 +85,8 @@ public:
   }
 
   void setMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+
+  const Marble::ElevationModel *getElevationModel();
 
 signals:
   /* Emitted when window is shown the first time */
