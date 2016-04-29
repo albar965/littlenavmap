@@ -69,6 +69,8 @@
 
 #include <route/routecontroller.h>
 
+#include <common/weatherreporter.h>
+
 using namespace Marble;
 using atools::settings::Settings;
 
@@ -96,6 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
   openDatabase();
 
   databaseLoader = new DatabaseLoader(this, &db);
+
+  weatherReporter = new WeatherReporter(this);
 
   mapQuery = new MapQuery(&db);
   mapQuery->initQueries();
@@ -131,6 +135,7 @@ MainWindow::~MainWindow()
 {
   delete routeController;
   delete searchController;
+  delete weatherReporter;
   delete mapQuery;
   delete legendWidget;
   delete marbleAbout;

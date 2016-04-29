@@ -22,11 +22,12 @@
 #include "common/formatter.h"
 
 #include <common/morsecode.h>
+#include <common/weatherreporter.h>
 
 using namespace maptypes;
 
-MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery)
-  : QObject(parent), query(mapQuery)
+MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
+  : QObject(parent), query(mapQuery), weather(weatherReporter)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
@@ -58,6 +59,23 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     if(!state.isEmpty())
       text += ", " + state;
     text += ", " + country + "</b>";
+
+    QString metar;
+    if(weather->hasAsnWeather())
+    {
+      metar = weather->getAsnMetar(ap.ident);
+      if(!metar.isEmpty())
+        text += "<br/>Metar (ASN): " + metar;
+    }
+    else
+    {
+      metar = weather->getNoaaMetar(ap.ident);
+      if(!metar.isEmpty())
+        text += "<br/>Metar (NOAA): " + metar;
+      metar = weather->getVatsimMetar(ap.ident);
+      if(!metar.isEmpty())
+        text += "<br/>Metar (Vatsim): " + metar;
+    }
 
     if(ap.routeIndex == 0)
       text += "<br/>Route start airport";

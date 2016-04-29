@@ -36,6 +36,7 @@ class QComboBox;
 class QLabel;
 class Search;
 class DatabaseLoader;
+class WeatherReporter;
 
 namespace Marble {
 class LegendWidget;
@@ -88,6 +89,11 @@ public:
 
   const Marble::ElevationModel *getElevationModel();
 
+  WeatherReporter *getWeatherReporter() const
+  {
+    return weatherReporter;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -117,6 +123,7 @@ private:
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
   DatabaseLoader *databaseLoader = nullptr;
+  WeatherReporter *weatherReporter = nullptr;
 
   void openDatabase();
   void closeDatabase();

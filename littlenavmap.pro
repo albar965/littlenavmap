@@ -85,7 +85,8 @@ SOURCES += src/main.cpp\
     src/route/heap.cpp \
     src/route/routenetworkradio.cpp \
     src/route/routenetworkairway.cpp \
-    src/route/routenetwork.cpp
+    src/route/routenetwork.cpp \
+    src/common/weatherreporter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -133,7 +134,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/heap.h \
     src/route/routenetworkradio.h \
     src/route/routenetworkairway.h \
-    src/route/routenetwork.h
+    src/route/routenetwork.h \
+    src/common/weatherreporter.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

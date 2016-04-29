@@ -68,7 +68,7 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  mapTooltip = new MapTooltip(this, mapQuery);
+  mapTooltip = new MapTooltip(this, mapQuery, parentWindow->getWeatherReporter());
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 

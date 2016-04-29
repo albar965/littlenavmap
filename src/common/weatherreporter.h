@@ -15,43 +15,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTOOLTIP_H
-#define MAPTOOLTIP_H
+#ifndef WEATHERLOADER_H
+#define WEATHERLOADER_H
 
+#include <QHash>
+#include <QNetworkAccessManager>
 #include <QObject>
 
-namespace maptypes {
-struct MapSearchResult;
+class QFileSystemWatcher;
+class MainWindow;
 
-}
-
-class RouteMapObject;
-class MorseCode;
-class MapLayer;
-class MapQuery;
-class WeatherReporter;
-
-class MapTooltip :
+class WeatherReporter :
   public QObject
 {
   Q_OBJECT
 
 public:
-  MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter);
-  virtual ~MapTooltip();
+  WeatherReporter(MainWindow *parentWindow);
+  virtual ~WeatherReporter();
 
-  QString buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
-                       const QList<RouteMapObject>& routeMapObjects,
-                       bool airportDiagram);
+  QString getAsnMetar(const QString& airportIcao);
+  QString getNoaaMetar(const QString& airportIcao);
+  QString getVatsimMetar(const QString& airportIcao);
+
+  bool hasAsnWeather()
+  {
+    return !asnSnapshotPath.isEmpty();
+  }
 
 private:
-  const int MAXLINES = 30;
-  MapQuery *query;
-  bool checkText(QStringList& text);
+  void fileChanged(const QString& path);
+  void loadVatsimSnapshot(const QString& airportIcao);
+  void loadActiveSkySnapshot();
+  void loadNoaaSnapshot(const QString& airportIcao);
 
-  MorseCode *morse;
-  WeatherReporter *weather;
+  QHash<QString, QString> asnMetars, noaaMetars, vatsimMetars;
+  QString asnSnapshotPath;
+  QString getAsnSnapshotPath();
+
+  QFileSystemWatcher *fsWatcher = nullptr;
+
+  QNetworkAccessManager networkManager;
 
 };
 
-#endif // MAPTOOLTIP_H
+#endif // WEATHERLOADER_H
