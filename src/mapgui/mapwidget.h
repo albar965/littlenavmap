@@ -150,6 +150,7 @@ public:
   }
 
   void updateMapShowFeatures();
+  void updateTooltip();
 
 signals:
   void markChanged(const atools::geo::Pos& mark);
@@ -178,6 +179,9 @@ private:
   MouseStates mouseState = NONE;
   bool mouseMoved = false;
   MainWindow *parentWindow;
+  QPoint tooltipPos;
+  maptypes::MapSearchResult mapSearchResultTooltip;
+
   MapPaintLayer *paintLayer;
   MapQuery *mapQuery;
   double homeDistance = 0.;
@@ -235,6 +239,7 @@ private:
 
   void debugOnClick(int x, int y);
   void updateVisibleObjects();
+
 };
 
 #endif // NAVMAPWIDGET_H

@@ -67,7 +67,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       if(!metar.isEmpty())
         text += "<br/>Metar (ASN): " + metar;
     }
-    else
+//    else
     {
       metar = weather->getNoaaMetar(ap.ident);
       if(!metar.isEmpty())

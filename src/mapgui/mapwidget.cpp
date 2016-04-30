@@ -52,6 +52,7 @@
 #include <QPainter>
 
 #include <route/routenetworkradio.h>
+#include "common/weatherreporter.h"
 
 using namespace Marble;
 
@@ -78,6 +79,8 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   setContextMenuPolicy(Qt::CustomContextMenu);
 
   connect(this, &MapWidget::customContextMenuRequested, this, &MapWidget::contextMenu);
+  connect(parentWindow->getWeatherReporter(), &WeatherReporter::weatherUpdated,
+          this, &MapWidget::updateTooltip);
 }
 
 MapWidget::~MapWidget()
@@ -1189,24 +1192,36 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     showPos(mapSearchResult.userPoints.at(0).position);
 }
 
+void MapWidget::updateTooltip()
+{
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
+                                          parentWindow->getRouteController()->getRouteMapObjects(),
+                                          paintLayer->getMapLayer()->isAirportDiagram());
+
+  if(!text.isEmpty())
+  {
+    // qDebug() << "Tooltip show";
+    QToolTip::showText(tooltipPos, text, nullptr, QRect(), 3600 * 1000);
+  }
+  else
+  {
+    // qDebug() << "Tooltip hide";
+    tooltipPos = QPoint();
+    QToolTip::hideText();
+  }
+}
+
 bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
+    // qDebug() << "QEvent::ToolTip";
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-
-    maptypes::MapSearchResult mapSearchResult;
-    getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResult);
-    QString text = mapTooltip->buildTooltip(mapSearchResult,
-                                            parentWindow->getRouteController()->getRouteMapObjects(),
-                                            paintLayer->getMapLayer()->isAirportDiagram());
-
-    if(!text.isEmpty())
-      QToolTip::showText(helpEvent->globalPos(), text.trimmed(), nullptr, QRect(), 3600 * 1000);
-    else
-      QToolTip::hideText();
+    mapSearchResultTooltip = maptypes::MapSearchResult();
+    getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResultTooltip);
+    tooltipPos = helpEvent->globalPos();
+    updateTooltip();
     event->accept();
-
     return true;
   }
 

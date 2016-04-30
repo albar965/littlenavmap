@@ -43,11 +43,13 @@ public:
     return !asnSnapshotPath.isEmpty();
   }
 
+  void clearNoaaReply();
+
 private:
   void fileChanged(const QString& path);
-  void loadVatsimSnapshot(const QString& airportIcao);
+  void loadVatsimMetar(const QString& airportIcao);
   void loadActiveSkySnapshot();
-  void loadNoaaSnapshot(const QString& airportIcao);
+  void loadNoaaMetar(const QString& airportIcao);
 
   QHash<QString, QString> asnMetars, noaaMetars, vatsimMetars;
   QString asnSnapshotPath;
@@ -56,6 +58,20 @@ private:
   QFileSystemWatcher *fsWatcher = nullptr;
 
   QNetworkAccessManager networkManager;
+
+  void httpFinished(QNetworkReply* reply, const QString& icao, QHash<QString, QString>& metars);
+
+  QString noaaRequestIcao, vatsimRequestIcao;
+
+  QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
+
+  void httpFinishedNoaa();
+  void httpFinishedVatsim();
+
+  void clearVatsimReply();
+
+signals:
+  void weatherUpdated();
 
 };
 

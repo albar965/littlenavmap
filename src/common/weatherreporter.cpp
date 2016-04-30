@@ -47,6 +47,8 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow)
 
 WeatherReporter::~WeatherReporter()
 {
+  clearNoaaReply();
+  clearVatsimReply();
   delete fsWatcher;
 }
 
@@ -77,7 +79,6 @@ void WeatherReporter::loadActiveSkySnapshot()
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
-
 }
 
 QString WeatherReporter::getAsnSnapshotPath()
@@ -101,50 +102,49 @@ QString WeatherReporter::getAsnSnapshotPath()
   return QString();
 }
 
-void WeatherReporter::loadVatsimSnapshot(const QString& airportIcao)
+void WeatherReporter::clearVatsimReply()
+{
+  if(vatsimReply != nullptr)
+  {
+    disconnect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
+    vatsimReply->abort();
+    vatsimReply->deleteLater();
+    vatsimReply = nullptr;
+    vatsimRequestIcao.clear();
+  }
+}
+
+void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
 {
   // http://metar.vatsim.net/metar.php?id=EDDF
   qDebug() << "Vatsim Request for" << airportIcao;
+  clearVatsimReply();
 
+  vatsimRequestIcao = airportIcao;
   QNetworkRequest request(QUrl("http://metar.vatsim.net/metar.php?id=" + airportIcao));
 
-  QNetworkReply *reply = networkManager.get(request);
+  vatsimReply = networkManager.get(request);
 
-  if(reply != nullptr)
-  {
-    // Set up a local event loop for synchronous request
-    QEventLoop *loop = new QEventLoop;
-    // Abort any request taking longer
-    QTimer::singleShot(500, loop, &QEventLoop::quit);
-    connect(reply, &QNetworkReply::finished, loop, &QEventLoop::quit);
-    loop->exec();
-    if(reply->isRunning())
-    {
-      qDebug() << "Aborting Vatsim request";
-      reply->abort();
-    }
-    else
-    {
-      if(reply->error() == QNetworkReply::NoError)
-      {
-        QString metar(reply->readAll());
-        if(!metar.contains("no metar available", Qt::CaseInsensitive))
-          vatsimMetars.insert(airportIcao, metar);
-        else
-          vatsimMetars.insert(airportIcao, QString());
-      }
-      else
-        qDebug() << "Vatsim request for" << airportIcao << "failed. Reason:" << reply->errorString();
-    }
-    disconnect(reply, &QNetworkReply::finished, loop, &QEventLoop::quit);
-    loop->deleteLater();
-  }
+  if(vatsimReply != nullptr)
+    connect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
   else
     qWarning() << "Vatsim Reply is null";
   qDebug() << "Vatsim Request for" << airportIcao << "done";
 }
 
-void WeatherReporter::loadNoaaSnapshot(const QString& airportIcao)
+void WeatherReporter::clearNoaaReply()
+{
+  if(noaaReply != nullptr)
+  {
+    disconnect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
+    noaaReply->abort();
+    noaaReply->deleteLater();
+    noaaReply = nullptr;
+    noaaRequestIcao.clear();
+  }
+}
+
+void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
 {
   // http://www.aviationweather.gov/static/adds/metars/stations.txt
   // http://weather.noaa.gov/pub/data/observations/metar/stations/EDDL.TXT
@@ -152,40 +152,54 @@ void WeatherReporter::loadNoaaSnapshot(const QString& airportIcao)
   // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
   qDebug() << "NOAA Request for" << airportIcao;
 
+  clearNoaaReply();
+
+  noaaRequestIcao = airportIcao;
   QNetworkRequest request(QUrl("http://weather.noaa.gov/pub/data/observations/metar/stations/" +
                                airportIcao + ".TXT"));
 
-  QNetworkReply *reply = networkManager.get(request);
+  noaaReply = networkManager.get(request);
 
-  if(reply != nullptr)
-  {
-    // Set up a local event loop for synchronous request
-    QEventLoop *loop = new QEventLoop;
-    // Abort any request taking longer
-    QTimer::singleShot(500, loop, &QEventLoop::quit);
-    connect(reply, &QNetworkReply::finished, loop, &QEventLoop::quit);
-    loop->exec();
-    if(reply->isRunning())
-    {
-      qDebug() << "Aborting NOAA request";
-      reply->abort();
-    }
-    else
-    {
-      if(reply->error() == QNetworkReply::NoError)
-        noaaMetars.insert(airportIcao, QString(reply->readAll()));
-      else
-      {
-        noaaMetars.insert(airportIcao, QString());
-        qDebug() << "NOAA request for" << airportIcao << "failed. Reason:" << reply->errorString();
-      }
-    }
-    disconnect(reply, &QNetworkReply::finished, loop, &QEventLoop::quit);
-    loop->deleteLater();
-  }
+  if(noaaReply != nullptr)
+    connect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
   else
     qWarning() << "NOAA Reply is null";
   qDebug() << "NOAA Request for" << airportIcao << "done";
+}
+
+void WeatherReporter::httpFinishedNoaa()
+{
+  httpFinished(noaaReply, noaaRequestIcao, noaaMetars);
+  noaaReply = nullptr;
+}
+
+void WeatherReporter::httpFinishedVatsim()
+{
+  httpFinished(vatsimReply, vatsimRequestIcao, vatsimMetars);
+  vatsimReply = nullptr;
+}
+
+void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, QString>& metars)
+{
+  if(reply != nullptr)
+  {
+    if(reply->error() == QNetworkReply::NoError)
+    {
+      QString metar(reply->readAll());
+      if(!metar.contains("no metar available", Qt::CaseInsensitive))
+        metars.insert(icao, metar);
+      else
+        metars.insert(icao, QString());
+      qDebug() << "Request for" << icao << "succeeded.";
+      emit weatherUpdated();
+    }
+    else if(reply->error() != QNetworkReply::OperationCanceledError)
+    {
+      metars.insert(icao, QString());
+      qDebug() << "Request for" << icao << "failed. Reason:" << reply->errorString();
+    }
+    reply->deleteLater();
+  }
 }
 
 QString WeatherReporter::getAsnMetar(const QString& airportIcao)
@@ -196,14 +210,14 @@ QString WeatherReporter::getAsnMetar(const QString& airportIcao)
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
   if(!noaaMetars.contains(airportIcao))
-    loadNoaaSnapshot(airportIcao);
+    loadNoaaMetar(airportIcao);
   return noaaMetars.value(airportIcao, QString());
 }
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
   if(!vatsimMetars.contains(airportIcao))
-    loadVatsimSnapshot(airportIcao);
+    loadVatsimMetar(airportIcao);
   return vatsimMetars.value(airportIcao, QString());
 
 }
