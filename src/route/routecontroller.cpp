@@ -96,8 +96,8 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
 
   Ui::MainWindow *ui = parentWindow->getUi();
-  ui->mainToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
-  ui->mainToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
+  ui->routeToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
+  ui->routeToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
 
   connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::updateLabel);

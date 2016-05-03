@@ -55,7 +55,7 @@
     <addaction name="actionContents"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAboutMarble"/>
-    <addaction name="actionAbout_Qt"/>
+    <addaction name="actionAboutQt"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -83,15 +83,7 @@
    <addaction name="actionRouteSave"/>
    <addaction name="separator"/>
    <addaction name="actionReloadScenery"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteSelectParking"/>
-   <addaction name="actionRouteCalcDirect"/>
-   <addaction name="actionRouteCalcRadionav"/>
-   <addaction name="actionRouteCalcHighAlt"/>
-   <addaction name="actionRouteCalcLowAlt"/>
-   <addaction name="actionRouteCalcSetAlt"/>
-   <addaction name="actionRouteReverse"/>
-   <addaction name="actionRouteSettings"/>
+   <addaction name="actionConnectSimulator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
@@ -1704,6 +1696,24 @@
    <addaction name="actionMapShowCities"/>
    <addaction name="actionMapShowHillshading"/>
   </widget>
+  <widget class="QToolBar" name="routeToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionRouteCalcDirect"/>
+   <addaction name="actionRouteCalcRadionav"/>
+   <addaction name="actionRouteCalcHighAlt"/>
+   <addaction name="actionRouteCalcLowAlt"/>
+   <addaction name="actionRouteCalcSetAlt"/>
+   <addaction name="actionRouteReverse"/>
+  </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -2025,7 +2035,7 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionAbout_Qt">
+  <action name="actionAboutQt">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
@@ -2703,6 +2713,15 @@
    </property>
    <property name="toolTip">
     <string>Grid</string>
+   </property>
+  </action>
+  <action name="actionConnectSimulator">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Connect to Simulator</string>
    </property>
   </action>
  </widget>

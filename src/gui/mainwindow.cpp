@@ -299,7 +299,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
-  connect(ui->actionAbout_Qt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
+  connect(ui->actionAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
   // Map widget related connections
   connect(navMapWidget, &MapWidget::objectSelected, searchController, &SearchController::objectSelected);

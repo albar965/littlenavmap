@@ -89,5 +89,6 @@
         <file>resources/icons/filter-remove.svg</file>
         <file>resources/icons/filter-add.svg</file>
         <file>resources/icons/mapgrid.svg</file>
+        <file>resources/icons/network.svg</file>
     </qresource>
 </RCC>
