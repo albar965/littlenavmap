@@ -71,6 +71,8 @@
 
 #include <common/weatherreporter.h>
 
+#include <connect/connectclient.h>
+
 using namespace Marble;
 using atools::settings::Settings;
 
@@ -117,6 +119,8 @@ MainWindow::MainWindow(QWidget *parent) :
   searchController->createAirportSearch(ui->tableViewAirportSearch);
   searchController->createNavSearch(ui->tableViewNavSearch);
 
+  connectClient = new ConnectClient(this);
+
   connectAllSlots();
   readSettings();
   updateActionStates();
@@ -129,10 +133,14 @@ MainWindow::MainWindow(QWidget *parent) :
   updateMapShowFeatures();
   navMapWidget->showSavedPos();
   searchController->updateTableSelection();
+
 }
 
 MainWindow::~MainWindow()
 {
+  qDebug() << "MainWindow destructor";
+
+  delete connectClient;
   delete routeController;
   delete searchController;
   delete weatherReporter;
@@ -140,8 +148,6 @@ MainWindow::~MainWindow()
   delete legendWidget;
   delete marbleAbout;
   delete ui;
-
-  qDebug() << "MainWindow destructor";
 
   delete dialog;
   delete errorHandler;
@@ -392,6 +398,9 @@ void MainWindow::connectAllSlots()
           navMapWidget, &MapWidget::setPropertyValue);
   connect(ui->actionAboutMarble, &QAction::triggered,
           marbleAbout, &Marble::MarbleAboutDialog::exec);
+
+  connect(ui->actionConnectSimulator, &QAction::triggered,
+          connectClient, &ConnectClient::connectToServer);
 
   // connect(getElevationModel(), &Marble::ElevationModel::updateAvailable,
   // routeController, &RouteController::updateElevation);

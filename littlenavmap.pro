@@ -86,7 +86,9 @@ SOURCES += src/main.cpp\
     src/route/routenetworkradio.cpp \
     src/route/routenetworkairway.cpp \
     src/route/routenetwork.cpp \
-    src/common/weatherreporter.cpp
+    src/common/weatherreporter.cpp \
+    src/connect/connectdialog.cpp \
+    src/connect/connectclient.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -135,11 +137,14 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routenetworkradio.h \
     src/route/routenetworkairway.h \
     src/route/routenetwork.h \
-    src/common/weatherreporter.h
+    src/common/weatherreporter.h \
+    src/connect/connectdialog.h \
+    src/connect/connectclient.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
-    src/route/parkingdialog.ui
+    src/route/parkingdialog.ui \
+    src/connect/connectdialog.ui
 
 # Marble dependencies
 win32 {

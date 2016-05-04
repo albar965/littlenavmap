@@ -37,6 +37,7 @@ class QLabel;
 class Search;
 class DatabaseLoader;
 class WeatherReporter;
+class ConnectClient;
 
 namespace Marble {
 class LegendWidget;
@@ -124,6 +125,7 @@ private:
   atools::gui::HelpHandler *helpHandler = nullptr;
   DatabaseLoader *databaseLoader = nullptr;
   WeatherReporter *weatherReporter = nullptr;
+  ConnectClient *connectClient = nullptr;
 
   void openDatabase();
   void closeDatabase();
