@@ -134,6 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
   navMapWidget->showSavedPos();
   searchController->updateTableSelection();
 
+  connectClient->tryConnect();
 }
 
 MainWindow::~MainWindow()
@@ -345,6 +346,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
 
   connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &MapWidget::showMark);
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &MapWidget::showHome);
@@ -401,6 +403,9 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionConnectSimulator, &QAction::triggered,
           connectClient, &ConnectClient::connectToServer);
+
+  connect(connectClient, &ConnectClient::dataPacketReceived,
+          navMapWidget, &MapWidget::simDataChanged);
 
   // connect(getElevationModel(), &Marble::ElevationModel::updateAvailable,
   // routeController, &RouteController::updateElevation);
@@ -740,13 +745,14 @@ void MainWindow::readSettings()
   searchController->restoreState();
   navMapWidget->restoreState();
   routeController->restoreState();
+  connectClient->restoreState();
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
               ui->actionMapShowAddonAirports,
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-              ui->actionMapShowRoute,
+              ui->actionMapShowRoute, ui->actionMapShowAircraft,
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
@@ -766,13 +772,14 @@ void MainWindow::writeSettings()
   searchController->saveState();
   navMapWidget->saveState();
   routeController->saveState();
+  connectClient->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
            ui->actionMapShowAddonAirports,
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-           ui->actionMapShowRoute,
+           ui->actionMapShowRoute, ui->actionMapShowAircraft,
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);

@@ -95,6 +95,11 @@ public:
     return weatherReporter;
   }
 
+  ConnectClient *getConnectClient() const
+  {
+    return connectClient;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

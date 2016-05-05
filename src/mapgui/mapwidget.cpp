@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "connect/connectclient.h"
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
 #include "settings/settings.h"
@@ -134,6 +135,8 @@ void MapWidget::updateMapShowFeatures()
 
   setShowMapFeatures(maptypes::ROUTE,
                      ui->actionMapShowRoute->isChecked());
+  setShowMapFeatures(maptypes::AIRCRAFT,
+                     ui->actionMapShowAircraft->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT_HARD,
                      ui->actionMapShowAirports->isChecked());
@@ -358,6 +361,24 @@ void MapWidget::routeChanged(bool geometryChanged)
   }
 }
 
+void MapWidget::simDataChanged(const atools::fs::SimConnectData& simulatorData)
+{
+  simData = simulatorData;
+
+  if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
+  {
+    CoordinateConverter conv(viewport());
+    QPoint diff = conv.wToS(simulatorData.getPosition()) - conv.wToS(lastSimPos);
+
+    if(!lastSimPos.isValid() || diff.manhattanLength() > 2)
+    {
+      lastSimPos = simulatorData.getPosition();
+      // TODO update region only
+      update();
+    }
+  }
+}
+
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
   highlightMapObjects = positions;
@@ -381,7 +402,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
 
   CoordinateConverter conv(viewport());
 
-  // Get objects from cache - alread present objects will be skipped
+  // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
                               paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT),

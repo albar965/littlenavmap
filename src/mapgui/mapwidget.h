@@ -31,10 +31,15 @@
 
 #include <route/routemapobject.h>
 
+#include <fs/simconnectdata.h>
+
 namespace atools {
 namespace geo {
 class Pos;
 class Rect;
+}
+namespace fs {
+class SimConnectData;
 }
 }
 
@@ -83,6 +88,7 @@ public:
   void changeHighlight(const maptypes::MapSearchResult& positions);
   void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
   void routeChanged(bool geometryChanged);
+  void simDataChanged(const atools::fs::SimConnectData& simulatorData);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -152,6 +158,11 @@ public:
   void updateMapShowFeatures();
   void updateTooltip();
 
+  const atools::fs::SimConnectData& getSimConnectData() const
+  {
+    return simData;
+  }
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -203,6 +214,9 @@ private:
   MapPosHistory history;
   MapTooltip *mapTooltip;
   Marble::Projection currentProjection;
+
+  atools::fs::SimConnectData simData;
+  atools::geo::Pos lastSimPos;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

@@ -1691,6 +1691,7 @@
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
+   <addaction name="actionMapShowAircraft"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
@@ -2722,6 +2723,24 @@
    </property>
    <property name="text">
     <string>Connect to Simulator</string>
+   </property>
+  </action>
+  <action name="actionMapShowAircraft">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Aircraft</string>
    </property>
   </action>
  </widget>

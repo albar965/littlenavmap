@@ -25,16 +25,19 @@
 #include <QWidget>
 #include <QApplication>
 
+#include <gui/widgetstate.h>
+
 ConnectClient::ConnectClient(QWidget *parent)
   : QObject(parent), parentWidget(parent)
 {
-
+  dialog = new ConnectDialog(parentWidget);
 }
 
 ConnectClient::~ConnectClient()
 {
   closeSocket();
   delete data;
+  delete dialog;
 }
 
 void ConnectClient::readFromServer()
@@ -44,7 +47,6 @@ void ConnectClient::readFromServer()
 
   if(data->read(socket))
   {
-    qDebug() << "data" << data->getAirplaneName();
     emit dataPacketReceived(*data);
     delete data;
     data = nullptr;
@@ -54,6 +56,8 @@ void ConnectClient::readFromServer()
 void ConnectClient::connectedToServer()
 {
   qInfo() << "Connected to" << socket->peerName() << ":" << socket->peerPort();
+  silent = false;
+  emit connectedToSimulator();
 }
 
 void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
@@ -62,25 +66,41 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
 
   qWarning() << "Error connecting" << socket->errorString();
 
-  QMessageBox::critical(parentWidget, QApplication::applicationName(),
-                        QString("Error in server connection: \"%1\" (%2)").
-                        arg(socket->errorString()).arg(socket->error()),
-                        QMessageBox::Close, QMessageBox::NoButton);
+  if(!silent)
+    QMessageBox::critical(parentWidget, QApplication::applicationName(),
+                          QString("Error in server connection: \"%1\" (%2)").
+                          arg(socket->errorString()).arg(socket->error()),
+                          QMessageBox::Close, QMessageBox::NoButton);
 
   closeSocket();
+  silent = false;
+
+  emit disconnectedFromSimulator();
 }
 
 void ConnectClient::connectToServer()
 {
-  ConnectDialog dlg(parentWidget);
-
-  int retval = dlg.exec();
-  dlg.hide();
+  int retval = dialog->exec();
+  dialog->hide();
 
   if(retval == QDialog::Accepted)
   {
+    silent = false;
     closeSocket();
+    connectInternal();
+  }
+}
 
+void ConnectClient::tryConnect()
+{
+  silent = true;
+  connectInternal();
+}
+
+void ConnectClient::connectInternal()
+{
+  if(socket == nullptr)
+  {
     socket = new QTcpSocket(this);
 
     connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromServer);
@@ -89,8 +109,23 @@ void ConnectClient::connectToServer()
             static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromServerError);
 
-    socket->connectToHost(dlg.getHostname(), dlg.getPort(), QAbstractSocket::ReadOnly);
+    socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadOnly);
   }
+}
+
+bool ConnectClient::isConnected() const
+{
+  return socket != nullptr && socket->isOpen();
+}
+
+void ConnectClient::saveState()
+{
+  dialog->saveState();
+}
+
+void ConnectClient::restoreState()
+{
+  dialog->restoreState();
 }
 
 void ConnectClient::closeSocket()

@@ -55,6 +55,9 @@ const QColor airportSymbolFillColor = QColor(Qt::white);
 const QPen markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
 const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 
+const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 8, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
+
 const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
 

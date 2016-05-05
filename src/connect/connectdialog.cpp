@@ -18,6 +18,7 @@
 #include "connectdialog.h"
 #include "ui_connectdialog.h"
 #include <QPushButton>
+#include <gui/widgetstate.h>
 
 ConnectDialog::ConnectDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::ConnectDialog)
@@ -44,4 +45,17 @@ QString ConnectDialog::getHostname() const
 quint16 ConnectDialog::getPort() const
 {
   return static_cast<quint16>(ui->spinBoxConnectPort->value());
+}
+
+void ConnectDialog::saveState()
+{
+  atools::gui::WidgetState saver("NavConnect/Remote");
+  saver.save({ui->lineEditConnectHostname, ui->spinBoxConnectPort});
+
+}
+
+void ConnectDialog::restoreState()
+{
+  atools::gui::WidgetState saver("NavConnect/Remote");
+  saver.restore({ui->lineEditConnectHostname, ui->spinBoxConnectPort});
 }

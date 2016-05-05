@@ -23,6 +23,7 @@
 #include "fs/simconnectdata.h"
 
 class QTcpSocket;
+class ConnectDialog;
 
 class ConnectClient :
   public QObject
@@ -34,9 +35,17 @@ public:
   virtual ~ConnectClient();
 
   void connectToServer();
+  void tryConnect();
+
+  bool isConnected() const;
+
+  void saveState();
+  void restoreState();
 
 signals:
   void dataPacketReceived(atools::fs::SimConnectData data);
+  void connectedToSimulator();
+  void disconnectedFromSimulator();
 
 private:
   void readFromServer();
@@ -44,10 +53,13 @@ private:
   void connectedToServer();
   void closeSocket();
 
+  bool silent = false;
+  ConnectDialog *dialog = nullptr;
   atools::fs::SimConnectData *data = nullptr;
   QTcpSocket *socket = nullptr;
   QWidget *parentWidget;
 
+  void connectInternal();
 };
 
 #endif // CONNECTCLIENT_H

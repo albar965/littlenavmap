@@ -15,32 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef CONNECTDIALOG_H
-#define CONNECTDIALOG_H
+#ifndef MAPPAINTERAIRCRAFT_H
+#define MAPPAINTERAIRCRAFT_H
 
-#include <QDialog>
+#include "mappainter.h"
 
-namespace Ui {
-class ConnectDialog;
+namespace Marble {
+class GeoDataLineString;
 }
 
-class ConnectDialog :
-  public QDialog
+class MapWidget;
+
+class MapPainterAircraft :
+  public MapPainter
 {
-  Q_OBJECT
-
 public:
-  explicit ConnectDialog(QWidget *parent = 0);
-  ~ConnectDialog();
+  MapPainterAircraft(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  virtual ~MapPainterAircraft();
 
-  QString getHostname() const;
-  quint16 getPort() const;
-
-  void saveState();
-  void restoreState();
+  virtual void render(const PaintContext *context) override;
 
 private:
-  Ui::ConnectDialog *ui;
+  MapWidget *navMapWidget;
+  void paintAircraft(Marble::GeoPainter *painter);
+
 };
 
-#endif // CONNECTDIALOG_H
+#endif // MAPPAINTERMARKAIRCRAFT_H

@@ -18,6 +18,7 @@
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
 #include "maplayersettings.h"
+#include "mappainteraircraft.h"
 #include "mappainterairport.h"
 #include "mappainterils.h"
 #include "mappaintermark.h"
@@ -63,6 +64,7 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale, false);
   mapPainterRoute = new MapPainterRoute(navMapWidget, mapQuery, mapScale,
                                         navMapWidget->getRouteController(), false);
+  mapPainterAircraft = new MapPainterAircraft(navMapWidget, mapQuery, mapScale, false);
 
   objectTypes = maptypes::MapObjectTypes(
     maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
@@ -238,6 +240,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
     painter->setFont(font);
 
+    QElapsedTimer t;
+    t.start();
+
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(dist);
     mapLayer = layers->getLayer(dist, detailFactor);
@@ -271,6 +276,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     }
     mapPainterRoute->render(&context);
     mapPainterMark->render(&context);
+    mapPainterAircraft->render(&context);
+
+    if(navMapWidget->viewContext() == Marble::Still)
+      qDebug() << "Time for render" << t.elapsed() << "ms";
   }
 
   return true;
