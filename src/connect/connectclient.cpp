@@ -34,32 +34,21 @@ ConnectClient::ConnectClient(QWidget *parent)
 ConnectClient::~ConnectClient()
 {
   closeSocket();
+  delete data;
 }
-
-quint16 datasize = 0;
 
 void ConnectClient::readFromServer()
 {
-  QDataStream in(socket);
-  in.setVersion(QDataStream::Qt_4_0);
+  if(data == nullptr)
+    data = new atools::fs::SimConnectData;
 
-  if(datasize == 0)
+  if(data->read(socket))
   {
-    if(socket->bytesAvailable() < sizeof(quint16))
-      return;
-
-    in >> datasize;
+    qDebug() << "data" << data->getAirplaneName();
+    emit dataPacketReceived(*data);
+    delete data;
+    data = nullptr;
   }
-
-  if(socket->bytesAvailable() < datasize)
-    return;
-
-  QString msg;
-  in >> msg;
-  qDebug() << msg;
-  datasize = 0;
-
-  emit dataPacketReceived();
 }
 
 void ConnectClient::connectedToServer()

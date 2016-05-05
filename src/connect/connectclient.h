@@ -20,6 +20,8 @@
 
 #include <QAbstractSocket>
 
+#include "fs/simconnectdata.h"
+
 class QTcpSocket;
 
 class ConnectClient :
@@ -34,7 +36,7 @@ public:
   void connectToServer();
 
 signals:
-  void dataPacketReceived();
+  void dataPacketReceived(atools::fs::SimConnectData data);
 
 private:
   void readFromServer();
@@ -42,6 +44,7 @@ private:
   void connectedToServer();
   void closeSocket();
 
+  atools::fs::SimConnectData *data = nullptr;
   QTcpSocket *socket = nullptr;
   QWidget *parentWidget;
 
