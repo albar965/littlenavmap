@@ -158,9 +158,14 @@ public:
   void updateMapShowFeatures();
   void updateTooltip();
 
-  const atools::fs::SimConnectData& getSimConnectData() const
+  const atools::fs::SimConnectData& getSimData() const
   {
     return simData;
+  }
+
+  MainWindow *getParentWindow() const
+  {
+    return parentWindow;
   }
 
 signals:

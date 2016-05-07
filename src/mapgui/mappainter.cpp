@@ -90,7 +90,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   for(int i = 0; i <= 360; i += step)
   {
     Pos p2 = pos.endpoint(radiusMeter, i).normalize();
-    ellipse.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+    ellipse.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
 
     bool v2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &h2);
 

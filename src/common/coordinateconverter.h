@@ -20,6 +20,7 @@
 
 #include <QPoint>
 #include <QSize>
+#include <marble/GeoDataCoordinates.h>
 
 namespace Marble {
 class ViewportParams;
@@ -61,6 +62,10 @@ public:
   atools::geo::Pos sToW(const QPoint& point) const;
 
   bool isHidden(const atools::geo::Pos& coords) const;
+
+  const Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
+  const Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
+  const Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
 
 private:
   const Marble::ViewportParams *viewport;

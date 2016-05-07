@@ -94,7 +94,7 @@ void MapPainterAirport::render(const PaintContext *context)
     {
       GeoDataLatLonBox apbox(airport.bounding.getNorth(), airport.bounding.getSouth(),
                              airport.bounding.getEast(), airport.bounding.getWest(),
-                             GeoDataCoordinates::Degree);
+                             DEG);
       visible = curBox.intersects(apbox);
     }
 

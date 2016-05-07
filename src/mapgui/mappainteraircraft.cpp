@@ -62,7 +62,8 @@ void MapPainterAircraft::render(const PaintContext *context)
 
 void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 {
-  const Pos& pos = navMapWidget->getSimConnectData().getPosition();
+  const atools::fs::SimConnectData& simData = navMapWidget->getSimData();
+  const Pos& pos = simData.getPosition();
 
   if(!pos.isValid())
     return;
@@ -71,7 +72,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
   if(wToS(pos, x, y))
   {
     painter->translate(x, y);
-    painter->rotate(atools::geo::normalizeCourse(navMapWidget->getSimConnectData().getCourseTrue()));
+    painter->rotate(atools::geo::normalizeCourse(navMapWidget->getSimData().getCourseTrue()));
 
     painter->setPen(mapcolors::aircraftBackPen);
     painter->drawLines(AIRCRAFTLINES);
@@ -80,5 +81,18 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     painter->drawLines(AIRCRAFTLINES);
 
     painter->resetTransform();
+
+    QStringList texts;
+    texts.append(simData.getAirplaneName());
+    texts.append(QString::number(simData.getIndicatedSpeed(), 'f', 0) + " IAS / " +
+                 QString::number(simData.getGroundSpeed(), 'f', 0) + " GS / " +
+                 QString::number(simData.getCourseMag(), 'f', 0) + " °M ");
+
+    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
+
+    texts.append(QString::number(simData.getWindDirection(), 'f', 0) + " / " +
+                 QString::number(simData.getWindSpeed(), 'f', 0));
+
+    symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
   }
 }

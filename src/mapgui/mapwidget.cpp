@@ -1411,7 +1411,13 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     changed = true;
   }
 
+  QElapsedTimer t;
+  t.start();
+
   MarbleWidget::paintEvent(paintEvent);
+
+  if(viewContext() == Marble::Still)
+    qDebug() << "Time for all rendering" << t.elapsed() << "ms";
 
   if(changed)
   {

@@ -84,7 +84,7 @@ void MapPainterIls::render(const PaintContext *context)
       {
         GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
                                 ils.bounding.getEast(), ils.bounding.getWest(),
-                                GeoDataCoordinates::Degree);
+                                DEG);
         visible = curBox.intersects(ilsbox);
       }
 

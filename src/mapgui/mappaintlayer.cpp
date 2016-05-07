@@ -15,6 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "connect/connectclient.h"
+#include "gui/mainwindow.h"
 #include "mapgui/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
 #include "maplayersettings.h"
@@ -276,10 +278,12 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     }
     mapPainterRoute->render(&context);
     mapPainterMark->render(&context);
-    mapPainterAircraft->render(&context);
+
+    if(navMapWidget->getParentWindow()->getConnectClient()->isConnected())
+      mapPainterAircraft->render(&context);
 
     if(navMapWidget->viewContext() == Marble::Still)
-      qDebug() << "Time for render" << t.elapsed() << "ms";
+      qDebug() << "Time for rendering" << t.elapsed() << "ms";
   }
 
   return true;

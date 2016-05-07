@@ -63,10 +63,6 @@ public:
   virtual void render(const PaintContext *context) = 0;
 
 protected:
-  const Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
-  const Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
-  const Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
-
   void setRenderHints(Marble::GeoPainter *painter);
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos, int radiusNm, bool fast,
                    int& xtext, int& ytext);

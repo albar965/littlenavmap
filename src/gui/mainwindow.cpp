@@ -407,6 +407,11 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived,
           navMapWidget, &MapWidget::simDataChanged);
 
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          this, &MainWindow::updateActionStates);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          this, &MainWindow::updateActionStates);
+
   // connect(getElevationModel(), &Marble::ElevationModel::updateAvailable,
   // routeController, &RouteController::updateElevation);
 
@@ -677,6 +682,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
+  ui->actionMapShowRoute->setEnabled(hasFlightplan);
+  ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
 
   ui->actionRouteCalcDirect->setEnabled(hasStartAndDest && routeController->hasEntries());
   ui->actionRouteCalcRadionav->setEnabled(hasStartAndDest);

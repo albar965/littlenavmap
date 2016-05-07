@@ -191,7 +191,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
       }
 
       if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                                             GeoDataCoordinates::Degree)) /* && !fast*/)
+                                             DEG)) /* && !fast*/)
       {
         painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
         painter->drawEllipse(center, 4, 4);
@@ -252,8 +252,8 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       // Draw great circle route
       float distanceMeter = m.from.distanceMeterTo(m.to);
 
-      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, GeoDataCoordinates::Degree);
-      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, GeoDataCoordinates::Degree);
+      GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
+      GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
 
       GeoDataLineString line;
       line.append(from);
@@ -262,9 +262,9 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       painter->drawPolyline(line);
 
       qreal initBearing = normalizeCourse(
-        from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::InitialBearing));
+        from.bearing(to, DEG, INITBRG));
       qreal finalBearing = normalizeCourse(
-        from.bearing(to, GeoDataCoordinates::Degree, GeoDataCoordinates::FinalBearing));
+        from.bearing(to, DEG, FINALBRG));
 
       QStringList texts;
       if(!m.text.isEmpty())
@@ -301,16 +301,16 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       {
         p2 = m.from.endpointRhumb(d, bearing);
         GeoDataLineString line;
-        line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
-        line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+        line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
+        line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
         painter->drawPolyline(line);
         p1 = p2;
       }
 
       p2 = m.from.endpointRhumb(distanceMeter, bearing);
       GeoDataLineString line;
-      line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, GeoDataCoordinates::Degree));
-      line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, GeoDataCoordinates::Degree));
+      line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
+      line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
       painter->drawPolyline(line);
 
       QStringList texts;

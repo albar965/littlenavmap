@@ -72,7 +72,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
 {
   bool hidden;
   bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0,
-                                                 GeoDataCoordinates::Degree), x, y, size, &hidden);
+                                                 DEG), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
@@ -142,10 +142,10 @@ bool CoordinateConverter::sToW(int x, int y, Marble::GeoDataCoordinates& coords)
 {
   qreal lon, lat;
 
-  bool visible = viewport->geoCoordinates(x, y, lon, lat, GeoDataCoordinates::Degree);
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
 
-  coords.setLongitude(lon, GeoDataCoordinates::Degree);
-  coords.setLatitude(lat, GeoDataCoordinates::Degree);
+  coords.setLongitude(lon, DEG);
+  coords.setLatitude(lat, DEG);
   return visible;
 }
 
@@ -153,7 +153,7 @@ atools::geo::Pos CoordinateConverter::sToW(int x, int y) const
 {
   qreal lon, lat;
 
-  bool visible = viewport->geoCoordinates(x, y, lon, lat, GeoDataCoordinates::Degree);
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
   if(visible)
     return atools::geo::Pos(lon, lat);
   else
