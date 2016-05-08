@@ -83,7 +83,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     painter->resetTransform();
 
     QStringList texts;
-    texts.append(simData.getAirplaneName());
+    texts.append(simData.getAirplaneTitle());
     texts.append(QString::number(simData.getIndicatedSpeed(), 'f', 0) + " IAS / " +
                  QString::number(simData.getGroundSpeed(), 'f', 0) + " GS / " +
                  QString::number(simData.getCourseMag(), 'f', 0) + " °M ");
