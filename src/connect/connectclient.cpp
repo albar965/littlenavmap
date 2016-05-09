@@ -47,7 +47,9 @@ void ConnectClient::readFromServer()
 
   if(data->read(socket))
   {
-    emit dataPacketReceived(*data);
+    if(data->getPosition().isValid())
+      emit dataPacketReceived(*data);
+
     delete data;
     data = nullptr;
   }
