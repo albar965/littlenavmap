@@ -327,6 +327,18 @@ void MapWidget::showMark()
   }
 }
 
+void MapWidget::showAircraft(bool state)
+{
+  qDebug() << "NavMapWidget::showAircraft" << markPos;
+
+  if(state && simData.getPosition().isValid())
+  {
+    if(zoom() < 1800)
+      setZoom(1800);
+    centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
+  }
+}
+
 void MapWidget::showHome()
 {
   qDebug() << "NavMapWidget::showHome" << markPos;
@@ -363,18 +375,32 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::SimConnectData& simulatorData)
 {
-  simData = simulatorData;
-
   if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
   {
-    CoordinateConverter conv(viewport());
-    QPoint diff = conv.wToS(simulatorData.getPosition()) - conv.wToS(lastSimPos);
+    simData = simulatorData;
 
-    if(!lastSimPos.isValid() || diff.manhattanLength() > 2)
+    CoordinateConverter conv(viewport());
+    QPoint curPos = conv.wToS(simulatorData.getPosition());
+    QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
+
+    using atools::geo::almostNotEqual;
+    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 2 ||
+       almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 2.f) ||
+       almostNotEqual(lastSimData.getIndicatedSpeed(), simData.getIndicatedSpeed(), 10.f) ||
+       almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 100.f))
     {
-      lastSimPos = simulatorData.getPosition();
-      // TODO update region only
-      update();
+      lastSimData = simulatorData;
+
+      int dx = width() / 4;
+      int dy = height() / 4;
+
+      QRect widgetRect = geometry();
+      widgetRect.adjust(dx, dy, -dx, -dy);
+
+      if(!widgetRect.contains(curPos) && parentWindow->getUi()->actionMapAircraftCenter->isChecked())
+        centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
+      else
+        update();
     }
   }
 }

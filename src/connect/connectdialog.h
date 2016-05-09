@@ -24,6 +24,8 @@ namespace Ui {
 class ConnectDialog;
 }
 
+class QAbstractButton;
+
 class ConnectDialog :
   public QDialog
 {
@@ -39,8 +41,23 @@ public:
   void saveState();
   void restoreState();
 
+  void setConnected(bool connected);
+
+  bool isDisconnectClicked() const
+  {
+    return disconnectClicked;
+  }
+
+  void setDisconnectClicked(bool value)
+  {
+    disconnectClicked = value;
+  }
+
 private:
+  bool disconnectClicked = false;
   Ui::ConnectDialog *ui;
+  void buttonClicked(QAbstractButton *button);
+
 };
 
 #endif // CONNECTDIALOG_H

@@ -64,13 +64,23 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
 {
   Q_UNUSED(error);
 
-  qWarning() << "Error connecting" << socket->errorString();
+  qWarning() << "Error connecting to" << socket->peerName() << ":" << dialog->getPort()
+             << socket->errorString();
 
   if(!silent)
-    QMessageBox::critical(parentWidget, QApplication::applicationName(),
-                          QString("Error in server connection: \"%1\" (%2)").
-                          arg(socket->errorString()).arg(socket->error()),
-                          QMessageBox::Close, QMessageBox::NoButton);
+  {
+    if(socket->error() == QAbstractSocket::RemoteHostClosedError)
+    {
+      atools::gui::Dialog(parentWidget).showInfoMsgBox("Actions/ShowDisconnectInfo",
+                                                       "Little Navconnect closed connection.",
+                                                       tr("Do not &show this dialog again."));
+    }
+    else
+      QMessageBox::critical(parentWidget, QApplication::applicationName(),
+                            QString("Error in server connection: \"%1\" (%2)").
+                            arg(socket->errorString()).arg(socket->error()),
+                            QMessageBox::Close, QMessageBox::NoButton);
+  }
 
   closeSocket();
   silent = false;
@@ -80,6 +90,8 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
 
 void ConnectClient::connectToServer()
 {
+  dialog->setConnected(isConnected());
+
   int retval = dialog->exec();
   dialog->hide();
 
@@ -89,6 +101,8 @@ void ConnectClient::connectToServer()
     closeSocket();
     connectInternal();
   }
+  else if(retval == QDialog::Rejected && dialog->isDisconnectClicked())
+    closeSocket();
 }
 
 void ConnectClient::tryConnect()

@@ -85,6 +85,7 @@ public:
   void showHome();
   void changeMark(const atools::geo::Pos& pos);
   void changeHome();
+  void showAircraft(bool state);
   void changeHighlight(const maptypes::MapSearchResult& positions);
   void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
   void routeChanged(bool geometryChanged);
@@ -168,6 +169,7 @@ public:
     return parentWindow;
   }
 
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -220,8 +222,7 @@ private:
   MapTooltip *mapTooltip;
   Marble::Projection currentProjection;
 
-  atools::fs::SimConnectData simData;
-  atools::geo::Pos lastSimPos;
+  atools::fs::SimConnectData simData, lastSimData;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

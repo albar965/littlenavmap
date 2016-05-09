@@ -26,15 +26,39 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
   ui->setupUi(this);
 
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
+  ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setText(tr("&Disconnect"));
 
-  connect(ui->buttonBoxConnect, &QDialogButtonBox::accepted, this, &QDialog::accept);
-  connect(ui->buttonBoxConnect, &QDialogButtonBox::rejected, this, &QDialog::reject);
-
+  connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonClicked);
 }
 
 ConnectDialog::~ConnectDialog()
 {
   delete ui;
+}
+
+void ConnectDialog::buttonClicked(QAbstractButton *button)
+{
+  if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
+  {
+    disconnectClicked = false;
+    QDialog::accept();
+  }
+  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
+  {
+    disconnectClicked = true;
+    QDialog::reject();
+  }
+  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Cancel))
+  {
+    disconnectClicked = false;
+    QDialog::reject();
+
+  }
+}
+
+void ConnectDialog::setConnected(bool connected)
+{
+  ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setEnabled(connected);
 }
 
 QString ConnectDialog::getHostname() const

@@ -1672,6 +1672,7 @@
    <addaction name="actionMapShowHome"/>
    <addaction name="actionMapShowMark"/>
    <addaction name="actionRouteCenter"/>
+   <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
@@ -2176,7 +2177,7 @@
   <action name="actionMapShowMark">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
     <string>Map Mark</string>
@@ -2741,6 +2742,21 @@
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
+   </property>
+  </action>
+  <action name="actionMapAircraftCenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Center Aircraft</string>
    </property>
   </action>
  </widget>

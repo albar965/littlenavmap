@@ -350,6 +350,8 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &MapWidget::showMark);
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &MapWidget::showHome);
+  connect(ui->actionMapAircraftCenter, &QAction::toggled, navMapWidget, &MapWidget::showAircraft);
+
   connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &MapWidget::historyNext);
   connect(ui->actionMapMoreDetails, &QAction::triggered, this, &MainWindow::increaseMapDetail);
@@ -684,6 +686,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
+  ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 
   ui->actionRouteCalcDirect->setEnabled(hasStartAndDest && routeController->hasEntries());
   ui->actionRouteCalcRadionav->setEnabled(hasStartAndDest);

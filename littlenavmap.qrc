@@ -91,5 +91,7 @@
         <file>resources/icons/mapgrid.svg</file>
         <file>resources/icons/network.svg</file>
         <file>resources/icons/aircraft.svg</file>
+        <file>resources/icons/centeraircraft.svg</file>
+        <file>resources/icons/centermark.svg</file>
     </qresource>
 </RCC>
