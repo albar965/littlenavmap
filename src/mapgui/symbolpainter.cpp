@@ -538,6 +538,7 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
     for(const QString& text : texts)
     {
       QRect rect = metrics.boundingRect(text);
+      rect.setWidth(rect.width() + 2);
 
       int newx = x;
       if(atts.testFlag(textatt::RIGHT))

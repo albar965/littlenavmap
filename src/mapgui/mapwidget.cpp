@@ -41,7 +41,6 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/ViewportParams.h>
 #include <marble/MarbleModel.h>
-#include <marble/ElevationModel.h>
 #include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "maptooltip.h"
@@ -882,13 +881,13 @@ void MapWidget::contextMenu(const QPoint& point)
     }
     else if(action == ui->actionRouteDeleteWaypoint)
     {
-      ui->dockWidgetRoute->raise();
+      // ui->dockWidgetRoute->raise();
       emit routeDelete(delRouteIndex, delType);
     }
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionRouteParkingStart)
     {
-      ui->dockWidgetRoute->raise();
+      // ui->dockWidgetRoute->raise();
 
       atools::geo::Pos position = pos;
       maptypes::MapObjectTypes type;
@@ -1124,16 +1123,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
           distanceMarkers[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
-
-        // atools::geo::Pos from = distanceMarkers[currentDistanceMarkerIndex].from;
-        // atools::geo::Pos to = distanceMarkers[currentDistanceMarkerIndex].to;
-        // const ElevationModel *localElevationModel = model()->elevationModel();
-        // QList<GeoDataCoordinates> elev = localElevationModel->heightProfile(from.getLonX(), from.getLatY(),
-        // to.getLonX(), to.getLatY());
-        // for(const GeoDataCoordinates& e : elev)
-        // qDebug() << e.altitude();
-        // qDebug() << "from height" << localElevationModel->height(from.getLonX(), from.getLatY());
-        // qDebug() << "to height" << localElevationModel->height(to.getLonX(), to.getLatY());
       }
       else if(mouseState & DRAG_POST_CANCEL)
       {
@@ -1321,9 +1310,6 @@ void MapWidget::debugOnClick(int x, int y)
   if(node.id == -1)
     return;
 
-  // atools::geo::Pos pos = conv.sToW(x, y);
-  // const nw::Node *node = net.addArtificialNode(pos);
-
   highlightMapObjects.airports.clear();
   maptypes::MapAirport ap;
   ap.id = node.id;
@@ -1337,10 +1323,10 @@ void MapWidget::debugOnClick(int x, int y)
   qDebug() << "=== num neighbors" << neighbours.size();
   for(const nw::Node& n : neighbours)
   {
-    maptypes::MapAirport ap;
-    ap.id = n.id;
-    ap.position = n.pos;
-    highlightMapObjects.airports.append(ap);
+    maptypes::MapAirport a;
+    a.id = n.id;
+    a.position = n.pos;
+    highlightMapObjects.airports.append(a);
   }
 
   update();

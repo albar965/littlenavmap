@@ -33,9 +33,10 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16),
-                                    QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2),
-                                    QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18)});
+const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
+                                    QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2), // Wings
+                                    QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
+                                   });
 
 MapPainterAircraft::MapPainterAircraft(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                                        bool verboseMsg)
@@ -83,10 +84,18 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     painter->resetTransform();
 
     QStringList texts;
-    texts.append(simData.getAirplaneTitle());
+    // texts.append("Title " + simData.getAirplaneTitle());
+    // texts.append("Model " + simData.getAirplaneModel());
+    if(!simData.getAirplaneReg().isEmpty())
+      texts.append(simData.getAirplaneReg());
+    // texts.append("Type " + simData.getAirplaneType());
+
+    if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
+      texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
+
     texts.append(QString::number(simData.getIndicatedSpeed(), 'f', 0) + " IAS / " +
                  QString::number(simData.getGroundSpeed(), 'f', 0) + " GS / " +
-                 QString::number(simData.getCourseMag(), 'f', 0) + " °M ");
+                 QString::number(simData.getCourseMag(), 'f', 0) + " °M");
 
     texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
 

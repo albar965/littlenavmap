@@ -89,7 +89,8 @@ SOURCES += src/main.cpp\
     src/common/weatherreporter.cpp \
     src/connect/connectdialog.cpp \
     src/connect/connectclient.cpp \
-    src/mapgui/mappainteraircraft.cpp
+    src/mapgui/mappainteraircraft.cpp \
+    src/profile/profilewidget.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -141,7 +142,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/weatherreporter.h \
     src/connect/connectdialog.h \
     src/connect/connectclient.h \
-    src/mapgui/mappainteraircraft.h
+    src/mapgui/mappainteraircraft.h \
+    src/profile/profilewidget.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

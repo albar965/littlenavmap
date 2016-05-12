@@ -110,6 +110,13 @@ public:
   void reverse();
   void updateElevation();
 
+signals:
+  void showRect(const atools::geo::Rect& rect);
+  void showPos(const atools::geo::Pos& pos, int zoom);
+  void changeMark(const atools::geo::Pos& pos);
+  void routeSelectionChanged(int selected, int total);
+  void routeChanged(bool geometryChanged);
+
 private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -174,13 +181,6 @@ private:
                               bool fetchAirways, bool useSetAltitude);
 
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry, int& minAltitude);
-
-signals:
-  void showRect(const atools::geo::Rect& rect);
-  void showPos(const atools::geo::Pos& pos, int zoom);
-  void changeMark(const atools::geo::Pos& pos);
-  void routeSelectionChanged(int selected, int total);
-  void routeChanged(bool geometryChanged);
 
 };
 

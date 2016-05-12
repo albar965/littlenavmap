@@ -73,6 +73,8 @@
 
 #include <connect/connectclient.h>
 
+#include <profile/profilewidget.h>
+
 using namespace Marble;
 using atools::settings::Settings;
 
@@ -110,6 +112,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
   createNavMap();
 
+  profileWidget = new ProfileWidget(this);
+  ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
+
   legendWidget = new Marble::LegendWidget(this);
   legendWidget->setMarbleModel(navMapWidget->model());
   ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
@@ -146,6 +151,7 @@ MainWindow::~MainWindow()
   delete searchController;
   delete weatherReporter;
   delete mapQuery;
+  delete profileWidget;
   delete legendWidget;
   delete marbleAbout;
   delete ui;
@@ -232,6 +238,7 @@ void MainWindow::setupUi()
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
+  ui->menuView->addAction(ui->dockWidgetElevation->toggleViewAction());
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
@@ -265,6 +272,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, navMapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, navMapWidget, &MapWidget::changeMark);
   connect(routeController, &RouteController::routeChanged, navMapWidget, &MapWidget::routeChanged);
+  connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect,
@@ -413,10 +421,6 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
-
-  // connect(getElevationModel(), &Marble::ElevationModel::updateAvailable,
-  // routeController, &RouteController::updateElevation);
-
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)

@@ -20,8 +20,6 @@
 
 #include <QMainWindow>
 
-#include <marble/ElevationModel.h>
-
 #include "geo/pos.h"
 #include "sql/sqldatabase.h"
 #include "marble/MarbleGlobal.h"
@@ -38,10 +36,12 @@ class Search;
 class DatabaseLoader;
 class WeatherReporter;
 class ConnectClient;
+class ProfileWidget;
 
 namespace Marble {
 class LegendWidget;
 class MarbleAboutDialog;
+class ElevationModel;
 }
 
 namespace atools {
@@ -119,6 +119,7 @@ private:
 
   Ui::MainWindow *ui;
   MapWidget *navMapWidget = nullptr;
+  ProfileWidget *profileWidget = nullptr;
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
 
   bool hasDatabaseLoadStatus = false;
