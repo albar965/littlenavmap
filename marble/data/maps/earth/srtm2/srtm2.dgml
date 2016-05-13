@@ -36,7 +36,7 @@
                 <texture name="srtm2_data"><!-- type="texture"-->
                     <sourcedir format="PNG"> earth/srtm2 </sourcedir>
                     <storageLayout maximumTileLevel="9"/>
-<!--                    <downloadUrl protocol="http" host="files.kde.org" path="marble/" /> -->
+                    <downloadUrl protocol="http" host="maps.kde.org" path="/earth/srtm2/" />
                     <downloadPolicy usage="Browse" maximumConnections="20" />
                     <downloadPolicy usage="Bulk" maximumConnections="2" />
                 </texture>
