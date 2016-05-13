@@ -18,11 +18,15 @@
 #ifndef PROFILEWIDGET_H
 #define PROFILEWIDGET_H
 
+#include <QFuture>
+#include <QFutureWatcher>
 #include <QWidget>
 
 #include <marble/GeoDataCoordinates.h>
 
 #include <geo/pos.h>
+
+#include <route/routemapobject.h>
 
 namespace Marble {
 class ElevationModel;
@@ -53,19 +57,35 @@ private:
     float maxElevation = 0.f;
   };
 
-  QList<ElevationLeg> elevationLegs;
-  float maxRouteElevation, totalDistance;
-  int totalNumPoints;
+  struct ElevationLegList
+  {
+    QList<ElevationLeg> elevationLegs;
+    float maxRouteElevation, totalDistance;
+    int totalNumPoints;
+  };
+
+  ElevationLegList legList;
 
   QTimer *updateTimer = nullptr;
   const Marble::ElevationModel *elevationModel = nullptr;
   RouteController *routeController = nullptr;
 
   MainWindow *parentWindow;
-  void fetchRouteElevations();
+  ElevationLegList fetchRouteElevations();
+
+  QFuture<ProfileWidget::ElevationLegList> future;
+  QFutureWatcher<ElevationLegList> watcher;
+  bool terminate = false;
+  QList<RouteMapObject> routeMapObjects;
+
   void updateElevation();
   void updateTimeout();
 
+  void updateFinished();
+
+  virtual void showEvent(QShowEvent*) override;
+  virtual void hideEvent(QHideEvent*) override;
+  bool visible = false;
 };
 
 #endif // PROFILEWIDGET_H

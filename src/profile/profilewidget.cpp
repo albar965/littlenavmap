@@ -18,18 +18,21 @@
 #include "profilewidget.h"
 
 #include <gui/mainwindow.h>
+#include "geo/calculations.h"
 
 #include <QPainter>
 #include <QTimer>
 #include <QGuiApplication>
 #include <QElapsedTimer>
+#include <QFutureWatcher>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include <route/routecontroller.h>
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
 
-const int UPDATE_TIMEOUT = 1000;
+const int UPDATE_TIMEOUT = 2000;
 
 using Marble::GeoDataCoordinates;
 using atools::geo::Pos;
@@ -46,15 +49,25 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
 
   connect(elevationModel, &Marble::ElevationModel::updateAvailable,
           this, &ProfileWidget::updateElevation);
+  connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateFinished);
+
 }
 
 ProfileWidget::~ProfileWidget()
 {
+  if(future.isRunning() || future.isStarted())
+  {
+    terminate = true;
+    future.waitForFinished();
+  }
 
 }
 
 void ProfileWidget::routeChanged(bool geometryChanged)
 {
+  if(!visible)
+    return;
+
   if(geometryChanged)
   {
     qDebug() << "Profile route geometry changed";
@@ -64,6 +77,9 @@ void ProfileWidget::routeChanged(bool geometryChanged)
 
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
+  if(!visible)
+    return;
+
   QElapsedTimer etimer;
   etimer.start();
 
@@ -73,8 +89,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setRenderHint(QPainter::Antialiasing);
   painter.fillRect(rect(), QBrush(QColor(Qt::white)));
 
-  float vertScale = h / maxRouteElevation;
-  float horizScale = w / totalDistance;
+  float flightplanAlt = atools::geo::feetToMeter(
+    static_cast<float>(routeController->getFlightplan()->getCruisingAlt()));
+  float altBuffer = atools::geo::feetToMeter(1000.f);
+
+  float maxHeight = std::max(legList.maxRouteElevation, flightplanAlt) + altBuffer;
+  float vertScale = h / maxHeight;
+  float horizScale = w / legList.totalDistance;
 
   QVector<int> waypointX;
   waypointX.append(0);
@@ -83,7 +104,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   poly.append(QPoint(0, h));
 
   float fromDistance = 0.f;
-  for(const ElevationLeg& leg : elevationLegs)
+  for(const ElevationLeg& leg : legList.elevationLegs)
   {
     waypointX.append(static_cast<int>(fromDistance * horizScale));
 
@@ -104,29 +125,44 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   poly.append(QPoint(w, h));
 
+  painter.setPen(QPen(Qt::lightGray, 2, Qt::SolidLine));
+  for(int wpx : waypointX)
+    painter.drawLine(wpx, 0, wpx, h);
+
   painter.setBrush(QColor(Qt::darkGreen));
   painter.setBackgroundMode(Qt::OpaqueMode);
   painter.setPen(Qt::black);
   painter.drawPolygon(poly);
 
-  painter.setPen(QPen(Qt::black, 2, Qt::SolidLine));
-  for(int wpx : waypointX)
-    painter.drawLine(wpx, 0, wpx, h);
+  painter.setBrush(QColor(Qt::black));
+  painter.setPen(QPen(Qt::red, 3, Qt::SolidLine));
+  painter.drawLine(0, static_cast<int>(h - (legList.maxRouteElevation + altBuffer) * vertScale),
+                   w, static_cast<int>(h - (legList.maxRouteElevation + altBuffer) * vertScale));
+
+  painter.setPen(QPen(Qt::black, 7, Qt::SolidLine));
+  painter.drawLine(0, static_cast<int>(h - flightplanAlt * vertScale),
+                   w, static_cast<int>(h - flightplanAlt * vertScale));
+
+  painter.setPen(QPen(Qt::yellow, 3, Qt::SolidLine));
+  painter.drawLine(0, static_cast<int>(h - flightplanAlt * vertScale),
+                   w, static_cast<int>(h - flightplanAlt * vertScale));
 
   qDebug() << "profile paint" << etimer.elapsed() << "ms";
 }
 
-void ProfileWidget::fetchRouteElevations()
+ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevations()
 {
-  totalNumPoints = 0;
-  totalDistance = 0.f;
-  maxRouteElevation = 0.f;
-  elevationLegs.clear();
-
-  const QList<RouteMapObject>& routeMapObjects = routeController->getRouteMapObjects();
+  ElevationLegList legs;
+  legs.totalNumPoints = 0;
+  legs.totalDistance = 0.f;
+  legs.maxRouteElevation = 0.f;
+  legs.elevationLegs.clear();
 
   for(int i = 1; i < routeMapObjects.size(); i++)
   {
+    if(terminate)
+      return legs;
+
     const RouteMapObject& lastRmo = routeMapObjects.at(i - 1);
     const RouteMapObject& rmo = routeMapObjects.at(i);
 
@@ -139,46 +175,94 @@ void ProfileWidget::fetchRouteElevations()
     Pos lastPos;
     for(const GeoDataCoordinates& coord : elev)
     {
+      if(terminate)
+        return ElevationLegList();
+
       Pos pos(coord.longitude(GeoDataCoordinates::Degree),
               coord.latitude(GeoDataCoordinates::Degree), coord.altitude());
+
+      if(lastPos.isValid() && pos.getAltitude() > 0.f && // lastPos.getAltitude() > 0.f &&
+         atools::geo::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
+        continue;
 
       float alt = pos.getAltitude();
       if(alt > leg.maxElevation)
         leg.maxElevation = alt;
-      if(alt > maxRouteElevation)
-        maxRouteElevation = alt;
+      if(alt > legs.maxRouteElevation)
+        legs.maxRouteElevation = alt;
 
       leg.elevation.append(pos);
       if(lastPos.isValid())
       {
         float dist = lastPos.distanceMeterTo(pos);
         leg.distances.append(dist);
-        totalDistance += dist;
+        legs.totalDistance += dist;
       }
 
-      totalNumPoints++;
+      legs.totalNumPoints++;
       lastPos = pos;
     }
     leg.distances.append(0.f); // Add dummy
-    elevationLegs.append(leg);
+    legs.elevationLegs.append(leg);
   }
-  qDebug() << "elevation legs" << elevationLegs.size() << "total points" << totalNumPoints
-           << "total distance" << totalDistance << "max route elevation" << maxRouteElevation;
+  qDebug() << "elevation legs" << legs.elevationLegs.size() << "total points" << legs.totalNumPoints
+           << "total distance" << legs.totalDistance << "max route elevation" << legs.maxRouteElevation;
+  return legs;
 }
 
 void ProfileWidget::updateElevation()
 {
+  if(!visible)
+    return;
+
   qDebug() << "Profile update elevation";
   updateTimer->start(UPDATE_TIMEOUT);
 }
 
 void ProfileWidget::updateTimeout()
 {
+  if(!visible)
+    return;
+
   qDebug() << "Profile update elevation timeout";
 
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  fetchRouteElevations();
-  QGuiApplication::restoreOverrideCursor();
+  if(future.isRunning() || future.isStarted())
+  {
+    terminate = true;
+    future.waitForFinished();
+  }
 
-  update();
+  terminate = false;
+
+  // Need a copy to avoid synchronization problems
+  routeMapObjects = routeController->getRouteMapObjects();
+
+  // Start the computation in background
+  future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevations);
+  watcher.setFuture(future);
+}
+
+void ProfileWidget::updateFinished()
+{
+  if(!visible)
+    return;
+
+  qDebug() << "Profile update finished";
+
+  if(!terminate)
+  {
+    legList = future.result();
+    update();
+  }
+}
+
+void ProfileWidget::showEvent(QShowEvent *)
+{
+  visible = true;
+  updateTimer->start(0);
+}
+
+void ProfileWidget::hideEvent(QHideEvent *)
+{
+  visible = false;
 }

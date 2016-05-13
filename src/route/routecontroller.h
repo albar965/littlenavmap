@@ -65,6 +65,11 @@ public:
     return routeMapObjects;
   }
 
+  const atools::fs::pln::Flightplan *getFlightplan() const
+  {
+    return flightplan;
+  }
+
   void getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const;
 
   const atools::geo::Rect& getBoundingRect() const
