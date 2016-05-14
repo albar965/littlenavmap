@@ -272,6 +272,9 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, navMapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, navMapWidget, &MapWidget::changeMark);
   connect(routeController, &RouteController::routeChanged, navMapWidget, &MapWidget::routeChanged);
+  connect(profileWidget, &ProfileWidget::highlightProfilePoint,
+          navMapWidget, &MapWidget::highlightProfilePoint);
+
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 

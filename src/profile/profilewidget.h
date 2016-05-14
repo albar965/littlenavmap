@@ -48,6 +48,9 @@ public:
 
   void routeChanged(bool geometryChanged);
 
+signals:
+  void highlightProfilePoint(atools::geo::Pos pos);
+
 private:
   virtual void paintEvent(QPaintEvent *) override;
 
@@ -60,9 +63,10 @@ private:
 
   struct ElevationLegList
   {
+    QList<RouteMapObject> routeMapObjects;
     QList<ElevationLeg> elevationLegs;
-    float maxRouteElevation, totalDistance;
-    int totalNumPoints;
+    float maxRouteElevation = 0.f, totalDistance = 0.f;
+    int totalNumPoints = 0;
   };
 
   ElevationLegList legList;
@@ -72,12 +76,11 @@ private:
   RouteController *routeController = nullptr;
 
   MainWindow *parentWindow;
-  ElevationLegList fetchRouteElevations();
+  ElevationLegList fetchRouteElevationsThread();
 
   QFuture<ProfileWidget::ElevationLegList> future;
   QFutureWatcher<ElevationLegList> watcher;
   bool terminate = false;
-  QList<RouteMapObject> routeMapObjects;
   QRubberBand *rubberBand = nullptr;
 
   void updateElevation();

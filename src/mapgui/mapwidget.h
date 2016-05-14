@@ -49,6 +49,7 @@ class MapPaintLayer;
 class MapQuery;
 class RouteController;
 class MapTooltip;
+class QRubberBand;
 
 enum MouseState
 {
@@ -90,6 +91,7 @@ public:
   void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
   void routeChanged(bool geometryChanged);
   void simDataChanged(const atools::fs::SimConnectData& simulatorData);
+  void highlightProfilePoint(atools::geo::Pos pos);
 
   bool eventFilter(QObject *obj, QEvent *e) override;
 
@@ -169,7 +171,6 @@ public:
     return parentWindow;
   }
 
-
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -215,6 +216,8 @@ private:
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom, routeDragTo;
   int routeDragPoint = -1, routeDragLeg = -1;
+
+  QRubberBand *profilePoint = nullptr;
 
   int currentDistanceMarkerIndex = -1;
   maptypes::DistanceMarker distanceMarkerBackup;

@@ -30,6 +30,7 @@
 #include <QMenu>
 #include <QSettings>
 #include <QToolTip>
+#include <QRubberBand>
 
 #include <marble/MarbleLocale.h>
 #include <marble/GeoDataDocument.h>
@@ -402,6 +403,33 @@ void MapWidget::simDataChanged(const atools::fs::SimConnectData& simulatorData)
         update();
     }
   }
+}
+
+void MapWidget::highlightProfilePoint(atools::geo::Pos pos)
+{
+  qDebug() << "highlightProfilePoint";
+  if(pos.isValid())
+  {
+    CoordinateConverter conv(viewport());
+    int x, y;
+    if(conv.wToS(pos, x, y))
+    {
+      if(profilePoint == nullptr)
+        profilePoint = new QRubberBand(QRubberBand::Rectangle, this);
+
+      const QRect& geo = profilePoint->geometry();
+
+      if(geo.x() != x - 6 && geo.y() != y - 6)
+      {
+        profilePoint->setGeometry(x - 6, y - 6, 12, 12);
+        profilePoint->show();
+      }
+      return;
+    }
+  }
+
+  delete profilePoint;
+  profilePoint = nullptr;
 }
 
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
