@@ -371,11 +371,16 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
   if(flags & textflags::FREQ)
     texts.append(QString::number(ndb.frequency / 100., 'f', 1));
 
-  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::CENTER;
+  textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
-  y += size / 2 + painter->fontMetrics().ascent();
+  if(!flags.testFlag(textflags::ABS_POS))
+  {
+    y += size / 2 + painter->fontMetrics().ascent();
+    textAttrs |= textatt::CENTER;
+  }
+
   int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
 }
@@ -404,11 +409,16 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
   if(flags & textflags::FREQ)
     texts.append(QString::number(vor.frequency / 1000., 'f', 2));
 
-  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::RIGHT;
+  textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
-  x -= size / 2 + 2;
+  if(!flags.testFlag(textflags::ABS_POS))
+  {
+    x -= size / 2 + 2;
+    textAttrs |= textatt::RIGHT;
+  }
+
   int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
 }
@@ -423,12 +433,16 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
   if(flags & textflags::IDENT)
     texts.append(wp.ident);
 
-  x += size / 2 + 2;
-  int transparency = fill ? 255 : 0;
-
-  textatt::TextAttributes textAttrs = textatt::BOLD | textatt::LEFT;
+  textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
     textAttrs |= textatt::ROUTE_BG_COLOR;
+
+  if(!flags.testFlag(textflags::ABS_POS))
+  {
+    x += size / 2 + 2;
+    textAttrs |= textatt::LEFT;
+  }
+  int transparency = fill ? 255 : 0;
 
   textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
@@ -453,7 +467,8 @@ void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirpor
     if(!airport.scenery())
       transparency = 0;
 
-    x += size + 2;
+    if(!flags.testFlag(textflags::ABS_POS))
+      x += size + 2;
 
     textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
   }
@@ -504,7 +519,11 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
 
   painter->save();
 
-  QColor backColor = atts & textatt::ROUTE_BG_COLOR ? mapcolors::routeTextBoxColor : mapcolors::textBoxColor;
+  QColor backColor;
+  if(atts.testFlag(textatt::ROUTE_BG_COLOR))
+    backColor = mapcolors::routeTextBoxColor;
+  else
+    backColor = mapcolors::textBoxColor;
 
   if(transparency != 255)
   {

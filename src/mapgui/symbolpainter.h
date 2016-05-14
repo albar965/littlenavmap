@@ -52,6 +52,7 @@ enum TextFlag
   MORSE = 0x10,
   INFO = 0x20,
   ROUTE_TEXT = 0x40,
+  ABS_POS = 0x80,
   ALL = 0xff
 };
 

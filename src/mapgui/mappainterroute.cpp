@@ -335,5 +335,6 @@ void MapPainterRoute::paintText(const MapLayer *mapLayer, GeoPainter *painter, c
     return;
 
   symbolPainter->textBox(painter, {text}, color,
-                         x + mapLayer->getWaypointSymbolSize() / 2 + 2, y, textatt::BOLD, 255);
+                         x + mapLayer->getWaypointSymbolSize() / 2 + 2, y, textatt::BOLD |
+                         textatt::ROUTE_BG_COLOR, 255);
 }
