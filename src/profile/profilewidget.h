@@ -35,6 +35,7 @@ class ElevationModel;
 class MainWindow;
 class RouteController;
 class QTimer;
+class QRubberBand;
 
 class ProfileWidget :
   public QWidget
@@ -77,15 +78,27 @@ private:
   QFutureWatcher<ElevationLegList> watcher;
   bool terminate = false;
   QList<RouteMapObject> routeMapObjects;
+  QRubberBand *rubberBand = nullptr;
 
   void updateElevation();
   void updateTimeout();
 
   void updateFinished();
 
-  virtual void showEvent(QShowEvent*) override;
-  virtual void hideEvent(QHideEvent*) override;
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
+  virtual void mouseMoveEvent(QMouseEvent *mouseEvent) override;
+  virtual void resizeEvent(QResizeEvent *) override;
+  virtual void leaveEvent(QEvent *) override;
+
   bool visible = false;
+
+  void updateScreenCoords();
+
+  QVector<int> waypointX;
+  QPolygon poly;
+  float maxRouteElevationFt, flightplanAltFt, maxHeight, vertScale, horizScale;
+
 };
 
 #endif // PROFILEWIDGET_H

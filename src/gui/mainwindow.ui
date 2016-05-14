@@ -1609,6 +1609,21 @@
          <string>Airport</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QTextEdit" name="textEditAirportInfo"/>
          </item>
@@ -1728,8 +1743,18 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsElevation">
     <layout class="QVBoxLayout" name="verticalLayout_12">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QWidget" name="elevationWidgetDummy" native="true"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="labelElevationInfo">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
