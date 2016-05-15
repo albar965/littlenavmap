@@ -24,6 +24,7 @@
 #include <QTcpSocket>
 #include <QWidget>
 #include <QApplication>
+#include <QThread>
 
 #include <gui/widgetstate.h>
 
@@ -47,6 +48,14 @@ void ConnectClient::readFromServer()
 
   if(data->read(socket))
   {
+    // QThread::sleep(2);
+
+    char d[] = "0";
+    qint64 written = socket->write(d, strlen(d));
+    bool flush = socket->flush();
+
+    qDebug() << "write" << written << "flush" << flush;
+
     if(data->getPosition().isValid())
       emit dataPacketReceived(*data);
 
@@ -125,7 +134,7 @@ void ConnectClient::connectInternal()
             static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromServerError);
 
-    socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadOnly);
+    socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadWrite);
   }
 }
 
