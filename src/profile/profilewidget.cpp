@@ -108,6 +108,9 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       }
       const atools::geo::Pos& position = routeController->getRouteMapObjects().at(index).getPosition();
       aircraftDistanceFromStart -= atools::geo::meterToNm(position.distanceMeterTo(simData.getPosition()));
+
+      if(simData.getPosition().getAltitude() > maxHeight)
+        updateScreenCoords();
       update();
     }
   }
@@ -186,9 +189,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.fillRect(X0, 0, w, h + Y0, QBrush(QColor::fromRgb(204, 204, 255)));
 
   // Draw grey vertical lines for waypoints
+  int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
   painter.setPen(QPen(Qt::lightGray, 2, Qt::SolidLine));
   for(int wpx : waypointX)
-    painter.drawLine(wpx, Y0, wpx, Y0 + h);
+    painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
   // Draw the mountains
   painter.setBrush(QColor(Qt::darkGreen));
@@ -202,7 +206,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
   SymbolPainter symPainter;
-  int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
 
   // Draw the flightplan line
   painter.setPen(QPen(Qt::black, 6, Qt::SolidLine));
