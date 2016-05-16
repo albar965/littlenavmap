@@ -120,8 +120,6 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
 
   closeSocket();
   silent = false;
-
-  emit disconnectedFromSimulator();
 }
 
 void ConnectClient::connectToServer()
@@ -189,4 +187,6 @@ void ConnectClient::closeSocket()
 
   delete data;
   data = nullptr;
+  emit disconnectedFromSimulator();
+
 }

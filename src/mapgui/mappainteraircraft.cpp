@@ -34,11 +34,6 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
-                                    QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2), // Wings
-                                    QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
-                                   });
-
 MapPainterAircraft::MapPainterAircraft(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
                                        bool verboseMsg)
   : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
@@ -76,11 +71,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     painter->translate(x, y);
     painter->rotate(atools::geo::normalizeCourse(navMapWidget->getSimData().getCourseTrue()));
 
-    painter->setPen(mapcolors::aircraftBackPen);
-    painter->drawLines(AIRCRAFTLINES);
-
-    painter->setPen(mapcolors::aircraftFillPen);
-    painter->drawLines(AIRCRAFTLINES);
+    symbolPainter->drawAircraftSymbol(painter, 0, 0, 40);
 
     painter->resetTransform();
 
@@ -94,13 +85,13 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
       texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
 
-    texts.append(QString::number(simData.getIndicatedSpeed(), 'f', 0) + " IAS / " +
-                 QString::number(simData.getGroundSpeed(), 'f', 0) + " GS / " +
-                 QString::number(simData.getCourseMag(), 'f', 0) + " °M");
+    texts.append("IAS " + QString::number(simData.getIndicatedSpeed(), 'f', 0) + " , " +
+                 "GS " + QString::number(simData.getGroundSpeed(), 'f', 0) + " , " +
+                 "HDG " + QString::number(simData.getCourseMag(), 'f', 0) + " °M");
 
-    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
+    texts.append("ALT " + QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
 
-    texts.append(QString::number(simData.getWindDirection(), 'f', 0) + " / " +
+    texts.append("Wind " + QString::number(simData.getWindDirection(), 'f', 0) + " °M / " +
                  QString::number(simData.getWindSpeed(), 'f', 0));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);

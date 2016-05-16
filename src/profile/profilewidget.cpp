@@ -32,14 +32,14 @@
 #include <QRubberBand>
 #include <QtConcurrent/QtConcurrentRun>
 #include <mapgui/symbolpainter.h>
-
+#include "mapgui/mapwidget.h"
 #include <route/routecontroller.h>
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
 
 const int UPDATE_TIMEOUT = 1000;
-const int X0 = 65, Y0 = 10;
+const int X0 = 65, Y0 = 14;
 
 using Marble::GeoDataCoordinates;
 using atools::geo::Pos;
@@ -69,7 +69,6 @@ ProfileWidget::~ProfileWidget()
     terminate = true;
     future.waitForFinished();
   }
-
 }
 
 void ProfileWidget::routeChanged(bool geometryChanged)
@@ -89,14 +88,59 @@ void ProfileWidget::routeChanged(bool geometryChanged)
   }
 }
 
+void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  if(parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
+     !routeController->isFlightplanEmpty())
+  {
+    simData = simulatorData;
+
+    int index = routeController->nearestLegIndex(simData.getPosition());
+    if(index != -1)
+    {
+      if(index >= routeController->getRouteMapObjects().size())
+        index = routeController->getRouteMapObjects().size() - 1;
+      aircraftDistanceFromStart = 0.f;
+      for(int i = 0; i <= index; i++)
+      {
+        const RouteMapObject& nearestRmo = routeController->getRouteMapObjects().at(i);
+        aircraftDistanceFromStart += nearestRmo.getDistanceTo();
+      }
+      const atools::geo::Pos& position = routeController->getRouteMapObjects().at(index).getPosition();
+      aircraftDistanceFromStart -= atools::geo::meterToNm(position.distanceMeterTo(simData.getPosition()));
+      update();
+    }
+  }
+  else
+  {
+    bool valid = simData.getPosition().isValid();
+    simData = atools::fs::sc::SimConnectData();
+    if(valid)
+      update();
+  }
+}
+
+void ProfileWidget::disconnectedFromSimulator()
+{
+  simData = atools::fs::sc::SimConnectData();
+  updateScreenCoords();
+  update();
+}
+
 void ProfileWidget::updateScreenCoords()
 {
-  int w = rect().width() - X0 * 2, h = rect().height() - Y0 * 2;
+  int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
   // Add 1000 ft buffer and round up to the next 500 feet
   maxRouteElevationFt = std::ceil((legList.maxRouteElevation + 1000.f) / 500.f) * 500.f;
   flightplanAltFt = static_cast<float>(routeController->getFlightplan()->getCruisingAlt());
   maxHeight = std::max(maxRouteElevationFt, flightplanAltFt);
+
+  if(simData.getPosition().isValid() &&
+     parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
+     !routeController->isFlightplanEmpty())
+    maxHeight = std::max(maxHeight, simData.getPosition().getAltitude());
+
   vertScale = h / maxHeight;
   horizScale = w / legList.totalDistance;
 
@@ -124,7 +168,6 @@ void ProfileWidget::updateScreenCoords()
   }
   waypointX.append(X0 + w);
   poly.append(QPoint(X0 + w, h + Y0));
-
 }
 
 void ProfileWidget::paintEvent(QPaintEvent *)
@@ -135,12 +178,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   QElapsedTimer etimer;
   etimer.start();
 
-  int w = rect().width() - X0 * 2, h = rect().height() - Y0 * 2;
+  int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
   painter.fillRect(rect(), QBrush(Qt::white));
-  painter.fillRect(X0, Y0, w, h, QBrush(QColor::fromRgb(204, 204, 255)));
+  painter.fillRect(X0, 0, w, h + Y0, QBrush(QColor::fromRgb(204, 204, 255)));
 
   // Draw grey vertical lines for waypoints
   painter.setPen(QPen(Qt::lightGray, 2, Qt::SolidLine));
@@ -158,8 +201,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int maxAltY = Y0 + static_cast<int>(h - maxRouteElevationFt * vertScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
-  // Draw the flightplan line
+  SymbolPainter symPainter;
   int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
+
+  // Draw the flightplan line
   painter.setPen(QPen(Qt::black, 6, Qt::SolidLine));
   painter.setBrush(QColor(Qt::black));
   painter.drawLine(X0, flightplanY, X0 + static_cast<int>(w), flightplanY);
@@ -170,13 +215,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw flightplan symbols
   // Set default font to bold and reduce size
   QFont font = painter.font();
+  float defaultFontSize = font.pointSizeF();
   font.setBold(true);
-  font.setPointSizeF(font.pointSizeF() * 8.f / 10.f);
+  font.setPointSizeF(defaultFontSize * 0.8f);
   painter.setFont(font);
 
   painter.setBackgroundMode(Qt::TransparentMode);
 
-  SymbolPainter symPainter;
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
   for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
@@ -227,7 +272,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   font.setBold(true);
-  font.setPointSizeF(font.pointSizeF() * 1.2f);
+  font.setPointSizeF(defaultFontSize);
   painter.setFont(font);
   for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
   {
@@ -244,18 +289,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
+  // Draw text lables
   float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
   QString startAltStr = QLocale().toString(startAlt, 'f', 0) + " ft";
   symPainter.textBox(&painter, {startAltStr},
                      QPen(Qt::black), X0 - 8,
-                     Y0 + static_cast<int>(h - startAlt * vertScale) + 5,
+                     Y0 + static_cast<int>(h - startAlt * vertScale),
                      textatt::BOLD | textatt::RIGHT, 255);
 
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
   QString destAltStr = QLocale().toString(destAlt, 'f', 0) + " ft";
   symPainter.textBox(&painter, {destAltStr},
                      QPen(Qt::black), X0 + w + 4,
-                     Y0 + static_cast<int>(h - destAlt * vertScale) + 5,
+                     Y0 + static_cast<int>(h - destAlt * vertScale),
                      textatt::BOLD | textatt::LEFT, 255);
 
   QString maxAlt =
@@ -266,6 +312,28 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   QString routeAlt = QLocale().toString(routeController->getFlightplan()->getCruisingAlt()) + " ft";
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
+
+  // Draw user aircraft
+  if(simData.getPosition().isValid() &&
+     parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
+     !routeController->isFlightplanEmpty())
+  {
+    int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizScale);
+    int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * vertScale);
+    painter.translate(acx, acy);
+    painter.rotate(90);
+    symPainter.drawAircraftSymbol(&painter, 0, 0, 20);
+    painter.resetTransform();
+
+    font.setPointSizeF(defaultFontSize);
+    painter.setFont(font);
+
+    QStringList texts;
+    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
+    texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm");
+
+    symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
+  }
 
   qDebug() << "profile paint" << etimer.elapsed() << "ms";
 }
@@ -459,7 +527,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   float maxElev = std::ceil((leg.maxElevation + 1000.f) / 500.f) * 500.f;
 
   parentWindow->getUi()->labelElevationInfo->setText(
-    "<b>"+from + " −> " + to + "</b>, " +
+    "<b>" + from + " −> " + to + "</b>, " +
     QString::number(distance, 'f', distance < 100.f ? 1 : 0) + " nm, " +
     " Ground Altitude " + QString::number(alt, 'f', 0) + " ft, " +
     " Above Ground Altitude " + QString::number(flightplanAltFt - alt, 'f', 0) + " ft, " +
@@ -476,6 +544,8 @@ void ProfileWidget::leaveEvent(QEvent *)
 
   delete rubberBand;
   rubberBand = nullptr;
+
+  parentWindow->getUi()->labelElevationInfo->setText("No information.");
 
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }

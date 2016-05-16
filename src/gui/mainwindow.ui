@@ -95,6 +95,18 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsSearch">
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
@@ -1455,6 +1467,18 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsRoute">
     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QLabel" name="labelRouteInfo">
        <property name="text">
@@ -1599,6 +1623,18 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsInfo">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetInformation">
        <property name="currentIndex">
@@ -1743,18 +1779,27 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsElevation">
     <layout class="QVBoxLayout" name="verticalLayout_12">
-     <property name="spacing">
-      <number>0</number>
+     <property name="leftMargin">
+      <number>2</number>
      </property>
-     <item>
-      <widget class="QWidget" name="elevationWidgetDummy" native="true"/>
-     </item>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item>
       <widget class="QLabel" name="labelElevationInfo">
        <property name="text">
-        <string/>
+        <string>No information.</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QWidget" name="elevationWidgetDummy" native="true"/>
      </item>
     </layout>
    </widget>

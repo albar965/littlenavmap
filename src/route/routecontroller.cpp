@@ -935,7 +935,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
     insertIndex = legIndex + 1;
   else
   {
-    int leg = nearestLeg(entry.getPosition());
+    int leg = nearestLegIndex(entry.getPosition());
     qDebug() << "nearestLeg" << leg;
 
     insertIndex = leg;
@@ -964,7 +964,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   emit routeChanged(true);
 }
 
-int RouteController::nearestLeg(const atools::geo::Pos& pos)
+int RouteController::nearestLegIndex(const atools::geo::Pos& pos)
 {
   int nearest = -1;
   float minDistance = std::numeric_limits<float>::max();

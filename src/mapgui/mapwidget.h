@@ -93,6 +93,8 @@ public:
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
   void highlightProfilePoint(atools::geo::Pos pos);
 
+  void disconnectedFromSimulator();
+
   bool eventFilter(QObject *obj, QEvent *e) override;
 
   const atools::geo::Pos& getMarkPos() const
@@ -150,6 +152,8 @@ public:
   void setShowMapPois(bool show);
   void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
   void setDetailFactor(int factor);
+
+  maptypes::MapObjectTypes getShownMapFeatures();
 
   RouteController *getRouteController() const;
 

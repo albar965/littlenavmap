@@ -24,6 +24,11 @@
 #include <QApplication>
 #include <marble/GeoPainter.h>
 
+const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
+                                    QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2), // Wings
+                                    QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
+                                   });
+
 using namespace Marble;
 
 SymbolPainter::SymbolPainter()
@@ -218,6 +223,28 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
     painter->drawPoint(x, y);
 
   painter->restore();
+}
+
+void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size)
+{
+  QVector<QLine> lines(AIRCRAFTLINES);
+  for(QLine& l : lines)
+  {
+    if(size != 40)
+    {
+      l.setP1(QPoint(l.x1() * size / 40, l.y1() * size / 40));
+      l.setP2(QPoint(l.x2() * size / 40, l.y2() * size / 40));
+    }
+
+    if(x != 0 && y != 0)
+      l.translate(x, y);
+  }
+
+  painter->setPen(mapcolors::aircraftBackPen);
+  painter->drawLines(lines);
+
+  painter->setPen(mapcolors::aircraftFillPen);
+  painter->drawLines(lines);
 }
 
 void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size,

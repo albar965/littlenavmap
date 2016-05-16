@@ -28,6 +28,8 @@
 
 #include <route/routemapobject.h>
 
+#include <fs/sc/simconnectdata.h>
+
 namespace Marble {
 class ElevationModel;
 }
@@ -48,11 +50,18 @@ public:
 
   void routeChanged(bool geometryChanged);
 
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+
+  void disconnectedFromSimulator();
+
 signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
 private:
   virtual void paintEvent(QPaintEvent *) override;
+
+  atools::fs::sc::SimConnectData simData, lastSimData;
+  float aircraftDistanceFromStart;
 
   struct ElevationLeg
   {

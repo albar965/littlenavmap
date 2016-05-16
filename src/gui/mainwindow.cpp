@@ -419,11 +419,19 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::dataPacketReceived,
           navMapWidget, &MapWidget::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived,
+          profileWidget, &ProfileWidget::simDataChanged);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
+
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          navMapWidget, &MapWidget::disconnectedFromSimulator);
+
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          profileWidget, &ProfileWidget::disconnectedFromSimulator);
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
@@ -439,7 +447,8 @@ const ElevationModel *MainWindow::getElevationModel()
 
 void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
 {
-  qDebug() << "resultTruncated" << type << "num" << truncatedTo;
+  if(truncatedTo > 0)
+    qDebug() << "resultTruncated" << type << "num" << truncatedTo;
   if(truncatedTo > 0)
     messageLabel->setText(tr("Too many objects."));
 }
@@ -648,6 +657,7 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
 void MainWindow::updateMapShowFeatures()
 {
   navMapWidget->updateMapShowFeatures();
+  profileWidget->update();
 }
 
 void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
@@ -769,7 +779,7 @@ void MainWindow::readSettings()
               ui->actionMapShowAddonAirports,
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-              ui->actionMapShowRoute, ui->actionMapShowAircraft,
+              ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
@@ -796,7 +806,7 @@ void MainWindow::writeSettings()
            ui->actionMapShowAddonAirports,
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-           ui->actionMapShowRoute, ui->actionMapShowAircraft,
+           ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);

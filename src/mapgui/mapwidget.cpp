@@ -184,6 +184,11 @@ void MapWidget::setDetailFactor(int factor)
   updateAirwayScreenLines();
 }
 
+maptypes::MapObjectTypes MapWidget::getShownMapFeatures()
+{
+  return paintLayer->getShownMapFeatures();
+}
+
 RouteController *MapWidget::getRouteController() const
 {
   return parentWindow->getRouteController();
@@ -384,10 +389,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
 
     using atools::geo::almostNotEqual;
-    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 2 ||
-       almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 2.f) ||
+    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
+       almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 1.f) ||
        almostNotEqual(lastSimData.getIndicatedSpeed(), simData.getIndicatedSpeed(), 10.f) ||
-       almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 100.f))
+       almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
     {
       lastSimData = simulatorData;
 
@@ -430,6 +435,12 @@ void MapWidget::highlightProfilePoint(atools::geo::Pos pos)
 
   delete profilePoint;
   profilePoint = nullptr;
+}
+
+void MapWidget::disconnectedFromSimulator()
+{
+  simData = atools::fs::sc::SimConnectData();
+  update();
 }
 
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
