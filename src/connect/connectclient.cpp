@@ -19,6 +19,7 @@
 #include "connectdialog.h"
 #include "gui/errorhandler.h"
 #include "gui/dialog.h"
+#include "fs/sc/simconnectreply.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -44,17 +45,21 @@ ConnectClient::~ConnectClient()
 void ConnectClient::readFromServer()
 {
   if(data == nullptr)
-    data = new atools::fs::SimConnectData;
+    data = new atools::fs::sc::SimConnectData;
 
-  if(data->read(socket))
+  bool read = data->read(socket);
+  if(data->getStatus() != atools::fs::sc::OK)
   {
-    // QThread::sleep(2);
+    QMessageBox::critical(parentWidget, QApplication::applicationName(),
+                          QString("Error reading data  from Little Navconnect: %1.").
+                          arg(data->getStatusText()));
+    closeSocket();
+    return;
+  }
 
-    char d[] = "0";
-    qint64 written = socket->write(d, strlen(d));
-    bool flush = socket->flush();
-
-    qDebug() << "write" << written << "flush" << flush;
+  if(read)
+  {
+    writeReply();
 
     if(data->getPosition().isValid())
       emit dataPacketReceived(*data);
@@ -62,6 +67,26 @@ void ConnectClient::readFromServer()
     delete data;
     data = nullptr;
   }
+}
+
+void ConnectClient::writeReply()
+{
+  // QThread::sleep(2);
+
+  atools::fs::sc::SimConnectReply reply;
+  reply.write(socket);
+
+  if(reply.getStatus() != atools::fs::sc::OK)
+  {
+    QMessageBox::critical(parentWidget, QApplication::applicationName(),
+                          QString("Error writing reply to Little Navconnect: %1.").
+                          arg(reply.getStatusText()));
+    closeSocket();
+    return;
+  }
+
+  if(!socket->flush())
+    qWarning() << "Reply to server not flushed";
 }
 
 void ConnectClient::connectedToServer()
@@ -161,4 +186,7 @@ void ConnectClient::closeSocket()
     socket->deleteLater();
     socket = nullptr;
   }
+
+  delete data;
+  data = nullptr;
 }

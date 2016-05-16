@@ -20,7 +20,7 @@
 
 #include <QAbstractSocket>
 
-#include "fs/simconnectdata.h"
+#include "fs/sc/simconnectdata.h"
 
 class QTcpSocket;
 class ConnectDialog;
@@ -43,7 +43,7 @@ public:
   void restoreState();
 
 signals:
-  void dataPacketReceived(atools::fs::SimConnectData data);
+  void dataPacketReceived(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
   void disconnectedFromSimulator();
 
@@ -55,11 +55,13 @@ private:
 
   bool silent = false;
   ConnectDialog *dialog = nullptr;
-  atools::fs::SimConnectData *data = nullptr;
+  atools::fs::sc::SimConnectData *data = nullptr;
   QTcpSocket *socket = nullptr;
   QWidget *parentWidget;
 
   void connectInternal();
+  void writeReply();
+
 };
 
 #endif // CONNECTCLIENT_H

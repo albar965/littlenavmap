@@ -373,7 +373,7 @@ void MapWidget::routeChanged(bool geometryChanged)
   }
 }
 
-void MapWidget::simDataChanged(const atools::fs::SimConnectData& simulatorData)
+void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
   {

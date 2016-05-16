@@ -24,6 +24,7 @@
 #include "mapgui/symbolpainter.h"
 
 #include <algorithm>
+#include "fs/sc/simconnectdata.h"
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
@@ -63,7 +64,7 @@ void MapPainterAircraft::render(const PaintContext *context)
 
 void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 {
-  const atools::fs::SimConnectData& simData = navMapWidget->getSimData();
+  const atools::fs::sc::SimConnectData& simData = navMapWidget->getSimData();
   const Pos& pos = simData.getPosition();
 
   if(!pos.isValid())
