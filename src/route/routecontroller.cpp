@@ -377,7 +377,7 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       entries.insert(entries.end() - 1, flightplanEentry);
 
     }
-    if(minAltitude != 0)
+    if(minAltitude != 0 && !useSetAltitude)
       flightplan->setCruisingAlt(minAltitude);
 
     QGuiApplication::restoreOverrideCursor();
@@ -1139,7 +1139,7 @@ void RouteController::updateFlightplanData()
     // <Descr>LFHO, EDRJ</Descr>
     flightplan->setDescription(departureIcao + ", " + destinationIcao);
     // <FPType>IFR</FPType>
-    flightplan->setRouteType(atools::fs::pln::VOR);
+    // flightplan->setRouteType(atools::fs::pln::VOR);
     // <RouteType>LowAlt</RouteType>
     flightplan->setFlightplanType(
       ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);

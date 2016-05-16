@@ -106,6 +106,7 @@ void MapPaintLayer::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 void MapPaintLayer::setDetailFactor(int factor)
 {
   detailFactor = factor;
+  updateLayers();
 }
 
 void MapPaintLayer::routeChanged()
@@ -224,6 +225,14 @@ void MapPaintLayer::initLayers()
   qDebug() << *layers;
 }
 
+void MapPaintLayer::updateLayers()
+{
+  float dist = static_cast<float>(navMapWidget->distance());
+  // Get the uncorrected effective layer - route painting is independent of declutter
+  mapLayerEffective = layers->getLayer(dist);
+  mapLayer = layers->getLayer(dist, detailFactor);
+}
+
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                            const QString& renderPos, GeoSceneLayer *layer)
 {
@@ -234,8 +243,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   {
     mapScale->update(viewport, navMapWidget->distance());
 
-    float dist = static_cast<float>(navMapWidget->distance());
-
     // Set default font to bold and reduce size a bit
     QFont font = painter->font();
     font.setBold(true);
@@ -245,9 +252,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     QElapsedTimer t;
     t.start();
 
-    // Get the uncorrected effective layer - route painting is independent of declutter
-    mapLayerEffective = layers->getLayer(dist);
-    mapLayer = layers->getLayer(dist, detailFactor);
+    updateLayers();
 
     PaintContext context;
     context.mapLayer = mapLayer;

@@ -175,9 +175,6 @@ void ProfileWidget::updateScreenCoords()
 
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
-  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
-    return;
-
   QElapsedTimer etimer;
   etimer.start();
 
@@ -187,6 +184,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setRenderHint(QPainter::Antialiasing);
   painter.fillRect(rect(), QBrush(Qt::white));
   painter.fillRect(X0, 0, w, h + Y0, QBrush(QColor::fromRgb(204, 204, 255)));
+
+  SymbolPainter symPainter;
+
+  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  {
+    symPainter.textBox(&painter, {"No Route loaded."}, QPen(Qt::black),
+                       X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
+
+    return;
+  }
 
   // Draw grey vertical lines for waypoints
   int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
@@ -204,8 +211,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setPen(QPen(Qt::red, 4, Qt::SolidLine));
   int maxAltY = Y0 + static_cast<int>(h - maxRouteElevationFt * vertScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
-
-  SymbolPainter symPainter;
 
   // Draw the flightplan line
   painter.setPen(QPen(Qt::black, 6, Qt::SolidLine));
@@ -474,6 +479,9 @@ void ProfileWidget::hideEvent(QHideEvent *)
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
+  if(legList.elevationLegs.isEmpty())
+    return;
+
   if(rubberBand == nullptr)
     rubberBand = new QRubberBand(QRubberBand::Line, this);
 

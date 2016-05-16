@@ -273,11 +273,11 @@ void MapWidget::restoreState()
     emit markChanged(markPos);
   }
 
-  if(s->contains("Map/HomeLonX") && s->contains("Map/HomeLatY") && s->contains("Map/HomeZoom"))
+  if(s->contains("Map/HomeLonX") && s->contains("Map/HomeLatY") && s->contains("Map/HomeDistance"))
   {
     homePos = atools::geo::Pos(s->value("Map/HomeLonX").toDouble(), s->value("Map/HomeLatY").toDouble());
     homeDistance = s->value("Map/HomeDistance").toDouble();
-    emit homeChanged(markPos);
+    emit homeChanged(homePos);
   }
   history.restoreState("Map/History");
 

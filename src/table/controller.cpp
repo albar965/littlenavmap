@@ -93,6 +93,7 @@ void Controller::postDatabaseLoad()
 void Controller::filterIncluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   model->filterIncluding(toS(index));
   changed = true;
 }
@@ -100,6 +101,7 @@ void Controller::filterIncluding(const QModelIndex& index)
 void Controller::filterExcluding(const QModelIndex& index)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   model->filterExcluding(toS(index));
   changed = true;
 }
@@ -120,6 +122,7 @@ atools::geo::Pos Controller::getGeoPos(const QModelIndex& index)
 void Controller::filterByLineEdit(const Column *col, const QString& text)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   model->filter(col, text);
   changed = true;
 }
@@ -127,6 +130,7 @@ void Controller::filterByLineEdit(const Column *col, const QString& text)
 void Controller::filterBySpinBox(const Column *col, int value)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
     model->filter(col, QVariant(QVariant::Int));
   else
@@ -137,12 +141,14 @@ void Controller::filterBySpinBox(const Column *col, int value)
 void Controller::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   model->filterByIdent(ident, region, airportIdent);
 }
 
 void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   QVariant minVal(minValue), maxVal(maxValue);
   if(col->getMinSpinBoxWidget()->value() == col->getMinSpinBoxWidget()->minimum())
     minVal = QVariant(QVariant::Int);
@@ -158,6 +164,7 @@ void Controller::filterByCheckbox(const Column *col, int state, bool triState)
 {
   Q_ASSERT(model != nullptr);
 
+  view->clearSelection();
   if(triState)
   {
     Qt::CheckState s = static_cast<Qt::CheckState>(state);
@@ -182,6 +189,7 @@ void Controller::filterByCheckbox(const Column *col, int state, bool triState)
 void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
 {
   Q_ASSERT(model != nullptr);
+  view->clearSelection();
   if(noFilter)
     // Index 0 for combo box means here: no filter, so remove it
     model->filter(col, QVariant(QVariant::Int));
@@ -195,6 +203,8 @@ void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel:
 {
   if(center.isValid())
   {
+    view->clearSelection();
+
     currentDistanceCenter = center;
     atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
 
@@ -225,6 +235,7 @@ void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel:
   }
   else
   {
+    view->clearSelection();
     currentDistanceCenter = atools::geo::Pos();
 
     viewSetModel(model);
@@ -247,6 +258,7 @@ void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int 
 {
   if(currentDistanceCenter.isValid())
   {
+    view->clearSelection();
     atools::geo::Rect rect(currentDistanceCenter, atools::geo::nmToMeter(maxDistance));
 
     proxyModel->setDistanceFilter(currentDistanceCenter, dir, minDistance, maxDistance);
@@ -257,6 +269,7 @@ void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int 
 
 void Controller::filterOperator(bool useAnd)
 {
+  view->clearSelection();
   Q_ASSERT(model != nullptr);
   if(useAnd)
     model->filterOperator("and");
@@ -277,6 +290,8 @@ void Controller::groupByColumn(const QModelIndex& index)
   Q_ASSERT(columns != nullptr);
   Q_ASSERT(!isGrouped());
 
+  view->clearSelection();
+
   saveTempViewState();
 
   columns->clearWidgets();
@@ -293,6 +308,9 @@ void Controller::ungroup()
 {
   Q_ASSERT(model != nullptr);
   Q_ASSERT(columns != nullptr);
+
+  view->clearSelection();
+
   columns->clearWidgets();
   columns->enableWidgets(true);
 
@@ -306,7 +324,7 @@ void Controller::ungroup()
 void Controller::selectAll()
 {
   Q_ASSERT(view->selectionModel() != nullptr);
-  return view->selectAll();
+  view->selectAll();
 }
 
 const QItemSelection Controller::getSelection() const

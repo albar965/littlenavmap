@@ -110,6 +110,7 @@ private:
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
   void initLayers();
+  void updateLayers();
 
 };
 
