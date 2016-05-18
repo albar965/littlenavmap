@@ -70,11 +70,12 @@ enum Type
 struct Edge
 {
   Edge()
+    : toNodeId(-1), distanceMeter(0), minAltFt(0), airwayId(-1), type(nw::NONE)
   {
   }
 
-  Edge(int to, int distance = 0, int minimumAltitude = 0, nw::Type edgeType = nw::NONE)
-    : toNodeId(to), distanceMeter(distance), minAltFt(minimumAltitude), airwayId(-1), type(edgeType)
+  Edge(int to, int distance)
+    : toNodeId(to), distanceMeter(distance), minAltFt(0), airwayId(-1), type(nw::NONE)
   {
 
   }
@@ -84,7 +85,8 @@ struct Edge
 
   bool operator==(const nw::Edge& other) const
   {
-    return toNodeId == other.toNodeId;
+    // Need compare both since edges are added for both directions
+    return toNodeId == other.toNodeId && type == other.type;
   }
 
   bool operator!=(const nw::Edge& other) const
@@ -96,12 +98,13 @@ struct Edge
 
 inline int qHash(const nw::Edge& edge)
 {
-  return edge.toNodeId;
+  return edge.toNodeId ^ edge.type;
 }
 
 struct Node
 {
   Node()
+    : id(-1), range(0), type(nw::NONE)
   {
   }
 
@@ -182,6 +185,12 @@ public:
     return mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
   }
 
+#ifdef DEBUG_ROUTE
+  void printNodeDebug(const nw::Node& node);
+  void printEdgeDebug(const nw::Edge& edge);
+
+#endif
+
 protected:
   void addDestNodeEdges(nw::Node& node);
   void cleanDestNodeEdges();
@@ -214,7 +223,8 @@ protected:
   int nodeIdIndex = -1, nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
 
   bool edgeIndexesCreated = false;
-  int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1, edgeDistanceIndex = -1;
+  int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
+      edgeDistanceIndex = -1;
 
 };
 

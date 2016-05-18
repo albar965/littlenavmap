@@ -356,13 +356,9 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     entries.erase(flightplan->getEntries().begin() + 1, entries.end() - 1);
 
     int minAltitude = 0;
-    maptypes::MapSearchResult result;
     for(const rf::RouteEntry& routeEntry : route)
     {
-      qDebug() << "Route id" << routeEntry.ref.id << "type" << routeEntry.ref.type;
-
-      query->getMapObjectById(result, routeEntry.ref.type, routeEntry.ref.id);
-
+      // qDebug() << "Route id" << routeEntry.ref.id << "type" << routeEntry.ref.type;
       FlightplanEntry flightplanEentry;
       buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type, flightplanEentry,
                            fetchAirways);
@@ -1006,6 +1002,9 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
   query->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
   minAltitude = airway.minalt;
+
+  // qDebug() << "airway id" << airwayId << "name" << airway.name << "alt" << airway.minalt
+  // << "type" << airway.type;
 }
 
 void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,

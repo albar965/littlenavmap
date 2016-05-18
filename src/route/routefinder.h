@@ -58,7 +58,7 @@ private:
   void expandNode(const nw::Node& node, const nw::Node& destNode);
 
   float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
-  float costEstimate(const nw::Node& currentNode, const nw::Node& successor);
+  float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
 
   Heap<nw::Node> openNodesHeap;
   QSet<int> closedNodes;

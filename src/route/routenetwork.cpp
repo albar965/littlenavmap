@@ -27,6 +27,8 @@
 
 #include <QElapsedTimer>
 
+const int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
+
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
@@ -76,6 +78,10 @@ void RouteNetwork::clear()
   nodes.clear();
   destinationNodePredecessors.clear();
   numNodesDb = -1;
+  nodeIndexesCreated = false;
+  edgeIndexesCreated = false;
+  nodes.reserve(60000);
+  destinationNodePredecessors.reserve(1000);
 }
 
 void RouteNetwork::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours,
@@ -119,7 +125,7 @@ void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, con
     destinationPos = to;
 
     // Add destination first so it can be added to start successors
-    destinationNodeRect = Rect(to, atools::geo::nmToMeter(200));
+    destinationNodeRect = Rect(to, NODE_SEARCH_RADIUS);
     fetchNode(to.getLonX(), to.getLatY(), false, DESTINATION_NODE_ID);
 
     for(int id : nodes.keys())
@@ -129,7 +135,7 @@ void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, con
   if(startPos != from)
   {
     startPos = from;
-    startNodeRect = Rect(from, atools::geo::nmToMeter(200));
+    startNodeRect = Rect(from, NODE_SEARCH_RADIUS);
     fetchNode(from.getLonX(), from.getLatY(), true, START_NODE_ID);
   }
   qDebug() << "adding start and  destination to network done";
@@ -152,11 +158,21 @@ void RouteNetwork::cleanDestNodeEdges()
   {
     if(nodes.contains(i))
     {
-      if(nodes[i].edges.removeAll(Edge(DESTINATION_NODE_ID)) == 0)
-        qDebug() << "No node destination predecessors deleted for node" << nodes.value(i).id;
+      QVector<Edge>& edges = nodes[i].edges;
+
+      QVector<Edge>::iterator it = std::remove_if(edges.begin(), edges.end(),
+                                                  [ = ](const Edge &e)->bool
+                                                  {
+                                                    return e.toNodeId == DESTINATION_NODE_ID;
+                                                  });
+
+      if(it == edges.end())
+        qWarning() << "No node destination predecessors deleted for node" << nodes.value(i).id;
+      else
+        edges.erase(it, edges.end());
     }
     else
-      qDebug() << "No node destination found" << nodes.value(i).id;
+      qWarning() << "No node destination found" << nodes.value(i).id;
   }
   destinationNodePredecessors.clear();
 }
@@ -166,9 +182,15 @@ void RouteNetwork::addDestNodeEdges(nw::Node& node)
   if(destinationNodeRect.contains(node.pos) && !destinationNodePredecessors.contains(node.id) &&
      node.id != DESTINATION_NODE_ID)
   {
+    nw::Edge edge(DESTINATION_NODE_ID,
+                  static_cast<int>(node.pos.distanceMeterTo(destinationPos)));
+
+#ifdef DEBUG_ROUTE
+    printEdgeDebug(edge);
+#endif
+
     // Near destination - add as successor
-    node.edges.append(Edge(DESTINATION_NODE_ID,
-                           static_cast<int>(node.pos.distanceMeterTo(destinationPos) + 0.5f)));
+    node.edges.append(edge);
     // Remember for later cleanup
     destinationNodePredecessors.insert(node.id);
   }
@@ -182,6 +204,16 @@ nw::Node RouteNetwork::getNodeByNavId(int id, nw::Type type)
 
   if(nodeByNavIdQuery->next())
     return fetchNode(nodeByNavIdQuery->value("node_id").toInt());
+  else
+  {
+    if(type == nw::WAYPOINT_JET || type == nw::WAYPOINT_VICTOR)
+    {
+      nodeByNavIdQuery->bindValue(":type", nw::WAYPOINT_BOTH);
+      nodeByNavIdQuery->exec();
+      if(nodeByNavIdQuery->next())
+        return fetchNode(nodeByNavIdQuery->value("node_id").toInt());
+    }
+  }
 
   return Node();
 }
@@ -218,8 +250,6 @@ void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type
 
 nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
 {
-  const int MAX_RANGE = atools::geo::nmToMeter(200);
-
   nodes.remove(id);
 
   Node node;
@@ -238,7 +268,7 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
 
   if(loadSuccessors)
   {
-    Rect queryRect(Pos(lonx, laty), MAX_RANGE);
+    Rect queryRect(Pos(lonx, laty), NODE_SEARCH_RADIUS);
     QSet<Edge> tempEdges;
     tempEdges.reserve(1000);
 
@@ -253,7 +283,7 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
         {
           // TODO build edge add minAltFt and type
           Pos otherPos(nearestNodesQuery->value("lonx").toFloat(), nearestNodesQuery->value("laty").toFloat());
-          tempEdges.insert(Edge(nodeId, static_cast<int>(node.pos.distanceMeterTo(otherPos) + 0.5f)));
+          tempEdges.insert(Edge(nodeId, static_cast<int>(node.pos.distanceMeterTo(otherPos))));
         }
       }
     }
@@ -338,7 +368,7 @@ void RouteNetwork::initQueries()
 
   edgeToQuery = new SqlQuery(db);
   edgeToQuery->prepare(
-    "select " + edgeCols + "to_node_id, to_node_type from " + edgeTable +
+    "select " + edgeCols + " to_node_id, to_node_type from " + edgeTable +
     " where from_node_id = :id");
 
   edgeFromQuery = new SqlQuery(db);
@@ -456,3 +486,43 @@ void RouteNetwork::bindCoordRect(const atools::geo::Rect& rect, atools::sql::Sql
   query->bindValue(":bottomy", rect.getSouth());
   query->bindValue(":topy", rect.getNorth());
 }
+
+#ifdef DEBUG_ROUTE
+void RouteNetwork::printNodeDebug(const nw::Node& node)
+{
+  SqlQuery q(db);
+  q.prepare(
+    "select * from waypoint  w  join route_node_airway n on w.waypoint_id = n.nav_id  where n.node_id = :id");
+  q.bindValue(":id", node.id);
+  q.exec();
+  int i = 0;
+  while(q.next())
+  {
+    qDebug() << "Node #" << i++ << "ident" << q.value("ident").toString()
+             << "id" << node.id << "range" << QString::number(node.range, 'f', 0)
+             << "type" << node.type << "pos" << node.pos;
+
+  }
+
+}
+
+void RouteNetwork::printEdgeDebug(const nw::Edge& edge)
+{
+  SqlQuery q(db);
+  q.prepare(
+    "select * from airway a join route_edge_airway e on a.airway_id = e.airway_id where e.edge_id = :id");
+
+  q.bindValue(":id", edge.id);
+  q.exec();
+  int i = 0;
+  while(q.next())
+  {
+    qDebug() << "Edge #" << i++ << "name" << q.value("airway_name").toString()
+             << "type" << q.value("airway_type").toString()
+             << "to node id" << edge.toNodeId << "airway id" << edge.airwayId
+             << "dist" << QString::number(edge.distanceMeter, 'f', 0)
+             << "minalt" << edge.minAltFt << "type" << edge.type;
+  }
+}
+
+#endif

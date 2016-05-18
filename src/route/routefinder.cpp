@@ -61,6 +61,10 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   {
     // Contains known nodes
     openNodesHeap.pop(currentNode);
+#ifdef DEBUG_ROUTE
+    qDebug() << "pop";
+    network->printNodeDebug(currentNode);
+#endif
 
     if(currentNode.id == destNode.id)
     {
@@ -133,14 +137,20 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 
     if(distanceMeter == 0)
       // No distance given for airways - have to calculate this here
-      distanceMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos) + 0.5f);
+      distanceMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos));
 
     float successorEdgeCosts = cost(currentNode, successor, distanceMeter);
     float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
 
     if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
+    {
+#ifdef DEBUG_ROUTE
+      qDebug() << "not cheaper successorNodeCosts" << successorNodeCosts;
+      network->printNodeDebug(successor);
+#endif
       // New path is not cheaper
       continue;
+    }
 
     nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
     nodePredecessor[successor.id] = currentNode.id;
@@ -150,9 +160,21 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     float totalCost = successorNodeCosts + costEstimate(successor, destNode);
 
     if(openNodesHeap.contains(successor))
+    {
+#ifdef DEBUG_ROUTE
+      qDebug() << "change totalCost" << totalCost;
+      network->printNodeDebug(successor);
+#endif
       openNodesHeap.change(successor, totalCost);
+    }
     else
+    {
+#ifdef DEBUG_ROUTE
+      qDebug() << "push totalCost" << totalCost;
+      network->printNodeDebug(successor);
+#endif
       openNodesHeap.push(successor, totalCost);
+    }
   }
 }
 
@@ -177,11 +199,9 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
   return costs;
 }
 
-float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& successor)
+float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& destNode)
 {
-  // return 0.f;
-  // Use largest factor to allow underestimate
-  return currentNode.pos.distanceMeterTo(successor.pos);
+  return currentNode.pos.distanceMeterTo(destNode.pos);
 }
 
 maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::Type type)

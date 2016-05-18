@@ -55,6 +55,8 @@
 #include <route/routenetworkradio.h>
 #include "common/weatherreporter.h"
 
+#include <route/routenetworkairway.h>
+
 using namespace Marble;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
@@ -1316,35 +1318,42 @@ void MapWidget::debugOnClick(int x, int y)
   // Get objects from cache - alread present objects will be skipped
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               paintLayer->getShownMapFeatures() &
-                              (maptypes::VOR | maptypes::NDB),
+                              // (maptypes::VOR | maptypes::NDB),
+                              maptypes::WAYPOINT | maptypes::AIRWAYV | maptypes::AIRWAYJ,
                               x, y, 10, mapSearchResult);
 
-  RouteNetworkRadio net(mapQuery->getDatabase());
-  net.setMode( /*nw::ROUTE_DME |*/ nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
+  RouteNetworkAirway net(mapQuery->getDatabase());
+  // net.setMode( /*nw::ROUTE_DME |*/ nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
+  net.setMode(nw::ROUTE_JET);
 
   nw::Node node;
-  if(!mapSearchResult.vors.isEmpty())
+  if(!mapSearchResult.waypoints.isEmpty())
   {
-    maptypes::MapVor vor = mapSearchResult.vors.first();
-    QString type = maptypes::vorType(vor);
-    if(type == "VOR")
-      node = net.getNodeByNavId(vor.id, nw::VOR);
-    else if(type == "DME")
-      node = net.getNodeByNavId(vor.id, nw::DME);
-    else if(type == "VORDME")
-      node = net.getNodeByNavId(vor.id, nw::VORDME);
+    maptypes::MapWaypoint wp = mapSearchResult.waypoints.first();
+    node = net.getNodeByNavId(wp.id, nw::WAYPOINT_JET);
 
-    qDebug() << "=== node_id" << node.id << "type" << node.type
-             << "VOR nav_id" << mapSearchResult.vors.first().id;
+    qDebug() << "=== node_id" << node.id << "type" << node.type;
   }
 
-  if(!mapSearchResult.ndbs.isEmpty())
-  {
-    node = net.getNodeByNavId(mapSearchResult.ndbs.first().id, nw::NDB);
-
-    qDebug() << "=== node_id" << node.id << "type" << node.type
-             << "NDB nav_id" << mapSearchResult.ndbs.first().id;
-  }
+  // if(!mapSearchResult.vors.isEmpty())
+  // {
+  // maptypes::MapVor vor = mapSearchResult.vors.first();
+  // QString type = maptypes::vorType(vor);
+  // if(type == "VOR")
+  // node = net.getNodeByNavId(vor.id, nw::VOR);
+  // else if(type == "DME")
+  // node = net.getNodeByNavId(vor.id, nw::DME);
+  // else if(type == "VORDME")
+  // node = net.getNodeByNavId(vor.id, nw::VORDME);
+  // qDebug() << "=== node_id" << node.id << "type" << node.type
+  // << "VOR nav_id" << mapSearchResult.vors.first().id;
+  // }
+  // if(!mapSearchResult.ndbs.isEmpty())
+  // {
+  // node = net.getNodeByNavId(mapSearchResult.ndbs.first().id, nw::NDB);
+  // qDebug() << "=== node_id" << node.id << "type" << node.type
+  // << "NDB nav_id" << mapSearchResult.ndbs.first().id;
+  // }
 
   if(node.id == -1)
     return;
