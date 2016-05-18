@@ -175,8 +175,8 @@ void ProfileWidget::updateScreenCoords()
 
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
-  QElapsedTimer etimer;
-  etimer.start();
+  // QElapsedTimer etimer;
+  // etimer.start();
 
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
@@ -223,7 +223,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw flightplan symbols
   // Set default font to bold and reduce size
   QFont font = painter.font();
-  float defaultFontSize = font.pointSizeF();
+  float defaultFontSize = static_cast<float>(font.pointSizeF());
   font.setBold(true);
   font.setPointSizeF(defaultFontSize * 0.8f);
   painter.setFont(font);
@@ -343,7 +343,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
   }
 
-  qDebug() << "profile paint" << etimer.elapsed() << "ms";
+  // qDebug() << "profile paint" << etimer.elapsed() << "ms";
 }
 
 ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
@@ -533,7 +533,12 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   // Get Position for highlight
   float legdistpart = distance - leg.distances.first();
   float legdist = leg.distances.last() - leg.distances.first();
+
+  // qDebug() << "legdistpart" << legdistpart << "legdist" << legdist << "fraction" << legdistpart / legdist;
+  // qDebug() << "first" << leg.elevation.first() << "last" << leg.elevation.last();
+
   const atools::geo::Pos& pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
+  // qDebug() << "pos" << pos;
 
   float maxElev = std::ceil((leg.maxElevation + 1000.f) / 500.f) * 500.f;
 

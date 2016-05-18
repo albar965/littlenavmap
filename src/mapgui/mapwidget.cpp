@@ -414,7 +414,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
 void MapWidget::highlightProfilePoint(atools::geo::Pos pos)
 {
-  qDebug() << "highlightProfilePoint";
   if(pos.isValid())
   {
     CoordinateConverter conv(viewport());
@@ -426,7 +425,7 @@ void MapWidget::highlightProfilePoint(atools::geo::Pos pos)
 
       const QRect& geo = profilePoint->geometry();
 
-      if(geo.x() != x - 6 && geo.y() != y - 6)
+      if(geo.x() != x - 6 || geo.y() != y - 6)
       {
         profilePoint->setGeometry(x - 6, y - 6, 12, 12);
         profilePoint->show();
@@ -1319,7 +1318,7 @@ void MapWidget::debugOnClick(int x, int y)
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
                               paintLayer->getShownMapFeatures() &
                               // (maptypes::VOR | maptypes::NDB),
-                              maptypes::WAYPOINT | maptypes::AIRWAYV | maptypes::AIRWAYJ,
+                              (maptypes::WAYPOINT | maptypes::AIRWAYV | maptypes::AIRWAYJ),
                               x, y, 10, mapSearchResult);
 
   RouteNetworkAirway net(mapQuery->getDatabase());
