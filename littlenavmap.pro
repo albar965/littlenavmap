@@ -90,7 +90,8 @@ SOURCES += src/main.cpp\
     src/connect/connectdialog.cpp \
     src/connect/connectclient.cpp \
     src/mapgui/mappainteraircraft.cpp \
-    src/profile/profilewidget.cpp
+    src/profile/profilewidget.cpp \
+    src/route/routemapobjectlist.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/table/columnlist.h \
@@ -143,7 +144,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/connect/connectdialog.h \
     src/connect/connectclient.h \
     src/mapgui/mappainteraircraft.h \
-    src/profile/profilewidget.h
+    src/profile/profilewidget.h \
+    src/route/routemapobjectlist.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

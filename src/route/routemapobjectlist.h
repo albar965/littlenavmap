@@ -15,44 +15,22 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTOOLTIP_H
-#define MAPTOOLTIP_H
+#ifndef ROUTEMAPOBJECTLIST_H
+#define ROUTEMAPOBJECTLIST_H
 
-#include <QObject>
+#include "routemapobject.h"
 
-namespace maptypes {
-struct MapSearchResult;
-
-}
-
-class RouteMapObject;
-class MorseCode;
-class MapLayer;
-class MapQuery;
-class WeatherReporter;
-class RouteMapObjectList;
-
-class MapTooltip :
-  public QObject
+class RouteMapObjectList :
+  public QList<RouteMapObject>
 {
-  Q_OBJECT
-
 public:
-  MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter);
-  virtual ~MapTooltip();
+  RouteMapObjectList();
+  virtual ~RouteMapObjectList();
 
-  QString buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
-                       const RouteMapObjectList& routeMapObjects,
-                       bool airportDiagram);
+  int nearestLegIndex(const atools::geo::Pos& pos) const;
 
-private:
-  const int MAXLINES = 30;
-  MapQuery *query;
-  bool checkText(QStringList& text);
-
-  MorseCode *morse;
-  WeatherReporter *weather;
+  bool getRouteDistances(const atools::geo::Pos& pos, float& distFromStart, float& distToDest) const;
 
 };
 
-#endif // MAPTOOLTIP_H
+#endif // ROUTEMAPOBJECTLIST_H

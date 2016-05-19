@@ -629,7 +629,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected);
   Q_UNUSED(total);
-  QList<RouteMapObject> result;
+  RouteMapObjectList result;
   routeController->getSelectedRouteMapObjects(result);
   navMapWidget->changeRouteHighlight(result);
 }

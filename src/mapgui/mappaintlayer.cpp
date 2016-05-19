@@ -112,7 +112,7 @@ void MapPaintLayer::setDetailFactor(int factor)
 void MapPaintLayer::routeChanged()
 {
   qDebug() << "route changed";
-  const QList<RouteMapObject>& routeMapObjects = navMapWidget->getRouteController()->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = navMapWidget->getRouteController()->getRouteMapObjects();
 
   forcePaint.clear();
   for(const RouteMapObject& obj : routeMapObjects)

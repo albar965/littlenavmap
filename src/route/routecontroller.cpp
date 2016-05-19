@@ -962,30 +962,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
 int RouteController::nearestLegIndex(const atools::geo::Pos& pos)
 {
-  int nearest = -1;
-  float minDistance = std::numeric_limits<float>::max();
-  for(int i = 1; i < routeMapObjects.size(); i++)
-  {
-    bool valid;
-    float distance = std::abs(pos.distanceMeterToLine(routeMapObjects.at(i - 1).getPosition(),
-                                                      routeMapObjects.at(i).getPosition(), valid));
-
-    if(valid && distance < minDistance)
-    {
-      minDistance = distance;
-      nearest = i;
-    }
-  }
-  for(int i = 0; i < routeMapObjects.size(); i++)
-  {
-    float distance = routeMapObjects.at(i).getPosition().distanceMeterTo(pos);
-    if(distance < minDistance)
-    {
-      minDistance = distance;
-      nearest = i + 1;
-    }
-  }
-  return nearest;
+  return routeMapObjects.nearestLegIndex(pos);
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)

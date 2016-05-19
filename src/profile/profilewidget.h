@@ -61,7 +61,7 @@ private:
   virtual void paintEvent(QPaintEvent *) override;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
-  float aircraftDistanceFromStart;
+  float aircraftDistanceFromStart, aircraftDistanceToDest;
 
   struct ElevationLeg
   {

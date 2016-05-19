@@ -129,7 +129,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
   if(mapLayerEff->isAirport())
     size = std::max(size, mapLayerEff->getAirportSymbolSize());
 
-  const QList<RouteMapObject>& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
+  const RouteMapObjectList& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
   positions.clear();
   for(const RouteMapObject& rmo : routeHighlightResults)
     positions.append(rmo.getPosition());

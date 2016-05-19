@@ -20,6 +20,7 @@
 #include "common/maptypes.h"
 #include "mapgui/mapquery.h"
 #include "common/formatter.h"
+#include "route/routemapobjectlist.h"
 
 #include <common/morsecode.h>
 #include <common/weatherreporter.h>
@@ -38,7 +39,7 @@ MapTooltip::~MapTooltip()
 }
 
 QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
-                                 const QList<RouteMapObject>& routeMapObjects,
+                                 const RouteMapObjectList& routeMapObjects,
                                  bool airportDiagram)
 {
   QStringList text;
@@ -67,7 +68,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       if(!metar.isEmpty())
         text += "<br/>Metar (ASN): " + metar;
     }
-//    else
+    // else
     {
       metar = weather->getNoaaMetar(ap.ident);
       if(!metar.isEmpty())

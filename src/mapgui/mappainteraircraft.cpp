@@ -89,7 +89,13 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
                  "GS " + QString::number(simData.getGroundSpeed(), 'f', 0) + " , " +
                  "HDG " + QString::number(simData.getCourseMag(), 'f', 0) + " °M");
 
-    texts.append("ALT " + QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
+    QString upDown;
+    if(simData.getVerticalSpeed() > 100)
+      upDown = " ⭡";
+    else if(simData.getVerticalSpeed() < -100)
+      upDown = " ⭣";
+
+    texts.append("ALT " + QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
 
     texts.append("Wind " + QString::number(simData.getWindDirection(), 'f', 0) + " °M / " +
                  QString::number(simData.getWindSpeed(), 'f', 0));

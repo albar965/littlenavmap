@@ -30,6 +30,7 @@
 #include <geo/pos.h>
 
 #include <route/routemapobject.h>
+#include <route/routemapobjectlist.h>
 
 #include "fs/sc/simconnectdata.h"
 
@@ -50,6 +51,7 @@ class MapQuery;
 class RouteController;
 class MapTooltip;
 class QRubberBand;
+class RouteMapObjectList;
 
 enum MouseState
 {
@@ -88,7 +90,7 @@ public:
   void changeHome();
   void showAircraft(bool state);
   void changeHighlight(const maptypes::MapSearchResult& positions);
-  void changeRouteHighlight(const QList<RouteMapObject>& routeHighlight);
+  void changeRouteHighlight(const RouteMapObjectList& routeHighlight);
   void routeChanged(bool geometryChanged);
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
   void highlightProfilePoint(atools::geo::Pos pos);
@@ -112,7 +114,7 @@ public:
     return highlightMapObjects;
   }
 
-  const QList<RouteMapObject>& getRouteHighlightMapObjects() const
+  const RouteMapObjectList& getRouteHighlightMapObjects() const
   {
     return routeHighlightMapObjects;
   }
@@ -211,7 +213,7 @@ private:
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
   maptypes::MapSearchResult highlightMapObjects;
-  QList<RouteMapObject> routeHighlightMapObjects;
+  RouteMapObjectList routeHighlightMapObjects;
   QList<maptypes::RangeMarker> rangeMarkers;
   QList<maptypes::DistanceMarker> distanceMarkers;
   QList<std::pair<int, QLine> > routeScreenLines;
@@ -247,7 +249,7 @@ private:
                                      maptypes::MapSearchResult& mapobjects);
 
   void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                 const QList<RouteMapObject>& routeMapObjects,
+                                 const RouteMapObjectList& routeMapObjects,
                                  maptypes::MapSearchResult& mapobjects);
 
   void getAllNearestMapObjects(int xs, int ys, int screenDistance,

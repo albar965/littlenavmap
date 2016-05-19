@@ -95,23 +95,23 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   {
     simData = simulatorData;
 
-    int index = routeController->nearestLegIndex(simData.getPosition());
-    if(index != -1)
-    {
-      if(index >= routeController->getRouteMapObjects().size())
-        index = routeController->getRouteMapObjects().size() - 1;
-      aircraftDistanceFromStart = 0.f;
-      for(int i = 0; i <= index; i++)
-      {
-        const RouteMapObject& nearestRmo = routeController->getRouteMapObjects().at(i);
-        aircraftDistanceFromStart += nearestRmo.getDistanceTo();
-      }
-      const atools::geo::Pos& position = routeController->getRouteMapObjects().at(index).getPosition();
-      aircraftDistanceFromStart -= atools::geo::meterToNm(position.distanceMeterTo(simData.getPosition()));
+    const RouteMapObjectList& rmoList = routeController->getRouteMapObjects();
 
-      if(simData.getPosition().getAltitude() > maxHeight)
-        updateScreenCoords();
-      update();
+    if(rmoList.getRouteDistances(simData.getPosition(), aircraftDistanceFromStart, aircraftDistanceToDest))
+    {
+      QPoint diff(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
+                  Y0 + static_cast<int>(rect().height() - Y0 -
+                                        simData.getPosition().getAltitude() * vertScale));
+
+      using atools::geo::almostNotEqual;
+      if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
+         almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
+      {
+        lastSimData = simData;
+        if(simData.getPosition().getAltitude() > maxHeight)
+          updateScreenCoords();
+        update();
+      }
     }
   }
   else
@@ -336,9 +336,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     font.setPointSizeF(defaultFontSize);
     painter.setFont(font);
 
+    QString upDown;
+    if(simData.getVerticalSpeed() > 100)
+      upDown = " ⭡";
+    else if(simData.getVerticalSpeed() < -100)
+      upDown = " ⭣";
+
     QStringList texts;
-    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft");
-    texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm");
+    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
+    texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
+                 QString::number(aircraftDistanceToDest, 'f', 0) + " nm");
 
     symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
   }
@@ -503,11 +510,14 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   }
   const ElevationLeg& leg = legList.elevationLegs.at(index);
 
-  // Get from/to text
-  QString from = legList.routeMapObjects.at(index).getIdent();
-  QString to = legList.routeMapObjects.at(index + 1).getIdent();
-
   float distance = (x - X0) / horizScale;
+  if(distance < 0.f)
+    distance = 0.f;
+
+  float distanceToGo = legList.totalDistance - distance;
+  if(distanceToGo < 0.f)
+    distanceToGo = 0.f;
+
   int indexLowDist = 0;
   QVector<float>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(),
                                                               leg.distances.end(), distance);
@@ -542,9 +552,14 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   float maxElev = std::ceil((leg.maxElevation + 1000.f) / 500.f) * 500.f;
 
+  // Get from/to text
+  QString from = legList.routeMapObjects.at(index).getIdent();
+  QString to = legList.routeMapObjects.at(index + 1).getIdent();
+
   parentWindow->getUi()->labelElevationInfo->setText(
     "<b>" + from + " −> " + to + "</b>, " +
-    QString::number(distance, 'f', distance < 100.f ? 1 : 0) + " nm, " +
+    QString::number(distance, 'f', distance < 100.f ? 1 : 0) + " −> " +
+    QString::number(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
     " Ground Altitude " + QString::number(alt, 'f', 0) + " ft, " +
     " Above Ground Altitude " + QString::number(flightplanAltFt - alt, 'f', 0) + " ft, " +
     " Leg Safe Altitude " + QString::number(maxElev, 'f', 0) + " ft");

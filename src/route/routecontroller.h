@@ -20,6 +20,7 @@
 
 #include "routemapobject.h"
 #include "routecommand.h"
+#include "routemapobjectlist.h"
 
 #include <QObject>
 
@@ -60,7 +61,7 @@ public:
   void saveState();
   void restoreState();
 
-  const QList<RouteMapObject>& getRouteMapObjects() const
+  const RouteMapObjectList& getRouteMapObjects() const
   {
     return routeMapObjects;
   }
@@ -128,7 +129,7 @@ private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
-  QList<RouteMapObject> routeMapObjects;
+  RouteMapObjectList routeMapObjects;
   QString routeFilename, dockWindowTitle;
   MainWindow *parentWindow;
   QTableView *view;

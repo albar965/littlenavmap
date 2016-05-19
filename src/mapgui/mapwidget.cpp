@@ -364,7 +364,7 @@ void MapWidget::changeMark(const atools::geo::Pos& pos)
   update();
 }
 
-void MapWidget::changeRouteHighlight(const QList<RouteMapObject>& routeHighlight)
+void MapWidget::changeRouteHighlight(const RouteMapObjectList& routeHighlight)
 {
   routeHighlightMapObjects = routeHighlight;
   update();
@@ -1088,7 +1088,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   else if(mouseState == NONE)
     if(event->buttons() == Qt::NoButton)
     {
-      const QList<RouteMapObject>& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+      const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
 
       if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
       {
@@ -1192,7 +1192,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
     else
     {
-      const QList<RouteMapObject>& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+      const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
 
       if(rmos.size() > 1)
       {
@@ -1546,7 +1546,7 @@ void MapWidget::updateRouteScreenLines()
 {
   using atools::geo::Pos;
 
-  const QList<RouteMapObject>& routeMapObjects = parentWindow->getRouteController()->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = parentWindow->getRouteController()->getRouteMapObjects();
 
   routeScreenLines.clear();
   routeScreenPoints.clear();
@@ -1629,7 +1629,7 @@ void MapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
 }
 
 void MapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                          const QList<RouteMapObject>& routeMapObjects,
+                                          const RouteMapObjectList& routeMapObjects,
                                           maptypes::MapSearchResult& mapobjects)
 {
   if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))

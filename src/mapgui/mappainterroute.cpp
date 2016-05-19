@@ -63,7 +63,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
 {
   Q_UNUSED(fast);
 
-  const QList<RouteMapObject> routeMapObjects = routeController->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
 
   painter->setBrush(Qt::NoBrush);
 
