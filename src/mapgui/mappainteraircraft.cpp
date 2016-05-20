@@ -116,31 +116,38 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 
   if(!aircraftTrack.isEmpty())
   {
-    GeoDataLineString lineString;
-    lineString.setTessellate(true);
+    QPolygon polyline;
 
-    painter->setPen(QPen(QColor(Qt::black), 2, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin));
+    painter->setPen(mapcolors::aircraftTrackPen);
     bool lastVisible = true;
-    atools::geo::Pos lastPos;
-    for(const atools::geo::Pos& pos : aircraftTrack)
+    int lastX = -1, lastY = -1;
+
+    for(int i = 0; i < aircraftTrack.size(); i++)
     {
-      bool visible = isVisible(pos);
+      const atools::geo::Pos& pos = aircraftTrack.at(i);
+      int x, y;
+      bool visible = wToS(pos, x, y);
 
-      if((visible || lastVisible) && lastPos.isValid())
-        lineString.append(GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., DEG));
-
-      if(!visible && lastVisible)
+      if(visible || lastVisible)
       {
-        // End a segment and paint
-        painter->drawPolyline(lineString);
-        lineString.clear();
+        if(i == 0 || i == aircraftTrack.size() - 1 || atools::geo::manhattanDistance(x, y, lastX, lastY) > 5)
+        {
+          polyline.append(QPoint(x, y));
+
+          if(!visible && lastVisible)
+          {
+            // End a segment and paint
+            painter->drawPolyline(polyline);
+            polyline.clear();
+          }
+
+          lastVisible = visible;
+          lastX = x;
+          lastY = y;
+        }
       }
-
-      lastVisible = visible;
-      lastPos = pos;
     }
-    if(!lineString.isEmpty())
-      painter->drawPolyline(lineString);
-
+    if(!polyline.isEmpty())
+      painter->drawPolyline(polyline);
   }
 }

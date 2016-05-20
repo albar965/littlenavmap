@@ -57,6 +57,7 @@ const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::Solid
 
 const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 8, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftTrackPen = QPen(QColor(Qt::black), 2, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin);
 
 const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
