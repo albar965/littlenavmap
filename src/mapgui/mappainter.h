@@ -39,6 +39,7 @@ class SymbolPainter;
 class MapLayer;
 class MapQuery;
 class MapScale;
+class MapWidget;
 
 /* Map of id and type */
 typedef maptypes::MapObjectRef ForcePaintType;
@@ -57,7 +58,7 @@ class MapPainter :
   public CoordinateConverter
 {
 public:
-  MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainter();
 
   virtual void render(const PaintContext *context) = 0;
@@ -77,7 +78,7 @@ protected:
   const float FIND_TEXT_POS_STEP = 0.02f;
 
   SymbolPainter *symbolPainter;
-  Marble::MarbleWidget *widget;
+  MapWidget *mapWidget;
   MapQuery *query;
   MapScale *scale;
   bool verbose = false;

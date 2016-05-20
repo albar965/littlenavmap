@@ -31,6 +31,19 @@ public:
 
   bool getRouteDistances(const atools::geo::Pos& pos, float& distFromStart, float& distToDest) const;
 
+  float getTotalDistance() const
+  {
+    return totalDistance;
+  }
+
+  void setTotalDistance(float value)
+  {
+    totalDistance = value;
+  }
+
+private:
+  float totalDistance = 0.f;
+
 };
 
 #endif // ROUTEMAPOBJECTLIST_H

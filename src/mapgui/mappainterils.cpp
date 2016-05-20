@@ -24,6 +24,7 @@
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
+#include "mapgui/mapwidget.h"
 
 #include <QElapsedTimer>
 
@@ -34,9 +35,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterIls::MapPainterIls(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                              bool verboseMsg)
-  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
+  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
 {
 }
 
@@ -56,7 +57,7 @@ void MapPainterIls::render(const PaintContext *context)
 
   if(context->mapLayer->isIls())
   {
-  bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = mapWidget->viewContext() == Marble::Animation;
 
   const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
@@ -66,7 +67,7 @@ void MapPainterIls::render(const PaintContext *context)
   if(ilss != nullptr)
   {
     setRenderHints(context->painter);
-    if(widget->viewContext() == Marble::Still && verbose)
+    if(mapWidget->viewContext() == Marble::Still && verbose)
     {
       qDebug() << "Number of ils" << ilss->size();
       qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -92,7 +93,7 @@ void MapPainterIls::render(const PaintContext *context)
         drawIlsSymbol(context->painter, ils, context->mapLayer, drawFast);
     }
   }
-  if(widget->viewContext() == Marble::Still && verbose)
+  if(mapWidget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
   }
 }

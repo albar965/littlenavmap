@@ -24,6 +24,7 @@
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
+#include "mapgui/mapwidget.h"
 
 #include <QElapsedTimer>
 
@@ -35,9 +36,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterNav::MapPainterNav(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
-                             bool verboseMsg)
-  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
+MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
+  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
 {
 }
 
@@ -47,7 +47,7 @@ MapPainterNav::~MapPainterNav()
 
 void MapPainterNav::render(const PaintContext *context)
 {
-  bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = mapWidget->viewContext() == Marble::Animation;
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
@@ -64,7 +64,7 @@ void MapPainterNav::render(const PaintContext *context)
     const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, drawFast);
     if(airways != nullptr)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
+      if(mapWidget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of airways" << airways->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -84,7 +84,7 @@ void MapPainterNav::render(const PaintContext *context)
     const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, drawFast);
     if(waypoints != nullptr)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
+      if(mapWidget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of waypoints" << waypoints->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -102,7 +102,7 @@ void MapPainterNav::render(const PaintContext *context)
     const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, drawFast);
     if(vors != nullptr)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
+      if(mapWidget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of vors" << vors->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -120,7 +120,7 @@ void MapPainterNav::render(const PaintContext *context)
     const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, drawFast);
     if(ndbs != nullptr)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
+      if(mapWidget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of ndbs" << ndbs->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -138,7 +138,7 @@ void MapPainterNav::render(const PaintContext *context)
     const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, drawFast);
     if(markers != nullptr)
     {
-      if(widget->viewContext() == Marble::Still && verbose)
+      if(mapWidget->viewContext() == Marble::Still && verbose)
       {
         qDebug() << "Number of marker" << markers->size();
         qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -151,7 +151,7 @@ void MapPainterNav::render(const PaintContext *context)
     }
   }
 
-  if(widget->viewContext() == Marble::Still && verbose)
+  if(mapWidget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 

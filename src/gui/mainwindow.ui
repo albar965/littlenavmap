@@ -1724,6 +1724,7 @@
    <addaction name="actionMapShowMark"/>
    <addaction name="actionRouteCenter"/>
    <addaction name="actionMapAircraftCenter"/>
+   <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
@@ -1744,6 +1745,7 @@
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowAircraft"/>
+   <addaction name="actionMapShowAircraftTrack"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
@@ -2845,6 +2847,39 @@
    </property>
    <property name="text">
     <string>Center Aircraft</string>
+   </property>
+  </action>
+  <action name="actionMapShowAircraftTrack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Aircraft Trail</string>
+   </property>
+   <property name="toolTip">
+    <string>Aircraft</string>
+   </property>
+  </action>
+  <action name="actionMapDeleteAircraftTrack">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Aircraft Trail Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Aircraft</string>
    </property>
   </action>
  </widget>

@@ -140,7 +140,6 @@ private:
 
   void updateWindowTitle();
 
-  float totalDistance = 0.f;
   int curUserpointNumber = 1;
   bool changed = false;
 

@@ -28,7 +28,7 @@ class MapPainterIls :
   public MapPainter
 {
 public:
-  MapPainterIls(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterIls();
 
   virtual void render(const PaintContext *context) override;

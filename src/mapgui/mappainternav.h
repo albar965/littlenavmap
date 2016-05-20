@@ -28,7 +28,7 @@ class MapPainterNav :
   public MapPainter
 {
 public:
-  MapPainterNav(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterNav();
 
   virtual void render(const PaintContext *context) override;

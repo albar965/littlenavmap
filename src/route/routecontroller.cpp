@@ -1128,7 +1128,7 @@ void RouteController::updateFlightplanData()
 
 void RouteController::updateRouteMapObjects()
 {
-  totalDistance = 0.f;
+  float totalDistance = 0.f;
   curUserpointNumber = 0;
   // Used to number user waypoints
   RouteMapObject *last = nullptr;
@@ -1146,6 +1146,8 @@ void RouteController::updateRouteMapObjects()
 
     last = &mapobj;
   }
+  routeMapObjects.setTotalDistance(totalDistance);
+
   curUserpointNumber++;
 }
 
@@ -1154,7 +1156,7 @@ void RouteController::createRouteMapObjects()
   routeMapObjects.clear();
 
   RouteMapObject *last = nullptr;
-  totalDistance = 0.f;
+  float totalDistance = 0.f;
   curUserpointNumber = 0;
   // Create map objects first and calculate total distance
   for(int i = 0; i < flightplan->getEntries().size(); i++)
@@ -1178,12 +1180,15 @@ void RouteController::createRouteMapObjects()
     routeMapObjects.append(mapobj);
     last = &routeMapObjects.last();
   }
+
+  routeMapObjects.setTotalDistance(totalDistance);
   curUserpointNumber++;
 }
 
 void RouteController::updateModel()
 {
   model->removeRows(0, model->rowCount());
+  float totalDistance = routeMapObjects.getTotalDistance();
 
   int row = 0;
   float cumulatedDistance = 0.f;
@@ -1323,6 +1328,8 @@ void RouteController::updateLabel()
         break;
 
     }
+    float totalDistance = routeMapObjects.getTotalDistance();
+
     float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
     ui->labelRouteInfo->setText("<b>" + startAirport + "</b> to <b>" + destAirport + "</b>, " +
                                 QString::number(totalDistance, 'f', 0) + " nm, " +
@@ -1346,8 +1353,8 @@ void RouteController::clearRoute()
 {
   flightplan->clear();
   routeMapObjects.clear();
+  routeMapObjects.setTotalDistance(0.f);
   routeFilename.clear();
-  totalDistance = 0.f;
   undoStack->clear();
   changed = false;
 }

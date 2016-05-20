@@ -93,5 +93,7 @@
         <file>resources/icons/aircraft.svg</file>
         <file>resources/icons/centeraircraft.svg</file>
         <file>resources/icons/centermark.svg</file>
+        <file>resources/icons/aircrafttraildelete.svg</file>
+        <file>resources/icons/aircrafttrail.svg</file>
     </qresource>
 </RCC>

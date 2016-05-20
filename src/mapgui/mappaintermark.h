@@ -30,13 +30,12 @@ class MapPainterMark :
   public MapPainter
 {
 public:
-  MapPainterMark(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterMark();
 
   virtual void render(const PaintContext *context) override;
 
 private:
-  MapWidget *navMapWidget;
   void paintMark(Marble::GeoPainter *painter);
   void paintHome(Marble::GeoPainter *painter);
   void paintHighlights(const MapLayer *mapLayerEff, Marble::GeoPainter *painter,

@@ -34,7 +34,7 @@ class MapPainterAirport :
   public MapPainter
 {
 public:
-  MapPainterAirport(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale,
+  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                     bool verboseMsg);
   virtual ~MapPainterAirport();
 

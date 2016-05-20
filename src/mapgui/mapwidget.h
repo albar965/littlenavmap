@@ -177,6 +177,13 @@ public:
     return parentWindow;
   }
 
+  const QList<atools::geo::Pos>& getAircraftTrack() const
+  {
+    return aircraftTrack;
+  }
+
+  void deleteAircraftTrack();
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -232,6 +239,7 @@ private:
   Marble::Projection currentProjection;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
+  QList<atools::geo::Pos> aircraftTrack;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
@@ -266,7 +274,10 @@ private:
   void updateAirwayScreenLines();
   void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
 
+#ifdef DEBUG_MAP_CLICK
   void debugOnClick(int x, int y);
+
+#endif
   void updateVisibleObjects();
 
 };

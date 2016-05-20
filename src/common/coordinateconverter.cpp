@@ -41,6 +41,16 @@ bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
   return hidden;
 }
 
+bool CoordinateConverter::isVisible(const atools::geo::Pos& coords, const QSize& size, bool *isHidden) const
+{
+  qreal xr, yr;
+  bool hidden;
+  bool visible = wToS(coords, xr, yr, size, &hidden);
+  if(isHidden != nullptr)
+    *isHidden = hidden;
+  return visible && !hidden;
+}
+
 bool CoordinateConverter::wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size,
                                bool *isHidden) const
 {

@@ -41,6 +41,9 @@ public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
   ~CoordinateConverter();
 
+  bool isVisible(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
+                 bool *isHidden = nullptr) const;
+
   QPoint wToS(const Marble::GeoDataCoordinates& coords, const QSize& size = DEFAULT_WTOS_SIZE,
               bool *visible = nullptr, bool *isHidden = nullptr) const;
   bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y,

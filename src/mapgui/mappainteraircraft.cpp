@@ -34,9 +34,9 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterAircraft::MapPainterAircraft(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                        bool verboseMsg)
-  : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
+  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
 {
 }
 
@@ -47,19 +47,25 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render(const PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(AIRCRAFT))
+  if(!context->objectTypes.testFlag(AIRCRAFT) && !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRAIL))
     return;
 
   setRenderHints(context->painter);
 
   context->painter->save();
-  paintAircraft(context->painter);
+
+  if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRAIL))
+    paintAircraftTrack(context->painter);
+
+  if(context->objectTypes.testFlag(AIRCRAFT))
+    paintAircraft(context->painter);
+
   context->painter->restore();
 }
 
 void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 {
-  const atools::fs::sc::SimConnectData& simData = navMapWidget->getSimData();
+  const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
   const Pos& pos = simData.getPosition();
 
   if(!pos.isValid())
@@ -69,7 +75,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
   if(wToS(pos, x, y))
   {
     painter->translate(x, y);
-    painter->rotate(atools::geo::normalizeCourse(navMapWidget->getSimData().getCourseTrue()));
+    painter->rotate(atools::geo::normalizeCourse(mapWidget->getSimData().getCourseTrue()));
 
     symbolPainter->drawAircraftSymbol(painter, 0, 0, 40);
 
@@ -101,5 +107,40 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
                  QString::number(simData.getWindSpeed(), 'f', 0));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
+  }
+}
+
+void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
+{
+  const QList<Pos>& aircraftTrack = mapWidget->getAircraftTrack();
+
+  if(!aircraftTrack.isEmpty())
+  {
+    GeoDataLineString lineString;
+    lineString.setTessellate(true);
+
+    painter->setPen(QPen(QColor(Qt::black), 2, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin));
+    bool lastVisible = true;
+    atools::geo::Pos lastPos;
+    for(const atools::geo::Pos& pos : aircraftTrack)
+    {
+      bool visible = isVisible(pos);
+
+      if((visible || lastVisible) && lastPos.isValid())
+        lineString.append(GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., DEG));
+
+      if(!visible && lastVisible)
+      {
+        // End a segment and paint
+        painter->drawPolyline(lineString);
+        lineString.clear();
+      }
+
+      lastVisible = visible;
+      lastPos = pos;
+    }
+    if(!lineString.isEmpty())
+      painter->drawPolyline(lineString);
+
   }
 }

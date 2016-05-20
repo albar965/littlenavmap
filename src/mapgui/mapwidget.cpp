@@ -139,6 +139,8 @@ void MapWidget::updateMapShowFeatures()
                      ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT,
                      ui->actionMapShowAircraft->isChecked());
+  setShowMapFeatures(maptypes::AIRCRAFT_TRAIL,
+                     ui->actionMapShowAircraftTrack->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT_HARD,
                      ui->actionMapShowAirports->isChecked());
@@ -390,6 +392,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     QPoint curPos = conv.wToS(simulatorData.getPosition());
     QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
 
+    bool wasEmpty = aircraftTrack.isEmpty();
+    aircraftTrack.append(simulatorData.getPosition());
+
+    if(wasEmpty != aircraftTrack.isEmpty())
+      emit updateActionStates();
+
     using atools::geo::almostNotEqual;
     if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
        almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 1.f) ||
@@ -592,6 +600,8 @@ void MapWidget::contextMenu(const QPoint& point)
 
   if(mouseState != NONE)
     return;
+
+  QToolTip::hideText();
 
   Ui::MainWindow *ui = parentWindow->getUi();
 
@@ -1090,32 +1100,29 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
 
+      Qt::CursorShape cursorShape = Qt::ArrowCursor;
+
       if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
-      {
         // Change cursor at one route point
-        if(cursor().shape() != Qt::CrossCursor)
-          setCursor(Qt::CrossCursor);
-      }
+        cursorShape = Qt::CrossCursor;
       else if(getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
-      {
         // Change cursor above a route line
-        if(cursor().shape() != Qt::CrossCursor)
-          setCursor(Qt::CrossCursor);
-      }
+        cursorShape = Qt::CrossCursor;
       else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10) != -1)
-      {
         // Change cursor at the end of an marker
-        if(cursor().shape() != Qt::CrossCursor)
-          setCursor(Qt::CrossCursor);
-      }
-      else if(cursor().shape() != Qt::ArrowCursor)
-        setCursor(Qt::ArrowCursor);
+        cursorShape = Qt::CrossCursor;
+
+      if(cursor().shape() != cursorShape)
+        setCursor(cursorShape);
     }
 }
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
   qDebug() << "mousePressEvent state" << mouseState;
+
+  QToolTip::hideText();
+
   mouseMoved = false;
   if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
      mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
@@ -1134,6 +1141,8 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   qDebug() << "mouseReleaseEvent state" << mouseState;
+
+  QToolTip::hideText();
 
   if(mouseState & DRAG_ROUTE_POINT || mouseState & DRAG_ROUTE_LEG)
   {
@@ -1239,8 +1248,11 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
   }
 
+#ifdef DEBUG_MAP_CLICK
   if(event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier)
     debugOnClick(event->pos().x(), event->pos().y());
+#endif
+
   mouseMoved = false;
 }
 
@@ -1287,6 +1299,13 @@ void MapWidget::updateTooltip()
   }
 }
 
+void MapWidget::deleteAircraftTrack()
+{
+  aircraftTrack.clear();
+  emit updateActionStates();
+  update();
+}
+
 bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
@@ -1304,6 +1323,7 @@ bool MapWidget::event(QEvent *event)
   return QWidget::event(event);
 }
 
+#ifdef DEBUG_MAP_CLICK
 void MapWidget::debugOnClick(int x, int y)
 {
   qDebug() << "=== DEBUG CLICK";
@@ -1378,6 +1398,8 @@ void MapWidget::debugOnClick(int x, int y)
 
   update();
 }
+
+#endif
 
 void MapWidget::updateVisibleObjects()
 {

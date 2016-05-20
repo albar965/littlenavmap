@@ -24,6 +24,7 @@
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
+#include "mapgui/mapwidget.h"
 
 #include <QElapsedTimer>
 
@@ -37,9 +38,9 @@ using namespace maptypes;
 const int RUNWAY_TEXT_FONT_SIZE = 16;
 const int RUNWAY_NUMER_FONT_SIZE = 20;
 
-MapPainterAirport::MapPainterAirport(Marble::MarbleWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                      bool verboseMsg)
-  : MapPainter(widget, mapQuery, mapScale, verboseMsg)
+  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
 {
 }
 
@@ -53,7 +54,7 @@ void MapPainterAirport::render(const PaintContext *context)
      (!context->mapLayerEffective->isAirportDiagram() || context->forcePaintObjects == nullptr))
     return;
 
-  bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = mapWidget->viewContext() == Marble::Animation;
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
@@ -123,7 +124,7 @@ void MapPainterAirport::render(const PaintContext *context)
     }
   }
 
-  if(widget->viewContext() == Marble::Still && verbose)
+  if(mapWidget->viewContext() == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 

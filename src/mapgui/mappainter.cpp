@@ -21,6 +21,7 @@
 #include "common/mapcolors.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
+#include "mapgui/mapwidget.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -34,10 +35,10 @@ const int CIRCLE_MAX_POINTS = 72;
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainter::MapPainter(Marble::MarbleWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale,
                        bool verboseMsg)
-  : CoordinateConverter(marbleWidget->viewport()), widget(marbleWidget), query(mapQuery), scale(mapScale),
-    verbose(verboseMsg)
+  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery),
+    scale(mapScale), verbose(verboseMsg)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -49,13 +50,13 @@ MapPainter::~MapPainter()
 
 void MapPainter::setRenderHints(GeoPainter *painter)
 {
-  if(widget->viewContext() == Marble::Still)
+  if(mapWidget->viewContext() == Marble::Still)
   {
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
   }
-  else if(widget->viewContext() == Marble::Animation)
+  else if(mapWidget->viewContext() == Marble::Animation)
   {
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::TextAntialiasing, false);

@@ -31,7 +31,7 @@ class MapPainterRoute :
   public MapPainter
 {
 public:
-  MapPainterRoute(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                   RouteController *controller, bool verbose);
   virtual ~MapPainterRoute();
 
@@ -39,7 +39,7 @@ public:
 
 private:
   RouteController *routeController;
-  MapWidget *navMapWidget;
+
   void paintRoute(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
 
   void paintAirport(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,

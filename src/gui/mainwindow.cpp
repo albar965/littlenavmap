@@ -358,6 +358,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, navMapWidget,
+          &MapWidget::deleteAircraftTrack);
 
   connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &MapWidget::showMark);
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &MapWidget::showHome);
@@ -703,6 +707,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
+  ui->actionMapShowAircraftTrack->setEnabled(connectClient->isConnected());
+  ui->actionMapDeleteAircraftTrack->setEnabled(!navMapWidget->getAircraftTrack().isEmpty());
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 
   ui->actionRouteCalcDirect->setEnabled(hasStartAndDest && routeController->hasEntries());
@@ -780,6 +786,7 @@ void MainWindow::readSettings()
               ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
               ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+              ui->actionMapShowAircraftTrack,
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
@@ -807,6 +814,7 @@ void MainWindow::writeSettings()
            ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
            ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+           ui->actionMapShowAircraftTrack,
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);

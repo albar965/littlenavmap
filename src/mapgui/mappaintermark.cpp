@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterMark::MapPainterMark(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
-  : MapPainter(widget, mapQuery, mapScale, verboseMsg), navMapWidget(widget)
+MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
+  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
 {
 }
 
@@ -45,7 +45,7 @@ MapPainterMark::~MapPainterMark()
 
 void MapPainterMark::render(const PaintContext *context)
 {
-  bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = mapWidget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
 
   context->painter->save();
@@ -61,7 +61,7 @@ void MapPainterMark::render(const PaintContext *context)
 void MapPainterMark::paintMark(GeoPainter *painter)
 {
   int x, y;
-  if(wToS(navMapWidget->getMarkPos(), x, y))
+  if(wToS(mapWidget->getMarkPos(), x, y))
   {
     painter->setPen(mapcolors::markBackPen);
 
@@ -77,7 +77,7 @@ void MapPainterMark::paintMark(GeoPainter *painter)
 void MapPainterMark::paintHome(GeoPainter *painter)
 {
   int x, y;
-  if(wToS(navMapWidget->getHomePos(), x, y))
+  if(wToS(mapWidget->getHomePos(), x, y))
   {
     painter->setPen(mapcolors::homeBackPen);
     painter->setBrush(mapcolors::homeFillColor);
@@ -92,7 +92,7 @@ void MapPainterMark::paintHome(GeoPainter *painter)
 
 void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *painter, bool fast)
 {
-  const MapSearchResult& highlightResults = navMapWidget->getHighlightMapObjects();
+  const MapSearchResult& highlightResults = mapWidget->getHighlightMapObjects();
   int size = 6;
 
   QList<Pos> positions;
@@ -129,7 +129,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
   if(mapLayerEff->isAirport())
     size = std::max(size, mapLayerEff->getAirportSymbolSize());
 
-  const RouteMapObjectList& routeHighlightResults = navMapWidget->getRouteHighlightMapObjects();
+  const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlightMapObjects();
   positions.clear();
   for(const RouteMapObject& rmo : routeHighlightResults)
     positions.append(rmo.getPosition());
@@ -155,7 +155,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
 
 void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewport, bool fast)
 {
-  const QList<maptypes::RangeMarker>& rangeRings = navMapWidget->getRangeRings();
+  const QList<maptypes::RangeMarker>& rangeRings = mapWidget->getRangeRings();
   const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
   painter->setBrush(Qt::NoBrush);
@@ -230,7 +230,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
   QFontMetrics metrics = painter->fontMetrics();
   painter->setBrush(QColor(Qt::white));
 
-  const QList<maptypes::DistanceMarker>& distanceMarkers = navMapWidget->getDistanceMarkers();
+  const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
@@ -339,7 +339,7 @@ void MapPainterMark::paintRouteDrag(GeoPainter *painter)
   atools::geo::Pos from, to;
   QPoint cur;
 
-  navMapWidget->getRouteDragPoints(from, to, cur);
+  mapWidget->getRouteDragPoints(from, to, cur);
   if(!cur.isNull())
   {
     GeoDataCoordinates curGeo;

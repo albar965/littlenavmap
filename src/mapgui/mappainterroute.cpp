@@ -34,9 +34,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainterRoute::MapPainterRoute(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale,
+MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                  RouteController *controller, bool verbose)
-  : MapPainter(widget, mapQuery, mapScale, verbose), routeController(controller), navMapWidget(widget)
+  : MapPainter(mapWidget, mapQuery, mapScale, verbose), routeController(controller)
 {
 }
 
@@ -50,12 +50,14 @@ void MapPainterRoute::render(const PaintContext *context)
   if(!context->objectTypes.testFlag(maptypes::ROUTE))
     return;
 
-  bool drawFast = widget->viewContext() == Marble::Animation;
+  bool drawFast = mapWidget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
 
   context->painter->save();
+
   // Use layer independent of declutter factor
   paintRoute(context->mapLayerEffective, context->painter, drawFast);
+
   context->painter->restore();
 }
 

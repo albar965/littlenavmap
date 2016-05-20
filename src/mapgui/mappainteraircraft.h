@@ -30,14 +30,14 @@ class MapPainterAircraft :
   public MapPainter
 {
 public:
-  MapPainterAircraft(MapWidget *widget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterAircraft();
 
   virtual void render(const PaintContext *context) override;
 
 private:
-  MapWidget *navMapWidget;
   void paintAircraft(Marble::GeoPainter *painter);
+  void paintAircraftTrack(Marble::GeoPainter *painter);
 
 };
 

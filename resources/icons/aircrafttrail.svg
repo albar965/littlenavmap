@@ -14,7 +14,7 @@
    height="128"
    id="svg1655"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="aircraft.svg">
+   sodipodi:docname="aircrafttrail.svg">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -41,7 +41,7 @@
      id="namedview8"
      showgrid="false"
      inkscape:zoom="1.84375"
-     inkscape:cx="118.17327"
+     inkscape:cx="117.6309"
      inkscape:cy="64"
      inkscape:window-x="40"
      inkscape:window-y="24"
@@ -50,9 +50,19 @@
   <defs
      id="defs1658" />
   <g
+     id="layer4" />
+  <g
+     style="display:inline"
+     id="layer2" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
+     d="M 66.169492,57.491525 12.474576,113.35593"
+     id="path4851"
+     inkscape:connector-curvature="0" />
+  <g
      id="g4162-1-1"
      style="fill:none;stroke:#cbcacc;stroke-width:18;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     transform="matrix(1.3181321,0,0,1.3181321,-345.17366,-13.832939)">
+     transform="matrix(0.89965855,0,0,0.89965855,-198.05191,-7.3894294)">
     <path
        inkscape:connector-curvature="0"
        id="path4156-3-6"
@@ -70,14 +80,9 @@
        style="fill:none;fill-rule:evenodd;stroke:#cbcacc;stroke-width:18;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
-     id="layer4" />
-  <g
-     style="display:inline"
-     id="layer2" />
-  <g
      id="g4162-1"
      style="fill:none;stroke:#000000;stroke-width:18;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     transform="matrix(1.2280405,0,0,1.2280405,-324.46373,-13.67743)">
+     transform="matrix(0.83816875,0,0,0.83816875,-183.91686,-7.2832906)">
     <path
        inkscape:connector-curvature="0"
        id="path4156-3"
@@ -97,7 +102,7 @@
   <g
      id="g4162"
      style="fill:none;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     transform="matrix(1.2280405,0,0,1.2280405,-324.46998,-14.337084)">
+     transform="matrix(0.83816875,0,0,0.83816875,-183.92112,-7.7335212)">
     <path
        inkscape:connector-curvature="0"
        id="path4156"
