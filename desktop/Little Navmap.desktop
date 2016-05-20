@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/alex/Projekte/littlenavmap/littlenavmap-debug.sh
+Path=/home/alex/Projekte/littlenavmap/
+Name=Little Navmap
+GenericName=Little Navmap
+Icon=/home/alex/Projekte/littlenavmap/resources/icons/navroute.svg
+Terminal=false
+Categories=Qt;Utility;Geography;
+
