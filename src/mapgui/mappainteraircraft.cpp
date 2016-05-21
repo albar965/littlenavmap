@@ -47,14 +47,14 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render(const PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(AIRCRAFT) && !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRAIL))
+  if(!context->objectTypes.testFlag(AIRCRAFT) && !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     return;
 
   setRenderHints(context->painter);
 
   context->painter->save();
 
-  if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRAIL))
+  if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context->painter);
 
   if(context->objectTypes.testFlag(AIRCRAFT))
@@ -75,9 +75,10 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
   if(wToS(pos, x, y))
   {
     painter->translate(x, y);
-    painter->rotate(atools::geo::normalizeCourse(mapWidget->getSimData().getCourseTrue()));
+    painter->rotate(atools::geo::normalizeCourse(simData.getCourseTrue()));
 
-    symbolPainter->drawAircraftSymbol(painter, 0, 0, 40);
+    symbolPainter->drawAircraftSymbol(painter, 0, 0, 40,
+                                      simData.getFlags() & atools::fs::sc::ON_GROUND);
 
     painter->resetTransform();
 
@@ -112,7 +113,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 
 void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 {
-  const QList<Pos>& aircraftTrack = mapWidget->getAircraftTrack();
+  const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
 
   if(!aircraftTrack.isEmpty())
   {
@@ -124,9 +125,9 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 
     for(int i = 0; i < aircraftTrack.size(); i++)
     {
-      const atools::geo::Pos& pos = aircraftTrack.at(i);
+      const AircraftTrackPos& trackPos = aircraftTrack.at(i);
       int x, y;
-      bool visible = wToS(pos, x, y);
+      bool visible = wToS(trackPos.pos, x, y);
 
       if(visible || lastVisible)
       {

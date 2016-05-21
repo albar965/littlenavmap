@@ -34,6 +34,8 @@
 
 #include "fs/sc/simconnectdata.h"
 
+#include <common/aircrafttrack.h>
+
 namespace atools {
 namespace geo {
 class Pos;
@@ -177,7 +179,7 @@ public:
     return parentWindow;
   }
 
-  const QList<atools::geo::Pos>& getAircraftTrack() const
+  const AircraftTrack& getAircraftTrack() const
   {
     return aircraftTrack;
   }
@@ -239,7 +241,7 @@ private:
   Marble::Projection currentProjection;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
-  QList<atools::geo::Pos> aircraftTrack;
+  AircraftTrack aircraftTrack;
 
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;

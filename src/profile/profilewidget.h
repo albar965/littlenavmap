@@ -27,6 +27,7 @@
 #include <geo/pos.h>
 
 #include <route/routemapobject.h>
+#include <route/routemapobjectlist.h>
 
 #include <fs/sc/simconnectdata.h>
 
@@ -54,6 +55,10 @@ public:
 
   void disconnectedFromSimulator();
 
+  void updateProfileShowFeatures();
+
+  void deleteAircraftTrack();
+
 signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
@@ -61,6 +66,7 @@ private:
   virtual void paintEvent(QPaintEvent *) override;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
+  QPolygon aircraftTrackPoints;
   float aircraftDistanceFromStart, aircraftDistanceToDest;
 
   struct ElevationLeg
@@ -72,7 +78,7 @@ private:
 
   struct ElevationLegList
   {
-    QList<RouteMapObject> routeMapObjects;
+    RouteMapObjectList routeMapObjects;
     QList<ElevationLeg> elevationLegs;
     float maxRouteElevation = 0.f, totalDistance = 0.f;
     int totalNumPoints = 0;
@@ -106,6 +112,8 @@ private:
   bool visible = false;
 
   void updateScreenCoords();
+
+  bool showAircraft = false, showAircraftTrack = false;
 
   QVector<int> waypointX;
   QPolygon poly;

@@ -139,6 +139,7 @@ MainWindow::MainWindow(QWidget *parent) :
   navMapWidget->showSavedPos();
   searchController->updateTableSelection();
 
+  profileWidget->updateProfileShowFeatures();
   connectClient->tryConnect();
 }
 
@@ -357,11 +358,19 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget,
+          &ProfileWidget::updateProfileShowFeatures);
+  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget,
+          &ProfileWidget::updateProfileShowFeatures);
 
+  // Order is important. First let the mapwidget delete the track then notify the profile
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, navMapWidget,
           &MapWidget::deleteAircraftTrack);
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget,
+          &ProfileWidget::deleteAircraftTrack);
 
   connect(ui->actionMapShowMark, &QAction::triggered, navMapWidget, &MapWidget::showMark);
   connect(ui->actionMapShowHome, &QAction::triggered, navMapWidget, &MapWidget::showHome);

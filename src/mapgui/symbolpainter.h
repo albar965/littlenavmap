@@ -118,7 +118,7 @@ public:
 
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
-  void drawAircraftSymbol(QPainter *painter, int x, int y, int size);
+  void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
 
 private:
   QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);

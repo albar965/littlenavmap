@@ -90,37 +90,60 @@ void ProfileWidget::routeChanged(bool geometryChanged)
 
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
-     !routeController->isFlightplanEmpty())
+  bool updateProfile = false;
+
+  if(!routeController->isFlightplanEmpty())
   {
-    simData = simulatorData;
+    const RouteMapObjectList& rmoList = legList.routeMapObjects;
 
-    const RouteMapObjectList& rmoList = routeController->getRouteMapObjects();
-
-    if(rmoList.getRouteDistances(simData.getPosition(), aircraftDistanceFromStart, aircraftDistanceToDest))
+    if(showAircraft || showAircraftTrack)
     {
-      QPoint diff(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
+      simData = simulatorData;
+      if(rmoList.getRouteDistances(simData.getPosition(), &aircraftDistanceFromStart, &aircraftDistanceToDest))
+      {
+        QPoint lastPt;
+        if(lastSimData.getPosition().isValid())
+          lastPt = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
+                          Y0 + static_cast<int>(rect().height() - Y0 -
+                                                lastSimData.getPosition().getAltitude() * vertScale));
+
+        QPoint pt(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
                   Y0 + static_cast<int>(rect().height() - Y0 -
                                         simData.getPosition().getAltitude() * vertScale));
 
-      using atools::geo::almostNotEqual;
-      if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
-         almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
-      {
-        lastSimData = simData;
-        if(simData.getPosition().getAltitude() > maxHeight)
-          updateScreenCoords();
-        update();
+        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
+        {
+          if(simData.getPosition().isValid())
+          {
+            aircraftTrackPoints.append(pt);
+            updateProfile = true;
+          }
+        }
+
+        using atools::geo::almostNotEqual;
+        if(!lastSimData.getPosition().isValid() || (lastPt - pt).manhattanLength() > 0 ||
+           almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
+        {
+          lastSimData = simData;
+          if(simData.getPosition().getAltitude() > maxHeight)
+            // Scale up to keep the aircraft visible
+            updateScreenCoords();
+          updateProfile = true;
+        }
       }
     }
+    else
+    {
+      bool valid = simData.getPosition().isValid();
+      simData = atools::fs::sc::SimConnectData();
+      if(valid)
+        updateProfile = true;
+    }
+
   }
-  else
-  {
-    bool valid = simData.getPosition().isValid();
-    simData = atools::fs::sc::SimConnectData();
-    if(valid)
-      update();
-  }
+
+  if(updateProfile)
+    update();
 }
 
 void ProfileWidget::disconnectedFromSimulator()
@@ -132,16 +155,18 @@ void ProfileWidget::disconnectedFromSimulator()
 
 void ProfileWidget::updateScreenCoords()
 {
+  MapWidget *mapWidget = parentWindow->getMapWidget();
+
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
+  // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   maxRouteElevationFt = std::ceil((legList.maxRouteElevation + 1000.f) / 500.f) * 500.f;
   flightplanAltFt = static_cast<float>(routeController->getFlightplan()->getCruisingAlt());
   maxHeight = std::max(maxRouteElevationFt, flightplanAltFt);
 
   if(simData.getPosition().isValid() &&
-     parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
-     !routeController->isFlightplanEmpty())
+     (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
     maxHeight = std::max(maxHeight, simData.getPosition().getAltitude());
 
   vertScale = h / maxHeight;
@@ -171,6 +196,28 @@ void ProfileWidget::updateScreenCoords()
   }
   waypointX.append(X0 + w);
   poly.append(QPoint(X0 + w, h + Y0));
+
+  aircraftTrackPoints.clear();
+  if(!routeController->isFlightplanEmpty() && showAircraftTrack)
+  {
+    // Update aircraft track screen coordinates
+    const RouteMapObjectList& rmoList = legList.routeMapObjects;
+    const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
+
+    for(int i = 0; i < aircraftTrack.size(); i++)
+    {
+      const Pos& p = aircraftTrack.at(i).pos;
+      float distFromStart = 0.f;
+      if(rmoList.getRouteDistances(p, &distFromStart, nullptr))
+      {
+        QPoint pt(X0 + static_cast<int>(distFromStart * horizScale),
+                  Y0 + static_cast<int>(rect().height() - Y0 - p.getAltitude() * vertScale));
+
+        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
+          aircraftTrackPoints.append(pt);
+      }
+    }
+  }
 }
 
 void ProfileWidget::paintEvent(QPaintEvent *)
@@ -321,33 +368,41 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  // Draw user aircraft
-  if(simData.getPosition().isValid() &&
-     parentWindow->getMapWidget()->getShownMapFeatures() & maptypes::AIRCRAFT &&
-     !routeController->isFlightplanEmpty())
+  if(!routeController->isFlightplanEmpty())
   {
-    int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizScale);
-    int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * vertScale);
-    painter.translate(acx, acy);
-    painter.rotate(90);
-    symPainter.drawAircraftSymbol(&painter, 0, 0, 20);
-    painter.resetTransform();
+    // Draw user aircraft track
+    if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
+    {
+      painter.setPen(mapcolors::aircraftTrackPen);
+      painter.drawPolyline(aircraftTrackPoints);
+    }
 
-    font.setPointSizeF(defaultFontSize);
-    painter.setFont(font);
+    // Draw user aircraft
+    if(simData.getPosition().isValid() && showAircraft)
+    {
+      int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizScale);
+      int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * vertScale);
+      painter.translate(acx, acy);
+      painter.rotate(90);
+      symPainter.drawAircraftSymbol(&painter, 0, 0, 20, simData.getFlags() & atools::fs::sc::ON_GROUND);
+      painter.resetTransform();
 
-    QString upDown;
-    if(simData.getVerticalSpeed() > 100)
-      upDown = " ⭡";
-    else if(simData.getVerticalSpeed() < -100)
-      upDown = " ⭣";
+      font.setPointSizeF(defaultFontSize);
+      painter.setFont(font);
 
-    QStringList texts;
-    texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
-    texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
-                 QString::number(aircraftDistanceToDest, 'f', 0) + " nm");
+      QString upDown;
+      if(simData.getVerticalSpeed() > 100)
+        upDown = " ⭡";
+      else if(simData.getVerticalSpeed() < -100)
+        upDown = " ⭣";
 
-    symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
+      QStringList texts;
+      texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
+      texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
+                   QString::number(aircraftDistanceToDest, 'f', 0) + " nm");
+
+      symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
+    }
   }
 
   // qDebug() << "profile paint" << etimer.elapsed() << "ms";
@@ -584,4 +639,27 @@ void ProfileWidget::leaveEvent(QEvent *)
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
   updateScreenCoords();
+}
+
+void ProfileWidget::deleteAircraftTrack()
+{
+  updateScreenCoords();
+  update();
+}
+
+void ProfileWidget::updateProfileShowFeatures()
+{
+  Ui::MainWindow *ui = parentWindow->getUi();
+
+  bool updateProfile = showAircraft != ui->actionMapShowAircraft->isChecked() ||
+                       showAircraftTrack != ui->actionMapShowAircraftTrack->isChecked();
+
+  showAircraft = ui->actionMapShowAircraft->isChecked();
+  showAircraftTrack = ui->actionMapShowAircraftTrack->isChecked();
+
+  if(updateProfile)
+  {
+    updateScreenCoords();
+    update();
+  }
 }

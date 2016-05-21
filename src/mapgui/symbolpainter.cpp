@@ -225,7 +225,7 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
   painter->restore();
 }
 
-void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
 {
   QVector<QLine> lines(AIRCRAFTLINES);
   for(QLine& l : lines)
@@ -240,10 +240,10 @@ void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size
       l.translate(x, y);
   }
 
-  painter->setPen(mapcolors::aircraftBackPen);
+  painter->setPen(onGround ? mapcolors::aircraftGroundBackPen : mapcolors::aircraftBackPen);
   painter->drawLines(lines);
 
-  painter->setPen(mapcolors::aircraftFillPen);
+  painter->setPen(onGround ? mapcolors::aircraftGroundFillPen : mapcolors::aircraftFillPen);
   painter->drawLines(lines);
 }
 

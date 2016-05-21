@@ -56,8 +56,8 @@ int RouteMapObjectList::nearestLegIndex(const atools::geo::Pos& pos) const
   return nearest;
 }
 
-bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos, float& distFromStart,
-                                           float& distToDest) const
+bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
+                                           float *distFromStartNm, float *distToDestNm) const
 {
   int index = nearestLegIndex(pos);
   if(index != -1)
@@ -68,15 +68,21 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos, float& d
     const atools::geo::Pos& position = at(index).getPosition();
     float distToCur = atools::geo::meterToNm(position.distanceMeterTo(pos));
 
-    distFromStart = 0.f;
-    for(int i = 0; i <= index; i++)
-      distFromStart += at(i).getDistanceTo();
-    distFromStart -= distToCur;
+    if(distFromStartNm != nullptr)
+    {
+      *distFromStartNm = 0.f;
+      for(int i = 0; i <= index; i++)
+        *distFromStartNm += at(i).getDistanceTo();
+      *distFromStartNm -= distToCur;
+    }
 
-    distToDest = 0.f;
-    for(int i = index + 1; i < size(); i++)
-      distToDest += at(i).getDistanceTo();
-    distToDest += distToCur;
+    if(distToDestNm != nullptr)
+    {
+      *distToDestNm = 0.f;
+      for(int i = index + 1; i < size(); i++)
+        *distToDestNm += at(i).getDistanceTo();
+      *distToDestNm += distToCur;
+    }
     return true;
   }
   return false;

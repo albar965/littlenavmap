@@ -139,7 +139,7 @@ void MapWidget::updateMapShowFeatures()
                      ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT,
                      ui->actionMapShowAircraft->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT_TRAIL,
+  setShowMapFeatures(maptypes::AIRCRAFT_TRACK,
                      ui->actionMapShowAircraftTrack->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT_HARD,
@@ -393,7 +393,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
 
     bool wasEmpty = aircraftTrack.isEmpty();
-    aircraftTrack.append(simulatorData.getPosition());
+    aircraftTrack.appendTrackPos(simulatorData.getPosition(),
+                                 simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
 
     if(wasEmpty != aircraftTrack.isEmpty())
       emit updateActionStates();
@@ -449,6 +450,7 @@ void MapWidget::highlightProfilePoint(atools::geo::Pos pos)
 void MapWidget::disconnectedFromSimulator()
 {
   simData = atools::fs::sc::SimConnectData();
+  aircraftTrack.clear();
   update();
 }
 

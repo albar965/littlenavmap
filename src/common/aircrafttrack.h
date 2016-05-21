@@ -15,35 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEMAPOBJECTLIST_H
-#define ROUTEMAPOBJECTLIST_H
+#ifndef AIRCRAFTTRACK_H
+#define AIRCRAFTTRACK_H
 
-#include "routemapobject.h"
+#include <geo/pos.h>
 
-class RouteMapObjectList :
-  public QList<RouteMapObject>
+struct AircraftTrackPos
+{
+  atools::geo::Pos pos;
+  bool onGround;
+  char padding;
+  short padding2;
+};
+
+Q_DECLARE_TYPEINFO(AircraftTrackPos, Q_PRIMITIVE_TYPE);
+
+class AircraftTrack :
+  public QList<AircraftTrackPos>
 {
 public:
-  RouteMapObjectList();
-  virtual ~RouteMapObjectList();
+  AircraftTrack();
+  ~AircraftTrack();
 
-  int nearestLegIndex(const atools::geo::Pos& pos) const;
-
-  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStartNm, float *distToDestNm) const;
-
-  float getTotalDistance() const
-  {
-    return totalDistance;
-  }
-
-  void setTotalDistance(float value)
-  {
-    totalDistance = value;
-  }
-
-private:
-  float totalDistance = 0.f;
+  void appendTrackPos(const atools::geo::Pos& pos, bool onGround);
 
 };
 
-#endif // ROUTEMAPOBJECTLIST_H
+#endif // AIRCRAFTTRACK_H
