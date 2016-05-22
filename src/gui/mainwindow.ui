@@ -110,13 +110,28 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
          <string>Airports</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutAirportSearch">
            <property name="spacing">
@@ -939,6 +954,21 @@
          <string>Nav Aids</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutNavSearch">
            <property name="bottomMargin">
@@ -1467,6 +1497,9 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsRoute">
     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -1623,6 +1656,9 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsInfo">
     <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -1637,6 +1673,9 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetInformation">
+       <property name="tabShape">
+        <enum>QTabWidget::Rounded</enum>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -1646,19 +1685,19 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_7">
          <property name="spacing">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="leftMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="rightMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>2</number>
          </property>
          <item>
           <widget class="QTextEdit" name="textEditAirportInfo"/>
@@ -1670,6 +1709,21 @@
          <string>Runways</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <widget class="QTextEdit" name="textEditRunwayInfo"/>
          </item>
@@ -1680,16 +1734,46 @@
          <string>Com</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_11">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <widget class="QTextEdit" name="textEditComInfo"/>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabNavIdInfo">
+       <widget class="QWidget" name="tabApproachInfo">
         <attribute name="title">
-         <string>Nav Aids</string>
+         <string>Approaches</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_9">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <widget class="QTextEdit" name="textEditNavIdInfo"/>
          </item>
@@ -1700,6 +1784,21 @@
          <string>Map Legend</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_6">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutMapLegendInfo"/>
          </item>
@@ -1781,6 +1880,9 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsElevation">
     <layout class="QVBoxLayout" name="verticalLayout_12">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="leftMargin">
       <number>2</number>
      </property>
