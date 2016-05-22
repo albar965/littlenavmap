@@ -38,6 +38,10 @@
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
 
+const int NUM_SCALE_STEPS = 5;
+const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
+const int MIN_SCALE_SCREEN_DISTANCE = 20;
+
 const int UPDATE_TIMEOUT = 1000;
 const int X0 = 65, Y0 = 14;
 
@@ -125,7 +129,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
            almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
         {
           lastSimData = simData;
-          if(simData.getPosition().getAltitude() > maxHeight)
+          if(simData.getPosition().getAltitude() > maxAlt)
             // Scale up to keep the aircraft visible
             updateScreenCoords();
           updateProfile = true;
@@ -161,20 +165,20 @@ void ProfileWidget::updateScreenCoords()
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
-  maxRouteElevationFt = std::ceil((legList.maxRouteElevation + 1000.f) / 500.f) * 500.f;
+  minSafeAltitudeFt = std::ceil((legList.maxElevationFt + 1000.f) / 500.f) * 500.f;
   flightplanAltFt = static_cast<float>(routeController->getFlightplan()->getCruisingAlt());
-  maxHeight = std::max(maxRouteElevationFt, flightplanAltFt);
+  maxAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getPosition().isValid() &&
      (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
-    maxHeight = std::max(maxHeight, simData.getPosition().getAltitude());
+    maxAlt = std::max(maxAlt, simData.getPosition().getAltitude());
 
-  vertScale = h / maxHeight;
+  vertScale = h / maxAlt;
   horizScale = w / legList.totalDistance;
 
   waypointX.clear();
-  poly.clear();
-  poly.append(QPoint(X0, h + Y0));
+  landPolygon.clear();
+  landPolygon.append(QPoint(X0, h + Y0));
 
   for(const ElevationLeg& leg : legList.elevationLegs)
   {
@@ -189,13 +193,13 @@ void ProfileWidget::updateScreenCoords()
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
-        poly.append(pt);
+        landPolygon.append(pt);
         lastPt = pt;
       }
     }
   }
   waypointX.append(X0 + w);
-  poly.append(QPoint(X0 + w, h + Y0));
+  landPolygon.append(QPoint(X0 + w, h + Y0));
 
   aircraftTrackPoints.clear();
   if(!routeController->isFlightplanEmpty() && showAircraftTrack)
@@ -229,8 +233,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
-  painter.fillRect(rect(), QBrush(Qt::white));
-  painter.fillRect(X0, 0, w, h + Y0, QBrush(QColor::fromRgb(204, 204, 255)));
+  painter.fillRect(rect(), mapcolors::profileBackgroundColor);
+  painter.fillRect(X0, 0, w, h + Y0, mapcolors::profileSkyColor);
 
   SymbolPainter symPainter;
 
@@ -238,33 +242,59 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     symPainter.textBox(&painter, {"No Route loaded."}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
-
     return;
   }
 
+  // Draw the mountains
+  // QLinearGradient gradient(QPointF(0.5f,1),QPointF(0.5f,0));
+  // gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+  // gradient.setColorAt(0, Qt::darkGreen);
+  // gradient.setColorAt(1, Qt::lightGray);
+  // QBrush mountainBrush(gradient);
+  painter.setBrush( /*mountainBrush */ mapcolors::profileLandColor);
+  painter.setPen(mapcolors::profileLandOutlineColor);
+  painter.drawPolygon(landPolygon);
+
   // Draw grey vertical lines for waypoints
   int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
-  painter.setPen(QPen(Qt::lightGray, 2, Qt::SolidLine));
+  painter.setPen(mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
-  // Draw the mountains
-  painter.setBrush(QColor(Qt::darkGreen));
-  painter.setPen(Qt::black);
-  painter.drawPolygon(poly);
+  // Find best scale for elevation lines
+  int step = 10000;
+  for(int s : SCALE_STEPS)
+  {
+    if(s * vertScale > MIN_SCALE_SCREEN_DISTANCE)
+    {
+      step = s;
+      break;
+    }
+  }
+
+  // Draw elevation scale
+  painter.setPen(mapcolors::profleElevationScalePen);
+  for(int i = Y0 + h, a = 0; i > Y0; i -= step * vertScale, a += step)
+  {
+    painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
+
+    symPainter.textBox(&painter, {QString::number(a)},
+                       mapcolors::profleElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
+
+    symPainter.textBox(&painter, {QString::number(a)},
+                       mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
+  }
 
   // Draw the red maximum elevation line
-  painter.setBrush(QColor(Qt::black));
-  painter.setPen(QPen(Qt::red, 4, Qt::SolidLine));
-  int maxAltY = Y0 + static_cast<int>(h - maxRouteElevationFt * vertScale);
+  painter.setPen(mapcolors::profileSafeAltLinePen);
+  int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * vertScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
   // Draw the flightplan line
-  painter.setPen(QPen(Qt::black, 6, Qt::SolidLine));
-  painter.setBrush(QColor(Qt::black));
+  painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
   painter.drawLine(X0, flightplanY, X0 + static_cast<int>(w), flightplanY);
 
-  painter.setPen(QPen(Qt::yellow, 2, Qt::SolidLine));
+  painter.setPen(QPen(mapcolors::routeColor, 2, Qt::SolidLine));
   painter.drawLine(X0, flightplanY, X0 + w, flightplanY);
 
   // Draw flightplan symbols
@@ -279,6 +309,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
+  // Draw the most unimportant symbols first
   for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
   {
     const RouteMapObject& rmo = legList.routeMapObjects.at(i);
@@ -306,6 +337,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
+  // Draw the more important radio navaids
   for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
   {
     const RouteMapObject& rmo = legList.routeMapObjects.at(i);
@@ -326,6 +358,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
+  // Draw the most important airport symbols
   font.setBold(true);
   font.setPointSizeF(defaultFontSize);
   painter.setFont(font);
@@ -334,13 +367,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteMapObject& rmo = legList.routeMapObjects.at(i);
     int symx = waypointX.at(i);
 
-    switch(rmo.getMapObjectType())
+    if(rmo.getMapObjectType() == maptypes::AIRPORT)
     {
-      case maptypes::AIRPORT:
-        symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, flightplanY, 10, false, false);
-        symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22,
-                                   flags, 10, false, true, false);
-        break;
+      symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, flightplanY, 10, false, false);
+      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22,
+                                 flags, 10, false, true, false);
     }
   }
 
@@ -360,7 +391,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      textatt::BOLD | textatt::LEFT, 255);
 
   QString maxAlt =
-    QLocale().toString(maxRouteElevationFt, 'f', 0) + " ft";
+    QLocale().toString(minSafeAltitudeFt, 'f', 0) + " ft";
   symPainter.textBox(&painter, {maxAlt},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
@@ -416,7 +447,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
   ElevationLegList legs;
   legs.totalNumPoints = 0;
   legs.totalDistance = 0.f;
-  legs.maxRouteElevation = 0.f;
+  legs.maxElevationFt = 0.f;
   legs.elevationLegs.clear();
 
   // Need a copy to avoid synchronization problems
@@ -462,8 +493,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
       float alt = pos.getAltitude();
       if(alt > leg.maxElevation)
         leg.maxElevation = alt;
-      if(alt > legs.maxRouteElevation)
-        legs.maxRouteElevation = alt;
+      if(alt > legs.maxElevationFt)
+        legs.maxElevationFt = alt;
 
       leg.elevation.append(pos);
       if(j > 0)
@@ -480,7 +511,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
   }
 
   qDebug() << "elevation legs" << legs.elevationLegs.size() << "total points" << legs.totalNumPoints
-           << "total distance" << legs.totalDistance << "max route elevation" << legs.maxRouteElevation;
+           << "total distance" << legs.totalDistance << "max route elevation" << legs.maxElevationFt;
   return legs;
 }
 

@@ -104,6 +104,17 @@ const QColor& colorForParkingType(const QString& type);
 const QColor& colorForAirport(const maptypes::MapAirport& ap);
 const QColor& alternatingRowColor(int row, bool isSort);
 
+// Elevation profile colors and pens
+const QColor profileSkyColor(QColor::fromRgb(204, 204, 255));
+const QColor profileBackgroundColor(Qt::white);
+
+const QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
+const QColor profileLandColor(Qt::darkGreen);
+const QColor profileLandOutlineColor(Qt::black);
+
+const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
+const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+
 } // namespace mapcolors
 
 #endif // MAPCOLORS_H

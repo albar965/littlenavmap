@@ -80,7 +80,7 @@ private:
   {
     RouteMapObjectList routeMapObjects;
     QList<ElevationLeg> elevationLegs;
-    float maxRouteElevation = 0.f, totalDistance = 0.f;
+    float maxElevationFt = 0.f, totalDistance = 0.f;
     int totalNumPoints = 0;
   };
 
@@ -116,8 +116,8 @@ private:
   bool showAircraft = false, showAircraftTrack = false;
 
   QVector<int> waypointX;
-  QPolygon poly;
-  float maxRouteElevationFt, flightplanAltFt, maxHeight, vertScale, horizScale;
+  QPolygon landPolygon;
+  float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
 
 };
 
