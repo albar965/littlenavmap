@@ -19,7 +19,7 @@
 #define MAPPAINTERAIRPORT_H
 
 #include "mapgui/mappainter.h"
-#include "mapgui/symbolpainter.h"
+#include "common/symbolpainter.h"
 
 class SymbolPainter;
 

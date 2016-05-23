@@ -25,12 +25,10 @@ struct MapSearchResult;
 
 }
 
-class RouteMapObject;
-class MorseCode;
-class MapLayer;
 class MapQuery;
 class WeatherReporter;
 class RouteMapObjectList;
+class HtmlBuilder;
 
 class MapTooltip :
   public QObject
@@ -48,9 +46,8 @@ public:
 private:
   const int MAXLINES = 30;
   MapQuery *query;
-  bool checkText(QStringList& text);
+  bool checkText(HtmlBuilder& text);
 
-  MorseCode *morse;
   WeatherReporter *weather;
 
 };

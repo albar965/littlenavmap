@@ -47,7 +47,7 @@ HtmlBuilder::~HtmlBuilder()
 
 }
 
-HtmlBuilder& HtmlBuilder::row(const QString& name, const QVariant& value, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, html::Flags flags, QColor color)
 {
   QString valueStr;
   switch(value.type())
@@ -105,7 +105,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, const QVariant& value, html::
   }
   html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
           arg(asText(name, flags, color), value.toString());
-  index++;
+  tableIndex++;
+  numLines++;
   return *this;
 }
 
@@ -113,7 +114,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, const QString& value, html::F
 {
   html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
           arg(asText(name, flags, color), value);
-  index++;
+  tableIndex++;
+  numLines++;
   return *this;
 }
 
@@ -123,7 +125,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, float value, int precision, h
   html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
           arg(asText(name, flags, color),
               locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
-  index++;
+  tableIndex++;
+  numLines++;
   return *this;
 }
 
@@ -133,7 +136,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, double value, int precision, 
   html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
           arg(asText(name, flags, color),
               locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
-  index++;
+  tableIndex++;
+  numLines++;
   return *this;
 }
 
@@ -141,19 +145,22 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, int value, html::Flags flags,
 {
   html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
           arg(asText(name, flags, color), locale.toString(value));
-  index++;
+  tableIndex++;
+  numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::table()
 {
   html += "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\"><tbody>";
+  tableIndex = 0;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::tableEnd()
 {
   html += "</tbody></table>";
+  tableIndex = 0;
   return *this;
 }
 
@@ -161,7 +168,8 @@ HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QC
 {
   QString num = QString::number(level);
   html += "<h" + num + ">" + asText(str, flags, color) + "</h" + num + ">";
-  index = 0;
+  tableIndex = 0;
+  numLines++;
   return *this;
 }
 
@@ -228,12 +236,27 @@ HtmlBuilder& HtmlBuilder::big(const QString& str)
 HtmlBuilder& HtmlBuilder::br()
 {
   html += "<br/>";
+  numLines++;
   return *this;
+}
+
+HtmlBuilder& HtmlBuilder::brText(const QString& str)
+{
+  br();
+  html += str;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::textBr(const QString& str)
+{
+  html += str;
+  return br();
 }
 
 HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 {
   html += "<hr size=\"" + QString::number(size) + "\" width=\"" + QString::number(widthPercent) + "%\"/>";
+  numLines++;
   return *this;
 }
 
@@ -264,6 +287,7 @@ HtmlBuilder& HtmlBuilder::ulEnd()
 HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color)
 {
   html += "<li>" + asText(str, flags, color) + "</li>";
+  numLines++;
   return *this;
 }
 
@@ -321,6 +345,18 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
   return prefix + str + suffix;
 }
 
+bool HtmlBuilder::checklength(int maxLines, const QString& msg)
+{
+  QString dotText(QString("<b>%1</b>").arg(msg));
+  if(numLines > maxLines)
+  {
+    if(!html.endsWith(dotText))
+      hr().b(msg);
+    return true;
+  }
+  return false;
+}
+
 HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor color)
 {
   html += asText(str, flags, color);
@@ -332,7 +368,8 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
   html += "<p>";
   text(str, flags, color);
   html += "</p>";
-  index = 0;
+  tableIndex = 0;
+  numLines++;
   return *this;
 }
 
@@ -344,7 +381,7 @@ HtmlBuilder& HtmlBuilder::doc()
         "<head>"
         "</head>"
         "<body style=\"font-family:'sans'; font-size:8pt; font-weight:400; font-style:normal;\">";
-  index = 0;
+  tableIndex = 0;
   return *this;
 }
 
@@ -354,7 +391,13 @@ HtmlBuilder& HtmlBuilder::docEnd()
   return *this;
 }
 
+void HtmlBuilder::clear()
+{
+  html.clear();
+  numLines = 0;
+}
+
 const QString& HtmlBuilder::alt(const QStringList& list) const
 {
-  return list.at(index % list.size());
+  return list.at(tableIndex % list.size());
 }

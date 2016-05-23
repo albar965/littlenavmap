@@ -31,7 +31,7 @@
 #include <QMouseEvent>
 #include <QRubberBand>
 #include <QtConcurrent/QtConcurrentRun>
-#include <mapgui/symbolpainter.h>
+#include <common/symbolpainter.h>
 #include "mapgui/mapwidget.h"
 #include <route/routecontroller.h>
 

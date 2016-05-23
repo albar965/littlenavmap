@@ -22,7 +22,7 @@
 #include "sqlproxymodel.h"
 #include "logging/loggingdefs.h"
 #include "mapgui/mapquery.h"
-#include "mapgui/symbolpainter.h"
+#include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 
 #include <QPainter>

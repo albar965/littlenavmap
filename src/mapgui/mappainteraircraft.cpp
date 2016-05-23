@@ -21,7 +21,7 @@
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
-#include "mapgui/symbolpainter.h"
+#include "common/symbolpainter.h"
 
 #include <algorithm>
 #include "fs/sc/simconnectdata.h"

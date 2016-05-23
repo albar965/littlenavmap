@@ -246,14 +246,14 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
 
     // VOR and DME are scaled up in nav_search to easily differentiate from NDB
     if(freq >= 1000000 && freq <= 1200000)
-      return formatter::formatDoubleUnit(value.toDouble() / 10000., QString(), 2);
+      return QLocale().toString(value.toDouble() / 10000., 'f', 2);
     else if(freq >= 10000 && freq <= 120000)
-      return formatter::formatDoubleUnit(value.toDouble() / 100., QString(), 1);
+      return QLocale().toString(value.toDouble() / 100., 'f', 1);
     else
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return formatter::formatDoubleUnit(value.toDouble(), QString(), 1);
+    return QLocale().toString(value.toDouble(), 'f', 1);
   else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
     return QLocale().toString(dataValue.toInt());
   else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)

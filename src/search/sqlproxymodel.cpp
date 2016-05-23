@@ -136,7 +136,7 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
     if(role == Qt::DisplayRole)
     {
       float dist = meterToNm(buildPos(mapToSource(index).row()).distanceMeterTo(centerPos));
-      return formatter::formatDoubleUnit(dist, QString(), 1);
+      return QLocale().toString(dist, 'f', 1);
     }
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;
@@ -146,7 +146,7 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
     if(role == Qt::DisplayRole)
     {
       float heading = normalizeCourse(centerPos.angleDegTo(buildPos(mapToSource(index).row())));
-      return formatter::formatDoubleUnit(heading, QString(), 0);
+      return QLocale().toString(heading, 'f', 0);
     }
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;

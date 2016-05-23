@@ -23,6 +23,7 @@
 #include <common/maptypes.h>
 
 class MainWindow;
+class MapQuery;
 
 class InfoController :
   public QObject
@@ -30,13 +31,14 @@ class InfoController :
   Q_OBJECT
 
 public:
-  InfoController(MainWindow *parent);
+  InfoController(MainWindow *parent, MapQuery *mapQuery);
   virtual ~InfoController();
 
   void showInformation(maptypes::MapSearchResult result);
 
 private:
   MainWindow *mainWindow;
+  MapQuery *query;
 };
 
 #endif // INFOCONTROLLER_H

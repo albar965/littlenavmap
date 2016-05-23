@@ -56,7 +56,6 @@ public:
   HtmlBuilder& sup(const QString& str);
   HtmlBuilder& small(const QString& str);
   HtmlBuilder& big(const QString& str);
-  HtmlBuilder& br();
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
 
   HtmlBuilder& ol();
@@ -70,6 +69,10 @@ public:
   /* Add string enclosed in a paragraph */
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& pre(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+
+  HtmlBuilder& br();
+  HtmlBuilder& textBr(const QString& str);
+  HtmlBuilder& brText(const QString& str = QString());
 
   /* Add HTML header */
   HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
@@ -88,18 +91,22 @@ public:
                    html::Flags flags = html::BOLD, QColor color = QColor());
   HtmlBuilder& row(const QString& name, int value,
                    html::Flags flags = html::BOLD, QColor color = QColor());
-  HtmlBuilder& row(const QString& name, const QVariant& value,
+  HtmlBuilder& rowVar(const QString& name, const QVariant& value,
                    html::Flags flags = html::BOLD, QColor color = QColor());
 
   HtmlBuilder& doc();
   HtmlBuilder& docEnd();
 
-  void clear()
+  bool checklength(int maxLines, const QString& msg);
+
+  bool isEmpty() const
   {
-    html.clear();
+    return html.isEmpty();
   }
 
-  QString getHtml() const
+  void clear();
+
+  const QString& getHtml() const
   {
     return html;
   }
@@ -124,6 +131,21 @@ public:
     defaultPrecision = value;
   }
 
+  int getNumLines() const
+  {
+    return numLines;
+  }
+
+  bool isTruncated() const
+  {
+    return truncated;
+  }
+
+  void setTruncated(bool value)
+  {
+    truncated = value;
+  }
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
@@ -132,13 +154,12 @@ private:
   QString rowBackColor, rowBackColorAlt, tableRowHeader;
   QStringList tableRow, tableRowAlignRight;
 
-  int index = 0;
+  int tableIndex = 0, defaultPrecision = 0, numLines = 0;
   QString html;
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
-  int defaultPrecision = 0;
-
+  bool truncated = false;
 };
 
 #endif // HTMLBUILDER_H

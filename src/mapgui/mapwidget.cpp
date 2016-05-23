@@ -45,7 +45,7 @@
 #include "common/coordinateconverter.h"
 #include "maplayer.h"
 #include "maptooltip.h"
-#include "symbolpainter.h"
+#include "common/symbolpainter.h"
 #include "ui_mainwindow.h"
 
 #include <gui/actiontextsaver.h>
@@ -891,7 +891,7 @@ void MapWidget::contextMenu(const QPoint& point)
 
       if(vor != nullptr)
       {
-        dm.text = vor->ident + " " + formatter::formatDoubleUnit(vor->frequency / 1000., QString(), 2);
+        dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
         dm.from = vor->position;
         dm.magvar = vor->magvar;
         dm.hasMagvar = true;
@@ -900,7 +900,7 @@ void MapWidget::contextMenu(const QPoint& point)
       }
       else if(ndb != nullptr)
       {
-        dm.text = ndb->ident + " " + formatter::formatDoubleUnit(ndb->frequency / 100., QString(), 2);
+        dm.text = ndb->ident + " " + QLocale().toString(ndb->frequency / 100., 'f', 2);
         dm.from = ndb->position;
         dm.magvar = ndb->magvar;
         dm.hasMagvar = true;
@@ -1016,9 +1016,9 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
   ring.center = pos;
 
   if(type == maptypes::VOR || type == maptypes::ILS)
-    ring.text = ident + " " + formatter::formatDoubleUnit(frequency / 1000., QString(), 2);
+    ring.text = ident + " " + QLocale().toString(frequency / 1000., 'f', 2);
   else if(type == maptypes::NDB)
-    ring.text = ident + " " + formatter::formatDoubleUnit(frequency / 100., QString(), 2);
+    ring.text = ident + " " + QLocale().toString(frequency / 100., 'f', 2);
 
   ring.ranges.append(range);
   rangeMarkers.append(ring);

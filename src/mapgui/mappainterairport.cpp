@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "mappainterairport.h"
-#include "symbolpainter.h"
+#include "common/symbolpainter.h"
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"

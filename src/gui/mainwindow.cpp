@@ -128,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connectClient = new ConnectClient(this);
 
-  infoController = new InfoController(this);
+  infoController = new InfoController(this, mapQuery);
 
   connectAllSlots();
   readSettings();

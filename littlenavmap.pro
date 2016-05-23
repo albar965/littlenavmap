@@ -58,7 +58,6 @@ SOURCES += src/main.cpp\
     src/mapgui/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
     src/search/airporticondelegate.cpp \
-    src/mapgui/symbolpainter.cpp \
     src/common/maptypes.cpp \
     src/common/mapcolors.cpp \
     src/mapgui/mappainternav.cpp \
@@ -94,7 +93,9 @@ SOURCES += src/main.cpp\
     src/route/routemapobjectlist.cpp \
     src/common/aircrafttrack.cpp \
     src/info/infocontroller.cpp \
-    src/common/htmlbuilder.cpp
+    src/common/htmlbuilder.cpp \
+    src/common/symbolpainter.cpp \
+    src/common/maphtmlinfobuilder.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -115,7 +116,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappaintermark.h \
     src/mapgui/mapscale.h \
     src/search/airporticondelegate.h \
-    src/mapgui/symbolpainter.h \
     src/common/maptypes.h \
     src/common/mapcolors.h \
     src/mapgui/mappainternav.h \
@@ -151,7 +151,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routemapobjectlist.h \
     src/common/aircrafttrack.h \
     src/info/infocontroller.h \
-    src/common/htmlbuilder.h
+    src/common/htmlbuilder.h \
+    src/common/symbolpainter.h \
+    src/common/maphtmlinfobuilder.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

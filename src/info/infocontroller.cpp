@@ -21,6 +21,9 @@
 
 #include <gui/mainwindow.h>
 #include "ui_mainwindow.h"
+#include <common/htmlbuilder.h>
+#include <common/maphtmlinfobuilder.h>
+#include <mapgui/mapquery.h>
 
 enum TabIndex
 {
@@ -33,8 +36,8 @@ enum TabIndex
   MAP_LEGEND = 6
 };
 
-InfoController::InfoController(MainWindow *parent) :
-  QObject(parent), mainWindow(parent)
+InfoController::InfoController(MainWindow *parent, MapQuery *mapQuery) :
+  QObject(parent), mainWindow(parent), query(mapQuery)
 {
 
 }
@@ -48,6 +51,9 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 {
   qDebug() << "InfoController::showInformation";
 
+  MapHtmlInfoBuilder info(query, true);
+  HtmlBuilder html;
+
   Ui::MainWindow *ui = mainWindow->getUi();
   int idx = ui->tabWidgetInformation->currentIndex();
 
@@ -55,21 +61,29 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   {
     if(idx != AIRPORT && idx != RUNWAYS && idx != COM && idx != APPROACHES)
       ui->tabWidgetInformation->setCurrentIndex(AIRPORT);
-    ui->textEditAirportInfo->setText(result.airports.first().ident);
+
+    info.airportText(result.airports.first(), html, nullptr, nullptr);
+    ui->textEditAirportInfo->setText(html.getHtml());
   }
   else if(!result.vors.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    ui->textEditNavaidInfo->setText(result.vors.first().ident);
+
+    info.vorText(result.vors.first(), html);
+    ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.ndbs.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    ui->textEditNavaidInfo->setText(result.ndbs.first().ident);
+
+    info.ndbText(result.ndbs.first(), html);
+    ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.waypoints.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    ui->textEditNavaidInfo->setText(result.waypoints.first().ident);
+
+    info.waypointText(result.waypoints.first(), html);
+    ui->textEditNavaidInfo->setText(html.getHtml());
   }
 }
