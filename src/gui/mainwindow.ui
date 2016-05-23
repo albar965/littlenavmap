@@ -1700,7 +1700,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditAirportInfo"/>
+          <widget class="QTextEdit" name="textEditAirportInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1725,7 +1729,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditRunwayInfo"/>
+          <widget class="QTextEdit" name="textEditRunwayInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1750,7 +1758,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditComInfo"/>
+          <widget class="QTextEdit" name="textEditComInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1775,7 +1787,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditApproachInfo"/>
+          <widget class="QTextEdit" name="textEditApproachInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1800,7 +1816,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditNavaidInfo"/>
+          <widget class="QTextEdit" name="textEditNavaidInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -1825,7 +1845,11 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditNavmapLegendInfo"/>
+          <widget class="QTextEdit" name="textEditNavmapLegendInfo">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

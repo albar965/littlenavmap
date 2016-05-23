@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "common/maptypes.h"
-#include "mapquery.h"
+#include "mapgui/mapquery.h"
 #include "symbolpainter.h"
 #include "common/mapcolors.h"
 

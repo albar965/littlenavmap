@@ -17,7 +17,7 @@
 
 #include "mappainter.h"
 #include "mapscale.h"
-#include "symbolpainter.h"
+#include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"

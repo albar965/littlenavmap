@@ -72,7 +72,7 @@ public:
 
   HtmlBuilder& br();
   HtmlBuilder& textBr(const QString& str);
-  HtmlBuilder& brText(const QString& str = QString());
+  HtmlBuilder& brText(const QString& str);
 
   /* Add HTML header */
   HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
@@ -92,7 +92,7 @@ public:
   HtmlBuilder& row(const QString& name, int value,
                    html::Flags flags = html::BOLD, QColor color = QColor());
   HtmlBuilder& rowVar(const QString& name, const QVariant& value,
-                   html::Flags flags = html::BOLD, QColor color = QColor());
+                      html::Flags flags = html::BOLD, QColor color = QColor());
 
   HtmlBuilder& doc();
   HtmlBuilder& docEnd();

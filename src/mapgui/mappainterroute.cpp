@@ -18,7 +18,7 @@
 #include "mappainterroute.h"
 #include "mapwidget.h"
 #include "mapscale.h"
-#include "symbolpainter.h"
+#include "common/symbolpainter.h"
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"

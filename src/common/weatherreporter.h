@@ -45,6 +45,9 @@ public:
 
   void clearNoaaReply();
 
+signals:
+  void weatherUpdated();
+
 private:
   void fileChanged(const QString& path);
   void loadVatsimMetar(const QString& airportIcao);
@@ -59,7 +62,7 @@ private:
 
   QNetworkAccessManager networkManager;
 
-  void httpFinished(QNetworkReply* reply, const QString& icao, QHash<QString, QString>& metars);
+  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, QString>& metars);
 
   QString noaaRequestIcao, vatsimRequestIcao;
 
@@ -69,9 +72,6 @@ private:
   void httpFinishedVatsim();
 
   void clearVatsimReply();
-
-signals:
-  void weatherUpdated();
 
 };
 

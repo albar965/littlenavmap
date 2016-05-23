@@ -18,6 +18,9 @@
 #ifndef MAPHTMLINFOBUILDER_H
 #define MAPHTMLINFOBUILDER_H
 
+#include <QCoreApplication>
+#include <QLocale>
+
 class RouteMapObject;
 class MorseCode;
 class MapQuery;
@@ -50,6 +53,8 @@ struct MapUserpoint;
 
 class MapHtmlInfoBuilder
 {
+  Q_DECLARE_TR_FUNCTIONS(MapHtmlInfoBuilder)
+
 public:
   MapHtmlInfoBuilder(MapQuery *mapQuery, bool formatInfo);
 
@@ -73,6 +78,13 @@ private:
   MapQuery *query;
   MorseCode *morse;
   bool info;
+  QLocale locale;
+  void tableRow(HtmlBuilder& html, const QString& caption, const QString& value);
+
+  void tableHeader(HtmlBuilder& html, const QString& text);
+
+  void tableEnd(HtmlBuilder& html);
+  void tableStart(HtmlBuilder& html);
 };
 
 #endif // MAPHTMLINFOBUILDER

@@ -36,7 +36,14 @@ public:
 
   void showInformation(maptypes::MapSearchResult result);
 
+  void saveState();
+  void restoreState();
+
+  void updateAirport();
+
 private:
+  int curAirportId = -1;
+
   MainWindow *mainWindow;
   MapQuery *query;
 };

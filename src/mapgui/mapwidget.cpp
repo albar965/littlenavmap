@@ -82,8 +82,6 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   setContextMenuPolicy(Qt::CustomContextMenu);
 
   connect(this, &MapWidget::customContextMenuRequested, this, &MapWidget::contextMenu);
-  connect(parentWindow->getWeatherReporter(), &WeatherReporter::weatherUpdated,
-          this, &MapWidget::updateTooltip);
 }
 
 MapWidget::~MapWidget()

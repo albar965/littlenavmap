@@ -63,8 +63,6 @@ void MapTypesFactory::fillAirport(const QSqlRecord& record, maptypes::MapAirport
                     record.value("altitude").toFloat());
   ap.bounding = Rect(record.value("left_lonx").toFloat(), record.value("top_laty").toFloat(),
                      record.value("right_lonx").toFloat(), record.value("bottom_laty").toFloat());
-
-  ap.valid = true;
 }
 
 maptypes::MapAirportFlags MapTypesFactory::getFlags(const QSqlRecord& record)

@@ -458,6 +458,12 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           profileWidget, &ProfileWidget::disconnectedFromSimulator);
+
+  connect(weatherReporter, &WeatherReporter::weatherUpdated,
+          navMapWidget, &MapWidget::updateTooltip);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated,
+          infoController, &InfoController::updateAirport);
+
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
@@ -801,6 +807,7 @@ void MainWindow::readSettings()
   navMapWidget->restoreState();
   routeController->restoreState();
   connectClient->restoreState();
+  infoController->restoreState();
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox,
               ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
@@ -829,6 +836,7 @@ void MainWindow::writeSettings()
   navMapWidget->saveState();
   routeController->saveState();
   connectClient->saveState();
+  infoController->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,

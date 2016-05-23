@@ -16,14 +16,17 @@
 *****************************************************************************/
 
 #include "logging/loggingdefs.h"
-
+#include "route/routecontroller.h"
+#include "common/weatherreporter.h"
 #include "infocontroller.h"
-
+#include <QSettings>
 #include <gui/mainwindow.h>
+#include <gui/widgetstate.h>
 #include "ui_mainwindow.h"
 #include <common/htmlbuilder.h>
 #include <common/maphtmlinfobuilder.h>
 #include <mapgui/mapquery.h>
+#include <settings/settings.h>
 
 enum TabIndex
 {
@@ -39,12 +42,52 @@ enum TabIndex
 InfoController::InfoController(MainWindow *parent, MapQuery *mapQuery) :
   QObject(parent), mainWindow(parent), query(mapQuery)
 {
-
 }
 
 InfoController::~InfoController()
 {
 
+}
+
+void InfoController::saveState()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  atools::gui::WidgetState ws("InfoWindow/Widget");
+  ws.save({ui->tabWidgetInformation, ui->textEditAirportInfo, ui->textEditRunwayInfo, ui->textEditComInfo,
+           ui->textEditApproachInfo, ui->textEditNavaidInfo});
+
+  atools::settings::Settings::instance()->setValue("InfoWindow/CurrentAirportId", curAirportId);
+}
+
+void InfoController::restoreState()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  atools::gui::WidgetState ws("InfoWindow/Widget");
+  ws.restore({ui->tabWidgetInformation, ui->textEditAirportInfo, ui->textEditRunwayInfo, ui->textEditComInfo,
+              ui->textEditApproachInfo, ui->textEditNavaidInfo});
+
+  curAirportId = atools::settings::Settings::instance()->value("InfoWindow/CurrentAirportId", -1).toInt();
+
+  updateAirport();
+}
+
+void InfoController::updateAirport()
+{
+  qDebug() << "InfoController::updateAirport";
+
+  if(curAirportId != -1)
+  {
+    MapHtmlInfoBuilder info(query, true);
+    HtmlBuilder html;
+    maptypes::MapAirport ap;
+    query->getAirportById(ap, curAirportId);
+
+    info.airportText(ap, html,
+                     &mainWindow->getRouteController()->getRouteMapObjects(), mainWindow->getWeatherReporter());
+    mainWindow->getUi()->textEditAirportInfo->setText(html.getHtml());
+  }
 }
 
 void InfoController::showInformation(maptypes::MapSearchResult result)
@@ -62,8 +105,8 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     if(idx != AIRPORT && idx != RUNWAYS && idx != COM && idx != APPROACHES)
       ui->tabWidgetInformation->setCurrentIndex(AIRPORT);
 
-    info.airportText(result.airports.first(), html, nullptr, nullptr);
-    ui->textEditAirportInfo->setText(html.getHtml());
+    curAirportId = result.airports.first().id;
+    updateAirport();
   }
   else if(!result.vors.isEmpty())
   {
@@ -84,6 +127,13 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
 
     info.waypointText(result.waypoints.first(), html);
+    ui->textEditNavaidInfo->setText(html.getHtml());
+  }
+  else if(!result.airways.isEmpty())
+  {
+    ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+
+    info.airwayText(result.airways.first(), html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
 }
