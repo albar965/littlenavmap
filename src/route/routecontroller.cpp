@@ -490,6 +490,10 @@ void RouteController::doubleClick(const QModelIndex& index)
     }
     else
       emit showPos(mo.getPosition(), 2700);
+
+    maptypes::MapSearchResult result;
+    query->getMapObjectById(result, mo.getMapObjectType(), mo.getId());
+    emit showInformation(result);
   }
 }
 
@@ -525,7 +529,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   Ui::MainWindow *ui = parentWindow->getUi();
 
-  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
+  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionShowInformation});
   Q_UNUSED(saver);
 
   QModelIndex index = view->indexAt(pos);
@@ -540,9 +544,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addAction(ui->actionRouteDeleteLeg);
 
     menu.addSeparator();
-    menu.addAction(ui->actionSearchSetMark);
-    menu.addSeparator();
+    menu.addAction(ui->actionShowInformation);
 
+    menu.addSeparator();
+    menu.addAction(ui->actionSearchSetMark);
+
+    menu.addSeparator();
     menu.addAction(ui->actionSearchTableCopy);
 
     updateMoveAndDeleteActions();
@@ -552,8 +559,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionMapHideRangeRings->setEnabled(!parentWindow->getMapWidget()->getRangeRings().isEmpty());
 
-    ui->actionMapNavaidRange->setText(tr("Show Navaid Ranges "));
+    ui->actionShowInformation->setEnabled(true);
+    ui->actionShowInformation->setText(tr("Show Information"));
+
     ui->actionMapNavaidRange->setEnabled(false);
+    ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+
     QList<RouteMapObject> selectedRouteMapObjects;
     getSelectedRouteMapObjects(selectedRouteMapObjects);
     for(const RouteMapObject& rmo : selectedRouteMapObjects)
@@ -605,8 +616,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
       }
       else if(action == ui->actionMapHideRangeRings)
         parentWindow->getMapWidget()->clearRangeRings();
+      else if(action == ui->actionShowInformation)
+      {
+        maptypes::MapSearchResult result;
+        query->getMapObjectById(result, routeMapObject.getMapObjectType(), routeMapObject.getId());
+        emit showInformation(result);
+      }
     }
-
   }
 }
 

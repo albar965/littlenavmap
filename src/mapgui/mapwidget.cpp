@@ -610,6 +610,7 @@ void MapWidget::contextMenu(const QPoint& point)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAdd,
+                                          ui->actionShowInformation,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest, ui->actionRouteParkingStart});
   Q_UNUSED(textSaver);
@@ -617,6 +618,8 @@ void MapWidget::contextMenu(const QPoint& point)
   QMenu menu;
   menu.addAction(ui->actionMapSetMark);
   menu.addAction(ui->actionMapSetHome);
+  menu.addSeparator();
+  menu.addAction(ui->actionShowInformation);
   menu.addSeparator();
   menu.addAction(ui->actionMapMeasureDistance);
   menu.addAction(ui->actionMapMeasureRhumbDistance);
@@ -770,12 +773,16 @@ void MapWidget::contextMenu(const QPoint& point)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
+    ui->actionRouteAdd->setEnabled(true);
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(searchText));
+    ui->actionShowInformation->setEnabled(true);
+    ui->actionShowInformation->setText(ui->actionShowInformation->text().arg(searchText));
   }
   else
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg("Position"));
+    ui->actionShowInformation->setText(ui->actionShowInSearch->text().arg(QString()));
   }
 
   // Update "delete in route"
@@ -937,7 +944,8 @@ void MapWidget::contextMenu(const QPoint& point)
       emit routeDelete(delRouteIndex, delType);
     }
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionRouteParkingStart)
+            action == ui->actionRouteAirportDest || action == ui->actionRouteParkingStart ||
+            action == ui->actionShowInformation)
     {
       // ui->dockWidgetRoute->raise();
 
@@ -994,6 +1002,8 @@ void MapWidget::contextMenu(const QPoint& point)
         emit routeSetStart(*airport);
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
+      else if(action == ui->actionShowInformation)
+        emit showInformation(result);
     }
   }
 }
@@ -1037,6 +1047,7 @@ void MapWidget::clearRangeRings()
 
 bool MapWidget::eventFilter(QObject *obj, QEvent *e)
 {
+
   if(e->type() == QEvent::MouseButtonDblClick)
   {
     // Catch the double click event
@@ -1045,6 +1056,22 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     event(e);
     return true;
   }
+
+  if(e->type() == QEvent::MouseButtonPress)
+  {
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
+
+    if(mouseEvent != nullptr)
+    {
+      if(mouseEvent->modifiers() & Qt::ControlModifier)
+      {
+        // Remove control modifer to disable Marble rectangle dragging
+        mouseEvent->setModifiers(mouseEvent->modifiers() & ~Qt::ControlModifier);
+        qDebug() << "eventFilter ctrl click";
+      }
+    }
+  }
+
   if(e->type() == QEvent::MouseMove && mouseState != NONE)
   {
     // Do not allow mouse scrolling during drag actions
@@ -1186,6 +1213,12 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         currentDistanceMarkerIndex = -1;
       }
     }
+    else
+    {
+      if(cursor().shape() != Qt::ArrowCursor)
+        setCursor(Qt::ArrowCursor);
+    }
+
     mouseState = NONE;
     setViewContext(Marble::Still);
     update();
@@ -1244,6 +1277,11 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             routeDragFrom = rmos.at(routeLeg).getPosition();
             routeDragTo = rmos.at(routeLeg + 1).getPosition();
             setContextMenuPolicy(Qt::NoContextMenu);
+          }
+          else
+          {
+            qDebug() << "Single click info";
+            handleInfoClick(event->pos());
           }
         }
       }
@@ -1853,4 +1891,11 @@ int MapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)
     index++;
   }
   return -1;
+}
+
+void MapWidget::handleInfoClick(QPoint pos)
+{
+  maptypes::MapSearchResult result;
+  getAllNearestMapObjects(pos.x(), pos.y(), 10, result);
+  emit showInformation(result);
 }

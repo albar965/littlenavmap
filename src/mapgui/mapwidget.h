@@ -199,6 +199,7 @@ signals:
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void updateActionStates();
+  void showInformation(maptypes::MapSearchResult result);
 
 private:
   enum MapThemeComboIndex
@@ -281,6 +282,8 @@ private:
 
 #endif
   void updateVisibleObjects();
+
+  void handleInfoClick(QPoint pos);
 
 };
 

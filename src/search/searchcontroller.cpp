@@ -15,15 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/searchcontroller.h"
+#include "search/searchcontroller.h"
 #include "gui/mainwindow.h"
-#include "table/column.h"
-#include "table/columnlist.h"
-#include "table/airportsearch.h"
+#include "search/column.h"
+#include "search/columnlist.h"
+#include "search/airportsearch.h"
 #include "navsearch.h"
 #include "mapgui/mapwidget.h"
 #include "gui/widgetstate.h"
-#include "table/controller.h"
+#include "search/controller.h"
 
 SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
                                    QTabWidget *tabWidgetSearch)

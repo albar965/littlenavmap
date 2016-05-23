@@ -15,14 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/sqlmodel.h"
+#include "search/sqlmodel.h"
 #include "gui/errorhandler.h"
-#include "table/columnlist.h"
+#include "search/columnlist.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "logging/loggingdefs.h"
-#include "table/column.h"
+#include "search/column.h"
 
 #include <QApplication>
 #include <QLineEdit>

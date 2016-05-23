@@ -951,7 +951,7 @@
        </widget>
        <widget class="QWidget" name="tabNavIdSearch">
         <attribute name="title">
-         <string>Nav Aids</string>
+         <string>Navaids</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <property name="spacing">
@@ -1775,7 +1775,57 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditNavIdInfo"/>
+          <widget class="QTextEdit" name="textEditApproachInfo"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabNavaidInfo">
+        <attribute name="title">
+         <string>Navaid</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_14">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="textEditNavaidInfo"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabNavmapLegendInfo">
+        <attribute name="title">
+         <string>Navmap Legend</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_13">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="textEditNavmapLegendInfo"/>
          </item>
         </layout>
        </widget>
@@ -2982,6 +3032,15 @@
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
+   </property>
+  </action>
+  <action name="actionShowInformation">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Information for %1</string>
    </property>
   </action>
  </widget>

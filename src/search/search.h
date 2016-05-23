@@ -50,7 +50,7 @@ class Search :
 
 public:
   explicit Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  MapQuery *query, int tabWidgetIndex);
+                  MapQuery *mapQuery, int tabWidgetIndex);
   virtual ~Search();
 
   virtual void preDatabaseLoad();
@@ -80,6 +80,17 @@ public:
 
   void tableSelectionChanged();
 
+signals:
+  void showRect(const atools::geo::Rect& rect);
+  void showPos(const atools::geo::Pos& pos, int zoom);
+  void changeMark(const atools::geo::Pos& pos);
+  void selectionChanged(const Search *source, int selected, int visible, int total);
+  void showInformation(maptypes::MapSearchResult result);
+
+  void routeSetStart(maptypes::MapAirport airport);
+  void routeSetDest(maptypes::MapAirport airport);
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+
 protected:
   QIcon *boolIcon = nullptr;
   void editStarted();
@@ -88,7 +99,7 @@ protected:
   void connectSearchWidgets();
   void contextMenu(const QPoint& pos);
 
-  MapQuery *mapQuery;
+  MapQuery *query;
   atools::geo::Pos mapMark;
 
   Controller *controller;
@@ -106,15 +117,7 @@ protected:
   void reconnectSelectionModel();
   void connectModelSlots();
 
-signals:
-  void showRect(const atools::geo::Rect& rect);
-  void showPos(const atools::geo::Pos& pos, int zoom);
-  void changeMark(const atools::geo::Pos& pos);
-  void selectionChanged(const Search *source, int selected, int visible, int total);
-
-  void routeSetStart(maptypes::MapAirport airport);
-  void routeSetDest(maptypes::MapAirport airport);
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+  void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
 
 };
 

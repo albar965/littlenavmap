@@ -20,7 +20,7 @@
 
 #include "geo/pos.h"
 
-#include "table/search.h"
+#include "search/search.h"
 
 #include <QObject>
 
@@ -47,7 +47,7 @@ class AirportSearch :
 
 public:
   explicit AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                         MapQuery *mapQuery, int tabWidgetIndex);
+                         MapQuery *query, int tabWidgetIndex);
   virtual ~AirportSearch();
 
   virtual void saveState() override;

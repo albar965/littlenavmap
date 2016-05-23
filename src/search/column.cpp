@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/column.h"
+#include "search/column.h"
 
 #include <QCheckBox>
 #include <QComboBox>

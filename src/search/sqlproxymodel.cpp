@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/sqlproxymodel.h"
+#include "search/sqlproxymodel.h"
 #include "geo/calculations.h"
-#include "table/sqlmodel.h"
+#include "search/sqlmodel.h"
 #include "common/formatter.h"
 
 #include <QApplication>

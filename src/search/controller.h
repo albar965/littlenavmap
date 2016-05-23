@@ -19,9 +19,9 @@
 #define LITTLENAVMAP_CONTROLLER_H
 
 #include "common/maptypes.h"
-#include "table/sqlmodel.h"
+#include "search/sqlmodel.h"
 #include "geo/pos.h"
-#include "table/sqlproxymodel.h"
+#include "search/sqlproxymodel.h"
 
 #include <QItemSelectionModel>
 #include <QObject>

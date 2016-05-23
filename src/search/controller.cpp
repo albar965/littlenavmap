@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/controller.h"
+#include "search/controller.h"
 
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
@@ -24,8 +24,8 @@
 #include "airporticondelegate.h"
 #include "column.h"
 #include "sqlproxymodel.h"
-#include "table/sqlmodel.h"
-#include "table/columnlist.h"
+#include "search/sqlmodel.h"
+#include "search/columnlist.h"
 
 #include <functional>
 #include <algorithm>

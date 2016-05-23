@@ -113,10 +113,10 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       text += "<br/>Has Soft Runways";
     if(ap.water())
       text += "<br/>Has Water Runways";
-    if(ap.helipad())
-      text += "<br/>Has Helipads";
     if(ap.flags.testFlag(AP_LIGHT))
       text += "<br/>Has Lighted Runways";
+    if(ap.helipad())
+      text += "<br/>Has Helipads";
     if(ap.flags.testFlag(AP_AVGAS))
       text += "<br/>Has Avgas";
     if(ap.flags.testFlag(AP_JETFUEL))

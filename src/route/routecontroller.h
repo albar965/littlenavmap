@@ -124,6 +124,7 @@ signals:
   void changeMark(const atools::geo::Pos& pos);
   void routeSelectionChanged(int selected, int total);
   void routeChanged(bool geometryChanged);
+  void showInformation(maptypes::MapSearchResult result);
 
 private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;

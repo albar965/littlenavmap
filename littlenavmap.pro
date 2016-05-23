@@ -40,15 +40,15 @@ win32:DEFINES +=_USE_MATH_DEFINES
 
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
-    src/table/columnlist.cpp \
-    src/table/controller.cpp \
-    src/table/sqlmodel.cpp \
-    src/table/column.cpp \
-    src/table/sqlproxymodel.cpp \
-    src/table/searchcontroller.cpp \
-    src/table/search.cpp \
-    src/table/airportsearch.cpp \
-    src/table/navsearch.cpp \
+    src/search/columnlist.cpp \
+    src/search/controller.cpp \
+    src/search/sqlmodel.cpp \
+    src/search/column.cpp \
+    src/search/sqlproxymodel.cpp \
+    src/search/searchcontroller.cpp \
+    src/search/search.cpp \
+    src/search/airportsearch.cpp \
+    src/search/navsearch.cpp \
     src/mapgui/mapquery.cpp \
     src/mapgui/mappaintlayer.cpp \
     src/mapgui/maplayer.cpp \
@@ -57,12 +57,12 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainterairport.cpp \
     src/mapgui/mappaintermark.cpp \
     src/mapgui/mapscale.cpp \
-    src/table/airporticondelegate.cpp \
+    src/search/airporticondelegate.cpp \
     src/mapgui/symbolpainter.cpp \
     src/common/maptypes.cpp \
     src/common/mapcolors.cpp \
     src/mapgui/mappainternav.cpp \
-    src/table/navicondelegate.cpp \
+    src/search/navicondelegate.cpp \
     src/mapgui/mappainterils.cpp \
     src/mapgui/mapposhistory.cpp \
     src/common/maptools.cpp \
@@ -92,18 +92,20 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainteraircraft.cpp \
     src/profile/profilewidget.cpp \
     src/route/routemapobjectlist.cpp \
-    src/common/aircrafttrack.cpp
+    src/common/aircrafttrack.cpp \
+    src/info/infocontroller.cpp \
+    src/common/htmlbuilder.cpp
 
 HEADERS  += src/gui/mainwindow.h \
-    src/table/columnlist.h \
-    src/table/controller.h \
-    src/table/sqlmodel.h \
-    src/table/column.h \
-    src/table/sqlproxymodel.h \
-    src/table/searchcontroller.h \
-    src/table/search.h \
-    src/table/airportsearch.h \
-    src/table/navsearch.h \
+    src/search/columnlist.h \
+    src/search/controller.h \
+    src/search/sqlmodel.h \
+    src/search/column.h \
+    src/search/sqlproxymodel.h \
+    src/search/searchcontroller.h \
+    src/search/search.h \
+    src/search/airportsearch.h \
+    src/search/navsearch.h \
     src/mapgui/mapquery.h \
     src/mapgui/mappaintlayer.h \
     src/mapgui/maplayer.h \
@@ -112,12 +114,12 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainterairport.h \
     src/mapgui/mappaintermark.h \
     src/mapgui/mapscale.h \
-    src/table/airporticondelegate.h \
+    src/search/airporticondelegate.h \
     src/mapgui/symbolpainter.h \
     src/common/maptypes.h \
     src/common/mapcolors.h \
     src/mapgui/mappainternav.h \
-    src/table/navicondelegate.h \
+    src/search/navicondelegate.h \
     src/mapgui/mappainterils.h \
     src/mapgui/mapposhistory.h \
     src/common/maptools.h \
@@ -147,7 +149,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainteraircraft.h \
     src/profile/profilewidget.h \
     src/route/routemapobjectlist.h \
-    src/common/aircrafttrack.h
+    src/common/aircrafttrack.h \
+    src/info/infocontroller.h \
+    src/common/htmlbuilder.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

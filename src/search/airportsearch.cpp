@@ -15,16 +15,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "table/airportsearch.h"
+#include "search/airportsearch.h"
 #include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
 #include "sql/sqldatabase.h"
-#include "table/controller.h"
+#include "search/controller.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
-#include "table/column.h"
+#include "search/column.h"
 #include "ui_mainwindow.h"
-#include "table/columnlist.h"
+#include "search/columnlist.h"
 #include "geo/rect.h"
 #include "geo/pos.h"
 #include "gui/widgettools.h"

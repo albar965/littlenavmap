@@ -26,11 +26,11 @@
 #include "logging/logginghandler.h"
 #include "gui/translator.h"
 #include "fs/fspaths.h"
-#include "table/search.h"
+#include "search/search.h"
 #include "mapgui/mapwidget.h"
 #include "common/formatter.h"
-#include "table/airportsearch.h"
-#include "table/navsearch.h"
+#include "search/airportsearch.h"
+#include "search/navsearch.h"
 #include "mapgui/mapquery.h"
 #include <marble/MarbleModel.h>
 #include <marble/GeoDataPlacemark.h>
@@ -55,12 +55,12 @@
 
 #include "settings/settings.h"
 #include "fs/bglreaderoptions.h"
-#include "table/controller.h"
+#include "search/controller.h"
 #include "gui/widgetstate.h"
 #include "gui/tablezoomhandler.h"
 #include "fs/bglreaderprogressinfo.h"
 #include "fs/navdatabase.h"
-#include "table/searchcontroller.h"
+#include "search/searchcontroller.h"
 #include "gui/helphandler.h"
 
 #include "sql/sqlutil.h"
@@ -74,6 +74,8 @@
 #include <connect/connectclient.h>
 
 #include <profile/profilewidget.h>
+
+#include <info/infocontroller.h>
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -126,6 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connectClient = new ConnectClient(this);
 
+  infoController = new InfoController(this);
+
   connectAllSlots();
   readSettings();
   updateActionStates();
@@ -155,6 +159,7 @@ MainWindow::~MainWindow()
   delete profileWidget;
   delete legendWidget;
   delete marbleAbout;
+  delete infoController;
   delete ui;
 
   delete dialog;
@@ -273,6 +278,9 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, navMapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, navMapWidget, &MapWidget::changeMark);
   connect(routeController, &RouteController::routeChanged, navMapWidget, &MapWidget::routeChanged);
+  connect(routeController, &RouteController::showInformation,
+          infoController, &InfoController::showInformation);
+
   connect(profileWidget, &ProfileWidget::highlightProfilePoint,
           navMapWidget, &MapWidget::highlightProfilePoint);
 
@@ -285,9 +293,13 @@ void MainWindow::connectAllSlots()
           navMapWidget, &MapWidget::showPos);
   connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
           navMapWidget, &MapWidget::changeMark);
+  connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
+          infoController, &InfoController::showInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, navMapWidget, &MapWidget::showPos);
   connect(searchController->getNavSearch(), &NavSearch::changeMark, navMapWidget, &MapWidget::changeMark);
+  connect(searchController->getNavSearch(), &NavSearch::showInformation,
+          infoController, &InfoController::showInformation);
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -323,10 +335,11 @@ void MainWindow::connectAllSlots()
   // Map widget related connections
   connect(navMapWidget, &MapWidget::objectSelected, searchController, &SearchController::objectSelected);
   // Connect the map widget to the position label.
-  QObject::connect(navMapWidget, &MapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
-  QObject::connect(navMapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
-  QObject::connect(navMapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
-  QObject::connect(navMapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
+  connect(navMapWidget, &MapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
+  connect(navMapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
+  connect(navMapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
+  connect(navMapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
+  connect(navMapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)

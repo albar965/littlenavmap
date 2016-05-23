@@ -37,6 +37,7 @@ class DatabaseLoader;
 class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
+class InfoController;
 
 namespace Marble {
 class LegendWidget;
@@ -132,6 +133,7 @@ private:
   DatabaseLoader *databaseLoader = nullptr;
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
+  InfoController *infoController = nullptr;
 
   void openDatabase();
   void closeDatabase();
