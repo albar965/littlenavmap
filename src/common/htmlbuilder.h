@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QCoreApplication>
 #include <QColor>
+#include <QSize>
 
 namespace html {
 enum Flag
@@ -57,6 +58,10 @@ public:
   HtmlBuilder& small(const QString& str);
   HtmlBuilder& big(const QString& str);
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
+  HtmlBuilder& a(const QString& text, const QString& href,
+                 html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& img(const QString& src, const QString& alt = QString(),
+                   const QString& style = QString(), QSize size = QSize());
 
   HtmlBuilder& ol();
   HtmlBuilder& olEnd();
@@ -75,11 +80,16 @@ public:
   HtmlBuilder& brText(const QString& str);
 
   /* Add HTML header */
-  HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
-  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE,
+                 QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h1(const QString& str, html::Flags flags = html::NONE,
+                  QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h2(const QString& str, html::Flags flags = html::NONE,
+                  QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h3(const QString& str, html::Flags flags = html::NONE,
+                  QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE,
+                  QColor color = QColor(), const QString& id = QString());
 
   HtmlBuilder& table();
   HtmlBuilder& tableEnd();

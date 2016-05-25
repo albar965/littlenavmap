@@ -164,36 +164,37 @@ HtmlBuilder& HtmlBuilder::tableEnd()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color, const QString& id)
 {
   QString num = QString::number(level);
-  html += "<h" + num + ">" + asText(str, flags, color) + "</h" + num + ">";
+  html += "<h" + num + (id.isEmpty() ? QString() : " id=\"" + id + "\"") + ">" +
+          asText(str, flags, color) + "</h" + num + ">";
   tableIndex = 0;
   numLines++;
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h1(const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::h1(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(1, str, flags, color);
+  h(1, str, flags, color, id);
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h2(const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::h2(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(2, str, flags, color);
+  h(2, str, flags, color, id);
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h3(const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::h3(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(3, str, flags, color);
+  h(3, str, flags, color, id);
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h4(const QString& str, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::h4(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
-  h(4, str, flags, color);
+  h(4, str, flags, color, id);
   return *this;
 }
 
@@ -257,6 +258,24 @@ HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 {
   html += "<hr size=\"" + QString::number(size) + "\" width=\"" + QString::number(widthPercent) + "%\"/>";
   numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
+{
+  html += "<a" + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
+          asText(text, flags, color) + "</a>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
+{
+  html += "<img src=\"" + src + "\"" + (style.isEmpty() ? QString() : " style=\"" + style + "\"") +
+          (alt.isEmpty() ? QString() : " alt=\"" + alt + "\"") +
+          (size.isValid() ?
+           QString(" width=\"") + QString::number(size.width()) + "\"" +
+           " height=\"" + QString::number(size.height()) + "\"" : QString()) + "/>";
+
   return *this;
 }
 

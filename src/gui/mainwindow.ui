@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>1333</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1704,6 +1704,9 @@
            <property name="readOnly">
             <bool>true</bool>
            </property>
+           <property name="placeholderText">
+            <string>No airport seleced.</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1732,6 +1735,9 @@
           <widget class="QTextEdit" name="textEditRunwayInfo">
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>No airport seleced.</string>
            </property>
           </widget>
          </item>
@@ -1762,6 +1768,9 @@
            <property name="readOnly">
             <bool>true</bool>
            </property>
+           <property name="placeholderText">
+            <string>No airport seleced.</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1791,6 +1800,9 @@
            <property name="readOnly">
             <bool>true</bool>
            </property>
+           <property name="placeholderText">
+            <string>No airport seleced.</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1819,6 +1831,9 @@
           <widget class="QTextEdit" name="textEditNavaidInfo">
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+           <property name="placeholderText">
+            <string>No Waypoint, VOR or NDB seleced.</string>
            </property>
           </widget>
          </item>
@@ -1972,7 +1987,7 @@
      <item>
       <widget class="QLabel" name="labelElevationInfo">
        <property name="text">
-        <string>No information.</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;No information.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
      </item>

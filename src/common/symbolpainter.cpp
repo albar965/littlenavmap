@@ -41,6 +41,10 @@ QIcon SymbolPainter::createAirportIcon(const maptypes::MapAirport& airport, int 
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
   SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
   return QIcon(pixmap);
 }
@@ -50,6 +54,10 @@ QIcon SymbolPainter::createVorIcon(const maptypes::MapVor& vor, int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
   SymbolPainter().drawVorSymbol(&painter, vor, size / 2, size / 2, size * 7 / 10, false, false, false);
   return QIcon(pixmap);
 }
@@ -59,6 +67,10 @@ QIcon SymbolPainter::createNdbIcon(const maptypes::MapNdb& ndb, int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
   SymbolPainter().drawNdbSymbol(&painter, ndb, size / 2, size / 2, size * 8 / 10, false, false);
   return QIcon(pixmap);
 }
@@ -68,6 +80,10 @@ QIcon SymbolPainter::createWaypointIcon(const maptypes::MapWaypoint& waypoint, i
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
   SymbolPainter().drawWaypointSymbol(&painter, waypoint, QColor(), size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }
@@ -77,6 +93,10 @@ QIcon SymbolPainter::createUserpointIcon(int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
   SymbolPainter().drawUserpointSymbol(&painter, size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }

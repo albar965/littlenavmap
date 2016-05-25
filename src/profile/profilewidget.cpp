@@ -662,7 +662,7 @@ void ProfileWidget::leaveEvent(QEvent *)
   delete rubberBand;
   rubberBand = nullptr;
 
-  parentWindow->getUi()->labelElevationInfo->setText("No information.");
+  parentWindow->getUi()->labelElevationInfo->setText("<b>No information.</b>");
 
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }

@@ -25,6 +25,8 @@
 #include <common/morsecode.h>
 #include <common/weatherreporter.h>
 
+#include <QSize>
+
 using namespace maptypes;
 
 MapHtmlInfoBuilder::MapHtmlInfoBuilder(MapQuery *mapQuery, bool formatInfo)
@@ -41,6 +43,7 @@ MapHtmlInfoBuilder::~MapHtmlInfoBuilder()
 void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
                                      const RouteMapObjectList *routeMapObjects, WeatherReporter *weather)
 {
+  html.img("data://symbol");
   tableHeader(html, airport.name + " (" + airport.ident + ")");
   QString city, state, country;
   query->getAirportAdminById(airport.id, city, state, country);
@@ -148,6 +151,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html)
 {
+  html.img("data://symbol");
   QString type = maptypes::vorType(vor);
   tableHeader(html, type + ": " + vor.name + " (" + vor.ident + ")");
 
@@ -168,6 +172,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html)
 
 void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html)
 {
+  html.img("data://symbol");
   tableHeader(html, "NDB: " + ndb.name + " (" + ndb.ident + ")");
   tableStart(html);
   if(ndb.routeIndex >= 0)
@@ -184,6 +189,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html)
 
 void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html)
 {
+  html.img("data://symbol");
   tableHeader(html, "Waypoint: " + waypoint.ident);
   tableStart(html);
   if(waypoint.routeIndex >= 0)

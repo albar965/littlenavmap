@@ -19,14 +19,18 @@
 #include "route/routecontroller.h"
 #include "common/weatherreporter.h"
 #include "infocontroller.h"
+#include <QImageReader>
 #include <QSettings>
 #include <gui/mainwindow.h>
 #include <gui/widgetstate.h>
 #include "ui_mainwindow.h"
 #include <common/htmlbuilder.h>
 #include <common/maphtmlinfobuilder.h>
+#include <common/symbolpainter.h>
 #include <mapgui/mapquery.h>
 #include <settings/settings.h>
+
+const int SYMBOL_SIZE = 20;
 
 enum TabIndex
 {
@@ -84,6 +88,11 @@ void InfoController::updateAirport()
     maptypes::MapAirport ap;
     query->getAirportById(ap, curAirportId);
 
+    // QImage image = QImageReader(":/littlenavmap/resources/icons/about.svg").read();
+    QIcon icon = SymbolPainter().createAirportIcon(ap, SYMBOL_SIZE);
+    mainWindow->getUi()->textEditAirportInfo->document()->addResource(
+      QTextDocument::ImageResource, QUrl("data://symbol"),
+      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info.airportText(ap, html,
                      &mainWindow->getRouteController()->getRouteMapObjects(), mainWindow->getWeatherReporter());
     mainWindow->getUi()->textEditAirportInfo->setText(html.getHtml());
@@ -112,6 +121,11 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
 
+    QIcon icon = SymbolPainter().createVorIcon(result.vors.first(), SYMBOL_SIZE);
+    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
+      QTextDocument::ImageResource, QUrl("data://symbol"),
+      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
+
     info.vorText(result.vors.first(), html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
@@ -119,6 +133,10 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
 
+    QIcon icon = SymbolPainter().createNdbIcon(result.ndbs.first(), SYMBOL_SIZE);
+    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
+      QTextDocument::ImageResource, QUrl("data://symbol"),
+      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info.ndbText(result.ndbs.first(), html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
@@ -126,6 +144,10 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
 
+    QIcon icon = SymbolPainter().createWaypointIcon(result.waypoints.first(), SYMBOL_SIZE);
+    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
+      QTextDocument::ImageResource, QUrl("data://symbol"),
+      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info.waypointText(result.waypoints.first(), html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
