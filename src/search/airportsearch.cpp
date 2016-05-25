@@ -44,7 +44,6 @@
 #include <QLineEdit>
 #include <QStyledItemDelegate>
 #include <QMouseEvent>
-#include <QSqlField>
 
 #include <common/maptypesfactory.h>
 
@@ -393,10 +392,10 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 {
   const QString idColumnName = columns->getIdColumnName();
 
-  QSqlRecord rec;
-  rec.append(QSqlField(idColumnName, QVariant::Int));
-  rec.append(QSqlField("lonx", QVariant::Double));
-  rec.append(QSqlField("laty", QVariant::Double));
+  atools::sql::SqlRecord rec;
+  rec.appendField(idColumnName, QVariant::Int);
+  rec.appendField("lonx", QVariant::Double);
+  rec.appendField("laty", QVariant::Double);
 
   MapTypesFactory factory;
 

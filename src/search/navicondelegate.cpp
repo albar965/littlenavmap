@@ -24,11 +24,11 @@
 #include "mapgui/mapquery.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
+#include "sql/sqlrecord.h"
 
 #include <QPainter>
 #include <QSqlQueryModel>
 #include <QApplication>
-#include <QSqlRecord>
 
 NavIconDelegate::NavIconDelegate(const ColumnList *columns)
   : cols(columns)
@@ -67,7 +67,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   int y = option.rect.y() + symSize / 2 + 2;
 
   painter->setRenderHint(QPainter::Antialiasing);
-  QString navtype = sqlModel->record(idx.row()).value("nav_type").toString();
+  QString navtype = sqlModel->getSqlRecord(idx.row()).value("nav_type").toString();
   maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
 
   if(type == maptypes::WAYPOINT)

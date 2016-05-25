@@ -19,6 +19,7 @@
 
 #include <sql/sqldatabase.h>
 #include <sql/sqlquery.h>
+#include <sql/sqlrecord.h>
 #include <sql/sqlutil.h>
 
 #include "geo/calculations.h"
@@ -31,6 +32,7 @@ const int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
+using atools::sql::SqlRecord;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
@@ -398,7 +400,7 @@ void RouteNetwork::deInitQueries()
   edgeFromQuery = nullptr;
 }
 
-nw::Node RouteNetwork::createNode(const QSqlRecord& rec)
+nw::Node RouteNetwork::createNode(const SqlRecord& rec)
 {
   updateNodeIndexes(rec);
   Node node;
@@ -410,7 +412,7 @@ nw::Node RouteNetwork::createNode(const QSqlRecord& rec)
   return node;
 }
 
-void RouteNetwork::updateNodeIndexes(const QSqlRecord& rec)
+void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
 {
   if(!nodeIndexesCreated)
   {
@@ -423,7 +425,7 @@ void RouteNetwork::updateNodeIndexes(const QSqlRecord& rec)
   }
 }
 
-nw::Edge RouteNetwork::createEdge(const QSqlRecord& rec, int toNodeId)
+nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeId)
 {
   updateEdgeIndexes(rec);
   Edge edge;
@@ -435,7 +437,7 @@ nw::Edge RouteNetwork::createEdge(const QSqlRecord& rec, int toNodeId)
   return edge;
 }
 
-void RouteNetwork::updateEdgeIndexes(const QSqlRecord& rec)
+void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
 {
   if(!edgeIndexesCreated)
   {

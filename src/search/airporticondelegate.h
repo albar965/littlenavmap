@@ -25,7 +25,6 @@
 class ColumnList;
 class SqlModel;
 class SymbolPainter;
-class QSqlRecord;
 class MapTypesFactory;
 
 class AirportIconDelegate :

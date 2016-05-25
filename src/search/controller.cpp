@@ -40,6 +40,8 @@
 
 #include <geo/rect.h>
 
+#include <sql/sqlrecord.h>
+
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 
@@ -296,7 +298,7 @@ void Controller::groupByColumn(const QModelIndex& index)
 
   columns->clearWidgets();
   // Disable all search widgets except the one for the group by column
-  columns->enableWidgets(false, {model->record().fieldName(index.column())});
+  columns->enableWidgets(false, {model->getSqlRecord().fieldName(index.column())});
 
   model->groupByColumn(index);
   processViewColumns();
@@ -475,7 +477,7 @@ void Controller::processViewColumns()
   Q_ASSERT(columns != nullptr);
 
   const Column *sort = nullptr;
-  QSqlRecord rec = model->record();
+  atools::sql::SqlRecord rec = model->getSqlRecord();
   int cnt = rec.count();
   for(int i = 0; i < cnt; ++i)
   {
@@ -603,7 +605,7 @@ void Controller::loadAllRows()
 QVector<const Column *> Controller::getCurrentColumns() const
 {
   QVector<const Column *> cols;
-  QSqlRecord rec = model->record();
+  atools::sql::SqlRecord rec = model->getSqlRecord();
   cols.clear();
   for(int i = 0; i < rec.count(); ++i)
     cols.append(columns->getColumn(rec.fieldName(i)));
@@ -625,17 +627,14 @@ QVariantList Controller::getRawModelData(int row) const
   return model->getRawRowData(row);
 }
 
-void Controller::initRecord(QSqlRecord& rec)
+void Controller::initRecord(atools::sql::SqlRecord& rec)
 {
-  QSqlRecord from = model->record();
+  atools::sql::SqlRecord from = model->getSqlRecord();
   for(int i = 0; i < from.count(); i++)
-  {
-    const QSqlField& f = from.field(i);
-    rec.append(QSqlField(f.name(), f.type()));
-  }
+    rec.appendField(from.fieldName(i), from.fieldType(i));
 }
 
-void Controller::fillRecord(int row, QSqlRecord& rec)
+void Controller::fillRecord(int row, atools::sql::SqlRecord& rec)
 {
   int srow = row;
   if(proxyModel != nullptr)
@@ -647,7 +646,7 @@ void Controller::fillRecord(int row, QSqlRecord& rec)
 
 QVariant Controller::getRawData(int row, const QString& colname) const
 {
-  int colIdx = model->record().indexOf(colname);
+  int colIdx = model->getSqlRecord().indexOf(colname);
   int srow = row;
   if(proxyModel != nullptr)
     srow = toS(proxyModel->index(row, 0)).row();

@@ -28,6 +28,7 @@ namespace atools {
 namespace sql {
 class SqlQuery;
 class SqlDatabase;
+class SqlRecord;
 }
 }
 
@@ -155,11 +156,16 @@ public:
 
   void filterByIdent(const QString& ident, const QString& region, const QString& airportIdent);
 
+  atools::sql::SqlRecord getSqlRecord() const;
+  atools::sql::SqlRecord getSqlRecord(int row) const;
+
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
 
 private:
+  using QSqlQueryModel::record;
+
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
 
   FormatFunctionType formatFunc = nullptr;

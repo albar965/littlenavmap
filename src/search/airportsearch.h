@@ -31,7 +31,6 @@ class ColumnList;
 class QAction;
 class MainWindow;
 class Column;
-class QSqlRecord;
 class AirportIconDelegate;
 
 namespace atools {

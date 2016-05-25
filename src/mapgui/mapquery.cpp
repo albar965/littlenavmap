@@ -26,7 +26,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <QSqlRecord>
 #include <marble/GeoDataLatLonBox.h>
 #include <common/maptypesfactory.h>
 
@@ -320,13 +319,13 @@ const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLa
   {
     case layer::ALL:
       airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, true, lazy, true);
+      return fetchAirports(rect, airportByRectQuery, true, lazy, false);
 
     case layer::MEDIUM:
-      return fetchAirports(rect, airportMediumByRectQuery, false, lazy, false);
+      return fetchAirports(rect, airportMediumByRectQuery, false, lazy, true);
 
     case layer::LARGE:
-      return fetchAirports(rect, airportLargeByRectQuery, false, lazy, false);
+      return fetchAirports(rect, airportLargeByRectQuery, false, lazy, true);
 
   }
   return nullptr;
@@ -472,7 +471,7 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
 
 const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                            atools::sql::SqlQuery *query, bool reverse,
-                                                           bool lazy, bool complete)
+                                                           bool lazy, bool overview)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -483,7 +482,10 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
       while(query->next())
       {
         maptypes::MapAirport ap;
-        mapTypesFactory->fillAirport(query->record(), ap, complete);
+        if(overview)
+          mapTypesFactory->fillAirportForOverview(query->record(), ap);
+        else
+          mapTypesFactory->fillAirport(query->record(), ap, true);
 
         if(reverse)
           airportCache.list.prepend(ap);
@@ -815,7 +817,16 @@ void MapQuery::initQueries()
     "longest_runway_length, longest_runway_heading, mag_var, "
     "tower_lonx, tower_laty, altitude, lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
 
-  QString airwayQueryBase(
+  static QString airportQueryBaseOverview(
+    "select airport_id, ident, name, rating, "
+    "has_avgas, has_jetfuel, "
+    "tower_frequency, "
+    "is_closed, is_military, is_addon,"
+    "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
+    "longest_runway_length, longest_runway_heading, mag_var, "
+    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty ");
+
+  static QString airwayQueryBase(
     "select airway_id, airway_name, airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
     "minimum_altitude, from_lonx, from_laty, to_lonx, to_laty ");
 
@@ -879,25 +890,11 @@ void MapQuery::initQueries()
 
   airportMediumByRectQuery = new SqlQuery(db);
   airportMediumByRectQuery->prepare(
-    "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon,"
-    "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_medium where " + whereRect + " order by longest_runway_length" + "  " + whereLimit);
+    airportQueryBaseOverview + "from airport_medium where " + whereRect + " " + whereLimit);
 
   airportLargeByRectQuery = new SqlQuery(db);
   airportLargeByRectQuery->prepare(
-    "select airport_id, ident, name, rating, "
-    "has_avgas, has_jetfuel, "
-    "tower_frequency, "
-    "is_closed, is_military, is_addon,"
-    "num_runway_hard, num_runway_soft, num_runway_water, "
-    "longest_runway_length, longest_runway_heading, mag_var, "
-    "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-    "from airport_large where " + whereRect + " " + whereLimit);
+    airportQueryBaseOverview + "from airport_large where " + whereRect + " " + whereLimit);
 
   runwayOverviewQuery = new SqlQuery(db);
   runwayOverviewQuery->prepare(

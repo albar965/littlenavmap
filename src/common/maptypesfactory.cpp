@@ -16,10 +16,10 @@
 *****************************************************************************/
 
 #include "maptypesfactory.h"
-
-#include <QSqlRecord>
+#include "sql/sqlrecord.h"
 
 using namespace atools::geo;
+using atools::sql::SqlRecord;
 
 MapTypesFactory::MapTypesFactory()
 {
@@ -31,73 +31,133 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const QSqlRecord& record, maptypes::MapAirport& ap, bool complete)
+void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, maptypes::MapAirport& ap)
 {
-  ap.id = record.value("airport_id").toInt();
-  ap.ident = record.value("ident").toString();
-  ap.name = record.value("name").toString();
-  ap.longestRunwayLength = record.value("longest_runway_length").toInt();
-  ap.longestRunwayHeading = static_cast<int>(std::roundf(record.value("longest_runway_heading").toFloat()));
+  // "select airport_id, ident, name, rating, "
+  // "has_avgas, has_jetfuel, "
+  // "tower_frequency, "
+  // "is_closed, is_military, is_addon,"
+  // "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
+  // "longest_runway_length, longest_runway_heading, mag_var, "
+  // "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
 
-  if(record.contains("has_tower_object"))
-    ap.towerCoords = Pos(record.value("tower_lonx").toFloat(), record.value("tower_laty").toFloat());
+  fillAirportBase(record, ap, true);
 
-  if(record.contains("tower_frequency"))
-    ap.towerFrequency = record.value("tower_frequency").toInt();
-  if(record.contains("atis_frequency"))
-    ap.atisFrequency = record.value("atis_frequency").toInt();
-  if(record.contains("awos_frequency"))
-    ap.awosFrequency = record.value("awos_frequency").toInt();
-  if(record.contains("asos_frequency"))
-    ap.asosFrequency = record.value("asos_frequency").toInt();
-  if(record.contains("unicom_frequency"))
-    ap.unicomFrequency = record.value("unicom_frequency").toInt();
-
-  ap.flags = getFlags(record);
-
-  if(complete)
-    ap.flags |= maptypes::AP_COMPLETE;
-
-  ap.magvar = record.value("mag_var").toFloat();
-  ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
-                    record.value("altitude").toFloat());
-  ap.bounding = Rect(record.value("left_lonx").toFloat(), record.value("top_laty").toFloat(),
-                     record.value("right_lonx").toFloat(), record.value("bottom_laty").toFloat());
+  ap.flags = fillAirportFlags(record, true);
+  ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(), 0.f);
 }
 
-maptypes::MapAirportFlags MapTypesFactory::getFlags(const QSqlRecord& record)
+void MapTypesFactory::fillAirport(const SqlRecord& record, maptypes::MapAirport& ap, bool complete)
+{
+  fillAirportBase(record, ap, complete);
+
+  if(complete)
+  {
+    ap.flags = fillAirportFlags(record, false);
+    if(record.contains("has_tower_object"))
+      ap.towerCoords = Pos(record.value("tower_lonx").toFloat(), record.value("tower_laty").toFloat());
+
+    ap.atisFrequency = record.value("atis_frequency").toInt();
+    ap.awosFrequency = record.value("awos_frequency").toInt();
+    ap.asosFrequency = record.value("asos_frequency").toInt();
+    ap.unicomFrequency = record.value("unicom_frequency").toInt();
+
+    ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
+                      record.value("altitude").toFloat());
+  }
+  else
+    ap.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(), 0.f);
+}
+
+void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirport& ap, bool complete)
+{
+  ap.id = record.value("airport_id").toInt();
+
+  if(complete)
+  {
+    ap.towerFrequency = record.value("tower_frequency").toInt();
+    ap.ident = record.value("ident").toString();
+    ap.name = record.value("name").toString();
+    ap.longestRunwayLength = record.value("longest_runway_length").toInt();
+    ap.longestRunwayHeading = static_cast<int>(std::roundf(record.value("longest_runway_heading").toFloat()));
+    ap.magvar = record.value("mag_var").toFloat();
+
+    ap.bounding = Rect(record.value("left_lonx").toFloat(), record.value("top_laty").toFloat(),
+                       record.value("right_lonx").toFloat(), record.value("bottom_laty").toFloat());
+    ap.flags |= maptypes::AP_COMPLETE;
+  }
+}
+
+maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, bool overview)
 {
   using namespace maptypes;
 
   MapAirportFlags flags = 0;
-  flags |= flag(record, "num_helipad", AP_HELIPAD);
-  flags |= flag(record, "rating", AP_SCENERY);
-  flags |= flag(record, "has_avgas", AP_AVGAS);
-  flags |= flag(record, "has_jetfuel", AP_JETFUEL);
-  flags |= flag(record, "tower_frequency", AP_TOWER);
-  flags |= flag(record, "is_closed", AP_CLOSED);
-  flags |= flag(record, "is_military", AP_MIL);
-  flags |= flag(record, "is_addon", AP_ADDON);
-  flags |= flag(record, "num_approach", AP_APPR);
-  flags |= flag(record, "num_runway_hard", AP_HARD);
-  flags |= flag(record, "num_runway_soft", AP_SOFT);
-  flags |= flag(record, "num_runway_water", AP_WATER);
-  flags |= flag(record, "num_runway_light", AP_LIGHT);
-  flags |= flag(record, "num_runway_end_ils", AP_ILS);
+  flags |= airportFlag(record, "num_helipad", AP_HELIPAD);
+  flags |= airportFlag(record, "rating", AP_SCENERY);
+  flags |= airportFlag(record, "has_avgas", AP_AVGAS);
+  flags |= airportFlag(record, "has_jetfuel", AP_JETFUEL);
+  flags |= airportFlag(record, "tower_frequency", AP_TOWER);
+  flags |= airportFlag(record, "is_closed", AP_CLOSED);
+  flags |= airportFlag(record, "is_military", AP_MIL);
+  flags |= airportFlag(record, "is_addon", AP_ADDON);
+  flags |= airportFlag(record, "num_runway_hard", AP_HARD);
+  flags |= airportFlag(record, "num_runway_soft", AP_SOFT);
+  flags |= airportFlag(record, "num_runway_water", AP_WATER);
+
+  if(!overview)
+  {
+  flags |= airportFlag(record, "num_approach", AP_APPR);
+  flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
+  flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);
+  }
 
   return flags;
 }
 
-maptypes::MapAirportFlags MapTypesFactory::flag(const QSqlRecord& record, const QString& field,
-                                                maptypes::MapAirportFlags flag)
+maptypes::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, const QString& field,
+                                                       maptypes::MapAirportFlags flag)
 {
-  if(!record.contains(field) || record.isNull(field))
+  if(record.isNull(field) || record.value(field).toInt() == 0)
     return maptypes::AP_NONE;
   else
-    return record.value(field).toInt() > 0 ? flag : maptypes::AP_NONE;
+    return flag;
 }
 
-void MapTypesFactory::fillVor(const QSqlRecord& record, maptypes::MapVor& vor)
+void MapTypesFactory::fillVor(const SqlRecord& record, maptypes::MapVor& vor)
+{
+  fillVorBase(record, vor);
+
+  vor.dmeOnly = record.value("dme_only").toInt() > 0;
+  vor.hasDme = !record.value("dme_altitude").isNull();
+}
+
+void MapTypesFactory::fillVorFromNav(const SqlRecord& record, maptypes::MapVor& vor)
+{
+  fillVorBase(record, vor);
+
+  QString navType = record.value("nav_type").toString();
+  if(navType == "VORDME")
+  {
+    vor.dmeOnly = false;
+    vor.hasDme = true;
+  }
+  else if(navType == "DME")
+  {
+    vor.dmeOnly = true;
+    vor.hasDme = true;
+  }
+  else if(navType == "VOR")
+  {
+    vor.dmeOnly = false;
+    vor.hasDme = false;
+  }
+
+  // Adapt to nav_search table frequency scaling
+  vor.frequency /= 10;
+}
+
+void MapTypesFactory::fillVorBase(const SqlRecord& record, maptypes::MapVor& vor)
 {
   vor.id = record.value("vor_id").toInt();
   vor.ident = record.value("ident").toString();
@@ -106,14 +166,12 @@ void MapTypesFactory::fillVor(const QSqlRecord& record, maptypes::MapVor& vor)
   vor.type = record.value("type").toString();
   vor.frequency = record.value("frequency").toInt();
   vor.range = record.value("range").toInt();
-  vor.dmeOnly = record.value("dme_only").toInt() > 0;
-  vor.hasDme = !record.value("dme_altitude").isNull();
   vor.magvar = record.value("mag_var").toFloat();
   vor.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat(),
                      record.value("altitude").toFloat());
 }
 
-void MapTypesFactory::fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb)
+void MapTypesFactory::fillNdb(const SqlRecord& record, maptypes::MapNdb& ndb)
 {
   ndb.id = record.value("ndb_id").toInt();
   ndb.ident = record.value("ident").toString();
@@ -127,7 +185,7 @@ void MapTypesFactory::fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb)
                      record.value("altitude").toFloat());
 }
 
-void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoint& wp)
+void MapTypesFactory::fillWaypoint(const SqlRecord& record, maptypes::MapWaypoint& wp)
 {
   wp.id = record.value("waypoint_id").toInt();
   wp.ident = record.value("ident").toString();
@@ -139,7 +197,19 @@ void MapTypesFactory::fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoi
   wp.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
 }
 
-void MapTypesFactory::fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway)
+void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, maptypes::MapWaypoint& wp)
+{
+  wp.id = record.value("waypoint_id").toInt();
+  wp.ident = record.value("ident").toString();
+  wp.region = record.value("region").toString();
+  wp.type = record.value("type").toString();
+  wp.magvar = record.value("mag_var").toFloat();
+  wp.hasVictor = record.value("waypoint_num_victor_airway").toInt() > 0;
+  wp.hasJet = record.value("waypoint_num_jet_airway").toInt() > 0;
+  wp.position = Pos(record.value("lonx").toFloat(), record.value("laty").toFloat());
+}
+
+void MapTypesFactory::fillAirway(const SqlRecord& record, maptypes::MapAirway& airway)
 {
   airway.id = record.value("airway_id").toInt();
   airway.type = maptypes::airwayTypeFromString(record.value("airway_type").toString());
@@ -157,7 +227,7 @@ void MapTypesFactory::fillAirway(const QSqlRecord& record, maptypes::MapAirway& 
   airway.bounding.extend(airway.to);
 }
 
-void MapTypesFactory::fillMarker(const QSqlRecord& record, maptypes::MapMarker& marker)
+void MapTypesFactory::fillMarker(const SqlRecord& record, maptypes::MapMarker& marker)
 {
   marker.id = record.value("marker_id").toInt();
   marker.type = record.value("type").toString();
@@ -166,7 +236,7 @@ void MapTypesFactory::fillMarker(const QSqlRecord& record, maptypes::MapMarker& 
                         record.value("laty").toFloat());
 }
 
-void MapTypesFactory::fillIls(const QSqlRecord& record, maptypes::MapIls& ils)
+void MapTypesFactory::fillIls(const SqlRecord& record, maptypes::MapIls& ils)
 {
   ils.id = record.value("ils_id").toInt();
   ils.ident = record.value("ident").toString();
@@ -194,7 +264,7 @@ void MapTypesFactory::fillIls(const QSqlRecord& record, maptypes::MapIls& ils)
   ils.bounding.extend(ils.pos2);
 }
 
-void MapTypesFactory::fillParking(const QSqlRecord& record, maptypes::MapParking& parking)
+void MapTypesFactory::fillParking(const SqlRecord& record, maptypes::MapParking& parking)
 {
   parking.id = record.value("parking_id").toInt();
   parking.airportId = record.value("airport_id").toInt();

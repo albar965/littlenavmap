@@ -268,7 +268,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   const QString idColumnName = columns->getIdColumnName();
 
-  QSqlRecord rec;
+  atools::sql::SqlRecord rec;
   controller->initRecord(rec);
 
   MapTypesFactory factory;
@@ -286,7 +286,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
       if(type == maptypes::WAYPOINT)
       {
         maptypes::MapWaypoint obj;
-        factory.fillWaypoint(rec, obj);
+        factory.fillWaypointFromNav(rec, obj);
         result.waypoints.append(obj);
       }
       else if(type == maptypes::NDB)
@@ -298,9 +298,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
       else if(type == maptypes::VOR)
       {
         maptypes::MapVor obj;
-        factory.fillVor(rec, obj);
-        // Adapt to nav_search table frequency scaling
-        obj.frequency /= 10;
+        factory.fillVorFromNav(rec, obj);
         result.vors.append(obj);
       }
     }

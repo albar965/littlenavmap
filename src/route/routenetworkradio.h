@@ -25,8 +25,6 @@
 
 #include <common/maptypes.h>
 
-class QSqlRecord;
-
 namespace  atools {
 namespace sql {
 class SqlDatabase;

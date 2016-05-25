@@ -198,6 +198,16 @@ void SqlModel::filterByIdent(const QString& ident, const QString& region, const 
   buildQuery();
 }
 
+atools::sql::SqlRecord SqlModel::getSqlRecord() const
+{
+  return atools::sql::SqlRecord(record(), currentSqlQuery);
+}
+
+atools::sql::SqlRecord SqlModel::getSqlRecord(int row) const
+{
+  return atools::sql::SqlRecord(record(row), currentSqlQuery);
+}
+
 void SqlModel::filterBy(QModelIndex index, bool exclude)
 {
   QString whereCol = record().field(index.column()).name();

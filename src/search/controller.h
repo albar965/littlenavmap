@@ -25,7 +25,6 @@
 
 #include <QItemSelectionModel>
 #include <QObject>
-#include <QSqlRecord>
 #include <functional>
 
 namespace atools {
@@ -197,8 +196,8 @@ public:
     return proxyModel;
   }
 
-  void initRecord(QSqlRecord& rec);
-  void fillRecord(int row, QSqlRecord& rec);
+  void initRecord(atools::sql::SqlRecord& rec);
+  void fillRecord(int row, atools::sql::SqlRecord& rec);
 
   void preDatabaseLoad();
   void postDatabaseLoad();

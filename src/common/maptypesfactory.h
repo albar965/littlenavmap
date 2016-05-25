@@ -20,7 +20,12 @@
 
 #include "maptypes.h"
 
-class QSqlRecord;
+namespace atools {
+namespace sql {
+
+class SqlRecord;
+}
+}
 
 class MapTypesFactory
 {
@@ -28,18 +33,29 @@ public:
   MapTypesFactory();
   ~MapTypesFactory();
 
-  void fillAirport(const QSqlRecord& record, maptypes::MapAirport& ap, bool complete);
-  void fillVor(const QSqlRecord& record, maptypes::MapVor& vor);
-  void fillNdb(const QSqlRecord& record, maptypes::MapNdb& ndb);
-  void fillWaypoint(const QSqlRecord& record, maptypes::MapWaypoint& wp);
-  void fillAirway(const QSqlRecord& record, maptypes::MapAirway& airway);
-  void fillMarker(const QSqlRecord& record, maptypes::MapMarker& marker);
-  void fillIls(const QSqlRecord& record, maptypes::MapIls& ils);
-  void fillParking(const QSqlRecord& record, maptypes::MapParking& parking);
-  maptypes::MapAirportFlags flag(const QSqlRecord& record, const QString& field,
-                                 maptypes::MapAirportFlags flag);
-  maptypes::MapAirportFlags getFlags(const QSqlRecord& record);
+  void fillAirport(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
+  void fillAirportForOverview(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap);
 
+  void fillVor(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
+  void fillVorFromNav(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
+
+  void fillNdb(const atools::sql::SqlRecord& record, maptypes::MapNdb& ndb);
+
+  void fillWaypoint(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& wp);
+  void fillWaypointFromNav(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& wp);
+
+  void fillAirway(const atools::sql::SqlRecord& record, maptypes::MapAirway& airway);
+  void fillMarker(const atools::sql::SqlRecord& record, maptypes::MapMarker& marker);
+  void fillIls(const atools::sql::SqlRecord& record, maptypes::MapIls& ils);
+  void fillParking(const atools::sql::SqlRecord& record, maptypes::MapParking& parking);
+  maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
+                                 maptypes::MapAirportFlags airportFlag);
+  maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
+
+private:
+  void fillVorBase(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
+
+  void fillAirportBase(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
 };
 
 #endif // MAPTYPESFACTORY_H

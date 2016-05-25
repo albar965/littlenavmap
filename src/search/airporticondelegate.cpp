@@ -24,11 +24,11 @@
 #include "mapgui/mapquery.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
+#include "sql/sqlrecord.h"
 
 #include <QPainter>
 #include <QSqlQueryModel>
 #include <QApplication>
-#include <QSqlRecord>
 
 #include <common/maptypesfactory.h>
 
@@ -60,7 +60,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   Q_ASSERT(sqlModel != nullptr);
 
   maptypes::MapAirport ap;
-  mapTypesFactory->fillAirport(sqlModel->record(idx.row()), ap, true);
+  mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true);
 
   // Create a style copy
   QStyleOptionViewItem opt(option);

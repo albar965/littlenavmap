@@ -41,7 +41,6 @@ class SqlQuery;
 }
 
 class CoordinateConverter;
-class QSqlRecord;
 class MapTypesFactory;
 
 class MapQuery
@@ -175,7 +174,7 @@ private:
 
   const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                                    atools::sql::SqlQuery *query, bool reverse,
-                                                   bool lazy, bool complete);
+                                                   bool lazy, bool overview);
 
   void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                  const QString& prefix = QString());

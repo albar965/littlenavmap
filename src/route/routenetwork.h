@@ -24,12 +24,11 @@
 
 #include <common/maptypes.h>
 
-class QSqlRecord;
-
 namespace  atools {
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
+class SqlRecord;
 }
 namespace geo {
 class Pos;
@@ -197,11 +196,11 @@ protected:
 
   void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
   bool checkType(nw::Type type);
-  nw::Node createNode(const QSqlRecord& rec);
-  nw::Edge createEdge(const QSqlRecord& rec, int toNodeId);
+  nw::Node createNode(const atools::sql::SqlRecord& rec);
+  nw::Edge createEdge(const atools::sql::SqlRecord& rec, int toNodeId);
 
-  void updateNodeIndexes(const QSqlRecord& rec);
-  void updateEdgeIndexes(const QSqlRecord& rec);
+  void updateNodeIndexes(const atools::sql::SqlRecord& rec);
+  void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
 
   const int START_NODE_ID = -10;
   const int DESTINATION_NODE_ID = -20;
