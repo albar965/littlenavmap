@@ -404,9 +404,9 @@ nw::Node RouteNetwork::createNode(const SqlRecord& rec)
 {
   updateNodeIndexes(rec);
   Node node;
-  node.id = rec.value(nodeIdIndex).toInt();
   node.type = static_cast<nw::Type>(rec.value(nodeTypeIndex).toInt());
-  node.range = rec.value(nodeRangeIndex).toInt();
+  if(nodeRangeIndex != -1)
+    node.range = rec.value(nodeRangeIndex).toInt();
   node.pos.setLonX(rec.value(nodeLonXIndex).toFloat());
   node.pos.setLatY(rec.value(nodeLatYIndex).toFloat());
   return node;
@@ -416,9 +416,11 @@ void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
 {
   if(!nodeIndexesCreated)
   {
-    nodeIdIndex = rec.indexOf("node_id");
     nodeTypeIndex = rec.indexOf("type");
-    nodeRangeIndex = rec.indexOf("range");
+    if(rec.contains("range"))
+      nodeRangeIndex = rec.indexOf("range");
+    else
+      nodeRangeIndex = -1;
     nodeLonXIndex = rec.indexOf("lonx");
     nodeLatYIndex = rec.indexOf("laty");
     nodeIndexesCreated = true;
@@ -430,10 +432,14 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
   updateEdgeIndexes(rec);
   Edge edge;
   edge.toNodeId = toNodeId;
-  edge.type = static_cast<nw::Type>(rec.value(edgeTypeIndex).toInt());
-  edge.minAltFt = rec.value(edgeMinAltIndex).toInt();
-  edge.airwayId = rec.value(edgeAirwayIdIndex).toInt();
-  edge.distanceMeter = rec.value(edgeDistanceIndex).toInt();
+  if(edgeTypeIndex != -1)
+    edge.type = static_cast<nw::Type>(rec.value(edgeTypeIndex).toInt());
+  if(edgeMinAltIndex != -1)
+    edge.minAltFt = rec.value(edgeMinAltIndex).toInt();
+  if(edgeAirwayIdIndex != -1)
+    edge.airwayId = rec.value(edgeAirwayIdIndex).toInt();
+  if(edgeDistanceIndex != -1)
+    edge.distanceMeter = rec.value(edgeDistanceIndex).toInt();
   return edge;
 }
 
@@ -441,10 +447,26 @@ void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
 {
   if(!edgeIndexesCreated)
   {
-    edgeTypeIndex = rec.indexOf("type");
-    edgeMinAltIndex = rec.indexOf("minimum_altitude");
-    edgeAirwayIdIndex = rec.indexOf("airway_id");
-    edgeDistanceIndex = rec.indexOf("distance");
+    if(rec.contains("type"))
+      edgeTypeIndex = rec.indexOf("type");
+    else
+      edgeTypeIndex = -1;
+
+    if(rec.contains("minimum_altitude"))
+      edgeMinAltIndex = rec.indexOf("minimum_altitude");
+    else
+      edgeMinAltIndex = -1;
+
+    if(rec.contains("airway_id"))
+      edgeAirwayIdIndex = rec.indexOf("airway_id");
+    else
+      edgeAirwayIdIndex = -1;
+
+    if(rec.contains("distance"))
+      edgeDistanceIndex = rec.indexOf("distance");
+    else
+      edgeDistanceIndex = -1;
+
     edgeIndexesCreated = true;
   }
 }
