@@ -21,6 +21,8 @@
 #include <QApplication>
 #include <QPalette>
 #include <QDateTime>
+#include <QBuffer>
+#include <QIcon>
 
 HtmlBuilder::HtmlBuilder()
 {
@@ -268,9 +270,19 @@ HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flag
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QString& style, QSize size)
+{
+  QByteArray data;
+  QBuffer buffer(&data);
+  icon.pixmap(size).save(&buffer, "PNG", 100);
+
+  img(QString("data:image/png;base64, %0").arg(QString(data.toBase64())), alt, style, size);
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  html += "<img src=\"" + src + "\"" + (style.isEmpty() ? QString() : " style=\"" + style + "\"") +
+  html += "<img src='" + src + "'" + (style.isEmpty() ? QString() : " style=\"" + style + "\"") +
           (alt.isEmpty() ? QString() : " alt=\"" + alt + "\"") +
           (size.isValid() ?
            QString(" width=\"") + QString::number(size.width()) + "\"" +

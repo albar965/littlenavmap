@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
+  : QObject(parent), db(sqlDb)
 {
   mapTypesFactory = new MapTypesFactory();
 }

@@ -18,6 +18,7 @@
 #ifndef MAPTOOLTIP_H
 #define MAPTOOLTIP_H
 
+#include <QColor>
 #include <QObject>
 
 namespace maptypes {
@@ -49,7 +50,7 @@ private:
   bool checkText(HtmlBuilder& text);
 
   WeatherReporter *weather;
-
+  QColor iconBackColor;
 };
 
 #endif // MAPTOOLTIP_H

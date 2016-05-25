@@ -24,6 +24,7 @@
 class RouteMapObject;
 class MorseCode;
 class MapQuery;
+class InfoQuery;
 class WeatherReporter;
 class RouteMapObjectList;
 class HtmlBuilder;
@@ -56,17 +57,18 @@ class MapHtmlInfoBuilder
   Q_DECLARE_TR_FUNCTIONS(MapHtmlInfoBuilder)
 
 public:
-  MapHtmlInfoBuilder(MapQuery *mapQuery, bool formatInfo);
+  MapHtmlInfoBuilder(MapQuery *mapQuery, InfoQuery *infoDbQuery, bool formatInfo);
 
   virtual ~MapHtmlInfoBuilder();
 
   void airportText(const maptypes::MapAirport& airport, HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
-                   WeatherReporter *weather);
+                   WeatherReporter *weather, QColor background);
 
-  void vorText(const maptypes::MapVor& vor, HtmlBuilder& html);
-  void ndbText(const maptypes::MapNdb& ndb, HtmlBuilder& html);
-  void waypointText(const maptypes::MapWaypoint& waypoint, HtmlBuilder& html);
+  void vorText(const maptypes::MapVor& vor, HtmlBuilder& html, QColor background);
+  void ndbText(const maptypes::MapNdb& ndb, HtmlBuilder& html, QColor background);
+  void waypointText(const maptypes::MapWaypoint& waypoint, HtmlBuilder& html, QColor background);
+
   void airwayText(const maptypes::MapAirway& airway, HtmlBuilder& html);
   void markerText(const maptypes::MapMarker& m, HtmlBuilder& html);
   void towerText(const maptypes::MapAirport& airport, HtmlBuilder& html);
@@ -75,7 +77,8 @@ public:
   void userpointText(const maptypes::MapUserpoint& userpoint, HtmlBuilder& html);
 
 private:
-  MapQuery *query;
+  MapQuery *mapQuery;
+  InfoQuery *infoQuery;
   MorseCode *morse;
   bool info;
   QLocale locale;
@@ -85,6 +88,7 @@ private:
 
   void tableEnd(HtmlBuilder& html);
   void tableStart(HtmlBuilder& html);
+
 };
 
 #endif // MAPHTMLINFOBUILDER

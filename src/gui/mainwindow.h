@@ -60,6 +60,7 @@ class MainWindow;
 
 class MapWidget;
 class MapQuery;
+class InfoQuery;
 
 class MainWindow :
   public QMainWindow
@@ -140,6 +141,7 @@ private:
 
   atools::sql::SqlDatabase db;
   MapQuery *mapQuery;
+  InfoQuery *infoQuery;
   QString databaseFile;
   void connectAllSlots();
   void mainWindowShown();

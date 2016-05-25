@@ -49,7 +49,7 @@ class MapQuery
   Q_OBJECT
 
 public:
-  MapQuery(atools::sql::SqlDatabase *sqlDb);
+  MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb);
   ~MapQuery();
 
   void getAirportAdminById(int airportId, QString& city, QString& state, QString& country);

@@ -80,6 +80,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 class SymbolPainter
 {
 public:
+  SymbolPainter(QColor backgroundColor);
   SymbolPainter();
 
   QIcon createAirportIcon(const maptypes::MapAirport& airport, int size);

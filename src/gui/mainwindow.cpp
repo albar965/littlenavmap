@@ -76,6 +76,7 @@
 #include <profile/profilewidget.h>
 
 #include <info/infocontroller.h>
+#include <info/infoquery.h>
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -107,8 +108,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
   weatherReporter = new WeatherReporter(this);
 
-  mapQuery = new MapQuery(&db);
+  mapQuery = new MapQuery(this, &db);
   mapQuery->initQueries();
+
+  infoQuery = new InfoQuery(this, &db);
+  infoQuery->initQueries();
 
   routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
 
@@ -128,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connectClient = new ConnectClient(this);
 
-  infoController = new InfoController(this, mapQuery);
+  infoController = new InfoController(this, mapQuery, infoQuery);
 
   connectAllSlots();
   readSettings();
@@ -156,6 +160,7 @@ MainWindow::~MainWindow()
   delete searchController;
   delete weatherReporter;
   delete mapQuery;
+  delete infoQuery;
   delete profileWidget;
   delete legendWidget;
   delete marbleAbout;
@@ -900,6 +905,7 @@ void MainWindow::preDatabaseLoad()
     routeController->preDatabaseLoad();
     navMapWidget->preDatabaseLoad();
     mapQuery->deInitQueries();
+    infoQuery->deInitQueries();
   }
   else
     qWarning() << "Already in database loading status";
@@ -909,6 +915,7 @@ void MainWindow::postDatabaseLoad()
 {
   if(hasDatabaseLoadStatus)
   {
+    infoQuery->initQueries();
     mapQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();

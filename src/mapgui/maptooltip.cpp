@@ -26,11 +26,15 @@
 #include <common/maphtmlinfobuilder.h>
 #include <common/weatherreporter.h>
 
+#include <QPalette>
+#include <QToolTip>
+
 using namespace maptypes;
 
 MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
   : QObject(parent), query(mapQuery), weather(weatherReporter)
 {
+  iconBackColor = QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase);
 }
 
 MapTooltip::~MapTooltip()
@@ -43,7 +47,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 {
   HtmlBuilder html;
 
-  MapHtmlInfoBuilder info(query, false);
+  MapHtmlInfoBuilder info(query, nullptr, false);
 
   for(const MapAirport& ap : mapSearchResult.airports)
   {
@@ -55,7 +59,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     if(!html.isEmpty())
       html.hr();
 
-    info.airportText(ap, html, &routeMapObjects, weather);
+    info.airportText(ap, html, &routeMapObjects, weather, iconBackColor);
   }
 
   for(const MapVor& vor : mapSearchResult.vors)
@@ -68,7 +72,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     if(!html.isEmpty())
       html.hr();
 
-    info.vorText(vor, html);
+    info.vorText(vor, html, iconBackColor);
   }
 
   for(const MapNdb& ndb : mapSearchResult.ndbs)
@@ -81,7 +85,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     if(!html.isEmpty())
       html.hr();
 
-    info.ndbText(ndb, html);
+    info.ndbText(ndb, html, iconBackColor);
   }
 
   for(const MapWaypoint& wp : mapSearchResult.waypoints)
@@ -94,7 +98,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     if(!html.isEmpty())
       html.hr();
 
-    info.waypointText(wp, html);
+    info.waypointText(wp, html, iconBackColor);
   }
 
   for(const MapAirway& airway : mapSearchResult.airways)

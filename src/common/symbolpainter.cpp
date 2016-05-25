@@ -31,6 +31,11 @@ const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
 
 using namespace Marble;
 
+SymbolPainter::SymbolPainter(QColor backgroundColor)
+{
+  iconBackground = backgroundColor;
+}
+
 SymbolPainter::SymbolPainter()
 {
   iconBackground = QApplication::palette().color(QPalette::Active, QPalette::Window);

@@ -62,6 +62,8 @@ public:
                  html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& img(const QString& src, const QString& alt = QString(),
                    const QString& style = QString(), QSize size = QSize());
+  HtmlBuilder& img(const QIcon& icon, const QString& alt = QString(),
+                   const QString& style = QString(), QSize size = QSize());
 
   HtmlBuilder& ol();
   HtmlBuilder& olEnd();

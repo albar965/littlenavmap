@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "maphtmlinfobuilder.h"
+#include "symbolpainter.h"
 #include "common/maptypes.h"
 #include "mapgui/mapquery.h"
 #include "common/formatter.h"
@@ -29,8 +30,10 @@
 
 using namespace maptypes;
 
-MapHtmlInfoBuilder::MapHtmlInfoBuilder(MapQuery *mapQuery, bool formatInfo)
-  : query(mapQuery), info(formatInfo)
+const int SYMBOL_SIZE = 20;
+
+MapHtmlInfoBuilder::MapHtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo)
+  : mapQuery(mapDbQuery), infoQuery(infoDbQuery), info(formatInfo)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
@@ -41,12 +44,15 @@ MapHtmlInfoBuilder::~MapHtmlInfoBuilder()
 }
 
 void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
-                                     const RouteMapObjectList *routeMapObjects, WeatherReporter *weather)
+                                     const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
+                                     QColor background)
 {
-  html.img("data://symbol");
+  QIcon icon = SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE);
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+
   tableHeader(html, airport.name + " (" + airport.ident + ")");
   QString city, state, country;
-  query->getAirportAdminById(airport.id, city, state, country);
+  mapQuery->getAirportAdminById(airport.id, city, state, country);
 
   tableStart(html);
   tableRow(html, "City:", city);
@@ -149,9 +155,11 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   tableEnd(html);
 }
 
-void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html)
+void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
 {
-  html.img("data://symbol");
+  QIcon icon = SymbolPainter(background).createVorIcon(vor, SYMBOL_SIZE);
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+
   QString type = maptypes::vorType(vor);
   tableHeader(html, type + ": " + vor.name + " (" + vor.ident + ")");
 
@@ -170,9 +178,11 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html)
   tableEnd(html);
 }
 
-void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html)
+void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background)
 {
-  html.img("data://symbol");
+  QIcon icon = SymbolPainter(background).createNdbIcon(ndb, SYMBOL_SIZE);
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+
   tableHeader(html, "NDB: " + ndb.name + " (" + ndb.ident + ")");
   tableStart(html);
   if(ndb.routeIndex >= 0)
@@ -187,9 +197,11 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html)
   tableEnd(html);
 }
 
-void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html)
+void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background)
 {
-  html.img("data://symbol");
+  QIcon icon = SymbolPainter(background).createWaypointIcon(waypoint, SYMBOL_SIZE);
+  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+
   tableHeader(html, "Waypoint: " + waypoint.ident);
   tableStart(html);
   if(waypoint.routeIndex >= 0)
@@ -200,7 +212,7 @@ void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& 
   tableEnd(html);
 
   QList<MapAirway> airways;
-  query->getAirwaysForWaypoint(airways, waypoint.id);
+  mapQuery->getAirwaysForWaypoint(airways, waypoint.id);
 
   if(!airways.isEmpty())
   {

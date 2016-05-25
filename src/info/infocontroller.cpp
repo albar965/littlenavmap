@@ -23,6 +23,7 @@
 #include <QSettings>
 #include <gui/mainwindow.h>
 #include <gui/widgetstate.h>
+#include "infoquery.h"
 #include "ui_mainwindow.h"
 #include <common/htmlbuilder.h>
 #include <common/maphtmlinfobuilder.h>
@@ -43,9 +44,10 @@ enum TabIndex
   MAP_LEGEND = 6
 };
 
-InfoController::InfoController(MainWindow *parent, MapQuery *mapQuery) :
-  QObject(parent), mainWindow(parent), query(mapQuery)
+InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery) :
+  QObject(parent), mainWindow(parent), mapQuery(mapDbQuery), infoQuery(infoDbQuery)
 {
+  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
 }
 
 InfoController::~InfoController()
@@ -83,18 +85,14 @@ void InfoController::updateAirport()
 
   if(curAirportId != -1)
   {
-    MapHtmlInfoBuilder info(query, true);
+    MapHtmlInfoBuilder info(mapQuery, infoQuery, true);
     HtmlBuilder html;
     maptypes::MapAirport ap;
-    query->getAirportById(ap, curAirportId);
+    mapQuery->getAirportById(ap, curAirportId);
 
-    // QImage image = QImageReader(":/littlenavmap/resources/icons/about.svg").read();
-    QIcon icon = SymbolPainter().createAirportIcon(ap, SYMBOL_SIZE);
-    mainWindow->getUi()->textEditAirportInfo->document()->addResource(
-      QTextDocument::ImageResource, QUrl("data://symbol"),
-      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info.airportText(ap, html,
-                     &mainWindow->getRouteController()->getRouteMapObjects(), mainWindow->getWeatherReporter());
+                     &mainWindow->getRouteController()->getRouteMapObjects(),
+                     mainWindow->getWeatherReporter(), iconBackColor);
     mainWindow->getUi()->textEditAirportInfo->setText(html.getHtml());
   }
 }
@@ -103,7 +101,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 {
   qDebug() << "InfoController::showInformation";
 
-  MapHtmlInfoBuilder info(query, true);
+  MapHtmlInfoBuilder info(mapQuery, infoQuery, true);
   HtmlBuilder html;
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -126,7 +124,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
       QTextDocument::ImageResource, QUrl("data://symbol"),
       QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
 
-    info.vorText(result.vors.first(), html);
+    info.vorText(result.vors.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.ndbs.isEmpty())
@@ -137,7 +135,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
       QTextDocument::ImageResource, QUrl("data://symbol"),
       QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
-    info.ndbText(result.ndbs.first(), html);
+    info.ndbText(result.ndbs.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.waypoints.isEmpty())
@@ -148,7 +146,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
       QTextDocument::ImageResource, QUrl("data://symbol"),
       QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
-    info.waypointText(result.waypoints.first(), html);
+    info.waypointText(result.waypoints.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.airways.isEmpty())
@@ -158,4 +156,14 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     info.airwayText(result.airways.first(), html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
+}
+
+void InfoController::preDatabaseLoad()
+{
+  infoQuery->deInitQueries();
+}
+
+void InfoController::postDatabaseLoad()
+{
+  infoQuery->initQueries();
 }

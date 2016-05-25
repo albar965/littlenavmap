@@ -15,43 +15,43 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef INFOCONTROLLER_H
-#define INFOCONTROLLER_H
+#ifndef INFOQUERY_H
+#define INFOQUERY_H
 
+#include <QCache>
 #include <QObject>
 
-#include <common/maptypes.h>
+namespace atools {
+namespace sql {
+class SqlDatabase;
+class SqlQuery;
+class SqlRecord;
+}
+}
 
-class MainWindow;
-class MapQuery;
-class InfoQuery;
-
-class InfoController :
+class InfoQuery :
   public QObject
 {
   Q_OBJECT
 
 public:
-  InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery);
-  virtual ~InfoController();
+  InfoQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb);
+  virtual ~InfoQuery();
 
-  void showInformation(maptypes::MapSearchResult result);
+  const atools::sql::SqlRecord *getAirportInformation(int airportId);
 
-  void saveState();
-  void restoreState();
-
-  void updateAirport();
-
-  void preDatabaseLoad();
-  void postDatabaseLoad();
+  void initQueries();
+  void deInitQueries();
 
 private:
-  int curAirportId = -1;
+  QCache<int, atools::sql::SqlRecord> airportCache;
 
-  MainWindow *mainWindow;
-  MapQuery *mapQuery;
-  InfoQuery *infoQuery;
-  QColor iconBackColor;
+  atools::sql::SqlDatabase *db;
+  atools::sql::SqlQuery *airportQuery = nullptr;
+
+  const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
+                                             atools::sql::SqlQuery *query, int id);
+
 };
 
-#endif // INFOCONTROLLER_H
+#endif // INFOQUERY_H
