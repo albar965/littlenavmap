@@ -28,7 +28,12 @@
 
 #include <QSize>
 
+#include <sql/sqlrecord.h>
+
+#include <info/infoquery.h>
+
 using namespace maptypes;
+using atools::sql::SqlRecord;
 
 const int SYMBOL_SIZE = 20;
 
@@ -47,8 +52,12 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
                                      const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
                                      QColor background)
 {
-  QIcon icon = SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE);
-  html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getAirportInformation(airport.id);
+
+  html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
+           QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
 
   tableHeader(html, airport.name + " (" + airport.ident + ")");
   QString city, state, country;
@@ -59,6 +68,11 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(!state.isEmpty())
     tableRow(html, "State/Province:", state);
   tableRow(html, "Country:", country);
+  tableRow(html, "Altitude:", locale.toString(airport.getPosition().getAltitude(), 'f', 0) + " ft");
+  tableRow(html, "Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
+  if(rec != nullptr)
+    addCoordinates(rec, html);
+
   tableEnd(html);
 
   if(routeMapObjects != nullptr)
@@ -96,12 +110,23 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   }
 
   if(info)
-    tableHeader(html, "Data");
-  tableStart(html);
-  tableRow(html, "Longest Runway:", locale.toString(airport.longestRunwayLength) + " ft");
-  tableRow(html, "Altitude:", locale.toString(airport.getPosition().getAltitude(), 'f', 0) + " ft");
-  tableRow(html, "Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
-  tableEnd(html);
+  {
+    tableHeader(html, "Longest Runway");
+    tableStart(html);
+    tableRow(html, "Length:", locale.toString(airport.longestRunwayLength) + " ft");
+    if(rec != nullptr)
+    {
+      tableRow(html, "Longest Runway Width:",
+               locale.toString(rec->value("longest_runway_width").toInt()) + " ft");
+      tableRow(html, "Heading:",
+               locale.toString(rec->value("longest_runway_heading").toInt()) + " °");
+      tableRow(html, "Surface:",
+               maptypes::surfaceName(rec->value("longest_runway_surface").toString()));
+    }
+    tableEnd(html);
+  }
+  else
+    tableRow(html, "Longest Runway Length:", locale.toString(airport.longestRunwayLength) + " ft");
 
   if(info)
     tableHeader(html, "COM Frequencies");
@@ -117,6 +142,10 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(airport.unicomFrequency > 0)
     tableRow(html, "Unicom:", locale.toString(airport.unicomFrequency / 1000., 'f', 2));
   tableEnd(html);
+
+  if(rec != nullptr)
+  {
+  }
 
   if(info)
     tableHeader(html, "Facilities");
@@ -153,6 +182,9 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   tableRow(html, QString(), facilities.join(", "));
 
   tableEnd(html);
+
+  if(rec != nullptr)
+    addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
@@ -328,4 +360,21 @@ void MapHtmlInfoBuilder::tableEnd(HtmlBuilder& html)
 {
   if(info)
     html.tableEnd();
+}
+
+void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+{
+  tableHeader(html, "Scenery");
+  tableStart(html);
+  tableRow(html, "Local Path:", rec->value("scenery_local_path").toString());
+  tableRow(html, "BGL Filename:", rec->value("bgl_filename").toString());
+  tableEnd(html);
+}
+
+void MapHtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+{
+  atools::geo::Pos pos(rec->value("lonx").toFloat(), rec->value("laty").toFloat(),
+                       rec->value("altitude").toFloat());
+
+  tableRow(html, "Coordinates:", pos.toHumanReadableString());
 }

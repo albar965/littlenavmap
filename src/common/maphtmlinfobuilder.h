@@ -52,6 +52,12 @@ struct MapUserpoint;
 
 }
 
+namespace atools {
+namespace sql {
+class SqlRecord;
+}
+}
+
 class MapHtmlInfoBuilder
 {
   Q_DECLARE_TR_FUNCTIONS(MapHtmlInfoBuilder)
@@ -88,6 +94,9 @@ private:
 
   void tableEnd(HtmlBuilder& html);
   void tableStart(HtmlBuilder& html);
+
+  void addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
+  void addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
 
 };
 

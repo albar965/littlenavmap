@@ -25,6 +25,7 @@
 class MainWindow;
 class MapQuery;
 class InfoQuery;
+class MapHtmlInfoBuilder;
 
 class InfoController :
   public QObject
@@ -52,6 +53,8 @@ private:
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   QColor iconBackColor;
+  MapHtmlInfoBuilder *info;
+
 };
 
 #endif // INFOCONTROLLER_H

@@ -34,7 +34,11 @@ using namespace maptypes;
 MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
   : QObject(parent), query(mapQuery), weather(weatherReporter)
 {
+#if defined(Q_OS_WIN32)
+  iconBackColor = QColor(Qt::transparent);
+#else
   iconBackColor = QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase);
+#endif
 }
 
 MapTooltip::~MapTooltip()

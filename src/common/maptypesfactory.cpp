@@ -33,14 +33,6 @@ MapTypesFactory::~MapTypesFactory()
 
 void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, maptypes::MapAirport& ap)
 {
-  // "select airport_id, ident, name, rating, "
-  // "has_avgas, has_jetfuel, "
-  // "tower_frequency, "
-  // "is_closed, is_military, is_addon,"
-  // "num_runway_hard, num_runway_soft, num_runway_water, num_helipad, "
-  // "longest_runway_length, longest_runway_heading, mag_var, "
-  // "lonx, laty, left_lonx, top_laty, right_lonx, bottom_laty "
-
   fillAirportBase(record, ap, true);
 
   ap.flags = fillAirportFlags(record, true);
