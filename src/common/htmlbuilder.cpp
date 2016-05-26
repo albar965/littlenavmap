@@ -255,7 +255,7 @@ HtmlBuilder& HtmlBuilder::b(const QString& str)
 
 HtmlBuilder& HtmlBuilder::nbsp()
 {
-  text("&nbsp;");
+  htmlText += "&nbsp;";
   return *this;
 }
 
@@ -312,13 +312,13 @@ HtmlBuilder& HtmlBuilder::pEnd()
 HtmlBuilder& HtmlBuilder::brText(const QString& str)
 {
   br();
-  htmlText += str;
+  htmlText += str.toHtmlEscaped();
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::textBr(const QString& str)
 {
-  htmlText += str;
+  htmlText += str.toHtmlEscaped();
   return br();
 }
 
@@ -445,7 +445,7 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
     suffix.prepend("</span>");
   }
 
-  return prefix + str + suffix;
+  return prefix + str.toHtmlEscaped() + suffix;
 }
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)

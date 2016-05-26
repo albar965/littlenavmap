@@ -50,9 +50,14 @@ const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
   return cachedRecordVector(runwayCache, runwayQuery, airportId);
 }
 
-const atools::sql::SqlRecord* InfoQuery::getRunwayEndInformation(int runwayEndId)
+const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)
 {
   return cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
+}
+
+const atools::sql::SqlRecord *InfoQuery::getIlsInformation(int runwayEndId)
+{
+  return cachedRecord(ilsCache, ilsQuery, runwayEndId);
 }
 
 const SqlRecord *InfoQuery::getVorInformation(int vorId)
@@ -173,6 +178,9 @@ void InfoQuery::initQueries()
 
   runwayEndQuery = new SqlQuery(db);
   runwayEndQuery->prepare("select * from runway_end where runway_end_id = :id");
+
+  ilsQuery = new SqlQuery(db);
+  ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
 }
 
 void InfoQuery::deInitQueries()
@@ -200,4 +208,7 @@ void InfoQuery::deInitQueries()
 
   delete runwayEndQuery;
   runwayEndQuery = nullptr;
+
+  delete ilsQuery;
+  ilsQuery = nullptr;
 }

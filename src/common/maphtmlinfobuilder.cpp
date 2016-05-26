@@ -170,11 +170,15 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   {
     QString asnMetar, noaaMetar, vatsimMetar;
     if(weather->hasAsnWeather())
-    {
       asnMetar = weather->getAsnMetar(airport.ident);
+
+    if(!weather->hasAsnWeather() || info)
+    {
+      noaaMetar = weather->getNoaaMetar(airport.ident);
+
+      if(noaaMetar.isEmpty() || info)
+        vatsimMetar = weather->getVatsimMetar(airport.ident);
     }
-    noaaMetar = weather->getNoaaMetar(airport.ident);
-    vatsimMetar = weather->getVatsimMetar(airport.ident);
 
     if(!asnMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
     {
@@ -365,7 +369,7 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
 
         rowForStr(html, &rec, "edge_light", "Edge Lights:", "%1");
         rowForStr(html, &rec, "center_light", "Center Lights:", "%1");
-        rowForBool(html, &rec, "has_center_red", "Center red Lights", false);
+        rowForBool(html, &rec, "has_center_red", "Has red Center Lights", false);
 
         {
           RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
@@ -423,7 +427,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
 {
   bool closed = rec->valueBool("has_closed_markings");
 
-  html.text(rec->valueStr("name"), closed ? (html::STRIKEOUT | html::BOLD) : html::BOLD);
+  html.h3(rec->valueStr("name"), closed ? (html::STRIKEOUT) : html::NONE);
   html.table();
   if(closed)
     html.row("Closed", QString());
@@ -432,7 +436,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   rowForInt(html, rec, "blast_pad", "Blast Pad:", "%1 ft");
   rowForInt(html, rec, "overrun", "Overrun:", "%1 ft");
 
-  rowForBool(html, rec, "has_stol_markings", "STOL Markings", false);
+  rowForBool(html, rec, "has_stol_markings", "Has STOL Markings", false);
   // rowForBool(html, recPrim, "is_takeoff", "Closed for Takeoff", true);
   // rowForBool(html, recPrim, "is_landing", "Closed for Landing", true);
   rowForStr(html, rec, "is_pattern", "Pattern:", "%1");
@@ -443,12 +447,40 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   rowForFloat(html, rec, "right_vasi_pitch", "Right VASI Pitch:", "%1 °", 1);
 
   rowForStr(html, rec, "app_light_system_type", "ALS Type:", "%1");
-  rowForBool(html, rec, "has_end_lights", "Runway End Lights", false);
-  rowForBool(html, rec, "has_reils", "Runway End Strobes", false);
-  rowForBool(html, rec, "has_touchdown_lights", "Touchdown lights", false);
+  rowForBool(html, rec, "has_end_lights", "Has Runway End Lights", false);
+  rowForBool(html, rec, "has_reils", "Has Runway End Strobes", false);
+  rowForBool(html, rec, "has_touchdown_lights", "Has Touchdown lights", false);
 
   // num_strobes integer not null
   html.tableEnd();
+
+  const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
+  if(ilsRec != nullptr)
+  {
+    bool dme = !ilsRec->isNull("dme_altitude");
+    bool gs = !ilsRec->isNull("gs_altitude");
+
+    html.br().h4(ilsRec->valueStr("name") + " (" +
+            ilsRec->valueStr("ident") + ") - " +
+            QString("ILS") + (gs ? " / GS" : "") + (dme ? " / DME" : ""));
+
+    html.table();
+    html.row("Frequency:", locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + " MHz");
+    html.row("Range:", locale.toString(ilsRec->valueInt("range")) + " nm");
+    float magvar = ilsRec->valueFloat("mag_var");
+    html.row("Magvar:", locale.toString(magvar, 'f', 1) + " °");
+    rowForBool(html, ilsRec, "has_backcourse", "Has Backcourse", false);
+
+    float hdg = ilsRec->valueFloat("loc_heading") + magvar;
+    hdg = atools::geo::normalizeCourse(hdg);
+
+    html.row("Localizer Heading:", locale.toString(hdg, 'f', 1) + " °M");
+    html.row("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + " °");
+    if(gs)
+      html.row("Glideslope Pitch:", locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + " °");
+
+    html.tableEnd();
+  }
 }
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
@@ -649,7 +681,10 @@ void MapHtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlB
 {
   if(rec != nullptr)
   {
-    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude"));
+    float alt = 0;
+    if(rec->contains("altitude"))
+      alt = rec->valueFloat("altitude");
+    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), alt);
     html.row("Coordinates:", pos.toHumanReadableString());
   }
 }
