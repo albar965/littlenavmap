@@ -38,6 +38,26 @@ const atools::sql::SqlRecord *InfoQuery::getAirportInformation(int airportId)
   return cachedRecord(airportCache, airportQuery, airportId);
 }
 
+const atools::sql::SqlRecord *InfoQuery::getVorInformation(int vorId)
+{
+  return cachedRecord(vorCache, vorQuery, vorId);
+}
+
+const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
+{
+  return cachedRecord(ndbCache, ndbQuery, ndbId);
+}
+
+const atools::sql::SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
+{
+  return cachedRecord(waypointCache, waypointQuery, waypointId);
+}
+
+const atools::sql::SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
+{
+  return cachedRecord(airwayCache, airwayQuery, airwayId);
+}
+
 const atools::sql::SqlRecord *InfoQuery::cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
                                                       atools::sql::SqlQuery *query, int id)
 {
@@ -61,12 +81,49 @@ void InfoQuery::initQueries()
 {
   deInitQueries();
 
+  // TODO limit number of columns
   airportQuery = new SqlQuery(db);
-  airportQuery->prepare("select * from airport where airport_id = :id");
+  airportQuery->prepare("select * from airport "
+                        "join bgl_file on airport.file_id = bgl_file.bgl_file_id "
+                        "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                        "where airport_id = :id");
+
+  vorQuery = new SqlQuery(db);
+  vorQuery->prepare("select * from vor "
+                    "join bgl_file on vor.file_id = bgl_file.bgl_file_id "
+                    "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                    "where vor_id = :id");
+
+  ndbQuery = new SqlQuery(db);
+  ndbQuery->prepare("select * from ndb "
+                    "join bgl_file on ndb.file_id = bgl_file.bgl_file_id "
+                    "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                    "where ndb_id = :id");
+
+  waypointQuery = new SqlQuery(db);
+  waypointQuery->prepare("select * from waypoint "
+                    "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
+                    "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                    "where waypoint_id = :id");
+
+  airwayQuery = new SqlQuery(db);
+  airwayQuery->prepare("select * from airway where airway_id = :id");
 }
 
 void InfoQuery::deInitQueries()
 {
   delete airportQuery;
   airportQuery = nullptr;
+
+  delete vorQuery;
+  vorQuery = nullptr;
+
+  delete ndbQuery;
+  ndbQuery = nullptr;
+
+  delete waypointQuery;
+  waypointQuery = nullptr;
+
+  delete airwayQuery;
+  airwayQuery = nullptr;
 }

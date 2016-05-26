@@ -109,6 +109,7 @@ struct MapAirport
   atools::geo::Rect bounding;
   int routeIndex = -1;
 
+  bool closed() const;
   bool hard() const;
   bool soft() const;
   bool water() const;

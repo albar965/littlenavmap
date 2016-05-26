@@ -21,6 +21,7 @@
 #include "mapgui/mapquery.h"
 #include "common/formatter.h"
 #include "route/routemapobjectlist.h"
+#include "geo/calculations.h"
 
 #include <common/htmlbuilder.h>
 #include <common/morsecode.h>
@@ -58,22 +59,42 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
 
-  tableHeader(html, airport.name + " (" + airport.ident + ")");
+  html::Flags titleFlags = html::BOLD;
+  if(airport.closed())
+    titleFlags |= html::STRIKEOUT;
+  if(airport.addon())
+    titleFlags |= html::ITALIC;
+
+  if(info)
+    html.text(airport.name + " (" + airport.ident + ")", titleFlags | html::BIG);
+  else
+    html.text(airport.name + " (" + airport.ident + ")", titleFlags);
+
   QString city, state, country;
   mapQuery->getAirportAdminById(airport.id, city, state, country);
 
-  tableStart(html);
-  tableRow(html, "City:", city);
+  html.table();
+  html.row("City:", city);
   if(!state.isEmpty())
-    tableRow(html, "State/Province:", state);
-  tableRow(html, "Country:", country);
-  tableRow(html, "Altitude:", locale.toString(airport.getPosition().getAltitude(), 'f', 0) + " ft");
-  tableRow(html, "Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
+    html.row("State/Province:", state);
+  html.row("Country:", country);
+  html.row("Altitude:", locale.toString(airport.getPosition().getAltitude(), 'f', 0) + " ft");
+  html.row("Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
   if(rec != nullptr)
+  {
+    html.row("Rating (0-5):", rec->value("rating").toInt());
     addCoordinates(rec, html);
+  }
+  html.tableEnd();
 
-  tableEnd(html);
+  if(!info)
+  {
+    html.table();
+    html.row("Longest Runway Length:", locale.toString(airport.longestRunwayLength) + " ft");
+    html.tableEnd();
+  }
 
   if(routeMapObjects != nullptr)
   {
@@ -87,70 +108,82 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   if(weather != nullptr)
   {
-    if(info)
-      tableHeader(html, "Weather");
-    tableStart(html);
-    QString metar;
+    QString asnMetar, noaaMetar, vatsimMetar;
     if(weather->hasAsnWeather())
     {
-      metar = weather->getAsnMetar(airport.ident);
-      if(!metar.isEmpty())
-        tableRow(html, "Metar (ASN):", metar);
+      asnMetar = weather->getAsnMetar(airport.ident);
     }
-    // else
+    noaaMetar = weather->getNoaaMetar(airport.ident);
+    vatsimMetar = weather->getVatsimMetar(airport.ident);
+
+    if(!asnMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
     {
-      metar = weather->getNoaaMetar(airport.ident);
-      if(!metar.isEmpty())
-        tableRow(html, "Metar (NOAA):", metar);
-      metar = weather->getVatsimMetar(airport.ident);
-      if(!metar.isEmpty())
-        tableRow(html, "Metar (Vatsim):", metar);
+      if(info)
+        head(html, "Weather");
+      html.table();
+      if(!asnMetar.isEmpty())
+        html.row("Metar (ASN):", asnMetar);
+      if(!noaaMetar.isEmpty())
+        html.row("Metar (NOAA):", noaaMetar);
+      if(!vatsimMetar.isEmpty())
+        html.row("Metar (Vatsim):", vatsimMetar);
+
+      html.tableEnd();
+
     }
-    tableEnd(html);
   }
 
   if(info)
   {
-    tableHeader(html, "Longest Runway");
-    tableStart(html);
-    tableRow(html, "Length:", locale.toString(airport.longestRunwayLength) + " ft");
+    head(html, "Longest Runway");
+    html.table();
+    html.row("Length:", locale.toString(airport.longestRunwayLength) + " ft");
     if(rec != nullptr)
     {
-      tableRow(html, "Longest Runway Width:",
+      html.row("Width:",
                locale.toString(rec->value("longest_runway_width").toInt()) + " ft");
-      tableRow(html, "Heading:",
-               locale.toString(rec->value("longest_runway_heading").toInt()) + " °");
-      tableRow(html, "Surface:",
+
+      float hdg = rec->value("longest_runway_heading").toFloat() + rec->value("mag_var").toFloat();
+      hdg = atools::geo::normalizeCourse(hdg);
+      float otherHdg = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdg));
+
+      html.row("Heading:", locale.toString(hdg, 'f', 0) + " ° / " + locale.toString(otherHdg, 'f', 0) + " °");
+      html.row("Surface:",
                maptypes::surfaceName(rec->value("longest_runway_surface").toString()));
     }
-    tableEnd(html);
+    html.tableEnd();
   }
-  else
-    tableRow(html, "Longest Runway Length:", locale.toString(airport.longestRunwayLength) + " ft");
 
-  if(info)
-    tableHeader(html, "COM Frequencies");
-  tableStart(html);
-  if(airport.towerFrequency > 0)
-    tableRow(html, "Tower:", locale.toString(airport.towerFrequency / 1000., 'f', 2));
-  if(airport.atisFrequency > 0)
-    tableRow(html, "ATIS:", locale.toString(airport.atisFrequency / 1000., 'f', 2));
-  if(airport.awosFrequency > 0)
-    tableRow(html, "AWOS:", locale.toString(airport.awosFrequency / 1000., 'f', 2));
-  if(airport.asosFrequency > 0)
-    tableRow(html, "ASOS:", locale.toString(airport.asosFrequency / 1000., 'f', 2));
-  if(airport.unicomFrequency > 0)
-    tableRow(html, "Unicom:", locale.toString(airport.unicomFrequency / 1000., 'f', 2));
-  tableEnd(html);
+  if(airport.towerFrequency > 0 || airport.atisFrequency > 0 || airport.awosFrequency > 0 ||
+     airport.asosFrequency > 0 || airport.unicomFrequency > 0)
+  {
+    if(info)
+      head(html, "COM Frequencies");
+    html.table();
+    if(airport.towerFrequency > 0)
+      html.row("Tower:", locale.toString(airport.towerFrequency / 1000., 'f', 2));
+    if(airport.atisFrequency > 0)
+      html.row("ATIS:", locale.toString(airport.atisFrequency / 1000., 'f', 2));
+    if(airport.awosFrequency > 0)
+      html.row("AWOS:", locale.toString(airport.awosFrequency / 1000., 'f', 2));
+    if(airport.asosFrequency > 0)
+      html.row("ASOS:", locale.toString(airport.asosFrequency / 1000., 'f', 2));
+    if(airport.unicomFrequency > 0)
+      html.row("Unicom:", locale.toString(airport.unicomFrequency / 1000., 'f', 2));
+    html.tableEnd();
+  }
 
   if(rec != nullptr)
   {
   }
 
   if(info)
-    tableHeader(html, "Facilities");
-  tableStart(html);
+    head(html, "Facilities");
+  html.table();
   QStringList facilities;
+
+  if(airport.closed())
+    facilities.append("Closed");
 
   if(airport.addon())
     facilities.append("Add-on");
@@ -179,9 +212,9 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(airport.flags.testFlag(AP_APPR))
     facilities.append("Approaches");
 
-  tableRow(html, QString(), facilities.join(", "));
+  html.row(QString(), facilities.join(", "));
 
-  tableEnd(html);
+  html.tableEnd();
 
   if(rec != nullptr)
     addScenery(rec, html);
@@ -189,59 +222,84 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
 {
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getVorInformation(vor.id);
+
   QIcon icon = SymbolPainter(background).createVorIcon(vor, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
 
   QString type = maptypes::vorType(vor);
-  tableHeader(html, type + ": " + vor.name + " (" + vor.ident + ")");
+  title(html, type + ": " + vor.name + " (" + vor.ident + ")");
 
-  tableStart(html);
+  html.table();
   if(vor.routeIndex >= 0)
-    tableRow(html, "Route position:", QString::number(vor.routeIndex + 1));
+    html.row("Route position:", QString::number(vor.routeIndex + 1));
 
-  tableRow(html, "Type:", maptypes::navTypeName(vor.type));
-  tableRow(html, "Region:", vor.region);
-  tableRow(html, "Freq:", locale.toString(vor.frequency / 1000., 'f', 2) + " MHz");
+  html.row("Type:", maptypes::navTypeName(vor.type));
+  html.row("Region:", vor.region);
+  html.row("Freq:", locale.toString(vor.frequency / 1000., 'f', 2) + " MHz");
   if(!vor.dmeOnly)
-    tableRow(html, "Magvar:", locale.toString(vor.magvar, 'f', 1) + " °");
-  tableRow(html, "Altitude:", locale.toString(vor.getPosition().getAltitude(), 'f', 0) + " ft");
-  tableRow(html, "Range:", QString::number(vor.range) + " nm");
-  tableRow(html, "Morse:", "<b>" + morse->getCode(vor.ident) + "</b>");
-  tableEnd(html);
+    html.row("Magvar:", locale.toString(vor.magvar, 'f', 1) + " °");
+  html.row("Altitude:", locale.toString(vor.getPosition().getAltitude(), 'f', 0) + " ft");
+  html.row("Range:", QString::number(vor.range) + " nm");
+  html.row("Morse:", "<b>" + morse->getCode(vor.ident) + "</b>");
+  addCoordinates(rec, html);
+  html.tableEnd();
+
+  if(rec != nullptr)
+    addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background)
 {
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getNdbInformation(ndb.id);
+
   QIcon icon = SymbolPainter(background).createNdbIcon(ndb, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
 
-  tableHeader(html, "NDB: " + ndb.name + " (" + ndb.ident + ")");
-  tableStart(html);
+  title(html, "NDB: " + ndb.name + " (" + ndb.ident + ")");
+  html.table();
   if(ndb.routeIndex >= 0)
-    tableRow(html, "Route position ", QString::number(ndb.routeIndex + 1));
-  tableRow(html, "Type:", maptypes::navTypeName(ndb.type));
-  tableRow(html, "Region:", ndb.region);
-  tableRow(html, "Freq:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
-  tableRow(html, "Magvar:", locale.toString(ndb.magvar, 'f', 1) + " °");
-  tableRow(html, "Altitude:", locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + " ft");
-  tableRow(html, "Range:", QString::number(ndb.range) + " nm");
-  tableRow(html, "Morse:", "<b>" + morse->getCode(ndb.ident) + "</b>");
-  tableEnd(html);
+    html.row("Route position ", QString::number(ndb.routeIndex + 1));
+  html.row("Type:", maptypes::navTypeName(ndb.type));
+  html.row("Region:", ndb.region);
+  html.row("Freq:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
+  html.row("Magvar:", locale.toString(ndb.magvar, 'f', 1) + " °");
+  html.row("Altitude:", locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + " ft");
+  html.row("Range:", QString::number(ndb.range) + " nm");
+  html.row("Morse:", "<b>" + morse->getCode(ndb.ident) + "</b>");
+  addCoordinates(rec, html);
+  html.tableEnd();
+
+  if(rec != nullptr)
+    addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background)
 {
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getWaypointInformation(waypoint.id);
+
   QIcon icon = SymbolPainter(background).createWaypointIcon(waypoint, SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
+  html.nbsp().nbsp();
 
-  tableHeader(html, "Waypoint: " + waypoint.ident);
-  tableStart(html);
+  title(html, "Waypoint: " + waypoint.ident);
+  html.table();
   if(waypoint.routeIndex >= 0)
-    tableRow(html, "Route position:", QString::number(waypoint.routeIndex + 1));
-  tableRow(html, "Type:", maptypes::navTypeName(waypoint.type));
-  tableRow(html, "Region:", waypoint.region);
-  tableRow(html, "Magvar:", locale.toString(waypoint.magvar, 'f', 1) + " °");
-  tableEnd(html);
+    html.row("Route position:", QString::number(waypoint.routeIndex + 1));
+  html.row("Type:", maptypes::navTypeName(waypoint.type));
+  html.row("Region:", waypoint.region);
+  html.row("Magvar:", locale.toString(waypoint.magvar, 'f', 1) + " °");
+  addCoordinates(rec, html);
+
+  html.tableEnd();
 
   QList<MapAirway> airways;
   mapQuery->getAirwaysForWaypoint(airways, waypoint.id);
@@ -267,49 +325,61 @@ void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& 
       airwayTexts.erase(std::unique(airwayTexts.begin(), airwayTexts.end()), airwayTexts.end());
 
       if(info)
-        html.h4("Airways:");
+        head(html, "Airways:");
       else
         html.br().b("Airways: ");
 
-      tableStart(html);
+      html.table();
       for(const std::pair<QString, QString>& aw : airwayTexts)
-        tableRow(html, aw.first, aw.second);
-      tableEnd(html);
+        html.row(aw.first, aw.second);
+      html.tableEnd();
     }
   }
+
+  if(rec != nullptr)
+    addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
 {
-  tableHeader(html, "Airway: " + airway.name);
-  tableStart(html);
-  tableRow(html, "Type:", maptypes::airwayTypeToString(airway.type));
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getAirwayInformation(airway.id);
+
+  title(html, "Airway: " + airway.name);
+  html.table();
+  html.row("Type:", maptypes::airwayTypeToString(airway.type));
 
   if(airway.minalt > 0)
-    tableRow(html, "Min altitude:", QString::number(airway.minalt) + " ft");
-  tableEnd(html);
+    html.row("Min altitude:", QString::number(airway.minalt) + " ft");
+  html.tableEnd();
+
+  // TODO add all waypoints
+
+  // if(rec != nullptr)
+  // addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::markerText(const MapMarker& m, HtmlBuilder& html)
 {
   if(!html.isEmpty())
     html.hr();
-  html.b("Marker: " + m.type);
+  head(html, "Marker: " + m.type);
 }
 
 void MapHtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
 {
   if(airport.towerFrequency > 0)
-    html.b("Tower: " + locale.toString(airport.towerFrequency / 1000., 'f', 2));
+    head(html, "Tower: " + locale.toString(airport.towerFrequency / 1000., 'f', 2));
   else
-    html.b("Tower");
+    head(html, "Tower");
 }
 
 void MapHtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html)
 {
   if(parking.type != "FUEL")
   {
-    html.b(maptypes::parkingName(parking.name) + " " + QString::number(parking.number));
+    head(html, maptypes::parkingName(parking.name) + " " + QString::number(parking.number));
     html.brText(maptypes::parkingTypeName(parking.type));
     html.brText(QString::number(parking.radius * 2) + " ft");
     if(parking.jetway)
@@ -321,7 +391,7 @@ void MapHtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& htm
 
 void MapHtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html)
 {
-  html.b("Helipad:");
+  head(html, "Helipad:");
   html.brText("Surface: " + maptypes::surfaceName(helipad.surface));
   html.brText("Type: " + helipad.type);
   html.brText(QString::number(helipad.width) + " ft");
@@ -331,10 +401,31 @@ void MapHtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& htm
 
 void MapHtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html)
 {
-  html.b("Routepoint:").brText(userpoint.name);
+  head(html, "Routepoint:");
+  html.brText(userpoint.name);
 }
 
-void MapHtmlInfoBuilder::tableHeader(HtmlBuilder& html, const QString& text)
+void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+{
+  head(html, "Scenery");
+  html.table();
+  html.row("Title:", rec->value("title").toString());
+  html.row("BGL Filepath:", rec->value("filepath").toString());
+  html.tableEnd();
+}
+
+void MapHtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+{
+  if(rec != nullptr)
+  {
+    atools::geo::Pos pos(rec->value("lonx").toFloat(), rec->value("laty").toFloat(),
+                         rec->value("altitude").toFloat());
+
+    html.row("Coordinates:", pos.toHumanReadableString());
+  }
+}
+
+void MapHtmlInfoBuilder::head(HtmlBuilder& html, const QString& text)
 {
   if(info)
     html.h4(text);
@@ -342,39 +433,10 @@ void MapHtmlInfoBuilder::tableHeader(HtmlBuilder& html, const QString& text)
     html.b(text);
 }
 
-void MapHtmlInfoBuilder::tableRow(HtmlBuilder& html, const QString& caption, const QString& value)
+void MapHtmlInfoBuilder::title(HtmlBuilder& html, const QString& text)
 {
   if(info)
-    html.row(caption, value);
+    html.text(text, html::BOLD | html::BIG);
   else
-    html.brText(caption + " " + value);
-}
-
-void MapHtmlInfoBuilder::tableStart(HtmlBuilder& html)
-{
-  if(info)
-    html.table();
-}
-
-void MapHtmlInfoBuilder::tableEnd(HtmlBuilder& html)
-{
-  if(info)
-    html.tableEnd();
-}
-
-void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
-{
-  tableHeader(html, "Scenery");
-  tableStart(html);
-  tableRow(html, "Local Path:", rec->value("scenery_local_path").toString());
-  tableRow(html, "BGL Filename:", rec->value("bgl_filename").toString());
-  tableEnd(html);
-}
-
-void MapHtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
-{
-  atools::geo::Pos pos(rec->value("lonx").toFloat(), rec->value("laty").toFloat(),
-                       rec->value("altitude").toFloat());
-
-  tableRow(html, "Coordinates:", pos.toHumanReadableString());
+    html.b(text);
 }

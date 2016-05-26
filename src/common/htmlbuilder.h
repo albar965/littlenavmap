@@ -31,10 +31,11 @@ enum Flag
   BOLD = 0x0001,
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
-  SUBSCRIPT = 0x0008,
-  SUPERSCRIPT = 0x0010,
-  SMALL = 0x0020,
-  BIG = 0x0040,
+  STRIKEOUT = 0x0008,
+  SUBSCRIPT = 0x0010,
+  SUPERSCRIPT = 0x0020,
+  SMALL = 0x0040,
+  BIG = 0x0080,
   ALIGN_RIGHT = 0x1000 // Only for table data
 };
 
@@ -47,7 +48,7 @@ class HtmlBuilder
   Q_DECLARE_TR_FUNCTIONS(HtmlBuilder)
 
 public:
-  HtmlBuilder();
+  HtmlBuilder(bool hasBackColor);
   ~HtmlBuilder();
 
   HtmlBuilder& b(const QString& str);
@@ -75,11 +76,15 @@ public:
 
   /* Add string enclosed in a paragraph */
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& p();
+  HtmlBuilder& pEnd();
+
   HtmlBuilder& pre(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   HtmlBuilder& br();
   HtmlBuilder& textBr(const QString& str);
   HtmlBuilder& brText(const QString& str);
+  HtmlBuilder& nbsp();
 
   /* Add HTML header */
   HtmlBuilder& h(int level, const QString& str, html::Flags flags = html::NONE,

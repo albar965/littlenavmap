@@ -214,6 +214,11 @@ QString parkingNameForFlightplan(const maptypes::MapParking& parking)
   return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
 
+bool MapAirport::closed() const
+{
+  return flags.testFlag(AP_CLOSED);
+}
+
 bool MapAirport::hard() const
 {
   return flags.testFlag(AP_HARD);

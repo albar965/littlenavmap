@@ -83,11 +83,14 @@ void InfoController::restoreState()
 
 void InfoController::updateAirport()
 {
+  if(databaseLoadStatus)
+    return;
+
   qDebug() << "InfoController::updateAirport";
 
   if(curAirportId != -1)
   {
-    HtmlBuilder html;
+    HtmlBuilder html(true);
     maptypes::MapAirport ap;
     mapQuery->getAirportById(ap, curAirportId);
 
@@ -102,7 +105,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 {
   qDebug() << "InfoController::showInformation";
 
-  HtmlBuilder html;
+  HtmlBuilder html(true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   int idx = ui->tabWidgetInformation->currentIndex();
@@ -160,10 +163,10 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
 void InfoController::preDatabaseLoad()
 {
-  infoQuery->deInitQueries();
+  databaseLoadStatus = true;
 }
 
 void InfoController::postDatabaseLoad()
 {
-  infoQuery->initQueries();
+  databaseLoadStatus = false;
 }

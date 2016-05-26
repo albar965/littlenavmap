@@ -45,9 +45,9 @@ public:
                        bool airportDiagram);
 
 private:
-  const int MAXLINES = 30;
+  const int MAXLINES = 20;
   MapQuery *query;
-  bool checkText(HtmlBuilder& text);
+  bool checkText(HtmlBuilder& html, int numEntries);
 
   WeatherReporter *weather;
   QColor iconBackColor;

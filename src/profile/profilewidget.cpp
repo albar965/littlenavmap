@@ -94,6 +94,9 @@ void ProfileWidget::routeChanged(bool geometryChanged)
 
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
+  if(databaseLoadStatus)
+    return;
+
   bool updateProfile = false;
 
   if(!routeController->isFlightplanEmpty())
@@ -517,7 +520,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
 
 void ProfileWidget::updateElevation()
 {
-  if(!visible)
+  if(!visible || databaseLoadStatus)
     return;
 
   qDebug() << "Profile update elevation";
@@ -526,7 +529,7 @@ void ProfileWidget::updateElevation()
 
 void ProfileWidget::updateTimeout()
 {
-  if(!visible)
+  if(!visible || databaseLoadStatus)
     return;
 
   qDebug() << "Profile update elevation timeout";
@@ -546,7 +549,7 @@ void ProfileWidget::updateTimeout()
 
 void ProfileWidget::updateFinished()
 {
-  if(!visible)
+  if(!visible || databaseLoadStatus)
     return;
 
   qDebug() << "Profile update finished";
@@ -676,6 +679,17 @@ void ProfileWidget::deleteAircraftTrack()
 {
   updateScreenCoords();
   update();
+}
+
+void ProfileWidget::preDatabaseLoad()
+{
+  databaseLoadStatus = true;
+}
+
+void ProfileWidget::postDatabaseLoad()
+{
+  databaseLoadStatus = false;
+  routeChanged(true);
 }
 
 void ProfileWidget::updateProfileShowFeatures()

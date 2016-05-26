@@ -24,21 +24,32 @@
 #include <QBuffer>
 #include <QIcon>
 
-HtmlBuilder::HtmlBuilder()
+HtmlBuilder::HtmlBuilder(bool hasBackColor)
 {
-  // Create darker colors dynamically from default palette
-  rowBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base).
-                 darker(105).name(QColor::HexRgb);
-  rowBackColorAlt = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase).
-                    darker(105).name(QColor::HexRgb);
+  if(hasBackColor)
+  {
+    // Create darker colors dynamically from default palette
+    rowBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base).
+                   darker(105).name(QColor::HexRgb);
+    rowBackColorAlt = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase).
+                      darker(105).name(QColor::HexRgb);
 
-  tableRow.append("<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td>%2</td></tr>");
-  tableRow.append("<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td>%2</td></tr>");
 
-  tableRowAlignRight.append(
-    "<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
-  tableRowAlignRight.append(
-    "<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append(
+      "<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append(
+      "<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+  }
+  else
+  {
+    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
+
+    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
+  }
 
   tableRowHeader = "<tr><td>%1</td></tr>";
 
@@ -206,6 +217,12 @@ HtmlBuilder& HtmlBuilder::b(const QString& str)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::nbsp()
+{
+  text("&nbsp;");
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::u(const QString& str)
 {
   text(str, html::UNDERLINE);
@@ -240,6 +257,19 @@ HtmlBuilder& HtmlBuilder::br()
 {
   html += "<br/>";
   numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::p()
+{
+  html += "<p>";
+  numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::pEnd()
+{
+  html += "</p>";
   return *this;
 }
 
@@ -341,6 +371,12 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
   {
     prefix.append("<u>");
     suffix.prepend("</u>");
+  }
+
+  if(flags & html::STRIKEOUT)
+  {
+    prefix.append("<s>");
+    suffix.prepend("</s>");
   }
 
   if(flags & html::SUBSCRIPT)

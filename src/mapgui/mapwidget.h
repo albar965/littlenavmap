@@ -202,6 +202,7 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
+  bool databaseLoadStatus = false;
   enum MapThemeComboIndex
   {
     OSM,

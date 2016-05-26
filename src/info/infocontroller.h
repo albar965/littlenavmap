@@ -48,6 +48,7 @@ public:
 
 private:
   int curAirportId = -1;
+  bool databaseLoadStatus = false;
 
   MainWindow *mainWindow;
   MapQuery *mapQuery;

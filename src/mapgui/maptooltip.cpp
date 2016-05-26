@@ -49,133 +49,170 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
                                  const RouteMapObjectList& routeMapObjects,
                                  bool airportDiagram)
 {
-  HtmlBuilder html;
+  HtmlBuilder html(false);
 
   MapHtmlInfoBuilder info(query, nullptr, false);
+  int numEntries = 0;
 
   for(const MapAirport& ap : mapSearchResult.airports)
   {
     qDebug() << "Airport" << ap.ident << "id" << ap.id;
 
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.airportText(ap, html, &routeMapObjects, weather, iconBackColor);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapVor& vor : mapSearchResult.vors)
   {
     qDebug() << "Vor" << vor.ident << "id" << vor.id;
 
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.vorText(vor, html, iconBackColor);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapNdb& ndb : mapSearchResult.ndbs)
   {
     qDebug() << "Ndb" << ndb.ident << "id" << ndb.id;
 
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.ndbText(ndb, html, iconBackColor);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapWaypoint& wp : mapSearchResult.waypoints)
   {
     qDebug() << "Waypoint" << wp.ident << "id" << wp.id;
 
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.waypointText(wp, html, iconBackColor);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapAirway& airway : mapSearchResult.airways)
   {
     qDebug() << "Airway" << airway.name << "id" << airway.id;
 
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.airwayText(airway, html);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapMarker& m : mapSearchResult.markers)
   {
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.markerText(m, html);
+    html.pEnd();
+    numEntries++;
   }
 
   if(airportDiagram)
   {
     for(const MapAirport& ap : mapSearchResult.towers)
     {
-      if(checkText(html))
+      if(checkText(html, numEntries))
         break;
 
       if(!html.isEmpty())
         html.hr();
 
+      html.p();
       info.towerText(ap, html);
+      html.pEnd();
+      numEntries++;
     }
     for(const MapParking& p : mapSearchResult.parkings)
     {
-      if(checkText(html))
+      if(checkText(html, numEntries))
         break;
 
       if(!html.isEmpty())
         html.hr();
 
+      html.p();
       info.parkingText(p, html);
+      html.pEnd();
+      numEntries++;
     }
     for(const MapHelipad& p : mapSearchResult.helipads)
     {
-      if(checkText(html))
+      if(checkText(html, numEntries))
         break;
 
       if(!html.isEmpty())
         html.hr();
 
+      html.p();
       info.helipadText(p, html);
+      html.pEnd();
+      numEntries++;
     }
   }
   for(const MapUserpoint& up : mapSearchResult.userPoints)
   {
-    if(checkText(html))
+    if(checkText(html, numEntries))
       break;
 
     if(!html.isEmpty())
       html.hr();
 
+    html.p();
     info.userpointText(up, html);
+    html.pEnd();
+    numEntries++;
   }
   return html.getHtml();
 }
 
-bool MapTooltip::checkText(HtmlBuilder& text)
+bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
 {
-  return text.checklength(MAXLINES, "More ...");
+  if(numEntries > 3)
+  {
+    html.hr().b("More ...");
+    return true;
+  }
+
+  return html.checklength(MAXLINES, "More ...");
 }

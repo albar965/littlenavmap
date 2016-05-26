@@ -904,8 +904,10 @@ void MainWindow::preDatabaseLoad()
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
     navMapWidget->preDatabaseLoad();
-    mapQuery->deInitQueries();
+    profileWidget->preDatabaseLoad();
+    infoController->preDatabaseLoad();
     infoQuery->deInitQueries();
+    mapQuery->deInitQueries();
   }
   else
     qWarning() << "Already in database loading status";
@@ -915,11 +917,13 @@ void MainWindow::postDatabaseLoad()
 {
   if(hasDatabaseLoadStatus)
   {
-    infoQuery->initQueries();
     mapQuery->initQueries();
+    infoQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
     navMapWidget->postDatabaseLoad();
+    profileWidget->postDatabaseLoad();
+    infoController->postDatabaseLoad();
     hasDatabaseLoadStatus = false;
   }
   else

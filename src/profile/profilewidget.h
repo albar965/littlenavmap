@@ -59,10 +59,14 @@ public:
 
   void deleteAircraftTrack();
 
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
 signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
 private:
+  bool databaseLoadStatus = false;
   virtual void paintEvent(QPaintEvent *) override;
 
   atools::fs::sc::SimConnectData simData, lastSimData;

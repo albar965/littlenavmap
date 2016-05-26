@@ -88,15 +88,11 @@ private:
   MorseCode *morse;
   bool info;
   QLocale locale;
-  void tableRow(HtmlBuilder& html, const QString& caption, const QString& value);
-
-  void tableHeader(HtmlBuilder& html, const QString& text);
-
-  void tableEnd(HtmlBuilder& html);
-  void tableStart(HtmlBuilder& html);
-
   void addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
   void addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
+  void head(HtmlBuilder& html, const QString& text);
+
+  void title(HtmlBuilder& html, const QString& text);
 
 };
 

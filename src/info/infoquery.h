@@ -39,15 +39,20 @@ public:
   virtual ~InfoQuery();
 
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
+  const atools::sql::SqlRecord *getVorInformation(int vorId);
+  const atools::sql::SqlRecord *getNdbInformation(int ndbId);
+  const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
+  const atools::sql::SqlRecord *getAirwayInformation(int airwayId);
 
   void initQueries();
   void deInitQueries();
 
 private:
-  QCache<int, atools::sql::SqlRecord> airportCache;
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache;
 
   atools::sql::SqlDatabase *db;
-  atools::sql::SqlQuery *airportQuery = nullptr;
+  atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
+  *waypointQuery = nullptr, *airwayQuery = nullptr;
 
   const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
                                              atools::sql::SqlQuery *query, int id);

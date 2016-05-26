@@ -205,11 +205,13 @@ void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to,
 
 void MapWidget::preDatabaseLoad()
 {
+  databaseLoadStatus = true;
   paintLayer->preDatabaseLoad();
 }
 
 void MapWidget::postDatabaseLoad()
 {
+  databaseLoadStatus = false;
   paintLayer->postDatabaseLoad();
   updateAirwayScreenLines();
   updateRouteScreenLines();
@@ -382,6 +384,9 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
+  if(databaseLoadStatus)
+    return;
+
   if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
   {
     simData = simulatorData;
@@ -1320,6 +1325,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
 void MapWidget::updateTooltip()
 {
+  if(databaseLoadStatus)
+    return;
+
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
                                           parentWindow->getRouteController()->getRouteMapObjects(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
@@ -1354,7 +1362,7 @@ bool MapWidget::event(QEvent *event)
     getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResultTooltip);
     tooltipPos = helpEvent->globalPos();
     updateTooltip();
-    event->accept();
+    event->ignore();
     return true;
   }
 
