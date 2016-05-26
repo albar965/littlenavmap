@@ -51,6 +51,9 @@ HtmlBuilder::HtmlBuilder(bool hasBackColor)
     tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
   }
 
+  tableRowBegin.append("<tr bgcolor=\"" + rowBackColor + "\">");
+  tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAlt + "\">");
+
   tableRowHeader = "<tr><td>%1</td></tr>";
 
 }
@@ -60,7 +63,8 @@ HtmlBuilder::~HtmlBuilder()
 
 }
 
-HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, html::Flags flags,
+                                 QColor color)
 {
   QString valueStr;
   switch(value.type())
@@ -116,8 +120,8 @@ HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, htm
       valueStr = QString("Error: Invalid variant type \"%1\"").arg(value.typeName());
 
   }
-  html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-          arg(asText(name, flags, color), value.toString());
+  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+              arg(asText(name, flags, color), value.toString());
   tableIndex++;
   numLines++;
   return *this;
@@ -125,8 +129,8 @@ HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, htm
 
 HtmlBuilder& HtmlBuilder::row(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
-  html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-          arg(asText(name, flags, color), value);
+  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+              arg(asText(name, flags, color), value);
   tableIndex++;
   numLines++;
   return *this;
@@ -135,9 +139,9 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, const QString& value, html::F
 HtmlBuilder& HtmlBuilder::row(const QString& name, float value, int precision, html::Flags flags,
                               QColor color)
 {
-  html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-          arg(asText(name, flags, color),
-              locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
+  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+              arg(asText(name, flags, color),
+                  locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
   tableIndex++;
   numLines++;
   return *this;
@@ -146,9 +150,9 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, float value, int precision, h
 HtmlBuilder& HtmlBuilder::row(const QString& name, double value, int precision, html::Flags flags,
                               QColor color)
 {
-  html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-          arg(asText(name, flags, color),
-              locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
+  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+              arg(asText(name, flags, color),
+                  locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
   tableIndex++;
   numLines++;
   return *this;
@@ -156,32 +160,55 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, double value, int precision, 
 
 HtmlBuilder& HtmlBuilder::row(const QString& name, int value, html::Flags flags, QColor color)
 {
-  html += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-          arg(asText(name, flags, color), locale.toString(value));
+  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+              arg(asText(name, flags, color), locale.toString(value));
   tableIndex++;
   numLines++;
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
+{
+  htmlText += QString("<td") + (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") + ">";
+  text(str, flags, color);
+  htmlText += "</td>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::tr()
+{
+  htmlText += alt(tableRowBegin);
+  tableIndex++;
+  numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::trEnd()
+{
+  htmlText += "</tr>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::table()
 {
-  html += "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\"><tbody>";
+  htmlText += "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\"><tbody>";
   tableIndex = 0;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::tableEnd()
 {
-  html += "</tbody></table>";
+  htmlText += "</tbody></table>";
   tableIndex = 0;
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color, const QString& id)
+HtmlBuilder& HtmlBuilder::h(int level, const QString& str, html::Flags flags, QColor color,
+                            const QString& id)
 {
   QString num = QString::number(level);
-  html += "<h" + num + (id.isEmpty() ? QString() : " id=\"" + id + "\"") + ">" +
-          asText(str, flags, color) + "</h" + num + ">";
+  htmlText += "<h" + num + (id.isEmpty() ? QString() : " id=\"" + id + "\"") + ">" +
+              asText(str, flags, color) + "</h" + num + ">";
   tableIndex = 0;
   numLines++;
   return *this;
@@ -255,48 +282,48 @@ HtmlBuilder& HtmlBuilder::big(const QString& str)
 
 HtmlBuilder& HtmlBuilder::br()
 {
-  html += "<br/>";
+  htmlText += "<br/>";
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::p()
 {
-  html += "<p>";
+  htmlText += "<p>";
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::pEnd()
 {
-  html += "</p>";
+  htmlText += "</p>";
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::brText(const QString& str)
 {
   br();
-  html += str;
+  htmlText += str;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::textBr(const QString& str)
 {
-  html += str;
+  htmlText += str;
   return br();
 }
 
 HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 {
-  html += "<hr size=\"" + QString::number(size) + "\" width=\"" + QString::number(widthPercent) + "%\"/>";
+  htmlText += "<hr size=\"" + QString::number(size) + "\" width=\"" + QString::number(widthPercent) + "%\"/>";
   numLines++;
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
 {
-  html += "<a" + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
-          asText(text, flags, color) + "</a>";
+  htmlText += "<a" + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
+              asText(text, flags, color) + "</a>";
   return *this;
 }
 
@@ -312,42 +339,42 @@ HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QStri
 
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  html += "<img src='" + src + "'" + (style.isEmpty() ? QString() : " style=\"" + style + "\"") +
-          (alt.isEmpty() ? QString() : " alt=\"" + alt + "\"") +
-          (size.isValid() ?
-           QString(" width=\"") + QString::number(size.width()) + "\"" +
-           " height=\"" + QString::number(size.height()) + "\"" : QString()) + "/>";
+  htmlText += "<img src='" + src + "'" + (style.isEmpty() ? QString() : " style=\"" + style + "\"") +
+              (alt.isEmpty() ? QString() : " alt=\"" + alt + "\"") +
+              (size.isValid() ?
+               QString(" width=\"") + QString::number(size.width()) + "\"" +
+               " height=\"" + QString::number(size.height()) + "\"" : QString()) + "/>";
 
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ol()
 {
-  html += "<ol>";
+  htmlText += "<ol>";
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::olEnd()
 {
-  html += "</ol>";
+  htmlText += "</ol>";
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ul()
 {
-  html += "<ul>";
+  htmlText += "<ul>";
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::ulEnd()
 {
-  html += "</ul>";
+  htmlText += "</ul>";
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color)
 {
-  html += "<li>" + asText(str, flags, color) + "</li>";
+  htmlText += "<li>" + asText(str, flags, color) + "</li>";
   numLines++;
   return *this;
 }
@@ -417,7 +444,7 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
   QString dotText(QString("<b>%1</b>").arg(msg));
   if(numLines > maxLines)
   {
-    if(!html.endsWith(dotText))
+    if(!htmlText.endsWith(dotText))
       hr().b(msg);
     return true;
   }
@@ -426,15 +453,15 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
 
 HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor color)
 {
-  html += asText(str, flags, color);
+  htmlText += asText(str, flags, color);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 {
-  html += "<p>";
+  htmlText += "<p>";
   text(str, flags, color);
-  html += "</p>";
+  htmlText += "</p>";
   tableIndex = 0;
   numLines++;
   return *this;
@@ -442,7 +469,7 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 
 HtmlBuilder& HtmlBuilder::doc()
 {
-  html +=
+  htmlText +=
     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
       "<html>"
         "<head>"
@@ -454,13 +481,13 @@ HtmlBuilder& HtmlBuilder::doc()
 
 HtmlBuilder& HtmlBuilder::docEnd()
 {
-  html += "</body></html>";
+  htmlText += "</body></html>";
   return *this;
 }
 
 void HtmlBuilder::clear()
 {
-  html.clear();
+  htmlText.clear();
   numLines = 0;
 }
 

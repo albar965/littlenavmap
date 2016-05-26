@@ -280,7 +280,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
       controller->fillRecord(row, rec);
 
       // All objects are fully populated
-      QString navType = rec.value("nav_type").toString();
+      QString navType = rec.valueStr("nav_type");
       maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navType);
 
       if(type == maptypes::WAYPOINT)

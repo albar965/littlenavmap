@@ -145,7 +145,7 @@ const QHash<QString, QString> parkingNameMap(
     {"GATE_Z", QObject::tr("Gate Z")}
   });
 
-const QHash<QString, QString> typeNames(
+const QHash<QString, QString> navTypeNames(
   {
     {"HIGH", "High"},
     {"LOW", "Low"},
@@ -160,13 +160,33 @@ const QHash<QString, QString> typeNames(
     {"NDB", "NDB"}
   });
 
-const QHash<QString, QString> navTypeNames(
+const QHash<QString, QString> navNames(
   {
     {"VORDME", "VORDME"},
     {"VOR", "VOR"},
     {"DME", "DME"},
     {"NDB", "NDB"},
     {"WAYPOINT", "Waypoint"}
+  });
+
+const QHash<QString, QString> comTypeNames(
+  {
+    {"NONE", "None"},
+    {"ATIS", "ATIS"},
+    {"MULTICOM", "Multicom"},
+    {"UNICOM", "Unicom"},
+    {"CTAF", "CTAF"},
+    {"GROUND", "Ground"},
+    {"TOWER", "Tower"},
+    {"CLEARANCE", "Clearance"},
+    {"APPROACH", "Approach"},
+    {"DEPARTURE", "Departure"},
+    {"CENTER", "Center"},
+    {"FSS", "FSS"},
+    {"AWOS", "AWOS"},
+    {"ASOS", "ASOS"},
+    {"CLEARANCE_PRE_TAXI", "Clearance pre Taxi"},
+    {"REMOTE_CLEARANCE_DELIVERY", "Remote Clearance Delivery"}
   });
 
 int qHash(const maptypes::MapObjectRef& type)
@@ -176,12 +196,12 @@ int qHash(const maptypes::MapObjectRef& type)
 
 QString navTypeName(const QString& type)
 {
-  return typeNames.value(type);
+  return navTypeNames.value(type);
 }
 
 QString navName(const QString& type)
 {
-  return navTypeNames.value(type);
+  return navNames.value(type);
 }
 
 QString surfaceName(const QString& surface)
@@ -451,6 +471,11 @@ QString userpointText(const MapUserpoint& userpoint)
 QString airportText(const MapAirport& airport)
 {
   return "Airport " + airport.name + " (" + airport.ident + ")";
+}
+
+QString comTypeName(const QString& type)
+{
+  return comTypeNames.value(type);
 }
 
 bool MapObjectRef::operator==(const MapObjectRef& other) const

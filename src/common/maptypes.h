@@ -463,6 +463,7 @@ QString parkingNameForFlightplan(const MapParking& parking);
 QString airwayTypeToShortString(maptypes::MapAirwayType type);
 QString airwayTypeToString(maptypes::MapAirwayType type);
 MapAirwayType  airwayTypeFromString(const QString& typeStr);
+QString comTypeName(const QString& type);
 
 QString airportText(const maptypes::MapAirport& airport);
 QString vorText(const maptypes::MapVor& vor);

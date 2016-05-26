@@ -67,7 +67,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   int y = option.rect.y() + symSize / 2 + 2;
 
   painter->setRenderHint(QPainter::Antialiasing);
-  QString navtype = sqlModel->getSqlRecord(idx.row()).value("nav_type").toString();
+  QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
 
   if(type == maptypes::WAYPOINT)

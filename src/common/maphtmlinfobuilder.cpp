@@ -35,6 +35,7 @@
 
 using namespace maptypes;
 using atools::sql::SqlRecord;
+using atools::sql::SqlRecordVector;
 
 const int SYMBOL_SIZE = 20;
 
@@ -49,14 +50,8 @@ MapHtmlInfoBuilder::~MapHtmlInfoBuilder()
   delete morse;
 }
 
-void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
-                                     const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
-                                     QColor background)
+void MapHtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background)
 {
-  const SqlRecord *rec = nullptr;
-  if(info && infoQuery != nullptr)
-    rec = infoQuery->getAirportInformation(airport.id);
-
   html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
@@ -71,6 +66,17 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     html.text(airport.name + " (" + airport.ident + ")", titleFlags | html::BIG);
   else
     html.text(airport.name + " (" + airport.ident + ")", titleFlags);
+}
+
+void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
+                                     const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
+                                     QColor background)
+{
+  const SqlRecord *rec = nullptr;
+  if(info && infoQuery != nullptr)
+    rec = infoQuery->getAirportInformation(airport.id);
+
+  airportTitle(airport, html, background);
 
   QString city, state, country;
   mapQuery->getAirportAdminById(airport.id, city, state, country);
@@ -84,7 +90,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   html.row("Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
   if(rec != nullptr)
   {
-    html.row("Rating (0-5):", rec->value("rating").toInt());
+    html.row("Rating (0-5):", rec->valueInt("rating"));
     addCoordinates(rec, html);
   }
   html.tableEnd();
@@ -127,9 +133,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
         html.row("Metar (NOAA):", noaaMetar);
       if(!vatsimMetar.isEmpty())
         html.row("Metar (Vatsim):", vatsimMetar);
-
       html.tableEnd();
-
     }
   }
 
@@ -141,15 +145,15 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     if(rec != nullptr)
     {
       html.row("Width:",
-               locale.toString(rec->value("longest_runway_width").toInt()) + " ft");
+               locale.toString(rec->valueInt("longest_runway_width")) + " ft");
 
-      float hdg = rec->value("longest_runway_heading").toFloat() + rec->value("mag_var").toFloat();
+      float hdg = rec->valueFloat("longest_runway_heading") + rec->valueFloat("mag_var");
       hdg = atools::geo::normalizeCourse(hdg);
       float otherHdg = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdg));
 
       html.row("Heading:", locale.toString(hdg, 'f', 0) + " ° / " + locale.toString(otherHdg, 'f', 0) + " °");
       html.row("Surface:",
-               maptypes::surfaceName(rec->value("longest_runway_surface").toString()));
+               maptypes::surfaceName(rec->valueStr("longest_runway_surface")));
     }
     html.tableEnd();
   }
@@ -175,7 +179,63 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   if(rec != nullptr)
   {
+    if(info)
+      head(html, "Parking");
+    html.table();
+
+    int num;
+    num = rec->valueInt("num_parking_gate");
+    if(num > 0)
+      html.row("Gates:", num);
+    num = rec->valueInt("num_jetway");
+    if(num > 0)
+      html.row("Jetways:", num);
+    num = rec->valueInt("num_parking_ga_ramp");
+    if(num > 0)
+      html.row("GA Ramp:", num);
+    num = rec->valueInt("num_parking_cargo");
+    if(num > 0)
+      html.row("Cargo:", num);
+    num = rec->valueInt("num_parking_mil_cargo");
+    if(num > 0)
+      html.row("Military Cargo:", num);
+    num = rec->valueInt("num_parking_mil_combat");
+    if(num > 0)
+      html.row("Military Combat:", num);
+    num = rec->valueInt("num_helipad");
+    if(num > 0)
+      html.row("Helipads:", num);
+
+    if(!rec->isNull("largest_parking_ramp"))
+      html.row("Largest Ramp:", maptypes::parkingRampName(rec->valueStr("largest_parking_ramp")));
+    if(!rec->isNull("largest_parking_gate"))
+      html.row("Largest Gate:", maptypes::parkingRampName(rec->valueStr("largest_parking_gate")));
+
+    html.tableEnd();
   }
+
+  if(info)
+    head(html, "Runways");
+  html.table();
+  QStringList runways;
+
+  if(airport.hard())
+    runways.append("Hard");
+  if(airport.soft())
+    runways.append("Soft");
+  if(airport.water())
+    runways.append("Water");
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_runway_end_closed") > 0)
+      runways.append("Closed");
+  }
+  if(airport.flags.testFlag(AP_LIGHT))
+    runways.append("Lighted");
+
+  html.row(info ? QString() : "Runways:", runways.join(", "));
+
+  html.tableEnd();
 
   if(info)
     head(html, "Facilities");
@@ -192,14 +252,14 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(airport.scenery())
     facilities.append("Scenery");
 
-  if(airport.hard())
-    facilities.append("Hard Runways");
-  if(airport.soft())
-    facilities.append("Soft Runways");
-  if(airport.water())
-    facilities.append("Water Runways");
-  if(airport.flags.testFlag(AP_LIGHT))
-    facilities.append("Lighted Runways");
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_apron") > 0)
+      facilities.append("Aprons");
+    if(rec->valueInt("num_taxi_path") > 0)
+      facilities.append("Taxiways");
+  }
+
   if(airport.helipad())
     facilities.append("Helipads");
   if(airport.flags.testFlag(AP_AVGAS))
@@ -212,12 +272,52 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(airport.flags.testFlag(AP_APPR))
     facilities.append("Approaches");
 
-  html.row(QString(), facilities.join(", "));
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_runway_end_vasi") > 0)
+      facilities.append("VASI");
+    if(rec->valueInt("num_runway_end_als") > 0)
+      facilities.append("ALS");
+    if(rec->valueInt("num_boundary_fence") > 0)
+      facilities.append("Boundary Fence");
+    if(rec->valueBool("has_tower_object"))
+      facilities.append("Tower Object");
+  }
+
+  html.row(info ? QString() : "Facilities:", facilities.join(", "));
 
   html.tableEnd();
 
   if(rec != nullptr)
     addScenery(rec, html);
+}
+
+void MapHtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background)
+{
+  if(info && infoQuery != nullptr)
+  {
+    airportTitle(airport, html, background);
+
+    const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
+    if(recVector != nullptr)
+    {
+      html.table();
+
+      html.tr();
+      html.td("Type", html::BOLD, QColor(Qt::gray)).td("Frequency MHz", html::BOLD).td("Name", html::BOLD);
+      html.trEnd();
+
+      for(const SqlRecord& rec : *recVector)
+      {
+        html.tr();
+        html.td(maptypes::comTypeName(rec.valueStr("type")));
+        html.td(locale.toString(rec.valueInt("frequency") / 1000., 'f', 2) + " MHz");
+        html.td(rec.valueStr("name"));
+        html.trEnd();
+      }
+      html.tableEnd();
+    }
+  }
 }
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
@@ -409,8 +509,8 @@ void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuild
 {
   head(html, "Scenery");
   html.table();
-  html.row("Title:", rec->value("title").toString());
-  html.row("BGL Filepath:", rec->value("filepath").toString());
+  html.row("Title:", rec->valueStr("title"));
+  html.row("BGL Filepath:", rec->valueStr("filepath"));
   html.tableEnd();
 }
 
@@ -418,9 +518,7 @@ void MapHtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlB
 {
   if(rec != nullptr)
   {
-    atools::geo::Pos pos(rec->value("lonx").toFloat(), rec->value("laty").toFloat(),
-                         rec->value("altitude").toFloat());
-
+    atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude"));
     html.row("Coordinates:", pos.toHumanReadableString());
   }
 }

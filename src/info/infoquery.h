@@ -26,6 +26,7 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
+class SqlRecordVector;
 }
 }
 
@@ -39,6 +40,8 @@ public:
   virtual ~InfoQuery();
 
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
+
+  const atools::sql::SqlRecordVector *getComInformation(int airportId);
   const atools::sql::SqlRecord *getVorInformation(int vorId);
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
@@ -47,15 +50,24 @@ public:
   void initQueries();
   void deInitQueries();
 
+  const atools::sql::SqlRecordVector *getRunwayInformation(int airportId);
+  const atools::sql::SqlRecord *getRunwayEndInformation(int runwayEndId);
+
 private:
-  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache;
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache,
+                                      runwayEndCache;
+  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache;
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
-  *waypointQuery = nullptr, *airwayQuery = nullptr;
+  *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
+  *runwayQuery = nullptr, *runwayEndQuery = nullptr;
 
   const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
                                              atools::sql::SqlQuery *query, int id);
+
+  const atools::sql::SqlRecordVector *cachedRecordVector(QCache<int, atools::sql::SqlRecordVector>& cache,
+                                                         atools::sql::SqlQuery *query, int id);
 
 };
 

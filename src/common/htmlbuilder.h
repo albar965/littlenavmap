@@ -111,6 +111,10 @@ public:
   HtmlBuilder& rowVar(const QString& name, const QVariant& value,
                       html::Flags flags = html::BOLD, QColor color = QColor());
 
+  HtmlBuilder& tr();
+  HtmlBuilder& trEnd();
+  HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+
   HtmlBuilder& doc();
   HtmlBuilder& docEnd();
 
@@ -118,14 +122,14 @@ public:
 
   bool isEmpty() const
   {
-    return html.isEmpty();
+    return htmlText.isEmpty();
   }
 
   void clear();
 
   const QString& getHtml() const
   {
-    return html;
+    return htmlText;
   }
 
   QLocale::FormatType getDateFormat() const
@@ -169,10 +173,10 @@ private:
   QString asText(const QString& str, html::Flags flags, QColor color);
 
   QString rowBackColor, rowBackColorAlt, tableRowHeader;
-  QStringList tableRow, tableRowAlignRight;
+  QStringList tableRow, tableRowAlignRight, tableRowBegin;
 
   int tableIndex = 0, defaultPrecision = 0, numLines = 0;
-  QString html;
+  QString htmlText;
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;

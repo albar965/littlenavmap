@@ -70,6 +70,7 @@ public:
   void airportText(const maptypes::MapAirport& airport, HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
                    WeatherReporter *weather, QColor background);
+  void comText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
 
   void vorText(const maptypes::MapVor& vor, HtmlBuilder& html, QColor background);
   void ndbText(const maptypes::MapNdb& ndb, HtmlBuilder& html, QColor background);
@@ -93,6 +94,8 @@ private:
   void head(HtmlBuilder& html, const QString& text);
 
   void title(HtmlBuilder& html, const QString& text);
+
+  void airportTitle(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
 
 };
 

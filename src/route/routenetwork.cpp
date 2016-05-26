@@ -404,11 +404,11 @@ nw::Node RouteNetwork::createNode(const SqlRecord& rec)
 {
   updateNodeIndexes(rec);
   Node node;
-  node.type = static_cast<nw::Type>(rec.value(nodeTypeIndex).toInt());
+  node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex));
   if(nodeRangeIndex != -1)
-    node.range = rec.value(nodeRangeIndex).toInt();
-  node.pos.setLonX(rec.value(nodeLonXIndex).toFloat());
-  node.pos.setLatY(rec.value(nodeLatYIndex).toFloat());
+    node.range = rec.valueInt(nodeRangeIndex);
+  node.pos.setLonX(rec.valueFloat(nodeLonXIndex));
+  node.pos.setLatY(rec.valueFloat(nodeLatYIndex));
   return node;
 }
 
@@ -433,13 +433,13 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
   Edge edge;
   edge.toNodeId = toNodeId;
   if(edgeTypeIndex != -1)
-    edge.type = static_cast<nw::Type>(rec.value(edgeTypeIndex).toInt());
+    edge.type = static_cast<nw::Type>(rec.valueInt(edgeTypeIndex));
   if(edgeMinAltIndex != -1)
-    edge.minAltFt = rec.value(edgeMinAltIndex).toInt();
+    edge.minAltFt = rec.valueInt(edgeMinAltIndex);
   if(edgeAirwayIdIndex != -1)
-    edge.airwayId = rec.value(edgeAirwayIdIndex).toInt();
+    edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
   if(edgeDistanceIndex != -1)
-    edge.distanceMeter = rec.value(edgeDistanceIndex).toInt();
+    edge.distanceMeter = rec.valueInt(edgeDistanceIndex);
   return edge;
 }
 

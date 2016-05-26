@@ -117,38 +117,26 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
     curAirportId = result.airports.first().id;
     updateAirport();
+
+    html.clear();
+    info->comText(result.airports.first(), html, iconBackColor);
+    ui->textEditComInfo->setText(html.getHtml());
   }
   else if(!result.vors.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-
-    QIcon icon = SymbolPainter().createVorIcon(result.vors.first(), SYMBOL_SIZE);
-    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
-      QTextDocument::ImageResource, QUrl("data://symbol"),
-      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
-
     info->vorText(result.vors.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.ndbs.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-
-    QIcon icon = SymbolPainter().createNdbIcon(result.ndbs.first(), SYMBOL_SIZE);
-    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
-      QTextDocument::ImageResource, QUrl("data://symbol"),
-      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info->ndbText(result.ndbs.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
   else if(!result.waypoints.isEmpty())
   {
     ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-
-    QIcon icon = SymbolPainter().createWaypointIcon(result.waypoints.first(), SYMBOL_SIZE);
-    mainWindow->getUi()->textEditNavaidInfo->document()->addResource(
-      QTextDocument::ImageResource, QUrl("data://symbol"),
-      QVariant(icon.pixmap(QSize(SYMBOL_SIZE, SYMBOL_SIZE))));
     info->waypointText(result.waypoints.first(), html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
