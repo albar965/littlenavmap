@@ -97,6 +97,8 @@ public:
                   QColor color = QColor(), const QString& id = QString());
   HtmlBuilder& h4(const QString& str, html::Flags flags = html::NONE,
                   QColor color = QColor(), const QString& id = QString());
+  HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE,
+                  QColor color = QColor(), const QString& id = QString());
 
   HtmlBuilder& table();
   HtmlBuilder& tableEnd();
@@ -111,7 +113,7 @@ public:
   HtmlBuilder& rowVar(const QString& name, const QVariant& value,
                       html::Flags flags = html::BOLD, QColor color = QColor());
 
-  HtmlBuilder& tr();
+  HtmlBuilder& tr(QColor backgroundColor = QColor());
   HtmlBuilder& trEnd();
   HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 

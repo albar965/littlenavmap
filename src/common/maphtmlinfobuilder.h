@@ -70,6 +70,7 @@ public:
   void airportText(const maptypes::MapAirport& airport, HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
                    WeatherReporter *weather, QColor background);
+  void runwayText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
   void comText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
 
   void vorText(const maptypes::MapVor& vor, HtmlBuilder& html, QColor background);
@@ -96,6 +97,20 @@ private:
   void title(HtmlBuilder& html, const QString& text);
 
   void airportTitle(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
+
+  void rowForInt(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
+                 const QString& msg, const QString& val);
+
+  void rowForBool(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
+                  const QString& msg, bool expected = false);
+
+  void runwayEndText(HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim);
+
+  void rowForStr(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
+                 const QString& msg, const QString& val);
+
+  void rowForFloat(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
+                   const QString& msg, const QString& val, int precision = 0);
 
 };
 

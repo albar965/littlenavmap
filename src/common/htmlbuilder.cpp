@@ -175,9 +175,12 @@ HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::tr()
+HtmlBuilder& HtmlBuilder::tr(QColor backgroundColor)
 {
-  htmlText += alt(tableRowBegin);
+  if(backgroundColor.isValid())
+    htmlText += "<tr bgcolor=\"" + backgroundColor.name(QColor::HexRgb) + "\">";
+  else
+    htmlText += alt(tableRowBegin);
   tableIndex++;
   numLines++;
   return *this;
@@ -233,6 +236,12 @@ HtmlBuilder& HtmlBuilder::h3(const QString& str, html::Flags flags, QColor color
 }
 
 HtmlBuilder& HtmlBuilder::h4(const QString& str, html::Flags flags, QColor color, const QString& id)
+{
+  h(4, str, flags, color, id);
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::h5(const QString& str, html::Flags flags, QColor color, const QString& id)
 {
   h(4, str, flags, color, id);
   return *this;

@@ -22,7 +22,7 @@
 #include "common/formatter.h"
 #include "route/routemapobjectlist.h"
 #include "geo/calculations.h"
-
+#include "fs/bgl/ap/rw/runway.h"
 #include <common/htmlbuilder.h>
 #include <common/morsecode.h>
 #include <common/weatherreporter.h>
@@ -95,6 +95,60 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   }
   html.tableEnd();
 
+  if(info)
+    head(html, "Facilities");
+  html.table();
+  QStringList facilities;
+
+  if(airport.closed())
+    facilities.append("Closed");
+
+  if(airport.addon())
+    facilities.append("Add-on");
+  if(airport.flags.testFlag(AP_MIL))
+    facilities.append("Military");
+  if(airport.scenery())
+    facilities.append("Scenery");
+
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_apron") > 0)
+      facilities.append("Aprons");
+    if(rec->valueInt("num_taxi_path") > 0)
+      facilities.append("Taxiways");
+  }
+
+  if(airport.helipad())
+    facilities.append("Helipads");
+  if(airport.flags.testFlag(AP_AVGAS))
+    facilities.append("Avgas");
+  if(airport.flags.testFlag(AP_JETFUEL))
+    facilities.append("Jetfuel");
+
+  if(airport.flags.testFlag(AP_APPR))
+    facilities.append("Approaches");
+
+  if(airport.flags.testFlag(AP_ILS))
+    facilities.append("ILS");
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_runway_end_vasi") > 0)
+      facilities.append("VASI");
+    if(rec->valueInt("num_runway_end_als") > 0)
+      facilities.append("ALS");
+    if(rec->valueInt("num_boundary_fence") > 0)
+      facilities.append("Boundary Fence");
+    if(rec->valueBool("has_tower_object"))
+      facilities.append("Tower Object");
+  }
+
+  if(facilities.isEmpty())
+    facilities.append("None");
+
+  html.row(info ? QString() : "Facilities:", facilities.join(", "));
+
+  html.tableEnd();
+
   if(!info)
   {
     html.table();
@@ -147,11 +201,12 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
       html.row("Width:",
                locale.toString(rec->valueInt("longest_runway_width")) + " ft");
 
-      float hdg = rec->valueFloat("longest_runway_heading") + rec->valueFloat("mag_var");
+      float hdg = rec->valueFloat("longest_runway_heading") + airport.magvar;
       hdg = atools::geo::normalizeCourse(hdg);
       float otherHdg = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdg));
 
-      html.row("Heading:", locale.toString(hdg, 'f', 0) + " ° / " + locale.toString(otherHdg, 'f', 0) + " °");
+      html.row("Heading:", locale.toString(hdg, 'f', 0) + " °M / " +
+               locale.toString(otherHdg, 'f', 0) + " °M");
       html.row("Surface:",
                maptypes::surfaceName(rec->valueStr("longest_runway_surface")));
     }
@@ -179,38 +234,45 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   if(rec != nullptr)
   {
+    int numParkingGate = rec->valueInt("num_parking_gate");
+    int numJetway = rec->valueInt("num_jetway");
+    int numParkingGaRamp = rec->valueInt("num_parking_ga_ramp");
+    int numParkingCargo = rec->valueInt("num_parking_cargo");
+    int numParkingMilCargo = rec->valueInt("num_parking_mil_cargo");
+    int numParkingMilCombat = rec->valueInt("num_parking_mil_combat");
+    int numHelipad = rec->valueInt("num_helipad");
+
     if(info)
       head(html, "Parking");
     html.table();
+    if(numParkingGate > 0 || numJetway > 0 || numParkingGaRamp > 0 || numParkingCargo > 0 ||
+       numParkingMilCargo > 0 || numParkingMilCombat > 0 ||
+       !rec->isNull("largest_parking_ramp") || !rec->isNull("largest_parking_gate"))
+    {
 
-    int num;
-    num = rec->valueInt("num_parking_gate");
-    if(num > 0)
-      html.row("Gates:", num);
-    num = rec->valueInt("num_jetway");
-    if(num > 0)
-      html.row("Jetways:", num);
-    num = rec->valueInt("num_parking_ga_ramp");
-    if(num > 0)
-      html.row("GA Ramp:", num);
-    num = rec->valueInt("num_parking_cargo");
-    if(num > 0)
-      html.row("Cargo:", num);
-    num = rec->valueInt("num_parking_mil_cargo");
-    if(num > 0)
-      html.row("Military Cargo:", num);
-    num = rec->valueInt("num_parking_mil_combat");
-    if(num > 0)
-      html.row("Military Combat:", num);
-    num = rec->valueInt("num_helipad");
-    if(num > 0)
-      html.row("Helipads:", num);
+      if(numParkingGate > 0)
+        html.row("Gates:", numParkingGate);
+      if(numJetway > 0)
+        html.row("Jetways:", numJetway);
+      if(numParkingGaRamp > 0)
+        html.row("GA Ramp:", numParkingGaRamp);
+      if(numParkingCargo > 0)
+        html.row("Cargo:", numParkingCargo);
+      if(numParkingMilCargo > 0)
+        html.row("Military Cargo:", numParkingMilCargo);
+      if(numParkingMilCombat > 0)
+        html.row("Military Combat:", numParkingMilCombat);
 
-    if(!rec->isNull("largest_parking_ramp"))
-      html.row("Largest Ramp:", maptypes::parkingRampName(rec->valueStr("largest_parking_ramp")));
-    if(!rec->isNull("largest_parking_gate"))
-      html.row("Largest Gate:", maptypes::parkingRampName(rec->valueStr("largest_parking_gate")));
+      if(!rec->isNull("largest_parking_ramp"))
+        html.row("Largest Ramp:", maptypes::parkingRampName(rec->valueStr("largest_parking_ramp")));
+      if(!rec->isNull("largest_parking_gate"))
+        html.row("Largest Gate:", maptypes::parkingRampName(rec->valueStr("largest_parking_gate")));
 
+      if(numHelipad > 0)
+        html.row("Helipads:", numHelipad);
+    }
+    else
+      html.row(QString(), "None");
     html.tableEnd();
   }
 
@@ -234,58 +296,6 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     runways.append("Lighted");
 
   html.row(info ? QString() : "Runways:", runways.join(", "));
-
-  html.tableEnd();
-
-  if(info)
-    head(html, "Facilities");
-  html.table();
-  QStringList facilities;
-
-  if(airport.closed())
-    facilities.append("Closed");
-
-  if(airport.addon())
-    facilities.append("Add-on");
-  if(airport.flags.testFlag(AP_MIL))
-    facilities.append("Military");
-  if(airport.scenery())
-    facilities.append("Scenery");
-
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_apron") > 0)
-      facilities.append("Aprons");
-    if(rec->valueInt("num_taxi_path") > 0)
-      facilities.append("Taxiways");
-  }
-
-  if(airport.helipad())
-    facilities.append("Helipads");
-  if(airport.flags.testFlag(AP_AVGAS))
-    facilities.append("Avgas");
-  if(airport.flags.testFlag(AP_JETFUEL))
-    facilities.append("Jetfuel");
-
-  if(airport.flags.testFlag(AP_ILS))
-    facilities.append("ILS");
-  if(airport.flags.testFlag(AP_APPR))
-    facilities.append("Approaches");
-
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_runway_end_vasi") > 0)
-      facilities.append("VASI");
-    if(rec->valueInt("num_runway_end_als") > 0)
-      facilities.append("ALS");
-    if(rec->valueInt("num_boundary_fence") > 0)
-      facilities.append("Boundary Fence");
-    if(rec->valueBool("has_tower_object"))
-      facilities.append("Tower Object");
-  }
-
-  html.row(info ? QString() : "Facilities:", facilities.join(", "));
-
   html.tableEnd();
 
   if(rec != nullptr)
@@ -297,14 +307,15 @@ void MapHtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, Q
   if(info && infoQuery != nullptr)
   {
     airportTitle(airport, html, background);
+    html.h3("COM Frequencies");
 
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
     {
-      html.table();
 
-      html.tr();
-      html.td("Type", html::BOLD, QColor(Qt::gray)).td("Frequency MHz", html::BOLD).td("Name", html::BOLD);
+      html.table();
+      html.tr(QColor(Qt::lightGray));
+      html.td("Type", html::BOLD).td("Frequency", html::BOLD).td("Name", html::BOLD);
       html.trEnd();
 
       for(const SqlRecord& rec : *recVector)
@@ -317,7 +328,127 @@ void MapHtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, Q
       }
       html.tableEnd();
     }
+    else
+      html.text("None");
   }
+}
+
+Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
+Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
+
+void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background)
+{
+  if(info && infoQuery != nullptr)
+  {
+    airportTitle(airport, html, background);
+
+    const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
+    if(recVector != nullptr)
+    {
+      for(const SqlRecord& rec : *recVector)
+      {
+        const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
+        const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
+        float hdgPrim = atools::geo::normalizeCourse(rec.valueFloat("heading") + airport.magvar);
+        float hdgSec = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdgPrim));
+        bool closedPrim = recPrim->valueBool("has_closed_markings");
+        bool closedSec = recSec->valueBool("has_closed_markings");
+
+        html.h3("Runway " + recPrim->valueStr("name") + " / " + recSec->valueStr("name"),
+                (closedPrim & closedSec ? html::STRIKEOUT : html::NONE));
+        html.table();
+
+        html.row("Size:", locale.toString(rec.valueInt("length")) + " x " + locale
+                 .toString(rec.valueInt("width")) + " ft");
+        html.row("Surface:", maptypes::surfaceName(rec.valueStr("surface")));
+        html.row("Pattern Altitude:", locale.toString(rec.valueInt("pattern_altitude")) + " ft");
+
+        rowForStr(html, &rec, "edge_light", "Edge Lights:", "%1");
+        rowForStr(html, &rec, "center_light", "Center Lights:", "%1");
+        rowForBool(html, &rec, "has_center_red", "Center red Lights", false);
+
+        {
+          RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
+          QStringList markings;
+          if(flags & atools::fs::bgl::rw::EDGES)
+            markings.append("Edges");
+          if(flags & atools::fs::bgl::rw::THRESHOLD)
+            markings.append("Threshold");
+          if(flags & atools::fs::bgl::rw::FIXED_DISTANCE)
+            markings.append("Fixed Distance");
+          if(flags & atools::fs::bgl::rw::TOUCHDOWN)
+            markings.append("Touchdown");
+          if(flags & atools::fs::bgl::rw::DASHES)
+            markings.append("Dashes");
+          if(flags & atools::fs::bgl::rw::IDENT)
+            markings.append("Ident");
+          if(flags & atools::fs::bgl::rw::PRECISION)
+            markings.append("Precision");
+          if(flags & atools::fs::bgl::rw::EDGE_PAVEMENT)
+            markings.append("Edge Pavement");
+          if(flags & atools::fs::bgl::rw::SINGLE_END)
+            markings.append("Single End");
+
+          if(flags & atools::fs::bgl::rw::ALTERNATE_THRESHOLD)
+            markings.append("Alternate Threshold");
+          if(flags & atools::fs::bgl::rw::ALTERNATE_FIXEDDISTANCE)
+            markings.append("Alternate Fixed Distance");
+          if(flags & atools::fs::bgl::rw::ALTERNATE_TOUCHDOWN)
+            markings.append("Alternate Touchdown");
+          if(flags & atools::fs::bgl::rw::ALTERNATE_PRECISION)
+            markings.append("Alternate Precision");
+
+          if(flags & atools::fs::bgl::rw::LEADING_ZERO_IDENT)
+            markings.append("Leading Zero Ident");
+
+          if(flags & atools::fs::bgl::rw::NO_THRESHOLD_END_ARROWS)
+            markings.append("No Threshold End Arrows");
+
+          if(markings.isEmpty())
+            markings.append("None");
+
+          html.row("Runway Markings:", markings.join(", "));
+        }
+
+        html.tableEnd();
+
+        runwayEndText(html, recPrim, hdgPrim);
+        runwayEndText(html, recSec, hdgSec);
+      }
+    }
+  }
+}
+
+void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim)
+{
+  bool closed = rec->valueBool("has_closed_markings");
+
+  html.text(rec->valueStr("name"), closed ? (html::STRIKEOUT | html::BOLD) : html::BOLD);
+  html.table();
+  if(closed)
+    html.row("Closed", QString());
+  html.row("Heading:", locale.toString(hdgPrim, 'f', 0) + " °M");
+  rowForInt(html, rec, "offset_threshold", "Offset Threshold:", "%1 ft");
+  rowForInt(html, rec, "blast_pad", "Blast Pad:", "%1 ft");
+  rowForInt(html, rec, "overrun", "Overrun:", "%1 ft");
+
+  rowForBool(html, rec, "has_stol_markings", "STOL Markings", false);
+  // rowForBool(html, recPrim, "is_takeoff", "Closed for Takeoff", true);
+  // rowForBool(html, recPrim, "is_landing", "Closed for Landing", true);
+  rowForStr(html, rec, "is_pattern", "Pattern:", "%1");
+
+  rowForStr(html, rec, "left_vasi_type", "Left VASI Type:", "%1");
+  rowForFloat(html, rec, "left_vasi_pitch", "Left VASI Pitch:", "%1 °", 1);
+  rowForStr(html, rec, "right_vasi_type", "Right VASI Type:", "%1");
+  rowForFloat(html, rec, "right_vasi_pitch", "Right VASI Pitch:", "%1 °", 1);
+
+  rowForStr(html, rec, "app_light_system_type", "ALS Type:", "%1");
+  rowForBool(html, rec, "has_end_lights", "Runway End Lights", false);
+  rowForBool(html, rec, "has_reils", "Runway End Strobes", false);
+  rowForBool(html, rec, "has_touchdown_lights", "Touchdown lights", false);
+
+  // num_strobes integer not null
+  html.tableEnd();
 }
 
 void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
@@ -339,7 +470,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor ba
 
   html.row("Type:", maptypes::navTypeName(vor.type));
   html.row("Region:", vor.region);
-  html.row("Freq:", locale.toString(vor.frequency / 1000., 'f', 2) + " MHz");
+  html.row("Frequency:", locale.toString(vor.frequency / 1000., 'f', 2) + " MHz");
   if(!vor.dmeOnly)
     html.row("Magvar:", locale.toString(vor.magvar, 'f', 1) + " °");
   html.row("Altitude:", locale.toString(vor.getPosition().getAltitude(), 'f', 0) + " ft");
@@ -368,7 +499,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor ba
     html.row("Route position ", QString::number(ndb.routeIndex + 1));
   html.row("Type:", maptypes::navTypeName(ndb.type));
   html.row("Region:", ndb.region);
-  html.row("Freq:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
+  html.row("Frequency:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
   html.row("Magvar:", locale.toString(ndb.magvar, 'f', 1) + " °");
   html.row("Altitude:", locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + " ft");
   html.row("Range:", QString::number(ndb.range) + " nm");
@@ -537,4 +668,48 @@ void MapHtmlInfoBuilder::title(HtmlBuilder& html, const QString& text)
     html.text(text, html::BOLD | html::BIG);
   else
     html.b(text);
+}
+
+void MapHtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
+                                     const QString& msg, const QString& val, int precision)
+{
+  if(!rec->isNull(colName))
+  {
+    float i = rec->valueFloat(colName);
+    if(i > 0)
+      html.row(msg, val.arg(locale.toString(i, 'f', precision)));
+  }
+}
+
+void MapHtmlInfoBuilder::rowForInt(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
+                                   const QString& msg, const QString& val)
+{
+  if(!rec->isNull(colName))
+  {
+    int i = rec->valueInt(colName);
+    if(i > 0)
+      html.row(msg, val.arg(locale.toString(i)));
+  }
+}
+
+void MapHtmlInfoBuilder::rowForBool(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
+                                    const QString& msg, bool expected)
+{
+  if(!rec->isNull(colName))
+  {
+    bool i = rec->valueBool(colName);
+    if(i != expected)
+      html.row(msg, QString());
+  }
+}
+
+void MapHtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
+                                   const QString& msg, const QString& val)
+{
+  if(!rec->isNull(colName))
+  {
+    QString i = rec->valueStr(colName);
+    if(!i.isEmpty())
+      html.row(msg, val.arg(i));
+  }
 }

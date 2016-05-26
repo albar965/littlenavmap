@@ -119,6 +119,10 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     updateAirport();
 
     html.clear();
+    info->runwayText(result.airports.first(), html, iconBackColor);
+    ui->textEditRunwayInfo->setText(html.getHtml());
+
+    html.clear();
     info->comText(result.airports.first(), html, iconBackColor);
     ui->textEditComInfo->setText(html.getHtml());
   }
