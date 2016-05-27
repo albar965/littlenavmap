@@ -246,10 +246,21 @@ void MainWindow::setupUi()
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
+  ui->menuView->addAction(ui->mapToolBar->toggleViewAction());
+  ui->menuView->addAction(ui->routeToolBar->toggleViewAction());
+  ui->menuView->addAction(ui->viewToolBar->toggleViewAction());
+  ui->menuView->addSeparator();
   ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->menuView->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->menuView->addAction(ui->dockWidgetAircraft->toggleViewAction());
+
+  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
 
   // Create labels for the statusbar
   messageLabel = new QLabel();

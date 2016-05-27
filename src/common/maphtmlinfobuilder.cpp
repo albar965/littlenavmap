@@ -605,10 +605,6 @@ void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& 
 
 void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
 {
-  const SqlRecord *rec = nullptr;
-  if(info && infoQuery != nullptr)
-    rec = infoQuery->getAirwayInformation(airway.id);
-
   title(html, "Airway: " + airway.name);
   html.table();
   html.row("Type:", maptypes::airwayTypeToString(airway.type));
@@ -616,7 +612,7 @@ void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   if(airway.minalt > 0)
     html.row("Min altitude:", QString::number(airway.minalt) + " ft");
 
-  if(infoQuery != nullptr)
+  if(infoQuery != nullptr && info)
   {
     atools::sql::SqlRecordVector waypoints =
       infoQuery->getAirwayWaypointInformation(airway.name, airway.fragment);
@@ -624,8 +620,8 @@ void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
     if(!waypoints.isEmpty())
     {
       QStringList waypointTexts;
-      for(const SqlRecord& rec : waypoints)
-        waypointTexts.append(rec.valueStr("from_ident") + "/" + rec.valueStr("from_region"));
+      for(const SqlRecord& wprec : waypoints)
+        waypointTexts.append(wprec.valueStr("from_ident") + "/" + wprec.valueStr("from_region"));
       waypointTexts.append(waypoints.last().valueStr("to_ident") + "/" +
                            waypoints.last().valueStr("to_region"));
 
