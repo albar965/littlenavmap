@@ -461,8 +461,8 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     bool gs = !ilsRec->isNull("gs_altitude");
 
     html.br().h4(ilsRec->valueStr("name") + " (" +
-            ilsRec->valueStr("ident") + ") - " +
-            QString("ILS") + (gs ? " / GS" : "") + (dme ? " / DME" : ""));
+                 ilsRec->valueStr("ident") + ") - " +
+                 QString("ILS") + (gs ? " / GS" : "") + (dme ? " / DME" : ""));
 
     html.table();
     html.row("Frequency:", locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + " MHz");
@@ -615,12 +615,25 @@ void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
 
   if(airway.minalt > 0)
     html.row("Min altitude:", QString::number(airway.minalt) + " ft");
+
+  if(infoQuery != nullptr)
+  {
+    atools::sql::SqlRecordVector waypoints =
+      infoQuery->getAirwayWaypointInformation(airway.name, airway.fragment);
+
+    if(!waypoints.isEmpty())
+    {
+      QStringList waypointTexts;
+      for(const SqlRecord& rec : waypoints)
+        waypointTexts.append(rec.valueStr("from_ident") + "/" + rec.valueStr("from_region"));
+      waypointTexts.append(waypoints.last().valueStr("to_ident") + "/" +
+                           waypoints.last().valueStr("to_region"));
+
+      html.row("Waypoints (Ident/Region):", waypointTexts.join(", "));
+    }
+  }
   html.tableEnd();
 
-  // TODO add all waypoints
-
-  // if(rec != nullptr)
-  // addScenery(rec, html);
 }
 
 void MapHtmlInfoBuilder::markerText(const MapMarker& m, HtmlBuilder& html)

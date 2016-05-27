@@ -80,6 +80,18 @@ const SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
   return cachedRecord(airwayCache, airwayQuery, airwayId);
 }
 
+atools::sql::SqlRecordVector InfoQuery::getAirwayWaypointInformation(const QString& name, int fragment)
+{
+  airwayWaypointQuery->bindValue(":name", name);
+  airwayWaypointQuery->bindValue(":fragment", fragment);
+  airwayWaypointQuery->exec();
+
+  SqlRecordVector rec;
+  while(airwayWaypointQuery->next())
+    rec.append(airwayWaypointQuery->record());
+  return rec;
+}
+
 const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery *query, int id)
 {
   SqlRecord *rec = cache.object(id);
@@ -181,6 +193,16 @@ void InfoQuery::initQueries()
 
   ilsQuery = new SqlQuery(db);
   ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
+
+  airwayWaypointQuery = new SqlQuery(db);
+  airwayWaypointQuery->prepare("select w1.ident as from_ident, w1.region as from_region, "
+                               "w2.ident as to_ident, w2.region as to_region "
+                               "from airway a "
+                               "join waypoint w1 on w1.waypoint_id = a.from_waypoint_id "
+                               "join waypoint w2 on w2.waypoint_id = a.to_waypoint_id "
+                               "where airway_name = :name and airway_fragment_no = :fragment "
+                               "order by a.sequence_no");
+
 }
 
 void InfoQuery::deInitQueries()
@@ -211,4 +233,7 @@ void InfoQuery::deInitQueries()
 
   delete ilsQuery;
   ilsQuery = nullptr;
+
+  delete airwayWaypointQuery;
+  airwayWaypointQuery = nullptr;
 }

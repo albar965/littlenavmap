@@ -112,43 +112,53 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
   if(!result.airports.isEmpty())
   {
+    const maptypes::MapAirport& airport = result.airports.first();
+
     if(idx != AIRPORT && idx != RUNWAYS && idx != COM && idx != APPROACHES)
       ui->tabWidgetInformation->setCurrentIndex(AIRPORT);
 
-    curAirportId = result.airports.first().id;
+    curAirportId = airport.id;
     updateAirport();
 
     html.clear();
-    info->runwayText(result.airports.first(), html, iconBackColor);
+    info->runwayText(airport, html, iconBackColor);
     ui->textEditRunwayInfo->setText(html.getHtml());
 
     html.clear();
-    info->comText(result.airports.first(), html, iconBackColor);
+    info->comText(airport, html, iconBackColor);
     ui->textEditComInfo->setText(html.getHtml());
   }
-  else if(!result.vors.isEmpty())
-  {
-    ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    info->vorText(result.vors.first(), html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
-  }
-  else if(!result.ndbs.isEmpty())
-  {
-    ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    info->ndbText(result.ndbs.first(), html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
-  }
-  else if(!result.waypoints.isEmpty())
-  {
-    ui->tabWidgetInformation->setCurrentIndex(NAVAID);
-    info->waypointText(result.waypoints.first(), html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
-  }
-  else if(!result.airways.isEmpty())
-  {
-    ui->tabWidgetInformation->setCurrentIndex(NAVAID);
 
-    info->airwayText(result.airways.first(), html);
+  html.clear();
+  for(const maptypes::MapVor& vor : result.vors)
+  {
+    if(result.airports.isEmpty())
+      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+    info->vorText(vor, html, iconBackColor);
+    ui->textEditNavaidInfo->setText(html.getHtml());
+  }
+
+  for(const maptypes::MapNdb& ndb : result.ndbs)
+  {
+    if(result.airports.isEmpty())
+      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+    info->ndbText(ndb, html, iconBackColor);
+    ui->textEditNavaidInfo->setText(html.getHtml());
+  }
+
+  for(const maptypes::MapWaypoint& waypoint : result.waypoints)
+  {
+    if(result.airports.isEmpty())
+      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+    info->waypointText(waypoint, html, iconBackColor);
+    ui->textEditNavaidInfo->setText(html.getHtml());
+  }
+
+  for(const maptypes::MapAirway& airway : result.airways)
+  {
+    if(result.airports.isEmpty())
+      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+    info->airwayText(airway, html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
 }

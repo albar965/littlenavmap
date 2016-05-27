@@ -46,6 +46,7 @@ public:
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
   const atools::sql::SqlRecord *getAirwayInformation(int airwayId);
+  atools::sql::SqlRecordVector getAirwayWaypointInformation(const QString& name, int fragment);
 
   void initQueries();
   void deInitQueries();
@@ -62,7 +63,8 @@ private:
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
   *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
-  *runwayQuery = nullptr, *runwayEndQuery = nullptr, *ilsQuery = nullptr;
+  *runwayQuery = nullptr, *runwayEndQuery = nullptr, *ilsQuery = nullptr,
+  *airwayWaypointQuery = nullptr;
 
   const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
                                              atools::sql::SqlQuery *query, int id);
