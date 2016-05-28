@@ -27,7 +27,7 @@
 #include <common/morsecode.h>
 #include <common/weatherreporter.h>
 #include "atools.h"
-
+#include "common/formatter.h"
 #include <QSize>
 
 #include <sql/sqlrecord.h>
@@ -37,6 +37,7 @@
 using namespace maptypes;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
+using formatter::capString;
 
 const int SYMBOL_SIZE = 20;
 
@@ -331,7 +332,11 @@ void MapHtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, Q
         html.tr();
         html.td(maptypes::comTypeName(rec.valueStr("type")));
         html.td(locale.toString(rec.valueInt("frequency") / 1000., 'f', 2) + " MHz");
-        html.td(rec.valueStr("name"));
+        if(rec.valueStr("type") != "ATIS")
+          html.td(capString(rec.valueStr("name")));
+        else
+          // ATIS contains the airport code - do not capitalize
+          html.td(rec.valueStr("name"));
         html.trEnd();
       }
       html.tableEnd();
@@ -503,7 +508,7 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
         html.table();
         rowForBool(html, &recApp, "has_gps_overlay", "Has GPS Overlay", false);
         html.row2("Fix Ident and Region:", recApp.valueStr("fix_ident") + ", " + recApp.valueStr("fix_region"));
-        html.row2("Fix Type:", recApp.valueStr("fix_type"));
+        html.row2("Fix Type:", capString(recApp.valueStr("fix_type")));
 
         float hdg = recApp.valueFloat("heading") + airport.magvar;
         hdg = atools::geo::normalizeCourse(hdg);
@@ -522,10 +527,10 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
           {
             html.h4("Transition " + recTrans.valueStr("fix_ident") + runway);
             html.table();
-            html.row2("Type:", recTrans.valueStr("type"));
+            html.row2("Type:", capString(recTrans.valueStr("type")));
             html.row2("Fix Ident and Region:", recTrans.valueStr("fix_ident") + ", " +
                       recTrans.valueStr("fix_region"));
-            html.row2("Fix Type:", recTrans.valueStr("fix_type"));
+            html.row2("Fix Type:", capString(recTrans.valueStr("fix_type")));
             html.row2("Altitude:", locale.toString(recTrans.valueFloat("altitude"), 'f', 0) + " ft");
 
             if(!recTrans.isNull("dme_ident"))

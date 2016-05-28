@@ -16,11 +16,13 @@
 *****************************************************************************/
 
 #include "common/formatter.h"
+#include "atools.h"
 
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QLocale>
 #include <QObject>
+#include <QSet>
 #include <algorithm>
 
 namespace formatter {
@@ -130,6 +132,14 @@ QString formatElapsed(const QElapsedTimer& timer)
            arg(mins).arg(mins == 1 ? QObject::tr("minute") : QObject::tr("minutes")).
            arg(secs).arg(secs == 1 ? QObject::tr("second") : QObject::tr("seconds"));
   }
+}
+
+QString capString(const QString& str)
+{
+  static QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME", "ATIS",
+                               "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III", "H", "HH", "MH",
+                              "VASI", "PAPI", "ALS"});
+  return atools::capString(str, {}, {}, ignore);
 }
 
 } // namespace formatter

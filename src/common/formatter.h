@@ -23,6 +23,8 @@
 class QElapsedTimer;
 
 namespace formatter {
+QString capString(const QString& str);
+
 /* All formatters are locale aware */
 
 /* Format time_t to short locale dependent date string */
