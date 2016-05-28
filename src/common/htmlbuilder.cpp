@@ -63,7 +63,7 @@ HtmlBuilder::~HtmlBuilder()
 
 }
 
-HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, html::Flags flags,
+HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, html::Flags flags,
                                  QColor color)
 {
   QString valueStr;
@@ -127,7 +127,7 @@ HtmlBuilder& HtmlBuilder::rowVar(const QString& name, const QVariant& value, htm
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::row(const QString& name, const QString& value, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags, color), value);
@@ -136,8 +136,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, const QString& value, html::F
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::row(const QString& name, float value, int precision, html::Flags flags,
-                              QColor color)
+HtmlBuilder& HtmlBuilder::row2(const QString& name, float value, int precision, html::Flags flags,
+                               QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags, color),
@@ -147,8 +147,8 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, float value, int precision, h
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::row(const QString& name, double value, int precision, html::Flags flags,
-                              QColor color)
+HtmlBuilder& HtmlBuilder::row2(const QString& name, double value, int precision, html::Flags flags,
+                               QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags, color),
@@ -158,7 +158,7 @@ HtmlBuilder& HtmlBuilder::row(const QString& name, double value, int precision, 
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::row(const QString& name, int value, html::Flags flags, QColor color)
+HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags, color), locale.toString(value));

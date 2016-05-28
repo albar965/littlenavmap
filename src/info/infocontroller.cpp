@@ -127,6 +127,10 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     html.clear();
     info->comText(airport, html, iconBackColor);
     ui->textEditComInfo->setText(html.getHtml());
+
+    html.clear();
+    info->approachText(airport, html, iconBackColor);
+    ui->textEditApproachInfo->setText(html.getHtml());
   }
 
   html.clear();

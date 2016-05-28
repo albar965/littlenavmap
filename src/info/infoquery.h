@@ -55,16 +55,19 @@ public:
   const atools::sql::SqlRecord *getRunwayEndInformation(int runwayEndId);
   const atools::sql::SqlRecord *getIlsInformation(int runwayEndId);
 
+  const atools::sql::SqlRecordVector *getApproachInformation(int airportId);
+  const atools::sql::SqlRecordVector *getTransitionInformation(int approachId);
+
 private:
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache,
                                       runwayEndCache, ilsCache;
-  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache;
+  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, approachCache, transitionCache;
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
   *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
   *runwayQuery = nullptr, *runwayEndQuery = nullptr, *ilsQuery = nullptr,
-  *airwayWaypointQuery = nullptr;
+  *airwayWaypointQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
 
   const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
                                              atools::sql::SqlQuery *query, int id);

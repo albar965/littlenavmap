@@ -72,6 +72,7 @@ public:
                    WeatherReporter *weather, QColor background);
   void runwayText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
   void comText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
+  void approachText(const maptypes::MapAirport& airport, HtmlBuilder& html, QColor background);
 
   void vorText(const maptypes::MapVor& vor, HtmlBuilder& html, QColor background);
   void ndbText(const maptypes::MapNdb& ndb, HtmlBuilder& html, QColor background);

@@ -102,16 +102,16 @@ public:
 
   HtmlBuilder& table();
   HtmlBuilder& tableEnd();
-  HtmlBuilder& row(const QString& name, const QString& value,
-                   html::Flags flags = html::BOLD, QColor color = QColor());
-  HtmlBuilder& row(const QString& name, float value, int precision = -1,
-                   html::Flags flags = html::BOLD, QColor color = QColor());
-  HtmlBuilder& row(const QString& name, double value, int precision = -1,
-                   html::Flags flags = html::BOLD, QColor color = QColor());
-  HtmlBuilder& row(const QString& name, int value,
-                   html::Flags flags = html::BOLD, QColor color = QColor());
-  HtmlBuilder& rowVar(const QString& name, const QVariant& value,
-                      html::Flags flags = html::BOLD, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, const QString& value,
+                    html::Flags flags = html::BOLD, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, float value, int precision = -1,
+                    html::Flags flags = html::BOLD, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, double value, int precision = -1,
+                    html::Flags flags = html::BOLD, QColor color = QColor());
+  HtmlBuilder& row2(const QString& name, int value,
+                    html::Flags flags = html::BOLD, QColor color = QColor());
+  HtmlBuilder& row2Var(const QString& name, const QVariant& value,
+                       html::Flags flags = html::BOLD, QColor color = QColor());
 
   HtmlBuilder& tr(QColor backgroundColor = QColor());
   HtmlBuilder& trEnd();

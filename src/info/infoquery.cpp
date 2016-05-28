@@ -45,6 +45,16 @@ const SqlRecordVector *InfoQuery::getComInformation(int airportId)
   return cachedRecordVector(comCache, comQuery, airportId);
 }
 
+const SqlRecordVector *InfoQuery::getApproachInformation(int airportId)
+{
+  return cachedRecordVector(approachCache, approachQuery, airportId);
+}
+
+const SqlRecordVector *InfoQuery::getTransitionInformation(int approachId)
+{
+  return cachedRecordVector(transitionCache, transitionQuery, approachId);
+}
+
 const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
 {
   return cachedRecordVector(runwayCache, runwayQuery, airportId);
@@ -203,6 +213,13 @@ void InfoQuery::initQueries()
                                "where airway_name = :name and airway_fragment_no = :fragment "
                                "order by a.sequence_no");
 
+  approachQuery = new SqlQuery(db);
+  approachQuery->prepare("select r.name as runway_name, a.* from approach a "
+                         "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
+                         "where a.airport_id = :id");
+
+  transitionQuery = new SqlQuery(db);
+  transitionQuery->prepare("select * from transition where approach_id = :id");
 }
 
 void InfoQuery::deInitQueries()
@@ -236,4 +253,10 @@ void InfoQuery::deInitQueries()
 
   delete airwayWaypointQuery;
   airwayWaypointQuery = nullptr;
+
+  delete approachQuery;
+  approachQuery = nullptr;
+
+  delete transitionQuery;
+  transitionQuery = nullptr;
 }
