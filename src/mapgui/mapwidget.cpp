@@ -26,6 +26,8 @@
 #include "common/maptools.h"
 #include "common/mapcolors.h"
 #include "route/routecontroller.h"
+#include "atools.h"
+
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QSettings>
@@ -351,7 +353,7 @@ void MapWidget::showAircraft(bool state)
 void MapWidget::showHome()
 {
   qDebug() << "NavMapWidget::showHome" << markPos;
-  if(!atools::geo::almostEqual(homeDistance, 0.))
+  if(!atools::almostEqual(homeDistance, 0.))
     setDistance(homeDistance);
 
   if(homePos.isValid())
@@ -402,7 +404,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(wasEmpty != aircraftTrack.isEmpty())
       emit updateActionStates();
 
-    using atools::geo::almostNotEqual;
+    using atools::almostNotEqual;
     if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
        almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 1.f) ||
        almostNotEqual(lastSimData.getIndicatedSpeed(), simData.getIndicatedSpeed(), 10.f) ||

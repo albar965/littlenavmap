@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
+#include "atools.h"
 
 #include <algorithm>
 #include <marble/GeoDataLineString.h>
@@ -271,7 +272,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
         texts.append(m.text);
       texts.append(QString::number(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T −> " +
                    QString::number(atools::geo::normalizeCourse(finalBearing), 'f', 0) + "°T");
-      texts.append(numberToString(meterToNm(distanceMeter)) + " nm");
+      texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)
         texts.append(QString::number(meterToFeet(distanceMeter), 'f', 0) + " ft");
 
@@ -318,7 +319,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
         texts.append(m.text);
       texts.append(QString::number(atools::geo::normalizeCourse(magBearing), 'f',
                                    0) + (m.hasMagvar ? "°M" : "°T"));
-      texts.append(numberToString(meterToNm(distanceMeter)) + " nm");
+      texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)
         texts.append(QString::number(meterToFeet(distanceMeter), 'f', 0) + " ft");
 

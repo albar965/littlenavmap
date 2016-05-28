@@ -26,6 +26,7 @@
 #include <common/htmlbuilder.h>
 #include <common/morsecode.h>
 #include <common/weatherreporter.h>
+#include "atools.h"
 
 #include <QSize>
 
@@ -93,7 +94,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   html.row2("Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
   if(rec != nullptr)
   {
-    html.row2("Rating (0-5):", rec->valueInt("rating"));
+    html.row2("Rating:", atools::ratingString(rec->valueInt("rating"), 5));
     addCoordinates(rec, html);
   }
   html.tableEnd();
@@ -515,23 +516,26 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
 
         const SqlRecordVector *recTransVector =
           infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
-        for(const SqlRecord& recTrans : *recTransVector)
+        if(recTransVector != nullptr)
         {
-          html.h4("Transition " + recTrans.valueStr("fix_ident") + runway);
-          html.table();
-          html.row2("Type:", recTrans.valueStr("type"));
-          html.row2("Fix Ident and Region:", recTrans.valueStr("fix_ident") + ", " +
-                    recTrans.valueStr("fix_region"));
-          html.row2("Fix Type:", recTrans.valueStr("fix_type"));
-          html.row2("Altitude:", locale.toString(recTrans.valueFloat("altitude"), 'f', 0) + " ft");
+          for(const SqlRecord& recTrans : *recTransVector)
+          {
+            html.h4("Transition " + recTrans.valueStr("fix_ident") + runway);
+            html.table();
+            html.row2("Type:", recTrans.valueStr("type"));
+            html.row2("Fix Ident and Region:", recTrans.valueStr("fix_ident") + ", " +
+                      recTrans.valueStr("fix_region"));
+            html.row2("Fix Type:", recTrans.valueStr("fix_type"));
+            html.row2("Altitude:", locale.toString(recTrans.valueFloat("altitude"), 'f', 0) + " ft");
 
-          if(!recTrans.isNull("dme_ident"))
-            html.row2("DME Ident and Region:", recTrans.valueStr("dme_ident") + ", " +
-                      recTrans.valueStr("dme_region"));
+            if(!recTrans.isNull("dme_ident"))
+              html.row2("DME Ident and Region:", recTrans.valueStr("dme_ident") + ", " +
+                        recTrans.valueStr("dme_region"));
 
-          rowForFloat(html, &recTrans, "dme_radial", "DME Radial:", "%1", 0);
-          rowForFloat(html, &recTrans, "dme_distance", "DME Distance:", "%1 nm", 0);
-          html.tableEnd();
+            rowForFloat(html, &recTrans, "dme_radial", "DME Radial:", "%1", 0);
+            rowForFloat(html, &recTrans, "dme_distance", "DME Distance:", "%1 nm", 0);
+            html.tableEnd();
+          }
         }
       }
     }
@@ -684,7 +688,6 @@ void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
     }
   }
   html.tableEnd();
-
 }
 
 void MapHtmlInfoBuilder::markerText(const MapMarker& m, HtmlBuilder& html)

@@ -35,6 +35,7 @@
 #include "common/mapcolors.h"
 #include <algorithm>
 #include <functional>
+#include "atools.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -46,8 +47,6 @@
 #include <QMouseEvent>
 
 #include <common/maptypesfactory.h>
-
-const QStringList AirportSearch::ratings({"", "*", "**", "***", "****", "*****"});
 
 const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
                                                 "is_military",
@@ -377,7 +376,7 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
   else if(col->getColumnName() == "largest_parking_gate")
     return maptypes::parkingGateName(dataValue.toString());
   else if(col->getColumnName() == "rating")
-    return ratings.at(dataValue.toInt());
+    return atools::ratingString(dataValue.toInt(), 5);
   else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
     return QLocale().toString(dataValue.toInt());
   else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)

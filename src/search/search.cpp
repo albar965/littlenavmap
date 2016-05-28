@@ -28,6 +28,7 @@
 #include "geo/pos.h"
 #include "mapgui/mapwidget.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -350,7 +351,7 @@ void Search::doubleClick(const QModelIndex& index)
       float rightLon = controller->getRawData(index.row(), "right_lonx").toFloat();
       float bottomLat = controller->getRawData(index.row(), "bottom_laty").toFloat();
 
-      if(atools::geo::almostEqual(leftLon, rightLon) && atools::geo::almostEqual(topLat, bottomLat))
+      if(atools::almostEqual(leftLon, rightLon) && atools::almostEqual(topLat, bottomLat))
       {
         atools::geo::Pos p(leftLon, topLat);
         qDebug() << "emit showPos" << p;

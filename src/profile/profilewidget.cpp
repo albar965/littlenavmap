@@ -17,6 +17,7 @@
 
 #include "profilewidget.h"
 #include <algorithm>
+#include "atools.h"
 
 #include <gui/mainwindow.h>
 #include "geo/calculations.h"
@@ -127,7 +128,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           }
         }
 
-        using atools::geo::almostNotEqual;
+        using atools::almostNotEqual;
         if(!lastSimData.getPosition().isValid() || (lastPt - pt).manhattanLength() > 0 ||
            almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
         {
@@ -490,7 +491,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
 
       // Drop points with similar altitude except the first and last one on a segment
       if(lastPos.isValid() && j != 0 && j != elev.size() - 1 && legs.elevationLegs.size() > 2 &&
-         atools::geo::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
+         atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
         continue;
 
       float alt = pos.getAltitude();

@@ -66,7 +66,6 @@ private:
   QList<QObject *> airportSearchWidgets;
   QList<QAction *> airportSearchMenuActions;
 
-  static const QStringList ratings;
   static const QSet<QString> boolColumns;
   static const QSet<QString> numberColumns;
 
