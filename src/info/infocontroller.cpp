@@ -31,6 +31,7 @@
 #include <mapgui/mapquery.h>
 #include <settings/settings.h>
 #include <QScrollBar>
+#include "atools.h"
 
 const int SYMBOL_SIZE = 20;
 
@@ -185,7 +186,10 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
   if(ui->dockWidgetAircraft->isVisible() && !databaseLoadStatus &&
      !ui->textEditAircraftInfo->verticalScrollBar()->isSliderDown())
   {
-    if(!lastSimData.getPosition().isValid() || !lastSimData.getPosition().fuzzyEqual(data.getPosition()))
+    if(!lastSimData.getPosition().isValid() ||
+       // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||
+       atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+                              lastSimUpdate, static_cast<qint64>(500)))
     {
       HtmlBuilder html(true);
 
@@ -196,6 +200,7 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
       ui->textEditAircraftInfo->setText(html.getHtml());
       ui->textEditAircraftInfo->verticalScrollBar()->setValue(val);
       lastSimData = data;
+      lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
   }
 }

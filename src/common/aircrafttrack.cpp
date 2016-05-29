@@ -29,6 +29,6 @@ AircraftTrack::~AircraftTrack()
 
 void AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
 {
-  if(isEmpty() || !pos.fuzzyEqual(last().pos))
+  if(isEmpty() || !pos.fuzzyEqual(last().pos, atools::geo::Pos::POS_EPSILON_1M))
     append({pos, onGround, 0, 0});
 }

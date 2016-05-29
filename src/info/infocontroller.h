@@ -55,6 +55,7 @@ private:
   int curAirportId = -1;
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
+  qint64 lastSimUpdate = 0;
 
   MainWindow *mainWindow;
   MapQuery *mapQuery;

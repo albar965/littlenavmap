@@ -770,12 +770,23 @@ void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data
 
   head(html, "Aircraft");
   html.table();
-  html.row2("Title:", data.getAirplaneTitle());
-  html.row2("Airline:", data.getAirplaneAirline());
-  html.row2("Flight Number:", data.getAirplaneFlightnumber());
-  html.row2("Model:", data.getAirplaneModel());
-  html.row2("Registration:", data.getAirplaneReg());
-  html.row2("Type:", data.getAirplaneType());
+  if(!data.getAirplaneTitle().isEmpty())
+    html.row2("Title:", data.getAirplaneTitle());
+
+  if(!data.getAirplaneAirline().isEmpty())
+    html.row2("Airline:", data.getAirplaneAirline());
+
+  if(!data.getAirplaneFlightnumber().isEmpty())
+    html.row2("Flight Number:", data.getAirplaneFlightnumber());
+
+  if(!data.getAirplaneModel().isEmpty())
+    html.row2("Model:", data.getAirplaneModel());
+
+  if(!data.getAirplaneReg().isEmpty())
+    html.row2("Registration:", data.getAirplaneReg());
+
+  if(!data.getAirplaneType().isEmpty())
+    html.row2("Type:", data.getAirplaneType());
   html.tableEnd();
 
   if(!rmoList.isEmpty())
@@ -793,7 +804,7 @@ void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data
       html.row2("Distance to Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
       html.row2("Cross Track Distance:", locale.toString(crossTrackDistancce, 'f', 1) + " nm");
       html.row2("Distance to next Waypoint:", locale.toString(nearestLegDistance, 'f', 0) + " nm");
-      html.row2("Course:", locale.toString(rmoList.at(nearestLegIndex).getCourseToRhumb(), 'f', 0));
+      html.row2("Course:", locale.toString(rmoList.at(nearestLegIndex).getCourseToRhumb(), 'f', 0) + " °M");
       html.row2("Next Waypoint:", rmoList.at(nearestLegIndex).getIdent());
       html.row2("Next Waypoint Type:", rmoList.at(nearestLegIndex).getMapObjectType());
     }
@@ -805,10 +816,10 @@ void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data
 
   head(html, "Altitude");
   html.table();
-  html.row2("Real:", locale.toString(data.getPosition().getAltitude(), 'f', 0) + " ft");
   html.row2("Indicated:", locale.toString(data.getIndicatedAltitude(), 'f', 0) + " ft");
+  html.row2("Actual:", locale.toString(data.getPosition().getAltitude(), 'f', 0) + " ft");
   html.row2("Above Ground:", locale.toString(data.getAltitudeAboveGround(), 'f', 0) + " ft");
-  html.row2("Ground:", locale.toString(data.getGroundAltitude(), 'f', 0) + " ft");
+  html.row2("Ground Elevation:", locale.toString(data.getGroundAltitude(), 'f', 0) + " ft");
   html.tableEnd();
 
   head(html, "Course");
