@@ -18,8 +18,9 @@
 #include "routemapobject.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
-
+#include "common/formatter.h"
 #include <QRegularExpression>
+#include "atools.h"
 
 #include <fs/pln/flightplan.h>
 
@@ -424,7 +425,7 @@ const QString& RouteMapObject::getRegion() const
   return EMPTY_STR;
 }
 
-const QString& RouteMapObject::getName() const
+QString RouteMapObject::getName() const
 {
   if(type == maptypes::INVALID)
     return EMPTY_STR;
@@ -440,10 +441,10 @@ const QString& RouteMapObject::getName() const
       return airport.name;
 
     case atools::fs::pln::entry::VOR:
-      return vor.name;
+      return atools::capString(vor.name);
 
     case atools::fs::pln::entry::NDB:
-      return ndb.name;
+      return atools::capString(ndb.name);
   }
   return EMPTY_STR;
 }

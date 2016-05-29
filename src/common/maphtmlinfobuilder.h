@@ -113,6 +113,9 @@ private:
   void rowForFloat(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                    const QString& msg, const QString& val, int precision = 0);
 
+  void rowForStrCap(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
+                    const QString& msg, const QString& val);
+
 };
 
 #endif // MAPHTMLINFOBUILDER

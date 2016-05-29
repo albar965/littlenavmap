@@ -154,6 +154,28 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   html.tableEnd();
 
+  if(info)
+    head(html, "Runways");
+  html.table();
+  QStringList runways;
+
+  if(airport.hard())
+    runways.append("Hard");
+  if(airport.soft())
+    runways.append("Soft");
+  if(airport.water())
+    runways.append("Water");
+  if(rec != nullptr)
+  {
+    if(rec->valueInt("num_runway_end_closed") > 0)
+      runways.append("Closed");
+  }
+  if(airport.flags.testFlag(AP_LIGHT))
+    runways.append("Lighted");
+
+  html.row2(info ? QString() : "Runways:", runways.join(", "));
+  html.tableEnd();
+
   if(!info)
   {
     html.table();
@@ -285,28 +307,6 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     html.tableEnd();
   }
 
-  if(info)
-    head(html, "Runways");
-  html.table();
-  QStringList runways;
-
-  if(airport.hard())
-    runways.append("Hard");
-  if(airport.soft())
-    runways.append("Soft");
-  if(airport.water())
-    runways.append("Water");
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_runway_end_closed") > 0)
-      runways.append("Closed");
-  }
-  if(airport.flags.testFlag(AP_LIGHT))
-    runways.append("Lighted");
-
-  html.row2(info ? QString() : "Runways:", runways.join(", "));
-  html.tableEnd();
-
   if(rec != nullptr)
     addScenery(rec, html);
 }
@@ -373,8 +373,8 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
         html.row2("Surface:", maptypes::surfaceName(rec.valueStr("surface")));
         html.row2("Pattern Altitude:", locale.toString(rec.valueInt("pattern_altitude")) + " ft");
 
-        rowForStr(html, &rec, "edge_light", "Edge Lights:", "%1");
-        rowForStr(html, &rec, "center_light", "Center Lights:", "%1");
+        rowForStrCap(html, &rec, "edge_light", "Edge Lights:", "%1");
+        rowForStrCap(html, &rec, "center_light", "Center Lights:", "%1");
         rowForBool(html, &rec, "has_center_red", "Has red Center Lights", false);
 
         {
@@ -445,7 +445,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   rowForBool(html, rec, "has_stol_markings", "Has STOL Markings", false);
   // rowForBool(html, recPrim, "is_takeoff", "Closed for Takeoff", true);
   // rowForBool(html, recPrim, "is_landing", "Closed for Landing", true);
-  rowForStr(html, rec, "is_pattern", "Pattern:", "%1");
+  rowForStrCap(html, rec, "is_pattern", "Pattern:", "%1");
 
   rowForStr(html, rec, "left_vasi_type", "Left VASI Type:", "%1");
   rowForFloat(html, rec, "left_vasi_pitch", "Left VASI Pitch:", "%1 °", 1);
@@ -453,11 +453,15 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   rowForFloat(html, rec, "right_vasi_pitch", "Right VASI Pitch:", "%1 °", 1);
 
   rowForStr(html, rec, "app_light_system_type", "ALS Type:", "%1");
-  rowForBool(html, rec, "has_end_lights", "Has Runway End Lights", false);
-  rowForBool(html, rec, "has_reils", "Has Runway End Strobes", false);
-  rowForBool(html, rec, "has_touchdown_lights", "Has Touchdown lights", false);
 
-  // num_strobes integer not null
+  QStringList lights;
+  if(rec->valueBool("has_end_lights"))
+    lights.append("Lights");
+  if(rec->valueBool("has_reils"))
+    lights.append("Strobes");
+  if(rec->valueBool("has_touchdown_lights"))
+    lights.append("Touchdown");
+  html.row2("Runway End Lights:", lights.join(", "));
   html.tableEnd();
 
   const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
@@ -480,8 +484,8 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     float hdg = ilsRec->valueFloat("loc_heading") + magvar;
     hdg = atools::geo::normalizeCourse(hdg);
 
-    html.row2("Localizer Heading:", locale.toString(hdg, 'f', 1) + " °M");
-    html.row2("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + " °");
+    html.row2("Localizer Heading:", locale.toString(hdg, 'f', 0) + " °M");
+    html.row2("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + " °");
     if(gs)
       html.row2("Glideslope Pitch:", locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + " °");
 
@@ -512,8 +516,8 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
 
         float hdg = recApp.valueFloat("heading") + airport.magvar;
         hdg = atools::geo::normalizeCourse(hdg);
-        html.row2("Heading:", locale.toString(hdg, 'f', 1) + " °M, " +
-                  locale.toString(recApp.valueFloat("heading"), 'f', 1) + " °T");
+        html.row2("Heading:", locale.toString(hdg, 'f', 0) + " °M, " +
+                  locale.toString(recApp.valueFloat("heading"), 'f', 0) + " °T");
 
         html.row2("Altitude:", locale.toString(recApp.valueFloat("altitude"), 'f', 0) + " ft");
         html.row2("Missed Altitude:", locale.toString(recApp.valueFloat("missed_altitude"), 'f', 0) + " ft");
@@ -558,7 +562,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor ba
   html.nbsp().nbsp();
 
   QString type = maptypes::vorType(vor);
-  title(html, type + ": " + vor.name + " (" + vor.ident + ")");
+  title(html, type + ": " + atools::capString(vor.name) + " (" + vor.ident + ")");
 
   html.table();
   if(vor.routeIndex >= 0)
@@ -589,7 +593,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor ba
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
-  title(html, "NDB: " + ndb.name + " (" + ndb.ident + ")");
+  title(html, "NDB: " + atools::capString(ndb.name) + " (" + ndb.ident + ")");
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2("Route position ", QString::number(ndb.routeIndex + 1));
@@ -818,5 +822,16 @@ void MapHtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, cons
     QString i = rec->valueStr(colName);
     if(!i.isEmpty())
       html.row2(msg, val.arg(i));
+  }
+}
+
+void MapHtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
+                                      const QString& msg, const QString& val)
+{
+  if(!rec->isNull(colName))
+  {
+    QString i = rec->valueStr(colName);
+    if(!i.isEmpty())
+      html.row2(msg, val.arg(atools::capString(i)));
   }
 }

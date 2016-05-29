@@ -53,7 +53,7 @@ public:
   const atools::geo::Pos& getPosition() const;
   QString getIdent() const;
   const QString& getRegion() const;
-  const QString& getName() const;
+  QString getName() const;
   int getFrequency() const;
   float getMagvar() const;
   int getRange() const;

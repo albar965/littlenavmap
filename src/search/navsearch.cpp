@@ -32,6 +32,7 @@
 #include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
+#include "atools.h"
 
 #include <QMessageBox>
 #include <QWidget>
@@ -240,6 +241,8 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
     return maptypes::navTypeName(value.toString());
   else if(col->getColumnName() == "nav_type")
     return maptypes::navName(value.toString());
+  else if(col->getColumnName() == "name")
+    return atools::capString(value.toString());
   else if(col->getColumnName() == "frequency" && !value.isNull())
   {
     double freq = value.toDouble();

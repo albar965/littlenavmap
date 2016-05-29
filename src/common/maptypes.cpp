@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "maptypes.h"
+#include "common/formatter.h"
+#include "atools.h"
 
 #include <QDataStream>
 #include <QHash>
@@ -361,13 +363,13 @@ QString airwayTypeToString(MapAirwayType type)
     case maptypes::NO_AIRWAY:
       break;
     case maptypes::VICTOR:
-      return "VICTOR";
+      return "Victor";
 
     case maptypes::JET:
-      return "JET";
+      return "Jet";
 
     case maptypes::BOTH:
-      return "BOTH";
+      return "Both";
 
   }
   return QString();
@@ -375,11 +377,11 @@ QString airwayTypeToString(MapAirwayType type)
 
 MapAirwayType airwayTypeFromString(const QString& typeStr)
 {
-  if(typeStr == "VICTOR")
+  if(typeStr.startsWith("V"))
     return maptypes::VICTOR;
-  else if(typeStr == "JET")
+  else if(typeStr.startsWith("J"))
     return maptypes::JET;
-  else if(typeStr == "BOTH")
+  else if(typeStr.startsWith("B"))
     return maptypes::BOTH;
   else
     return maptypes::NO_AIRWAY;
@@ -450,12 +452,12 @@ QString vorType(const MapVor& vor)
 
 QString vorText(const MapVor& vor)
 {
-  return vorType(vor) + " " + vor.name + " (" + vor.ident + ")";
+  return vorType(vor) + " " + atools::capString(vor.name) + " (" + vor.ident + ")";
 }
 
 QString ndbText(const MapNdb& ndb)
 {
-  return "NDB " + ndb.name + " (" + ndb.ident + ")";
+  return "NDB " + atools::capString(ndb.name) + " (" + ndb.ident + ")";
 }
 
 QString waypointText(const MapWaypoint& waypoint)

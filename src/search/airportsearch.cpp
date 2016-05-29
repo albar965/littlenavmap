@@ -312,7 +312,9 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
     case Qt::TextAlignmentRole:
       if(boolColumns.contains(col->getColumnName()) && dataValue.toInt() > 0)
         return Qt::AlignCenter;
-      else if(col->getColumnName() == "ident" || col->getColumnName() == "rating" ||
+      else if(col->getColumnName() == "rating")
+        return Qt::AlignLeft;
+      else if(col->getColumnName() == "ident" ||
               dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt ||
               dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong ||
               dataValue.type() == QVariant::Double)
