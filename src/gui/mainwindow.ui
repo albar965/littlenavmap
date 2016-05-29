@@ -1955,6 +1955,7 @@
     <bool>true</bool>
    </attribute>
    <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionRouteEditMode"/>
    <addaction name="actionRouteCalcDirect"/>
    <addaction name="actionRouteCalcRadionav"/>
    <addaction name="actionRouteCalcHighAlt"/>
@@ -3134,6 +3135,21 @@
    </property>
    <property name="text">
     <string>Show Information for %1</string>
+   </property>
+  </action>
+  <action name="actionRouteEditMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeedit.svg</normaloff>:/littlenavmap/resources/icons/routeedit.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Route</string>
    </property>
   </action>
  </widget>

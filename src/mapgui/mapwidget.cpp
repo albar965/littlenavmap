@@ -1135,11 +1135,14 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
+      bool routeEditMode = parentWindow->getUi()->actionRouteEditMode->isChecked();
 
-      if(getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
+      if(routeEditMode &&
+         getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
         // Change cursor at one route point
         cursorShape = Qt::CrossCursor;
-      else if(getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
+      else if(routeEditMode &&
+              getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
       else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10) != -1)
@@ -1241,54 +1244,58 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
     else
     {
-      const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
-
-      if(rmos.size() > 1)
+      if(parentWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10);
-        if(routePoint != -1)
+        const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+
+        if(rmos.size() > 1)
         {
-          routeDragPoint = routePoint;
-          qDebug() << "route point" << routePoint;
-
-          // Found a leg - start dragging
-          mouseState = DRAG_ROUTE_POINT;
-
-          routeDragCur = QPoint(event->pos().x(), event->pos().y());
-
-          if(routePoint > 0)
-            routeDragFrom = rmos.at(routePoint - 1).getPosition();
-          else
-            routeDragFrom = atools::geo::EMPTY_POS;
-
-          if(routePoint < rmos.size() - 1)
-            routeDragTo = rmos.at(routePoint + 1).getPosition();
-          else
-            routeDragTo = atools::geo::EMPTY_POS;
-          setContextMenuPolicy(Qt::NoContextMenu);
-        }
-        else
-        {
-          int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10);
-          if(routeLeg != -1)
+          int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10);
+          if(routePoint != -1)
           {
-            routeDragLeg = routeLeg;
-            qDebug() << "route leg" << routeLeg;
+            routeDragPoint = routePoint;
+            qDebug() << "route point" << routePoint;
+
             // Found a leg - start dragging
-            mouseState = DRAG_ROUTE_LEG;
+            mouseState = DRAG_ROUTE_POINT;
 
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
-            routeDragFrom = rmos.at(routeLeg).getPosition();
-            routeDragTo = rmos.at(routeLeg + 1).getPosition();
+            if(routePoint > 0)
+              routeDragFrom = rmos.at(routePoint - 1).getPosition();
+            else
+              routeDragFrom = atools::geo::EMPTY_POS;
+
+            if(routePoint < rmos.size() - 1)
+              routeDragTo = rmos.at(routePoint + 1).getPosition();
+            else
+              routeDragTo = atools::geo::EMPTY_POS;
             setContextMenuPolicy(Qt::NoContextMenu);
           }
           else
           {
-            qDebug() << "Single click info";
-            handleInfoClick(event->pos());
+            int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10);
+            if(routeLeg != -1)
+            {
+              routeDragLeg = routeLeg;
+              qDebug() << "route leg" << routeLeg;
+              // Found a leg - start dragging
+              mouseState = DRAG_ROUTE_LEG;
+
+              routeDragCur = QPoint(event->pos().x(), event->pos().y());
+
+              routeDragFrom = rmos.at(routeLeg).getPosition();
+              routeDragTo = rmos.at(routeLeg + 1).getPosition();
+              setContextMenuPolicy(Qt::NoContextMenu);
+            }
           }
         }
+      }
+
+      if(mouseState == NONE)
+      {
+        qDebug() << "Single click info";
+        handleInfoClick(event->pos());
       }
     }
   }

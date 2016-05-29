@@ -750,6 +750,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
+  ui->actionRouteEditMode->setEnabled(hasFlightplan);
+
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(connectClient->isConnected());
   ui->actionMapDeleteAircraftTrack->setEnabled(!navMapWidget->getAircraftTrack().isEmpty());
@@ -832,7 +834,8 @@ void MainWindow::readSettings()
               ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
               ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
               ui->actionMapShowAircraftTrack,
-              ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
+              ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+              ui->actionRouteEditMode});
 
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
@@ -861,7 +864,8 @@ void MainWindow::writeSettings()
            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
            ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
            ui->actionMapShowAircraftTrack,
-           ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading});
+           ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+           ui->actionRouteEditMode});
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 
