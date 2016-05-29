@@ -245,6 +245,13 @@ void MainWindow::setupUi()
                             "earth/political/political.dgml");
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
+  ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
+  ui->dockWidgetRoute->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routedock.svg"));
+  ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
+  ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
+  ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
+
+  ui->menuView->addSeparator();
   ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
   ui->menuView->addAction(ui->mapToolBar->toggleViewAction());
   ui->menuView->addAction(ui->routeToolBar->toggleViewAction());

@@ -96,5 +96,12 @@
         <file>resources/icons/aircrafttraildelete.svg</file>
         <file>resources/icons/aircrafttrail.svg</file>
         <file>resources/icons/routeedit.svg</file>
+        <file>resources/icons/profiledock.svg</file>
+        <file>resources/icons/infodock.svg</file>
+        <file>resources/icons/routedock.svg</file>
+        <file>resources/icons/searchdock.svg</file>
+        <file>resources/icons/aircraftdock.svg</file>
+        <file>resources/icons/statusbar.svg</file>
+        <file>resources/icons/menubutton.svg</file>
     </qresource>
 </RCC>

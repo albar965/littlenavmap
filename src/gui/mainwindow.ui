@@ -46,6 +46,7 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionShowStatusbar"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -86,6 +87,10 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/searchdock.svg</normaloff>:/littlenavmap/resources/icons/searchdock.svg</iconset>
+   </property>
    <property name="windowTitle">
     <string>Search</string>
    </property>
@@ -112,7 +117,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
@@ -190,9 +195,13 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+               </property>
                <property name="iconSize">
                 <size>
-                 <width>10</width>
+                 <width>16</width>
                  <height>16</height>
                 </size>
                </property>
@@ -1059,9 +1068,13 @@
                <property name="text">
                 <string/>
                </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+               </property>
                <property name="iconSize">
                 <size>
-                 <width>10</width>
+                 <width>16</width>
                  <height>16</height>
                 </size>
                </property>
@@ -1491,6 +1504,10 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidgetRoute">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routedock.svg</normaloff>:/littlenavmap/resources/icons/routedock.svg</iconset>
+   </property>
    <property name="windowTitle">
     <string>Route</string>
    </property>
@@ -1653,6 +1670,10 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidgetInformation">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/infodock.svg</normaloff>:/littlenavmap/resources/icons/infodock.svg</iconset>
+   </property>
    <property name="windowTitle">
     <string>Information</string>
    </property>
@@ -1964,6 +1985,10 @@
    <addaction name="actionRouteReverse"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetElevation">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/profiledock.svg</normaloff>:/littlenavmap/resources/icons/profiledock.svg</iconset>
+   </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
@@ -2004,6 +2029,10 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidgetAircraft">
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftdock.svg</normaloff>:/littlenavmap/resources/icons/aircraftdock.svg</iconset>
+   </property>
    <property name="windowTitle">
     <string>Aircraft</string>
    </property>
@@ -2050,7 +2079,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionShowStatusbar"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -2350,6 +2378,9 @@
   <action name="actionShowStatusbar">
    <property name="checkable">
     <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Statusbar</string>
