@@ -64,7 +64,7 @@ HtmlBuilder::~HtmlBuilder()
 }
 
 HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, html::Flags flags,
-                                 QColor color)
+                                  QColor color)
 {
   QString valueStr;
   switch(value.type())
@@ -503,4 +503,13 @@ void HtmlBuilder::clear()
 const QString& HtmlBuilder::alt(const QStringList& list) const
 {
   return list.at(tableIndex % list.size());
+}
+
+QString HtmlBuilder::getEncodedImageHref(const QIcon& icon, QSize size)
+{
+  QByteArray data;
+  QBuffer buffer(&data);
+  icon.pixmap(size).save(&buffer, "PNG", 100);
+
+  return QString("data:image/png;base64, %0").arg(QString(data.toBase64()));
 }

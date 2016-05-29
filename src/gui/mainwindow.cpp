@@ -470,11 +470,18 @@ void MainWindow::connectAllSlots()
           navMapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived,
           profileWidget, &ProfileWidget::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived,
+          infoController, &InfoController::dataPacketReceived);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
+
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          infoController, &InfoController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectToServer,
+          infoController, &InfoController::connectedToSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           navMapWidget, &MapWidget::disconnectedFromSimulator);

@@ -53,6 +53,11 @@ struct MapUserpoint;
 }
 
 namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectData;
+}
+}
 namespace sql {
 class SqlRecord;
 }
@@ -85,12 +90,17 @@ public:
   void helipadText(const maptypes::MapHelipad& helipad, HtmlBuilder& html);
   void userpointText(const maptypes::MapUserpoint& userpoint, HtmlBuilder& html);
 
+  void aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
+                    const RouteMapObjectList& rmoList);
+
 private:
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   MorseCode *morse;
   bool info;
   QLocale locale;
+  QString aircraftGroundEncodedIcon, aircraftEncodedIcon;
+
   void addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
   void addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html);
   void head(HtmlBuilder& html, const QString& text);

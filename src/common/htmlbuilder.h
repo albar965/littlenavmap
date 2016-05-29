@@ -169,6 +169,8 @@ public:
     truncated = value;
   }
 
+  static QString getEncodedImageHref(const QIcon& icon, QSize size);
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;

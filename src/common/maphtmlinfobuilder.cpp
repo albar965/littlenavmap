@@ -34,6 +34,8 @@
 
 #include <info/infoquery.h>
 
+#include <fs/sc/simconnectdata.h>
+
 using namespace maptypes;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
@@ -48,6 +50,11 @@ MapHtmlInfoBuilder::MapHtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQu
   : mapQuery(mapDbQuery), infoQuery(infoDbQuery), info(formatInfo)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
+
+  aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
+    QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
+  aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
+    QIcon(":/littlenavmap/resources/icons/aircraftground.svg"), QSize(24, 24));
 }
 
 MapHtmlInfoBuilder::~MapHtmlInfoBuilder()
@@ -742,6 +749,91 @@ void MapHtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilde
 {
   head(html, "Routepoint:");
   html.brText(userpoint.name);
+}
+
+void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
+                                      const RouteMapObjectList& rmoList)
+{
+  QString *icon;
+  if(data.getFlags() & atools::fs::sc::ON_GROUND)
+    icon = &aircraftGroundEncodedIcon;
+  else
+    icon = &aircraftEncodedIcon;
+
+  html.img(*icon, "Aircraft", QString(), QSize(24, 24));
+  html.nbsp().nbsp();
+
+  if(info)
+    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD | html::BIG);
+  else
+    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD);
+
+  head(html, "Aircraft");
+  html.table();
+  html.row2("Title:", data.getAirplaneTitle());
+  html.row2("Airline:", data.getAirplaneAirline());
+  html.row2("Flight Number:", data.getAirplaneFlightnumber());
+  html.row2("Model:", data.getAirplaneModel());
+  html.row2("Registration:", data.getAirplaneReg());
+  html.row2("Type:", data.getAirplaneType());
+  html.tableEnd();
+
+  if(!rmoList.isEmpty())
+  {
+    float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistancce = 0.f;
+    int nearestLegIndex;
+
+    head(html, "Route Progress");
+    html.table();
+    if(rmoList.getRouteDistances(data.getPosition(),
+                                 &distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistancce,
+                                 &nearestLegIndex))
+    {
+      html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + " nm");
+      html.row2("Distance to Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
+      html.row2("Cross Track Distance:", locale.toString(crossTrackDistancce, 'f', 1) + " nm");
+      html.row2("Distance to next Waypoint:", locale.toString(nearestLegDistance, 'f', 0) + " nm");
+      html.row2("Course:", locale.toString(rmoList.at(nearestLegIndex).getCourseToRhumb(), 'f', 0));
+      html.row2("Next Waypoint:", rmoList.at(nearestLegIndex).getIdent());
+      html.row2("Next Waypoint Type:", rmoList.at(nearestLegIndex).getMapObjectType());
+    }
+    else
+      html.row2("No Active Route Leg found.", QString());
+
+    html.tableEnd();
+  }
+
+  head(html, "Altitude");
+  html.table();
+  html.row2("Real:", locale.toString(data.getPosition().getAltitude(), 'f', 0) + " ft");
+  html.row2("Indicated:", locale.toString(data.getIndicatedAltitude(), 'f', 0) + " ft");
+  html.row2("Above Ground:", locale.toString(data.getAltitudeAboveGround(), 'f', 0) + " ft");
+  html.row2("Ground:", locale.toString(data.getGroundAltitude(), 'f', 0) + " ft");
+  html.tableEnd();
+
+  head(html, "Course");
+  html.table();
+  html.row2("Magnetic:", locale.toString(data.getCourseMag(), 'f', 0) + " °M");
+  html.row2("True:", locale.toString(data.getCourseTrue(), 'f', 0) + " °T");
+  html.tableEnd();
+
+  head(html, "Speed");
+  html.table();
+  html.row2("Ground:", locale.toString(data.getGroundSpeed(), 'f', 0) + " kts");
+  html.row2("Indicated:", locale.toString(data.getIndicatedSpeed(), 'f', 0) + " kts");
+  html.row2("True:", locale.toString(data.getTrueSpeed(), 'f', 0) + "kts");
+  html.row2("Vertical:", locale.toString(data.getVerticalSpeed(), 'f', 0) + " ft/min");
+  html.tableEnd();
+
+  head(html, "Wind");
+  html.table();
+  html.row2("Direction:", locale.toString(data.getWindDirection(), 'f', 0) + " °M");
+  html.row2("Speed:", locale.toString(data.getWindSpeed(), 'f', 0) + " kts");
+  html.tableEnd();
+
+  head(html, "Position");
+  html.row2("Coordinates:", data.getPosition().toHumanReadableString());
+  html.tableEnd();
 }
 
 void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)

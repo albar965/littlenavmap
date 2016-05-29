@@ -30,6 +30,7 @@
 #include <common/symbolpainter.h>
 #include <mapgui/mapquery.h>
 #include <settings/settings.h>
+#include <QScrollBar>
 
 const int SYMBOL_SIZE = 20;
 
@@ -175,4 +176,38 @@ void InfoController::preDatabaseLoad()
 void InfoController::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+}
+
+void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
+{
+
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(ui->dockWidgetAircraft->isVisible() && !databaseLoadStatus &&
+     !ui->textEditAircraftInfo->verticalScrollBar()->isSliderDown())
+  {
+    if(!lastSimData.getPosition().isValid() || !lastSimData.getPosition().fuzzyEqual(data.getPosition()))
+    {
+      HtmlBuilder html(true);
+
+      const RouteMapObjectList& rmoList = mainWindow->getRouteController()->getRouteMapObjects();
+      info->aircraftText(data, html, rmoList);
+
+      int val = ui->textEditAircraftInfo->verticalScrollBar()->value();
+      ui->textEditAircraftInfo->setText(html.getHtml());
+      ui->textEditAircraftInfo->verticalScrollBar()->setValue(val);
+      lastSimData = data;
+    }
+  }
+}
+
+void InfoController::connectedToSimulator()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  ui->textEditAircraftInfo->setText("Connected.");
+}
+
+void InfoController::disconnectedFromSimulator()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  ui->textEditAircraftInfo->setText("Disconnected.");
 }

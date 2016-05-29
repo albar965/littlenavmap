@@ -103,5 +103,6 @@
         <file>resources/icons/aircraftdock.svg</file>
         <file>resources/icons/statusbar.svg</file>
         <file>resources/icons/menubutton.svg</file>
+        <file>resources/icons/aircraftground.svg</file>
     </qresource>
 </RCC>

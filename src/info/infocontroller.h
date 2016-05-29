@@ -20,6 +20,7 @@
 
 #include <QObject>
 
+#include "fs/sc/simconnectdata.h"
 #include <common/maptypes.h>
 
 class MainWindow;
@@ -46,9 +47,14 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  void dataPacketReceived(atools::fs::sc::SimConnectData data);
+  void connectedToSimulator();
+  void disconnectedFromSimulator();
+
 private:
   int curAirportId = -1;
   bool databaseLoadStatus = false;
+  atools::fs::sc::SimConnectData lastSimData;
 
   MainWindow *mainWindow;
   MapQuery *mapQuery;

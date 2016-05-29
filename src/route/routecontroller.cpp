@@ -978,7 +978,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
 int RouteController::nearestLegIndex(const atools::geo::Pos& pos)
 {
-  return routeMapObjects.nearestLegIndex(pos);
+  return routeMapObjects.getNearestLegIndex(pos);
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)

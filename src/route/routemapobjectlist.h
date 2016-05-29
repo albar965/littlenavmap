@@ -27,9 +27,11 @@ public:
   RouteMapObjectList();
   virtual ~RouteMapObjectList();
 
-  int nearestLegIndex(const atools::geo::Pos& pos) const;
+  int getNearestLegIndex(const atools::geo::Pos& pos, float *crossTrackDistance = nullptr) const;
 
-  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStartNm, float *distToDestNm) const;
+  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStartNm, float *distToDestNm,
+                         float *nearestLegDistance = nullptr, float *crossTrackDistance = nullptr,
+                         int *nearestLegIndex = nullptr) const;
 
   float getTotalDistance() const
   {
