@@ -43,6 +43,8 @@ public:
     totalDistance = value;
   }
 
+  const static float INVALID_VALUE;
+
 private:
   float totalDistance = 0.f;
 

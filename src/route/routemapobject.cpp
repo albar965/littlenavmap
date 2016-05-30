@@ -335,6 +335,34 @@ int RouteMapObject::getRange() const
   return -1;
 }
 
+QString RouteMapObject::getMapObjectTypeName() const
+{
+  if(type == maptypes::INVALID)
+    return "Invalid";
+
+  switch(entry->getWaypointType())
+  {
+    case atools::fs::pln::entry::UNKNOWN:
+      return "Unknown";
+
+    case atools::fs::pln::entry::AIRPORT:
+      return "Airport";
+
+    case atools::fs::pln::entry::INTERSECTION:
+      return "Waypoint";
+
+    case atools::fs::pln::entry::USER:
+      return QString();
+
+    case atools::fs::pln::entry::VOR:
+      return maptypes::vorType(vor) + " (" + maptypes::navTypeName(vor.type) + ")";
+
+    case atools::fs::pln::entry::NDB:
+      return "NDB (" + maptypes::navTypeName(ndb.type) + ")";
+  }
+  return QString();
+}
+
 bool RouteMapObject::isUser()
 {
   return entry->getWaypointType() == atools::fs::pln::entry::USER;

@@ -193,12 +193,17 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
     {
       HtmlBuilder html(true);
 
-      const RouteMapObjectList& rmoList = mainWindow->getRouteController()->getRouteMapObjects();
-      info->aircraftText(data, html, rmoList);
-
+      info->aircraftText(data, html);
       int val = ui->textEditAircraftInfo->verticalScrollBar()->value();
       ui->textEditAircraftInfo->setText(html.getHtml());
       ui->textEditAircraftInfo->verticalScrollBar()->setValue(val);
+
+      html.clear();
+      info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
+      val = ui->textEditAircraftProgressInfo->verticalScrollBar()->value();
+      ui->textEditAircraftProgressInfo->setText(html.getHtml());
+      ui->textEditAircraftProgressInfo->verticalScrollBar()->setValue(val);
+
       lastSimData = data;
       lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }

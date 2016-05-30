@@ -18,6 +18,8 @@
 #include "routemapobjectlist.h"
 #include "geo/calculations.h"
 
+const float RouteMapObjectList::INVALID_VALUE = std::numeric_limits<float>::max();
+
 RouteMapObjectList::RouteMapObjectList()
 {
 
@@ -32,15 +34,18 @@ int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float *c
 {
   int nearest = -1;
   float minDistance = std::numeric_limits<float>::max();
+  float minCrossTrack = std::numeric_limits<float>::max();
+
   for(int i = 1; i < size(); i++)
   {
     bool valid;
-    float distance = std::abs(pos.distanceMeterToLine(at(i - 1).getPosition(),
-                                                      at(i).getPosition(), valid));
+    float crossTrack = pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), valid);
+    float distance = std::abs(crossTrack);
 
     if(valid && distance < minDistance)
     {
       minDistance = distance;
+      minCrossTrack = crossTrack;
       nearest = i;
     }
   }
@@ -50,11 +55,18 @@ int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float *c
     if(distance < minDistance)
     {
       minDistance = distance;
+      minCrossTrack = INVALID_VALUE;
       nearest = i + 1;
     }
   }
   if(crossTrackDistance != nullptr)
-    *crossTrackDistance = atools::geo::meterToNm(minDistance);
+  {
+    if(minCrossTrack == INVALID_VALUE)
+      *crossTrackDistance = INVALID_VALUE;
+    else
+      *crossTrackDistance = atools::geo::meterToNm(minCrossTrack);
+
+  }
   return nearest;
 }
 
@@ -84,6 +96,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
       for(int i = 0; i <= index; i++)
         *distFromStartNm += at(i).getDistanceTo();
       *distFromStartNm -= distToCur;
+      *distFromStartNm = std::abs(*distFromStartNm);
     }
 
     if(distToDestNm != nullptr)
@@ -92,6 +105,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
       for(int i = index + 1; i < size(); i++)
         *distToDestNm += at(i).getDistanceTo();
       *distToDestNm += distToCur;
+      *distToDestNm = std::abs(*distToDestNm);
     }
     return true;
   }

@@ -68,6 +68,8 @@ public:
     return type;
   }
 
+  QString getMapObjectTypeName() const;
+
   bool isUser();
 
   const maptypes::MapAirport& getAirport() const

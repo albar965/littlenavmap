@@ -90,8 +90,10 @@ public:
   void helipadText(const maptypes::MapHelipad& helipad, HtmlBuilder& html);
   void userpointText(const maptypes::MapUserpoint& userpoint, HtmlBuilder& html);
 
-  void aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
-                    const RouteMapObjectList& rmoList);
+  void aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html);
+
+  void aircraftProgressText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
+                            const RouteMapObjectList& rmoList);
 
 private:
   MapQuery *mapQuery;
