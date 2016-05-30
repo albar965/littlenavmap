@@ -81,9 +81,6 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   MarbleWidgetInputHandler *input = inputHandler();
   input->setMouseButtonPopupEnabled(Qt::RightButton, false);
   input->setMouseButtonPopupEnabled(Qt::LeftButton, false);
-  setContextMenuPolicy(Qt::CustomContextMenu);
-
-  connect(this, &MapWidget::customContextMenuRequested, this, &MapWidget::contextMenu);
 }
 
 MapWidget::~MapWidget()
@@ -600,10 +597,17 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
   }
 }
 
-void MapWidget::contextMenu(const QPoint& point)
+void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  Q_UNUSED(point);
-  qInfo() << "tableContextMenu";
+  qDebug() << "contextMenuEvent state" << mouseState
+           << "modifiers" << event->modifiers() << "reason" << event->reason()
+           << "pos" << event->pos();
+
+  QPoint point;
+  if(event->reason() == QContextMenuEvent::Keyboard)
+    point = mapFromGlobal(QCursor::pos());
+  else
+    point = event->pos();
 
   if(mouseState != NONE)
     return;
@@ -787,7 +791,7 @@ void MapWidget::contextMenu(const QPoint& point)
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg("Position"));
-    ui->actionShowInformation->setText(ui->actionShowInSearch->text().arg(QString()));
+    ui->actionShowInformation->setText(ui->actionShowInformation->text().arg(QString()));
   }
 
   // Update "delete in route"
@@ -798,12 +802,6 @@ void MapWidget::contextMenu(const QPoint& point)
   }
   else
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
-
-  if(airport != nullptr)
-  {
-    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
-    ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
-  }
 
   // Update "show range rings for Navaid"
   if(vor != nullptr || ndb != nullptr)
@@ -1093,8 +1091,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   if(!isActiveWindow())
     return;
 
-  // Ignore any clicks for route drag, etc. if mouse was moved during click
-  mouseMoved = true;
+  // qDebug() << "mouseMoveEvent state" << mouseState <<
+  // "modifiers" << event->modifiers() << "buttons" << event->buttons()
+  // << "button" << event->button() << "pos" << event->pos();
 
   if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
@@ -1111,13 +1110,6 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     }
     setViewContext(Marble::Animation);
     update();
-
-    // CoordinateConverter conv(viewport());
-    // QPoint origin = conv.wToS(distanceMarkers[currentDistanceMarkerIndex].from);
-    // QRect clipRect(origin, QPoint(event->pos().x(), event->pos().y()));
-    // clipRect = clipRect.normalized();
-    // clipRect = clipRect.marginsAdded(QMargins(100, 100, 100, 100));
-    // update(clipRect.normalized());
   }
   else if(mouseState & DRAG_ROUTE_LEG || mouseState & DRAG_ROUTE_POINT)
   {
@@ -1156,11 +1148,13 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
-  qDebug() << "mousePressEvent state" << mouseState;
+  qDebug() << "mousePressEvent state" << mouseState <<
+  "modifiers" << event->modifiers() << "buttons" << event->buttons()
+           << "button" << event->button() << "pos" << event->pos();
 
   QToolTip::hideText();
 
-  mouseMoved = false;
+  mouseMoved = event->pos();
   if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
      mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
   {
@@ -1172,13 +1166,14 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
       mouseState |= DRAG_POST_CANCEL;
   }
   else if(mouseState == NONE && event->buttons() & Qt::RightButton)
-    setContextMenuPolicy(Qt::CustomContextMenu);
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  qDebug() << "mouseReleaseEvent state" << mouseState;
-
+  qDebug() << "mouseReleaseEvent state" << mouseState <<
+  "modifiers" << event->modifiers() << "buttons" << event->buttons()
+           << "button" << event->button() << "pos" << event->pos();
   QToolTip::hideText();
 
   if(mouseState & DRAG_ROUTE_POINT || mouseState & DRAG_ROUTE_LEG)
@@ -1231,7 +1226,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     setViewContext(Marble::Still);
     update();
   }
-  else if(event->button() == Qt::LeftButton && !mouseMoved)
+  else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {
     // Start all dragging
     currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10);
@@ -1305,7 +1300,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     debugOnClick(event->pos().x(), event->pos().y());
 #endif
 
-  mouseMoved = false;
+  mouseMoved = QPoint();
 }
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
@@ -1371,7 +1366,7 @@ bool MapWidget::event(QEvent *event)
     getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResultTooltip);
     tooltipPos = helpEvent->globalPos();
     updateTooltip();
-    event->ignore();
+    event->accept();
     return true;
   }
 

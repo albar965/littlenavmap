@@ -90,7 +90,7 @@ const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);
 const QColor ilsSymbolColor = QColor(Qt::darkGreen);
-const QColor ilsTextColor = QColor::fromRgb(0, 70, 0);
+const QColor ilsTextColor = QColor::fromRgb(0, 30, 0);
 const QColor waypointSymbolColor = QColor(Qt::magenta);
 
 const QColor airwayVictorColor = QColor::fromRgb(150, 150, 150);

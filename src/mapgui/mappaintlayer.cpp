@@ -246,7 +246,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     // Set default font to bold and reduce size a bit
     QFont font = painter->font();
     font.setBold(true);
-    font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
+//    font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
     painter->setFont(font);
 
     QElapsedTimer t;

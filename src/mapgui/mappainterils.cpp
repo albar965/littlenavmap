@@ -143,7 +143,8 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
 
     if(!text.isEmpty())
     {
-      painter->setPen(QPen(mapcolors::ilsTextColor, 2, Qt::SolidLine, Qt::FlatCap));
+      // painter->setBrush(mapcolors::textBoxColor);
+      painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       painter->translate(origin);
 
       float rotate;
@@ -157,10 +158,11 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
 
       if(featherLen > 40)
       {
-        int texth = painter->fontMetrics().descent();
+        QFontMetrics metrics = painter->fontMetrics();
+        int texth = metrics.descent();
 
-        text = painter->fontMetrics().elidedText(text, Qt::ElideRight, featherLen);
-        int textw = painter->fontMetrics().width(text);
+        text = metrics.elidedText(text, Qt::ElideRight, featherLen);
+        int textw = metrics.width(text);
 
         int textpos;
         if(ils.heading > 180)
@@ -169,6 +171,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
           textpos = -(featherLen + textw) / 2;
 
         painter->rotate(rotate);
+        // painter->drawRect(textpos - 2, 2, textw + 2, -metrics.height() - 2);
         painter->drawText(textpos, -texth, text);
         painter->resetTransform();
       }

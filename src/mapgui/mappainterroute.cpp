@@ -102,7 +102,7 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
     if(i > 0 && !fast)
     {
       int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
-      if(lineLength > 40)
+      if(lineLength > 80)
       {
         QString text(QString::number(obj.getDistanceTo(), 'f', 0) + " nm  / " +
                      QString::number(obj.getCourseToRhumb(), 'f', 0) + "°M");
@@ -145,7 +145,8 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
   if(!fast)
   {
     // Draw text along lines
-    painter->setPen(QColor(Qt::black));
+    // painter->setBrush(mapcolors::routeTextBoxColor);
+    painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
     int i = 0;
     for(const QPoint& textCoord : textCoords)
     {
@@ -167,13 +168,15 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
           rotate = brg + 90.f;
         }
 
+        QFontMetrics metrics = painter->fontMetrics();
+
         if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
-          text = painter->fontMetrics().elidedText(text, elide, textLineLengths.at(i));
+          text = metrics.elidedText(text, elide, textLineLengths.at(i));
 
         painter->translate(textCoord.x(), textCoord.y());
         painter->rotate(rotate);
-        painter->drawText(-painter->fontMetrics().width(text) / 2,
-                          -painter->fontMetrics().descent(), text);
+        // painter->drawRect(-metrics.width(text) / 2 - 2, -metrics.height(), metrics.width(text) + 4, metrics.height());
+        painter->drawText(-metrics.width(text) / 2, -metrics.descent() - 2, text);
         painter->resetTransform();
       }
       i++;

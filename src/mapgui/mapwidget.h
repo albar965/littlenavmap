@@ -78,8 +78,6 @@ public:
   MapWidget(MainWindow *parent, MapQuery *query);
   virtual ~MapWidget();
 
-  void contextMenu(const QPoint& point);
-
   void saveState();
   void restoreState();
 
@@ -213,7 +211,7 @@ private:
 
   MapThemeComboIndex currentComboIndex = INVALID;
   MouseStates mouseState = NONE;
-  bool mouseMoved = false;
+  QPoint mouseMoved;
   MainWindow *parentWindow;
   QPoint tooltipPos;
   maptypes::MapSearchResult mapSearchResultTooltip;
@@ -285,6 +283,8 @@ private:
   void updateVisibleObjects();
 
   void handleInfoClick(QPoint pos);
+
+  virtual void contextMenuEvent(QContextMenuEvent *event) override;
 
 };
 
