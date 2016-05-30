@@ -103,6 +103,7 @@ public:
 
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+  QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
                         textflags::TextFlags flags, int size, bool fill, bool fast);

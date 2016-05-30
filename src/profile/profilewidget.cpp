@@ -436,7 +436,17 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
                    QString::number(aircraftDistanceToDest, 'f', 0) + " nm");
 
-      symPainter.textBox(&painter, texts, QPen(Qt::black), acx, acy + 20, textatt::BOLD, 255);
+      textatt::TextAttributes att = textatt::BOLD;
+      int textx = acx, texty = acy + 20;
+
+      QRect rect = symPainter.textBoxSize(&painter, texts, att);
+      if(textx + rect.right() > X0 + w)
+        att |= textatt::RIGHT;
+
+      if(texty + rect.bottom() > Y0 + h)
+        texty -= rect.bottom() + 20;
+
+      symPainter.textBox(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
   }
 

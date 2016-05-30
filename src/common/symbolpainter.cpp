@@ -639,3 +639,45 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   }
   painter->restore();
 }
+
+QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts)
+{
+  QRect retval;
+  if(texts.isEmpty())
+    return retval;
+
+  painter->save();
+
+  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
+  {
+    QFont f = painter->font();
+    f.setBold(atts.testFlag(textatt::BOLD));
+    f.setItalic(atts.testFlag(textatt::ITALIC));
+    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
+    painter->setFont(f);
+  }
+
+  QFontMetrics metrics = painter->fontMetrics();
+  int h = metrics.height();
+
+  int yoffset = 0;
+  for(const QString& t : texts)
+  {
+    int w = metrics.width(t);
+    int newx = 0;
+    if(atts.testFlag(textatt::RIGHT))
+      newx -= w;
+    else if(atts.testFlag(textatt::CENTER))
+      newx -= w / 2;
+
+    int textW = metrics.width(t);
+    if(retval.isNull())
+      retval = QRect(newx, yoffset, textW, h);
+    else
+      retval = retval.united(QRect(newx, yoffset, textW, h));
+    // painter->drawText(newx, y + yoffset, t);
+    yoffset += h;
+  }
+  painter->restore();
+  return retval;
+}
