@@ -65,7 +65,8 @@ void InfoController::saveState()
 
   atools::gui::WidgetState ws("InfoWindow/Widget");
   ws.save({ui->tabWidgetInformation, ui->textEditAirportInfo, ui->textEditRunwayInfo, ui->textEditComInfo,
-           ui->textEditApproachInfo, ui->textEditNavaidInfo});
+           ui->textEditApproachInfo, ui->textEditNavaidInfo,
+           ui->tabWidgetAircraft});
 
   atools::settings::Settings::instance()->setValue("InfoWindow/CurrentAirportId", curAirportId);
 }
@@ -76,7 +77,8 @@ void InfoController::restoreState()
 
   atools::gui::WidgetState ws("InfoWindow/Widget");
   ws.restore({ui->tabWidgetInformation, ui->textEditAirportInfo, ui->textEditRunwayInfo, ui->textEditComInfo,
-              ui->textEditApproachInfo, ui->textEditNavaidInfo});
+              ui->textEditApproachInfo, ui->textEditNavaidInfo,
+              ui->tabWidgetAircraft});
 
   curAirportId = atools::settings::Settings::instance()->value("InfoWindow/CurrentAirportId", -1).toInt();
 
@@ -214,10 +216,12 @@ void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->textEditAircraftInfo->setText("Connected.");
+  ui->textEditAircraftProgressInfo->setText("Connected.");
 }
 
 void InfoController::disconnectedFromSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->textEditAircraftInfo->setText("Disconnected.");
+  ui->textEditAircraftProgressInfo->setText("Disconnected.");
 }

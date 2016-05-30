@@ -867,7 +867,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   else
     html.text("No Route loaded.", html::BOLD);
 
-  head(html, "Altitude");
+  head(html, "Aircraft");
   html.table();
   html.row2("Fuel Flow:", locale.toString(data.getFuelFlowPPH(), 'f', 0) + " pph, " +
             locale.toString(data.getFuelFlowGPH(), 'f', 0) + " gph, ");
@@ -889,16 +889,31 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.row2("Ground:", locale.toString(data.getGroundSpeed(), 'f', 0) + " kts");
   html.row2("Indicated:", locale.toString(data.getIndicatedSpeed(), 'f', 0) + " kts");
   html.row2("True:", locale.toString(data.getTrueSpeed(), 'f', 0) + "kts");
-  html.row2("Vertical:", locale.toString(data.getVerticalSpeed(), 'f', 0) + " ft/min");
+
+  QString upDown;
+  if(data.getVerticalSpeed() > 100)
+    upDown = " <b>⭡</b>";
+  else if(data.getVerticalSpeed() < -100)
+    upDown = " <b>⭣</b>";
+  html.row2("Vertical:", locale.toString(data.getVerticalSpeed(), 'f', 0) + " ft/min " + upDown);
   html.tableEnd();
 
   head(html, "Ambient");
   html.table();
   html.row2("Wind Direction and Speed:", locale.toString(data.getWindDirection(), 'f', 0) + " °M, " +
             locale.toString(data.getWindSpeed(), 'f', 0) + " kts");
-  html.row2("Temperature:", locale.toString(data.getAmbientTemperature(), 'f', 0) + " °C");
-  html.row2("Total Air Temperature:", locale.toString(data.getTotalAirTemperature(), 'f', 0) + " °C");
-  html.row2("Sea level Pressure:", locale.toString(data.getSeaLevelPressure(), 'f', 0) + " mb");
+
+  float temp = data.getAmbientTemperature();
+  html.row2("Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
+            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
+
+  temp = data.getTotalAirTemperature();
+  html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
+            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
+
+  float slp = data.getSeaLevelPressure();
+  html.row2("Sea Level Pressure:", locale.toString(slp, 'f', 0) + " mbar, " +
+            locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + " inHg");
   html.tableEnd();
 
   head(html, "Position");
