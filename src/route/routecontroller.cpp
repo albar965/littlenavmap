@@ -172,7 +172,7 @@ void RouteController::routeTypeChanged()
   emit routeChanged(false);
 }
 
-void RouteController::selectDepartureParking()
+bool RouteController::selectDepartureParking()
 {
   const maptypes::MapAirport& airport = routeMapObjects.first().getAirport();
   ParkingDialog dialog(parentWindow, query, airport);
@@ -184,8 +184,13 @@ void RouteController::selectDepartureParking()
   {
     maptypes::MapParking parking;
     if(dialog.getSelectedParking(parking))
+    {
       routeSetParking(parking);
+      return true;
+    }
   }
+
+  return false;
 }
 
 void RouteController::saveState()
@@ -448,6 +453,23 @@ bool RouteController::hasValidDestination() const
 {
   return !flightplan->isEmpty() &&
          flightplan->getEntries().last().getWaypointType() == atools::fs::pln::entry::AIRPORT;
+}
+
+bool RouteController::hasValidParking() const
+{
+  if(hasValidStart())
+  {
+    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(
+      routeMapObjects.first().getId());
+
+    if(parkingCache == nullptr || parkingCache->isEmpty())
+      // No parking available - so no parking selection is valid
+      return true;
+    else
+      return !flightplan->getDepartureParkingName().isEmpty();
+  }
+  else
+    return false;
 }
 
 bool RouteController::hasEntries() const

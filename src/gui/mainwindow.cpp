@@ -540,14 +540,38 @@ void MainWindow::routeCenter()
   navMapWidget->showRect(routeController->getBoundingRect());
 }
 
-void MainWindow::routeCheckForStartAndDest()
+bool MainWindow::routeValidate()
 {
   if(!routeController->hasValidStart() || !routeController->hasValidDestination())
     dialog->showInfoMsgBox("Actions/ShowRouteWarning",
                            tr("Route must have an airport as start and destination and "
                               "will not be usable by the Simulator."),
                            tr("Do not &show this dialog again."));
+  else
+  {
+    if(!routeController->hasValidParking())
+    {
+      atools::gui::DialogButtonList buttons({
+                                              {QString(), QMessageBox::Cancel},
+                                              {"Select Parking", QMessageBox::Yes},
+                                              {QString(), QMessageBox::Save}
+                                            });
 
+      int result = dialog->showQuestionMsgBox(
+        "Actions/ShowRouteParkingWarning",
+        "The start airport has parking spots but no parking was selected for this route",
+        tr("Do not show this dialog again and save route in the future."),
+        buttons, QMessageBox::Yes, QMessageBox::Save);
+
+      if(result == QMessageBox::Yes)
+        return routeController->selectDepartureParking();
+      else if(result == QMessageBox::Save)
+        return true;
+      else if(result == QMessageBox::Cancel)
+        return false;
+    }
+  }
+  return true;
 }
 
 bool MainWindow::routeCheckForChanges()
@@ -568,11 +592,7 @@ bool MainWindow::routeCheckForChanges()
       if(routeController->getRouteFilename().isEmpty())
         return routeSaveAs();
       else
-      {
-        routeSave();
-        // ok to erase route
-        return true;
-      }
+        return routeSave();
 
     case QMessageBox::No:
       // ok to erase route
@@ -611,33 +631,38 @@ void MainWindow::routeOpen()
   }
 }
 
-void MainWindow::routeSave()
+bool MainWindow::routeSave()
 {
   if(routeController->getRouteFilename().isEmpty())
-    routeSaveAs();
+    return routeSaveAs();
   else
   {
-    routeCheckForStartAndDest();
-    routeController->saveFlightplan();
-    updateActionStates();
+    if(routeValidate())
+    {
+      routeController->saveFlightplan();
+      updateActionStates();
+      return true;
+    }
   }
+  return false;
 }
 
 bool MainWindow::routeSaveAs()
 {
-  routeCheckForStartAndDest();
-
-  QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
-                                             tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
-                                             "pln", "Route/",
-                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX),
-                                             routeController->getDefaultFilename());
-
-  if(!routeFile.isEmpty())
+  if(routeValidate())
   {
-    routeController->saveFlighplanAs(routeFile);
-    updateActionStates();
-    return true;
+    QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
+                                               tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
+                                               "pln", "Route/",
+                                               atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX),
+                                               routeController->getDefaultFilename());
+
+    if(!routeFile.isEmpty())
+    {
+      routeController->saveFlighplanAs(routeFile);
+      updateActionStates();
+      return true;
+    }
   }
   return false;
 }

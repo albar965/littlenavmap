@@ -83,7 +83,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void routeSetParking(maptypes::MapParking parking);
-  void selectDepartureParking();
+  bool selectDepartureParking();
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* Used by undo/redo */
@@ -104,6 +104,7 @@ public:
   bool hasValidStart() const;
   bool hasValidDestination() const;
   bool hasEntries() const;
+  bool hasValidParking() const;
 
   void preDatabaseLoad();
   void postDatabaseLoad();
