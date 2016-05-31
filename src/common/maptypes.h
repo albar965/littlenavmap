@@ -74,23 +74,29 @@ maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
 
 enum MapAirportFlag
 {
-  AP_NONE = 0x0000,
-  AP_SCENERY = 0x0001,
-  AP_ADDON = 0x0002,
-  AP_LIGHT = 0x0004,
-  AP_TOWER = 0x0008,
-  AP_ILS = 0x0010,
-  AP_APPR = 0x0020,
-  AP_MIL = 0x0040,
-  AP_CLOSED = 0x0080,
-  AP_AVGAS = 0x0100,
-  AP_JETFUEL = 0x0200,
-  AP_HARD = 0x0400,
-  AP_SOFT = 0x0800,
-  AP_WATER = 0x1000,
-  AP_HELIPAD = 0x2000,
-  AP_COMPLETE = 0x4000, // Struct completely loaded?
-  AP_ALL = 0xffff
+  AP_NONE = 0x000000,
+  AP_ADDON = 0x000001,
+  AP_LIGHT = 0x000002,
+  AP_TOWER = 0x000004,
+  AP_ILS = 0x000008,
+  AP_APPR = 0x000010,
+  AP_MIL = 0x000020,
+  AP_CLOSED = 0x000040,
+  AP_AVGAS = 0x000080,
+  AP_JETFUEL = 0x000100,
+  AP_HARD = 0x000200,
+  AP_SOFT = 0x000400,
+  AP_WATER = 0x000800,
+  AP_HELIPAD = 0x001000,
+  AP_APRON = 0x002000,
+  AP_TAXIWAY = 0x004000,
+  AP_TOWER_OBJ = 0x008000,
+  AP_PARKING = 0x010000,
+  AP_ALS = 0x020000,
+  AP_VASI = 0x040000,
+  AP_FENCE = 0x080000,
+  AP_COMPLETE = 0x100000, // Struct completely loaded?
+  AP_ALL = 0xfffff
 };
 
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
@@ -118,11 +124,18 @@ struct MapAirport
   bool waterOnly() const;
   bool helipadOnly() const;
   bool noRunways() const;
-  bool scenery() const;
   bool tower() const;
   bool addon() const;
   bool anyFuel() const;
   bool complete() const;
+  bool towerObject() const;
+  bool apron() const;
+  bool taxiway() const;
+  bool parking() const;
+  bool empty() const;
+  bool als() const;
+  bool vasi() const;
+  bool fence() const;
 
   bool isVisible(maptypes::MapObjectTypes objectTypes) const;
 

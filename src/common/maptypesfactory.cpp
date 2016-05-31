@@ -86,7 +86,6 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
 
   MapAirportFlags flags = 0;
   flags |= airportFlag(record, "num_helipad", AP_HELIPAD);
-  flags |= airportFlag(record, "rating", AP_SCENERY);
   flags |= airportFlag(record, "has_avgas", AP_AVGAS);
   flags |= airportFlag(record, "has_jetfuel", AP_JETFUEL);
   flags |= airportFlag(record, "tower_frequency", AP_TOWER);
@@ -102,6 +101,27 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
   flags |= airportFlag(record, "num_approach", AP_APPR);
   flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
   flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);
+
+  flags |= airportFlag(record, "num_apron", AP_APRON);
+  flags |= airportFlag(record, "num_taxi_path", AP_TAXIWAY);
+  flags |= airportFlag(record, "has_tower_object", AP_TOWER_OBJ);
+
+  flags |= airportFlag(record, "num_parking_gate", AP_PARKING);
+  flags |= airportFlag(record, "num_parking_ga_ramp", AP_PARKING);
+  flags |= airportFlag(record, "num_parking_cargo", AP_PARKING);
+  flags |= airportFlag(record, "num_parking_mil_cargo", AP_PARKING);
+  flags |= airportFlag(record, "num_parking_mil_combat", AP_PARKING);
+
+  flags |= airportFlag(record, "num_runway_end_vasi", AP_VASI);
+  flags |= airportFlag(record, "num_runway_end_als", AP_ALS);
+  flags |= airportFlag(record, "num_boundary_fence", AP_FENCE);
+  }
+  else
+  {
+    // Force non empty airports for overview results
+    flags |= AP_APRON;
+    flags |= AP_TAXIWAY;
+    flags |= AP_TOWER_OBJ;
   }
 
   return flags;

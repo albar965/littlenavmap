@@ -212,6 +212,16 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).
 
+  append(Column("num_apron").hidden()).
+  append(Column("num_taxi_path").hidden()).
+  append(Column("has_tower_object").hidden()).
+  append(Column("num_runway_end_vasi").hidden()).
+  append(Column("num_runway_end_als").hidden()).
+  append(Column("num_boundary_fence").hidden()).
+
+  append(Column("tower_lonx").hidden()).
+  append(Column("tower_laty").hidden()).
+
   append(Column("left_lonx").hidden()).
   append(Column("top_laty").hidden()).
   append(Column("right_lonx").hidden()).

@@ -246,14 +246,49 @@ bool MapAirport::hard() const
   return flags.testFlag(AP_HARD);
 }
 
-bool MapAirport::scenery() const
-{
-  return flags.testFlag(AP_SCENERY);
-}
-
 bool MapAirport::tower() const
 {
   return flags.testFlag(AP_TOWER);
+}
+
+bool MapAirport::towerObject() const
+{
+  return flags.testFlag(AP_TOWER_OBJ);
+}
+
+bool MapAirport::apron() const
+{
+  return flags.testFlag(AP_APRON);
+}
+
+bool MapAirport::taxiway() const
+{
+  return flags.testFlag(AP_TAXIWAY);
+}
+
+bool MapAirport::parking() const
+{
+  return flags.testFlag(AP_PARKING);
+}
+
+bool MapAirport::als() const
+{
+  return flags.testFlag(AP_ALS);
+}
+
+bool MapAirport::vasi() const
+{
+  return flags.testFlag(AP_VASI);
+}
+
+bool MapAirport::fence() const
+{
+  return flags.testFlag(AP_FENCE);
+}
+
+bool MapAirport::empty() const
+{
+  return !towerObject() && !parking() && !taxiway() && !apron() && !addon();
 }
 
 bool MapAirport::addon() const
@@ -312,7 +347,7 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
   if(addon() && objectTypes.testFlag(maptypes::AIRPORT_ADDON))
     return true;
 
-  if(!scenery() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+  if(empty() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
     return false;
 
   if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))

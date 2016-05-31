@@ -119,16 +119,15 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     facilities.append("Add-on");
   if(airport.flags.testFlag(AP_MIL))
     facilities.append("Military");
-  if(airport.scenery())
-    facilities.append("Scenery");
 
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_apron") > 0)
-      facilities.append("Aprons");
-    if(rec->valueInt("num_taxi_path") > 0)
-      facilities.append("Taxiways");
-  }
+  if(airport.apron())
+    facilities.append("Aprons");
+  if(airport.taxiway())
+    facilities.append("Taxiways");
+  if(airport.towerObject())
+    facilities.append("Tower Object");
+  if(airport.parking())
+    facilities.append("Parking");
 
   if(airport.helipad())
     facilities.append("Helipads");
@@ -142,17 +141,13 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
 
   if(airport.flags.testFlag(AP_ILS))
     facilities.append("ILS");
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_runway_end_vasi") > 0)
-      facilities.append("VASI");
-    if(rec->valueInt("num_runway_end_als") > 0)
-      facilities.append("ALS");
-    if(rec->valueInt("num_boundary_fence") > 0)
-      facilities.append("Boundary Fence");
-    if(rec->valueBool("has_tower_object"))
-      facilities.append("Tower Object");
-  }
+
+  if(airport.vasi())
+    facilities.append("VASI");
+  if(airport.als())
+    facilities.append("ALS");
+  if(airport.fence())
+    facilities.append("Boundary Fence");
 
   if(facilities.isEmpty())
     facilities.append("None");

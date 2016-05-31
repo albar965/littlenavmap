@@ -65,7 +65,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Create a style copy
   QStyleOptionViewItem opt(option);
   opt.displayAlignment = Qt::AlignRight;
-  if(ap.scenery())
+  if(!ap.empty())
     opt.font.setBold(true);
   if(ap.addon())
     opt.font.setItalic(true);
