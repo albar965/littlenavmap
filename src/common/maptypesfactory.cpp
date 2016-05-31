@@ -115,13 +115,18 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
   flags |= airportFlag(record, "num_runway_end_vasi", AP_VASI);
   flags |= airportFlag(record, "num_runway_end_als", AP_ALS);
   flags |= airportFlag(record, "num_boundary_fence", AP_FENCE);
+  flags |= airportFlag(record, "num_runway_end_closed", AP_RW_CLOSED);
+
   }
   else
   {
-    // Force non empty airports for overview results
-    flags |= AP_APRON;
-    flags |= AP_TAXIWAY;
-    flags |= AP_TOWER_OBJ;
+    if(record.valueInt("rating") > 0)
+    {
+      // Force non empty airports for overview results
+      flags |= AP_APRON;
+      flags |= AP_TAXIWAY;
+      flags |= AP_TOWER_OBJ;
+    }
   }
 
   return flags;

@@ -167,11 +167,8 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     runways.append("Soft");
   if(airport.water())
     runways.append("Water");
-  if(rec != nullptr)
-  {
-    if(rec->valueInt("num_runway_end_closed") > 0)
-      runways.append("Closed");
-  }
+  if(airport.closedRunways())
+    runways.append("Closed");
   if(airport.flags.testFlag(AP_LIGHT))
     runways.append("Lighted");
 

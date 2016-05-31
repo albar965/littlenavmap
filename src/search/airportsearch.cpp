@@ -208,6 +208,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("longest_runway_width", tr("Longest\nRunway Width ft"))).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface"))).
   append(Column("longest_runway_heading").hidden()).
+  append(Column("num_runway_end_closed").hidden()).
 
   append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).

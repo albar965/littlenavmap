@@ -95,7 +95,8 @@ enum MapAirportFlag
   AP_ALS = 0x020000,
   AP_VASI = 0x040000,
   AP_FENCE = 0x080000,
-  AP_COMPLETE = 0x100000, // Struct completely loaded?
+  AP_RW_CLOSED = 0x100000,
+  AP_COMPLETE = 0x200000, // Struct completely loaded?
   AP_ALL = 0xfffff
 };
 
@@ -136,6 +137,7 @@ struct MapAirport
   bool als() const;
   bool vasi() const;
   bool fence() const;
+  bool closedRunways() const;
 
   bool isVisible(maptypes::MapObjectTypes objectTypes) const;
 

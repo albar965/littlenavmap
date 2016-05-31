@@ -286,6 +286,11 @@ bool MapAirport::fence() const
   return flags.testFlag(AP_FENCE);
 }
 
+bool MapAirport::closedRunways() const
+{
+  return flags.testFlag(AP_RW_CLOSED);
+}
+
 bool MapAirport::empty() const
 {
   return !towerObject() && !parking() && !taxiway() && !apron() && !addon();
