@@ -540,15 +540,15 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
   if(flags & textflags::INFO)
   {
     QString tower = (airport.towerFrequency == 0 ? QString() :
-                     "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 2));
+                     "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 3));
 
     QString autoWeather;
     if(airport.atisFrequency > 0)
-      autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 2);
+      autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 3);
     else if(airport.awosFrequency > 0)
-      autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 2);
+      autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 3);
     else if(airport.asosFrequency > 0)
-      autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 2);
+      autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 3);
 
     if(!tower.isEmpty() || !autoWeather.isEmpty())
       texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
@@ -558,7 +558,7 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
                    (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
                    QString::number(airport.longestRunwayLength / 100) + " " +
                    (airport.unicomFrequency == 0 ? QString() :
-                    QString::number(airport.unicomFrequency / 1000., 'f', 2)));
+                    QString::number(airport.unicomFrequency / 1000., 'f', 3)));
   }
   return texts;
 }

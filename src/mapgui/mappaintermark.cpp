@@ -289,6 +289,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       // Draw a rhumb line with constant course
       float bearing = m.from.angleDegToRhumb(m.to);
       float magBearing = m.hasMagvar ? bearing + m.magvar : bearing;
+      magBearing = atools::geo::normalizeCourse(magBearing);
 
       float distanceMeter = m.from.distanceMeterToRhumb(m.to);
 
@@ -317,8 +318,8 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QString::number(atools::geo::normalizeCourse(magBearing), 'f',
-                                   0) + (m.hasMagvar ? "°M" : "°T"));
+      texts.append(QString::number(atools::geo::normalizeCourse(magBearing), 'f', 0) +
+                   (m.hasMagvar ? "°M" : "°T"));
       texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)
         texts.append(QString::number(meterToFeet(distanceMeter), 'f', 0) + " ft");

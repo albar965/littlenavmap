@@ -94,13 +94,13 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   mapQuery->getAirportAdminById(airport.id, city, state, country);
 
   html.table();
-  if(routeMapObjects != nullptr)
+  if(routeMapObjects != nullptr && airport.routeIndex != -1)
   {
     if(airport.routeIndex == 0)
       html.row2("Route Start Airport", QString());
     else if(airport.routeIndex == routeMapObjects->size() - 1)
       html.row2("Route Destination Airport", QString());
-    else if(airport.routeIndex != -1)
+    else
       html.row2("Route position:", locale.toString(airport.routeIndex + 1));
   }
   html.row2("City:", city);
@@ -249,15 +249,15 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
       head(html, "COM Frequencies");
     html.table();
     if(airport.towerFrequency > 0)
-      html.row2("Tower:", locale.toString(airport.towerFrequency / 1000., 'f', 2));
+      html.row2("Tower:", locale.toString(airport.towerFrequency / 1000., 'f', 3));
     if(airport.atisFrequency > 0)
-      html.row2("ATIS:", locale.toString(airport.atisFrequency / 1000., 'f', 2));
+      html.row2("ATIS:", locale.toString(airport.atisFrequency / 1000., 'f', 3));
     if(airport.awosFrequency > 0)
-      html.row2("AWOS:", locale.toString(airport.awosFrequency / 1000., 'f', 2));
+      html.row2("AWOS:", locale.toString(airport.awosFrequency / 1000., 'f', 3));
     if(airport.asosFrequency > 0)
-      html.row2("ASOS:", locale.toString(airport.asosFrequency / 1000., 'f', 2));
+      html.row2("ASOS:", locale.toString(airport.asosFrequency / 1000., 'f', 3));
     if(airport.unicomFrequency > 0)
-      html.row2("Unicom:", locale.toString(airport.unicomFrequency / 1000., 'f', 2));
+      html.row2("Unicom:", locale.toString(airport.unicomFrequency / 1000., 'f', 3));
     html.tableEnd();
   }
 
@@ -329,7 +329,7 @@ void MapHtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, Q
       {
         html.tr();
         html.td(maptypes::comTypeName(rec.valueStr("type")));
-        html.td(locale.toString(rec.valueInt("frequency") / 1000., 'f', 2) + " MHz");
+        html.td(locale.toString(rec.valueInt("frequency") / 1000., 'f', 3) + " MHz");
         if(rec.valueStr("type") != "ATIS")
           html.td(capString(rec.valueStr("name")));
         else
@@ -717,7 +717,7 @@ void MapHtmlInfoBuilder::markerText(const MapMarker& m, HtmlBuilder& html)
 void MapHtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
 {
   if(airport.towerFrequency > 0)
-    head(html, "Tower: " + locale.toString(airport.towerFrequency / 1000., 'f', 2));
+    head(html, "Tower: " + locale.toString(airport.towerFrequency / 1000., 'f', 3));
   else
     head(html, "Tower");
 }
@@ -830,6 +830,11 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     {
       head(html, "Route Progress");
       html.table();
+      QDateTime local = QDateTime::fromTime_t(data.getLocalTime());
+      QDateTime zulu = QDateTime::fromTime_t(data.getZuluTime());
+
+      html.row2("Time Local, UTC:", locale.toString(local) + ", " + locale.toString(zulu));
+
       html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + " nm");
       html.row2("Distance to Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
 
@@ -897,53 +902,52 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   if(mach > 0.4f)
     html.row2("Mach:", locale.toString(mach, 'f', 2));
 
+  int vspeed = atools::roundToPrecision(data.getVerticalSpeed());
   QString upDown;
-  if(data.getVerticalSpeed() > 100)
+  if(vspeed >= 100)
     upDown = " <b>⭡</b>";
-  else if(data.getVerticalSpeed() < -100)
+  else if(vspeed <= -100)
     upDown = " <b>⭣</b>";
-  html.row2("Vertical:", locale.toString(data.getVerticalSpeed(), 'f', 0) + " ft/min " + upDown);
+  html.row2("Vertical:", locale.toString(vspeed) + " ft/min " + upDown);
   html.tableEnd();
 
   head(html, "Ambient");
   html.table();
   float windSpeed = data.getWindSpeed();
+  float windDir = atools::geo::normalizeCourse(data.getWindDirection() + data.getMagVar());
   if(windSpeed >= 1.f)
-  {
-    float windDir = data.getWindDirection();
     html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + " °M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");
-
-    float diffRad = atools::geo::toRadians(windDir - data.getCourseMag());
-    float headWind = windSpeed * std::cos(diffRad);
-    QString header("Headwind:");
-    if(headWind <= -1.f)
-      header = "Tailwind:";
-    headWind = std::abs(headWind);
-
-    QString value = "None";
-    if(headWind >= 1.0f)
-      value = locale.toString(std::abs(headWind), 'f', 0) + " kts";
-
-    html.row2(header, value);
-
-    float crossWind = windSpeed * std::sin(diffRad);
-    QString dir;
-    if(crossWind >= 1.f)
-      dir = "Right";
-    else if(crossWind <= -1.f)
-      dir = "Left";
-
-    crossWind = std::abs(crossWind);
-
-    value = "None";
-    if(crossWind >= 1.0f)
-      value = locale.toString(crossWind, 'f', 0) + " kts ";
-
-    html.row2("Crosswind:", value + dir);
-  }
   else
-    html.row2("No Wind", QString());
+    html.row2("Wind Direction and Speed:", "None");
+
+  float diffRad = atools::geo::toRadians(windDir - data.getCourseMag());
+  float headWind = windSpeed * std::cos(diffRad);
+  QString header("Headwind:");
+  if(headWind <= -1.f)
+    header = "Tailwind:";
+  headWind = std::abs(headWind);
+
+  QString value = "None";
+  if(headWind >= 1.0f)
+    value = locale.toString(std::abs(headWind), 'f', 0) + " kts";
+
+  html.row2(header, value);
+
+  float crossWind = windSpeed * std::sin(diffRad);
+  QString dir;
+  if(crossWind >= 1.f)
+    dir = "Right";
+  else if(crossWind <= -1.f)
+    dir = "Left";
+
+  crossWind = std::abs(crossWind);
+
+  value = "None";
+  if(crossWind >= 1.0f)
+    value = locale.toString(crossWind, 'f', 0) + " kts ";
+
+  html.row2("Crosswind:", value + dir);
 
   float temp = data.getTotalAirTemperature();
   html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +

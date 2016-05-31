@@ -293,7 +293,7 @@ bool MapAirport::closedRunways() const
 
 bool MapAirport::empty() const
 {
-  return !towerObject() && !parking() && !taxiway() && !apron() && !addon();
+  return !parking() && !taxiway() && !apron() && !addon();
 }
 
 bool MapAirport::addon() const

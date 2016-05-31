@@ -374,7 +374,7 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
     if(value.isNull())
       return QString();
     else
-      return QLocale().toString(value.toDouble() / 1000, 'f', 2);
+      return QLocale().toString(value.toDouble() / 1000, 'f', 3);
   }
   else if(col->getColumnName() == "mag_var")
     return formatter::formatFloatUnit(value.toFloat(), QString(), 1);
