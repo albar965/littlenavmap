@@ -379,7 +379,25 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
     }
     if(minAltitude != 0 && !useSetAltitude)
+    {
+      float fpDir = flightplan->getDeparturePos().angleDegToRhumb(flightplan->getDestinationPos());
+
+      qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
+
+      if(fpDir >= 0.f && fpDir <= 180.f)
+        // General direction is east - round up to the next odd value
+        minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+      else
+        // General direction is west - round up to the next even value
+        minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
+
+      if(flightplan->getFlightplanType() == atools::fs::pln::VFR)
+        minAltitude += 500;
+
+      qDebug() << "corrected minAltitude" << minAltitude;
+
       flightplan->setCruisingAlt(minAltitude);
+    }
 
     QGuiApplication::restoreOverrideCursor();
     createRouteMapObjects();

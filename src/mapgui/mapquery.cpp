@@ -843,7 +843,7 @@ void MapQuery::initQueries()
     "select ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
 
   static QString parkingQueryBase(
-    "select parking_id, airport_id, type, name, number, radius, heading, has_jetway, lonx, laty ");
+    "select parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
 
   deInitQueries();
 

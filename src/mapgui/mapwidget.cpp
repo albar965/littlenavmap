@@ -1577,16 +1577,18 @@ void MapWidget::updateAirwayScreenLines()
 
   CoordinateConverter conv(viewport());
   const MapScale *scale = paintLayer->getMapScale();
+  bool showJet = paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ);
+  bool showVictor = paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV);
 
-  if(scale->isValid() && paintLayer->getMapLayer()->isAirway() &&
-     (paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ) ||
-      paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV)))
+  if(scale->isValid() && paintLayer->getMapLayer()->isAirway() && (showJet || showVictor))
   {
     const QList<MapAirway> *airways = mapQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
 
     for(int i = 0; i < airways->size(); i++)
     {
       const MapAirway& airway = airways->at(i);
+      if((airway.type == maptypes::VICTOR && !showVictor) || (airway.type == maptypes::JET && !showJet))
+        continue;
 
       GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
                                  airway.bounding.getEast(), airway.bounding.getWest(),

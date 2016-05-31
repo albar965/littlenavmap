@@ -214,7 +214,7 @@ struct MapTaxiPath
 
 struct MapParking
 {
-  QString type, name;
+  QString type, name, airlineCodes;
   int id, airportId;
   atools::geo::Pos position;
   int number, radius, heading;

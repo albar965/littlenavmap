@@ -284,6 +284,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, maptypes::MapParking&
   parking.airportId = record.valueInt("airport_id");
   parking.type = record.valueStr("type");
   parking.name = record.valueStr("name");
+  parking.airlineCodes = record.valueStr("airline_codes");
 
   parking.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   parking.jetway = record.valueInt("has_jetway") > 0;

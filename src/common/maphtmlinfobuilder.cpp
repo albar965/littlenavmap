@@ -94,6 +94,15 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   mapQuery->getAirportAdminById(airport.id, city, state, country);
 
   html.table();
+  if(routeMapObjects != nullptr)
+  {
+    if(airport.routeIndex == 0)
+      html.row2("Route Start Airport", QString());
+    else if(airport.routeIndex == routeMapObjects->size() - 1)
+      html.row2("Route Destination Airport", QString());
+    else if(airport.routeIndex != -1)
+      html.row2("Route position:", locale.toString(airport.routeIndex + 1));
+  }
   html.row2("City:", city);
   if(!state.isEmpty())
     html.row2("State or Province:", state);
@@ -180,16 +189,6 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     html.table();
     html.row2("Longest Runway Length:", locale.toString(airport.longestRunwayLength) + " ft");
     html.tableEnd();
-  }
-
-  if(routeMapObjects != nullptr)
-  {
-    if(airport.routeIndex == 0)
-      html.brText("Route start airport");
-    else if(airport.routeIndex == routeMapObjects->size() - 1)
-      html.brText("Route destination airport");
-    else if(airport.routeIndex != -1)
-      html.brText("Route position " + locale.toString(airport.routeIndex + 1));
   }
 
   if(weather != nullptr)
@@ -367,7 +366,9 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
                 (closedPrim & closedSec ? html::STRIKEOUT : html::NONE));
         html.table();
 
-        html.row2("Size:", locale.toString(rec.valueInt("length")) + " x " + locale
+        int length = rec.valueInt("length");
+
+        html.row2("Size:", locale.toString(length) + " x " + locale
                   .toString(rec.valueInt("width")) + " ft");
         html.row2("Surface:", maptypes::surfaceName(rec.valueStr("surface")));
         html.row2("Pattern Altitude:", locale.toString(rec.valueInt("pattern_altitude")) + " ft");
@@ -421,14 +422,14 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
 
         html.tableEnd();
 
-        runwayEndText(html, recPrim, hdgPrim);
-        runwayEndText(html, recSec, hdgSec);
+        runwayEndText(html, recPrim, hdgPrim, length);
+        runwayEndText(html, recSec, hdgSec, length);
       }
     }
   }
 }
 
-void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim)
+void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim, int length)
 {
   bool closed = rec->valueBool("has_closed_markings");
 
@@ -437,7 +438,14 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   if(closed)
     html.row2("Closed", QString());
   html.row2("Heading:", locale.toString(hdgPrim, 'f', 0) + " °M");
-  rowForInt(html, rec, "offset_threshold", "Offset Threshold:", "%1 ft");
+
+  int threshold = rec->valueInt("offset_threshold");
+  if(threshold > 0)
+  {
+    html.row2("Offset Threshold:", QString("%1 ft").arg(threshold));
+    html.row2("Effective Landing Distance:", QString("%1 ft").arg(length - threshold));
+  }
+
   rowForInt(html, rec, "blast_pad", "Blast Pad:", "%1 ft");
   rowForInt(html, rec, "overrun", "Overrun:", "%1 ft");
 
@@ -460,7 +468,8 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     lights.append("Strobes");
   if(rec->valueBool("has_touchdown_lights"))
     lights.append("Touchdown");
-  html.row2("Runway End Lights:", lights.join(", "));
+  if(!lights.isEmpty())
+    html.row2("Runway End Lights:", lights.join(", "));
   html.tableEnd();
 
   const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
@@ -692,7 +701,7 @@ void MapHtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
       waypointTexts.append(waypoints.last().valueStr("to_ident") + ", " +
                            waypoints.last().valueStr("to_region"));
 
-      html.row2("Waypoints (Ident and Region):", waypointTexts.join(", "));
+      html.row2("Waypoints Ident and Region:", waypointTexts.join(", "));
     }
   }
   html.tableEnd();
@@ -722,6 +731,8 @@ void MapHtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& htm
     html.brText(locale.toString(parking.radius * 2) + " ft");
     if(parking.jetway)
       html.brText("Has Jetway");
+    if(!parking.airlineCodes.isEmpty())
+      html.brText("Airline Codes: " + parking.airlineCodes);
   }
   else
     html.text("Fuel");
@@ -880,7 +891,11 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.table();
   html.row2("Ground:", locale.toString(data.getGroundSpeed(), 'f', 0) + " kts");
   html.row2("Indicated:", locale.toString(data.getIndicatedSpeed(), 'f', 0) + " kts");
-  html.row2("True:", locale.toString(data.getTrueSpeed(), 'f', 0) + "kts");
+  html.row2("True:", locale.toString(data.getTrueSpeed(), 'f', 0) + " kts");
+
+  float mach = data.getMachSpeed();
+  if(mach > 0.4f)
+    html.row2("Mach:", locale.toString(mach, 'f', 2));
 
   QString upDown;
   if(data.getVerticalSpeed() > 100)
@@ -892,15 +907,50 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
 
   head(html, "Ambient");
   html.table();
-  html.row2("Wind Direction and Speed:", locale.toString(data.getWindDirection(), 'f', 0) + " °M, " +
-            locale.toString(data.getWindSpeed(), 'f', 0) + " kts");
+  float windSpeed = data.getWindSpeed();
+  if(windSpeed >= 1.f)
+  {
+    float windDir = data.getWindDirection();
+    html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + " °M, " +
+              locale.toString(windSpeed, 'f', 0) + " kts");
 
-  float temp = data.getAmbientTemperature();
-  html.row2("Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
+    float diffRad = atools::geo::toRadians(windDir - data.getCourseMag());
+    float headWind = windSpeed * std::cos(diffRad);
+    QString header("Headwind:");
+    if(headWind <= -1.f)
+      header = "Tailwind:";
+    headWind = std::abs(headWind);
+
+    QString value = "None";
+    if(headWind >= 1.0f)
+      value = locale.toString(std::abs(headWind), 'f', 0) + " kts";
+
+    html.row2(header, value);
+
+    float crossWind = windSpeed * std::sin(diffRad);
+    QString dir;
+    if(crossWind >= 1.f)
+      dir = "Right";
+    else if(crossWind <= -1.f)
+      dir = "Left";
+
+    crossWind = std::abs(crossWind);
+
+    value = "None";
+    if(crossWind >= 1.0f)
+      value = locale.toString(crossWind, 'f', 0) + " kts ";
+
+    html.row2("Crosswind:", value + dir);
+  }
+  else
+    html.row2("No Wind", QString());
+
+  float temp = data.getTotalAirTemperature();
+  html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
             locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
 
-  temp = data.getTotalAirTemperature();
-  html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
+  temp = data.getAmbientTemperature();
+  html.row2("Static Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
             locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
 
   float slp = data.getSeaLevelPressure();

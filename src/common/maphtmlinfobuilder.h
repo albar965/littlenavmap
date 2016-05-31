@@ -117,7 +117,7 @@ private:
   void rowForBool(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                   const QString& msg, bool expected = false);
 
-  void runwayEndText(HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim);
+  void runwayEndText(HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim, int length);
 
   void rowForStr(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val);
