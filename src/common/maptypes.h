@@ -69,6 +69,8 @@ struct MapObjectRef
 
 int qHash(const maptypes::MapObjectRef& type);
 
+typedef QVector<MapObjectRef> MapObjectRefList;
+
 /* Convert nav_search type */
 maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
 
