@@ -117,7 +117,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">

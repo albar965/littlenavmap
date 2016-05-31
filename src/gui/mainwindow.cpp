@@ -480,7 +480,7 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           infoController, &InfoController::disconnectedFromSimulator);
-  connect(connectClient, &ConnectClient::connectToServer,
+  connect(connectClient, &ConnectClient::connectedToSimulator,
           infoController, &InfoController::connectedToSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
@@ -820,7 +820,16 @@ void MainWindow::openDatabase()
     qDebug() << "Opening database" << databaseFile;
     db = SqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(databaseFile);
-    db.open({"PRAGMA foreign_keys = ON"});
+
+    if(atools::settings::Settings::instance().getAndStoreValue("Options/ForeignKeys", false).toBool())
+      db.open({"PRAGMA foreign_keys = ON"});
+    else
+      db.open({"PRAGMA foreign_keys = OFF"});
+
+    atools::sql::SqlQuery query(db);
+    query.exec("PRAGMA foreign_keys");
+    if(query.next())
+      qDebug() << "Foreign keys are" << query.value(0).toBool();
 
     createEmptySchema();
   }
