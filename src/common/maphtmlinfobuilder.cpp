@@ -29,6 +29,7 @@
 #include "atools.h"
 #include "common/formatter.h"
 #include <QSize>
+#include "geo/calculations.h"
 
 #include <sql/sqlrecord.h>
 
@@ -819,25 +820,29 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   else
     html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD);
 
+  float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
+  int nearestLegIndex;
+
   if(!rmoList.isEmpty())
   {
-    float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
-    int nearestLegIndex;
-
     if(rmoList.getRouteDistances(data.getPosition(),
                                  &distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance,
                                  &nearestLegIndex))
     {
       head(html, "Route Progress");
       html.table();
-      QDateTime local = QDateTime::fromTime_t(data.getLocalTime());
-      QDateTime zulu = QDateTime::fromTime_t(data.getZuluTime());
-
-      html.row2("Time Local, UTC:", locale.toString(local) + ", " + locale.toString(zulu));
+      html.row2("Local Time and Date:", locale.toString(data.getLocalTime()));
+      html.row2("UTC Time:", locale.toString(data.getZuluTime()));
 
       html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + " nm");
       html.row2("Distance to Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
+      html.tableEnd();
 
+      head(html, "Next Waypoint");
+      html.table();
+      const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
+      html.row2("Distance:", locale.toString(nearestLegDistance, 'f', 0) + " nm");
+      html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
       if(crossTrackDistance != RouteMapObjectList::INVALID_VALUE)
       {
         int ctd = atools::roundToPrecision(crossTrackDistance * 10.f);
@@ -851,20 +856,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
                   locale.toString(std::abs(ctd / 10.f), 'f', 1) + " nm " + crossDirection);
       }
       else
-        html.row2("Cross Track Distance:", "-");
-
-      html.row2("Heading:", locale.toString(data.getCourseMag(), 'f', 0) + " °M, " +
-                locale.toString(data.getCourseTrue(), 'f', 0) + " °T");
-      html.row2("Track:", locale.toString(data.getTrackMag(), 'f', 0) + " °M, " +
-                locale.toString(data.getTrackTrue(), 'f', 0) + " °T");
-
-      html.tableEnd();
-
-      head(html, "Next Waypoint");
-      html.table();
-      const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
-      html.row2("Distance:", locale.toString(nearestLegDistance, 'f', 0) + " nm");
-      html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
+        html.row2("Cross Track Distance:");
       html.row2("Name and Type:", rmo.getIdent() +
                 (rmo.getMapObjectTypeName().isEmpty() ? "" : ", " + rmo.getMapObjectTypeName()));
       html.tableEnd();
@@ -877,8 +869,32 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
 
   head(html, "Aircraft");
   html.table();
+  html.row2("Heading:", locale.toString(data.getCourseMag(), 'f', 0) + " °M, " +
+            locale.toString(data.getCourseTrue(), 'f', 0) + " °T");
+  html.row2("Track:", locale.toString(data.getTrackMag(), 'f', 0) + " °M, " +
+            locale.toString(data.getTrackTrue(), 'f', 0) + " °T");
+
   html.row2("Fuel Flow:", locale.toString(data.getFuelFlowPPH(), 'f', 0) + " pph, " +
             locale.toString(data.getFuelFlowGPH(), 'f', 0) + " gph, ");
+
+  if(data.getFuelFlowPPH() > 0.1f)
+  {
+    float hoursRemaining = data.getFuelTotalWeight() / data.getFuelFlowPPH();
+    float distanceRemaining = hoursRemaining * data.getGroundSpeed();
+    html.row2("Endurance:", formatter::formatMinutesHoursLong(hoursRemaining) + ", " +
+              locale.toString(distanceRemaining, 'f', 0) + " nm");
+  }
+  else
+    html.row2("Endurance:");
+
+  if(distToDestNm > 1.f && data.getFuelFlowPPH() > 0.1f && data.getGroundSpeed() > 1.f)
+  {
+    float neededFuel = distToDestNm / data.getGroundSpeed() * data.getFuelFlowPPH();
+    float fuelRemaining = data.getFuelTotalWeight() - neededFuel;
+    html.row2("Remaining Fuel at Destination:", locale.toString(fuelRemaining, 'f', 0) + " lbs");
+  }
+  else
+    html.row2("Remaining Fuel at Destination:");
 
   html.row2("Pitot Ice:", locale.toString(data.getPitotIce(), 'f', 0) + " %");
   html.row2("Structural Ice:", locale.toString(data.getStructuralIce(), 'f', 0) + " %");
@@ -896,11 +912,13 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.table();
   html.row2("Ground:", locale.toString(data.getGroundSpeed(), 'f', 0) + " kts");
   html.row2("Indicated:", locale.toString(data.getIndicatedSpeed(), 'f', 0) + " kts");
-  html.row2("True:", locale.toString(data.getTrueSpeed(), 'f', 0) + " kts");
+  html.row2("True Airspeed:", locale.toString(data.getTrueSpeed(), 'f', 0) + " kts");
 
   float mach = data.getMachSpeed();
   if(mach > 0.4f)
     html.row2("Mach:", locale.toString(mach, 'f', 2));
+  else
+    html.row2("Mach:");
 
   int vspeed = atools::roundToPrecision(data.getVerticalSpeed());
   QString upDown;
@@ -911,7 +929,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.row2("Vertical:", locale.toString(vspeed) + " ft/min " + upDown);
   html.tableEnd();
 
-  head(html, "Ambient");
+  head(html, "Environment");
   html.table();
   float windSpeed = data.getWindSpeed();
   float windDir = atools::geo::normalizeCourse(data.getWindDirection() + data.getMagVar());
@@ -960,6 +978,26 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   float slp = data.getSeaLevelPressure();
   html.row2("Sea Level Pressure:", locale.toString(slp, 'f', 0) + " mbar, " +
             locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + " inHg");
+
+  QStringList precip;
+  if(data.getFlags() & atools::fs::sc::IN_CLOUD)
+    precip.append("Cloud");
+  if(data.getFlags() & atools::fs::sc::IN_RAIN)
+    precip.append("Rain");
+  if(data.getFlags() & atools::fs::sc::IN_SNOW)
+    precip.append("Snow");
+  if(precip.isEmpty())
+    precip.append("None");
+  html.row2("Conditions:", precip.join(", "));
+
+  float visibility = data.getAmbientVisibility();
+  if(visibility > atools::geo::nmToMeter(100.f))
+    html.row2("Visibility:", "> 100 nm");
+  else
+    html.row2("Visibility:",
+              locale.toString(atools::geo::meterToNm(data.getAmbientVisibility()), 'f', 2) + " nm, " +
+              locale.toString(atools::roundToPrecision(data.getAmbientVisibility(), 2)) + " m");
+
   html.tableEnd();
 
   head(html, "Position");

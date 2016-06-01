@@ -102,7 +102,7 @@ public:
 
   HtmlBuilder& table();
   HtmlBuilder& tableEnd();
-  HtmlBuilder& row2(const QString& name, const QString& value,
+  HtmlBuilder& row2(const QString& name, const QString& value = QString(),
                     html::Flags flags = html::BOLD, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, float value, int precision = -1,
                     html::Flags flags = html::BOLD, QColor color = QColor());
