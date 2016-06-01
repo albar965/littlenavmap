@@ -282,10 +282,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
 
-    symPainter.textBox(&painter, {QString::number(a)},
+    symPainter.textBox(&painter, {QLocale().toString(a)},
                        mapcolors::profleElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
 
-    symPainter.textBox(&painter, {QString::number(a)},
+    symPainter.textBox(&painter, {QLocale().toString(a)},
                        mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
@@ -432,9 +432,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         upDown = " ⭣";
 
       QStringList texts;
-      texts.append(QString::number(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
-      texts.append(QString::number(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
-                   QString::number(aircraftDistanceToDest, 'f', 0) + " nm");
+      texts.append(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
+      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
+                   QLocale().toString(aircraftDistanceToDest, 'f', 0) + " nm");
 
       textatt::TextAttributes att = textatt::BOLD;
       int textx = acx, texty = acy + 20;
@@ -658,11 +658,11 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   parentWindow->getUi()->labelElevationInfo->setText(
     "<b>" + from + " −> " + to + "</b>, " +
-    QString::number(distance, 'f', distance < 100.f ? 1 : 0) + " −> " +
-    QString::number(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
-    " Ground Altitude " + QString::number(alt, 'f', 0) + " ft, " +
-    " Above Ground Altitude " + QString::number(flightplanAltFt - alt, 'f', 0) + " ft, " +
-    " Leg Safe Altitude " + QString::number(maxElev, 'f', 0) + " ft");
+    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + " −> " +
+    QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
+    " Ground Altitude " + QLocale().toString(alt, 'f', 0) + " ft, " +
+    " Above Ground Altitude " + QLocale().toString(flightplanAltFt - alt, 'f', 0) + " ft, " +
+    " Leg Safe Altitude " + QLocale().toString(maxElev, 'f', 0) + " ft");
 
   mouseEvent->accept();
 

@@ -757,19 +757,7 @@ void MapHtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilde
 
 void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html)
 {
-  QString *icon;
-  if(data.getFlags() & atools::fs::sc::ON_GROUND)
-    icon = &aircraftGroundEncodedIcon;
-  else
-    icon = &aircraftEncodedIcon;
-
-  html.img(*icon, "Aircraft", QString(), QSize(24, 24));
-  html.nbsp().nbsp();
-
-  if(info)
-    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD | html::BIG);
-  else
-    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD);
+  aircraftTitle(data, html);
 
   head(html, "Aircraft");
   html.table();
@@ -806,19 +794,7 @@ void MapHtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data
 void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
                                               const RouteMapObjectList& rmoList)
 {
-  QString *icon;
-  if(data.getFlags() & atools::fs::sc::ON_GROUND)
-    icon = &aircraftGroundEncodedIcon;
-  else
-    icon = &aircraftEncodedIcon;
-
-  html.img(*icon, "Aircraft", QString(), QSize(24, 24));
-  html.nbsp().nbsp();
-
-  if(info)
-    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD | html::BIG);
-  else
-    html.text(data.getAirplaneReg() + " (" + data.getAirplaneType() + ")", html::BOLD);
+  aircraftTitle(data, html);
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
   int nearestLegIndex;
@@ -902,8 +878,20 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   else
     html.row2("Fuel at Destination:");
 
-  html.row2("Ice:", "Pitot " + locale.toString(data.getPitotIce(), 'f', 0) + " %, Structure " +
-            locale.toString(data.getStructuralIce(), 'f', 0) + " %");
+  QString ice;
+
+  if(data.getPitotIce() >= 1.f)
+    ice += "Pitot " + locale.toString(data.getPitotIce(), 'f', 0) + " %";
+  if(data.getStructuralIce() >= 1.f)
+  {
+    if(!ice.isEmpty())
+      ice += ", ";
+    ice += "Structure " + locale.toString(data.getStructuralIce(), 'f', 0) + " %";
+  }
+  if(ice.isEmpty())
+    ice = "None";
+
+  html.row2("Ice:", ice);
   html.tableEnd();
 
   head(html, "Altitude");
@@ -938,7 +926,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   head(html, "Environment");
   html.table();
   float windSpeed = data.getWindSpeed();
-  float windDir = atools::geo::normalizeCourse(data.getWindDirection() + data.getMagVar());
+  float windDir = atools::geo::normalizeCourse(data.getWindDirection() - data.getMagVar());
   if(windSpeed >= 1.f)
     html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + " °M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");
@@ -996,8 +984,8 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     precip.append("None");
   html.row2("Conditions:", precip.join(", "));
 
-  float visibilityNm = data.getAmbientVisibility();
-  float visibilityMeter = atools::geo::nmToMeter(visibilityNm);
+  float visibilityMeter = data.getAmbientVisibility();
+  float visibilityNm = atools::geo::meterToNm(visibilityMeter);
   QString visibilityMeterStr;
   if(visibilityMeter > 5000.f)
     visibilityMeterStr = locale.toString(visibilityMeter / 1000.f, 'f', 0) + " km";
@@ -1005,17 +993,46 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     visibilityMeterStr = locale.toString(
       atools::roundToPrecision(visibilityMeter, visibilityMeter > 1000 ? 2 : 1)) + " m";
 
-  if(visibilityNm > 100.f)
-    html.row2("Visibility:", "> 100 nm");
+  if(visibilityNm > 20.f)
+    html.row2("Visibility:", "> 20 nm");
   else
-    html.row2("Visibility:",
-              locale.toString(visibilityNm, 'f', visibilityNm < 5 ? 1 : 0) + " nm, " + visibilityMeterStr);
+    html.row2("Visibility:", locale.toString(visibilityNm, 'f', visibilityNm < 5 ? 1 : 0) + " nm, " +
+              visibilityMeterStr);
 
   html.tableEnd();
 
   head(html, "Position");
   html.row2("Coordinates:", data.getPosition().toHumanReadableString());
   html.tableEnd();
+}
+
+void MapHtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html)
+{
+  QString *icon;
+  if(data.getFlags() & atools::fs::sc::ON_GROUND)
+    icon = &aircraftGroundEncodedIcon;
+  else
+    icon = &aircraftEncodedIcon;
+
+  html.img(*icon, "Aircraft", QString(), QSize(24, 24));
+  html.nbsp().nbsp();
+
+  QString title(data.getAirplaneReg());
+
+  QString title2;
+  if(!data.getAirplaneType().isEmpty())
+    title2 += data.getAirplaneType();
+
+  if(!data.getAirplaneModel().isEmpty())
+    title2 += (title2.isEmpty() ? "" : ", ") + data.getAirplaneModel();
+
+  if(!title2.isEmpty())
+    title += " (" + title2 + ")";
+
+  if(info)
+    html.text(title, html::BOLD | html::BIG);
+  else
+    html.text(title, html::BOLD);
 }
 
 void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)

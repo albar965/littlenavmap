@@ -128,6 +128,8 @@ private:
   void rowForStrCap(HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                     const QString& msg, const QString& val);
 
+  void aircraftTitle(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html);
+
 };
 
 #endif // MAPHTMLINFOBUILDER

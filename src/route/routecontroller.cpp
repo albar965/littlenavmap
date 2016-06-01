@@ -1280,9 +1280,9 @@ void RouteController::updateModel()
     if(mapobj.getFrequency() > 0)
     {
       if(mapobj.getMapObjectType() == maptypes::VOR)
-        item = new QStandardItem(QString::number(mapobj.getFrequency() / 1000.f, 'f', 2));
+        item = new QStandardItem(QLocale().toString(mapobj.getFrequency() / 1000.f, 'f', 2));
       else if(mapobj.getMapObjectType() == maptypes::NDB)
-        item = new QStandardItem(QString::number(mapobj.getFrequency() / 100.f, 'f', 1));
+        item = new QStandardItem(QLocale().toString(mapobj.getFrequency() / 100.f, 'f', 1));
       else
         item = new QStandardItem();
       item->setTextAlignment(Qt::AlignRight);
@@ -1299,15 +1299,15 @@ void RouteController::updateModel()
     }
     else
     {
-      item = new QStandardItem(QString::number(mapobj.getCourseTo(), 'f', 0));
+      item = new QStandardItem(QLocale().toString(mapobj.getCourseTo(), 'f', 0));
       item->setTextAlignment(Qt::AlignRight);
       items.append(item);
 
-      item = new QStandardItem(QString::number(mapobj.getCourseToRhumb(), 'f', 0));
+      item = new QStandardItem(QLocale().toString(mapobj.getCourseToRhumb(), 'f', 0));
       item->setTextAlignment(Qt::AlignRight);
       items.append(item);
 
-      item = new QStandardItem(QString::number(mapobj.getDistanceTo(), 'f', 1));
+      item = new QStandardItem(QLocale().toString(mapobj.getDistanceTo(), 'f', 1));
       item->setTextAlignment(Qt::AlignRight);
       items.append(item);
     }
@@ -1317,7 +1317,7 @@ void RouteController::updateModel()
     float remaining = totalDistance - cumulatedDistance;
     if(remaining < 0.f)
       remaining = 0.f;  // Catch the -0 case due to rounding errors
-    item = new QStandardItem(QString::number(remaining, 'f', 1));
+    item = new QStandardItem(QLocale().toString(remaining, 'f', 1));
     item->setTextAlignment(Qt::AlignRight);
     items.append(item);
 
@@ -1388,7 +1388,7 @@ void RouteController::updateLabel()
 
     float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
     ui->labelRouteInfo->setText("<b>" + startAirport + "</b> to <b>" + destAirport + "</b>, " +
-                                QString::number(totalDistance, 'f', 0) + " nm, " +
+                                QLocale().toString(totalDistance, 'f', 0) + " nm, " +
                                 formatter::formatMinutesHoursLong(travelTime) +
                                 routeType
                                 );

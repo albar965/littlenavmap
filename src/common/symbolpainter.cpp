@@ -421,7 +421,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
     texts.append(ndb.ident);
 
   if(flags & textflags::FREQ)
-    texts.append(QString::number(ndb.frequency / 100., 'f', 1));
+    texts.append(QLocale().toString(ndb.frequency / 100., 'f', 1));
 
   textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
@@ -459,7 +459,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
     texts.append(vor.ident);
 
   if(flags & textflags::FREQ)
-    texts.append(QString::number(vor.frequency / 1000., 'f', 2));
+    texts.append(QLocale().toString(vor.frequency / 1000., 'f', 2));
 
   textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
@@ -540,25 +540,25 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
   if(flags & textflags::INFO)
   {
     QString tower = (airport.towerFrequency == 0 ? QString() :
-                     "CT - " + QString::number(airport.towerFrequency / 1000., 'f', 3));
+                     "CT - " + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
 
     QString autoWeather;
     if(airport.atisFrequency > 0)
-      autoWeather = "ATIS " + QString::number(airport.atisFrequency / 1000., 'f', 3);
+      autoWeather = "ATIS " + QLocale().toString(airport.atisFrequency / 1000., 'f', 3);
     else if(airport.awosFrequency > 0)
-      autoWeather = "AWOS " + QString::number(airport.awosFrequency / 1000., 'f', 3);
+      autoWeather = "AWOS " + QLocale().toString(airport.awosFrequency / 1000., 'f', 3);
     else if(airport.asosFrequency > 0)
-      autoWeather = "ASOS " + QString::number(airport.asosFrequency / 1000., 'f', 3);
+      autoWeather = "ASOS " + QLocale().toString(airport.asosFrequency / 1000., 'f', 3);
 
     if(!tower.isEmpty() || !autoWeather.isEmpty())
       texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
 
     if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-      texts.append(QString::number(airport.getPosition().getAltitude()) + " " +
+      texts.append(QLocale().toString(airport.getPosition().getAltitude()) + " " +
                    (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
-                   QString::number(airport.longestRunwayLength / 100) + " " +
+                   QLocale().toString(airport.longestRunwayLength / 100) + " " +
                    (airport.unicomFrequency == 0 ? QString() :
-                    QString::number(airport.unicomFrequency / 1000., 'f', 3)));
+                    QLocale().toString(airport.unicomFrequency / 1000., 'f', 3)));
   }
   return texts;
 }

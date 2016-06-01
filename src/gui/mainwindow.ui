@@ -1130,6 +1130,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
                <property name="suffix">
                 <string> nm</string>
                </property>
@@ -1557,6 +1560,9 @@
        </property>
        <item>
         <widget class="QSpinBox" name="spinBoxRouteSpeed">
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
+         </property>
          <property name="suffix">
           <string> kts</string>
          </property>
@@ -1573,6 +1579,9 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinBoxRouteAlt">
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
+         </property>
          <property name="suffix">
           <string> ft</string>
          </property>

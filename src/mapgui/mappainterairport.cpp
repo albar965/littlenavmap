@@ -444,7 +444,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
           if(parking.type.startsWith("FUEL"))
             text = "F";
           else
-            text = QString::number(parking.number) + " " + parkingTypeName(parking.name);
+            text = QLocale().toString(parking.number) + " " + parkingTypeName(parking.name);
           pt.setY(pt.y() + painter->fontMetrics().ascent() / 2);
           pt.setX(pt.x() - painter->fontMetrics().width(text) / 2);
 
@@ -486,10 +486,10 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       else
         painter->rotate(runway.heading - 90);
 
-      QString text = QString::number(runway.length);
+      QString text = QLocale().toString(runway.length);
 
       if(runway.width > 8)
-        text += " x " + QString::number(runway.width);
+        text += " x " + QLocale().toString(runway.width);
 
       if(!runway.edgeLight.isEmpty())
         text += " / L";

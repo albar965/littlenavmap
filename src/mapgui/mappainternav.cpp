@@ -210,7 +210,7 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
         {
           text += QString(" / ") + maptypes::airwayTypeToShortString(airway.type);
           if(airway.minalt)
-            text += QString(" / ") + QString::number(airway.minalt) + " ft";
+            text += QString(" / ") + QLocale().toString(airway.minalt) + " ft";
         }
 
         if(!text.isEmpty())

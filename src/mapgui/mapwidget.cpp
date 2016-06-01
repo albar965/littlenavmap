@@ -386,21 +386,21 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   if(databaseLoadStatus)
     return;
 
+  simData = simulatorData;
+
+  CoordinateConverter conv(viewport());
+  QPoint curPos = conv.wToS(simulatorData.getPosition());
+  QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
+
+  bool wasEmpty = aircraftTrack.isEmpty();
+  aircraftTrack.appendTrackPos(simulatorData.getPosition(),
+                               simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
+
+  if(wasEmpty != aircraftTrack.isEmpty())
+    emit updateActionStates();
+
   if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
   {
-    simData = simulatorData;
-
-    CoordinateConverter conv(viewport());
-    QPoint curPos = conv.wToS(simulatorData.getPosition());
-    QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
-
-    bool wasEmpty = aircraftTrack.isEmpty();
-    aircraftTrack.appendTrackPos(simulatorData.getPosition(),
-                                 simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
-
-    if(wasEmpty != aircraftTrack.isEmpty())
-      emit updateActionStates();
-
     using atools::almostNotEqual;
     if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
        almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 1.f) ||
@@ -409,8 +409,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     {
       lastSimData = simulatorData;
 
-      int dx = width() / 4;
-      int dy = height() / 4;
+      int dx = width() / 3;
+      int dy = height() / 3;
 
       QRect widgetRect = geometry();
       widgetRect.adjust(dx, dy, -dx, -dy);
@@ -419,6 +419,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
         centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
       else
         update();
+    }
+  }
+  else if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT_TRACK)
+  {
+    using atools::almostNotEqual;
+    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 4)
+    {
+      lastSimData = simulatorData;
+      update();
     }
   }
 }
@@ -702,7 +711,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   if(airport != nullptr)
     searchText = maptypes::airportText(*airport);
   else if(parking != nullptr)
-    searchText = maptypes::parkingName(parking->name) + " " + QString::number(parking->number);
+    searchText = maptypes::parkingName(parking->name) + " " + QLocale().toString(parking->number);
   else if(vor != nullptr)
     searchText = maptypes::vorText(*vor);
   else if(ndb != nullptr)
@@ -1469,19 +1478,19 @@ void MapWidget::updateVisibleObjects()
       {
         if(layer->getMinRunwayLength() > 0)
         {
-          ap.append(">" + QString::number(layer->getMinRunwayLength() / 100));
-          apTooltip.append(" with runway length > " + QString::number(layer->getMinRunwayLength()) + " ft");
+          ap.append(">" + QLocale().toString(layer->getMinRunwayLength() / 100));
+          apTooltip.append(" with runway length > " + QLocale().toString(layer->getMinRunwayLength()) + " ft");
         }
       }
       else if(layer->getDataSource() == layer::MEDIUM)
       {
         ap.append(">40");
-        apTooltip.append(" with runway length > 4000 ft");
+        apTooltip.append(" with runway length > " + QLocale().toString(4000) + " ft");
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
         ap.append(">80,H");
-        apTooltip.append(" with runway length > 8000 ft and hard runways");
+        apTooltip.append(" with runway length > " + QLocale().toString(8000) + " ft and hard runways");
       }
 
       visible.append(ap);
