@@ -115,7 +115,6 @@ public:
   void calculateLowAlt();
   void calculateSetAlt();
   void reverse();
-  void updateElevation();
 
   int nearestLegIndex(const atools::geo::Pos& pos);
 
@@ -189,6 +188,8 @@ private:
                               bool fetchAirways, bool useSetAltitude);
 
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry, int& minAltitude);
+
+  void updateModelRouteTime();
 
 };
 

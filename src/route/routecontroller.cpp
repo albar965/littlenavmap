@@ -49,8 +49,8 @@
 const int ROUTE_UNDO_LIMIT = 50;
 // TODO tr
 const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.\nMHz/kHz",
-                                    "Course\n°M", "Direct\n°M",
-                                    "Distance\nnm", "Remaining\nnm" /*, "Ground Alt\nft"*/});
+                                    "Course\n°M", "Direct\n°M", "Distance\nnm", "Remaining\nnm",
+                                    "Leg Time\nhh:mm", "ETA\nhh:mm UTC"});
 namespace rc {
 enum RouteColumns
 {
@@ -65,8 +65,10 @@ enum RouteColumns
   DIRECT,
   DIST,
   REMAINING,
+  TIME,
+  ETA,
   // GROUND_ALT,
-  LAST_COL = REMAINING
+  LAST_COL = ETA
 };
 
 }
@@ -101,6 +103,8 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
 
   connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::updateLabel);
+  connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &RouteController::updateModelRouteTime);
   connect(ui->spinBoxRouteAlt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::routeAltChanged);
   connect(ui->comboBoxRouteType, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated),
@@ -1241,8 +1245,32 @@ void RouteController::createRouteMapObjects()
   curUserpointNumber++;
 }
 
+void RouteController::updateModelRouteTime()
+{
+  Ui::MainWindow *ui = parentWindow->getUi();
+  int row = 0;
+  float cumulatedDistance = 0.f;
+  for(const RouteMapObject& mapobj : routeMapObjects)
+  {
+    cumulatedDistance += mapobj.getDistanceTo();
+    if(row == 0)
+      model->setItem(row, rc::TIME, nullptr);
+    else
+    {
+      float travelTime = mapobj.getDistanceTo() / static_cast<float>(ui->spinBoxRouteSpeed->value());
+      model->setItem(row, rc::TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
+    }
+
+    float eta = cumulatedDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
+    model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
+    row++;
+  }
+}
+
 void RouteController::updateModel()
 {
+  Ui::MainWindow *ui = parentWindow->getUi();
+
   model->removeRows(0, model->rowCount());
   float totalDistance = routeMapObjects.getTotalDistance();
 
@@ -1321,15 +1349,15 @@ void RouteController::updateModel()
     item->setTextAlignment(Qt::AlignRight);
     items.append(item);
 
-    // item = new QStandardItem(QString::number(mapobj.getGroundAltitude(), 'f', 0));
-    // item->setTextAlignment(Qt::AlignRight);
-    // items.append(item);
+    // Travel time and ETA - updated in updateModelRouteTime
+    items.append(nullptr);
+    items.append(nullptr);
 
     model->appendRow(items);
     row++;
   }
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  updateModelRouteTime();
 
   ui->spinBoxRouteAlt->blockSignals(true);
   ui->spinBoxRouteAlt->setValue(flightplan->getCruisingAlt());
@@ -1390,8 +1418,7 @@ void RouteController::updateLabel()
     ui->labelRouteInfo->setText("<b>" + startAirport + "</b> to <b>" + destAirport + "</b>, " +
                                 QLocale().toString(totalDistance, 'f', 0) + " nm, " +
                                 formatter::formatMinutesHoursLong(travelTime) +
-                                routeType
-                                );
+                                routeType);
   }
   else
     ui->labelRouteInfo->setText(tr("No Flightplan loaded"));
@@ -1428,10 +1455,4 @@ void RouteController::postChange(RouteCommand *undoCommand)
     undoCommand->setFlightplanAfter(flightplan);
     undoStack->push(undoCommand);
   }
-}
-
-void RouteController::updateElevation()
-{
-  qDebug() << "updateElevation";
-
 }

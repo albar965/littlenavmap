@@ -817,11 +817,14 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
                 locale.toString(data.getZuluTime().time(), QLocale::ShortFormat) +
                 " " + data.getZuluTime().timeZoneAbbreviation());
 
-      float timeToDestination = distToDestNm / data.getGroundSpeed();
-      QDateTime arrival = data.getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
-      html.row2("Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
-                arrival.timeZoneAbbreviation());
-      html.row2("Travelling Time:", formatter::formatMinutesHoursLong(timeToDestination));
+      if(data.getGroundSpeed() > 20.f)
+      {
+        float timeToDestination = distToDestNm / data.getGroundSpeed();
+        QDateTime arrival = data.getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
+        html.row2("Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
+                  arrival.timeZoneAbbreviation());
+        html.row2("Travelling Time:", formatter::formatMinutesHoursLong(timeToDestination));
+      }
       html.tableEnd();
 
       head(html, "Next Waypoint");
@@ -866,17 +869,15 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.row2("Fuel Flow:", locale.toString(data.getFuelFlowPPH(), 'f', 0) + " pph, " +
             locale.toString(data.getFuelFlowGPH(), 'f', 0) + " gph, ");
 
-  if(data.getFuelFlowPPH() > 0.1f)
+  if(data.getFuelFlowPPH() > 1.0f && data.getGroundSpeed() > 20.f)
   {
     float hoursRemaining = data.getFuelTotalWeight() / data.getFuelFlowPPH();
     float distanceRemaining = hoursRemaining * data.getGroundSpeed();
     html.row2("Endurance:", formatter::formatMinutesHoursLong(hoursRemaining) + ", " +
               locale.toString(distanceRemaining, 'f', 0) + " nm");
   }
-  else
-    html.row2("Endurance:");
 
-  if(distToDestNm > 1.f && data.getFuelFlowPPH() > 0.1f && data.getGroundSpeed() > 1.f)
+  if(distToDestNm > 1.f && data.getFuelFlowPPH() > 1.f && data.getGroundSpeed() > 20.f)
   {
     float neededFuel = distToDestNm / data.getGroundSpeed() * data.getFuelFlowPPH();
     html.row2("Fuel at Destination:",
@@ -1035,7 +1036,7 @@ void MapHtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& dat
   if(!title2.isEmpty())
     title += " (" + title2 + ")";
 
-    html.text(title, html::BOLD | html::BIG);
+  html.text(title, html::BOLD | html::BIG);
 }
 
 void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
