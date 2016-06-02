@@ -224,7 +224,8 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->dockWidgetAircraft->isVisible() && !databaseLoadStatus &&
-     !ui->textEditAircraftInfo->verticalScrollBar()->isSliderDown())
+     !ui->textEditAircraftInfo->verticalScrollBar()->isSliderDown() &&
+     !ui->textEditAircraftProgressInfo->verticalScrollBar()->isSliderDown())
   {
     if(!lastSimData.getPosition().isValid() ||
        // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||

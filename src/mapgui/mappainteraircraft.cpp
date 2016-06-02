@@ -98,9 +98,9 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 
     QString upDown;
     if(simData.getVerticalSpeed() > 100)
-      upDown = " ⭡";
+      upDown = " 🡱";
     else if(simData.getVerticalSpeed() < -100)
-      upDown = " ⭣";
+      upDown = " 🡳";
 
     texts.append("ALT " + QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
 

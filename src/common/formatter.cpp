@@ -134,7 +134,7 @@ QString formatElapsed(const QElapsedTimer& timer)
   }
 }
 
-QString capString(const QString& str)
+QString capNavString(const QString& str)
 {
   static QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME", "ATIS",
                                "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III", "H", "HH", "MH",

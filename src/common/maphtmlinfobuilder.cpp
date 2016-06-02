@@ -40,7 +40,10 @@
 using namespace maptypes;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
-using formatter::capString;
+using formatter::capNavString;
+using atools::geo::normalizeCourse;
+using atools::geo::opposedCourseDeg;
+using atools::capString;
 
 const int SYMBOL_SIZE = 20;
 
@@ -232,8 +235,8 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
                 locale.toString(rec->valueInt("longest_runway_width")) + " ft");
 
       float hdg = rec->valueFloat("longest_runway_heading") + airport.magvar;
-      hdg = atools::geo::normalizeCourse(hdg);
-      float otherHdg = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdg));
+      hdg = normalizeCourse(hdg);
+      float otherHdg = normalizeCourse(opposedCourseDeg(hdg));
 
       html.row2("Heading:", locale.toString(hdg, 'f', 0) + " °M, " +
                 locale.toString(otherHdg, 'f', 0) + " °M");
@@ -358,8 +361,8 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
       {
         const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
         const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-        float hdgPrim = atools::geo::normalizeCourse(rec.valueFloat("heading") + airport.magvar);
-        float hdgSec = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(hdgPrim));
+        float hdgPrim = normalizeCourse(rec.valueFloat("heading") + airport.magvar);
+        float hdgSec = normalizeCourse(opposedCourseDeg(hdgPrim));
         bool closedPrim = recPrim->valueBool("has_closed_markings");
         bool closedSec = recSec->valueBool("has_closed_markings");
 
@@ -491,7 +494,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     rowForBool(html, ilsRec, "has_backcourse", "Has Backcourse", false);
 
     float hdg = ilsRec->valueFloat("loc_heading") + magvar;
-    hdg = atools::geo::normalizeCourse(hdg);
+    hdg = normalizeCourse(hdg);
 
     html.row2("Localizer Heading:", locale.toString(hdg, 'f', 0) + " °M");
     html.row2("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + " °");
@@ -521,10 +524,10 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
         html.table();
         rowForBool(html, &recApp, "has_gps_overlay", "Has GPS Overlay", false);
         html.row2("Fix Ident and Region:", recApp.valueStr("fix_ident") + ", " + recApp.valueStr("fix_region"));
-        html.row2("Fix Type:", capString(recApp.valueStr("fix_type")));
+        html.row2("Fix Type:", capNavString(recApp.valueStr("fix_type")));
 
         float hdg = recApp.valueFloat("heading") + airport.magvar;
-        hdg = atools::geo::normalizeCourse(hdg);
+        hdg = normalizeCourse(hdg);
         html.row2("Heading:", locale.toString(hdg, 'f', 0) + " °M, " +
                   locale.toString(recApp.valueFloat("heading"), 'f', 0) + " °T");
 
@@ -540,10 +543,10 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
           {
             html.h4("Transition " + recTrans.valueStr("fix_ident") + runway);
             html.table();
-            html.row2("Type:", capString(recTrans.valueStr("type")));
+            html.row2("Type:", capNavString(recTrans.valueStr("type")));
             html.row2("Fix Ident and Region:", recTrans.valueStr("fix_ident") + ", " +
                       recTrans.valueStr("fix_region"));
-            html.row2("Fix Type:", capString(recTrans.valueStr("fix_type")));
+            html.row2("Fix Type:", capNavString(recTrans.valueStr("fix_type")));
             html.row2("Altitude:", locale.toString(recTrans.valueFloat("altitude"), 'f', 0) + " ft");
 
             if(!recTrans.isNull("dme_ident"))
@@ -571,7 +574,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor ba
   html.nbsp().nbsp();
 
   QString type = maptypes::vorType(vor);
-  title(html, type + ": " + atools::capString(vor.name) + " (" + vor.ident + ")");
+  title(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
 
   html.table();
   if(vor.routeIndex >= 0)
@@ -602,7 +605,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor ba
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
-  title(html, "NDB: " + atools::capString(ndb.name) + " (" + ndb.ident + ")");
+  title(html, "NDB: " + capString(ndb.name) + " (" + ndb.ident + ")");
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2("Route position ", locale.toString(ndb.routeIndex + 1));
@@ -807,47 +810,51 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     {
       head(html, "Route Progress");
       html.table();
-      html.row2("Local Time and Date:", locale.toString(data.getLocalTime(), QLocale::ShortFormat) +
-                " " + data.getLocalTime().timeZoneAbbreviation());
-      html.row2("UTC Time:", locale.toString(data.getZuluTime().time(), QLocale::ShortFormat));
-
       // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + " nm");
       html.row2("Distance to Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
+      html.row2("Time and Date:", locale.toString(data.getLocalTime(), QLocale::ShortFormat) +
+                " " + data.getLocalTime().timeZoneAbbreviation() + ", " +
+                locale.toString(data.getZuluTime().time(), QLocale::ShortFormat) +
+                " " + data.getZuluTime().timeZoneAbbreviation());
 
       float timeToDestination = distToDestNm / data.getGroundSpeed();
       QDateTime arrival = data.getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
+      html.row2("Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
+                arrival.timeZoneAbbreviation());
       html.row2("Travelling Time:", formatter::formatMinutesHoursLong(timeToDestination));
-      html.row2("UTC Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat));
       html.tableEnd();
 
       head(html, "Next Waypoint");
       html.table();
       const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
-      html.row2("Distance:", locale.toString(nearestLegDistance, 'f', 0) + " nm");
+      float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) + rmo.getMagvar());
+      html.row2("Name and Type:", rmo.getIdent() +
+                (rmo.getMapObjectTypeName().isEmpty() ? "" : ", " + rmo.getMapObjectTypeName()));
+      html.row2("Distance and Course:", locale.toString(nearestLegDistance, 'f', 0) + " nm, " +
+                locale.toString(crs, 'f', 0) + " °M");
       html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
+
       if(crossTrackDistance != RouteMapObjectList::INVALID_VALUE)
       {
         int ctd = atools::roundToPrecision(crossTrackDistance * 10.f);
         QString crossDirection;
         if(ctd >= 1)
-          crossDirection = "Left";
+          crossDirection = "🡲";
         else if(ctd <= -1)
-          crossDirection = "Right";
+          crossDirection = "🡰";
 
         html.row2("Cross Track Distance:",
                   locale.toString(std::abs(ctd / 10.f), 'f', 1) + " nm " + crossDirection);
       }
       else
-        html.row2("Cross Track Distance:");
-      html.row2("Name and Type:", rmo.getIdent() +
-                (rmo.getMapObjectTypeName().isEmpty() ? "" : ", " + rmo.getMapObjectTypeName()));
+        html.row2("Cross Track Distance:", "Not along Track");
       html.tableEnd();
     }
     else
-      html.text("No Active Route Leg found.", html::BOLD);
+      html.h4("No Active Route Leg found.", html::BOLD);
   }
   else
-    html.text("No Route loaded.", html::BOLD);
+    html.h4("No Route loaded.", html::BOLD);
 
   head(html, "Aircraft");
   html.table();
@@ -875,8 +882,6 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     html.row2("Fuel at Destination:",
               locale.toString(data.getFuelTotalWeight() - neededFuel, 'f', 0) + " lbs");
   }
-  else
-    html.row2("Fuel at Destination:");
 
   QString ice;
 
@@ -911,22 +916,20 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   float mach = data.getMachSpeed();
   if(mach > 0.4f)
     html.row2("Mach:", locale.toString(mach, 'f', 2));
-  else
-    html.row2("Mach:");
 
   int vspeed = atools::roundToPrecision(data.getVerticalSpeed());
   QString upDown;
   if(vspeed >= 100)
-    upDown = " <b>⭡</b>";
+    upDown = " 🡱";
   else if(vspeed <= -100)
-    upDown = " <b>⭣</b>";
+    upDown = " 🡳";
   html.row2("Vertical:", locale.toString(vspeed) + " ft/min " + upDown);
   html.tableEnd();
 
   head(html, "Environment");
   html.table();
   float windSpeed = data.getWindSpeed();
-  float windDir = atools::geo::normalizeCourse(data.getWindDirection() - data.getMagVar());
+  float windDir = normalizeCourse(data.getWindDirection() - data.getMagVar());
   if(windSpeed >= 1.f)
     html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + " °M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");
@@ -935,31 +938,34 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
 
   float diffRad = atools::geo::toRadians(windDir - data.getCourseMag());
   float headWind = windSpeed * std::cos(diffRad);
-  QString header("Headwind:");
-  if(headWind <= -1.f)
-    header = "Tailwind:";
-  headWind = std::abs(headWind);
-
-  QString value = "None";
-  if(headWind >= 1.0f)
-    value = locale.toString(std::abs(headWind), 'f', 0) + " kts";
-
-  html.row2(header, value);
-
   float crossWind = windSpeed * std::sin(diffRad);
-  QString dir;
-  if(crossWind >= 1.f)
-    dir = "Right";
-  else if(crossWind <= -1.f)
-    dir = "Left";
 
-  crossWind = std::abs(crossWind);
+  QString value;
+  if(std::abs(headWind) >= 1.0f)
+  {
+    value += locale.toString(std::abs(headWind), 'f', 0) + " kts ";
 
-  value = "None";
-  if(crossWind >= 1.0f)
-    value = locale.toString(crossWind, 'f', 0) + " kts ";
+    if(headWind <= -1.f)
+      value += "🡱";  // Tailwind
+    else
+      value += "🡳";  // Headwind
+  }
 
-  html.row2("Crosswind:", value + dir);
+  if(std::abs(crossWind) >= 1.0f)
+  {
+    if(!value.isEmpty())
+      value += ", ";
+
+    value += locale.toString(std::abs(crossWind), 'f', 0) + " kts ";
+
+    if(crossWind >= 1.f)
+      value += "🡰";
+    else if(crossWind <= -1.f)
+      value += "🡲";
+
+  }
+
+  html.row2(QString(), value);
 
   float temp = data.getTotalAirTemperature();
   html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
@@ -1029,10 +1035,7 @@ void MapHtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& dat
   if(!title2.isEmpty())
     title += " (" + title2 + ")";
 
-  if(info)
     html.text(title, html::BOLD | html::BIG);
-  else
-    html.text(title, html::BOLD);
 }
 
 void MapHtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
@@ -1123,6 +1126,6 @@ void MapHtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, c
   {
     QString i = rec->valueStr(colName);
     if(!i.isEmpty())
-      html.row2(msg, val.arg(atools::capString(i)));
+      html.row2(msg, val.arg(capString(i)));
   }
 }

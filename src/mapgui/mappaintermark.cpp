@@ -235,9 +235,9 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
-    painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+    painter->setPen(QPen(m.color, 2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
-    const int SYMBOL_SIZE = 4;
+    const int SYMBOL_SIZE = 5;
     int x, y;
     if(wToS(m.from, x, y))
       painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
@@ -248,6 +248,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
     }
 
+    painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     if(!m.rhumbLine)
     {
       // Draw great circle route
@@ -270,7 +271,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T −> " +
+      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T 🡲 " +
                    QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + "°T");
       texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)

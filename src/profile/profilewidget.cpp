@@ -427,13 +427,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       QString upDown;
       if(simData.getVerticalSpeed() > 100)
-        upDown = " ⭡";
+        upDown = " 🡱";
       else if(simData.getVerticalSpeed() < -100)
-        upDown = " ⭣";
+        upDown = " 🡳";
 
       QStringList texts;
       texts.append(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
-      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + " nm −> " +
+      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + " nm 🡲 " +
                    QLocale().toString(aircraftDistanceToDest, 'f', 0) + " nm");
 
       textatt::TextAttributes att = textatt::BOLD;
@@ -657,8 +657,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString to = legList.routeMapObjects.at(index + 1).getIdent();
 
   parentWindow->getUi()->labelElevationInfo->setText(
-    "<b>" + from + " −> " + to + "</b>, " +
-    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + " −> " +
+    "<b>" + from + " 🡲 " + to + "</b>, " +
+    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + " 🡲 " +
     QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
     " Ground Altitude " + QLocale().toString(alt, 'f', 0) + " ft, " +
     " Above Ground Altitude " + QLocale().toString(flightplanAltFt - alt, 'f', 0) + " ft, " +

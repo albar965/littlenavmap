@@ -23,7 +23,7 @@
 class QElapsedTimer;
 
 namespace formatter {
-QString capString(const QString& str);
+QString capNavString(const QString& str);
 
 /* All formatters are locale aware */
 
