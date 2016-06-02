@@ -991,7 +991,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
     insertIndex = legIndex + 1;
   else
   {
-    int leg = nearestLegIndex(entry.getPosition());
+    int leg = routeMapObjects.getNearestLegOrPointIndex(entry.getPosition());
     qDebug() << "nearestLeg" << leg;
 
     insertIndex = leg;
@@ -1018,11 +1018,6 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   updateWindowTitle();
 
   emit routeChanged(true);
-}
-
-int RouteController::nearestLegIndex(const atools::geo::Pos& pos)
-{
-  return routeMapObjects.getNearestLegIndex(pos);
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)

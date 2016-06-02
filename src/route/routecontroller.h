@@ -116,8 +116,6 @@ public:
   void calculateSetAlt();
   void reverse();
 
-  int nearestLegIndex(const atools::geo::Pos& pos);
-
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);

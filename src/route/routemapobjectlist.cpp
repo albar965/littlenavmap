@@ -18,7 +18,7 @@
 #include "routemapobjectlist.h"
 #include "geo/calculations.h"
 
-const float RouteMapObjectList::INVALID_VALUE = std::numeric_limits<float>::max();
+const float RouteMapObjectList::INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 
 RouteMapObjectList::RouteMapObjectList()
 {
@@ -30,11 +30,48 @@ RouteMapObjectList::~RouteMapObjectList()
 
 }
 
-int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float *crossTrackDistance) const
+int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) const
+{
+  float crossDist;
+  int legIndex = getNearestLegIndex(pos, crossDist);
+
+  float pointDistance;
+  int pointIndex = getNearestPointIndex(pos, pointDistance);
+  if(pointDistance < std::abs(crossDist))
+    return pointIndex;
+  else
+    return legIndex;
+}
+
+int RouteMapObjectList::getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const
 {
   int nearest = -1;
+  float minDistance = INVALID_DISTANCE_VALUE;
+
+  pointDistance = INVALID_DISTANCE_VALUE;
+
+  for(int i = 0; i < size(); i++)
+  {
+    float distance = at(i).getPosition().distanceMeterTo(pos);
+    if(distance < minDistance)
+    {
+      minDistance = distance;
+      nearest = i + 1;
+    }
+  }
+
+  if(minDistance != INVALID_DISTANCE_VALUE)
+    pointDistance = atools::geo::meterToNm(minDistance);
+  return nearest;
+}
+
+int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance) const
+{
+  int nearestLeg = -1;
+
   float minDistance = std::numeric_limits<float>::max();
-  float minCrossTrack = std::numeric_limits<float>::max();
+
+  crossTrackDistance = INVALID_DISTANCE_VALUE;
 
   for(int i = 1; i < size(); i++)
   {
@@ -45,29 +82,15 @@ int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float *c
     if(valid && distance < minDistance)
     {
       minDistance = distance;
-      minCrossTrack = crossTrack;
-      nearest = i;
+      crossTrackDistance = crossTrack;
+      nearestLeg = i;
     }
   }
-  for(int i = 0; i < size(); i++)
-  {
-    float distance = at(i).getPosition().distanceMeterTo(pos);
-    if(distance < minDistance)
-    {
-      minDistance = distance;
-      minCrossTrack = INVALID_VALUE;
-      nearest = i + 1;
-    }
-  }
-  if(crossTrackDistance != nullptr)
-  {
-    if(minCrossTrack == INVALID_VALUE)
-      *crossTrackDistance = INVALID_VALUE;
-    else
-      *crossTrackDistance = atools::geo::meterToNm(minCrossTrack);
 
-  }
-  return nearest;
+  if(crossTrackDistance != INVALID_DISTANCE_VALUE)
+    crossTrackDistance = atools::geo::meterToNm(crossTrackDistance);
+
+  return nearestLeg;
 }
 
 bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
@@ -75,16 +98,29 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
                                            float *nearestLegDistance, float *crossTrackDistance,
                                            int *nearestLegIndex) const
 {
-  int index = getNearestLegIndex(pos, crossTrackDistance);
-  if(index != -1)
+  float crossDist;
+  int legIndex = getNearestLegIndex(pos, crossDist);
+
+  float pointDistance;
+  int pointIndex = getNearestPointIndex(pos, pointDistance);
+  if(pointDistance < std::abs(crossDist))
   {
-    if(index >= size())
-      index = size() - 1;
+    legIndex = pointIndex;
+    if(crossTrackDistance != nullptr)
+      *crossTrackDistance = INVALID_DISTANCE_VALUE;
+  }
+  else if(crossTrackDistance != nullptr)
+    *crossTrackDistance = crossDist;
+
+  if(legIndex != -1)
+  {
+    if(legIndex >= size())
+      legIndex = size() - 1;
 
     if(nearestLegIndex != nullptr)
-      *nearestLegIndex = index;
+      *nearestLegIndex = legIndex;
 
-    const atools::geo::Pos& position = at(index).getPosition();
+    const atools::geo::Pos& position = at(legIndex).getPosition();
     float distToCur = atools::geo::meterToNm(position.distanceMeterTo(pos));
 
     if(nearestLegDistance != nullptr)
@@ -93,7 +129,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(distFromStartNm != nullptr)
     {
       *distFromStartNm = 0.f;
-      for(int i = 0; i <= index; i++)
+      for(int i = 0; i <= legIndex; i++)
         *distFromStartNm += at(i).getDistanceTo();
       *distFromStartNm -= distToCur;
       *distFromStartNm = std::abs(*distFromStartNm);
@@ -102,11 +138,12 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(distToDestNm != nullptr)
     {
       *distToDestNm = 0.f;
-      for(int i = index + 1; i < size(); i++)
+      for(int i = legIndex + 1; i < size(); i++)
         *distToDestNm += at(i).getDistanceTo();
       *distToDestNm += distToCur;
       *distToDestNm = std::abs(*distToDestNm);
     }
+
     return true;
   }
   return false;

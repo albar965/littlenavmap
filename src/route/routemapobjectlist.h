@@ -27,7 +27,9 @@ public:
   RouteMapObjectList();
   virtual ~RouteMapObjectList();
 
-  int getNearestLegIndex(const atools::geo::Pos& pos, float *crossTrackDistance = nullptr) const;
+  int getNearestLegOrPointIndex(const atools::geo::Pos& pos) const;
+  int getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance) const;
+  int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const;
 
   bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStartNm, float *distToDestNm,
                          float *nearestLegDistance = nullptr, float *crossTrackDistance = nullptr,
@@ -43,7 +45,7 @@ public:
     totalDistance = value;
   }
 
-  const static float INVALID_VALUE;
+  const static float INVALID_DISTANCE_VALUE;
 
 private:
   float totalDistance = 0.f;

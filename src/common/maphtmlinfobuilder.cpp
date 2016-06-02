@@ -837,7 +837,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
                 locale.toString(crs, 'f', 0) + " °M");
       html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
 
-      if(crossTrackDistance != RouteMapObjectList::INVALID_VALUE)
+      if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)
       {
         int ctd = atools::roundToPrecision(crossTrackDistance * 10.f);
         QString crossDirection;
