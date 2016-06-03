@@ -63,12 +63,12 @@ public:
 
   const RouteMapObjectList& getRouteMapObjects() const
   {
-    return routeMapObjects;
+    return route;
   }
 
-  const atools::fs::pln::Flightplan *getFlightplan() const
+  const atools::fs::pln::Flightplan& getFlightplan() const
   {
-    return flightplan;
+    return route.getFlightplan();
   }
 
   void getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const;
@@ -126,9 +126,8 @@ signals:
 
 private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
-  atools::fs::pln::Flightplan *flightplan = nullptr;
   atools::geo::Rect boundingRect;
-  RouteMapObjectList routeMapObjects;
+  RouteMapObjectList route;
   QString routeFilename, dockWindowTitle;
   MainWindow *parentWindow;
   QTableView *view;

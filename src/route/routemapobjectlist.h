@@ -20,6 +20,8 @@
 
 #include "routemapobject.h"
 
+#include <fs/pln/flightplan.h>
+
 class RouteMapObjectList :
   public QList<RouteMapObject>
 {
@@ -47,8 +49,24 @@ public:
 
   const static float INVALID_DISTANCE_VALUE;
 
+  const atools::fs::pln::Flightplan& getFlightplan() const
+  {
+    return flightplan;
+  }
+
+  atools::fs::pln::Flightplan& getFlightplan()
+  {
+    return flightplan;
+  }
+
+  void setFlightplan(const atools::fs::pln::Flightplan& value)
+  {
+    flightplan = value;
+  }
+
 private:
   float totalDistance = 0.f;
+  atools::fs::pln::Flightplan flightplan;
 
 };
 

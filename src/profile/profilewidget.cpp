@@ -62,7 +62,7 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
 
   connect(elevationModel, &Marble::ElevationModel::updateAvailable,
           this, &ProfileWidget::updateElevation);
-  connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateFinished);
+  connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateThreadFinished);
 
   setMouseTracking(true);
 }
@@ -170,7 +170,7 @@ void ProfileWidget::updateScreenCoords()
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = std::ceil((legList.maxElevationFt + 1000.f) / 500.f) * 500.f;
-  flightplanAltFt = static_cast<float>(routeController->getFlightplan()->getCruisingAlt());
+  flightplanAltFt = static_cast<float>(routeController->getFlightplan().getCruisingAlt());
   maxAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getPosition().isValid() &&
@@ -394,12 +394,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      Y0 + static_cast<int>(h - destAlt * vertScale),
                      textatt::BOLD | textatt::LEFT, 255);
 
-  QString maxAlt =
-    QLocale().toString(minSafeAltitudeFt, 'f', 0) + " ft";
-  symPainter.textBox(&painter, {maxAlt},
+  symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + " ft"},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  QString routeAlt = QLocale().toString(routeController->getFlightplan()->getCruisingAlt()) + " ft";
+  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAlt()) + " ft";
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
@@ -453,24 +451,58 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // qDebug() << "profile paint" << etimer.elapsed() << "ms";
 }
 
-ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
+void ProfileWidget::updateTimeout()
+{
+  if(!visible || databaseLoadStatus)
+    return;
+
+  qDebug() << "Profile update elevation timeout";
+
+  if(future.isRunning() || future.isStarted())
+  {
+    terminate = true;
+    future.waitForFinished();
+  }
+
+  terminate = false;
+
+  // Need a copy of the leg list before starting thread to avoid synchronization problems
+  // Start the computation in background
+  ElevationLegList legs;
+  legs.routeMapObjects = routeController->getRouteMapObjects();
+  future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
+  watcher.setFuture(future);
+}
+
+void ProfileWidget::updateThreadFinished()
+{
+  if(!visible || databaseLoadStatus)
+    return;
+
+  qDebug() << "Profile update finished";
+
+  if(!terminate)
+  {
+    legList = future.result();
+    updateScreenCoords();
+    update();
+  }
+}
+
+ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
 {
   using atools::geo::meterToNm;
   using atools::geo::meterToFeet;
 
-  ElevationLegList legs;
   legs.totalNumPoints = 0;
   legs.totalDistance = 0.f;
   legs.maxElevationFt = 0.f;
   legs.elevationLegs.clear();
 
-  // Need a copy to avoid synchronization problems
-  legs.routeMapObjects = routeController->getRouteMapObjects();
-
   for(int i = 1; i < legs.routeMapObjects.size(); i++)
   {
     if(terminate)
-      return legs;
+      return ElevationLegList();
 
     const RouteMapObject& lastRmo = legs.routeMapObjects.at(i - 1);
     const RouteMapObject& rmo = legs.routeMapObjects.at(i);
@@ -500,7 +532,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
               coord.latitude(GeoDataCoordinates::Degree), meterToFeet(coord.altitude()));
 
       // Drop points with similar altitude except the first and last one on a segment
-      if(lastPos.isValid() && j != 0 && j != elev.size() - 1 && legs.elevationLegs.size() > 2 &&
+      if(lastPos.isValid() && j != 0 && j != elev.size() - 1 &&
+         legs.elevationLegs.size() > 2 &&
          atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
         continue;
 
@@ -524,8 +557,10 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread()
     legs.elevationLegs.append(leg);
   }
 
-  qDebug() << "elevation legs" << legs.elevationLegs.size() << "total points" << legs.totalNumPoints
-           << "total distance" << legs.totalDistance << "max route elevation" << legs.maxElevationFt;
+  qDebug() << "elevation legs" << legs.elevationLegs.size()
+           << "total points" << legs.totalNumPoints
+           << "total distance" << legs.totalDistance
+           << "max route elevation" << legs.maxElevationFt;
   return legs;
 }
 
@@ -536,41 +571,6 @@ void ProfileWidget::updateElevation()
 
   qDebug() << "Profile update elevation";
   updateTimer->start(UPDATE_TIMEOUT);
-}
-
-void ProfileWidget::updateTimeout()
-{
-  if(!visible || databaseLoadStatus)
-    return;
-
-  qDebug() << "Profile update elevation timeout";
-
-  if(future.isRunning() || future.isStarted())
-  {
-    terminate = true;
-    future.waitForFinished();
-  }
-
-  terminate = false;
-
-  // Start the computation in background
-  future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread);
-  watcher.setFuture(future);
-}
-
-void ProfileWidget::updateFinished()
-{
-  if(!visible || databaseLoadStatus)
-    return;
-
-  qDebug() << "Profile update finished";
-
-  if(!terminate)
-  {
-    legList = future.result();
-    updateScreenCoords();
-    update();
-  }
 }
 
 void ProfileWidget::showEvent(QShowEvent *)

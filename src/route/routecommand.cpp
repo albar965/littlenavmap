@@ -19,12 +19,11 @@
 #include "routecontroller.h"
 
 RouteCommand::RouteCommand(RouteController *routeController,
-                           const atools::fs::pln::Flightplan *flightplanBefore, const QString& text,
+                           const atools::fs::pln::Flightplan& flightplanBefore, const QString& text,
                            rctype::RouteCmdType rcType)
   : QUndoCommand(text), controller(routeController), type(rcType)
 {
-  if(flightplanBefore != nullptr)
-    planBefore = *flightplanBefore;
+  planBefore = flightplanBefore;
 }
 
 RouteCommand::~RouteCommand()
@@ -32,10 +31,9 @@ RouteCommand::~RouteCommand()
 
 }
 
-void RouteCommand::setFlightplanAfter(const atools::fs::pln::Flightplan *flightplanAfter)
+void RouteCommand::setFlightplanAfter(const atools::fs::pln::Flightplan& flightplanAfter)
 {
-  if(flightplanAfter != nullptr)
-    planAfter = *flightplanAfter;
+  planAfter = flightplanAfter;
 }
 
 void RouteCommand::undo()

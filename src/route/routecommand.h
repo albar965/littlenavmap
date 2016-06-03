@@ -40,7 +40,7 @@ class RouteCommand :
   public QUndoCommand
 {
 public:
-  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan *flightplanBefore,
+  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore,
                const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   virtual ~RouteCommand();
 
@@ -48,7 +48,7 @@ public:
   virtual void redo() override;
 
   /* Need to keep both versions in a redundant way since linking between commands is not reliable */
-  void setFlightplanAfter(const atools::fs::pln::Flightplan *flightplanAfter);
+  void setFlightplanAfter(const atools::fs::pln::Flightplan& flightplanAfter);
 
 private:
   virtual int id() const override;

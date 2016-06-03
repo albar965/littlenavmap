@@ -95,9 +95,9 @@ private:
   RouteController *routeController = nullptr;
 
   MainWindow *parentWindow;
-  ElevationLegList fetchRouteElevationsThread();
+  ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
 
-  QFuture<ProfileWidget::ElevationLegList> future;
+  QFuture<ElevationLegList> future;
   QFutureWatcher<ElevationLegList> watcher;
   bool terminate = false;
   QRubberBand *rubberBand = nullptr;
@@ -105,7 +105,7 @@ private:
   void updateElevation();
   void updateTimeout();
 
-  void updateFinished();
+  void updateThreadFinished();
 
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
