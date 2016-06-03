@@ -158,9 +158,11 @@ struct MapAirport
 struct MapRunway
 {
   QString surface, primName, secName, edgeLight;
-  int length, heading, width, primOffset, secOffset;
+  int length;
+  float heading;
+  int width, primOffset, secOffset;
   atools::geo::Pos position, primary, secondary;
-  bool secClosed, primClosed;
+  bool primClosed, secClosed;
 
   bool isHard() const
   {

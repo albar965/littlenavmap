@@ -157,13 +157,13 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
         float rotate, brg = textBearing.at(i);
         if(brg < 180.)
         {
-          text += "  ⮞⮞";
+          text += " ⮞";
           elide = Qt::ElideLeft;
           rotate = brg - 90.f;
         }
         else
         {
-          text = "⮜⮜  " + text;
+          text = "⮜ " + text;
           elide = Qt::ElideRight;
           rotate = brg + 90.f;
         }

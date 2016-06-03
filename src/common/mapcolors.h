@@ -34,6 +34,7 @@ const QPen textPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt
 const QColor airportDetailBackColor = QColor(Qt::white);
 
 const QColor taxiwayNameColor = QColor(Qt::black);
+const QColor taxiwayNameBackgroundColor = QColor::fromRgb(255, 255, 120);
 const QColor runwayOutlineColor = QColor(Qt::black);
 const QColor runwayOffsetColor = QColor(Qt::white);
 const QColor parkingOutlineColor = QColor::fromRgb(80, 80, 80);
@@ -46,6 +47,7 @@ const QColor darkParkingTextColor = QColor(Qt::black);
 const QColor brightParkingTextColor = QColor(Qt::white);
 const QColor towerTextColor = QColor(Qt::black);
 const QColor runwayDimsTextColor = QColor(Qt::black);
+const QColor runwayTextBackgroundColor = QColor::fromRgb(255, 255, 255, 170);
 
 const QColor textBoxColor = QColor(Qt::white);
 const QColor routeTextBoxColor = QColor::fromRgb(255, 255, 150);

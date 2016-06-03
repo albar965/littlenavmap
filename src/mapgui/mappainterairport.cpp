@@ -35,8 +35,9 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
+const int RUNWAY_HEADING_FONT_SIZE = 12;
 const int RUNWAY_TEXT_FONT_SIZE = 16;
-const int RUNWAY_NUMER_FONT_SIZE = 20;
+const int RUNWAY_NUMBER_FONT_SIZE = 20;
 
 MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                      bool verboseMsg)
@@ -217,13 +218,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw taxiway names ---------------------------------
-  // TODO workaround - add nameplacement hints in compiler
   if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
+    QFontMetrics taxiMetrics = painter->fontMetrics();
     painter->setBackgroundMode(Qt::TransparentMode);
-
     painter->setPen(QPen(mapcolors::taxiwayNameColor, 2, Qt::SolidLine, Qt::FlatCap));
 
+    // Map all vivible names to paths
     QMultiMap<QString, MapTaxiPath> map;
     for(const MapTaxiPath& taxipath : *taxipaths)
       if(!taxipath.name.isEmpty())
@@ -240,6 +241,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       QList<MapTaxiPath> paths = map.values(taxiname);
       QList<MapTaxiPath> paths2;
 
+      // Simplified text placement - take first, last and middle name for a path
       paths2.append(paths.first());
       if(paths.size() > 2)
         paths2.append(paths.at(paths.size() / 2));
@@ -247,18 +249,21 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
       for(const MapTaxiPath& taxipath : paths2)
       {
-
         bool visible;
         QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
         QPoint end = wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
 
-        int w = painter->fontMetrics().width(taxiname);
-        int h = painter->fontMetrics().height();
+        QRect textrect = taxiMetrics.boundingRect(taxiname);
 
         int length = atools::geo::simpleDistance(start.x(), start.y(), end.x(), end.y());
         if(length > 40)
-          painter->drawText(QPoint(((start.x() + end.x()) / 2) - w / 2,
-                                   ((start.y() + end.y()) / 2) + h / 2), taxiname);
+        {
+          int x = ((start.x() + end.x()) / 2) - textrect.width() / 2;
+          int y = ((start.y() + end.y()) / 2) + textrect.height() / 2 - taxiMetrics.descent();
+          textrect.moveTo(x, y - textrect.height() + taxiMetrics.descent());
+          painter->fillRect(textrect, mapcolors::taxiwayNameBackgroundColor);
+          painter->drawText(x, y, taxiname);
+        }
       }
     }
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -425,6 +430,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->setBackgroundMode(Qt::TransparentMode);
 
   // Draw parking and tower texts -------------------------------------------------
+  QFontMetrics metrics = painter->fontMetrics();
   if(!fast && context->mapLayerEffective->isAirportDiagramDetail())
   {
     for(const MapParking& parking : *parkings)
@@ -445,8 +451,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
             text = "F";
           else
             text = QLocale().toString(parking.number) + " " + parkingTypeName(parking.name);
-          pt.setY(pt.y() + painter->fontMetrics().ascent() / 2);
-          pt.setX(pt.x() - painter->fontMetrics().width(text) / 2);
+          pt.setY(pt.y() + metrics.ascent() / 2);
+          pt.setX(pt.x() - metrics.width(text) / 2);
 
           painter->drawText(pt, text);
         }
@@ -459,8 +465,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     QPoint pt = wToS(airport.towerCoords, DEFAULT_WTOS_SIZE, &visible);
     if(visible)
     {
-      pt.setY(pt.y() + painter->fontMetrics().ascent() / 2);
-      pt.setX(pt.x() - painter->fontMetrics().width("T") / 2);
+      pt.setY(pt.y() + metrics.ascent() / 2);
+      pt.setX(pt.x() - metrics.width("T") / 2);
       painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
       painter->drawText(pt, "T");
     }
@@ -472,19 +478,15 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     QFont rwTextFont = painter->font();
     rwTextFont.setPixelSize(RUNWAY_TEXT_FONT_SIZE);
     painter->setFont(rwTextFont);
+    QFontMetrics rwMetrics = painter->fontMetrics();
 
+    QVector<int> runwayTextLengths;
     // Draw dimensions at runway side
     painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       const MapRunway& runway = runways->at(i);
-      const QRect& rect = runwayRects.at(i);
-
-      painter->translate(runwayCenters.at(i));
-      if(runway.heading > 180)
-        painter->rotate(runway.heading + 90);
-      else
-        painter->rotate(runway.heading - 90);
+      const QRect& runwayRect = runwayRects.at(i);
 
       QString text = QLocale().toString(runway.length);
 
@@ -495,21 +497,72 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         text += " / L";
       text += " / " + maptypes::surfaceName(runway.surface);
 
-      int textWidth = painter->fontMetrics().width(text);
-      if(textWidth > rect.height())
-        textWidth = rect.height();
-      text = painter->fontMetrics().elidedText(text, Qt::ElideRight, rect.height());
+      QRect textRect = rwMetrics.boundingRect(text);
+      int textWidth = textRect.width();
+      if(textWidth > runwayRect.height())
+        textWidth = runwayRect.height();
 
-      painter->drawText(-textWidth / 2,
-                        -rect.width() / 2 - painter->fontMetrics().descent(),
-                        text);
+      int textx = -textWidth / 2, texty = -runwayRect.width() / 2;
+      textRect.moveTo(textx, texty - textRect.height() - 3);
+
+      runwayTextLengths.append(textWidth);
+      text = rwMetrics.elidedText(text, Qt::ElideRight, runwayRect.height());
+
+      painter->translate(runwayCenters.at(i));
+      if(runway.heading > 180.f)
+        painter->rotate(runway.heading + 90.f);
+      else
+        painter->rotate(runway.heading - 90.f);
+      painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
+      painter->drawText(textx, texty - rwMetrics.descent() - 3, text);
       painter->resetTransform();
     }
 
-    rwTextFont.setPixelSize(RUNWAY_NUMER_FONT_SIZE);
-    painter->setFont(rwTextFont);
+    // Draw runway heading at the side
+    QFont rwHdgTextFont = painter->font();
+    rwHdgTextFont.setPixelSize(RUNWAY_HEADING_FONT_SIZE);
+    painter->setFont(rwHdgTextFont);
+    QFontMetrics rwHdgMetrics = painter->fontMetrics();
+
+    for(int i = 0; i < runwayCenters.size(); i++)
+    {
+      const MapRunway& runway = runways->at(i);
+      const QRect& runwayRect = runwayRects.at(i);
+
+      QString textPrim("⮞ " + QString::number(runway.heading + airport.magvar, 'f', 0) + " °M");
+      QString textSec(QString::number(
+                        normalizeCourse(opposedCourseDeg(runway.heading + airport.magvar)), 'f', 0) + " °M ⮜");
+
+      QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);
+
+      QRect textRectSec = rwHdgMetrics.boundingRect(textSec);
+
+      if(textRectPrim.width() + textRectSec.width() + runwayTextLengths.at(i) < runwayRect.height())
+      {
+        painter->translate(runwayCenters.at(i));
+        if(runway.heading > 180.f)
+          painter->rotate(runway.heading + 90.f);
+        else
+          painter->rotate(runway.heading - 90.f);
+
+        textRectPrim.moveTo(-runwayRect.height() / 2, -runwayRect.width() / 2 - textRectPrim.height() - 3);
+        painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(-runwayRect.height() / 2,
+                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 3, textPrim);
+
+        textRectSec.moveTo(runwayRect.height() / 2 - textRectSec.width(),
+                           -runwayRect.width() / 2 - textRectSec.height() - 3);
+        painter->fillRect(textRectSec, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(runwayRect.height() / 2 - textRectSec.width(),
+                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 3, textSec);
+        painter->resetTransform();
+      }
+    }
 
     // Draw numbers at end
+    rwTextFont.setPixelSize(RUNWAY_NUMBER_FONT_SIZE);
+    painter->setFont(rwTextFont);
+    QFontMetrics rwTextMetrics = painter->fontMetrics();
     const int CROSS_SIZE = 10;
     for(int i = 0; i < runwayCenters.size(); i++)
     {
@@ -522,16 +575,19 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(primaryVisible)
       {
         painter->translate(prim);
-        painter->rotate(runway.heading + 180);
+        painter->rotate(runway.heading + 180.f);
 
-        painter->drawText(-painter->fontMetrics().width(runway.secName) / 2,
-                          painter->fontMetrics().ascent(), runway.secName);
+        QRect rectSec = rwTextMetrics.boundingRect(runway.secName);
+        rectSec.moveTo(-rectSec.width() / 2, 4);
+
+        painter->fillRect(rectSec, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(-rectSec.width() / 2, rwTextMetrics.ascent() + 4, runway.secName);
 
         if(runway.secClosed)
         {
           // Cross out runway number
-          painter->drawLine(-CROSS_SIZE, -CROSS_SIZE + 10, CROSS_SIZE, CROSS_SIZE + 10);
-          painter->drawLine(-CROSS_SIZE, CROSS_SIZE + 10, CROSS_SIZE, -CROSS_SIZE + 10);
+          painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
+          painter->drawLine(-CROSS_SIZE + 4, CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4);
         }
         painter->resetTransform();
       }
@@ -540,19 +596,24 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         painter->translate(sec);
         painter->rotate(runway.heading);
-        painter->drawText(-painter->fontMetrics().width(runway.primName) / 2,
-                          painter->fontMetrics().ascent(), runway.primName);
+
+        QRect rectPrim = rwTextMetrics.boundingRect(runway.primName);
+        rectPrim.moveTo(-rectPrim.width() / 2, 4);
+
+        painter->fillRect(rectPrim, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(-rectPrim.width() / 2, rwTextMetrics.ascent() + 4, runway.primName);
 
         if(runway.primClosed)
         {
           // Cross out runway number
-          painter->drawLine(-CROSS_SIZE, -CROSS_SIZE + 10, CROSS_SIZE, CROSS_SIZE + 10);
-          painter->drawLine(-CROSS_SIZE, CROSS_SIZE + 10, CROSS_SIZE, -CROSS_SIZE + 10);
+          painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
+          painter->drawLine(-CROSS_SIZE + 4, CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4);
         }
         painter->resetTransform();
       }
     }
   }
+
   painter->restore();
 }
 
