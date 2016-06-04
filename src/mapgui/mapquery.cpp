@@ -513,27 +513,9 @@ const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     QList<maptypes::MapRunway> *rws = new QList<maptypes::MapRunway>;
     while(runwayOverviewQuery->next())
     {
-      maptypes::MapRunway r =
-      {
-        QString(),
-        QString(),
-        QString(),
-        QString(),
-        runwayOverviewQuery->value("length").toInt(),
-        runwayOverviewQuery->value("heading").toFloat(),
-        0,
-        0,
-        0,
-        Pos(runwayOverviewQuery->value("lonx").toFloat(),
-            runwayOverviewQuery->value("laty").toFloat()),
-        Pos(runwayOverviewQuery->value("primary_lonx").toFloat(),
-            runwayOverviewQuery->value("primary_laty").toFloat()),
-        Pos(runwayOverviewQuery->value("secondary_lonx").toFloat(),
-            runwayOverviewQuery->value("secondary_laty").toFloat()),
-        false,
-        false
-      };
-      rws->append(r);
+      maptypes::MapRunway runway;
+      mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true);
+      rws->append(runway);
     }
     runwayOverwiewCache.insert(airportId, rws);
     return rws;
@@ -707,26 +689,9 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
     QList<maptypes::MapRunway> *rs = new QList<maptypes::MapRunway>;
     while(runwaysQuery->next())
     {
-      maptypes::MapRunway r =
-      {
-        runwaysQuery->value("surface").toString(),
-        runwaysQuery->value("primary_name").toString(),
-        runwaysQuery->value("secondary_name").toString(),
-        runwaysQuery->value("edge_light").toString(),
-        runwaysQuery->value("length").toInt(),
-        runwaysQuery->value("heading").toFloat(),
-        runwaysQuery->value("width").toInt(),
-        runwaysQuery->value("primary_offset_threshold").toInt(),
-        runwaysQuery->value("secondary_offset_threshold").toInt(),
-        Pos(runwaysQuery->value("lonx").toFloat(), runwaysQuery->value("laty").toFloat()),
-        Pos(runwaysQuery->value("primary_lonx").toFloat(),
-            runwaysQuery->value("primary_laty").toFloat()),
-        Pos(runwaysQuery->value("secondary_lonx").toFloat(),
-            runwaysQuery->value("secondary_laty").toFloat()),
-        runwaysQuery->value("primary_closed_markings").toInt() > 0,
-        runwaysQuery->value("secondary_closed_markings").toInt() > 0
-      };
-      rs->append(r);
+      maptypes::MapRunway runway;
+      mapTypesFactory->fillRunway(runwaysQuery->record(), runway, false);
+      rs->append(runway);
     }
 
     // Sort to draw the hard runways last
@@ -933,6 +898,8 @@ void MapQuery::initQueries()
     "edge_light, "
     "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
     "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
+    "p.blast_pad as primary_blast_pad,  p.overrun as primary_overrun, "
+    "s.blast_pad as secondary_blast_pad,  s.overrun as secondary_overrun,"
     "primary_lonx, primary_laty, secondary_lonx, secondary_laty "
     "from runway "
     "join runway_end p on primary_end_id = p.runway_end_id "

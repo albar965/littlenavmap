@@ -160,7 +160,7 @@ struct MapRunway
   QString surface, primName, secName, edgeLight;
   int length;
   float heading;
-  int width, primOffset, secOffset;
+  int width, primOffset, secOffset, primBlastPad, secBlastPad, primOverrun, secOverrun;
   atools::geo::Pos position, primary, secondary;
   bool primClosed, secClosed;
 

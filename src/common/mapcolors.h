@@ -37,6 +37,10 @@ const QColor taxiwayNameColor = QColor(Qt::black);
 const QColor taxiwayNameBackgroundColor = QColor::fromRgb(255, 255, 120);
 const QColor runwayOutlineColor = QColor(Qt::black);
 const QColor runwayOffsetColor = QColor(Qt::white);
+
+const QBrush runwayBlastpadBrush = QBrush(Qt::yellow, Qt::DiagCrossPattern);
+const QBrush runwayOverrunBrush = QBrush(QColor::fromRgb(180, 180, 0), Qt::DiagCrossPattern);
+
 const QColor parkingOutlineColor = QColor::fromRgb(80, 80, 80);
 const QColor helipadOutlineColor = QColor(Qt::black);
 const QColor activeTowerColor = QColor(Qt::red);

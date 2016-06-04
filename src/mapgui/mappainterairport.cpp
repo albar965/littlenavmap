@@ -269,15 +269,64 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setBackgroundMode(Qt::OpaqueMode);
   }
 
-  // Draw runway outlines --------------------------------
-  painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
-  painter->setBrush(mapcolors::runwayOutlineColor);
-  for(int i = 0; i < runwayCenters.size(); i++)
+  if(!fast)
   {
-    painter->translate(runwayCenters.at(i));
-    painter->rotate(runways->at(i).heading);
-    painter->drawRect(runwayRects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
-    painter->resetTransform();
+    // Draw runway overrun and blast pads --------------------------------
+    painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
+    for(int i = 0; i < runwayCenters.size(); i++)
+    {
+      const MapRunway& runway = runways->at(i);
+      const QRect& rect = runwayRects.at(i);
+      QColor col = mapcolors::colorForSurface(runway.surface);
+
+      painter->translate(runwayCenters.at(i));
+      painter->rotate(runways->at(i).heading);
+
+      if(runway.primOverrun > 0)
+      {
+        int offs = scale->getPixelIntForFeet(runway.primOverrun, runway.heading);
+        painter->setBrush(mapcolors::runwayOverrunBrush);
+        painter->setBackground(col);
+        painter->drawRect(rect.left(), rect.bottom(), rect.width(), offs);
+      }
+      if(runway.secOverrun > 0)
+      {
+        int offs = scale->getPixelIntForFeet(runway.secOverrun, runway.heading);
+        painter->setBrush(mapcolors::runwayOverrunBrush);
+        painter->setBackground(col);
+        painter->drawRect(rect.left(), rect.top() - offs, rect.width(), offs);
+      }
+      if(runway.primBlastPad > 0)
+      {
+        int offs = scale->getPixelIntForFeet(runway.primBlastPad, runway.heading);
+        painter->setBrush(mapcolors::runwayBlastpadBrush);
+        painter->setBackground(col);
+        painter->drawRect(rect.left(), rect.bottom(), rect.width(), offs);
+      }
+      if(runway.secBlastPad > 0)
+      {
+        int offs = scale->getPixelIntForFeet(runway.secBlastPad, runway.heading);
+        painter->setBrush(mapcolors::runwayBlastpadBrush);
+        painter->setBackground(col);
+        painter->drawRect(rect.left(), rect.top() - offs, rect.width(), offs);
+      }
+
+      painter->resetTransform();
+    }
+  }
+
+  if(!fast)
+  {
+    // Draw runway outlines --------------------------------
+    painter->setPen(QPen(mapcolors::runwayOutlineColor, 1, Qt::SolidLine, Qt::FlatCap));
+    painter->setBrush(mapcolors::runwayOutlineColor);
+    for(int i = 0; i < runwayCenters.size(); i++)
+    {
+      painter->translate(runwayCenters.at(i));
+      painter->rotate(runways->at(i).heading);
+      painter->drawRect(runwayRects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
+      painter->resetTransform();
+    }
   }
 
   // Draw runways --------------------------------
@@ -287,11 +336,12 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     const QRect& rect = runwayRects.at(i);
 
     QColor col = mapcolors::colorForSurface(runway.surface);
-    painter->setBrush(col);
-    painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
 
     painter->translate(runwayCenters.at(i));
     painter->rotate(runway.heading);
+
+    painter->setBrush(col);
+    painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
     painter->drawRect(rect);
     painter->resetTransform();
   }
@@ -528,22 +578,35 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     {
       const MapRunway& runway = runways->at(i);
       const QRect& runwayRect = runwayRects.at(i);
+      float magHeading = normalizeCourse(runway.heading + airport.magvar);
 
-      QString textPrim("⮞ " + QString::number(runway.heading + airport.magvar, 'f', 0) + " °M");
-      QString textSec(QString::number(
-                        normalizeCourse(opposedCourseDeg(runway.heading + airport.magvar)), 'f', 0) + " °M ⮜");
+      QString textPrim;
+      QString textSec;
+
+      float rotate;
+      if(runway.heading > 180.f)
+      {
+        // This case is rare (eg. LTAI)
+        rotate = runway.heading + 90.f;
+        textPrim = QString("⮞ " +
+                           QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + " °M");
+        textSec = QString(QString::number(magHeading, 'f', 0) + " °M ⮜");
+      }
+      else
+      {
+        rotate = runway.heading - 90.f;
+        textPrim = QString("⮞ " + QString::number(magHeading, 'f', 0) + " °M");
+        textSec = QString(QString::number(
+                            normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + " °M ⮜");
+      }
 
       QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);
-
       QRect textRectSec = rwHdgMetrics.boundingRect(textSec);
 
       if(textRectPrim.width() + textRectSec.width() + runwayTextLengths.at(i) < runwayRect.height())
       {
         painter->translate(runwayCenters.at(i));
-        if(runway.heading > 180.f)
-          painter->rotate(runway.heading + 90.f);
-        else
-          painter->rotate(runway.heading - 90.f);
+        painter->rotate(rotate);
 
         textRectPrim.moveTo(-runwayRect.height() / 2, -runwayRect.width() / 2 - textRectPrim.height() - 3);
         painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);

@@ -482,8 +482,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     bool dme = !ilsRec->isNull("dme_altitude");
     bool gs = !ilsRec->isNull("gs_altitude");
 
-    html.br().h4(ilsRec->valueStr("name") + " (" +
-                 ilsRec->valueStr("ident") + ") - " +
+    html.br().h4(ilsRec->valueStr("name") + " (" + ilsRec->valueStr("ident") + ") - " +
                  QString("ILS") + (gs ? ", GS" : "") + (dme ? ", DME" : ""));
 
     html.table();

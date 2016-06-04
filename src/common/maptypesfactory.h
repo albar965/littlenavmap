@@ -33,29 +33,32 @@ public:
   MapTypesFactory();
   ~MapTypesFactory();
 
-  void fillAirport(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap);
+  void fillAirport(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport, bool complete);
+  void fillAirportForOverview(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport);
+
+  void fillRunway(const atools::sql::SqlRecord& record, maptypes::MapRunway& runway, bool overview);
 
   void fillVor(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
   void fillVorFromNav(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
 
   void fillNdb(const atools::sql::SqlRecord& record, maptypes::MapNdb& ndb);
 
-  void fillWaypoint(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& wp);
-  void fillWaypointFromNav(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& wp);
+  void fillWaypoint(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& waypoint);
+  void fillWaypointFromNav(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& waypoint);
 
   void fillAirway(const atools::sql::SqlRecord& record, maptypes::MapAirway& airway);
   void fillMarker(const atools::sql::SqlRecord& record, maptypes::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, maptypes::MapIls& ils);
   void fillParking(const atools::sql::SqlRecord& record, maptypes::MapParking& parking);
   maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
-                                 maptypes::MapAirportFlags airportFlag);
+                                        maptypes::MapAirportFlags airportFlag);
   maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
 
   void fillAirportBase(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
+
 };
 
 #endif // MAPTYPESFACTORY_H
