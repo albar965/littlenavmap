@@ -588,16 +588,16 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         // This case is rare (eg. LTAI)
         rotate = runway.heading + 90.f;
-        textPrim = QString("⮞ " +
+        textPrim = QString("► " +
                            QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + " °M");
-        textSec = QString(QString::number(magHeading, 'f', 0) + " °M ⮜");
+        textSec = QString(QString::number(magHeading, 'f', 0) + " °M ◄");
       }
       else
       {
         rotate = runway.heading - 90.f;
-        textPrim = QString("⮞ " + QString::number(magHeading, 'f', 0) + " °M");
+        textPrim = QString("► " + QString::number(magHeading, 'f', 0) + " °M");
         textSec = QString(QString::number(
-                            normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + " °M ⮜");
+                            normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + " °M ◄");
       }
 
       QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);

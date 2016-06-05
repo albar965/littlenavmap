@@ -97,10 +97,10 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
                  "HDG " + QLocale().toString(simData.getCourseMag(), 'f', 0) + " °M");
 
     QString upDown;
-    if(simData.getVerticalSpeed() > 100)
-      upDown = " ⮝";
-    else if(simData.getVerticalSpeed() < -100)
-      upDown = " ⮟";
+    if(simData.getVerticalSpeed() > 100.f)
+      upDown = " ▲";
+    else if(simData.getVerticalSpeed() < -100.f)
+      upDown = " ▼";
 
     texts.append("ALT " + QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
 

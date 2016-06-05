@@ -841,9 +841,9 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
         int ctd = atools::roundToPrecision(crossTrackDistance * 10.f);
         QString crossDirection;
         if(ctd >= 1)
-          crossDirection = "<b>⮞</b>";
+          crossDirection = "<b>►</b>";
         else if(ctd <= -1)
-          crossDirection = "<b>⮜</b>";
+          crossDirection = "<b>◄</b>";
 
         html.row2("Cross Track Distance:",
                   locale.toString(std::abs(ctd / 10.f), 'f', 1) + " nm " + crossDirection);
@@ -920,9 +920,9 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   int vspeed = atools::roundToPrecision(data.getVerticalSpeed());
   QString upDown;
   if(vspeed >= 100)
-    upDown = " <b>⮝</b>";
+    upDown = " <b>▲</b>";
   else if(vspeed <= -100)
-    upDown = " <b>⮝</b>";
+    upDown = " <b>▼</b>";
   html.row2("Vertical:", locale.toString(vspeed) + " ft/min " + upDown);
   html.tableEnd();
 
@@ -946,9 +946,9 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     value += locale.toString(std::abs(headWind), 'f', 0) + " kts ";
 
     if(headWind <= -1.f)
-      value += "<b>⮝</b>";  // Tailwind
+      value += "<b>▲</b>";  // Tailwind
     else
-      value += "<b>⮝</b>";  // Headwind
+      value += "<b>▼</b>";  // Headwind
   }
 
   if(std::abs(crossWind) >= 1.0f)
@@ -959,9 +959,9 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
     value += locale.toString(std::abs(crossWind), 'f', 0) + " kts ";
 
     if(crossWind >= 1.f)
-      value += "<b>⮜</b>";
+      value += "<b>◄</b>";
     else if(crossWind <= -1.f)
-      value += "<b>⮞</b>";
+      value += "<b>►</b>";
 
   }
 
