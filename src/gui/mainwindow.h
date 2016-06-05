@@ -19,6 +19,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QUrl>
 
 #include "geo/pos.h"
 #include "sql/sqldatabase.h"
@@ -111,6 +112,7 @@ private:
   SearchController *searchController;
   RouteController *routeController;
   RouteFileHistory *routeFileHistory;
+  QUrl legendUrl;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
   int mapDetailFactor;
@@ -181,6 +183,10 @@ private:
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
   bool routeValidate();
+
+  void loadNavmapLegend();
+
+  void showNavmapLegend();
 
 };
 

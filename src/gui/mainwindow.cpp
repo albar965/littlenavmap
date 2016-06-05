@@ -64,6 +64,7 @@
 #include "gui/helphandler.h"
 
 #include "sql/sqlutil.h"
+#include <QIODevice>
 
 #include "ui_mainwindow.h"
 
@@ -152,7 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   profileWidget->updateProfileShowFeatures();
   connectClient->tryConnect();
-
+  loadNavmapLegend();
 }
 
 MainWindow::~MainWindow()
@@ -184,6 +185,37 @@ MainWindow::~MainWindow()
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 
+}
+
+void MainWindow::showNavmapLegend()
+{
+  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
+  {
+    ui->dockWidgetInformation->show();
+    ui->tabWidgetInformation->setCurrentIndex(NAVMAP_LEGEND);
+  }
+  else
+    helpHandler->openHelpUrl(legendUrl);
+}
+
+void MainWindow::loadNavmapLegend()
+{
+  legendUrl = helpHandler->getHelpUrl("help", "legend.html");
+  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
+  {
+    QString legend;
+    QFile legendFile(legendUrl.toLocalFile());
+    if(legendFile.open(QIODevice::ReadOnly))
+    {
+      QTextStream stream(&legendFile);
+      legend.append(stream.readAll());
+      ui->textEditNavmapLegendInfo->setText(legend);
+    }
+    else
+      errorHandler->handleIOError(legendFile, "While opening Navmap Legend file:");
+  }
+  else
+    helpHandler->openHelpUrl(legendUrl);
 }
 
 void MainWindow::createNavMap()
@@ -270,6 +302,12 @@ void MainWindow::setupUi()
                                ui->routeToolBar->toggleViewAction(),
                                ui->viewToolBar->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
+
+  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
@@ -497,6 +535,8 @@ void MainWindow::connectAllSlots()
           infoController, &InfoController::updateAirport);
 
   connect(routeFileHistory, &RouteFileHistory::fileSelected, this, &MainWindow::routeOpenRecent);
+
+  connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)

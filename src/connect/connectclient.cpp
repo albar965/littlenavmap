@@ -157,6 +157,7 @@ void ConnectClient::connectInternal()
             static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromServerError);
 
+    qDebug() << "Connecting to" << dialog->getHostname() << ":" << dialog->getPort();
     socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadWrite);
   }
 }

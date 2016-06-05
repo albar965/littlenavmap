@@ -28,6 +28,17 @@ class MapQuery;
 class InfoQuery;
 class MapHtmlInfoBuilder;
 
+enum TabIndex
+{
+  AIRPORT = 0,
+  RUNWAYS = 1,
+  COM = 2,
+  APPROACHES = 3,
+  NAVAID = 4,
+  NAVMAP_LEGEND = 5,
+  MAP_LEGEND = 6
+};
+
 class InfoController :
   public QObject
 {

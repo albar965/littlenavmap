@@ -33,17 +33,6 @@
 #include <QScrollBar>
 #include "atools.h"
 
-enum TabIndex
-{
-  AIRPORT = 0,
-  RUNWAYS = 1,
-  COM = 2,
-  APPROACHES = 3,
-  NAVAID = 4,
-  NAVMAP_LEGEND = 5,
-  MAP_LEGEND = 6
-};
-
 InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery) :
   QObject(parent), mainWindow(parent), mapQuery(mapDbQuery), infoQuery(infoDbQuery)
 {
