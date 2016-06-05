@@ -3234,6 +3234,9 @@
    <property name="text">
     <string>Connect to Simulator ...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
   </action>
   <action name="actionMapShowAircraft">
    <property name="checkable">

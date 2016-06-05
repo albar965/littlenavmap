@@ -16,14 +16,22 @@
 *****************************************************************************/
 
 #include "connectdialog.h"
+#include "logging/loggingdefs.h"
 #include "ui_connectdialog.h"
 #include <QPushButton>
 #include <gui/widgetstate.h>
+#include <settings/settings.h>
+#include <QSettings>
+
+using atools::settings::Settings;
 
 ConnectDialog::ConnectDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::ConnectDialog)
 {
   ui->setupUi(this);
+
+  ui->comboBoxConnectHostname->setAutoCompletion(true);
+  ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
   ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setText(tr("&Disconnect"));
@@ -38,9 +46,32 @@ ConnectDialog::~ConnectDialog()
 
 void ConnectDialog::buttonClicked(QAbstractButton *button)
 {
+  qDebug() << "host" << ui->comboBoxConnectHostname->currentText();
+
+  qDebug() << "host cur index" << ui->comboBoxConnectHostname->currentIndex();
+  for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
+    qDebug() << "host list" << ui->comboBoxConnectHostname->itemText(i);
+
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
   {
     disconnectClicked = false;
+
+    bool found = false;
+    int cnt = ui->comboBoxConnectHostname->count();
+    QString ctxt = ui->comboBoxConnectHostname->currentText();
+    for(int i = 0; i < cnt; i++)
+    {
+      QString itxt = ui->comboBoxConnectHostname->itemText(i);
+      if(itxt.compare(ctxt, Qt::CaseInsensitive) == 0)
+      {
+        found = true;
+        break;
+      }
+    }
+
+    if(!found)
+      ui->comboBoxConnectHostname->addItem(ui->comboBoxConnectHostname->currentText());
+
     QDialog::accept();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
@@ -52,7 +83,6 @@ void ConnectDialog::buttonClicked(QAbstractButton *button)
   {
     disconnectClicked = false;
     QDialog::reject();
-
   }
 }
 
@@ -63,7 +93,7 @@ void ConnectDialog::setConnected(bool connected)
 
 QString ConnectDialog::getHostname() const
 {
-  return ui->lineEditConnectHostname->text();
+  return ui->comboBoxConnectHostname->currentText();
 }
 
 quint16 ConnectDialog::getPort() const
@@ -74,12 +104,29 @@ quint16 ConnectDialog::getPort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState saver("NavConnect/Remote");
-  saver.save({ui->lineEditConnectHostname, ui->spinBoxConnectPort});
+  saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort});
 
+  QStringList entries;
+  for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
+    entries.append(ui->comboBoxConnectHostname->itemText(i));
+
+  Settings::instance()->setValue("NavConnect/RemoteHosts", entries);
 }
 
 void ConnectDialog::restoreState()
 {
+  QStringList entries = Settings::instance()->value("NavConnect/RemoteHosts").toStringList();
+  entries.removeDuplicates();
+
+  if(entries.isEmpty())
+    ui->comboBoxConnectHostname->addItem("localhost");
+  else
+  {
+    for(const QString& entry : entries)
+      if(!entry.isEmpty())
+        ui->comboBoxConnectHostname->addItem(entry);
+  }
+
   atools::gui::WidgetState saver("NavConnect/Remote");
-  saver.restore({ui->lineEditConnectHostname, ui->spinBoxConnectPort});
+  saver.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort});
 }
