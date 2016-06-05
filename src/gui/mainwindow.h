@@ -38,6 +38,7 @@ class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
+class RouteFileHistory;
 
 namespace Marble {
 class LegendWidget;
@@ -109,6 +110,7 @@ signals:
 private:
   SearchController *searchController;
   RouteController *routeController;
+  RouteFileHistory *routeFileHistory;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
   int mapDetailFactor;
@@ -171,6 +173,7 @@ private:
 
   void routeNew();
   void routeOpen();
+  void routeOpenRecent(const QString& routeFile);
   bool routeSave();
   bool routeSaveAs();
   void routeCenter();

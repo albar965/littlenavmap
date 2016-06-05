@@ -68,6 +68,7 @@
 #include "ui_mainwindow.h"
 
 #include <route/routecontroller.h>
+#include <route/routefilehistory.h>
 
 #include <common/weatherreporter.h>
 
@@ -114,6 +115,8 @@ MainWindow::MainWindow(QWidget *parent) :
   infoQuery = new InfoQuery(this, &db);
   infoQuery->initQueries();
 
+  routeFileHistory = new RouteFileHistory(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
+                                          ui->actionRecentRoutesClear);
   routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
 
   createNavMap();
@@ -149,6 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   profileWidget->updateProfileShowFeatures();
   connectClient->tryConnect();
+
 }
 
 MainWindow::~MainWindow()
@@ -165,6 +169,7 @@ MainWindow::~MainWindow()
   delete legendWidget;
   delete marbleAbout;
   delete infoController;
+  delete routeFileHistory;
   delete ui;
 
   delete dialog;
@@ -251,23 +256,20 @@ void MainWindow::setupUi()
   ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
 
-  ui->menuView->addSeparator();
-  ui->menuView->addAction(ui->mainToolBar->toggleViewAction());
-  ui->menuView->addAction(ui->mapToolBar->toggleViewAction());
-  ui->menuView->addAction(ui->routeToolBar->toggleViewAction());
-  ui->menuView->addAction(ui->viewToolBar->toggleViewAction());
-  ui->menuView->addSeparator();
-  ui->menuView->addAction(ui->dockWidgetSearch->toggleViewAction());
-  ui->menuView->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->menuView->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->menuView->addAction(ui->dockWidgetElevation->toggleViewAction());
-  ui->menuView->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->menuView->insertActions(ui->actionShowStatusbar,
+                              {ui->dockWidgetSearch->toggleViewAction(),
+                               ui->dockWidgetRoute->toggleViewAction(),
+                               ui->dockWidgetInformation->toggleViewAction(),
+                               ui->dockWidgetElevation->toggleViewAction(),
+                               ui->dockWidgetAircraft->toggleViewAction()});
+  ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
-  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->menuView->insertActions(ui->actionShowStatusbar,
+                              {ui->mainToolBar->toggleViewAction(),
+                               ui->mapToolBar->toggleViewAction(),
+                               ui->routeToolBar->toggleViewAction(),
+                               ui->viewToolBar->toggleViewAction()});
+  ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
@@ -351,9 +353,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteReverse, &QAction::triggered,
           routeController, &RouteController::reverse);
 
-  connect(ui->actionContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
-  connect(ui->actionAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
-  connect(ui->actionAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
+  connect(ui->actionHelpContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
+  connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
+  connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
   // Map widget related connections
   connect(navMapWidget, &MapWidget::objectSelected, searchController, &SearchController::objectSelected);
@@ -494,6 +496,7 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated,
           infoController, &InfoController::updateAirport);
 
+  connect(routeFileHistory, &RouteFileHistory::fileSelected, this, &MainWindow::routeOpenRecent);
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
@@ -626,6 +629,19 @@ void MainWindow::routeOpen()
     if(!routeFile.isEmpty())
     {
       routeController->loadFlightplan(routeFile);
+      routeFileHistory->addFile(routeFile);
+      navMapWidget->update();
+    }
+  }
+}
+
+void MainWindow::routeOpenRecent(const QString& routeFile)
+{
+  if(routeCheckForChanges())
+  {
+    if(!routeFile.isEmpty())
+    {
+      routeController->loadFlightplan(routeFile);
       navMapWidget->update();
     }
   }
@@ -640,6 +656,7 @@ bool MainWindow::routeSave()
     if(routeValidate())
     {
       routeController->saveFlightplan();
+      routeFileHistory->addFile(routeController->getRouteFilename());
       updateActionStates();
       return true;
     }
@@ -660,6 +677,7 @@ bool MainWindow::routeSaveAs()
     if(!routeFile.isEmpty())
     {
       routeController->saveFlighplanAs(routeFile);
+      routeFileHistory->addFile(routeFile);
       updateActionStates();
       return true;
     }
@@ -869,6 +887,7 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws("MainWindow/Widget");
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
+  routeFileHistory->restoreState();
   searchController->restoreState();
   navMapWidget->restoreState();
   routeController->restoreState();
@@ -904,6 +923,7 @@ void MainWindow::writeSettings()
   routeController->saveState();
   connectClient->saveState();
   infoController->saveState();
+  routeFileHistory->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,

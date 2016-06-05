@@ -96,7 +96,8 @@ SOURCES += src/main.cpp\
     src/common/htmlbuilder.cpp \
     src/common/symbolpainter.cpp \
     src/common/maphtmlinfobuilder.cpp \
-    src/info/infoquery.cpp
+    src/info/infoquery.cpp \
+    src/route/routefilehistory.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -155,7 +156,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/htmlbuilder.h \
     src/common/symbolpainter.h \
     src/common/maphtmlinfobuilder.h \
-    src/info/infoquery.h
+    src/info/infoquery.h \
+    src/route/routefilehistory.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

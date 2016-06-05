@@ -33,18 +33,25 @@
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuRecentRoutes">
+     <property name="title">
+      <string>Recent Routes</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionRecentRoutesClear"/>
+    </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
+    <addaction name="menuRecentRoutes"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
-    <addaction name="separator"/>
-    <addaction name="actionReloadScenery"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>Window</string>
     </property>
     <addaction name="actionShowStatusbar"/>
    </widget>
@@ -52,20 +59,78 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionContents"/>
-    <addaction name="actionAbout"/>
+    <addaction name="actionHelpContents"/>
+    <addaction name="actionHelpNavmapLegend"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpAbout"/>
     <addaction name="actionAboutMarble"/>
-    <addaction name="actionAboutQt"/>
+    <addaction name="actionHelpAboutQt"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionReloadScenery"/>
+    <addaction name="actionConnectSimulator"/>
+    <addaction name="separator"/>
+    <addaction name="actionResetMessages"/>
     <addaction name="actionOptions"/>
    </widget>
+   <widget class="QMenu" name="menuMap">
+    <property name="title">
+     <string>Map</string>
+    </property>
+    <addaction name="actionMapShowHome"/>
+    <addaction name="actionMapShowMark"/>
+    <addaction name="actionRouteCenter"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapAircraftCenter"/>
+    <addaction name="actionMapDeleteAircraftTrack"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapBack"/>
+    <addaction name="actionMapNext"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapMoreDetails"/>
+    <addaction name="actionMapDefaultDetails"/>
+    <addaction name="actionMapLessDetails"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowAddonAirports"/>
+    <addaction name="actionMapShowAirports"/>
+    <addaction name="actionMapShowSoftAirports"/>
+    <addaction name="actionMapShowEmptyAirports"/>
+    <addaction name="actionMapShowVor"/>
+    <addaction name="actionMapShowNdb"/>
+    <addaction name="actionMapShowWp"/>
+    <addaction name="actionMapShowIls"/>
+    <addaction name="actionMapShowVictorAirways"/>
+    <addaction name="actionMapShowJetAirways"/>
+    <addaction name="actionMapShowRoute"/>
+    <addaction name="actionMapShowAircraft"/>
+    <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapShowGrid"/>
+    <addaction name="actionMapShowCities"/>
+    <addaction name="actionMapShowHillshading"/>
+   </widget>
+   <widget class="QMenu" name="menuRoute">
+    <property name="title">
+     <string>Route</string>
+    </property>
+    <addaction name="actionRouteSelectParking"/>
+    <addaction name="actionRouteEditMode"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteCalcDirect"/>
+    <addaction name="actionRouteCalcRadionav"/>
+    <addaction name="actionRouteCalcHighAlt"/>
+    <addaction name="actionRouteCalcLowAlt"/>
+    <addaction name="actionRouteCalcSetAlt"/>
+    <addaction name="actionRouteReverse"/>
+   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuView"/>
+   <addaction name="menuRoute"/>
+   <addaction name="menuMap"/>
    <addaction name="menuTools"/>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1949,6 +2014,7 @@
    <addaction name="actionMapShowHome"/>
    <addaction name="actionMapShowMark"/>
    <addaction name="actionRouteCenter"/>
+   <addaction name="separator"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="separator"/>
@@ -2459,7 +2525,7 @@
     <string>Statusbar</string>
    </property>
   </action>
-  <action name="actionContents">
+  <action name="actionHelpContents">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
@@ -2468,7 +2534,7 @@
     <string>Contents</string>
    </property>
   </action>
-  <action name="actionAbout">
+  <action name="actionHelpAbout">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
@@ -2477,7 +2543,7 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionAboutQt">
+  <action name="actionHelpAboutQt">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
@@ -2593,7 +2659,7 @@
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Home</string>
+    <string>Goto Home</string>
    </property>
   </action>
   <action name="actionMapBack">
@@ -2602,7 +2668,7 @@
      <normaloff>:/littlenavmap/resources/icons/back.svg</normaloff>:/littlenavmap/resources/icons/back.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Back</string>
+    <string>Map Position Back</string>
    </property>
   </action>
   <action name="actionMapNext">
@@ -2611,7 +2677,7 @@
      <normaloff>:/littlenavmap/resources/icons/next.svg</normaloff>:/littlenavmap/resources/icons/next.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Next</string>
+    <string>Map Position Next</string>
    </property>
   </action>
   <action name="actionMapShowMark">
@@ -2620,7 +2686,7 @@
      <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Mark</string>
+    <string>Goto Map Mark</string>
    </property>
   </action>
   <action name="actionMapSetHome">
@@ -2644,7 +2710,7 @@
      <normaloff>:/littlenavmap/resources/icons/airport.svg</normaloff>:/littlenavmap/resources/icons/airport.svg</iconset>
    </property>
    <property name="text">
-    <string>AP</string>
+    <string>Show Airports with hard Runways</string>
    </property>
   </action>
   <action name="actionMapShowVor">
@@ -2659,7 +2725,7 @@
      <normaloff>:/littlenavmap/resources/icons/vor.svg</normaloff>:/littlenavmap/resources/icons/vor.svg</iconset>
    </property>
    <property name="text">
-    <string>VOR</string>
+    <string>Show VOR Stations</string>
    </property>
   </action>
   <action name="actionMapShowNdb">
@@ -2674,7 +2740,7 @@
      <normaloff>:/littlenavmap/resources/icons/ndb.svg</normaloff>:/littlenavmap/resources/icons/ndb.svg</iconset>
    </property>
    <property name="text">
-    <string>NDB</string>
+    <string>Show NDB Stations</string>
    </property>
   </action>
   <action name="actionMapShowWp">
@@ -2689,7 +2755,7 @@
      <normaloff>:/littlenavmap/resources/icons/waypoint.svg</normaloff>:/littlenavmap/resources/icons/waypoint.svg</iconset>
    </property>
    <property name="text">
-    <string>WP</string>
+    <string>Show Waypoints</string>
    </property>
   </action>
   <action name="actionMapShowCities">
@@ -2704,7 +2770,7 @@
      <normaloff>:/littlenavmap/resources/icons/cities.svg</normaloff>:/littlenavmap/resources/icons/cities.svg</iconset>
    </property>
    <property name="text">
-    <string>Cities</string>
+    <string>Show Country and City Names</string>
    </property>
   </action>
   <action name="actionMapShowIls">
@@ -2719,7 +2785,7 @@
      <normaloff>:/littlenavmap/resources/icons/ils.svg</normaloff>:/littlenavmap/resources/icons/ils.svg</iconset>
    </property>
    <property name="text">
-    <string>ILS</string>
+    <string>Show ILS Feathers</string>
    </property>
   </action>
   <action name="actionMapDefaultDetails">
@@ -2797,7 +2863,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportsoft.svg</normaloff>:/littlenavmap/resources/icons/airportsoft.svg</iconset>
    </property>
    <property name="text">
-    <string>AP Soft</string>
+    <string>Show Airports with soft Runways</string>
    </property>
   </action>
   <action name="actionMapShowEmptyAirports">
@@ -2812,7 +2878,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportempty.svg</normaloff>:/littlenavmap/resources/icons/airportempty.svg</iconset>
    </property>
    <property name="text">
-    <string>AP Empty</string>
+    <string>Show empty Airports</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">
@@ -2843,6 +2909,9 @@
    </property>
    <property name="text">
     <string>Save Route as ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionRouteNew">
@@ -2875,7 +2944,7 @@
      <normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</iconset>
    </property>
    <property name="text">
-    <string>V</string>
+    <string>Show Victor Airways</string>
    </property>
   </action>
   <action name="actionMapShowJetAirways">
@@ -2887,7 +2956,7 @@
      <normaloff>:/littlenavmap/resources/icons/airwayjet.svg</normaloff>:/littlenavmap/resources/icons/airwayjet.svg</iconset>
    </property>
    <property name="text">
-    <string>J</string>
+    <string>Show Jet Airways</string>
    </property>
    <property name="toolTip">
     <string>J</string>
@@ -2905,7 +2974,7 @@
      <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
    </property>
    <property name="text">
-    <string>R</string>
+    <string>Show Route</string>
    </property>
    <property name="toolTip">
     <string>R</string>
@@ -3001,7 +3070,7 @@
      <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
    </property>
    <property name="text">
-    <string>High Alt Route</string>
+    <string>Calculate High Alt Route</string>
    </property>
   </action>
   <action name="actionRouteCalcLowAlt">
@@ -3010,7 +3079,7 @@
      <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
    </property>
    <property name="text">
-    <string>Low Alt Route</string>
+    <string>Calculate Low Alt Route</string>
    </property>
   </action>
   <action name="actionRouteCalcRadionav">
@@ -3019,7 +3088,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
    </property>
    <property name="text">
-    <string>Radionav Route</string>
+    <string>Calculate Radionav Route</string>
    </property>
   </action>
   <action name="actionRouteCalcDirect">
@@ -3028,7 +3097,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedirect.svg</normaloff>:/littlenavmap/resources/icons/routedirect.svg</iconset>
    </property>
    <property name="text">
-    <string>Direct Route</string>
+    <string>Calculate Direct Route</string>
    </property>
   </action>
   <action name="actionRouteReverse">
@@ -3037,7 +3106,7 @@
      <normaloff>:/littlenavmap/resources/icons/routereverse.svg</normaloff>:/littlenavmap/resources/icons/routereverse.svg</iconset>
    </property>
    <property name="text">
-    <string>Rverse Route</string>
+    <string>Reverse Route</string>
    </property>
   </action>
   <action name="actionRouteSettings">
@@ -3097,7 +3166,7 @@
      <normaloff>:/littlenavmap/resources/icons/hillshading.svg</normaloff>:/littlenavmap/resources/icons/hillshading.svg</iconset>
    </property>
    <property name="text">
-    <string>Hillshading</string>
+    <string>Show Hillshading</string>
    </property>
    <property name="toolTip">
     <string>Hillshading</string>
@@ -3121,7 +3190,7 @@
      <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
    </property>
    <property name="text">
-    <string>Route based on given Altitude</string>
+    <string>Calculate Route based on given Altitude</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -3136,7 +3205,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
    </property>
    <property name="text">
-    <string>Addon Airports</string>
+    <string>Force Show Addon Airports</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -3151,7 +3220,7 @@
      <normaloff>:/littlenavmap/resources/icons/mapgrid.svg</normaloff>:/littlenavmap/resources/icons/mapgrid.svg</iconset>
    </property>
    <property name="text">
-    <string>Grid</string>
+    <string>Show Map Grid</string>
    </property>
    <property name="toolTip">
     <string>Grid</string>
@@ -3163,7 +3232,7 @@
      <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
    </property>
    <property name="text">
-    <string>Connect to Simulator</string>
+    <string>Connect to Simulator ...</string>
    </property>
   </action>
   <action name="actionMapShowAircraft">
@@ -3178,7 +3247,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Aircraft</string>
+    <string>Show Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3211,7 +3280,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</iconset>
    </property>
    <property name="text">
-    <string>Aircraft Trail</string>
+    <string>Show Aircraft Trail</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3226,7 +3295,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
    </property>
    <property name="text">
-    <string>Aircraft Trail Delete</string>
+    <string>Delete Aircraft Trail</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3253,7 +3322,26 @@
      <normaloff>:/littlenavmap/resources/icons/routeedit.svg</normaloff>:/littlenavmap/resources/icons/routeedit.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Route</string>
+    <string>Edit Route on Map</string>
+   </property>
+  </action>
+  <action name="actionRecentRoutesClear">
+   <property name="text">
+    <string>Clear Menu</string>
+   </property>
+  </action>
+  <action name="actionHelpNavmapLegend">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Navmap Legend</string>
+   </property>
+  </action>
+  <action name="actionResetMessages">
+   <property name="text">
+    <string>Reset all Messages</string>
    </property>
   </action>
  </widget>
