@@ -271,7 +271,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T ⮞ " +
+      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T ► " +
                    QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + "°T");
       texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
       if(distanceMeter < 6000)
