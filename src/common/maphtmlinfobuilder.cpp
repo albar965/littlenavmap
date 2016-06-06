@@ -822,7 +822,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
         QDateTime arrival = data.getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
         html.row2("Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
                   arrival.timeZoneAbbreviation());
-        html.row2("Travelling Time:", formatter::formatMinutesHoursLong(timeToDestination));
+        html.row2("Enroute Time:", formatter::formatMinutesHoursLong(timeToDestination));
       }
       html.tableEnd();
 
@@ -832,8 +832,9 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
       float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) + rmo.getMagvar());
       html.row2("Name and Type:", rmo.getIdent() +
                 (rmo.getMapObjectTypeName().isEmpty() ? "" : ", " + rmo.getMapObjectTypeName()));
-      html.row2("Distance and Course:", locale.toString(nearestLegDistance, 'f', 0) + " nm, " +
-                locale.toString(crs, 'f', 0) + " °M");
+      html.row2("Distance, Course and Time:", locale.toString(nearestLegDistance, 'f', 0) + " nm, " +
+                locale.toString(crs, 'f', 0) + " °M, "+
+                formatter::formatMinutesHoursLong(nearestLegDistance/ data.getGroundSpeed()));
       html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
 
       if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)

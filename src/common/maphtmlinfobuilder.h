@@ -63,7 +63,8 @@ class SqlRecord;
 }
 }
 
-class MapHtmlInfoBuilder
+class
+MapHtmlInfoBuilder
 {
   Q_DECLARE_TR_FUNCTIONS(MapHtmlInfoBuilder)
 
