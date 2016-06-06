@@ -54,9 +54,9 @@ public:
   virtual ~RouteController();
 
   void newFlightplan();
-  void loadFlightplan(const QString& filename);
-  void saveFlighplanAs(const QString& filename);
-  void saveFlightplan();
+  bool loadFlightplan(const QString& filename);
+  bool saveFlighplanAs(const QString& filename);
+  bool saveFlightplan();
 
   void saveState();
   void restoreState();
@@ -129,7 +129,7 @@ private:
   atools::geo::Rect boundingRect;
   RouteMapObjectList route;
   QString routeFilename, dockWindowTitle;
-  MainWindow *parentWindow;
+  MainWindow *mainWindow;
   QTableView *view;
   MapQuery *query;
   QStandardItemModel *model;

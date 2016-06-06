@@ -31,6 +31,7 @@ class SqlDatabase;
 
 class QProgressDialog;
 class QElapsedTimer;
+class DatabaseDialog;
 
 class DatabaseLoader :
   public QObject
@@ -41,7 +42,7 @@ public:
   DatabaseLoader(QWidget *parent, atools::sql::SqlDatabase *sqlDb);
   virtual ~DatabaseLoader();
 
-  void exec();
+  void run();
 
   void saveState();
   void restoreState();
@@ -49,7 +50,7 @@ public:
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
 
   const int DB_VERSION_MAJOR = 0;
-  const int DB_VERSION_MINOR = 6;
+  const int DB_VERSION_MINOR = 7;
 
 signals:
   void preDatabaseLoad();
@@ -59,9 +60,11 @@ private:
   atools::sql::SqlDatabase *db;
   QWidget *parentWidget;
   QProgressDialog *progressDialog = nullptr;
-  void loadScenery();
+  bool loadScenery(QWidget *parent);
 
   QString basePath, sceneryCfg;
+  void runInternal(DatabaseDialog& dlg);
+
 };
 
 #endif // DATABASELOADER_H

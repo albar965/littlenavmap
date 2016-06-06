@@ -42,9 +42,11 @@
 #include <settings/settings.h>
 #include <gui/actiontextsaver.h>
 #include <gui/dialog.h>
+#include <gui/errorhandler.h>
 #include <QListWidget>
 #include <QUndoStack>
 #include <QVector2D>
+#include "exception.h"
 
 const int ROUTE_UNDO_LIMIT = 50;
 // TODO tr
@@ -76,8 +78,8 @@ enum RouteColumns
 using namespace atools::fs::pln;
 using namespace atools::geo;
 
-RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView)
-  : QObject(parent), parentWindow(parent), view(tableView), query(mapQuery)
+RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
+  : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
 {
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
@@ -87,16 +89,16 @@ RouteController::RouteController(MainWindow *parent, MapQuery *mapQuery, QTableV
   routeNetworkRadio = new RouteNetworkRadio(query->getDatabase());
   routeNetworkAirway = new RouteNetworkAirway(query->getDatabase());
 
-  undoStack = new QUndoStack(parentWindow);
+  undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);
 
-  QAction *undoAction = undoStack->createUndoAction(parentWindow, "Undo Route");
+  QAction *undoAction = undoStack->createUndoAction(mainWindow, "Undo Route");
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
 
-  QAction *redoAction = undoStack->createRedoAction(parentWindow, "Redo Route");
+  QAction *redoAction = undoStack->createRedoAction(mainWindow, "Redo Route");
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
 
@@ -177,7 +179,7 @@ void RouteController::routeTypeChanged()
 bool RouteController::selectDepartureParking()
 {
   const maptypes::MapAirport& airport = route.first().getAirport();
-  ParkingDialog dialog(parentWindow, query, airport);
+  ParkingDialog dialog(mainWindow, query, airport);
 
   int result = dialog.exec();
   dialog.hide();
@@ -197,7 +199,7 @@ bool RouteController::selectDepartureParking()
 
 void RouteController::saveState()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   atools::gui::WidgetState saver("Route/View");
   saver.save({view, ui->spinBoxRouteSpeed});
@@ -212,7 +214,13 @@ void RouteController::restoreState()
   if(!newRouteFilename.isEmpty())
   {
     if(QFile::exists(newRouteFilename))
-      loadFlightplan(newRouteFilename);
+    {
+      if(!loadFlightplan(newRouteFilename))
+      {
+        routeFilename.clear();
+        route.clear();
+      }
+    }
     else
     {
       routeFilename.clear();
@@ -220,7 +228,7 @@ void RouteController::restoreState()
     }
   }
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState saver("Route/View");
   model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
   saver.restore({view, ui->spinBoxRouteSpeed});
@@ -245,32 +253,61 @@ void RouteController::newFlightplan()
   emit routeChanged(true);
 }
 
-void RouteController::loadFlightplan(const QString& filename)
+bool RouteController::loadFlightplan(const QString& filename)
 {
-  clearRoute();
+  Flightplan newFlightplan;
+  try
+  {
+    newFlightplan.load(filename);
 
-  routeFilename = filename;
-  route.getFlightplan().load(filename);
-  createRouteMapObjects();
-  updateModel();
-  updateWindowTitle();
-  updateLabel();
-  emit routeChanged(true);
+    clearRoute();
+    routeFilename = filename;
+    route.setFlightplan(newFlightplan);
+    createRouteMapObjects();
+    updateModel();
+    updateWindowTitle();
+    updateLabel();
+    emit routeChanged(true);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
 }
 
-void RouteController::saveFlighplanAs(const QString& filename)
+bool RouteController::saveFlighplanAs(const QString& filename)
 {
   routeFilename = filename;
-  route.getFlightplan().save(filename);
-  changed = false;
-  updateWindowTitle();
+  return saveFlightplan();
 }
 
-void RouteController::saveFlightplan()
+bool RouteController::saveFlightplan()
 {
-  route.getFlightplan().save(routeFilename);
-  changed = false;
-  updateWindowTitle();
+  try
+  {
+    route.getFlightplan().save(routeFilename);
+
+    changed = false;
+    updateWindowTitle();
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
 }
 
 void RouteController::calculateDirect()
@@ -415,7 +452,7 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   else
   {
     QGuiApplication::restoreOverrideCursor();
-    QMessageBox::information(parentWindow,
+    QMessageBox::information(mainWindow,
                              QApplication::applicationName(),
                              "Routing failed. Start or destination are not reachable.");
   }
@@ -548,7 +585,7 @@ void RouteController::doubleClick(const QModelIndex& index)
 
 void RouteController::updateMoveAndDeleteActions()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   QItemSelectionModel *sm = view->selectionModel();
 
   ui->actionRouteLegUp->setEnabled(false);
@@ -576,7 +613,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 {
   qDebug() << "tableContextMenu";
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionShowInformation});
   Q_UNUSED(saver);
@@ -606,7 +643,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionSearchTableCopy->setEnabled(index.isValid());
 
     ui->actionMapRangeRings->setEnabled(true);
-    ui->actionMapHideRangeRings->setEnabled(!parentWindow->getMapWidget()->getRangeRings().isEmpty());
+    ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
     ui->actionShowInformation->setEnabled(true);
     ui->actionShowInformation->setText(tr("Show Information"));
@@ -650,21 +687,21 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else if(action == ui->actionSearchSetMark)
         emit changeMark(routeMapObject.getPosition());
       else if(action == ui->actionMapRangeRings)
-        parentWindow->getMapWidget()->addRangeRing(routeMapObject.getPosition());
+        mainWindow->getMapWidget()->addRangeRing(routeMapObject.getPosition());
       else if(action == ui->actionMapNavaidRange)
       {
 
         for(const RouteMapObject& rmo : selectedRouteMapObjects)
         {
           if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
-            parentWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
-                                                          rmo.getIdent(), rmo.getFrequency(),
-                                                          rmo.getRange());
+            mainWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
+                                                        rmo.getIdent(), rmo.getFrequency(),
+                                                        rmo.getRange());
         }
 
       }
       else if(action == ui->actionMapHideRangeRings)
-        parentWindow->getMapWidget()->clearRangeRings();
+        mainWindow->getMapWidget()->clearRangeRings();
       else if(action == ui->actionShowInformation)
       {
         maptypes::MapSearchResult result;
@@ -882,7 +919,7 @@ void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
 
   flightplan.getEntries().prepend(entry);
 
-  RouteMapObject rmo(&flightplan, parentWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
   rmo.loadFromAirport(&flightplan.getEntries().first(), airport, nullptr);
   route.prepend(rmo);
 }
@@ -915,7 +952,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   if(flightplan.getEntries().size() > 1)
     rmoPred = &route.at(route.size() - 1);
 
-  RouteMapObject rmo(&flightplan, parentWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
   rmo.loadFromAirport(&flightplan.getEntries().last(), airport, rmoPred);
   route.append(rmo);
 
@@ -970,7 +1007,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   const RouteMapObject *rmoPred = nullptr;
 
-  RouteMapObject rmo(&flightplan, parentWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
   rmo.loadFromDatabaseByEntry(&flightplan.getEntries()[legIndex], query, rmoPred);
 
   route.replace(legIndex, rmo);
@@ -1015,7 +1052,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   if(flightplan.isEmpty() && insertIndex > 0)
     rmoPred = &route.at(insertIndex - 1);
-  RouteMapObject rmo(&flightplan, parentWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
   rmo.loadFromDatabaseByEntry(&flightplan.getEntries()[insertIndex], query, rmoPred);
 
   route.insert(insertIndex, rmo);
@@ -1178,7 +1215,7 @@ void RouteController::updateFlightplanData()
       flightplan.setDestinationPos(Pos());
     }
 
-    Ui::MainWindow *ui = parentWindow->getUi();
+    Ui::MainWindow *ui = mainWindow->getUi();
 
     // <Descr>LFHO, EDRJ</Descr>
     flightplan.setDescription(departureIcao + ", " + destinationIcao);
@@ -1233,7 +1270,7 @@ void RouteController::createRouteMapObjects()
   {
     FlightplanEntry& entry = flightplan.getEntries()[i];
 
-    RouteMapObject mapobj(&flightplan, parentWindow->getElevationModel());
+    RouteMapObject mapobj(&flightplan, mainWindow->getElevationModel());
     mapobj.loadFromDatabaseByEntry(&entry, query, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
@@ -1257,7 +1294,7 @@ void RouteController::createRouteMapObjects()
 
 void RouteController::updateModelRouteTime()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   int row = 0;
   float cumulatedDistance = 0.f;
   for(const RouteMapObject& mapobj : route)
@@ -1279,7 +1316,7 @@ void RouteController::updateModelRouteTime()
 
 void RouteController::updateModel()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   model->removeRows(0, model->rowCount());
   float totalDistance = route.getTotalDistance();
@@ -1387,7 +1424,7 @@ void RouteController::updateLabel()
 {
   const Flightplan& flightplan = route.getFlightplan();
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   QString startAirport("No airport"), destAirport("No airport");
   if(!flightplan.isEmpty())
   {
@@ -1440,7 +1477,7 @@ void RouteController::updateLabel()
 
 void RouteController::updateWindowTitle()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   ui->dockWidgetRoute->setWindowTitle(dockWindowTitle + " - " +
                                       QFileInfo(routeFilename).fileName() +
                                       (changed ? " *" : QString()));

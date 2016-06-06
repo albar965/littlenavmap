@@ -369,7 +369,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseLoader::exec);
+  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseLoader::run);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
@@ -668,9 +668,11 @@ void MainWindow::routeOpen()
 
     if(!routeFile.isEmpty())
     {
-      routeController->loadFlightplan(routeFile);
-      routeFileHistory->addFile(routeFile);
-      navMapWidget->update();
+      if(routeController->loadFlightplan(routeFile))
+      {
+        routeFileHistory->addFile(routeFile);
+        navMapWidget->update();
+      }
     }
   }
 }
@@ -681,8 +683,8 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
   {
     if(!routeFile.isEmpty())
     {
-      routeController->loadFlightplan(routeFile);
-      navMapWidget->update();
+      if(routeController->loadFlightplan(routeFile))
+        navMapWidget->update();
     }
   }
 }
@@ -695,10 +697,12 @@ bool MainWindow::routeSave()
   {
     if(routeValidate())
     {
-      routeController->saveFlightplan();
-      routeFileHistory->addFile(routeController->getRouteFilename());
-      updateActionStates();
-      return true;
+      if(routeController->saveFlightplan())
+      {
+        routeFileHistory->addFile(routeController->getRouteFilename());
+        updateActionStates();
+        return true;
+      }
     }
   }
   return false;
@@ -716,10 +720,12 @@ bool MainWindow::routeSaveAs()
 
     if(!routeFile.isEmpty())
     {
-      routeController->saveFlighplanAs(routeFile);
-      routeFileHistory->addFile(routeFile);
-      updateActionStates();
-      return true;
+      if(routeController->saveFlighplanAs(routeFile))
+      {
+        routeFileHistory->addFile(routeFile);
+        updateActionStates();
+        return true;
+      }
     }
   }
   return false;
@@ -814,11 +820,22 @@ void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
 
 void MainWindow::createEmptySchema()
 {
-  if(!atools::sql::SqlUtil(&db).hasTable("airport"))
+  try
   {
-    atools::fs::BglReaderOptions opts;
-    atools::fs::Navdatabase nd(&opts, &db);
-    nd.createSchema();
+    if(!atools::sql::SqlUtil(&db).hasTable("airport"))
+    {
+      atools::fs::BglReaderOptions opts;
+      atools::fs::Navdatabase nd(&opts, &db);
+      nd.createSchema();
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(this).handleUnknownException();
   }
 }
 
