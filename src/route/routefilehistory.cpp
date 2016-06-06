@@ -36,23 +36,28 @@ RouteFileHistory::~RouteFileHistory()
 
 void RouteFileHistory::saveState()
 {
+  files.removeAll(QString());
   atools::settings::Settings::instance()->setValue(settings, files);
 }
 
 void RouteFileHistory::restoreState()
 {
   files = atools::settings::Settings::instance()->value(settings).toStringList();
+  files.removeAll(QString());
   updateMenu();
 }
 
 void RouteFileHistory::addFile(const QString& filename)
 {
-  files.prepend(filename);
+  if(!filename.isEmpty())
+  {
+    files.prepend(filename);
 
-  if(files.size() > maxEntries)
-    files.removeLast();
+    if(files.size() > maxEntries)
+      files.removeLast();
 
-  updateMenu();
+    updateMenu();
+  }
 }
 
 void RouteFileHistory::removeFile(const QString& filename)
