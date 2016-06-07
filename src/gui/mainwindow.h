@@ -188,6 +188,8 @@ private:
 
   void showNavmapLegend();
 
+  void resetMessages();
+
 };
 
 #endif // MAINWINDOW_H

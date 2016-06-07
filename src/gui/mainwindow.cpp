@@ -371,6 +371,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseLoader::run);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
+  connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
@@ -623,6 +624,7 @@ bool MainWindow::routeCheckForChanges()
     return true;
 
   QMessageBox msgBox;
+  msgBox.setWindowTitle(QApplication::applicationName());
   msgBox.setText("Route has been changed.");
   msgBox.setInformativeText("Save changes?");
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
@@ -681,10 +683,16 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 {
   if(routeCheckForChanges())
   {
-    if(!routeFile.isEmpty())
+    if(QFile::exists(routeFile))
     {
       if(routeController->loadFlightplan(routeFile))
         navMapWidget->update();
+    }
+    else
+    {
+      QMessageBox::warning(this, QApplication::applicationName(),
+                           QString("File \"%1\" does not exist").arg(routeFile));
+      routeFileHistory->removeFile(routeFile);
     }
   }
 }
@@ -839,8 +847,14 @@ void MainWindow::createEmptySchema()
   }
 }
 
+void MainWindow::resetMessages()
+{
+  // TODO reset messages
+}
+
 void MainWindow::options()
 {
+  // TODO create options dialog
   // QtMarbleConfigDialog dlg(mapWidget);
   // dlg.exec();
 

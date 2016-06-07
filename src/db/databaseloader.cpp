@@ -126,7 +126,10 @@ void DatabaseLoader::runInternal(DatabaseDialog& dlg)
     QString metaText;
     DatabaseMeta dbmeta(db);
     if(!dbmeta.isValid())
-      metaText = meta.arg(tr("Invalid")).arg(tr("Invalid")).arg(tr("Invalid"));
+      metaText = meta.arg(tr("None")).
+                 arg(tr("None")).
+                 arg(tr("None")).
+                 arg(DB_VERSION_MAJOR).arg(DB_VERSION_MINOR);
     else
       metaText = meta.arg(dbmeta.getLastLoadTime().toString()).
                  arg(dbmeta.getMajorVersion()).arg(dbmeta.getMinorVersion()).
