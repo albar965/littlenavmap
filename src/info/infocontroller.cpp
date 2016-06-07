@@ -208,13 +208,47 @@ void InfoController::postDatabaseLoad()
   databaseLoadStatus = false;
 }
 
+bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)
+{
+  // Do not update if scrollbar is clicked
+  return !textEdit->verticalScrollBar()->isSliderDown() &&
+         !textEdit->horizontalScrollBar()->isSliderDown();
+}
+
+void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
+{
+  // Remember cursor position
+  QTextCursor cursor = textEdit->textCursor();
+  int pos = cursor.position();
+  int anchor = cursor.anchor();
+
+  // Remember scrollbar position
+  int vScrollPos = textEdit->verticalScrollBar()->value();
+  int hScrollPos = textEdit->horizontalScrollBar()->value();
+  textEdit->setText(text);
+
+  if(anchor != pos)
+  {
+    // Reset cursor
+    int maxPos = textEdit->document()->characterCount() - 1;
+
+    // Probably the document changed its size
+    anchor = std::min(maxPos, anchor);
+    pos = std::min(maxPos, pos);
+
+    cursor.setPosition(anchor, QTextCursor::MoveAnchor);
+    cursor.setPosition(pos, QTextCursor::KeepAnchor);
+    textEdit->setTextCursor(cursor);
+  }
+  textEdit->verticalScrollBar()->setValue(vScrollPos);
+  textEdit->horizontalScrollBar()->setValue(hScrollPos);
+}
+
 void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 {
-
   Ui::MainWindow *ui = mainWindow->getUi();
-  if(ui->dockWidgetAircraft->isVisible() && !databaseLoadStatus &&
-     !ui->textEditAircraftInfo->verticalScrollBar()->isSliderDown() &&
-     !ui->textEditAircraftProgressInfo->verticalScrollBar()->isSliderDown())
+
+  if(!databaseLoadStatus)
   {
     if(!lastSimData.getPosition().isValid() ||
        // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||
@@ -223,17 +257,21 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
     {
       HtmlBuilder html(true);
 
-      info->aircraftText(data, html);
-      int val = ui->textEditAircraftInfo->verticalScrollBar()->value();
-      ui->textEditAircraftInfo->setText(html.getHtml());
-      ui->textEditAircraftInfo->verticalScrollBar()->setValue(val);
+      if(ui->dockWidgetAircraft->isVisible())
+      {
+        if(canTextEditUpdate(ui->textEditAircraftInfo))
+        {
+          info->aircraftText(data, html);
+          updateTextEdit(ui->textEditAircraftInfo, html.getHtml());
+        }
 
-      html.clear();
-      info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
-      val = ui->textEditAircraftProgressInfo->verticalScrollBar()->value();
-      ui->textEditAircraftProgressInfo->setText(html.getHtml());
-      ui->textEditAircraftProgressInfo->verticalScrollBar()->setValue(val);
-
+        if(canTextEditUpdate(ui->textEditAircraftProgressInfo))
+        {
+          html.clear();
+          info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
+          updateTextEdit(ui->textEditAircraftProgressInfo, html.getHtml());
+        }
+      }
       lastSimData = data;
       lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
@@ -243,8 +281,8 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textEditAircraftInfo->setText("Connected.");
-  ui->textEditAircraftProgressInfo->setText("Connected.");
+  ui->textEditAircraftInfo->setText("Connected. Waiting for update.");
+  ui->textEditAircraftProgressInfo->setText("Connected. Waiting for update.");
 }
 
 void InfoController::disconnectedFromSimulator()
