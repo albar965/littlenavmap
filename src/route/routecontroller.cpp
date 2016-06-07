@@ -118,7 +118,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  dockWindowTitle = ui->dockWidgetRoute->windowTitle();
+  mainWindowTitle = mainWindow->windowTitle();
   model = new QStandardItemModel();
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(model);
@@ -1477,10 +1477,11 @@ void RouteController::updateLabel()
 
 void RouteController::updateWindowTitle()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
-  ui->dockWidgetRoute->setWindowTitle(dockWindowTitle + " - " +
-                                      QFileInfo(routeFilename).fileName() +
-                                      (changed ? " *" : QString()));
+  QString newTitle = mainWindowTitle;
+  if(!routeFilename.isEmpty())
+    newTitle += " - " + QFileInfo(routeFilename).fileName() + (changed ? " *" : QString());
+
+  mainWindow->setWindowTitle(newTitle);
 }
 
 void RouteController::clearRoute()

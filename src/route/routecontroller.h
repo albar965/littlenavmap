@@ -128,7 +128,7 @@ private:
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
   atools::geo::Rect boundingRect;
   RouteMapObjectList route;
-  QString routeFilename, dockWindowTitle;
+  QString routeFilename, mainWindowTitle;
   MainWindow *mainWindow;
   QTableView *view;
   MapQuery *query;
