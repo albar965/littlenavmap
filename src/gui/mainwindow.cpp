@@ -209,7 +209,11 @@ void MainWindow::loadNavmapLegend()
     {
       QTextStream stream(&legendFile);
       legend.append(stream.readAll());
-      ui->textEditNavmapLegendInfo->setText(legend);
+
+      QString searchPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
+      searchPath += "/help/en"; // TODO other languages
+      ui->textBrowserNavmapLegendInfo->setSearchPaths({searchPath});
+      ui->textBrowserNavmapLegendInfo->setText(legend);
     }
     else
       errorHandler->handleIOError(legendFile, "While opening Navmap Legend file:");
@@ -280,6 +284,8 @@ void MainWindow::setupUi()
                             "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Simple"),
                             "earth/political/political.dgml");
+  mapThemeComboBox->addItem(tr("Plain"),
+                            "earth/plain/plain.dgml");
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));

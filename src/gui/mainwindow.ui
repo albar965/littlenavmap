@@ -1963,11 +1963,7 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditNavmapLegendInfo">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
+          <widget class="QTextBrowser" name="textBrowserNavmapLegendInfo"/>
          </item>
         </layout>
        </widget>

@@ -206,6 +206,7 @@ private:
     OSM,
     OPENTOPOMAP,
     POLITICAL,
+    PLAIN,
     INVALID = -1
   };
 

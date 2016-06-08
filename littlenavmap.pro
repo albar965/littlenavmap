@@ -199,7 +199,8 @@ DISTFILES += \
     LICENSE.txt \
     README.txt \
     help/en/index.html \
-    help/en/images/gpl-v3-logo.svg
+    help/en/images/gpl-v3-logo.svg \
+    help/en/legend.html
 
 RESOURCES += \
     littlenavmap.qrc

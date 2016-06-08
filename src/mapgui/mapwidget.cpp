@@ -108,6 +108,7 @@ void MapWidget::setTheme(const QString& theme, int index)
       ui->actionMapShowHillshading->setEnabled(true);
       break;
     case MapWidget::POLITICAL:
+    case MapWidget::PLAIN:
       ui->actionMapShowCities->setEnabled(true);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
@@ -122,7 +123,8 @@ void MapWidget::setTheme(const QString& theme, int index)
 void MapWidget::updateMapShowFeatures()
 {
   Ui::MainWindow *ui = parentWindow->getUi();
-  setShowMapPois(ui->actionMapShowCities->isChecked() && currentComboIndex == MapWidget::POLITICAL);
+  setShowMapPois(ui->actionMapShowCities->isChecked() &&
+                 (currentComboIndex == MapWidget::POLITICAL || currentComboIndex == MapWidget::PLAIN));
   setShowGrid(ui->actionMapShowGrid->isChecked());
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    currentComboIndex == MapWidget::OSM);
