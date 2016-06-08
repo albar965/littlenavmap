@@ -211,7 +211,7 @@ void MainWindow::loadNavmapLegend()
       legend.append(stream.readAll());
 
       QString searchPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
-      searchPath += "/help/en"; // TODO other languages
+      searchPath += tr("/help/en");
       ui->textBrowserNavmapLegendInfo->setSearchPaths({searchPath});
       ui->textBrowserNavmapLegendInfo->setText(legend);
     }

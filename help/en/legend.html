@@ -8,10 +8,12 @@
     <title></title>
   </head>
   <body>
-    <h4>
+  All speeds are in knots, distances in nm, altitude in feet.
+  Heading and course are suffixed with °T for true course or °M for magnetic course.
+    <h3>
       Map Marks
-    </h4>
-    <table style="text-align: left;" cellpadding="2" cellspacing="0" border="1">
+    </h3>
+    <table style="text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
@@ -79,7 +81,8 @@
             <img alt="Distance GC" src="images/legend/distance_gc.png" />
           </td>
           <td>
-            Great circle distance measurement line indicating distance, start and destination true
+            <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a>
+            distance measurement line indicating distance, start and destination true
             heading. At lower zoom levels distance is also shown in feet.
           </td>
         </tr>
@@ -88,7 +91,8 @@
             <img alt="Distance Rhumb" src="images/legend/distance_rhumb.png" />
           </td>
           <td>
-            Rhumb line of equal heading distance measurement indicating distance and true heading.
+      <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance
+      measurement indicating distance and true heading. This is used to approach a VOR or NDB.
           </td>
         </tr>
         <tr>
@@ -103,10 +107,9 @@
         </tr>
       </tbody>
     </table>
-    <h4>
+    <h3>
       Airports
-    </h4>
-    <p>
+    </h3>
       Airports having control towers are shown in <span style=
       "color: rgb(15, 70, 130);"><span style="font-weight: bold;">dark blue</span></span> others in
       <span style="color: rgb(126, 58, 91);"><span style=
@@ -117,8 +120,7 @@
       "font-style: italic;">nderlined</span></span></span>. Airports that are part of the route
       have a <span style="background-color: rgb(255, 255, 153);"><span style=
       "font-weight: bold;">light yellow</span></span> text background.
-    </p>
-    <table style=" text-align: left;" cellpadding="2" cellspacing="0" border="1">
+    <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
@@ -127,18 +129,18 @@
             "Large Airport" src="images/legend/airport_8000.png" />
           </td>
           <td style="text-align: left;">
-            Airports with hard surfaced runways longer than 8,000 ft. All runways longer than 4,000
+            Airports with hard surface runways longer than 8,000 ft. All runways longer than 4,000
             ft are shown the diagram. Only for lower zoom levels.
           </td>
         </tr>
         <tr>
           <td style="text-align: center;">
             <img alt="Airport with Tower" src=
-            "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/airport_tower.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Airport"
-            src="file:///home/alex/Projekte/littlenavmap/help/en/images/legend/airport.png" />
+            "images/legend/airport_tower.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Airport"
+            src="images/legend/airport.png" />
           </td>
           <td style="text-align: left;">
-            Airports with hard surfaced runways. White line shows heading of longest runway.
+            Airports with hard surface runways. White line shows heading of longest runway.
           </td>
         </tr>
         <tr>
@@ -148,7 +150,7 @@
             "Airport with soft Runways" src="images/legend/airport_soft.png" />
           </td>
           <td style="text-align: left;">
-            Airports with soft surfaced runways.
+            Airports with soft surface runways.
           </td>
         </tr>
         <tr>
@@ -222,15 +224,13 @@
         </tr>
       </tbody>
     </table>
-    <h4>
+    <h3>
       Navaids
-    </h4>
-    <p>
+    </h3>
       Navaids that are part of the route have a <span style=
-      "background-color: rgb(255, 255, 153);"><span style="font-weight: bold;">light
+      "background-color: rgb(255, 255, 150);"><span style="font-weight: bold;">light
       yellow</span></span> text background.
-    </p>
-    <table style=" text-align: left;" cellpadding="2" cellspacing="0" border="1">
+    <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
@@ -307,14 +307,14 @@
         </tr>
       </tbody>
     </table>
-    <table style=" text-align: left; width: 100%;" cellpadding="2" cellspacing="0" border="1">
+    <table style=" text-align: left; vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="vertical-align: top;">
             <img alt="ILS" src=
             "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/ils_gs_small.png" />&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
-            "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/ils_gs.png" /> ILS with
+            "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/ils_gs.png" /><br/> ILS with
             glideslope. Label shows ident, frequency, magnetic heading, glideslope pitch and DME
             indication if available.
           </td>
@@ -325,26 +325,24 @@
             "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/ils_small.png" />&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
             "file:///home/alex/Projekte/littlenavmap/help/en/images/legend/ils_large.png" />
-            Localizer. Label shows ident, frequency, magnetic heading and DME indication if
+            <br/>Localizer. Label shows ident, frequency, magnetic heading and DME indication if
             available.
           </td>
         </tr>
       </tbody>
     </table>
-    <h4>
+    <h3>
       Airport Diagram
-    </h4>
-    <p>
+    </h3>
       Runway, taxiway, helipad and apron colors indicate surface type.
-    </p>
-    <table style=" text-align: left;" cellpadding="2" cellspacing="0" border="1">
+    <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
             <img alt="Runway" src="images/legend/runway.png" />
           </td>
           <td>
-            Runway with length, width, light indicator (L) and surface.
+            Runway with length, width, light indicator (L) and surface type.
           </td>
         </tr>
         <tr>
@@ -454,7 +452,7 @@
     <h3>
       Profile Legend
     </h3>
-    <table style=" text-align: left;" cellpadding="2" cellspacing="0" border="1">
+    <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
