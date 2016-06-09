@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>167</height>
+    <width>458</width>
+    <height>199</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,14 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QLabel" name="labelConnectTitle">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
      <property name="text">
-      <string>Start Little Navconnect on the FS computer before trying to connect. Use the values that Little Navconnect shows in its log.</string>
+      <string>Start Little Navconnect on the FS computer before trying to connect. Use the hostname and port values that Little Navconnect shows in its log.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -26,46 +32,7 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelConnectPort">
-       <property name="text">
-        <string>&amp;Port:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>spinBoxConnectPort</cstring>
-       </property>
-      </widget>
-     </item>
      <item row="1" column="2">
-      <widget class="QSpinBox" name="spinBoxConnectPort">
-       <property name="minimum">
-        <number>1024</number>
-       </property>
-       <property name="maximum">
-        <number>65535</number>
-       </property>
-       <property name="value">
-        <number>51968</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelConnectHostname">
-       <property name="text">
-        <string>&amp;Hostname or IP Address:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>comboBoxConnectHostname</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
       <widget class="QComboBox" name="comboBoxConnectHostname">
        <property name="editable">
         <bool>true</bool>
@@ -81,7 +48,53 @@
        </property>
       </widget>
      </item>
+     <item row="2" column="2">
+      <widget class="QSpinBox" name="spinBoxConnectPort">
+       <property name="minimum">
+        <number>1024</number>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>51968</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelConnectHostname">
+       <property name="text">
+        <string>&amp;Hostname or IP Address:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>comboBoxConnectHostname</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelConnectPort">
+       <property name="text">
+        <string>&amp;Port:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>spinBoxConnectPort</cstring>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBoxConnectOnStartup">
+     <property name="text">
+      <string>Connect on &amp;startup</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxConnect">
@@ -89,7 +102,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Close|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>

@@ -49,7 +49,6 @@
 #include "mapgui/maplayersettings.h"
 
 #include <QCloseEvent>
-#include <QElapsedTimer>
 #include <QProgressDialog>
 #include <QSettings>
 

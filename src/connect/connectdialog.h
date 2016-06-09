@@ -53,6 +53,8 @@ public:
     disconnectClicked = value;
   }
 
+  bool isConnectOnStartup() const;
+
 private:
   bool disconnectClicked = false;
   Ui::ConnectDialog *ui;

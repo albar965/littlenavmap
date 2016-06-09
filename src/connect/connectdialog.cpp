@@ -34,7 +34,8 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
-  ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setText(tr("&Disconnect"));
+  ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setText(tr("&Disconnect"));
+  // ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setText(tr("&Disconnect"));
 
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonClicked);
 }
@@ -74,12 +75,12 @@ void ConnectDialog::buttonClicked(QAbstractButton *button)
 
     QDialog::accept();
   }
-  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
+  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Reset))
   {
     disconnectClicked = true;
     QDialog::reject();
   }
-  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Cancel))
+  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
   {
     disconnectClicked = false;
     QDialog::reject();
@@ -88,7 +89,12 @@ void ConnectDialog::buttonClicked(QAbstractButton *button)
 
 void ConnectDialog::setConnected(bool connected)
 {
-  ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setEnabled(connected);
+  ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setEnabled(connected);
+}
+
+bool ConnectDialog::isConnectOnStartup() const
+{
+  return ui->checkBoxConnectOnStartup->isChecked();
 }
 
 QString ConnectDialog::getHostname() const
@@ -104,7 +110,7 @@ quint16 ConnectDialog::getPort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState saver("NavConnect/Remote");
-  saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort});
+  saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 
   QStringList entries;
   for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
@@ -128,5 +134,5 @@ void ConnectDialog::restoreState()
   }
 
   atools::gui::WidgetState saver("NavConnect/Remote");
-  saver.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort});
+  saver.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 }

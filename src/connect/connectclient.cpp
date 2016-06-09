@@ -141,8 +141,11 @@ void ConnectClient::connectToServer()
 
 void ConnectClient::tryConnect()
 {
-  silent = true;
-  connectInternal();
+  if(dialog->isConnectOnStartup())
+  {
+    silent = true;
+    connectInternal();
+  }
 }
 
 void ConnectClient::connectInternal()
