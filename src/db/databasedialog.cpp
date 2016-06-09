@@ -33,9 +33,26 @@ DatabaseDialog::DatabaseDialog(QWidget *parent)
 
   dialog = new atools::gui::Dialog(this);
 
+  using atools::fs::fstype::SimulatorType;
+  using atools::fs::FsPaths;
+
+  for(SimulatorType type : atools::fs::fstype::ALL_SIMULATOR_TYPES)
+  {
+    QString sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+    QString basePath = FsPaths::getBasePath(type);
+
+    if(!basePath.isEmpty())
+    {
+      QAction *action = new QAction(QString("Get paths for %1").arg(FsPaths::typeToString(type)), this);
+      action->setData(type);
+      ui->toolButtonDatabaseMenu->addAction(action);
+    }
+  }
+
   connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
+  connect(ui->toolButtonDatabaseMenu, &QToolButton::triggered, this, &DatabaseDialog::menuTriggered);
   connect(ui->pushButtonDatabaseBasePath, &QPushButton::clicked,
           this, &DatabaseDialog::selectBasePath);
   connect(ui->pushButtonDatabaseSceneryFile, &QPushButton::clicked,
@@ -45,6 +62,16 @@ DatabaseDialog::DatabaseDialog(QWidget *parent)
 DatabaseDialog::~DatabaseDialog()
 {
   delete ui;
+}
+
+void DatabaseDialog::menuTriggered(QAction *action)
+{
+  using atools::fs::fstype::SimulatorType;
+  using atools::fs::FsPaths;
+
+  SimulatorType type = static_cast<SimulatorType>(action->data().toInt());
+  setBasePath(FsPaths::getBasePath(type));
+  setSceneryConfigFile(FsPaths::getSceneryLibraryPath(type));
 }
 
 QString DatabaseDialog::getBasePath() const

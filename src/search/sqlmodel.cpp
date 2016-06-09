@@ -594,7 +594,7 @@ void SqlModel::buildQuery()
     if(!boundingRect.isValid())
       resetSqlQuery();
   }
-  catch(std::exception& e)
+  catch(atools::Exception& e)
   {
     atools::gui::ErrorHandler(parentWidget).handleException(e, "While executing query");
   }

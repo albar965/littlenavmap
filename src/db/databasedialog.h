@@ -53,6 +53,8 @@ private:
   void selectSceneryConfig();
 
   atools::gui::Dialog *dialog;
+  void menuTriggered(QAction *action);
+
 };
 
 #endif // DATABASEDIALOG_H

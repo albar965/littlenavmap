@@ -215,11 +215,11 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
         head(html, "Weather");
       html.table();
       if(!asnMetar.isEmpty())
-        html.row2("Metar (ASN):", asnMetar);
+        html.row2("ASN:", asnMetar);
       if(!noaaMetar.isEmpty())
-        html.row2("Metar (NOAA):", noaaMetar);
+        html.row2("NOAA:", noaaMetar);
       if(!vatsimMetar.isEmpty())
-        html.row2("Metar (Vatsim):", vatsimMetar);
+        html.row2("Vatsim:", vatsimMetar);
       html.tableEnd();
     }
   }

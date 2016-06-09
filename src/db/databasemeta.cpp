@@ -35,26 +35,35 @@ DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
     {
       majorVersion = query.value("db_version_major").toInt();
       minorVersion = query.value("db_version_minor").toInt();
-      lastLoadTime.setTime_t(query.value("last_load_timestamp").toUInt());
+      lastLoadTime = query.value("last_load_timestamp").toDateTime();
       valid = true;
     }
   }
 }
 
-void DatabaseMeta::update(int majorVer, int minorVer)
+void DatabaseMeta::updateVersion(int majorVer, int minorVer)
 {
   majorVersion = majorVer;
   minorVersion = minorVer;
-  lastLoadTime = QDateTime::currentDateTime();
 
   SqlQuery query(db);
   query.exec("delete from metadata");
 
-  query.prepare("insert into metadata (db_version_major, db_version_minor, last_load_timestamp) "
-                "values(:major, :minor, :loadts)");
+  query.prepare("insert into metadata (db_version_major, db_version_minor) "
+                "values(:major, :minor)");
   query.bindValue(":major", majorVersion);
   query.bindValue(":minor", minorVersion);
-  query.bindValue(":loadts", lastLoadTime.toTime_t());
+  query.exec();
+  db->commit();
+}
+
+void DatabaseMeta::updateTimestamp()
+{
+  lastLoadTime = QDateTime::currentDateTime();
+
+  SqlQuery query(db);
+  query.prepare("update metadata set last_load_timestamp = :loadts");
+  query.bindValue(":loadts", lastLoadTime);
   query.exec();
   db->commit();
 }

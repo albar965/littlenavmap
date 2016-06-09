@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>535</width>
-    <height>134</height>
+    <height>158</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEditDatabaseBasePath"/>
-     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="labelDatabaseBasePath">
        <property name="text">
@@ -42,24 +39,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="pushButtonDatabaseBasePath">
-       <property name="text">
-        <string>Select ...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
-       <property name="text">
-        <string>Select ...</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0" colspan="3">
       <widget class="QLabel" name="labelDatabaseInformation">
        <property name="frameShape">
-        <enum>QFrame::Box</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
@@ -75,6 +58,40 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEditDatabaseBasePath"/>
+     </item>
+     <item row="0" column="3" alignment="Qt::AlignTop">
+      <widget class="QToolButton" name="toolButtonDatabaseMenu">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../../littlenavmap.qrc">
+         <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextBesideIcon</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" colspan="2">
+      <widget class="QPushButton" name="pushButtonDatabaseBasePath">
+       <property name="text">
+        <string>Select ...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" colspan="2">
+      <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
+       <property name="text">
+        <string>Select ...</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -86,6 +103,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -35,6 +35,14 @@
 #include <sql/sqlutil.h>
 
 #include <gui/errorhandler.h>
+#include <QMessageBox>
+
+using atools::gui::ErrorHandler;
+using atools::sql::SqlUtil;
+using atools::settings::Settings;
+using atools::fs::FsPaths;
+using atools::fs::BglReaderOptions;
+using atools::fs::Navdatabase;
 
 const QString meta("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>");
 
@@ -97,8 +105,6 @@ const QString textWithFile(QObject::tr(
                              "<b>Time:</b> %4<br/>"
                              ) + table);
 
-using namespace atools::settings;
-
 DatabaseLoader::DatabaseLoader(QWidget *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb), parentWidget(parent)
 {
@@ -112,66 +118,107 @@ DatabaseLoader::~DatabaseLoader()
 
 void DatabaseLoader::run()
 {
+  // Get the newest simulator for default values
+  atools::fs::fstype::SimulatorType type = atools::fs::fstype::UNKNOWN;
+  if(!FsPaths::getBasePath(atools::fs::fstype::P3D_V3).isEmpty())
+    type = atools::fs::fstype::P3D_V3;
+  else if(!FsPaths::getBasePath(atools::fs::fstype::P3D_V2).isEmpty())
+    type = atools::fs::fstype::P3D_V2;
+  else if(!FsPaths::getBasePath(atools::fs::fstype::FSX_SE).isEmpty())
+    type = atools::fs::fstype::FSX_SE;
+  else if(!FsPaths::getBasePath(atools::fs::fstype::FSX).isEmpty())
+    type = atools::fs::fstype::FSX;
+
+  if(type != atools::fs::fstype::UNKNOWN)
+  {
+    if(basePath.isEmpty())
+      basePath = atools::fs::FsPaths::getBasePath(type);
+    if(sceneryCfg.isEmpty())
+      sceneryCfg = atools::fs::FsPaths::getSceneryLibraryPath(type);
+  }
+
   DatabaseDialog dlg(parentWidget);
   dlg.setBasePath(basePath);
   dlg.setSceneryConfigFile(sceneryCfg);
 
-  runInternal(dlg);
+  QString metaText;
+  DatabaseMeta dbmeta(db);
+  if(!dbmeta.isValid())
+    metaText = meta.arg(tr("None")).
+               arg(tr("None")).
+               arg(tr("None")).
+               arg(DB_VERSION_MAJOR).arg(DB_VERSION_MINOR);
+  else
+    metaText = meta.
+               arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : "None").
+               arg(dbmeta.getMajorVersion()).
+               arg(dbmeta.getMinorVersion()).
+               arg(DB_VERSION_MAJOR).
+               arg(DB_VERSION_MINOR);
+
+  atools::sql::SqlUtil util(db);
+
+  // Get row counts for the dialog
+  QString tableText = table.arg(util.rowCount("bgl_file")).
+                      arg(util.rowCount("airport")).
+                      arg(util.rowCount("vor")).
+                      arg(util.rowCount("ils")).
+                      arg(util.rowCount("ndb")).
+                      arg(util.rowCount("marker")).
+                      arg(util.rowCount("boundary")).
+                      arg(util.rowCount("waypoint"));
+
+  dlg.setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
+
+  // try until user hits cancel or the database was loaded successfully
+  while(runInternal(dlg, dbmeta))
+    ;
 }
 
-void DatabaseLoader::runInternal(DatabaseDialog& dlg)
+bool DatabaseLoader::runInternal(DatabaseDialog& dlg, DatabaseMeta& dbmeta)
 {
+  bool reopenDialog = true;
   try
   {
-    QString metaText;
-    DatabaseMeta dbmeta(db);
-    if(!dbmeta.isValid())
-      metaText = meta.arg(tr("None")).
-                 arg(tr("None")).
-                 arg(tr("None")).
-                 arg(DB_VERSION_MAJOR).arg(DB_VERSION_MINOR);
-    else
-      metaText = meta.arg(dbmeta.getLastLoadTime().toString()).
-                 arg(dbmeta.getMajorVersion()).arg(dbmeta.getMinorVersion()).
-                 arg(DB_VERSION_MAJOR).arg(DB_VERSION_MINOR);
-
-    atools::sql::SqlUtil util(db);
-
-    // Get row counts for the dialog
-    QString tableText = table.arg(util.rowCount("bgl_file")).
-                        arg(util.rowCount("airport")).
-                        arg(util.rowCount("vor")).
-                        arg(util.rowCount("ils")).
-                        arg(util.rowCount("ndb")).
-                        arg(util.rowCount("marker")).
-                        arg(util.rowCount("boundary")).
-                        arg(util.rowCount("waypoint"));
-
-    dlg.setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
-
     int retval = dlg.exec();
-    dlg.hide();
 
     if(retval == QDialog::Accepted)
     {
-      sceneryCfg = dlg.getSceneryConfigFile();
-      basePath = dlg.getBasePath();
-      if(loadScenery(&dlg))
-        // Successfully loaded
-        dbmeta.update(DB_VERSION_MAJOR, DB_VERSION_MINOR);
+      QString err;
+      if(atools::fs::Navdatabase::isBasePathValid(dlg.getBasePath(), err))
+      {
+        if(atools::fs::Navdatabase::isSceneryConfigValid(dlg.getSceneryConfigFile(), err))
+        {
+          sceneryCfg = dlg.getSceneryConfigFile();
+          basePath = dlg.getBasePath();
+          if(loadScenery(&dlg))
+          {
+            // Successfully loaded
+            dbmeta.updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
+            dbmeta.updateTimestamp();
+            reopenDialog = false;
+          }
+        }
+        else
+          QMessageBox::warning(&dlg, QApplication::applicationName(),
+                               tr("Cannot read \"%1\". Reason: %2.").arg(dlg.getSceneryConfigFile()).arg(err));
+      }
       else
-        // Try again until the user cancels the dialog
-        runInternal(dlg);
+        QMessageBox::warning(&dlg, QApplication::applicationName(),
+                             tr("Cannot read \"%1\". Reason: %2.").arg(dlg.getBasePath()).arg(err));
     }
+    else
+      reopenDialog = false;
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(parentWidget).handleException(e);
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(parentWidget).handleUnknownException();
   }
+  return reopenDialog;
 }
 
 bool DatabaseLoader::loadScenery(QWidget *parent)
@@ -220,12 +267,12 @@ bool DatabaseLoader::loadScenery(QWidget *parent)
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(parent).handleException(e);
     success = false;
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(parent).handleUnknownException();
     success = false;
   }
 
@@ -305,6 +352,68 @@ bool DatabaseLoader::progressCallback(const atools::fs::BglReaderProgressInfo& p
   return progressDialog->wasCanceled();
 }
 
+bool DatabaseLoader::hasSchema() const
+{
+  try
+  {
+    return SqlUtil(db).hasTable("airport");
+  }
+  catch(atools::Exception& e)
+  {
+    ErrorHandler(parentWidget).handleException(e);
+  }
+  catch(...)
+  {
+    ErrorHandler(parentWidget).handleUnknownException();
+  }
+  return false;
+}
+
+bool DatabaseLoader::hasData() const
+{
+  try
+  {
+    return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
+  }
+  catch(atools::Exception& e)
+  {
+    ErrorHandler(parentWidget).handleException(e);
+  }
+  catch(...)
+  {
+    ErrorHandler(parentWidget).handleUnknownException();
+  }
+  return false;
+}
+
+bool DatabaseLoader::isDatabaseCompatible()
+{
+  DatabaseMeta dbmeta(db);
+  if(dbmeta.isValid())
+    return DB_VERSION_MAJOR == dbmeta.getMajorVersion();
+
+  return false;
+}
+
+void DatabaseLoader::createEmptySchema()
+{
+  try
+  {
+    BglReaderOptions opts;
+    Navdatabase(&opts, db).createSchema();
+
+    DatabaseMeta(db).updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
+  }
+  catch(atools::Exception& e)
+  {
+    ErrorHandler(parentWidget).handleException(e);
+  }
+  catch(...)
+  {
+    ErrorHandler(parentWidget).handleUnknownException();
+  }
+}
+
 void DatabaseLoader::saveState()
 {
   Settings& s = Settings::instance();
@@ -315,10 +424,8 @@ void DatabaseLoader::saveState()
 void DatabaseLoader::restoreState()
 {
   Settings& s = Settings::instance();
-  atools::fs::fstype::SimulatorType type = atools::fs::fstype::FSX;
-
-  basePath = s->value("Database/BasePath", atools::fs::FsPaths::getBasePath(type)).toString();
-  sceneryCfg = s->value("Database/SceneryConfig", atools::fs::FsPaths::getSceneryLibraryPath(type)).toString();
+  basePath = s->value("Database/BasePath").toString();
+  sceneryCfg = s->value("Database/SceneryConfig").toString();
 
   qDebug() << "Base Path" << basePath;
   qDebug() << "Scenery Configuration Path" << sceneryCfg;

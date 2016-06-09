@@ -32,6 +32,7 @@ class SqlDatabase;
 class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
+class DatabaseMeta;
 
 class DatabaseLoader :
   public QObject
@@ -49,8 +50,13 @@ public:
 
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
 
-  const int DB_VERSION_MAJOR = 0;
-  const int DB_VERSION_MINOR = 7;
+  bool hasSchema() const;
+  bool hasData() const;
+  void createEmptySchema();
+  bool isDatabaseCompatible();
+
+  const int DB_VERSION_MAJOR = 1;
+  const int DB_VERSION_MINOR = 0;
 
 signals:
   void preDatabaseLoad();
@@ -63,7 +69,7 @@ private:
   bool loadScenery(QWidget *parent);
 
   QString basePath, sceneryCfg;
-  void runInternal(DatabaseDialog& dlg);
+  bool runInternal(DatabaseDialog& dlg, DatabaseMeta& dbmeta);
 
 };
 

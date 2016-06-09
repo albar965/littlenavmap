@@ -46,12 +46,13 @@ public:
     return lastLoadTime;
   }
 
-  void update(int majorVer, int minorVer);
-
   bool isValid() const
   {
     return valid;
   }
+
+  void updateVersion(int majorVer, int minorVer);
+  void updateTimestamp();
 
 private:
   atools::sql::SqlDatabase *db;

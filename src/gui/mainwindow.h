@@ -160,7 +160,6 @@ private:
   void options();
   void preDatabaseLoad();
   void postDatabaseLoad();
-  void createEmptySchema();
 
   void updateHistActions(int minIndex, int curIndex, int maxIndex);
 
@@ -189,6 +188,8 @@ private:
   void showNavmapLegend();
 
   void resetMessages();
+
+  void checkDatabase();
 
 };
 

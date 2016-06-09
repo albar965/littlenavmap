@@ -107,6 +107,8 @@ MainWindow::MainWindow(QWidget *parent) :
   openDatabase();
 
   databaseLoader = new DatabaseLoader(this, &db);
+  if(!databaseLoader->hasSchema())
+    databaseLoader->createEmptySchema();
 
   weatherReporter = new WeatherReporter(this);
 
@@ -832,27 +834,6 @@ void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
   ui->actionMapNext->setEnabled(curIndex < maxIndex);
 }
 
-void MainWindow::createEmptySchema()
-{
-  try
-  {
-    if(!atools::sql::SqlUtil(&db).hasTable("airport"))
-    {
-      atools::fs::BglReaderOptions opts;
-      atools::fs::Navdatabase nd(&opts, &db);
-      nd.createSchema();
-    }
-  }
-  catch(atools::Exception& e)
-  {
-    atools::gui::ErrorHandler(this).handleException(e);
-  }
-  catch(...)
-  {
-    atools::gui::ErrorHandler(this).handleUnknownException();
-  }
-}
-
 void MainWindow::resetMessages()
 {
   // TODO reset messages
@@ -869,6 +850,7 @@ void MainWindow::options()
 void MainWindow::mainWindowShown()
 {
   qDebug() << "MainWindow::mainWindowShown()";
+  checkDatabase();
 }
 
 void MainWindow::updateActionStates()
@@ -925,10 +907,8 @@ void MainWindow::openDatabase()
     query.exec("PRAGMA foreign_keys");
     if(query.next())
       qDebug() << "Foreign keys are" << query.value(0).toBool();
-
-    createEmptySchema();
   }
-  catch(std::exception& e)
+  catch(atools::Exception& e)
   {
     errorHandler->handleException(e, "While opening database");
   }
@@ -942,12 +922,10 @@ void MainWindow::closeDatabase()
 {
   try
   {
-    using atools::sql::SqlDatabase;
-
     qDebug() << "Closing database" << databaseFile;
     db.close();
   }
-  catch(std::exception& e)
+  catch(atools::Exception& e)
   {
     errorHandler->handleException(e, "While closing database");
   }
@@ -955,6 +933,23 @@ void MainWindow::closeDatabase()
   {
     errorHandler->handleUnknownException("While closing database");
   }
+}
+
+void MainWindow::checkDatabase()
+{
+  if(!databaseLoader->isDatabaseCompatible())
+  {
+    // If the schema is different force user to reload
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("Found older Navdatabase schema. "
+                                "You need to load the scenery files to update the schema."));
+    databaseLoader->run();
+    if(!databaseLoader->isDatabaseCompatible())
+      QApplication::quit();
+  }
+  else if(!databaseLoader->hasData())
+    // Show dialog if schema is empty (maybe due to first start)
+    databaseLoader->run();
 }
 
 void MainWindow::readSettings()

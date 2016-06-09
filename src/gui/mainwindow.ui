@@ -264,20 +264,11 @@
                 <iconset resource="../../littlenavmap.qrc">
                  <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
                </property>
-               <property name="iconSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
-               </property>
                <property name="popupMode">
                 <enum>QToolButton::InstantPopup</enum>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonFollowStyle</enum>
-               </property>
-               <property name="arrowType">
-                <enum>Qt::NoArrow</enum>
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -368,7 +359,7 @@
              <item row="1" column="0">
               <widget class="QCheckBox" name="checkBoxAirportScenerySearch">
                <property name="text">
-                <string>Scenery</string>
+                <string>Rating</string>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -1137,20 +1128,11 @@
                 <iconset resource="../../littlenavmap.qrc">
                  <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
                </property>
-               <property name="iconSize">
-                <size>
-                 <width>16</width>
-                 <height>16</height>
-                </size>
-               </property>
                <property name="popupMode">
                 <enum>QToolButton::InstantPopup</enum>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonFollowStyle</enum>
-               </property>
-               <property name="arrowType">
-                <enum>Qt::NoArrow</enum>
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -1780,7 +1762,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>5</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <attribute name="title">
