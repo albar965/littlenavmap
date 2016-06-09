@@ -20,7 +20,7 @@
             <img alt="Home" src="images/legend/home.png" />
           </td>
           <td>
-            Center of the Home position.
+            Center of the home position.
           </td>
         </tr>
         <tr>
@@ -28,7 +28,7 @@
             <img alt="Mark" src="images/legend/mark.png" />
           </td>
           <td>
-            Center that will be used for distance searches.
+            Center point that will be used for distance searches.
           </td>
         </tr>
         <tr>
@@ -41,13 +41,22 @@
         </tr>
         <tr>
           <td style="text-align: center;">
-            <img alt="Aircraft" src="images/legend/aircraft.png" />
+            <img alt="Aircraft" src="images/legend/aircraft.png" />&nbsp;&nbsp;&nbsp;&nbsp;
+            <img alt="Aircraft" src="images/legend/aircraft_text.png" />
           </td>
           <td>
             Current aircraft position if connected to the flight simulator. Labels include
             registration number, airline (if available), flight number (if available), indicated
             speed, ground speed, magnetic heading, altitude, climb/sink arrow and wind magnetic
             heading and speed.
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Aircraft" src="images/legend/aircraft_ground.png" />
+          </td>
+          <td>
+            Aircraft on ground.
           </td>
         </tr>
         <tr>
@@ -82,8 +91,8 @@
           </td>
           <td>
             <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a>
-            distance measurement line indicating distance, start and destination true
-            heading. At lower zoom levels distance is also shown in feet.
+            distance measurement line indicating length and true heading at start and destination.
+            For shorter distances length is also shown in feet.
           </td>
         </tr>
         <tr>
@@ -91,8 +100,9 @@
             <img alt="Distance Rhumb" src="images/legend/distance_rhumb.png" />
           </td>
           <td>
-      <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance
-      measurement indicating distance and true heading. This is used to approach a VOR or NDB.
+          <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance
+          measurement indicating distance and true heading. Rhumb lines are used to approach a VOR or NDB
+          or travel along airways.
           </td>
         </tr>
         <tr>
@@ -111,15 +121,12 @@
       Airports
     </h3>
       Airports having control towers are shown in <span style=
-      "color: rgb(15, 70, 130);"><span style="font-weight: bold;">dark blue</span></span> others in
-      <span style="color: rgb(126, 58, 91);"><span style=
-      "font-weight: bold;">magenta</span></span>. Add-on airport names and ident are shown
-      <span style="font-weight: bold;"><span style="text-decoration: underline;"><span style=
-      "font-style: italic;">italic and u</span></span></span><span style=
-      "font-weight: bold;"><span style="text-decoration: underline;"><span style=
-      "font-style: italic;">nderlined</span></span></span>. Airports that are part of the route
-      have a <span style="background-color: rgb(255, 255, 153);"><span style=
-      "font-weight: bold;">light yellow</span></span> text background.
+      "color: rgb(15, 70, 130);font-weight: bold;">dark blue</span> others in
+      <span style="color: rgb(126, 58, 91);font-weight: bold;">magenta</span>.
+      Add-on airport names and idents are shown
+      <span style="font-weight: bold;text-decoration: underline;font-style: italic;">italic and underlined</span>.
+      Airports that are part of the route
+      have a <span style="background-color: rgb(255, 255, 153);font-weight: bold;">light yellow</span> text background.
     <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
@@ -249,7 +256,7 @@
             "VOR" src="images/legend/vor_large.png" />
           </td>
           <td>
-            VOR including same as above.
+            VOR including ident, range and frequency.
           </td>
         </tr>
         <tr>
@@ -257,7 +264,7 @@
             <img alt="DME" src="images/legend/dme.png" />
           </td>
           <td>
-            DME including&nbsp; ident, range and frequency.
+            DME including ident, range and frequency.
           </td>
         </tr>
         <tr>
@@ -274,7 +281,7 @@
             <img alt="Waypoint" src="images/legend/waypoint.png" />
           </td>
           <td>
-            Waypoint with name.
+            Waypoint or intersection with name.
           </td>
         </tr>
         <tr>
@@ -293,8 +300,7 @@
             <img alt="Jet Airway" src="images/legend/airway_jet.png" />
           </td>
           <td>
-            Jet airway with label showing name, type (Jet or Both) and minimum altitude depending
-            on zoom factor.
+            Jet airway with label showing name, type (Jet or Both) and minimum altitude.
           </td>
         </tr>
         <tr>
@@ -351,7 +357,7 @@
             "images/legend/runway_end.png" />
           </td>
           <td>
-            Runway end with ident, magnetic heading.
+            Runway end with ident and magnetic heading.
           </td>
         </tr>
         <tr>
@@ -359,7 +365,7 @@
             <img alt="Runway Threshold" src="images/legend/runway_threshold.png" />
           </td>
           <td>
-            Displaced threshold - not to be used for landing.
+            Displaced threshold. Do not use for landing.
           </td>
         </tr>
         <tr>
@@ -367,7 +373,7 @@
             <img alt="Runway Overrun" src="images/legend/runway_overrun.png" />
           </td>
           <td>
-            Overrun area - not to be used for taxi, takeoff or landing.
+            Overrun area. Do not use for taxi, takeoff or landing.
           </td>
         </tr>
         <tr>
@@ -375,7 +381,7 @@
             <img alt="Runway Blastpad" src="images/legend/runway_blastpad.png" />
           </td>
           <td>
-            Blast pad - not to be used for taxi, takeoff or landing.
+            Blast pad. Do not use for taxi, takeoff or landing.
           </td>
         </tr>
         <tr>
@@ -409,7 +415,7 @@
             <img alt="Parking" src="images/legend/parking_ga_ramp.png" />
           </td>
           <td>
-            GA ramp with heading tick
+            GA ramp with heading tick mark.
           </td>
         </tr>
         <tr>
@@ -419,7 +425,7 @@
             " width: 51px; height: 49px;" alt="Parking" src="images/legend/parking_gate.png" />
           </td>
           <td>
-            Gate with heading tick. Second ring indicates availability of jetway.
+            Gate. Second ring indicates availability of jetway.
           </td>
         </tr>
         <tr>
@@ -427,7 +433,7 @@
             <img alt="Parking" src="images/legend/parking_ramp_cargo.png" />
           </td>
           <td>
-            Cargo ramp.
+            Cargo ramp
           </td>
         </tr>
         <tr>
@@ -469,7 +475,7 @@
             <img alt="Profile Safe Alt" src="images/legend/profile_safe_alt.png" />
           </td>
           <td>
-            Minimum safe altitude for route
+            Minimum safe altitude for route.
           </td>
         </tr>
         <tr>

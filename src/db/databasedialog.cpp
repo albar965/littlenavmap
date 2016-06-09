@@ -36,6 +36,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent)
   using atools::fs::fstype::SimulatorType;
   using atools::fs::FsPaths;
 
+  // Add an action to the toolbutton for each simulator
   for(SimulatorType type : atools::fs::fstype::ALL_SIMULATOR_TYPES)
   {
     QString sceneryCfg = FsPaths::getSceneryLibraryPath(type);
@@ -69,6 +70,7 @@ void DatabaseDialog::menuTriggered(QAction *action)
   using atools::fs::fstype::SimulatorType;
   using atools::fs::FsPaths;
 
+  // Get paths for the selected simulators
   SimulatorType type = static_cast<SimulatorType>(action->data().toInt());
   setBasePath(FsPaths::getBasePath(type));
   setSceneryConfigFile(FsPaths::getSceneryLibraryPath(type));
@@ -98,7 +100,7 @@ void DatabaseDialog::selectBasePath()
 {
   QString path = dialog->openDirectoryDialog(tr("Select Flight Simulator Basepath"),
                                              "Database/BasePath",
-                                             atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+                                             getBasePath());
 
   if(!path.isEmpty())
     ui->lineEditDatabaseBasePath->setText(path);
@@ -109,7 +111,7 @@ void DatabaseDialog::selectSceneryConfig()
   QString path = dialog->openFileDialog(tr("Open Scenery Configuration File"),
                                         tr("Scenery Configuration Files (*.cfg *.CFG);;All Files (*)"),
                                         "Database/SceneryConfig",
-                                        atools::fs::FsPaths::getSceneryLibraryPath(atools::fs::fstype::FSX));
+                                        getSceneryConfigFile());
 
   if(!path.isEmpty())
     ui->lineEditDatabaseSceneryFile->setText(path);
