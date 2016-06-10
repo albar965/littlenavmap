@@ -78,6 +78,42 @@ enum RouteColumns
 using namespace atools::fs::pln;
 using namespace atools::geo;
 
+#ifdef ROUTE_UNDO_DEBUG
+void reportUndo(QUndoStack *undoStack, int undoIndex, int undoIndexClean)
+{
+  qDebug() << "*** postChange: undo stack clean" << undoStack->isClean()
+           << "clean idx" << undoStack->cleanIndex()
+           << "undo stack cur idx" << undoStack->index()
+           << "undo stack size" << undoStack->count();
+
+  const QUndoCommand *cleanCmd = undoStack->command(undoStack->cleanIndex());
+  if(cleanCmd != nullptr)
+    qDebug() << "*** clean cmd" << cleanCmd->text();
+  else
+    qDebug() << "*** clean cmd null";
+
+  const QUndoCommand *curCmd = undoStack->command(undoStack->index());
+  if(curCmd != nullptr)
+    qDebug() << "*** cur cmd" << curCmd->text();
+  else
+    qDebug() << "*** cur cmd null";
+
+  for(int i = 0; i < undoStack->count(); i++)
+  {
+    const QUndoCommand *cmd = undoStack->command(i);
+    if(cmd != nullptr)
+      qDebug() << "*** #" << i << "cur cmd" << cmd->text();
+    else
+      qDebug() << "*** #" << i << "cur cmd null";
+
+  }
+
+  qDebug() << "*** undoIndex" << undoIndex;
+  qDebug() << "*** undoIndexClean" << undoIndexClean;
+}
+
+#endif
+
 RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
 {
@@ -307,8 +343,8 @@ bool RouteController::saveFlightplan()
   try
   {
     route.getFlightplan().save(routeFilename);
-
-    changed = false;
+    undoIndexClean = undoIndex;
+    undoStack->setClean();
     updateWindowTitle();
   }
   catch(atools::Exception& e)
@@ -756,8 +792,34 @@ void RouteController::tableSelectionChanged()
   emit routeSelectionChanged(selectedRows, model->rowCount());
 }
 
+void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan)
+{
+  qDebug() << "changeRouteUndo";
+  undoIndex--;
+
+  changeRouteUndoRedo(newFlightplan);
+}
+
+void RouteController::undoMerge()
+{
+  qDebug() << "undoMerge";
+  undoIndex--;
+}
+
+void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan)
+{
+  qDebug() << "changeRouteRedo";
+  undoIndex++;
+  changeRouteUndoRedo(newFlightplan);
+}
+
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
+  // Called by route command
+#ifdef ROUTE_UNDO_DEBUG
+  reportUndo(undoStack, undoIndex, undoIndexClean);
+#endif
+
   route.setFlightplan(newFlightplan);
 
   createRouteMapObjects();
@@ -766,6 +828,12 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateLabel();
   updateMoveAndDeleteActions();
   emit routeChanged(true);
+}
+
+bool RouteController::hasChanged() const
+{
+  return undoIndexClean != undoIndex;
+  // return changed;
 }
 
 void RouteController::moveLegsDown()
@@ -1295,6 +1363,7 @@ void RouteController::createRouteMapObjects()
   RouteMapObject *last = nullptr;
   float totalDistance = 0.f;
   curUserpointNumber = 0;
+
   // Create map objects first and calculate total distance
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
@@ -1509,7 +1578,9 @@ void RouteController::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
   if(!routeFilename.isEmpty())
-    newTitle += " - " + QFileInfo(routeFilename).fileName() + (changed ? " *" : QString());
+    newTitle += " - " + QFileInfo(routeFilename).fileName() + (hasChanged() ? " *" : QString());
+  else if(hasChanged())
+    newTitle += " - *";
 
   mainWindow->setWindowTitle(newTitle);
 }
@@ -1521,7 +1592,8 @@ void RouteController::clearRoute()
   route.setTotalDistance(0.f);
   routeFilename.clear();
   undoStack->clear();
-  changed = false;
+  undoIndex = 0;
+  undoIndexClean = 0;
 }
 
 RouteCommand *RouteController::preChange(const QString& text, rctype::RouteCmdType rcType)
@@ -1531,10 +1603,12 @@ RouteCommand *RouteController::preChange(const QString& text, rctype::RouteCmdTy
 
 void RouteController::postChange(RouteCommand *undoCommand)
 {
-  changed = true;
-  if(undoStack != nullptr)
-  {
-    undoCommand->setFlightplanAfter(route.getFlightplan());
-    undoStack->push(undoCommand);
-  }
+  undoCommand->setFlightplanAfter(route.getFlightplan());
+
+  undoIndex++;
+  undoStack->push(undoCommand);
+
+#ifdef ROUTE_UNDO_DEBUG
+  reportUndo(undoStack, undoIndex, undoIndexClean);
+#endif
 }

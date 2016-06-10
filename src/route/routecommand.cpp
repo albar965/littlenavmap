@@ -38,7 +38,7 @@ void RouteCommand::setFlightplanAfter(const atools::fs::pln::Flightplan& flightp
 
 void RouteCommand::undo()
 {
-  controller->changeRouteUndoRedo(planBefore);
+  controller->changeRouteUndo(planBefore);
 }
 
 void RouteCommand::redo()
@@ -46,7 +46,7 @@ void RouteCommand::redo()
   if(!firstRedoExecuted)
     firstRedoExecuted = true;
   else
-    controller->changeRouteUndoRedo(planAfter);
+    controller->changeRouteRedo(planAfter);
 }
 
 int RouteCommand::id() const
@@ -73,6 +73,7 @@ bool RouteCommand::mergeWith(const QUndoCommand *other)
     case rctype::MOVE:
     case rctype::ALTITUDE:
       planAfter = newCmd->planAfter;
+      controller->undoMerge();
       return true;
   }
   return false;

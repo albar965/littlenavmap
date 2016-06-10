@@ -86,13 +86,7 @@ public:
   bool selectDepartureParking();
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
-  /* Used by undo/redo */
-  void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
-
-  bool hasChanged() const
-  {
-    return changed;
-  }
+  bool hasChanged() const;
 
   const QString& getRouteFilename() const
   {
@@ -116,6 +110,11 @@ public:
   void calculateSetAlt();
   void reverse();
 
+  void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
+  void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
+
+  void undoMerge();
+
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);
@@ -136,10 +135,11 @@ private:
   RouteIconDelegate *iconDelegate;
   QUndoStack *undoStack;
 
+  // Need a workaround since QUndoStack does not report current indices and clean state
+  int undoIndex = 0, undoIndexClean = 0;
   void updateWindowTitle();
 
   int curUserpointNumber = 1;
-  bool changed = false;
 
   void updateLabel();
 
@@ -189,6 +189,10 @@ private:
   void updateModelRouteTime();
 
   void updateFlightplanFromWidgets();
+
+  /* Used by undo/redo */
+  void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
+
 };
 
 #endif // ROUTECONTROLLER_H
