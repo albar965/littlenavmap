@@ -49,6 +49,7 @@
 #include "mapgui/maplayersettings.h"
 
 #include <QCloseEvent>
+#include <QElapsedTimer>
 #include <QProgressDialog>
 #include <QSettings>
 
@@ -87,6 +88,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   qDebug() << "MainWindow constructor";
 
+  // Get a file in the organization specific directory with an application
+  // specific name (i.e. Linux: ~/.config/ABarthel/little_logbook.sqlite)
+  databaseFile = atools::settings::Settings::getConfigFilename(".sqlite");
+
   QString aboutMessage =
     tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
          "<p>This software is licensed under "
@@ -98,7 +103,10 @@ MainWindow::MainWindow(QWidget *parent) :
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
   helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+  helpHandler->addDirFileLink("Database (" + QFileInfo(databaseFile).fileName() + ")", databaseFile);
+
   marbleAbout = new Marble::MarbleAboutDialog(this);
+  marbleAbout->setApplicationTitle(QApplication::applicationName());
 
   ui->setupUi(this);
   setupUi();
@@ -888,10 +896,6 @@ void MainWindow::openDatabase()
   try
   {
     using atools::sql::SqlDatabase;
-
-    // Get a file in the organization specific directory with an application
-    // specific name (i.e. Linux: ~/.config/ABarthel/little_logbook.sqlite)
-    databaseFile = atools::settings::Settings::getConfigFilename(".sqlite");
 
     qDebug() << "Opening database" << databaseFile;
     db = SqlDatabase::addDatabase("QSQLITE");

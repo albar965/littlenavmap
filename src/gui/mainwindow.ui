@@ -2522,7 +2522,7 @@
      <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
    </property>
    <property name="text">
-    <string>About</string>
+    <string>About Little Navmap</string>
    </property>
   </action>
   <action name="actionHelpAboutQt">
