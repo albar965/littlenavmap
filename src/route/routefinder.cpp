@@ -39,7 +39,7 @@ RouteFinder::~RouteFinder()
 
 }
 
-void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
+bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
                                  QVector<rf::RouteEntry>& route, int flownAltitude)
 {
   altitude = flownAltitude;
@@ -50,7 +50,7 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   int numNodesTotal = network->getNumberOfNodesDatabase();
 
   if(startNode.edges.isEmpty())
-    return;
+    return false;
 
   openNodesHeap.push(startNode, 0.f);
   nodeCosts[startNode.id] = 0.f;
@@ -113,6 +113,8 @@ void RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
 
   qDebug() << "num nodes database" << network->getNumberOfNodesDatabase()
            << "num nodes cache" << network->getNumberOfNodesCache();
+
+  return found;
 }
 
 void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
@@ -124,6 +126,9 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
   for(int i = 0; i < successorNodes.size(); i++)
   {
     const Node& successor = successorNodes.at(i);
+
+    if(successor.type == nw::DESTINATION)
+      qDebug() << "dest";
 
     if(closedNodes.contains(successor.id))
       continue;
@@ -182,7 +187,9 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
 {
   float costs = distanceMeter;
 
-  if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
+  if(currentNode.type == nw::START && successorNode.type == nw::DESTINATION)
+    costs *= COST_FACTOR_DIRECT;
+  else if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
     costs *= COST_FACTOR_FORCE_CLOSE_NODES;
 
   if((currentNode.range != 0 || successorNode.range != 0) &&

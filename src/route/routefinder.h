@@ -37,12 +37,14 @@ public:
   RouteFinder(RouteNetwork *routeNetwork);
   virtual ~RouteFinder();
 
-  void calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
+  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
                       QVector<rf::RouteEntry>& route, int flownAltitude);
 
 private:
+  // Force algortihm to avoid direct route from start to destination
+  const float COST_FACTOR_DIRECT = 2.f;
   // Force algortihm to use close waypoints near start and destination
-  const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5;
+  const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
   // Increase costs to force reception of at least one radio navaid along the route
   const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
   // Try to avoid NDBs

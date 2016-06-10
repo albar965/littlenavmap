@@ -154,26 +154,38 @@ RouteController::~RouteController()
 
 void RouteController::routeAltChanged()
 {
-  RouteCommand *undoCommand = preChange("Change Altitude", rctype::ALTITUDE);
+  RouteCommand *undoCommand = nullptr;
+
+  if(!route.isEmpty())
+    undoCommand = preChange("Change Altitude", rctype::ALTITUDE);
 
   updateFlightplanData();
 
-  postChange(undoCommand);
+  if(!route.isEmpty())
+    postChange(undoCommand);
 
   updateWindowTitle();
-  emit routeChanged(false);
+
+  if(!route.isEmpty())
+    emit routeChanged(false);
 }
 
 void RouteController::routeTypeChanged()
 {
-  RouteCommand *undoCommand = preChange("Change Type");
+  RouteCommand *undoCommand = nullptr;
+
+  if(!route.isEmpty())
+    undoCommand = preChange("Change Type");
 
   updateFlightplanData();
 
-  postChange(undoCommand);
+  if(!route.isEmpty())
+    postChange(undoCommand);
 
   updateWindowTitle();
-  emit routeChanged(false);
+
+  if(!route.isEmpty())
+    emit routeChanged(false);
 }
 
 bool RouteController::selectDepartureParking()
@@ -193,7 +205,6 @@ bool RouteController::selectDepartureParking()
       return true;
     }
   }
-
   return false;
 }
 
@@ -202,13 +213,18 @@ void RouteController::saveState()
   Ui::MainWindow *ui = mainWindow->getUi();
 
   atools::gui::WidgetState saver("Route/View");
-  saver.save({view, ui->spinBoxRouteSpeed});
+  saver.save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
   atools::settings::Settings::instance()->setValue("Route/Filename", routeFilename);
 }
 
 void RouteController::restoreState()
 {
+  Ui::MainWindow *ui = mainWindow->getUi();
+  atools::gui::WidgetState saver("Route/View");
+  model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
+  saver.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
+
   QString newRouteFilename = atools::settings::Settings::instance()->value("Route/Filename").toString();
 
   if(!newRouteFilename.isEmpty())
@@ -227,11 +243,6 @@ void RouteController::restoreState()
       route.clear();
     }
   }
-
-  Ui::MainWindow *ui = mainWindow->getUi();
-  atools::gui::WidgetState saver("Route/View");
-  model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
-  saver.restore({view, ui->spinBoxRouteSpeed});
 }
 
 void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const
@@ -245,6 +256,9 @@ void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRoute
 void RouteController::newFlightplan()
 {
   clearRoute();
+
+  // Copy current alt and type from widgets to flightplan
+  updateFlightplanFromWidgets();
 
   createRouteMapObjects();
   updateModel();
@@ -388,11 +402,11 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   if(useSetAltitude)
     altitude = flightplan.getCruisingAlt();
 
-  routeFinder->calculateRoute(flightplan.getDeparturePos(),
-                              flightplan.getDestinationPos(), calculatedRoute,
-                              altitude);
+  bool found = routeFinder->calculateRoute(flightplan.getDeparturePos(),
+                                           flightplan.getDestinationPos(), calculatedRoute,
+                                           altitude);
 
-  if(!calculatedRoute.isEmpty())
+  if(found)
   {
     RouteCommand *undoCommand = preChange(commandName);
 
@@ -418,8 +432,8 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       }
 
       entries.insert(entries.end() - 1, flightplanEentry);
-
     }
+
     if(minAltitude != 0 && !useSetAltitude)
     {
       float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
@@ -497,6 +511,16 @@ QString RouteController::getDefaultFilename() const
   else
     filename += flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
   filename += ".pln";
+
+  // Remove characters that are note allowed in most filesystems
+  filename.replace('\\', ' ');
+  filename.replace('/', ' ');
+  filename.replace(':', ' ');
+  filename.replace('\'', ' ');
+  filename.replace('<', ' ');
+  filename.replace('>', ' ');
+  filename.replace('?', ' ');
+  filename.replace('$', ' ');
   return filename;
 }
 
@@ -1215,20 +1239,26 @@ void RouteController::updateFlightplanData()
       flightplan.setDestinationPos(Pos());
     }
 
-    Ui::MainWindow *ui = mainWindow->getUi();
-
     // <Descr>LFHO, EDRJ</Descr>
     flightplan.setDescription(departureIcao + ", " + destinationIcao);
-    // <FPType>IFR</FPType>
-    // flightplan.setRouteType(atools::fs::pln::VOR);
-    // <RouteType>LowAlt</RouteType>
-    flightplan.setFlightplanType(
-      ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
-    // <CruisingAlt>19000</CruisingAlt>
-    flightplan.setCruisingAlt(ui->spinBoxRouteAlt->value());
+
     // <Title>LFHO to EDRJ</Title>
     flightplan.setTitle(departureIcao + " to " + destinationIcao);
   }
+  updateFlightplanFromWidgets();
+}
+
+void RouteController::updateFlightplanFromWidgets()
+{
+  Flightplan& flightplan = route.getFlightplan();
+  Ui::MainWindow *ui = mainWindow->getUi();
+  // <FPType>IFR</FPType>
+  // flightplan.setRouteType(atools::fs::pln::VOR);
+  // <RouteType>LowAlt</RouteType>
+  flightplan.setFlightplanType(
+    ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
+  // <CruisingAlt>19000</CruisingAlt>
+  flightplan.setCruisingAlt(ui->spinBoxRouteAlt->value());
 }
 
 void RouteController::updateRouteMapObjects()

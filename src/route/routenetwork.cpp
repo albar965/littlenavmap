@@ -93,7 +93,7 @@ void RouteNetwork::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighb
   {
     bool add = false;
 
-    // Handle airways differently to keep cache for low and high alt routes
+    // Handle airways differently to keep cache for low and high alt routes together
     if(e.type == WAYPOINT_BOTH)
       add = mode & ROUTE_JET || mode & ROUTE_VICTOR;
     else if(e.type == WAYPOINT_JET)

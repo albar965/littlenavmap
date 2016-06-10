@@ -188,6 +188,7 @@ private:
 
   void updateModelRouteTime();
 
+  void updateFlightplanFromWidgets();
 };
 
 #endif // ROUTECONTROLLER_H
