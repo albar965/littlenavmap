@@ -632,7 +632,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionShowInSearch, ui->actionRouteAdd,
                                           ui->actionShowInformation,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                          ui->actionRouteAirportDest, ui->actionRouteParkingStart});
+                                          ui->actionRouteAirportDest});
   Q_UNUSED(textSaver);
 
   QMenu menu;
@@ -654,7 +654,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionRouteDeleteWaypoint);
   menu.addSeparator();
   menu.addAction(ui->actionRouteAirportStart);
-  menu.addAction(ui->actionRouteParkingStart);
   menu.addAction(ui->actionRouteAirportDest);
   menu.addSeparator();
   menu.addAction(ui->actionShowInSearch);
@@ -683,7 +682,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
-  ui->actionRouteParkingStart->setEnabled(false);
 
   maptypes::MapSearchResult result;
   getAllNearestMapObjects(point.x(), point.y(), 10, result);
@@ -766,27 +764,33 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "set airport as start/dest"
-  if(airport != nullptr)
+  if(airport != nullptr || parking != nullptr)
   {
+    QString airportText;
+
+    if(parking != nullptr)
+    {
+      maptypes::MapAirport parkAp;
+      mapQuery->getAirportById(parkAp, parking->airportId);
+      airportText = maptypes::airportText(parkAp) + " / ";
+    }
+
     ui->actionRouteAirportStart->setEnabled(true);
-    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(searchText));
-    ui->actionRouteAirportDest->setEnabled(true);
-    ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(searchText));
+    ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(airportText + searchText));
+
+    if(airport != nullptr)
+    {
+      ui->actionRouteAirportDest->setEnabled(true);
+      ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(searchText));
+    }
+    else
+      ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
   else
   {
     ui->actionRouteAirportStart->setText(ui->actionRouteAirportStart->text().arg(QString()));
     ui->actionRouteAirportDest->setText(ui->actionRouteAirportDest->text().arg(QString()));
   }
-
-  // Update "set parking start"
-  if(parking != nullptr)
-  {
-    ui->actionRouteParkingStart->setEnabled(true);
-    ui->actionRouteParkingStart->setText(ui->actionRouteParkingStart->text().arg(searchText));
-  }
-  else
-    ui->actionRouteParkingStart->setText(ui->actionRouteParkingStart->text().arg(QString()));
 
   // Update "show in search" and "add to route"
   if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
@@ -958,8 +962,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       emit routeDelete(delRouteIndex, delType);
     }
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionRouteParkingStart ||
-            action == ui->actionShowInformation)
+            action == ui->actionRouteAirportDest || action == ui->actionShowInformation)
     {
       // ui->dockWidgetRoute->raise();
 
@@ -1000,7 +1003,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         position = pos;
       }
 
-      if(action == ui->actionRouteParkingStart && parking != nullptr)
+      if(action == ui->actionRouteAirportStart && parking != nullptr)
         emit routeSetParkingStart(*parking);
       else if(action == ui->actionRouteAdd)
       {
