@@ -210,6 +210,7 @@ private:
     INVALID = -1
   };
 
+  int screenSearchDistance = 16, screenSearchDistanceTooltip = 10;
   MapThemeComboIndex currentComboIndex = INVALID;
   MouseStates mouseState = NONE;
   QPoint mouseMoved;

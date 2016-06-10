@@ -486,7 +486,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
   qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
 
   maptypes::MapSearchResult result;
-  getAllNearestMapObjects(newPoint.x(), newPoint.y(), 10, result);
+  getAllNearestMapObjects(newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
   CoordinateConverter conv(viewport());
 
@@ -494,7 +494,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
   mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
                               paintLayer->getShownMapFeatures() &
                               (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT),
-                              newPoint.x(), newPoint.y(), 10, result);
+                              newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
   int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size();
 
@@ -658,8 +658,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addSeparator();
   menu.addAction(ui->actionShowInSearch);
 
-  int distMarkerIndex = getNearestDistanceMarkerIndex(point.x(), point.y(), 10);
-  int rangeMarkerIndex = getNearestRangeMarkerIndex(point.x(), point.y(), 10);
+  int distMarkerIndex = getNearestDistanceMarkerIndex(point.x(), point.y(), screenSearchDistance);
+  int rangeMarkerIndex = getNearestRangeMarkerIndex(point.x(), point.y(), screenSearchDistance);
 
   qreal lon, lat;
   bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
@@ -684,7 +684,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteDeleteWaypoint->setEnabled(false);
 
   maptypes::MapSearchResult result;
-  getAllNearestMapObjects(point.x(), point.y(), 10, result);
+  getAllNearestMapObjects(point.x(), point.y(), screenSearchDistance, result);
   // maptypes::MapObjectTypes selectedSearchType = maptypes::NONE, selectedRangeType = maptypes::NONE;
   maptypes::MapAirport *airport = nullptr;
   maptypes::MapVor *vor = nullptr;
@@ -1151,7 +1151,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
               getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
-      else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10) != -1)
+      else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
         // Change cursor at the end of an marker
         cursorShape = Qt::CrossCursor;
 
@@ -1243,7 +1243,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {
     // Start all dragging
-    currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), 10);
+    currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(),
+                                                               event->pos().y(), screenSearchDistance);
     if(currentDistanceMarkerIndex != -1)
     {
       // Found an end - create a backup and start dragging
@@ -1259,7 +1260,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
         if(rmos.size() > 1)
         {
-          int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 10);
+          int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
           if(routePoint != -1)
           {
             routeDragPoint = routePoint;
@@ -1283,7 +1284,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           }
           else
           {
-            int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 10);
+            int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
             if(routeLeg != -1)
             {
               routeDragLeg = routeLeg;
@@ -1322,7 +1323,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   qDebug() << "mouseDoubleClickEvent";
 
   maptypes::MapSearchResult mapSearchResult;
-  getAllNearestMapObjects(event->pos().x(), event->pos().y(), 10, mapSearchResult);
+  getAllNearestMapObjects(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
   if(!mapSearchResult.airports.isEmpty())
   {
@@ -1377,7 +1378,8 @@ bool MapWidget::event(QEvent *event)
     // qDebug() << "QEvent::ToolTip";
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
     mapSearchResultTooltip = maptypes::MapSearchResult();
-    getAllNearestMapObjects(helpEvent->pos().x(), helpEvent->pos().y(), 10, mapSearchResultTooltip);
+    getAllNearestMapObjects(helpEvent->pos().x(),
+                            helpEvent->pos().y(), screenSearchDistanceTooltip, mapSearchResultTooltip);
     tooltipPos = helpEvent->globalPos();
     updateTooltip();
     event->accept();
