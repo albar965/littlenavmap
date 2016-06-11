@@ -71,6 +71,10 @@ private:
   QString basePath, sceneryCfg;
   bool runInternal(DatabaseDialog& dlg, DatabaseMeta& dbmeta);
 
+  void backupDatabaseFile();
+
+  void restoreDatabaseFileBackup();
+
 };
 
 #endif // DATABASELOADER_H

@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1333</width>
-    <height>760</height>
+    <width>1280</width>
+    <height>768</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,17 +28,17 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1333</width>
+     <width>1280</width>
      <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <widget class="QMenu" name="menuRecentRoutes">
      <property name="title">
-      <string>Recent Routes</string>
+      <string>&amp;Recent Routes</string>
      </property>
      <addaction name="separator"/>
      <addaction name="actionRecentRoutesClear"/>
@@ -51,24 +54,25 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>Window</string>
+     <string>&amp;Window</string>
     </property>
     <addaction name="actionShowStatusbar"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpContents"/>
     <addaction name="actionHelpNavmapLegend"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
+    <addaction name="separator"/>
     <addaction name="actionAboutMarble"/>
     <addaction name="actionHelpAboutQt"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>&amp;Tools</string>
     </property>
     <addaction name="actionReloadScenery"/>
     <addaction name="actionConnectSimulator"/>
@@ -78,7 +82,7 @@
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
-     <string>Map</string>
+     <string>&amp;Map</string>
     </property>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
@@ -114,7 +118,7 @@
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
-     <string>Route</string>
+     <string>&amp;Route</string>
     </property>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
@@ -2388,7 +2392,7 @@
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>Open Route ...</string>
+    <string>&amp;Open Route ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -2400,7 +2404,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesave.svg</normaloff>:/littlenavmap/resources/icons/filesave.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Route ...</string>
+    <string>&amp;Save Route ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -2490,7 +2494,7 @@
      <normaloff>:/littlenavmap/resources/icons/application-exit.svg</normaloff>:/littlenavmap/resources/icons/application-exit.svg</iconset>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -2890,7 +2894,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Route as ...</string>
+    <string>Save Route &amp;as ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -2902,7 +2906,7 @@
      <normaloff>:/littlenavmap/resources/icons/filenew.svg</normaloff>:/littlenavmap/resources/icons/filenew.svg</iconset>
    </property>
    <property name="text">
-    <string>New Route</string>
+    <string>&amp;New Route</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>

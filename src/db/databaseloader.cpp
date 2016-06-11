@@ -35,6 +35,7 @@
 #include <sql/sqlutil.h>
 
 #include <gui/errorhandler.h>
+#include <QFileInfo>
 #include <QMessageBox>
 
 using atools::gui::ErrorHandler;
@@ -262,6 +263,8 @@ bool DatabaseLoader::loadScenery(QWidget *parent)
 
   try
   {
+    // Create a backup and delete the original file
+    backupDatabaseFile();
     atools::fs::Navdatabase nd(&opts, db);
     nd.create();
   }
@@ -287,11 +290,48 @@ bool DatabaseLoader::loadScenery(QWidget *parent)
     // Loading was cancelled
     success = false;
 
+  if(!success)
+    restoreDatabaseFileBackup();
+
   delete progressDialog;
   progressDialog = nullptr;
 
   emit postDatabaseLoad();
   return success;
+}
+
+void DatabaseLoader::backupDatabaseFile()
+{
+  qDebug() << "Creating database backup";
+  db->close();
+
+  QString backupName(db->databaseName() + "-backup");
+  QFile backupFile(backupName);
+  bool removed = backupFile.remove();
+  qDebug() << "removed database backup" << backupFile.fileName() << removed;
+
+  QFile dbFile(db->databaseName());
+  bool renamed = dbFile.rename(backupName);
+  qDebug() << "renamed database from" << db->databaseName() << "to" << backupName << renamed;
+
+  db->open();
+}
+
+void DatabaseLoader::restoreDatabaseFileBackup()
+{
+  qDebug() << "Restoring database backup";
+  db->close();
+
+  QFile dbFile(db->databaseName());
+  bool removed = dbFile.remove();
+  qDebug() << "removed database" << dbFile.fileName() << removed;
+
+  QString backupName(db->databaseName() + "-backup");
+  QFile backupFile(backupName);
+  bool copied = backupFile.copy(db->databaseName());
+  qDebug() << "copied database from" << backupName << "to" << db->databaseName() << copied;
+
+  db->open();
 }
 
 bool DatabaseLoader::progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer)
