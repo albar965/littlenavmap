@@ -180,6 +180,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw aprons ---------------------------------
+  painter->setBackground(Qt::transparent);
   for(const MapApron& apron : *aprons)
   {
     points.clear();
@@ -190,12 +191,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     QColor col = mapcolors::colorForSurface(apron.surface);
     col = col.darker(110);
 
-    // if(!apron.drawSurface)
-    // col.setAlpha(100);
-
-    painter->setBrush(QBrush(col));
-
     painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
+
+    if(!apron.drawSurface)
+      painter->setBrush(QBrush(col, Qt::Dense6Pattern));
+    else
+      painter->setBrush(QBrush(col));
+
     painter->QPainter::drawPolygon(points.data(), points.size());
   }
 
@@ -205,11 +207,10 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     int pathThickness = scale->getPixelIntForFeet(taxipath.width);
     QColor col = mapcolors::colorForSurface(taxipath.surface);
 
-    // if(!taxipath.drawSurface)
-    // col.setAlpha(100);
-
-    painter->setBrush(col);
-    painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
+    if(!taxipath.drawSurface)
+      painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), pathThickness, Qt::SolidLine, Qt::RoundCap));
+    else
+      painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
 
     bool visible;
     QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
@@ -261,6 +262,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
           int x = ((start.x() + end.x()) / 2) - textrect.width() / 2;
           int y = ((start.y() + end.y()) / 2) + textrect.height() / 2 - taxiMetrics.descent();
           textrect.moveTo(x, y - textrect.height() + taxiMetrics.descent());
+          textrect.adjust(-1, -1, 1, 1);
           painter->fillRect(textrect, mapcolors::taxiwayNameBackgroundColor);
           painter->drawText(x, y, taxiname);
         }
