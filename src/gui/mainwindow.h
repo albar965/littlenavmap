@@ -34,7 +34,7 @@ class RouteController;
 class QComboBox;
 class QLabel;
 class Search;
-class DatabaseLoader;
+class DatabaseManager;
 class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
@@ -135,18 +135,13 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
-  DatabaseLoader *databaseLoader = nullptr;
+  DatabaseManager *databaseLoader = nullptr;
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
 
-  void openDatabase();
-  void closeDatabase();
-
-  atools::sql::SqlDatabase db;
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
-  QString databaseFile;
   void connectAllSlots();
   void mainWindowShown();
 

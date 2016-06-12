@@ -200,12 +200,15 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
 void InfoController::preDatabaseLoad()
 {
+  currentSearchResult = maptypes::MapSearchResult();
+
   databaseLoadStatus = true;
 }
 
 void InfoController::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+  showInformation(maptypes::MapSearchResult());
 }
 
 bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)

@@ -18,14 +18,11 @@
 #ifndef DATABASEDIALOG_H
 #define DATABASEDIALOG_H
 
+#include "fs/fspaths.h"
+#include "db/dbtypes.h"
+
 #include <QDialog>
 #include <QWidget>
-
-namespace atools {
-namespace gui {
-class Dialog;
-}
-}
 
 namespace Ui {
 class DatabaseDialog;
@@ -37,23 +34,43 @@ class DatabaseDialog
   Q_OBJECT
 
 public:
-  DatabaseDialog(QWidget *parent);
+  DatabaseDialog(QWidget *parent, const FsPathMapList& value);
   virtual ~DatabaseDialog();
+
+  void setHeader(const QString& header);
+
+  atools::fs::FsPaths::SimulatorType getCurrentFsType() const
+  {
+    return currentFsType;
+  }
 
   QString getBasePath() const;
   QString getSceneryConfigFile() const;
 
-  void setBasePath(const QString& path);
-  void setSceneryConfigFile(const QString& path);
-  void setHeader(const QString& header);
+  void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
+
+  const FsPathMapList& getPaths() const
+  {
+    return paths;
+  }
+
+signals:
+  void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
 
 private:
   Ui::DatabaseDialog *ui;
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
+  FsPathMapList paths;
+
+  void basePathEdited(const QString& text);
+  void sceneryConfigFileEdited(const QString& text);
   void selectBasePath();
   void selectSceneryConfig();
+  void simComboChanged(int index);
+  void updateLineEdits();
+  void resetPaths();
 
-  atools::gui::Dialog *dialog;
-  void menuTriggered(QAction *action);
+  void updateComboBox();
 
 };
 

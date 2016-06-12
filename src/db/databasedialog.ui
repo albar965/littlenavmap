@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>535</width>
-    <height>158</height>
+    <width>553</width>
+    <height>201</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,33 +16,10 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelDatabaseBasePath">
-       <property name="text">
-        <string>&amp;Flight Simulator Base Path:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditDatabaseBasePath</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditDatabaseSceneryFile"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelDatabaseSceneryFile">
-       <property name="text">
-        <string>&amp;Scenery Configuration File:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditDatabaseSceneryFile</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="3">
+     <item row="0" column="0" colspan="5">
       <widget class="QLabel" name="labelDatabaseInformation">
        <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
+        <enum>QFrame::Box</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Sunken</enum>
@@ -58,44 +35,70 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="lineEditDatabaseSceneryFile"/>
+     </item>
+     <item row="2" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="labelDatabaseBasePath">
+       <property name="text">
+        <string>&amp;Flight Simulator Base Path:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditDatabaseBasePath</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="labelDatabaseSceneryFile">
+       <property name="text">
+        <string>Scenery &amp;Configuration File:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditDatabaseSceneryFile</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
       <widget class="QLineEdit" name="lineEditDatabaseBasePath"/>
      </item>
-     <item row="0" column="3" alignment="Qt::AlignTop">
-      <widget class="QToolButton" name="toolButtonDatabaseMenu">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../littlenavmap.qrc">
-         <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-       <property name="toolButtonStyle">
-        <enum>Qt::ToolButtonTextBesideIcon</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2" colspan="2">
-      <widget class="QPushButton" name="pushButtonDatabaseBasePath">
-       <property name="text">
-        <string>Select ...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2" colspan="2">
+     <item row="3" column="2" colspan="3">
       <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
        <property name="text">
         <string>Select ...</string>
        </property>
       </widget>
      </item>
+     <item row="2" column="2" colspan="3">
+      <widget class="QPushButton" name="pushButtonDatabaseBasePath">
+       <property name="text">
+        <string>Select ...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="comboBoxSimulator"/>
+     </item>
+     <item row="1" column="2" colspan="3">
+      <widget class="QPushButton" name="pushButtonDatabaseResetPaths">
+       <property name="text">
+        <string>&amp;Reset Paths</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" alignment="Qt::AlignRight">
+      <widget class="QLabel" name="labelDatabaseSimulator">
+       <property name="text">
+        <string>&amp;Simulator:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboBoxSimulator</cstring>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="QDialogButtonBox" name="buttonBoxDatabase">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
@@ -103,8 +106,14 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../littlenavmap.qrc"/>
- </resources>
+ <tabstops>
+  <tabstop>comboBoxSimulator</tabstop>
+  <tabstop>pushButtonDatabaseResetPaths</tabstop>
+  <tabstop>lineEditDatabaseBasePath</tabstop>
+  <tabstop>pushButtonDatabaseBasePath</tabstop>
+  <tabstop>lineEditDatabaseSceneryFile</tabstop>
+  <tabstop>pushButtonDatabaseSceneryFile</tabstop>
+ </tabstops>
+ <resources/>
  <connections/>
 </ui>

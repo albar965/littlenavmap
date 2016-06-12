@@ -127,6 +127,7 @@ private:
   struct SimpleCache
   {
     bool handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
+    void clear();
 
     Marble::GeoDataLatLonBox curRect;
     const MapLayer *curMapLayer = nullptr;
@@ -219,6 +220,14 @@ bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& re
     return true;
   }
   return false;
+}
+
+template<typename TYPE>
+void MapQuery::SimpleCache<TYPE>::clear()
+{
+  list.clear();
+  curRect.clear();
+  curMapLayer = nullptr;
 }
 
 #endif // MAPQUERY_H

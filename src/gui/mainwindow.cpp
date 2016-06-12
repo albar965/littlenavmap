@@ -17,7 +17,7 @@
 
 #include "gui/mainwindow.h"
 
-#include "db/databaseloader.h"
+#include "db/databasemanager.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "sql/sqldatabase.h"
@@ -88,10 +88,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   qDebug() << "MainWindow constructor";
 
-  // Get a file in the organization specific directory with an application
-  // specific name (i.e. Linux: ~/.config/ABarthel/little_logbook.sqlite)
-  databaseFile = atools::settings::Settings::getConfigFilename(".sqlite");
-
   QString aboutMessage =
     tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
          "<p>This software is licensed under "
@@ -103,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
   helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
-  helpHandler->addDirFileLink("Database (" + QFileInfo(databaseFile).fileName() + ")", databaseFile);
+  // TODO helpHandler->addDirFileLink("Database (" + QFileInfo(databaseFile).fileName() + ")", databaseFile);
 
   marbleAbout = new Marble::MarbleAboutDialog(this);
   marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -111,18 +107,15 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->setupUi(this);
   setupUi();
 
-  openDatabase();
-
-  databaseLoader = new DatabaseLoader(this, &db);
-  if(!databaseLoader->hasSchema())
-    databaseLoader->createEmptySchema();
+  databaseLoader = new DatabaseManager(this);
+  databaseLoader->openDatabase();
 
   weatherReporter = new WeatherReporter(this);
 
-  mapQuery = new MapQuery(this, &db);
+  mapQuery = new MapQuery(this, databaseLoader->getDatabase());
   mapQuery->initQueries();
 
-  infoQuery = new InfoQuery(this, &db);
+  infoQuery = new InfoQuery(this, databaseLoader->getDatabase());
   infoQuery->initQueries();
 
   routeFileHistory = new RouteFileHistory(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
@@ -188,9 +181,6 @@ MainWindow::~MainWindow()
 
   atools::settings::Settings::shutdown();
   atools::gui::Translator::unload();
-
-  closeDatabase();
-
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 
@@ -384,7 +374,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseLoader::run);
+  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseManager::run);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
@@ -511,8 +501,8 @@ void MainWindow::connectAllSlots()
 
   connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
 
-  connect(databaseLoader, &DatabaseLoader::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
-  connect(databaseLoader, &DatabaseLoader::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
+  connect(databaseLoader, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
+  connect(databaseLoader, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
   connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
           navMapWidget, &MapWidget::setPropertyValue);
@@ -681,7 +671,7 @@ void MainWindow::routeOpen()
     QString routeFile = dialog->openFileDialog(tr("Open Flightplan"),
                                                tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
                                                "Route/",
-                                               atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX));
+                                               atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
 
     if(!routeFile.isEmpty())
     {
@@ -738,7 +728,7 @@ bool MainWindow::routeSaveAs()
     QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
                                                tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
                                                "pln", "Route/",
-                                               atools::fs::FsPaths::getFilesPath(atools::fs::fstype::FSX),
+                                               atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
                                                routeController->getDefaultFilename());
 
     if(!routeFile.isEmpty())
@@ -891,53 +881,6 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMark->setEnabled(navMapWidget->getMarkPos().isValid());
 }
 
-void MainWindow::openDatabase()
-{
-  try
-  {
-    using atools::sql::SqlDatabase;
-
-    qDebug() << "Opening database" << databaseFile;
-    db = SqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(databaseFile);
-
-    if(atools::settings::Settings::instance().getAndStoreValue("Options/ForeignKeys", false).toBool())
-      db.open({"PRAGMA foreign_keys = ON"});
-    else
-      db.open({"PRAGMA foreign_keys = OFF"});
-
-    atools::sql::SqlQuery query(db);
-    query.exec("PRAGMA foreign_keys");
-    if(query.next())
-      qDebug() << "Foreign keys are" << query.value(0).toBool();
-  }
-  catch(atools::Exception& e)
-  {
-    errorHandler->handleException(e, "While opening database");
-  }
-  catch(...)
-  {
-    errorHandler->handleUnknownException("While opening database");
-  }
-}
-
-void MainWindow::closeDatabase()
-{
-  try
-  {
-    qDebug() << "Closing database" << databaseFile;
-    db.close();
-  }
-  catch(atools::Exception& e)
-  {
-    errorHandler->handleException(e, "While closing database");
-  }
-  catch(...)
-  {
-    errorHandler->handleUnknownException("While closing database");
-  }
-}
-
 void MainWindow::checkDatabase()
 {
   if(!databaseLoader->isDatabaseCompatible())
@@ -982,8 +925,8 @@ void MainWindow::readSettings()
   mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
                                                                   MAP_DEFAULT_DETAIL_FACTOR).toInt();
 
-  databaseLoader->restoreState();
-
+  // Already loaded in constructor early to allow database creations
+  // databaseLoader->restoreState();
 }
 
 void MainWindow::writeSettings()
@@ -1055,6 +998,7 @@ void MainWindow::showEvent(QShowEvent *event)
 
 void MainWindow::preDatabaseLoad()
 {
+  qDebug() << "MainWindow::preDatabaseLoad";
   if(!hasDatabaseLoadStatus)
   {
     hasDatabaseLoadStatus = true;
@@ -1064,6 +1008,7 @@ void MainWindow::preDatabaseLoad()
     navMapWidget->preDatabaseLoad();
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
+
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
   }
@@ -1073,6 +1018,7 @@ void MainWindow::preDatabaseLoad()
 
 void MainWindow::postDatabaseLoad()
 {
+  qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
   {
     mapQuery->initQueries();

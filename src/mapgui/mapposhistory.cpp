@@ -22,14 +22,25 @@
 
 #include <QSettings>
 #include <QDateTime>
+#include <QDataStream>
 
 MapPosHistoryEntry::MapPosHistoryEntry()
 {
 
 }
 
+MapPosHistoryEntry::MapPosHistoryEntry(const MapPosHistoryEntry& other)
+{
+  *this = other;
+}
+
 MapPosHistoryEntry::MapPosHistoryEntry(atools::geo::Pos position, double mapDistance, qint64 mapTimestamp)
-  : pos(position), distance(mapDistance), timestamp(mapTimestamp)
+  : timestamp(mapTimestamp), pos(position), distance(mapDistance)
+{
+
+}
+
+MapPosHistoryEntry::~MapPosHistoryEntry()
 {
 
 }
@@ -43,6 +54,18 @@ bool MapPosHistoryEntry::operator==(const MapPosHistoryEntry& other) const
 bool MapPosHistoryEntry::operator!=(const MapPosHistoryEntry& other) const
 {
   return !operator==(other);
+}
+
+QDataStream& operator<<(QDataStream& out, const MapPosHistoryEntry& obj)
+{
+  out << obj.timestamp << obj.pos << obj.distance;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, MapPosHistoryEntry& obj)
+{
+  in >> obj.timestamp >> obj.pos >> obj.distance;
+  return in;
 }
 
 QDebug operator<<(QDebug debug, const MapPosHistoryEntry& entry)
@@ -130,43 +153,21 @@ void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
 
 void MapPosHistory::saveState(const QString& keyPrefix)
 {
-  QStringList list;
-  list.append(QString::number(currentIndex));
-
-  for(const MapPosHistoryEntry& e : entries)
-  {
-    list.append(QString::number(e.getPos().getLonX(), 'f'));
-    list.append(QString::number(e.getPos().getLatY(), 'f'));
-    list.append(QString::number(e.getDistance(), 'f'));
-    list.append(QString::number(e.getTimestamp()));
-  }
-
   using atools::settings::Settings;
-  Settings::instance()->setValue(keyPrefix, list.join(";"));
+  QVariant var = QVariant::fromValue<QList<MapPosHistoryEntry> >(entries);
+  Settings::instance()->setValue(keyPrefix + "Entries",
+                                 var);
+  Settings::instance()->setValue(keyPrefix + "CurrentIndex", currentIndex);
 }
 
 void MapPosHistory::restoreState(const QString& keyPrefix)
 {
-  entries.clear();
-  currentIndex = -1;
-
   using atools::settings::Settings;
-  QString val = Settings::instance()->value(keyPrefix).toString();
-  QStringList list = val.split(";", QString::SkipEmptyParts);
+  entries = Settings::instance()->value(keyPrefix + "Entries").value<QList<MapPosHistoryEntry> >();
+  currentIndex = Settings::instance()->value(keyPrefix + "CurrentIndex", -1).toInt();
 
-  if(!list.isEmpty())
-  {
-    currentIndex = list.at(0).toInt();
-    list.removeFirst();
-    for(int i = 0; i < list.size(); i += 4)
-    {
-      entries.append(MapPosHistoryEntry(
-                       atools::geo::Pos(list.at(i).toFloat(), list.at(i + 1).toFloat()),
-                       list.at(i + 2).toDouble(),
-                       list.at(i + 3).toLongLong()));
-    }
-    emit historyChanged(0, currentIndex, entries.size() - 1);
-  }
-  else
+  if(entries.isEmpty())
     emit historyChanged(0, 0, 0);
+  else
+    emit historyChanged(0, currentIndex, entries.size() - 1);
 }

@@ -15,17 +15,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DATABASELOADER_H
-#define DATABASELOADER_H
+#ifndef DATABASEMANAGER_H
+#define DATABASEMANAGER_H
 
 #include <QObject>
+
+#include <sql/sqldatabase.h>
+#include "fs/fspaths.h"
+#include "db/dbtypes.h"
 
 namespace atools {
 namespace fs {
 class BglReaderProgressInfo;
-}
-namespace sql {
-class SqlDatabase;
 }
 }
 
@@ -34,14 +35,14 @@ class QElapsedTimer;
 class DatabaseDialog;
 class DatabaseMeta;
 
-class DatabaseLoader :
+class DatabaseManager :
   public QObject
 {
   Q_OBJECT
 
 public:
-  DatabaseLoader(QWidget *parent, atools::sql::SqlDatabase *sqlDb);
-  virtual ~DatabaseLoader();
+  DatabaseManager(QWidget *parent);
+  virtual ~DatabaseManager();
 
   void run();
 
@@ -50,31 +51,47 @@ public:
 
   bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
 
-  bool hasSchema() const;
-  bool hasData() const;
+  bool hasSchema();
+  bool hasData();
   void createEmptySchema();
   bool isDatabaseCompatible();
 
   const int DB_VERSION_MAJOR = 1;
   const int DB_VERSION_MINOR = 0;
 
+  void openDatabase();
+  void closeDatabase();
+
+  atools::sql::SqlDatabase *getDatabase();
+
 signals:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
 private:
-  atools::sql::SqlDatabase *db;
+  QString databaseFile;
+  atools::sql::SqlDatabase db;
   QWidget *parentWidget;
   QProgressDialog *progressDialog = nullptr;
-  bool loadScenery(QWidget *parent);
+  bool loadScenery();
 
-  QString basePath, sceneryCfg;
-  bool runInternal(DatabaseDialog& dlg, DatabaseMeta& dbmeta);
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
+                                     origFsType = atools::fs::FsPaths::UNKNOWN;
+  FsPathMapList paths;
+
+  void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
+
+  bool runInternal(bool& loaded);
 
   void backupDatabaseFile();
 
   void restoreDatabaseFileBackup();
 
+  void updateDatabaseFileName();
+
+  void updateDialogInfo();
+
+  DatabaseDialog *dlg = nullptr;
 };
 
-#endif // DATABASELOADER_H
+#endif // DATABASEMANAGER_H

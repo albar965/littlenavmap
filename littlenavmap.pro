@@ -74,7 +74,6 @@ SOURCES += src/main.cpp\
     src/common/coordinateconverter.cpp \
     src/common/maptypesfactory.cpp \
     src/common/morsecode.cpp \
-    src/db/databaseloader.cpp \
     src/db/databasedialog.cpp \
     src/db/databasemeta.cpp \
     src/route/parkingdialog.cpp \
@@ -97,7 +96,9 @@ SOURCES += src/main.cpp\
     src/common/symbolpainter.cpp \
     src/common/maphtmlinfobuilder.cpp \
     src/info/infoquery.cpp \
-    src/route/routefilehistory.cpp
+    src/route/routefilehistory.cpp \
+    src/db/databasemanager.cpp \
+    src/db/dbtypes.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -134,7 +135,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/coordinateconverter.h \
     src/common/maptypesfactory.h \
     src/common/morsecode.h \
-    src/db/databaseloader.h \
     src/db/databasedialog.h \
     src/db/databasemeta.h \
     src/route/parkingdialog.h \
@@ -157,7 +157,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/symbolpainter.h \
     src/common/maphtmlinfobuilder.h \
     src/info/infoquery.h \
-    src/route/routefilehistory.h
+    src/route/routefilehistory.h \
+    src/db/databasemanager.h \
+    src/db/dbtypes.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

@@ -942,6 +942,21 @@ void MapQuery::initQueries()
 
 void MapQuery::deInitQueries()
 {
+  airportCache.clear();
+  waypointCache.clear();
+  vorCache.clear();
+  ndbCache.clear();
+  markerCache.clear();
+  ilsCache.clear();
+  airwayCache.clear();
+
+  runwayCache.clear();
+  runwayOverwiewCache.clear();
+  apronCache.clear();
+  taxipathCache.clear();
+  parkingCache.clear();
+  helipadCache.clear();
+
   delete airportByRectQuery;
   airportByRectQuery = nullptr;
   delete airportMediumByRectQuery;

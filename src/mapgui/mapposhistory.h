@@ -26,7 +26,9 @@ class MapPosHistoryEntry
 {
 public:
   MapPosHistoryEntry();
+  MapPosHistoryEntry(const MapPosHistoryEntry& other);
   MapPosHistoryEntry(atools::geo::Pos position, double mapDistance, qint64 mapTimestamp = 0L);
+  ~MapPosHistoryEntry();
 
   /* Does not compare the timestamp */
   bool operator==(const MapPosHistoryEntry& other) const;
@@ -55,10 +57,17 @@ public:
 private:
   friend QDebug operator<<(QDebug debug, const MapPosHistoryEntry& entry);
 
+  friend QDataStream& operator<<(QDataStream& out, const MapPosHistoryEntry& obj);
+
+  friend QDataStream& operator>>(QDataStream& in, MapPosHistoryEntry& obj);
+
+  qint64 timestamp = 0L;
   atools::geo::Pos pos;
   double distance = 0.;
-  qint64 timestamp = 0L;
 };
+
+Q_DECLARE_METATYPE(MapPosHistoryEntry);
+Q_DECLARE_TYPEINFO(MapPosHistoryEntry, Q_PRIMITIVE_TYPE);
 
 const MapPosHistoryEntry EMPTY_MAP_POS;
 

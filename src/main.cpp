@@ -23,17 +23,33 @@
 #include "gui/translator.h"
 #include "exception.h"
 #include "gui/errorhandler.h"
+#include "db/databasemanager.h"
 
 #include <QSettings>
 #include <QApplication>
+
+#if defined(Q_OS_WIN32)
+#include <QSharedMemory>
+#include <QMessageBox>
+#endif
+
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
+
+#include <mapgui/mapposhistory.h>
 
 int main(int argc, char *argv[])
 {
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
+
+  qRegisterMetaTypeStreamOperators<MapPosHistoryEntry>();
+  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+  qRegisterMetaTypeStreamOperators<QList<MapPosHistoryEntry> >();
+  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+  qRegisterMetaTypeStreamOperators<FsPath>();
+  qRegisterMetaTypeStreamOperators<FsPathMapList>();
 
   int retval = 0;
   QApplication app(argc, argv);
@@ -43,7 +59,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationDomain("abarthel.org");
   QCoreApplication::setApplicationVersion("0.8.0.develop");
 
-#ifdef Q_WS_WIN
+#if defined(Q_OS_WIN32)
   QApplication::addLibraryPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
 #endif
 
@@ -67,6 +83,17 @@ int main(int argc, char *argv[])
 
     // Load local and Qt system translations from various places
     Translator::load(s->value("Options/Language", QString()).toString());
+
+#if defined(Q_OS_WIN32)
+    // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
+    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd"); // generated GUID
+    if(!shared.create(512, QSharedMemory::ReadWrite))
+    {
+      QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
+                            QObject::tr("%1 is already running.").arg(QApplication::applicationName()));
+      return 1;
+    }
+#endif
 
     using namespace Marble;
     MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();

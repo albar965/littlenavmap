@@ -224,6 +224,18 @@ void InfoQuery::initQueries()
 
 void InfoQuery::deInitQueries()
 {
+  airportCache.clear();
+  vorCache.clear();
+  ndbCache.clear();
+  waypointCache.clear();
+  airwayCache.clear();
+  runwayEndCache.clear();
+  ilsCache.clear();
+  comCache.clear();
+  runwayCache.clear();
+  approachCache.clear();
+  transitionCache.clear();
+
   delete airportQuery;
   airportQuery = nullptr;
 
