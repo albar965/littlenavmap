@@ -99,7 +99,6 @@ MainWindow::MainWindow(QWidget *parent) :
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
   helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
-  // TODO helpHandler->addDirFileLink("Database (" + QFileInfo(databaseFile).fileName() + ")", databaseFile);
 
   marbleAbout = new Marble::MarbleAboutDialog(this);
   marbleAbout->setApplicationTitle(QApplication::applicationName());
@@ -109,6 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
   databaseLoader = new DatabaseManager(this);
   databaseLoader->openDatabase();
+  databaseLoader->insertSimSwitchActions(ui->actionReloadScenery, ui->menuTools);
+  helpHandler->addDirLink("Database Files", databaseLoader->getDatabaseDirectory());
 
   weatherReporter = new WeatherReporter(this);
 

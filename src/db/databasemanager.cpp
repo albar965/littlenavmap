@@ -37,6 +37,9 @@
 #include <gui/errorhandler.h>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QList>
+#include <QMenu>
+#include <QDir>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -44,6 +47,7 @@ using atools::fs::FsPaths;
 using atools::fs::BglReaderOptions;
 using atools::fs::Navdatabase;
 using atools::settings::Settings;
+using atools::sql::SqlDatabase;
 
 const QString meta("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>");
 
@@ -111,6 +115,9 @@ DatabaseManager::DatabaseManager(QWidget *parent)
 {
   restoreState();
 
+  databaseDirectory = Settings::getPath() + QDir::separator() + "little_navmap_db";
+  QDir().mkpath(databaseDirectory);
+
   paths.fillDefault();
 
   if(currentFsType == atools::fs::FsPaths::UNKNOWN)
@@ -122,10 +129,14 @@ DatabaseManager::DatabaseManager(QWidget *parent)
   dlg = new DatabaseDialog(parentWidget, paths);
   dlg->setCurrentFsType(currentFsType);
   connect(dlg, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChanged);
+
+  db = SqlDatabase::addDatabase("QSQLITE");
 }
 
 DatabaseManager::~DatabaseManager()
 {
+  freeActions();
+
   delete dlg;
   delete progressDialog;
   closeDatabase();
@@ -133,19 +144,79 @@ DatabaseManager::~DatabaseManager()
 
 void DatabaseManager::updateDatabaseFileName()
 {
-  databaseFile = Settings::getConfigFilename("_" +
-                                             atools::fs::FsPaths::typeToString(currentFsType).toLower() +
-                                             ".sqlite", "littlenavmapdb");
+  databaseFile = databaseDirectory + QDir::separator() + "little_navmap_" +
+                 atools::fs::FsPaths::typeToString(currentFsType).toLower() + ".sqlite";
+}
+
+void DatabaseManager::freeActions()
+{
+  if(group != nullptr)
+  {
+    delete group;
+    group = nullptr;
+  }
+  qDeleteAll(actions);
+  actions.clear();
+}
+
+void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
+{
+  freeActions();
+
+  group = new QActionGroup(menu);
+
+  for(atools::fs::FsPaths::SimulatorType type : paths.keys())
+  {
+    QAction *action = new QAction(FsPaths::typeToName(type), menu);
+    action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+    action->setCheckable(true);
+    action->setActionGroup(group);
+
+    if(type == currentFsType)
+      action->setChecked(true);
+
+    menu->insertAction(before, action);
+
+    connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMenu);
+
+    actions.append(action);
+  }
+  menu->insertSeparator(before);
+}
+
+void DatabaseManager::updateSimSwitchActions()
+{
+  for(QAction *action : actions)
+  {
+    atools::fs::FsPaths::SimulatorType type = action->data().value<atools::fs::FsPaths::SimulatorType>();
+    action->setChecked(type == currentFsType);
+  }
+}
+
+void DatabaseManager::switchSimFromMenu()
+{
+  qDebug() << "switchSim";
+
+  QAction *action = dynamic_cast<QAction *>(sender());
+
+  if(action != nullptr)
+  {
+    emit preDatabaseLoad();
+
+    closeDatabase();
+    currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
+    updateDatabaseFileName();
+    openDatabase();
+
+    emit postDatabaseLoad();
+  }
 }
 
 void DatabaseManager::openDatabase()
 {
   try
   {
-    using atools::sql::SqlDatabase;
-
     qDebug() << "Opening database" << databaseFile;
-    db = SqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(databaseFile);
 
     if(Settings::instance().getAndStoreValue("Options/ForeignKeys", false).toBool())
@@ -342,6 +413,7 @@ void DatabaseManager::simulatorChanged(FsPaths::SimulatorType value)
   updateDatabaseFileName();
   openDatabase();
   updateDialogInfo();
+  updateSimSwitchActions();
 }
 
 void DatabaseManager::backupDatabaseFile()

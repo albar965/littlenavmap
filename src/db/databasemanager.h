@@ -18,6 +18,7 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
+#include <QAction>
 #include <QObject>
 
 #include <sql/sqldatabase.h>
@@ -64,16 +65,27 @@ public:
 
   atools::sql::SqlDatabase *getDatabase();
 
+  /* Actions have to be freed by the caller and are connected to switchSim */
+  void insertSimSwitchActions(QAction *before, QMenu *menu);
+
+  const QString& getDatabaseDirectory() const
+  {
+    return databaseDirectory;
+  }
+
 signals:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
 private:
-  QString databaseFile;
+  QString databaseFile, databaseDirectory;
   atools::sql::SqlDatabase db;
   QWidget *parentWidget;
   QProgressDialog *progressDialog = nullptr;
   bool loadScenery();
+
+  QActionGroup *group = nullptr;
+  QList<QAction *> actions;
 
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
                                      origFsType = atools::fs::FsPaths::UNKNOWN;
@@ -92,6 +104,11 @@ private:
   void updateDialogInfo();
 
   DatabaseDialog *dlg = nullptr;
+  void switchSimFromMenu();
+
+  void freeActions();
+  void updateSimSwitchActions();
+
 };
 
 #endif // DATABASEMANAGER_H

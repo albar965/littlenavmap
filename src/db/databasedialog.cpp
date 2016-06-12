@@ -35,6 +35,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathMapList& pathMap)
   ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load Navigation Data"));
 
   // Add an action to the toolbutton for each simulator
+  // TODO Sort
   for(atools::fs::FsPaths::SimulatorType type : paths.keys())
     ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
@@ -144,8 +145,6 @@ void DatabaseDialog::setCurrentFsType(atools::fs::FsPaths::SimulatorType value)
   updateComboBox();
   updateLineEdits();
 }
-
-
 
 void DatabaseDialog::updateComboBox()
 {

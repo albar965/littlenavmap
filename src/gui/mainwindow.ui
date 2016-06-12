@@ -75,6 +75,7 @@
      <string>&amp;Tools</string>
     </property>
     <addaction name="actionReloadScenery"/>
+    <addaction name="separator"/>
     <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
@@ -151,7 +152,6 @@
    <addaction name="actionRouteOpen"/>
    <addaction name="actionRouteSave"/>
    <addaction name="separator"/>
-   <addaction name="actionReloadScenery"/>
    <addaction name="actionConnectSimulator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
