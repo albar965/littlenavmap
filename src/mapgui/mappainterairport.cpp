@@ -549,13 +549,11 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         text += " / L";
       text += " / " + maptypes::surfaceName(runway.surface);
 
-      QRect textRect = rwMetrics.boundingRect(text);
-      int textWidth = textRect.width();
+      int textWidth = rwMetrics.width(text);
       if(textWidth > runwayRect.height())
         textWidth = runwayRect.height();
 
       int textx = -textWidth / 2, texty = -runwayRect.width() / 2;
-      textRect.moveTo(textx, texty - textRect.height() - 3);
 
       runwayTextLengths.append(textWidth);
       text = rwMetrics.elidedText(text, Qt::ElideRight, runwayRect.height());
@@ -565,8 +563,12 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->rotate(runway.heading + 90.f);
       else
         painter->rotate(runway.heading - 90.f);
-      painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
-      painter->drawText(textx, texty - rwMetrics.descent() - 3, text);
+
+      QRect textBackRect = rwMetrics.boundingRect(text);
+      textBackRect.moveTo(textx, texty - textBackRect.height() - 5);
+      painter->fillRect(textBackRect, mapcolors::runwayTextBackgroundColor);
+
+      painter->drawText(textx, texty - rwMetrics.descent() - 5, text);
       painter->resetTransform();
     }
 
@@ -610,16 +612,16 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->translate(runwayCenters.at(i));
         painter->rotate(rotate);
 
-        textRectPrim.moveTo(-runwayRect.height() / 2, -runwayRect.width() / 2 - textRectPrim.height() - 3);
+        textRectPrim.moveTo(-runwayRect.height() / 2, -runwayRect.width() / 2 - textRectPrim.height() - 5);
         painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);
         painter->drawText(-runwayRect.height() / 2,
-                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 3, textPrim);
+                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 5, textPrim);
 
         textRectSec.moveTo(runwayRect.height() / 2 - textRectSec.width(),
-                           -runwayRect.width() / 2 - textRectSec.height() - 3);
+                           -runwayRect.width() / 2 - textRectSec.height() - 5);
         painter->fillRect(textRectSec, mapcolors::runwayTextBackgroundColor);
         painter->drawText(runwayRect.height() / 2 - textRectSec.width(),
-                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 3, textSec);
+                          -runwayRect.width() / 2 - rwHdgMetrics.descent() - 5, textSec);
         painter->resetTransform();
       }
     }

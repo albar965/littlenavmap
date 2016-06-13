@@ -69,11 +69,7 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
 
 ProfileWidget::~ProfileWidget()
 {
-  if(future.isRunning() || future.isStarted())
-  {
-    terminate = true;
-    future.waitForFinished();
-  }
+  terminateThread();
 }
 
 void ProfileWidget::routeChanged(bool geometryChanged)
@@ -458,12 +454,7 @@ void ProfileWidget::updateTimeout()
 
   qDebug() << "Profile update elevation timeout";
 
-  if(future.isRunning() || future.isStarted())
-  {
-    terminate = true;
-    future.waitForFinished();
-  }
-
+  terminateThread();
   terminate = false;
 
   // Need a copy of the leg list before starting thread to avoid synchronization problems
@@ -694,6 +685,7 @@ void ProfileWidget::deleteAircraftTrack()
 
 void ProfileWidget::preDatabaseLoad()
 {
+  terminateThread();
   databaseLoadStatus = true;
 }
 
@@ -717,5 +709,14 @@ void ProfileWidget::updateProfileShowFeatures()
   {
     updateScreenCoords();
     update();
+  }
+}
+
+void ProfileWidget::terminateThread()
+{
+  if(future.isRunning() || future.isStarted())
+  {
+    terminate = true;
+    future.waitForFinished();
   }
 }

@@ -123,6 +123,7 @@ private:
   QPolygon landPolygon;
   float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
 
+  void terminateThread();
 };
 
 #endif // PROFILEWIDGET_H
