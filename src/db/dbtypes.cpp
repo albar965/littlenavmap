@@ -49,16 +49,29 @@ void FsPathTypeMap::fillDefault()
     fillOneDefault(type);
 }
 
-atools::fs::FsPaths::SimulatorType FsPathTypeMap::getLatestSimulator()
+atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestSimulator()
 {
-  // Get the newest simulator for default values
-  if(FsPaths::hasSim(atools::fs::FsPaths::P3D_V3))
+  if(contains(atools::fs::FsPaths::P3D_V3))
     return atools::fs::FsPaths::P3D_V3;
-  else if(FsPaths::hasSim(atools::fs::FsPaths::P3D_V2))
+  else if(contains(atools::fs::FsPaths::P3D_V2))
     return atools::fs::FsPaths::P3D_V2;
-  else if(FsPaths::hasSim(atools::fs::FsPaths::FSX_SE))
+  else if(contains(atools::fs::FsPaths::FSX_SE))
     return atools::fs::FsPaths::FSX_SE;
-  else if(FsPaths::hasSim(atools::fs::FsPaths::FSX))
+  else if(contains(atools::fs::FsPaths::FSX))
+    return atools::fs::FsPaths::FSX;
+
+  return atools::fs::FsPaths::UNKNOWN;
+}
+
+atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestLoadingSimulator()
+{
+  if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasRegistry)
+    return atools::fs::FsPaths::P3D_V3;
+  else if(contains(atools::fs::FsPaths::P3D_V2) && value(atools::fs::FsPaths::P3D_V2).hasRegistry)
+    return atools::fs::FsPaths::P3D_V2;
+  else if(contains(atools::fs::FsPaths::FSX_SE) && value(atools::fs::FsPaths::FSX_SE).hasRegistry)
+    return atools::fs::FsPaths::FSX_SE;
+  else if(contains(atools::fs::FsPaths::FSX) && value(atools::fs::FsPaths::FSX).hasRegistry)
     return atools::fs::FsPaths::FSX;
 
   return atools::fs::FsPaths::UNKNOWN;

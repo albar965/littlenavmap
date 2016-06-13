@@ -55,7 +55,7 @@ public:
   bool hasSchema();
   bool hasData();
   bool isDatabaseCompatible();
-  void createEmptySchema();
+  void createEmptySchema(atools::sql::SqlDatabase *sqlDatabase);
   bool hasRegistrySims() const;
 
   const int DB_VERSION_MAJOR = 1;
@@ -75,7 +75,8 @@ public:
     return databaseDirectory;
   }
 
-  void setDialogFsType();
+  /* if false quit application */
+  bool checkIncompatibleDatabases();
 
 signals:
   void preDatabaseLoad();
@@ -92,7 +93,8 @@ private:
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
 
-  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
+                                     loadingFsType = atools::fs::FsPaths::UNKNOWN;
   FsPathTypeMap paths;
 
   void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);

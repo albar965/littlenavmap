@@ -123,18 +123,22 @@ int main(int argc, char *argv[])
     s.getAndStoreValue("Options/Version", QCoreApplication::applicationVersion());
     s.syncSettings();
 
+    DatabaseManager mgr(nullptr);
+    if(mgr.checkIncompatibleDatabases())
+    {
     MainWindow mainWindow;
     mainWindow.show();
 
     qDebug() << "Before app.exec()";
     retval = app.exec();
+    }
 
     qDebug() << "app.exec() done, retval is" << retval;
   }
   catch(atools::Exception& e)
   {
-  atools::gui::ErrorHandler(nullptr).handleException(e);
-  retval = 1;
+    atools::gui::ErrorHandler(nullptr).handleException(e);
+    retval = 1;
   }
   catch(...)
   {

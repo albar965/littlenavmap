@@ -48,6 +48,7 @@
 #include <marble/MarbleDebug.h>
 #include "mapgui/maplayersettings.h"
 
+#include <QDesktopServices>
 #include <QCloseEvent>
 #include <QElapsedTimer>
 #include <QProgressDialog>
@@ -110,9 +111,10 @@ MainWindow::MainWindow(QWidget *parent) :
   mainWindowTitle = windowTitle();
 
   databaseManager = new DatabaseManager(this);
+
   databaseManager->openDatabase();
-  databaseManager->insertSimSwitchActions(ui->actionReloadScenery, ui->menuTools);
-  helpHandler->addDirLink("Database Files", databaseManager->getDatabaseDirectory());
+  databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuTools);
+  // helpHandler->addDirLink("Database Files", databaseManager->getDatabaseDirectory());
 
   weatherReporter = new WeatherReporter(this);
 
@@ -183,7 +185,7 @@ MainWindow::~MainWindow()
   delete errorHandler;
   delete databaseManager;
 
-  atools::settings::Settings::shutdown();
+  Settings::shutdown();
   atools::gui::Translator::unload();
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
@@ -379,6 +381,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
   connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::run);
+  connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
+
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
@@ -547,6 +551,16 @@ void MainWindow::connectAllSlots()
   connect(routeFileHistory, &RouteFileHistory::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
+}
+
+void MainWindow::showDatabaseFiles()
+{
+
+  QUrl url = QUrl::fromLocalFile(databaseManager->getDatabaseDirectory());
+
+  if(!QDesktopServices::openUrl(url))
+    QMessageBox::warning(this, QApplication::applicationName(), QString(
+                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
 void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
@@ -865,7 +879,15 @@ void MainWindow::options()
 void MainWindow::mainWindowShown()
 {
   qDebug() << "MainWindow::mainWindowShown()";
-  checkDatabase();
+
+  if(firstApplicationStart)
+  {
+    firstApplicationStart = false;
+    if(databaseManager->hasRegistrySims())
+      databaseManager->run();
+    else
+      QMessageBox::information(this, QApplication::applicationName(), "No Simulators found.");
+  }
 }
 
 void MainWindow::updateActionStates()
@@ -901,33 +923,6 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMark->setEnabled(navMapWidget->getMarkPos().isValid());
 }
 
-void MainWindow::checkDatabase()
-{
-  if(!databaseManager->isDatabaseCompatible())
-  {
-    if(!databaseManager->hasRegistrySims())
-    {
-      QMessageBox::information(this, QApplication::applicationName(),
-                               tr("Found older Navdatabase schema and no registered simulator. "
-                                  "You have to replace the database files."));
-      QApplication::quit();
-    }
-    else
-    {
-      // If the schema is different force user to reload
-      QMessageBox::information(this, QApplication::applicationName(),
-                               tr("Found older Navdatabase schema. "
-                                  "You need to load the scenery files to update the schema."));
-      databaseManager->run();
-      if(!databaseManager->isDatabaseCompatible())
-        QApplication::quit();
-    }
-  }
-  else if(!databaseManager->hasData())
-    // Show dialog if schema is empty (maybe due to first start)
-    databaseManager->run();
-}
-
 void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
@@ -952,8 +947,11 @@ void MainWindow::readSettings()
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
               ui->actionRouteEditMode});
 
-  mapDetailFactor = atools::settings::Settings::instance()->value("Map/DetailFactor",
-                                                                  MAP_DEFAULT_DETAIL_FACTOR).toInt();
+  mapDetailFactor = Settings::instance()->value("Map/DetailFactor",
+                                                MAP_DEFAULT_DETAIL_FACTOR).toInt();
+
+  firstApplicationStart = Settings::instance()->value("MainWindow/FirstApplicationStart",
+                                                      true).toBool();
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
@@ -966,12 +964,18 @@ void MainWindow::writeSettings()
   atools::gui::WidgetState ws("MainWindow/Widget");
   ws.save({this, ui->statusBar, ui->tabWidgetSearch});
 
-  searchController->saveState();
-  navMapWidget->saveState();
-  routeController->saveState();
-  connectClient->saveState();
-  infoController->saveState();
-  routeFileHistory->saveState();
+  if(searchController != nullptr)
+    searchController->saveState();
+  if(navMapWidget != nullptr)
+    navMapWidget->saveState();
+  if(routeController != nullptr)
+    routeController->saveState();
+  if(connectClient != nullptr)
+    connectClient->saveState();
+  if(infoController != nullptr)
+    infoController->saveState();
+  if(routeFileHistory != nullptr)
+    routeFileHistory->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
@@ -983,9 +987,11 @@ void MainWindow::writeSettings()
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
            ui->actionRouteEditMode});
 
-  atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
+  Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
+  Settings::instance()->setValue("MainWindow/FirstApplicationStart", firstApplicationStart);
 
-  databaseManager->saveState();
+  if(databaseManager != nullptr)
+    databaseManager->saveState();
 
   ws.syncSettings();
 }
@@ -996,21 +1002,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // close button on the window frame
   qDebug() << "closeEvent";
 
-  if(routeController->hasChanged())
+  if(routeController != nullptr)
   {
-    if(!routeCheckForChanges())
-      event->ignore();
-  }
-  else
-  {
-    int result = dialog->showQuestionMsgBox("Actions/ShowQuit",
-                                            tr("Really Quit?"),
-                                            tr("Do not &show this dialog again."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
+    if(routeController->hasChanged())
+    {
+      if(!routeCheckForChanges())
+        event->ignore();
+    }
+    else
+    {
+      int result = dialog->showQuestionMsgBox("Actions/ShowQuit",
+                                              tr("Really Quit?"),
+                                              tr("Do not &show this dialog again."),
+                                              QMessageBox::Yes | QMessageBox::No,
+                                              QMessageBox::No, QMessageBox::Yes);
 
-    if(result != QMessageBox::Yes)
-      event->ignore();
+      if(result != QMessageBox::Yes)
+        event->ignore();
+    }
   }
   writeSettings();
 }

@@ -74,6 +74,7 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="actionDatabaseFiles"/>
     <addaction name="actionReloadScenery"/>
     <addaction name="separator"/>
     <addaction name="actionConnectSimulator"/>
@@ -3331,6 +3332,11 @@
   <action name="actionResetMessages">
    <property name="text">
     <string>Reset all Messages</string>
+   </property>
+  </action>
+  <action name="actionDatabaseFiles">
+   <property name="text">
+    <string>Show Database Files</string>
    </property>
   </action>
  </widget>

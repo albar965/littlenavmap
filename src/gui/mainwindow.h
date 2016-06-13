@@ -112,9 +112,9 @@ signals:
 
 private:
   QString mainWindowTitle;
-  SearchController *searchController;
-  RouteController *routeController;
-  RouteFileHistory *routeFileHistory;
+  SearchController *searchController = nullptr;
+  RouteController *routeController = nullptr;
+  RouteFileHistory *routeFileHistory = nullptr;
   QUrl legendUrl;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
@@ -143,12 +143,12 @@ private:
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
 
-  MapQuery *mapQuery;
-  InfoQuery *infoQuery;
+  MapQuery *mapQuery = nullptr;
+  InfoQuery *infoQuery = nullptr;
   void connectAllSlots();
   void mainWindowShown();
 
-  bool firstStart = true;
+  bool firstStart = true, firstApplicationStart = false;
   void writeSettings();
   void readSettings();
   void updateActionStates();
@@ -180,14 +180,10 @@ private:
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
   bool routeValidate();
-
   void loadNavmapLegend();
-
   void showNavmapLegend();
-
   void resetMessages();
-
-  void checkDatabase();
+  void showDatabaseFiles();
 
 };
 

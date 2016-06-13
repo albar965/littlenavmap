@@ -43,10 +43,13 @@ class FsPathTypeMap :
 {
 public:
   void fillDefault();
-  atools::fs::FsPaths::SimulatorType getLatestSimulator();
+  atools::fs::FsPaths::SimulatorType getBestSimulator();
 
   QList<atools::fs::FsPaths::SimulatorType> getAllRegistryPaths() const;
+
   QList<atools::fs::FsPaths::SimulatorType> getAllDatabasePaths() const;
+
+  atools::fs::FsPaths::SimulatorType getBestLoadingSimulator();
 
 private:
   void fillOneDefault(atools::fs::FsPaths::SimulatorType type);
