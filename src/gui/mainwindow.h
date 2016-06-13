@@ -104,11 +104,14 @@ public:
     return connectClient;
   }
 
+  void updateWindowTitle();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
 
 private:
+  QString mainWindowTitle;
   SearchController *searchController;
   RouteController *routeController;
   RouteFileHistory *routeFileHistory;
@@ -135,7 +138,7 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
-  DatabaseManager *databaseLoader = nullptr;
+  DatabaseManager *databaseManager = nullptr;
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;

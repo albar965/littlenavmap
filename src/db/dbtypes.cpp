@@ -15,39 +15,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
 #include "dbtypes.h"
 
 #include <QDataStream>
 
 using atools::fs::FsPaths;
 
-void FsPathMapList::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
+void FsPathTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
 {
   if(FsPaths::hasSim(type))
   {
-    if(!contains(type))
-    {
-      FsPath& path = (*this)[type];
-      path.type = type;
+    FsPathType& path = (*this)[type];
+    if(path.basePath.isEmpty())
       path.basePath = FsPaths::getBasePath(type);
+    if(path.sceneryCfg.isEmpty())
       path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
-    }
+
+    // If already present or not - this one has a registry entry
+    path.hasRegistry = true;
   }
   else
   {
-    // Not in the list anymore - remove
+    // Not in the list anymore - remove it - can be adder later again if database is found
     if(contains(type))
       remove(type);
   }
 }
 
-void FsPathMapList::fillDefault()
+void FsPathTypeMap::fillDefault()
 {
   for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
     fillOneDefault(type);
 }
 
-atools::fs::FsPaths::SimulatorType FsPathMapList::getLatestSimulator()
+atools::fs::FsPaths::SimulatorType FsPathTypeMap::getLatestSimulator()
 {
   // Get the newest simulator for default values
   if(FsPaths::hasSim(atools::fs::FsPaths::P3D_V3))
@@ -62,28 +64,58 @@ atools::fs::FsPaths::SimulatorType FsPathMapList::getLatestSimulator()
   return atools::fs::FsPaths::UNKNOWN;
 }
 
-QDataStream& operator<<(QDataStream& out, const FsPath& obj)
+QList<atools::fs::FsPaths::SimulatorType> FsPathTypeMap::getAllRegistryPaths() const
 {
-  out << obj.basePath << obj.sceneryCfg << obj.type;
+  QList<atools::fs::FsPaths::SimulatorType> retval;
+  for(atools::fs::FsPaths::SimulatorType p : keys())
+    if(value(p).hasRegistry)
+      retval.append(p);
+  return retval;
+}
+
+QList<atools::fs::FsPaths::SimulatorType> FsPathTypeMap::getAllDatabasePaths() const
+{
+  QList<atools::fs::FsPaths::SimulatorType> retval;
+  for(atools::fs::FsPaths::SimulatorType p : keys())
+    if(value(p).hasDatabase)
+      retval.append(p);
+  return retval;
+}
+
+QDebug operator<<(QDebug out, const FsPathType& record)
+{
+  QDebugStateSaver saver(out);
+  out.nospace() << "FsPathType["
+  << "registry entry " << record.hasRegistry
+  << ", has database " << record.hasDatabase
+  << ", base path " << record.basePath
+  << ", scenery config " << record.sceneryCfg
+  << "]";
   return out;
 }
 
-QDataStream& operator>>(QDataStream& in, FsPath& obj)
+QDataStream& operator<<(QDataStream& out, const FsPathType& obj)
 {
-  in >> obj.basePath >> obj.sceneryCfg >> obj.type;
+  out << obj.basePath << obj.sceneryCfg;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, FsPathType& obj)
+{
+  in >> obj.basePath >> obj.sceneryCfg;
   return in;
 }
 
-QDataStream& operator<<(QDataStream& out, const FsPathMapList& obj)
+QDataStream& operator<<(QDataStream& out, const FsPathTypeMap& obj)
 {
-  QHash<atools::fs::FsPaths::SimulatorType, FsPath> hash(obj);
+  QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash(obj);
   out << hash;
   return out;
 }
 
-QDataStream& operator>>(QDataStream& in, FsPathMapList& obj)
+QDataStream& operator>>(QDataStream& in, FsPathTypeMap& obj)
 {
-  QHash<atools::fs::FsPaths::SimulatorType, FsPath> hash;
+  QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash;
   in >> hash;
   obj.swap(hash);
   return in;

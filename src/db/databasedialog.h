@@ -34,7 +34,7 @@ class DatabaseDialog
   Q_OBJECT
 
 public:
-  DatabaseDialog(QWidget *parent, const FsPathMapList& value);
+  DatabaseDialog(QWidget *parent, const FsPathTypeMap& value);
   virtual ~DatabaseDialog();
 
   void setHeader(const QString& header);
@@ -49,7 +49,7 @@ public:
 
   void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
 
-  const FsPathMapList& getPaths() const
+  const FsPathTypeMap& getPaths() const
   {
     return paths;
   }
@@ -60,7 +60,7 @@ signals:
 private:
   Ui::DatabaseDialog *ui;
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
-  FsPathMapList paths;
+  FsPathTypeMap paths;
 
   void basePathEdited(const QString& text);
   void sceneryConfigFileEdited(const QString& text);

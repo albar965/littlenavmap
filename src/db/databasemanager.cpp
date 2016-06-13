@@ -40,7 +40,7 @@
 #include <QList>
 #include <QMenu>
 #include <QDir>
-
+#include <QMessageBox>
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
 using atools::fs::FsPaths;
@@ -49,86 +49,99 @@ using atools::fs::Navdatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 
-const QString meta("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>");
+const QString DATABASE_META_TEXT(
+  "<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6</b></p>");
 
-const QString table(QObject::tr("<table>"
-                                  "<tbody>"
-                                    "<tr> "
-                                      "<td width=\"60\"><b>Files:</b>"
-                                      "</td>    "
-                                      "<td width=\"60\">%L5"
-                                      "</td> "
-                                      "<td width=\"60\"><b>VOR:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L7"
-                                      "</td> "
-                                      "<td width=\"60\"><b>Marker:</b>"
-                                      "</td>     "
-                                      "<td width=\"60\">%L10"
-                                      "</td>"
-                                    "</tr>"
-                                    "<tr> "
-                                      "<td width=\"60\"><b>Airports:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L6"
-                                      "</td> "
-                                      "<td width=\"60\"><b>ILS:</b>"
-                                      "</td> "
-                                      "<td width=\"60\">%L8"
-                                      "</td> "
-                                      "<td width=\"60\"><b>Boundaries:</b>"
-                                      "</td> <td width=\"60\">%L11"
-                                    "</td>"
-                                  "</tr>"
-                                  "<tr> "
-                                    "<td width=\"60\">"
-                                    "</td>"
-                                    "<td width=\"60\">"
-                                    "</td>"
-                                    "<td width=\"60\"><b>NDB:</b>"
-                                    "</td> "
-                                    "<td width=\"60\">%L9"
-                                    "</td> "
-                                    "<td width=\"60\"><b>Waypoints:"
-                                    "</b>"
-                                  "</td>  "
-                                  "<td width=\"60\">%L12"
-                                  "</td>"
-                                "</tr>"
-                              "</tbody>"
-                            "</table>"
-                                ));
+const QString DATABASE_INCOMPAT_TEXT(
+  "<br/><span style=\"color:red\">Database not compatible. Has to be reloaded.</span>");
 
-const QString text(QObject::tr(
-                     "<b>%1</b><br/><br/><br/>"
-                     "<b>Time:</b> %2<br/>%3%4"
-                     ) + table);
+const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
+                                               "<tbody>"
+                                                 "<tr> "
+                                                   "<td width=\"60\"><b>Files:</b>"
+                                                   "</td>    "
+                                                   "<td width=\"60\">%L5"
+                                                   "</td> "
+                                                   "<td width=\"60\"><b>VOR:</b>"
+                                                   "</td> "
+                                                   "<td width=\"60\">%L7"
+                                                   "</td> "
+                                                   "<td width=\"60\"><b>Marker:</b>"
+                                                   "</td>     "
+                                                   "<td width=\"60\">%L10"
+                                                   "</td>"
+                                                 "</tr>"
+                                                 "<tr> "
+                                                   "<td width=\"60\"><b>Airports:</b>"
+                                                   "</td> "
+                                                   "<td width=\"60\">%L6"
+                                                   "</td> "
+                                                   "<td width=\"60\"><b>ILS:</b>"
+                                                   "</td> "
+                                                   "<td width=\"60\">%L8"
+                                                   "</td> "
+                                                   "<td width=\"60\"><b>Boundaries:</b>"
+                                                   "</td> <td width=\"60\">%L11"
+                                                 "</td>"
+                                               "</tr>"
+                                               "<tr> "
+                                                 "<td width=\"60\">"
+                                                 "</td>"
+                                                 "<td width=\"60\">"
+                                                 "</td>"
+                                                 "<td width=\"60\"><b>NDB:</b>"
+                                                 "</td> "
+                                                 "<td width=\"60\">%L9"
+                                                 "</td> "
+                                                 "<td width=\"60\"><b>Waypoints:"
+                                                 "</b>"
+                                               "</td>  "
+                                               "<td width=\"60\">%L12"
+                                               "</td>"
+                                             "</tr>"
+                                           "</tbody>"
+                                         "</table>"
+                                             ));
 
-const QString textWithFile(QObject::tr(
-                             "<b>Scenery:</b> %1 (%2)<br/>"
-                             "<b>File:</b> %3<br/><br/>"
-                             "<b>Time:</b> %4<br/>"
-                             ) + table);
+const QString DATABASE_TIME_TEXT(QObject::tr(
+                                   "<b>%1</b><br/><br/><br/>"
+                                   "<b>Time:</b> %2<br/>%3%4"
+                                   ) + DATABASE_INFO_TEXT);
+
+const QString DATABASE_FILE_TEXT(QObject::tr(
+                                   "<b>Scenery:</b> %1 (%2)<br/>"
+                                   "<b>File:</b> %3<br/><br/>"
+                                   "<b>Time:</b> %4<br/>"
+                                   ) + DATABASE_INFO_TEXT);
 
 DatabaseManager::DatabaseManager(QWidget *parent)
   : QObject(parent), parentWidget(parent)
 {
+  // Also loads list of simulators
   restoreState();
 
   databaseDirectory = Settings::getPath() + QDir::separator() + "little_navmap_db";
   QDir().mkpath(databaseDirectory);
 
+  // Find simulators by default registry entries
   paths.fillDefault();
+
+  // Find any stale databases that do not belong to a simulators
+  fillPathsFromDatabases();
+
+  for(atools::fs::FsPaths::SimulatorType t : paths.keys())
+    qDebug() << t << paths.value(t);
 
   if(currentFsType == atools::fs::FsPaths::UNKNOWN)
     currentFsType = paths.getLatestSimulator();
-  origFsType = currentFsType;
 
-  updateDatabaseFileName();
+  databaseFile = buildDatabaseFileName(currentFsType);
 
   dlg = new DatabaseDialog(parentWidget, paths);
-  dlg->setCurrentFsType(currentFsType);
-  connect(dlg, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChanged);
+
+  setDialogFsType();
+
+  connect(dlg, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChangedFromCombo);
 
   db = SqlDatabase::addDatabase("QSQLITE");
 }
@@ -142,32 +155,15 @@ DatabaseManager::~DatabaseManager()
   closeDatabase();
 }
 
-void DatabaseManager::updateDatabaseFileName()
-{
-  databaseFile = databaseDirectory + QDir::separator() + "little_navmap_" +
-                 atools::fs::FsPaths::typeToString(currentFsType).toLower() + ".sqlite";
-}
-
-void DatabaseManager::freeActions()
-{
-  if(group != nullptr)
-  {
-    delete group;
-    group = nullptr;
-  }
-  qDeleteAll(actions);
-  actions.clear();
-}
-
 void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
 {
   freeActions();
 
   group = new QActionGroup(menu);
-
+  int index = 1;
   for(atools::fs::FsPaths::SimulatorType type : paths.keys())
   {
-    QAction *action = new QAction(FsPaths::typeToName(type), menu);
+    QAction *action = new QAction("&" + QString::number(index++) + " " + FsPaths::typeToName(type), menu);
     action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
     action->setCheckable(true);
     action->setActionGroup(group);
@@ -204,11 +200,69 @@ void DatabaseManager::switchSimFromMenu()
     emit preDatabaseLoad();
 
     closeDatabase();
+
+    atools::fs::FsPaths::SimulatorType origFsType = currentFsType;
+
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
-    updateDatabaseFileName();
+    databaseFile = buildDatabaseFileName(currentFsType);
     openDatabase();
 
+    if(!isDatabaseCompatible())
+    {
+      if(!paths.value(currentFsType).hasRegistry)
+      {
+        QMessageBox::information(dlg, QApplication::applicationName(),
+                                 tr("Found older Navdatabase schema and no registered simulator. "
+                                    "You have to replace the database files."));
+      }
+      else
+      {
+        QMessageBox::information(dlg, QApplication::applicationName(),
+                                 tr("Found older Navdatabase schema. "
+                                    "You need to load the scenery files to update the schema."));
+        runNoMessages();
+      }
+    }
+
+    if(!isDatabaseCompatible())
+      simulatorChangedFromCombo(origFsType);
+
     emit postDatabaseLoad();
+  }
+}
+
+void DatabaseManager::fillPathsFromDatabases()
+{
+  try
+  {
+    for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
+    {
+      QString dbFile = buildDatabaseFileName(type);
+      if(QFile::exists(dbFile))
+      {
+        // Already present or not - update database status
+        FsPathType& path = paths[type];
+        path.hasDatabase = true;
+      }
+      else
+      {
+        if(paths.contains(type))
+        {
+          // No database found and no registry entry - remove
+          const FsPathType& path = paths.value(type);
+          if(!path.hasRegistry)
+            paths.remove(type);
+        }
+      }
+    }
+  }
+  catch(atools::Exception& e)
+  {
+    ErrorHandler(parentWidget).handleException(e, "While looking for databases");
+  }
+  catch(...)
+  {
+    ErrorHandler(parentWidget).handleUnknownException("While looking for databases");
   }
 }
 
@@ -259,6 +313,11 @@ void DatabaseManager::closeDatabase()
   }
 }
 
+QString DatabaseManager::getSimShortName() const
+{
+  return atools::fs::FsPaths::typeToShortName(currentFsType);
+}
+
 atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 {
   return &db;
@@ -267,7 +326,14 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 void DatabaseManager::run()
 {
   emit preDatabaseLoad();
-  dlg->setCurrentFsType(currentFsType);
+  runNoMessages();
+  emit postDatabaseLoad();
+}
+
+void DatabaseManager::runNoMessages()
+{
+  atools::fs::FsPaths::SimulatorType origFsType = currentFsType;
+  setDialogFsType();
   updateDialogInfo();
 
   bool loaded = false;
@@ -276,9 +342,7 @@ void DatabaseManager::run()
     ;
 
   if(!loaded && currentFsType != origFsType)
-    simulatorChanged(origFsType);
-
-  emit postDatabaseLoad();
+    simulatorChangedFromCombo(origFsType);
 }
 
 bool DatabaseManager::runInternal(bool& loaded)
@@ -350,7 +414,7 @@ bool DatabaseManager::loadScenery()
   label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
   label->setIndent(10);
   label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setMinimumWidth(600);
+  label->setMinimumWidth(800);
 
   progressDialog->setWindowModality(Qt::WindowModal);
   progressDialog->setLabel(label);
@@ -400,17 +464,19 @@ bool DatabaseManager::loadScenery()
   if(!success)
     restoreDatabaseFileBackup();
 
+  removeDatabaseFileBackup();
+
   delete progressDialog;
   progressDialog = nullptr;
 
   return success;
 }
 
-void DatabaseManager::simulatorChanged(FsPaths::SimulatorType value)
+void DatabaseManager::simulatorChangedFromCombo(FsPaths::SimulatorType value)
 {
   closeDatabase();
   currentFsType = value;
-  updateDatabaseFileName();
+  databaseFile = buildDatabaseFileName(currentFsType);
   openDatabase();
   updateDialogInfo();
   updateSimSwitchActions();
@@ -450,6 +516,15 @@ void DatabaseManager::restoreDatabaseFileBackup()
   db.open();
 }
 
+void DatabaseManager::removeDatabaseFileBackup()
+{
+  qDebug() << "Removing database backup";
+  QString backupName(db.databaseName() + "-backup");
+  QFile backupFile(backupName);
+  bool removed = backupFile.remove();
+  qDebug() << "removed database" << backupFile.fileName() << removed;
+}
+
 bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& progress,
                                        QElapsedTimer& timer)
 {
@@ -463,7 +538,7 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
 
   if(progress.isNewOther())
     progressDialog->setLabelText(
-      text.arg(progress.getOtherAction()).
+      DATABASE_TIME_TEXT.arg(progress.getOtherAction()).
       arg(formatter::formatElapsed(timer)).
       arg(QString()).
       arg(QString()).
@@ -477,7 +552,7 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
       arg(progress.getNumWaypoints()));
   else if(progress.isNewSceneryArea() || progress.isNewFile())
     progressDialog->setLabelText(
-      textWithFile.arg(progress.getSceneryTitle()).
+      DATABASE_FILE_TEXT.arg(progress.getSceneryTitle()).
       arg(progress.getSceneryPath()).
       arg(progress.getBglFilename()).
       arg(formatter::formatElapsed(timer)).
@@ -491,7 +566,7 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
       arg(progress.getNumWaypoints()));
   else if(progress.isLastCall())
     progressDialog->setLabelText(
-      text.arg(tr("Done")).
+      DATABASE_TIME_TEXT.arg(tr("Done")).
       arg(formatter::formatElapsed(timer)).
       arg(QString()).
       arg(QString()).
@@ -513,7 +588,7 @@ bool DatabaseManager::hasSchema()
 {
   try
   {
-    return SqlUtil(&db).hasTable("airport");
+    return DatabaseMeta(&db).hasSchema();
   }
   catch(atools::Exception& e)
   {
@@ -530,7 +605,7 @@ bool DatabaseManager::hasData()
 {
   try
   {
-    return hasSchema() && SqlUtil(&db).rowCount("airport") > 0;
+    return DatabaseMeta(&db).hasData();
   }
   catch(atools::Exception& e)
   {
@@ -545,10 +620,18 @@ bool DatabaseManager::hasData()
 
 bool DatabaseManager::isDatabaseCompatible()
 {
-  DatabaseMeta dbmeta(&db);
-  if(dbmeta.isValid())
-    return DB_VERSION_MAJOR == dbmeta.getMajorVersion();
-
+  try
+  {
+    return DatabaseMeta(&db).isDatabaseCompatible(DB_VERSION_MAJOR);
+  }
+  catch(atools::Exception& e)
+  {
+    ErrorHandler(parentWidget).handleException(e);
+  }
+  catch(...)
+  {
+    ErrorHandler(parentWidget).handleUnknownException();
+  }
   return false;
 }
 
@@ -570,37 +653,47 @@ void DatabaseManager::createEmptySchema()
   }
 }
 
+bool DatabaseManager::hasRegistrySims() const
+{
+  return !paths.getAllRegistryPaths().isEmpty();
+}
+
 void DatabaseManager::saveState()
 {
   Settings& s = Settings::instance();
   s->setValue("Database/Paths", QVariant::fromValue(paths));
-  s->setValue("Database/Simulator", atools::fs::FsPaths::typeToString(currentFsType));
+  s->setValue("Database/Simulator", atools::fs::FsPaths::typeToShortName(currentFsType));
 }
 
 void DatabaseManager::restoreState()
 {
   Settings& s = Settings::instance();
-  paths = s->value("Database/Paths").value<FsPathMapList>();
+  paths = s->value("Database/Paths").value<FsPathTypeMap>();
   currentFsType = atools::fs::FsPaths::stringToType(s->value("Database/Simulator",
                                                              atools::fs::FsPaths::UNKNOWN).toString());
 }
 
 void DatabaseManager::updateDialogInfo()
 {
+  QString compatText = isDatabaseCompatible() ? QString() : DATABASE_INCOMPAT_TEXT;
+
   QString metaText;
   DatabaseMeta dbmeta(&db);
   if(!dbmeta.isValid())
-    metaText = meta.arg(tr("None")).
+    metaText = DATABASE_META_TEXT.arg(tr("None")).
                arg(tr("None")).
                arg(tr("None")).
-               arg(DB_VERSION_MAJOR).arg(DB_VERSION_MINOR);
+               arg(DB_VERSION_MAJOR).
+               arg(DB_VERSION_MINOR).
+               arg(compatText);
   else
-    metaText = meta.
+    metaText = DATABASE_META_TEXT.
                arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : "None").
                arg(dbmeta.getMajorVersion()).
                arg(dbmeta.getMinorVersion()).
                arg(DB_VERSION_MAJOR).
-               arg(DB_VERSION_MINOR);
+               arg(DB_VERSION_MINOR).
+               arg(compatText);
 
   QString tableText;
   if(hasSchema())
@@ -608,7 +701,7 @@ void DatabaseManager::updateDialogInfo()
     atools::sql::SqlUtil util(&db);
 
     // Get row counts for the dialog
-    tableText = table.arg(util.rowCount("bgl_file")).
+    tableText = DATABASE_INFO_TEXT.arg(util.rowCount("bgl_file")).
                 arg(util.rowCount("airport")).
                 arg(util.rowCount("vor")).
                 arg(util.rowCount("ils")).
@@ -618,7 +711,35 @@ void DatabaseManager::updateDialogInfo()
                 arg(util.rowCount("waypoint"));
   }
   else
-    tableText = table.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
+    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
   dlg->setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
+}
+
+QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)
+{
+  return databaseDirectory + QDir::separator() + "little_navmap_" +
+         atools::fs::FsPaths::typeToShortName(type).toLower() + ".sqlite";
+}
+
+void DatabaseManager::freeActions()
+{
+  if(group != nullptr)
+  {
+    delete group;
+    group = nullptr;
+  }
+  qDeleteAll(actions);
+  actions.clear();
+}
+
+void DatabaseManager::setDialogFsType()
+{
+  QList<FsPaths::SimulatorType> regpaths = paths.getAllRegistryPaths();
+  if(regpaths.contains(currentFsType))
+    dlg->setCurrentFsType(currentFsType);
+  else if(!regpaths.isEmpty())
+    dlg->setCurrentFsType(regpaths.first());
+  else
+    dlg->setCurrentFsType(FsPaths::UNKNOWN);
 }

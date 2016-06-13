@@ -48,8 +48,8 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
   qRegisterMetaTypeStreamOperators<QList<MapPosHistoryEntry> >();
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
-  qRegisterMetaTypeStreamOperators<FsPath>();
-  qRegisterMetaTypeStreamOperators<FsPathMapList>();
+  qRegisterMetaTypeStreamOperators<FsPathType>();
+  qRegisterMetaTypeStreamOperators<FsPathTypeMap>();
 
   int retval = 0;
   QApplication app(argc, argv);

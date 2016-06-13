@@ -96,6 +96,8 @@ MainWindow::MainWindow(QWidget *parent) :
                "<a href=\"https://github.com/albar965\">Github</a>.</p>"
                  "<p><b>Copyright 2015-2016 Alexander Barthel (albar965@mailbox.org).</b></p>");
 
+  ui->setupUi(this);
+
   dialog = new atools::gui::Dialog(this);
   errorHandler = new atools::gui::ErrorHandler(this);
   helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
@@ -103,20 +105,21 @@ MainWindow::MainWindow(QWidget *parent) :
   marbleAbout = new Marble::MarbleAboutDialog(this);
   marbleAbout->setApplicationTitle(QApplication::applicationName());
 
-  ui->setupUi(this);
   setupUi();
 
-  databaseLoader = new DatabaseManager(this);
-  databaseLoader->openDatabase();
-  databaseLoader->insertSimSwitchActions(ui->actionReloadScenery, ui->menuTools);
-  helpHandler->addDirLink("Database Files", databaseLoader->getDatabaseDirectory());
+  mainWindowTitle = windowTitle();
+
+  databaseManager = new DatabaseManager(this);
+  databaseManager->openDatabase();
+  databaseManager->insertSimSwitchActions(ui->actionReloadScenery, ui->menuTools);
+  helpHandler->addDirLink("Database Files", databaseManager->getDatabaseDirectory());
 
   weatherReporter = new WeatherReporter(this);
 
-  mapQuery = new MapQuery(this, databaseLoader->getDatabase());
+  mapQuery = new MapQuery(this, databaseManager->getDatabase());
   mapQuery->initQueries();
 
-  infoQuery = new InfoQuery(this, databaseLoader->getDatabase());
+  infoQuery = new InfoQuery(this, databaseManager->getDatabase());
   infoQuery->initQueries();
 
   routeFileHistory = new RouteFileHistory(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
@@ -178,7 +181,7 @@ MainWindow::~MainWindow()
 
   delete dialog;
   delete errorHandler;
-  delete databaseLoader;
+  delete databaseManager;
 
   atools::settings::Settings::shutdown();
   atools::gui::Translator::unload();
@@ -375,7 +378,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
-  connect(ui->actionReloadScenery, &QAction::triggered, databaseLoader, &DatabaseManager::run);
+  connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::run);
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
@@ -502,8 +505,8 @@ void MainWindow::connectAllSlots()
 
   connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
 
-  connect(databaseLoader, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
-  connect(databaseLoader, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
+  connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
+  connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
   connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
           navMapWidget, &MapWidget::setPropertyValue);
@@ -622,6 +625,20 @@ bool MainWindow::routeValidate()
     }
   }
   return true;
+}
+
+void MainWindow::updateWindowTitle()
+{
+  QString newTitle = mainWindowTitle;
+  newTitle += " - " + databaseManager->getSimShortName();
+
+  if(!routeController->getRouteFilename().isEmpty())
+    newTitle += " - " + QFileInfo(routeController->getRouteFilename()).fileName() +
+                (routeController->hasChanged() ? " *" : QString());
+  else if(routeController->hasChanged())
+    newTitle += " - *";
+
+  setWindowTitle(newTitle);
 }
 
 bool MainWindow::routeCheckForChanges()
@@ -859,6 +876,8 @@ void MainWindow::updateActionStates()
   bool hasFlightplan = !routeController->isFlightplanEmpty();
   bool hasStartAndDest = routeController->hasValidStart() && routeController->hasValidDestination();
 
+  ui->actionReloadScenery->setEnabled(databaseManager->hasRegistrySims());
+
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
@@ -884,19 +903,29 @@ void MainWindow::updateActionStates()
 
 void MainWindow::checkDatabase()
 {
-  if(!databaseLoader->isDatabaseCompatible())
+  if(!databaseManager->isDatabaseCompatible())
   {
-    // If the schema is different force user to reload
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("Found older Navdatabase schema. "
-                                "You need to load the scenery files to update the schema."));
-    databaseLoader->run();
-    if(!databaseLoader->isDatabaseCompatible())
+    if(!databaseManager->hasRegistrySims())
+    {
+      QMessageBox::information(this, QApplication::applicationName(),
+                               tr("Found older Navdatabase schema and no registered simulator. "
+                                  "You have to replace the database files."));
       QApplication::quit();
+    }
+    else
+    {
+      // If the schema is different force user to reload
+      QMessageBox::information(this, QApplication::applicationName(),
+                               tr("Found older Navdatabase schema. "
+                                  "You need to load the scenery files to update the schema."));
+      databaseManager->run();
+      if(!databaseManager->isDatabaseCompatible())
+        QApplication::quit();
+    }
   }
-  else if(!databaseLoader->hasData())
+  else if(!databaseManager->hasData())
     // Show dialog if schema is empty (maybe due to first start)
-    databaseLoader->run();
+    databaseManager->run();
 }
 
 void MainWindow::readSettings()
@@ -956,7 +985,7 @@ void MainWindow::writeSettings()
 
   atools::settings::Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
 
-  databaseLoader->saveState();
+  databaseManager->saveState();
 
   ws.syncSettings();
 }
@@ -1033,4 +1062,7 @@ void MainWindow::postDatabaseLoad()
   }
   else
     qWarning() << "Not in database loading status";
+
+  // Database title might have changed
+  updateWindowTitle();
 }

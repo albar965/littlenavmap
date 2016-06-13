@@ -20,7 +20,8 @@
 #include <sql/sqlquery.h>
 #include <sql/sqlutil.h>
 
-using namespace atools::sql;
+using atools::sql::SqlUtil;
+using atools::sql::SqlQuery;
 
 DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -66,4 +67,22 @@ void DatabaseMeta::updateTimestamp()
   query.bindValue(":loadts", lastLoadTime);
   query.exec();
   db->commit();
+}
+
+bool DatabaseMeta::hasSchema()
+{
+  return SqlUtil(db).hasTable("airport");
+}
+
+bool DatabaseMeta::hasData()
+{
+  return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
+}
+
+bool DatabaseMeta::isDatabaseCompatible(int version)
+{
+  if(isValid())
+    return version == getMajorVersion();
+
+  return false;
 }

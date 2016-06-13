@@ -54,14 +54,16 @@ public:
 
   bool hasSchema();
   bool hasData();
-  void createEmptySchema();
   bool isDatabaseCompatible();
+  void createEmptySchema();
+  bool hasRegistrySims() const;
 
   const int DB_VERSION_MAJOR = 1;
   const int DB_VERSION_MINOR = 0;
 
   void openDatabase();
   void closeDatabase();
+  QString getSimShortName() const;
 
   atools::sql::SqlDatabase *getDatabase();
 
@@ -73,6 +75,8 @@ public:
     return databaseDirectory;
   }
 
+  void setDialogFsType();
+
 signals:
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -83,15 +87,15 @@ private:
   QWidget *parentWidget;
   QProgressDialog *progressDialog = nullptr;
   bool loadScenery();
+  void runNoMessages();
 
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
 
-  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
-                                     origFsType = atools::fs::FsPaths::UNKNOWN;
-  FsPathMapList paths;
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
+  FsPathTypeMap paths;
 
-  void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
+  void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
 
   bool runInternal(bool& loaded);
 
@@ -99,7 +103,7 @@ private:
 
   void restoreDatabaseFileBackup();
 
-  void updateDatabaseFileName();
+  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
 
   void updateDialogInfo();
 
@@ -108,6 +112,10 @@ private:
 
   void freeActions();
   void updateSimSwitchActions();
+
+  void removeDatabaseFileBackup();
+
+  void fillPathsFromDatabases();
 
 };
 

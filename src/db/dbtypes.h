@@ -24,33 +24,38 @@
 #include <QString>
 #include <QObject>
 
-struct FsPath
+struct FsPathType
 {
   QString basePath, sceneryCfg;
-  atools::fs::FsPaths::SimulatorType type;
+  bool hasDatabase = false, hasRegistry = false;
 };
 
-QDataStream& operator<<(QDataStream& out, const FsPath& obj);
-QDataStream& operator>>(QDataStream& in, FsPath& obj);
+QDebug operator<<(QDebug out, const FsPathType& record);
 
-Q_DECLARE_METATYPE(FsPath);
-Q_DECLARE_TYPEINFO(FsPath, Q_MOVABLE_TYPE);
+QDataStream& operator<<(QDataStream& out, const FsPathType& obj);
+QDataStream& operator>>(QDataStream& in, FsPathType& obj);
 
-class FsPathMapList :
-  public QHash<atools::fs::FsPaths::SimulatorType, FsPath>
+Q_DECLARE_METATYPE(FsPathType);
+Q_DECLARE_TYPEINFO(FsPathType, Q_MOVABLE_TYPE);
+
+class FsPathTypeMap :
+  public QHash<atools::fs::FsPaths::SimulatorType, FsPathType>
 {
 public:
   void fillDefault();
   atools::fs::FsPaths::SimulatorType getLatestSimulator();
+
+  QList<atools::fs::FsPaths::SimulatorType> getAllRegistryPaths() const;
+  QList<atools::fs::FsPaths::SimulatorType> getAllDatabasePaths() const;
 
 private:
   void fillOneDefault(atools::fs::FsPaths::SimulatorType type);
 
 };
 
-QDataStream& operator<<(QDataStream& out, const FsPathMapList& obj);
-QDataStream& operator>>(QDataStream& in, FsPathMapList& obj);
+QDataStream& operator<<(QDataStream& out, const FsPathTypeMap& obj);
+QDataStream& operator>>(QDataStream& in, FsPathTypeMap& obj);
 
-Q_DECLARE_METATYPE(FsPathMapList);
+Q_DECLARE_METATYPE(FsPathTypeMap);
 
 #endif // DBTYPES_H

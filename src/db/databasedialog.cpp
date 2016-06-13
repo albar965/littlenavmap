@@ -27,7 +27,7 @@
 
 using atools::fs::FsPaths;
 
-DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathMapList& pathMap)
+DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), paths(pathMap)
 {
   ui->setupUi(this);
@@ -36,7 +36,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathMapList& pathMap)
 
   // Add an action to the toolbutton for each simulator
   // TODO Sort
-  for(atools::fs::FsPaths::SimulatorType type : paths.keys())
+  for(atools::fs::FsPaths::SimulatorType type : paths.getAllRegistryPaths())
     ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
 
@@ -109,7 +109,7 @@ void DatabaseDialog::selectBasePath()
     tr("Select Flight Simulator Basepath"), "Database/BasePath", ui->lineEditDatabaseBasePath->text());
 
   if(!path.isEmpty())
-    paths[currentFsType].basePath = FsPaths::getBasePath(currentFsType);
+    paths[currentFsType].basePath = path;
   updateLineEdits();
 }
 
@@ -120,7 +120,7 @@ void DatabaseDialog::selectSceneryConfig()
     "Database/SceneryConfig", ui->lineEditDatabaseSceneryFile->text());
 
   if(!path.isEmpty())
-    paths[currentFsType].sceneryCfg = FsPaths::getSceneryLibraryPath(currentFsType);
+    paths[currentFsType].sceneryCfg = path;
   updateLineEdits();
 }
 
