@@ -131,16 +131,18 @@ DatabaseManager::DatabaseManager(QWidget *parent)
   for(atools::fs::FsPaths::SimulatorType t : paths.keys())
     qDebug() << t << paths.value(t);
 
-  if(currentFsType == atools::fs::FsPaths::UNKNOWN)
+  if(currentFsType == atools::fs::FsPaths::UNKNOWN || !paths.contains(currentFsType))
     currentFsType = paths.getBestSimulator();
 
-  loadingFsType = paths.getBestLoadingSimulator();
+  if(loadingFsType == atools::fs::FsPaths::UNKNOWN || !paths.getAllRegistryPaths().contains(loadingFsType))
+    loadingFsType = paths.getBestLoadingSimulator();
 
   databaseFile = buildDatabaseFileName(currentFsType);
 
-  dlg = new DatabaseDialog(parentWidget, paths);
+  databaseDialog = new DatabaseDialog(parentWidget, paths);
 
-  connect(dlg, &DatabaseDialog::simulatorChanged, this, &DatabaseManager::simulatorChangedFromCombo);
+  connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
+          &DatabaseManager::simulatorChangedFromCombo);
 
   if(!SqlDatabase::contains(QString()))
     db = SqlDatabase::addDatabase("QSQLITE");
@@ -150,7 +152,7 @@ DatabaseManager::~DatabaseManager()
 {
   freeActions();
 
-  delete dlg;
+  delete databaseDialog;
   delete progressDialog;
   closeDatabase();
 }
@@ -388,7 +390,7 @@ void DatabaseManager::runNoMessages()
   databaseFile = buildDatabaseFileName(loadingFsType);
   openDatabase();
 
-  dlg->setCurrentFsType(loadingFsType);
+  databaseDialog->setCurrentFsType(loadingFsType);
 
   updateDialogInfo();
 
@@ -408,18 +410,18 @@ bool DatabaseManager::runInternal(bool& loaded)
   loaded = false;
   try
   {
-    int retval = dlg->exec();
+    int retval = databaseDialog->exec();
+    // Copy the changed path structures
+    updatePathsFromDialog();
+    loadingFsType = databaseDialog->getCurrentFsType();
 
     if(retval == QDialog::Accepted)
     {
       QString err;
-      if(atools::fs::Navdatabase::isBasePathValid(dlg->getBasePath(), err))
+      if(atools::fs::Navdatabase::isBasePathValid(databaseDialog->getBasePath(), err))
       {
-        if(atools::fs::Navdatabase::isSceneryConfigValid(dlg->getSceneryConfigFile(), err))
+        if(atools::fs::Navdatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), err))
         {
-          // Copy the changed path structures
-          paths = dlg->getPaths();
-          loadingFsType = dlg->getCurrentFsType();
           if(loadScenery())
           {
             // Successfully loaded
@@ -431,12 +433,13 @@ bool DatabaseManager::runInternal(bool& loaded)
           }
         }
         else
-          QMessageBox::warning(dlg, QApplication::applicationName(),
-                               tr("Cannot read \"%1\". Reason: %2.").arg(dlg->getSceneryConfigFile()).arg(err));
+          QMessageBox::warning(databaseDialog, QApplication::applicationName(),
+                               tr("Cannot read \"%1\". Reason: %2.").arg(databaseDialog->getSceneryConfigFile(
+                                                                           )).arg(err));
       }
       else
-        QMessageBox::warning(dlg, QApplication::applicationName(),
-                             tr("Cannot read \"%1\". Reason: %2.").arg(dlg->getBasePath()).arg(err));
+        QMessageBox::warning(databaseDialog, QApplication::applicationName(),
+                             tr("Cannot read \"%1\". Reason: %2.").arg(databaseDialog->getBasePath()).arg(err));
     }
     else
       reopenDialog = false;
@@ -466,7 +469,7 @@ bool DatabaseManager::loadScenery()
   opts.loadFromSettings(settings);
 
   delete progressDialog;
-  progressDialog = new QProgressDialog(dlg);
+  progressDialog = new QProgressDialog(databaseDialog);
 
   QLabel *label = new QLabel(progressDialog);
   label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -499,12 +502,12 @@ bool DatabaseManager::loadScenery()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(dlg).handleException(e);
+    ErrorHandler(databaseDialog).handleException(e);
     success = false;
   }
   catch(...)
   {
-    ErrorHandler(dlg).handleUnknownException();
+    ErrorHandler(databaseDialog).handleUnknownException();
     success = false;
   }
 
@@ -720,6 +723,7 @@ void DatabaseManager::saveState()
   Settings& s = Settings::instance();
   s->setValue("Database/Paths", QVariant::fromValue(paths));
   s->setValue("Database/Simulator", atools::fs::FsPaths::typeToShortName(currentFsType));
+  s->setValue("Database/LoadingSimulator", atools::fs::FsPaths::typeToShortName(loadingFsType));
 }
 
 void DatabaseManager::restoreState()
@@ -727,6 +731,8 @@ void DatabaseManager::restoreState()
   Settings& s = Settings::instance();
   paths = s->value("Database/Paths").value<FsPathTypeMap>();
   currentFsType = atools::fs::FsPaths::stringToType(s->value("Database/Simulator",
+                                                             atools::fs::FsPaths::UNKNOWN).toString());
+  loadingFsType = atools::fs::FsPaths::stringToType(s->value("Database/LoadingSimulator",
                                                              atools::fs::FsPaths::UNKNOWN).toString());
 }
 
@@ -766,7 +772,7 @@ void DatabaseManager::updateDialogInfo()
   else
     tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
-  dlg->setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
+  databaseDialog->setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
 }
 
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)
@@ -784,4 +790,18 @@ void DatabaseManager::freeActions()
   }
   qDeleteAll(actions);
   actions.clear();
+}
+
+void DatabaseManager::updatePathsFromDialog()
+{
+  const FsPathTypeMap& dlgPaths = databaseDialog->getPaths();
+
+  for(FsPaths::SimulatorType type : dlgPaths.keys())
+  {
+    if(paths.contains(type))
+    {
+      paths[type].basePath = dlgPaths.value(type).basePath;
+      paths[type].sceneryCfg = dlgPaths.value(type).sceneryCfg;
+    }
+  }
 }

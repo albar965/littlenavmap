@@ -109,7 +109,7 @@ private:
 
   void updateDialogInfo();
 
-  DatabaseDialog *dlg = nullptr;
+  DatabaseDialog *databaseDialog = nullptr;
   void switchSimFromMenu();
 
   void freeActions();
@@ -118,6 +118,8 @@ private:
   void removeDatabaseFileBackup();
 
   void fillPathsFromDatabases();
+
+  void updatePathsFromDialog();
 
 };
 
