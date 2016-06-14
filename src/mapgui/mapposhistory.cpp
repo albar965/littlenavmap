@@ -155,16 +155,15 @@ void MapPosHistory::saveState(const QString& keyPrefix)
 {
   using atools::settings::Settings;
   QVariant var = QVariant::fromValue<QList<MapPosHistoryEntry> >(entries);
-  Settings::instance()->setValue(keyPrefix + "Entries",
-                                 var);
-  Settings::instance()->setValue(keyPrefix + "CurrentIndex", currentIndex);
+  Settings::instance().setValueVar(keyPrefix + "Entries", var);
+  Settings::instance().setValue(keyPrefix + "CurrentIndex", currentIndex);
 }
 
 void MapPosHistory::restoreState(const QString& keyPrefix)
 {
   using atools::settings::Settings;
-  entries = Settings::instance()->value(keyPrefix + "Entries").value<QList<MapPosHistoryEntry> >();
-  currentIndex = Settings::instance()->value(keyPrefix + "CurrentIndex", -1).toInt();
+  entries = Settings::instance().valueVar(keyPrefix + "Entries").value<QList<MapPosHistoryEntry> >();
+  currentIndex = Settings::instance().valueInt(keyPrefix + "CurrentIndex", -1);
 
   if(entries.isEmpty())
     emit historyChanged(0, 0, 0);

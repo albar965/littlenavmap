@@ -250,7 +250,7 @@ void RouteController::saveState()
   atools::gui::WidgetState saver("Route/View");
   saver.save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
-  atools::settings::Settings::instance()->setValue("Route/Filename", routeFilename);
+  atools::settings::Settings::instance().setValue("Route/Filename", routeFilename);
 }
 
 void RouteController::restoreState()
@@ -260,7 +260,7 @@ void RouteController::restoreState()
   model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
   saver.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
-  QString newRouteFilename = atools::settings::Settings::instance()->value("Route/Filename").toString();
+  QString newRouteFilename = atools::settings::Settings::instance().valueStr("Route/Filename");
 
   if(!newRouteFilename.isEmpty())
   {

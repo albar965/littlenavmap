@@ -947,11 +947,10 @@ void MainWindow::readSettings()
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
               ui->actionRouteEditMode});
 
-  mapDetailFactor = Settings::instance()->value("Map/DetailFactor",
-                                                MAP_DEFAULT_DETAIL_FACTOR).toInt();
+  mapDetailFactor = Settings::instance().valueInt("Map/DetailFactor",
+                                                  MAP_DEFAULT_DETAIL_FACTOR);
 
-  firstApplicationStart = Settings::instance()->value("MainWindow/FirstApplicationStart",
-                                                      true).toBool();
+  firstApplicationStart = Settings::instance().valueBool("MainWindow/FirstApplicationStart", true);
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
@@ -987,8 +986,8 @@ void MainWindow::writeSettings()
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
            ui->actionRouteEditMode});
 
-  Settings::instance()->setValue("Map/DetailFactor", mapDetailFactor);
-  Settings::instance()->setValue("MainWindow/FirstApplicationStart", firstApplicationStart);
+  Settings::instance().setValue("Map/DetailFactor", mapDetailFactor);
+  Settings::instance().setValue("MainWindow/FirstApplicationStart", firstApplicationStart);
 
   if(databaseManager != nullptr)
     databaseManager->saveState();

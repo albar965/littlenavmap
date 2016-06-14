@@ -36,12 +36,12 @@ RouteFileHistory::~RouteFileHistory()
 
 void RouteFileHistory::saveState()
 {
-  atools::settings::Settings::instance()->setValue(settings, files);
+  atools::settings::Settings::instance().setValue(settings, files);
 }
 
 void RouteFileHistory::restoreState()
 {
-  files = atools::settings::Settings::instance()->value(settings).toStringList();
+  files = atools::settings::Settings::instance().valueStrList(settings);
   updateMenu();
 }
 

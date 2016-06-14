@@ -116,12 +116,12 @@ void ConnectDialog::saveState()
   for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
     entries.append(ui->comboBoxConnectHostname->itemText(i));
 
-  Settings::instance()->setValue("NavConnect/RemoteHosts", entries);
+  Settings::instance().setValue("NavConnect/RemoteHosts", entries);
 }
 
 void ConnectDialog::restoreState()
 {
-  QStringList entries = Settings::instance()->value("NavConnect/RemoteHosts").toStringList();
+  QStringList entries = Settings::instance().valueStrList("NavConnect/RemoteHosts");
   entries.removeDuplicates();
 
   if(entries.isEmpty())

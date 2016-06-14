@@ -68,12 +68,12 @@ void InfoController::saveState()
   QStringList refList;
   for(const maptypes::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
-  atools::settings::Settings::instance()->setValue("InfoWindow/CurrentMapObjects", refList.join(";"));
+  atools::settings::Settings::instance().setValue("InfoWindow/CurrentMapObjects", refList.join(";"));
 }
 
 void InfoController::restoreState()
 {
-  QString refsStr = atools::settings::Settings::instance()->value("InfoWindow/CurrentMapObjects").toString();
+  QString refsStr = atools::settings::Settings::instance().valueStr("InfoWindow/CurrentMapObjects");
   QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
   maptypes::MapSearchResult res;

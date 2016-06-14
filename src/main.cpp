@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     Settings& s = Settings::instance();
 
     // Load local and Qt system translations from various places
-    Translator::load(s->value("Options/Language", QString()).toString());
+    Translator::load(s.valueStr("Options/Language", QString()));
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
     // Write version to configuration file
-    QString oldVersion = s->value("Options/Language").toString();
+    QString oldVersion = s.valueStr("Options/Language");
     qInfo() << "Found version" << oldVersion << "in configuration file";
     s.getAndStoreValue("Options/Version", QCoreApplication::applicationVersion());
     s.syncSettings();

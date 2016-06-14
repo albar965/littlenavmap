@@ -721,19 +721,18 @@ bool DatabaseManager::hasRegistrySims() const
 void DatabaseManager::saveState()
 {
   Settings& s = Settings::instance();
-  s->setValue("Database/Paths", QVariant::fromValue(paths));
-  s->setValue("Database/Simulator", atools::fs::FsPaths::typeToShortName(currentFsType));
-  s->setValue("Database/LoadingSimulator", atools::fs::FsPaths::typeToShortName(loadingFsType));
+  s.setValueVar("Database/Paths", QVariant::fromValue(paths));
+  s.setValue("Database/Simulator", atools::fs::FsPaths::typeToShortName(currentFsType));
+  s.setValue("Database/LoadingSimulator", atools::fs::FsPaths::typeToShortName(loadingFsType));
 }
 
 void DatabaseManager::restoreState()
 {
   Settings& s = Settings::instance();
-  paths = s->value("Database/Paths").value<FsPathTypeMap>();
-  currentFsType = atools::fs::FsPaths::stringToType(s->value("Database/Simulator",
-                                                             atools::fs::FsPaths::UNKNOWN).toString());
-  loadingFsType = atools::fs::FsPaths::stringToType(s->value("Database/LoadingSimulator",
-                                                             atools::fs::FsPaths::UNKNOWN).toString());
+  paths = s.valueVar("Database/Paths").value<FsPathTypeMap>();
+  currentFsType =
+    atools::fs::FsPaths::stringToType(s.valueStr("Database/Simulator", QString()));
+  loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr("Database/LoadingSimulator"));
 }
 
 void DatabaseManager::updateDialogInfo()

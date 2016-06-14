@@ -246,25 +246,25 @@ void MapWidget::saveState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   writePluginSettings(*s.getQSettings());
 
-  s->setValue("Map/MarkLonX", static_cast<double>(markPos.getLonX()));
-  s->setValue("Map/MarkLatY", static_cast<double>(markPos.getLatY()));
+  s.setValue("Map/MarkLonX", markPos.getLonX());
+  s.setValue("Map/MarkLatY", markPos.getLatY());
 
-  s->setValue("Map/HomeLonX", static_cast<double>(homePos.getLonX()));
-  s->setValue("Map/HomeLatY", static_cast<double>(homePos.getLatY()));
-  s->setValue("Map/HomeDistance", homeDistance);
+  s.setValue("Map/HomeLonX", homePos.getLonX());
+  s.setValue("Map/HomeLatY", homePos.getLatY());
+  s.setValue("Map/HomeDistance", homeDistance);
   history.saveState("Map/History");
 
   QByteArray bytesDistMarker;
   QDataStream ds(&bytesDistMarker, QIODevice::WriteOnly);
   ds.setVersion(QDataStream::Qt_5_5);
   ds << distanceMarkers;
-  s->setValue("Map/DistanceMarkers", bytesDistMarker);
+  s.setValueVar("Map/DistanceMarkers", bytesDistMarker);
 
   QByteArray bytesRangeMarker;
   QDataStream ds2(&bytesRangeMarker, QIODevice::WriteOnly);
   ds2.setVersion(QDataStream::Qt_5_5);
   ds2 << rangeMarkers;
-  s->setValue("Map/RangeMarkers", bytesRangeMarker);
+  s.setValueVar("Map/RangeMarkers", bytesRangeMarker);
 }
 
 void MapWidget::restoreState()
@@ -272,26 +272,26 @@ void MapWidget::restoreState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   readPluginSettings(*s.getQSettings());
 
-  if(s->contains("Map/MarkLonX") && s->contains("Map/MarkLatY"))
+  if(s.contains("Map/MarkLonX") && s.contains("Map/MarkLatY"))
   {
-    markPos = atools::geo::Pos(s->value("Map/MarkLonX").toDouble(), s->value("Map/MarkLatY").toDouble());
+    markPos = atools::geo::Pos(s.valueFloat("Map/MarkLonX"), s.valueFloat("Map/MarkLatY"));
     emit markChanged(markPos);
   }
 
-  if(s->contains("Map/HomeLonX") && s->contains("Map/HomeLatY") && s->contains("Map/HomeDistance"))
+  if(s.contains("Map/HomeLonX") && s.contains("Map/HomeLatY") && s.contains("Map/HomeDistance"))
   {
-    homePos = atools::geo::Pos(s->value("Map/HomeLonX").toDouble(), s->value("Map/HomeLatY").toDouble());
-    homeDistance = s->value("Map/HomeDistance").toDouble();
+    homePos = atools::geo::Pos(s.valueFloat("Map/HomeLonX"), s.valueFloat("Map/HomeLatY"));
+    homeDistance = s.valueFloat("Map/HomeDistance");
     emit homeChanged(homePos);
   }
   history.restoreState("Map/History");
 
-  QByteArray bytesDistMark(s->value("Map/DistanceMarkers").toByteArray());
+  QByteArray bytesDistMark(s.valueVar("Map/DistanceMarkers").toByteArray());
   QDataStream ds(&bytesDistMark, QIODevice::ReadOnly);
   ds.setVersion(QDataStream::Qt_5_5);
   ds >> distanceMarkers;
 
-  QByteArray bytesRangeMark(s->value("Map/RangeMarkers").toByteArray());
+  QByteArray bytesRangeMark(s.valueVar("Map/RangeMarkers").toByteArray());
   QDataStream ds2(&bytesRangeMark, QIODevice::ReadOnly);
   ds2.setVersion(QDataStream::Qt_5_5);
   ds2 >> rangeMarkers;
