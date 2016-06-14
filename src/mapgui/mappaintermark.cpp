@@ -160,44 +160,47 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
   const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
   painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::rangeRingColor), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
   for(const maptypes::RangeMarker& rings : rangeRings)
   {
-    auto maxIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+    QVector<int>::const_iterator maxIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+
     if(maxIter != rings.ranges.end())
     {
-      bool visible;
-      QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &visible);
-
       int maxDiameter = *maxIter;
 
-      Rect rect(rings.center, nmToMeter(maxDiameter / 2 * 5 / 4));
-
-      QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
-      if(rings.type == maptypes::VOR)
-      {
-        color = mapcolors::vorSymbolColor;
-        textColor = mapcolors::vorSymbolColor;
-      }
-      else if(rings.type == maptypes::NDB)
-      {
-        color = mapcolors::ndbSymbolColor;
-        textColor = mapcolors::ndbSymbolColor;
-      }
-      else if(rings.type == maptypes::ILS)
-      {
-        color = mapcolors::ilsSymbolColor;
-        textColor = mapcolors::ilsTextColor;
-      }
+      Rect rect(rings.center, nmToMeter(maxDiameter));
 
       if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                                              DEG)) /* && !fast*/)
       {
-        painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-        painter->drawEllipse(center, 4, 4);
+        QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
+        if(rings.type == maptypes::VOR)
+        {
+          color = mapcolors::vorSymbolColor;
+          textColor = mapcolors::vorSymbolColor;
+        }
+        else if(rings.type == maptypes::NDB)
+        {
+          color = mapcolors::ndbSymbolColor;
+          textColor = mapcolors::ndbSymbolColor;
+        }
+        else if(rings.type == maptypes::ILS)
+        {
+          color = mapcolors::ilsSymbolColor;
+          textColor = mapcolors::ilsTextColor;
+        }
         painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-        painter->drawEllipse(center, 4, 4);
+
+        bool visible;
+        QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &visible);
+        if(visible)
+        {
+          painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+          painter->drawEllipse(center, 4, 4);
+          painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+          painter->drawEllipse(center, 4, 4);
+        }
 
         for(int diameter : rings.ranges)
         {
