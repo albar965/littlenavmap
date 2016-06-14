@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef PROFILEWIDGET_H
-#define PROFILEWIDGET_H
+#ifndef LITTLENAVMAP_PROFILEWIDGET_H
+#define LITTLENAVMAP_PROFILEWIDGET_H
 
 #include <QFuture>
 #include <QFutureWatcher>
@@ -24,12 +24,12 @@
 
 #include <marble/GeoDataCoordinates.h>
 
-#include <geo/pos.h>
+#include "geo/pos.h"
 
-#include <route/routemapobject.h>
-#include <route/routemapobjectlist.h>
+#include "route/routemapobject.h"
+#include "route/routemapobjectlist.h"
 
-#include <fs/sc/simconnectdata.h>
+#include "fs/sc/simconnectdata.h"
 
 namespace Marble {
 class ElevationModel;
@@ -126,4 +126,4 @@ private:
   void terminateThread();
 };
 
-#endif // PROFILEWIDGET_H
+#endif // LITTLENAVMAP_PROFILEWIDGET_H

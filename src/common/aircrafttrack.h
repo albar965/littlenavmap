@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef AIRCRAFTTRACK_H
-#define AIRCRAFTTRACK_H
+#ifndef LITTLENAVMAP_AIRCRAFTTRACK_H
+#define LITTLENAVMAP_AIRCRAFTTRACK_H
 
-#include <geo/pos.h>
+#include "geo/pos.h"
 
 struct AircraftTrackPos
 {
@@ -41,4 +41,4 @@ public:
 
 };
 
-#endif // AIRCRAFTTRACK_H
+#endif // LITTLENAVMAP_AIRCRAFTTRACK_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVMAPWIDGET_H
-#define NAVMAPWIDGET_H
+#ifndef LITTLENAVMAP_NAVMAPWIDGET_H
+#define LITTLENAVMAP_NAVMAPWIDGET_H
 
 #include "common/maptypes.h"
 
@@ -27,14 +27,14 @@
 
 #include <QWidget>
 
-#include <geo/pos.h>
+#include "geo/pos.h"
 
-#include <route/routemapobject.h>
-#include <route/routemapobjectlist.h>
+#include "route/routemapobject.h"
+#include "route/routemapobjectlist.h"
 
 #include "fs/sc/simconnectdata.h"
 
-#include <common/aircrafttrack.h>
+#include "common/aircrafttrack.h"
 
 namespace atools {
 namespace geo {
@@ -290,4 +290,4 @@ private:
 
 };
 
-#endif // NAVMAPWIDGET_H
+#endif // LITTLENAVMAP_NAVMAPWIDGET_H

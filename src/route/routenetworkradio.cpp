@@ -17,13 +17,13 @@
 
 #include "routenetworkradio.h"
 
-#include <sql/sqldatabase.h>
-#include <sql/sqlquery.h>
-#include <sql/sqlutil.h>
+#include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
 
 #include "geo/calculations.h"
-#include <geo/pos.h>
-#include <geo/rect.h>
+#include "geo/pos.h"
+#include "geo/rect.h"
 
 #include <QElapsedTimer>
 

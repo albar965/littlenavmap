@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPSCALE_H
-#define MAPSCALE_H
+#ifndef LITTLENAVMAP_MAPSCALE_H
+#define LITTLENAVMAP_MAPSCALE_H
 
 #include <QVector>
 
@@ -61,4 +61,4 @@ private:
   QVector<double> scales;
 };
 
-#endif // MAPSCALE_H
+#endif // LITTLENAVMAP_MAPSCALE_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef AIRPORTICONDELEGATE_H
-#define AIRPORTICONDELEGATE_H
+#ifndef LITTLENAVMAP_AIRPORTICONDELEGATE_H
+#define LITTLENAVMAP_AIRPORTICONDELEGATE_H
 
 #include <QStyledItemDelegate>
 
@@ -46,4 +46,4 @@ private:
 
 };
 
-#endif // AIRPORTICONDELEGATE_H
+#endif // LITTLENAVMAP_AIRPORTICONDELEGATE_H

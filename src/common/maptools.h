@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTOOLS_H
-#define MAPTOOLS_H
+#ifndef LITTLENAVMAP_MAPTOOLS_H
+#define LITTLENAVMAP_MAPTOOLS_H
 
 #include "common/coordinateconverter.h"
 #include "geo/calculations.h"
@@ -75,4 +75,4 @@ void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& l
 
 } // namespace maptools
 
-#endif // MAPTOOLS_H
+#endif // LITTLENAVMAP_MAPTOOLS_H

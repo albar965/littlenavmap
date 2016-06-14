@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef APSEARCHPANE_H
-#define APSEARCHPANE_H
+#ifndef LITTLENAVMAP_APSEARCHPANE_H
+#define LITTLENAVMAP_APSEARCHPANE_H
 
 #include "geo/pos.h"
 
@@ -73,4 +73,4 @@ private:
 
 };
 
-#endif // APSEARCHPANE_H
+#endif // LITTLENAVMAP_APSEARCHPANE_H

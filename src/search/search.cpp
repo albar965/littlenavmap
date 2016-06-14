@@ -38,9 +38,9 @@
 #include <QLineEdit>
 #include <QTimer>
 
-#include <gui/actiontextsaver.h>
+#include "gui/actiontextsaver.h"
 
-#include <mapgui/mapquery.h>
+#include "mapgui/mapquery.h"
 
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 600;
 

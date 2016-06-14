@@ -15,11 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef HTMLBUILDER_H
-#define HTMLBUILDER_H
+#ifndef LITTLENAVMAP_HTMLBUILDER_H
+#define LITTLENAVMAP_HTMLBUILDER_H
 
 #include <QLocale>
-#include <QStringList>
 #include <QCoreApplication>
 #include <QColor>
 #include <QSize>
@@ -187,4 +186,4 @@ private:
   bool truncated = false;
 };
 
-#endif // HTMLBUILDER_H
+#endif // LITTLENAVMAP_HTMLBUILDER_H

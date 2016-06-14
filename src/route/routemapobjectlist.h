@@ -15,12 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEMAPOBJECTLIST_H
-#define ROUTEMAPOBJECTLIST_H
+#ifndef LITTLENAVMAP_ROUTEMAPOBJECTLIST_H
+#define LITTLENAVMAP_ROUTEMAPOBJECTLIST_H
 
 #include "routemapobject.h"
 
-#include <fs/pln/flightplan.h>
+#include "fs/pln/flightplan.h"
 
 class RouteMapObjectList :
   public QList<RouteMapObject>
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // ROUTEMAPOBJECTLIST_H
+#endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H

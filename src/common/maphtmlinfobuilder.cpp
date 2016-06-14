@@ -23,19 +23,19 @@
 #include "route/routemapobjectlist.h"
 #include "geo/calculations.h"
 #include "fs/bgl/ap/rw/runway.h"
-#include <common/htmlbuilder.h>
-#include <common/morsecode.h>
-#include <common/weatherreporter.h>
+#include "common/htmlbuilder.h"
+#include "common/morsecode.h"
+#include "common/weatherreporter.h"
 #include "atools.h"
 #include "common/formatter.h"
 #include <QSize>
 #include "geo/calculations.h"
 
-#include <sql/sqlrecord.h>
+#include "sql/sqlrecord.h"
 
-#include <info/infoquery.h>
+#include "info/infoquery.h"
 
-#include <fs/sc/simconnectdata.h>
+#include "fs/sc/simconnectdata.h"
 
 using namespace maptypes;
 using atools::sql::SqlRecord;

@@ -20,16 +20,15 @@
 #include "common/weatherreporter.h"
 #include "infocontroller.h"
 #include <QImageReader>
-#include <QSettings>
-#include <gui/mainwindow.h>
-#include <gui/widgetstate.h>
+#include "gui/mainwindow.h"
+#include "gui/widgetstate.h"
 #include "infoquery.h"
 #include "ui_mainwindow.h"
-#include <common/htmlbuilder.h>
-#include <common/maphtmlinfobuilder.h>
-#include <common/symbolpainter.h>
-#include <mapgui/mapquery.h>
-#include <settings/settings.h>
+#include "common/htmlbuilder.h"
+#include "common/maphtmlinfobuilder.h"
+#include "common/symbolpainter.h"
+#include "mapgui/mapquery.h"
+#include "settings/settings.h"
 #include <QScrollBar>
 #include "atools.h"
 

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPHTMLINFOBUILDER_H
-#define MAPHTMLINFOBUILDER_H
+#ifndef LITTLENAVMAP_MAPHTMLINFOBUILDER_H
+#define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
 #include <QCoreApplication>
 #include <QLocale>

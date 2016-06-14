@@ -22,9 +22,9 @@
 #include <QRegularExpression>
 #include "atools.h"
 
-#include <fs/pln/flightplan.h>
+#include "fs/pln/flightplan.h"
 
-#include <marble/ElevationModel.h>
+#include "marble/ElevationModel.h"
 
 using namespace atools::geo;
 

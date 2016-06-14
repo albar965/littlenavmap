@@ -30,7 +30,7 @@
 #include <QSqlQueryModel>
 #include <QApplication>
 
-#include <common/maptypesfactory.h>
+#include "common/maptypesfactory.h"
 
 AirportIconDelegate::AirportIconDelegate(const ColumnList *columns)
   : cols(columns)

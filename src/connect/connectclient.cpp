@@ -27,7 +27,7 @@
 #include <QApplication>
 #include <QThread>
 
-#include <gui/widgetstate.h>
+#include "gui/widgetstate.h"
 
 ConnectClient::ConnectClient(QWidget *parent)
   : QObject(parent), parentWidget(parent)

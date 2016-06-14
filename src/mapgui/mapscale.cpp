@@ -22,7 +22,7 @@
 
 #include <marble/ViewportParams.h>
 
-#include <geo/rect.h>
+#include "geo/rect.h"
 
 using namespace Marble;
 using namespace atools::geo;

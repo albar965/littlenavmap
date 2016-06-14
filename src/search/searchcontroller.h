@@ -20,8 +20,8 @@
 #include <QObject>
 #include <QString>
 
-#ifndef SEARCHPANELIST_H
-#define SEARCHPANELIST_H
+#ifndef LITTLENAVMAP_SEARCHPANELIST_H
+#define LITTLENAVMAP_SEARCHPANELIST_H
 
 class MainWindow;
 class Search;
@@ -84,4 +84,4 @@ private:
 
 };
 
-#endif // SEARCHPANELIST_H
+#endif // LITTLENAVMAP_SEARCHPANELIST_H

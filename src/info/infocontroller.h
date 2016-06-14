@@ -15,13 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef INFOCONTROLLER_H
-#define INFOCONTROLLER_H
+#ifndef LITTLENAVMAP_INFOCONTROLLER_H
+#define LITTLENAVMAP_INFOCONTROLLER_H
 
 #include <QObject>
 
 #include "fs/sc/simconnectdata.h"
-#include <common/maptypes.h>
+#include "common/maptypes.h"
 
 class MainWindow;
 class MapQuery;
@@ -82,4 +82,4 @@ private:
 
 };
 
-#endif // INFOCONTROLLER_H
+#endif // LITTLENAVMAP_INFOCONTROLLER_H

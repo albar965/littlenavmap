@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERMARK_H
-#define MAPPAINTERMARK_H
+#ifndef LITTLENAVMAP_MAPPAINTERMARK_H
+#define LITTLENAVMAP_MAPPAINTERMARK_H
 
 #include "mappainter.h"
 
@@ -47,4 +47,4 @@ private:
 
 };
 
-#endif // MAPPAINTERMARK_H
+#endif // LITTLENAVMAP_MAPPAINTERMARK_H

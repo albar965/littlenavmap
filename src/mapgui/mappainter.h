@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTER_H
-#define MAPPAINTER_H
+#ifndef LITTLENAVMAP_MAPPAINTER_H
+#define LITTLENAVMAP_MAPPAINTER_H
 
 #include "common/coordinateconverter.h"
 #include "common/maptypes.h"
@@ -85,4 +85,4 @@ protected:
 
 };
 
-#endif // MAPPAINTER_H
+#endif // LITTLENAVMAP_MAPPAINTER_H

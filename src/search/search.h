@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SEARCHPANE_H
-#define SEARCHPANE_H
+#ifndef LITTLENAVMAP_SEARCHPANE_H
+#define LITTLENAVMAP_SEARCHPANE_H
 
 #include "geo/pos.h"
 #include "common/maptypes.h"
@@ -121,4 +121,4 @@ protected:
 
 };
 
-#endif // SEARCHPANE_H
+#endif // LITTLENAVMAP_SEARCHPANE_H

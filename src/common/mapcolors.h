@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPCOLORS_H
-#define MAPCOLORS_H
+#ifndef LITTLENAVMAP_MAPCOLORS_H
+#define LITTLENAVMAP_MAPCOLORS_H
 
 #include <QColor>
 #include <QPen>
@@ -123,4 +123,4 @@ const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
 
 } // namespace mapcolors
 
-#endif // MAPCOLORS_H
+#endif // LITTLENAVMAP_MAPCOLORS_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DATABASEDIALOG_H
-#define DATABASEDIALOG_H
+#ifndef LITTLENAVMAP_DATABASEDIALOG_H
+#define LITTLENAVMAP_DATABASEDIALOG_H
 
 #include "fs/fspaths.h"
 #include "db/dbtypes.h"
@@ -74,4 +74,4 @@ private:
 
 };
 
-#endif // DATABASEDIALOG_H
+#endif // LITTLENAVMAP_DATABASEDIALOG_H

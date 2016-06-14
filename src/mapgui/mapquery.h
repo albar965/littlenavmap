@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPQUERY_H
-#define MAPQUERY_H
+#ifndef LITTLENAVMAP_MAPQUERY_H
+#define LITTLENAVMAP_MAPQUERY_H
 
 #include "geo/pos.h"
 #include "geo/rect.h"
@@ -230,4 +230,4 @@ void MapQuery::SimpleCache<TYPE>::clear()
   curMapLayer = nullptr;
 }
 
-#endif // MAPQUERY_H
+#endif // LITTLENAVMAP_MAPQUERY_H

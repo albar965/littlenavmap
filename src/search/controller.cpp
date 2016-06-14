@@ -31,16 +31,15 @@
 #include <algorithm>
 #include <QTableView>
 #include <QHeaderView>
-#include <QSettings>
 #include <QSpinBox>
 #include <QSortFilterProxyModel>
 #include <QApplication>
 #include <QEventLoop>
 #include <QSqlField>
 
-#include <geo/rect.h>
+#include "geo/rect.h"
 
-#include <sql/sqlrecord.h>
+#include "sql/sqlrecord.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;

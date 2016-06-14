@@ -19,7 +19,7 @@
 #include <algorithm>
 #include "atools.h"
 
-#include <gui/mainwindow.h>
+#include "gui/mainwindow.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "ui_mainwindow.h"
@@ -32,9 +32,9 @@
 #include <QMouseEvent>
 #include <QRubberBand>
 #include <QtConcurrent/QtConcurrentRun>
-#include <common/symbolpainter.h>
+#include "common/symbolpainter.h"
 #include "mapgui/mapwidget.h"
-#include <route/routecontroller.h>
+#include "route/routecontroller.h"
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTLAYER_H
-#define MAPPAINTLAYER_H
+#ifndef LITTLENAVMAP_MAPPAINTLAYER_H
+#define LITTLENAVMAP_MAPPAINTLAYER_H
 
 #include <marble/LayerInterface.h>
 #include <QPen>
@@ -114,4 +114,4 @@ private:
 
 };
 
-#endif // MAPPAINTLAYER_H
+#endif // LITTLENAVMAP_MAPPAINTLAYER_H

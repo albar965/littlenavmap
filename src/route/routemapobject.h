@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEMAPOBJECT_H
-#define ROUTEMAPOBJECT_H
+#ifndef LITTLENAVMAP_ROUTEMAPOBJECT_H
+#define LITTLENAVMAP_ROUTEMAPOBJECT_H
 
 #include "common/maptypes.h"
 
@@ -156,4 +156,4 @@ private:
 
 };
 
-#endif // ROUTEMAPOBJECT_H
+#endif // LITTLENAVMAP_ROUTEMAPOBJECT_H

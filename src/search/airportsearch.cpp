@@ -46,7 +46,7 @@
 #include <QStyledItemDelegate>
 #include <QMouseEvent>
 
-#include <common/maptypesfactory.h>
+#include "common/maptypesfactory.h"
 
 const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
                                                 "is_military",

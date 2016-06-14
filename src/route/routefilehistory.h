@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEFILEHISTORY_H
-#define ROUTEFILEHISTORY_H
+#ifndef LITTLENAVMAP_ROUTEFILEHISTORY_H
+#define LITTLENAVMAP_ROUTEFILEHISTORY_H
 
 #include <QObject>
 
@@ -64,4 +64,4 @@ private:
   int maxEntries = 15;
 };
 
-#endif // ROUTEFILEHISTORY_H
+#endif // LITTLENAVMAP_ROUTEFILEHISTORY_H

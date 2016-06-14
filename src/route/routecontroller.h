@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTECONTROLLER_H
-#define ROUTECONTROLLER_H
+#ifndef LITTLENAVMAP_ROUTECONTROLLER_H
+#define LITTLENAVMAP_ROUTECONTROLLER_H
 
 #include "routemapobject.h"
 #include "routecommand.h"
@@ -195,4 +195,4 @@ private:
 
 };
 
-#endif // ROUTECONTROLLER_H
+#endif // LITTLENAVMAP_ROUTECONTROLLER_H

@@ -18,8 +18,8 @@
 #include "parkingdialog.h"
 #include "ui_parkingdialog.h"
 #include <QPushButton>
-#include <common/maptypes.h>
-#include <mapgui/mapquery.h>
+#include "common/maptypes.h"
+#include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 
 ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,

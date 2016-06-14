@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERAIRPORT_H
-#define MAPPAINTERAIRPORT_H
+#ifndef LITTLENAVMAP_MAPPAINTERAIRPORT_H
+#define LITTLENAVMAP_MAPPAINTERAIRPORT_H
 
 #include "mapgui/mappainter.h"
 #include "common/symbolpainter.h"
@@ -50,4 +50,4 @@ private:
 
 };
 
-#endif // MAPPAINTERAIRPORT_H
+#endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

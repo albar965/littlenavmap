@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEFINDER_H
-#define ROUTEFINDER_H
+#ifndef LITTLENAVMAP_ROUTEFINDER_H
+#define LITTLENAVMAP_ROUTEFINDER_H
 
 #include "common/maptypes.h"
 #include "heap.h"
@@ -82,4 +82,4 @@ private:
   QVector<nw::Edge> successorEdges;
 };
 
-#endif // ROUTEFINDER_H
+#endif // LITTLENAVMAP_ROUTEFINDER_H

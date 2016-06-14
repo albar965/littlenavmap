@@ -21,9 +21,6 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QLocale>
-#include <QObject>
-#include <QSet>
-#include <algorithm>
 
 namespace formatter {
 
@@ -138,7 +135,7 @@ QString capNavString(const QString& str)
 {
   static QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME", "ATIS",
                                "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III", "H", "HH", "MH",
-                              "VASI", "PAPI", "ALS"});
+                               "VASI", "PAPI", "ALS"});
   return atools::capString(str, {}, {}, ignore);
 }
 

@@ -15,12 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef COORDINATECONVERTER_H
-#define COORDINATECONVERTER_H
+#ifndef LITTLENAVMAP_COORDINATECONVERTER_H
+#define LITTLENAVMAP_COORDINATECONVERTER_H
+
+#include <marble/GeoDataCoordinates.h>
 
 #include <QPoint>
 #include <QSize>
-#include <marble/GeoDataCoordinates.h>
 
 namespace Marble {
 class ViewportParams;
@@ -77,4 +78,4 @@ private:
 
 };
 
-#endif // COORDINATECONVERTER_H
+#endif // LITTLENAVMAP_COORDINATECONVERTER_H

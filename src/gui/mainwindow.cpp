@@ -17,69 +17,39 @@
 
 #include "gui/mainwindow.h"
 
+#include "logging/loggingdefs.h"
+#include "common/weatherreporter.h"
+#include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
-#include "sql/sqldatabase.h"
-#include "settings/settings.h"
-#include "logging/loggingdefs.h"
-#include "logging/logginghandler.h"
+#include "gui/helphandler.h"
+#include "gui/tablezoomhandler.h"
 #include "gui/translator.h"
-#include "fs/fspaths.h"
-#include "search/search.h"
+#include "gui/widgetstate.h"
+#include "info/infocontroller.h"
+#include "info/infoquery.h"
+#include "logging/logginghandler.h"
+#include "mapgui/mapquery.h"
 #include "mapgui/mapwidget.h"
-#include "common/formatter.h"
+#include "profile/profilewidget.h"
+#include "route/routecontroller.h"
+#include "route/routefilehistory.h"
 #include "search/airportsearch.h"
 #include "search/navsearch.h"
-#include "mapgui/mapquery.h"
-#include <marble/MarbleModel.h>
-#include <marble/GeoDataPlacemark.h>
-#include <marble/MarbleAboutDialog.h>
-#include <marble/GeoDataDocument.h>
-#include <marble/GeoDataTreeModel.h>
-#include <marble/LegendWidget.h>
-#include <marble/MarbleWidgetPopupMenu.h>
-#include <marble/MarbleWidgetInputHandler.h>
-#include <marble/GeoDataStyle.h>
-#include <marble/GeoDataIconStyle.h>
-#include <marble/RenderPlugin.h>
-#include <marble/MarbleDirs.h>
-#include <marble/QtMarbleConfigDialog.h>
-#include <marble/MarbleDebug.h>
 #include "mapgui/maplayersettings.h"
-
-#include <QDesktopServices>
-#include <QCloseEvent>
-#include <QElapsedTimer>
-#include <QProgressDialog>
-#include <QSettings>
-
-#include "settings/settings.h"
-#include "fs/bglreaderoptions.h"
-#include "search/controller.h"
-#include "gui/widgetstate.h"
-#include "gui/tablezoomhandler.h"
-#include "fs/bglreaderprogressinfo.h"
-#include "fs/navdatabase.h"
 #include "search/searchcontroller.h"
-#include "gui/helphandler.h"
+#include "settings/settings.h"
 
-#include "sql/sqlutil.h"
-#include <QIODevice>
+#include <marble/LegendWidget.h>
+#include <marble/MarbleAboutDialog.h>
+#include <marble/MarbleModel.h>
+
+#include <QCloseEvent>
+#include <QDesktopServices>
+#include <QFileInfo>
 
 #include "ui_mainwindow.h"
-
-#include <route/routecontroller.h>
-#include <route/routefilehistory.h>
-
-#include <common/weatherreporter.h>
-
-#include <connect/connectclient.h>
-
-#include <profile/profilewidget.h>
-
-#include <info/infocontroller.h>
-#include <info/infoquery.h>
 
 using namespace Marble;
 using atools::settings::Settings;

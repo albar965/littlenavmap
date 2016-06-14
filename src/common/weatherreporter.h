@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WEATHERLOADER_H
-#define WEATHERLOADER_H
+#ifndef LITTLENAVMAP_WEATHERLOADER_H
+#define LITTLENAVMAP_WEATHERLOADER_H
 
 #include <QHash>
 #include <QNetworkAccessManager>
@@ -75,4 +75,4 @@ private:
 
 };
 
-#endif // WEATHERLOADER_H
+#endif // LITTLENAVMAP_WEATHERLOADER_H

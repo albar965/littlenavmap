@@ -30,7 +30,6 @@
 
 #include <QContextMenuEvent>
 #include <QMenu>
-#include <QSettings>
 #include <QToolTip>
 #include <QRubberBand>
 
@@ -50,14 +49,14 @@
 #include "common/symbolpainter.h"
 #include "ui_mainwindow.h"
 
-#include <gui/actiontextsaver.h>
+#include "gui/actiontextsaver.h"
 
 #include <QPainter>
 
-#include <route/routenetworkradio.h>
+#include "route/routenetworkradio.h"
 #include "common/weatherreporter.h"
 
-#include <route/routenetworkairway.h>
+#include "route/routenetworkairway.h"
 
 using namespace Marble;
 
@@ -244,7 +243,7 @@ void MapWidget::historyBack()
 void MapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  writePluginSettings(*s.getQSettings());
+  writePluginSettings(s.getQSettings());
 
   s.setValue("Map/MarkLonX", markPos.getLonX());
   s.setValue("Map/MarkLatY", markPos.getLatY());
@@ -270,7 +269,7 @@ void MapWidget::saveState()
 void MapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  readPluginSettings(*s.getQSettings());
+  readPluginSettings(s.getQSettings());
 
   if(s.contains("Map/MarkLonX") && s.contains("Map/MarkLatY"))
   {

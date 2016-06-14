@@ -17,8 +17,8 @@
 
 #include "databasemeta.h"
 
-#include <sql/sqlquery.h>
-#include <sql/sqlutil.h>
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
 
 using atools::sql::SqlUtil;
 using atools::sql::SqlQuery;

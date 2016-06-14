@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SQLSORTFILTERPROXYMODEL_H
-#define SQLSORTFILTERPROXYMODEL_H
+#ifndef LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H
+#define LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H
 
 #include "geo/pos.h"
 
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // SQLSORTFILTERPROXYMODEL_H
+#endif // LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H

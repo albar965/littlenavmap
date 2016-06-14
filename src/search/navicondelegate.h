@@ -15,12 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVICONDELEGATE_H
-#define NAVICONDELEGATE_H
+#ifndef LITTLENAVMAP_NAVICONDELEGATE_H
+#define LITTLENAVMAP_NAVICONDELEGATE_H
 
 #include <QStyledItemDelegate>
 
-#include <mapgui/mapquery.h>
+#include "mapgui/mapquery.h"
 
 class ColumnList;
 class SqlModel;
@@ -44,4 +44,4 @@ private:
 
 };
 
-#endif // NAVICONDELEGATE_H
+#endif // LITTLENAVMAP_NAVICONDELEGATE_H

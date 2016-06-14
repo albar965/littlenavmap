@@ -22,9 +22,9 @@
 #include "common/formatter.h"
 #include "route/routemapobjectlist.h"
 
-#include <common/htmlbuilder.h>
-#include <common/maphtmlinfobuilder.h>
-#include <common/weatherreporter.h>
+#include "common/htmlbuilder.h"
+#include "common/maphtmlinfobuilder.h"
+#include "common/weatherreporter.h"
 
 #include <QPalette>
 #include <QToolTip>

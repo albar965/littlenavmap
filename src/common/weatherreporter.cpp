@@ -28,7 +28,7 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-#include <settings/settings.h>
+#include "settings/settings.h"
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow)
   : QObject(parentWindow)

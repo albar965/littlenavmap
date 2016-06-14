@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DATABASEMETA_H
-#define DATABASEMETA_H
+#ifndef LITTLENAVMAP_DATABASEMETA_H
+#define LITTLENAVMAP_DATABASEMETA_H
 
 #include <QDateTime>
 
@@ -65,4 +65,4 @@ private:
   bool valid = false;
 };
 
-#endif // DATABASEMETA_H
+#endif // LITTLENAVMAP_DATABASEMETA_H

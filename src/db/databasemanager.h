@@ -15,13 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DATABASEMANAGER_H
-#define DATABASEMANAGER_H
+#ifndef LITTLENAVMAP_DATABASEMANAGER_H
+#define LITTLENAVMAP_DATABASEMANAGER_H
 
 #include <QAction>
 #include <QObject>
 
-#include <sql/sqldatabase.h>
+#include "sql/sqldatabase.h"
 #include "fs/fspaths.h"
 #include "db/dbtypes.h"
 
@@ -123,4 +123,4 @@ private:
 
 };
 
-#endif // DATABASEMANAGER_H
+#endif // LITTLENAVMAP_DATABASEMANAGER_H

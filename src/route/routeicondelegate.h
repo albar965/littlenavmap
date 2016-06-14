@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVICONDELEGATE_H
-#define NAVICONDELEGATE_H
+#ifndef LITTLENAVMAP_NAVICONDELEGATE_H
+#define LITTLENAVMAP_NAVICONDELEGATE_H
 
 #include "routemapobject.h"
 
@@ -43,4 +43,4 @@ private:
 
 };
 
-#endif // NAVICONDELEGATE_H
+#endif // LITTLENAVMAP_NAVICONDELEGATE_H

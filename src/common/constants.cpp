@@ -15,37 +15,4 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_PARKINGDIALOG_H
-#define LITTLENAVMAP_PARKINGDIALOG_H
-
-#include <QDialog>
-
-#include "common/maptypes.h"
-
-namespace Ui {
-class ParkingDialog;
-}
-
-class QListWidget;
-class MapQuery;
-
-class ParkingDialog :
-  public QDialog
-{
-  Q_OBJECT
-
-public:
-  ParkingDialog(QWidget *parent, MapQuery *mapQuery, const maptypes::MapAirport& departureAirport);
-  virtual ~ParkingDialog();
-
-  bool getSelectedParking(maptypes::MapParking& parking);
-
-private:
-  void updateButtons();
-
-  QList<maptypes::MapParking> parkings;
-
-  Ui::ParkingDialog *ui;
-};
-
-#endif // LITTLENAVMAP_PARKINGDIALOG_H
+#include "common/constants.h"

@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QPalette>
 
-#include <mapgui/mapquery.h>
+#include "mapgui/mapquery.h"
 
 namespace mapcolors {
 

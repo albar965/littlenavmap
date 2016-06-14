@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef DBTYPES_H
-#define DBTYPES_H
+#ifndef LITTLENAVMAP_DBTYPES_H
+#define LITTLENAVMAP_DBTYPES_H
 
 #include "fs/fspaths.h"
 
@@ -61,4 +61,4 @@ QDataStream& operator>>(QDataStream& in, FsPathTypeMap& obj);
 
 Q_DECLARE_METATYPE(FsPathTypeMap);
 
-#endif // DBTYPES_H
+#endif // LITTLENAVMAP_DBTYPES_H

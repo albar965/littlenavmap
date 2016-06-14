@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTOOLTIP_H
-#define MAPTOOLTIP_H
+#ifndef LITTLENAVMAP_MAPTOOLTIP_H
+#define LITTLENAVMAP_MAPTOOLTIP_H
 
 #include <QColor>
 #include <QObject>
@@ -53,4 +53,4 @@ private:
   QColor iconBackColor;
 };
 
-#endif // MAPTOOLTIP_H
+#endif // LITTLENAVMAP_MAPTOOLTIP_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LAYERSETTINGS_H
-#define LAYERSETTINGS_H
+#ifndef LITTLENAVMAP_LAYERSETTINGS_H
+#define LITTLENAVMAP_LAYERSETTINGS_H
 
 #include "mapgui/maplayer.h"
 
@@ -44,4 +44,4 @@ private:
   QList<MapLayer> layers;
 };
 
-#endif // LAYERSETTINGS_H
+#endif // LITTLENAVMAP_LAYERSETTINGS_H

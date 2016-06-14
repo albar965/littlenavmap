@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef HEAP_H
-#define HEAP_H
+#ifndef LITTLENAVMAP_HEAP_H
+#define LITTLENAVMAP_HEAP_H
 
 #include <QVector>
 #include <algorithm>
@@ -132,4 +132,4 @@ void Heap<TYPE>::change(const TYPE& data, float cost)
   std::make_heap(heap.begin(), heap.end(), compareFunc);
 }
 
-#endif // HEAP_H
+#endif // LITTLENAVMAP_HEAP_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef CONNECTCLIENT_H
-#define CONNECTCLIENT_H
+#ifndef LITTLENAVMAP_CONNECTCLIENT_H
+#define LITTLENAVMAP_CONNECTCLIENT_H
 
 #include <QAbstractSocket>
 
@@ -64,4 +64,4 @@ private:
 
 };
 
-#endif // CONNECTCLIENT_H
+#endif // LITTLENAVMAP_CONNECTCLIENT_H

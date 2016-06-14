@@ -15,20 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef LITTLENAVMAP_MAINWINDOW_H
+#define LITTLENAVMAP_MAINWINDOW_H
+
+#include "marble/MarbleGlobal.h"
+#include "common/maptypes.h"
 
 #include <QMainWindow>
 #include <QUrl>
 
-#include "geo/pos.h"
-#include "sql/sqldatabase.h"
-#include "marble/MarbleGlobal.h"
-#include "common/maptypes.h"
-
-class QElapsedTimer;
-class Controller;
-class ColumnList;
 class SearchController;
 class RouteController;
 class QComboBox;
@@ -187,4 +182,4 @@ private:
 
 };
 
-#endif // MAINWINDOW_H
+#endif // LITTLENAVMAP_MAINWINDOW_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPOSHISTORY_H
-#define MAPPOSHISTORY_H
+#ifndef LITTLENAVMAP_MAPPOSHISTORY_H
+#define LITTLENAVMAP_MAPPOSHISTORY_H
 
 #include "geo/pos.h"
 
@@ -101,4 +101,4 @@ signals:
 
 };
 
-#endif // MAPPOSHISTORY_H
+#endif // LITTLENAVMAP_MAPPOSHISTORY_H

@@ -19,8 +19,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QFileInfo>
-#include <settings/settings.h>
-#include <QSettings>
+#include "settings/settings.h"
 
 RouteFileHistory::RouteFileHistory(QObject *parent, const QString& settingsName,
                                    QMenu *recentMenuList, QAction *clearMenuAction) :

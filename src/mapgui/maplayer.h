@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LAYER_H
-#define LAYER_H
+#ifndef LITTLENAVMAP_LAYER_H
+#define LITTLENAVMAP_LAYER_H
 
 #include "logging/loggingdefs.h"
 
@@ -334,4 +334,4 @@ private:
 
 };
 
-#endif // LAYER_H
+#endif // LITTLENAVMAP_LAYER_H

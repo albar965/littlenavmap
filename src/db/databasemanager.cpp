@@ -20,21 +20,20 @@
 #include "db/databasedialog.h"
 #include "logging/loggingdefs.h"
 #include "settings/settings.h"
-#include <fs/bglreaderoptions.h>
-#include <fs/bglreaderprogressinfo.h>
+#include "fs/bglreaderoptions.h"
+#include "fs/bglreaderprogressinfo.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
 #include <QElapsedTimer>
 #include <QLabel>
 #include <QProgressDialog>
-#include <QSettings>
 #include <QApplication>
 
-#include <fs/navdatabase.h>
+#include "fs/navdatabase.h"
 
-#include <sql/sqlutil.h>
+#include "sql/sqlutil.h"
 
-#include <gui/errorhandler.h>
+#include "gui/errorhandler.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QList>
@@ -42,6 +41,7 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QAbstractButton>
+#include <QSettings>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;

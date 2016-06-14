@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERAIRCRAFT_H
-#define MAPPAINTERAIRCRAFT_H
+#ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
+#define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
 
 #include "mappainter.h"
 
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif // MAPPAINTERMARKAIRCRAFT_H
+#endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

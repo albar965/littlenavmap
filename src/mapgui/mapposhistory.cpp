@@ -20,7 +20,6 @@
 #include "logging/loggingdefs.h"
 #include "geo/calculations.h"
 
-#include <QSettings>
 #include <QDateTime>
 #include <QDataStream>
 

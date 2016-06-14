@@ -29,7 +29,7 @@
 #include <marble/GeoPainter.h>
 #include <marble/MarbleWidget.h>
 #include <marble/ViewportParams.h>
-#include <route/routecontroller.h>
+#include "route/routecontroller.h"
 
 using namespace Marble;
 using namespace atools::geo;

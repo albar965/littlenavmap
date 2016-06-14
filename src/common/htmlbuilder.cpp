@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "htmlbuilder.h"
+
 #include "logging/loggingdefs.h"
 
 #include <QApplication>

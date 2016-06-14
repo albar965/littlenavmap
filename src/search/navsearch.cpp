@@ -42,7 +42,7 @@
 #include <QLineEdit>
 #include <QSqlField>
 
-#include <common/maptypesfactory.h>
+#include "common/maptypesfactory.h"
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                      MapQuery *mapQuery, int tabWidgetIndex)

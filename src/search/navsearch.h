@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVSEARCHPANE_H
-#define NAVSEARCHPANE_H
+#ifndef LITTLENAVMAP_NAVSEARCHPANE_H
+#define LITTLENAVMAP_NAVSEARCHPANE_H
 
 #include "geo/pos.h"
 
@@ -70,4 +70,4 @@ private:
 
 };
 
-#endif // NAVSEARCHPANE_H
+#endif // LITTLENAVMAP_NAVSEARCHPANE_H

@@ -17,7 +17,7 @@
 
 #include "infoquery.h"
 
-#include <sql/sqldatabase.h>
+#include "sql/sqldatabase.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MORSECODE_H
-#define MORSECODE_H
+#ifndef LITTLENAVMAP_MORSECODE_H
+#define LITTLENAVMAP_MORSECODE_H
 
 #include <QString>
 
@@ -32,4 +32,4 @@ private:
   QString signSep, charSep;
 };
 
-#endif // MORSECODE_H
+#endif // LITTLENAVMAP_MORSECODE_H

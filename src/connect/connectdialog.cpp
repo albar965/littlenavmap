@@ -19,9 +19,8 @@
 #include "logging/loggingdefs.h"
 #include "ui_connectdialog.h"
 #include <QPushButton>
-#include <gui/widgetstate.h>
-#include <settings/settings.h>
-#include <QSettings>
+#include "gui/widgetstate.h"
+#include "settings/settings.h"
 
 using atools::settings::Settings;
 

@@ -25,7 +25,6 @@
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
 
-#include <QSettings>
 #include <QApplication>
 
 #if defined(Q_OS_WIN32)
@@ -37,7 +36,7 @@
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
 
-#include <mapgui/mapposhistory.h>
+#include "mapgui/mapposhistory.h"
 
 int main(int argc, char *argv[])
 {

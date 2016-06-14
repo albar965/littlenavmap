@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SYMBOLPAINTER_H
-#define SYMBOLPAINTER_H
+#ifndef LITTLENAVMAP_SYMBOLPAINTER_H
+#define LITTLENAVMAP_SYMBOLPAINTER_H
 
 #include <QColor>
 #include <QIcon>
@@ -128,4 +128,4 @@ private:
   QColor iconBackground;
 };
 
-#endif // SYMBOLPAINTER_H
+#endif // LITTLENAVMAP_SYMBOLPAINTER_H

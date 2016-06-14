@@ -15,14 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTENETWORK_H
-#define ROUTENETWORK_H
+#ifndef LITTLENAVMAP_ROUTENETWORK_H
+#define LITTLENAVMAP_ROUTENETWORK_H
 
 #include <QElapsedTimer>
 #include <QHash>
 #include <QVector>
 
-#include <common/maptypes.h>
+#include "common/maptypes.h"
 
 namespace  atools {
 namespace sql {
@@ -232,4 +232,4 @@ protected:
 
 };
 
-#endif // ROUTENETWORK_H
+#endif // LITTLENAVMAP_ROUTENETWORK_H

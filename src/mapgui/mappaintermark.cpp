@@ -232,7 +232,6 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
 void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
 {
   QFontMetrics metrics = painter->fontMetrics();
-  painter->setBrush(QColor(Qt::white));
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
 

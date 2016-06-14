@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef CONNECTDIALOG_H
-#define CONNECTDIALOG_H
+#ifndef LITTLENAVMAP_CONNECTDIALOG_H
+#define LITTLENAVMAP_CONNECTDIALOG_H
 
 #include <QDialog>
 
@@ -62,4 +62,4 @@ private:
 
 };
 
-#endif // CONNECTDIALOG_H
+#endif // LITTLENAVMAP_CONNECTDIALOG_H

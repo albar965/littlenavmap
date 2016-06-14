@@ -55,7 +55,7 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
 
   if(mapObj.getMapObjectType() == maptypes::INVALID)
   {
-    // Used red for invalid entriess
+    // Used red text for invalid entries
     opt.palette.setColor(QPalette::Active, QPalette::Text, QColor(Qt::red));
     opt.palette.setColor(QPalette::Inactive, QPalette::Text, QColor(Qt::red));
     opt.palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::red));

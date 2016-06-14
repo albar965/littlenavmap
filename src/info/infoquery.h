@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef INFOQUERY_H
-#define INFOQUERY_H
+#ifndef LITTLENAVMAP_INFOQUERY_H
+#define LITTLENAVMAP_INFOQUERY_H
 
 #include <QCache>
 #include <QObject>
@@ -77,4 +77,4 @@ private:
 
 };
 
-#endif // INFOQUERY_H
+#endif // LITTLENAVMAP_INFOQUERY_H

@@ -15,15 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTENETWORKRADIO_H
-#define ROUTENETWORKRADIO_H
+#ifndef LITTLENAVMAP_ROUTENETWORKRADIO_H
+#define LITTLENAVMAP_ROUTENETWORKRADIO_H
 
 #include "routenetwork.h"
 
 #include <QHash>
 #include <QVector>
 
-#include <common/maptypes.h>
+#include "common/maptypes.h"
 
 namespace  atools {
 namespace sql {
@@ -47,4 +47,4 @@ public:
 
 };
 
-#endif // ROUTENETWORKRADIO_H
+#endif // LITTLENAVMAP_ROUTENETWORKRADIO_H

@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <functional>
 #include <marble/GeoDataLatLonBox.h>
-#include <common/maptypesfactory.h>
+#include "common/maptypesfactory.h"
 
 using namespace Marble;
 using namespace atools::sql;

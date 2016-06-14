@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPPAINTERROUTE_H
-#define MAPPAINTERROUTE_H
+#ifndef LITTLENAVMAP_MAPPAINTERROUTE_H
+#define LITTLENAVMAP_MAPPAINTERROUTE_H
 
 #include "mappainter.h"
 
@@ -68,4 +68,4 @@ private:
 
 };
 
-#endif // MAPPAINTERROUTE_H
+#endif // LITTLENAVMAP_MAPPAINTERROUTE_H

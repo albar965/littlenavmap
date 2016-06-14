@@ -23,7 +23,7 @@
 
 #include <QDialog>
 
-#include <gui/dialog.h>
+#include "gui/dialog.h"
 
 using atools::fs::FsPaths;
 

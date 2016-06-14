@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef MAPTYPESFACTORY_H
-#define MAPTYPESFACTORY_H
+#ifndef LITTLENAVMAP_MAPTYPESFACTORY_H
+#define LITTLENAVMAP_MAPTYPESFACTORY_H
 
 #include "maptypes.h"
 
@@ -61,4 +61,4 @@ private:
 
 };
 
-#endif // MAPTYPESFACTORY_H
+#endif // LITTLENAVMAP_MAPTYPESFACTORY_H

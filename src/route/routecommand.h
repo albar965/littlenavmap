@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTECOMMAND_H
-#define ROUTECOMMAND_H
+#ifndef LITTLENAVMAP_ROUTECOMMAND_H
+#define LITTLENAVMAP_ROUTECOMMAND_H
 
-#include <fs/pln/flightplan.h>
+#include "fs/pln/flightplan.h"
 
 #include <QUndoCommand>
 
@@ -60,4 +60,4 @@ private:
   atools::fs::pln::Flightplan planBefore, planAfter;
 };
 
-#endif // ROUTECOMMAND_H
+#endif // LITTLENAVMAP_ROUTECOMMAND_H
