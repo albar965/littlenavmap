@@ -21,6 +21,7 @@
 #include "common/maptypes.h"
 #include "heap.h"
 #include "route/routenetwork.h"
+#include "geo/calculations.h"
 
 namespace rf {
 struct RouteEntry
@@ -53,6 +54,11 @@ private:
   const float COST_FACTOR_VOR = 1.2f;
   // Avoid DMEs
   const float COST_FACTOR_DME = 4.f;
+
+  // Avoid too long airway segments
+  const float COST_FACTOR_LONG_AIRWAY = 1.2f;
+  // Distance to define a long airway segment in meter
+  const float DISTANCE_LONG_AIRWAY = atools::geo::nmToMeter(200.f);
 
   int altitude = 0;
 

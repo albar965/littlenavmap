@@ -190,6 +190,11 @@ public:
 
 #endif
 
+  nw::Modes getMode() const
+  {
+    return mode;
+  }
+
 protected:
   void addDestNodeEdges(nw::Node& node);
   void cleanDestNodeEdges();

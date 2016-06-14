@@ -192,16 +192,24 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
   else if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
     costs *= COST_FACTOR_FORCE_CLOSE_NODES;
 
-  if((currentNode.range != 0 || successorNode.range != 0) &&
-     currentNode.range + successorNode.range < distanceMeter)
-    costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
+  if(network->getMode() & nw::ROUTE_JET || network->getMode() & nw::ROUTE_VICTOR)
+  {
+    if(distanceMeter > DISTANCE_LONG_AIRWAY)
+      costs *= COST_FACTOR_LONG_AIRWAY;
+  }
+  else
+  {
+    if((currentNode.range != 0 || successorNode.range != 0) &&
+       currentNode.range + successorNode.range < distanceMeter)
+      costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
-  if(successorNode.type == nw::DME)
-    costs *= COST_FACTOR_DME;
-  else if(successorNode.type == nw::VOR)
-    costs *= COST_FACTOR_VOR;
-  else if(successorNode.type == nw::NDB)
-    costs *= COST_FACTOR_NDB;
+    if(successorNode.type == nw::DME)
+      costs *= COST_FACTOR_DME;
+    else if(successorNode.type == nw::VOR)
+      costs *= COST_FACTOR_VOR;
+    else if(successorNode.type == nw::NDB)
+      costs *= COST_FACTOR_NDB;
+  }
 
   return costs;
 }
