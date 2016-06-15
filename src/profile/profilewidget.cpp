@@ -577,7 +577,7 @@ void ProfileWidget::hideEvent(QHideEvent *)
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-  if(legList.elevationLegs.isEmpty())
+  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
     return;
 
   if(rubberBand == nullptr)
@@ -662,6 +662,9 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
 void ProfileWidget::leaveEvent(QEvent *)
 {
+  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+    return;
+
   qDebug() << "leave";
 
   delete rubberBand;
