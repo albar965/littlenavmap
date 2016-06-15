@@ -420,9 +420,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setFont(font);
 
       QString upDown;
-      if(simData.getVerticalSpeed() > 100.f)
+      if(simData.getVerticalSpeedFeetPerMin() > 100.f)
         upDown = " ▲";
-      else if(simData.getVerticalSpeed() < -100.f)
+      else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
         upDown = " ▼";
 
       QStringList texts;

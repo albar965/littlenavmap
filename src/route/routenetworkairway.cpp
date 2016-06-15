@@ -35,7 +35,8 @@ using atools::geo::Rect;
 using namespace nw;
 
 RouteNetworkAirway::RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb)
-  : RouteNetwork(sqlDb, "route_node_airway", "route_edge_airway", {}, {"type", "minimum_altitude", "airway_id"})
+  : RouteNetwork(sqlDb, "route_node_airway", "route_edge_airway", {},
+                 {"type", "minimum_altitude", "airway_id"})
 {
 }
 

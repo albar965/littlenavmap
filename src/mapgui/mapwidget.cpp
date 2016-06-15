@@ -404,8 +404,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   {
     using atools::almostNotEqual;
     if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
-       almostNotEqual(lastSimData.getCourseMag(), simData.getCourseMag(), 1.f) ||
-       almostNotEqual(lastSimData.getIndicatedSpeed(), simData.getIndicatedSpeed(), 10.f) ||
+       almostNotEqual(lastSimData.getHeadingDegMag(), simData.getHeadingDegMag(), 1.f) ||
+       almostNotEqual(lastSimData.getIndicatedSpeedKts(), simData.getIndicatedSpeedKts(), 10.f) ||
        almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
     {
       lastSimData = simulatorData;

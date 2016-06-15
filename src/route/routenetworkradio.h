@@ -43,8 +43,6 @@ public:
   RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb);
   virtual ~RouteNetworkRadio();
 
-
-
 };
 
 #endif // LITTLENAVMAP_ROUTENETWORKRADIO_H

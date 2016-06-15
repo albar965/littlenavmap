@@ -78,7 +78,7 @@ private:
 
   bool canTextEditUpdate(const QTextEdit *textEdit);
 
-  void updateTextEdit(QTextEdit* textEdit, const QString& text);
+  void updateTextEdit(QTextEdit *textEdit, const QString& text);
 
 };
 

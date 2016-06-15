@@ -124,6 +124,7 @@ private:
   float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
 
   void terminateThread();
+
 };
 
 #endif // LITTLENAVMAP_PROFILEWIDGET_H

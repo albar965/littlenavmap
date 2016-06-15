@@ -148,7 +148,3 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
   }
   return false;
 }
-
-
-
-

@@ -75,7 +75,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
   if(wToS(pos, x, y))
   {
     painter->translate(x, y);
-    painter->rotate(atools::geo::normalizeCourse(simData.getCourseTrue()));
+    painter->rotate(atools::geo::normalizeCourse(simData.getHeadingDegTrue()));
 
     symbolPainter->drawAircraftSymbol(painter, 0, 0, 40,
                                       simData.getFlags() & atools::fs::sc::ON_GROUND);
@@ -92,22 +92,22 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
       texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
 
-    texts.append("IAS " + QLocale().toString(simData.getIndicatedSpeed(), 'f', 0) + " , " +
-                 "GS " + QLocale().toString(simData.getGroundSpeed(), 'f', 0) + " , " +
-                 "HDG " + QLocale().toString(simData.getCourseMag(), 'f', 0) + " °M");
+    texts.append("IAS " + QLocale().toString(simData.getIndicatedSpeedKts(), 'f', 0) + " , " +
+                 "GS " + QLocale().toString(simData.getGroundSpeedKts(), 'f', 0) + " , " +
+                 "HDG " + QLocale().toString(simData.getHeadingDegMag(), 'f', 0) + " °M");
 
     QString upDown;
-    if(simData.getVerticalSpeed() > 100.f)
+    if(simData.getVerticalSpeedFeetPerMin() > 100.f)
       upDown = " ▲";
-    else if(simData.getVerticalSpeed() < -100.f)
+    else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
       upDown = " ▼";
 
     texts.append("ALT " + QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
 
     texts.append("Wind " + QLocale().toString(
                    atools::geo::normalizeCourse(
-                     simData.getWindDirection() - simData.getMagVar()), 'f', 0) + " °M / " +
-                 QLocale().toString(simData.getWindSpeed(), 'f', 0));
+                     simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0) + " °M / " +
+                 QLocale().toString(simData.getWindSpeedKts(), 'f', 0));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
   }
