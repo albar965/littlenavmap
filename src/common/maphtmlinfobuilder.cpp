@@ -112,7 +112,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
     html.row2("State or Province:", state);
   html.row2("Country:", country);
   html.row2("Altitude:", locale.toString(airport.getPosition().getAltitude(), 'f', 0) + " ft");
-  html.row2("Magvar:", locale.toString(airport.magvar, 'f', 1) + " °");
+  html.row2("Magvar:", maptypes::magvarText(airport.magvar));
   if(rec != nullptr)
   {
     html.row2("Rating:", atools::ratingString(rec->valueInt("rating"), 5));
@@ -238,8 +238,8 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
       hdg = normalizeCourse(hdg);
       float otherHdg = normalizeCourse(opposedCourseDeg(hdg));
 
-      html.row2("Heading:", locale.toString(hdg, 'f', 0) + " °M, " +
-                locale.toString(otherHdg, 'f', 0) + " °M");
+      html.row2("Heading:", locale.toString(hdg, 'f', 0) + "°M, " +
+                locale.toString(otherHdg, 'f', 0) + "°M");
       html.row2("Surface:",
                 maptypes::surfaceName(rec->valueStr("longest_runway_surface")));
     }
@@ -441,7 +441,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   html.table();
   if(closed)
     html.row2("Closed", QString());
-  html.row2("Heading:", locale.toString(hdgPrim, 'f', 0) + " °M");
+  html.row2("Heading:", locale.toString(hdgPrim, 'f', 0) + "°M");
 
   int threshold = rec->valueInt("offset_threshold");
   if(threshold > 0)
@@ -459,9 +459,9 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
   rowForStrCap(html, rec, "is_pattern", "Pattern:", "%1");
 
   rowForStr(html, rec, "left_vasi_type", "Left VASI Type:", "%1");
-  rowForFloat(html, rec, "left_vasi_pitch", "Left VASI Pitch:", "%1 °", 1);
+  rowForFloat(html, rec, "left_vasi_pitch", "Left VASI Pitch:", "%1°", 1);
   rowForStr(html, rec, "right_vasi_type", "Right VASI Type:", "%1");
-  rowForFloat(html, rec, "right_vasi_pitch", "Right VASI Pitch:", "%1 °", 1);
+  rowForFloat(html, rec, "right_vasi_pitch", "Right VASI Pitch:", "%1°", 1);
 
   rowForStr(html, rec, "app_light_system_type", "ALS Type:", "%1");
 
@@ -489,16 +489,16 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     html.row2("Frequency:", locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + " MHz");
     html.row2("Range:", locale.toString(ilsRec->valueInt("range")) + " nm");
     float magvar = ilsRec->valueFloat("mag_var");
-    html.row2("Magvar:", locale.toString(magvar, 'f', 1) + " °");
+    html.row2("Magvar:", maptypes::magvarText(magvar));
     rowForBool(html, ilsRec, "has_backcourse", "Has Backcourse", false);
 
     float hdg = ilsRec->valueFloat("loc_heading") + magvar;
     hdg = normalizeCourse(hdg);
 
-    html.row2("Localizer Heading:", locale.toString(hdg, 'f', 0) + " °M");
-    html.row2("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + " °");
+    html.row2("Localizer Heading:", locale.toString(hdg, 'f', 0) + "°M");
+    html.row2("Localizer Width:", locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + "°");
     if(gs)
-      html.row2("Glideslope Pitch:", locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + " °");
+      html.row2("Glideslope Pitch:", locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + "°");
 
     html.tableEnd();
   }
@@ -527,8 +527,8 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
 
         float hdg = recApp.valueFloat("heading") + airport.magvar;
         hdg = normalizeCourse(hdg);
-        html.row2("Heading:", locale.toString(hdg, 'f', 0) + " °M, " +
-                  locale.toString(recApp.valueFloat("heading"), 'f', 0) + " °T");
+        html.row2("Heading:", locale.toString(hdg, 'f', 0) + "°M, " +
+                  locale.toString(recApp.valueFloat("heading"), 'f', 0) + "°T");
 
         html.row2("Altitude:", locale.toString(recApp.valueFloat("altitude"), 'f', 0) + " ft");
         html.row2("Missed Altitude:", locale.toString(recApp.valueFloat("missed_altitude"), 'f', 0) + " ft");
@@ -583,7 +583,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor ba
   html.row2("Region:", vor.region);
   html.row2("Frequency:", locale.toString(vor.frequency / 1000., 'f', 2) + " MHz");
   if(!vor.dmeOnly)
-    html.row2("Magvar:", locale.toString(vor.magvar, 'f', 1) + " °");
+    html.row2("Magvar:", maptypes::magvarText(vor.magvar));
   html.row2("Altitude:", locale.toString(vor.getPosition().getAltitude(), 'f', 0) + " ft");
   html.row2("Range:", locale.toString(vor.range) + " nm");
   html.row2("Morse:", "<b>" + morse->getCode(vor.ident) + "</b>");
@@ -611,7 +611,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor ba
   html.row2("Type:", maptypes::navTypeName(ndb.type));
   html.row2("Region:", ndb.region);
   html.row2("Frequency:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
-  html.row2("Magvar:", locale.toString(ndb.magvar, 'f', 1) + " °");
+  html.row2("Magvar:", maptypes::magvarText(ndb.magvar));
   html.row2("Altitude:", locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + " ft");
   html.row2("Range:", locale.toString(ndb.range) + " nm");
   html.row2("Morse:", "<b>" + morse->getCode(ndb.ident) + "</b>");
@@ -638,7 +638,7 @@ void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& 
     html.row2("Route position:", locale.toString(waypoint.routeIndex + 1));
   html.row2("Type:", maptypes::navTypeName(waypoint.type));
   html.row2("Region:", waypoint.region);
-  html.row2("Magvar:", locale.toString(waypoint.magvar, 'f', 1) + " °");
+  html.row2("Magvar:", maptypes::magvarText(waypoint.magvar));
   addCoordinates(rec, html);
 
   html.tableEnd();
@@ -837,8 +837,8 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
 
       html.row2("Distance, Course and Time:", locale.toString(nearestLegDistance, 'f', 0) + " nm, " +
                 locale.toString(crs, 'f', 0) +
-                " °M" + timeStr);
-      html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + " °M");
+                "°M" + timeStr);
+      html.row2("Leg Course:", locale.toString(rmo.getCourseToRhumb(), 'f', 0) + "°M");
 
       if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)
       {
@@ -864,10 +864,10 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
 
   head(html, "Aircraft");
   html.table();
-  html.row2("Heading:", locale.toString(data.getHeadingDegMag(), 'f', 0) + " °M, " +
-            locale.toString(data.getHeadingDegTrue(), 'f', 0) + " °T");
-  html.row2("Track:", locale.toString(data.getTrackDegMag(), 'f', 0) + " °M, " +
-            locale.toString(data.getTrackDegTrue(), 'f', 0) + " °T");
+  html.row2("Heading:", locale.toString(data.getHeadingDegMag(), 'f', 0) + "°M, " +
+            locale.toString(data.getHeadingDegTrue(), 'f', 0) + "°T");
+  html.row2("Track:", locale.toString(data.getTrackDegMag(), 'f', 0) + "°M, " +
+            locale.toString(data.getTrackDegTrue(), 'f', 0) + "°T");
 
   html.row2("Fuel Flow:", locale.toString(data.getFuelFlowPPH(), 'f', 0) + " pph, " +
             locale.toString(data.getFuelFlowGPH(), 'f', 0) + " gph, ");
@@ -937,7 +937,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   float windSpeed = data.getWindSpeedKts();
   float windDir = normalizeCourse(data.getWindDirectionDegT() - data.getMagVarDeg());
   if(windSpeed >= 1.f)
-    html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + " °M, " +
+    html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + "°M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");
   else
     html.row2("Wind Direction and Speed:", "None");
@@ -974,12 +974,12 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   html.row2(QString(), value);
 
   float temp = data.getTotalAirTemperatureCelsius();
-  html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
-            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
+  html.row2("Total Air Temperature:", locale.toString(temp, 'f', 0) + "°C, " +
+            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + "°F");
 
   temp = data.getAmbientTemperatureCelsius();
-  html.row2("Static Air Temperature:", locale.toString(temp, 'f', 0) + " °C, " +
-            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + " °F");
+  html.row2("Static Air Temperature:", locale.toString(temp, 'f', 0) + "°C, " +
+            locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + "°F");
 
   float slp = data.getSeaLevelPressureMbar();
   html.row2("Sea Level Pressure:", locale.toString(slp, 'f', 0) + " mbar, " +

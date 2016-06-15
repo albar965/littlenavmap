@@ -490,6 +490,7 @@ QString vorType(const maptypes::MapVor& vor);
 QString ndbText(const maptypes::MapNdb& ndb);
 QString waypointText(const maptypes::MapWaypoint& waypoint);
 QString userpointText(const maptypes::MapUserpoint& userpoint);
+QString magvarText(float magvar, int decimals = 1);
 
 } // namespace types
 

@@ -164,7 +164,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
                 tr("Scenery\nRating")).conditions("> 0", "== 0")).
 
   append(Column("altitude", tr("Altitude\nft"))).
-  append(Column("mag_var", tr("Mag\nVar °"))).
+  append(Column("mag_var", tr("Mag\nVar°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas"))).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel"))).
 
@@ -377,7 +377,7 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
       return QLocale().toString(value.toDouble() / 1000, 'f', 3);
   }
   else if(col->getColumnName() == "mag_var")
-    return formatter::formatFloatUnit(value.toFloat(), QString(), 1);
+    return maptypes::magvarText(value.toFloat(), 1);
   else if(numberColumns.contains(col->getColumnName()))
     return dataValue.toInt() > 0 ? dataValue.toString() : QString();
   else if(boolColumns.contains(col->getColumnName()))

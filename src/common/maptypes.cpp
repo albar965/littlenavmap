@@ -530,4 +530,15 @@ bool MapObjectRef::operator!=(const MapObjectRef& other) const
   return !operator==(other);
 }
 
+QString magvarText(float magvar, int decimals)
+{
+  // positive" (or "easterly") variation
+  if(magvar < 0.f)
+    return QObject::tr("%1°%2").arg(QLocale().toString(std::abs(magvar), 'f', decimals)).arg(QObject::tr("W"));
+  else if(magvar > 0.f)
+    return QObject::tr("%1°%2").arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr("E"));
+  else
+    return "0°";
+}
+
 } // namespace types

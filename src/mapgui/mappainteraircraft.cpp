@@ -94,7 +94,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 
     texts.append("IAS " + QLocale().toString(simData.getIndicatedSpeedKts(), 'f', 0) + " , " +
                  "GS " + QLocale().toString(simData.getGroundSpeedKts(), 'f', 0) + " , " +
-                 "HDG " + QLocale().toString(simData.getHeadingDegMag(), 'f', 0) + " °M");
+                 "HDG " + QLocale().toString(simData.getHeadingDegMag(), 'f', 0) + "°M");
 
     QString upDown;
     if(simData.getVerticalSpeedFeetPerMin() > 100.f)
@@ -106,7 +106,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 
     texts.append("Wind " + QLocale().toString(
                    atools::geo::normalizeCourse(
-                     simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0) + " °M / " +
+                     simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0) + "°M / " +
                  QLocale().toString(simData.getWindSpeedKts(), 'f', 0));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);

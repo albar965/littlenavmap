@@ -121,7 +121,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).
   append(Column("frequency", tr("Frequency\nkHz/MHz"))).
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\nnm")).filter().condition(">")).
-  append(Column("mag_var", tr("Mag\nVar °"))).
+  append(Column("mag_var", tr("Mag\nVar°"))).
   append(Column("altitude", tr("Altitude\nft"))).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("File")).filter()).
@@ -256,7 +256,7 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return QLocale().toString(value.toDouble(), 'f', 1);
+    return maptypes::magvarText(value.toFloat(), 1);
   else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
     return QLocale().toString(dataValue.toInt());
   else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)
