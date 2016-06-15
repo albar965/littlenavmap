@@ -234,7 +234,7 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
       html.row2("Width:",
                 locale.toString(rec->valueInt("longest_runway_width")) + " ft");
 
-      float hdg = rec->valueFloat("longest_runway_heading") + airport.magvar;
+      float hdg = rec->valueFloat("longest_runway_heading") - airport.magvar;
       hdg = normalizeCourse(hdg);
       float otherHdg = normalizeCourse(opposedCourseDeg(hdg));
 
@@ -361,7 +361,7 @@ void MapHtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html
       {
         const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
         const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-        float hdgPrim = normalizeCourse(rec.valueFloat("heading") + airport.magvar);
+        float hdgPrim = normalizeCourse(rec.valueFloat("heading") - airport.magvar);
         float hdgSec = normalizeCourse(opposedCourseDeg(hdgPrim));
         bool closedPrim = recPrim->valueBool("has_closed_markings");
         bool closedSec = recSec->valueBool("has_closed_markings");
@@ -492,7 +492,7 @@ void MapHtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, 
     html.row2("Magvar:", maptypes::magvarText(magvar));
     rowForBool(html, ilsRec, "has_backcourse", "Has Backcourse", false);
 
-    float hdg = ilsRec->valueFloat("loc_heading") + magvar;
+    float hdg = ilsRec->valueFloat("loc_heading") - magvar;
     hdg = normalizeCourse(hdg);
 
     html.row2("Localizer Heading:", locale.toString(hdg, 'f', 0) + "°M");
@@ -525,7 +525,7 @@ void MapHtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& ht
         html.row2("Fix Ident and Region:", recApp.valueStr("fix_ident") + ", " + recApp.valueStr("fix_region"));
         html.row2("Fix Type:", capNavString(recApp.valueStr("fix_type")));
 
-        float hdg = recApp.valueFloat("heading") + airport.magvar;
+        float hdg = recApp.valueFloat("heading") - airport.magvar;
         hdg = normalizeCourse(hdg);
         html.row2("Heading:", locale.toString(hdg, 'f', 0) + "°M, " +
                   locale.toString(recApp.valueFloat("heading"), 'f', 0) + "°T");
@@ -827,7 +827,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
       head(html, "Next Waypoint");
       html.table();
       const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
-      float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) + rmo.getMagvar());
+      float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
       html.row2("Name and Type:", rmo.getIdent() +
                 (rmo.getMapObjectTypeName().isEmpty() ? "" : ", " + rmo.getMapObjectTypeName()));
 
@@ -935,7 +935,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   head(html, "Environment");
   html.table();
   float windSpeed = data.getWindSpeedKts();
-  float windDir = normalizeCourse(data.getWindDirectionDegT() - data.getMagVarDeg());
+  float windDir = normalizeCourse(data.getWindDirectionDegT() + data.getMagVarDeg());
   if(windSpeed >= 1.f)
     html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + "°M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");

@@ -291,7 +291,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
     painter->translate(x, y);
 
     if(largeSize > 0 && !vor.dmeOnly)
-      painter->rotate(-vor.magvar);
+      painter->rotate(vor.magvar);
 
     int radius = size / 2;
     if(vor.hasDme)

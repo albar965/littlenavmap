@@ -256,7 +256,7 @@ QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(value.toFloat(), 1);
+    return maptypes::magvarText(value.toFloat());
   else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
     return QLocale().toString(dataValue.toInt());
   else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)

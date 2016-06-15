@@ -291,7 +291,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
     {
       // Draw a rhumb line with constant course
       float bearing = m.from.angleDegToRhumb(m.to);
-      float magBearing = m.hasMagvar ? bearing + m.magvar : bearing;
+      float magBearing = m.hasMagvar ? bearing - m.magvar : bearing;
       magBearing = atools::geo::normalizeCourse(magBearing);
 
       float distanceMeter = m.from.distanceMeterToRhumb(m.to);

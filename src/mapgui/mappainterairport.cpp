@@ -582,7 +582,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     {
       const MapRunway& runway = runways->at(i);
       const QRect& runwayRect = runwayRects.at(i);
-      float magHeading = normalizeCourse(runway.heading + airport.magvar);
+      float magHeading = normalizeCourse(runway.heading - airport.magvar);
 
       QString textPrim;
       QString textSec;

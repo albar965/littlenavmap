@@ -377,7 +377,7 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
       return QLocale().toString(value.toDouble() / 1000, 'f', 3);
   }
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(value.toFloat(), 1);
+    return maptypes::magvarText(value.toFloat());
   else if(numberColumns.contains(col->getColumnName()))
     return dataValue.toInt() > 0 ? dataValue.toString() : QString();
   else if(boolColumns.contains(col->getColumnName()))

@@ -230,8 +230,8 @@ void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)
     if(magvar == 0.f)
       magvar = predRouteMapObj->getMagvar();
 
-    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) + magvar);
-    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) + magvar);
+    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) - magvar);
+    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) - magvar);
 
     // QList<Marble::GeoDataCoordinates> elev =
     // elevation->heightProfile(prevPos.getLonX(), prevPos.getLatY(),

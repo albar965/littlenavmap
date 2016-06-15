@@ -530,13 +530,19 @@ bool MapObjectRef::operator!=(const MapObjectRef& other) const
   return !operator==(other);
 }
 
-QString magvarText(float magvar, int decimals)
+QString magvarText(float magvar)
 {
-  // positive" (or "easterly") variation
+  int decimals = 0;
+  if(std::remainder(magvar, 1.f) > 0.f)
+    decimals = 1;
+
   if(magvar < 0.f)
-    return QObject::tr("%1°%2").arg(QLocale().toString(std::abs(magvar), 'f', decimals)).arg(QObject::tr("W"));
+    return QObject::tr("%1°%2").
+           arg(QLocale().toString(std::abs(magvar), 'f', decimals)).arg(QObject::tr(" West"));
   else if(magvar > 0.f)
-    return QObject::tr("%1°%2").arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr("E"));
+    // positive" (or "easterly") variation
+    return QObject::tr("%1°%2").
+           arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr(" East"));
   else
     return "0°";
 }
