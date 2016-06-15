@@ -261,6 +261,12 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     context.viewport = viewport;
     context.objectTypes = objectTypes;
 
+    const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
+    context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
+                                             box.north(GeoDataCoordinates::Degree),
+                                             box.east(GeoDataCoordinates::Degree),
+                                             box.south(GeoDataCoordinates::Degree));
+
     if(objectTypes.testFlag(maptypes::ROUTE) && !forcePaint.isEmpty())
       context.forcePaintObjects = &forcePaint;
     else

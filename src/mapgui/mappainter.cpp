@@ -67,6 +67,8 @@ void MapPainter::setRenderHints(GeoPainter *painter)
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, bool fast,
                              int& xtext, int& ytext)
 {
+  QRect vpRect(painter->viewport());
+
   // Calculate the number of points to use depending in screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
 
@@ -82,44 +84,73 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   QVector<int> xtexts;
   QVector<int> ytexts;
 
-  Pos p1 = pos.endpoint(radiusMeter, 0).normalize();
+  Pos startPoint = pos.endpoint(radiusMeter, 0).normalize();
+  Pos p1 = startPoint;
   bool h1 = true, h2 = true;
   bool v1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &h1);
 
-  GeoDataLinearRing ellipse;
+  bool ringVisible = false, lastVisible = false;
+  GeoDataLineString ellipse;
   ellipse.setTessellate(true);
   for(int i = 0; i <= 360; i += step)
   {
     Pos p2 = pos.endpoint(radiusMeter, i).normalize();
-    ellipse.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
 
     bool v2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &h2);
 
-    if((v1 || v2) && !h1 && !h2)
-      if(v1 && v2)
-      {
-        // Remember visible positions for the text
-        xtexts.append((x1 + x2) / 2);
-        ytexts.append((y1 + y2) / 2);
-      }
+    QRect r(QPoint(x1, y1), QPoint(x2, y2));
+    bool nowVisible = r.normalized().intersects(vpRect);
+
+    if(lastVisible || nowVisible)
+      ellipse.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
+
+    if(lastVisible && !nowVisible)
+    {
+      // Not visible anymore draw previous line segment
+      painter->drawPolyline(ellipse);
+      ellipse.clear();
+    }
+
+    if(lastVisible || nowVisible)
+    {
+      ringVisible = true;
+
+      if((v1 || v2) && !h1 && !h2)
+        if(v1 && v2)
+        {
+          // Remember visible positions for the text
+          xtexts.append((x1 + x2) / 2);
+          ytexts.append((y1 + y2) / 2);
+        }
+    }
     x1 = x2;
     y1 = y2;
     v1 = v2;
     h1 = h2;
+    p1 = p2;
+    lastVisible = nowVisible;
   }
 
-  painter->drawPolygon(ellipse);
+  if(ringVisible)
+  {
+    if(!ellipse.isEmpty())
+    {
+      // Last one always need closing the circle
+      ellipse.append(GeoDataCoordinates(startPoint.getLonX(), startPoint.getLatY(), 0, DEG));
+      painter->drawPolyline(ellipse);
+    }
 
-  if(!xtexts.isEmpty() && !ytexts.isEmpty())
-  {
-    // Take the position at one third
-    xtext = xtexts.at(xtexts.size() / 3);
-    ytext = ytexts.at(ytexts.size() / 3);
-  }
-  else
-  {
-    xtext = -1;
-    ytext = -1;
+    if(!xtexts.isEmpty() && !ytexts.isEmpty())
+    {
+      // Take the position at one third
+      xtext = xtexts.at(xtexts.size() / 3);
+      ytext = ytexts.at(ytexts.size() / 3);
+    }
+    else
+    {
+      xtext = -1;
+      ytext = -1;
+    }
   }
 }
 

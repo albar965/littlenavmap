@@ -40,10 +40,13 @@ private:
   void paintHome(Marble::GeoPainter *painter);
   void paintHighlights(const MapLayer *mapLayerEff, Marble::GeoPainter *painter,
                        bool fast);
-  void paintRangeRings(Marble::GeoPainter *painter,
-                       Marble::ViewportParams *viewport, bool fast);
+
+  void paintRangeRings(Marble::GeoPainter *painter, const atools::geo::Rect& viewBox, bool fast);
+
   void paintDistanceMarkers(Marble::GeoPainter *painter, bool fast);
   void paintRouteDrag(Marble::GeoPainter *painter);
+
+  void paintMagneticPoles(Marble::GeoPainter *painter);
 
 };
 

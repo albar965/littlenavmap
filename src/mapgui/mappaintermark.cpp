@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
 #include "atools.h"
+#include "common/constants.h"
 
 #include <algorithm>
 #include <marble/GeoDataLineString.h>
@@ -53,9 +54,10 @@ void MapPainterMark::render(const PaintContext *context)
   paintHighlights(context->mapLayerEffective, context->painter, drawFast);
   paintMark(context->painter);
   paintHome(context->painter);
-  paintRangeRings(context->painter, context->viewport, drawFast);
+  paintRangeRings(context->painter, context->viewportRect, drawFast);
   paintDistanceMarkers(context->painter, drawFast);
   paintRouteDrag(context->painter);
+  paintMagneticPoles(context->painter);
   context->painter->restore();
 }
 
@@ -72,6 +74,25 @@ void MapPainterMark::paintMark(GeoPainter *painter)
     painter->setPen(mapcolors::markFillPen);
     painter->drawLine(x, y - 8, x, y + 8);
     painter->drawLine(x - 8, y, x + 8, y);
+  }
+}
+
+void MapPainterMark::paintMagneticPoles(GeoPainter *painter)
+{
+  int x, y;
+
+  painter->setPen(mapcolors::magneticPolePen);
+
+  if(wToS(MAG_NORTH_POLE_2007, x, y))
+  {
+    painter->drawEllipse(x, y, 5, 5);
+    symbolPainter->textBox(painter, {"Magnetic North", "2007"}, painter->pen(), x + 5, y, textatt::NONE, 0);
+  }
+
+  if(wToS(MAG_SOUTH_POLE_2007, x, y))
+  {
+    painter->drawEllipse(x, y, 5, 5);
+    symbolPainter->textBox(painter, {"Magnetic South", "2007"}, painter->pen(), x + 5, y, textatt::NONE, 0);
   }
 }
 
@@ -154,10 +175,9 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
   }
 }
 
-void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewport, bool fast)
+void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rect& viewBox, bool fast)
 {
   const QList<maptypes::RangeMarker>& rangeRings = mapWidget->getRangeRings();
-  const GeoDataLatLonAltBox& viewBox = viewport->viewLatLonAltBox();
 
   painter->setBrush(Qt::NoBrush);
 
@@ -171,8 +191,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
 
       Rect rect(rings.center, nmToMeter(maxDiameter));
 
-      if(viewBox.intersects(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                                             DEG)) /* && !fast*/)
+      if(viewBox.overlaps(rect) /*&& !fast*/)
       {
         QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
         if(rings.type == maptypes::VOR)
@@ -192,9 +211,9 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, ViewportParams *viewpo
         }
         painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
-        bool visible;
-        QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &visible);
-        if(visible)
+        bool centerVisible;
+        QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &centerVisible);
+        if(centerVisible)
         {
           painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           painter->drawEllipse(center, 4, 4);

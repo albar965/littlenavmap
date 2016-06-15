@@ -52,6 +52,7 @@ struct PaintContext
   Marble::ViewportParams *viewport;
   maptypes::MapObjectTypes objectTypes;
   QSet<ForcePaintType> *forcePaintObjects;
+  atools::geo::Rect viewportRect;
 };
 
 class MapPainter :
@@ -65,8 +66,8 @@ public:
 
 protected:
   void setRenderHints(Marble::GeoPainter *painter);
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos, int radiusNm, bool fast,
-                   int& xtext, int& ytext);
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos,
+                   int radiusNm, bool fast, int& xtext, int& ytext);
 
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
                    int w, int h, int& x, int& y, float *bearing);
