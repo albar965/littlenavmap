@@ -935,7 +935,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
   head(html, "Environment");
   html.table();
   float windSpeed = data.getWindSpeedKts();
-  float windDir = normalizeCourse(data.getWindDirectionDegT() + data.getMagVarDeg());
+  float windDir = normalizeCourse(data.getWindDirectionDegT() - data.getMagVarDeg());
   if(windSpeed >= 1.f)
     html.row2("Wind Direction and Speed:", locale.toString(windDir, 'f', 0) + "°M, " +
               locale.toString(windSpeed, 'f', 0) + " kts");
