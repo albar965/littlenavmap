@@ -98,5 +98,7 @@
         <file>resources/icons/statusbar.svg</file>
         <file>resources/icons/menubutton.svg</file>
         <file>resources/icons/aircraftground.svg</file>
+        <file>resources/icons/offline.svg</file>
+        <file>resources/icons/kmlfileopen.svg</file>
     </qresource>
 </RCC>

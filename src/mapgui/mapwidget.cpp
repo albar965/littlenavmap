@@ -251,6 +251,7 @@ void MapWidget::saveState()
   s.setValue("Map/HomeLonX", homePos.getLonX());
   s.setValue("Map/HomeLatY", homePos.getLatY());
   s.setValue("Map/HomeDistance", homeDistance);
+  s.setValue("Map/KmlFiles", kmlFiles);
   history.saveState("Map/History");
 
   QByteArray bytesDistMarker;
@@ -284,6 +285,19 @@ void MapWidget::restoreState()
     emit homeChanged(homePos);
   }
   history.restoreState("Map/History");
+
+  if(s.contains("Map/KmlFiles"))
+    kmlFiles = s.valueStrList("Map/KmlFiles");
+
+  QStringList copyKml(kmlFiles);
+  for(const QString& kml : kmlFiles)
+  {
+    if(QFile::exists(kml))
+      model()->addGeoDataFile(kml);
+    else
+      copyKml.removeAll(kml);
+  }
+  kmlFiles = copyKml;
 
   QByteArray bytesDistMark(s.valueVar("Map/DistanceMarkers").toByteArray());
   QDataStream ds(&bytesDistMark, QIODevice::ReadOnly);
@@ -464,6 +478,19 @@ void MapWidget::disconnectedFromSimulator()
   simData = atools::fs::sc::SimConnectData();
   aircraftTrack.clear();
   update();
+}
+
+void MapWidget::addKmlFile(const QString& kmlFile)
+{
+  kmlFiles.append(kmlFile);
+  model()->addGeoDataFile(kmlFile);
+}
+
+void MapWidget::clearKmlFiles()
+{
+  for(const QString& file : kmlFiles)
+    model()->removeGeoData(file);
+  kmlFiles.clear();
 }
 
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
@@ -1059,6 +1086,15 @@ void MapWidget::clearRangeRings()
   qDebug() << "range rings hide";
   rangeMarkers.clear();
   update();
+}
+
+void MapWidget::workOffline(bool offline)
+{
+  qDebug() << "Work offline" << offline;
+  model()->setWorkOffline(offline);
+
+  if(!offline)
+    update();
 }
 
 bool MapWidget::eventFilter(QObject *obj, QEvent *e)

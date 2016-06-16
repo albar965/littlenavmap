@@ -34,7 +34,7 @@ class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
-class RouteFileHistory;
+class FileHistoryHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -109,7 +109,7 @@ private:
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
-  RouteFileHistory *routeFileHistory = nullptr;
+  FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
   QUrl legendUrl;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
@@ -179,6 +179,10 @@ private:
   void showNavmapLegend();
   void resetMessages();
   void showDatabaseFiles();
+
+  void kmlOpenRecent(const QString& kmlFile);
+  void kmlOpen();
+  void kmlClear();
 
 };
 

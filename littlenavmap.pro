@@ -96,10 +96,10 @@ SOURCES += src/main.cpp\
     src/common/symbolpainter.cpp \
     src/common/maphtmlinfobuilder.cpp \
     src/info/infoquery.cpp \
-    src/route/routefilehistory.cpp \
     src/db/databasemanager.cpp \
     src/db/dbtypes.cpp \
-    src/common/constants.cpp
+    src/common/constants.cpp \
+    src/common/filehistoryhandler.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -158,10 +158,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/symbolpainter.h \
     src/common/maphtmlinfobuilder.h \
     src/info/infoquery.h \
-    src/route/routefilehistory.h \
     src/db/databasemanager.h \
     src/db/dbtypes.h \
-    src/common/constants.h
+    src/common/constants.h \
+    src/common/filehistoryhandler.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

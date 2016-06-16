@@ -15,36 +15,37 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routefilehistory.h"
+#include "common/filehistoryhandler.h"
+
 #include <QMenu>
 #include <QAction>
 #include <QFileInfo>
 #include "settings/settings.h"
 
-RouteFileHistory::RouteFileHistory(QObject *parent, const QString& settingsName,
-                                   QMenu *recentMenuList, QAction *clearMenuAction) :
+FileHistoryHandler::FileHistoryHandler(QObject *parent, const QString& settingsName,
+                                       QMenu *recentMenuList, QAction *clearMenuAction) :
   QObject(parent), recentMenu(recentMenuList), clearAction(clearMenuAction), settings(settingsName)
 {
-  connect(recentMenu, &QMenu::triggered, this, &RouteFileHistory::itemTriggered);
+  connect(recentMenu, &QMenu::triggered, this, &FileHistoryHandler::itemTriggered);
 }
 
-RouteFileHistory::~RouteFileHistory()
+FileHistoryHandler::~FileHistoryHandler()
 {
 
 }
 
-void RouteFileHistory::saveState()
+void FileHistoryHandler::saveState()
 {
   atools::settings::Settings::instance().setValue(settings, files);
 }
 
-void RouteFileHistory::restoreState()
+void FileHistoryHandler::restoreState()
 {
   files = atools::settings::Settings::instance().valueStrList(settings);
   updateMenu();
 }
 
-void RouteFileHistory::addFile(const QString& filename)
+void FileHistoryHandler::addFile(const QString& filename)
 {
   if(!filename.isEmpty())
   {
@@ -59,13 +60,13 @@ void RouteFileHistory::addFile(const QString& filename)
   }
 }
 
-void RouteFileHistory::removeFile(const QString& filename)
+void FileHistoryHandler::removeFile(const QString& filename)
 {
   files.removeAll(filename);
   updateMenu();
 }
 
-void RouteFileHistory::itemTriggered(QAction *action)
+void FileHistoryHandler::itemTriggered(QAction *action)
 {
   if(action == clearAction)
     clearMenu();
@@ -81,7 +82,7 @@ void RouteFileHistory::itemTriggered(QAction *action)
   }
 }
 
-void RouteFileHistory::updateMenu()
+void FileHistoryHandler::updateMenu()
 {
   recentMenu->clear();
 
@@ -106,7 +107,7 @@ void RouteFileHistory::updateMenu()
   recentMenu->addAction(clearAction);
 }
 
-void RouteFileHistory::clearMenu()
+void FileHistoryHandler::clearMenu()
 {
   files.clear();
   updateMenu();

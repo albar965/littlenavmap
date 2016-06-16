@@ -97,6 +97,9 @@ public:
 
   void disconnectedFromSimulator();
 
+  void addKmlFile(const QString& kmlFile);
+  void clearKmlFiles();
+
   bool eventFilter(QObject *obj, QEvent *e) override;
 
   const atools::geo::Pos& getMarkPos() const
@@ -135,6 +138,8 @@ public:
   {
     return distanceMarkers;
   }
+
+void workOffline(bool offline);
 
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -200,6 +205,7 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
+  QStringList kmlFiles;
   bool databaseLoadStatus = false;
   enum MapThemeComboIndex
   {

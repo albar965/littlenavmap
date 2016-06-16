@@ -15,23 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_ROUTEFILEHISTORY_H
-#define LITTLENAVMAP_ROUTEFILEHISTORY_H
+#ifndef LITTLENAVMAP_FILEHISTORYHANDLER_H
+#define LITTLENAVMAP_FILEHISTORYHANDLER_H
 
 #include <QObject>
 
 class QMenu;
 class QAction;
 
-class RouteFileHistory :
+class FileHistoryHandler :
   public QObject
 {
   Q_OBJECT
 
 public:
-  RouteFileHistory(QObject *parent, const QString& settingsNamePrefix, QMenu *recentMenuList,
-                   QAction *clearMenuAction);
-  virtual ~RouteFileHistory();
+  FileHistoryHandler(QObject *parent, const QString& settingsNamePrefix, QMenu *recentMenuList,
+                     QAction *clearMenuAction);
+  virtual ~FileHistoryHandler();
 
   void saveState();
   void restoreState();
@@ -64,4 +64,4 @@ private:
   int maxEntries = 15;
 };
 
-#endif // LITTLENAVMAP_ROUTEFILEHISTORY_H
+#endif // LITTLENAVMAP_FILEHISTORYHANDLER_H

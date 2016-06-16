@@ -34,7 +34,7 @@
 #include "mapgui/mapwidget.h"
 #include "profile/profilewidget.h"
 #include "route/routecontroller.h"
-#include "route/routefilehistory.h"
+#include "common/filehistoryhandler.h"
 #include "search/airportsearch.h"
 #include "search/navsearch.h"
 #include "mapgui/maplayersettings.h"
@@ -94,9 +94,12 @@ MainWindow::MainWindow(QWidget *parent) :
   infoQuery = new InfoQuery(this, databaseManager->getDatabase());
   infoQuery->initQueries();
 
-  routeFileHistory = new RouteFileHistory(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
-                                          ui->actionRecentRoutesClear);
+  routeFileHistory = new FileHistoryHandler(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
+                                            ui->actionRecentRoutesClear);
   routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
+
+  kmlFileHistory = new FileHistoryHandler(this, "Route/FilenamesKmlRecent", ui->menuRecentKml,
+                                          ui->actionClearKmlMenu);
 
   createNavMap();
 
@@ -149,6 +152,7 @@ MainWindow::~MainWindow()
   delete marbleAbout;
   delete infoController;
   delete routeFileHistory;
+  delete kmlFileHistory;
   delete ui;
 
   delete dialog;
@@ -206,7 +210,7 @@ void MainWindow::createNavMap()
 
   // mapWidget->setShowSunShading(true);
 
-  // mapWidget->model()->addGeoDataFile("/home/alex/ownCloud/Flight Simulator/FSX/Airports KML/NA Blue.kml");
+  // navMapWidget->model()->addGeoDataFile("/home/alex/Dokumente/Google Earth/BC Airports.kmz");
   // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
 
   ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, navMapWidget);
@@ -361,6 +365,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
+  connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
+
+  connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
+  connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
+  connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
   connect(ui->actionRouteCalcDirect, &QAction::triggered,
           routeController, &RouteController::calculateDirect);
@@ -438,6 +447,8 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapBack, &QAction::triggered, navMapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, navMapWidget, &MapWidget::historyNext);
+  connect(ui->actionWorkOffline, &QAction::toggled, navMapWidget, &MapWidget::workOffline);
+
   connect(ui->actionMapMoreDetails, &QAction::triggered, this, &MainWindow::increaseMapDetail);
   connect(ui->actionMapLessDetails, &QAction::triggered, this, &MainWindow::decreaseMapDetail);
   connect(ui->actionMapDefaultDetails, &QAction::triggered, this, &MainWindow::defaultMapDetail);
@@ -517,8 +528,6 @@ void MainWindow::connectAllSlots()
           navMapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated,
           infoController, &InfoController::updateAirport);
-
-  connect(routeFileHistory, &RouteFileHistory::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
 }
@@ -680,7 +689,7 @@ void MainWindow::routeOpen()
       if(routeController->loadFlightplan(routeFile))
       {
         routeFileHistory->addFile(routeFile);
-        navMapWidget->update();
+        routeCenter();
       }
     }
   }
@@ -693,7 +702,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     if(QFile::exists(routeFile))
     {
       if(routeController->loadFlightplan(routeFile))
-        navMapWidget->update();
+        routeCenter();
     }
     else
     {
@@ -744,6 +753,36 @@ bool MainWindow::routeSaveAs()
     }
   }
   return false;
+}
+
+void MainWindow::kmlClear()
+{
+  navMapWidget->clearKmlFiles();
+}
+
+void MainWindow::kmlOpen()
+{
+  QString kmlFile = dialog->openFileDialog(tr("Google Earth KML"),
+                                           tr("Google Earth KML (*.kml *.KML *.kmz *.KMZ);;All Files (*)"),
+                                           "Kml/", QString());
+
+  if(!kmlFile.isEmpty())
+  {
+    kmlFileHistory->addFile(kmlFile);
+    navMapWidget->addKmlFile(kmlFile);
+  }
+}
+
+void MainWindow::kmlOpenRecent(const QString& kmlFile)
+{
+  if(QFile::exists(kmlFile))
+    navMapWidget->addKmlFile(kmlFile);
+  else
+  {
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         QString("File \"%1\" does not exist").arg(kmlFile));
+    kmlFileHistory->removeFile(kmlFile);
+  }
 }
 
 void MainWindow::defaultMapDetail()
@@ -900,6 +939,7 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws("MainWindow/Widget");
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
+  kmlFileHistory->restoreState();
   routeFileHistory->restoreState();
   searchController->restoreState();
   navMapWidget->restoreState();
@@ -915,7 +955,8 @@ void MainWindow::readSettings()
               ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
               ui->actionMapShowAircraftTrack,
               ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-              ui->actionRouteEditMode});
+              ui->actionRouteEditMode,
+              ui->actionWorkOffline});
 
   mapDetailFactor = Settings::instance().valueInt("Map/DetailFactor",
                                                   MAP_DEFAULT_DETAIL_FACTOR);
@@ -945,6 +986,8 @@ void MainWindow::writeSettings()
     infoController->saveState();
   if(routeFileHistory != nullptr)
     routeFileHistory->saveState();
+  if(kmlFileHistory != nullptr)
+    kmlFileHistory->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
@@ -954,7 +997,8 @@ void MainWindow::writeSettings()
            ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
            ui->actionMapShowAircraftTrack,
            ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-           ui->actionRouteEditMode});
+           ui->actionRouteEditMode,
+           ui->actionWorkOffline});
 
   Settings::instance().setValue("Map/DetailFactor", mapDetailFactor);
   Settings::instance().setValue("MainWindow/FirstApplicationStart", firstApplicationStart);

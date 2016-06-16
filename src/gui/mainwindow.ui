@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -43,12 +43,24 @@
      <addaction name="separator"/>
      <addaction name="actionRecentRoutesClear"/>
     </widget>
+    <widget class="QMenu" name="menuRecentKml">
+     <property name="title">
+      <string>Recent Google Earth KML</string>
+     </property>
+     <addaction name="actionClearKmlMenu"/>
+    </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
     <addaction name="menuRecentRoutes"/>
     <addaction name="separator"/>
+    <addaction name="actionLoadKml"/>
+    <addaction name="menuRecentKml"/>
+    <addaction name="actionClearKml"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionWorkOffline"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -3337,6 +3349,41 @@
   <action name="actionDatabaseFiles">
    <property name="text">
     <string>Show Database Files</string>
+   </property>
+  </action>
+  <action name="actionLoadKml">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Open Google Earth KML ...</string>
+   </property>
+  </action>
+  <action name="actionClearKmlMenu">
+   <property name="text">
+    <string>Clear Menu</string>
+   </property>
+  </action>
+  <action name="actionClearKml">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/cancel.svg</normaloff>:/littlenavmap/resources/icons/cancel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Clear KML from Map</string>
+   </property>
+  </action>
+  <action name="actionWorkOffline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/offline.svg</normaloff>:/littlenavmap/resources/icons/offline.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Work Offline</string>
    </property>
   </action>
  </widget>
