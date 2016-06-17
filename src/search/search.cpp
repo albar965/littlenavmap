@@ -323,18 +323,18 @@ void Search::resetView()
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
-    atools::gui::Dialog dlg(mainWindow);
-    int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
-                                        tr("Reset sort order, column order and column sizes to default?"),
-                                        tr("Do not &show this dialog again."),
-                                        QMessageBox::Yes | QMessageBox::No,
-                                        QMessageBox::Yes, QMessageBox::Yes);
+    // atools::gui::Dialog dlg(mainWindow);
+    // int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
+    // tr("Reset sort order, column order and column sizes to default?"),
+    // tr("Do not &show this dialog again."),
+    // QMessageBox::Yes | QMessageBox::No,
+    // QMessageBox::Yes, QMessageBox::Yes);
 
-    if(result == QMessageBox::Yes)
-    {
-      controller->resetView();
-      mainWindow->getUi()->statusBar->showMessage(tr("View reset to default."));
-    }
+    // if(result == QMessageBox::Yes)
+    // {
+    controller->resetView();
+    // mainWindow->getUi()->statusBar->showMessage(tr("View reset to default."));
+    // }
   }
 }
 
@@ -570,22 +570,27 @@ void Search::contextMenu(const QPoint& pos)
 
 void Search::showInformationMenu()
 {
-  QModelIndex index = view->currentIndex();
-  if(index.isValid())
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
-    maptypes::MapObjectTypes navType = maptypes::NONE;
-    int id = -1;
-    getNavTypeAndId(index.row(), navType, id);
+    QModelIndex index = view->currentIndex();
+    if(index.isValid())
+    {
+      maptypes::MapObjectTypes navType = maptypes::NONE;
+      int id = -1;
+      getNavTypeAndId(index.row(), navType, id);
 
-    maptypes::MapSearchResult result;
-    query->getMapObjectById(result, navType, id);
-    emit showInformation(result);
+      maptypes::MapSearchResult result;
+      query->getMapObjectById(result, navType, id);
+      emit showInformation(result);
+    }
   }
 }
 
 void Search::showOnMapMenu()
 {
-  if(view->isVisible())
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     QModelIndex index = view->currentIndex();
     if(index.isValid())
