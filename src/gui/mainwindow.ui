@@ -38,7 +38,7 @@
     </property>
     <widget class="QMenu" name="menuRecentRoutes">
      <property name="title">
-      <string>&amp;Recent Routes</string>
+      <string>&amp;Recent Flight Plan</string>
      </property>
      <addaction name="separator"/>
      <addaction name="actionRecentRoutesClear"/>
@@ -132,7 +132,7 @@
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
-     <string>&amp;Route</string>
+     <string>Flight &amp;Plan</string>
     </property>
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
@@ -164,8 +164,6 @@
    <addaction name="actionRouteNew"/>
    <addaction name="actionRouteOpen"/>
    <addaction name="actionRouteSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionConnectSimulator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetSearch">
@@ -1576,7 +1574,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedock.svg</normaloff>:/littlenavmap/resources/icons/routedock.svg</iconset>
    </property>
    <property name="windowTitle">
-    <string>Route</string>
+    <string>Flight Plan</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -1668,6 +1666,12 @@
        </item>
        <item>
         <widget class="QComboBox" name="comboBoxRouteType">
+         <property name="toolTip">
+          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules)</string>
+         </property>
+         <property name="statusTip">
+          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules)</string>
+         </property>
          <item>
           <property name="text">
            <string>IFR</string>
@@ -2044,7 +2048,7 @@
   </widget>
   <widget class="QToolBar" name="routeToolBar">
    <property name="windowTitle">
-    <string>Route Toolbar</string>
+    <string>Flight Plan Toolbar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -2070,7 +2074,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Route Elevation Profile</string>
+    <string>Flight Plan Elevation Profile</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -2405,7 +2409,7 @@
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Route ...</string>
+    <string>&amp;Open Flight Plan ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -2417,7 +2421,10 @@
      <normaloff>:/littlenavmap/resources/icons/filesave.svg</normaloff>:/littlenavmap/resources/icons/filesave.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save Route ...</string>
+    <string>&amp;Save Flight Plan ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Flight Plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -2429,7 +2436,7 @@
      <normaloff>:/littlenavmap/resources/icons/database.svg</normaloff>:/littlenavmap/resources/icons/database.svg</iconset>
    </property>
    <property name="text">
-    <string>Reload Scenery ...</string>
+    <string>Reload Scenery Library ...</string>
    </property>
   </action>
   <action name="actionAirportSearchShowExtOptions">
@@ -2642,6 +2649,9 @@
    <property name="text">
     <string>More Details</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
   </action>
   <action name="actionMapLessDetails">
    <property name="icon">
@@ -2650,6 +2660,9 @@
    </property>
    <property name="text">
     <string>Less Details</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
    </property>
   </action>
   <action name="actionMapShowHome">
@@ -2660,6 +2673,9 @@
    <property name="text">
     <string>Goto Home</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Home</string>
+   </property>
   </action>
   <action name="actionMapBack">
    <property name="icon">
@@ -2669,6 +2685,9 @@
    <property name="text">
     <string>Map Position Back</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
   </action>
   <action name="actionMapNext">
    <property name="icon">
@@ -2676,7 +2695,10 @@
      <normaloff>:/littlenavmap/resources/icons/next.svg</normaloff>:/littlenavmap/resources/icons/next.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Position Next</string>
+    <string>Map Position Forward</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Right</string>
    </property>
   </action>
   <action name="actionMapShowMark">
@@ -2686,6 +2708,9 @@
    </property>
    <property name="text">
     <string>Goto Map Mark</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+End</string>
    </property>
   </action>
   <action name="actionMapSetHome">
@@ -2798,6 +2823,9 @@
    <property name="toolTip">
     <string>Default Details</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+0</string>
+   </property>
   </action>
   <action name="actionMapMeasureDistance">
    <property name="icon">
@@ -2907,7 +2935,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Route &amp;as ...</string>
+    <string>Save Flight Plan &amp;as ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -2919,7 +2947,7 @@
      <normaloff>:/littlenavmap/resources/icons/filenew.svg</normaloff>:/littlenavmap/resources/icons/filenew.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Route</string>
+    <string>&amp;New Flight Plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -2931,7 +2959,7 @@
      <normaloff>:/littlenavmap/resources/icons/centerroute.svg</normaloff>:/littlenavmap/resources/icons/centerroute.svg</iconset>
    </property>
    <property name="text">
-    <string>Center Route</string>
+    <string>Center Flight Plan</string>
    </property>
   </action>
   <action name="actionMapShowVictorAirways">
@@ -2973,7 +3001,7 @@
      <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Route</string>
+    <string>Show Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>R</string>
@@ -2985,7 +3013,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Route Start</string>
+    <string>Set %1 as Flight Plan Departure</string>
    </property>
   </action>
   <action name="actionRouteAirportDest">
@@ -2994,7 +3022,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Route Destination</string>
+    <string>Set %1 as Flight Plan Destination</string>
    </property>
    <property name="toolTip">
     <string>Set Airport as Route Destination</string>
@@ -3006,7 +3034,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
    </property>
    <property name="text">
-    <string>Add %1 to Route</string>
+    <string>Add %1 to Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>Set Airport as Route Destination</string>
@@ -3057,7 +3085,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete %1 from Route</string>
+    <string>Delete %1 from Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>Delete from Route</string>
@@ -3069,7 +3097,7 @@
      <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate High Alt Route</string>
+    <string>Calculate high Altitude</string>
    </property>
   </action>
   <action name="actionRouteCalcLowAlt">
@@ -3078,7 +3106,7 @@
      <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Low Alt Route</string>
+    <string>Calculate low Altitude</string>
    </property>
   </action>
   <action name="actionRouteCalcRadionav">
@@ -3087,7 +3115,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Radionav Route</string>
+    <string>Calculate Radionav</string>
    </property>
   </action>
   <action name="actionRouteCalcDirect">
@@ -3096,7 +3124,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedirect.svg</normaloff>:/littlenavmap/resources/icons/routedirect.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Direct Route</string>
+    <string>Calculate Direct</string>
    </property>
   </action>
   <action name="actionRouteReverse">
@@ -3105,16 +3133,7 @@
      <normaloff>:/littlenavmap/resources/icons/routereverse.svg</normaloff>:/littlenavmap/resources/icons/routereverse.svg</iconset>
    </property>
    <property name="text">
-    <string>Reverse Route</string>
-   </property>
-  </action>
-  <action name="actionRouteSettings">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/settings.svg</normaloff>:/littlenavmap/resources/icons/settings.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Settings Route</string>
+    <string>Reverse Flight Plan</string>
    </property>
   </action>
   <action name="actionRouteParkingStart">
@@ -3123,7 +3142,7 @@
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Route Start Position</string>
+    <string>Set %1 as Flight Plan Departure</string>
    </property>
   </action>
   <action name="actionRouteSelectParking">
@@ -3141,7 +3160,7 @@
      <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
    </property>
    <property name="text">
-    <string>Route Undo</string>
+    <string>Flight Plan Undo</string>
    </property>
   </action>
   <action name="actionRouteRedo">
@@ -3150,7 +3169,7 @@
      <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
    </property>
    <property name="text">
-    <string>Route Redo</string>
+    <string>Flight Plan Redo</string>
    </property>
   </action>
   <action name="actionMapShowHillshading">
@@ -3189,7 +3208,7 @@
      <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Route based on given Altitude</string>
+    <string>Calculate based on given Altitude</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -3324,7 +3343,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeedit.svg</normaloff>:/littlenavmap/resources/icons/routeedit.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Route on Map</string>
+    <string>Edit Flight Plan on Map</string>
    </property>
   </action>
   <action name="actionRecentRoutesClear">

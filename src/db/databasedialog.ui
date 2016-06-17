@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Navdatabase Loader</string>
+   <string>Reload Scenery Library</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>

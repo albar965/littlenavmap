@@ -590,7 +590,7 @@ bool MainWindow::routeValidate()
 {
   if(!routeController->hasValidStart() || !routeController->hasValidDestination())
     dialog->showInfoMsgBox("Actions/ShowRouteWarning",
-                           tr("Route must have an airport as start and destination and "
+                           tr("Flight Plan must have an airport as start and destination and "
                               "will not be usable by the Simulator."),
                            tr("Do not &show this dialog again."));
   else
@@ -605,8 +605,8 @@ bool MainWindow::routeValidate()
 
       int result = dialog->showQuestionMsgBox(
         "Actions/ShowRouteParkingWarning",
-        "The start airport has parking spots but no parking was selected for this route",
-        tr("Do not show this dialog again and save route in the future."),
+        "The start airport has parking spots but no parking was selected for this Flight Plan",
+        tr("Do not show this dialog again and save Flight Plan in the future."),
         buttons, QMessageBox::Yes, QMessageBox::Save);
 
       if(result == QMessageBox::Yes)
@@ -641,7 +641,7 @@ bool MainWindow::routeCheckForChanges()
 
   QMessageBox msgBox;
   msgBox.setWindowTitle(QApplication::applicationName());
-  msgBox.setText("Route has been changed.");
+  msgBox.setText("Flight Plan has been changed.");
   msgBox.setInformativeText("Save changes?");
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
 

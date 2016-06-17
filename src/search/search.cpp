@@ -52,7 +52,7 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
 
   Ui::MainWindow *ui = parentWidget->getUi();
   // Avoid stealing of Ctrl-C from other default menus
-  ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchResetSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
@@ -457,16 +457,16 @@ void Search::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchSetMark);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchTableCopy);
-  ui->actionSearchTableCopy->setEnabled(index.isValid());
+  // menu.addAction(ui->actionSearchTableCopy);
+  // ui->actionSearchTableCopy->setEnabled(index.isValid());
 
   menu.addAction(ui->actionSearchTableSelectAll);
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
-  ui->actionRouteAdd->setText(tr("Add to Route"));
-  ui->actionRouteAirportStart->setText(tr("Set as Route Start"));
-  ui->actionRouteAirportDest->setText(tr("Set as Route Destination"));
+  ui->actionRouteAdd->setText(tr("Add to Flight Plan"));
+  ui->actionRouteAirportStart->setText(tr("Set as Flight Plan Departure"));
+  ui->actionRouteAirportDest->setText(tr("Set as Flight Plan Destination"));
   ui->actionShowInformation->setText(tr("Show Information"));
 
   menu.addSeparator();
@@ -498,8 +498,8 @@ void Search::contextMenu(const QPoint& pos)
     // Other actions with shortcuts are connectied directly to methods
     if(action == ui->actionSearchResetView)
       resetView();
-    else if(action == ui->actionSearchTableCopy)
-      tableCopyCipboard();
+    // else if(action == ui->actionSearchTableCopy)
+    // tableCopyCipboard();
     else if(action == ui->actionSearchFilterIncluding)
       controller->filterIncluding(index);
     else if(action == ui->actionSearchFilterExcluding)

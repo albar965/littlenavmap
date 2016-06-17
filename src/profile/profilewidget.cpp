@@ -240,7 +240,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
   {
-    symPainter.textBox(&painter, {"No Route loaded."}, QPen(Qt::black),
+    symPainter.textBox(&painter, {"No Flight Plan loaded."}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
     return;
   }

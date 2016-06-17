@@ -32,7 +32,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathTypeMap& pathMap)
 {
   ui->setupUi(this);
 
-  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load Navigation Data"));
+  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));
 
   // Add an action to the toolbutton for each simulator
   // TODO Sort

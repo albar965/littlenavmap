@@ -564,7 +564,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
     const int ICON_SIZE = 20;
     qDebug() << "add navaids" << totalSize;
     QMenu menu;
-    QString menuPrefix("Add "), menuSuffix(" to route");
+    QString menuPrefix("Add "), menuSuffix(" to Flight Plan");
     SymbolPainter symbolPainter;
 
     for(const maptypes::MapAirport& obj : result.airports)

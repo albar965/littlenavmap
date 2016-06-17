@@ -101,11 +101,11 @@ void MapHtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& htm
   if(routeMapObjects != nullptr && airport.routeIndex != -1)
   {
     if(airport.routeIndex == 0)
-      html.row2("Route Start Airport", QString());
+      html.row2("Departure Airport", QString());
     else if(airport.routeIndex == routeMapObjects->size() - 1)
-      html.row2("Route Destination Airport", QString());
+      html.row2("Destination Airport", QString());
     else
-      html.row2("Route position:", locale.toString(airport.routeIndex + 1));
+      html.row2("Flight Plan position:", locale.toString(airport.routeIndex + 1));
   }
   html.row2("City:", city);
   if(!state.isEmpty())
@@ -577,7 +577,7 @@ void MapHtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor ba
 
   html.table();
   if(vor.routeIndex >= 0)
-    html.row2("Route position:", locale.toString(vor.routeIndex + 1));
+    html.row2("Flight Plan position:", locale.toString(vor.routeIndex + 1));
 
   html.row2("Type:", maptypes::navTypeName(vor.type));
   html.row2("Region:", vor.region);
@@ -607,7 +607,7 @@ void MapHtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor ba
   title(html, "NDB: " + capString(ndb.name) + " (" + ndb.ident + ")");
   html.table();
   if(ndb.routeIndex >= 0)
-    html.row2("Route position ", locale.toString(ndb.routeIndex + 1));
+    html.row2("Flight Plan position ", locale.toString(ndb.routeIndex + 1));
   html.row2("Type:", maptypes::navTypeName(ndb.type));
   html.row2("Region:", ndb.region);
   html.row2("Frequency:", locale.toString(ndb.frequency / 100., 'f', 2) + " kHz");
@@ -635,7 +635,7 @@ void MapHtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& 
   title(html, "Waypoint: " + waypoint.ident);
   html.table();
   if(waypoint.routeIndex >= 0)
-    html.row2("Route position:", locale.toString(waypoint.routeIndex + 1));
+    html.row2("Flight Plan position:", locale.toString(waypoint.routeIndex + 1));
   html.row2("Type:", maptypes::navTypeName(waypoint.type));
   html.row2("Region:", waypoint.region);
   html.row2("Magvar:", maptypes::magvarText(waypoint.magvar));
@@ -751,7 +751,7 @@ void MapHtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& htm
 
 void MapHtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html)
 {
-  head(html, "Routepoint:");
+  head(html, "Flight Plan Point:");
   html.brText(userpoint.name);
 }
 
@@ -805,7 +805,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
                                  &distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance,
                                  &nearestLegIndex))
     {
-      head(html, "Route Progress");
+      head(html, "Flight Plan Progress");
       html.table();
       // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + " nm");
       html.row2("To Destination:", locale.toString(distToDestNm, 'f', 0) + " nm");
@@ -820,7 +820,7 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
         QDateTime arrival = data.getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
         html.row2("Arrival Time:", locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
                   arrival.timeZoneAbbreviation());
-        html.row2("Enroute Time:", formatter::formatMinutesHoursLong(timeToDestination));
+        html.row2("En route Time:", formatter::formatMinutesHoursLong(timeToDestination));
       }
       html.tableEnd();
 
@@ -857,10 +857,10 @@ void MapHtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectDa
       html.tableEnd();
     }
     else
-      html.h4("No Active Route Leg found.", html::BOLD);
+      html.h4("No Active Flight Plan Leg found.", html::BOLD);
   }
   else
-    html.h4("No Route loaded.", html::BOLD);
+    html.h4("No Flight Plan loaded.", html::BOLD);
 
   head(html, "Aircraft");
   html.table();

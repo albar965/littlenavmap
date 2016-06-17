@@ -127,10 +127,10 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);
 
-  QAction *undoAction = undoStack->createUndoAction(mainWindow, "Undo Route");
+  QAction *undoAction = undoStack->createUndoAction(mainWindow, "Undo Flight Plan");
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
 
-  QAction *redoAction = undoStack->createRedoAction(mainWindow, "Redo Route");
+  QAction *redoAction = undoStack->createRedoAction(mainWindow, "Redo Flight Plan");
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -361,7 +361,7 @@ bool RouteController::saveFlightplan()
 void RouteController::calculateDirect()
 {
   qDebug() << "calculateDirect";
-  RouteCommand *undoCommand = preChange("Direct Route");
+  RouteCommand *undoCommand = preChange("Direct Flight Plan Calculation");
 
   Flightplan& flightplan = route.getFlightplan();
   flightplan.setRouteType(atools::fs::pln::DIRECT);
@@ -383,7 +383,8 @@ void RouteController::calculateRadionav()
 
   RouteFinder routeFinder(routeNetworkRadio);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav route", false, false);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav Flight Plan Calculation", false,
+                         false);
 }
 
 void RouteController::calculateHighAlt()
@@ -393,7 +394,9 @@ void RouteController::calculateHighAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude route", true, false);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude Flight Plan Calculation",
+                         true,
+                         false);
 }
 
 void RouteController::calculateLowAlt()
@@ -403,7 +406,8 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude route", true, false);
+  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude Flight Plan Calculation", true,
+                         false);
 }
 
 void RouteController::calculateSetAlt()
@@ -510,7 +514,7 @@ void RouteController::reverse()
 {
   qDebug() << "reverse";
 
-  RouteCommand *undoCommand = preChange("Reverse Route", rctype::REVERSE);
+  RouteCommand *undoCommand = preChange("Reverse Flight Plan", rctype::REVERSE);
 
   route.getFlightplan().reverse();
 
@@ -693,12 +697,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addSeparator();
     menu.addAction(ui->actionSearchSetMark);
 
-    menu.addSeparator();
-    menu.addAction(ui->actionSearchTableCopy);
+    // menu.addSeparator();
+    // menu.addAction(ui->actionSearchTableCopy);
 
     updateMoveAndDeleteActions();
 
-    ui->actionSearchTableCopy->setEnabled(index.isValid());
+    // ui->actionSearchTableCopy->setEnabled(index.isValid());
 
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
