@@ -656,33 +656,39 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAdd,
-                                          ui->actionShowInformation,
+                                          ui->actionMapShowInformation,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest});
   Q_UNUSED(textSaver);
 
   QMenu menu;
-  menu.addAction(ui->actionMapSetMark);
-  menu.addAction(ui->actionMapSetHome);
+  menu.addAction(ui->actionMapShowInformation);
   menu.addSeparator();
-  menu.addAction(ui->actionShowInformation);
-  menu.addSeparator();
+
   menu.addAction(ui->actionMapMeasureDistance);
   menu.addAction(ui->actionMapMeasureRhumbDistance);
   menu.addAction(ui->actionMapHideDistanceMarker);
   menu.addSeparator();
+
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideOneRangeRing);
   menu.addAction(ui->actionMapHideRangeRings);
   menu.addSeparator();
-  menu.addAction(ui->actionRouteAdd);
-  menu.addAction(ui->actionRouteDeleteWaypoint);
-  menu.addSeparator();
+
   menu.addAction(ui->actionRouteAirportStart);
   menu.addAction(ui->actionRouteAirportDest);
   menu.addSeparator();
+
+  menu.addAction(ui->actionRouteAdd);
+  menu.addAction(ui->actionRouteDeleteWaypoint);
+  menu.addSeparator();
+
   menu.addAction(ui->actionShowInSearch);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapSetMark);
+  menu.addAction(ui->actionMapSetHome);
 
   int distMarkerIndex = getNearestDistanceMarkerIndex(point.x(), point.y(), screenSearchDistance);
   int rangeMarkerIndex = getNearestRangeMarkerIndex(point.x(), point.y(), screenSearchDistance);
@@ -825,14 +831,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
     ui->actionRouteAdd->setEnabled(true);
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(searchText));
-    ui->actionShowInformation->setEnabled(true);
-    ui->actionShowInformation->setText(ui->actionShowInformation->text().arg(searchText));
+    ui->actionMapShowInformation->setEnabled(true);
+    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(searchText));
   }
   else
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg("Position"));
-    ui->actionShowInformation->setText(ui->actionShowInformation->text().arg(QString()));
+    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
   // Update "delete in route"
@@ -988,7 +994,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       emit routeDelete(delRouteIndex, delType);
     }
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
-            action == ui->actionRouteAirportDest || action == ui->actionShowInformation)
+            action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
       // ui->dockWidgetRoute->raise();
 
@@ -1045,7 +1051,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         emit routeSetStart(*airport);
       else if(action == ui->actionRouteAirportDest)
         emit routeSetDest(*airport);
-      else if(action == ui->actionShowInformation)
+      else if(action == ui->actionMapShowInformation)
         emit showInformation(result);
     }
   }

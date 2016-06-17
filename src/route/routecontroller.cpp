@@ -132,13 +132,18 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
   QAction *undoAction = undoStack->createUndoAction(mainWindow, "Undo Flight Plan");
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
+  undoAction->setShortcut(QKeySequence("Ctrl+Z"));
 
   QAction *redoAction = undoStack->createRedoAction(mainWindow, "Redo Flight Plan");
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
+  redoAction->setShortcut(QKeySequence("Ctrl+Y"));
 
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
+
+  ui->menuRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);
 
   connect(ui->spinBoxRouteSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, &RouteController::updateLabel);
@@ -168,6 +173,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   ui->actionRouteLegDown->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Avoid stealing of Ctrl - C from other default menus
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -176,7 +183,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
 
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
-                    ui->actionRouteTableCopy});
+                    ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowOnMap});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
@@ -185,6 +192,9 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveLegsDown);
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveLegsUp);
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteLegs);
+
+  connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
+  connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 }
 
 RouteController::~RouteController()
@@ -653,13 +663,8 @@ void RouteController::doubleClick(const QModelIndex& index)
 
     const RouteMapObject& mo = route.at(index.row());
 
-    if(mo.getMapObjectType() == maptypes::AIRPORT)
-    {
-      if(mo.getAirport().bounding.isPoint())
-        emit showPos(mo.getPosition(), 2700);
-      else
-        emit showRect(mo.getAirport().bounding);
-    }
+    if(mo.getMapObjectType() == maptypes::AIRPORT && mo.getAirport().bounding.isPoint())
+      emit showRect(mo.getAirport().bounding);
     else
       emit showPos(mo.getPosition(), 2700);
 
@@ -695,34 +700,45 @@ void RouteController::updateMoveAndDeleteActions()
   }
 }
 
+void RouteController::showInformationMenu()
+{
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+  {
+    const RouteMapObject& routeMapObject = route.at(index.row());
+    maptypes::MapSearchResult result;
+    query->getMapObjectById(result, routeMapObject.getMapObjectType(), routeMapObject.getId());
+    emit showInformation(result);
+  }
+}
+
+void RouteController::showOnMapMenu()
+{
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+  {
+    const RouteMapObject& routeMapObject = route.at(index.row());
+    if(routeMapObject.getMapObjectType() == maptypes::AIRPORT &&
+       !routeMapObject.getAirport().bounding.isPoint())
+      emit showRect(routeMapObject.getAirport().bounding);
+    else
+      emit showPos(routeMapObject.getPosition(), 2700);
+  }
+}
+
 void RouteController::tableContextMenu(const QPoint& pos)
 {
   qDebug() << "tableContextMenu";
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
-  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionShowInformation});
+  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
   Q_UNUSED(saver);
 
   QModelIndex index = view->indexAt(pos);
   if(index.isValid())
   {
     const RouteMapObject& routeMapObject = route.at(index.row());
-
-    QMenu menu;
-
-    menu.addAction(ui->actionRouteLegUp);
-    menu.addAction(ui->actionRouteLegDown);
-    menu.addAction(ui->actionRouteDeleteLeg);
-
-    menu.addSeparator();
-    menu.addAction(ui->actionShowInformation);
-
-    menu.addSeparator();
-    menu.addAction(ui->actionSearchSetMark);
-
-    menu.addSeparator();
-    menu.addAction(ui->actionSearchTableCopy);
 
     updateMoveAndDeleteActions();
 
@@ -731,8 +747,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
-    ui->actionShowInformation->setEnabled(true);
-    ui->actionShowInformation->setText(tr("Show Information"));
+    ui->actionRouteShowInformation->setEnabled(true);
+
+    ui->actionRouteShowOnMap->setEnabled(true);
 
     ui->actionMapNavaidRange->setEnabled(false);
     ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
@@ -746,15 +763,29 @@ void RouteController::tableContextMenu(const QPoint& pos)
         break;
       }
 
-    menu.addAction(ui->actionSearchTableSelectAll);
-
+    QMenu menu;
+    menu.addAction(ui->actionRouteShowInformation);
+    menu.addAction(ui->actionRouteShowOnMap);
     menu.addSeparator();
-    menu.addAction(ui->actionSearchResetView);
 
+    menu.addAction(ui->actionRouteLegUp);
+    menu.addAction(ui->actionRouteLegDown);
+    menu.addAction(ui->actionRouteDeleteLeg);
     menu.addSeparator();
+
     menu.addAction(ui->actionMapRangeRings);
     menu.addAction(ui->actionMapNavaidRange);
     menu.addAction(ui->actionMapHideRangeRings);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchTableCopy);
+    menu.addAction(ui->actionSearchTableSelectAll);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchResetView);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchSetMark);
 
     QAction *action = menu.exec(QCursor::pos());
     if(action != nullptr)
@@ -788,12 +819,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
       }
       else if(action == ui->actionMapHideRangeRings)
         mainWindow->getMapWidget()->clearRangeRings();
-      else if(action == ui->actionShowInformation)
-      {
-        maptypes::MapSearchResult result;
-        query->getMapObjectById(result, routeMapObject.getMapObjectType(), routeMapObject.getId());
-        emit showInformation(result);
-      }
     }
   }
 }

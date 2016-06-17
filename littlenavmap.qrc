@@ -100,5 +100,6 @@
         <file>resources/icons/aircraftground.svg</file>
         <file>resources/icons/offline.svg</file>
         <file>resources/icons/kmlfileopen.svg</file>
+        <file>resources/icons/showonmap.svg</file>
     </qresource>
 </RCC>

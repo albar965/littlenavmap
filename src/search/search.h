@@ -121,6 +121,9 @@ protected:
   void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
 
   CsvExporter *csvExporter = nullptr;
+  void showInformationMenu();
+  void showOnMapMenu();
+
 };
 
 #endif // LITTLENAVMAP_SEARCHPANE_H

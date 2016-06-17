@@ -288,11 +288,11 @@ void MainWindow::setupUi()
                                ui->viewToolBar->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
-  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
-  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetSearch->toggleViewAction(), tr("Alt+1")));
+  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetRoute->toggleViewAction(), tr("Alt+2")));
+  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetInformation->toggleViewAction(), tr("Alt+3")));
+  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetElevation->toggleViewAction(), tr("Alt+4")));
+  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetAircraft->toggleViewAction(), tr("Alt+5")));
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
@@ -314,6 +314,12 @@ void MainWindow::setupUi()
   mapPosLabel = new QLabel();
   mapPosLabel->setMinimumWidth(200);
   ui->statusBar->addPermanentWidget(mapPosLabel);
+}
+
+QAction *MainWindow::addShortcut(QAction *action, const QString& key)
+{
+  action->setShortcut(QKeySequence(key));
+  return action;
 }
 
 void MainWindow::connectAllSlots()

@@ -52,22 +52,30 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
   : QObject(parent), query(mapQuery), columns(columnList), view(tableView), mainWindow(parent),
     tabIndex(tabWidgetIndex)
 {
-
   Ui::MainWindow *ui = mainWindow->getUi();
   // Avoid stealing of Ctrl - C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchResetSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
   // Need extra action connected to catch the default Ctrl-C in the table view
   connect(ui->actionSearchTableCopy, &QAction::triggered, this, &Search::tableCopyClipboard);
 
-  tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll, ui->actionSearchTableCopy});
+  ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
+
+  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation,
+                         ui->actionSearchShowOnMap});
 
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
   connect(updateTimer, &QTimer::timeout, this, &Search::editTimeout);
+
+  connect(ui->actionSearchShowInformation, &QAction::triggered, this, &Search::showInformationMenu);
+  connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &Search::showOnMapMenu);
 }
 
 Search::~Search()
@@ -412,7 +420,7 @@ void Search::contextMenu(const QPoint& pos)
 
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
-                                      ui->actionRouteAdd, ui->actionShowInformation});
+                                      ui->actionRouteAdd});
   Q_UNUSED(saver);
 
   atools::geo::Pos position;
@@ -467,45 +475,48 @@ void Search::contextMenu(const QPoint& pos)
 
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
-  // Build the menu
-  QMenu menu;
-
-  menu.addAction(ui->actionSearchSetMark);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionSearchTableCopy);
-  ui->actionSearchTableCopy->setEnabled(index.isValid());
-
-  menu.addAction(ui->actionSearchTableSelectAll);
-  ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
-
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
   ui->actionRouteAdd->setText(tr("Add to Flight Plan"));
   ui->actionRouteAirportStart->setText(tr("Set as Flight Plan Departure"));
   ui->actionRouteAirportDest->setText(tr("Set as Flight Plan Destination"));
-  ui->actionShowInformation->setText(tr("Show Information"));
 
-  menu.addSeparator();
-  menu.addAction(ui->actionSearchResetView);
-  menu.addAction(ui->actionSearchResetSearch);
-  menu.addAction(ui->actionSearchShowAll);
+  ui->actionSearchTableCopy->setEnabled(index.isValid());
+  ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
 
+  // Build the menu
+  QMenu menu;
+  menu.addAction(ui->actionSearchShowInformation);
+  menu.addAction(ui->actionSearchShowOnMap);
   menu.addSeparator();
-  menu.addAction(ui->actionShowInformation);
 
-  menu.addSeparator();
   menu.addAction(ui->actionSearchFilterIncluding);
   menu.addAction(ui->actionSearchFilterExcluding);
-
   menu.addSeparator();
+
+  menu.addAction(ui->actionSearchResetSearch);
+  menu.addAction(ui->actionSearchShowAll);
+  menu.addSeparator();
+
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
   menu.addAction(ui->actionMapHideRangeRings);
-
   menu.addSeparator();
-  menu.addAction(ui->actionRouteAdd);
+
   menu.addAction(ui->actionRouteAirportStart);
   menu.addAction(ui->actionRouteAirportDest);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteAdd);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchTableCopy);
+  menu.addAction(ui->actionSearchTableSelectAll);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchResetView);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(QCursor::pos());
   if(action != nullptr)
@@ -554,13 +565,47 @@ void Search::contextMenu(const QPoint& pos)
       query->getAirportById(ap, controller->getIdForRow(index));
       emit routeSetDest(ap);
     }
-    else if(action == ui->actionShowInformation)
+  }
+}
+
+void Search::showInformationMenu()
+{
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+  {
+    maptypes::MapObjectTypes navType = maptypes::NONE;
+    int id = -1;
+    getNavTypeAndId(index.row(), navType, id);
+
+    maptypes::MapSearchResult result;
+    query->getMapObjectById(result, navType, id);
+    emit showInformation(result);
+  }
+}
+
+void Search::showOnMapMenu()
+{
+  if(view->isVisible())
+  {
+    QModelIndex index = view->currentIndex();
+    if(index.isValid())
     {
+      maptypes::MapObjectTypes navType = maptypes::NONE;
+      int id = -1;
+      getNavTypeAndId(index.row(), navType, id);
+
       maptypes::MapSearchResult result;
       query->getMapObjectById(result, navType, id);
-      emit showInformation(result);
+
+      if(!result.airports.isEmpty() && !result.airports.first().bounding.isPoint())
+        emit showRect(result.airports.first().bounding);
+      else if(!result.vors.isEmpty())
+        emit showPos(result.vors.first().getPosition(), 2700);
+      else if(!result.ndbs.isEmpty())
+        emit showPos(result.ndbs.first().getPosition(), 2700);
+      else if(!result.waypoints.isEmpty())
+        emit showPos(result.waypoints.first().getPosition(), 2700);
     }
-    // else if(a == ui->actionTableCopy) this is alread covered by the connected action (view->setAction())
   }
 }
 

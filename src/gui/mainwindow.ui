@@ -2438,6 +2438,9 @@
    <property name="text">
     <string>Reload Scenery Library ...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
+   </property>
   </action>
   <action name="actionAirportSearchShowExtOptions">
    <property name="checkable">
@@ -2584,7 +2587,7 @@
      <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Mark</string>
+    <string>Set Center for Distance Search</string>
    </property>
   </action>
   <action name="actionMapSetMark">
@@ -2593,7 +2596,7 @@
      <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
    </property>
    <property name="text">
-    <string>Set Mark</string>
+    <string>Set Center for Distance Search</string>
    </property>
   </action>
   <action name="actionNavSearchShowAllOptions">
@@ -2707,7 +2710,7 @@
      <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto Map Mark</string>
+    <string>Goto Center for Distance Search</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
@@ -2736,6 +2739,9 @@
    <property name="text">
     <string>Show Airports with hard Runways</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+H</string>
+   </property>
   </action>
   <action name="actionMapShowVor">
    <property name="checkable">
@@ -2750,6 +2756,9 @@
    </property>
    <property name="text">
     <string>Show VOR Stations</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+V</string>
    </property>
   </action>
   <action name="actionMapShowNdb">
@@ -2766,6 +2775,9 @@
    <property name="text">
     <string>Show NDB Stations</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+N</string>
+   </property>
   </action>
   <action name="actionMapShowWp">
    <property name="checkable">
@@ -2780,6 +2792,9 @@
    </property>
    <property name="text">
     <string>Show Waypoints</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+W</string>
    </property>
   </action>
   <action name="actionMapShowCities">
@@ -2810,6 +2825,9 @@
    </property>
    <property name="text">
     <string>Show ILS Feathers</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+I</string>
    </property>
   </action>
   <action name="actionMapDefaultDetails">
@@ -2892,6 +2910,9 @@
    <property name="text">
     <string>Show Airports with soft Runways</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
+   </property>
   </action>
   <action name="actionMapShowEmptyAirports">
    <property name="checkable">
@@ -2961,6 +2982,9 @@
    <property name="text">
     <string>Center Flight Plan</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+F</string>
+   </property>
   </action>
   <action name="actionMapShowVictorAirways">
    <property name="checkable">
@@ -3005,6 +3029,9 @@
    </property>
    <property name="toolTip">
     <string>R</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F</string>
    </property>
   </action>
   <action name="actionRouteAirportStart">
@@ -3288,6 +3315,9 @@
    <property name="text">
     <string>Center Aircraft</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+A</string>
+   </property>
   </action>
   <action name="actionMapShowAircraftTrack">
    <property name="checkable">
@@ -3322,13 +3352,16 @@
     <string>Aircraft</string>
    </property>
   </action>
-  <action name="actionShowInformation">
+  <action name="actionMapShowInformation">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
     <string>Show Information for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Information for Airport or Navaid</string>
    </property>
   </action>
   <action name="actionRouteEditMode">
@@ -3344,6 +3377,9 @@
    </property>
    <property name="text">
     <string>Edit Flight Plan on Map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="actionRecentRoutesClear">
@@ -3421,6 +3457,63 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionRouteShowOnMap">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show on Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Show on Map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="actionRouteShowInformation">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Information</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionSearchShowInformation">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Information</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Information</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionSearchShowOnMap">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show on Map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

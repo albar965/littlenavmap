@@ -184,6 +184,8 @@ private:
   void kmlOpen();
   void kmlClear();
 
+  QAction *addShortcut(QAction *action, const QString& key);
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
