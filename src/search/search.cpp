@@ -37,8 +37,11 @@
 #include <QMenu>
 #include <QLineEdit>
 #include <QTimer>
+#include <QClipboard>
+#include <QStandardItemModel>
 
 #include "gui/actiontextsaver.h"
+#include <export/csvexporter.h>
 
 #include "mapgui/mapquery.h"
 
@@ -46,18 +49,22 @@ const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 600;
 
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                MapQuery *mapQuery, int tabWidgetIndex)
-  : QObject(parent), query(mapQuery), columns(columnList), view(tableView), parentWidget(parent),
+  : QObject(parent), query(mapQuery), columns(columnList), view(tableView), mainWindow(parent),
     tabIndex(tabWidgetIndex)
 {
 
-  Ui::MainWindow *ui = parentWidget->getUi();
-  // Avoid stealing of Ctrl-C from other default menus
-  // ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  Ui::MainWindow *ui = mainWindow->getUi();
+  // Avoid stealing of Ctrl - C from other default menus
+  ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchResetSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   boolIcon = new QIcon(":/littlenavmap/resources/icons/checkmark.svg");
 
-  tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
+  // Need extra action connected to catch the default Ctrl-C in the table view
+  connect(ui->actionSearchTableCopy, &QAction::triggered, this, &Search::tableCopyClipboard);
+
+  tableView->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll, ui->actionSearchTableCopy});
+
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
   connect(updateTimer, &QTimer::timeout, this, &Search::editTimeout);
@@ -66,7 +73,23 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
 Search::~Search()
 {
   delete boolIcon;
+  delete csvExporter;
   delete updateTimer;
+}
+
+void Search::tableCopyClipboard()
+{
+  if(view->isVisible())
+  {
+    QString csv;
+    int exported = CsvExporter::selectionAsCsv(view, true, csv);
+
+    if(!csv.isEmpty())
+      QApplication::clipboard()->setText(csv);
+
+    mainWindow->getUi()->statusBar->showMessage(
+      QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+  }
 }
 
 void Search::initViewAndController()
@@ -77,8 +100,10 @@ void Search::initViewAndController()
 
   atools::gui::TableZoomHandler zoomHandler(view);
   Q_UNUSED(zoomHandler);
-  controller = new Controller(parentWidget, query->getDatabase(), columns, view);
+  controller = new Controller(mainWindow, query->getDatabase(), columns, view);
   controller->prepareModel();
+
+  csvExporter = new CsvExporter(mainWindow, controller);
 }
 
 void Search::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
@@ -230,7 +255,7 @@ void Search::connectSlots()
   connect(view, &QTableView::doubleClicked, this, &Search::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &Search::contextMenu);
 
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   connect(ui->actionSearchShowAll, &QAction::triggered, this, &Search::loadAllRowsIntoView);
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &Search::resetSearch);
@@ -287,10 +312,10 @@ void Search::postDatabaseLoad()
 
 void Search::resetView()
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
-    atools::gui::Dialog dlg(parentWidget);
+    atools::gui::Dialog dlg(mainWindow);
     int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
                                         tr("Reset sort order, column order and column sizes to default?"),
                                         tr("Do not &show this dialog again."),
@@ -300,37 +325,28 @@ void Search::resetView()
     if(result == QMessageBox::Yes)
     {
       controller->resetView();
-      parentWidget->getUi()->statusBar->showMessage(tr("View reset to default."));
+      mainWindow->getUi()->statusBar->showMessage(tr("View reset to default."));
     }
   }
 }
 
 void Search::resetSearch()
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();
-    parentWidget->getUi()->statusBar->showMessage(tr("Search filters cleared."));
+    mainWindow->getUi()->statusBar->showMessage(tr("Search filters cleared."));
   }
-}
-
-void Search::tableCopyCipboard()
-{
-  // QString rows;
-  int exported = 0; // csvExporter->exportSelectedToString(&rows);
-  // QApplication::clipboard()->setText(rows);
-  parentWidget->getUi()->statusBar->showMessage(
-    QString(tr("Copied %1 logbook entries to clipboard.")).arg(exported));
 }
 
 void Search::loadAllRowsIntoView()
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->loadAllRows();
-    parentWidget->getUi()->statusBar->showMessage(tr("All logbook entries read."));
+    mainWindow->getUi()->statusBar->showMessage(tr("All logbook entries read."));
   }
 }
 
@@ -388,7 +404,7 @@ void Search::contextMenu(const QPoint& pos)
   QObject *localSender = sender();
   qDebug() << localSender->metaObject()->className() << localSender->objectName();
 
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   QString header, fieldData = "Data";
   bool columnCanFilter = false, columnCanGroup = false;
   maptypes::MapObjectTypes navType = maptypes::NONE;
@@ -447,7 +463,7 @@ void Search::contextMenu(const QPoint& pos)
   ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
-  ui->actionMapHideRangeRings->setEnabled(!parentWidget->getMapWidget()->getRangeRings().isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
@@ -457,8 +473,8 @@ void Search::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchSetMark);
   menu.addSeparator();
 
-  // menu.addAction(ui->actionSearchTableCopy);
-  // ui->actionSearchTableCopy->setEnabled(index.isValid());
+  menu.addAction(ui->actionSearchTableCopy);
+  ui->actionSearchTableCopy->setEnabled(index.isValid());
 
   menu.addAction(ui->actionSearchTableSelectAll);
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
@@ -498,8 +514,8 @@ void Search::contextMenu(const QPoint& pos)
     // Other actions with shortcuts are connectied directly to methods
     if(action == ui->actionSearchResetView)
       resetView();
-    // else if(action == ui->actionSearchTableCopy)
-    // tableCopyCipboard();
+    else if(action == ui->actionSearchTableCopy)
+      tableCopyClipboard();
     else if(action == ui->actionSearchFilterIncluding)
       controller->filterIncluding(index);
     else if(action == ui->actionSearchFilterExcluding)
@@ -509,7 +525,7 @@ void Search::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeMark(controller->getGeoPos(index));
     else if(action == ui->actionMapRangeRings)
-      parentWidget->getMapWidget()->addRangeRing(position);
+      mainWindow->getMapWidget()->addRangeRing(position);
     else if(action == ui->actionMapNavaidRange)
     {
       int frequency = controller->getRawData(index.row(), "frequency").toInt();
@@ -517,13 +533,13 @@ void Search::contextMenu(const QPoint& pos)
         // Adapt scaled frequency from nav_search table
         frequency /= 10;
 
-      parentWidget->getMapWidget()->addNavRangeRing(position, navType,
-                                                    controller->getRawData(index.row(), "ident").toString(),
-                                                    frequency,
-                                                    controller->getRawData(index.row(), "range").toInt());
+      mainWindow->getMapWidget()->addNavRangeRing(position, navType,
+                                                  controller->getRawData(index.row(), "ident").toString(),
+                                                  frequency,
+                                                  controller->getRawData(index.row(), "range").toInt());
     }
     else if(action == ui->actionMapHideRangeRings)
-      parentWidget->getMapWidget()->clearRangeRings();
+      mainWindow->getMapWidget()->clearRangeRings();
     else if(action == ui->actionRouteAdd)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
     else if(action == ui->actionRouteAirportStart)

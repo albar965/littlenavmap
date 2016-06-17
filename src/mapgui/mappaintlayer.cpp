@@ -293,8 +293,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     if(navMapWidget->getParentWindow()->getConnectClient()->isConnected())
       mapPainterAircraft->render(&context);
 
-    if(navMapWidget->viewContext() == Marble::Still)
-      qDebug() << "Time for rendering" << t.elapsed() << "ms";
+    // if(navMapWidget->viewContext() == Marble::Still)
+    // qDebug() << "Time for rendering" << t.elapsed() << "ms";
   }
 
   return true;

@@ -3405,6 +3405,24 @@
     <string>Work Offline</string>
    </property>
   </action>
+  <action name="actionRouteTableCopy">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/copy.svg</normaloff>:/littlenavmap/resources/icons/copy.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy selected entries into the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy selected logbook entries into the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>

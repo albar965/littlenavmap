@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "routecontroller.h"
+
+#include <QClipboard>
 #include "fs/pln/flightplan.h"
 #include "common/formatter.h"
 #include "geo/calculations.h"
@@ -46,6 +48,7 @@
 #include <QUndoStack>
 #include <QVector2D>
 #include "exception.h"
+#include <export/csvexporter.h>
 
 const int ROUTE_UNDO_LIMIT = 50;
 // TODO tr
@@ -166,7 +169,14 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg});
+  // Avoid stealing of Ctrl - C from other default menus
+  ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+
+  // Need extra action connected to catch the default Ctrl-C in the table view
+  connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
+
+  view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
+                    ui->actionRouteTableCopy});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
@@ -184,6 +194,20 @@ RouteController::~RouteController()
   delete undoStack;
   delete routeNetworkRadio;
   delete routeNetworkAirway;
+}
+
+void RouteController::tableCopyClipboard()
+{
+  qDebug() << "RouteController::tableCopyClipboard";
+
+  QString csv;
+  int exported = CsvExporter::selectionAsCsv(view, true, csv);
+
+  if(!csv.isEmpty())
+    QApplication::clipboard()->setText(csv);
+
+  mainWindow->getUi()->statusBar->showMessage(
+    QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
 void RouteController::routeAltChanged()
@@ -697,12 +721,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addSeparator();
     menu.addAction(ui->actionSearchSetMark);
 
-    // menu.addSeparator();
-    // menu.addAction(ui->actionSearchTableCopy);
+    menu.addSeparator();
+    menu.addAction(ui->actionSearchTableCopy);
 
     updateMoveAndDeleteActions();
 
-    // ui->actionSearchTableCopy->setEnabled(index.isValid());
+    ui->actionSearchTableCopy->setEnabled(index.isValid());
 
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());

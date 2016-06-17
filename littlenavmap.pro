@@ -99,7 +99,10 @@ SOURCES += src/main.cpp\
     src/db/databasemanager.cpp \
     src/db/dbtypes.cpp \
     src/common/constants.cpp \
-    src/common/filehistoryhandler.cpp
+    src/common/filehistoryhandler.cpp \
+    src/export/csvexporter.cpp \
+    src/export/exporter.cpp \
+    src/export/htmlexporter.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -161,7 +164,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/db/databasemanager.h \
     src/db/dbtypes.h \
     src/common/constants.h \
-    src/common/filehistoryhandler.h
+    src/common/filehistoryhandler.h \
+    src/export/csvexporter.h \
+    src/export/exporter.h \
+    src/export/htmlexporter.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

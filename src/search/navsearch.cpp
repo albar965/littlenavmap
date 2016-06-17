@@ -48,7 +48,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
                      MapQuery *mapQuery, int tabWidgetIndex)
   : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   navSearchWidgets =
   {
@@ -153,7 +153,7 @@ void NavSearch::connectSlots()
 {
   Search::connectSlots();
 
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   // Distance
   columns->assignDistanceSearchWidgets(ui->checkBoxNavDistSearch,
@@ -237,6 +237,7 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
 QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                       const QVariant& dataValue) const
 {
+  // Called directly by the model for export functions
   if(col->getColumnName() == "type")
     return maptypes::navTypeName(value.toString());
   else if(col->getColumnName() == "nav_type")
@@ -278,6 +279,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 
   const QItemSelection& selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
+  {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
       controller->fillRecord(row, rec);
@@ -305,6 +307,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
         result.vors.append(obj);
       }
     }
+  }
 }
 
 void NavSearch::postDatabaseLoad()
@@ -318,5 +321,6 @@ void NavSearch::setCallbacks()
 {
   using namespace std::placeholders;
   controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
+  controller->setFormatCallback(std::bind(&NavSearch::modelFormatHandler, this, _1, _2, _3));
   controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }

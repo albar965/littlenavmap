@@ -159,6 +159,9 @@ public:
   atools::sql::SqlRecord getSqlRecord() const;
   atools::sql::SqlRecord getSqlRecord(int row) const;
 
+  /* Format data for display */
+  virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+
 signals:
   /* Emitted when more data was fetched*/
   void fetchedMore();
@@ -187,9 +190,6 @@ private:
   };
 
   atools::geo::Rect boundingRect;
-
-  /* Format data for display */
-  virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
   /* Build full list of columns to query including group by and aggregated
    * columns */

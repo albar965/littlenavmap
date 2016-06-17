@@ -614,7 +614,7 @@ void SqlModel::resetSqlQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
-  return formatFunc(columns->getColumn(colName), QVariant(), value);
+  return formatFunc(columns->getColumn(colName), value, value);
 }
 
 Qt::SortOrder SqlModel::getSortOrder() const

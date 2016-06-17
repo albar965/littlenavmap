@@ -62,7 +62,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
                              MapQuery *mapQuery, int tabWidgetIndex)
   : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
 {
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   airportSearchWidgets =
   {
@@ -249,7 +249,7 @@ void AirportSearch::connectSlots()
 {
   Search::connectSlots();
 
-  Ui::MainWindow *ui = parentWidget->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   // Runways
   columns->assignMinMaxWidget("longest_runway_length",
@@ -312,7 +312,6 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
   switch(role)
   {
     case Qt::DisplayRole:
-
       return modelFormatHandler(col, value, dataValue);
 
     case Qt::DecorationRole:
@@ -367,6 +366,7 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& value,
                                           const QVariant& dataValue) const
 {
+  // Called directly by the model for export functions
   if(col->getColumnName() == "tower_frequency" || col->getColumnName() == "atis_frequency" ||
      col->getColumnName() == "awos_frequency" || col->getColumnName() == "asos_frequency" ||
      col->getColumnName() == "unicom_frequency")
@@ -413,6 +413,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 
   const QItemSelection& selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
+  {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
       maptypes::MapAirport ap;
@@ -424,6 +425,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
       factory.fillAirport(rec, ap, false);
       result.airports.append(ap);
     }
+  }
 }
 
 void AirportSearch::postDatabaseLoad()
@@ -436,5 +438,6 @@ void AirportSearch::setCallbacks()
 {
   using namespace std::placeholders;
   controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
+  controller->setFormatCallback(std::bind(&AirportSearch::modelFormatHandler, this, _1, _2, _3));
   controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
 }

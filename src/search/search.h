@@ -33,6 +33,7 @@ class MainWindow;
 class QItemSelection;
 class MapQuery;
 class QTimer;
+class CsvExporter;
 
 namespace atools {
 namespace geo {
@@ -67,7 +68,7 @@ public:
 
   void resetView();
   void resetSearch();
-  void tableCopyCipboard();
+  void tableCopyClipboard();
   void loadAllRowsIntoView();
 
   void filterByIdent(const QString& ident, const QString& region = QString(),
@@ -105,7 +106,7 @@ protected:
   Controller *controller;
   ColumnList *columns;
   QTableView *view;
-  MainWindow *parentWidget;
+  MainWindow *mainWindow;
   QTimer *updateTimer;
   int tabIndex;
 
@@ -119,6 +120,7 @@ protected:
 
   void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
 
+  CsvExporter *csvExporter = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHPANE_H

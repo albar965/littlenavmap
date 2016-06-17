@@ -193,6 +193,8 @@ private:
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
+  void tableCopyClipboard();
+
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H
