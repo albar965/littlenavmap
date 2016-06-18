@@ -63,8 +63,11 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
   connect(ui->listWidgetSelectParking, &QListWidget::itemSelectionChanged, this,
           &ParkingDialog::updateButtons);
 
-  connect(ui->listWidgetSelectParking, &QListWidget::itemDoubleClicked, this,
+  connect(ui->listWidgetSelectParking, &QListWidget::itemActivated, this,
           &QDialog::accept);
+
+  connect(ui->buttonBoxSelectParking, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  connect(ui->buttonBoxSelectParking, &QDialogButtonBox::rejected, this, &QDialog::reject);
 }
 
 ParkingDialog::~ParkingDialog()

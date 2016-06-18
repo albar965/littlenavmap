@@ -184,8 +184,6 @@ private:
   void kmlOpen();
   void kmlClear();
 
-  QAction *addShortcut(QAction *action, const QString& key = QString());
-
   void legendAnchorClicked(const QUrl& url);
 
 };

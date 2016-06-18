@@ -344,7 +344,7 @@
              <item row="1" column="1">
               <widget class="QCheckBox" name="checkBoxAirportLightSearch">
                <property name="text">
-                <string>Lighted</string>
+                <string>&amp;Lighted</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -354,7 +354,7 @@
              <item row="1" column="4">
               <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
                <property name="text">
-                <string>Avgas</string>
+                <string>Av&amp;gas</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -364,7 +364,7 @@
              <item row="1" column="2">
               <widget class="QCheckBox" name="checkBoxAirportIlsSearch">
                <property name="text">
-                <string>ILS</string>
+                <string>IL&amp;S</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -374,7 +374,7 @@
              <item row="1" column="0">
               <widget class="QCheckBox" name="checkBoxAirportScenerySearch">
                <property name="text">
-                <string>Rating</string>
+                <string>&amp;Rating</string>
                </property>
                <property name="checked">
                 <bool>false</bool>
@@ -387,7 +387,7 @@
              <item row="2" column="0">
               <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
                <property name="text">
-                <string>Addon</string>
+                <string>Add&amp;on</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -397,7 +397,7 @@
              <item row="1" column="3">
               <widget class="QCheckBox" name="checkBoxAirportMilSearch">
                <property name="text">
-                <string>Military</string>
+                <string>Militar&amp;y</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -407,7 +407,7 @@
              <item row="2" column="2">
               <widget class="QCheckBox" name="checkBoxAirportApprSearch">
                <property name="text">
-                <string>Approach</string>
+                <string>A&amp;pproach</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -417,7 +417,7 @@
              <item row="2" column="1">
               <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
                <property name="text">
-                <string>Tower</string>
+                <string>&amp;Tower</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -427,7 +427,7 @@
              <item row="2" column="3">
               <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
                <property name="text">
-                <string>Closed</string>
+                <string>&amp;Closed</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -437,7 +437,7 @@
              <item row="2" column="4">
               <widget class="QCheckBox" name="checkBoxAirportJetASearch">
                <property name="text">
-                <string>Jetfuel</string>
+                <string>Jet&amp;fuel</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -575,10 +575,13 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Runways: Min:</string>
+                <string>Runways: &amp;Min:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportRunwaysMinSearch</cstring>
                </property>
               </widget>
              </item>
@@ -610,10 +613,13 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Max:</string>
+                <string>&amp;Max:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportRunwaysMaxSearch</cstring>
                </property>
               </widget>
              </item>
@@ -713,7 +719,10 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Altitude: Min:</string>
+                <string>Altitude: &amp;Min:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportAltitudeMinSearch</cstring>
                </property>
               </widget>
              </item>
@@ -748,7 +757,10 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Max:</string>
+                <string>&amp;Max:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportAltitudeMaxSearch</cstring>
                </property>
               </widget>
              </item>
@@ -809,7 +821,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Distance</string>
+                <string>&amp;Distance</string>
                </property>
               </widget>
              </item>
@@ -822,10 +834,13 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Min:</string>
+                <string>M&amp;in:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportDistMinSearch</cstring>
                </property>
               </widget>
              </item>
@@ -857,7 +872,10 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Max:</string>
+                <string>Ma&amp;x:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAirportDistMaxSearch</cstring>
                </property>
               </widget>
              </item>
@@ -1180,7 +1198,10 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Min Range:</string>
+                <string>Min &amp;Range:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxNavMaxRangeSearch</cstring>
                </property>
               </widget>
              </item>
@@ -1357,7 +1378,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Distance</string>
+                <string>&amp;Distance</string>
                </property>
               </widget>
              </item>
@@ -1370,10 +1391,13 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Min:</string>
+                <string>&amp;Min:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxNavDistMinSearch</cstring>
                </property>
               </widget>
              </item>
@@ -1405,7 +1429,10 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Max:</string>
+                <string>&amp;Max:</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxNavDistMaxSearch</cstring>
                </property>
               </widget>
              </item>
@@ -1622,6 +1649,12 @@
        </property>
        <item>
         <widget class="QSpinBox" name="spinBoxRouteSpeed">
+         <property name="toolTip">
+          <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+         </property>
+         <property name="statusTip">
+          <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+         </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
          </property>
@@ -1644,6 +1677,12 @@
        </item>
        <item>
         <widget class="QSpinBox" name="spinBoxRouteAlt">
+         <property name="toolTip">
+          <string>Flight plan altitude which is also used to calculate route based on given altitude</string>
+         </property>
+         <property name="statusTip">
+          <string>Flight plan altitude which is also used to calculate route based on given altitude</string>
+         </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
          </property>
@@ -1667,10 +1706,10 @@
        <item>
         <widget class="QComboBox" name="comboBoxRouteType">
          <property name="toolTip">
-          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules)</string>
+          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
          </property>
          <property name="statusTip">
-          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules)</string>
+          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
          </property>
          <item>
           <property name="text">
@@ -2080,7 +2119,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Flight Plan Elevation Profile</string>
+    <string>Flight Plan Profile</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -2121,7 +2160,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircraftdock.svg</normaloff>:/littlenavmap/resources/icons/aircraftdock.svg</iconset>
    </property>
    <property name="windowTitle">
-    <string>Aircraft</string>
+    <string>Simulator Aircraft</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -2237,10 +2276,10 @@
     <string>Filter by Entries &amp;including %1</string>
    </property>
    <property name="toolTip">
-    <string>Filter by logbook entries including text</string>
+    <string>Filter by entries including text</string>
    </property>
    <property name="statusTip">
-    <string>Filter by logbook entries including text</string>
+    <string>Filter by entries including text</string>
    </property>
   </action>
   <action name="actionSearchFilterExcluding">
@@ -2252,10 +2291,10 @@
     <string>Filter by Entries e&amp;xcluding %1</string>
    </property>
    <property name="toolTip">
-    <string>Filter by logbook entries excluding text</string>
+    <string>Filter by entries excluding text</string>
    </property>
    <property name="statusTip">
-    <string>Filter by logbook entries excluding text</string>
+    <string>Filter by entries excluding text</string>
    </property>
   </action>
   <action name="actionSearchResetView">
@@ -2278,10 +2317,10 @@
     <string>Select &amp;All</string>
    </property>
    <property name="toolTip">
-    <string>Select all logbook entries in the table view</string>
+    <string>Select all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Select all logbook entries in the table view</string>
+    <string>Select all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -2296,10 +2335,10 @@
     <string>&amp;Copy</string>
    </property>
    <property name="toolTip">
-    <string>Copy selected logbook entries into the clipboard</string>
+    <string>Copy selected entries in CSV format into the clipboard</string>
    </property>
    <property name="statusTip">
-    <string>Copy selected logbook entries into the clipboard</string>
+    <string>Copy selected entries in CSV format into the clipboard</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -2400,10 +2439,10 @@
     <string>&amp;Show All</string>
    </property>
    <property name="toolTip">
-    <string>Load all logbook entries into the view</string>
+    <string>Load all entries into the view</string>
    </property>
    <property name="statusTip">
-    <string>Load all logbook entries into the view</string>
+    <string>Load all entries into the view</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -2416,6 +2455,9 @@
    </property>
    <property name="text">
     <string>&amp;Open Flight Plan ...</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Flight Plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -2432,6 +2474,9 @@
    <property name="toolTip">
     <string>Save Flight Plan</string>
    </property>
+   <property name="statusTip">
+    <string>Save Flight Plan</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
@@ -2442,7 +2487,16 @@
      <normaloff>:/littlenavmap/resources/icons/database.svg</normaloff>:/littlenavmap/resources/icons/database.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Reload Scenery Library ...</string>
+    <string>&amp;Load Scenery Library ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load Scenery Library</string>
+   </property>
+   <property name="toolTip">
+    <string>Load a flight simulator scenery library into the Little Navmap database</string>
+   </property>
+   <property name="statusTip">
+    <string>Load a flight simulator scenery library into the Little Navmap database</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
@@ -2458,6 +2512,12 @@
    <property name="text">
     <string>Facilities</string>
    </property>
+   <property name="toolTip">
+    <string>Show airport facility search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport facility search options</string>
+   </property>
   </action>
   <action name="actionAirportSearchShowFuelParkOptions">
    <property name="checkable">
@@ -2470,7 +2530,10 @@
     <string>Parking</string>
    </property>
    <property name="toolTip">
-    <string>Parking</string>
+    <string>Show airport parking search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport parking search options</string>
    </property>
   </action>
   <action name="actionAirportSearchShowRunwayOptions">
@@ -2483,6 +2546,12 @@
    <property name="text">
     <string>Runway</string>
    </property>
+   <property name="toolTip">
+    <string>Show airport runway search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport runway search options</string>
+   </property>
   </action>
   <action name="actionAirportSearchShowAltOptions">
    <property name="checkable">
@@ -2493,6 +2562,12 @@
    </property>
    <property name="text">
     <string>Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airport altitude search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport altitude search options</string>
    </property>
   </action>
   <action name="actionAirportSearchShowDistOptions">
@@ -2505,6 +2580,12 @@
    <property name="text">
     <string>Distance to Mark</string>
    </property>
+   <property name="toolTip">
+    <string>Show airport distance search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport distance search options</string>
+   </property>
   </action>
   <action name="actionAirportSearchShowSceneryOptions">
    <property name="checkable">
@@ -2516,6 +2597,12 @@
    <property name="text">
     <string>Scenery</string>
    </property>
+   <property name="toolTip">
+    <string>Show airport scenery search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport scenery search options</string>
+   </property>
   </action>
   <action name="actionExit">
    <property name="icon">
@@ -2524,6 +2611,12 @@
    </property>
    <property name="text">
     <string>&amp;Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Exit the application</string>
+   </property>
+   <property name="statusTip">
+    <string>Exit the application</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -2539,6 +2632,12 @@
    <property name="text">
     <string>Statusbar</string>
    </property>
+   <property name="toolTip">
+    <string>Show the statusbar</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the statusbar</string>
+   </property>
   </action>
   <action name="actionHelpContents">
    <property name="icon">
@@ -2548,6 +2647,12 @@
    <property name="text">
     <string>Contents</string>
    </property>
+   <property name="toolTip">
+    <string>Show the help in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the help in a browser</string>
+   </property>
   </action>
   <action name="actionHelpAbout">
    <property name="icon">
@@ -2555,6 +2660,9 @@
      <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
    </property>
    <property name="text">
+    <string>About Little Navmap</string>
+   </property>
+   <property name="statusTip">
     <string>About Little Navmap</string>
    </property>
   </action>
@@ -2566,6 +2674,9 @@
    <property name="text">
     <string>About Qt</string>
    </property>
+   <property name="statusTip">
+    <string>About Qt</string>
+   </property>
   </action>
   <action name="actionOptions">
    <property name="icon">
@@ -2574,6 +2685,12 @@
    </property>
    <property name="text">
     <string>&amp;Options ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the options dialog</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the options dialog</string>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -2586,6 +2703,12 @@
    <property name="text">
     <string>All</string>
    </property>
+   <property name="toolTip">
+    <string>Show all or no additional search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show all or no additional search options</string>
+   </property>
   </action>
   <action name="actionSearchSetMark">
    <property name="icon">
@@ -2595,6 +2718,12 @@
    <property name="text">
     <string>Set Center for Distance Search</string>
    </property>
+   <property name="toolTip">
+    <string>Set center mark for distance search</string>
+   </property>
+   <property name="statusTip">
+    <string>Set center mark for distance search</string>
+   </property>
   </action>
   <action name="actionMapSetMark">
    <property name="icon">
@@ -2603,6 +2732,12 @@
    </property>
    <property name="text">
     <string>Set Center for Distance Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Set center mark for distance search</string>
+   </property>
+   <property name="statusTip">
+    <string>Set center mark for distance search</string>
    </property>
   </action>
   <action name="actionNavSearchShowAllOptions">
@@ -2615,6 +2750,12 @@
    <property name="text">
     <string>All</string>
    </property>
+   <property name="toolTip">
+    <string>Show all or no additional navaid search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show all or no additional navaid search options</string>
+   </property>
   </action>
   <action name="actionNavSearchShowDistOptions">
    <property name="checkable">
@@ -2625,6 +2766,12 @@
    </property>
    <property name="text">
     <string>Distance to Mark</string>
+   </property>
+   <property name="toolTip">
+    <string>Show navaid distance search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show navaid distance search options</string>
    </property>
   </action>
   <action name="actionNavSearchShowSceneryOptions">
@@ -2637,6 +2784,12 @@
    <property name="text">
     <string>Scenery</string>
    </property>
+   <property name="toolTip">
+    <string>Show navaid scenery search options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show navaid scenery search options</string>
+   </property>
   </action>
   <action name="actionShowInSearch">
    <property name="icon">
@@ -2647,7 +2800,10 @@
     <string>Show %1 in Search</string>
    </property>
    <property name="toolTip">
-    <string>Show in Search</string>
+    <string>Show airport or navaid in search window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport or navaid in search window</string>
    </property>
   </action>
   <action name="actionMapMoreDetails">
@@ -2657,6 +2813,12 @@
    </property>
    <property name="text">
     <string>&amp;More Details</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more details on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show more details on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl++</string>
@@ -2670,6 +2832,12 @@
    <property name="text">
     <string>&amp;Less Details</string>
    </property>
+   <property name="toolTip">
+    <string>Show less details on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show less details on map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
    </property>
@@ -2681,6 +2849,12 @@
    </property>
    <property name="text">
     <string>Goto &amp;Home</string>
+   </property>
+   <property name="toolTip">
+    <string>Goto home position</string>
+   </property>
+   <property name="statusTip">
+    <string>Goto home position</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Home</string>
@@ -2694,6 +2868,12 @@
    <property name="text">
     <string>Map Position &amp;Back</string>
    </property>
+   <property name="toolTip">
+    <string>Go back to the last map position</string>
+   </property>
+   <property name="statusTip">
+    <string>Go back to the last map position</string>
+   </property>
    <property name="shortcut">
     <string>Alt+Left</string>
    </property>
@@ -2705,6 +2885,12 @@
    </property>
    <property name="text">
     <string>Map Position &amp;Forward</string>
+   </property>
+   <property name="toolTip">
+    <string>Go forward to the next map position</string>
+   </property>
+   <property name="statusTip">
+    <string>Go forward to the next map position</string>
    </property>
    <property name="shortcut">
     <string>Alt+Right</string>
@@ -2718,6 +2904,12 @@
    <property name="text">
     <string>Goto Center for &amp;Distance Search</string>
    </property>
+   <property name="toolTip">
+    <string>Goto center mark for distance search</string>
+   </property>
+   <property name="statusTip">
+    <string>Goto center mark for distance search</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
    </property>
@@ -2729,6 +2921,12 @@
    </property>
    <property name="text">
     <string>Set Home</string>
+   </property>
+   <property name="toolTip">
+    <string>Set position and zoom as home</string>
+   </property>
+   <property name="statusTip">
+    <string>Set position and zoom as home</string>
    </property>
   </action>
   <action name="actionMapShowAirports">
@@ -2744,6 +2942,12 @@
    </property>
    <property name="text">
     <string>Show Airports with &amp;hard Runways</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airports with hard runways on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airports with hard runways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+H</string>
@@ -2763,6 +2967,12 @@
    <property name="text">
     <string>Show &amp;VOR Stations</string>
    </property>
+   <property name="toolTip">
+    <string>Show VOR stations on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show VOR stations on map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Alt+V</string>
    </property>
@@ -2780,6 +2990,12 @@
    </property>
    <property name="text">
     <string>Show &amp;NDB Stations</string>
+   </property>
+   <property name="toolTip">
+    <string>Show NDB stations on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show NDB stations on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+N</string>
@@ -2799,6 +3015,12 @@
    <property name="text">
     <string>Show &amp;Waypoints</string>
    </property>
+   <property name="toolTip">
+    <string>Show waypoints on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show waypoints on map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Alt+W</string>
    </property>
@@ -2817,6 +3039,12 @@
    <property name="text">
     <string>Show &amp;Country and City Names</string>
    </property>
+   <property name="toolTip">
+    <string>Show country and city names on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show country and city names on map</string>
+   </property>
   </action>
   <action name="actionMapShowIls">
    <property name="checkable">
@@ -2832,6 +3060,12 @@
    <property name="text">
     <string>Show &amp;ILS Feathers</string>
    </property>
+   <property name="toolTip">
+    <string>Show ILS feathers on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show ILS feathers on map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Alt+I</string>
    </property>
@@ -2845,7 +3079,7 @@
     <string>&amp;Default Details</string>
    </property>
    <property name="toolTip">
-    <string>Default Details</string>
+    <string>Go back to default details on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
@@ -2860,7 +3094,10 @@
     <string>Measure GC Distance from %1</string>
    </property>
    <property name="toolTip">
-    <string>Measure Great Circle Distance</string>
+    <string>Measure great circle distance on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Measure great circle distance on map</string>
    </property>
   </action>
   <action name="actionMapRangeRings">
@@ -2871,6 +3108,12 @@
    <property name="text">
     <string>Show Range Rings</string>
    </property>
+   <property name="toolTip">
+    <string>Show range rings on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show range rings on map</string>
+   </property>
   </action>
   <action name="actionMapNavaidRange">
    <property name="icon">
@@ -2880,6 +3123,12 @@
    <property name="text">
     <string>Show Navaid Range for %1</string>
    </property>
+   <property name="toolTip">
+    <string>Show range for navaid on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show range for navaid on map</string>
+   </property>
   </action>
   <action name="actionMapHideRangeRings">
    <property name="icon">
@@ -2887,7 +3136,13 @@
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Hide All Range Rings and Distance Markers</string>
+    <string>Remove All Range Rings and Distance Measurements</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all range rings and distance measurements from map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all range rings and distance measurements from map</string>
    </property>
   </action>
   <action name="actionMapMeasureRhumbDistance">
@@ -2899,7 +3154,10 @@
     <string>Measure Rhumb Distance from %1</string>
    </property>
    <property name="toolTip">
-    <string>Measure Great Circle Distance</string>
+    <string>Measure rhumb line distance on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Measure rhumb line distance on map</string>
    </property>
   </action>
   <action name="actionMapShowSoftAirports">
@@ -2915,6 +3173,12 @@
    </property>
    <property name="text">
     <string>Show Airports with &amp;soft Runways</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airports with soft runways on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airports with soft runways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
@@ -2934,6 +3198,12 @@
    <property name="text">
     <string>Show &amp;empty Airports</string>
    </property>
+   <property name="toolTip">
+    <string>Show empty airports on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show empty airports on map</string>
+   </property>
   </action>
   <action name="actionMapHideOneRangeRing">
    <property name="icon">
@@ -2941,7 +3211,13 @@
      <normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Hide Range Ring</string>
+    <string>Remove Range Ring</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove this range ring</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this range ring</string>
    </property>
   </action>
   <action name="actionMapHideDistanceMarker">
@@ -2950,10 +3226,13 @@
      <normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</iconset>
    </property>
    <property name="text">
-    <string>Hide Distance Line</string>
+    <string>Remove Distance Measurement</string>
    </property>
    <property name="toolTip">
-    <string>Measure Great Circle Distance</string>
+    <string>Remove this distance measurement</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this distance measurement</string>
    </property>
   </action>
   <action name="actionRouteSaveAs">
@@ -2963,6 +3242,12 @@
    </property>
    <property name="text">
     <string>Save Flight Plan &amp;as ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -2976,6 +3261,12 @@
    <property name="text">
     <string>&amp;New Flight Plan</string>
    </property>
+   <property name="toolTip">
+    <string>Create a new flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a new flight plan</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
    </property>
@@ -2987,6 +3278,12 @@
    </property>
    <property name="text">
     <string>Center &amp;Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Center flight plan on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Center flight plan on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
@@ -3003,6 +3300,12 @@
    <property name="text">
     <string>Show &amp;Victor Airways</string>
    </property>
+   <property name="toolTip">
+    <string>Show victor airways on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show victor airways on map</string>
+   </property>
   </action>
   <action name="actionMapShowJetAirways">
    <property name="checkable">
@@ -3016,7 +3319,10 @@
     <string>Show &amp;Jet Airways</string>
    </property>
    <property name="toolTip">
-    <string>J</string>
+    <string>Show jet airways on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show jet airways on map</string>
    </property>
   </action>
   <action name="actionMapShowRoute">
@@ -3034,7 +3340,10 @@
     <string>Show &amp;Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>R</string>
+    <string>Show flight plan on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show flight plan on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+F</string>
@@ -3048,6 +3357,12 @@
    <property name="text">
     <string>Set %1 as Flight Plan Departure</string>
    </property>
+   <property name="toolTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
   </action>
   <action name="actionRouteAirportDest">
    <property name="icon">
@@ -3058,7 +3373,10 @@
     <string>Set %1 as Flight Plan Destination</string>
    </property>
    <property name="toolTip">
-    <string>Set Airport as Route Destination</string>
+    <string>Set this as destionation for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as destionation for the flight plan</string>
    </property>
   </action>
   <action name="actionRouteAdd">
@@ -3070,7 +3388,10 @@
     <string>Add %1 to Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Set Airport as Route Destination</string>
+    <string>Add airport, navaid or map position to flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add airport, navaid or map position to flight plan</string>
    </property>
   </action>
   <action name="actionRouteDeleteLeg">
@@ -3080,6 +3401,12 @@
    </property>
    <property name="text">
     <string>Delete selected Legs</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete all selected flight plan legs</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete all selected flight plan legs</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -3092,6 +3419,12 @@
    </property>
    <property name="text">
     <string>Move selected Legs Up</string>
+   </property>
+   <property name="toolTip">
+    <string>Move selected flight plan legs up</string>
+   </property>
+   <property name="statusTip">
+    <string>Move selected flight plan legs up</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Up</string>
@@ -3106,7 +3439,10 @@
     <string>Move selected Legs Down</string>
    </property>
    <property name="toolTip">
-    <string>Move Leg Down</string>
+    <string>Move selected flight plan legs down</string>
+   </property>
+   <property name="statusTip">
+    <string>Move selected flight plan legs down</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Down</string>
@@ -3121,7 +3457,10 @@
     <string>Delete %1 from Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Delete from Route</string>
+    <string>Delete this airport, navaid or map position from flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete this airport, navaid or map position from flight plan</string>
    </property>
   </action>
   <action name="actionRouteCalcHighAlt">
@@ -3132,6 +3471,12 @@
    <property name="text">
     <string>Calculate &amp;high Altitude</string>
    </property>
+   <property name="toolTip">
+    <string>Calculate a high altitude (Jet airways) route</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a high altitude (Jet airways) route</string>
+   </property>
   </action>
   <action name="actionRouteCalcLowAlt">
    <property name="icon">
@@ -3140,6 +3485,12 @@
    </property>
    <property name="text">
     <string>Calculate &amp;low Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a low altitude (Victor airways) route</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a low altitude (Victor airways) route</string>
    </property>
   </action>
   <action name="actionRouteCalcRadionav">
@@ -3150,6 +3501,12 @@
    <property name="text">
     <string>Calculate Radio&amp;nav</string>
    </property>
+   <property name="toolTip">
+    <string>Calculate a radio navaid (VOR and NDB) route</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a radio navaid (VOR and NDB) route</string>
+   </property>
   </action>
   <action name="actionRouteCalcDirect">
    <property name="icon">
@@ -3158,6 +3515,12 @@
    </property>
    <property name="text">
     <string>Calculate &amp;Direct</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate a direct route</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a direct route</string>
    </property>
   </action>
   <action name="actionRouteReverse">
@@ -3168,6 +3531,12 @@
    <property name="text">
     <string>&amp;Reverse Flight Plan</string>
    </property>
+   <property name="toolTip">
+    <string>Reverse flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Reverse flight plan</string>
+   </property>
   </action>
   <action name="actionRouteParkingStart">
    <property name="icon">
@@ -3176,6 +3545,12 @@
    </property>
    <property name="text">
     <string>Set %1 as Flight Plan Departure</string>
+   </property>
+   <property name="toolTip">
+    <string>Set parking position as flight plan departure</string>
+   </property>
+   <property name="statusTip">
+    <string>Set parking position as flight plan departure</string>
    </property>
   </action>
   <action name="actionRouteSelectParking">
@@ -3186,23 +3561,14 @@
    <property name="text">
     <string>Select &amp;Parking Position for Departure</string>
    </property>
-  </action>
-  <action name="actionRouteUndo">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   <property name="toolTip">
+    <string>Select parking position for flight plan departure</string>
    </property>
-   <property name="text">
-    <string>Flight Plan Undo</string>
+   <property name="statusTip">
+    <string>Select parking position for flight plan departure</string>
    </property>
-  </action>
-  <action name="actionRouteRedo">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Flight Plan Redo</string>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
    </property>
   </action>
   <action name="actionMapShowHillshading">
@@ -3220,7 +3586,10 @@
     <string>Show &amp;Hillshading</string>
    </property>
    <property name="toolTip">
-    <string>Hillshading</string>
+    <string>Show hillshading on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show hillshading on map</string>
    </property>
   </action>
   <action name="actionAboutMarble">
@@ -3234,6 +3603,9 @@
    <property name="toolTip">
     <string>About the Marble Widget</string>
    </property>
+   <property name="statusTip">
+    <string>About the Marble Widget</string>
+   </property>
   </action>
   <action name="actionRouteCalcSetAlt">
    <property name="icon">
@@ -3242,6 +3614,12 @@
    </property>
    <property name="text">
     <string>Calculate based on given &amp;Altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Calculate route based on given altitude using Victor or Jet airways</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate route based on given altitude using Victor or Jet airways</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -3257,6 +3635,12 @@
    </property>
    <property name="text">
     <string>Force &amp;Show Addon Airports</string>
+   </property>
+   <property name="toolTip">
+    <string>Force map to show add-on airports</string>
+   </property>
+   <property name="statusTip">
+    <string>Force map to show add-on airports</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -3274,7 +3658,10 @@
     <string>Show Map &amp;Grid</string>
    </property>
    <property name="toolTip">
-    <string>Grid</string>
+    <string>Show map grid</string>
+   </property>
+   <property name="statusTip">
+    <string>Show map grid</string>
    </property>
   </action>
   <action name="actionConnectSimulator">
@@ -3284,6 +3671,12 @@
    </property>
    <property name="text">
     <string>&amp;Connect to Simulator ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect to simulator via Little Navconnect</string>
+   </property>
+   <property name="statusTip">
+    <string>Connect to simulator via Little Navconnect</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
@@ -3304,7 +3697,10 @@
     <string>Show &amp;Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Aircraft</string>
+    <string>Show simulator aircraft position and data on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show simulator aircraft position and data on map</string>
    </property>
   </action>
   <action name="actionMapAircraftCenter">
@@ -3320,6 +3716,12 @@
    </property>
    <property name="text">
     <string>Center &amp;Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Center simulator aircraft on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Center simulator aircraft on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -3340,7 +3742,10 @@
     <string>Show Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
-    <string>Aircraft</string>
+    <string>Show simulator aircraft trail on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show simulator aircraft trail on map</string>
    </property>
   </action>
   <action name="actionMapDeleteAircraftTrack">
@@ -3355,7 +3760,10 @@
     <string>Delete Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
-    <string>Aircraft</string>
+    <string>Delete simulator aircraft trail from map</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete simulator aircraft trail from map</string>
    </property>
   </action>
   <action name="actionMapShowInformation">
@@ -3367,7 +3775,10 @@
     <string>Show Information for %1</string>
    </property>
    <property name="toolTip">
-    <string>Show Information for Airport or Navaid</string>
+    <string>Show Information for airport or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Show Information for airport or navaid</string>
    </property>
   </action>
   <action name="actionRouteEditMode">
@@ -3384,6 +3795,12 @@
    <property name="text">
     <string>&amp;Edit Flight Plan on Map</string>
    </property>
+   <property name="toolTip">
+    <string>Enable or disable flight plan edit mode on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Enable or disable flight plan edit mode on map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
    </property>
@@ -3391,6 +3808,12 @@
   <action name="actionRecentRoutesClear">
    <property name="text">
     <string>Clear Menu</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all recent flight plans from menu</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all recent flight plans from menu</string>
    </property>
   </action>
   <action name="actionHelpNavmapLegend">
@@ -3401,15 +3824,33 @@
    <property name="text">
     <string>Navmap Legend</string>
    </property>
+   <property name="toolTip">
+    <string>Show the navigation map legend</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the navigation map legend</string>
+   </property>
   </action>
   <action name="actionResetMessages">
    <property name="text">
     <string>Reset all &amp;Messages</string>
    </property>
+   <property name="toolTip">
+    <string>Reset all messages that were disabled with the &quot;do not show again&quot; button</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset all messages that were disabled with the &quot;do not show again&quot; button</string>
+   </property>
   </action>
   <action name="actionDatabaseFiles">
    <property name="text">
     <string>&amp;Show Database Files</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the Little Navmap database directory in Explorer</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the Little Navmap database directory in Explorer</string>
    </property>
   </action>
   <action name="actionLoadKml">
@@ -3420,10 +3861,22 @@
    <property name="text">
     <string>Open Google Earth &amp;KML ...</string>
    </property>
+   <property name="toolTip">
+    <string>Open Google Earth KML files</string>
+   </property>
+   <property name="statusTip">
+    <string>Open Google Earth KML files</string>
+   </property>
   </action>
   <action name="actionClearKmlMenu">
    <property name="text">
     <string>Clear Menu</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all recent KML files from menu</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all recent KML files from menu</string>
    </property>
   </action>
   <action name="actionClearKml">
@@ -3433,6 +3886,12 @@
    </property>
    <property name="text">
     <string>&amp;Clear KML from Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all KML files from the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all KML files from the map</string>
    </property>
   </action>
   <action name="actionWorkOffline">
@@ -3445,6 +3904,12 @@
    </property>
    <property name="text">
     <string>&amp;Work Offline</string>
+   </property>
+   <property name="toolTip">
+    <string>Work offline and stop loading of map data</string>
+   </property>
+   <property name="statusTip">
+    <string>Work offline and stop loading of map data</string>
    </property>
   </action>
   <action name="actionRouteTableCopy">
@@ -3459,7 +3924,10 @@
     <string>Copy selected entries into the clipboard</string>
    </property>
    <property name="statusTip">
-    <string>Copy selected logbook entries into the clipboard</string>
+    <string>Copy selected entries in CSV format into the clipboard</string>
+   </property>
+   <property name="whatsThis">
+    <string>Copy selected entries in CSV format into the clipboard</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -3474,7 +3942,10 @@
     <string>Show on Map</string>
    </property>
    <property name="toolTip">
-    <string>Show on Map</string>
+    <string>Show the airport or navaid on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the airport or navaid on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
@@ -3489,7 +3960,10 @@
     <string>Show Information</string>
    </property>
    <property name="toolTip">
-    <string>Show Information</string>
+    <string>Show information about the airport or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about the airport or navaid</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -3504,7 +3978,10 @@
     <string>Show Information</string>
    </property>
    <property name="toolTip">
-    <string>Show Information</string>
+    <string>Show information about the airport or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about the airport or navaid</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -3518,12 +3995,81 @@
    <property name="text">
     <string>Show on Map</string>
    </property>
+   <property name="toolTip">
+    <string>Show the airport or navaid on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the airport or navaid on the map</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+M</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>tabWidgetSearch</tabstop>
+  <tabstop>lineEditAirportIcaoSearch</tabstop>
+  <tabstop>lineEditAirportNameSearch</tabstop>
+  <tabstop>toolButtonAirportSearch</tabstop>
+  <tabstop>lineEditAirportCitySearch</tabstop>
+  <tabstop>lineEditAirportStateSearch</tabstop>
+  <tabstop>lineEditAirportCountrySearch</tabstop>
+  <tabstop>checkBoxAirportScenerySearch</tabstop>
+  <tabstop>checkBoxAirportAddonSearch</tabstop>
+  <tabstop>checkBoxAirportLightSearch</tabstop>
+  <tabstop>checkBoxAirportTowerSearch</tabstop>
+  <tabstop>checkBoxAirportIlsSearch</tabstop>
+  <tabstop>checkBoxAirportApprSearch</tabstop>
+  <tabstop>checkBoxAirportMilSearch</tabstop>
+  <tabstop>checkBoxAirportClosedSearch</tabstop>
+  <tabstop>checkBoxAirportAvgasSearch</tabstop>
+  <tabstop>checkBoxAirportJetASearch</tabstop>
+  <tabstop>comboBoxAirportRampSearch</tabstop>
+  <tabstop>comboBoxAirportGateSearch</tabstop>
+  <tabstop>comboBoxAirportHelipadSearch</tabstop>
+  <tabstop>spinBoxAirportRunwaysMinSearch</tabstop>
+  <tabstop>spinBoxAirportRunwaysMaxSearch</tabstop>
+  <tabstop>comboBoxAirportSurfaceSearch</tabstop>
+  <tabstop>spinBoxAirportAltitudeMinSearch</tabstop>
+  <tabstop>spinBoxAirportAltitudeMaxSearch</tabstop>
+  <tabstop>checkBoxAirportDistSearch</tabstop>
+  <tabstop>spinBoxAirportDistMinSearch</tabstop>
+  <tabstop>spinBoxAirportDistMaxSearch</tabstop>
+  <tabstop>comboBoxAirportDistDirectionSearch</tabstop>
+  <tabstop>lineEditAirportScenerySearch</tabstop>
+  <tabstop>lineEditAirportFileSearch</tabstop>
+  <tabstop>tableViewAirportSearch</tabstop>
+  <tabstop>lineEditNavIcaoSearch</tabstop>
+  <tabstop>lineEditNavNameSearch</tabstop>
+  <tabstop>lineEditNavRegionSearch</tabstop>
+  <tabstop>lineEditNavAirportIcaoSearch</tabstop>
+  <tabstop>toolButtonNavSearch</tabstop>
+  <tabstop>spinBoxNavMaxRangeSearch</tabstop>
+  <tabstop>comboBoxNavTypeSearch</tabstop>
+  <tabstop>comboBoxNavNavAidSearch</tabstop>
+  <tabstop>checkBoxNavDistSearch</tabstop>
+  <tabstop>spinBoxNavDistMinSearch</tabstop>
+  <tabstop>spinBoxNavDistMaxSearch</tabstop>
+  <tabstop>comboBoxNavDistDirectionSearch</tabstop>
+  <tabstop>lineEditNavScenerySearch</tabstop>
+  <tabstop>lineEditNavFileSearch</tabstop>
+  <tabstop>tableViewNavSearch</tabstop>
+  <tabstop>spinBoxRouteSpeed</tabstop>
+  <tabstop>spinBoxRouteAlt</tabstop>
+  <tabstop>comboBoxRouteType</tabstop>
+  <tabstop>tableViewRoute</tabstop>
+  <tabstop>tabWidgetInformation</tabstop>
+  <tabstop>textEditAirportInfo</tabstop>
+  <tabstop>textEditRunwayInfo</tabstop>
+  <tabstop>textEditComInfo</tabstop>
+  <tabstop>textEditApproachInfo</tabstop>
+  <tabstop>textEditNavaidInfo</tabstop>
+  <tabstop>textBrowserNavmapLegendInfo</tabstop>
+  <tabstop>tabWidgetAircraft</tabstop>
+  <tabstop>textEditAircraftInfo</tabstop>
+  <tabstop>textEditAircraftProgressInfo</tabstop>
+ </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>
  </resources>

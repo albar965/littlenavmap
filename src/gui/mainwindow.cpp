@@ -258,7 +258,7 @@ void MainWindow::setupUi()
 
   mapProjectionComboBox = new QComboBox(this);
   mapProjectionComboBox->setObjectName("mapProjectionComboBox");
-  QString helpText = tr("Select Map Theme");
+  QString helpText = tr("Select map projection");
   mapProjectionComboBox->setToolTip(helpText);
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
@@ -267,7 +267,7 @@ void MainWindow::setupUi()
 
   mapThemeComboBox = new QComboBox(this);
   mapThemeComboBox->setObjectName("mapThemeComboBox");
-  helpText = tr("Select Map Theme");
+  helpText = tr("Select map theme");
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
   mapThemeComboBox->addItem(tr("OpenStreetMap"),
@@ -281,17 +281,45 @@ void MainWindow::setupUi()
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
+  ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence("Alt+1"));
+  ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                       arg(ui->dockWidgetSearch->windowTitle().toLower()));
+  ui->dockWidgetSearch->toggleViewAction()->setStatusTip(ui->dockWidgetSearch->toggleViewAction()->toolTip());
+
   ui->dockWidgetRoute->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routedock.svg"));
+  ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence("Alt+2"));
+  ui->dockWidgetRoute->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                      arg(ui->dockWidgetRoute->windowTitle().toLower()));
+  ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
+
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
+  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence("Alt+3"));
+  ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                            arg(ui->dockWidgetInformation->windowTitle().
+                                                                toLower()));
+  ui->dockWidgetInformation->toggleViewAction()->setStatusTip(
+    ui->dockWidgetInformation->toggleViewAction()->toolTip());
+
   ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
+  ui->dockWidgetElevation->toggleViewAction()->setShortcut(QKeySequence("Alt+4"));
+  ui->dockWidgetElevation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                          arg(ui->dockWidgetElevation->windowTitle().toLower()));
+  ui->dockWidgetElevation->toggleViewAction()->setStatusTip(
+    ui->dockWidgetElevation->toggleViewAction()->toolTip());
+
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
+  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence("Alt+5"));
+  ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                         arg(ui->dockWidgetAircraft->windowTitle().toLower()));
+  ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
+    ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
   ui->menuView->insertActions(ui->actionShowStatusbar,
-                              {addShortcut(ui->dockWidgetSearch->toggleViewAction()),
-                               addShortcut(ui->dockWidgetRoute->toggleViewAction()),
-                               addShortcut(ui->dockWidgetInformation->toggleViewAction()),
-                               addShortcut(ui->dockWidgetElevation->toggleViewAction()),
-                               addShortcut(ui->dockWidgetAircraft->toggleViewAction())});
+                              {ui->dockWidgetSearch->toggleViewAction(),
+                               ui->dockWidgetRoute->toggleViewAction(),
+                               ui->dockWidgetInformation->toggleViewAction(),
+                               ui->dockWidgetElevation->toggleViewAction(),
+                               ui->dockWidgetAircraft->toggleViewAction()});
 
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
@@ -302,11 +330,11 @@ void MainWindow::setupUi()
                                ui->viewToolBar->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
-  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetSearch->toggleViewAction(), tr("Alt+1")));
-  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetRoute->toggleViewAction(), tr("Alt+2")));
-  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetInformation->toggleViewAction(), tr("Alt+3")));
-  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetElevation->toggleViewAction(), tr("Alt+4")));
-  ui->viewToolBar->addAction(addShortcut(ui->dockWidgetAircraft->toggleViewAction(), tr("Alt+5")));
+  ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
@@ -328,14 +356,6 @@ void MainWindow::setupUi()
   mapPosLabel = new QLabel();
   mapPosLabel->setMinimumWidth(200);
   ui->statusBar->addPermanentWidget(mapPosLabel);
-}
-
-QAction *MainWindow::addShortcut(QAction *action, const QString& key)
-{
-  // action->setText(QString("&") + action->text());
-  if(!key.isEmpty())
-    action->setShortcut(QKeySequence(key));
-  return action;
 }
 
 void MainWindow::connectAllSlots()

@@ -17,15 +17,25 @@
    <item>
     <widget class="QLabel" name="labelSelectParking">
      <property name="text">
-      <string>Select a Parking Position for Departure %1</string>
+      <string>&amp;Select a Parking Position for Departure %1</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
+     <property name="buddy">
+      <cstring>listWidgetSelectParking</cstring>
+     </property>
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="listWidgetSelectParking"/>
+    <widget class="QListWidget" name="listWidgetSelectParking">
+     <property name="toolTip">
+      <string>Choose a parking spot for the departure airport.</string>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxSelectParking">
@@ -40,38 +50,5 @@
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBoxSelectParking</sender>
-   <signal>accepted()</signal>
-   <receiver>ParkingDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBoxSelectParking</sender>
-   <signal>rejected()</signal>
-   <receiver>ParkingDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
