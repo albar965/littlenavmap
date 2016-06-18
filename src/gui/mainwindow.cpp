@@ -179,7 +179,7 @@ void MainWindow::showNavmapLegend()
 
 void MainWindow::loadNavmapLegend()
 {
-  legendUrl = helpHandler->getHelpUrl("help", "legend.html");
+  legendUrl = helpHandler->getHelpUrl("help", "legend_inline.html");
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {
     QString legend;
@@ -199,6 +199,19 @@ void MainWindow::loadNavmapLegend()
   }
   else
     helpHandler->openHelpUrl(legendUrl);
+}
+
+void MainWindow::legendAnchorClicked(const QUrl& url)
+{
+  qDebug() << "MainWindow::legendAnchorClicked" << url;
+
+  QUrl newUrl(url);
+  if(url.isLocalFile())
+    newUrl = helpHandler->getHelpUrl("help", url.fileName(QUrl::FullyDecoded));
+
+  if(!QDesktopServices::openUrl(newUrl))
+    QMessageBox::warning(this, QApplication::applicationName(), QString(
+                           tr("Error opening URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
 void MainWindow::createNavMap()
@@ -274,11 +287,12 @@ void MainWindow::setupUi()
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
 
   ui->menuView->insertActions(ui->actionShowStatusbar,
-                              {ui->dockWidgetSearch->toggleViewAction(),
-                               ui->dockWidgetRoute->toggleViewAction(),
-                               ui->dockWidgetInformation->toggleViewAction(),
-                               ui->dockWidgetElevation->toggleViewAction(),
-                               ui->dockWidgetAircraft->toggleViewAction()});
+                              {addShortcut(ui->dockWidgetSearch->toggleViewAction()),
+                               addShortcut(ui->dockWidgetRoute->toggleViewAction()),
+                               addShortcut(ui->dockWidgetInformation->toggleViewAction()),
+                               addShortcut(ui->dockWidgetElevation->toggleViewAction()),
+                               addShortcut(ui->dockWidgetAircraft->toggleViewAction())});
+
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   ui->menuView->insertActions(ui->actionShowStatusbar,
@@ -318,13 +332,18 @@ void MainWindow::setupUi()
 
 QAction *MainWindow::addShortcut(QAction *action, const QString& key)
 {
-  action->setShortcut(QKeySequence(key));
+  // action->setText(QString("&") + action->text());
+  if(!key.isEmpty())
+    action->setShortcut(QKeySequence(key));
   return action;
 }
 
 void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
+
+  connect(ui->textBrowserNavmapLegendInfo, &QTextBrowser::anchorClicked, this,
+          &MainWindow::legendAnchorClicked);
 
   connect(ui->actionMapSetHome, &QAction::triggered, navMapWidget, &MapWidget::changeHome);
 

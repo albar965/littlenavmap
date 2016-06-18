@@ -130,11 +130,11 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);
 
-  QAction *undoAction = undoStack->createUndoAction(mainWindow, "Undo Flight Plan");
+  QAction *undoAction = undoStack->createUndoAction(mainWindow, "&Undo Flight Plan");
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
   undoAction->setShortcut(QKeySequence("Ctrl+Z"));
 
-  QAction *redoAction = undoStack->createRedoAction(mainWindow, "Redo Flight Plan");
+  QAction *redoAction = undoStack->createRedoAction(mainWindow, "&Redo Flight Plan");
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
   redoAction->setShortcut(QKeySequence("Ctrl+Y"));
 

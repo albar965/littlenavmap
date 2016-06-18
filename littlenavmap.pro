@@ -102,7 +102,8 @@ SOURCES += src/main.cpp\
     src/common/filehistoryhandler.cpp \
     src/export/csvexporter.cpp \
     src/export/exporter.cpp \
-    src/export/htmlexporter.cpp
+    src/export/htmlexporter.cpp \
+    src/options/options.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -167,12 +168,14 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/filehistoryhandler.h \
     src/export/csvexporter.h \
     src/export/exporter.h \
-    src/export/htmlexporter.h
+    src/export/htmlexporter.h \
+    src/options/options.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
     src/route/parkingdialog.ui \
-    src/connect/connectdialog.ui
+    src/connect/connectdialog.ui \
+    src/options/options.ui
 
 # Marble dependencies
 win32 {
@@ -210,7 +213,8 @@ DISTFILES += \
     README.txt \
     help/en/index.html \
     help/en/images/gpl-v3-logo.svg \
-    help/en/legend.html
+    help/en/legend.html \
+    help/en/legend_inline.html
 
 RESOURCES += \
     littlenavmap.qrc

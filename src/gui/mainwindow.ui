@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1967,8 +1967,14 @@
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserNavmapLegendInfo">
+           <property name="acceptDrops">
+            <bool>false</bool>
+           </property>
            <property name="openExternalLinks">
-            <bool>true</bool>
+            <bool>false</bool>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2436,7 +2442,7 @@
      <normaloff>:/littlenavmap/resources/icons/database.svg</normaloff>:/littlenavmap/resources/icons/database.svg</iconset>
    </property>
    <property name="text">
-    <string>Reload Scenery Library ...</string>
+    <string>&amp;Reload Scenery Library ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
@@ -2567,7 +2573,7 @@
      <normaloff>:/littlenavmap/resources/icons/settings.svg</normaloff>:/littlenavmap/resources/icons/settings.svg</iconset>
    </property>
    <property name="text">
-    <string>Options ...</string>
+    <string>&amp;Options ...</string>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -2650,7 +2656,7 @@
      <normaloff>:/littlenavmap/resources/icons/detailmore.svg</normaloff>:/littlenavmap/resources/icons/detailmore.svg</iconset>
    </property>
    <property name="text">
-    <string>More Details</string>
+    <string>&amp;More Details</string>
    </property>
    <property name="shortcut">
     <string>Ctrl++</string>
@@ -2662,7 +2668,7 @@
      <normaloff>:/littlenavmap/resources/icons/detailless.svg</normaloff>:/littlenavmap/resources/icons/detailless.svg</iconset>
    </property>
    <property name="text">
-    <string>Less Details</string>
+    <string>&amp;Less Details</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
@@ -2674,7 +2680,7 @@
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto Home</string>
+    <string>Goto &amp;Home</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Home</string>
@@ -2686,7 +2692,7 @@
      <normaloff>:/littlenavmap/resources/icons/back.svg</normaloff>:/littlenavmap/resources/icons/back.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Position Back</string>
+    <string>Map Position &amp;Back</string>
    </property>
    <property name="shortcut">
     <string>Alt+Left</string>
@@ -2698,7 +2704,7 @@
      <normaloff>:/littlenavmap/resources/icons/next.svg</normaloff>:/littlenavmap/resources/icons/next.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Position Forward</string>
+    <string>Map Position &amp;Forward</string>
    </property>
    <property name="shortcut">
     <string>Alt+Right</string>
@@ -2710,7 +2716,7 @@
      <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto Center for Distance Search</string>
+    <string>Goto Center for &amp;Distance Search</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
@@ -2737,7 +2743,7 @@
      <normaloff>:/littlenavmap/resources/icons/airport.svg</normaloff>:/littlenavmap/resources/icons/airport.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airports with hard Runways</string>
+    <string>Show Airports with &amp;hard Runways</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+H</string>
@@ -2755,7 +2761,7 @@
      <normaloff>:/littlenavmap/resources/icons/vor.svg</normaloff>:/littlenavmap/resources/icons/vor.svg</iconset>
    </property>
    <property name="text">
-    <string>Show VOR Stations</string>
+    <string>Show &amp;VOR Stations</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+V</string>
@@ -2773,7 +2779,7 @@
      <normaloff>:/littlenavmap/resources/icons/ndb.svg</normaloff>:/littlenavmap/resources/icons/ndb.svg</iconset>
    </property>
    <property name="text">
-    <string>Show NDB Stations</string>
+    <string>Show &amp;NDB Stations</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+N</string>
@@ -2791,7 +2797,7 @@
      <normaloff>:/littlenavmap/resources/icons/waypoint.svg</normaloff>:/littlenavmap/resources/icons/waypoint.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Waypoints</string>
+    <string>Show &amp;Waypoints</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+W</string>
@@ -2809,7 +2815,7 @@
      <normaloff>:/littlenavmap/resources/icons/cities.svg</normaloff>:/littlenavmap/resources/icons/cities.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Country and City Names</string>
+    <string>Show &amp;Country and City Names</string>
    </property>
   </action>
   <action name="actionMapShowIls">
@@ -2824,7 +2830,7 @@
      <normaloff>:/littlenavmap/resources/icons/ils.svg</normaloff>:/littlenavmap/resources/icons/ils.svg</iconset>
    </property>
    <property name="text">
-    <string>Show ILS Feathers</string>
+    <string>Show &amp;ILS Feathers</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+I</string>
@@ -2836,7 +2842,7 @@
      <normaloff>:/littlenavmap/resources/icons/detaildefault.svg</normaloff>:/littlenavmap/resources/icons/detaildefault.svg</iconset>
    </property>
    <property name="text">
-    <string>Default Details</string>
+    <string>&amp;Default Details</string>
    </property>
    <property name="toolTip">
     <string>Default Details</string>
@@ -2908,7 +2914,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportsoft.svg</normaloff>:/littlenavmap/resources/icons/airportsoft.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airports with soft Runways</string>
+    <string>Show Airports with &amp;soft Runways</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
@@ -2926,7 +2932,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportempty.svg</normaloff>:/littlenavmap/resources/icons/airportempty.svg</iconset>
    </property>
    <property name="text">
-    <string>Show empty Airports</string>
+    <string>Show &amp;empty Airports</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">
@@ -2980,7 +2986,7 @@
      <normaloff>:/littlenavmap/resources/icons/centerroute.svg</normaloff>:/littlenavmap/resources/icons/centerroute.svg</iconset>
    </property>
    <property name="text">
-    <string>Center Flight Plan</string>
+    <string>Center &amp;Flight Plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
@@ -2995,7 +3001,7 @@
      <normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Victor Airways</string>
+    <string>Show &amp;Victor Airways</string>
    </property>
   </action>
   <action name="actionMapShowJetAirways">
@@ -3007,7 +3013,7 @@
      <normaloff>:/littlenavmap/resources/icons/airwayjet.svg</normaloff>:/littlenavmap/resources/icons/airwayjet.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Jet Airways</string>
+    <string>Show &amp;Jet Airways</string>
    </property>
    <property name="toolTip">
     <string>J</string>
@@ -3025,7 +3031,7 @@
      <normaloff>:/littlenavmap/resources/icons/route.svg</normaloff>:/littlenavmap/resources/icons/route.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Flight Plan</string>
+    <string>Show &amp;Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>R</string>
@@ -3124,7 +3130,7 @@
      <normaloff>:/littlenavmap/resources/icons/routehigh.svg</normaloff>:/littlenavmap/resources/icons/routehigh.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate high Altitude</string>
+    <string>Calculate &amp;high Altitude</string>
    </property>
   </action>
   <action name="actionRouteCalcLowAlt">
@@ -3133,7 +3139,7 @@
      <normaloff>:/littlenavmap/resources/icons/routelow.svg</normaloff>:/littlenavmap/resources/icons/routelow.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate low Altitude</string>
+    <string>Calculate &amp;low Altitude</string>
    </property>
   </action>
   <action name="actionRouteCalcRadionav">
@@ -3142,7 +3148,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeradio.svg</normaloff>:/littlenavmap/resources/icons/routeradio.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Radionav</string>
+    <string>Calculate Radio&amp;nav</string>
    </property>
   </action>
   <action name="actionRouteCalcDirect">
@@ -3151,7 +3157,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedirect.svg</normaloff>:/littlenavmap/resources/icons/routedirect.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate Direct</string>
+    <string>Calculate &amp;Direct</string>
    </property>
   </action>
   <action name="actionRouteReverse">
@@ -3160,7 +3166,7 @@
      <normaloff>:/littlenavmap/resources/icons/routereverse.svg</normaloff>:/littlenavmap/resources/icons/routereverse.svg</iconset>
    </property>
    <property name="text">
-    <string>Reverse Flight Plan</string>
+    <string>&amp;Reverse Flight Plan</string>
    </property>
   </action>
   <action name="actionRouteParkingStart">
@@ -3178,7 +3184,7 @@
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select Parking Position for Departure</string>
+    <string>Select &amp;Parking Position for Departure</string>
    </property>
   </action>
   <action name="actionRouteUndo">
@@ -3211,7 +3217,7 @@
      <normaloff>:/littlenavmap/resources/icons/hillshading.svg</normaloff>:/littlenavmap/resources/icons/hillshading.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Hillshading</string>
+    <string>Show &amp;Hillshading</string>
    </property>
    <property name="toolTip">
     <string>Hillshading</string>
@@ -3235,7 +3241,7 @@
      <normaloff>:/littlenavmap/resources/icons/routealt.svg</normaloff>:/littlenavmap/resources/icons/routealt.svg</iconset>
    </property>
    <property name="text">
-    <string>Calculate based on given Altitude</string>
+    <string>Calculate based on given &amp;Altitude</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -3250,7 +3256,7 @@
      <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
    </property>
    <property name="text">
-    <string>Force Show Addon Airports</string>
+    <string>Force &amp;Show Addon Airports</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -3265,7 +3271,7 @@
      <normaloff>:/littlenavmap/resources/icons/mapgrid.svg</normaloff>:/littlenavmap/resources/icons/mapgrid.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Map Grid</string>
+    <string>Show Map &amp;Grid</string>
    </property>
    <property name="toolTip">
     <string>Grid</string>
@@ -3277,7 +3283,7 @@
      <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
    </property>
    <property name="text">
-    <string>Connect to Simulator ...</string>
+    <string>&amp;Connect to Simulator ...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>
@@ -3295,7 +3301,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Aircraft</string>
+    <string>Show &amp;Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3313,7 +3319,7 @@
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center Aircraft</string>
+    <string>Center &amp;Aircraft</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -3331,7 +3337,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Aircraft Trail</string>
+    <string>Show Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3346,7 +3352,7 @@
      <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete Aircraft Trail</string>
+    <string>Delete Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
     <string>Aircraft</string>
@@ -3376,7 +3382,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeedit.svg</normaloff>:/littlenavmap/resources/icons/routeedit.svg</iconset>
    </property>
    <property name="text">
-    <string>Edit Flight Plan on Map</string>
+    <string>&amp;Edit Flight Plan on Map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
@@ -3398,12 +3404,12 @@
   </action>
   <action name="actionResetMessages">
    <property name="text">
-    <string>Reset all Messages</string>
+    <string>Reset all &amp;Messages</string>
    </property>
   </action>
   <action name="actionDatabaseFiles">
    <property name="text">
-    <string>Show Database Files</string>
+    <string>&amp;Show Database Files</string>
    </property>
   </action>
   <action name="actionLoadKml">
@@ -3412,7 +3418,7 @@
      <normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>Open Google Earth KML ...</string>
+    <string>Open Google Earth &amp;KML ...</string>
    </property>
   </action>
   <action name="actionClearKmlMenu">
@@ -3426,7 +3432,7 @@
      <normaloff>:/littlenavmap/resources/icons/cancel.svg</normaloff>:/littlenavmap/resources/icons/cancel.svg</iconset>
    </property>
    <property name="text">
-    <string>Clear KML from Map</string>
+    <string>&amp;Clear KML from Map</string>
    </property>
   </action>
   <action name="actionWorkOffline">
@@ -3438,7 +3444,7 @@
      <normaloff>:/littlenavmap/resources/icons/offline.svg</normaloff>:/littlenavmap/resources/icons/offline.svg</iconset>
    </property>
    <property name="text">
-    <string>Work Offline</string>
+    <string>&amp;Work Offline</string>
    </property>
   </action>
   <action name="actionRouteTableCopy">

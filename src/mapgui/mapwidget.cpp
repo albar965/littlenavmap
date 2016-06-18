@@ -314,6 +314,9 @@ void MapWidget::showSavedPos()
 {
   const MapPosHistoryEntry& currentPos = history.current();
 
+  QToolTip::hideText();
+  tooltipPos = QPoint();
+
   if(currentPos.isValid())
   {
     centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
@@ -329,6 +332,8 @@ void MapWidget::showSavedPos()
 void MapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
+  QToolTip::hideText();
+  tooltipPos = QPoint();
   setZoom(zoomValue);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
@@ -336,6 +341,8 @@ void MapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
 void MapWidget::showRect(const atools::geo::Rect& rect)
 {
   qDebug() << "NavMapWidget::showRect" << rect;
+  QToolTip::hideText();
+  tooltipPos = QPoint();
   centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                             GeoDataCoordinates::Degree), false);
 }
@@ -343,6 +350,10 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
 void MapWidget::showMark()
 {
   qDebug() << "NavMapWidget::showMark" << markPos;
+
+  QToolTip::hideText();
+  tooltipPos = QPoint();
+
   if(markPos.isValid())
   {
     setZoom(2700);
@@ -365,6 +376,10 @@ void MapWidget::showAircraft(bool state)
 void MapWidget::showHome()
 {
   qDebug() << "NavMapWidget::showHome" << markPos;
+
+  QToolTip::hideText();
+  tooltipPos = QPoint();
+
   if(!atools::almostEqual(homeDistance, 0.))
     setDistance(homeDistance);
 
@@ -1392,7 +1407,7 @@ void MapWidget::updateTooltip()
                                           parentWindow->getRouteController()->getRouteMapObjects(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
-  if(!text.isEmpty())
+  if(!text.isEmpty() && !tooltipPos.isNull())
   {
     // qDebug() << "Tooltip show";
     QToolTip::showText(tooltipPos, text, nullptr, QRect(), 3600 * 1000);
