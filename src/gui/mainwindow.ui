@@ -237,6 +237,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Airport ICAO code</string>
+               </property>
+               <property name="statusTip">
+                <string>Airport ICAO code</string>
+               </property>
                <property name="maxLength">
                 <number>8</number>
                </property>
@@ -262,6 +268,12 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>Airport name</string>
+               </property>
+               <property name="statusTip">
+                <string>Airport name</string>
+               </property>
                <property name="placeholderText">
                 <string>Airport Name</string>
                </property>
@@ -271,7 +283,53 @@
               </widget>
              </item>
              <item>
+              <widget class="QLabel" name="labelAirportSearchHelp">
+               <property name="maximumSize">
+                <size>
+                 <width>18</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Check boxes: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
+&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
+&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="statusTip">
+                <string>Shows quick help for search options</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/help.svg</pixmap>
+               </property>
+               <property name="scaledContents">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QToolButton" name="toolButtonAirportSearch">
+               <property name="toolTip">
+                <string>Show or hide search options</string>
+               </property>
+               <property name="statusTip">
+                <string>Show or hide search options</string>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -293,6 +351,12 @@
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch2">
              <item>
               <widget class="QLineEdit" name="lineEditAirportCitySearch">
+               <property name="toolTip">
+                <string>Airport city</string>
+               </property>
+               <property name="statusTip">
+                <string>Airport city</string>
+               </property>
                <property name="placeholderText">
                 <string>City</string>
                </property>
@@ -303,6 +367,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditAirportStateSearch">
+               <property name="toolTip">
+                <string>Airport state or province</string>
+               </property>
+               <property name="statusTip">
+                <string>Airport state or province</string>
+               </property>
                <property name="placeholderText">
                 <string>State / Province</string>
                </property>
@@ -313,6 +383,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditAirportCountrySearch">
+               <property name="toolTip">
+                <string>Airport country</string>
+               </property>
+               <property name="statusTip">
+                <string>Airport country</string>
+               </property>
                <property name="placeholderText">
                 <string>Country</string>
                </property>
@@ -343,6 +419,12 @@
              </property>
              <item row="1" column="1">
               <widget class="QCheckBox" name="checkBoxAirportLightSearch">
+               <property name="toolTip">
+                <string>Airports with at least one lighted runway</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with at least one lighted runway</string>
+               </property>
                <property name="text">
                 <string>&amp;Lighted</string>
                </property>
@@ -353,6 +435,12 @@
              </item>
              <item row="1" column="4">
               <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
+               <property name="toolTip">
+                <string>Airports that have avgas</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have avgas</string>
+               </property>
                <property name="text">
                 <string>Av&amp;gas</string>
                </property>
@@ -363,6 +451,12 @@
              </item>
              <item row="1" column="2">
               <widget class="QCheckBox" name="checkBoxAirportIlsSearch">
+               <property name="toolTip">
+                <string>Airports with at least one ILS</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with at least one ILS</string>
+               </property>
                <property name="text">
                 <string>IL&amp;S</string>
                </property>
@@ -373,6 +467,12 @@
              </item>
              <item row="1" column="0">
               <widget class="QCheckBox" name="checkBoxAirportScenerySearch">
+               <property name="toolTip">
+                <string>Airports that have at least taxi paths, parking or aprons</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have at least taxi paths, parking or aprons</string>
+               </property>
                <property name="text">
                 <string>&amp;Rating</string>
                </property>
@@ -386,6 +486,12 @@
              </item>
              <item row="2" column="0">
               <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
+               <property name="toolTip">
+                <string>Add-on airports</string>
+               </property>
+               <property name="statusTip">
+                <string>Add-on airports</string>
+               </property>
                <property name="text">
                 <string>Add&amp;on</string>
                </property>
@@ -396,6 +502,12 @@
              </item>
              <item row="1" column="3">
               <widget class="QCheckBox" name="checkBoxAirportMilSearch">
+               <property name="toolTip">
+                <string>Military airports</string>
+               </property>
+               <property name="statusTip">
+                <string>Military airports</string>
+               </property>
                <property name="text">
                 <string>Militar&amp;y</string>
                </property>
@@ -406,6 +518,12 @@
              </item>
              <item row="2" column="2">
               <widget class="QCheckBox" name="checkBoxAirportApprSearch">
+               <property name="toolTip">
+                <string>Airports with approaches</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with approaches</string>
+               </property>
                <property name="text">
                 <string>A&amp;pproach</string>
                </property>
@@ -416,6 +534,12 @@
              </item>
              <item row="2" column="1">
               <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
+               <property name="toolTip">
+                <string>Airports with tower frequency</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with tower frequency</string>
+               </property>
                <property name="text">
                 <string>&amp;Tower</string>
                </property>
@@ -426,6 +550,12 @@
              </item>
              <item row="2" column="3">
               <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
+               <property name="toolTip">
+                <string>Airports where all runways are closed</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports where all runways are closed</string>
+               </property>
                <property name="text">
                 <string>&amp;Closed</string>
                </property>
@@ -436,6 +566,12 @@
              </item>
              <item row="2" column="4">
               <widget class="QCheckBox" name="checkBoxAirportJetASearch">
+               <property name="toolTip">
+                <string>Airports that have jet fuel</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have jet fuel</string>
+               </property>
                <property name="text">
                 <string>Jet&amp;fuel</string>
                </property>
@@ -466,6 +602,12 @@
              </property>
              <item>
               <widget class="QComboBox" name="comboBoxAirportRampSearch">
+               <property name="toolTip">
+                <string>Airports that have certain ramp parking types</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have certain ramp parking types</string>
+               </property>
                <item>
                 <property name="text">
                  <string>Any or no Ramp</string>
@@ -505,6 +647,12 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxAirportGateSearch">
+               <property name="toolTip">
+                <string>Airports that have certain gate parking types</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have certain gate parking types</string>
+               </property>
                <item>
                 <property name="text">
                  <string>Any or no Gate</string>
@@ -529,6 +677,12 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxAirportHelipadSearch">
+               <property name="toolTip">
+                <string>Airports that have helipads</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have helipads</string>
+               </property>
                <item>
                 <property name="text">
                  <string>Any or no Helipad</string>
@@ -587,6 +741,12 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportRunwaysMinSearch">
+               <property name="toolTip">
+                <string>Airports that have at least one runway that is longer than this value</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have at least one runway that is longer than this value</string>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -625,6 +785,12 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportRunwaysMaxSearch">
+               <property name="toolTip">
+                <string>Airports that have no runway that is longer than this value</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have no runway that is longer than this value</string>
+               </property>
                <property name="specialValueText">
                 <string>All</string>
                </property>
@@ -647,6 +813,12 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxAirportSurfaceSearch">
+               <property name="toolTip">
+                <string>Airports that have certain runway surfaces</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have certain runway surfaces</string>
+               </property>
                <item>
                 <property name="text">
                  <string>Any Surface</string>
@@ -728,6 +900,12 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportAltitudeMinSearch">
+               <property name="toolTip">
+                <string>Minimum altitude for airport</string>
+               </property>
+               <property name="statusTip">
+                <string>Minimum altitude for airport</string>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -766,6 +944,12 @@
              </item>
              <item>
               <widget class="QSpinBox" name="spinBoxAirportAltitudeMaxSearch">
+               <property name="toolTip">
+                <string>Maximum altitude for airport</string>
+               </property>
+               <property name="statusTip">
+                <string>Maximum altitude for airport</string>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -820,6 +1004,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Search for all airports within the given distance limits around the distance search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Search for all airports within the given distance limits around the distance search center</string>
+               </property>
                <property name="text">
                 <string>&amp;Distance</string>
                </property>
@@ -848,6 +1038,12 @@
               <widget class="QSpinBox" name="spinBoxAirportDistMinSearch">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Minimum airport distance to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Minimum airport distance to search center</string>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -884,6 +1080,12 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="toolTip">
+                <string>Maximum airport distance to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Maximum airport distance to search center</string>
+               </property>
                <property name="specialValueText">
                 <string/>
                </property>
@@ -911,6 +1113,12 @@
               <widget class="QComboBox" name="comboBoxAirportDistDirectionSearch">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Approximate direction to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Approximate direction to search center</string>
                </property>
                <item>
                 <property name="text">
@@ -964,6 +1172,12 @@
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
+               <property name="toolTip">
+                <string>Path of the BGL file containing the airport as in scenery.cfg</string>
+               </property>
+               <property name="statusTip">
+                <string>Path of the BGL file containing the airport as in scenery.cfg</string>
+               </property>
                <property name="placeholderText">
                 <string>Scenery Path</string>
                </property>
@@ -974,6 +1188,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditAirportFileSearch">
+               <property name="toolTip">
+                <string>Name of the BGL file containg the airport</string>
+               </property>
+               <property name="statusTip">
+                <string>Name of the BGL file containg the airport</string>
+               </property>
                <property name="placeholderText">
                 <string>Filename</string>
                </property>
@@ -1093,6 +1313,12 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>Navaid ICAO ident</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid ICAO ident</string>
+               </property>
                <property name="maxLength">
                 <number>6</number>
                </property>
@@ -1106,6 +1332,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditNavNameSearch">
+               <property name="toolTip">
+                <string>Navaid name</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid name</string>
+               </property>
                <property name="placeholderText">
                 <string>Name</string>
                </property>
@@ -1121,6 +1353,12 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Navaid two-letter code for region</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid two-letter code for region</string>
                </property>
                <property name="maxLength">
                 <number>5</number>
@@ -1141,6 +1379,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Navaid airport ICAO code</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid airport ICAO code</string>
+               </property>
                <property name="maxLength">
                 <number>8</number>
                </property>
@@ -1153,7 +1397,49 @@
               </widget>
              </item>
              <item>
+              <widget class="QLabel" name="labelNavaidSearchHelp">
+               <property name="maximumSize">
+                <size>
+                 <width>18</width>
+                 <height>18</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="statusTip">
+                <string>Shows quick help for search options</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/help.svg</pixmap>
+               </property>
+               <property name="scaledContents">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QToolButton" name="toolButtonNavSearch">
+               <property name="toolTip">
+                <string>Show or hide search options</string>
+               </property>
+               <property name="statusTip">
+                <string>Show or hide search options</string>
+               </property>
+               <property name="accessibleName">
+                <string/>
+               </property>
                <property name="text">
                 <string/>
                </property>
@@ -1213,6 +1499,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Minmum range of a VOR or NDB</string>
+               </property>
+               <property name="statusTip">
+                <string>Minmum range of a VOR or NDB</string>
+               </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
                </property>
@@ -1235,6 +1527,12 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxNavTypeSearch">
+               <property name="toolTip">
+                <string>Navaid types</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid types</string>
+               </property>
                <item>
                 <property name="text">
                  <string>All Types</string>
@@ -1299,6 +1597,12 @@
              </item>
              <item>
               <widget class="QComboBox" name="comboBoxNavNavAidSearch">
+               <property name="toolTip">
+                <string>Navaid categories</string>
+               </property>
+               <property name="statusTip">
+                <string>Navaid categories</string>
+               </property>
                <item>
                 <property name="text">
                  <string>All Nav Aids</string>
@@ -1377,6 +1681,12 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Search for all navaids within the given distance limits around the distance search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Search for all navaids within the given distance limits around the distance search center</string>
+               </property>
                <property name="text">
                 <string>&amp;Distance</string>
                </property>
@@ -1405,6 +1715,12 @@
               <widget class="QSpinBox" name="spinBoxNavDistMinSearch">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Minimum navaid distance to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Minimum navaid distance to search center</string>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -1441,6 +1757,12 @@
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="toolTip">
+                <string>Maximum navaid distance to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Maximum navaid distance to search center</string>
+               </property>
                <property name="specialValueText">
                 <string/>
                </property>
@@ -1468,6 +1790,12 @@
               <widget class="QComboBox" name="comboBoxNavDistDirectionSearch">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Approximate direction to search center</string>
+               </property>
+               <property name="statusTip">
+                <string>Approximate direction to search center</string>
                </property>
                <item>
                 <property name="text">
@@ -1505,6 +1833,12 @@
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditNavScenerySearch">
+               <property name="toolTip">
+                <string>Path of the BGL file containing the navaid as in scenery.cfg</string>
+               </property>
+               <property name="statusTip">
+                <string>Path of the BGL file containing the navaid as in scenery.cfg</string>
+               </property>
                <property name="placeholderText">
                 <string>Scenery Path</string>
                </property>
@@ -1515,6 +1849,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditNavFileSearch">
+               <property name="toolTip">
+                <string>Name of the BGL file containg the navaid</string>
+               </property>
+               <property name="statusTip">
+                <string>Name of the BGL file containg the navaid</string>
+               </property>
                <property name="placeholderText">
                 <string>Filename</string>
                </property>
