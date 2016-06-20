@@ -139,7 +139,7 @@ public:
     return distanceMarkers;
   }
 
-void workOffline(bool offline);
+  void workOffline(bool offline);
 
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -179,7 +179,7 @@ void workOffline(bool offline);
 
   MainWindow *getParentWindow() const
   {
-    return parentWindow;
+    return mainWindow;
   }
 
   const AircraftTrack& getAircraftTrack() const
@@ -220,7 +220,7 @@ private:
   MapThemeComboIndex currentComboIndex = INVALID;
   MouseStates mouseState = NONE;
   QPoint mouseMoved;
-  MainWindow *parentWindow;
+  MainWindow *mainWindow;
   QPoint tooltipPos;
   maptypes::MapSearchResult mapSearchResultTooltip;
 

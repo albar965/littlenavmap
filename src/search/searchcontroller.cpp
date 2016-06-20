@@ -27,7 +27,7 @@
 
 SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
                                    QTabWidget *tabWidgetSearch)
-  : mapQuery(mQuery), parentWidget(parent), tabWidget(tabWidgetSearch)
+  : mapQuery(mQuery), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
 
@@ -84,11 +84,11 @@ void SearchController::createAirportSearch(QTableView *tableView)
 {
   airportColumns = new ColumnList("airport", "airport_id");
 
-  airportSearch = new AirportSearch(parentWidget, tableView, airportColumns, mapQuery, 0);
+  airportSearch = new AirportSearch(mainWindow, tableView, airportColumns, mapQuery, 0);
 
   airportSearch->connectSlots();
 
-  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &MapWidget::markChanged,
+  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
                                         airportSearch, &Search::markChanged);
 
   allSearchTabs.append(airportSearch);
@@ -98,10 +98,10 @@ void SearchController::createNavSearch(QTableView *tableView)
 {
   navColumns = new ColumnList("nav_search", "nav_search_id");
 
-  navSearch = new NavSearch(parentWidget, tableView, navColumns, mapQuery, 1);
+  navSearch = new NavSearch(mainWindow, tableView, navColumns, mapQuery, 1);
   navSearch->connectSlots();
 
-  parentWidget->getMapWidget()->connect(parentWidget->getMapWidget(), &MapWidget::markChanged,
+  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
                                         navSearch, &Search::markChanged);
 
   allSearchTabs.append(navSearch);

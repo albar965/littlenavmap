@@ -61,7 +61,7 @@
 using namespace Marble;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
-  : Marble::MarbleWidget(parent), parentWindow(parent), mapQuery(query)
+  : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
 {
   installEventFilter(this);
 
@@ -73,7 +73,7 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  mapTooltip = new MapTooltip(this, mapQuery, parentWindow->getWeatherReporter());
+  mapTooltip = new MapTooltip(this, mapQuery, mainWindow->getWeatherReporter());
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
@@ -93,7 +93,7 @@ void MapWidget::setTheme(const QString& theme, int index)
   Q_UNUSED(index);
   qDebug() << "setting map theme to " << theme;
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   currentComboIndex = MapWidget::MapThemeComboIndex(index);
   switch(index)
   {
@@ -121,7 +121,7 @@ void MapWidget::setTheme(const QString& theme, int index)
 
 void MapWidget::updateMapShowFeatures()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
                  (currentComboIndex == MapWidget::POLITICAL || currentComboIndex == MapWidget::PLAIN));
   setShowGrid(ui->actionMapShowGrid->isChecked());
@@ -193,7 +193,7 @@ maptypes::MapObjectTypes MapWidget::getShownMapFeatures()
 
 RouteController *MapWidget::getRouteController() const
 {
-  return parentWindow->getRouteController();
+  return mainWindow->getRouteController();
 }
 
 void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
@@ -445,7 +445,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       QRect widgetRect = geometry();
       widgetRect.adjust(dx, dy, -dx, -dy);
 
-      if(!widgetRect.contains(curPos) && parentWindow->getUi()->actionMapAircraftCenter->isChecked())
+      if(!widgetRect.contains(curPos) && mainWindow->getUi()->actionMapAircraftCenter->isChecked())
         centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
       else
         update();
@@ -666,7 +666,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   QToolTip::hideText();
 
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
@@ -1194,10 +1194,10 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   else if(mouseState == NONE)
     if(event->buttons() == Qt::NoButton)
     {
-      const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+      const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
-      bool routeEditMode = parentWindow->getUi()->actionRouteEditMode->isChecked();
+      bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
 
       if(routeEditMode &&
          getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
@@ -1310,9 +1310,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
     else
     {
-      if(parentWindow->getUi()->actionRouteEditMode->isChecked())
+      if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const RouteMapObjectList& rmos = parentWindow->getRouteController()->getRouteMapObjects();
+        const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
 
         if(rmos.size() > 1)
         {
@@ -1404,7 +1404,7 @@ void MapWidget::updateTooltip()
     return;
 
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
-                                          parentWindow->getRouteController()->getRouteMapObjects(),
+                                          mainWindow->getRouteController()->getRouteMapObjects(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
@@ -1591,7 +1591,7 @@ void MapWidget::updateVisibleObjects()
       visibleTooltip.append("Victor airways");
     }
 
-    parentWindow->setMessageText(visible.join(","), visibleTooltip.join("\n"));
+    mainWindow->setMessageText(visible.join(","), visibleTooltip.join("\n"));
   }
 }
 
@@ -1692,7 +1692,7 @@ void MapWidget::updateRouteScreenLines()
 {
   using atools::geo::Pos;
 
-  const RouteMapObjectList& routeMapObjects = parentWindow->getRouteController()->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = mainWindow->getRouteController()->getRouteMapObjects();
 
   routeScreenLines.clear();
   routeScreenPoints.clear();
@@ -1755,7 +1755,7 @@ void MapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
   getNearestAirways(xs, ys, screenDistance, mapSearchResult);
 
   // Get copies from route
-  getNearestRouteMapObjects(xs, ys, screenDistance, parentWindow->getRouteController()->getRouteMapObjects(),
+  getNearestRouteMapObjects(xs, ys, screenDistance, mainWindow->getRouteController()->getRouteMapObjects(),
                             mapSearchResult);
 
   // Get copies from highlightMapObjects

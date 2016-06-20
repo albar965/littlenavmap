@@ -50,11 +50,11 @@ using Marble::GeoDataCoordinates;
 using atools::geo::Pos;
 
 ProfileWidget::ProfileWidget(MainWindow *parent)
-  : QWidget(parent), parentWindow(parent)
+  : QWidget(parent), mainWindow(parent)
 {
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-  elevationModel = parentWindow->getElevationModel();
-  routeController = parentWindow->getRouteController();
+  elevationModel = mainWindow->getElevationModel();
+  routeController = mainWindow->getRouteController();
 
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
@@ -159,7 +159,7 @@ void ProfileWidget::disconnectedFromSimulator()
 
 void ProfileWidget::updateScreenCoords()
 {
-  MapWidget *mapWidget = parentWindow->getMapWidget();
+  MapWidget *mapWidget = mainWindow->getMapWidget();
 
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
@@ -647,7 +647,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString from = legList.routeMapObjects.at(index).getIdent();
   QString to = legList.routeMapObjects.at(index + 1).getIdent();
 
-  parentWindow->getUi()->labelElevationInfo->setText(
+  mainWindow->getUi()->labelElevationInfo->setText(
     "<b>" + from + " ► " + to + "</b>, " +
     QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + " ► " +
     QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
@@ -670,7 +670,7 @@ void ProfileWidget::leaveEvent(QEvent *)
   delete rubberBand;
   rubberBand = nullptr;
 
-  parentWindow->getUi()->labelElevationInfo->setText("<b>No information.</b>");
+  mainWindow->getUi()->labelElevationInfo->setText("<b>No information.</b>");
 
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }
@@ -700,7 +700,7 @@ void ProfileWidget::postDatabaseLoad()
 
 void ProfileWidget::updateProfileShowFeatures()
 {
-  Ui::MainWindow *ui = parentWindow->getUi();
+  Ui::MainWindow *ui = mainWindow->getUi();
 
   bool updateProfile = showAircraft != ui->actionMapShowAircraft->isChecked() ||
                        showAircraftTrack != ui->actionMapShowAircraftTrack->isChecked();

@@ -46,7 +46,7 @@ class ProfileWidget :
   Q_OBJECT
 
 public:
-  ProfileWidget(MainWindow *parent = nullptr);
+  ProfileWidget(MainWindow *parent);
   virtual ~ProfileWidget();
 
   void routeChanged(bool geometryChanged);
@@ -94,7 +94,7 @@ private:
   const Marble::ElevationModel *elevationModel = nullptr;
   RouteController *routeController = nullptr;
 
-  MainWindow *parentWindow;
+  MainWindow *mainWindow;
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
 
   QFuture<ElevationLegList> future;

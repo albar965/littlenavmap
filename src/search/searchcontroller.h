@@ -79,7 +79,7 @@ private:
   ColumnList *navColumns = nullptr;
   NavSearch *navSearch = nullptr;
 
-  MainWindow *parentWidget;
+  MainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;
 
 };
