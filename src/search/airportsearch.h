@@ -71,6 +71,8 @@ private:
 
   AirportIconDelegate *iconDelegate = nullptr;
 
+  virtual void updateMenu() override;
+
 };
 
 #endif // LITTLENAVMAP_APSEARCHPANE_H

@@ -48,6 +48,8 @@
 
 #include "common/maptypesfactory.h"
 
+using atools::gui::WidgetTools;
+
 const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
                                                 "is_military",
                                                 "is_addon"});
@@ -280,17 +282,40 @@ void AirportSearch::connectSlots()
   using atools::gui::WidgetTools;
   /* *INDENT-OFF* */
   connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [=](bool state)
-  {WidgetTools::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch});
+    updateMenu();
+  });
+
   connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state, {ui->lineAirportFuelParkSearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state, {ui->lineAirportFuelParkSearch});
+    updateMenu();
+  });
+
   connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state, {ui->lineAirportRunwaySearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state, {ui->lineAirportRunwaySearch});
+    updateMenu();
+  });
+
   connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch});
+    updateMenu();
+  });
+
   connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch});
+    updateMenu();
+  });
+
   connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch});
+    updateMenu();
+  });
   /* *INDENT-ON* */
 }
 
@@ -440,4 +465,45 @@ void AirportSearch::setCallbacks()
   controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
   controller->setFormatCallback(std::bind(&AirportSearch::modelFormatHandler, this, _1, _2, _3));
   controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
+}
+
+void AirportSearch::updateMenu()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  QList<const QAction *> menus =
+  {
+    ui->actionAirportSearchShowExtOptions,
+    ui->actionAirportSearchShowFuelParkOptions,
+    ui->actionAirportSearchShowRunwayOptions,
+    ui->actionAirportSearchShowAltOptions,
+    ui->actionAirportSearchShowDistOptions,
+    ui->actionAirportSearchShowSceneryOptions
+  };
+
+  ui->actionAirportSearchShowAllOptions->blockSignals(true);
+  if(WidgetTools::allChecked(menus))
+    ui->actionAirportSearchShowAllOptions->setChecked(true);
+  else if(WidgetTools::noneChecked(menus))
+    ui->actionAirportSearchShowAllOptions->setChecked(false);
+  else
+    ui->actionAirportSearchShowAllOptions->setChecked(false);
+  ui->actionAirportSearchShowAllOptions->blockSignals(false);
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowExtOptions,
+                                    WidgetTools::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportFuelParkSearch}));
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportRunwaySearch}));
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowAltOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowDistOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch}));
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
 }

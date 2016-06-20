@@ -68,6 +68,8 @@ private:
 
   NavIconDelegate *iconDelegate = nullptr;
 
+  virtual void updateMenu() override;
+
 };
 
 #endif // LITTLENAVMAP_NAVSEARCHPANE_H

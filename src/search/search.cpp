@@ -150,6 +150,7 @@ void Search::connectSearchWidgets()
       connect(col->getLineEditWidget(), &QLineEdit::textChanged, [=](const QString &text)
       {
         controller->filterByLineEdit(col, text);
+        updateMenu();
         editStarted();
       });
     }
@@ -158,6 +159,7 @@ void Search::connectSearchWidgets()
       connect(col->getComboBoxWidget(), curIndexChangedPtr, [=](int index)
       {
         controller->filterByComboBox(col, index, index == 0);
+        updateMenu();
         editStarted();
       });
     }
@@ -166,6 +168,7 @@ void Search::connectSearchWidgets()
       connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, [=](int state)
       {
         controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
+        updateMenu();
         editStarted();
       });
     }
@@ -174,6 +177,7 @@ void Search::connectSearchWidgets()
       connect(col->getSpinBoxWidget(), valueChangedPtr, [=](int value)
       {
         controller->filterBySpinBox(col, value);
+        updateMenu();
         editStarted();
       });
     }
@@ -182,12 +186,14 @@ void Search::connectSearchWidgets()
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [=](int value)
       {
         controller->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value());
+        updateMenu();
         editStarted();
       });
 
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [=](int value)
       {
         controller->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value);
+        updateMenu();
         editStarted();
       });
     }
@@ -215,6 +221,7 @@ void Search::connectSearchWidgets()
       distanceDirWidget->setEnabled(state == Qt::Checked);
       if(state == Qt::Checked)
         controller->loadAllRowsForRectQuery();
+      updateMenu();
     });
 
     connect(minDistanceWidget, valueChangedPtr, [=](int value)
@@ -223,6 +230,7 @@ void Search::connectSearchWidgets()
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             value, maxDistanceWidget->value());
       maxDistanceWidget->setMinimum(value > 10 ? value : 10);
+      updateMenu();
       editStarted();
     });
 
@@ -232,6 +240,7 @@ void Search::connectSearchWidgets()
             static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
             minDistanceWidget->value(), value);
       minDistanceWidget->setMaximum(value);
+      updateMenu();
       editStarted();
     });
 
@@ -240,6 +249,7 @@ void Search::connectSearchWidgets()
       controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
                                                 minDistanceWidget->value(),
                                                 maxDistanceWidget->value());
+      updateMenu();
       editStarted();
     });
     /* *INDENT-ON* */

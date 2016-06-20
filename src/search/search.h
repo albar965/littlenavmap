@@ -109,6 +109,7 @@ protected:
   MainWindow *mainWindow;
   QTimer *updateTimer;
   int tabIndex;
+  virtual void updateMenu() = 0;
 
   void doubleClick(const QModelIndex& index);
 

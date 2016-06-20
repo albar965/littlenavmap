@@ -44,6 +44,8 @@
 
 #include "common/maptypesfactory.h"
 
+using atools::gui::WidgetTools;
+
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                      MapQuery *mapQuery, int tabWidgetIndex)
   : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
@@ -171,9 +173,15 @@ void NavSearch::connectSlots()
   using atools::gui::WidgetTools;
   /* *INDENT-OFF* */
   connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state, {ui->lineNavDistSearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state, {ui->lineNavDistSearch});
+    updateMenu();
+  });
   connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [=](bool state)
-  { WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state, {ui->lineNavScenerySearch}); });
+  {
+    WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state, {ui->lineNavScenerySearch});
+    updateMenu();
+  });
   /* *INDENT-ON* */
 }
 
@@ -313,7 +321,6 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 void NavSearch::postDatabaseLoad()
 {
   Search::postDatabaseLoad();
-
   setCallbacks();
 }
 
@@ -323,4 +330,24 @@ void NavSearch::setCallbacks()
   controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
   controller->setFormatCallback(std::bind(&NavSearch::modelFormatHandler, this, _1, _2, _3));
   controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
+}
+
+void NavSearch::updateMenu()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  ui->actionNavSearchShowAllOptions->blockSignals(true);
+  if(WidgetTools::allChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
+    ui->actionNavSearchShowAllOptions->setChecked(true);
+  else if(WidgetTools::noneChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
+    ui->actionNavSearchShowAllOptions->setChecked(false);
+  else
+    ui->actionNavSearchShowAllOptions->setChecked(false);
+  ui->actionNavSearchShowAllOptions->blockSignals(false);
+
+  WidgetTools::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
+
+  WidgetTools::changeStarIndication(ui->actionNavSearchShowDistOptions,
+                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch}));
 }
