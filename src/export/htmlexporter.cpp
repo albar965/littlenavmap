@@ -17,6 +17,7 @@
 
 #include "export/htmlexporter.h"
 
+#include "common/constants.h"
 #include "search/column.h"
 #include "gui/errorhandler.h"
 #include "search/sqlmodel.h"
@@ -54,7 +55,7 @@ QString HtmlExporter::saveHtmlFileDialog()
 {
   return dialog->saveFileDialog(tr("Export HTML Document"),
                                 tr("HTML Documents (*.htm *.html);;All Files (*)"),
-                                "html", "Export/FileDialog");
+                                "html", lnm::EXPORT_FILEDIALOG);
 }
 
 bool HtmlExporter::askOverwriteDialog(const QString& basename, int totalPages)

@@ -23,4 +23,47 @@
 const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);
 const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f, 0.f);
 
+namespace lnm {
+
+const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";
+const QString ACTIONS_SHOWQUIT = "Actions/ShowQuit";
+const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
+const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
+const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
+const QString DATABASE_BASEPATH = "Database/BasePath";
+const QString DATABASE_LOADINGSIMULATOR = "Database/LoadingSimulator";
+const QString DATABASE_PATHS = "Database/Paths";
+const QString DATABASE_SCENERYCONFIG = "Database/SceneryConfig";
+const QString DATABASE_SIMULATOR = "Database/Simulator";
+const QString EXPORT_FILEDIALOG = "Export/FileDialog";
+const QString INFOWINDOW_CURRENTMAPOBJECTS = "InfoWindow/CurrentMapObjects";
+const QString INFOWINDOW_WIDGET = "InfoWindow/Widget";
+const QString MAINWINDOW_FIRSTAPPLICATIONSTART = "MainWindow/FirstApplicationStart";
+const QString MAINWINDOW_WIDGET = "MainWindow/Widget";
+const QString MAP_DETAILFACTOR = "Map/DetailFactor";
+const QString MAP_DISTANCEMARKERS = "Map/DistanceMarkers";
+const QString MAP_HISTORY = "Map/History";
+const QString MAP_HOMEDISTANCE = "Map/HomeDistance";
+const QString MAP_HOMELATY = "Map/HomeLatY";
+const QString MAP_HOMELONX = "Map/HomeLonX";
+const QString MAP_KMLFILES = "Map/KmlFiles";
+const QString MAP_MARKLATY = "Map/MarkLatY";
+const QString MAP_MARKLONX = "Map/MarkLonX";
+const QString MAP_RANGEMARKERS = "Map/RangeMarkers";
+const QString NAVCONNECT_REMOTEHOSTS = "NavConnect/RemoteHosts";
+const QString NAVCONNECT_REMOTE = "NavConnect/Remote";
+const QString OPTIONS_FOREIGNKEYS = "Options/ForeignKeys";
+const QString ROUTE_FILENAME = "Route/Filename";
+const QString ROUTE_FILENAMESRECENT = "Route/FilenamesRecent";
+const QString ROUTE_FILENAMESKMLRECENT = "Route/FilenamesKmlRecent";
+const QString ROUTE_VIEW = "Route/View";
+const QString SEARCHPANEAIRPORT_WIDGET = "SearchPaneAirport/Widget";
+const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
+
+const QString OPTIONS_LANGUAGE = "Options/Language";
+const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
+const QString OPTIONS_VERSION = "Options/Version";
+
+} // namespace lnm
+
 #endif // LITTLENAVMAP_CONSTANTS_H

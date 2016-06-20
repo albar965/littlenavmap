@@ -88,8 +88,8 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
-                                     const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
-                                     QColor background)
+                                  const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
+                                  QColor background)
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
@@ -795,7 +795,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, H
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
-                                              const RouteMapObjectList& rmoList)
+                                           const RouteMapObjectList& rmoList)
 {
   aircraftTitle(data, html);
 
@@ -1085,7 +1085,7 @@ void HtmlInfoBuilder::title(HtmlBuilder& html, const QString& text)
 }
 
 void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                     const QString& msg, const QString& val, int precision)
+                                  const QString& msg, const QString& val, int precision)
 {
   if(!rec->isNull(colName))
   {
@@ -1096,7 +1096,7 @@ void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const
 }
 
 void HtmlInfoBuilder::rowForInt(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                   const QString& msg, const QString& val)
+                                const QString& msg, const QString& val)
 {
   if(!rec->isNull(colName))
   {
@@ -1107,7 +1107,7 @@ void HtmlInfoBuilder::rowForInt(HtmlBuilder& html, const SqlRecord *rec, const Q
 }
 
 void HtmlInfoBuilder::rowForBool(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                    const QString& msg, bool expected)
+                                 const QString& msg, bool expected)
 {
   if(!rec->isNull(colName))
   {
@@ -1118,7 +1118,7 @@ void HtmlInfoBuilder::rowForBool(HtmlBuilder& html, const SqlRecord *rec, const 
 }
 
 void HtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                   const QString& msg, const QString& val)
+                                const QString& msg, const QString& val)
 {
   if(!rec->isNull(colName))
   {
@@ -1129,7 +1129,7 @@ void HtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, const Q
 }
 
 void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                      const QString& msg, const QString& val)
+                                   const QString& msg, const QString& val)
 {
   if(!rec->isNull(colName))
   {

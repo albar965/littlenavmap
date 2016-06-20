@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "connectclient.h"
+
+#include "common/constants.h"
 #include "connectdialog.h"
 #include "gui/errorhandler.h"
 #include "gui/dialog.h"
@@ -107,7 +109,7 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
   {
     if(socket->error() == QAbstractSocket::RemoteHostClosedError)
     {
-      atools::gui::Dialog(parentWidget).showInfoMsgBox("Actions/ShowDisconnectInfo",
+      atools::gui::Dialog(parentWidget).showInfoMsgBox(lnm::ACTIONS_SHOWDISCONNECTINFO,
                                                        "Little Navconnect closed connection.",
                                                        tr("Do not &show this dialog again."));
     }

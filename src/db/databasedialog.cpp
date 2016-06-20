@@ -15,8 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "logging/loggingdefs.h"
 #include "databasedialog.h"
+
+#include "common/constants.h"
+#include "logging/loggingdefs.h"
 #include "ui_databasedialog.h"
 #include "fs/fspaths.h"
 #include "db/databasemanager.h"
@@ -106,7 +108,7 @@ void DatabaseDialog::simComboChanged(int index)
 void DatabaseDialog::selectBasePath()
 {
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
-    tr("Select Flight Simulator Basepath"), "Database/BasePath", ui->lineEditDatabaseBasePath->text());
+    tr("Select Flight Simulator Basepath"), lnm::DATABASE_BASEPATH, ui->lineEditDatabaseBasePath->text());
 
   if(!path.isEmpty())
     paths[currentFsType].basePath = path;
@@ -117,7 +119,7 @@ void DatabaseDialog::selectSceneryConfig()
 {
   QString path = atools::gui::Dialog(this).openFileDialog(
     tr("Open Scenery Configuration File"), tr("Scenery Configuration Files (*.cfg *.CFG);;All Files (*)"),
-    "Database/SceneryConfig", ui->lineEditDatabaseSceneryFile->text());
+    lnm::DATABASE_SCENERYCONFIG, ui->lineEditDatabaseSceneryFile->text());
 
   if(!path.isEmpty())
     paths[currentFsType].sceneryCfg = path;

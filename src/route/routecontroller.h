@@ -197,6 +197,7 @@ private:
 
   void showInformationMenu();
   void showOnMapMenu();
+
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

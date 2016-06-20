@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "gui/mainwindow.h"
+#include "common/constants.h"
 #include "logging/loggingdefs.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
@@ -80,7 +81,7 @@ int main(int argc, char *argv[])
     Settings& s = Settings::instance();
 
     // Load local and Qt system translations from various places
-    Translator::load(s.valueStr("Options/Language", QString()));
+    Translator::load(s.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
 
     MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
     MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
-    MarbleDebug::setEnabled(s.getAndStoreValue("Options/MarbleDebug", false).toBool());
+    MarbleDebug::setEnabled(s.getAndStoreValue(lnm::OPTIONS_MARBLEDEBUG, false).toBool());
 
     qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
     qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
@@ -116,9 +117,9 @@ int main(int argc, char *argv[])
     qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
     // Write version to configuration file
-    QString oldVersion = s.valueStr("Options/Language");
+    QString oldVersion = s.valueStr(lnm::OPTIONS_LANGUAGE);
     qInfo() << "Found version" << oldVersion << "in configuration file";
-    s.getAndStoreValue("Options/Version", QCoreApplication::applicationVersion());
+    s.getAndStoreValue(lnm::OPTIONS_VERSION, QCoreApplication::applicationVersion());
     s.syncSettings();
 
     DatabaseManager mgr(nullptr);

@@ -17,6 +17,7 @@
 
 #include "routecontroller.h"
 
+#include "common/constants.h"
 #include <QClipboard>
 #include "fs/pln/flightplan.h"
 #include "common/formatter.h"
@@ -280,20 +281,20 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
-  atools::gui::WidgetState saver("Route/View");
+  atools::gui::WidgetState saver(lnm::ROUTE_VIEW);
   saver.save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
-  atools::settings::Settings::instance().setValue("Route/Filename", routeFilename);
+  atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 }
 
 void RouteController::restoreState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  atools::gui::WidgetState saver("Route/View");
+  atools::gui::WidgetState saver(lnm::ROUTE_VIEW);
   model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
   saver.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
-  QString newRouteFilename = atools::settings::Settings::instance().valueStr("Route/Filename");
+  QString newRouteFilename = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
 
   if(!newRouteFilename.isEmpty())
   {

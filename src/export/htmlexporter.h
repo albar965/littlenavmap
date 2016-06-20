@@ -46,14 +46,14 @@ public:
    * @param open Open file in default browser after export.
    * @return number of rows exported.
    */
-  virtual int exportAll(bool open)override;
+  virtual int exportAll(bool open) override;
 
   /* Export only selected rows.
    *
    * @param open Open file in default browser after export.
    * @return number of rows exported.
    */
-  virtual int exportSelected(bool open)override;
+  virtual int exportSelected(bool open) override;
 
 private:
   int pageSize = 500;

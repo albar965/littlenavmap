@@ -89,7 +89,7 @@ void SearchController::createAirportSearch(QTableView *tableView)
   airportSearch->connectSlots();
 
   mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
-                                        airportSearch, &Search::markChanged);
+                                      airportSearch, &Search::markChanged);
 
   allSearchTabs.append(airportSearch);
 }
@@ -102,7 +102,7 @@ void SearchController::createNavSearch(QTableView *tableView)
   navSearch->connectSlots();
 
   mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
-                                        navSearch, &Search::markChanged);
+                                      navSearch, &Search::markChanged);
 
   allSearchTabs.append(navSearch);
 }

@@ -15,10 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "infocontroller.h"
+
 #include "logging/loggingdefs.h"
+#include "common/constants.h"
 #include "route/routecontroller.h"
 #include "common/weatherreporter.h"
-#include "infocontroller.h"
 #include <QImageReader>
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
@@ -51,7 +53,7 @@ void InfoController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
-  atools::gui::WidgetState ws("InfoWindow/Widget");
+  atools::gui::WidgetState ws(lnm::INFOWINDOW_WIDGET);
   ws.save({ui->tabWidgetInformation, ui->tabWidgetAircraft});
 
   maptypes::MapObjectRefList refs;
@@ -69,12 +71,12 @@ void InfoController::saveState()
   QStringList refList;
   for(const maptypes::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
-  atools::settings::Settings::instance().setValue("InfoWindow/CurrentMapObjects", refList.join(";"));
+  atools::settings::Settings::instance().setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 }
 
 void InfoController::restoreState()
 {
-  QString refsStr = atools::settings::Settings::instance().valueStr("InfoWindow/CurrentMapObjects");
+  QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
   QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
   maptypes::MapSearchResult res;
@@ -86,7 +88,7 @@ void InfoController::restoreState()
   showInformation(res);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  atools::gui::WidgetState ws("InfoWindow/Widget");
+  atools::gui::WidgetState ws(lnm::INFOWINDOW_WIDGET);
   ws.restore({ui->tabWidgetInformation, ui->tabWidgetAircraft});
 }
 

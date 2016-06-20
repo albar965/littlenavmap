@@ -334,7 +334,7 @@ void Search::resetView()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     // atools::gui::Dialog dlg(mainWindow);
-    // int result = dlg.showQuestionMsgBox("Actions/ShowResetView",
+    // int result = dlg.showQuestionMsgBox(lnm::Actions_ShowResetView,
     // tr("Reset sort order, column order and column sizes to default?"),
     // tr("Do not &show this dialog again."),
     // QMessageBox::Yes | QMessageBox::No,

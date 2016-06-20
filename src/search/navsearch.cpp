@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "search/navsearch.h"
+
+#include "common/constants.h"
 #include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
 #include "sql/sqldatabase.h"
@@ -187,13 +189,13 @@ void NavSearch::connectSlots()
 
 void NavSearch::saveState()
 {
-  atools::gui::WidgetState saver("SearchPaneNav/Widget");
+  atools::gui::WidgetState saver(lnm::SEARCHPANENAV_WIDGET);
   saver.save(navSearchWidgets);
 }
 
 void NavSearch::restoreState()
 {
-  atools::gui::WidgetState saver("SearchPaneNav/Widget");
+  atools::gui::WidgetState saver(lnm::SEARCHPANENAV_WIDGET);
   saver.restore(navSearchWidgets);
 }
 

@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "databasemanager.h"
+
+#include "common/constants.h"
 #include "fs/db/databasemeta.h"
 #include "db/databasedialog.h"
 #include "logging/loggingdefs.h"
@@ -327,7 +329,7 @@ void DatabaseManager::openDatabase()
     qDebug() << "Opening database" << databaseFile;
     db.setDatabaseName(databaseFile);
 
-    if(Settings::instance().getAndStoreValue("Options/ForeignKeys", false).toBool())
+    if(Settings::instance().getAndStoreValue(lnm::OPTIONS_FOREIGNKEYS, false).toBool())
       db.open({"PRAGMA foreign_keys = ON"});
     else
       db.open({"PRAGMA foreign_keys = OFF"});
@@ -722,18 +724,18 @@ bool DatabaseManager::hasRegistrySims() const
 void DatabaseManager::saveState()
 {
   Settings& s = Settings::instance();
-  s.setValueVar("Database/Paths", QVariant::fromValue(paths));
-  s.setValue("Database/Simulator", atools::fs::FsPaths::typeToShortName(currentFsType));
-  s.setValue("Database/LoadingSimulator", atools::fs::FsPaths::typeToShortName(loadingFsType));
+  s.setValueVar(lnm::DATABASE_PATHS, QVariant::fromValue(paths));
+  s.setValue(lnm::DATABASE_SIMULATOR, atools::fs::FsPaths::typeToShortName(currentFsType));
+  s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(loadingFsType));
 }
 
 void DatabaseManager::restoreState()
 {
   Settings& s = Settings::instance();
-  paths = s.valueVar("Database/Paths").value<FsPathTypeMap>();
+  paths = s.valueVar(lnm::DATABASE_PATHS).value<FsPathTypeMap>();
   currentFsType =
-    atools::fs::FsPaths::stringToType(s.valueStr("Database/Simulator", QString()));
-  loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr("Database/LoadingSimulator"));
+    atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
+  loadingFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
 }
 
 void DatabaseManager::updateDialogInfo()

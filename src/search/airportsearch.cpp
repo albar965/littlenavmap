@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "search/airportsearch.h"
+
+#include "common/constants.h"
 #include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
 #include "sql/sqldatabase.h"
@@ -321,13 +323,13 @@ void AirportSearch::connectSlots()
 
 void AirportSearch::saveState()
 {
-  atools::gui::WidgetState saver("SearchPaneAirport/Widget");
+  atools::gui::WidgetState saver(lnm::SEARCHPANEAIRPORT_WIDGET);
   saver.save(airportSearchWidgets);
 }
 
 void AirportSearch::restoreState()
 {
-  atools::gui::WidgetState saver("SearchPaneAirport/Widget");
+  atools::gui::WidgetState saver(lnm::SEARCHPANEAIRPORT_WIDGET);
   saver.restore(airportSearchWidgets);
 }
 

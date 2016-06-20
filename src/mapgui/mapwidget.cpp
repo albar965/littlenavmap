@@ -15,9 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "mapgui/mapwidget.h"
+
+#include "common/constants.h"
 #include "connect/connectclient.h"
 #include "mapgui/mappaintlayer.h"
-#include "mapgui/mapwidget.h"
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
@@ -247,26 +249,26 @@ void MapWidget::saveState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   writePluginSettings(*s.getQSettings());
 
-  s.setValue("Map/MarkLonX", markPos.getLonX());
-  s.setValue("Map/MarkLatY", markPos.getLatY());
+  s.setValue(lnm::MAP_MARKLONX, markPos.getLonX());
+  s.setValue(lnm::MAP_MARKLATY, markPos.getLatY());
 
-  s.setValue("Map/HomeLonX", homePos.getLonX());
-  s.setValue("Map/HomeLatY", homePos.getLatY());
-  s.setValue("Map/HomeDistance", homeDistance);
-  s.setValue("Map/KmlFiles", kmlFiles);
-  history.saveState("Map/History");
+  s.setValue(lnm::MAP_HOMELONX, homePos.getLonX());
+  s.setValue(lnm::MAP_HOMELATY, homePos.getLatY());
+  s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
+  s.setValue(lnm::MAP_KMLFILES, kmlFiles);
+  history.saveState(lnm::MAP_HISTORY);
 
   QByteArray bytesDistMarker;
   QDataStream ds(&bytesDistMarker, QIODevice::WriteOnly);
   ds.setVersion(QDataStream::Qt_5_5);
   ds << distanceMarkers;
-  s.setValueVar("Map/DistanceMarkers", bytesDistMarker);
+  s.setValueVar(lnm::MAP_DISTANCEMARKERS, bytesDistMarker);
 
   QByteArray bytesRangeMarker;
   QDataStream ds2(&bytesRangeMarker, QIODevice::WriteOnly);
   ds2.setVersion(QDataStream::Qt_5_5);
   ds2 << rangeMarkers;
-  s.setValueVar("Map/RangeMarkers", bytesRangeMarker);
+  s.setValueVar(lnm::MAP_RANGEMARKERS, bytesRangeMarker);
 }
 
 void MapWidget::restoreState()
@@ -274,22 +276,22 @@ void MapWidget::restoreState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   readPluginSettings(*s.getQSettings());
 
-  if(s.contains("Map/MarkLonX") && s.contains("Map/MarkLatY"))
+  if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
   {
-    markPos = atools::geo::Pos(s.valueFloat("Map/MarkLonX"), s.valueFloat("Map/MarkLatY"));
+    markPos = atools::geo::Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
     emit markChanged(markPos);
   }
 
-  if(s.contains("Map/HomeLonX") && s.contains("Map/HomeLatY") && s.contains("Map/HomeDistance"))
+  if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
-    homePos = atools::geo::Pos(s.valueFloat("Map/HomeLonX"), s.valueFloat("Map/HomeLatY"));
-    homeDistance = s.valueFloat("Map/HomeDistance");
+    homePos = atools::geo::Pos(s.valueFloat(lnm::MAP_HOMELONX), s.valueFloat(lnm::MAP_HOMELATY));
+    homeDistance = s.valueFloat(lnm::MAP_HOMEDISTANCE);
     emit homeChanged(homePos);
   }
-  history.restoreState("Map/History");
+  history.restoreState(lnm::MAP_HISTORY);
 
-  if(s.contains("Map/KmlFiles"))
-    kmlFiles = s.valueStrList("Map/KmlFiles");
+  if(s.contains(lnm::MAP_KMLFILES))
+    kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
 
   QStringList copyKml(kmlFiles);
   for(const QString& kml : kmlFiles)
@@ -301,12 +303,12 @@ void MapWidget::restoreState()
   }
   kmlFiles = copyKml;
 
-  QByteArray bytesDistMark(s.valueVar("Map/DistanceMarkers").toByteArray());
+  QByteArray bytesDistMark(s.valueVar(lnm::MAP_DISTANCEMARKERS).toByteArray());
   QDataStream ds(&bytesDistMark, QIODevice::ReadOnly);
   ds.setVersion(QDataStream::Qt_5_5);
   ds >> distanceMarkers;
 
-  QByteArray bytesRangeMark(s.valueVar("Map/RangeMarkers").toByteArray());
+  QByteArray bytesRangeMark(s.valueVar(lnm::MAP_RANGEMARKERS).toByteArray());
   QDataStream ds2(&bytesRangeMark, QIODevice::ReadOnly);
   ds2.setVersion(QDataStream::Qt_5_5);
   ds2 >> rangeMarkers;

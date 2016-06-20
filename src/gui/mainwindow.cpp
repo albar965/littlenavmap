@@ -17,6 +17,7 @@
 
 #include "gui/mainwindow.h"
 
+#include "common/constants.h"
 #include "logging/loggingdefs.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -50,6 +51,8 @@
 #include <QFileInfo>
 
 #include "ui_mainwindow.h"
+
+#include <options/options.h>
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -96,11 +99,11 @@ MainWindow::MainWindow(QWidget *parent) :
   infoQuery = new InfoQuery(this, databaseManager->getDatabase());
   infoQuery->initQueries();
 
-  routeFileHistory = new FileHistoryHandler(this, "Route/FilenamesRecent", ui->menuRecentRoutes,
+  routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
                                             ui->actionRecentRoutesClear);
   routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
 
-  kmlFileHistory = new FileHistoryHandler(this, "Route/FilenamesKmlRecent", ui->menuRecentKml,
+  kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
                                           ui->actionClearKmlMenu);
 
   createNavMap();
@@ -636,7 +639,7 @@ void MainWindow::routeCenter()
 bool MainWindow::routeValidate()
 {
   if(!routeController->hasValidStart() || !routeController->hasValidDestination())
-    dialog->showInfoMsgBox("Actions/ShowRouteWarning",
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
                            tr("Flight Plan must have an airport as start and destination and "
                               "will not be usable by the Simulator."),
                            tr("Do not &show this dialog again."));
@@ -646,13 +649,13 @@ bool MainWindow::routeValidate()
     {
       atools::gui::DialogButtonList buttons({
                                               {QString(), QMessageBox::Cancel},
-                                              {"Select Parking", QMessageBox::Yes},
+                                              {tr("Select Parking"), QMessageBox::Yes},
                                               {QString(), QMessageBox::Save}
                                             });
 
       int result = dialog->showQuestionMsgBox(
-        "Actions/ShowRouteParkingWarning",
-        "The start airport has parking spots but no parking was selected for this Flight Plan",
+        lnm::ACTIONS_SHOWROUTEPARKINGWARNING,
+        tr("The start airport has parking spots but no parking was selected for this Flight Plan"),
         tr("Do not show this dialog again and save Flight Plan in the future."),
         buttons, QMessageBox::Yes, QMessageBox::Save);
 
@@ -688,8 +691,8 @@ bool MainWindow::routeCheckForChanges()
 
   QMessageBox msgBox;
   msgBox.setWindowTitle(QApplication::applicationName());
-  msgBox.setText("Flight Plan has been changed.");
-  msgBox.setInformativeText("Save changes?");
+  msgBox.setText(tr("Flight Plan has been changed."));
+  msgBox.setInformativeText(tr("Save changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
 
   int retval = msgBox.exec();
@@ -921,7 +924,16 @@ void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
 
 void MainWindow::resetMessages()
 {
-  // TODO reset messages
+  qDebug() << "resetMessages";
+  Settings& s = Settings::instance();
+
+  // Show all message dialogs again
+  s.setValue(lnm::ACTIONS_SHOWDISCONNECTINFO, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWQUIT, true);
+  s.syncSettings();
+  ui->statusBar->showMessage(tr("All message dialogs reset."));
 }
 
 void MainWindow::options()
@@ -930,6 +942,9 @@ void MainWindow::options()
   // QtMarbleConfigDialog dlg(mapWidget);
   // dlg.exec();
 
+  Options opts(this);
+  opts.exec();
+  opts.hide();
 }
 
 void MainWindow::mainWindowShown()
@@ -983,7 +998,7 @@ void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
 
-  atools::gui::WidgetState ws("MainWindow/Widget");
+  atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
   kmlFileHistory->restoreState();
@@ -1005,10 +1020,10 @@ void MainWindow::readSettings()
               ui->actionRouteEditMode,
               ui->actionWorkOffline});
 
-  mapDetailFactor = Settings::instance().valueInt("Map/DetailFactor",
+  mapDetailFactor = Settings::instance().valueInt(lnm::MAP_DETAILFACTOR,
                                                   MAP_DEFAULT_DETAIL_FACTOR);
 
-  firstApplicationStart = Settings::instance().valueBool("MainWindow/FirstApplicationStart", true);
+  firstApplicationStart = Settings::instance().valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
@@ -1018,7 +1033,7 @@ void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
 
-  atools::gui::WidgetState ws("MainWindow/Widget");
+  atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.save({this, ui->statusBar, ui->tabWidgetSearch});
 
   if(searchController != nullptr)
@@ -1047,8 +1062,8 @@ void MainWindow::writeSettings()
            ui->actionRouteEditMode,
            ui->actionWorkOffline});
 
-  Settings::instance().setValue("Map/DetailFactor", mapDetailFactor);
-  Settings::instance().setValue("MainWindow/FirstApplicationStart", firstApplicationStart);
+  Settings::instance().setValue(lnm::MAP_DETAILFACTOR, mapDetailFactor);
+  Settings::instance().setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
   if(databaseManager != nullptr)
     databaseManager->saveState();
@@ -1071,7 +1086,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
     else
     {
-      int result = dialog->showQuestionMsgBox("Actions/ShowQuit",
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWQUIT,
                                               tr("Really Quit?"),
                                               tr("Do not &show this dialog again."),
                                               QMessageBox::Yes | QMessageBox::No,

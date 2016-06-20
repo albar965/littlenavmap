@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "connectdialog.h"
+
+#include "common/constants.h"
 #include "logging/loggingdefs.h"
 #include "ui_connectdialog.h"
 #include <QPushButton>
@@ -108,19 +110,19 @@ quint16 ConnectDialog::getPort() const
 
 void ConnectDialog::saveState()
 {
-  atools::gui::WidgetState saver("NavConnect/Remote");
+  atools::gui::WidgetState saver(lnm::NAVCONNECT_REMOTE);
   saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 
   QStringList entries;
   for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
     entries.append(ui->comboBoxConnectHostname->itemText(i));
 
-  Settings::instance().setValue("NavConnect/RemoteHosts", entries);
+  Settings::instance().setValue(lnm::NAVCONNECT_REMOTEHOSTS, entries);
 }
 
 void ConnectDialog::restoreState()
 {
-  QStringList entries = Settings::instance().valueStrList("NavConnect/RemoteHosts");
+  QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
   entries.removeDuplicates();
 
   if(entries.isEmpty())
@@ -132,6 +134,6 @@ void ConnectDialog::restoreState()
         ui->comboBoxConnectHostname->addItem(entry);
   }
 
-  atools::gui::WidgetState saver("NavConnect/Remote");
+  atools::gui::WidgetState saver(lnm::NAVCONNECT_REMOTE);
   saver.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 }

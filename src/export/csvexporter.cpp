@@ -17,6 +17,7 @@
 
 #include "export/csvexporter.h"
 
+#include "common/constants.h"
 #include "gui/errorhandler.h"
 #include "search/sqlmodel.h"
 #include "gui/dialog.h"
@@ -50,7 +51,7 @@ QString CsvExporter::saveCsvFileDialog()
 {
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
-                                "csv", "Export/FileDialog");
+                                "csv", lnm::EXPORT_FILEDIALOG);
 }
 
 int CsvExporter::exportAll(bool open)
