@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_ROUTEFINDER_H
 
 #include "common/maptypes.h"
-#include "heap.h"
+#include "util/heap.h"
 #include "route/routenetwork.h"
 #include "geo/calculations.h"
 
@@ -68,7 +68,7 @@ private:
   float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
 
-  Heap<nw::Node> openNodesHeap;
+  atools::util::Heap<nw::Node> openNodesHeap;
   QSet<int> closedNodes;
   QHash<int, float> nodeCosts;
   QHash<int, int> nodePredecessor;

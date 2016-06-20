@@ -26,7 +26,7 @@
 class MainWindow;
 class MapQuery;
 class InfoQuery;
-class MapHtmlInfoBuilder;
+class HtmlInfoBuilder;
 class QTextEdit;
 
 enum TabIndex
@@ -74,7 +74,7 @@ private:
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   QColor iconBackColor;
-  MapHtmlInfoBuilder *info;
+  HtmlInfoBuilder *info;
 
   bool canTextEditUpdate(const QTextEdit *textEdit);
 

@@ -28,13 +28,15 @@
 namespace atools {
 namespace fs {
 class BglReaderProgressInfo;
+namespace db {
+class DatabaseMeta;
+}
 }
 }
 
 class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
-class DatabaseMeta;
 
 class DatabaseManager :
   public QObject

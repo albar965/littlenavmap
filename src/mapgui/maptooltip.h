@@ -29,7 +29,12 @@ struct MapSearchResult;
 class MapQuery;
 class WeatherReporter;
 class RouteMapObjectList;
+
+namespace atools {
+namespace util {
 class HtmlBuilder;
+}
+}
 
 class MapTooltip :
   public QObject
@@ -47,7 +52,7 @@ public:
 private:
   const int MAXLINES = 20;
   MapQuery *query;
-  bool checkText(HtmlBuilder& html, int numEntries);
+  bool checkText(atools::util::HtmlBuilder& html, int numEntries);
 
   WeatherReporter *weather;
   QColor iconBackColor;

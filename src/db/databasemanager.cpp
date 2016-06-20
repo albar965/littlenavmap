@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "databasemanager.h"
-#include "databasemeta.h"
+#include "fs/db/databasemeta.h"
 #include "db/databasedialog.h"
 #include "logging/loggingdefs.h"
 #include "settings/settings.h"
@@ -50,6 +50,7 @@ using atools::fs::BglReaderOptions;
 using atools::fs::Navdatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
+using atools::fs::db::DatabaseMeta;
 
 const QString DATABASE_META_TEXT(
   "<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>");

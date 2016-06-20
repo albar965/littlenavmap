@@ -34,7 +34,7 @@
 #include "mapgui/mapwidget.h"
 #include "profile/profilewidget.h"
 #include "route/routecontroller.h"
-#include "common/filehistoryhandler.h"
+#include "gui/filehistoryhandler.h"
 #include "search/airportsearch.h"
 #include "search/navsearch.h"
 #include "mapgui/maplayersettings.h"
@@ -53,6 +53,8 @@
 
 using namespace Marble;
 using atools::settings::Settings;
+using atools::gui::FileHistoryHandler;
+using atools::gui::MapPosHistory;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent), ui(new Ui::MainWindow)

@@ -21,6 +21,7 @@
 #include "logging/loggingutil.h"
 #include "settings/settings.h"
 #include "gui/translator.h"
+#include "gui/mapposhistory.h"
 #include "exception.h"
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
@@ -36,16 +37,14 @@
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
 
-#include "mapgui/mapposhistory.h"
-
 int main(int argc, char *argv[])
 {
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
 
-  qRegisterMetaTypeStreamOperators<MapPosHistoryEntry>();
+  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
-  qRegisterMetaTypeStreamOperators<QList<MapPosHistoryEntry> >();
+  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<FsPathType>();
   qRegisterMetaTypeStreamOperators<FsPathTypeMap>();
@@ -56,7 +55,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setApplicationName("Little Navmap");
   QCoreApplication::setOrganizationName("ABarthel");
   QCoreApplication::setOrganizationDomain("abarthel.org");
-  QCoreApplication::setApplicationVersion("0.8.0.develop");
+  QCoreApplication::setApplicationVersion("0.9.0.develop");
 
 #if defined(Q_OS_WIN32)
   QApplication::addLibraryPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");

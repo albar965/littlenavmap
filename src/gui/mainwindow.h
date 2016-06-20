@@ -35,7 +35,6 @@ class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
-class FileHistoryHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -48,6 +47,7 @@ namespace gui {
 class Dialog;
 class ErrorHandler;
 class HelpHandler;
+class FileHistoryHandler;
 }
 
 }
@@ -110,7 +110,7 @@ private:
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
-  FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
   QUrl legendUrl;
 
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;

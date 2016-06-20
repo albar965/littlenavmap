@@ -63,7 +63,6 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainternav.cpp \
     src/search/navicondelegate.cpp \
     src/mapgui/mappainterils.cpp \
-    src/mapgui/mapposhistory.cpp \
     src/common/maptools.cpp \
     src/route/routecontroller.cpp \
     src/route/routemapobject.cpp \
@@ -73,14 +72,11 @@ SOURCES += src/main.cpp\
     src/common/formatter.cpp \
     src/common/coordinateconverter.cpp \
     src/common/maptypesfactory.cpp \
-    src/common/morsecode.cpp \
     src/db/databasedialog.cpp \
-    src/db/databasemeta.cpp \
     src/route/parkingdialog.cpp \
     src/route/routecommand.cpp \
     src/route/routefinder.cpp \
     src/mapgui/mapwidget.cpp \
-    src/route/heap.cpp \
     src/route/routenetworkradio.cpp \
     src/route/routenetworkairway.cpp \
     src/route/routenetwork.cpp \
@@ -92,18 +88,16 @@ SOURCES += src/main.cpp\
     src/route/routemapobjectlist.cpp \
     src/common/aircrafttrack.cpp \
     src/info/infocontroller.cpp \
-    src/common/htmlbuilder.cpp \
     src/common/symbolpainter.cpp \
-    src/common/maphtmlinfobuilder.cpp \
     src/info/infoquery.cpp \
     src/db/databasemanager.cpp \
     src/db/dbtypes.cpp \
     src/common/constants.cpp \
-    src/common/filehistoryhandler.cpp \
     src/export/csvexporter.cpp \
     src/export/exporter.cpp \
     src/export/htmlexporter.cpp \
-    src/options/options.cpp
+    src/options/options.cpp \
+    src/common/htmlinfobuilder.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -129,7 +123,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainternav.h \
     src/search/navicondelegate.h \
     src/mapgui/mappainterils.h \
-    src/mapgui/mapposhistory.h \
     src/common/maptools.h \
     src/route/routecontroller.h \
     src/route/routemapobject.h \
@@ -139,14 +132,11 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/formatter.h \
     src/common/coordinateconverter.h \
     src/common/maptypesfactory.h \
-    src/common/morsecode.h \
     src/db/databasedialog.h \
-    src/db/databasemeta.h \
     src/route/parkingdialog.h \
     src/route/routecommand.h \
     src/route/routefinder.h \
     src/mapgui/mapwidget.h \
-    src/route/heap.h \
     src/route/routenetworkradio.h \
     src/route/routenetworkairway.h \
     src/route/routenetwork.h \
@@ -158,18 +148,16 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routemapobjectlist.h \
     src/common/aircrafttrack.h \
     src/info/infocontroller.h \
-    src/common/htmlbuilder.h \
     src/common/symbolpainter.h \
-    src/common/maphtmlinfobuilder.h \
     src/info/infoquery.h \
     src/db/databasemanager.h \
     src/db/dbtypes.h \
     src/common/constants.h \
-    src/common/filehistoryhandler.h \
     src/export/csvexporter.h \
     src/export/exporter.h \
     src/export/htmlexporter.h \
-    src/options/options.h
+    src/options/options.h \
+    src/common/htmlinfobuilder.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

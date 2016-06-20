@@ -59,6 +59,8 @@
 #include "route/routenetworkairway.h"
 
 using namespace Marble;
+using atools::gui::MapPosHistoryEntry;
+using atools::gui::MapPosHistory;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)

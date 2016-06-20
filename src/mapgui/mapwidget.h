@@ -20,7 +20,7 @@
 
 #include "common/maptypes.h"
 
-#include "mapposhistory.h"
+#include "gui/mapposhistory.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
@@ -149,7 +149,7 @@ public:
   void historyNext();
   void historyBack();
 
-  MapPosHistory *getHistory()
+  atools::gui::MapPosHistory *getHistory()
   {
     return &history;
   }
@@ -244,7 +244,7 @@ private:
 
   int currentDistanceMarkerIndex = -1;
   maptypes::DistanceMarker distanceMarkerBackup;
-  MapPosHistory history;
+  atools::gui::MapPosHistory history;
   MapTooltip *mapTooltip;
   Marble::Projection currentProjection;
 

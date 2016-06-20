@@ -22,14 +22,15 @@
 #include "common/formatter.h"
 #include "route/routemapobjectlist.h"
 
-#include "common/htmlbuilder.h"
-#include "common/maphtmlinfobuilder.h"
+#include "util/htmlbuilder.h"
+#include "common/htmlinfobuilder.h"
 #include "common/weatherreporter.h"
 
 #include <QPalette>
 #include <QToolTip>
 
 using namespace maptypes;
+using atools::util::HtmlBuilder;
 
 MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
   : QObject(parent), query(mapQuery), weather(weatherReporter)
@@ -51,7 +52,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 {
   HtmlBuilder html(false);
 
-  MapHtmlInfoBuilder info(query, nullptr, false);
+  HtmlInfoBuilder info(query, nullptr, false);
   int numEntries = 0;
 
   for(const MapAirport& ap : mapSearchResult.airports)

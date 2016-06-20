@@ -24,20 +24,22 @@
 #include "gui/widgetstate.h"
 #include "infoquery.h"
 #include "ui_mainwindow.h"
-#include "common/htmlbuilder.h"
-#include "common/maphtmlinfobuilder.h"
+#include "util/htmlbuilder.h"
+#include "common/htmlinfobuilder.h"
 #include "common/symbolpainter.h"
 #include "mapgui/mapquery.h"
 #include "settings/settings.h"
 #include <QScrollBar>
 #include "atools.h"
 
+using atools::util::HtmlBuilder;
+
 InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery) :
   QObject(parent), mainWindow(parent), mapQuery(mapDbQuery), infoQuery(infoDbQuery)
 {
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
 
-  info = new MapHtmlInfoBuilder(mapQuery, infoQuery, true);
+  info = new HtmlInfoBuilder(mapQuery, infoQuery, true);
 }
 
 InfoController::~InfoController()
