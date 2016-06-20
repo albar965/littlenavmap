@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
   databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuTools);
   // helpHandler->addDirLink("Database Files", databaseManager->getDatabaseDirectory());
 
-  weatherReporter = new WeatherReporter(this);
+  weatherReporter = new WeatherReporter(this, databaseManager->getCurrentFsType());
 
   mapQuery = new MapQuery(this, databaseManager->getDatabase());
   mapQuery->initQueries();
@@ -1105,7 +1105,7 @@ void MainWindow::preDatabaseLoad()
     navMapWidget->preDatabaseLoad();
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
-
+    weatherReporter->preDatabaseLoad();
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
   }
@@ -1113,7 +1113,7 @@ void MainWindow::preDatabaseLoad()
     qWarning() << "Already in database loading status";
 }
 
-void MainWindow::postDatabaseLoad()
+void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
@@ -1125,6 +1125,7 @@ void MainWindow::postDatabaseLoad()
     navMapWidget->postDatabaseLoad();
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();
+    weatherReporter->postDatabaseLoad(type);
     hasDatabaseLoadStatus = false;
   }
   else

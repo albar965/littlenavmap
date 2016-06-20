@@ -18,6 +18,7 @@
 #include "weatherreporter.h"
 #include "logging/loggingdefs.h"
 #include "gui/mainwindow.h"
+#include "settings/settings.h"
 
 #include <QDir>
 #include <QFile>
@@ -28,21 +29,12 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-#include "settings/settings.h"
+using atools::fs::FsPaths;
 
-WeatherReporter::WeatherReporter(MainWindow *parentWindow)
-  : QObject(parentWindow)
+WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
+  : QObject(parentWindow), simType(type)
 {
-  asnSnapshotPath = getAsnSnapshotPath();
-  if(!asnSnapshotPath.isEmpty())
-  {
-    loadActiveSkySnapshot();
-    fsWatcher = new QFileSystemWatcher(this);
-    if(fsWatcher->addPath(asnSnapshotPath))
-      fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
-    else
-      qWarning() << "cannot watch" << asnSnapshotPath;
-  }
+  initActiveSkyNext();
 }
 
 WeatherReporter::~WeatherReporter()
@@ -50,6 +42,27 @@ WeatherReporter::~WeatherReporter()
   clearNoaaReply();
   clearVatsimReply();
   delete fsWatcher;
+}
+
+void WeatherReporter::initActiveSkyNext()
+{
+  if(fsWatcher != nullptr && !asnSnapshotPath.isEmpty())
+    if(!fsWatcher->removePath(asnSnapshotPath))
+      qWarning() << "cannot unwatch" << asnSnapshotPath;
+
+  asnSnapshotPath = getAsnSnapshotPath();
+  if(!asnSnapshotPath.isEmpty())
+  {
+    loadActiveSkySnapshot();
+    if(fsWatcher == nullptr)
+    {
+      fsWatcher = new QFileSystemWatcher(this);
+      fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
+    }
+
+    if(!fsWatcher->addPath(asnSnapshotPath))
+      qWarning() << "cannot watch" << asnSnapshotPath;
+  }
 }
 
 // C:\Users\USER\AppData\Roaming\HiFi\ASNFSX\Weather\wx_station_list.txt
@@ -73,7 +86,6 @@ void WeatherReporter::loadActiveSkySnapshot()
     {
       QStringList list = line.split("::");
       asnMetars.insert(list.at(0), list.at(1));
-
     }
     file.close();
   }
@@ -88,17 +100,32 @@ QString WeatherReporter::getAsnSnapshotPath()
 
   QDir dir(appdata);
 
-  // TODO other simulators
-  if(dir.cdUp() && dir.cd("HiFi") && dir.cd("ASNFSX") && dir.cd("Weather"))
+  QString simPath;
+  if(simType == atools::fs::FsPaths::FSX)
+    simPath = "ASNFSX";
+  else if(simType == atools::fs::FsPaths::FSX_SE)
+    simPath = "ASNFSX";
+  else if(simType == atools::fs::FsPaths::P3D_V2)
+    simPath = "ASNP3D";
+  else if(simType == atools::fs::FsPaths::P3D_V3)
+    simPath = "ASNP3D";
+
+  if(!simPath.isEmpty())
   {
-    QString file = dir.filePath("current_wx_snapshot.txt");
-    if(QFile::exists(file))
-      return file;
+    if(dir.cdUp() && dir.cd("HiFi") && dir.cd(simPath) && dir.cd("Weather"))
+    {
+      QString file = dir.filePath("current_wx_snapshot.txt");
+      if(QFile::exists(file))
+        return file;
+      else
+        qWarning() << "wx_station_list.txt not found";
+    }
     else
-      qWarning() << "wx_station_list.txt not found";
+      qWarning().noquote().nospace() << "HiFi/" + simPath + "/Weather not found";
   }
   else
-    qWarning() << "HiFi/ASNFSX/Weather not found";
+    qWarning() << "Invalid simulator type" << simType;
+
   return QString();
 }
 
@@ -170,16 +197,20 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
 void WeatherReporter::httpFinishedNoaa()
 {
   httpFinished(noaaReply, noaaRequestIcao, noaaMetars);
+  if(noaaReply != nullptr)
+    noaaReply->deleteLater();
   noaaReply = nullptr;
 }
 
 void WeatherReporter::httpFinishedVatsim()
 {
   httpFinished(vatsimReply, vatsimRequestIcao, vatsimMetars);
+  if(vatsimReply != nullptr)
+    vatsimReply->deleteLater();
   vatsimReply = nullptr;
 }
 
-void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, QString>& metars)
+void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars)
 {
   if(reply != nullptr)
   {
@@ -187,16 +218,16 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
     {
       QString metar(reply->readAll());
       if(!metar.contains("no metar available", Qt::CaseInsensitive))
-        metars.insert(icao, metar);
+        metars.insert(icao, {metar, QDateTime::currentDateTime()});
       else
-        metars.insert(icao, QString());
+        metars.insert(icao, Report());
       qDebug() << "Request for" << icao << "succeeded.";
       emit weatherUpdated();
     }
     else if(reply->error() != QNetworkReply::OperationCanceledError)
     {
-      metars.insert(icao, QString());
-      qDebug() << "Request for" << icao << "failed. Reason:" << reply->errorString();
+      metars.insert(icao, Report());
+      qWarning() << "Request for" << icao << "failed. Reason:" << reply->errorString();
     }
     reply->deleteLater();
   }
@@ -211,15 +242,50 @@ QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
   if(!noaaMetars.contains(airportIcao))
     loadNoaaMetar(airportIcao);
-  return noaaMetars.value(airportIcao, QString());
+  else
+  {
+    const Report& report = noaaMetars.value(airportIcao);
+    if(!report.metar.isEmpty())
+    {
+      if(report.reportTime.addSecs(900) < QDateTime::currentDateTime())
+        loadNoaaMetar(airportIcao);
+      else
+        return report.metar;
+    }
+  }
+  return QString();
 }
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
   if(!vatsimMetars.contains(airportIcao))
     loadVatsimMetar(airportIcao);
-  return vatsimMetars.value(airportIcao, QString());
+  else
+  {
+    const Report& report = vatsimMetars.value(airportIcao);
+    if(!report.metar.isEmpty())
+    {
+      if(report.reportTime.addSecs(900) < QDateTime::currentDateTime())
+        loadVatsimMetar(airportIcao);
+      else
+        return report.metar;
+    }
+  }
+  return QString();
+}
 
+void WeatherReporter::preDatabaseLoad()
+{
+
+}
+
+void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
+{
+  if(type != simType)
+  {
+    simType = type;
+    initActiveSkyNext();
+  }
 }
 
 void WeatherReporter::fileChanged(const QString& path)

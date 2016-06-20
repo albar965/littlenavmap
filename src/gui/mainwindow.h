@@ -20,6 +20,7 @@
 
 #include "marble/MarbleGlobal.h"
 #include "common/maptypes.h"
+#include "fs/fspaths.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -152,7 +153,7 @@ private:
   void createNavMap();
   void options();
   void preDatabaseLoad();
-  void postDatabaseLoad();
+  void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
   void updateHistActions(int minIndex, int curIndex, int maxIndex);
 

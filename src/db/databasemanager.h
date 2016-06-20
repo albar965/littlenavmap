@@ -78,9 +78,14 @@ public:
   /* if false quit application */
   bool checkIncompatibleDatabases();
 
+  atools::fs::FsPaths::SimulatorType getCurrentFsType() const
+  {
+    return currentFsType;
+  }
+
 signals:
   void preDatabaseLoad();
-  void postDatabaseLoad();
+  void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
   QString databaseFile, databaseDirectory;

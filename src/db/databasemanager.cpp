@@ -280,7 +280,7 @@ void DatabaseManager::switchSimFromMenu()
     databaseFile = buildDatabaseFileName(currentFsType);
     openDatabase();
 
-    emit postDatabaseLoad();
+    emit postDatabaseLoad(currentFsType);
   }
 }
 
@@ -381,7 +381,7 @@ void DatabaseManager::run()
 {
   emit preDatabaseLoad();
   runNoMessages();
-  emit postDatabaseLoad();
+  emit postDatabaseLoad(currentFsType);
 }
 
 void DatabaseManager::runNoMessages()

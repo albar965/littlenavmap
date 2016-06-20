@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_WEATHERLOADER_H
 #define LITTLENAVMAP_WEATHERLOADER_H
 
+#include "fs/fspaths.h"
+
 #include <QHash>
 #include <QNetworkAccessManager>
 #include <QObject>
@@ -31,7 +33,7 @@ class WeatherReporter :
   Q_OBJECT
 
 public:
-  WeatherReporter(MainWindow *parentWindow);
+  WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
   virtual ~WeatherReporter();
 
   QString getAsnMetar(const QString& airportIcao);
@@ -43,18 +45,26 @@ public:
     return !asnSnapshotPath.isEmpty();
   }
 
-  void clearNoaaReply();
+  void preDatabaseLoad();
+  void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 signals:
   void weatherUpdated();
 
 private:
+  struct Report
+  {
+    QString metar;
+    QDateTime reportTime;
+  };
+
   void fileChanged(const QString& path);
   void loadVatsimMetar(const QString& airportIcao);
   void loadActiveSkySnapshot();
   void loadNoaaMetar(const QString& airportIcao);
 
-  QHash<QString, QString> asnMetars, noaaMetars, vatsimMetars;
+  QHash<QString, QString> asnMetars;
+  QHash<QString, Report> noaaMetars, vatsimMetars;
   QString asnSnapshotPath;
   QString getAsnSnapshotPath();
 
@@ -62,8 +72,9 @@ private:
 
   QNetworkAccessManager networkManager;
 
-  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, QString>& metars);
+  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars);
 
+  atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
   QString noaaRequestIcao, vatsimRequestIcao;
 
   QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
@@ -72,6 +83,9 @@ private:
   void httpFinishedVatsim();
 
   void clearVatsimReply();
+  void clearNoaaReply();
+
+  void initActiveSkyNext();
 
 };
 

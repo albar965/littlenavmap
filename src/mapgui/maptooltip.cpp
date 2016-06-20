@@ -203,6 +203,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     html.pEnd();
     numEntries++;
   }
+  // qDebug() << html.getHtml();
   return html.getHtml();
 }
 
