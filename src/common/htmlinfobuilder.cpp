@@ -82,9 +82,9 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     titleFlags |= atools::util::html::ITALIC;
 
   if(info)
-    html.text(airport.name + " (" + airport.ident + ")", titleFlags | atools::util::html::BIG);
+    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
   else
-    html.text(airport.name + " (" + airport.ident + ")", titleFlags);
+    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
@@ -194,7 +194,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   if(!info)
   {
     html.table();
-    html.row2(tr("Longest Runway Length:"), locale.toString(airport.longestRunwayLength) + tr(" ft"));
+    html.row2(tr("Longest Runway Length: %1 ft").arg(locale.toString(airport.longestRunwayLength)));
     html.tableEnd();
   }
 
@@ -382,8 +382,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         html.row2(tr("Surface:"), maptypes::surfaceName(rec.valueStr("surface")));
         html.row2(tr("Pattern Altitude:"), locale.toString(rec.valueInt("pattern_altitude")) + tr(" ft"));
 
-        rowForStrCap(html, &rec, "edge_light", tr("Edge Lights:"), "%1");
-        rowForStrCap(html, &rec, "center_light", tr("Center Lights:"), "%1");
+        rowForStrCap(html, &rec, "edge_light", tr("Edge Lights:"), tr("%1"));
+        rowForStrCap(html, &rec, "center_light", tr("Center Lights:"), tr("%1"));
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
         RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
@@ -444,7 +444,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   html.table();
   if(closed)
     html.row2(tr("Closed"), QString());
-  html.row2(tr("Heading:"), locale.toString(hdgPrim, 'f', 0) + tr("°M"));
+  html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(hdgPrim, 'f', 0)));
 
   int threshold = rec->valueInt("offset_threshold");
   if(threshold > 0)
@@ -485,8 +485,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
     bool dme = !ilsRec->isNull("dme_altitude");
     bool gs = !ilsRec->isNull("gs_altitude");
 
-    html.br().h4(ilsRec->valueStr("name") + tr(" (") + ilsRec->valueStr("ident") + tr(") - ") +
-                 QString(tr("ILS")) + (gs ? tr(", GS") : "") + (dme ? tr(", DME") : ""));
+    html.br().h4(tr("%1 (%2) - ILS %3%4").arg(ilsRec->valueStr("name")).arg(ilsRec->valueStr("ident")).
+                 arg(gs ? tr(", GS") : "").arg(dme ? tr(", DME") : ""));
 
     html.table();
     html.row2(tr("Frequency:"), locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + tr(" MHz"));
@@ -525,16 +525,18 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         html.h4(tr("Approach ") + recApp.valueStr("type") + runway);
         html.table();
         rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
-        html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") + recApp.valueStr("fix_region"));
+        html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
+                  recApp.valueStr("fix_region"));
         html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
 
         float hdg = recApp.valueFloat("heading") - airport.magvar;
         hdg = normalizeCourse(hdg);
-        html.row2(tr("Heading:"), locale.toString(hdg, 'f', 0) + tr("°M, ") +
-                  locale.toString(recApp.valueFloat("heading"), 'f', 0) + tr("°T"));
+        html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
+                  arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
 
         html.row2(tr("Altitude:"), locale.toString(recApp.valueFloat("altitude"), 'f', 0) + tr(" ft"));
-        html.row2(tr("Missed Altitude:"), locale.toString(recApp.valueFloat("missed_altitude"), 'f', 0) + tr(" ft"));
+        html.row2(tr("Missed Altitude:"),
+                  locale.toString(recApp.valueFloat("missed_altitude"), 'f', 0) + tr(" ft"));
         html.tableEnd();
 
         const SqlRecordVector *recTransVector =
@@ -617,7 +619,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
   html.row2(tr("Altitude:"), locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + tr(" ft"));
   html.row2(tr("Range:"), locale.toString(ndb.range) + tr(" nm"));
-  html.row2(tr("Morse:"), tr("<b>") + morse->getCode(ndb.ident) + tr("</b>"));
+  html.row2(tr("Morse:"), "<b>" + morse->getCode(ndb.ident) + "</b>");
   addCoordinates(rec, html);
   html.tableEnd();
 
