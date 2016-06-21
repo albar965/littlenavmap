@@ -104,8 +104,8 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
       int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
       if(lineLength > 80)
       {
-        QString text(QLocale().toString(obj.getDistanceTo(), 'f', 0) + " nm  / " +
-                     QLocale().toString(obj.getCourseToRhumb(), 'f', 0) + "°M");
+        QString text(QLocale().toString(obj.getDistanceTo(), 'f', 0) + tr(" nm  / ") +
+                     QLocale().toString(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
 
         int textw = painter->fontMetrics().width(text);
         if(textw > lineLength)
@@ -157,13 +157,13 @@ void MapPainterRoute::paintRoute(const MapLayer *mapLayer, GeoPainter *painter, 
         float rotate, brg = textBearing.at(i);
         if(brg < 180.)
         {
-          text += " ►";
+          text += tr(" ►");
           elide = Qt::ElideLeft;
           rotate = brg - 90.f;
         }
         else
         {
-          text = "◄ " + text;
+          text = tr("◄ ") + text;
           elide = Qt::ElideRight;
           rotate = brg + 90.f;
         }

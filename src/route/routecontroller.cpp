@@ -53,9 +53,12 @@
 
 const int ROUTE_UNDO_LIMIT = 50;
 // TODO tr
-const QList<QString> ROUTE_COLUMNS({"Ident", "Region", "Name", "Airway", "Type", "Freq.\nMHz/kHz",
-                                    "Course\n°M", "Direct\n°M", "Distance\nnm", "Remaining\nnm",
-                                    "Leg Time\nhh:mm", "ETA\nhh:mm UTC"});
+const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"), QObject::tr("Region"), QObject::tr(
+                                      "Name"), QObject::tr("Airway"), QObject::tr("Type"), QObject::tr(
+                                      "Freq.\nMHz/kHz"),
+                                    QObject::tr("Course\n°M"), QObject::tr("Direct\n°M"), QObject::tr(
+                                      "Distance\nnm"), QObject::tr("Remaining\nnm"),
+                                    QObject::tr("Leg Time\nhh:mm"), QObject::tr("ETA\nhh:mm UTC")});
 namespace rc {
 enum RouteColumns
 {
@@ -131,11 +134,11 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);
 
-  QAction *undoAction = undoStack->createUndoAction(mainWindow, "&Undo Flight Plan");
+  QAction *undoAction = undoStack->createUndoAction(mainWindow, tr("&Undo Flight Plan"));
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
   undoAction->setShortcut(QKeySequence("Ctrl+Z"));
 
-  QAction *redoAction = undoStack->createRedoAction(mainWindow, "&Redo Flight Plan");
+  QAction *redoAction = undoStack->createRedoAction(mainWindow, tr("&Redo Flight Plan"));
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
   redoAction->setShortcut(QKeySequence("Ctrl+Y"));
 
@@ -238,7 +241,7 @@ void RouteController::routeAltChanged()
   RouteCommand *undoCommand = nullptr;
 
   if(!route.isEmpty())
-    undoCommand = preChange("Change Altitude", rctype::ALTITUDE);
+    undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
 
   updateFlightplanData();
 
@@ -256,7 +259,7 @@ void RouteController::routeTypeChanged()
   RouteCommand *undoCommand = nullptr;
 
   if(!route.isEmpty())
-    undoCommand = preChange("Change Type");
+    undoCommand = preChange(tr("Change Type"));
 
   updateFlightplanData();
 
@@ -412,7 +415,7 @@ bool RouteController::saveFlightplan()
 void RouteController::calculateDirect()
 {
   qDebug() << "calculateDirect";
-  RouteCommand *undoCommand = preChange("Direct Flight Plan Calculation");
+  RouteCommand *undoCommand = preChange(tr("Direct Flight Plan Calculation"));
 
   Flightplan& flightplan = route.getFlightplan();
   flightplan.setRouteType(atools::fs::pln::DIRECT);
@@ -435,7 +438,7 @@ void RouteController::calculateRadionav()
 
   RouteFinder routeFinder(routeNetworkRadio);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav Flight Plan Calculation", false,
+  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"), false,
                          false);
   mainWindow->statusMessage(tr("Calculated radio navaid flight plan."));
 }
@@ -447,7 +450,7 @@ void RouteController::calculateHighAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude Flight Plan Calculation",
+  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, tr("High altitude Flight Plan Calculation"),
                          true,
                          false);
   mainWindow->statusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
@@ -460,7 +463,8 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude Flight Plan Calculation", true,
+  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, tr(
+                           "Low altitude Flight Plan Calculation"), true,
                          false);
   mainWindow->statusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
 }
@@ -478,7 +482,7 @@ void RouteController::calculateSetAlt()
   else
     type = atools::fs::pln::LOW_ALT;
 
-  calculateRouteInternal(&routeFinder, type, "Low altitude flight plan", true, true);
+  calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"), true, true);
   mainWindow->statusMessage(tr("Calculated high/low flight plan for given altitude."));
 }
 
@@ -562,7 +566,7 @@ void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     QGuiApplication::restoreOverrideCursor();
     QMessageBox::information(mainWindow,
                              QApplication::applicationName(),
-                             "Routing failed. Start or destination are not reachable.");
+                             tr("Routing failed. Start or destination are not reachable."));
   }
 }
 
@@ -570,7 +574,7 @@ void RouteController::reverse()
 {
   qDebug() << "reverse";
 
-  RouteCommand *undoCommand = preChange("Reverse Flight Plan", rctype::REVERSE);
+  RouteCommand *undoCommand = preChange(tr("Reverse Flight Plan"), rctype::REVERSE);
 
   route.getFlightplan().reverse();
 
@@ -945,7 +949,7 @@ void RouteController::moveLegsInternal(int dir)
 
   if(!rows.isEmpty())
   {
-    RouteCommand *undoCommand = preChange("Move Waypoints", rctype::MOVE);
+    RouteCommand *undoCommand = preChange(tr("Move Waypoints"), rctype::MOVE);
 
     QModelIndex curIdx = view->currentIndex();
     view->selectionModel()->clear();
@@ -975,7 +979,7 @@ void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
 {
   qDebug() << "route delete routeIndex" << routeIndex << "type" << type;
 
-  RouteCommand *undoCommand = preChange("Delete");
+  RouteCommand *undoCommand = preChange(tr("Delete"));
 
   route.getFlightplan().getEntries().removeAt(routeIndex);
 
@@ -1002,7 +1006,7 @@ void RouteController::deleteLegs()
 
   if(!rows.isEmpty())
   {
-    RouteCommand *undoCommand = preChange("Delete Waypoints", rctype::DELETE);
+    RouteCommand *undoCommand = preChange(tr("Delete Waypoints"), rctype::DELETE);
 
     int firstRow = rows.last();
     view->selectionModel()->clear();
@@ -1059,7 +1063,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 {
   qDebug() << "route set parking id" << parking.id;
 
-  RouteCommand *undoCommand = preChange("Set Parking");
+  RouteCommand *undoCommand = preChange(tr("Set Parking"));
 
   if(route.isEmpty() || route.first().getMapObjectType() != maptypes::AIRPORT ||
      route.first().getId() != parking.airportId)
@@ -1117,7 +1121,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
 {
   qDebug() << "route set dest id" << airport.id;
 
-  RouteCommand *undoCommand = preChange("Set Destination");
+  RouteCommand *undoCommand = preChange(tr("Set Destination"));
 
   FlightplanEntry entry;
   buildFlightplanEntry(airport, entry);
@@ -1162,7 +1166,7 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
 {
   qDebug() << "route set start id" << airport.id;
 
-  RouteCommand *undoCommand = preChange("Set Departure");
+  RouteCommand *undoCommand = preChange(tr("Set Departure"));
 
   routeSetStartInternal(airport);
 
@@ -1188,7 +1192,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   qDebug() << "route replace" << "user pos" << userPos << "id" << id
            << "type" << type << "old index" << legIndex;
 
-  RouteCommand *undoCommand = preChange("Change Waypoint");
+  RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
@@ -1220,7 +1224,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 {
   qDebug() << "route add id" << id << "type" << type;
 
-  RouteCommand *undoCommand = preChange("Add Waypoint");
+  RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
   FlightplanEntry entry;
   buildFlightplanEntry(id, userPos, type, entry);
@@ -1538,16 +1542,16 @@ void RouteController::updateModel()
       QString type = mapobj.getVor().type.at(0);
 
       if(mapobj.getVor().dmeOnly)
-        items.append(new QStandardItem("DME (" + type + ")"));
+        items.append(new QStandardItem(tr("DME (%1)").arg(type)));
       else if(mapobj.getVor().hasDme)
-        items.append(new QStandardItem("VORDME (" + type + ")"));
+        items.append(new QStandardItem(tr("VORDME (%1)").arg(type)));
       else
-        items.append(new QStandardItem("VOR (" + type + ")"));
+        items.append(new QStandardItem(tr("VOR (%1)").arg(type)));
     }
     else if(mapobj.getMapObjectType() == maptypes::NDB)
     {
-      QString type = mapobj.getNdb().type == "COMPASS_POINT" ? "CP" : mapobj.getNdb().type;
-      items.append(new QStandardItem("NDB (" + type + ")"));
+      QString type = mapobj.getNdb().type == tr("COMPASS_POINT") ? tr("CP") : mapobj.getNdb().type;
+      items.append(new QStandardItem(tr("NDB (%1)").arg(type)));
     }
     else
       items.append(nullptr);
@@ -1626,7 +1630,7 @@ void RouteController::updateLabel()
   const Flightplan& flightplan = route.getFlightplan();
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  QString startAirport("No airport"), destAirport("No airport");
+  QString startAirport(tr("No airport")), destAirport(tr("No airport"));
   if(!flightplan.isEmpty())
   {
     if(flightplan.getEntries().first().getWaypointType() == entry::AIRPORT)
@@ -1651,16 +1655,16 @@ void RouteController::updateLabel()
       case atools::fs::pln::UNKNOWN_ROUTE:
         break;
       case atools::fs::pln::LOW_ALT:
-        routeType = ", Low Altitude";
+        routeType = tr(", Low Altitude");
         break;
       case atools::fs::pln::HIGH_ALT:
-        routeType = ", High Altitude";
+        routeType = tr(", High Altitude");
         break;
       case atools::fs::pln::VOR:
-        routeType = ", Radionav";
+        routeType = tr(", Radionav");
         break;
       case atools::fs::pln::DIRECT:
-        routeType = ", Direct";
+        routeType = tr(", Direct");
         break;
 
     }

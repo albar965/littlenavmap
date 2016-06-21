@@ -56,7 +56,7 @@ using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
 
 const QString DATABASE_META_TEXT(
-  "<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>");
+  QObject::tr("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>"));
 
 const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                "<tbody>"
@@ -207,8 +207,8 @@ bool DatabaseManager::checkIncompatibleDatabases()
                       msg.arg(databaseNames.join("<br/>")),
                       QMessageBox::No | QMessageBox::Yes,
                       mainWindow);
-      box.button(QMessageBox::No)->setText("&No and Exit Application");
-      box.button(QMessageBox::Yes)->setText("&Erase");
+      box.button(QMessageBox::No)->setText(tr("&No and Exit Application"));
+      box.button(QMessageBox::Yes)->setText(tr("&Erase"));
 
       int result = box.exec();
 
@@ -316,11 +316,11 @@ void DatabaseManager::fillPathsFromDatabases()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, "While looking for databases");
+    ErrorHandler(mainWindow).handleException(e, tr("While looking for databases"));
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException("While looking for databases");
+    ErrorHandler(mainWindow).handleUnknownException(tr("While looking for databases"));
   }
 }
 
@@ -346,11 +346,11 @@ void DatabaseManager::openDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, "While opening database");
+    ErrorHandler(mainWindow).handleException(e, tr("While opening database"));
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException("While opening database");
+    ErrorHandler(mainWindow).handleUnknownException(tr("While opening database"));
   }
 }
 
@@ -364,11 +364,11 @@ void DatabaseManager::closeDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, "While closing database");
+    ErrorHandler(mainWindow).handleException(e, tr("While closing database"));
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException("While closing database");
+    ErrorHandler(mainWindow).handleUnknownException(tr("While closing database"));
   }
 }
 
@@ -752,7 +752,7 @@ void DatabaseManager::updateDialogInfo()
                arg(DB_VERSION_MINOR);
   else
     metaText = DATABASE_META_TEXT.
-               arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : "None").
+               arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
                arg(dbmeta.getMajorVersion()).
                arg(dbmeta.getMinorVersion()).
                arg(DB_VERSION_MAJOR).
@@ -776,7 +776,7 @@ void DatabaseManager::updateDialogInfo()
   else
     tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
-  databaseDialog->setHeader(metaText + "<p><b>Currently Loaded:</b></p><p>" + tableText + "</p>");
+  databaseDialog->setHeader(metaText + tr("<p><b>Currently Loaded:</b></p><p>%1</p>").arg(tableText));
 }
 
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)

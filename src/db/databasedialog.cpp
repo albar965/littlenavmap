@@ -43,7 +43,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathTypeMap& pathMap)
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
 
   if(paths.isEmpty())
-    ui->labelDatabaseInformation->setText("<b>No Simulator Found</b>");
+    ui->labelDatabaseInformation->setText(tr("<b>No Simulator Found</b>"));
   ui->comboBoxSimulator->setDisabled(paths.isEmpty());
   ui->pushButtonDatabaseBasePath->setDisabled(paths.isEmpty());
   ui->pushButtonDatabaseSceneryFile->setDisabled(paths.isEmpty());

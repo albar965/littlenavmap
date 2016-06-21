@@ -208,18 +208,18 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
           text += airway.name;
         if(context->mapLayer->isAirwayInfo())
         {
-          text += QString(" / ") + maptypes::airwayTypeToShortString(airway.type);
+          text += QString(tr(" / ")) + maptypes::airwayTypeToShortString(airway.type);
           if(airway.minalt)
-            text += QString(" / ") + QLocale().toString(airway.minalt) + " ft";
+            text += QString(tr(" / ")) + QLocale().toString(airway.minalt) + tr(" ft");
         }
 
         if(!text.isEmpty())
         {
-          QString lineText = line.first().toString(GeoDataCoordinates::Decimal, 3) + "|" +
+          QString lineText = line.first().toString(GeoDataCoordinates::Decimal, 3) + tr("|") +
                              line.last().toString(GeoDataCoordinates::Decimal, 3);
           int index = lines.value(lineText, -1);
           if(index == -1)
-            index = lines.value(line.last().toString(GeoDataCoordinates::Decimal, 3) + "|" +
+            index = lines.value(line.last().toString(GeoDataCoordinates::Decimal, 3) + tr("|") +
                                 line.first().toString(GeoDataCoordinates::Decimal, 3), -1);
 
           if(index != -1)

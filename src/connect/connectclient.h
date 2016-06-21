@@ -32,7 +32,7 @@ class ConnectClient :
   Q_OBJECT
 
 public:
-  ConnectClient(MainWindow* parent);
+  ConnectClient(MainWindow *parent);
   virtual ~ConnectClient();
 
   void connectToServer();

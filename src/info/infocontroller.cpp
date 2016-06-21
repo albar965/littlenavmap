@@ -293,13 +293,13 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textEditAircraftInfo->setText("Connected. Waiting for update.");
-  ui->textEditAircraftProgressInfo->setText("Connected. Waiting for update.");
+  ui->textEditAircraftInfo->setText(tr("Connected. Waiting for update."));
+  ui->textEditAircraftProgressInfo->setText(tr("Connected. Waiting for update."));
 }
 
 void InfoController::disconnectedFromSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textEditAircraftInfo->setText("Disconnected.");
-  ui->textEditAircraftProgressInfo->setText("Disconnected.");
+  ui->textEditAircraftInfo->setText(tr("Disconnected."));
+  ui->textEditAircraftProgressInfo->setText(tr("Disconnected."));
 }

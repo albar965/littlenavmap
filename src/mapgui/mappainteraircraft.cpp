@@ -92,22 +92,24 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
     if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
       texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
 
-    texts.append("IAS " + QLocale().toString(simData.getIndicatedSpeedKts(), 'f', 0) + " , " +
-                 "GS " + QLocale().toString(simData.getGroundSpeedKts(), 'f', 0) + " , " +
-                 "HDG " + QLocale().toString(simData.getHeadingDegMag(), 'f', 0) + "°M");
+    texts.append(tr("IAS %1, GS %2, HDG %3°M").
+                 arg(QLocale().toString(simData.getIndicatedSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(simData.getGroundSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(simData.getHeadingDegMag(), 'f', 0)));
 
     QString upDown;
     if(simData.getVerticalSpeedFeetPerMin() > 100.f)
-      upDown = " ▲";
+      upDown = tr(" ▲");
     else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
-      upDown = " ▼";
+      upDown = tr(" ▼");
 
-    texts.append("ALT " + QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
+    texts.append(tr("ALT %1 ft%2").
+                 arg(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0)).arg(upDown));
 
-    texts.append("Wind " + QLocale().toString(
-                   atools::geo::normalizeCourse(
-                     simData.getWindDirectionDegT() + simData.getMagVarDeg()), 'f', 0) + "°M / " +
-                 QLocale().toString(simData.getWindSpeedKts(), 'f', 0));
+    texts.append(tr("Wind %1 °M / %2").
+                 arg(QLocale().toString(atools::geo::normalizeCourse(
+                                          simData.getWindDirectionDegT() + simData.getMagVarDeg()), 'f', 0)).
+                 arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
   }

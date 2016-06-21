@@ -416,7 +416,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(ndb.ident + " (" + (ndb.type == "COMPASS_POINT" ? "CP" : ndb.type) + ")");
+    texts.append(ndb.ident + " (" + (ndb.type == tr("COMPASS_POINT") ? tr("CP") : ndb.type) + ")");
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
 
@@ -540,15 +540,15 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
   if(flags & textflags::INFO)
   {
     QString tower = (airport.towerFrequency == 0 ? QString() :
-                     "CT - " + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
+                     tr("CT - ") + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
 
     QString autoWeather;
     if(airport.atisFrequency > 0)
-      autoWeather = "ATIS " + QLocale().toString(airport.atisFrequency / 1000., 'f', 3);
+      autoWeather = tr("ATIS ") + QLocale().toString(airport.atisFrequency / 1000., 'f', 3);
     else if(airport.awosFrequency > 0)
-      autoWeather = "AWOS " + QLocale().toString(airport.awosFrequency / 1000., 'f', 3);
+      autoWeather = tr("AWOS ") + QLocale().toString(airport.awosFrequency / 1000., 'f', 3);
     else if(airport.asosFrequency > 0)
-      autoWeather = "ASOS " + QLocale().toString(airport.asosFrequency / 1000., 'f', 3);
+      autoWeather = tr("ASOS ") + QLocale().toString(airport.asosFrequency / 1000., 'f', 3);
 
     if(!tower.isEmpty() || !autoWeather.isEmpty())
       texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);

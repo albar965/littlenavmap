@@ -149,46 +149,46 @@ const QHash<QString, QString> parkingNameMap(
 
 const QHash<QString, QString> navTypeNames(
   {
-    {"HIGH", "High"},
-    {"LOW", "Low"},
-    {"TERMINAL", "Terminal"},
-    {"HH", "HH"},
-    {"H", "H"},
-    {"MH", "MH"},
-    {"COMPASS_POINT", "Compass Point"},
-    {"NAMED", "Named"},
-    {"UNNAMED", "Unnamed"},
-    {"VOR", "VOR"},
-    {"NDB", "NDB"}
+    {"HIGH", QObject::tr("High")},
+    {"LOW", QObject::tr("Low")},
+    {"TERMINAL", QObject::tr("Terminal")},
+    {"HH", QObject::tr("HH")},
+    {"H", QObject::tr("H")},
+    {"MH", QObject::tr("MH")},
+    {"COMPASS_POINT", QObject::tr("Compass Point")},
+    {"NAMED", QObject::tr("Named")},
+    {"UNNAMED", QObject::tr("Unnamed")},
+    {"VOR", QObject::tr("VOR")},
+    {"NDB", QObject::tr("NDB")}
   });
 
 const QHash<QString, QString> navNames(
   {
-    {"VORDME", "VORDME"},
-    {"VOR", "VOR"},
-    {"DME", "DME"},
-    {"NDB", "NDB"},
-    {"WAYPOINT", "Waypoint"}
+    {"VORDME", QObject::tr("VORDME")},
+    {"VOR", QObject::tr("VOR")},
+    {"DME", QObject::tr("DME")},
+    {"NDB", QObject::tr("NDB")},
+    {"WAYPOINT", QObject::tr("Waypoint")}
   });
 
 const QHash<QString, QString> comTypeNames(
   {
-    {"NONE", "None"},
-    {"ATIS", "ATIS"},
-    {"MULTICOM", "Multicom"},
-    {"UNICOM", "Unicom"},
-    {"CTAF", "CTAF"},
-    {"GROUND", "Ground"},
-    {"TOWER", "Tower"},
-    {"CLEARANCE", "Clearance"},
-    {"APPROACH", "Approach"},
-    {"DEPARTURE", "Departure"},
-    {"CENTER", "Center"},
-    {"FSS", "FSS"},
-    {"AWOS", "AWOS"},
-    {"ASOS", "ASOS"},
-    {"CLEARANCE_PRE_TAXI", "Clearance pre Taxi"},
-    {"REMOTE_CLEARANCE_DELIVERY", "Remote Clearance Delivery"}
+    {"NONE", QObject::tr("None")},
+    {"ATIS", QObject::tr("ATIS")},
+    {"MULTICOM", QObject::tr("Multicom")},
+    {"UNICOM", QObject::tr("Unicom")},
+    {"CTAF", QObject::tr("CTAF")},
+    {"GROUND", QObject::tr("Ground")},
+    {"TOWER", QObject::tr("Tower")},
+    {"CLEARANCE", QObject::tr("Clearance")},
+    {"APPROACH", QObject::tr("Approach")},
+    {"DEPARTURE", QObject::tr("Departure")},
+    {"CENTER", QObject::tr("Center")},
+    {"FSS", QObject::tr("FSS")},
+    {"AWOS", QObject::tr("AWOS")},
+    {"ASOS", QObject::tr("ASOS")},
+    {"CLEARANCE_PRE_TAXI", QObject::tr("Clearance pre Taxi")},
+    {"REMOTE_CLEARANCE_DELIVERY", QObject::tr("Remote Clearance Delivery")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)
@@ -390,13 +390,13 @@ QString airwayTypeToShortString(MapAirwayType type)
     case maptypes::NO_AIRWAY:
       break;
     case maptypes::VICTOR:
-      return "V";
+      return QObject::tr("V");
 
     case maptypes::JET:
-      return "J";
+      return QObject::tr("J");
 
     case maptypes::BOTH:
-      return "B";
+      return QObject::tr("B");
 
   }
   return QString();
@@ -409,13 +409,13 @@ QString airwayTypeToString(MapAirwayType type)
     case maptypes::NO_AIRWAY:
       break;
     case maptypes::VICTOR:
-      return "Victor";
+      return QObject::tr("Victor");
 
     case maptypes::JET:
-      return "Jet";
+      return QObject::tr("Jet");
 
     case maptypes::BOTH:
-      return "Both";
+      return QObject::tr("Both");
 
   }
   return QString();
@@ -489,11 +489,11 @@ QString vorType(const MapVor& vor)
 {
   QString type;
   if(vor.dmeOnly)
-    return "DME";
+    return QObject::tr("DME");
   else if(vor.hasDme)
-    return "VORDME";
+    return QObject::tr("VORDME");
   else
-    return "VOR";
+    return QObject::tr("VOR");
 }
 
 QString vorText(const MapVor& vor)
@@ -503,22 +503,22 @@ QString vorText(const MapVor& vor)
 
 QString ndbText(const MapNdb& ndb)
 {
-  return "NDB " + atools::capString(ndb.name) + " (" + ndb.ident + ")";
+  return QObject::tr("NDB %1 (%2").arg(atools::capString(ndb.name)).arg(ndb.ident);
 }
 
 QString waypointText(const MapWaypoint& waypoint)
 {
-  return "Waypoint " + waypoint.ident;
+  return QObject::tr("Waypoint ") + waypoint.ident;
 }
 
 QString userpointText(const MapUserpoint& userpoint)
 {
-  return "User point " + userpoint.name;
+  return QObject::tr("User point ") + userpoint.name;
 }
 
 QString airportText(const MapAirport& airport)
 {
-  return "Airport " + airport.name + " (" + airport.ident + ")";
+  return QObject::tr("Airport %1 (%2)").arg(airport.name).arg(airport.ident);
 }
 
 QString comTypeName(const QString& type)

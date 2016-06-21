@@ -338,18 +338,18 @@ int RouteMapObject::getRange() const
 QString RouteMapObject::getMapObjectTypeName() const
 {
   if(type == maptypes::INVALID)
-    return "Invalid";
+    return tr("Invalid");
 
   switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
-      return "Unknown";
+      return tr("Unknown");
 
     case atools::fs::pln::entry::AIRPORT:
-      return "Airport";
+      return tr("Airport");
 
     case atools::fs::pln::entry::INTERSECTION:
-      return "Waypoint";
+      return tr("Waypoint");
 
     case atools::fs::pln::entry::USER:
       return QString();
@@ -358,7 +358,7 @@ QString RouteMapObject::getMapObjectTypeName() const
       return maptypes::vorType(vor) + " (" + maptypes::navTypeName(vor.type) + ")";
 
     case atools::fs::pln::entry::NDB:
-      return "NDB (" + maptypes::navTypeName(ndb.type) + ")";
+      return tr("NDB (%1)").arg(maptypes::navTypeName(ndb.type));
   }
   return QString();
 }
@@ -412,7 +412,7 @@ QString RouteMapObject::getIdent() const
       return UNKNOWN_STR;
 
     case atools::fs::pln::entry::USER:
-      return "User " + QString::number(userpointNum);
+      return tr("User %1").arg(QString::number(userpointNum));
 
     case atools::fs::pln::entry::AIRPORT:
       return airport.ident;

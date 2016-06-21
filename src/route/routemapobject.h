@@ -20,6 +20,8 @@
 
 #include "common/maptypes.h"
 
+#include <QApplication>
+
 namespace atools {
 namespace fs {
 namespace pln {
@@ -37,6 +39,8 @@ class MapQuery;
 
 class RouteMapObject
 {
+  Q_DECLARE_TR_FUNCTIONS(RouteMapObject)
+
 public:
   RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan, const Marble::ElevationModel *elevationModel);
   ~RouteMapObject();

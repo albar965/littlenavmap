@@ -20,6 +20,7 @@
 
 #include <QColor>
 #include <QIcon>
+#include <QApplication>
 
 class QPainter;
 class QPen;
@@ -79,6 +80,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 
 class SymbolPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(SymbolPainter)
+
 public:
   SymbolPainter(QColor backgroundColor);
   SymbolPainter();

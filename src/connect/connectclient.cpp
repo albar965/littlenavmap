@@ -55,7 +55,7 @@ void ConnectClient::readFromServer()
   if(data->getStatus() != atools::fs::sc::OK)
   {
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          QString("Error reading data  from Little Navconnect: %1.").
+                          QString(tr("Error reading data  from Little Navconnect: %1.")).
                           arg(data->getStatusText()));
     closeSocket();
     return;
@@ -83,7 +83,7 @@ void ConnectClient::writeReply()
   if(reply.getStatus() != atools::fs::sc::OK)
   {
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          QString("Error writing reply to Little Navconnect: %1.").
+                          QString(tr("Error writing reply to Little Navconnect: %1.")).
                           arg(reply.getStatusText()));
     closeSocket();
     return;
@@ -113,12 +113,12 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
     if(socket->error() == QAbstractSocket::RemoteHostClosedError)
     {
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWDISCONNECTINFO,
-                                                     "Little Navconnect closed connection.",
+                                                     tr("Little Navconnect closed connection."),
                                                      tr("Do not &show this dialog again."));
     }
     else
       QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                            QString("Error in server connection: \"%1\" (%2)").
+                            tr("Error in server connection: \"%1\" (%2)").
                             arg(socket->errorString()).arg(socket->error()),
                             QMessageBox::Close, QMessageBox::NoButton);
   }

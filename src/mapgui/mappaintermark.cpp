@@ -86,13 +86,15 @@ void MapPainterMark::paintMagneticPoles(GeoPainter *painter)
   if(wToS(MAG_NORTH_POLE_2007, x, y))
   {
     painter->drawEllipse(x, y, 5, 5);
-    symbolPainter->textBox(painter, {"Magnetic North", "2007"}, painter->pen(), x + 5, y, textatt::NONE, 0);
+    symbolPainter->textBox(painter, {tr("Magnetic North"), tr("2007")},
+                           painter->pen(), x + 5, y, textatt::NONE, 0);
   }
 
   if(wToS(MAG_SOUTH_POLE_2007, x, y))
   {
     painter->drawEllipse(x, y, 5, 5);
-    symbolPainter->textBox(painter, {"Magnetic South", "2007"}, painter->pen(), x + 5, y, textatt::NONE, 0);
+    symbolPainter->textBox(painter, {tr("Magnetic South"), tr("2007")},
+                           painter->pen(), x + 5, y, textatt::NONE, 0);
   }
 }
 
@@ -232,7 +234,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rec
 
             QString txt;
             if(rings.text.isEmpty())
-              txt = QLocale().toString(diameter) + " nm";
+              txt = QLocale().toString(diameter) + tr(" nm");
             else
               txt = rings.text;
 
@@ -292,11 +294,11 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + "°T ► " +
-                   QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + "°T");
-      texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
+      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + tr("°T ► ") +
+                   QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
+      texts.append(atools::numberToString(meterToNm(distanceMeter)) + tr(" nm"));
       if(distanceMeter < 6000)
-        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + " ft");
+        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + tr(" ft"));
 
       if(m.from != m.to)
       {
@@ -341,10 +343,10 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
       if(!m.text.isEmpty())
         texts.append(m.text);
       texts.append(QLocale().toString(atools::geo::normalizeCourse(magBearing), 'f', 0) +
-                   (m.hasMagvar ? "°M" : "°T"));
-      texts.append(atools::numberToString(meterToNm(distanceMeter)) + " nm");
+                   (m.hasMagvar ? tr("°M") : tr("°T")));
+      texts.append(atools::numberToString(meterToNm(distanceMeter)) + tr(" nm"));
       if(distanceMeter < 6000)
-        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + " ft");
+        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + tr(" ft"));
 
       if(m.from != m.to)
       {

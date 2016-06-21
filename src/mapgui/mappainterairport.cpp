@@ -500,7 +500,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
           QString text;
           if(parking.type.startsWith("FUEL"))
-            text = "F";
+            text = tr("F");
           else
             text = QLocale().toString(parking.number) + " " + parkingTypeName(parking.name);
           pt.setY(pt.y() + metrics.ascent() / 2);
@@ -518,9 +518,9 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     if(visible)
     {
       pt.setY(pt.y() + metrics.ascent() / 2);
-      pt.setX(pt.x() - metrics.width("T") / 2);
+      pt.setX(pt.x() - metrics.width(tr("T")) / 2);
       painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-      painter->drawText(pt, "T");
+      painter->drawText(pt, tr("T"));
     }
   }
 
@@ -543,11 +543,11 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       QString text = QLocale().toString(runway.length);
 
       if(runway.width > 8)
-        text += " x " + QLocale().toString(runway.width);
+        text += tr(" x ") + QLocale().toString(runway.width);
 
       if(!runway.edgeLight.isEmpty())
-        text += " / L";
-      text += " / " + maptypes::surfaceName(runway.surface);
+        text += tr(" / L");
+      text += tr(" / ") + maptypes::surfaceName(runway.surface);
 
       int textWidth = rwMetrics.width(text);
       if(textWidth > runwayRect.height())
@@ -592,16 +592,16 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       {
         // This case is rare (eg. LTAI)
         rotate = runway.heading + 90.f;
-        textPrim = QString("► " +
-                           QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + "°M");
-        textSec = QString(QString::number(magHeading, 'f', 0) + "°M ◄");
+        textPrim = QString(tr("► ") +
+                           QString::number(normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M"));
+        textSec = QString(QString::number(magHeading, 'f', 0) + tr("°M ◄"));
       }
       else
       {
         rotate = runway.heading - 90.f;
-        textPrim = QString("► " + QString::number(magHeading, 'f', 0) + "°M");
+        textPrim = QString(tr("► ") + QString::number(magHeading, 'f', 0) + tr("°M"));
         textSec = QString(QString::number(
-                            normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + "°M ◄");
+                            normalizeCourse(opposedCourseDeg(magHeading)), 'f', 0) + tr("°M ◄"));
       }
 
       QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);
@@ -787,27 +787,27 @@ void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *rw, QList
 QString MapPainterAirport::parkingName(const QString& name)
 {
   if(name == "PARKING")
-    return "P";
+    return tr("P");
   else if(name == "N_PARKING")
-    return "N";
+    return tr("N");
   else if(name == "NE_PARKING")
-    return "NE";
+    return tr("NE");
   else if(name == "E_PARKING")
-    return "E";
+    return tr("E");
   else if(name == "SE_PARKING")
-    return "SE";
+    return tr("SE");
   else if(name == "S_PARKING")
-    return "S";
+    return tr("S");
   else if(name == "SW_PARKING")
-    return "SW";
+    return tr("SW");
   else if(name == "W_PARKING")
-    return "W";
+    return tr("W");
   else if(name == "NW_PARKING")
-    return "NW";
+    return tr("NW");
   else if(name == "GATE")
     return QString();
   else if(name == "DOCK")
-    return "D";
+    return tr("D");
   else if(name.startsWith("GATE_"))
     return name.right(1);
   else

@@ -131,12 +131,12 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
     {
       text = ils.ident + " / " +
              QLocale().toString(ils.frequency / 1000., 'f', 2) + " / " +
-             QLocale().toString(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + "°M";
+             QLocale().toString(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + tr("°M");
 
       if(ils.slope > 0)
-        text += " / GS " + QLocale().toString(ils.slope, 'f', 1) + "°";
+        text += tr(" / GS ") + QLocale().toString(ils.slope, 'f', 1) + tr("°");
       if(ils.dme)
-        text += " / DME";
+        text += tr(" / DME");
     }
     else if(mapLayer->isIlsIdent())
       text = ils.ident;

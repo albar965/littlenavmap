@@ -23,6 +23,7 @@
 #include <marble/MarbleWidget.h>
 
 #include <QPen>
+#include <QApplication>
 
 namespace atools {
 namespace geo {
@@ -58,6 +59,8 @@ struct PaintContext
 class MapPainter :
   public CoordinateConverter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainter();

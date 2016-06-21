@@ -594,7 +594,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
     const int ICON_SIZE = 20;
     qDebug() << "add navaids" << totalSize;
     QMenu menu;
-    QString menuPrefix("Add "), menuSuffix(" to Flight Plan");
+    QString menuPrefix(tr("Add ")), menuSuffix(tr(" to Flight Plan"));
     SymbolPainter symbolPainter;
 
     for(const maptypes::MapAirport& obj : result.airports)
@@ -641,7 +641,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
 
     menu.addSeparator();
     menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"),
-                               "Cancel", this));
+                               tr("Cancel"), this));
 
     QAction *action = menu.exec(QCursor::pos());
     if(action != nullptr && !action->data().isNull())
@@ -867,7 +867,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
-    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg("Position"));
+    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(tr("Position")));
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
@@ -896,8 +896,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
   {
-    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg("here"));
-    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg("here"));
+    ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(tr("here")));
+    ui->actionMapMeasureRhumbDistance->setText(ui->actionMapMeasureRhumbDistance->text().arg(tr("here")));
   }
 
   // Show the menu ------------------------------------------------

@@ -212,9 +212,9 @@ bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
 {
   if(numEntries > 3)
   {
-    html.hr().b("More ...");
+    html.hr().b(tr("More ..."));
     return true;
   }
 
-  return html.checklength(MAXLINES, "More ...");
+  return html.checklength(MAXLINES, tr("More ..."));
 }

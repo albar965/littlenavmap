@@ -292,19 +292,19 @@ void MainWindow::setupUi()
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
-  ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence("Alt+1"));
+  ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
   ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                        arg(ui->dockWidgetSearch->windowTitle().toLower()));
   ui->dockWidgetSearch->toggleViewAction()->setStatusTip(ui->dockWidgetSearch->toggleViewAction()->toolTip());
 
   ui->dockWidgetRoute->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routedock.svg"));
-  ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence("Alt+2"));
+  ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+2")));
   ui->dockWidgetRoute->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                       arg(ui->dockWidgetRoute->windowTitle().toLower()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
-  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence("Alt+3"));
+  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
   ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                             arg(ui->dockWidgetInformation->windowTitle().
                                                                 toLower()));
@@ -312,14 +312,14 @@ void MainWindow::setupUi()
     ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
   ui->dockWidgetElevation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
-  ui->dockWidgetElevation->toggleViewAction()->setShortcut(QKeySequence("Alt+4"));
+  ui->dockWidgetElevation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetElevation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                           arg(ui->dockWidgetElevation->windowTitle().toLower()));
   ui->dockWidgetElevation->toggleViewAction()->setStatusTip(
     ui->dockWidgetElevation->toggleViewAction()->toolTip());
 
   ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
-  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence("Alt+5"));
+  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
   ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                          arg(ui->dockWidgetAircraft->windowTitle().toLower()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
@@ -999,7 +999,7 @@ void MainWindow::mainWindowShown()
     if(databaseManager->hasRegistrySims())
       databaseManager->run();
     else
-      QMessageBox::information(this, QApplication::applicationName(), "No Simulators found.");
+      QMessageBox::information(this, QApplication::applicationName(), tr("No Simulators found."));
   }
 }
 

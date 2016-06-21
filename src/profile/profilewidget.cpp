@@ -240,7 +240,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
   {
-    symPainter.textBox(&painter, {"No Flight Plan loaded."}, QPen(Qt::black),
+    symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
     return;
   }
@@ -377,23 +377,23 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw text lables
   float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
-  QString startAltStr = QLocale().toString(startAlt, 'f', 0) + " ft";
+  QString startAltStr = QLocale().toString(startAlt, 'f', 0) + tr(" ft");
   symPainter.textBox(&painter, {startAltStr},
                      QPen(Qt::black), X0 - 8,
                      Y0 + static_cast<int>(h - startAlt * vertScale),
                      textatt::BOLD | textatt::RIGHT, 255);
 
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
-  QString destAltStr = QLocale().toString(destAlt, 'f', 0) + " ft";
+  QString destAltStr = QLocale().toString(destAlt, 'f', 0) + tr(" ft");
   symPainter.textBox(&painter, {destAltStr},
                      QPen(Qt::black), X0 + w + 4,
                      Y0 + static_cast<int>(h - destAlt * vertScale),
                      textatt::BOLD | textatt::LEFT, 255);
 
-  symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + " ft"},
+  symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + tr(" ft")},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAlt()) + " ft";
+  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAlt()) + tr(" ft");
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
@@ -421,14 +421,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       QString upDown;
       if(simData.getVerticalSpeedFeetPerMin() > 100.f)
-        upDown = " ▲";
+        upDown = tr(" ▲");
       else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
-        upDown = " ▼";
+        upDown = tr(" ▼");
 
       QStringList texts;
-      texts.append(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + " ft" + upDown);
-      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + " nm ► " +
-                   QLocale().toString(aircraftDistanceToDest, 'f', 0) + " nm");
+      texts.append(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + tr(" ft") + upDown);
+      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + tr(" nm ► ") +
+                   QLocale().toString(aircraftDistanceToDest, 'f', 0) + tr(" nm"));
 
       textatt::TextAttributes att = textatt::BOLD;
       int textx = acx, texty = acy + 20;
@@ -649,12 +649,12 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString to = legList.routeMapObjects.at(index + 1).getIdent();
 
   mainWindow->getUi()->labelElevationInfo->setText(
-    "<b>" + from + " ► " + to + "</b>, " +
-    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + " ► " +
-    QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + " nm, " +
-    " Ground Altitude " + QLocale().toString(alt, 'f', 0) + " ft, " +
-    " Above Ground Altitude " + QLocale().toString(flightplanAltFt - alt, 'f', 0) + " ft, " +
-    " Leg Safe Altitude " + QLocale().toString(maxElev, 'f', 0) + " ft");
+    tr("<b>") + from + tr(" ► ") + to + tr("</b>, ") +
+    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + tr(" ► ") +
+    QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + tr(" nm, ") +
+    tr(" Ground Altitude ") + QLocale().toString(alt, 'f', 0) + tr(" ft, ") +
+    tr(" Above Ground Altitude ") + QLocale().toString(flightplanAltFt - alt, 'f', 0) + tr(" ft, ") +
+    tr(" Leg Safe Altitude ") + QLocale().toString(maxElev, 'f', 0) + tr(" ft"));
 
   mouseEvent->accept();
 
@@ -671,7 +671,7 @@ void ProfileWidget::leaveEvent(QEvent *)
   delete rubberBand;
   rubberBand = nullptr;
 
-  mainWindow->getUi()->labelElevationInfo->setText("<b>No information.</b>");
+  mainWindow->getUi()->labelElevationInfo->setText(tr("<b>No information.</b>"));
 
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }

@@ -596,11 +596,11 @@ void SqlModel::buildQuery()
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(parentWidget).handleException(e, "While executing query");
+    atools::gui::ErrorHandler(parentWidget).handleException(e, tr("While executing query"));
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(parentWidget).handleUnknownException("While executing query");
+    atools::gui::ErrorHandler(parentWidget).handleUnknownException(tr("While executing query"));
   }
 }
 
