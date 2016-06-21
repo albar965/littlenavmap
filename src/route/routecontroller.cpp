@@ -139,6 +139,9 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
   redoAction->setShortcut(QKeySequence("Ctrl+Y"));
 
+  connect(redoAction, &QAction::triggered, this, &RouteController::redoTriggered);
+  connect(undoAction, &QAction::triggered, this, &RouteController::undoTriggered);
+
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->routeToolBar->insertAction(ui->actionRouteSelectParking, redoAction);
@@ -207,6 +210,16 @@ RouteController::~RouteController()
   delete routeNetworkAirway;
 }
 
+void RouteController::undoTriggered()
+{
+  mainWindow->statusMessage(QString(tr("Undo flight plan change.")));
+}
+
+void RouteController::redoTriggered()
+{
+  mainWindow->statusMessage(QString(tr("Redo flight plan change.")));
+}
+
 void RouteController::tableCopyClipboard()
 {
   qDebug() << "RouteController::tableCopyClipboard";
@@ -217,8 +230,7 @@ void RouteController::tableCopyClipboard()
   if(!csv.isEmpty())
     QApplication::clipboard()->setText(csv);
 
-  mainWindow->getUi()->statusBar->showMessage(
-    QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+  mainWindow->statusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
 void RouteController::routeAltChanged()
@@ -254,7 +266,11 @@ void RouteController::routeTypeChanged()
   updateWindowTitle();
 
   if(!route.isEmpty())
+  {
     emit routeChanged(false);
+    Ui::MainWindow *ui = mainWindow->getUi();
+    mainWindow->statusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
+  }
 }
 
 bool RouteController::selectDepartureParking()
@@ -408,6 +424,7 @@ void RouteController::calculateDirect()
   postChange(undoCommand);
   updateWindowTitle();
   emit routeChanged(true);
+  mainWindow->statusMessage(tr("Calculated direct flight plan."));
 }
 
 void RouteController::calculateRadionav()
@@ -420,6 +437,7 @@ void RouteController::calculateRadionav()
 
   calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, "Radionnav Flight Plan Calculation", false,
                          false);
+  mainWindow->statusMessage(tr("Calculated radio navaid flight plan."));
 }
 
 void RouteController::calculateHighAlt()
@@ -432,6 +450,7 @@ void RouteController::calculateHighAlt()
   calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, "High altitude Flight Plan Calculation",
                          true,
                          false);
+  mainWindow->statusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
 }
 
 void RouteController::calculateLowAlt()
@@ -443,6 +462,7 @@ void RouteController::calculateLowAlt()
 
   calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, "Low altitude Flight Plan Calculation", true,
                          false);
+  mainWindow->statusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
 }
 
 void RouteController::calculateSetAlt()
@@ -458,7 +478,8 @@ void RouteController::calculateSetAlt()
   else
     type = atools::fs::pln::LOW_ALT;
 
-  calculateRouteInternal(&routeFinder, type, "Low altitude route", true, true);
+  calculateRouteInternal(&routeFinder, type, "Low altitude flight plan", true, true);
+  mainWindow->statusMessage(tr("Calculated high/low flight plan for given altitude."));
 }
 
 void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
@@ -559,6 +580,7 @@ void RouteController::reverse()
   postChange(undoCommand);
   updateWindowTitle();
   emit routeChanged(true);
+  mainWindow->statusMessage(tr("Reversed flight plan."));
 }
 
 QString RouteController::getDefaultFilename() const
@@ -640,6 +662,11 @@ bool RouteController::hasValidParking() const
 bool RouteController::hasEntries() const
 {
   return route.getFlightplan().getEntries().size() > 2;
+}
+
+bool RouteController::hasRoute() const
+{
+  return !route.getFlightplan().isEmpty();
 }
 
 void RouteController::preDatabaseLoad()
@@ -728,6 +755,11 @@ void RouteController::showOnMapMenu()
       emit showRect(routeMapObject.getAirport().bounding);
     else
       emit showPos(routeMapObject.getPosition(), 2700);
+
+    if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
+      mainWindow->statusMessage(tr("Showing airport on map."));
+    else
+      mainWindow->statusMessage(tr("Showing navaid on map."));
   }
 }
 
@@ -750,7 +782,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionSearchTableCopy->setEnabled(index.isValid());
 
     ui->actionMapRangeRings->setEnabled(true);
-    ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
+    ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                            !mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
     ui->actionRouteShowInformation->setEnabled(true);
 
@@ -803,6 +836,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
           header->moveSection(header->visualIndex(i), i);
 
         view->resizeColumnsToContents();
+        mainWindow->statusMessage(tr("Table view reset to defaults."));
       }
       else if(action == ui->actionSearchTableSelectAll)
         view->selectAll();
@@ -823,7 +857,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
       }
       else if(action == ui->actionMapHideRangeRings)
-        mainWindow->getMapWidget()->clearRangeRings();
+        mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
     }
   }
 }
@@ -933,6 +967,7 @@ void RouteController::moveLegsInternal(int dir)
     updateWindowTitle();
 
     emit routeChanged(true);
+    mainWindow->statusMessage(tr("Moved flight plan legs."));
   }
 }
 
@@ -955,6 +990,8 @@ void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
   updateWindowTitle();
 
   emit routeChanged(true);
+
+  mainWindow->statusMessage(tr("Removed waypoint from flight plan."));
 }
 
 void RouteController::deleteLegs()
@@ -987,6 +1024,7 @@ void RouteController::deleteLegs()
     updateWindowTitle();
 
     emit routeChanged(true);
+    mainWindow->statusMessage(tr("Removed flight plan legs."));
   }
 }
 
@@ -1045,6 +1083,9 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   updateWindowTitle();
 
   emit routeChanged(true);
+
+  mainWindow->statusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
+                            arg(maptypes::parkingNameNumberType(parking)));
 }
 
 void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
@@ -1113,6 +1154,8 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   updateWindowTitle();
 
   emit routeChanged(true);
+
+  mainWindow->statusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
 void RouteController::routeSetStart(maptypes::MapAirport airport)
@@ -1136,6 +1179,7 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
   updateWindowTitle();
 
   emit routeChanged(true);
+  mainWindow->statusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
@@ -1169,7 +1213,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   updateWindowTitle();
 
   emit routeChanged(true);
-
+  mainWindow->statusMessage(tr("Replaced waypoint in flight plan."));
 }
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
@@ -1214,6 +1258,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   updateWindowTitle();
 
   emit routeChanged(true);
+
+  mainWindow->statusMessage(tr("Added waypoint to flight plan."));
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)

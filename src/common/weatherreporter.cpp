@@ -32,7 +32,7 @@
 using atools::fs::FsPaths;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type)
+  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
   initActiveSkyNext();
 }
@@ -222,6 +222,7 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
       else
         metars.insert(icao, Report());
       qDebug() << "Request for" << icao << "succeeded.";
+      mainWindow->statusMessage(tr("Weather information updated."));
       emit weatherUpdated();
     }
     else if(reply->error() != QNetworkReply::OperationCanceledError)
@@ -293,4 +294,5 @@ void WeatherReporter::fileChanged(const QString& path)
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
   loadActiveSkySnapshot();
+  mainWindow->statusMessage(tr("Active Sky Next weather information updated."));
 }

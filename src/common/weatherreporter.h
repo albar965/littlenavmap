@@ -78,7 +78,7 @@ private:
   QString noaaRequestIcao, vatsimRequestIcao;
 
   QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
-
+  MainWindow *mainWindow;
   void httpFinishedNoaa();
   void httpFinishedVatsim();
 

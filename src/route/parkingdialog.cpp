@@ -50,10 +50,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
   // Add to list widget
   for(const maptypes::MapParking& p : parkings)
   {
-    QString text = maptypes::parkingName(p.name) + " " + QLocale().toString(p.number) +
-                   ", " + maptypes::parkingTypeName(p.type) +
-                   ", " + QLocale().toString(p.radius * 2) + " ft" +
-                   (p.jetway ? ", Has Jetway" : "");
+    QString text = maptypes::parkingNameNumberType(p) + ", " + QLocale().toString(p.radius * 2) + " ft" +
+                   (p.jetway ? tr(", Has Jetway") : "");
 
     new QListWidgetItem(mapcolors::iconForParkingType(p.type), text, ui->listWidgetSelectParking);
   }

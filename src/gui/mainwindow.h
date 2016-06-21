@@ -102,6 +102,8 @@ public:
 
   void updateWindowTitle();
 
+  void statusMessage(const QString& message);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -126,7 +128,7 @@ private:
   MapWidget *navMapWidget = nullptr;
   ProfileWidget *profileWidget = nullptr;
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
-
+  QStringList statusMessages;
   bool hasDatabaseLoadStatus = false;
 
   Marble::LegendWidget *legendWidget = nullptr;
@@ -186,6 +188,9 @@ private:
   void kmlClear();
 
   void legendAnchorClicked(const QUrl& url);
+
+  void changeMapProjection(int index);
+  void changeMapTheme(int index);
 
 };
 

@@ -37,6 +37,7 @@ class DatabaseMeta;
 class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
+class MainWindow;
 
 class DatabaseManager :
   public QObject
@@ -44,7 +45,7 @@ class DatabaseManager :
   Q_OBJECT
 
 public:
-  DatabaseManager(QWidget *parent);
+  DatabaseManager(MainWindow *parent);
   virtual ~DatabaseManager();
 
   void run();
@@ -92,7 +93,7 @@ signals:
 private:
   QString databaseFile, databaseDirectory;
   atools::sql::SqlDatabase db;
-  QWidget *parentWidget;
+  MainWindow *mainWindow;
   QProgressDialog *progressDialog = nullptr;
   bool loadScenery();
   void runNoMessages();
@@ -117,7 +118,7 @@ private:
   void updateDialogInfo();
 
   DatabaseDialog *databaseDialog = nullptr;
-  void switchSimFromMenu();
+  void switchSimFromMainMenu();
 
   void freeActions();
   void updateSimSwitchActions();

@@ -177,9 +177,13 @@ void MainWindow::showNavmapLegend()
   {
     ui->dockWidgetInformation->show();
     ui->tabWidgetInformation->setCurrentIndex(NAVMAP_LEGEND);
+    statusMessage(tr("Opened map legend."));
   }
   else
+  {
     helpHandler->openHelpUrl(legendUrl);
+    statusMessage(tr("Opened map legend in browser."));
+  }
 }
 
 void MainWindow::loadNavmapLegend()
@@ -200,10 +204,10 @@ void MainWindow::loadNavmapLegend()
       ui->textBrowserNavmapLegendInfo->setText(legend);
     }
     else
-      errorHandler->handleIOError(legendFile, "While opening Navmap Legend file:");
+      errorHandler->handleIOError(legendFile, tr("While opening Navmap Legend file:"));
   }
-  else
-    helpHandler->openHelpUrl(legendUrl);
+  // else
+  // helpHandler->openHelpUrl(legendUrl);
 }
 
 void MainWindow::legendAnchorClicked(const QUrl& url)
@@ -217,6 +221,8 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
   if(!QDesktopServices::openUrl(newUrl))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
                            tr("Error opening URL <i>%1</i>")).arg(url.toDisplayString()));
+  else
+    statusMessage(tr("Opened legend link in browser."));
 }
 
 void MainWindow::createNavMap()
@@ -448,20 +454,8 @@ void MainWindow::connectAllSlots()
   connect(navMapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
 
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
-  connect(mapProjectionComboBox, indexChangedPtr, [ = ](int)
-          {
-            Marble::Projection proj =
-              static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
-            qDebug() << "Changing projection to" << proj;
-            navMapWidget->setProjection(proj);
-          });
-
-  connect(mapThemeComboBox, indexChangedPtr, navMapWidget, [ = ](int index)
-          {
-            QString theme = mapThemeComboBox->currentData().toString();
-            qDebug() << "Changing theme to" << theme << "index" << index;
-            navMapWidget->setTheme(theme, index);
-          });
+  connect(mapProjectionComboBox, indexChangedPtr, this, &MainWindow::changeMapProjection);
+  connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
 
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -582,6 +576,24 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
 }
 
+void MainWindow::changeMapProjection(int index)
+{
+  Q_UNUSED(index);
+  Marble::Projection proj = static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
+  qDebug() << "Changing projection to" << proj;
+  navMapWidget->setProjection(proj);
+  statusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
+}
+
+void MainWindow::changeMapTheme(int index)
+{
+  Q_UNUSED(index);
+  QString theme = mapThemeComboBox->currentData().toString();
+  qDebug() << "Changing theme to" << theme << "index" << index;
+  navMapWidget->setTheme(theme, index);
+  statusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
+}
+
 void MainWindow::showDatabaseFiles()
 {
 
@@ -616,24 +628,27 @@ void MainWindow::renderStatusChanged(RenderStatus status)
   switch(status)
   {
     case Marble::Complete:
-      renderStatusLabel->setText("Done.");
+      renderStatusLabel->setText(tr("Done."));
       break;
     case Marble::WaitingForUpdate:
-      renderStatusLabel->setText("Waiting for Update ...");
+      renderStatusLabel->setText(tr("Waiting for Update ..."));
       break;
     case Marble::WaitingForData:
-      renderStatusLabel->setText("Waiting for Data ...");
+      renderStatusLabel->setText(tr("Waiting for Data ..."));
       break;
     case Marble::Incomplete:
-      renderStatusLabel->setText("Incomplete.");
+      renderStatusLabel->setText(tr("Incomplete."));
       break;
-
   }
 }
 
 void MainWindow::routeCenter()
 {
-  navMapWidget->showRect(routeController->getBoundingRect());
+  if(routeController->hasRoute())
+  {
+    navMapWidget->showRect(routeController->getBoundingRect());
+    statusMessage(tr("Flight plan shown on map."));
+  }
 }
 
 bool MainWindow::routeValidate()
@@ -722,6 +737,7 @@ void MainWindow::routeNew()
   {
     routeController->newFlightplan();
     navMapWidget->update();
+    statusMessage(tr("Created new empty flight plan."));
   }
 }
 
@@ -740,6 +756,7 @@ void MainWindow::routeOpen()
       {
         routeFileHistory->addFile(routeFile);
         routeCenter();
+        statusMessage(tr("Flight plan opened."));
       }
     }
   }
@@ -752,12 +769,15 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     if(QFile::exists(routeFile))
     {
       if(routeController->loadFlightplan(routeFile))
+      {
         routeCenter();
+        statusMessage(tr("Flight plan opened."));
+      }
     }
     else
     {
       QMessageBox::warning(this, QApplication::applicationName(),
-                           QString("File \"%1\" does not exist").arg(routeFile));
+                           tr("File \"%1\" does not exist").arg(routeFile));
       routeFileHistory->removeFile(routeFile);
     }
   }
@@ -775,6 +795,7 @@ bool MainWindow::routeSave()
       {
         routeFileHistory->addFile(routeController->getRouteFilename());
         updateActionStates();
+        statusMessage(tr("Flight plan saved."));
         return true;
       }
     }
@@ -798,6 +819,7 @@ bool MainWindow::routeSaveAs()
       {
         routeFileHistory->addFile(routeFile);
         updateActionStates();
+        statusMessage(tr("Flight plan saved."));
         return true;
       }
     }
@@ -808,6 +830,7 @@ bool MainWindow::routeSaveAs()
 void MainWindow::kmlClear()
 {
   navMapWidget->clearKmlFiles();
+  statusMessage(tr("Google Earth KML files removed from map."));
 }
 
 void MainWindow::kmlOpen()
@@ -820,17 +843,21 @@ void MainWindow::kmlOpen()
   {
     kmlFileHistory->addFile(kmlFile);
     navMapWidget->addKmlFile(kmlFile);
+    statusMessage(tr("Google Earth KML file opened."));
   }
 }
 
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
   if(QFile::exists(kmlFile))
+  {
     navMapWidget->addKmlFile(kmlFile);
+    statusMessage(tr("Google Earth KML file opened."));
+  }
   else
   {
     QMessageBox::warning(this, QApplication::applicationName(),
-                         QString("File \"%1\" does not exist").arg(kmlFile));
+                         tr("File \"%1\" does not exist").arg(kmlFile));
     kmlFileHistory->removeFile(kmlFile);
   }
 }
@@ -878,6 +905,7 @@ void MainWindow::setMapDetail(int factor)
     detStr = QString::number(det);
 
   detailLabel->setText(tr("Detail %1").arg(detStr));
+  statusMessage(tr("Map detail level changed."));
 }
 
 void MainWindow::routeSelectionChanged(int selected, int total)
@@ -913,6 +941,7 @@ void MainWindow::updateMapShowFeatures()
 {
   navMapWidget->updateMapShowFeatures();
   profileWidget->update();
+  statusMessage(tr("Map settigs changed."));
 }
 
 void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
@@ -933,7 +962,18 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWQUIT, true);
   s.syncSettings();
-  ui->statusBar->showMessage(tr("All message dialogs reset."));
+  statusMessage(tr("All message dialogs reset."));
+}
+
+void MainWindow::statusMessage(const QString& message)
+{
+  if(statusMessages.isEmpty() || statusMessages.last() != message)
+    statusMessages.append(message);
+
+  if(statusMessages.size() > 1)
+    statusMessages.removeAt(0);
+
+  ui->statusBar->showMessage(statusMessages.join(" "));
 }
 
 void MainWindow::options()
@@ -945,6 +985,8 @@ void MainWindow::options()
   Options opts(this);
   opts.exec();
   opts.hide();
+
+  statusMessage(tr("Options changed."));
 }
 
 void MainWindow::mainWindowShown()

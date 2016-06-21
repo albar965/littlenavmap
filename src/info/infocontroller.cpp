@@ -199,6 +199,12 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     info->airwayText(airway, html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
+
+  idx = ui->tabWidgetInformation->currentIndex();
+  if(idx == NAVAID)
+    mainWindow->statusMessage(tr("Showing information for navaid."));
+  else if(idx == AIRPORT || idx == RUNWAYS || idx == COM || idx == APPROACHES)
+    mainWindow->statusMessage(tr("Showing information for airport."));
 }
 
 void InfoController::preDatabaseLoad()

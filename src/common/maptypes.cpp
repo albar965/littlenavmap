@@ -231,6 +231,12 @@ QString parkingName(const QString& name)
   return parkingNameMap.value(name);
 }
 
+QString parkingNameNumberType(const maptypes::MapParking& parking)
+{
+  return maptypes::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
+         ", " + maptypes::parkingTypeName(parking.type);
+}
+
 QString parkingNameForFlightplan(const maptypes::MapParking& parking)
 {
   return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);

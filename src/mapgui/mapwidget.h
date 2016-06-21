@@ -132,7 +132,7 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
   void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
                        int frequency, int range);
-  void clearRangeRings();
+  void clearRangeRingsAndDistanceMarkers();
 
   const QList<maptypes::DistanceMarker>& getDistanceMarkers() const
   {

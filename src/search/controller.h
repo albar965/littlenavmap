@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_CONTROLLER_H
 #define LITTLENAVMAP_CONTROLLER_H
 
-#include "common/maptypes.h"
 #include "search/sqlmodel.h"
 #include "geo/pos.h"
 #include "search/sqlproxymodel.h"

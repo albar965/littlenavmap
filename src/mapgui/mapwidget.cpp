@@ -60,6 +60,8 @@
 
 #include "route/routenetworkairway.h"
 
+#include <util/htmlbuilder.h>
+
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
@@ -230,6 +232,7 @@ void MapWidget::historyNext()
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
+    mainWindow->statusMessage(tr("Map position history next."));
   }
 }
 
@@ -241,6 +244,7 @@ void MapWidget::historyBack()
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
+    mainWindow->statusMessage(tr("Map position history back."));
   }
 }
 
@@ -362,6 +366,7 @@ void MapWidget::showMark()
   {
     setZoom(2700);
     centerOn(markPos.getLonX(), markPos.getLatY(), false);
+    mainWindow->statusMessage(tr("Showing distance search center."));
   }
 }
 
@@ -374,6 +379,7 @@ void MapWidget::showAircraft(bool state)
     if(zoom() < 1800)
       setZoom(1800);
     centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
+    // mainWindow->statusMessage(tr("Showing simulator aircraft."));
   }
 }
 
@@ -388,7 +394,10 @@ void MapWidget::showHome()
     setDistance(homeDistance);
 
   if(homePos.isValid())
+  {
     centerOn(homePos.getLonX(), homePos.getLatY(), false);
+    mainWindow->statusMessage(tr("Showing home position."));
+  }
 }
 
 void MapWidget::changeMark(const atools::geo::Pos& pos)
@@ -397,6 +406,7 @@ void MapWidget::changeMark(const atools::geo::Pos& pos)
   emit markChanged(markPos);
   emit updateActionStates();
   update();
+  mainWindow->statusMessage(tr("Distance search center position changed."));
 }
 
 void MapWidget::changeRouteHighlight(const RouteMapObjectList& routeHighlight)
@@ -524,6 +534,7 @@ void MapWidget::changeHome()
   homeDistance = distance();
   emit updateActionStates();
   update();
+  mainWindow->statusMessage(QString(tr("Changed home position.")));
 }
 
 void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
@@ -894,9 +905,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(action == ui->actionMapHideRangeRings)
   {
-    rangeMarkers.clear();
-    distanceMarkers.clear();
-    currentDistanceMarkerIndex = -1;
+    clearRangeRingsAndDistanceMarkers();
     update();
   }
 
@@ -944,11 +953,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapHideOneRangeRing)
     {
       rangeMarkers.removeAt(rangeMarkerIndex);
+      mainWindow->statusMessage(QString(tr("Range ring removed from map.")));
       update();
     }
     else if(action == ui->actionMapHideDistanceMarker)
     {
       distanceMarkers.removeAt(distMarkerIndex);
+      mainWindow->statusMessage(QString(tr("Measurement line removed from map.")));
       update();
     }
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
@@ -1092,6 +1103,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
   rangeMarkers.append(ring);
   qDebug() << "navaid range" << ring.center;
   update();
+  mainWindow->statusMessage(tr("Added range rings for %1.").arg(ident));
 }
 
 void MapWidget::addRangeRing(const atools::geo::Pos& pos)
@@ -1104,13 +1116,19 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 
   qDebug() << "range rings" << rings.center;
   update();
+  mainWindow->statusMessage(tr("Added range rings for position."));
 }
 
-void MapWidget::clearRangeRings()
+void MapWidget::clearRangeRingsAndDistanceMarkers()
 {
   qDebug() << "range rings hide";
+
   rangeMarkers.clear();
+  distanceMarkers.clear();
+  currentDistanceMarkerIndex = -1;
+
   update();
+  mainWindow->statusMessage(tr("All range rings and measurement lines removed from map."));
 }
 
 void MapWidget::workOffline(bool offline)
@@ -1391,15 +1409,20 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
     else
       showRect(mapSearchResult.airports.at(0).bounding);
+    mainWindow->statusMessage(QString(tr("Showing airport on map.")));
   }
-  else if(!mapSearchResult.vors.isEmpty())
-    showPos(mapSearchResult.vors.at(0).position);
-  else if(!mapSearchResult.ndbs.isEmpty())
-    showPos(mapSearchResult.ndbs.at(0).position);
-  else if(!mapSearchResult.waypoints.isEmpty())
-    showPos(mapSearchResult.waypoints.at(0).position);
-  else if(!mapSearchResult.userPoints.isEmpty())
-    showPos(mapSearchResult.userPoints.at(0).position);
+  else
+  {
+    if(!mapSearchResult.vors.isEmpty())
+      showPos(mapSearchResult.vors.at(0).position);
+    else if(!mapSearchResult.ndbs.isEmpty())
+      showPos(mapSearchResult.ndbs.at(0).position);
+    else if(!mapSearchResult.waypoints.isEmpty())
+      showPos(mapSearchResult.waypoints.at(0).position);
+    else if(!mapSearchResult.userPoints.isEmpty())
+      showPos(mapSearchResult.userPoints.at(0).position);
+    mainWindow->statusMessage(QString(tr("Showing navaid on map.")));
+  }
 }
 
 void MapWidget::updateTooltip()
@@ -1429,6 +1452,7 @@ void MapWidget::deleteAircraftTrack()
   aircraftTrack.clear();
   emit updateActionStates();
   update();
+  mainWindow->statusMessage(QString(tr("Aircraft track removed from map.")));
 }
 
 bool MapWidget::event(QEvent *event)
@@ -1536,66 +1560,70 @@ void MapWidget::updateVisibleObjects()
     maptypes::MapObjectTypes shown = paintLayer->getShownMapFeatures();
 
     QStringList visible;
-    QStringList visibleTooltip;
+    atools::util::HtmlBuilder visibleTooltip(false);
+    visibleTooltip.b(tr("Currently shown on map:"));
+    visibleTooltip.table();
 
     if(layer->isAirport() && shown & maptypes::AIRPORT_ALL)
     {
-      QString ap("AP"), apTooltip("Airports");
+      QString ap(tr("AP")), apTooltip(tr("Airports"));
       if(layer->getDataSource() == layer::ALL)
       {
         if(layer->getMinRunwayLength() > 0)
         {
           ap.append(">" + QLocale().toString(layer->getMinRunwayLength() / 100));
-          apTooltip.append(" with runway length > " + QLocale().toString(layer->getMinRunwayLength()) + " ft");
+          apTooltip.append(tr(" with runway length > %1 ft").
+                           arg(QLocale().toString(layer->getMinRunwayLength())));
         }
       }
       else if(layer->getDataSource() == layer::MEDIUM)
       {
         ap.append(">40");
-        apTooltip.append(" with runway length > " + QLocale().toString(4000) + " ft");
+        apTooltip.append(tr(" with runway length > %1 ft").arg(QLocale().toString(4000)));
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
         ap.append(">80,H");
-        apTooltip.append(" with runway length > " + QLocale().toString(8000) + " ft and hard runways");
+        apTooltip.append(tr(" with runway length > %1 ft and hard runways").arg(QLocale().toString(8000)));
       }
 
       visible.append(ap);
-      visibleTooltip.append(apTooltip);
+      visibleTooltip.tr().td(apTooltip).trEnd();
     }
 
     if(layer->isVor() && shown & maptypes::VOR)
     {
-      visible.append("VOR");
-      visibleTooltip.append("VOR");
+      visible.append(tr("VOR"));
+      visibleTooltip.tr().td(tr("VOR")).trEnd();
     }
     if(layer->isNdb() && shown & maptypes::NDB)
     {
-      visible.append("NDB");
-      visibleTooltip.append("NDB");
+      visible.append(tr("NDB"));
+      visibleTooltip.tr().td(tr("NDB")).trEnd();
     }
     if(layer->isIls() && shown & maptypes::ILS)
     {
-      visible.append("ILS");
-      visibleTooltip.append("ILS");
+      visible.append(tr("ILS"));
+      visibleTooltip.tr().td(tr("ILS")).trEnd();
     }
     if(layer->isWaypoint() && shown & maptypes::WAYPOINT)
     {
-      visible.append("W");
-      visibleTooltip.append("Waypoints");
+      visible.append(tr("W"));
+      visibleTooltip.tr().td(tr("Waypoints")).trEnd();
     }
     if(layer->isAirway() && shown & maptypes::AIRWAYJ)
     {
-      visible.append("J");
-      visibleTooltip.append("Jet airways");
+      visible.append(tr("J"));
+      visibleTooltip.tr().td(tr("Jet Airways")).trEnd();
     }
     if(layer->isAirway() && shown & maptypes::AIRWAYV)
     {
-      visible.append("V");
-      visibleTooltip.append("Victor airways");
+      visible.append(tr("V"));
+      visibleTooltip.tr().td(tr("Victor Airways")).trEnd();
     }
+    visibleTooltip.tableEnd();
 
-    mainWindow->setMessageText(visible.join(","), visibleTooltip.join("\n"));
+    mainWindow->setMessageText(visible.join(","), visibleTooltip.getHtml());
   }
 }
 

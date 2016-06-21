@@ -21,7 +21,6 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "settings/settings.h"
-#include "airporticondelegate.h"
 #include "column.h"
 #include "sqlproxymodel.h"
 #include "search/sqlmodel.h"

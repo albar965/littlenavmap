@@ -24,6 +24,7 @@
 
 class QTcpSocket;
 class ConnectDialog;
+class MainWindow;
 
 class ConnectClient :
   public QObject
@@ -31,7 +32,7 @@ class ConnectClient :
   Q_OBJECT
 
 public:
-  ConnectClient(QWidget *parent);
+  ConnectClient(MainWindow* parent);
   virtual ~ConnectClient();
 
   void connectToServer();
@@ -57,7 +58,7 @@ private:
   ConnectDialog *dialog = nullptr;
   atools::fs::sc::SimConnectData *data = nullptr;
   QTcpSocket *socket = nullptr;
-  QWidget *parentWidget;
+  MainWindow *mainWindow;
 
   void connectInternal();
   void writeReply();

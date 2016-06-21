@@ -95,8 +95,7 @@ void Search::tableCopyClipboard()
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);
 
-    mainWindow->getUi()->statusBar->showMessage(
-      QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    mainWindow->statusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
   }
 }
 
@@ -343,6 +342,8 @@ void Search::resetView()
     // if(result == QMessageBox::Yes)
     // {
     controller->resetView();
+    mainWindow->statusMessage(tr("Table view reset to defaults."));
+
     // mainWindow->getUi()->statusBar->showMessage(tr("View reset to default."));
     // }
   }
@@ -354,7 +355,7 @@ void Search::resetSearch()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();
-    mainWindow->getUi()->statusBar->showMessage(tr("Search filters cleared."));
+    mainWindow->statusMessage(tr("Search filters cleared."));
   }
 }
 
@@ -364,7 +365,7 @@ void Search::loadAllRowsIntoView()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->loadAllRows();
-    mainWindow->getUi()->statusBar->showMessage(tr("All logbook entries read."));
+    mainWindow->statusMessage(tr("All entries read."));
   }
 }
 
@@ -481,7 +482,8 @@ void Search::contextMenu(const QPoint& pos)
   ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
-  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getRangeRings().isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                          !mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
@@ -560,7 +562,7 @@ void Search::contextMenu(const QPoint& pos)
                                                   controller->getRawData(index.row(), "range").toInt());
     }
     else if(action == ui->actionMapHideRangeRings)
-      mainWindow->getMapWidget()->clearRangeRings();
+      mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
     else if(action == ui->actionRouteAdd)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
     else if(action == ui->actionRouteAirportStart)
@@ -613,13 +615,20 @@ void Search::showOnMapMenu()
       query->getMapObjectById(result, navType, id);
 
       if(!result.airports.isEmpty() && !result.airports.first().bounding.isPoint())
+      {
         emit showRect(result.airports.first().bounding);
-      else if(!result.vors.isEmpty())
-        emit showPos(result.vors.first().getPosition(), 2700);
-      else if(!result.ndbs.isEmpty())
-        emit showPos(result.ndbs.first().getPosition(), 2700);
-      else if(!result.waypoints.isEmpty())
-        emit showPos(result.waypoints.first().getPosition(), 2700);
+        mainWindow->statusMessage(tr("Showing airport on map."));
+      }
+      else
+      {
+        if(!result.vors.isEmpty())
+          emit showPos(result.vors.first().getPosition(), 2700);
+        else if(!result.ndbs.isEmpty())
+          emit showPos(result.ndbs.first().getPosition(), 2700);
+        else if(!result.waypoints.isEmpty())
+          emit showPos(result.waypoints.first().getPosition(), 2700);
+        mainWindow->statusMessage(tr("Showing navaid on map."));
+      }
     }
   }
 }

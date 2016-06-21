@@ -99,6 +99,7 @@ public:
   bool hasValidDestination() const;
   bool hasEntries() const;
   bool hasValidParking() const;
+  bool hasRoute() const;
 
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -197,6 +198,9 @@ private:
 
   void showInformationMenu();
   void showOnMapMenu();
+
+  void undoTriggered();
+  void redoTriggered();
 
 };
 

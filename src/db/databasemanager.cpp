@@ -44,6 +44,7 @@
 #include <QMessageBox>
 #include <QAbstractButton>
 #include <QSettings>
+#include <gui/mainwindow.h>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -116,8 +117,8 @@ const QString DATABASE_FILE_TEXT(QObject::tr(
                                    "<b>Time:</b> %4<br/>"
                                    ) + DATABASE_INFO_TEXT);
 
-DatabaseManager::DatabaseManager(QWidget *parent)
-  : QObject(parent), parentWidget(parent)
+DatabaseManager::DatabaseManager(MainWindow *parent)
+  : QObject(parent), mainWindow(parent)
 {
   // Also loads list of simulators
   restoreState();
@@ -142,7 +143,7 @@ DatabaseManager::DatabaseManager(QWidget *parent)
 
   databaseFile = buildDatabaseFileName(currentFsType);
 
-  databaseDialog = new DatabaseDialog(parentWidget, paths);
+  databaseDialog = new DatabaseDialog(mainWindow, paths);
 
   connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
           &DatabaseManager::simulatorChangedFromCombo);
@@ -205,7 +206,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
                       msg.arg(databaseNames.join("<br/>")),
                       QMessageBox::No | QMessageBox::Yes,
-                      parentWidget);
+                      mainWindow);
       box.button(QMessageBox::No)->setText("&No and Exit Application");
       box.button(QMessageBox::Yes)->setText("&Erase");
 
@@ -250,7 +251,7 @@ void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
 
       menu->insertAction(before, action);
 
-      connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMenu);
+      connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
 
       actions.append(action);
     }
@@ -267,7 +268,7 @@ void DatabaseManager::updateSimSwitchActions()
   }
 }
 
-void DatabaseManager::switchSimFromMenu()
+void DatabaseManager::switchSimFromMainMenu()
 {
   qDebug() << "switchSim";
 
@@ -284,6 +285,7 @@ void DatabaseManager::switchSimFromMenu()
     openDatabase();
 
     emit postDatabaseLoad(currentFsType);
+    mainWindow->statusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
   }
 }
 
@@ -314,11 +316,11 @@ void DatabaseManager::fillPathsFromDatabases()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e, "While looking for databases");
+    ErrorHandler(mainWindow).handleException(e, "While looking for databases");
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException("While looking for databases");
+    ErrorHandler(mainWindow).handleUnknownException("While looking for databases");
   }
 }
 
@@ -344,11 +346,11 @@ void DatabaseManager::openDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e, "While opening database");
+    ErrorHandler(mainWindow).handleException(e, "While opening database");
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException("While opening database");
+    ErrorHandler(mainWindow).handleUnknownException("While opening database");
   }
 }
 
@@ -362,11 +364,11 @@ void DatabaseManager::closeDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e, "While closing database");
+    ErrorHandler(mainWindow).handleException(e, "While closing database");
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException("While closing database");
+    ErrorHandler(mainWindow).handleUnknownException("While closing database");
   }
 }
 
@@ -449,11 +451,11 @@ bool DatabaseManager::runInternal(bool& loaded)
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(mainWindow).handleUnknownException();
   }
   return reopenDialog;
 }
@@ -655,11 +657,11 @@ bool DatabaseManager::hasSchema()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(mainWindow).handleUnknownException();
   }
   return false;
 }
@@ -672,11 +674,11 @@ bool DatabaseManager::hasData()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(mainWindow).handleUnknownException();
   }
   return false;
 }
@@ -689,11 +691,11 @@ bool DatabaseManager::isDatabaseCompatible()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(mainWindow).handleUnknownException();
   }
   return false;
 }
@@ -708,11 +710,11 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(parentWidget).handleException(e);
+    ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    ErrorHandler(parentWidget).handleUnknownException();
+    ErrorHandler(mainWindow).handleUnknownException();
   }
 }
 

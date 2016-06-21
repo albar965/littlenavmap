@@ -477,6 +477,7 @@ void ProfileWidget::updateThreadFinished()
     legList = future.result();
     updateScreenCoords();
     update();
+    // mainWindow->statusMessage(tr("Elevation data updated."));
   }
 }
 
