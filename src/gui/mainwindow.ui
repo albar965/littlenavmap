@@ -38,14 +38,14 @@
     </property>
     <widget class="QMenu" name="menuRecentRoutes">
      <property name="title">
-      <string>&amp;Recent Flight Plan</string>
+      <string>&amp;Recent Flight Plans</string>
      </property>
      <addaction name="separator"/>
      <addaction name="actionRecentRoutesClear"/>
     </widget>
     <widget class="QMenu" name="menuRecentKml">
      <property name="title">
-      <string>Recent Google Earth KML</string>
+      <string>Recent &amp;Google Earth KML</string>
      </property>
      <addaction name="actionClearKmlMenu"/>
     </widget>
@@ -53,12 +53,12 @@
     <addaction name="actionRouteOpen"/>
     <addaction name="menuRecentRoutes"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSave"/>
+    <addaction name="actionRouteSaveAs"/>
+    <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
     <addaction name="actionClearKml"/>
-    <addaction name="separator"/>
-    <addaction name="actionRouteSave"/>
-    <addaction name="actionRouteSaveAs"/>
     <addaction name="separator"/>
     <addaction name="actionWorkOffline"/>
     <addaction name="separator"/>
@@ -2809,7 +2809,7 @@
      <normaloff>:/littlenavmap/resources/icons/filesave.svg</normaloff>:/littlenavmap/resources/icons/filesave.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Save Flight Plan ...</string>
+    <string>&amp;Save Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>Save Flight Plan</string>
@@ -2918,7 +2918,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Distance to Mark</string>
+    <string>Distance from Mark</string>
    </property>
    <property name="toolTip">
     <string>Show airport distance search options</string>
@@ -3105,7 +3105,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Distance to Mark</string>
+    <string>Distance from Mark</string>
    </property>
    <property name="toolTip">
     <string>Show navaid distance search options</string>

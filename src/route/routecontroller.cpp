@@ -620,14 +620,18 @@ bool RouteController::hasValidParking() const
 {
   if(hasValidStart())
   {
-    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(
-      route.first().getId());
+    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
 
-    if(parkingCache == nullptr || parkingCache->isEmpty())
-      // No parking available - so no parking selection is valid
-      return true;
-    else
+    int numParking = 0;
+    for(const maptypes::MapParking& p : *parkingCache)
+      if(p.type != "FUEL")
+        numParking++;
+
+    if(numParking > 0)
       return !route.getFlightplan().getDepartureParkingName().isEmpty();
+    else
+      // No parking available - so no parking selection is ok
+      return true;
   }
   else
     return false;

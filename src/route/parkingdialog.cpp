@@ -30,8 +30,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
 
-  const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(
-    departureAirport.id);
+  const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
 
   // Create a copy from the cached objects and exclude fuel
   for(const maptypes::MapParking& p : *parkingCache)
