@@ -67,10 +67,10 @@ public:
 
   bool isHidden(const atools::geo::Pos& coords) const;
 
-  static constexpr Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
-  static constexpr Marble::GeoDataCoordinates::BearingType INITBRG =
+  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
+  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG =
     Marble::GeoDataCoordinates::InitialBearing;
-  static constexpr Marble::GeoDataCoordinates::BearingType FINALBRG =
+  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType FINALBRG =
     Marble::GeoDataCoordinates::FinalBearing;
 
 private:

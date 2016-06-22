@@ -33,7 +33,7 @@ class Rect;
 class MapScale
 {
 private:
-  static constexpr float DEFAULT_ANGLE = 45.f;
+  static Q_DECL_CONSTEXPR float DEFAULT_ANGLE = 45.f;
 
 public:
   MapScale();

@@ -30,9 +30,9 @@ public:
   MapLayerSettings& append(const MapLayer& layer);
   void finishAppend();
 
-  static constexpr int MAP_DEFAULT_DETAIL_FACTOR = 10;
-  static constexpr int MAP_MAX_DETAIL_FACTOR = 15;
-  static constexpr int MAP_MIN_DETAIL_FACTOR = 5;
+  static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_FACTOR = 10;
+  static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_FACTOR = 15;
+  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 5;
 
   const MapLayer *getLayer(float distance, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
 

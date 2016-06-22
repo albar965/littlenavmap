@@ -83,8 +83,8 @@ public:
     return currentFsType;
   }
 
-  static constexpr int DB_VERSION_MAJOR = 1;
-  static constexpr int DB_VERSION_MINOR = 0;
+  static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 1;
+  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 0;
 
 signals:
   void preDatabaseLoad();

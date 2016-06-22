@@ -47,9 +47,9 @@ private:
                     QList<QRect> *innerRects, QList<QRect> *backRects);
   QString parkingName(const QString& name);
 
-  static constexpr int RUNWAY_HEADING_FONT_SIZE = 12;
-  static constexpr int RUNWAY_TEXT_FONT_SIZE = 16;
-  static constexpr int RUNWAY_NUMBER_FONT_SIZE = 20;
+  static Q_DECL_CONSTEXPR int RUNWAY_HEADING_FONT_SIZE = 12;
+  static Q_DECL_CONSTEXPR int RUNWAY_TEXT_FONT_SIZE = 16;
+  static Q_DECL_CONSTEXPR int RUNWAY_NUMBER_FONT_SIZE = 20;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

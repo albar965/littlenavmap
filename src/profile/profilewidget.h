@@ -89,10 +89,10 @@ private:
   void updateScreenCoords();
   void terminateThread();
 
-  static constexpr int NUM_SCALE_STEPS = 5;
+  static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
-  static constexpr int MIN_SCALE_SCREEN_DISTANCE = 25;
-  static constexpr int UPDATE_TIMEOUT = 1000;
+  static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
+  static Q_DECL_CONSTEXPR int UPDATE_TIMEOUT = 1000;
   const int X0 = 65, Y0 = 14;
 
   atools::fs::sc::SimConnectData simData, lastSimData;

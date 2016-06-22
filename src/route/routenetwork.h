@@ -204,7 +204,7 @@ protected:
   void updateNodeIndexes(const atools::sql::SqlRecord& rec);
   void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
 
-  static constexpr int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
+  static Q_DECL_CONSTEXPR int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
   const int START_NODE_ID = -10;
   const int DESTINATION_NODE_ID = -20;
   int numNodesDb = -1;

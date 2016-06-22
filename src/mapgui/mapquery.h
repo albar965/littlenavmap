@@ -165,9 +165,9 @@ private:
   QCache<int, QList<maptypes::MapParking> > parkingCache;
   QCache<int, QList<maptypes::MapHelipad> > helipadCache;
 
-  static constexpr double RECT_INFLATION_FACTOR = 0.3;
-  static constexpr double RECT_INFLATION_ADD = 0.1;
-  static constexpr int QUERY_ROW_LIMIT = 3000;
+  static Q_DECL_CONSTEXPR double RECT_INFLATION_FACTOR = 0.3;
+  static Q_DECL_CONSTEXPR double RECT_INFLATION_ADD = 0.1;
+  static Q_DECL_CONSTEXPR int QUERY_ROW_LIMIT = 3000;
 
   atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
   *airportLargeByRectQuery = nullptr;

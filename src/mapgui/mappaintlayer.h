@@ -92,7 +92,7 @@ private:
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
   /* Do not show anything at all above this limit */
-  static constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
+  static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   QSet<ForcePaintType> forcePaint;
 

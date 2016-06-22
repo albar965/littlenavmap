@@ -52,7 +52,7 @@ public:
 private:
   bool checkText(atools::util::HtmlBuilder& html, int numEntries);
 
-  static constexpr int MAXLINES = 20;
+  static Q_DECL_CONSTEXPR int MAXLINES = 20;
 
   MapQuery *query;
   WeatherReporter *weather;
