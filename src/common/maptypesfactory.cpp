@@ -15,7 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maptypesfactory.h"
+#include "common/maptypesfactory.h"
+
 #include "sql/sqlrecord.h"
 
 using namespace atools::geo;

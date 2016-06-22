@@ -15,13 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/coordinateconverter.h"
 #include "mapscale.h"
+
+#include "common/coordinateconverter.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
-
-#include <marble/ViewportParams.h>
-
 #include "geo/rect.h"
 
 using namespace Marble;

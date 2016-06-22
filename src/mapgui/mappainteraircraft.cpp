@@ -15,20 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainteraircraft.h"
-#include "mapwidget.h"
-#include "mapscale.h"
-#include "mapgui/mapquery.h"
+#include "mapgui/mappainteraircraft.h"
+
+#include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
 
-#include <algorithm>
-#include "fs/sc/simconnectdata.h"
-#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
-#include <marble/MarbleWidget.h>
-#include <marble/ViewportParams.h>
 
 using namespace Marble;
 using namespace atools::geo;

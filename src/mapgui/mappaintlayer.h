@@ -18,13 +18,13 @@
 #ifndef LITTLENAVMAP_MAPPAINTLAYER_H
 #define LITTLENAVMAP_MAPPAINTLAYER_H
 
-#include <marble/LayerInterface.h>
+#include "mapgui/mappainter.h"
+
 #include <QPen>
-#include "mapquery.h"
-#include "mappainter.h"
+
+#include <marble/LayerInterface.h>
 
 namespace Marble {
-class MarbleWidget;
 class GeoPainter;
 class GeoSceneLayer;
 class ViewportParams;
@@ -78,7 +78,21 @@ public:
   void routeChanged();
 
 private:
-  const float DISTANCE_CUT_OFF_LIMIT = 4000.f;
+  void initLayers();
+  void updateLayers();
+
+  // Implemented from LayerInterface
+  virtual QStringList renderPosition() const override
+  {
+    return QStringList("ORBIT");
+  }
+
+  // Implemented from LayerInterface
+  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
+                      const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
+
+  /* Do not show anything at all above this limit */
+  static constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   QSet<ForcePaintType> forcePaint;
 
@@ -96,21 +110,8 @@ private:
   MapQuery *mapQuery = nullptr;
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
-  MapWidget *navMapWidget = nullptr;
+  MapWidget *mapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
-
-  // Implemented from LayerInterface
-  virtual QStringList renderPosition() const override
-  {
-    return QStringList("ORBIT");
-  }
-
-  // Implemented from LayerInterface
-  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
-                      const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
-
-  void initLayers();
-  void updateLayers();
 
 };
 

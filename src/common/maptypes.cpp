@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maptypes.h"
-#include "common/formatter.h"
 #include "atools.h"
+#include "common/maptypes.h"
+#include "common/formatter.h"
 
 #include <QDataStream>
 #include <QHash>

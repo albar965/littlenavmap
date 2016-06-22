@@ -105,12 +105,6 @@ const QColor airwayJetColor = QColor::fromRgb(100, 100, 100);
 const QColor airwayBothColor = QColor::fromRgb(100, 100, 100);
 const QColor airwayTextColor = QColor::fromRgb(80, 80, 80);
 
-const QIcon& iconForParkingType(const QString& type);
-const QColor& colorForSurface(const QString& surface);
-const QColor& colorForParkingType(const QString& type);
-const QColor& colorForAirport(const maptypes::MapAirport& ap);
-const QColor& alternatingRowColor(int row, bool isSort);
-
 // Elevation profile colors and pens
 const QColor profileSkyColor(QColor::fromRgb(204, 204, 255));
 const QColor profileBackgroundColor(Qt::white);
@@ -121,6 +115,13 @@ const QColor profileLandOutlineColor(Qt::black);
 
 const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
 const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+
+// Functions
+const QIcon& iconForParkingType(const QString& type);
+const QColor& colorForSurface(const QString& surface);
+const QColor& colorForParkingType(const QString& type);
+const QColor& colorForAirport(const maptypes::MapAirport& ap);
+const QColor& alternatingRowColor(int row, bool isSort);
 
 } // namespace mapcolors
 

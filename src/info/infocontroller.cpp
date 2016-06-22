@@ -17,22 +17,19 @@
 
 #include "infocontroller.h"
 
-#include "logging/loggingdefs.h"
+#include "atools.h"
 #include "common/constants.h"
-#include "route/routecontroller.h"
-#include "common/weatherreporter.h"
-#include <QImageReader>
+#include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
-#include "infoquery.h"
+#include "logging/loggingdefs.h"
+#include "mapgui/mapquery.h"
+#include "route/routecontroller.h"
+#include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
-#include "common/htmlinfobuilder.h"
-#include "common/symbolpainter.h"
-#include "mapgui/mapquery.h"
-#include "settings/settings.h"
+
 #include <QScrollBar>
-#include "atools.h"
 
 using atools::util::HtmlBuilder;
 
@@ -129,8 +126,8 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.airportIds.clear();
     currentSearchResult.airports.append(airport);
 
-    if(idx != AIRPORT && idx != RUNWAYS && idx != COM && idx != APPROACHES)
-      ui->tabWidgetInformation->setCurrentIndex(AIRPORT);
+    if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::APPROACHES)
+      ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
 
     updateAirport();
 
@@ -165,7 +162,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.vors.append(vor);
 
     if(result.airports.isEmpty())
-      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->vorText(vor, html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
@@ -175,7 +172,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.ndbs.append(ndb);
 
     if(result.airports.isEmpty())
-      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->ndbText(ndb, html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
@@ -185,7 +182,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.waypoints.append(waypoint);
 
     if(result.airports.isEmpty())
-      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->waypointText(waypoint, html, iconBackColor);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
@@ -195,16 +192,16 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.airways.append(airway);
 
     if(result.airports.isEmpty())
-      ui->tabWidgetInformation->setCurrentIndex(NAVAID);
+      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->airwayText(airway, html);
     ui->textEditNavaidInfo->setText(html.getHtml());
   }
 
   idx = ui->tabWidgetInformation->currentIndex();
-  if(idx == NAVAID)
-    mainWindow->statusMessage(tr("Showing information for navaid."));
-  else if(idx == AIRPORT || idx == RUNWAYS || idx == COM || idx == APPROACHES)
-    mainWindow->statusMessage(tr("Showing information for airport."));
+  if(idx == ic::NAVAID)
+    mainWindow->setStatusMessage(tr("Showing information for navaid."));
+  else if(idx == ic::AIRPORT || idx == ic::RUNWAYS || idx == ic::COM || idx == ic::APPROACHES)
+    mainWindow->setStatusMessage(tr("Showing information for airport."));
 }
 
 void InfoController::preDatabaseLoad()

@@ -15,22 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainter.h"
-#include "mapscale.h"
+#include "mapgui/mappainter.h"
+
+#include "mapgui/mapscale.h"
 #include "common/symbolpainter.h"
-#include "common/mapcolors.h"
-#include "geo/pos.h"
 #include "geo/calculations.h"
 #include "mapgui/mapwidget.h"
 
 #include <marble/GeoDataLineString.h>
-#include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
-#include <marble/MarbleWidget.h>
-#include <marble/ViewportParams.h>
-
-const int CIRCLE_MIN_POINTS = 16;
-const int CIRCLE_MAX_POINTS = 72;
 
 using namespace Marble;
 using namespace atools::geo;

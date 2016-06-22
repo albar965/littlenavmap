@@ -16,21 +16,17 @@
 *****************************************************************************/
 
 #include "mappainterils.h"
-#include "common/symbolpainter.h"
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
-#include "common/maptypes.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 
 #include <QElapsedTimer>
 
-#include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
-#include <marble/ViewportParams.h>
 
 using namespace Marble;
 using namespace atools::geo;

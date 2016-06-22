@@ -20,7 +20,7 @@
 
 #include "mapgui/mappainter.h"
 
-#include "mapquery.h"
+#include "mapgui/mapquery.h"
 
 class SymbolPainter;
 

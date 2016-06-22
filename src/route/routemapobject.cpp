@@ -15,24 +15,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routemapobject.h"
+#include "route/routemapobject.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
-#include "common/formatter.h"
-#include <QRegularExpression>
+#include "fs/pln/flightplan.h"
 #include "atools.h"
 
-#include "fs/pln/flightplan.h"
-
-#include "marble/ElevationModel.h"
+#include <QRegularExpression>
 
 using namespace atools::geo;
 
-const QString EMPTY_STR;
-const QString UNKNOWN_STR("Unknown");
-
 const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
-
 const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 
 RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan,
@@ -409,7 +402,7 @@ QString RouteMapObject::getIdent() const
   switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
-      return UNKNOWN_STR;
+      return tr("Unknown Waypoint Type");
 
     case atools::fs::pln::entry::USER:
       return tr("User %1").arg(QString::number(userpointNum));
@@ -426,10 +419,10 @@ QString RouteMapObject::getIdent() const
     case atools::fs::pln::entry::NDB:
       return ndb.ident;
   }
-  return EMPTY_STR;
+  return QString();
 }
 
-const QString& RouteMapObject::getRegion() const
+QString RouteMapObject::getRegion() const
 {
   if(type == maptypes::INVALID)
     return entry->getIcaoRegion();
@@ -450,20 +443,20 @@ const QString& RouteMapObject::getRegion() const
     case atools::fs::pln::entry::NDB:
       return ndb.region;
   }
-  return EMPTY_STR;
+  return QString();
 }
 
 QString RouteMapObject::getName() const
 {
   if(type == maptypes::INVALID)
-    return EMPTY_STR;
+    return QString();
 
   switch(entry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
     case atools::fs::pln::entry::INTERSECTION:
-      return EMPTY_STR;
+      return QString();
 
     case atools::fs::pln::entry::AIRPORT:
       return airport.name;
@@ -474,7 +467,7 @@ QString RouteMapObject::getName() const
     case atools::fs::pln::entry::NDB:
       return atools::capString(ndb.name);
   }
-  return EMPTY_STR;
+  return QString();
 }
 
 int RouteMapObject::getFrequency() const

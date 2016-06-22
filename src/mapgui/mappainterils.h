@@ -20,8 +20,6 @@
 
 #include "mapgui/mappainter.h"
 
-#include "mapquery.h"
-
 class SymbolPainter;
 
 class MapPainterIls :
@@ -34,7 +32,7 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  const float ILS_FEATHER_LEN_METER = 8.f;
+  static constexpr float ILS_FEATHER_LEN_METER = 8.f;
 
   void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils,
                      const MapLayer *mapLayer, bool fast);

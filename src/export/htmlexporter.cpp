@@ -37,6 +37,7 @@
 #include <QDesktopServices>
 #include <QFileInfo>
 #include <QSqlRecord>
+#include <QItemSelectionModel>
 
 using atools::gui::ErrorHandler;
 using atools::gui::Dialog;

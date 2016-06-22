@@ -18,44 +18,25 @@
 #include "search/airportsearch.h"
 
 #include "common/constants.h"
-#include "logging/loggingdefs.h"
-#include "gui/tablezoomhandler.h"
-#include "sql/sqldatabase.h"
 #include "search/controller.h"
-#include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
-#include "geo/rect.h"
-#include "geo/pos.h"
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
-#include "common/formatter.h"
 #include "airporticondelegate.h"
-#include "common/maptypes.h"
-#include "common/mapcolors.h"
-#include <algorithm>
-#include <functional>
-#include "atools.h"
-
-#include <QMessageBox>
-#include <QWidget>
-#include <QTableView>
-#include <QHeaderView>
-#include <QMenu>
-#include <QLineEdit>
-#include <QStyledItemDelegate>
-#include <QMouseEvent>
-
 #include "common/maptypesfactory.h"
+#include "common/mapcolors.h"
+#include "atools.h"
+#include "sql/sqlrecord.h"
 
 using atools::gui::WidgetTools;
 
-const QSet<QString> AirportSearch::boolColumns({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
-                                                "is_military",
-                                                "is_addon"});
-const QSet<QString> AirportSearch::numberColumns(
+const QSet<QString> AirportSearch::BOOL_COLUMNS({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
+                                                 "is_military",
+                                                 "is_addon"});
+const QSet<QString> AirportSearch::NUMBER_COLUMNS(
   {"num_approach", "num_runway_hard", "num_runway_soft",
    "num_runway_water", "num_runway_light", "num_runway_end_ils",
    "num_parking_gate", "num_parking_ga_ramp", "num_parking_cargo",
@@ -342,12 +323,12 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
       return modelFormatHandler(col, value, dataValue);
 
     case Qt::DecorationRole:
-      if(boolColumns.contains(col->getColumnName()) && dataValue.toInt() > 0)
+      if(BOOL_COLUMNS.contains(col->getColumnName()) && dataValue.toInt() > 0)
         return *boolIcon;
 
       break;
     case Qt::TextAlignmentRole:
-      if(boolColumns.contains(col->getColumnName()) && dataValue.toInt() > 0)
+      if(BOOL_COLUMNS.contains(col->getColumnName()) && dataValue.toInt() > 0)
         return Qt::AlignCenter;
       else if(col->getColumnName() == "rating")
         return Qt::AlignLeft;
@@ -405,9 +386,9 @@ QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& val
   }
   else if(col->getColumnName() == "mag_var")
     return maptypes::magvarText(value.toFloat());
-  else if(numberColumns.contains(col->getColumnName()))
+  else if(NUMBER_COLUMNS.contains(col->getColumnName()))
     return dataValue.toInt() > 0 ? dataValue.toString() : QString();
-  else if(boolColumns.contains(col->getColumnName()))
+  else if(BOOL_COLUMNS.contains(col->getColumnName()))
     return QString();
   else if(col->getColumnName() == "longest_runway_surface")
     return maptypes::surfaceName(dataValue.toString());

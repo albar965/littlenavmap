@@ -18,12 +18,12 @@
 #ifndef LITTLENAVMAP_MAINWINDOW_H
 #define LITTLENAVMAP_MAINWINDOW_H
 
-#include "marble/MarbleGlobal.h"
 #include "common/maptypes.h"
 #include "fs/fspaths.h"
 
 #include <QMainWindow>
 #include <QUrl>
+#include <marble/MarbleGlobal.h>
 
 class SearchController;
 class RouteController;
@@ -66,10 +66,8 @@ class MainWindow :
   Q_OBJECT
 
 public:
-  explicit MainWindow(QWidget *parent = 0);
-  ~MainWindow();
-
-  void mapContextMenu(const QPoint& pos);
+  MainWindow(QWidget *parent = nullptr);
+  virtual ~MainWindow();
 
   Ui::MainWindow *getUi() const
   {
@@ -86,8 +84,6 @@ public:
     return routeController;
   }
 
-  void setMessageText(const QString& text = QString(), const QString& tooltipText = QString());
-
   const Marble::ElevationModel *getElevationModel();
 
   WeatherReporter *getWeatherReporter() const
@@ -102,51 +98,17 @@ public:
 
   void updateWindowTitle();
 
-  void statusMessage(const QString& message);
+  void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+  void setStatusMessage(const QString& message);
 
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
 
 private:
-  QString mainWindowTitle;
-  SearchController *searchController = nullptr;
-  RouteController *routeController = nullptr;
-  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
-  QUrl legendUrl;
-
-  QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
-  int mapDetailFactor;
-  /* Work on the close event that also catches clicking the close button
-   * in the window frame */
-  virtual void closeEvent(QCloseEvent *event) override;
-
-  /* Emit a signal windowShown after first appearance */
-  virtual void showEvent(QShowEvent *event) override;
-
-  Ui::MainWindow *ui;
-  MapWidget *navMapWidget = nullptr;
-  ProfileWidget *profileWidget = nullptr;
-  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
-  QStringList statusMessages;
-  bool hasDatabaseLoadStatus = false;
-
-  Marble::LegendWidget *legendWidget = nullptr;
-  Marble::MarbleAboutDialog *marbleAbout = nullptr;
-  atools::gui::Dialog *dialog = nullptr;
-  atools::gui::ErrorHandler *errorHandler = nullptr;
-  atools::gui::HelpHandler *helpHandler = nullptr;
-  DatabaseManager *databaseManager = nullptr;
-  WeatherReporter *weatherReporter = nullptr;
-  ConnectClient *connectClient = nullptr;
-  InfoController *infoController = nullptr;
-
-  MapQuery *mapQuery = nullptr;
-  InfoQuery *infoQuery = nullptr;
   void connectAllSlots();
   void mainWindowShown();
 
-  bool firstStart = true, firstApplicationStart = false;
   void writeSettings();
   void readSettings();
   void updateActionStates();
@@ -191,6 +153,43 @@ private:
 
   void changeMapProjection(int index);
   void changeMapTheme(int index);
+
+  /* Work on the close event that also catches clicking the close button
+   * in the window frame */
+  virtual void closeEvent(QCloseEvent *event) override;
+
+  /* Emit a signal windowShown after first appearance */
+  virtual void showEvent(QShowEvent *event) override;
+
+  QString mainWindowTitle;
+  SearchController *searchController = nullptr;
+  RouteController *routeController = nullptr;
+  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+  QUrl legendUrl;
+
+  QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
+  int mapDetailFactor;
+
+  Ui::MainWindow *ui;
+  MapWidget *navMapWidget = nullptr;
+  ProfileWidget *profileWidget = nullptr;
+  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
+  QStringList statusMessages;
+  bool hasDatabaseLoadStatus = false;
+
+  Marble::LegendWidget *legendWidget = nullptr;
+  Marble::MarbleAboutDialog *marbleAbout = nullptr;
+  atools::gui::Dialog *dialog = nullptr;
+  atools::gui::ErrorHandler *errorHandler = nullptr;
+  atools::gui::HelpHandler *helpHandler = nullptr;
+  DatabaseManager *databaseManager = nullptr;
+  WeatherReporter *weatherReporter = nullptr;
+  ConnectClient *connectClient = nullptr;
+  InfoController *infoController = nullptr;
+
+  MapQuery *mapQuery = nullptr;
+  InfoQuery *infoQuery = nullptr;
+  bool firstStart = true, firstApplicationStart = false;
 
 };
 

@@ -15,7 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "weatherreporter.h"
+#include "common/weatherreporter.h"
+
 #include "logging/loggingdefs.h"
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
@@ -222,7 +223,7 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
       else
         metars.insert(icao, Report());
       qDebug() << "Request for" << icao << "succeeded.";
-      mainWindow->statusMessage(tr("Weather information updated."));
+      mainWindow->setStatusMessage(tr("Weather information updated."));
       emit weatherUpdated();
     }
     else if(reply->error() != QNetworkReply::OperationCanceledError)
@@ -294,5 +295,5 @@ void WeatherReporter::fileChanged(const QString& path)
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
   loadActiveSkySnapshot();
-  mainWindow->statusMessage(tr("Active Sky Next weather information updated."));
+  mainWindow->setStatusMessage(tr("Active Sky Next weather information updated."));
 }

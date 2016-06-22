@@ -18,17 +18,17 @@
 #ifndef LITTLENAVMAP_INFOCONTROLLER_H
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
-#include <QObject>
-
 #include "fs/sc/simconnectdata.h"
 #include "common/maptypes.h"
+
+#include <QObject>
 
 class MainWindow;
 class MapQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
-
+namespace ic {
 enum TabIndex
 {
   AIRPORT = 0,
@@ -39,6 +39,8 @@ enum TabIndex
   NAVMAP_LEGEND = 5,
   MAP_LEGEND = 6
 };
+
+}
 
 class InfoController :
   public QObject
@@ -64,6 +66,9 @@ public:
   void disconnectedFromSimulator();
 
 private:
+  bool canTextEditUpdate(const QTextEdit *textEdit);
+  void updateTextEdit(QTextEdit *textEdit, const QString& text);
+
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
   qint64 lastSimUpdate = 0;
@@ -75,10 +80,6 @@ private:
   InfoQuery *infoQuery;
   QColor iconBackColor;
   HtmlInfoBuilder *info;
-
-  bool canTextEditUpdate(const QTextEdit *textEdit);
-
-  void updateTextEdit(QTextEdit *textEdit, const QString& text);
 
 };
 

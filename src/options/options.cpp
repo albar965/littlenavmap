@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "options.h"
+#include "options/options.h"
 #include "ui_options.h"
 
 Options::Options(QWidget *parent) :

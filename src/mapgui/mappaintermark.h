@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERMARK_H
 #define LITTLENAVMAP_MAPPAINTERMARK_H
 
-#include "mappainter.h"
+#include "mapgui/mappainter.h"
 
 namespace Marble {
 class GeoDataLineString;

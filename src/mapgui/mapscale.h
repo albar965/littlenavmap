@@ -19,8 +19,9 @@
 #define LITTLENAVMAP_MAPSCALE_H
 
 #include <QVector>
+#include <QSize>
 
-#include <marble/ViewportParams.h>
+ #include <marble/ViewportParams.h>
 
 namespace atools {
 namespace geo {
@@ -28,10 +29,12 @@ class Pos;
 class Rect;
 }
 }
-const float DEFAULT_ANGLE = 45.f;
 
 class MapScale
 {
+private:
+  static constexpr float DEFAULT_ANGLE = 45.f;
+
 public:
   MapScale();
 

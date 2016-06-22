@@ -15,15 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routeicondelegate.h"
-#include "logging/loggingdefs.h"
-#include "mapgui/mapquery.h"
+#include "route/routeicondelegate.h"
+
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 
 #include <QPainter>
-#include <QSqlQueryModel>
-#include <QApplication>
 
 RouteIconDelegate::RouteIconDelegate(const QList<RouteMapObject>& routeMapObjects)
   : routeObjects(routeMapObjects)

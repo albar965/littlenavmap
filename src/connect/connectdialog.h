@@ -32,7 +32,7 @@ class ConnectDialog :
   Q_OBJECT
 
 public:
-  explicit ConnectDialog(QWidget *parent = 0);
+  ConnectDialog(QWidget *parent);
   ~ConnectDialog();
 
   QString getHostname() const;

@@ -18,16 +18,12 @@
 #ifndef LITTLENAVMAP_MAPQUERY_H
 #define LITTLENAVMAP_MAPQUERY_H
 
-#include "geo/pos.h"
-#include "geo/rect.h"
-#include "geo/linestring.h"
 #include "common/maptypes.h"
-#include "maplayer.h"
+#include "mapgui/maplayer.h"
 
 #include <QCache>
 #include <QList>
 
-#include <marble/GeoDataCoordinates.h>
 #include <marble/GeoDataLatLonBox.h>
 
 namespace atools {
@@ -42,6 +38,7 @@ class SqlQuery;
 
 class CoordinateConverter;
 class MapTypesFactory;
+class MapLayer;
 
 class MapQuery
   : public QObject
@@ -134,6 +131,22 @@ private:
     QList<TYPE> list;
   };
 
+  const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
+                                                   atools::sql::SqlQuery *query, bool reverse,
+                                                   bool lazy, bool overview);
+
+  void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
+                                 const QString& prefix = QString());
+
+  QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
+
+  static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
+
+  bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
+
+  template<typename TYPE>
+  void checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type);
+
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
@@ -151,6 +164,10 @@ private:
   QCache<int, QList<maptypes::MapTaxiPath> > taxipathCache;
   QCache<int, QList<maptypes::MapParking> > parkingCache;
   QCache<int, QList<maptypes::MapHelipad> > helipadCache;
+
+  static constexpr double RECT_INFLATION_FACTOR = 0.3;
+  static constexpr double RECT_INFLATION_ADD = 0.1;
+  static constexpr int QUERY_ROW_LIMIT = 3000;
 
   atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
   *airportLargeByRectQuery = nullptr;
@@ -173,31 +190,9 @@ private:
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByIdQuery = nullptr;
 
-  const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                   atools::sql::SqlQuery *query, bool reverse,
-                                                   bool lazy, bool overview);
-
-  void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                 const QString& prefix = QString());
-
-  QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect);
-
-  static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
-
-  bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
-
-  template<typename TYPE>
-  void checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type);
-
 };
 
 // ---------------------------------------------------------------------------------
-namespace  {
-const double RECT_INFLATION_FACTOR = 0.3;
-const double RECT_INFLATION_ADD = 0.1;
-const int QUERY_ROW_LIMIT = 3000;
-}
-
 template<typename TYPE>
 bool MapQuery::SimpleCache<TYPE>::handleCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               bool lazy)

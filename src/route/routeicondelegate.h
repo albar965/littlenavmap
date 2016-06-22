@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVICONDELEGATE_H
 #define LITTLENAVMAP_NAVICONDELEGATE_H
 
-#include "routemapobject.h"
+#include "route/routemapobject.h"
 
 #include <QStyledItemDelegate>
 

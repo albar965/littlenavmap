@@ -56,7 +56,7 @@ public:
   int getId() const;
   const atools::geo::Pos& getPosition() const;
   QString getIdent() const;
-  const QString& getRegion() const;
+  QString getRegion() const;
   QString getName() const;
   int getFrequency() const;
   float getMagvar() const;
@@ -142,6 +142,8 @@ public:
   }
 
 private:
+  void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
+
   atools::fs::pln::Flightplan *flightplan = nullptr;
   const Marble::ElevationModel *elevation = nullptr;
   atools::fs::pln::FlightplanEntry *entry = nullptr;
@@ -156,7 +158,6 @@ private:
   bool valid = false;
 
   float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f, groundAltitude = 0.f;
-  void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
 
 };
 

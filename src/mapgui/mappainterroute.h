@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERROUTE_H
 #define LITTLENAVMAP_MAPPAINTERROUTE_H
 
-#include "mappainter.h"
+#include "mapgui/mappainter.h"
 
 namespace Marble {
 class GeoDataLineString;

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maplayer.h"
+#include "mapgui/maplayer.h"
 
 MapLayer::MapLayer(float maximumRange)
 {

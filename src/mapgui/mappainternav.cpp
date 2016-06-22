@@ -15,14 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainternav.h"
-#include "common/symbolpainter.h"
+#include "mapgui/mappainternav.h"
 
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "mapgui/mapquery.h"
-#include "geo/calculations.h"
-#include "common/maptypes.h"
+#include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
 

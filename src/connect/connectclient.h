@@ -53,15 +53,14 @@ private:
   void readFromServerError(QAbstractSocket::SocketError error);
   void connectedToServer();
   void closeSocket();
+  void connectInternal();
+  void writeReply();
 
   bool silent = false;
   ConnectDialog *dialog = nullptr;
   atools::fs::sc::SimConnectData *data = nullptr;
   QTcpSocket *socket = nullptr;
   MainWindow *mainWindow;
-
-  void connectInternal();
-  void writeReply();
 
 };
 

@@ -15,16 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maplayer.h"
 #include "maptooltip.h"
-#include "common/maptypes.h"
-#include "mapgui/mapquery.h"
-#include "common/formatter.h"
-#include "route/routemapobjectlist.h"
 
+#include "common/maptypes.h"
 #include "util/htmlbuilder.h"
 #include "common/htmlinfobuilder.h"
-#include "common/weatherreporter.h"
 
 #include <QPalette>
 #include <QToolTip>

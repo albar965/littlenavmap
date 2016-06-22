@@ -18,20 +18,13 @@
 #ifndef LITTLENAVMAP_APSEARCHPANE_H
 #define LITTLENAVMAP_APSEARCHPANE_H
 
-#include "geo/pos.h"
-
 #include "search/search.h"
 
 #include <QObject>
 
-class QWidget;
-class QTableView;
-class Controller;
-class ColumnList;
-class QAction;
-class MainWindow;
 class Column;
 class AirportIconDelegate;
+class QAction;
 
 namespace atools {
 namespace sql {
@@ -45,8 +38,8 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  explicit AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                         MapQuery *query, int tabWidgetIndex);
+  AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                MapQuery *query, int tabWidgetIndex);
   virtual ~AirportSearch();
 
   virtual void saveState() override;
@@ -62,16 +55,15 @@ private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                             const QVariant& dataValue, Qt::ItemDataRole role) const;
   QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
+  virtual void updateMenu() override;
+
+  static const QSet<QString> BOOL_COLUMNS;
+  static const QSet<QString> NUMBER_COLUMNS;
 
   QList<QObject *> airportSearchWidgets;
   QList<QAction *> airportSearchMenuActions;
 
-  static const QSet<QString> boolColumns;
-  static const QSet<QString> numberColumns;
-
   AirportIconDelegate *iconDelegate = nullptr;
-
-  virtual void updateMenu() override;
 
 };
 

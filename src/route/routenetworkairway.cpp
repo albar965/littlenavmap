@@ -15,24 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetworkairway.h"
+#include "route/routenetworkairway.h"
 
 #include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlutil.h"
-
-#include "geo/calculations.h"
-#include "geo/pos.h"
-#include "geo/rect.h"
-
-#include <QElapsedTimer>
-
-using atools::sql::SqlDatabase;
-using atools::sql::SqlQuery;
-using atools::geo::Pos;
-using atools::geo::Rect;
-
-using namespace nw;
 
 RouteNetworkAirway::RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb)
   : RouteNetwork(sqlDb, "route_node_airway", "route_edge_airway", {},

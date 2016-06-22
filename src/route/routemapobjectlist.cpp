@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routemapobjectlist.h"
+#include "route/routemapobjectlist.h"
 #include "geo/calculations.h"
 
 const float RouteMapObjectList::INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();

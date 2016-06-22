@@ -18,11 +18,12 @@
 #ifndef LITTLENAVMAP_ROUTENETWORK_H
 #define LITTLENAVMAP_ROUTENETWORK_H
 
+#include "common/maptypes.h"
+#include "geo/calculations.h"
+
 #include <QElapsedTimer>
 #include <QHash>
 #include <QVector>
-
-#include "common/maptypes.h"
 
 namespace  atools {
 namespace sql {
@@ -149,24 +150,10 @@ public:
                const QStringList& edgeExtraColumns);
   virtual ~RouteNetwork();
 
-  void setMode(nw::Modes mode);
-
-  nw::Node getNodeById(int id)
-  {
-    return fetchNode(id);
-  }
-
-  nw::Node getNodeByNavId(int id, nw::Type type);
   void getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type);
 
   void initQueries();
   void deInitQueries();
-  nw::Node fetchNode(int id);
-  nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
-
-  atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
-  *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
-  *edgeFromQuery = nullptr;
 
   void getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours, QVector<nw::Edge>& edges);
   void addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
@@ -195,7 +182,17 @@ public:
     return mode;
   }
 
+  void setMode(nw::Modes routeMode)
+  {
+    mode = routeMode;
+  }
+
 protected:
+  nw::Node getNodeByNavId(int id, nw::Type type);
+
+  nw::Node fetchNode(int id);
+  nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
+
   void addDestNodeEdges(nw::Node& node);
   void cleanDestNodeEdges();
 
@@ -207,9 +204,14 @@ protected:
   void updateNodeIndexes(const atools::sql::SqlRecord& rec);
   void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
 
+  static constexpr int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
   const int START_NODE_ID = -10;
   const int DESTINATION_NODE_ID = -20;
   int numNodesDb = -1;
+
+  atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
+  *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
+  *edgeFromQuery = nullptr;
 
   atools::geo::Rect startNodeRect, destinationNodeRect;
   atools::geo::Pos startPos, destinationPos;

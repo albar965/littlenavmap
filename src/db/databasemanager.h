@@ -61,9 +61,6 @@ public:
   void createEmptySchema(atools::sql::SqlDatabase *sqlDatabase);
   bool hasRegistrySims() const;
 
-  const int DB_VERSION_MAJOR = 1;
-  const int DB_VERSION_MINOR = 0;
-
   void openDatabase();
   void closeDatabase();
   QString getSimShortName() const;
@@ -86,17 +83,35 @@ public:
     return currentFsType;
   }
 
+  static constexpr int DB_VERSION_MAJOR = 1;
+  static constexpr int DB_VERSION_MINOR = 0;
+
 signals:
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
+  void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
+  bool runInternal(bool& loaded);
+  void backupDatabaseFile();
+  void restoreDatabaseFileBackup();
+  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
+  void updateDialogInfo();
+
+  DatabaseDialog *databaseDialog = nullptr;
+  void switchSimFromMainMenu();
+  void freeActions();
+  void updateSimSwitchActions();
+  void removeDatabaseFileBackup();
+  void fillPathsFromDatabases();
+  void updatePathsFromDialog();
+  bool loadScenery();
+  void runNoMessages();
+
   QString databaseFile, databaseDirectory;
   atools::sql::SqlDatabase db;
   MainWindow *mainWindow;
   QProgressDialog *progressDialog = nullptr;
-  bool loadScenery();
-  void runNoMessages();
 
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
@@ -104,30 +119,6 @@ private:
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
                                      loadingFsType = atools::fs::FsPaths::UNKNOWN;
   FsPathTypeMap paths;
-
-  void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
-
-  bool runInternal(bool& loaded);
-
-  void backupDatabaseFile();
-
-  void restoreDatabaseFileBackup();
-
-  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
-
-  void updateDialogInfo();
-
-  DatabaseDialog *databaseDialog = nullptr;
-  void switchSimFromMainMenu();
-
-  void freeActions();
-  void updateSimSwitchActions();
-
-  void removeDatabaseFileBackup();
-
-  void fillPathsFromDatabases();
-
-  void updatePathsFromDialog();
 
 };
 

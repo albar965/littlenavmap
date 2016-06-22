@@ -17,17 +17,9 @@
 
 #include "mapgui/mapquery.h"
 
-#include "sql/sqlquery.h"
-#include "geo/rect.h"
-#include "geo/calculations.h"
-#include "common/coordinateconverter.h"
-#include "maplayer.h"
-#include "common/maptools.h"
-
-#include <algorithm>
-#include <functional>
-#include <marble/GeoDataLatLonBox.h>
 #include "common/maptypesfactory.h"
+#include "sql/sqlquery.h"
+#include "common/maptools.h"
 
 using namespace Marble;
 using namespace atools::sql;

@@ -176,13 +176,13 @@ void MainWindow::showNavmapLegend()
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {
     ui->dockWidgetInformation->show();
-    ui->tabWidgetInformation->setCurrentIndex(NAVMAP_LEGEND);
-    statusMessage(tr("Opened map legend."));
+    ui->tabWidgetInformation->setCurrentIndex(ic::NAVMAP_LEGEND);
+    setStatusMessage(tr("Opened map legend."));
   }
   else
   {
     helpHandler->openHelpUrl(legendUrl);
-    statusMessage(tr("Opened map legend in browser."));
+    setStatusMessage(tr("Opened map legend in browser."));
   }
 }
 
@@ -222,7 +222,7 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
     QMessageBox::warning(this, QApplication::applicationName(), QString(
                            tr("Error opening URL <i>%1</i>")).arg(url.toDisplayString()));
   else
-    statusMessage(tr("Opened legend link in browser."));
+    setStatusMessage(tr("Opened legend link in browser."));
 }
 
 void MainWindow::createNavMap()
@@ -582,7 +582,7 @@ void MainWindow::changeMapProjection(int index)
   Marble::Projection proj = static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
   qDebug() << "Changing projection to" << proj;
   navMapWidget->setProjection(proj);
-  statusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
+  setStatusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
 }
 
 void MainWindow::changeMapTheme(int index)
@@ -591,7 +591,7 @@ void MainWindow::changeMapTheme(int index)
   QString theme = mapThemeComboBox->currentData().toString();
   qDebug() << "Changing theme to" << theme << "index" << index;
   navMapWidget->setTheme(theme, index);
-  statusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
+  setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }
 
 void MainWindow::showDatabaseFiles()
@@ -604,7 +604,7 @@ void MainWindow::showDatabaseFiles()
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
-void MainWindow::setMessageText(const QString& text, const QString& tooltipText)
+void MainWindow::setShownMapObjectsMessageText(const QString& text, const QString& tooltipText)
 {
   messageLabel->setText(text);
   messageLabel->setToolTip(tooltipText);
@@ -647,7 +647,7 @@ void MainWindow::routeCenter()
   if(routeController->hasRoute())
   {
     navMapWidget->showRect(routeController->getBoundingRect());
-    statusMessage(tr("Flight plan shown on map."));
+    setStatusMessage(tr("Flight plan shown on map."));
   }
 }
 
@@ -737,7 +737,7 @@ void MainWindow::routeNew()
   {
     routeController->newFlightplan();
     navMapWidget->update();
-    statusMessage(tr("Created new empty flight plan."));
+    setStatusMessage(tr("Created new empty flight plan."));
   }
 }
 
@@ -756,7 +756,7 @@ void MainWindow::routeOpen()
       {
         routeFileHistory->addFile(routeFile);
         routeCenter();
-        statusMessage(tr("Flight plan opened."));
+        setStatusMessage(tr("Flight plan opened."));
       }
     }
   }
@@ -771,7 +771,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       if(routeController->loadFlightplan(routeFile))
       {
         routeCenter();
-        statusMessage(tr("Flight plan opened."));
+        setStatusMessage(tr("Flight plan opened."));
       }
     }
     else
@@ -795,7 +795,7 @@ bool MainWindow::routeSave()
       {
         routeFileHistory->addFile(routeController->getRouteFilename());
         updateActionStates();
-        statusMessage(tr("Flight plan saved."));
+        setStatusMessage(tr("Flight plan saved."));
         return true;
       }
     }
@@ -819,7 +819,7 @@ bool MainWindow::routeSaveAs()
       {
         routeFileHistory->addFile(routeFile);
         updateActionStates();
-        statusMessage(tr("Flight plan saved."));
+        setStatusMessage(tr("Flight plan saved."));
         return true;
       }
     }
@@ -830,7 +830,7 @@ bool MainWindow::routeSaveAs()
 void MainWindow::kmlClear()
 {
   navMapWidget->clearKmlFiles();
-  statusMessage(tr("Google Earth KML files removed from map."));
+  setStatusMessage(tr("Google Earth KML files removed from map."));
 }
 
 void MainWindow::kmlOpen()
@@ -843,7 +843,7 @@ void MainWindow::kmlOpen()
   {
     kmlFileHistory->addFile(kmlFile);
     navMapWidget->addKmlFile(kmlFile);
-    statusMessage(tr("Google Earth KML file opened."));
+    setStatusMessage(tr("Google Earth KML file opened."));
   }
 }
 
@@ -852,7 +852,7 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   if(QFile::exists(kmlFile))
   {
     navMapWidget->addKmlFile(kmlFile);
-    statusMessage(tr("Google Earth KML file opened."));
+    setStatusMessage(tr("Google Earth KML file opened."));
   }
   else
   {
@@ -864,13 +864,13 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
 
 void MainWindow::defaultMapDetail()
 {
-  mapDetailFactor = MAP_DEFAULT_DETAIL_FACTOR;
+  mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
   setMapDetail(mapDetailFactor);
 }
 
 void MainWindow::increaseMapDetail()
 {
-  if(mapDetailFactor < MAP_MAX_DETAIL_FACTOR)
+  if(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR)
   {
     mapDetailFactor++;
     setMapDetail(mapDetailFactor);
@@ -879,7 +879,7 @@ void MainWindow::increaseMapDetail()
 
 void MainWindow::decreaseMapDetail()
 {
-  if(mapDetailFactor > MAP_MIN_DETAIL_FACTOR)
+  if(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR)
   {
     mapDetailFactor--;
     setMapDetail(mapDetailFactor);
@@ -890,12 +890,12 @@ void MainWindow::setMapDetail(int factor)
 {
   mapDetailFactor = factor;
   navMapWidget->setDetailFactor(mapDetailFactor);
-  ui->actionMapMoreDetails->setEnabled(mapDetailFactor < MAP_MAX_DETAIL_FACTOR);
-  ui->actionMapLessDetails->setEnabled(mapDetailFactor > MAP_MIN_DETAIL_FACTOR);
-  ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MAP_DEFAULT_DETAIL_FACTOR);
+  ui->actionMapMoreDetails->setEnabled(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR);
+  ui->actionMapLessDetails->setEnabled(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR);
+  ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
   navMapWidget->update();
 
-  int det = mapDetailFactor - MAP_DEFAULT_DETAIL_FACTOR;
+  int det = mapDetailFactor - MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
   QString detStr;
   if(det == 0)
     detStr = tr("Normal");
@@ -905,7 +905,7 @@ void MainWindow::setMapDetail(int factor)
     detStr = QString::number(det);
 
   detailLabel->setText(tr("Detail %1").arg(detStr));
-  statusMessage(tr("Map detail level changed."));
+  setStatusMessage(tr("Map detail level changed."));
 }
 
 void MainWindow::routeSelectionChanged(int selected, int total)
@@ -941,7 +941,7 @@ void MainWindow::updateMapShowFeatures()
 {
   navMapWidget->updateMapShowFeatures();
   profileWidget->update();
-  statusMessage(tr("Map settigs changed."));
+  setStatusMessage(tr("Map settigs changed."));
 }
 
 void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
@@ -962,10 +962,10 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWQUIT, true);
   s.syncSettings();
-  statusMessage(tr("All message dialogs reset."));
+  setStatusMessage(tr("All message dialogs reset."));
 }
 
-void MainWindow::statusMessage(const QString& message)
+void MainWindow::setStatusMessage(const QString& message)
 {
   if(statusMessages.isEmpty() || statusMessages.last() != message)
     statusMessages.append(message);
@@ -986,7 +986,7 @@ void MainWindow::options()
   opts.exec();
   opts.hide();
 
-  statusMessage(tr("Options changed."));
+  setStatusMessage(tr("Options changed."));
 }
 
 void MainWindow::mainWindowShown()
@@ -1063,7 +1063,7 @@ void MainWindow::readSettings()
               ui->actionWorkOffline});
 
   mapDetailFactor = Settings::instance().valueInt(lnm::MAP_DETAILFACTOR,
-                                                  MAP_DEFAULT_DETAIL_FACTOR);
+                                                  MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
 
   firstApplicationStart = Settings::instance().valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 

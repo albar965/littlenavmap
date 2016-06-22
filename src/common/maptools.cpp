@@ -15,8 +15,4 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maptools.h"
-
-namespace maptools {
-
-} // namespace maptools
+#include "common/maptools.h"

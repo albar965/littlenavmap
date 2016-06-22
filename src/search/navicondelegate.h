@@ -20,10 +20,7 @@
 
 #include <QStyledItemDelegate>
 
-#include "mapgui/mapquery.h"
-
 class ColumnList;
-class SqlModel;
 class SymbolPainter;
 
 class NavIconDelegate :

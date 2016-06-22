@@ -15,14 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "connectdialog.h"
+#include "connect/connectdialog.h"
 
 #include "common/constants.h"
-#include "logging/loggingdefs.h"
-#include "ui_connectdialog.h"
-#include <QPushButton>
 #include "gui/widgetstate.h"
+#include "logging/loggingdefs.h"
 #include "settings/settings.h"
+#include "ui_connectdialog.h"
+
+#include <QPushButton>
 
 using atools::settings::Settings;
 
@@ -36,7 +37,6 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
   ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setText(tr("&Disconnect"));
-  // ui->buttonBoxConnect->button(QDialogButtonBox::Close)->setText(tr("&Disconnect"));
 
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonClicked);
 }

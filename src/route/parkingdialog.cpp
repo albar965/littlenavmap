@@ -15,12 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "parkingdialog.h"
+#include "route/parkingdialog.h"
+
 #include "ui_parkingdialog.h"
-#include <QPushButton>
-#include "common/maptypes.h"
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
+
+#include <QPushButton>
 
 ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
                              const maptypes::MapAirport& departureAirport)

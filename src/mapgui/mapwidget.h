@@ -19,22 +19,15 @@
 #define LITTLENAVMAP_NAVMAPWIDGET_H
 
 #include "common/maptypes.h"
-
 #include "gui/mapposhistory.h"
-
-#include <marble/GeoDataLatLonAltBox.h>
-#include <marble/MarbleWidget.h>
+#include "route/routemapobjectlist.h"
+#include "fs/sc/simconnectdata.h"
+#include "common/aircrafttrack.h"
 
 #include <QWidget>
 
-#include "geo/pos.h"
-
-#include "route/routemapobject.h"
-#include "route/routemapobjectlist.h"
-
-#include "fs/sc/simconnectdata.h"
-
-#include "common/aircrafttrack.h"
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/MarbleWidget.h>
 
 namespace atools {
 namespace geo {
@@ -53,7 +46,6 @@ class MapQuery;
 class RouteController;
 class MapTooltip;
 class QRubberBand;
-class RouteMapObjectList;
 
 enum MouseState
 {
@@ -205,6 +197,44 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
+  virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mouseReleaseEvent(QMouseEvent *event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+  virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual bool event(QEvent *event) override;
+  virtual void contextMenuEvent(QContextMenuEvent *event) override;
+
+  virtual void paintEvent(QPaintEvent *paintEvent) override;
+
+  void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
+                                     maptypes::MapSearchResult& mapobjects);
+
+  void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
+                                 const RouteMapObjectList& routeMapObjects,
+                                 maptypes::MapSearchResult& mapobjects);
+
+  void getAllNearestMapObjects(int xs, int ys, int screenDistance,
+                               maptypes::MapSearchResult& mapSearchResult);
+
+  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
+  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
+
+  int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
+  int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
+  void getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result);
+
+  void updateRouteScreenLines();
+  void updateAirwayScreenLines();
+  void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
+  void updateVisibleObjects();
+
+  void handleInfoClick(QPoint pos);
+
+#ifdef DEBUG_MAP_CLICK
+  void debugOnClick(int x, int y);
+
+#endif
+
   QStringList kmlFiles;
   bool databaseLoadStatus = false;
   enum MapThemeComboIndex
@@ -251,48 +281,9 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
   AircraftTrack aircraftTrack;
 
-  virtual void mousePressEvent(QMouseEvent *event) override;
-  virtual void mouseReleaseEvent(QMouseEvent *event) override;
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
-  virtual void mouseMoveEvent(QMouseEvent *event) override;
-  virtual bool event(QEvent *event) override;
-
   bool changedByHistory = false;
   int curZoom = -1;
   Marble::GeoDataLatLonAltBox curBox;
-
-  virtual void paintEvent(QPaintEvent *paintEvent) override;
-
-  void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
-                                     maptypes::MapSearchResult& mapobjects);
-
-  void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                 const RouteMapObjectList& routeMapObjects,
-                                 maptypes::MapSearchResult& mapobjects);
-
-  void getAllNearestMapObjects(int xs, int ys, int screenDistance,
-                               maptypes::MapSearchResult& mapSearchResult);
-
-  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
-  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
-
-  int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
-  int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
-  void getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result);
-
-  void updateRouteScreenLines();
-  void updateAirwayScreenLines();
-  void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
-
-#ifdef DEBUG_MAP_CLICK
-  void debugOnClick(int x, int y);
-
-#endif
-  void updateVisibleObjects();
-
-  void handleInfoClick(QPoint pos);
-
-  virtual void contextMenuEvent(QContextMenuEvent *event) override;
 
 };
 

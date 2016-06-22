@@ -16,24 +16,20 @@
 *****************************************************************************/
 
 #include "search/sqlmodel.h"
+
 #include "gui/errorhandler.h"
 #include "search/columnlist.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
-#include "sql/sqlutil.h"
-#include "logging/loggingdefs.h"
+#include "exception.h"
 #include "search/column.h"
+#include "sql/sqlrecord.h"
 
-#include <QApplication>
 #include <QLineEdit>
-#include <QSqlField>
 #include <QCheckBox>
-#include <QSpinBox>
-
-#include <functional>
+#include <QSqlError>
 
 using atools::sql::SqlQuery;
-using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
 using atools::gui::ErrorHandler;
 
@@ -210,7 +206,7 @@ atools::sql::SqlRecord SqlModel::getSqlRecord(int row) const
 
 void SqlModel::filterBy(QModelIndex index, bool exclude)
 {
-  QString whereCol = record().field(index.column()).name();
+  QString whereCol = atools::sql::SqlRecord(record()).fieldName(index.column());
   QVariant whereValue = QSqlQueryModel::data(index);
 
   filterBy(exclude, whereCol, whereValue);
@@ -388,7 +384,7 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
 
 void SqlModel::sort(int column, Qt::SortOrder order)
 {
-  QString colname = record().field(column).name();
+  QString colname = atools::sql::SqlRecord(record()).fieldName(column);
   if(columns->getColumn(colname)->isNoSort())
     return;
 
@@ -656,7 +652,7 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
   if(handlerRoles.contains(dataRole))
   {
     QVariant dataValue = QSqlQueryModel::data(index, Qt::DisplayRole);
-    QString col = record().field(index.column()).name();
+    QString col = atools::sql::SqlRecord(record()).fieldName(index.column());
     const Column *column = columns->getColumn(col);
 
     int row = -1;
@@ -699,7 +695,7 @@ QStringList SqlModel::getRawColumns() const
 {
   QStringList cols;
   for(int i = 0; i < columnCount(); ++i)
-    cols.append(record().field(i).name());
+    cols.append(atools::sql::SqlRecord(record()).fieldName(i));
   return cols;
 }
 
@@ -714,7 +710,8 @@ QVariantList SqlModel::getFormattedRowData(int row)
   for(int i = 0; i < columnCount(); ++i)
   {
     QModelIndex idx = createIndex(row, i);
-    values.append(formatValue(record().field(idx.column()).name(), QSqlQueryModel::data(idx)));
+    values.append(formatValue(atools::sql::SqlRecord(record()).fieldName(idx.column()),
+                              QSqlQueryModel::data(idx)));
   }
   return values;
 }

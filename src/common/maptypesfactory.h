@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPTYPESFACTORY_H
 #define LITTLENAVMAP_MAPTYPESFACTORY_H
 
-#include "maptypes.h"
+#include "common/maptypes.h"
 
 namespace atools {
 namespace sql {

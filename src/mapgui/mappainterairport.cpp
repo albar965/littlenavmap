@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainterairport.h"
-#include "common/symbolpainter.h"
+#include "mapgui/mappainterairport.h"
 
+#include "common/symbolpainter.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapquery.h"
@@ -34,10 +34,6 @@
 using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
-
-const int RUNWAY_HEADING_FONT_SIZE = 12;
-const int RUNWAY_TEXT_FONT_SIZE = 16;
-const int RUNWAY_NUMBER_FONT_SIZE = 20;
 
 MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                      bool verboseMsg)

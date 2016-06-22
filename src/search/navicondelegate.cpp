@@ -15,20 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "navicondelegate.h"
-#include "column.h"
-#include "columnlist.h"
-#include "sqlmodel.h"
-#include "sqlproxymodel.h"
-#include "logging/loggingdefs.h"
-#include "mapgui/mapquery.h"
+#include "search/navicondelegate.h"
+
+#include "search/sqlmodel.h"
+#include "search/sqlproxymodel.h"
 #include "common/symbolpainter.h"
-#include "common/mapcolors.h"
 #include "sql/sqlrecord.h"
+#include "common/maptypes.h"
 
 #include <QPainter>
-#include <QSqlQueryModel>
-#include <QApplication>
 
 NavIconDelegate::NavIconDelegate(const ColumnList *columns)
   : cols(columns)

@@ -20,10 +20,7 @@
 
 #include <QStyledItemDelegate>
 
-#include "common/maptypes.h"
-
 class ColumnList;
-class SqlModel;
 class SymbolPainter;
 class MapTypesFactory;
 
@@ -37,12 +34,12 @@ public:
   virtual ~AirportIconDelegate();
 
 private:
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
+                     const QModelIndex& index) const override;
+
   const ColumnList *cols;
   SymbolPainter *symbolPainter;
   MapTypesFactory *mapTypesFactory;
-
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const override;
 
 };
 

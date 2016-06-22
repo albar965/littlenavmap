@@ -18,31 +18,18 @@
 #ifndef LITTLENAVMAP_SEARCHPANE_H
 #define LITTLENAVMAP_SEARCHPANE_H
 
-#include "geo/pos.h"
 #include "common/maptypes.h"
 
-#include <QColor>
 #include <QObject>
 
-class QWidget;
 class QTableView;
 class Controller;
 class ColumnList;
-class QAction;
 class MainWindow;
 class QItemSelection;
 class MapQuery;
 class QTimer;
 class CsvExporter;
-
-namespace atools {
-namespace geo {
-class Rect;
-}
-namespace sql {
-class SqlDatabase;
-}
-}
 
 class Search :
   public QObject
@@ -50,14 +37,12 @@ class Search :
   Q_OBJECT
 
 public:
-  explicit Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                  MapQuery *mapQuery, int tabWidgetIndex);
+  Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+         MapQuery *mapQuery, int tabWidgetIndex);
   virtual ~Search();
 
   virtual void preDatabaseLoad();
   virtual void postDatabaseLoad();
-
-  void markChanged(const atools::geo::Pos& mark);
 
   virtual void connectSlots();
 
@@ -70,6 +55,7 @@ public:
   void resetSearch();
   void tableCopyClipboard();
   void loadAllRowsIntoView();
+  void markChanged(const atools::geo::Pos& mark);
 
   void filterByIdent(const QString& ident, const QString& region = QString(),
                      const QString& airportIdent = QString());
@@ -93,13 +79,23 @@ signals:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
 protected:
-  QIcon *boolIcon = nullptr;
-  void editStarted();
+  virtual void updateMenu() = 0;
 
+  void editStarted();
+  void doubleClick(const QModelIndex& index);
+  void initViewAndController();
+  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void reconnectSelectionModel();
+  void connectModelSlots();
+  void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
+  void showInformationMenu();
+  void showOnMapMenu();
   void editTimeout();
   void connectSearchWidgets();
   void contextMenu(const QPoint& pos);
 
+  QIcon *boolIcon = nullptr;
+  CsvExporter *csvExporter = nullptr;
   MapQuery *query;
   atools::geo::Pos mapMark;
 
@@ -109,21 +105,6 @@ protected:
   MainWindow *mainWindow;
   QTimer *updateTimer;
   int tabIndex;
-  virtual void updateMenu() = 0;
-
-  void doubleClick(const QModelIndex& index);
-
-  void initViewAndController();
-  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-
-  void reconnectSelectionModel();
-  void connectModelSlots();
-
-  void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
-
-  CsvExporter *csvExporter = nullptr;
-  void showInformationMenu();
-  void showOnMapMenu();
 
 };
 

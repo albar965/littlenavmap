@@ -15,36 +15,26 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "profilewidget.h"
-#include <algorithm>
-#include "atools.h"
+#include "profile/profilewidget.h"
 
+#include "atools.h"
 #include "gui/mainwindow.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "ui_mainwindow.h"
-#include <QPainter>
-#include <QLocale>
-#include <QTimer>
-#include <QGuiApplication>
-#include <QElapsedTimer>
-#include <QFutureWatcher>
-#include <QMouseEvent>
-#include <QRubberBand>
-#include <QtConcurrent/QtConcurrentRun>
 #include "common/symbolpainter.h"
-#include "mapgui/mapwidget.h"
 #include "route/routecontroller.h"
+#include "common/aircrafttrack.h"
+#include "mapgui/mapwidget.h"
+
+#include <QPainter>
+#include <QTimer>
+#include <QRubberBand>
+#include <QMouseEvent>
+#include <QtConcurrent/QtConcurrentRun>
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
-
-const int NUM_SCALE_STEPS = 5;
-const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
-const int MIN_SCALE_SCREEN_DISTANCE = 25;
-
-const int UPDATE_TIMEOUT = 1000;
-const int X0 = 65, Y0 = 14;
 
 using Marble::GeoDataCoordinates;
 using atools::geo::Pos;
@@ -143,9 +133,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       if(valid)
         updateProfile = true;
     }
-
   }
-
   if(updateProfile)
     update();
 }

@@ -15,23 +15,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "connectclient.h"
+#include "connect/connectclient.h"
 
 #include "common/constants.h"
-#include "connectdialog.h"
-#include "gui/errorhandler.h"
-#include "gui/dialog.h"
+#include "connect/connectdialog.h"
 #include "fs/sc/simconnectreply.h"
+#include "gui/dialog.h"
+#include "gui/errorhandler.h"
+#include "gui/mainwindow.h"
+#include "gui/widgetstate.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
 #include <QWidget>
 #include <QApplication>
 #include <QThread>
-
-#include "gui/widgetstate.h"
-
-#include <gui/mainwindow.h>
 
 ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -98,7 +96,7 @@ void ConnectClient::connectedToServer()
   qInfo() << "Connected to" << socket->peerName() << ":" << socket->peerPort();
   silent = false;
   emit connectedToSimulator();
-  mainWindow->statusMessage(tr("Connected to %1.").arg(socket->peerName()));
+  mainWindow->setStatusMessage(tr("Connected to %1.").arg(socket->peerName()));
 }
 
 void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
@@ -201,7 +199,7 @@ void ConnectClient::closeSocket()
   emit disconnectedFromSimulator();
 
   if(peer.isEmpty())
-    mainWindow->statusMessage(tr("Disconnected."));
+    mainWindow->setStatusMessage(tr("Disconnected."));
   else
-    mainWindow->statusMessage(tr("Disconnected from %1.").arg(peer));
+    mainWindow->setStatusMessage(tr("Disconnected from %1.").arg(peer));
 }

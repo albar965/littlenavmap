@@ -18,18 +18,12 @@
 #ifndef LITTLENAVMAP_PROFILEWIDGET_H
 #define LITTLENAVMAP_PROFILEWIDGET_H
 
+#include "route/routemapobjectlist.h"
+#include "fs/sc/simconnectdata.h"
+
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QWidget>
-
-#include <marble/GeoDataCoordinates.h>
-
-#include "geo/pos.h"
-
-#include "route/routemapobject.h"
-#include "route/routemapobjectlist.h"
-
-#include "fs/sc/simconnectdata.h"
 
 namespace Marble {
 class ElevationModel;
@@ -66,13 +60,6 @@ signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
 private:
-  bool databaseLoadStatus = false;
-  virtual void paintEvent(QPaintEvent *) override;
-
-  atools::fs::sc::SimConnectData simData, lastSimData;
-  QPolygon aircraftTrackPoints;
-  float aircraftDistanceFromStart, aircraftDistanceToDest;
-
   struct ElevationLeg
   {
     QVector<atools::geo::Pos> elevation;
@@ -88,42 +75,44 @@ private:
     int totalNumPoints = 0;
   };
 
-  ElevationLegList legList;
-
-  QTimer *updateTimer = nullptr;
-  const Marble::ElevationModel *elevationModel = nullptr;
-  RouteController *routeController = nullptr;
-
-  MainWindow *mainWindow;
-  ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
-
-  QFuture<ElevationLegList> future;
-  QFutureWatcher<ElevationLegList> watcher;
-  bool terminate = false;
-  QRubberBand *rubberBand = nullptr;
-
-  void updateElevation();
-  void updateTimeout();
-
-  void updateThreadFinished();
-
+  virtual void paintEvent(QPaintEvent *) override;
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
   virtual void mouseMoveEvent(QMouseEvent *mouseEvent) override;
   virtual void resizeEvent(QResizeEvent *) override;
   virtual void leaveEvent(QEvent *) override;
 
-  bool visible = false;
-
+  ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
+  void updateElevation();
+  void updateTimeout();
+  void updateThreadFinished();
   void updateScreenCoords();
+  void terminateThread();
 
+  static constexpr int NUM_SCALE_STEPS = 5;
+  const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
+  static constexpr int MIN_SCALE_SCREEN_DISTANCE = 25;
+  static constexpr int UPDATE_TIMEOUT = 1000;
+  const int X0 = 65, Y0 = 14;
+
+  atools::fs::sc::SimConnectData simData, lastSimData;
+  QPolygon aircraftTrackPoints;
+  float aircraftDistanceFromStart, aircraftDistanceToDest;
+  ElevationLegList legList;
+  QTimer *updateTimer = nullptr;
+  const Marble::ElevationModel *elevationModel = nullptr;
+  RouteController *routeController = nullptr;
+  MainWindow *mainWindow;
+  QFuture<ElevationLegList> future;
+  QFutureWatcher<ElevationLegList> watcher;
+  bool databaseLoadStatus = false;
+  bool terminate = false;
+  QRubberBand *rubberBand = nullptr;
+  bool visible = false;
   bool showAircraft = false, showAircraftTrack = false;
-
   QVector<int> waypointX;
   QPolygon landPolygon;
   float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
-
-  void terminateThread();
 
 };
 

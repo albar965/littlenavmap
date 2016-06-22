@@ -100,13 +100,6 @@ public:
                             const RouteMapObjectList& rmoList);
 
 private:
-  MapQuery *mapQuery;
-  InfoQuery *infoQuery;
-  atools::util::MorseCode *morse;
-  bool info;
-  QLocale locale;
-  QString aircraftGroundEncodedIcon, aircraftEncodedIcon;
-
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html);
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html);
   void head(atools::util::HtmlBuilder& html, const QString& text);
@@ -137,6 +130,12 @@ private:
 
   void aircraftTitle(const atools::fs::sc::SimConnectData& data, atools::util::HtmlBuilder& html);
 
+  MapQuery *mapQuery;
+  InfoQuery *infoQuery;
+  atools::util::MorseCode *morse;
+  bool info;
+  QLocale locale;
+  QString aircraftGroundEncodedIcon, aircraftEncodedIcon;
 };
 
 #endif // MAPHTMLINFOBUILDER

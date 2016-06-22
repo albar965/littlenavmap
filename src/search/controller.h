@@ -19,12 +19,7 @@
 #define LITTLENAVMAP_CONTROLLER_H
 
 #include "search/sqlmodel.h"
-#include "geo/pos.h"
 #include "search/sqlproxymodel.h"
-
-#include <QItemSelectionModel>
-#include <QObject>
-#include <functional>
 
 namespace atools {
 namespace geo {
@@ -37,11 +32,6 @@ class SqlDatabase;
 
 class QWidget;
 class QTableView;
-class QModelIndex;
-class QPoint;
-class Column;
-class SqlProxyModel;
-class SqlModel;
 class ColumnList;
 
 /*
@@ -54,10 +44,6 @@ class Controller :
   Q_OBJECT
 
 public:
-  /*
-   * @param hasLogbookEntries true if logbook table is present and populated
-   * @param hasAirportTable true if additional airport information is available
-   */
   Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~Controller();
 
@@ -213,6 +199,9 @@ private:
   /* Load view state from settings */
   void restoreViewState();
 
+  QModelIndex toS(const QModelIndex& index) const;
+  QModelIndex fromS(const QModelIndex& index) const;
+
   SqlProxyModel *proxyModel = nullptr;
   SqlModel *model = nullptr;
   QWidget *parentWidget = nullptr;
@@ -220,9 +209,6 @@ private:
   QTableView *view = nullptr;
   ColumnList *columns = nullptr;
   QByteArray viewState;
-
-  QModelIndex toS(const QModelIndex& index) const;
-  QModelIndex fromS(const QModelIndex& index) const;
 
   bool changed = false;
   atools::geo::Pos currentDistanceCenter;

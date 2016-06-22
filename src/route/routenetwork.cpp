@@ -22,13 +22,10 @@
 #include "sql/sqlrecord.h"
 #include "sql/sqlutil.h"
 
-#include "geo/calculations.h"
 #include "geo/pos.h"
 #include "geo/rect.h"
 
 #include <QElapsedTimer>
-
-const int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
@@ -64,11 +61,6 @@ int RouteNetwork::getNumberOfNodesDatabase()
 int RouteNetwork::getNumberOfNodesCache() const
 {
   return nodes.size();
-}
-
-void RouteNetwork::setMode(nw::Modes routeMode)
-{
-  mode = routeMode;
 }
 
 void RouteNetwork::clear()

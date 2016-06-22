@@ -18,27 +18,14 @@
 #include "search/controller.h"
 
 #include "geo/calculations.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "settings/settings.h"
-#include "column.h"
-#include "sqlproxymodel.h"
-#include "search/sqlmodel.h"
+#include "search/column.h"
 #include "search/columnlist.h"
+#include "sql/sqlrecord.h"
 
-#include <functional>
-#include <algorithm>
 #include <QTableView>
 #include <QHeaderView>
 #include <QSpinBox>
-#include <QSortFilterProxyModel>
 #include <QApplication>
-#include <QEventLoop>
-#include <QSqlField>
-
-#include "geo/rect.h"
-
-#include "sql/sqlrecord.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;

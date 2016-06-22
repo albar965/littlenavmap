@@ -15,21 +15,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappaintermark.h"
-#include "mapwidget.h"
-#include "mapscale.h"
-#include "mapgui/mapquery.h"
+#include "mapgui/mappaintermark.h"
+
+#include "mapgui/mapwidget.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
 #include "atools.h"
 #include "common/constants.h"
 
-#include <algorithm>
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
-#include <marble/MarbleWidget.h>
-#include <marble/ViewportParams.h>
 
 using namespace Marble;
 using namespace atools::geo;

@@ -16,34 +16,20 @@
 *****************************************************************************/
 
 #include "search/search.h"
-#include "logging/loggingdefs.h"
 #include "gui/tablezoomhandler.h"
-#include "sql/sqldatabase.h"
 #include "search/controller.h"
-#include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
-#include "geo/pos.h"
 #include "mapgui/mapwidget.h"
-#include "geo/calculations.h"
 #include "atools.h"
+#include "gui/actiontextsaver.h"
+#include "export/csvexporter.h"
+#include "mapgui/mapquery.h"
 
-#include <QMessageBox>
-#include <QWidget>
-#include <QTableView>
-#include <QHeaderView>
-#include <QMenu>
-#include <QLineEdit>
 #include <QTimer>
 #include <QClipboard>
-#include <QStandardItemModel>
-
-#include "gui/actiontextsaver.h"
-#include <export/csvexporter.h>
-
-#include "mapgui/mapquery.h"
 
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 600;
 
@@ -95,7 +81,7 @@ void Search::tableCopyClipboard()
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);
 
-    mainWindow->statusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
   }
 }
 
@@ -342,7 +328,7 @@ void Search::resetView()
     // if(result == QMessageBox::Yes)
     // {
     controller->resetView();
-    mainWindow->statusMessage(tr("Table view reset to defaults."));
+    mainWindow->setStatusMessage(tr("Table view reset to defaults."));
 
     // mainWindow->getUi()->statusBar->showMessage(tr("View reset to default."));
     // }
@@ -355,7 +341,7 @@ void Search::resetSearch()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->resetSearch();
-    mainWindow->statusMessage(tr("Search filters cleared."));
+    mainWindow->setStatusMessage(tr("Search filters cleared."));
   }
 }
 
@@ -365,7 +351,7 @@ void Search::loadAllRowsIntoView()
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
     controller->loadAllRows();
-    mainWindow->statusMessage(tr("All entries read."));
+    mainWindow->setStatusMessage(tr("All entries read."));
   }
 }
 
@@ -617,7 +603,7 @@ void Search::showOnMapMenu()
       if(!result.airports.isEmpty() && !result.airports.first().bounding.isPoint())
       {
         emit showRect(result.airports.first().bounding);
-        mainWindow->statusMessage(tr("Showing airport on map."));
+        mainWindow->setStatusMessage(tr("Showing airport on map."));
       }
       else
       {
@@ -627,7 +613,7 @@ void Search::showOnMapMenu()
           emit showPos(result.ndbs.first().getPosition(), 2700);
         else if(!result.waypoints.isEmpty())
           emit showPos(result.waypoints.first().getPosition(), 2700);
-        mainWindow->statusMessage(tr("Showing navaid on map."));
+        mainWindow->setStatusMessage(tr("Showing navaid on map."));
       }
     }
   }

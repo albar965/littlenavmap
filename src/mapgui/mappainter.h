@@ -20,8 +20,8 @@
 
 #include "common/coordinateconverter.h"
 #include "common/maptypes.h"
-#include <marble/MarbleWidget.h>
 
+#include <marble/MarbleWidget.h>
 #include <QPen>
 #include <QApplication>
 
@@ -79,7 +79,10 @@ protected:
   bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
                         Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
 
+  /* Evaluate 50 text placement positions along line */
   const float FIND_TEXT_POS_STEP = 0.02f;
+  const int CIRCLE_MIN_POINTS = 16;
+  const int CIRCLE_MAX_POINTS = 72;
 
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;

@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_DATABASEDIALOG_H
 #define LITTLENAVMAP_DATABASEDIALOG_H
 
-#include "fs/fspaths.h"
 #include "db/dbtypes.h"
 
 #include <QDialog>
@@ -37,6 +36,14 @@ public:
   DatabaseDialog(QWidget *parent, const FsPathTypeMap& value);
   virtual ~DatabaseDialog();
 
+  QString getBasePath() const;
+  QString getSceneryConfigFile() const;
+
+  const FsPathTypeMap& getPaths() const
+  {
+    return paths;
+  }
+
   void setHeader(const QString& header);
 
   atools::fs::FsPaths::SimulatorType getCurrentFsType() const
@@ -44,33 +51,24 @@ public:
     return currentFsType;
   }
 
-  QString getBasePath() const;
-  QString getSceneryConfigFile() const;
-
   void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
-
-  const FsPathTypeMap& getPaths() const
-  {
-    return paths;
-  }
 
 signals:
   void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
 
 private:
-  Ui::DatabaseDialog *ui;
-  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
-  FsPathTypeMap paths;
-
   void basePathEdited(const QString& text);
+  void resetPaths();
   void sceneryConfigFileEdited(const QString& text);
   void selectBasePath();
   void selectSceneryConfig();
   void simComboChanged(int index);
-  void updateLineEdits();
-  void resetPaths();
-
   void updateComboBox();
+  void updateLineEdits();
+
+  Ui::DatabaseDialog *ui;
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
+  FsPathTypeMap paths;
 
 };
 

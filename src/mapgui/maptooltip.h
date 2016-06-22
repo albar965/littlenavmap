@@ -50,10 +50,11 @@ public:
                        bool airportDiagram);
 
 private:
-  const int MAXLINES = 20;
-  MapQuery *query;
   bool checkText(atools::util::HtmlBuilder& html, int numEntries);
 
+  static constexpr int MAXLINES = 20;
+
+  MapQuery *query;
   WeatherReporter *weather;
   QColor iconBackColor;
 };

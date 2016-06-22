@@ -15,58 +15,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "mapgui/mappaintlayer.h"
+
 #include "connect/connectclient.h"
 #include "gui/mainwindow.h"
-#include "mapgui/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
-#include "maplayersettings.h"
-#include "mappainteraircraft.h"
-#include "mappainterairport.h"
-#include "mappainterils.h"
-#include "mappaintermark.h"
-#include "mappainternav.h"
-#include "mappainterroute.h"
-#include "mapquery.h"
-#include "mapscale.h"
-#include "geo/calculations.h"
-#include "logging/loggingdefs.h"
+#include "mapgui/maplayersettings.h"
+#include "mapgui/mappainteraircraft.h"
+#include "mapgui/mappainterairport.h"
+#include "mapgui/mappainterils.h"
+#include "mapgui/mappaintermark.h"
+#include "mapgui/mappainternav.h"
+#include "mapgui/mappainterroute.h"
+#include "mapgui/mapscale.h"
 #include "route/routecontroller.h"
-#include <cmath>
-#include <marble/MarbleModel.h>
-#include <marble/GeoDataPlacemark.h>
-#include <marble/GeoDataDocument.h>
-#include <marble/GeoDataTreeModel.h>
-#include <marble/MarbleWidgetPopupMenu.h>
-#include <marble/MarbleWidgetInputHandler.h>
-#include <marble/GeoDataStyle.h>
-#include <marble/GeoDataIconStyle.h>
-#include <marble/GeoDataCoordinates.h>
-#include <marble/GeoPainter.h>
-#include <marble/LayerInterface.h>
-#include <marble/ViewportParams.h>
-#include <marble/MarbleLocale.h>
-#include <marble/MarbleWidget.h>
-#include <marble/ViewportParams.h>
 
-#include <QContextMenuEvent>
 #include <QElapsedTimer>
+
+#include <marble/GeoPainter.h>
 
 using namespace Marble;
 using namespace atools::geo;
 
 MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
-  : mapQuery(mapQueries), navMapWidget(widget)
+  : mapQuery(mapQueries), mapWidget(widget)
 {
   initLayers();
 
   mapScale = new MapScale();
-  mapPainterNav = new MapPainterNav(navMapWidget, mapQuery, mapScale, false);
-  mapPainterIls = new MapPainterIls(navMapWidget, mapQuery, mapScale, false);
-  mapPainterAirport = new MapPainterAirport(navMapWidget, mapQuery, mapScale, false);
-  mapPainterMark = new MapPainterMark(navMapWidget, mapQuery, mapScale, false);
-  mapPainterRoute = new MapPainterRoute(navMapWidget, mapQuery, mapScale,
-                                        navMapWidget->getRouteController(), false);
-  mapPainterAircraft = new MapPainterAircraft(navMapWidget, mapQuery, mapScale, false);
+  mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale, false);
+  mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale, false);
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, false);
+  mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale, false);
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale,
+                                        mapWidget->getRouteController(), false);
+  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale, false);
 
   objectTypes = maptypes::MapObjectTypes(
     maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
@@ -112,7 +95,7 @@ void MapPaintLayer::setDetailFactor(int factor)
 void MapPaintLayer::routeChanged()
 {
   qDebug() << "route changed";
-  const RouteMapObjectList& routeMapObjects = navMapWidget->getRouteController()->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteMapObjects();
 
   forcePaint.clear();
   for(const RouteMapObject& obj : routeMapObjects)
@@ -227,7 +210,7 @@ void MapPaintLayer::initLayers()
 
 void MapPaintLayer::updateLayers()
 {
-  float dist = static_cast<float>(navMapWidget->distance());
+  float dist = static_cast<float>(mapWidget->distance());
   // Get the uncorrected effective layer - route painting is independent of declutter
   mapLayerEffective = layers->getLayer(dist);
   mapLayer = layers->getLayer(dist, detailFactor);
@@ -241,7 +224,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
   if(!databaseLoadStatus)
   {
-    mapScale->update(viewport, navMapWidget->distance());
+    mapScale->update(viewport, mapWidget->distance());
 
     // Set default font to bold and reduce size a bit
     QFont font = painter->font();
@@ -272,7 +255,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     else
       context.forcePaintObjects = nullptr;
 
-    if(navMapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
+    if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
     {
       if(context.mapLayerEffective->isAirportDiagram())
       {
@@ -290,7 +273,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     mapPainterRoute->render(&context);
     mapPainterMark->render(&context);
 
-    if(navMapWidget->getParentWindow()->getConnectClient()->isConnected())
+    if(mapWidget->getParentWindow()->getConnectClient()->isConnected())
       mapPainterAircraft->render(&context);
 
     // if(navMapWidget->viewContext() == Marble::Still)

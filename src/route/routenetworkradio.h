@@ -18,21 +18,11 @@
 #ifndef LITTLENAVMAP_ROUTENETWORKRADIO_H
 #define LITTLENAVMAP_ROUTENETWORKRADIO_H
 
-#include "routenetwork.h"
-
-#include <QHash>
-#include <QVector>
-
-#include "common/maptypes.h"
+#include "route/routenetwork.h"
 
 namespace  atools {
 namespace sql {
 class SqlDatabase;
-class SqlQuery;
-}
-namespace geo {
-class Pos;
-class Rect;
 }
 }
 

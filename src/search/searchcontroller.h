@@ -18,7 +18,6 @@
 #include "common/maptypes.h"
 
 #include <QObject>
-#include <QString>
 
 #ifndef LITTLENAVMAP_SEARCHPANELIST_H
 #define LITTLENAVMAP_SEARCHPANELIST_H
@@ -28,8 +27,6 @@ class Search;
 class AirportSearch;
 class NavSearch;
 class ColumnList;
-class QLayout;
-class QAction;
 class QTableView;
 class QTabWidget;
 class MapQuery;

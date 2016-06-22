@@ -18,9 +18,9 @@
 #ifndef LITTLENAVMAP_ROUTECONTROLLER_H
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
-#include "routemapobject.h"
-#include "routecommand.h"
-#include "routemapobjectlist.h"
+#include "route/routecommand.h"
+#include "route/routemapobjectlist.h"
+#include "common/maptypes.h"
 
 #include <QObject>
 
@@ -34,13 +34,10 @@ class FlightplanEntry;
 }
 
 class MainWindow;
-class MapQuery;
 class QTableView;
 class QStandardItemModel;
-class QStandardItem;
 class QItemSelection;
 class RouteIconDelegate;
-class QUndoStack;
 class RouteNetwork;
 class RouteFinder;
 
@@ -125,22 +122,7 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
-  RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
-  atools::geo::Rect boundingRect;
-  RouteMapObjectList route;
-  QString routeFilename;
-  MainWindow *mainWindow;
-  QTableView *view;
-  MapQuery *query;
-  QStandardItemModel *model;
-  RouteIconDelegate *iconDelegate;
-  QUndoStack *undoStack;
-
-  // Need a workaround since QUndoStack does not report current indices and clean state
-  int undoIndex = 0, undoIndexClean = 0;
   void updateWindowTitle();
-
-  int curUserpointNumber = 1;
 
   void updateLabel();
 
@@ -201,6 +183,21 @@ private:
 
   void undoTriggered();
   void redoTriggered();
+
+  // Need a workaround since QUndoStack does not report current indices and clean state
+  int undoIndex = 0, undoIndexClean = 0;
+
+  int curUserpointNumber = 1;
+  RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
+  atools::geo::Rect boundingRect;
+  RouteMapObjectList route;
+  QString routeFilename;
+  MainWindow *mainWindow;
+  QTableView *view;
+  MapQuery *query;
+  QStandardItemModel *model;
+  RouteIconDelegate *iconDelegate;
+  QUndoStack *undoStack;
 
 };
 

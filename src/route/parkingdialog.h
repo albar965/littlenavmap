@@ -44,7 +44,6 @@ private:
   void updateButtons();
 
   QList<maptypes::MapParking> parkings;
-
   Ui::ParkingDialog *ui;
 };
 

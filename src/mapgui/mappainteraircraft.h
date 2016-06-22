@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
 #define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
 
-#include "mappainter.h"
+#include "mapgui/mappainter.h"
 
 namespace Marble {
 class GeoDataLineString;

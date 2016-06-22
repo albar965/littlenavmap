@@ -59,33 +59,34 @@ private:
   };
 
   void fileChanged(const QString& path);
-  void loadVatsimMetar(const QString& airportIcao);
+
   void loadActiveSkySnapshot();
+  void initActiveSkyNext();
+  QString getAsnSnapshotPath();
+
   void loadNoaaMetar(const QString& airportIcao);
+  void loadVatsimMetar(const QString& airportIcao);
+
+  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars);
+  void httpFinishedNoaa();
+  void httpFinishedVatsim();
+
+  void clearNoaaReply();
+  void clearVatsimReply();
 
   QHash<QString, QString> asnMetars;
   QHash<QString, Report> noaaMetars, vatsimMetars;
   QString asnSnapshotPath;
-  QString getAsnSnapshotPath();
 
   QFileSystemWatcher *fsWatcher = nullptr;
 
   QNetworkAccessManager networkManager;
-
-  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars);
 
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
   QString noaaRequestIcao, vatsimRequestIcao;
 
   QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
   MainWindow *mainWindow;
-  void httpFinishedNoaa();
-  void httpFinishedVatsim();
-
-  void clearVatsimReply();
-  void clearNoaaReply();
-
-  void initActiveSkyNext();
 
 };
 

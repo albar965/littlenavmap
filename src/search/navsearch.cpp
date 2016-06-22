@@ -18,33 +18,18 @@
 #include "search/navsearch.h"
 
 #include "common/constants.h"
-#include "logging/loggingdefs.h"
-#include "gui/tablezoomhandler.h"
-#include "sql/sqldatabase.h"
 #include "search/controller.h"
-#include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
-#include "navicondelegate.h"
+#include "search/navicondelegate.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
-#include "geo/pos.h"
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
-#include "common/formatter.h"
 #include "common/mapcolors.h"
-#include "common/maptypes.h"
 #include "atools.h"
-
-#include <QMessageBox>
-#include <QWidget>
-#include <QTableView>
-#include <QHeaderView>
-#include <QMenu>
-#include <QLineEdit>
-#include <QSqlField>
-
 #include "common/maptypesfactory.h"
+#include "sql/sqlrecord.h"
 
 using atools::gui::WidgetTools;
 
@@ -142,8 +127,6 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
   Search::initViewAndController();
-
-  using namespace std::placeholders;
 
   setCallbacks();
 }

@@ -285,7 +285,7 @@ void DatabaseManager::switchSimFromMainMenu()
     openDatabase();
 
     emit postDatabaseLoad(currentFsType);
-    mainWindow->statusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
+    mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
   }
 }
 

@@ -16,14 +16,15 @@
 *****************************************************************************/
 
 #include "search/searchcontroller.h"
+
 #include "gui/mainwindow.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/airportsearch.h"
-#include "navsearch.h"
+#include "search/navsearch.h"
 #include "mapgui/mapwidget.h"
-#include "gui/widgetstate.h"
-#include "search/controller.h"
+
+#include <QTabWidget>
 
 SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
                                    QTabWidget *tabWidgetSearch)

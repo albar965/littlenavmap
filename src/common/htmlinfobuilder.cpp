@@ -15,27 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "htmlinfobuilder.h"
-#include "symbolpainter.h"
-#include "common/maptypes.h"
-#include "mapgui/mapquery.h"
-#include "common/formatter.h"
-#include "route/routemapobjectlist.h"
-#include "geo/calculations.h"
-#include "fs/bgl/ap/rw/runway.h"
-#include "util/htmlbuilder.h"
-#include "util/morsecode.h"
-#include "common/weatherreporter.h"
+#include "common/htmlinfobuilder.h"
+
 #include "atools.h"
 #include "common/formatter.h"
-#include <QSize>
-#include "geo/calculations.h"
-
-#include "sql/sqlrecord.h"
-
-#include "info/infoquery.h"
-
+#include "common/maptypes.h"
+#include "common/weatherreporter.h"
+#include "fs/bgl/ap/rw/runway.h"
 #include "fs/sc/simconnectdata.h"
+#include "geo/calculations.h"
+#include "info/infoquery.h"
+#include "mapgui/mapquery.h"
+#include "route/routemapobjectlist.h"
+#include "sql/sqlrecord.h"
+#include "common/symbolpainter.h"
+#include "util/htmlbuilder.h"
+#include "util/morsecode.h"
+
+#include <QSize>
 
 using namespace maptypes;
 using atools::sql::SqlRecord;
@@ -834,7 +831,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData&
       const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
       float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
       html.row2(tr("Name and Type:"), rmo.getIdent() +
-                (rmo.getMapObjectTypeName().isEmpty() ? "tr(" : "), " + rmo.getMapObjectTypeName()));
+                (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
 
       QString timeStr;
       if(data.getGroundSpeedKts() > 20.f)

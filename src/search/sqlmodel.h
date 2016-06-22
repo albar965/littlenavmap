@@ -20,9 +20,9 @@
 
 #include "geo/rect.h"
 
-#include <QSqlQueryModel>
-
 #include <functional>
+
+#include <QSqlQueryModel>
 
 namespace atools {
 namespace sql {

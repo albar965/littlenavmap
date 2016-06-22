@@ -30,7 +30,7 @@ class CoordinateConverter;
 
 namespace maptools {
 
-const int MAX_LIST_ENTRIES = 5;
+static constexpr int MAX_LIST_ENTRIES = 5;
 
 template<typename TYPE>
 void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, QSet<int> *ids,

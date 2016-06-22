@@ -48,7 +48,6 @@ public:
   QList<atools::fs::FsPaths::SimulatorType> getAllRegistryPaths() const;
 
   QList<atools::fs::FsPaths::SimulatorType> getAllDatabasePaths() const;
-
   atools::fs::FsPaths::SimulatorType getBestLoadingSimulator();
 
 private:

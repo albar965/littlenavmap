@@ -18,49 +18,29 @@
 #include "mapgui/mapwidget.h"
 
 #include "common/constants.h"
-#include "connect/connectclient.h"
 #include "mapgui/mappaintlayer.h"
 #include "settings/settings.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mapscale.h"
-#include "common/formatter.h"
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
 #include "route/routecontroller.h"
 #include "atools.h"
+#include "mapgui/mapquery.h"
+#include "mapgui/maptooltip.h"
+#include "common/symbolpainter.h"
+#include "ui_mainwindow.h"
+#include "gui/actiontextsaver.h"
+#include "util/htmlbuilder.h"
 
 #include <QContextMenuEvent>
-#include <QMenu>
 #include <QToolTip>
 #include <QRubberBand>
 
 #include <marble/MarbleLocale.h>
-#include <marble/GeoDataDocument.h>
-#include <marble/GeoDataIconStyle.h>
-#include <marble/GeoDataPlacemark.h>
-#include <marble/GeoDataStyle.h>
-#include <marble/GeoDataTreeModel.h>
-#include <marble/MarbleModel.h>
 #include <marble/MarbleWidgetInputHandler.h>
-#include <marble/ViewportParams.h>
 #include <marble/MarbleModel.h>
-#include "common/coordinateconverter.h"
-#include "maplayer.h"
-#include "maptooltip.h"
-#include "common/symbolpainter.h"
-#include "ui_mainwindow.h"
-
-#include "gui/actiontextsaver.h"
-
-#include <QPainter>
-
-#include "route/routenetworkradio.h"
-#include "common/weatherreporter.h"
-
-#include "route/routenetworkairway.h"
-
-#include <util/htmlbuilder.h>
 
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
@@ -232,7 +212,7 @@ void MapWidget::historyNext()
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
-    mainWindow->statusMessage(tr("Map position history next."));
+    mainWindow->setStatusMessage(tr("Map position history next."));
   }
 }
 
@@ -244,7 +224,7 @@ void MapWidget::historyBack()
     setDistance(entry.getDistance());
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
-    mainWindow->statusMessage(tr("Map position history back."));
+    mainWindow->setStatusMessage(tr("Map position history back."));
   }
 }
 
@@ -366,7 +346,7 @@ void MapWidget::showMark()
   {
     setZoom(2700);
     centerOn(markPos.getLonX(), markPos.getLatY(), false);
-    mainWindow->statusMessage(tr("Showing distance search center."));
+    mainWindow->setStatusMessage(tr("Showing distance search center."));
   }
 }
 
@@ -396,7 +376,7 @@ void MapWidget::showHome()
   if(homePos.isValid())
   {
     centerOn(homePos.getLonX(), homePos.getLatY(), false);
-    mainWindow->statusMessage(tr("Showing home position."));
+    mainWindow->setStatusMessage(tr("Showing home position."));
   }
 }
 
@@ -406,7 +386,7 @@ void MapWidget::changeMark(const atools::geo::Pos& pos)
   emit markChanged(markPos);
   emit updateActionStates();
   update();
-  mainWindow->statusMessage(tr("Distance search center position changed."));
+  mainWindow->setStatusMessage(tr("Distance search center position changed."));
 }
 
 void MapWidget::changeRouteHighlight(const RouteMapObjectList& routeHighlight)
@@ -534,7 +514,7 @@ void MapWidget::changeHome()
   homeDistance = distance();
   emit updateActionStates();
   update();
-  mainWindow->statusMessage(QString(tr("Changed home position.")));
+  mainWindow->setStatusMessage(QString(tr("Changed home position.")));
 }
 
 void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
@@ -953,13 +933,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapHideOneRangeRing)
     {
       rangeMarkers.removeAt(rangeMarkerIndex);
-      mainWindow->statusMessage(QString(tr("Range ring removed from map.")));
+      mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
       update();
     }
     else if(action == ui->actionMapHideDistanceMarker)
     {
       distanceMarkers.removeAt(distMarkerIndex);
-      mainWindow->statusMessage(QString(tr("Measurement line removed from map.")));
+      mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
       update();
     }
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
@@ -1103,7 +1083,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
   rangeMarkers.append(ring);
   qDebug() << "navaid range" << ring.center;
   update();
-  mainWindow->statusMessage(tr("Added range rings for %1.").arg(ident));
+  mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
 }
 
 void MapWidget::addRangeRing(const atools::geo::Pos& pos)
@@ -1116,7 +1096,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 
   qDebug() << "range rings" << rings.center;
   update();
-  mainWindow->statusMessage(tr("Added range rings for position."));
+  mainWindow->setStatusMessage(tr("Added range rings for position."));
 }
 
 void MapWidget::clearRangeRingsAndDistanceMarkers()
@@ -1128,7 +1108,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
   currentDistanceMarkerIndex = -1;
 
   update();
-  mainWindow->statusMessage(tr("All range rings and measurement lines removed from map."));
+  mainWindow->setStatusMessage(tr("All range rings and measurement lines removed from map."));
 }
 
 void MapWidget::workOffline(bool offline)
@@ -1409,7 +1389,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
     else
       showRect(mapSearchResult.airports.at(0).bounding);
-    mainWindow->statusMessage(QString(tr("Showing airport on map.")));
+    mainWindow->setStatusMessage(QString(tr("Showing airport on map.")));
   }
   else
   {
@@ -1421,7 +1401,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.waypoints.at(0).position);
     else if(!mapSearchResult.userPoints.isEmpty())
       showPos(mapSearchResult.userPoints.at(0).position);
-    mainWindow->statusMessage(QString(tr("Showing navaid on map.")));
+    mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
 }
 
@@ -1452,7 +1432,7 @@ void MapWidget::deleteAircraftTrack()
   aircraftTrack.clear();
   emit updateActionStates();
   update();
-  mainWindow->statusMessage(QString(tr("Aircraft track removed from map.")));
+  mainWindow->setStatusMessage(QString(tr("Aircraft track removed from map.")));
 }
 
 bool MapWidget::event(QEvent *event)
@@ -1623,7 +1603,7 @@ void MapWidget::updateVisibleObjects()
     }
     visibleTooltip.tableEnd();
 
-    mainWindow->setMessageText(visible.join(","), visibleTooltip.getHtml());
+    mainWindow->setShownMapObjectsMessageText(visible.join(","), visibleTooltip.getHtml());
   }
 }
 
@@ -1646,8 +1626,8 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     changed = true;
   }
 
-  QElapsedTimer t;
-  t.start();
+  // QElapsedTimer t;
+  // t.start();
 
   MarbleWidget::paintEvent(paintEvent);
 

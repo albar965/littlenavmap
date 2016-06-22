@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routecommand.h"
-#include "routecontroller.h"
+#include "route/routecommand.h"
+#include "route/routecontroller.h"
 
 RouteCommand::RouteCommand(RouteController *routeController,
                            const atools::fs::pln::Flightplan& flightplanBefore, const QString& text,

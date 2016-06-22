@@ -15,8 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "db/dbtypes.h"
+
 #include "logging/loggingdefs.h"
-#include "dbtypes.h"
 
 #include <QDataStream>
 

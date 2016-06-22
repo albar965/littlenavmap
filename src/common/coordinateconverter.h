@@ -25,7 +25,6 @@
 
 namespace Marble {
 class ViewportParams;
-class GeoDataCoordinates;
 }
 
 namespace atools {
@@ -34,19 +33,20 @@ class Pos;
 }
 }
 
-const QSize DEFAULT_WTOS_SIZE(100, 100);
-
 class CoordinateConverter
 {
 public:
   CoordinateConverter(const Marble::ViewportParams *viewportParams);
   ~CoordinateConverter();
 
+  const static QSize DEFAULT_WTOS_SIZE;
+
   bool isVisible(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
                  bool *isHidden = nullptr) const;
 
   QPoint wToS(const Marble::GeoDataCoordinates& coords, const QSize& size = DEFAULT_WTOS_SIZE,
-              bool *visible = nullptr, bool *isHidden = nullptr) const;
+              bool *visible = nullptr,
+              bool *isHidden = nullptr) const;
   bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y,
             const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
   bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
@@ -67,14 +67,17 @@ public:
 
   bool isHidden(const atools::geo::Pos& coords) const;
 
-  const Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
-  const Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
-  const Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
+  static constexpr Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
+  static constexpr Marble::GeoDataCoordinates::BearingType INITBRG =
+    Marble::GeoDataCoordinates::InitialBearing;
+  static constexpr Marble::GeoDataCoordinates::BearingType FINALBRG =
+    Marble::GeoDataCoordinates::FinalBearing;
 
 private:
-  const Marble::ViewportParams *viewport;
   bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size,
                     bool *isHidden) const;
+
+  const Marble::ViewportParams *viewport;
 
 };
 

@@ -15,14 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapcolors.h"
+#include "common/mapcolors.h"
+#include "mapgui/mapquery.h"
 
 #include <QPen>
 #include <QString>
 #include <QApplication>
 #include <QPalette>
-
-#include "mapgui/mapquery.h"
 
 namespace mapcolors {
 

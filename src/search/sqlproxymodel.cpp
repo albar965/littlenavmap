@@ -16,9 +16,9 @@
 *****************************************************************************/
 
 #include "search/sqlproxymodel.h"
+
 #include "geo/calculations.h"
 #include "search/sqlmodel.h"
-#include "common/formatter.h"
 
 #include <QApplication>
 

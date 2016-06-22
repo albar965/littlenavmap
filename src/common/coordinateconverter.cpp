@@ -15,15 +15,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "coordinateconverter.h"
+#include "common/coordinateconverter.h"
 
 #include "geo/pos.h"
 
-#include <marble/GeoDataCoordinates.h>
 #include <marble/ViewportParams.h>
 
 using namespace Marble;
 using namespace atools::geo;
+
+const QSize CoordinateConverter::DEFAULT_WTOS_SIZE(100, 100);
 
 CoordinateConverter::CoordinateConverter(const ViewportParams *viewportParams)
   : viewport(viewportParams)
@@ -126,7 +127,6 @@ QPoint CoordinateConverter::wToS(const atools::geo::Pos& coords, const QSize& si
     else
       return QPoint();
   }
-
 }
 
 QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const QSize& size, bool *visible,

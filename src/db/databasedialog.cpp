@@ -15,17 +15,16 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "databasedialog.h"
+#include "db/databasedialog.h"
 
 #include "common/constants.h"
+#include "db/databasemanager.h"
+#include "fs/fspaths.h"
+#include "gui/dialog.h"
 #include "logging/loggingdefs.h"
 #include "ui_databasedialog.h"
-#include "fs/fspaths.h"
-#include "db/databasemanager.h"
 
 #include <QDialog>
-
-#include "gui/dialog.h"
 
 using atools::fs::FsPaths;
 
@@ -37,7 +36,6 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathTypeMap& pathMap)
   ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));
 
   // Add an action to the toolbutton for each simulator
-  // TODO Sort
   for(atools::fs::FsPaths::SimulatorType type : paths.getAllRegistryPaths())
     ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));

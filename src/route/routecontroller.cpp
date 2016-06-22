@@ -18,47 +18,44 @@
 #include "routecontroller.h"
 
 #include "common/constants.h"
-#include <QClipboard>
-#include "fs/pln/flightplan.h"
 #include "common/formatter.h"
-#include "geo/calculations.h"
+#include "exception.h"
+#include "export/csvexporter.h"
+#include "gui/actiontextsaver.h"
+#include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "mapgui/mapwidget.h"
-#include <QStandardItemModel>
-#include <QTableView>
-#include <QHeaderView>
-#include <QFile>
-#include <QFileInfo>
 #include "gui/tablezoomhandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
-#include <QSpinBox>
-#include "common/mapcolors.h"
+#include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
-#include "routecommand.h"
-#include "routefinder.h"
-#include "routeicondelegate.h"
-#include "routenetworkairway.h"
-#include "routenetworkradio.h"
-#include "ui_mainwindow.h"
+#include "route/routefinder.h"
+#include "route/routeicondelegate.h"
+#include "route/routenetworkairway.h"
+#include "route/routenetworkradio.h"
 #include "settings/settings.h"
-#include "gui/actiontextsaver.h"
-#include "gui/dialog.h"
-#include "gui/errorhandler.h"
-#include <QListWidget>
-#include <QUndoStack>
-#include <QVector2D>
-#include "exception.h"
-#include <export/csvexporter.h>
+#include "ui_mainwindow.h"
+
+#include <QClipboard>
+#include <QFile>
+#include <QStandardItemModel>
+#include <QMessageBox>
 
 const int ROUTE_UNDO_LIMIT = 50;
-// TODO tr
-const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"), QObject::tr("Region"), QObject::tr(
-                                      "Name"), QObject::tr("Airway"), QObject::tr("Type"), QObject::tr(
-                                      "Freq.\nMHz/kHz"),
-                                    QObject::tr("Course\n°M"), QObject::tr("Direct\n°M"), QObject::tr(
-                                      "Distance\nnm"), QObject::tr("Remaining\nnm"),
-                                    QObject::tr("Leg Time\nhh:mm"), QObject::tr("ETA\nhh:mm UTC")});
+
+const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
+                                    QObject::tr("Region"),
+                                    QObject::tr("Name"),
+                                    QObject::tr("Airway"),
+                                    QObject::tr("Type"),
+                                    QObject::tr("Freq.\nMHz/kHz"),
+                                    QObject::tr("Course\n°M"),
+                                    QObject::tr("Direct\n°M"),
+                                    QObject::tr("Distance\nnm"),
+                                    QObject::tr("Remaining\nnm"),
+                                    QObject::tr("Leg Time\nhh:mm"),
+                                    QObject::tr("ETA\nhh:mm UTC")});
+
 namespace rc {
 enum RouteColumns
 {
@@ -215,12 +212,12 @@ RouteController::~RouteController()
 
 void RouteController::undoTriggered()
 {
-  mainWindow->statusMessage(QString(tr("Undo flight plan change.")));
+  mainWindow->setStatusMessage(QString(tr("Undo flight plan change.")));
 }
 
 void RouteController::redoTriggered()
 {
-  mainWindow->statusMessage(QString(tr("Redo flight plan change.")));
+  mainWindow->setStatusMessage(QString(tr("Redo flight plan change.")));
 }
 
 void RouteController::tableCopyClipboard()
@@ -233,7 +230,7 @@ void RouteController::tableCopyClipboard()
   if(!csv.isEmpty())
     QApplication::clipboard()->setText(csv);
 
-  mainWindow->statusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+  mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
 void RouteController::routeAltChanged()
@@ -272,7 +269,7 @@ void RouteController::routeTypeChanged()
   {
     emit routeChanged(false);
     Ui::MainWindow *ui = mainWindow->getUi();
-    mainWindow->statusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
+    mainWindow->setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
   }
 }
 
@@ -427,7 +424,7 @@ void RouteController::calculateDirect()
   postChange(undoCommand);
   updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->statusMessage(tr("Calculated direct flight plan."));
+  mainWindow->setStatusMessage(tr("Calculated direct flight plan."));
 }
 
 void RouteController::calculateRadionav()
@@ -440,7 +437,7 @@ void RouteController::calculateRadionav()
 
   calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"), false,
                          false);
-  mainWindow->statusMessage(tr("Calculated radio navaid flight plan."));
+  mainWindow->setStatusMessage(tr("Calculated radio navaid flight plan."));
 }
 
 void RouteController::calculateHighAlt()
@@ -453,7 +450,7 @@ void RouteController::calculateHighAlt()
   calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, tr("High altitude Flight Plan Calculation"),
                          true,
                          false);
-  mainWindow->statusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
+  mainWindow->setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
 }
 
 void RouteController::calculateLowAlt()
@@ -466,7 +463,7 @@ void RouteController::calculateLowAlt()
   calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, tr(
                            "Low altitude Flight Plan Calculation"), true,
                          false);
-  mainWindow->statusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
+  mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
 }
 
 void RouteController::calculateSetAlt()
@@ -483,7 +480,7 @@ void RouteController::calculateSetAlt()
     type = atools::fs::pln::LOW_ALT;
 
   calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"), true, true);
-  mainWindow->statusMessage(tr("Calculated high/low flight plan for given altitude."));
+  mainWindow->setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
 }
 
 void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
@@ -584,7 +581,7 @@ void RouteController::reverse()
   postChange(undoCommand);
   updateWindowTitle();
   emit routeChanged(true);
-  mainWindow->statusMessage(tr("Reversed flight plan."));
+  mainWindow->setStatusMessage(tr("Reversed flight plan."));
 }
 
 QString RouteController::getDefaultFilename() const
@@ -761,9 +758,9 @@ void RouteController::showOnMapMenu()
       emit showPos(routeMapObject.getPosition(), 2700);
 
     if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
-      mainWindow->statusMessage(tr("Showing airport on map."));
+      mainWindow->setStatusMessage(tr("Showing airport on map."));
     else
-      mainWindow->statusMessage(tr("Showing navaid on map."));
+      mainWindow->setStatusMessage(tr("Showing navaid on map."));
   }
 }
 
@@ -840,7 +837,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
           header->moveSection(header->visualIndex(i), i);
 
         view->resizeColumnsToContents();
-        mainWindow->statusMessage(tr("Table view reset to defaults."));
+        mainWindow->setStatusMessage(tr("Table view reset to defaults."));
       }
       else if(action == ui->actionSearchTableSelectAll)
         view->selectAll();
@@ -971,7 +968,7 @@ void RouteController::moveLegsInternal(int dir)
     updateWindowTitle();
 
     emit routeChanged(true);
-    mainWindow->statusMessage(tr("Moved flight plan legs."));
+    mainWindow->setStatusMessage(tr("Moved flight plan legs."));
   }
 }
 
@@ -995,7 +992,7 @@ void RouteController::routeDelete(int routeIndex, maptypes::MapObjectTypes type)
 
   emit routeChanged(true);
 
-  mainWindow->statusMessage(tr("Removed waypoint from flight plan."));
+  mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
 }
 
 void RouteController::deleteLegs()
@@ -1028,7 +1025,7 @@ void RouteController::deleteLegs()
     updateWindowTitle();
 
     emit routeChanged(true);
-    mainWindow->statusMessage(tr("Removed flight plan legs."));
+    mainWindow->setStatusMessage(tr("Removed flight plan legs."));
   }
 }
 
@@ -1088,8 +1085,8 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 
   emit routeChanged(true);
 
-  mainWindow->statusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
-                            arg(maptypes::parkingNameNumberType(parking)));
+  mainWindow->setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.first().getIdent()).
+                               arg(maptypes::parkingNameNumberType(parking)));
 }
 
 void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
@@ -1159,7 +1156,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
 
   emit routeChanged(true);
 
-  mainWindow->statusMessage(tr("Destination set to %1.").arg(airport.ident));
+  mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
 void RouteController::routeSetStart(maptypes::MapAirport airport)
@@ -1183,7 +1180,7 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
   updateWindowTitle();
 
   emit routeChanged(true);
-  mainWindow->statusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
+  mainWindow->setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
@@ -1217,7 +1214,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   updateWindowTitle();
 
   emit routeChanged(true);
-  mainWindow->statusMessage(tr("Replaced waypoint in flight plan."));
+  mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
@@ -1263,7 +1260,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   emit routeChanged(true);
 
-  mainWindow->statusMessage(tr("Added waypoint to flight plan."));
+  mainWindow->setStatusMessage(tr("Added waypoint to flight plan."));
 }
 
 void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)

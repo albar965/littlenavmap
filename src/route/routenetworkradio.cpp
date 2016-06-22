@@ -15,24 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetworkradio.h"
+#include "route/routenetworkradio.h"
 
 #include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlutil.h"
-
-#include "geo/calculations.h"
-#include "geo/pos.h"
-#include "geo/rect.h"
-
-#include <QElapsedTimer>
-
-using atools::sql::SqlDatabase;
-using atools::sql::SqlQuery;
-using atools::geo::Pos;
-using atools::geo::Rect;
-
-using namespace nw;
 
 RouteNetworkRadio::RouteNetworkRadio(atools::sql::SqlDatabase *sqlDb)
   : RouteNetwork(sqlDb, "route_node_radio", "route_edge_radio", {"range"}, {"distance"})

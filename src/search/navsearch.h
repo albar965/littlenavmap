@@ -18,8 +18,6 @@
 #ifndef LITTLENAVMAP_NAVSEARCHPANE_H
 #define LITTLENAVMAP_NAVSEARCHPANE_H
 
-#include "geo/pos.h"
-
 #include "search/search.h"
 
 #include <QObject>
@@ -45,8 +43,8 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  explicit NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                     MapQuery *query, int tabWidgetIndex);
+  NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+            MapQuery *query, int tabWidgetIndex);
   virtual ~NavSearch();
 
   virtual void saveState() override;
@@ -54,10 +52,11 @@ public:
   virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
 
   virtual void connectSlots() override;
-
   virtual void postDatabaseLoad() override;
 
 private:
+  virtual void updateMenu() override;
+
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                             const QVariant& dataValue, Qt::ItemDataRole role) const;
@@ -65,10 +64,7 @@ private:
 
   QList<QObject *> navSearchWidgets;
   QList<QAction *> navSearchMenuActions;
-
   NavIconDelegate *iconDelegate = nullptr;
-
-  virtual void updateMenu() override;
 
 };
 
