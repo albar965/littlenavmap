@@ -86,9 +86,6 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="actionDatabaseFiles"/>
-    <addaction name="actionReloadScenery"/>
-    <addaction name="separator"/>
     <addaction name="actionConnectSimulator"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
@@ -144,9 +141,18 @@
     <addaction name="actionRouteCalcSetAlt"/>
     <addaction name="actionRouteReverse"/>
    </widget>
+   <widget class="QMenu" name="menuDatabase">
+    <property name="title">
+     <string>&amp;Database</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionDatabaseFiles"/>
+    <addaction name="actionReloadScenery"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuMap"/>
+   <addaction name="menuDatabase"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>

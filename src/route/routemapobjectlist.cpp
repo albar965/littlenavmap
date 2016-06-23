@@ -16,7 +16,9 @@
 *****************************************************************************/
 
 #include "route/routemapobjectlist.h"
+
 #include "geo/calculations.h"
+#include "common/maptools.h"
 
 const float RouteMapObjectList::INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 
@@ -147,4 +149,71 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     return true;
   }
   return false;
+}
+
+void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
+                                    maptypes::MapSearchResult& mapobjects) const
+{
+  using maptools::insertSortedByDistance;
+
+  int x, y;
+  int i = 0;
+  for(const RouteMapObject& obj : *this)
+  {
+    if(conv.wToS(obj.getPosition(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+      {
+        switch(obj.getMapObjectType())
+        {
+          case maptypes::VOR :
+            {
+              maptypes::MapVor vor = obj.getVor();
+              vor.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+            }
+            break;
+          case maptypes::WAYPOINT:
+            {
+              maptypes::MapWaypoint wp = obj.getWaypoint();
+              wp.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+            }
+            break;
+          case maptypes::NDB:
+            {
+              maptypes::MapNdb ndb = obj.getNdb();
+              ndb.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+            }
+            break;
+          case maptypes::AIRPORT:
+            {
+              maptypes::MapAirport ap = obj.getAirport();
+              ap.routeIndex = i;
+              insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
+            }
+            break;
+          case maptypes::INVALID:
+            {
+              maptypes::MapUserpoint up;
+              up.routeIndex = i;
+              up.name = obj.getIdent() + " (not found)";
+              up.position = obj.getPosition();
+              mapobjects.userPoints.append(up);
+            }
+            break;
+          case maptypes::USER:
+            {
+              maptypes::MapUserpoint up;
+              up.id = i;
+              up.routeIndex = i;
+              up.name = obj.getIdent();
+              up.position = obj.getPosition();
+              mapobjects.userPoints.append(up);
+            }
+            break;
+        }
+      }
+    i++;
+  }
 }

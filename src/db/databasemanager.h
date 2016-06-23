@@ -91,6 +91,9 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
+  const QString DB_NAME = "LNMDB";
+  const QString DB_TYPE = "QSQLITE";
+
   void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
   bool runInternal(bool& loaded);
   void backupDatabaseFile();
@@ -109,7 +112,8 @@ private:
   void runNoMessages();
 
   QString databaseFile, databaseDirectory;
-  atools::sql::SqlDatabase db;
+  // Need a pointer since it has to be deleted before the destructor is left
+  atools::sql::SqlDatabase *db = nullptr;
   MainWindow *mainWindow;
   QProgressDialog *progressDialog = nullptr;
 

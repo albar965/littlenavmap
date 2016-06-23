@@ -88,8 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
   databaseManager = new DatabaseManager(this);
 
   databaseManager->openDatabase();
-  databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuTools);
-  // helpHandler->addDirLink("Database Files", databaseManager->getDatabaseDirectory());
+  databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
 
   weatherReporter = new WeatherReporter(this, databaseManager->getCurrentFsType());
 
@@ -146,6 +145,8 @@ MainWindow::~MainWindow()
 {
   qDebug() << "MainWindow destructor";
 
+  preDatabaseLoad();
+
   delete connectClient;
   delete routeController;
   delete searchController;
@@ -162,13 +163,13 @@ MainWindow::~MainWindow()
 
   delete dialog;
   delete errorHandler;
+
   delete databaseManager;
 
   Settings::shutdown();
   atools::gui::Translator::unload();
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
-
 }
 
 void MainWindow::showNavmapLegend()

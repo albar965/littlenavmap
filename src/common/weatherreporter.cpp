@@ -223,7 +223,7 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
       else
         metars.insert(icao, Report());
       qDebug() << "Request for" << icao << "succeeded.";
-      mainWindow->setStatusMessage(tr("Weather information updated."));
+      // mainWindow->setStatusMessage(tr("Weather information updated."));
       emit weatherUpdated();
     }
     else if(reply->error() != QNetworkReply::OperationCanceledError)

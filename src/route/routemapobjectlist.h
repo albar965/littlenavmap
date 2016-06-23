@@ -22,6 +22,8 @@
 
 #include "fs/pln/flightplan.h"
 
+class CoordinateConverter;
+
 class RouteMapObjectList :
   public QList<RouteMapObject>
 {
@@ -63,6 +65,9 @@ public:
   {
     flightplan = value;
   }
+
+  void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
+                  maptypes::MapSearchResult& mapobjects) const;
 
 private:
   float totalDistance = 0.f;

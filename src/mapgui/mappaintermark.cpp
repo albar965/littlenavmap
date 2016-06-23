@@ -25,6 +25,8 @@
 #include "common/symbolpainter.h"
 #include "atools.h"
 #include "common/constants.h"
+#include "route/routemapobject.h"
+#include "route/routemapobjectlist.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>

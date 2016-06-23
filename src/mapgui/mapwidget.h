@@ -20,7 +20,6 @@
 
 #include "common/maptypes.h"
 #include "gui/mapposhistory.h"
-#include "route/routemapobjectlist.h"
 #include "fs/sc/simconnectdata.h"
 #include "common/aircrafttrack.h"
 
@@ -46,6 +45,8 @@ class MapQuery;
 class RouteController;
 class MapTooltip;
 class QRubberBand;
+class MapScreenIndex;
+class RouteMapObjectList;
 
 enum MouseState
 {
@@ -104,20 +105,19 @@ public:
     return homePos;
   }
 
-  const maptypes::MapSearchResult& getHighlightMapObjects() const
+  const maptypes::MapSearchResult& getHighlightMapObjects() const;
+  const RouteMapObjectList& getRouteHighlightMapObjects() const;
+
+  const QList<maptypes::RangeMarker>& getRangeRings() const;
+
+  const QList<maptypes::DistanceMarker>& getDistanceMarkers() const;
+
+  const AircraftTrack& getAircraftTrack() const
   {
-    return highlightMapObjects;
+    return aircraftTrack;
   }
 
-  const RouteMapObjectList& getRouteHighlightMapObjects() const
-  {
-    return routeHighlightMapObjects;
-  }
-
-  const QList<maptypes::RangeMarker>& getRangeRings() const
-  {
-    return rangeMarkers;
-  }
+  void deleteAircraftTrack();
 
   void getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur);
 
@@ -125,11 +125,6 @@ public:
   void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
                        int frequency, int range);
   void clearRangeRingsAndDistanceMarkers();
-
-  const QList<maptypes::DistanceMarker>& getDistanceMarkers() const
-  {
-    return distanceMarkers;
-  }
 
   void workOffline(bool offline);
 
@@ -174,13 +169,6 @@ public:
     return mainWindow;
   }
 
-  const AircraftTrack& getAircraftTrack() const
-  {
-    return aircraftTrack;
-  }
-
-  void deleteAircraftTrack();
-
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -206,34 +194,10 @@ private:
 
   virtual void paintEvent(QPaintEvent *paintEvent) override;
 
-  void getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
-                                     maptypes::MapSearchResult& mapobjects);
-
-  void getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                 const RouteMapObjectList& routeMapObjects,
-                                 maptypes::MapSearchResult& mapobjects);
-
-  void getAllNearestMapObjects(int xs, int ys, int screenDistance,
-                               maptypes::MapSearchResult& mapSearchResult);
-
-  int getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance);
-  int getNearestRangeMarkerIndex(int xs, int ys, int screenDistance);
-
-  int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
-  int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
-  void getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result);
-
-  void updateRouteScreenLines();
-  void updateAirwayScreenLines();
   void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
-  void updateVisibleObjects();
+  void updateVisibleObjectsStatusBar();
 
   void handleInfoClick(QPoint pos);
-
-#ifdef DEBUG_MAP_CLICK
-  void debugOnClick(int x, int y);
-
-#endif
 
   QStringList kmlFiles;
   bool databaseLoadStatus = false;
@@ -259,13 +223,9 @@ private:
   double homeDistance = 0.;
   bool showMapPois = true;
   atools::geo::Pos markPos, homePos;
-  maptypes::MapSearchResult highlightMapObjects;
-  RouteMapObjectList routeHighlightMapObjects;
-  QList<maptypes::RangeMarker> rangeMarkers;
-  QList<maptypes::DistanceMarker> distanceMarkers;
-  QList<std::pair<int, QLine> > routeScreenLines;
-  QList<std::pair<int, QLine> > airwayScreenLines;
-  QList<std::pair<int, QPoint> > routeScreenPoints;
+
+  MapScreenIndex *screenIndex = nullptr;
+
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom, routeDragTo;
   int routeDragPoint = -1, routeDragLeg = -1;

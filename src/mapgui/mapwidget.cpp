@@ -30,6 +30,7 @@
 #include "mapgui/mapquery.h"
 #include "mapgui/maptooltip.h"
 #include "common/symbolpainter.h"
+#include "mapgui/mapscreenindex.h"
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
 #include "util/htmlbuilder.h"
@@ -63,6 +64,8 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
 
+  screenIndex = new MapScreenIndex(this, mapQuery, paintLayer);
+
   MarbleWidgetInputHandler *input = inputHandler();
   input->setMouseButtonPopupEnabled(Qt::RightButton, false);
   input->setMouseButtonPopupEnabled(Qt::LeftButton, false);
@@ -72,6 +75,7 @@ MapWidget::~MapWidget()
 {
   delete paintLayer;
   delete mapTooltip;
+  delete screenIndex;
 }
 
 void MapWidget::setTheme(const QString& theme, int index)
@@ -145,7 +149,7 @@ void MapWidget::updateMapShowFeatures()
   setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
   setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
-  updateVisibleObjects();
+  updateVisibleObjectsStatusBar();
   update();
 }
 
@@ -161,15 +165,15 @@ void MapWidget::setShowMapPois(bool show)
 void MapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
   paintLayer->setShowMapFeatures(type, show);
-  updateAirwayScreenLines();
+  screenIndex->updateAirwayScreenLines(curBox);
 }
 
 void MapWidget::setDetailFactor(int factor)
 {
   qDebug() << "setDetailFactor" << factor;
   paintLayer->setDetailFactor(factor);
-  updateVisibleObjects();
-  updateAirwayScreenLines();
+  updateVisibleObjectsStatusBar();
+  screenIndex->updateAirwayScreenLines(curBox);
 }
 
 maptypes::MapObjectTypes MapWidget::getShownMapFeatures()
@@ -199,8 +203,8 @@ void MapWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
   paintLayer->postDatabaseLoad();
-  updateAirwayScreenLines();
-  updateRouteScreenLines();
+  screenIndex->updateAirwayScreenLines(curBox);
+  screenIndex->updateRouteScreenGeometry();
   update();
 }
 
@@ -241,18 +245,7 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
   s.setValue(lnm::MAP_KMLFILES, kmlFiles);
   history.saveState(lnm::MAP_HISTORY);
-
-  QByteArray bytesDistMarker;
-  QDataStream ds(&bytesDistMarker, QIODevice::WriteOnly);
-  ds.setVersion(QDataStream::Qt_5_5);
-  ds << distanceMarkers;
-  s.setValueVar(lnm::MAP_DISTANCEMARKERS, bytesDistMarker);
-
-  QByteArray bytesRangeMarker;
-  QDataStream ds2(&bytesRangeMarker, QIODevice::WriteOnly);
-  ds2.setVersion(QDataStream::Qt_5_5);
-  ds2 << rangeMarkers;
-  s.setValueVar(lnm::MAP_RANGEMARKERS, bytesRangeMarker);
+  screenIndex->saveState();
 }
 
 void MapWidget::restoreState()
@@ -286,16 +279,7 @@ void MapWidget::restoreState()
       copyKml.removeAll(kml);
   }
   kmlFiles = copyKml;
-
-  QByteArray bytesDistMark(s.valueVar(lnm::MAP_DISTANCEMARKERS).toByteArray());
-  QDataStream ds(&bytesDistMark, QIODevice::ReadOnly);
-  ds.setVersion(QDataStream::Qt_5_5);
-  ds >> distanceMarkers;
-
-  QByteArray bytesRangeMark(s.valueVar(lnm::MAP_RANGEMARKERS).toByteArray());
-  QDataStream ds2(&bytesRangeMark, QIODevice::ReadOnly);
-  ds2.setVersion(QDataStream::Qt_5_5);
-  ds2 >> rangeMarkers;
+  screenIndex->restoreState();
 }
 
 void MapWidget::showSavedPos()
@@ -391,7 +375,7 @@ void MapWidget::changeMark(const atools::geo::Pos& pos)
 
 void MapWidget::changeRouteHighlight(const RouteMapObjectList& routeHighlight)
 {
-  routeHighlightMapObjects = routeHighlight;
+  screenIndex->getRouteHighlights() = routeHighlight;
   update();
 }
 
@@ -400,7 +384,7 @@ void MapWidget::routeChanged(bool geometryChanged)
   if(geometryChanged)
   {
     paintLayer->routeChanged();
-    updateRouteScreenLines();
+    screenIndex->updateRouteScreenGeometry();
     update();
   }
 }
@@ -504,7 +488,7 @@ void MapWidget::clearKmlFiles()
 
 void MapWidget::changeHighlight(const maptypes::MapSearchResult& positions)
 {
-  highlightMapObjects = positions;
+  screenIndex->getHighlights() = positions;
   update();
 }
 
@@ -522,7 +506,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
   qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
 
   maptypes::MapSearchResult result;
-  getAllNearestMapObjects(newPoint.x(), newPoint.y(), screenSearchDistance, result);
+  screenIndex->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
   CoordinateConverter conv(viewport());
 
@@ -700,8 +684,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapSetMark);
   menu.addAction(ui->actionMapSetHome);
 
-  int distMarkerIndex = getNearestDistanceMarkerIndex(point.x(), point.y(), screenSearchDistance);
-  int rangeMarkerIndex = getNearestRangeMarkerIndex(point.x(), point.y(), screenSearchDistance);
+  int distMarkerIndex = screenIndex->getNearestDistanceMarksIndex(point.x(), point.y(), screenSearchDistance);
+  int rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
 
   qreal lon, lat;
   bool visible = geoCoordinates(point.x(), point.y(), lon, lat);
@@ -714,7 +698,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapMeasureRhumbDistance->setEnabled(visible);
   ui->actionMapRangeRings->setEnabled(visible);
 
-  ui->actionMapHideRangeRings->setEnabled(!rangeMarkers.isEmpty() || !distanceMarkers.isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!screenIndex->getRangeMarks().isEmpty() ||
+                                          !screenIndex->getDistanceMarks().isEmpty());
   ui->actionMapHideOneRangeRing->setEnabled(visible && rangeMarkerIndex != -1);
   ui->actionMapHideDistanceMarker->setEnabled(visible && distMarkerIndex != -1);
 
@@ -726,7 +711,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteDeleteWaypoint->setEnabled(false);
 
   maptypes::MapSearchResult result;
-  getAllNearestMapObjects(point.x(), point.y(), screenSearchDistance, result);
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
   // maptypes::MapObjectTypes selectedSearchType = maptypes::NONE, selectedRangeType = maptypes::NONE;
   maptypes::MapAirport *airport = nullptr;
   maptypes::MapVor *vor = nullptr;
@@ -932,13 +917,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       changeMark(pos);
     else if(action == ui->actionMapHideOneRangeRing)
     {
-      rangeMarkers.removeAt(rangeMarkerIndex);
+      screenIndex->getRangeMarks().removeAt(rangeMarkerIndex);
       mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
       update();
     }
     else if(action == ui->actionMapHideDistanceMarker)
     {
-      distanceMarkers.removeAt(distMarkerIndex);
+      screenIndex->getDistanceMarks().removeAt(distMarkerIndex);
       mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
       update();
     }
@@ -992,11 +977,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.color = dm.rhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
       }
 
-      distanceMarkers.append(dm);
+      screenIndex->getDistanceMarks().append(dm);
 
       mouseState = DRAG_DISTANCE;
       setContextMenuPolicy(Qt::NoContextMenu);
-      currentDistanceMarkerIndex = distanceMarkers.size() - 1;
+      currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
     else if(action == ui->actionRouteDeleteWaypoint)
     {
@@ -1080,7 +1065,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
     ring.text = ident + " " + QLocale().toString(frequency / 100., 'f', 2);
 
   ring.ranges.append(range);
-  rangeMarkers.append(ring);
+  screenIndex->getRangeMarks().append(ring);
   qDebug() << "navaid range" << ring.center;
   update();
   mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
@@ -1092,7 +1077,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   rings.type = maptypes::NONE;
   rings.center = pos;
   rings.ranges = {50, 100, 200, 500};
-  rangeMarkers.append(rings);
+  screenIndex->getRangeMarks().append(rings);
 
   qDebug() << "range rings" << rings.center;
   update();
@@ -1103,8 +1088,8 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
 {
   qDebug() << "range rings hide";
 
-  rangeMarkers.clear();
-  distanceMarkers.clear();
+  screenIndex->getRangeMarks().clear();
+  screenIndex->getDistanceMarks().clear();
   currentDistanceMarkerIndex = -1;
 
   update();
@@ -1158,6 +1143,26 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
+const maptypes::MapSearchResult& MapWidget::getHighlightMapObjects() const
+{
+  return screenIndex->getHighlights();
+}
+
+const RouteMapObjectList& MapWidget::getRouteHighlightMapObjects() const
+{
+  return screenIndex->getRouteHighlights();
+}
+
+const QList<maptypes::RangeMarker>& MapWidget::getRangeRings() const
+{
+  return screenIndex->getRangeMarks();
+}
+
+const QList<maptypes::DistanceMarker>& MapWidget::getDistanceMarkers() const
+{
+  return screenIndex->getDistanceMarks();
+}
+
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
   if(!isActiveWindow())
@@ -1177,8 +1182,8 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(visible)
     {
       atools::geo::Pos p(lon, lat);
-      if(!distanceMarkers.isEmpty())
-        distanceMarkers[currentDistanceMarkerIndex].to = p;
+      if(!screenIndex->getDistanceMarks().isEmpty())
+        screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = p;
     }
     setViewContext(Marble::Animation);
     update();
@@ -1202,14 +1207,17 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
 
       if(routeEditMode &&
-         getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
+         screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                5) != -1 && rmos.size() > 1)
         // Change cursor at one route point
         cursorShape = Qt::CrossCursor;
       else if(routeEditMode &&
-              getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 && rmos.size() > 1)
+              screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
+                                                   5) != -1 && rmos.size() > 1)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
-      else if(getNearestDistanceMarkerIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+      else if(screenIndex->getNearestDistanceMarksIndex(event->pos().x(), event->pos().y(),
+                                                         screenSearchDistance) != -1)
         // Change cursor at the end of an marker
         cursorShape = Qt::CrossCursor;
 
@@ -1267,7 +1275,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
   {
     // End distance marker dragging
-    if(!distanceMarkers.isEmpty())
+    if(!screenIndex->getDistanceMarks().isEmpty())
     {
       setCursor(Qt::ArrowCursor);
       if(mouseState & DRAG_POST)
@@ -1275,16 +1283,16 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
-          distanceMarkers[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
+          screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
       }
       else if(mouseState & DRAG_POST_CANCEL)
       {
         if(mouseState & DRAG_DISTANCE)
           // Remove new one
-          distanceMarkers.removeAt(currentDistanceMarkerIndex);
+          screenIndex->getDistanceMarks().removeAt(currentDistanceMarkerIndex);
         else if(mouseState & DRAG_CHANGE_DISTANCE)
           // Replace modified one with backup
-          distanceMarkers[currentDistanceMarkerIndex] = distanceMarkerBackup;
+          screenIndex->getDistanceMarks()[currentDistanceMarkerIndex] = distanceMarkerBackup;
         currentDistanceMarkerIndex = -1;
       }
     }
@@ -1301,13 +1309,14 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {
     // Start all dragging
-    currentDistanceMarkerIndex = getNearestDistanceMarkerIndex(event->pos().x(),
-                                                               event->pos().y(), screenSearchDistance);
+    currentDistanceMarkerIndex = screenIndex->getNearestDistanceMarksIndex(event->pos().x(),
+                                                                            event->pos().y(),
+                                                                            screenSearchDistance);
     if(currentDistanceMarkerIndex != -1)
     {
       // Found an end - create a backup and start dragging
       mouseState = DRAG_CHANGE_DISTANCE;
-      distanceMarkerBackup = distanceMarkers.at(currentDistanceMarkerIndex);
+      distanceMarkerBackup = screenIndex->getDistanceMarks().at(currentDistanceMarkerIndex);
       setContextMenuPolicy(Qt::NoContextMenu);
     }
     else
@@ -1318,7 +1327,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
         if(rmos.size() > 1)
         {
-          int routePoint = getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
+          int routePoint = screenIndex->getNearestRoutePointIndex(event->pos().x(),
+                                                                  event->pos().y(), screenSearchDistance);
           if(routePoint != -1)
           {
             routeDragPoint = routePoint;
@@ -1342,7 +1352,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           }
           else
           {
-            int routeLeg = getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
+            int routeLeg = screenIndex->getNearestRouteLegIndex(event->pos().x(),
+                                                                event->pos().y(), screenSearchDistance);
             if(routeLeg != -1)
             {
               routeDragLeg = routeLeg;
@@ -1367,12 +1378,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       }
     }
   }
-
-#ifdef DEBUG_MAP_CLICK
-  if(event->button() == Qt::LeftButton && event->modifiers() & Qt::ControlModifier)
-    debugOnClick(event->pos().x(), event->pos().y());
-#endif
-
   mouseMoved = QPoint();
 }
 
@@ -1381,7 +1386,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   qDebug() << "mouseDoubleClickEvent";
 
   maptypes::MapSearchResult mapSearchResult;
-  getAllNearestMapObjects(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
+  screenIndex->getAllNearest(event->pos().x(),
+                                       event->pos().y(), screenSearchDistance, mapSearchResult);
 
   if(!mapSearchResult.airports.isEmpty())
   {
@@ -1442,8 +1448,9 @@ bool MapWidget::event(QEvent *event)
     // qDebug() << "QEvent::ToolTip";
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
     mapSearchResultTooltip = maptypes::MapSearchResult();
-    getAllNearestMapObjects(helpEvent->pos().x(),
-                            helpEvent->pos().y(), screenSearchDistanceTooltip, mapSearchResultTooltip);
+    screenIndex->getAllNearest(helpEvent->pos().x(),
+                                         helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                         mapSearchResultTooltip);
     tooltipPos = helpEvent->globalPos();
     updateTooltip();
     event->accept();
@@ -1453,85 +1460,7 @@ bool MapWidget::event(QEvent *event)
   return QWidget::event(event);
 }
 
-#ifdef DEBUG_MAP_CLICK
-void MapWidget::debugOnClick(int x, int y)
-{
-  qDebug() << "=== DEBUG CLICK";
-
-  maptypes::MapSearchResult mapSearchResult;
-
-  CoordinateConverter conv(viewport());
-  const MapLayer *mapLayer = paintLayer->getMapLayer();
-  const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
-
-  // Get objects from cache - alread present objects will be skipped
-  mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
-                              paintLayer->getShownMapFeatures() &
-                              // (maptypes::VOR | maptypes::NDB),
-                              (maptypes::WAYPOINT | maptypes::AIRWAYV | maptypes::AIRWAYJ),
-                              x, y, 10, mapSearchResult);
-
-  RouteNetworkAirway net(mapQuery->getDatabase());
-  // net.setMode( /*nw::ROUTE_DME |*/ nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
-  net.setMode(nw::ROUTE_JET);
-
-  nw::Node node;
-  if(!mapSearchResult.waypoints.isEmpty())
-  {
-    maptypes::MapWaypoint wp = mapSearchResult.waypoints.first();
-    node = net.getNodeByNavId(wp.id, nw::WAYPOINT_JET);
-
-    qDebug() << "=== node_id" << node.id << "type" << node.type;
-  }
-
-  // if(!mapSearchResult.vors.isEmpty())
-  // {
-  // maptypes::MapVor vor = mapSearchResult.vors.first();
-  // QString type = maptypes::vorType(vor);
-  // if(type == "VOR")
-  // node = net.getNodeByNavId(vor.id, nw::VOR);
-  // else if(type == "DME")
-  // node = net.getNodeByNavId(vor.id, nw::DME);
-  // else if(type == "VORDME")
-  // node = net.getNodeByNavId(vor.id, nw::VORDME);
-  // qDebug() << "=== node_id" << node.id << "type" << node.type
-  // << "VOR nav_id" << mapSearchResult.vors.first().id;
-  // }
-  // if(!mapSearchResult.ndbs.isEmpty())
-  // {
-  // node = net.getNodeByNavId(mapSearchResult.ndbs.first().id, nw::NDB);
-  // qDebug() << "=== node_id" << node.id << "type" << node.type
-  // << "NDB nav_id" << mapSearchResult.ndbs.first().id;
-  // }
-
-  if(node.id == -1)
-    return;
-
-  highlightMapObjects.airports.clear();
-  maptypes::MapAirport ap;
-  ap.id = node.id;
-  ap.position = node.pos;
-  highlightMapObjects.airports.append(ap);
-
-  QVector<nw::Node> neighbours;
-  QVector<nw::Edge> edges;
-  net.getNeighbours(node, neighbours, edges);
-
-  qDebug() << "=== num neighbors" << neighbours.size();
-  for(const nw::Node& n : neighbours)
-  {
-    maptypes::MapAirport a;
-    a.id = n.id;
-    a.position = n.pos;
-    highlightMapObjects.airports.append(a);
-  }
-
-  update();
-}
-
-#endif
-
-void MapWidget::updateVisibleObjects()
+void MapWidget::updateVisibleObjectsStatusBar()
 {
   const MapLayer *layer = paintLayer->getMapLayer();
 
@@ -1636,362 +1565,15 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 
   if(changed)
   {
-    updateVisibleObjects();
-    updateRouteScreenLines();
-    updateAirwayScreenLines();
+    updateVisibleObjectsStatusBar();
+    screenIndex->updateRouteScreenGeometry();
+    screenIndex->updateAirwayScreenLines(curBox);
   }
-
-  // if(viewContext() == Marble::Still)
-  // {
-  // model()->setWorkOffline(false);
-  // qDebug() << "Offline false";
-  // // update();
-  // }
-  // else
-  // model()->setWorkOffline(true);
-
-}
-
-void MapWidget::updateAirwayScreenLines()
-{
-  using atools::geo::Pos;
-  using maptypes::MapAirway;
-
-  airwayScreenLines.clear();
-
-  CoordinateConverter conv(viewport());
-  const MapScale *scale = paintLayer->getMapScale();
-  bool showJet = paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ);
-  bool showVictor = paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV);
-
-  if(scale->isValid() && paintLayer->getMapLayer()->isAirway() && (showJet || showVictor))
-  {
-    const QList<MapAirway> *airways = mapQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
-
-    for(int i = 0; i < airways->size(); i++)
-    {
-      const MapAirway& airway = airways->at(i);
-      if((airway.type == maptypes::VICTOR && !showVictor) || (airway.type == maptypes::JET && !showJet))
-        continue;
-
-      GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
-                                 airway.bounding.getEast(), airway.bounding.getWest(),
-                                 Marble::GeoDataCoordinates::Degree);
-
-      if(airwaybox.intersects(curBox))
-      {
-        float distanceMeter = airway.from.distanceMeterTo(airway.to);
-        // Approximate the needed number of line segments
-        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 20.f, 4.f), 72.f);
-        float step = 1.f / numSegments;
-
-        for(int j = 0; j < numSegments; j++)
-        {
-          float cur = step * static_cast<float>(j);
-          int xs1, ys1, xs2, ys2;
-          bool va = conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur), xs1, ys1);
-          bool vb = conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur + step), xs2, ys2);
-
-          if(va || vb)
-            airwayScreenLines.append(std::make_pair(airway.id, QLine(xs1, ys1, xs2, ys2)));
-        }
-      }
-    }
-  }
-}
-
-void MapWidget::updateRouteScreenLines()
-{
-  using atools::geo::Pos;
-
-  const RouteMapObjectList& routeMapObjects = mainWindow->getRouteController()->getRouteMapObjects();
-
-  routeScreenLines.clear();
-  routeScreenPoints.clear();
-
-  QList<std::pair<int, QPoint> > airportPoints;
-  QList<std::pair<int, QPoint> > otherPoints;
-
-  CoordinateConverter conv(viewport());
-  const MapScale *scale = paintLayer->getMapScale();
-  if(scale->isValid())
-  {
-    Pos p1;
-
-    for(int i = 0; i < routeMapObjects.size(); i++)
-    {
-      const Pos& p2 = routeMapObjects.at(i).getPosition();
-      maptypes::MapObjectTypes type = routeMapObjects.at(i).getMapObjectType();
-      int x2, y2;
-      conv.wToS(p2, x2, y2);
-
-      if(type == maptypes::AIRPORT && (i == 0 || i == routeMapObjects.size() - 1))
-        airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
-      else
-        otherPoints.append(std::make_pair(i, QPoint(x2, y2)));
-
-      if(p1.isValid())
-      {
-        float distanceMeter = p2.distanceMeterTo(p1);
-        // Approximate the needed number of line segments
-        float numSegments = std::min(std::max(scale->getPixelIntForMeter(distanceMeter) / 20.f, 4.f), 72.f);
-        float step = 1.f / numSegments;
-
-        for(int j = 0; j < numSegments; j++)
-        {
-          float cur = step * static_cast<float>(j);
-          int xs1, ys1, xs2, ys2;
-          bool visible1 = conv.wToS(p1.interpolate(p2, distanceMeter, cur), xs1, ys1);
-          bool visible2 = conv.wToS(p1.interpolate(p2, distanceMeter, cur + step), xs2, ys2);
-
-          if(visible1 || visible2)
-            routeScreenLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
-        }
-      }
-      p1 = p2;
-    }
-
-    routeScreenPoints.append(airportPoints);
-    routeScreenPoints.append(otherPoints);
-  }
-}
-
-void MapWidget::getAllNearestMapObjects(int xs, int ys, int screenDistance,
-                                        maptypes::MapSearchResult& mapSearchResult)
-{
-  CoordinateConverter conv(viewport());
-  const MapLayer *mapLayer = paintLayer->getMapLayer();
-  const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
-
-  // Airways use a screen coordinate buffer
-  getNearestAirways(xs, ys, screenDistance, mapSearchResult);
-
-  // Get copies from route
-  getNearestRouteMapObjects(xs, ys, screenDistance, mainWindow->getRouteController()->getRouteMapObjects(),
-                            mapSearchResult);
-
-  // Get copies from highlightMapObjects
-  getNearestHighlightMapObjects(xs, ys, screenDistance, mapSearchResult);
-
-  // Get objects from cache - alread present objects will be skipped
-  mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
-                              paintLayer->getShownMapFeatures() &
-                              (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT |
-                               maptypes::MARKER | maptypes::AIRWAYJ | maptypes::AIRWAYV),
-                              xs, ys, screenDistance, mapSearchResult);
-
-  // Update all incomplete objects, especially from search
-  for(maptypes::MapAirport& obj : mapSearchResult.airports)
-    if(!obj.complete())
-      mapQuery->getAirportById(obj, obj.getId());
-}
-
-void MapWidget::getNearestRouteMapObjects(int xs, int ys, int screenDistance,
-                                          const RouteMapObjectList& routeMapObjects,
-                                          maptypes::MapSearchResult& mapobjects)
-{
-  if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
-    return;
-
-  using maptools::insertSortedByDistance;
-
-  CoordinateConverter conv(viewport());
-  int x, y;
-
-  int i = 0;
-  for(const RouteMapObject& obj : routeMapObjects)
-  {
-    if(conv.wToS(obj.getPosition(), x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-      {
-        switch(obj.getMapObjectType())
-        {
-          case maptypes::VOR :
-            {
-              maptypes::MapVor vor = obj.getVor();
-              vor.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
-            }
-            break;
-          case maptypes::WAYPOINT:
-            {
-              maptypes::MapWaypoint wp = obj.getWaypoint();
-              wp.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
-            }
-            break;
-          case maptypes::NDB:
-            {
-              maptypes::MapNdb ndb = obj.getNdb();
-              ndb.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
-            }
-            break;
-          case maptypes::AIRPORT:
-            {
-              maptypes::MapAirport ap = obj.getAirport();
-              ap.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
-            }
-            break;
-          case maptypes::INVALID:
-            {
-              maptypes::MapUserpoint up;
-              up.routeIndex = i;
-              up.name = obj.getIdent() + " (not found)";
-              up.position = obj.getPosition();
-              mapobjects.userPoints.append(up);
-            }
-            break;
-          case maptypes::USER:
-            {
-              maptypes::MapUserpoint up;
-              up.id = i;
-              up.routeIndex = i;
-              up.name = obj.getIdent();
-              up.position = obj.getPosition();
-              mapobjects.userPoints.append(up);
-            }
-            break;
-        }
-      }
-    i++;
-  }
-}
-
-void MapWidget::getNearestHighlightMapObjects(int xs, int ys, int screenDistance,
-                                              maptypes::MapSearchResult& mapobjects)
-{
-  using namespace maptypes;
-
-  CoordinateConverter conv(viewport());
-  int x, y;
-
-  using maptools::insertSortedByDistance;
-
-  for(const maptypes::MapAirport& obj : highlightMapObjects.airports)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, obj);
-
-  for(const maptypes::MapVor& obj : highlightMapObjects.vors)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, obj);
-
-  for(const maptypes::MapNdb& obj : highlightMapObjects.ndbs)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, obj);
-
-  for(const maptypes::MapWaypoint& obj : highlightMapObjects.waypoints)
-    if(conv.wToS(obj.position, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, obj);
-}
-
-int MapWidget::getNearestDistanceMarkerIndex(int xs, int ys, int screenDistance)
-{
-  CoordinateConverter conv(viewport());
-  int index = 0;
-  int x, y;
-  for(const maptypes::DistanceMarker& marker : distanceMarkers)
-  {
-    if(conv.wToS(marker.to, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        return index;
-
-    index++;
-  }
-  return -1;
-}
-
-int MapWidget::getNearestRoutePointIndex(int xs, int ys, int screenDistance)
-{
-  if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
-    return -1;
-
-  int minIndex = -1;
-  int minDist = std::numeric_limits<int>::max();
-
-  for(const std::pair<int, QPoint>& rsp : routeScreenPoints)
-  {
-    const QPoint& point = rsp.second;
-    int dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);
-    if(dist < minDist && dist < screenDistance)
-    {
-      minDist = dist;
-      minIndex = rsp.first;
-    }
-  }
-  return minIndex;
-}
-
-void MapWidget::getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result)
-{
-  if(!paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYJ) &&
-     !paintLayer->getShownMapFeatures().testFlag(maptypes::AIRWAYV))
-    return;
-
-  for(int i = 0; i < airwayScreenLines.size(); i++)
-  {
-    const std::pair<int, QLine>& line = airwayScreenLines.at(i);
-
-    QLine l = line.second;
-
-    if(atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2(), true) < screenDistance)
-    {
-      maptypes::MapAirway airway;
-      mapQuery->getAirwayById(airway, line.first);
-      result.airways.append(airway);
-    }
-  }
-}
-
-int MapWidget::getNearestRouteLegIndex(int xs, int ys, int screenDistance)
-{
-  if(!paintLayer->getShownMapFeatures().testFlag(maptypes::ROUTE))
-    return -1;
-
-  int minIndex = -1;
-  float minDist = std::numeric_limits<float>::max();
-
-  for(int i = 0; i < routeScreenLines.size(); i++)
-  {
-    const std::pair<int, QLine>& line = routeScreenLines.at(i);
-
-    QLine l = line.second;
-
-    float dist = atools::geo::distanceToLine(xs, ys, l.x1(), l.y1(), l.x2(), l.y2(), true);
-
-    if(dist < minDist && dist < screenDistance)
-    {
-      minDist = dist;
-      minIndex = line.first;
-    }
-  }
-  return minIndex;
-}
-
-int MapWidget::getNearestRangeMarkerIndex(int xs, int ys, int screenDistance)
-{
-  CoordinateConverter conv(viewport());
-  int index = 0;
-  int x, y;
-  for(const maptypes::RangeMarker& marker : rangeMarkers)
-  {
-    if(conv.wToS(marker.center, x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-        return index;
-
-    index++;
-  }
-  return -1;
 }
 
 void MapWidget::handleInfoClick(QPoint pos)
 {
   maptypes::MapSearchResult result;
-  getAllNearestMapObjects(pos.x(), pos.y(), 10, result);
+  screenIndex->getAllNearest(pos.x(), pos.y(), 10, result);
   emit showInformation(result);
 }

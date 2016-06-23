@@ -443,10 +443,10 @@ struct RangeMarker
     return center;
   }
 
-  QDataStream& operator>>(QDataStream& dataStream);
-  QDataStream& operator<<(QDataStream& dataStream) const;
-
 };
+
+QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj);
 
 struct DistanceMarker
 {
@@ -465,8 +465,6 @@ struct DistanceMarker
 
 };
 
-QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj);
 QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj);
 
@@ -509,9 +507,12 @@ Q_DECLARE_TYPEINFO(maptypes::MapWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
+
+Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(maptypes::RangeMarker);
+Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(maptypes::DistanceMarker);
 
 #endif // LITTLENAVMAP_TYPES_H

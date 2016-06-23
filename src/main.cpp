@@ -38,18 +38,26 @@
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
 
+using namespace Marble;
+
 int main(int argc, char *argv[])
 {
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
 
+  // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
   qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
   qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<FsPathType>();
   qRegisterMetaTypeStreamOperators<FsPathTypeMap>();
+  qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
+  qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
+  qRegisterMetaTypeStreamOperators<QList<maptypes::DistanceMarker> >();
+  qRegisterMetaTypeStreamOperators<QList<maptypes::RangeMarker> >();
 
+  // Set application information
   int retval = 0;
   QApplication app(argc, argv);
   QApplication::setWindowIcon(QIcon(":/littlenavmap/resources/icons/navroute.svg"));
@@ -57,6 +65,8 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationName("ABarthel");
   QCoreApplication::setOrganizationDomain("abarthel.org");
   QCoreApplication::setApplicationVersion("0.9.0.develop");
+
+  DatabaseManager *dbManager = nullptr;
 
 #if defined(Q_OS_WIN32)
   QApplication::addLibraryPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
@@ -94,7 +104,7 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    using namespace Marble;
+    // Set up Marble widget and print debugging informations
     MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
     MarbleGlobal::getInstance()->setProfiles(profiles);
 
@@ -122,14 +132,19 @@ int main(int argc, char *argv[])
     s.getAndStoreValue(lnm::OPTIONS_VERSION, QCoreApplication::applicationVersion());
     s.syncSettings();
 
-    DatabaseManager mgr(nullptr);
-    if(mgr.checkIncompatibleDatabases())
+    // Check if database is compatible as the user to erase all incomatible ones
+    // If erasing databases is refused exit application
+    dbManager = new DatabaseManager(nullptr);
+    if(dbManager->checkIncompatibleDatabases())
     {
-    MainWindow mainWindow;
-    mainWindow.show();
+      delete dbManager;
+      dbManager = nullptr;
 
-    qDebug() << "Before app.exec()";
-    retval = app.exec();
+      MainWindow mainWindow;
+      mainWindow.show();
+
+      qDebug() << "Before app.exec()";
+      retval = app.exec();
     }
 
     qDebug() << "app.exec() done, retval is" << retval;
@@ -144,6 +159,10 @@ int main(int argc, char *argv[])
     atools::gui::ErrorHandler(nullptr).handleUnknownException();
     retval = 1;
   }
+
+  delete dbManager;
+  dbManager = nullptr;
+
   return retval;
 
 }

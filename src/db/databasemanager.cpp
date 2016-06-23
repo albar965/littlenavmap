@@ -124,7 +124,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   restoreState();
 
   databaseDirectory = Settings::getPath() + QDir::separator() + "little_navmap_db";
-  QDir().mkpath(databaseDirectory);
+  if(!QDir().mkpath(databaseDirectory))
+    qWarning() << "Cannot create db dir" << databaseDirectory;
 
   // Find simulators by default registry entries
   paths.fillDefault();
@@ -143,13 +144,15 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   databaseFile = buildDatabaseFileName(currentFsType);
 
+  qDebug() << "fs type" << currentFsType << "db file" << databaseFile;
+
   databaseDialog = new DatabaseDialog(mainWindow, paths);
 
   connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
           &DatabaseManager::simulatorChangedFromCombo);
 
-  if(!SqlDatabase::contains(QString()))
-    db = SqlDatabase::addDatabase("QSQLITE");
+  if(!SqlDatabase::contains(DB_NAME))
+    db = new SqlDatabase(SqlDatabase::addDatabase(DB_TYPE, DB_NAME));
 }
 
 DatabaseManager::~DatabaseManager()
@@ -158,7 +161,10 @@ DatabaseManager::~DatabaseManager()
 
   delete databaseDialog;
   delete progressDialog;
+
   closeDatabase();
+  delete db;
+  SqlDatabase::removeDatabase(DB_NAME);
 }
 
 bool DatabaseManager::checkIncompatibleDatabases()
@@ -167,7 +173,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
 
   // Need empty block to delete sqlDb before removing driver
   {
-    SqlDatabase sqlDb = SqlDatabase::addDatabase("QSQLITE", "tempdb");
+    SqlDatabase sqlDb = SqlDatabase::addDatabase(DB_TYPE, "tempdb");
     QStringList databaseNames, databaseFiles;
 
     // Collect all incompatible databases
@@ -186,6 +192,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
         {
           databaseNames.append(FsPaths::typeToName(type));
           databaseFiles.append(dbName);
+          qWarning() << "Incompatible database" << dbName;
         }
         sqlDb.close();
       }
@@ -329,12 +336,12 @@ void DatabaseManager::openDatabase()
   try
   {
     qDebug() << "Opening database" << databaseFile;
-    db.setDatabaseName(databaseFile);
+    db->setDatabaseName(databaseFile);
 
     if(Settings::instance().getAndStoreValue(lnm::OPTIONS_FOREIGNKEYS, false).toBool())
-      db.open({"PRAGMA foreign_keys = ON"});
+      db->open({"PRAGMA foreign_keys = ON"});
     else
-      db.open({"PRAGMA foreign_keys = OFF"});
+      db->open({"PRAGMA foreign_keys = OFF"});
 
     atools::sql::SqlQuery query(db);
     query.exec("PRAGMA foreign_keys");
@@ -342,7 +349,7 @@ void DatabaseManager::openDatabase()
       qDebug() << "Foreign keys are" << query.value(0).toBool();
 
     if(!hasSchema())
-      createEmptySchema(&db);
+      createEmptySchema(db);
   }
   catch(atools::Exception& e)
   {
@@ -359,8 +366,8 @@ void DatabaseManager::closeDatabase()
   try
   {
     qDebug() << "Closing database" << databaseFile;
-    if(db.isOpen())
-      db.close();
+    if(db->isOpen())
+      db->close();
   }
   catch(atools::Exception& e)
   {
@@ -379,7 +386,7 @@ QString DatabaseManager::getSimShortName() const
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 {
-  return &db;
+  return db;
 }
 
 void DatabaseManager::run()
@@ -430,7 +437,7 @@ bool DatabaseManager::runInternal(bool& loaded)
           if(loadScenery())
           {
             // Successfully loaded
-            DatabaseMeta dbmeta(&db);
+            DatabaseMeta dbmeta(db);
             dbmeta.updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
             dbmeta.updateTimestamp();
             reopenDialog = false;
@@ -502,7 +509,7 @@ bool DatabaseManager::loadScenery()
   {
     // Create a backup and delete the original file
     backupDatabaseFile();
-    atools::fs::Navdatabase nd(&opts, &db);
+    atools::fs::Navdatabase nd(&opts, db);
     nd.create();
   }
   catch(atools::Exception& e)
@@ -550,41 +557,41 @@ void DatabaseManager::simulatorChangedFromCombo(FsPaths::SimulatorType value)
 void DatabaseManager::backupDatabaseFile()
 {
   qDebug() << "Creating database backup";
-  db.close();
+  db->close();
 
-  QString backupName(db.databaseName() + "-backup");
+  QString backupName(db->databaseName() + "-backup");
   QFile backupFile(backupName);
   bool removed = backupFile.remove();
   qDebug() << "removed database backup" << backupFile.fileName() << removed;
 
-  QFile dbFile(db.databaseName());
+  QFile dbFile(db->databaseName());
   bool renamed = dbFile.rename(backupName);
-  qDebug() << "renamed database from" << db.databaseName() << "to" << backupName << renamed;
+  qDebug() << "renamed database from" << db->databaseName() << "to" << backupName << renamed;
 
-  db.open();
+  db->open();
 }
 
 void DatabaseManager::restoreDatabaseFileBackup()
 {
   qDebug() << "Restoring database backup";
-  db.close();
+  db->close();
 
-  QFile dbFile(db.databaseName());
+  QFile dbFile(db->databaseName());
   bool removed = dbFile.remove();
   qDebug() << "removed database" << dbFile.fileName() << removed;
 
-  QString backupName(db.databaseName() + "-backup");
+  QString backupName(db->databaseName() + "-backup");
   QFile backupFile(backupName);
-  bool copied = backupFile.copy(db.databaseName());
-  qDebug() << "copied database from" << backupName << "to" << db.databaseName() << copied;
+  bool copied = backupFile.copy(db->databaseName());
+  qDebug() << "copied database from" << backupName << "to" << db->databaseName() << copied;
 
-  db.open();
+  db->open();
 }
 
 void DatabaseManager::removeDatabaseFileBackup()
 {
   qDebug() << "Removing database backup";
-  QString backupName(db.databaseName() + "-backup");
+  QString backupName(db->databaseName() + "-backup");
   QFile backupFile(backupName);
   bool removed = backupFile.remove();
   qDebug() << "removed database" << backupFile.fileName() << removed;
@@ -653,7 +660,7 @@ bool DatabaseManager::hasSchema()
 {
   try
   {
-    return DatabaseMeta(&db).hasSchema();
+    return DatabaseMeta(db).hasSchema();
   }
   catch(atools::Exception& e)
   {
@@ -670,7 +677,7 @@ bool DatabaseManager::hasData()
 {
   try
   {
-    return DatabaseMeta(&db).hasData();
+    return DatabaseMeta(db).hasData();
   }
   catch(atools::Exception& e)
   {
@@ -687,7 +694,7 @@ bool DatabaseManager::isDatabaseCompatible()
 {
   try
   {
-    return DatabaseMeta(&db).isDatabaseCompatible(DB_VERSION_MAJOR);
+    return DatabaseMeta(db).isDatabaseCompatible(DB_VERSION_MAJOR);
   }
   catch(atools::Exception& e)
   {
@@ -743,7 +750,7 @@ void DatabaseManager::restoreState()
 void DatabaseManager::updateDialogInfo()
 {
   QString metaText;
-  DatabaseMeta dbmeta(&db);
+  DatabaseMeta dbmeta(db);
   if(!dbmeta.isValid())
     metaText = DATABASE_META_TEXT.arg(tr("None")).
                arg(tr("None")).
@@ -761,7 +768,7 @@ void DatabaseManager::updateDialogInfo()
   QString tableText;
   if(hasSchema())
   {
-    atools::sql::SqlUtil util(&db);
+    atools::sql::SqlUtil util(db);
 
     // Get row counts for the dialog
     tableText = DATABASE_INFO_TEXT.arg(util.rowCount("bgl_file")).
