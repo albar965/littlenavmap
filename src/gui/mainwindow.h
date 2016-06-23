@@ -76,7 +76,7 @@ public:
 
   MapWidget *getMapWidget() const
   {
-    return navMapWidget;
+    return mapWidget;
   }
 
   RouteController *getRouteController() const
@@ -171,7 +171,7 @@ private:
   int mapDetailFactor;
 
   Ui::MainWindow *ui;
-  MapWidget *navMapWidget = nullptr;
+  MapWidget *mapWidget = nullptr;
   ProfileWidget *profileWidget = nullptr;
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
   QStringList statusMessages;

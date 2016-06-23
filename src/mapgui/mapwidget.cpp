@@ -270,16 +270,20 @@ void MapWidget::restoreState()
   if(s.contains(lnm::MAP_KMLFILES))
     kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
 
+  // Create a copy where all missing files will be removed
   QStringList copyKml(kmlFiles);
   for(const QString& kml : kmlFiles)
   {
-    if(QFile::exists(kml))
-      model()->addGeoDataFile(kml);
+    // Have to read the data ourselves to avoid centering on startup
+    QFile kmlFile(kml);
+    if(kmlFile.open(QFile::ReadOnly | QFile::Text))
+      model()->addGeoDataString(QTextStream(&kmlFile).readAll(), kml);
     else
       copyKml.removeAll(kml);
   }
   kmlFiles = copyKml;
   screenIndex->restoreState();
+  showSavedPos();
 }
 
 void MapWidget::showSavedPos()
@@ -1217,7 +1221,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
       else if(screenIndex->getNearestDistanceMarksIndex(event->pos().x(), event->pos().y(),
-                                                         screenSearchDistance) != -1)
+                                                        screenSearchDistance) != -1)
         // Change cursor at the end of an marker
         cursorShape = Qt::CrossCursor;
 
@@ -1310,8 +1314,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   {
     // Start all dragging
     currentDistanceMarkerIndex = screenIndex->getNearestDistanceMarksIndex(event->pos().x(),
-                                                                            event->pos().y(),
-                                                                            screenSearchDistance);
+                                                                           event->pos().y(),
+                                                                           screenSearchDistance);
     if(currentDistanceMarkerIndex != -1)
     {
       // Found an end - create a backup and start dragging
@@ -1387,7 +1391,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   maptypes::MapSearchResult mapSearchResult;
   screenIndex->getAllNearest(event->pos().x(),
-                                       event->pos().y(), screenSearchDistance, mapSearchResult);
+                             event->pos().y(), screenSearchDistance, mapSearchResult);
 
   if(!mapSearchResult.airports.isEmpty())
   {
@@ -1449,8 +1453,8 @@ bool MapWidget::event(QEvent *event)
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
     mapSearchResultTooltip = maptypes::MapSearchResult();
     screenIndex->getAllNearest(helpEvent->pos().x(),
-                                         helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                         mapSearchResultTooltip);
+                               helpEvent->pos().y(), screenSearchDistanceTooltip,
+                               mapSearchResultTooltip);
     tooltipPos = helpEvent->globalPos();
     updateTooltip();
     event->accept();
@@ -1577,3 +1581,5 @@ void MapWidget::handleInfoClick(QPoint pos)
   screenIndex->getAllNearest(pos.x(), pos.y(), 10, result);
   emit showInformation(result);
 }
+
+

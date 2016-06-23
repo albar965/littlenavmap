@@ -169,6 +169,11 @@ public:
     return mainWindow;
   }
 
+  const QStringList& getKmlFiles() const
+  {
+    return kmlFiles;
+  }
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
