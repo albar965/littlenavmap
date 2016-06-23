@@ -38,8 +38,9 @@ public:
   RouteFinder(RouteNetwork *routeNetwork);
   virtual ~RouteFinder();
 
-  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                      QVector<rf::RouteEntry>& route, int flownAltitude);
+  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude);
+
+  void extractRoute(QVector<rf::RouteEntry>& route, float& distance);
 
 private:
   // Force algortihm to avoid direct route from start to destination

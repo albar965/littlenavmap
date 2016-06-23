@@ -163,6 +163,8 @@ public:
   nw::Node getStartNode() const;
   nw::Node getDestinationNode() const;
 
+  nw::Node getNode(int id);
+
   int getNumberOfNodesDatabase();
   int getNumberOfNodesCache() const;
 

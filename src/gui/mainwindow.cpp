@@ -655,10 +655,21 @@ void MainWindow::routeCenter()
 bool MainWindow::routeValidate()
 {
   if(!routeController->hasValidStart() || !routeController->hasValidDestination())
-    dialog->showInfoMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
-                           tr("Flight Plan must have an airport as start and destination and "
-                              "will not be usable by the Simulator."),
-                           tr("Do not &show this dialog again."));
+  {
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
+                                            tr("Flight Plan must have an airport as "
+                                               "start and destination and "
+                                               "will not be usable by the Simulator."),
+                                            tr("Do not show this dialog again and"
+                                               " save Flight Plan in the future."),
+                                            QMessageBox::Cancel | QMessageBox::Save,
+                                            QMessageBox::Cancel, QMessageBox::Save);
+
+    if(result == QMessageBox::Save)
+      return true;
+    else if(result == QMessageBox::Cancel)
+      return false;
+  }
   else
   {
     if(!routeController->hasValidParking())
@@ -959,9 +970,11 @@ void MainWindow::resetMessages()
 
   // Show all message dialogs again
   s.setValue(lnm::ACTIONS_SHOWDISCONNECTINFO, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
-  s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWQUIT, true);
+  s.setValue(lnm::ACTIONS_SHOWRESETVIEW, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTEERROR, true);
   s.syncSettings();
   setStatusMessage(tr("All message dialogs reset."));
 }

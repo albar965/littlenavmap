@@ -145,6 +145,14 @@ nw::Node RouteNetwork::getDestinationNode() const
   return nodes.value(DESTINATION_NODE_ID);
 }
 
+nw::Node RouteNetwork::getNode(int id)
+{
+  if(id == -1)
+    return nw::Node();
+  else
+    return fetchNode(id);
+}
+
 void RouteNetwork::cleanDestNodeEdges()
 {
   // Remove all references to destination node

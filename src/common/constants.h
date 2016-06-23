@@ -25,11 +25,14 @@ const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f
 
 namespace lnm {
 
+/* State of "do not show again" dialog buttons */
 const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";
 const QString ACTIONS_SHOWQUIT = "Actions/ShowQuit";
 const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
 const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
 const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
+const QString ACTIONS_SHOWROUTEERROR = "Actions/ShowRouteError";
+
 const QString DATABASE_BASEPATH = "Database/BasePath";
 const QString DATABASE_LOADINGSIMULATOR = "Database/LoadingSimulator";
 const QString DATABASE_PATHS = "Database/Paths";

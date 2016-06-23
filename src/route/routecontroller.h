@@ -163,7 +163,7 @@ private:
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
 
-  void calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+  bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
                               bool fetchAirways, bool useSetAltitude);
 
@@ -183,6 +183,11 @@ private:
 
   void undoTriggered();
   void redoTriggered();
+
+  /* If route distance / direct distance if bigger than this value fail routing */
+  static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
+
+  static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
 
   // Need a workaround since QUndoStack does not report current indices and clean state
   int undoIndex = 0, undoIndexClean = 0;

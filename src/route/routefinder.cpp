@@ -15,8 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routefinder.h"
+#include "route/routefinder.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 using nw::Node;
 using nw::Edge;
@@ -39,8 +40,7 @@ RouteFinder::~RouteFinder()
 
 }
 
-bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to,
-                                 QVector<rf::RouteEntry>& route, int flownAltitude)
+bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude)
 {
   altitude = flownAltitude;
   network->addStartAndDestinationNodes(from, to);
@@ -83,38 +83,41 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     expandNode(currentNode, destNode);
   }
 
-  qDebug() << "heap size" << openNodesHeap.size();
-  qDebug() << "close nodes size" << closedNodes.size();
-
-  if(found)
-  {
-    route.reserve(500);
-    // Build route
-    int predId = currentNode.id;
-    while(predId != -1)
-    {
-      int navId;
-      nw::Type type;
-      network->getNavIdAndTypeForNode(predId, navId, type);
-
-      if(type != nw::START && type != nw::DESTINATION)
-      {
-        rf::RouteEntry entry;
-        entry.ref = {navId, toMapObjectType(type)};
-        entry.airwayId = nodeAirwayId.value(predId, -1);
-        route.prepend(entry);
-      }
-
-      predId = nodePredecessor.value(predId, -1);
-    }
-  }
-  else
-    qDebug() << "No route found";
+  qDebug() << "found" << found << "heap size" << openNodesHeap.size()
+           << "close nodes size" << closedNodes.size();
 
   qDebug() << "num nodes database" << network->getNumberOfNodesDatabase()
            << "num nodes cache" << network->getNumberOfNodesCache();
 
   return found;
+}
+
+void RouteFinder::extractRoute(QVector<rf::RouteEntry>& route, float& distanceMeter)
+{
+  distanceMeter = 0.f;
+  route.reserve(500);
+
+  // Build route
+  nw::Node pred = network->getDestinationNode();
+  while(pred.id != -1)
+  {
+    int navId;
+    nw::Type type;
+    network->getNavIdAndTypeForNode(pred.id, navId, type);
+
+    if(type != nw::START && type != nw::DESTINATION)
+    {
+      rf::RouteEntry entry;
+      entry.ref = {navId, toMapObjectType(type)};
+      entry.airwayId = nodeAirwayId.value(pred.id, -1);
+      route.prepend(entry);
+    }
+
+    nw::Node next = network->getNode(nodePredecessor.value(pred.id, -1));
+    if(next.pos.isValid())
+      distanceMeter += pred.pos.distanceMeterTo(next.pos);
+    pred = next;
+  }
 }
 
 void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
@@ -126,9 +129,6 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
   for(int i = 0; i < successorNodes.size(); i++)
   {
     const Node& successor = successorNodes.at(i);
-
-    if(successor.type == nw::DESTINATION)
-      qDebug() << "dest";
 
     if(closedNodes.contains(successor.id))
       continue;
@@ -148,14 +148,8 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
 
     if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
-    {
-#ifdef DEBUG_ROUTE
-      qDebug() << "not cheaper successorNodeCosts" << successorNodeCosts;
-      network->printNodeDebug(successor);
-#endif
       // New path is not cheaper
       continue;
-    }
 
     nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
     nodePredecessor[successor.id] = currentNode.id;
@@ -165,21 +159,9 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     float totalCost = successorNodeCosts + costEstimate(successor, destNode);
 
     if(openNodesHeap.contains(successor))
-    {
-#ifdef DEBUG_ROUTE
-      qDebug() << "change totalCost" << totalCost;
-      network->printNodeDebug(successor);
-#endif
       openNodesHeap.change(successor, totalCost);
-    }
     else
-    {
-#ifdef DEBUG_ROUTE
-      qDebug() << "push totalCost" << totalCost;
-      network->printNodeDebug(successor);
-#endif
       openNodesHeap.push(successor, totalCost);
-    }
   }
 }
 

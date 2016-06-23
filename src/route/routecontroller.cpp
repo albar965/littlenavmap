@@ -35,13 +35,12 @@
 #include "route/routenetworkradio.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
+#include "gui/dialog.h"
 
 #include <QClipboard>
 #include <QFile>
 #include <QStandardItemModel>
 #include <QMessageBox>
-
-const int ROUTE_UNDO_LIMIT = 50;
 
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
@@ -80,42 +79,6 @@ enum RouteColumns
 
 using namespace atools::fs::pln;
 using namespace atools::geo;
-
-#ifdef ROUTE_UNDO_DEBUG
-void reportUndo(QUndoStack *undoStack, int undoIndex, int undoIndexClean)
-{
-  qDebug() << "*** postChange: undo stack clean" << undoStack->isClean()
-           << "clean idx" << undoStack->cleanIndex()
-           << "undo stack cur idx" << undoStack->index()
-           << "undo stack size" << undoStack->count();
-
-  const QUndoCommand *cleanCmd = undoStack->command(undoStack->cleanIndex());
-  if(cleanCmd != nullptr)
-    qDebug() << "*** clean cmd" << cleanCmd->text();
-  else
-    qDebug() << "*** clean cmd null";
-
-  const QUndoCommand *curCmd = undoStack->command(undoStack->index());
-  if(curCmd != nullptr)
-    qDebug() << "*** cur cmd" << curCmd->text();
-  else
-    qDebug() << "*** cur cmd null";
-
-  for(int i = 0; i < undoStack->count(); i++)
-  {
-    const QUndoCommand *cmd = undoStack->command(i);
-    if(cmd != nullptr)
-      qDebug() << "*** #" << i << "cur cmd" << cmd->text();
-    else
-      qDebug() << "*** #" << i << "cur cmd null";
-
-  }
-
-  qDebug() << "*** undoIndex" << undoIndex;
-  qDebug() << "*** undoIndexClean" << undoIndexClean;
-}
-
-#endif
 
 RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
@@ -435,9 +398,11 @@ void RouteController::calculateRadionav()
 
   RouteFinder routeFinder(routeNetworkRadio);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"), false,
-                         false);
-  mainWindow->setStatusMessage(tr("Calculated radio navaid flight plan."));
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::VOR, tr("Radionnav Flight Plan Calculation"),
+                            false, false))
+    mainWindow->setStatusMessage(tr("Calculated radio navaid flight plan."));
+  else
+    mainWindow->setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateHighAlt()
@@ -447,10 +412,11 @@ void RouteController::calculateHighAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT, tr("High altitude Flight Plan Calculation"),
-                         true,
-                         false);
-  mainWindow->setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT,
+                            tr("High altitude Flight Plan Calculation"), true, false))
+    mainWindow->setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
+  else
+    mainWindow->setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateLowAlt()
@@ -460,10 +426,11 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, tr(
-                           "Low altitude Flight Plan Calculation"), true,
-                         false);
-  mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, tr("Low altitude Flight Plan Calculation"),
+                            true, false))
+    mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
+  else
+    mainWindow->setStatusMessage(tr("No route found."));
 }
 
 void RouteController::calculateSetAlt()
@@ -479,92 +446,105 @@ void RouteController::calculateSetAlt()
   else
     type = atools::fs::pln::LOW_ALT;
 
-  calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"), true, true);
-  mainWindow->setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
+  if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"), true, true))
+    mainWindow->setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
+  else
+    mainWindow->setStatusMessage(tr("No route found."));
 }
 
-void RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
+bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                                              const QString& commandName, bool fetchAirways,
                                              bool useSetAltitude)
 {
-  QVector<rf::RouteEntry> calculatedRoute;
-
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   Flightplan& flightplan = route.getFlightplan();
 
-  int altitude = 0;
-  if(useSetAltitude)
-    altitude = flightplan.getCruisingAlt();
+  int altitude = useSetAltitude ? flightplan.getCruisingAlt() : 0;
 
   bool found = routeFinder->calculateRoute(flightplan.getDeparturePos(),
-                                           flightplan.getDestinationPos(), calculatedRoute,
-                                           altitude);
+                                           flightplan.getDestinationPos(), altitude);
 
   if(found)
   {
-    RouteCommand *undoCommand = preChange(commandName);
+    float distance = 0.f;
+    QVector<rf::RouteEntry> calculatedRoute;
+    routeFinder->extractRoute(calculatedRoute, distance);
 
-    QList<FlightplanEntry>& entries = flightplan.getEntries();
+    float directDistance = flightplan.getDeparturePos().distanceMeterTo(flightplan.getDestinationPos());
+    float ratio = distance / directDistance;
+    qDebug() << "route distance" << QString::number(distance, 'f', 0)
+             << "direct distance" << QString::number(directDistance, 'f', 0) << "ratio" << ratio;
 
-    flightplan.setRouteType(type);
-    // Erase all but start and destination
-    entries.erase(flightplan.getEntries().begin() + 1, entries.end() - 1);
-
-    int minAltitude = 0;
-    for(const rf::RouteEntry& routeEntry : calculatedRoute)
+    if(ratio < MAX_DISTANCE_DIRECT_RATIO)
     {
-      // qDebug() << "Route id" << routeEntry.ref.id << "type" << routeEntry.ref.type;
-      FlightplanEntry flightplanEentry;
-      buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type, flightplanEentry,
-                           fetchAirways);
+      RouteCommand *undoCommand = preChange(commandName);
 
-      if(fetchAirways && routeEntry.airwayId != -1)
+      QList<FlightplanEntry>& entries = flightplan.getEntries();
+
+      flightplan.setRouteType(type);
+      // Erase all but start and destination
+      entries.erase(flightplan.getEntries().begin() + 1, entries.end() - 1);
+
+      int minAltitude = 0;
+      for(const rf::RouteEntry& routeEntry : calculatedRoute)
       {
-        int alt = 0;
-        updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEentry, alt);
-        minAltitude = std::max(minAltitude, alt);
+        // qDebug() << "Route id" << routeEntry.ref.id << "type" << routeEntry.ref.type;
+        FlightplanEntry flightplanEentry;
+        buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type, flightplanEentry,
+                             fetchAirways);
+
+        if(fetchAirways && routeEntry.airwayId != -1)
+        {
+          int alt = 0;
+          updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEentry, alt);
+          minAltitude = std::max(minAltitude, alt);
+        }
+
+        entries.insert(entries.end() - 1, flightplanEentry);
       }
 
-      entries.insert(entries.end() - 1, flightplanEentry);
+      if(minAltitude != 0 && !useSetAltitude)
+      {
+        float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
+
+        qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
+
+        if(fpDir >= 0.f && fpDir <= 180.f)
+          // General direction is east - round up to the next odd value
+          minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+        else
+          // General direction is west - round up to the next even value
+          minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
+
+        if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+          minAltitude += 500;
+
+        qDebug() << "corrected minAltitude" << minAltitude;
+
+        flightplan.setCruisingAlt(minAltitude);
+      }
+
+      QGuiApplication::restoreOverrideCursor();
+      createRouteMapObjects();
+      updateModel();
+      updateLabel();
+      postChange(undoCommand);
+      updateWindowTitle();
+      emit routeChanged(true);
     }
-
-    if(minAltitude != 0 && !useSetAltitude)
-    {
-      float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
-
-      qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
-
-      if(fpDir >= 0.f && fpDir <= 180.f)
-        // General direction is east - round up to the next odd value
-        minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
-      else
-        // General direction is west - round up to the next even value
-        minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
-
-      if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-        minAltitude += 500;
-
-      qDebug() << "corrected minAltitude" << minAltitude;
-
-      flightplan.setCruisingAlt(minAltitude);
-    }
-
-    QGuiApplication::restoreOverrideCursor();
-    createRouteMapObjects();
-    updateModel();
-    updateLabel();
-    postChange(undoCommand);
-    updateWindowTitle();
-    emit routeChanged(true);
+    else
+      found = false;
   }
-  else
-  {
-    QGuiApplication::restoreOverrideCursor();
-    QMessageBox::information(mainWindow,
-                             QApplication::applicationName(),
-                             tr("Routing failed. Start or destination are not reachable."));
-  }
+
+  QGuiApplication::restoreOverrideCursor();
+  if(!found)
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTEERROR,
+                                                   tr("Cannot find a route.\n"
+                                                      "Try another routing type or create the flight plan manually."),
+                                                   tr("Do not &show this dialog again."));
+
+  return found;
 }
 
 void RouteController::reverse()
@@ -609,14 +589,8 @@ QString RouteController::getDefaultFilename() const
   filename += ".pln";
 
   // Remove characters that are note allowed in most filesystems
-  filename.replace('\\', ' ');
-  filename.replace('/', ' ');
-  filename.replace(':', ' ');
-  filename.replace('\'', ' ');
-  filename.replace('<', ' ');
-  filename.replace('>', ' ');
-  filename.replace('?', ' ');
-  filename.replace('$', ' ');
+  filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
+  replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
   return filename;
 }
 
@@ -906,11 +880,6 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
-  // Called by route command
-#ifdef ROUTE_UNDO_DEBUG
-  reportUndo(undoStack, undoIndex, undoIndexClean);
-#endif
-
   route.setFlightplan(newFlightplan);
 
   createRouteMapObjects();
@@ -1704,8 +1673,4 @@ void RouteController::postChange(RouteCommand *undoCommand)
 
   undoIndex++;
   undoStack->push(undoCommand);
-
-#ifdef ROUTE_UNDO_DEBUG
-  reportUndo(undoStack, undoIndex, undoIndexClean);
-#endif
 }
