@@ -90,7 +90,7 @@ public:
 
   void disconnectedFromSimulator();
 
-  void addKmlFile(const QString& kmlFile);
+  bool addKmlFile(const QString& kmlFile);
   void clearKmlFiles();
 
   bool eventFilter(QObject *obj, QEvent *e) override;
@@ -174,6 +174,8 @@ public:
     return kmlFiles;
   }
 
+  void mainWindowShown();
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -203,6 +205,7 @@ private:
   void updateVisibleObjectsStatusBar();
 
   void handleInfoClick(QPoint pos);
+  bool loadKml(const QString& filename, bool center);
 
   QStringList kmlFiles;
   bool databaseLoadStatus = false;

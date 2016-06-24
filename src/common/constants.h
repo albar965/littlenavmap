@@ -66,6 +66,7 @@ const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
 const QString OPTIONS_LANGUAGE = "Options/Language";
 const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
 const QString OPTIONS_VERSION = "Options/Version";
+const QString OPTIONS_SETTINGS_VERSION = "Options/SettingsVersion";
 
 } // namespace lnm
 

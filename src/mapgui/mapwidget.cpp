@@ -35,9 +35,12 @@
 #include "gui/actiontextsaver.h"
 #include "util/htmlbuilder.h"
 
+#include "zip/zipreader.h"
+
 #include <QContextMenuEvent>
 #include <QToolTip>
 #include <QRubberBand>
+#include <QMessageBox>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleWidgetInputHandler.h>
@@ -269,20 +272,19 @@ void MapWidget::restoreState()
 
   if(s.contains(lnm::MAP_KMLFILES))
     kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
+  screenIndex->restoreState();
+}
 
+void MapWidget::mainWindowShown()
+{
   // Create a copy where all missing files will be removed
   QStringList copyKml(kmlFiles);
   for(const QString& kml : kmlFiles)
-  {
-    // Have to read the data ourselves to avoid centering on startup
-    QFile kmlFile(kml);
-    if(kmlFile.open(QFile::ReadOnly | QFile::Text))
-      model()->addGeoDataString(QTextStream(&kmlFile).readAll(), kml);
-    else
+    if(!loadKml(kml, false))
       copyKml.removeAll(kml);
-  }
+
   kmlFiles = copyKml;
-  screenIndex->restoreState();
+
   showSavedPos();
 }
 
@@ -477,10 +479,16 @@ void MapWidget::disconnectedFromSimulator()
   update();
 }
 
-void MapWidget::addKmlFile(const QString& kmlFile)
+bool MapWidget::addKmlFile(const QString& kmlFile)
 {
-  kmlFiles.append(kmlFile);
-  model()->addGeoDataFile(kmlFile);
+  if(loadKml(kmlFile, true))
+  {
+    // Add to the list of files that will be reloaded on startup
+    kmlFiles.append(kmlFile);
+    return true;
+  }
+  else
+    return false;
 }
 
 void MapWidget::clearKmlFiles()
@@ -1582,4 +1590,47 @@ void MapWidget::handleInfoClick(QPoint pos)
   emit showInformation(result);
 }
 
+bool MapWidget::loadKml(const QString& filename, bool center)
+{
+  bool retval = false;
 
+  if(QFile::exists(filename))
+  {
+    QString kmlString;
+    atools::zip::ZipReader reader(filename);
+    if(reader.exists() && reader.isReadable() &&
+       reader.status() == atools::zip::ZipReader::NoError)
+    {
+      QByteArray filedata = reader.fileData("doc.kml");
+      if(!filedata.isEmpty() && reader.status() == atools::zip::ZipReader::NoError)
+        kmlString = QString(filedata).trimmed();
+    }
+
+    if(kmlString.isEmpty())
+    {
+      QFile file(filename);
+      if(file.open(QFile::ReadOnly | QFile::Text))
+        kmlString = QTextStream(&file).readAll().trimmed();
+    }
+
+    // Do some rudimentary file content checking
+    if(!kmlString.isEmpty() && kmlString.startsWith("<?xml") && kmlString.endsWith("</kml>"))
+    {
+      if(center)
+        model()->addGeoDataFile(filename);
+      else
+        // Have to read the data ourselves to avoid centering on startup
+        model()->addGeoDataString(kmlString, filename);
+      retval = true;
+    }
+
+    if(!retval)
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("File %1 is malformed or neither KML nor KMZ.").arg(filename));
+  }
+  else
+    QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                         tr("File %1 does not exist.").arg(filename));
+
+  return retval;
+}

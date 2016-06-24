@@ -854,25 +854,29 @@ void MainWindow::kmlOpen()
 
   if(!kmlFile.isEmpty())
   {
-    kmlFileHistory->addFile(kmlFile);
-    mapWidget->addKmlFile(kmlFile);
-    updateActionStates();
-    setStatusMessage(tr("Google Earth KML file opened."));
+    if(mapWidget->addKmlFile(kmlFile))
+    {
+      kmlFileHistory->addFile(kmlFile);
+      updateActionStates();
+      setStatusMessage(tr("Google Earth KML file opened."));
+    }
+    else
+      setStatusMessage(tr("Opening Google Earth KML file failed."));
+
   }
 }
 
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
-  if(QFile::exists(kmlFile))
+  if(mapWidget->addKmlFile(kmlFile))
   {
-    mapWidget->addKmlFile(kmlFile);
     updateActionStates();
     setStatusMessage(tr("Google Earth KML file opened."));
   }
   else
   {
-    QMessageBox::warning(this, QApplication::applicationName(), tr("File \"%1\" does not exist").arg(kmlFile));
     kmlFileHistory->removeFile(kmlFile);
+    setStatusMessage(tr("Opening Google Earth KML file failed."));
   }
 }
 
@@ -1008,6 +1012,9 @@ void MainWindow::options()
 void MainWindow::mainWindowShown()
 {
   qDebug() << "MainWindow::mainWindowShown()";
+
+  // Postpone loading of KML etc. until now when everything is set ups
+  mapWidget->mainWindowShown();
 
   if(firstApplicationStart)
   {
