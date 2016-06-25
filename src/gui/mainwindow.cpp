@@ -998,15 +998,21 @@ void MainWindow::setStatusMessage(const QString& message)
 
 void MainWindow::options()
 {
-  // TODO create options dialog
-  // QtMarbleConfigDialog dlg(mapWidget);
-  // dlg.exec();
-
   Options opts(this);
-  opts.exec();
+  opts.restoreState();
+  int retval = opts.exec();
   opts.hide();
 
-  setStatusMessage(tr("Options changed."));
+  if(retval == QDialog::Accepted)
+  {
+    opts.saveState();
+    setStatusMessage(tr("Options changed."));
+  }
+  else if(retval == QDialog::Rejected)
+  {
+
+    setStatusMessage(tr("Options not changed."));
+  }
 }
 
 void MainWindow::mainWindowShown()

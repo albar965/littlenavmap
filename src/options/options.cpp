@@ -16,15 +16,81 @@
 *****************************************************************************/
 
 #include "options/options.h"
+
+#include "common/constants.h"
+#include "gui/mainwindow.h"
 #include "ui_options.h"
 
-Options::Options(QWidget *parent) :
-  QDialog(parent), ui(new Ui::Options)
+#include <gui/widgetstate.h>
+
+Options::Options(MainWindow *parentWindow)
+  : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
   ui->setupUi(this);
+
+  widgets.append(ui->checkBoxOptionsGuiCenterKml);
+  widgets.append(ui->checkBoxOptionsGuiCenterRoute);
+  widgets.append(ui->checkBoxOptionsMapEmptyAirports);
+  widgets.append(ui->checkBoxOptionsRouteEastWestRule);
+  widgets.append(ui->checkBoxOptionsRoutePreferNdb);
+  widgets.append(ui->checkBoxOptionsRoutePreferVor);
+  widgets.append(ui->checkBoxOptionsStartupLoadKml);
+  widgets.append(ui->checkBoxOptionsStartupLoadMapSettings);
+  widgets.append(ui->checkBoxOptionsStartupLoadRoute);
+  widgets.append(ui->checkBoxOptionsWeatherInfoAsn);
+  widgets.append(ui->checkBoxOptionsWeatherInfoNoaa);
+  widgets.append(ui->checkBoxOptionsWeatherInfoVatsim);
+  widgets.append(ui->checkBoxOptionsWeatherTooltipAsn);
+  widgets.append(ui->checkBoxOptionsWeatherTooltipNoaa);
+  widgets.append(ui->checkBoxOptionsWeatherTooltipVatsim);
+  widgets.append(ui->lineEditOptionsMapRangeRings);
+  widgets.append(ui->lineEditOptionsWeatherAsnPath);
+  widgets.append(ui->listWidgetOptionsDatabaseAddon);
+  widgets.append(ui->listWidgetOptionsDatabaseExclude);
+  widgets.append(ui->radioButtonOptionsMapScrollFull);
+  widgets.append(ui->radioButtonOptionsMapScrollNone);
+  widgets.append(ui->radioButtonOptionsMapScrollNormal);
+  widgets.append(ui->radioButtonOptionsMapSimUpdateFast);
+  widgets.append(ui->radioButtonOptionsMapSimUpdateLow);
+  widgets.append(ui->radioButtonOptionsMapSimUpdateMedium);
+  widgets.append(ui->radioButtonOptionsStartupShowHome);
+  widgets.append(ui->radioButtonOptionsStartupShowLast);
+  widgets.append(ui->spinBoxOptionsCacheDiskSize);
+  widgets.append(ui->spinBoxOptionsCacheMemorySize);
+  widgets.append(ui->spinBoxOptionsGuiInfoText);
+  widgets.append(ui->spinBoxOptionsGuiRouteText);
+  widgets.append(ui->spinBoxOptionsGuiSearchText);
+  widgets.append(ui->spinBoxOptionsGuiSimInfoText);
+  widgets.append(ui->spinBoxOptionsMapClickRect);
+  widgets.append(ui->spinBoxOptionsMapSymbolSize);
+  widgets.append(ui->spinBoxOptionsMapTextSize);
+  widgets.append(ui->spinBoxOptionsMapTooltipRect);
+  widgets.append(ui->spinBoxOptionsMapZoomShowMap);
+  widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
+
+  connect(ui->buttonBoxOptions, &QDialogButtonBox::accepted, this, &QDialog::accept);
+  connect(ui->buttonBoxOptions, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &Options::clicked);
 }
 
 Options::~Options()
 {
   delete ui;
+}
+
+void Options::clicked(QAbstractButton *button)
+{
+  qDebug() << "Clicked" << button->text();
+}
+
+void Options::saveState()
+{
+  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false, true);
+  saver.save(widgets);
+}
+
+void Options::restoreState()
+{
+  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false, true);
+  saver.restore(widgets);
 }

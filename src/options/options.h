@@ -24,17 +24,31 @@ namespace Ui {
 class Options;
 }
 
+class QAbstractButton;
+class MainWindow;
+
 class Options :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  Options(QWidget *parent);
+  Options(MainWindow *parentWindow);
   virtual ~Options();
+
+  void saveState();
+  void restoreState();
+
+signals:
+  void optionsChanged();
 
 private:
   Ui::Options *ui;
+  MainWindow *mainWindow;
+
+  QList<QObject *> widgets;
+  void clicked(QAbstractButton *button);
+
 };
 
 #endif // OPTIONS_H

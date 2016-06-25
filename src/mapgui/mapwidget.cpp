@@ -1596,6 +1596,7 @@ bool MapWidget::loadKml(const QString& filename, bool center)
 
   if(QFile::exists(filename))
   {
+    // Try if it is a zip file first - ignore extension
     QString kmlString;
     atools::zip::ZipReader reader(filename);
     if(reader.exists() && reader.isReadable() &&
@@ -1605,7 +1606,9 @@ bool MapWidget::loadKml(const QString& filename, bool center)
       if(!filedata.isEmpty() && reader.status() == atools::zip::ZipReader::NoError)
         kmlString = QString(filedata).trimmed();
     }
+    reader.close();
 
+    // Try second if it is a text KML file
     if(kmlString.isEmpty())
     {
       QFile file(filename);
