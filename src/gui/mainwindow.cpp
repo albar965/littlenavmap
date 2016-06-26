@@ -52,7 +52,7 @@
 
 #include "ui_mainwindow.h"
 
-#include <options/options.h>
+#include <options/optionsdialog.h>
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -82,6 +82,8 @@ MainWindow::MainWindow(QWidget *parent) :
   marbleAbout->setApplicationTitle(QApplication::applicationName());
 
   setupUi();
+
+  optionsDialog = new OptionsDialog(this, &optionData);
 
   mainWindowTitle = windowTitle();
 
@@ -159,6 +161,7 @@ MainWindow::~MainWindow()
   delete infoController;
   delete routeFileHistory;
   delete kmlFileHistory;
+  delete optionsDialog;
   delete ui;
 
   delete dialog;
@@ -998,21 +1001,12 @@ void MainWindow::setStatusMessage(const QString& message)
 
 void MainWindow::options()
 {
-  Options opts(this);
-  opts.restoreState();
-  int retval = opts.exec();
-  opts.hide();
+  int retval = optionsDialog->exec();
+  optionsDialog->hide();
 
+  // Dialog saves its own states
   if(retval == QDialog::Accepted)
-  {
-    opts.saveState();
     setStatusMessage(tr("Options changed."));
-  }
-  else if(retval == QDialog::Rejected)
-  {
-
-    setStatusMessage(tr("Options not changed."));
-  }
 }
 
 void MainWindow::mainWindowShown()
@@ -1074,6 +1068,7 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
+  optionsDialog->restoreState();
   kmlFileHistory->restoreState();
   routeFileHistory->restoreState();
   searchController->restoreState();
@@ -1123,6 +1118,8 @@ void MainWindow::writeSettings()
     routeFileHistory->saveState();
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
+  if(optionsDialog != nullptr)
+    optionsDialog->saveState();
 
   ws.save({mapProjectionComboBox, mapThemeComboBox,
            ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,

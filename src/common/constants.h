@@ -63,7 +63,7 @@ const QString ROUTE_VIEW = "Route/View";
 const QString SEARCHPANEAIRPORT_WIDGET = "SearchPaneAirport/Widget";
 const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
 
-const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget ";
+const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
 
 const QString OPTIONS_LANGUAGE = "Options/Language";
 const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";

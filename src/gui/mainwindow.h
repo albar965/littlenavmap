@@ -20,6 +20,7 @@
 
 #include "common/maptypes.h"
 #include "fs/fspaths.h"
+#include "options/optiondata.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -35,6 +36,7 @@ class WeatherReporter;
 class ConnectClient;
 class ProfileWidget;
 class InfoController;
+class OptionsDialog;
 
 namespace Marble {
 class LegendWidget;
@@ -100,6 +102,11 @@ public:
 
   void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
   void setStatusMessage(const QString& message);
+
+  const OptionData& getOptionData() const
+  {
+    return optionData;
+  }
 
 signals:
   /* Emitted when window is shown the first time */
@@ -179,6 +186,7 @@ private:
 
   Marble::LegendWidget *legendWidget = nullptr;
   Marble::MarbleAboutDialog *marbleAbout = nullptr;
+  OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
@@ -190,6 +198,8 @@ private:
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
   bool firstStart = true, firstApplicationStart = false;
+
+  OptionData optionData;
 
 };
 

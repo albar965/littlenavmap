@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Select Parking</string>
+   <string>Little Navmap - Select Parking for Flight Plan</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

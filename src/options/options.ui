@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Little Navmap - Options</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -30,7 +30,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
          <property name="text">
-          <string>Load last route after startup</string>
+          <string>Load last &amp;route after startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -40,7 +40,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
          <property name="text">
-          <string>Load last Google Earth KML file after startup</string>
+          <string>Load last Google Earth &amp;KML file after startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -50,7 +50,7 @@
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
          <property name="text">
-          <string>Restore map display settings</string>
+          <string>Restore &amp;map display settings</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -69,7 +69,7 @@
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowLast">
             <property name="text">
-             <string>Last position</string>
+             <string>&amp;Last position</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -79,7 +79,7 @@
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowHome">
             <property name="text">
-             <string>Home position</string>
+             <string>&amp;Home position</string>
             </property>
            </widget>
           </item>
@@ -95,7 +95,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Reset all Settings to Default</string>
+          <string>R&amp;eset all Options to Default</string>
          </property>
         </widget>
        </item>
@@ -144,7 +144,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
          <property name="text">
-          <string>Center route after loading</string>
+          <string>Center &amp;route after loading</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -176,7 +176,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="labelOptionsGuiSearchText">
          <property name="text">
-          <string>Text size for search tables:</string>
+          <string>Text size for &amp;search tables:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiSearchText</cstring>
@@ -208,7 +208,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="labelOptionsGuiInfoText">
          <property name="text">
-          <string>Text size for information panels:</string>
+          <string>Text size for &amp;information panels:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiInfoText</cstring>
@@ -240,7 +240,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="labelOptionsGuiSimInfoText">
          <property name="text">
-          <string>Text size for simulator aircraft information panels:</string>
+          <string>Text size for &amp;simulator aircraft information panels:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiSimInfoText</cstring>
@@ -250,7 +250,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="labelOptionsGuiRouteText">
          <property name="text">
-          <string>Text size for route table:</string>
+          <string>Text size for &amp;route table:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiRouteText</cstring>
@@ -260,7 +260,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
          <property name="text">
-          <string>Center Google Earth KML after loading</string>
+          <string>Center Google Earth &amp;KML after loading</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -294,7 +294,7 @@
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollFull">
               <property name="text">
-               <string>Full
+               <string>&amp;Full
 May cause stutters</string>
               </property>
              </widget>
@@ -302,7 +302,7 @@ May cause stutters</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollNormal">
               <property name="text">
-               <string>Normal
+               <string>&amp;Normal
 Will use limited details during scrolling</string>
               </property>
               <property name="checked">
@@ -313,7 +313,7 @@ Will use limited details during scrolling</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollNone">
               <property name="text">
-               <string>None
+               <string>N&amp;one
 Will not display airports or navaids while scrolling</string>
               </property>
              </widget>
@@ -324,7 +324,7 @@ Will not display airports or navaids while scrolling</string>
          <item row="0" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
            <property name="text">
-            <string>Treat empty airports special
+            <string>&amp;Treat empty airports special
 Display underneath all other airports and use gray color</string>
            </property>
            <property name="checked">
@@ -341,7 +341,7 @@ Display underneath all other airports and use gray color</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateLow">
               <property name="text">
-               <string>Low
+               <string>&amp;Low
 Map is updated only every second
 Can increase battery life on notebooks</string>
               </property>
@@ -350,7 +350,7 @@ Can increase battery life on notebooks</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateMedium">
               <property name="text">
-               <string>Medium</string>
+               <string>&amp;Medium</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -360,7 +360,7 @@ Can increase battery life on notebooks</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateFast">
               <property name="text">
-               <string>More
+               <string>&amp;High
 Fluid movement
 Can decrease battery life on notebooks</string>
               </property>
@@ -411,25 +411,6 @@ Can decrease battery life on notebooks</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapZoomShowMap">
-           <property name="suffix">
-            <string> %</string>
-           </property>
-           <property name="minimum">
-            <number>10</number>
-           </property>
-           <property name="maximum">
-            <number>200</number>
-           </property>
-           <property name="singleStep">
-            <number>10</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
            <property name="suffix">
@@ -459,7 +440,7 @@ Can decrease battery life on notebooks</string>
          <item row="3" column="0">
           <widget class="QLabel" name="labelOptionsMapTooltipRect">
            <property name="text">
-            <string>Tool tip sensitivity on map:</string>
+            <string>Tool tip &amp;sensitivity on map:</string>
            </property>
            <property name="buddy">
             <cstring>spinBoxOptionsMapTooltipRect</cstring>
@@ -469,7 +450,7 @@ Can decrease battery life on notebooks</string>
          <item row="2" column="0">
           <widget class="QLabel" name="labelOptionsMapClickRect">
            <property name="text">
-            <string>Click sensitivity when selecting objects on map:</string>
+            <string>&amp;Click sensitivity when selecting objects on map:</string>
            </property>
            <property name="buddy">
             <cstring>spinBoxOptionsMapClickRect</cstring>
@@ -479,17 +460,17 @@ Can decrease battery life on notebooks</string>
          <item row="0" column="0">
           <widget class="QLabel" name="labelOptionsMapZoomShowMap">
            <property name="text">
-            <string>Zoom level for double click or &quot;Show on Map&quot; menu item:</string>
+            <string>&amp;Zoom level for double click or &quot;Show on Map&quot; menu item:</string>
            </property>
            <property name="buddy">
-            <cstring>spinBoxOptionsMapZoomShowMap</cstring>
+            <cstring>doubleSpinBoxOptionsMapZoomShowMap</cstring>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="labelOptionsMapTextSize">
            <property name="text">
-            <string>Map text size:</string>
+            <string>&amp;Map text size:</string>
            </property>
            <property name="buddy">
             <cstring>spinBoxOptionsMapTextSize</cstring>
@@ -499,7 +480,7 @@ Can decrease battery life on notebooks</string>
          <item row="1" column="0">
           <widget class="QLabel" name="labelOptionsMapRangeRings">
            <property name="text">
-            <string>Range ring sizes (nautical miles):</string>
+            <string>&amp;Range ring sizes (nautical miles):</string>
            </property>
            <property name="buddy">
             <cstring>lineEditOptionsMapRangeRings</cstring>
@@ -509,7 +490,7 @@ Can decrease battery life on notebooks</string>
          <item row="5" column="0">
           <widget class="QLabel" name="labelOptionsMapSymbolSize">
            <property name="text">
-            <string>Symbol size:</string>
+            <string>&amp;Symbol size:</string>
            </property>
            <property name="buddy">
             <cstring>spinBoxOptionsMapSymbolSize</cstring>
@@ -535,6 +516,25 @@ Can decrease battery life on notebooks</string>
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
+           <property name="suffix">
+            <string> nm</string>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1000.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>1.500000000000000</double>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -547,7 +547,7 @@ Can decrease battery life on notebooks</string>
        <item row="1" column="0">
         <widget class="QLabel" name="labelOptionsCacheDisk">
          <property name="text">
-          <string>Disk cache:</string>
+          <string>&amp;Disk cache:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsCacheDiskSize</cstring>
@@ -576,14 +576,14 @@ Can decrease battery life on notebooks</string>
        <item row="0" column="2">
         <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
          <property name="text">
-          <string>Clear Memory Cache</string>
+          <string>&amp;Clear Memory Cache</string>
          </property>
         </widget>
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="labelOptionsCacheMemory">
          <property name="text">
-          <string>Memory cache:</string>
+          <string>&amp;Memory cache:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsCacheMemorySize</cstring>
@@ -612,7 +612,7 @@ Can decrease battery life on notebooks</string>
        <item row="1" column="2">
         <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
          <property name="text">
-          <string>Clear Disk Cache</string>
+          <string>C&amp;lear Disk Cache</string>
          </property>
         </widget>
        </item>
@@ -620,20 +620,20 @@ Can decrease battery life on notebooks</string>
      </widget>
      <widget class="QWidget" name="tabOptionsRoute">
       <attribute name="title">
-       <string>Route</string>
+       <string>Flight Plan</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
          <property name="text">
-          <string>Prefer VOR stations as transition to airway</string>
+          <string>Prefer &amp;VOR stations as transition to airway</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
          <property name="text">
-          <string>Minmum altitude buffer to ground in elevation profile (red line):</string>
+          <string>&amp;Minmum altitude buffer to ground in elevation profile (red line):</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
@@ -659,14 +659,14 @@ Can decrease battery life on notebooks</string>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
          <property name="text">
-          <string>Prefer NDB stations as  transition to airway</string>
+          <string>Prefer &amp;NDB stations as  transition to airway</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
          <property name="text">
-          <string>Use simplified east/west rule to determine cruise altitude</string>
+          <string>&amp;Use simplified east/west rule to determine cruise altitude</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -689,7 +689,7 @@ Can decrease battery life on notebooks</string>
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
             <property name="text">
-             <string>Active Sky Next</string>
+             <string>Active &amp;Sky Next</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -699,7 +699,7 @@ Can decrease battery life on notebooks</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
             <property name="text">
-             <string>NOAA</string>
+             <string>N&amp;OAA</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -709,7 +709,7 @@ Can decrease battery life on notebooks</string>
           <item row="2" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
             <property name="text">
-             <string>Vatsim</string>
+             <string>Va&amp;tsim</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -725,7 +725,7 @@ Can decrease battery life on notebooks</string>
        <item row="2" column="2">
         <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
          <property name="text">
-          <string>Select File</string>
+          <string>&amp;Select File</string>
          </property>
         </widget>
        </item>
@@ -738,7 +738,7 @@ Can decrease battery life on notebooks</string>
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
             <property name="text">
-             <string>Active Sky Next</string>
+             <string>&amp;Active Sky Next</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -748,7 +748,7 @@ Can decrease battery life on notebooks</string>
           <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipNoaa">
             <property name="text">
-             <string>NOAA</string>
+             <string>&amp;NOAA</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -758,7 +758,7 @@ Can decrease battery life on notebooks</string>
           <item row="2" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipVatsim">
             <property name="text">
-             <string>Vatsim</string>
+             <string>&amp;Vatsim</string>
             </property>
            </widget>
           </item>
@@ -768,7 +768,7 @@ Can decrease battery life on notebooks</string>
        <item row="2" column="0">
         <widget class="QLabel" name="labelOptionsWeatherAsnPath">
          <property name="text">
-          <string>Active Sky Next weather File:</string>
+          <string>Active Sky Next weather &amp;File:</string>
          </property>
          <property name="buddy">
           <cstring>lineEditOptionsWeatherAsnPath</cstring>
@@ -790,14 +790,14 @@ Can decrease battery life on notebooks</string>
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddExclude">
            <property name="text">
-            <string>Add</string>
+            <string>&amp;Add</string>
            </property>
           </widget>
          </item>
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveExclude">
            <property name="text">
-            <string>Remove</string>
+            <string>&amp;Remove</string>
            </property>
           </widget>
          </item>
@@ -825,7 +825,7 @@ Can decrease battery life on notebooks</string>
        <item row="0" column="0">
         <widget class="QLabel" name="labelOptionsDatabaseExclude">
          <property name="text">
-          <string>Select Paths to exclude from loading:
+          <string>&amp;Select Paths to exclude from loading:
 
 All entries in this list will be skipped when loading the scenery library into the Little Navmap database.</string>
          </property>
@@ -843,7 +843,7 @@ All entries in this list will be skipped when loading the scenery library into t
        <item row="1" column="0">
         <widget class="QLabel" name="labelOptionsDatabaseAddon">
          <property name="text">
-          <string>Select Paths to exclude from add-on recognition:
+          <string>Select &amp;Paths to exclude from add-on recognition:
 
 Directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.</string>
          </property>
@@ -866,14 +866,14 @@ Directories in this list will not be considered add-on if they are outside the f
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
            <property name="text">
-            <string>Add</string>
+            <string>A&amp;dd</string>
            </property>
           </widget>
          </item>
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
            <property name="text">
-            <string>Remove</string>
+            <string>R&amp;emove</string>
            </property>
           </widget>
          </item>
@@ -929,7 +929,7 @@ Directories in this list will not be considered add-on if they are outside the f
   <tabstop>radioButtonOptionsMapSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsMapSimUpdateMedium</tabstop>
   <tabstop>radioButtonOptionsMapSimUpdateFast</tabstop>
-  <tabstop>spinBoxOptionsMapZoomShowMap</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>spinBoxOptionsMapTooltipRect</tabstop>

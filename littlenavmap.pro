@@ -96,9 +96,10 @@ SOURCES += src/main.cpp\
     src/export/csvexporter.cpp \
     src/export/exporter.cpp \
     src/export/htmlexporter.cpp \
-    src/options/options.cpp \
     src/common/htmlinfobuilder.cpp \
-    src/mapgui/mapscreenindex.cpp
+    src/mapgui/mapscreenindex.cpp \
+    src/options/optionsdialog.cpp \
+    src/options/optiondata.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -157,9 +158,10 @@ HEADERS  += src/gui/mainwindow.h \
     src/export/csvexporter.h \
     src/export/exporter.h \
     src/export/htmlexporter.h \
-    src/options/options.h \
     src/common/htmlinfobuilder.h \
-    src/mapgui/mapscreenindex.h
+    src/mapgui/mapscreenindex.h \
+    src/options/optionsdialog.h \
+    src/options/optiondata.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

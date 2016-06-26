@@ -15,40 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#include "optiondata.h"
 
-#include <QDialog>
+OptionData::OptionData()
+{
 
-namespace Ui {
-class Options;
 }
 
-class QAbstractButton;
-class MainWindow;
-
-class Options :
-  public QDialog
+OptionData::~OptionData()
 {
-  Q_OBJECT
 
-public:
-  Options(MainWindow *parentWindow);
-  virtual ~Options();
-
-  void saveState();
-  void restoreState();
-
-signals:
-  void optionsChanged();
-
-private:
-  Ui::Options *ui;
-  MainWindow *mainWindow;
-
-  QList<QObject *> widgets;
-  void clicked(QAbstractButton *button);
-
-};
-
-#endif // OPTIONS_H
+}
