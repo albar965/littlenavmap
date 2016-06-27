@@ -42,17 +42,41 @@ public:
 
   void extractRoute(QVector<rf::RouteEntry>& route, float& distance);
 
+  void setPreferVorToAirway(bool value)
+  {
+    preferVorToAirway = value;
+  }
+
+  void setPreferNdbToAirway(bool value)
+  {
+    preferNdbToAirway = value;
+  }
+
 private:
+  RouteNetwork *network;
+  void expandNode(const nw::Node& node, const nw::Node& destNode);
+
+  float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
+  float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
+
   // Force algortihm to avoid direct route from start to destination
   const float COST_FACTOR_DIRECT = 2.f;
+
   // Force algortihm to use close waypoints near start and destination
   const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
+
+  // Force algortihm to use closest radio navaids near start and destination before waypoints
+  const float COST_FACTOR_FORCE_CLOSE_RADIONAV = 1.2f;
+
   // Increase costs to force reception of at least one radio navaid along the route
   const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
+
   // Try to avoid NDBs
   const float COST_FACTOR_NDB = 1.5f;
+
   // Try to avoid VORs (no DME)
   const float COST_FACTOR_VOR = 1.2f;
+
   // Avoid DMEs
   const float COST_FACTOR_DME = 4.f;
 
@@ -62,12 +86,6 @@ private:
   const float DISTANCE_LONG_AIRWAY = atools::geo::nmToMeter(200.f);
 
   int altitude = 0;
-
-  RouteNetwork *network;
-  void expandNode(const nw::Node& node, const nw::Node& destNode);
-
-  float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
-  float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
 
   atools::util::Heap<nw::Node> openNodesHeap;
   QSet<int> closedNodes;
@@ -81,6 +99,8 @@ private:
   // For RouteNetwork::getNeighbours
   QVector<nw::Node> successorNodes;
   QVector<nw::Edge> successorEdges;
+
+  bool preferVorToAirway = false, preferNdbToAirway = false;
 };
 
 #endif // LITTLENAVMAP_ROUTEFINDER_H

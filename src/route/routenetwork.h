@@ -42,12 +42,9 @@ namespace nw {
 enum Mode
 {
   ROUTE_NONE = 0x00,
-  ROUTE_VOR = 0x01,
-  ROUTE_VORDME = 0x02,
-  ROUTE_DME = 0x04,
-  ROUTE_NDB = 0x08,
-  ROUTE_VICTOR = 0x10,
-  ROUTE_JET = 0x20
+  ROUTE_RADIONAV = 0x01,
+  ROUTE_VICTOR = 0x02,
+  ROUTE_JET = 0x04
 };
 
 Q_DECLARE_FLAGS(Modes, Mode);
@@ -55,33 +52,40 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(nw::Modes);
 
 enum Type
 {
-  VOR = 0,
-  VORDME = 1,
-  DME = 2,
-  NDB = 3,
-  WAYPOINT_VICTOR = 4,
-  WAYPOINT_JET = 5,
-  WAYPOINT_BOTH = 6,
+  NONE = 0,
+  VOR = 1,
+  VORDME = 2,
+  DME = 3,
+  NDB = 4,
+  WAYPOINT_VICTOR = 5,
+  WAYPOINT_JET = 6,
+  WAYPOINT_BOTH = 7,
   START = 10,
-  DESTINATION = 11,
-  NONE = 20
+  DESTINATION = 11
+};
+
+enum EdgeType
+{
+  AIRWAY_NONE = 0,
+  AIRWAY_VICTOR = 5,
+  AIRWAY_JET = 6,
+  AIRWAY_BOTH = 7
 };
 
 struct Edge
 {
   Edge()
-    : toNodeId(-1), distanceMeter(0), minAltFt(0), airwayId(-1), type(nw::NONE)
+    : toNodeId(-1), distanceMeter(0), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
   {
   }
 
   Edge(int to, int distance)
-    : toNodeId(to), distanceMeter(distance), minAltFt(0), airwayId(-1), type(nw::NONE)
+    : toNodeId(to), distanceMeter(distance), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
   {
-
   }
 
   int toNodeId, distanceMeter, minAltFt, airwayId;
-  nw::Type type;
+  nw::EdgeType type;
 
   bool operator==(const nw::Edge& other) const
   {
@@ -104,25 +108,25 @@ inline int qHash(const nw::Edge& edge)
 struct Node
 {
   Node()
-    : id(-1), range(0), type(nw::NONE)
+    : id(-1), range(0), type(nw::NONE), type2(nw::NONE)
   {
   }
 
-  Node(int nodeId, nw::Type nodeType, const atools::geo::Pos& position, int nodeRange = 0)
-    : id(nodeId), range(nodeRange), pos(position), type(nodeType)
+  Node(int nodeId, nw::Type nodeType, nw::Type nodeType2,
+       const atools::geo::Pos& position, int nodeRange = 0)
+    : id(nodeId), range(nodeRange), pos(position), type(nodeType), type2(nodeType2)
   {
-
   }
 
   int id = -1;
   int range;
   QVector<Edge> edges;
   atools::geo::Pos pos;
-  nw::Type type;
+  nw::Type type, type2;
 
   bool operator==(const nw::Node& other) const
   {
-    return id == other.id && type == other.type;
+    return id == other.id && type == other.type && type2 == other.type2;
   }
 
   bool operator!=(const nw::Node& other) const
@@ -170,24 +174,10 @@ public:
 
   bool isAirwayRouting() const
   {
-    return mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
+    return airwayRouting;
   }
 
-#ifdef DEBUG_ROUTE
-  void printNodeDebug(const nw::Node& node);
-  void printEdgeDebug(const nw::Edge& edge);
-
-#endif
-
-  nw::Modes getMode() const
-  {
-    return mode;
-  }
-
-  void setMode(nw::Modes routeMode)
-  {
-    mode = routeMode;
-  }
+  void setMode(nw::Modes routeMode);
 
 protected:
   nw::Node getNodeByNavId(int id, nw::Type type);
@@ -233,6 +223,8 @@ protected:
   bool edgeIndexesCreated = false;
   int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
       edgeDistanceIndex = -1;
+
+  bool airwayRouting;
 
 };
 

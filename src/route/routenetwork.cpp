@@ -43,6 +43,7 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeT
 {
   nodes.reserve(60000);
   destinationNodePredecessors.reserve(1000);
+  airwayRouting = mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
   initQueries();
 }
 
@@ -61,6 +62,12 @@ int RouteNetwork::getNumberOfNodesDatabase()
 int RouteNetwork::getNumberOfNodesCache() const
 {
   return nodes.size();
+}
+
+void RouteNetwork::setMode(nw::Modes routeMode)
+{
+  mode = routeMode;
+  airwayRouting = mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
 }
 
 void RouteNetwork::clear()
@@ -86,11 +93,11 @@ void RouteNetwork::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighb
     bool add = false;
 
     // Handle airways differently to keep cache for low and high alt routes together
-    if(e.type == WAYPOINT_BOTH)
+    if(e.type == AIRWAY_BOTH)
       add = mode & ROUTE_JET || mode & ROUTE_VICTOR;
-    else if(e.type == WAYPOINT_JET)
+    else if(e.type == AIRWAY_JET)
       add = mode & ROUTE_JET;
-    else if(e.type == WAYPOINT_VICTOR)
+    else if(e.type == AIRWAY_VICTOR)
       add = mode & ROUTE_VICTOR;
     else
       add = true;
@@ -187,10 +194,6 @@ void RouteNetwork::addDestNodeEdges(nw::Node& node)
     nw::Edge edge(DESTINATION_NODE_ID,
                   static_cast<int>(node.pos.distanceMeterTo(destinationPos)));
 
-#ifdef DEBUG_ROUTE
-    printEdgeDebug(edge);
-#endif
-
     // Near destination - add as successor
     node.edges.append(edge);
     // Remember for later cleanup
@@ -240,7 +243,13 @@ void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type
     if(nodeNavIdAndTypeQuery->next())
     {
       navId = nodeNavIdAndTypeQuery->value("nav_id").toInt();
-      type = static_cast<nw::Type>(nodeNavIdAndTypeQuery->value("type").toInt());
+
+      int typeVal = nodeNavIdAndTypeQuery->value("type").toInt();
+
+      if(airwayRouting)
+        type = static_cast<nw::Type>(typeVal >> 4);
+      else
+        type = static_cast<nw::Type>(typeVal);
     }
     else
     {
@@ -404,7 +413,15 @@ nw::Node RouteNetwork::createNode(const SqlRecord& rec)
 {
   updateNodeIndexes(rec);
   Node node;
-  node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex));
+
+  if(airwayRouting)
+  {
+    node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex) >> 4);
+    node.type2 = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex) & 0x0f);
+  }
+  else
+    node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex));
+
   if(nodeRangeIndex != -1)
     node.range = rec.valueInt(nodeRangeIndex);
   node.pos.setLonX(rec.valueFloat(nodeLonXIndex));
@@ -433,7 +450,7 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
   Edge edge;
   edge.toNodeId = toNodeId;
   if(edgeTypeIndex != -1)
-    edge.type = static_cast<nw::Type>(rec.valueInt(edgeTypeIndex));
+    edge.type = static_cast<nw::EdgeType>(rec.valueInt(edgeTypeIndex));
   if(edgeMinAltIndex != -1)
     edge.minAltFt = rec.valueInt(edgeMinAltIndex);
   if(edgeAirwayIdIndex != -1)
@@ -473,24 +490,22 @@ void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
 
 bool RouteNetwork::checkType(nw::Type type)
 {
-  switch(type)
+  nw::Type tmp = type;
+  if(airwayRouting)
+    tmp = static_cast<nw::Type>(static_cast<int>(type) >> 4);
+
+  switch(tmp)
   {
     case nw::WAYPOINT_VICTOR:
     case nw::WAYPOINT_JET:
     case nw::WAYPOINT_BOTH:
       return mode & ROUTE_JET || mode & ROUTE_VICTOR;
 
-    case nw::VOR:
-      return mode & ROUTE_VOR;
-
-    case nw::VORDME:
-      return mode & ROUTE_VORDME;
-
-    case nw::DME:
-      return mode & ROUTE_DME;
-
     case nw::NDB:
-      return mode & ROUTE_NDB;
+    case nw::VOR:
+    case nw::VORDME:
+    case nw::DME:
+      return mode & ROUTE_RADIONAV;
 
     case nw::START:
     case nw::DESTINATION:
@@ -510,43 +525,3 @@ void RouteNetwork::bindCoordRect(const atools::geo::Rect& rect, atools::sql::Sql
   query->bindValue(":bottomy", rect.getSouth());
   query->bindValue(":topy", rect.getNorth());
 }
-
-#ifdef DEBUG_ROUTE
-void RouteNetwork::printNodeDebug(const nw::Node& node)
-{
-  SqlQuery q(db);
-  q.prepare(
-    "select * from waypoint  w  join route_node_airway n on w.waypoint_id = n.nav_id  where n.node_id = :id");
-  q.bindValue(":id", node.id);
-  q.exec();
-  int i = 0;
-  while(q.next())
-  {
-    qDebug() << "Node #" << i++ << "ident" << q.value("ident").toString()
-             << "id" << node.id << "range" << QString::number(node.range, 'f', 0)
-             << "type" << node.type << "pos" << node.pos;
-
-  }
-
-}
-
-void RouteNetwork::printEdgeDebug(const nw::Edge& edge)
-{
-  SqlQuery q(db);
-  q.prepare(
-    "select * from airway a join route_edge_airway e on a.airway_id = e.airway_id where e.edge_id = :id");
-
-  q.bindValue(":id", edge.id);
-  q.exec();
-  int i = 0;
-  while(q.next())
-  {
-    qDebug() << "Edge #" << i++ << "name" << q.value("airway_name").toString()
-             << "type" << q.value("airway_type").toString()
-             << "to node id" << edge.toNodeId << "airway id" << edge.airwayId
-             << "dist" << QString::number(edge.distanceMeter, 'f', 0)
-             << "minalt" << edge.minAltFt << "type" << edge.type;
-  }
-}
-
-#endif

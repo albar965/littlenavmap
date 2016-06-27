@@ -61,10 +61,6 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   {
     // Contains known nodes
     openNodesHeap.pop(currentNode);
-#ifdef DEBUG_ROUTE
-    qDebug() << "pop";
-    network->printNodeDebug(currentNode);
-#endif
 
     if(currentNode.id == destNode.id)
     {
@@ -170,11 +166,38 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
   float costs = distanceMeter;
 
   if(currentNode.type == nw::START && successorNode.type == nw::DESTINATION)
+    // Avoid direct routes
     costs *= COST_FACTOR_DIRECT;
   else if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
-    costs *= COST_FACTOR_FORCE_CLOSE_NODES;
+  {
+    if(network->isAirwayRouting())
+    {
+      bool preferRadionav = false;
+      if(preferVorToAirway)
+      {
+        if(currentNode.type == nw::START &&
+           (successorNode.type2 == nw::VOR || successorNode.type2 == nw::VORDME))
+          preferRadionav = true;
+        else if((currentNode.type2 == nw::VOR || currentNode.type2 == nw::VORDME) &&
+                successorNode.type == nw::DESTINATION)
+          preferRadionav = true;
+      }
 
-  if(network->getMode() & nw::ROUTE_JET || network->getMode() & nw::ROUTE_VICTOR)
+      if(preferNdbToAirway)
+      {
+        if((currentNode.type == nw::START && successorNode.type2 == nw::NDB) ||
+           (currentNode.type2 == nw::NDB && successorNode.type == nw::DESTINATION))
+          preferRadionav = true;
+      }
+
+      if(preferRadionav)
+        costs *= COST_FACTOR_FORCE_CLOSE_RADIONAV;
+      else
+        costs *= COST_FACTOR_FORCE_CLOSE_NODES;
+    }
+  }
+
+  if(network->isAirwayRouting())
   {
     if(distanceMeter > DISTANCE_LONG_AIRWAY)
       costs *= COST_FACTOR_LONG_AIRWAY;

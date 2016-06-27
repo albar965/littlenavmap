@@ -398,7 +398,7 @@ void RouteController::calculateRadionav()
 {
   qDebug() << "calculateRadionav";
   // Changing mode might need a clear
-  routeNetworkRadio->setMode(nw::ROUTE_NDB | nw::ROUTE_VOR | nw::ROUTE_VORDME);
+  routeNetworkRadio->setMode(nw::ROUTE_RADIONAV);
 
   RouteFinder routeFinder(routeNetworkRadio);
 
