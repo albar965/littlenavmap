@@ -102,7 +102,7 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
 
     texts.append(tr("Wind %1 °M / %2").
                  arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          simData.getWindDirectionDegT() + simData.getMagVarDeg()), 'f', 0)).
+                                          simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0)).
                  arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
 
     symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
