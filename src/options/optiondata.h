@@ -99,7 +99,8 @@ enum MapSimUpdateRate
 class OptionData
 {
 public:
-  OptionData();
+  static OptionData& instance();
+
   ~OptionData();
 
   opts::Flags getFlags() const
@@ -200,6 +201,11 @@ public:
 private:
   friend class OptionsDialog;
 
+  OptionData();
+  static OptionData& instanceInternal();
+
+  static OptionData *optionData;
+
   opts::Flags flags =
     opts::STARTUP_LOAD_KML |
     opts::STARTUP_LOAD_MAP_SETTINGS |
@@ -209,12 +215,12 @@ private:
     opts::GUI_CENTER_KML |
     opts::GUI_CENTER_ROUTE |
     opts::MAP_EMPTY_AIRPORTS |
-    // opts::ROUTE_PREFER_NDB             |
-    // opts::ROUTE_PREFER_VOR             |
+    opts::ROUTE_PREFER_NDB |
+    opts::ROUTE_PREFER_VOR |
     opts::ROUTE_EAST_WEST_RULE |
     opts::WEATHER_INFO_ASN |
     opts::WEATHER_INFO_NOAA |
-    opts::WEATHER_INFO_VATSIM |
+    // opts::WEATHER_INFO_VATSIM |
     opts::WEATHER_TOOLTIP_ASN |
     opts::WEATHER_TOOLTIP_NOAA |
     opts::WEATHER_TOOLTIP_VATSIM;
@@ -276,6 +282,8 @@ private:
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
+
+  bool valid = false;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

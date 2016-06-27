@@ -17,6 +17,7 @@
 
 #include "routecontroller.h"
 
+#include "options/optiondata.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "exception.h"
@@ -273,22 +274,25 @@ void RouteController::restoreState()
   model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
   saver.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
 
-  QString newRouteFilename = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
-
-  if(!newRouteFilename.isEmpty())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {
-    if(QFile::exists(newRouteFilename))
+    QString newRouteFilename = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
+
+    if(!newRouteFilename.isEmpty())
     {
-      if(!loadFlightplan(newRouteFilename))
+      if(QFile::exists(newRouteFilename))
+      {
+        if(!loadFlightplan(newRouteFilename))
+        {
+          routeFilename.clear();
+          route.clear();
+        }
+      }
+      else
       {
         routeFilename.clear();
         route.clear();
       }
-    }
-    else
-    {
-      routeFilename.clear();
-      route.clear();
     }
   }
 }
@@ -462,6 +466,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
   int altitude = useSetAltitude ? flightplan.getCruisingAlt() : 0;
 
+  routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
+  routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
+
   bool found = routeFinder->calculateRoute(flightplan.getDeparturePos(),
                                            flightplan.getDestinationPos(), altitude);
 
@@ -506,21 +513,24 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       if(minAltitude != 0 && !useSetAltitude)
       {
-        float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
+        if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
+        {
+          float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
 
-        qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
+          qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
 
-        if(fpDir >= 0.f && fpDir <= 180.f)
-          // General direction is east - round up to the next odd value
-          minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
-        else
-          // General direction is west - round up to the next even value
-          minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
+          if(fpDir >= 0.f && fpDir <= 180.f)
+            // General direction is east - round up to the next odd value
+            minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+          else
+            // General direction is west - round up to the next even value
+            minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
 
-        if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-          minAltitude += 500;
+          if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+            minAltitude += 500;
 
-        qDebug() << "corrected minAltitude" << minAltitude;
+          qDebug() << "corrected minAltitude" << minAltitude;
+        }
 
         flightplan.setCruisingAlt(minAltitude);
       }

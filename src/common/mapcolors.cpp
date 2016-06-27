@@ -16,7 +16,9 @@
 *****************************************************************************/
 
 #include "common/mapcolors.h"
+
 #include "mapgui/mapquery.h"
+#include "options/optiondata.h"
 
 #include <QPen>
 #include <QString>
@@ -31,7 +33,7 @@ const QColor& colorForAirport(const maptypes::MapAirport& ap)
   static QColor toweredAirportColor = QColor::fromRgb(15, 70, 130);
   static QColor unToweredAirportColor = QColor::fromRgb(126, 58, 91);
 
-  if(ap.empty() && !ap.waterOnly())
+  if(ap.empty() && !ap.waterOnly() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
     return airportEmptyColor;
   else if(ap.tower())
     return toweredAirportColor;

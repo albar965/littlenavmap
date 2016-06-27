@@ -20,16 +20,74 @@
 #include "common/constants.h"
 #include "gui/mainwindow.h"
 #include "ui_options.h"
-
-#include <gui/widgetstate.h>
+#include "common/weatherreporter.h"
+#include "gui/widgetstate.h"
 
 #include <QMessageBox>
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
 
-OptionsDialog::OptionsDialog(MainWindow *parentWindow, OptionData *optionDataParam)
-  : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow), optionData(optionDataParam)
+const int MAX_RANGE_RING_SIZE = 4000;
+const int MAX_RANGE_RINGS = 10;
+
+class RangeRingValidator :
+  public QValidator
+{
+public:
+  RangeRingValidator();
+
+private:
+  bool ringStrToVector(const QString& str) const;
+  virtual QValidator::State validate(QString& input, int& pos) const override;
+
+  QRegularExpressionValidator regexpVal;
+};
+
+RangeRingValidator::RangeRingValidator()
+{
+  regexpVal.setRegularExpression(QRegularExpression("^([1-9]\\d{0,3} )*[1-9]\\d{1,3}$"));
+}
+
+QValidator::State RangeRingValidator::validate(QString& input, int& pos) const
+{
+  State state = regexpVal.validate(input, pos);
+  if(state == Invalid)
+    return Invalid;
+  else if(!ringStrToVector(input))
+    return Invalid;
+
+  return state;
+}
+
+bool RangeRingValidator::ringStrToVector(const QString& input) const
+{
+  int numRing = 0;
+  for(const QString& str : input.split(" "))
+  {
+    QString val = str.trimmed();
+    if(!val.isEmpty())
+    {
+      bool ok;
+      int num = val.toInt(&ok);
+      if(!ok || num > MAX_RANGE_RING_SIZE)
+        return false;
+
+      numRing++;
+    }
+  }
+  return numRing <= MAX_RANGE_RINGS;
+}
+
+// ------------------------------------------------------------------------
+
+OptionsDialog::OptionsDialog(MainWindow *parentWindow)
+  : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
   ui->setupUi(this);
 
+  rangeRingValidator = new RangeRingValidator;
+
+  widgets.append(ui->tabWidgetOptions);
   widgets.append(ui->checkBoxOptionsGuiCenterKml);
   widgets.append(ui->checkBoxOptionsGuiCenterRoute);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
@@ -70,8 +128,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow, OptionData *optionDataPar
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
   widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
 
-  rangeRingValidator.setRegularExpression(QRegularExpression("^([1-9]\\d{0,3} )*[1-9]\\d{1,3}$"));
-  ui->lineEditOptionsMapRangeRings->setValidator(&rangeRingValidator);
+  ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
@@ -88,12 +145,18 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow, OptionData *optionDataPar
 
 OptionsDialog::~OptionsDialog()
 {
+  delete rangeRingValidator;
   delete ui;
 }
 
 int OptionsDialog::exec()
 {
   fromOptionData();
+
+  bool hasAsn = mainWindow->getWeatherReporter()->hasAsnWeather();
+  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
+  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+
   return QDialog::exec();
 }
 
@@ -106,10 +169,10 @@ void OptionsDialog::resetDefaultClicked()
 
   if(result == QMessageBox::Yes)
   {
-    *optionData = OptionData();
+    OptionData::instance() = OptionData();
     fromOptionData();
     saveState();
-    emit optionsChanged(optionData);
+    emit optionsChanged();
   }
 }
 
@@ -136,13 +199,13 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     toOptionData();
     saveState();
-    emit optionsChanged(optionData);
+    emit optionsChanged();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
   {
     toOptionData();
     saveState();
-    emit optionsChanged(optionData);
+    emit optionsChanged();
     accept();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
@@ -165,8 +228,28 @@ void OptionsDialog::restoreState()
   toOptionData();
 }
 
+QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
+{
+  QVector<int> rings;
+  for(const QString& str :  string.split(" "))
+  {
+    QString val = str.trimmed();
+
+    if(!val.isEmpty())
+    {
+      bool ok;
+      int num = val.toInt(&ok);
+      if(ok && num <= MAX_RANGE_RING_SIZE)
+        rings.append(num);
+    }
+  }
+  return rings;
+}
+
 void OptionsDialog::toOptionData()
 {
+  OptionData& data = OptionData::instanceInternal();
+
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
@@ -185,46 +268,45 @@ void OptionsDialog::toOptionData()
   toFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   toFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
 
-  optionData->mapRangeRings.clear();
-  for(const QString& str :  ui->lineEditOptionsMapRangeRings->text().split(" "))
-    optionData->mapRangeRings.append(str.toInt());
+  data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
-  optionData->weatherActiveSkyPath = ui->lineEditOptionsWeatherAsnPath->text();
+  data.weatherActiveSkyPath = ui->lineEditOptionsWeatherAsnPath->text();
 
-  optionData->databaseAddonExclude.clear();
+  data.databaseAddonExclude.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
-    optionData->databaseAddonExclude.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
+    data.databaseAddonExclude.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
 
-  optionData->databaseExclude.clear();
+  data.databaseExclude.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
-    optionData->databaseExclude.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
+    data.databaseExclude.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
 
   if(ui->radioButtonOptionsMapScrollFull->isChecked())
-    optionData->mapScrollDetail = opts::FULL;
+    data.mapScrollDetail = opts::FULL;
   else if(ui->radioButtonOptionsMapScrollNone->isChecked())
-    optionData->mapScrollDetail = opts::NONE;
+    data.mapScrollDetail = opts::NONE;
   else if(ui->radioButtonOptionsMapScrollNormal->isChecked())
-    optionData->mapScrollDetail = opts::NORMAL;
+    data.mapScrollDetail = opts::NORMAL;
 
   if(ui->radioButtonOptionsMapSimUpdateFast->isChecked())
-    optionData->mapSimUpdateRate = opts::FAST;
+    data.mapSimUpdateRate = opts::FAST;
   else if(ui->radioButtonOptionsMapSimUpdateLow->isChecked())
-    optionData->mapSimUpdateRate = opts::LOW;
+    data.mapSimUpdateRate = opts::LOW;
   else if(ui->radioButtonOptionsMapSimUpdateMedium->isChecked())
-    optionData->mapSimUpdateRate = opts::MEDIUM;
+    data.mapSimUpdateRate = opts::MEDIUM;
 
-  optionData->cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
-  optionData->cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
-  optionData->guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
-  optionData->guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
-  optionData->guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
-  optionData->guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
-  optionData->mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
-  optionData->mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
-  optionData->mapSymbolSize = ui->spinBoxOptionsMapSymbolSize->value();
-  optionData->mapTextSize = ui->spinBoxOptionsMapTextSize->value();
-  optionData->mapZoomShow = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMap->value());
-  optionData->routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
+  data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
+  data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
+  data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
+  data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
+  data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
+  data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
+  data.mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
+  data.mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
+  data.mapSymbolSize = ui->spinBoxOptionsMapSymbolSize->value();
+  data.mapTextSize = ui->spinBoxOptionsMapTextSize->value();
+  data.mapZoomShow = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMap->value());
+  data.routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
+  data.valid = true;
 }
 
 void OptionsDialog::fromOptionData()
@@ -247,25 +329,30 @@ void OptionsDialog::fromOptionData()
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
 
+  OptionData& data = OptionData::instance();
+
   QString txt;
-  for(int val : optionData->mapRangeRings)
+  for(int val : data.mapRangeRings)
   {
-    if(!txt.isEmpty())
-      txt += " ";
-    txt += QString::number(val);
+    if(val > 0)
+    {
+      if(!txt.isEmpty())
+        txt += " ";
+      txt += QString::number(val);
+    }
   }
   ui->lineEditOptionsMapRangeRings->setText(txt);
-  ui->lineEditOptionsWeatherAsnPath->setText(optionData->weatherActiveSkyPath);
+  ui->lineEditOptionsWeatherAsnPath->setText(data.weatherActiveSkyPath);
 
   ui->listWidgetOptionsDatabaseAddon->clear();
-  for(const QString& str : optionData->databaseAddonExclude)
+  for(const QString& str : data.databaseAddonExclude)
     ui->listWidgetOptionsDatabaseAddon->addItem(str);
 
   ui->listWidgetOptionsDatabaseExclude->clear();
-  for(const QString& str : optionData->databaseExclude)
+  for(const QString& str : data.databaseExclude)
     ui->listWidgetOptionsDatabaseExclude->addItem(str);
 
-  switch(optionData->mapScrollDetail)
+  switch(data.mapScrollDetail)
   {
     case opts::FULL:
       ui->radioButtonOptionsMapScrollFull->setChecked(true);
@@ -278,7 +365,7 @@ void OptionsDialog::fromOptionData()
       break;
   }
 
-  switch(optionData->mapSimUpdateRate)
+  switch(data.mapSimUpdateRate)
   {
     case opts::FAST:
       ui->radioButtonOptionsMapSimUpdateFast->setChecked(true);
@@ -291,42 +378,42 @@ void OptionsDialog::fromOptionData()
       break;
   }
 
-  ui->spinBoxOptionsCacheDiskSize->setValue(optionData->cacheSizeDisk);
-  ui->spinBoxOptionsCacheMemorySize->setValue(optionData->cacheSizeMemory);
-  ui->spinBoxOptionsGuiInfoText->setValue(optionData->guiInfoTextSize);
-  ui->spinBoxOptionsGuiRouteText->setValue(optionData->guiRouteTableTextSize);
-  ui->spinBoxOptionsGuiSearchText->setValue(optionData->guiSearchTableTextSize);
-  ui->spinBoxOptionsGuiSimInfoText->setValue(optionData->guiInfoSimSize);
-  ui->spinBoxOptionsMapClickRect->setValue(optionData->mapClickSensitivity);
-  ui->spinBoxOptionsMapTooltipRect->setValue(optionData->mapTooltipSensitivity);
-  ui->spinBoxOptionsMapSymbolSize->setValue(optionData->mapSymbolSize);
-  ui->spinBoxOptionsMapTextSize->setValue(optionData->mapTextSize);
-  ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(optionData->mapZoomShow);
-  ui->spinBoxOptionsRouteGroundBuffer->setValue(optionData->routeGroundBuffer);
+  ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
+  ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);
+  ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
+  ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
+  ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
+  ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
+  ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);
+  ui->spinBoxOptionsMapTooltipRect->setValue(data.mapTooltipSensitivity);
+  ui->spinBoxOptionsMapSymbolSize->setValue(data.mapSymbolSize);
+  ui->spinBoxOptionsMapTextSize->setValue(data.mapTextSize);
+  ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShow);
+  ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
 }
 
 void OptionsDialog::toFlags(QCheckBox *checkBox, opts::Flags flag)
 {
   if(checkBox->isChecked())
-    optionData->flags |= flag;
+    OptionData::instanceInternal().flags |= flag;
   else
-    optionData->flags &= ~flag;
+    OptionData::instanceInternal().flags &= ~flag;
 }
 
 void OptionsDialog::toFlags(QRadioButton *checkBox, opts::Flags flag)
 {
   if(checkBox->isChecked())
-    optionData->flags |= flag;
+    OptionData::instanceInternal().flags |= flag;
   else
-    optionData->flags &= ~flag;
+    OptionData::instanceInternal().flags &= ~flag;
 }
 
 void OptionsDialog::fromFlags(QCheckBox *checkBox, opts::Flags flag)
 {
-  checkBox->setChecked(optionData->flags & flag);
+  checkBox->setChecked(OptionData::instanceInternal().flags & flag);
 }
 
 void OptionsDialog::fromFlags(QRadioButton *checkBox, opts::Flags flag)
 {
-  checkBox->setChecked(optionData->flags & flag);
+  checkBox->setChecked(OptionData::instanceInternal().flags & flag);
 }

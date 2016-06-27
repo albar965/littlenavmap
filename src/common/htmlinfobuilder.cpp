@@ -17,6 +17,7 @@
 
 #include "common/htmlinfobuilder.h"
 
+#include "options/optiondata.h"
 #include "atools.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -197,17 +198,20 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
   if(weather != nullptr)
   {
+    opts::Flags flags = OptionData::instance().getFlags();
+    bool showAsn = info ? flags & opts::WEATHER_INFO_ASN : flags & opts::WEATHER_TOOLTIP_ASN;
+    bool showNoaa = info ? flags & opts::WEATHER_INFO_NOAA : flags & opts::WEATHER_TOOLTIP_NOAA;
+    bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
+
     QString asnMetar, noaaMetar, vatsimMetar;
-    if(weather->hasAsnWeather())
+    if(weather->hasAsnWeather() && showAsn)
       asnMetar = weather->getAsnMetar(airport.ident);
 
-    if(!weather->hasAsnWeather() || info)
-    {
+    if(showNoaa)
       noaaMetar = weather->getNoaaMetar(airport.ident);
 
-      if(noaaMetar.isEmpty() || info)
-        vatsimMetar = weather->getVatsimMetar(airport.ident);
-    }
+    if(showVatsim)
+      vatsimMetar = weather->getVatsimMetar(airport.ident);
 
     if(!asnMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
     {

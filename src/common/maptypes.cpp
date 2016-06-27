@@ -15,9 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "atools.h"
 #include "common/maptypes.h"
+
+#include "atools.h"
 #include "common/formatter.h"
+#include "options/optiondata.h"
 
 #include <QDataStream>
 #include <QHash>
@@ -358,7 +360,8 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
   if(addon() && objectTypes.testFlag(maptypes::AIRPORT_ADDON))
     return true;
 
-  if(empty() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+  if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS &&
+     empty() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
     return false;
 
   if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))

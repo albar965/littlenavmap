@@ -15,10 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "symbolpainter.h"
+
 #include "common/maptypes.h"
 #include "mapgui/mapquery.h"
-#include "symbolpainter.h"
 #include "common/mapcolors.h"
+#include "options/optiondata.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -516,7 +518,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirpor
       atts |= textatt::ROUTE_BG_COLOR;
 
     int transparency = diagram ? 130 : 255;
-    if(airport.empty())
+    if(airport.empty() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))

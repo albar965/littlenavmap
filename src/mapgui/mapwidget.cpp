@@ -17,6 +17,7 @@
 
 #include "mapgui/mapwidget.h"
 
+#include "options/optiondata.h"
 #include "common/constants.h"
 #include "mapgui/mappaintlayer.h"
 #include "settings/settings.h"
@@ -270,8 +271,11 @@ void MapWidget::restoreState()
   }
   history.restoreState(lnm::MAP_HISTORY);
 
-  if(s.contains(lnm::MAP_KMLFILES))
-    kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
+  {
+    if(s.contains(lnm::MAP_KMLFILES))
+      kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
+  }
   screenIndex->restoreState();
 }
 
@@ -290,20 +294,25 @@ void MapWidget::mainWindowShown()
 
 void MapWidget::showSavedPos()
 {
-  const MapPosHistoryEntry& currentPos = history.current();
-
-  QToolTip::hideText();
-  tooltipPos = QPoint();
-
-  if(currentPos.isValid())
+  if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_HOME)
+    showHome();
+  else if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_LAST)
   {
-    centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
-    setDistance(currentPos.getDistance());
-  }
-  else
-  {
-    centerOn(0.f, 0.f, false);
-    setDistance(7000);
+    const MapPosHistoryEntry& currentPos = history.current();
+
+    QToolTip::hideText();
+    tooltipPos = QPoint();
+
+    if(currentPos.isValid())
+    {
+      centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
+      setDistance(currentPos.getDistance());
+    }
+    else
+    {
+      centerOn(0.f, 0.f, false);
+      setDistance(7000);
+    }
   }
 }
 
@@ -1088,7 +1097,7 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   maptypes::RangeMarker rings;
   rings.type = maptypes::NONE;
   rings.center = pos;
-  rings.ranges = {50, 100, 200, 500};
+  rings.ranges = OptionData::instance().getMapRangeRings();
   screenIndex->getRangeMarks().append(rings);
 
   qDebug() << "range rings" << rings.center;
@@ -1619,7 +1628,7 @@ bool MapWidget::loadKml(const QString& filename, bool center)
     // Do some rudimentary file content checking
     if(!kmlString.isEmpty() && kmlString.startsWith("<?xml") && kmlString.endsWith("</kml>"))
     {
-      if(center)
+      if(center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML)
         model()->addGeoDataFile(filename);
       else
         // Have to read the data ourselves to avoid centering on startup

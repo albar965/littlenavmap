@@ -83,7 +83,7 @@ public:
     return currentFsType;
   }
 
-  static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 1;
+  static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 2;
   static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 0;
 
 signals:

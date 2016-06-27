@@ -117,7 +117,10 @@ QString WeatherReporter::getAsnSnapshotPath()
     {
       QString file = dir.filePath("current_wx_snapshot.txt");
       if(QFile::exists(file))
+      {
+        qDebug() << "found ASN path" << file;
         return file;
+      }
       else
         qWarning() << "wx_station_list.txt not found";
     }

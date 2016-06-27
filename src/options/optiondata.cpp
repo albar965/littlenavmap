@@ -17,6 +17,10 @@
 
 #include "optiondata.h"
 
+#include "exception.h"
+
+OptionData *OptionData::optionData = nullptr;
+
 OptionData::OptionData()
 {
 
@@ -24,5 +28,24 @@ OptionData::OptionData()
 
 OptionData::~OptionData()
 {
+
+}
+
+OptionData& OptionData::instance()
+{
+  OptionData& od = instanceInternal();
+
+  if(!od.valid)
+    throw new atools::Exception("OptionData not initialized yet");
+
+  return od;
+}
+
+OptionData& OptionData::instanceInternal()
+{
+  if(optionData == nullptr)
+    optionData = new OptionData();
+
+  return *optionData;
 
 }

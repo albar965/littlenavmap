@@ -41,6 +41,7 @@
 #include "mapgui/maplayersettings.h"
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
+#include "options/optionsdialog.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -51,8 +52,6 @@
 #include <QFileInfo>
 
 #include "ui_mainwindow.h"
-
-#include <options/optionsdialog.h>
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -83,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   setupUi();
 
-  optionsDialog = new OptionsDialog(this, &optionData);
+  optionsDialog = new OptionsDialog(this);
 
   mainWindowTitle = windowTitle();
 
@@ -127,6 +126,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   connectAllSlots();
   readSettings();
+  updateMapShowFeatures();
   updateActionStates();
 
   mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
@@ -379,6 +379,12 @@ void MainWindow::connectAllSlots()
 
   connect(ui->textBrowserNavmapLegendInfo, &QTextBrowser::anchorClicked, this,
           &MainWindow::legendAnchorClicked);
+
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
+
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapShowFeatures);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
@@ -770,7 +776,8 @@ void MainWindow::routeOpen()
       if(routeController->loadFlightplan(routeFile))
       {
         routeFileHistory->addFile(routeFile);
-        routeCenter();
+        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+          routeCenter();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -785,7 +792,8 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     {
       if(routeController->loadFlightplan(routeFile))
       {
-        routeCenter();
+        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+          routeCenter();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -1045,6 +1053,31 @@ void MainWindow::updateActionStates()
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
 
+  // Remove or add empty airport action from menu and toolbar depending on option
+  if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
+  {
+    ui->actionMapShowEmptyAirports->setChecked(true);
+    ui->actionMapShowEmptyAirports->setEnabled(true);
+
+    if(!ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->mapToolBar->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+
+    if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMap->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+  }
+  else
+  {
+    // Force display - even if action is not visible
+    ui->actionMapShowEmptyAirports->setChecked(true);
+    ui->actionMapShowEmptyAirports->setDisabled(true);
+
+    if(ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->mapToolBar->removeAction(ui->actionMapShowEmptyAirports);
+
+    if(ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
+  }
+
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(connectClient->isConnected());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
@@ -1068,7 +1101,9 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
+  // Need to be called first since it reads all options
   optionsDialog->restoreState();
+
   kmlFileHistory->restoreState();
   routeFileHistory->restoreState();
   searchController->restoreState();
@@ -1077,19 +1112,24 @@ void MainWindow::readSettings()
   connectClient->restoreState();
   infoController->restoreState();
 
-  ws.restore({mapProjectionComboBox, mapThemeComboBox,
-              ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-              ui->actionMapShowAddonAirports,
-              ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-              ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-              ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
-              ui->actionMapShowAircraftTrack,
-              ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-              ui->actionRouteEditMode,
-              ui->actionWorkOffline});
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  {
+    ws.setBlockSignals(true);
+    ws.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+                ui->actionMapShowAddonAirports,
+                ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+                ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                ui->actionMapShowAircraftTrack});
+    mapDetailFactor = Settings::instance().valueInt(lnm::MAP_DETAILFACTOR,
+                                                    MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
+    ws.setBlockSignals(false);
+  }
+  else
+    mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
 
-  mapDetailFactor = Settings::instance().valueInt(lnm::MAP_DETAILFACTOR,
-                                                  MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
+  ws.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
+              ui->actionMapShowHillshading, ui->actionRouteEditMode, ui->actionWorkOffline});
 
   firstApplicationStart = Settings::instance().valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 

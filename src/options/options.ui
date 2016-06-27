@@ -628,6 +628,9 @@ Can decrease battery life on notebooks</string>
          <property name="text">
           <string>Prefer &amp;VOR stations as transition to airway</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -660,6 +663,9 @@ Can decrease battery life on notebooks</string>
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
          <property name="text">
           <string>Prefer &amp;NDB stations as  transition to airway</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

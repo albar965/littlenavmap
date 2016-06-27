@@ -17,6 +17,7 @@
 
 #include "search/airporticondelegate.h"
 
+#include "options/optiondata.h"
 #include "search/sqlmodel.h"
 #include "search/sqlproxymodel.h"
 #include "common/symbolpainter.h"
@@ -58,7 +59,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Create a style copy
   QStyleOptionViewItem opt(option);
   opt.displayAlignment = Qt::AlignRight;
-  if(!ap.empty())
+  if(!ap.empty() && OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
     opt.font.setBold(true);
   if(ap.addon())
     opt.font.setItalic(true);

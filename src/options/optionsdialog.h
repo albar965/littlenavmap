@@ -21,7 +21,6 @@
 #include "options/optiondata.h"
 
 #include <QDialog>
-#include <QRegularExpressionValidator>
 
 namespace Ui {
 class Options;
@@ -32,6 +31,7 @@ class MainWindow;
 class OptionData;
 class QCheckBox;
 class QRadioButton;
+class RangeRingValidator;
 
 class OptionsDialog :
   public QDialog
@@ -39,7 +39,7 @@ class OptionsDialog :
   Q_OBJECT
 
 public:
-  OptionsDialog(MainWindow *parentWindow, OptionData *optionDataParam);
+  OptionsDialog(MainWindow *parentWindow);
   virtual ~OptionsDialog();
 
   void saveState();
@@ -48,23 +48,12 @@ public:
   virtual int exec() override;
 
 signals:
-  void optionsChanged(const OptionData *optionData);
+  void optionsChanged();
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
   void toOptionData();
   void fromOptionData();
-
-  Ui::Options *ui;
-  MainWindow *mainWindow;
-
-  QList<QObject *> widgets;
-
-  /* OptionData is owned by main window */
-  OptionData *optionData;
-
-  QRegularExpressionValidator rangeRingValidator;
-
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *checkBox, opts::Flags flag);
 
@@ -75,6 +64,13 @@ private:
   void selectAsnPathClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
+
+  QVector<int> ringStrToVector(const QString& string) const;
+
+  Ui::Options *ui;
+  MainWindow *mainWindow;
+  QList<QObject *> widgets;
+  RangeRingValidator *rangeRingValidator;
 
 };
 

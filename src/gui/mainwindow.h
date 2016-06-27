@@ -20,7 +20,6 @@
 
 #include "common/maptypes.h"
 #include "fs/fspaths.h"
-#include "options/optiondata.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -102,11 +101,6 @@ public:
 
   void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
   void setStatusMessage(const QString& message);
-
-  const OptionData& getOptionData() const
-  {
-    return optionData;
-  }
 
 signals:
   /* Emitted when window is shown the first time */
@@ -198,9 +192,6 @@ private:
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
   bool firstStart = true, firstApplicationStart = false;
-
-  OptionData optionData;
-
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
