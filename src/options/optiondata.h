@@ -99,7 +99,7 @@ enum MapSimUpdateRate
 class OptionData
 {
 public:
-  static OptionData& instance();
+  static const OptionData& instance();
 
   ~OptionData();
 
@@ -232,10 +232,10 @@ private:
   QString weatherActiveSkyPath;
 
   // ui->listWidgetOptionsDatabaseAddon
-  QStringList databaseAddonExclude;
+  QStringList databaseAddonExclude; // TODO implement
 
   // ui->listWidgetOptionsDatabaseExclude
-  QStringList databaseExclude;
+  QStringList databaseExclude; // TODO implement
 
   // ui->radioButtonOptionsMapScrollFull
   // ui->radioButtonOptionsMapScrollNone

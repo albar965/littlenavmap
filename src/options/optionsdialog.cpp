@@ -22,7 +22,9 @@
 #include "ui_options.h"
 #include "common/weatherreporter.h"
 #include "gui/widgetstate.h"
+#include "gui/dialog.h"
 
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
@@ -132,10 +134,13 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
-  connect(ui->pushButtonOptionsStartupResetDefault, &QPushButton::clicked,
-          this, &OptionsDialog::resetDefaultClicked);
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectAsnPathClicked);
+
+  connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::editingFinished,
+          this, &OptionsDialog::asnPathEditingFinished);
+  connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateAsnPathStatus);
 
   connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked,
           this, &OptionsDialog::clearDiskCachedClicked);
@@ -152,33 +157,73 @@ OptionsDialog::~OptionsDialog()
 int OptionsDialog::exec()
 {
   fromOptionData();
-
-  bool hasAsn = mainWindow->getWeatherReporter()->hasAsnWeather();
-  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
-  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+  updateAsnButtonState();
 
   return QDialog::exec();
 }
 
-void OptionsDialog::resetDefaultClicked()
+void OptionsDialog::updateAsnButtonState()
 {
-  qDebug() << "OptionsDialog::resetDefaultClicked";
+  WeatherReporter *wr = mainWindow->getWeatherReporter();
+  bool hasAsn = wr->isAsnDefaultFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
+  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
+  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+  updateAsnPathStatus();
+}
 
-  QMessageBox::StandardButton result = QMessageBox::question(this, QApplication::applicationName(),
-                                                             tr("Reset all options to default?"));
+void OptionsDialog::updateAsnPathStatus()
+{
+  const QString& path = ui->lineEditOptionsWeatherAsnPath->text();
 
-  if(result == QMessageBox::Yes)
+  if(!path.isEmpty())
   {
-    OptionData::instance() = OptionData();
-    fromOptionData();
-    saveState();
-    emit optionsChanged();
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+    {
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">File does not exist.</span>"));
+    }
+    else if(!fileinfo.isFile())
+    {
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">Is not a file.</span>"));
+      return;
+    }
+    else if(!WeatherReporter::validateAsnFile(path))
+    {
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">Is not an ASN weather snapshot file.</span>"));
+      return;
+    }
+    else
+      ui->labelOptionsWeatherAsnPathState->setText(tr("Weather snapshot file is valid."));
   }
+  else
+    ui->labelOptionsWeatherAsnPathState->setText(tr("No weather snapshot file selected. Using default."));
+}
+
+void OptionsDialog::asnPathEditingFinished()
+{
+  qDebug() << "OptionsDialog::asnPathEditingFinished";
+
+  updateAsnPathStatus();
+  updateAsnButtonState();
 }
 
 void OptionsDialog::selectAsnPathClicked()
 {
   qDebug() << "OptionsDialog::selectAsnPathClicked";
+
+  QString path = atools::gui::Dialog(this).openFileDialog(
+    tr("Open Active Sky Next Weather Snapshot File"),
+    tr("ASN Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_ASN_SNAPSHOT),
+    lnm::DATABASE_SCENERYCONFIG, ui->lineEditOptionsWeatherAsnPath->text());
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWeatherAsnPath->setText(path);
+
+  updateAsnPathStatus();
+  updateAsnButtonState();
 }
 
 void OptionsDialog::clearMemCachedClicked()
@@ -210,6 +255,22 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
+
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
+  {
+    qDebug() << "OptionsDialog::resetDefaultClicked";
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, QApplication::applicationName(),
+                                                               tr("Reset all options to default?"));
+
+    if(result == QMessageBox::Yes)
+    {
+      OptionData::instanceInternal() = OptionData();
+      fromOptionData();
+      saveState();
+      emit optionsChanged();
+    }
+  }
 }
 
 void OptionsDialog::saveState()
@@ -222,7 +283,7 @@ void OptionsDialog::saveState()
 
 void OptionsDialog::restoreState()
 {
-  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*visibility*/, true /*block signals*/);
+  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
   saver.restore(widgets);
 
   toOptionData();
@@ -329,7 +390,7 @@ void OptionsDialog::fromOptionData()
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
 
-  OptionData& data = OptionData::instance();
+  OptionData& data = OptionData::instanceInternal();
 
   QString txt;
   for(int val : data.mapRangeRings)

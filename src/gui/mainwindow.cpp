@@ -83,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
   setupUi();
 
   optionsDialog = new OptionsDialog(this);
+  optionsDialog->restoreState();
 
   mainWindowTitle = windowTitle();
 
@@ -385,6 +386,7 @@ void MainWindow::connectAllSlots()
 
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapShowFeatures);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
@@ -766,10 +768,11 @@ void MainWindow::routeOpen()
 {
   if(routeCheckForChanges())
   {
-    QString routeFile = dialog->openFileDialog(tr("Open Flightplan"),
-                                               tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
-                                               "Route/",
-                                               atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
+    QString routeFile = dialog->openFileDialog(
+      tr("Open Flightplan"),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      "Route/",
+      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
 
     if(!routeFile.isEmpty())
     {
@@ -830,11 +833,12 @@ bool MainWindow::routeSaveAs()
 {
   if(routeValidate())
   {
-    QString routeFile = dialog->saveFileDialog(tr("Save Flightplan"),
-                                               tr("Flightplan Files (*.pln *.PLN);;All Files (*)"),
-                                               "pln", "Route/",
-                                               atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
-                                               routeController->getDefaultFilename());
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan"),
+      tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+      "pln", "Route/",
+      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
+      routeController->getDefaultFilename());
 
     if(!routeFile.isEmpty())
     {
@@ -859,9 +863,10 @@ void MainWindow::kmlClear()
 
 void MainWindow::kmlOpen()
 {
-  QString kmlFile = dialog->openFileDialog(tr("Google Earth KML"),
-                                           tr("Google Earth KML (*.kml *.KML *.kmz *.KMZ);;All Files (*)"),
-                                           "Kml/", QString());
+  QString kmlFile = dialog->openFileDialog(
+    tr("Google Earth KML"),
+    tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
+    "Kml/", QString());
 
   if(!kmlFile.isEmpty())
   {
@@ -1101,8 +1106,8 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
-  // Need to be called first since it reads all options
-  optionsDialog->restoreState();
+  // Need to be loaded in constructor first since it reads all options
+  // optionsDialog->restoreState();
 
   kmlFileHistory->restoreState();
   routeFileHistory->restoreState();

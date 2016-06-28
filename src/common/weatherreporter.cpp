@@ -20,6 +20,7 @@
 #include "logging/loggingdefs.h"
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
+#include "options/optiondata.h"
 
 #include <QDir>
 #include <QFile>
@@ -29,6 +30,9 @@
 #include <QStandardPaths>
 #include <QNetworkReply>
 #include <QTimer>
+#include <QRegularExpression>
+
+QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
 
 using atools::fs::FsPaths;
 
@@ -47,22 +51,31 @@ WeatherReporter::~WeatherReporter()
 
 void WeatherReporter::initActiveSkyNext()
 {
-  if(fsWatcher != nullptr && !asnSnapshotPath.isEmpty())
-    if(!fsWatcher->removePath(asnSnapshotPath))
-      qWarning() << "cannot unwatch" << asnSnapshotPath;
-
-  asnSnapshotPath = getAsnSnapshotPath();
-  if(!asnSnapshotPath.isEmpty())
+  if(fsWatcher != nullptr)
   {
-    loadActiveSkySnapshot();
+    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
+    delete fsWatcher;
+    fsWatcher = nullptr;
+  }
+
+  QString manualAsnSnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
+  asnSnapshotPath = findAsnSnapshotPath();
+
+  // Manual path overrides found path for all simulators
+  QString asnPath = manualAsnSnapshotPath.isEmpty() ? asnSnapshotPath : manualAsnSnapshotPath;
+
+  if(!asnPath.isEmpty())
+  {
+    qDebug() << "Using ASN path" << asnPath;
+    loadActiveSkySnapshot(asnPath);
     if(fsWatcher == nullptr)
     {
       fsWatcher = new QFileSystemWatcher(this);
       fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
     }
 
-    if(!fsWatcher->addPath(asnSnapshotPath))
-      qWarning() << "cannot watch" << asnSnapshotPath;
+    if(!fsWatcher->addPath(asnPath))
+      qWarning() << "cannot watch" << asnPath;
   }
 }
 
@@ -70,12 +83,13 @@ void WeatherReporter::initActiveSkyNext()
 // AGGH::AGGH 261800Z 20002KT 9999 FEW014 SCT027 25/24 Q1009::AGGH 261655Z 2618/2718 VRB03KT 9999 FEW017 SCT028 FM270000
 // 34010KT 9999 -SH SCT019 SCT03 FM271200 VRB03KT 9999 -SH FEW017 SCT028 PROB30 INTER 2703/27010 5000 TSSH SCT016 FEW017CB BKN028
 // T 25 27 31 32 Q 1009 1011 1011 1009::278,11,24.0/267,12,19.0/263,13,16.1/233,12,7.2/290,7,-3.0/338,8,-13.0/348,18,-27.9/9,19,-37.9/26,15,-51.3
-void WeatherReporter::loadActiveSkySnapshot()
+void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 {
-  if(asnSnapshotPath.isEmpty())
+  // TODO overrride with settings
+  if(path.isEmpty())
     return;
 
-  QFile file(asnSnapshotPath);
+  QFile file(path);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     asnMetars.clear();
@@ -94,7 +108,25 @@ void WeatherReporter::loadActiveSkySnapshot()
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
 }
 
-QString WeatherReporter::getAsnSnapshotPath()
+bool WeatherReporter::validateAsnFile(const QString& path)
+{
+  bool retval = false;
+  QFile file(path);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream sceneryCfg(&file);
+    QString line;
+    if(sceneryCfg.readLineInto(&line))
+      if(ASN_VALIDATE_REGEXP.match(line).hasMatch())
+        retval = true;
+    file.close();
+  }
+  else
+    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+  return retval;
+}
+
+QString WeatherReporter::findAsnSnapshotPath()
 {
   // TODO find better way to get to Roaming directory
   QString appdata = atools::settings::Settings::instance().getPath();
@@ -118,11 +150,14 @@ QString WeatherReporter::getAsnSnapshotPath()
       QString file = dir.filePath("current_wx_snapshot.txt");
       if(QFile::exists(file))
       {
-        qDebug() << "found ASN path" << file;
-        return file;
+        qDebug() << "found ASN weather file" << file;
+        if(validateAsnFile(file))
+          return file;
+        else
+          qWarning() << "is not an ASN weather snapshot file" << file;
       }
       else
-        qWarning() << "wx_station_list.txt not found";
+        qWarning() << "file does not exist" << file;
     }
     else
       qWarning().noquote().nospace() << "HiFi/" + simPath + "/Weather not found";
@@ -252,7 +287,7 @@ QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
     const Report& report = noaaMetars.value(airportIcao);
     if(!report.metar.isEmpty())
     {
-      if(report.reportTime.addSecs(900) < QDateTime::currentDateTime())
+      if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
         loadNoaaMetar(airportIcao);
       else
         return report.metar;
@@ -270,7 +305,7 @@ QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
     const Report& report = vatsimMetars.value(airportIcao);
     if(!report.metar.isEmpty())
     {
-      if(report.reportTime.addSecs(900) < QDateTime::currentDateTime())
+      if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
         loadVatsimMetar(airportIcao);
       else
         return report.metar;
@@ -293,10 +328,15 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   }
 }
 
+void WeatherReporter::optionsChanged()
+{
+  initActiveSkyNext();
+}
+
 void WeatherReporter::fileChanged(const QString& path)
 {
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
-  loadActiveSkySnapshot();
+  loadActiveSkySnapshot(path);
   mainWindow->setStatusMessage(tr("Active Sky Next weather information updated."));
 }

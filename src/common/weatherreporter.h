@@ -40,7 +40,10 @@ public:
   QString getNoaaMetar(const QString& airportIcao);
   QString getVatsimMetar(const QString& airportIcao);
 
-  bool hasAsnWeather()
+  void saveState();
+  void restoreState();
+
+  bool isAsnDefaultFound()
   {
     return !asnSnapshotPath.isEmpty();
   }
@@ -48,10 +51,16 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
+  void optionsChanged();
+
+  static bool validateAsnFile(const QString& path);
+
 signals:
   void weatherUpdated();
 
 private:
+  // Update online reports if older than 15 minutes
+  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 900;
   struct Report
   {
     QString metar;
@@ -60,9 +69,9 @@ private:
 
   void fileChanged(const QString& path);
 
-  void loadActiveSkySnapshot();
+  void loadActiveSkySnapshot(const QString& path);
   void initActiveSkyNext();
-  QString getAsnSnapshotPath();
+  QString findAsnSnapshotPath();
 
   void loadNoaaMetar(const QString& airportIcao);
   void loadVatsimMetar(const QString& airportIcao);

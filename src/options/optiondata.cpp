@@ -17,6 +17,7 @@
 
 #include "optiondata.h"
 
+#include "logging/loggingdefs.h"
 #include "exception.h"
 
 OptionData *OptionData::optionData = nullptr;
@@ -31,12 +32,15 @@ OptionData::~OptionData()
 
 }
 
-OptionData& OptionData::instance()
+const OptionData& OptionData::instance()
 {
   OptionData& od = instanceInternal();
 
   if(!od.valid)
+  {
+    qCritical() << "OptionData not initialized yet";
     throw new atools::Exception("OptionData not initialized yet");
+  }
 
   return od;
 }
@@ -44,7 +48,10 @@ OptionData& OptionData::instance()
 OptionData& OptionData::instanceInternal()
 {
   if(optionData == nullptr)
+  {
+    qDebug() << "Creating new OptionData";
     optionData = new OptionData();
+  }
 
   return *optionData;
 

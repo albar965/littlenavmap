@@ -59,11 +59,13 @@ private:
 
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
   void fromFlags(QRadioButton *checkBox, opts::Flags flag);
-  void resetDefaultClicked();
 
   void selectAsnPathClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
+  void asnPathEditingFinished();
+  void updateAsnButtonState();
+  void updateAsnPathStatus();
 
   QVector<int> ringStrToVector(const QString& string) const;
 

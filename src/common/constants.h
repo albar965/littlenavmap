@@ -70,6 +70,19 @@ const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
 const QString OPTIONS_VERSION = "Options/Version";
 const QString OPTIONS_SETTINGS_VERSION = "Options/SettingsVersion";
 
+// File dialog patterns
+
+#if defined(Q_OS_WIN32)
+const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg)";
+const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln)";
+const QString FILE_PATTERN_KML = "(*.kml *.kmz)";
+#else
+const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.CFG)";
+const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.PLN)";
+const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
+#endif
+const QString FILE_PATTERN_ASN_SNAPSHOT = "(current_wx_snapshot.txt)";
+
 } // namespace lnm
 
 #endif // LITTLENAVMAP_CONSTANTS_H

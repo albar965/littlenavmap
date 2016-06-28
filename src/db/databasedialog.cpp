@@ -116,7 +116,8 @@ void DatabaseDialog::selectBasePath()
 void DatabaseDialog::selectSceneryConfig()
 {
   QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open Scenery Configuration File"), tr("Scenery Configuration Files (*.cfg *.CFG);;All Files (*)"),
+    tr("Open Scenery Configuration File"),
+    tr("Scenery Configuration Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_SCENERYCONFIG),
     lnm::DATABASE_SCENERYCONFIG, ui->lineEditDatabaseSceneryFile->text());
 
   if(!path.isEmpty())

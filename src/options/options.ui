@@ -27,36 +27,6 @@
        <string>Startup</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
-         <property name="text">
-          <string>Load last &amp;route after startup</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
-         <property name="text">
-          <string>Load last Google Earth &amp;KML file after startup</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
-         <property name="text">
-          <string>Restore &amp;map display settings</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0" alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBoxOptionsStartupShowMap">
          <property name="title">
@@ -86,31 +56,35 @@
          </layout>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QPushButton" name="pushButtonOptionsStartupResetDefault">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
          <property name="text">
-          <string>R&amp;eset all Options to Default</string>
+          <string>Load last &amp;route after startup</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <spacer name="horizontalSpacerStartup">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadKml">
+         <property name="text">
+          <string>Load last Google Earth &amp;KML file after startup</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
+         <property name="checked">
+          <bool>true</bool>
          </property>
-        </spacer>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
+         <property name="text">
+          <string>Restore &amp;map display settings</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -728,10 +702,10 @@ Can decrease battery life on notebooks</string>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath"/>
        </item>
-       <item row="2" column="2">
+       <item row="2" column="3">
         <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
          <property name="text">
-          <string>&amp;Select File</string>
+          <string>&amp;Select File ...</string>
          </property>
         </widget>
        </item>
@@ -774,10 +748,24 @@ Can decrease battery life on notebooks</string>
        <item row="2" column="0">
         <widget class="QLabel" name="labelOptionsWeatherAsnPath">
          <property name="text">
-          <string>Active Sky Next weather &amp;File:</string>
+          <string>Active Sky Next weather &amp;File.
+This file will be used for all simulators:</string>
          </property>
          <property name="buddy">
           <cstring>lineEditOptionsWeatherAsnPath</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="labelOptionsWeatherAsnPathState">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Valid</string>
          </property>
         </widget>
        </item>
@@ -796,7 +784,7 @@ Can decrease battery life on notebooks</string>
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddExclude">
            <property name="text">
-            <string>&amp;Add</string>
+            <string>&amp;Add ...</string>
            </property>
           </widget>
          </item>
@@ -872,7 +860,7 @@ Directories in this list will not be considered add-on if they are outside the f
          <item alignment="Qt::AlignTop">
           <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
            <property name="text">
-            <string>A&amp;dd</string>
+            <string>A&amp;dd ...</string>
            </property>
           </widget>
          </item>
@@ -908,7 +896,7 @@ Directories in this list will not be considered add-on if they are outside the f
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
      </property>
     </widget>
    </item>
@@ -921,7 +909,6 @@ Directories in this list will not be considered add-on if they are outside the f
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
-  <tabstop>pushButtonOptionsStartupResetDefault</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>

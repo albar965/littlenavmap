@@ -204,7 +204,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
 
     QString asnMetar, noaaMetar, vatsimMetar;
-    if(weather->hasAsnWeather() && showAsn)
+    if(showAsn)
       asnMetar = weather->getAsnMetar(airport.ident);
 
     if(showNoaa)
