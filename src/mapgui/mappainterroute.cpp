@@ -47,13 +47,12 @@ void MapPainterRoute::render(const PaintContext *context)
   if(!context->objectTypes.testFlag(maptypes::ROUTE))
     return;
 
-  bool drawFast = mapWidget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
 
   context->painter->save();
 
   // Use layer independent of declutter factor
-  paintRoute(context->mapLayerEffective, context->painter, drawFast);
+  paintRoute(context->mapLayerEffective, context->painter, context->drawFast);
 
   context->painter->restore();
 }

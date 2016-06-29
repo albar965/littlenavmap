@@ -226,58 +226,68 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
   {
     mapScale->update(viewport, mapWidget->distance());
 
-    // Set default font to bold and reduce size a bit
-    QFont font = painter->font();
-    font.setBold(true);
-    // font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
-    painter->setFont(font);
+    opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
 
-    QElapsedTimer t;
-    t.start();
-
-    updateLayers();
-
-    PaintContext context;
-    context.mapLayer = mapLayer;
-    context.mapLayerEffective = mapLayerEffective;
-    context.painter = painter;
-    context.viewport = viewport;
-    context.objectTypes = objectTypes;
-
-    const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
-    context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
-                                             box.north(GeoDataCoordinates::Degree),
-                                             box.east(GeoDataCoordinates::Degree),
-                                             box.south(GeoDataCoordinates::Degree));
-
-    if(objectTypes.testFlag(maptypes::ROUTE) && !forcePaint.isEmpty())
-      context.forcePaintObjects = &forcePaint;
-    else
-      context.forcePaintObjects = nullptr;
-
-    if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
+    // Check if no painting wanted during scroll
+    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation))
     {
-      if(context.mapLayerEffective->isAirportDiagram())
-      {
-        mapPainterIls->render(&context);
-        mapPainterAirport->render(&context);
-        mapPainterNav->render(&context);
-      }
+      // Set default font to bold and reduce size a bit
+      QFont font = painter->font();
+      font.setBold(true);
+      // font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
+      painter->setFont(font);
+
+      QElapsedTimer t;
+      t.start();
+
+      updateLayers();
+
+      PaintContext context;
+      context.mapLayer = mapLayer;
+      context.mapLayerEffective = mapLayerEffective;
+      context.painter = painter;
+      context.viewport = viewport;
+      context.objectTypes = objectTypes;
+      context.viewContext = mapWidget->viewContext();
+      context.drawFast = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() ==
+                         Marble::Animation;
+      context.mapScrollDetail = mapScrollDetail;
+
+      const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
+      context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
+                                               box.north(GeoDataCoordinates::Degree),
+                                               box.east(GeoDataCoordinates::Degree),
+                                               box.south(GeoDataCoordinates::Degree));
+
+      if(objectTypes.testFlag(maptypes::ROUTE) && !forcePaint.isEmpty())
+        context.forcePaintObjects = &forcePaint;
       else
+        context.forcePaintObjects = nullptr;
+
+      if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
       {
-        mapPainterIls->render(&context);
-        mapPainterNav->render(&context);
-        mapPainterAirport->render(&context);
+        if(context.mapLayerEffective->isAirportDiagram())
+        {
+          mapPainterIls->render(&context);
+          mapPainterAirport->render(&context);
+          mapPainterNav->render(&context);
+        }
+        else
+        {
+          mapPainterIls->render(&context);
+          mapPainterNav->render(&context);
+          mapPainterAirport->render(&context);
+        }
       }
+      mapPainterRoute->render(&context);
+      mapPainterMark->render(&context);
+
+      if(mapWidget->getParentWindow()->getConnectClient()->isConnected())
+        mapPainterAircraft->render(&context);
+
+      // if(navMapWidget->viewContext() == Marble::Still)
+      // qDebug() << "Time for rendering" << t.elapsed() << "ms";
     }
-    mapPainterRoute->render(&context);
-    mapPainterMark->render(&context);
-
-    if(mapWidget->getParentWindow()->getConnectClient()->isConnected())
-      mapPainterAircraft->render(&context);
-
-    // if(navMapWidget->viewContext() == Marble::Still)
-    // qDebug() << "Time for rendering" << t.elapsed() << "ms";
   }
 
   return true;

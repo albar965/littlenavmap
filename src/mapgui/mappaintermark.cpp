@@ -47,15 +47,14 @@ MapPainterMark::~MapPainterMark()
 
 void MapPainterMark::render(const PaintContext *context)
 {
-  bool drawFast = mapWidget->viewContext() == Marble::Animation;
   setRenderHints(context->painter);
 
   context->painter->save();
-  paintHighlights(context->mapLayerEffective, context->painter, drawFast);
+  paintHighlights(context->mapLayerEffective, context->painter, context->drawFast);
   paintMark(context->painter);
   paintHome(context->painter);
-  paintRangeRings(context->painter, context->viewportRect, drawFast);
-  paintDistanceMarkers(context->painter, drawFast);
+  paintRangeRings(context->painter, context->viewportRect, context->drawFast);
+  paintDistanceMarkers(context->painter, context->drawFast);
   paintRouteDrag(context->painter);
   paintMagneticPoles(context->painter);
   context->painter->restore();

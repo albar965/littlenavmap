@@ -20,6 +20,7 @@
 
 #include "common/coordinateconverter.h"
 #include "common/maptypes.h"
+#include "options/optiondata.h"
 
 #include <marble/MarbleWidget.h>
 #include <QPen>
@@ -51,9 +52,12 @@ struct PaintContext
   const MapLayer *mapLayerEffective;
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
+  Marble::ViewContext viewContext;
+  bool drawFast;
   maptypes::MapObjectTypes objectTypes;
   QSet<ForcePaintType> *forcePaintObjects;
   atools::geo::Rect viewportRect;
+  opts::MapScrollDetail mapScrollDetail;
 };
 
 class MapPainter :

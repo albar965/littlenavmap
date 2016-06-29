@@ -220,10 +220,11 @@ private:
     opts::ROUTE_EAST_WEST_RULE |
     opts::WEATHER_INFO_ASN |
     opts::WEATHER_INFO_NOAA |
-    // opts::WEATHER_INFO_VATSIM |
+    opts::WEATHER_INFO_VATSIM |
     opts::WEATHER_TOOLTIP_ASN |
-    opts::WEATHER_TOOLTIP_NOAA |
-    opts::WEATHER_TOOLTIP_VATSIM;
+    opts::WEATHER_TOOLTIP_NOAA
+    // opts::WEATHER_TOOLTIP_VATSIM
+  ;
 
   // ui->lineEditOptionsMapRangeRings
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});

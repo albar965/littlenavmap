@@ -51,21 +51,19 @@ void MapPainterAirport::render(const PaintContext *context)
      (!context->mapLayerEffective->isAirportDiagram() || context->forcePaintObjects == nullptr))
     return;
 
-  bool drawFast = mapWidget->viewContext() == Marble::Animation;
-
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   QElapsedTimer t;
   t.start();
 
   const QList<MapAirport> *airports = nullptr;
   if(context->mapLayerEffective->isAirportDiagram())
-    airports = query->getAirports(curBox, context->mapLayerEffective, drawFast);
+    airports = query->getAirports(curBox, context->mapLayerEffective, context->drawFast);
   else
-    airports = query->getAirports(curBox, context->mapLayer, drawFast);
+    airports = query->getAirports(curBox, context->mapLayer, context->drawFast);
   if(airports == nullptr)
     return;
 
-  if(!drawFast && verbose)
+  if(!context->drawFast && verbose)
   {
     qDebug() << "Number of aiports" << airports->size();
     qDebug() << "Time for query" << t.elapsed() << " ms";
@@ -99,11 +97,11 @@ void MapPainterAirport::render(const PaintContext *context)
     if(visible)
     {
       if(context->mapLayerEffective->isAirportDiagram())
-        drawAirportDiagram(context, airport, drawFast);
+        drawAirportDiagram(context, airport, context->drawFast);
       else
-        drawAirportSymbolOverview(context, airport, drawFast);
+        drawAirportSymbolOverview(context, airport, context->drawFast);
 
-      drawAirportSymbol(context, airport, x, y, drawFast);
+      drawAirportSymbol(context, airport, x, y, context->drawFast);
 
       textflags::TextFlags flags;
 
@@ -117,11 +115,11 @@ void MapPainterAirport::render(const PaintContext *context)
 
       symbolPainter->drawAirportText(context->painter, airport, x, y, flags,
                                      context->mapLayerEffective->getAirportSymbolSize(),
-                                     context->mapLayerEffective->isAirportDiagram(), true, drawFast);
+                                     context->mapLayerEffective->isAirportDiagram(), true, context->drawFast);
     }
   }
 
-  if(mapWidget->viewContext() == Marble::Still && verbose)
+  if(context->viewContext == Marble::Still && verbose)
     qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
