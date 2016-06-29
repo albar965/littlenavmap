@@ -192,7 +192,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   if(!info)
   {
     html.table();
-    html.row2(tr("Longest Runway Length: %1 ft").arg(locale.toString(airport.longestRunwayLength)));
+    html.row2(tr("Longest Runway Length:"), QString("%1 ft").arg(locale.toString(airport.longestRunwayLength)));
     html.tableEnd();
   }
 

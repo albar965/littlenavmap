@@ -115,9 +115,10 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->radioButtonOptionsMapScrollFull);
   widgets.append(ui->radioButtonOptionsMapScrollNone);
   widgets.append(ui->radioButtonOptionsMapScrollNormal);
-  widgets.append(ui->radioButtonOptionsMapSimUpdateFast);
-  widgets.append(ui->radioButtonOptionsMapSimUpdateLow);
-  widgets.append(ui->radioButtonOptionsMapSimUpdateMedium);
+  widgets.append(ui->radioButtonOptionsSimUpdateFast);
+  widgets.append(ui->radioButtonOptionsSimUpdateLow);
+  widgets.append(ui->radioButtonOptionsSimUpdateMedium);
+  widgets.append(ui->spinBoxOptionsSimUpdateBox);
   widgets.append(ui->radioButtonOptionsStartupShowHome);
   widgets.append(ui->radioButtonOptionsStartupShowLast);
   widgets.append(ui->spinBoxOptionsCacheDiskSize);
@@ -363,12 +364,13 @@ void OptionsDialog::toOptionData()
   else if(ui->radioButtonOptionsMapScrollNormal->isChecked())
     data.mapScrollDetail = opts::NORMAL;
 
-  if(ui->radioButtonOptionsMapSimUpdateFast->isChecked())
-    data.mapSimUpdateRate = opts::FAST;
-  else if(ui->radioButtonOptionsMapSimUpdateLow->isChecked())
-    data.mapSimUpdateRate = opts::LOW;
-  else if(ui->radioButtonOptionsMapSimUpdateMedium->isChecked())
-    data.mapSimUpdateRate = opts::MEDIUM;
+  if(ui->radioButtonOptionsSimUpdateFast->isChecked())
+    data.simUpdateRate = opts::FAST;
+  else if(ui->radioButtonOptionsSimUpdateLow->isChecked())
+    data.simUpdateRate = opts::LOW;
+  else if(ui->radioButtonOptionsSimUpdateMedium->isChecked())
+    data.simUpdateRate = opts::MEDIUM;
+  data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
 
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
   data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
@@ -441,18 +443,20 @@ void OptionsDialog::fromOptionData()
       break;
   }
 
-  switch(data.mapSimUpdateRate)
+  switch(data.simUpdateRate)
   {
     case opts::FAST:
-      ui->radioButtonOptionsMapSimUpdateFast->setChecked(true);
+      ui->radioButtonOptionsSimUpdateFast->setChecked(true);
       break;
     case opts::MEDIUM:
-      ui->radioButtonOptionsMapSimUpdateMedium->setChecked(true);
+      ui->radioButtonOptionsSimUpdateMedium->setChecked(true);
       break;
     case opts::LOW:
-      ui->radioButtonOptionsMapSimUpdateLow->setChecked(true);
+      ui->radioButtonOptionsSimUpdateLow->setChecked(true);
       break;
   }
+
+  ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
 
   ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);

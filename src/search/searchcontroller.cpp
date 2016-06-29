@@ -54,6 +54,12 @@ void SearchController::updateTableSelection()
   allSearchTabs.at(tabWidget->currentIndex())->tableSelectionChanged();
 }
 
+void SearchController::optionsChanged()
+{
+  for(Search *search : allSearchTabs)
+    search->optionsChanged();
+}
+
 void SearchController::tabChanged(int index)
 {
   allSearchTabs.at(index)->tableSelectionChanged();

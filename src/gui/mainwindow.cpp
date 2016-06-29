@@ -387,6 +387,11 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapShowFeatures);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged,
+          profileWidget, static_cast<void (ProfileWidget::*)(void)>(&ProfileWidget::update));
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
@@ -1066,7 +1071,7 @@ void MainWindow::updateActionStates()
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
   {
-    ui->actionMapShowEmptyAirports->setChecked(true);
+    // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setEnabled(true);
 
     if(!ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))
@@ -1078,7 +1083,7 @@ void MainWindow::updateActionStates()
   else
   {
     // Force display - even if action is not visible
-    ui->actionMapShowEmptyAirports->setChecked(true);
+    // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setDisabled(true);
 
     if(ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))

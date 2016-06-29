@@ -300,3 +300,8 @@ void InfoController::disconnectedFromSimulator()
   ui->textEditAircraftInfo->setText(tr("Disconnected."));
   ui->textEditAircraftProgressInfo->setText(tr("Disconnected."));
 }
+
+void InfoController::optionsChanged()
+{
+  showInformation(currentSearchResult);
+}

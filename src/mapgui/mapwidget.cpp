@@ -122,31 +122,26 @@ void MapWidget::updateMapShowFeatures()
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    currentComboIndex == MapWidget::OSM);
 
-  setShowMapFeatures(maptypes::AIRWAYV,
-                     ui->actionMapShowVictorAirways->isChecked());
-  setShowMapFeatures(maptypes::AIRWAYJ,
-                     ui->actionMapShowJetAirways->isChecked());
+  setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
+  setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapFeatures(maptypes::ROUTE,
-                     ui->actionMapShowRoute->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT,
-                     ui->actionMapShowAircraft->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT_TRACK,
-                     ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapFeatures(maptypes::ROUTE, ui->actionMapShowRoute->isChecked());
+  setShowMapFeatures(maptypes::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
+  setShowMapFeatures(maptypes::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
 
-  setShowMapFeatures(maptypes::AIRPORT_HARD,
-                     ui->actionMapShowAirports->isChecked());
-  setShowMapFeatures(maptypes::AIRPORT_SOFT,
-                     ui->actionMapShowSoftAirports->isChecked());
-  setShowMapFeatures(maptypes::AIRPORT_EMPTY,
-                     ui->actionMapShowEmptyAirports->isChecked());
-  setShowMapFeatures(maptypes::AIRPORT_ADDON,
-                     ui->actionMapShowAddonAirports->isChecked());
+  setShowMapFeatures(maptypes::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
+  setShowMapFeatures(maptypes::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
+
+  bool showEmpty = ui->actionMapShowEmptyAirports->isChecked() ||
+                   !(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
+
+  setShowMapFeatures(maptypes::AIRPORT_EMPTY, showEmpty);
+  setShowMapFeatures(maptypes::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT,
                      ui->actionMapShowAirports->isChecked() ||
                      ui->actionMapShowSoftAirports->isChecked() ||
-                     ui->actionMapShowEmptyAirports->isChecked() ||
+                     showEmpty ||
                      ui->actionMapShowAddonAirports->isChecked());
 
   setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
@@ -406,6 +401,7 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
+
   if(databaseLoadStatus)
     return;
 

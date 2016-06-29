@@ -65,6 +65,7 @@ public:
     return controller;
   }
 
+  void optionsChanged();
   void tableSelectionChanged();
 
 signals:

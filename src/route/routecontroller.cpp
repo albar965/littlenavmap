@@ -881,6 +881,12 @@ void RouteController::undoMerge()
   undoIndex--;
 }
 
+void RouteController::optionsChanged()
+{
+  updateModel();
+  view->update();
+}
+
 void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   qDebug() << "changeRouteRedo";
@@ -903,7 +909,6 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 bool RouteController::hasChanged() const
 {
   return undoIndexClean != undoIndex;
-  // return changed;
 }
 
 void RouteController::moveLegsDown()

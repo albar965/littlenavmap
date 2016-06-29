@@ -113,6 +113,8 @@ public:
 
   void undoMerge();
 
+  void optionsChanged();
+
 signals:
   void showRect(const atools::geo::Rect& rect);
   void showPos(const atools::geo::Pos& pos, int zoom);

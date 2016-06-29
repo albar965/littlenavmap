@@ -86,7 +86,7 @@ enum MapScrollDetail
   NONE
 };
 
-enum MapSimUpdateRate
+enum SimUpdateRate
 {
   FAST,
   MEDIUM,
@@ -133,9 +133,9 @@ public:
     return mapScrollDetail;
   }
 
-  opts::MapSimUpdateRate getMapSimUpdateRate() const
+  opts::SimUpdateRate getSimUpdateRate() const
   {
-    return mapSimUpdateRate;
+    return simUpdateRate;
   }
 
   int getCacheSizeDisk() const
@@ -198,6 +198,11 @@ public:
     return routeGroundBuffer;
   }
 
+  int getMapSimUpdateBox() const
+  {
+    return simUpdateBox;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -246,7 +251,10 @@ private:
   // ui->radioButtonOptionsMapSimUpdateFast
   // ui->radioButtonOptionsMapSimUpdateLow
   // ui->radioButtonOptionsMapSimUpdateMedium
-  opts::MapSimUpdateRate mapSimUpdateRate = opts::MEDIUM;
+  opts::SimUpdateRate simUpdateRate = opts::MEDIUM;
+
+  // ui->spinBoxOptionsMapSimUpdateBox
+  int simUpdateBox = 50;
 
   // ui->spinBoxOptionsCacheDiskSize
   int cacheSizeDisk = 2000;

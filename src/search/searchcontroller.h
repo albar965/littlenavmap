@@ -67,6 +67,8 @@ public:
 
   void updateTableSelection();
 
+void optionsChanged();
+
 private:
   MapQuery *mapQuery;
   ColumnList *airportColumns = nullptr;

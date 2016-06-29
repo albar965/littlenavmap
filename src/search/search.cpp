@@ -104,6 +104,13 @@ void Search::filterByIdent(const QString& ident, const QString& region, const QS
   controller->filterByIdent(ident, region, airportIdent);
 }
 
+void Search::optionsChanged()
+{
+  preDatabaseLoad();
+  postDatabaseLoad();
+  view->update();
+}
+
 void Search::markChanged(const atools::geo::Pos& mark)
 {
   mapMark = mark;

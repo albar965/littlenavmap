@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>508</height>
+    <width>791</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -93,7 +93,7 @@
        <string>User Interface</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="6" column="2">
+       <item row="6" column="2" alignment="Qt::AlignTop">
         <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
          <property name="readOnly">
           <bool>false</bool>
@@ -211,7 +211,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="6" column="0" alignment="Qt::AlignTop">
         <widget class="QLabel" name="labelOptionsGuiSimInfoText">
          <property name="text">
           <string>Text size for &amp;simulator aircraft information panels:</string>
@@ -256,7 +256,17 @@
          <property name="topMargin">
           <number>0</number>
          </property>
-         <item row="1" column="1">
+         <item row="0" column="0" colspan="2">
+          <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+           <property name="text">
+            <string>&amp;Treat empty airports special - Display underneath all other airports and use gray color</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="2">
           <widget class="QGroupBox" name="groupBoxOptionsMapScrollDetails">
            <property name="title">
             <string>Details while Scrolling</string>
@@ -268,16 +278,14 @@
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollFull">
               <property name="text">
-               <string>&amp;Full
-May cause stutters</string>
+               <string>&amp;Full - May cause stutters</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollNormal">
               <property name="text">
-               <string>&amp;Normal
-Will use limited details during scrolling</string>
+               <string>&amp;Normal - Will use limited details during scrolling</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -287,56 +295,7 @@ Will use limited details during scrolling</string>
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollNone">
               <property name="text">
-               <string>N&amp;one
-Will not display airports or navaids while scrolling</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="0" colspan="2">
-          <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
-           <property name="text">
-            <string>&amp;Treat empty airports special
-Display underneath all other airports and use gray color</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2">
-          <widget class="QGroupBox" name="groupBoxOptionsMapSimUpdates">
-           <property name="title">
-            <string>Simulator Aircraft Updates</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <item>
-             <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateLow">
-              <property name="text">
-               <string>&amp;Low
-Map is updated only every second
-Can increase battery life on notebooks</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateMedium">
-              <property name="text">
-               <string>&amp;Medium</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButtonOptionsMapSimUpdateFast">
-              <property name="text">
-               <string>&amp;High
-Fluid movement
-Can decrease battery life on notebooks</string>
+               <string>N&amp;one - Will not display airports or navaids while scrolling</string>
               </property>
              </widget>
             </item>
@@ -347,90 +306,6 @@ Can decrease battery life on notebooks</string>
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayoutOptionsMapLower">
-         <item row="4" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapTextSize">
-           <property name="suffix">
-            <string> %</string>
-           </property>
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>150</number>
-           </property>
-           <property name="singleStep">
-            <number>10</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
-           <property name="suffix">
-            <string> pixels</string>
-           </property>
-           <property name="prefix">
-            <string/>
-           </property>
-           <property name="minimum">
-            <number>2</number>
-           </property>
-           <property name="maximum">
-            <number>40</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
-           <property name="suffix">
-            <string> pixels</string>
-           </property>
-           <property name="prefix">
-            <string/>
-           </property>
-           <property name="minimum">
-            <number>2</number>
-           </property>
-           <property name="maximum">
-            <number>40</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
-           <property name="text">
-            <string>50 100 200 500</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="labelOptionsMapTooltipRect">
-           <property name="text">
-            <string>Tool tip &amp;sensitivity on map:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapTooltipRect</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelOptionsMapClickRect">
-           <property name="text">
-            <string>&amp;Click sensitivity when selecting objects on map:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapClickRect</cstring>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="labelOptionsMapZoomShowMap">
            <property name="text">
@@ -451,42 +326,10 @@ Can decrease battery life on notebooks</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelOptionsMapRangeRings">
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
            <property name="text">
-            <string>&amp;Range ring sizes (nautical miles):</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditOptionsMapRangeRings</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="labelOptionsMapSymbolSize">
-           <property name="text">
-            <string>&amp;Symbol size:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapSymbolSize</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapSymbolSize">
-           <property name="suffix">
-            <string> %</string>
-           </property>
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>150</number>
-           </property>
-           <property name="singleStep">
-            <number>10</number>
-           </property>
-           <property name="value">
-            <number>100</number>
+            <string>50 100 200 500</string>
            </property>
           </widget>
          </item>
@@ -509,7 +352,205 @@ Can decrease battery life on notebooks</string>
            </property>
           </widget>
          </item>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="spinBoxOptionsMapSymbolSize">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>150</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
+           <property name="suffix">
+            <string> pixels</string>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>40</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="labelOptionsMapSymbolSize">
+           <property name="text">
+            <string>Map &amp;symbol size:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapSymbolSize</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelOptionsMapRangeRings">
+           <property name="text">
+            <string>&amp;Range ring sizes (nautical miles):</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditOptionsMapRangeRings</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelOptionsMapClickRect">
+           <property name="text">
+            <string>&amp;Click sensitivity when selecting objects on map:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapClickRect</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinBoxOptionsMapTextSize">
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>150</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelOptionsMapTooltipRect">
+           <property name="text">
+            <string>Tool tip &amp;sensitivity on map:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapTooltipRect</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
+           <property name="suffix">
+            <string> pixels</string>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>2</number>
+           </property>
+           <property name="maximum">
+            <number>40</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOptionsSimulatorAircraft">
+      <attribute name="title">
+       <string>Simulator Aircraft</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelOptionsSimUpdateBox">
+         <property name="text">
+          <string>&amp;Simulator aircraft scroll box size:</string>
+         </property>
+         <property name="buddy">
+          <cstring>spinBoxOptionsMapSymbolSize</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
+         <property name="suffix">
+          <string> %</string>
+         </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>90</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2" alignment="Qt::AlignTop">
+        <widget class="QGroupBox" name="groupBoxOptionsSimUpdates">
+         <property name="title">
+          <string>Simulator Aircraft Updates</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsSimUpdateLow">
+            <property name="text">
+             <string>&amp;Low - Map is updated only every second. Can increase battery life on notebooks</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsSimUpdateMedium">
+            <property name="text">
+             <string>&amp;Medium</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="radioButtonOptionsSimUpdateFast">
+            <property name="text">
+             <string>&amp;High - Fluid movement. Can decrease battery life on notebooks</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -607,7 +648,7 @@ Can decrease battery life on notebooks</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="3" column="0" alignment="Qt::AlignTop">
         <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
          <property name="text">
           <string>&amp;Minmum altitude buffer to ground in elevation profile (red line):</string>
@@ -660,45 +701,6 @@ Can decrease battery life on notebooks</string>
        <string>Weather</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_6">
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
-         <property name="title">
-          <string>Weather Display in Information Panels</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
-            <property name="text">
-             <string>Active &amp;Sky Next</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
-            <property name="text">
-             <string>N&amp;OAA</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
-            <property name="text">
-             <string>Va&amp;tsim</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath"/>
        </item>
@@ -709,7 +711,7 @@ Can decrease battery life on notebooks</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
+       <item row="0" column="0" alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
          <property name="title">
           <string>Weather Display in Tooltip</string>
@@ -748,15 +750,15 @@ Can decrease battery life on notebooks</string>
        <item row="2" column="0">
         <widget class="QLabel" name="labelOptionsWeatherAsnPath">
          <property name="text">
-          <string>Active Sky Next weather &amp;File.
-This file will be used for all simulators:</string>
+          <string>Active Sky Next weather &amp;File:
+This file will be used for all simulators.</string>
          </property>
          <property name="buddy">
           <cstring>lineEditOptionsWeatherAsnPath</cstring>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="3" column="1" alignment="Qt::AlignTop">
         <widget class="QLabel" name="labelOptionsWeatherAsnPathState">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -767,6 +769,45 @@ This file will be used for all simulators:</string>
          <property name="text">
           <string>Valid</string>
          </property>
+        </widget>
+       </item>
+       <item row="0" column="1" alignment="Qt::AlignTop">
+        <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
+         <property name="title">
+          <string>Weather Display in Information Panels</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
+            <property name="text">
+             <string>Active &amp;Sky Next</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
+            <property name="text">
+             <string>N&amp;OAA</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
+            <property name="text">
+             <string>Va&amp;tsim</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -930,9 +971,6 @@ These paths apply to all Flight Simulators.</string>
   <tabstop>radioButtonOptionsMapScrollFull</tabstop>
   <tabstop>radioButtonOptionsMapScrollNormal</tabstop>
   <tabstop>radioButtonOptionsMapScrollNone</tabstop>
-  <tabstop>radioButtonOptionsMapSimUpdateLow</tabstop>
-  <tabstop>radioButtonOptionsMapSimUpdateMedium</tabstop>
-  <tabstop>radioButtonOptionsMapSimUpdateFast</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>spinBoxOptionsMapClickRect</tabstop>
