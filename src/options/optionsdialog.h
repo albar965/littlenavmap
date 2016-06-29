@@ -67,6 +67,13 @@ private:
   void updateAsnButtonState();
   void updateAsnPathStatus();
 
+  void addDatabaseExcludePathClicked();
+  void removeDatabaseExcludePathClicked();
+  void addDatabaseAddOnExcludePathClicked();
+  void removeDatabaseAddOnExcludePathClicked();
+
+  void updateDatabaseButtonState();
+
   QVector<int> ringStrToVector(const QString& string) const;
 
   Ui::Options *ui;

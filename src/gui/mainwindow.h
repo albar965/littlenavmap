@@ -102,6 +102,8 @@ public:
   void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
   void setStatusMessage(const QString& message);
 
+  atools::fs::FsPaths::SimulatorType getCurrentSimulator();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

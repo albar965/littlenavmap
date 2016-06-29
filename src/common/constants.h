@@ -64,6 +64,10 @@ const QString SEARCHPANEAIRPORT_WIDGET = "SearchPaneAirport/Widget";
 const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
 
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
+const QString OPTIONS_DIALOG_ASN_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
+const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
+const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
+const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
 
 const QString OPTIONS_LANGUAGE = "Options/Language";
 const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";

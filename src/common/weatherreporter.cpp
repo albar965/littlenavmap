@@ -117,7 +117,7 @@ bool WeatherReporter::validateAsnFile(const QString& path)
     QTextStream sceneryCfg(&file);
     QString line;
     if(sceneryCfg.readLineInto(&line))
-      if(ASN_VALIDATE_REGEXP.match(line).hasMatch())
+      if(ASN_VALIDATE_REGEXP.match(line.trimmed()).hasMatch())
         retval = true;
     file.close();
   }

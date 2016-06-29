@@ -232,10 +232,10 @@ private:
   QString weatherActiveSkyPath;
 
   // ui->listWidgetOptionsDatabaseAddon
-  QStringList databaseAddonExclude; // TODO implement
+  QStringList databaseAddonExclude;
 
   // ui->listWidgetOptionsDatabaseExclude
-  QStringList databaseExclude; // TODO implement
+  QStringList databaseExclude;
 
   // ui->radioButtonOptionsMapScrollFull
   // ui->radioButtonOptionsMapScrollNone

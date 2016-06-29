@@ -78,7 +78,7 @@ public:
   /* if false quit application */
   bool checkIncompatibleDatabases();
 
-  atools::fs::FsPaths::SimulatorType getCurrentFsType() const
+  atools::fs::FsPaths::SimulatorType getCurrentSimulator() const
   {
     return currentFsType;
   }
@@ -91,9 +91,6 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
-  const QString DB_NAME = "LNMDB";
-  const QString DB_TYPE = "QSQLITE";
-
   void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
   bool runInternal(bool& loaded);
   void backupDatabaseFile();
@@ -101,7 +98,6 @@ private:
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
   void updateDialogInfo();
 
-  DatabaseDialog *databaseDialog = nullptr;
   void switchSimFromMainMenu();
   void freeActions();
   void updateSimSwitchActions();
@@ -111,6 +107,10 @@ private:
   bool loadScenery();
   void runNoMessages();
 
+  const QString DB_NAME = "LNMDB";
+  const QString DB_TYPE = "QSQLITE";
+
+  DatabaseDialog *databaseDialog = nullptr;
   QString databaseFile, databaseDirectory;
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *db = nullptr;

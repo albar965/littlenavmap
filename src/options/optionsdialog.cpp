@@ -23,6 +23,7 @@
 #include "common/weatherreporter.h"
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
+#include "settings/settings.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -31,6 +32,8 @@
 
 const int MAX_RANGE_RING_SIZE = 4000;
 const int MAX_RANGE_RINGS = 10;
+
+using atools::settings::Settings;
 
 class RangeRingValidator :
   public QValidator
@@ -134,6 +137,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
+  // ASN widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectAsnPathClicked);
 
@@ -141,6 +145,22 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
           this, &OptionsDialog::asnPathEditingFinished);
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited,
           this, &OptionsDialog::updateAsnPathStatus);
+
+  // Database exclude path
+  connect(ui->pushButtonOptionsDatabaseAddExclude, &QPushButton::clicked,
+          this, &OptionsDialog::addDatabaseExcludePathClicked);
+  connect(ui->pushButtonOptionsDatabaseRemoveExclude, &QPushButton::clicked,
+          this, &OptionsDialog::removeDatabaseExcludePathClicked);
+  connect(ui->listWidgetOptionsDatabaseExclude, &QListWidget::currentRowChanged,
+          this, &OptionsDialog::updateDatabaseButtonState);
+
+  // Database addon exclude path
+  connect(ui->pushButtonOptionsDatabaseAddAddon, &QPushButton::clicked,
+          this, &OptionsDialog::addDatabaseAddOnExcludePathClicked);
+  connect(ui->pushButtonOptionsDatabaseRemoveAddon, &QPushButton::clicked,
+          this, &OptionsDialog::removeDatabaseAddOnExcludePathClicked);
+  connect(ui->listWidgetOptionsDatabaseAddon, &QListWidget::currentRowChanged,
+          this, &OptionsDialog::updateDatabaseButtonState);
 
   connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked,
           this, &OptionsDialog::clearDiskCachedClicked);
@@ -154,86 +174,65 @@ OptionsDialog::~OptionsDialog()
   delete ui;
 }
 
+void OptionsDialog::addDatabaseExcludePathClicked()
+{
+  qDebug() << "OptionsDialog::addDatabaseExcludePathClicked";
+
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(
+    tr("Open Directory to exclude from Scenery Loading"),
+    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+    atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
+
+  if(!path.isEmpty())
+    ui->listWidgetOptionsDatabaseExclude->addItem(path);
+  updateDatabaseButtonState();
+}
+
+void OptionsDialog::removeDatabaseExcludePathClicked()
+{
+  qDebug() << "OptionsDialog::removeDatabaseExcludePathClicked";
+
+  delete ui->listWidgetOptionsDatabaseExclude->currentItem();
+  updateDatabaseButtonState();
+}
+
+void OptionsDialog::addDatabaseAddOnExcludePathClicked()
+{
+  qDebug() << "OptionsDialog::addDatabaseAddOnExcludePathClicked";
+
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(
+    tr("Open Directory to exclude from Add-On Recognition"),
+    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+    atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
+
+  if(!path.isEmpty())
+    ui->listWidgetOptionsDatabaseAddon->addItem(path);
+  updateDatabaseButtonState();
+}
+
+void OptionsDialog::removeDatabaseAddOnExcludePathClicked()
+{
+  qDebug() << "OptionsDialog::removeDatabaseAddOnExcludePathClicked";
+
+  delete ui->listWidgetOptionsDatabaseAddon->currentItem();
+  updateDatabaseButtonState();
+}
+
+void OptionsDialog::updateDatabaseButtonState()
+{
+  ui->pushButtonOptionsDatabaseRemoveExclude->setEnabled(
+    ui->listWidgetOptionsDatabaseExclude->currentRow() != -1);
+  ui->pushButtonOptionsDatabaseRemoveAddon->setEnabled(
+    ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
+}
+
 int OptionsDialog::exec()
 {
   fromOptionData();
   updateAsnButtonState();
+  updateDatabaseButtonState();
 
   return QDialog::exec();
-}
-
-void OptionsDialog::updateAsnButtonState()
-{
-  WeatherReporter *wr = mainWindow->getWeatherReporter();
-  bool hasAsn = wr->isAsnDefaultFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
-  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
-  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
-  updateAsnPathStatus();
-}
-
-void OptionsDialog::updateAsnPathStatus()
-{
-  const QString& path = ui->lineEditOptionsWeatherAsnPath->text();
-
-  if(!path.isEmpty())
-  {
-    QFileInfo fileinfo(path);
-    if(!fileinfo.exists())
-    {
-      ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">File does not exist.</span>"));
-    }
-    else if(!fileinfo.isFile())
-    {
-      ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">Is not a file.</span>"));
-      return;
-    }
-    else if(!WeatherReporter::validateAsnFile(path))
-    {
-      ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">Is not an ASN weather snapshot file.</span>"));
-      return;
-    }
-    else
-      ui->labelOptionsWeatherAsnPathState->setText(tr("Weather snapshot file is valid."));
-  }
-  else
-    ui->labelOptionsWeatherAsnPathState->setText(tr("No weather snapshot file selected. Using default."));
-}
-
-void OptionsDialog::asnPathEditingFinished()
-{
-  qDebug() << "OptionsDialog::asnPathEditingFinished";
-
-  updateAsnPathStatus();
-  updateAsnButtonState();
-}
-
-void OptionsDialog::selectAsnPathClicked()
-{
-  qDebug() << "OptionsDialog::selectAsnPathClicked";
-
-  QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open Active Sky Next Weather Snapshot File"),
-    tr("ASN Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_ASN_SNAPSHOT),
-    lnm::DATABASE_SCENERYCONFIG, ui->lineEditOptionsWeatherAsnPath->text());
-
-  if(!path.isEmpty())
-    ui->lineEditOptionsWeatherAsnPath->setText(path);
-
-  updateAsnPathStatus();
-  updateAsnButtonState();
-}
-
-void OptionsDialog::clearMemCachedClicked()
-{
-  qDebug() << "OptionsDialog::clearMemCachedClicked";
-}
-
-void OptionsDialog::clearDiskCachedClicked()
-{
-  qDebug() << "OptionsDialog::clearDiskCachedClicked";
 }
 
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -279,12 +278,28 @@ void OptionsDialog::saveState()
 
   atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false, true);
   saver.save(widgets);
+
+  Settings& settings = Settings::instance();
+
+  QStringList paths;
+  for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
+    paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
+  settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
+
+  paths.clear();
+  for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
+    paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
+  settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 }
 
 void OptionsDialog::restoreState()
 {
   atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
   saver.restore(widgets);
+
+  Settings& settings = Settings::instance();
+  ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
+  ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
   toOptionData();
 }
@@ -477,4 +492,70 @@ void OptionsDialog::fromFlags(QCheckBox *checkBox, opts::Flags flag)
 void OptionsDialog::fromFlags(QRadioButton *checkBox, opts::Flags flag)
 {
   checkBox->setChecked(OptionData::instanceInternal().flags & flag);
+}
+
+void OptionsDialog::updateAsnButtonState()
+{
+  WeatherReporter *wr = mainWindow->getWeatherReporter();
+  bool hasAsn = wr->isAsnDefaultFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
+  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
+  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+  updateAsnPathStatus();
+}
+
+void OptionsDialog::updateAsnPathStatus()
+{
+  const QString& path = ui->lineEditOptionsWeatherAsnPath->text();
+
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">File does not exist.</span>"));
+    else if(!fileinfo.isFile())
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">Is not a file.</span>"));
+    else if(!WeatherReporter::validateAsnFile(path))
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("<span style=\"font-weight: bold; color: red;\">Is not an ASN weather snapshot file.</span>"));
+    else
+      ui->labelOptionsWeatherAsnPathState->setText(tr("Weather snapshot file is valid."));
+  }
+  else
+    ui->labelOptionsWeatherAsnPathState->setText(tr("No weather snapshot file selected. Using default."));
+}
+
+void OptionsDialog::asnPathEditingFinished()
+{
+  qDebug() << "OptionsDialog::asnPathEditingFinished";
+
+  updateAsnPathStatus();
+  updateAsnButtonState();
+}
+
+void OptionsDialog::selectAsnPathClicked()
+{
+  qDebug() << "OptionsDialog::selectAsnPathClicked";
+
+  QString path = atools::gui::Dialog(this).openFileDialog(
+    tr("Open Active Sky Next Weather Snapshot File"),
+    tr("ASN Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_ASN_SNAPSHOT),
+    lnm::OPTIONS_DIALOG_ASN_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWeatherAsnPath->setText(path);
+
+  updateAsnPathStatus();
+  updateAsnButtonState();
+}
+
+void OptionsDialog::clearMemCachedClicked()
+{
+  qDebug() << "OptionsDialog::clearMemCachedClicked";
+}
+
+void OptionsDialog::clearDiskCachedClicked()
+{
+  qDebug() << "OptionsDialog::clearDiskCachedClicked";
 }

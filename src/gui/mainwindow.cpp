@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
   databaseManager->openDatabase();
   databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
 
-  weatherReporter = new WeatherReporter(this, databaseManager->getCurrentFsType());
+  weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
 
   mapQuery = new MapQuery(this, databaseManager->getDatabase());
   mapQuery->initQueries();
@@ -1010,6 +1010,11 @@ void MainWindow::setStatusMessage(const QString& message)
     statusMessages.removeAt(0);
 
   ui->statusBar->showMessage(statusMessages.join(" "));
+}
+
+atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator()
+{
+  return databaseManager->getCurrentSimulator();
 }
 
 void MainWindow::options()

@@ -17,6 +17,7 @@
 
 #include "databasemanager.h"
 
+#include "options/optiondata.h"
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
 #include "db/databasedialog.h"
@@ -26,16 +27,15 @@
 #include "fs/bglreaderprogressinfo.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
+#include "fs/navdatabase.h"
+#include "sql/sqlutil.h"
+#include "gui/errorhandler.h"
+#include "gui/mainwindow.h"
+
 #include <QElapsedTimer>
 #include <QLabel>
 #include <QProgressDialog>
 #include <QApplication>
-
-#include "fs/navdatabase.h"
-
-#include "sql/sqlutil.h"
-
-#include "gui/errorhandler.h"
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QList>
@@ -44,7 +44,6 @@
 #include <QMessageBox>
 #include <QAbstractButton>
 #include <QSettings>
-#include <gui/mainwindow.h>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -203,11 +202,11 @@ bool DatabaseManager::checkIncompatibleDatabases()
       QString msg;
       if(databaseNames.size() == 1)
         msg = tr("The database for the simulator "
-                 "below is not compatible with this program version:<br/><br/>"
+                 "below is not compatible with this program version or was incompletly loaded:<br/><br/>"
                  "%1<br/><br/>Erase it?");
       else
         msg = tr("The databases for the simulators "
-                 "below are not compatible with this program version:<br/><br/>"
+                 "below are not compatible with this program version or was incompletly loaded:<br/><br/>"
                  "%1<br/><br/>Erase them?");
 
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
@@ -477,8 +476,12 @@ bool DatabaseManager::loadScenery()
 
   QSettings settings(config, QSettings::IniFormat);
 
-  BglReaderOptions opts;
-  opts.loadFromSettings(settings);
+  BglReaderOptions bglReaderOpts;
+  bglReaderOpts.loadFromSettings(settings);
+
+  const OptionData& optionData = OptionData::instance();
+  bglReaderOpts.addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
+  bglReaderOpts.addToDirectoryExcludes(optionData.getDatabaseExclude());
 
   delete progressDialog;
   progressDialog = new QProgressDialog(databaseDialog);
@@ -496,11 +499,12 @@ bool DatabaseManager::loadScenery()
   progressDialog->setMinimumDuration(0);
   progressDialog->show();
 
-  opts.setSceneryFile(paths.value(loadingFsType).sceneryCfg);
-  opts.setBasepath(paths.value(loadingFsType).basePath);
+  bglReaderOpts.setSceneryFile(paths.value(loadingFsType).sceneryCfg);
+  bglReaderOpts.setBasepath(paths.value(loadingFsType).basePath);
 
   QElapsedTimer timer;
-  opts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this, std::placeholders::_1, timer));
+  bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this, std::placeholders::_1,
+                                              timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -509,7 +513,7 @@ bool DatabaseManager::loadScenery()
   {
     // Create a backup and delete the original file
     backupDatabaseFile();
-    atools::fs::Navdatabase nd(&opts, db);
+    atools::fs::Navdatabase nd(&bglReaderOpts, db);
     nd.create();
   }
   catch(atools::Exception& e)

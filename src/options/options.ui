@@ -59,7 +59,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadRoute">
          <property name="text">
-          <string>Load last &amp;route after startup</string>
+          <string>Load last &amp;flight plan after startup</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -118,7 +118,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
          <property name="text">
-          <string>Center &amp;route after loading</string>
+          <string>Center &amp;flight plan after loading</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -224,7 +224,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="labelOptionsGuiRouteText">
          <property name="text">
-          <string>Text size for &amp;route table:</string>
+          <string>Text size for &amp;flight plan table:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiRouteText</cstring>
@@ -776,7 +776,14 @@ This file will be used for all simulators:</string>
        <string>Scenenery Library Database</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
-       <item row="0" column="2">
+       <item row="3" column="2">
+        <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
         <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase">
          <property name="leftMargin">
           <number>0</number>
@@ -810,49 +817,17 @@ This file will be used for all simulators:</string>
          </item>
         </layout>
        </item>
-       <item row="0" column="1">
-        <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="labelOptionsDatabaseExclude">
-         <property name="text">
-          <string>&amp;Select Paths to exclude from loading:
-
-All entries in this list will be skipped when loading the scenery library into the Little Navmap database.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="buddy">
-          <cstring>listWidgetOptionsDatabaseExclude</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="labelOptionsDatabaseAddon">
-         <property name="text">
-          <string>Select &amp;Paths to exclude from add-on recognition:
-
-Directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="buddy">
-          <cstring>listWidgetOptionsDatabaseAddon</cstring>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="2">
+        <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
         <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
          <property name="leftMargin">
           <number>0</number>
@@ -885,6 +860,42 @@ Directories in this list will not be considered add-on if they are outside the f
           </spacer>
          </item>
         </layout>
+       </item>
+       <item row="2" column="2" colspan="2">
+        <widget class="QLabel" name="labelOptionsDatabaseAddon">
+         <property name="text">
+          <string>Select &amp;Paths to exclude from add-on recognition.
+Directories including their sub-directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.
+These paths apply to all Flight Simulators.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="buddy">
+          <cstring>listWidgetOptionsDatabaseAddon</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" colspan="2">
+        <widget class="QLabel" name="labelOptionsDatabaseExclude">
+         <property name="text">
+          <string>&amp;Select Paths to exclude from loading.
+All directories including their sub-directories in this list will be skipped when loading the scenery library into the Little Navmap database.
+These paths apply to all Flight Simulators.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="buddy">
+          <cstring>listWidgetOptionsDatabaseExclude</cstring>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
