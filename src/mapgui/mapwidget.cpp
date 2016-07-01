@@ -88,6 +88,9 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   MarbleWidgetInputHandler *input = inputHandler();
   input->setMouseButtonPopupEnabled(Qt::RightButton, false);
   input->setMouseButtonPopupEnabled(Qt::LeftButton, false);
+
+  screenSearchDistance = OptionData::instance().getMapClickSensitivity();
+  screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
 }
 
 MapWidget::~MapWidget()
@@ -130,14 +133,19 @@ void MapWidget::setTheme(const QString& theme, int index)
 
 void MapWidget::optionsChanged()
 {
+  screenSearchDistance = OptionData::instance().getMapClickSensitivity();
+  screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
+
   updateCacheSizes();
 }
 
 void MapWidget::updateCacheSizes()
 {
   // kb
+  qDebug() << "Volatile cache to" << OptionData::instance().getCacheSizeMemoryMb() * 1000L << "kb";
   setVolatileTileCacheLimit(OptionData::instance().getCacheSizeMemoryMb() * 1000L);
   // kb
+  qDebug() << "Persistend cache to" << OptionData::instance().getCacheSizeDiskMb() * 1000L << "kb";
   model()->setPersistentTileCacheLimit(OptionData::instance().getCacheSizeDiskMb() * 1000L);
 }
 
@@ -1629,7 +1637,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 void MapWidget::handleInfoClick(QPoint pos)
 {
   maptypes::MapSearchResult result;
-  screenIndex->getAllNearest(pos.x(), pos.y(), 10, result);
+  screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
   emit showInformation(result);
 }
 

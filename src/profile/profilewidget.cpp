@@ -171,7 +171,8 @@ void ProfileWidget::updateScreenCoords()
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
-  minSafeAltitudeFt = std::ceil((legList.maxElevationFt + 1000.f) / 500.f) * 500.f;
+  minSafeAltitudeFt = std::ceil((legList.maxElevationFt +
+                                 OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
   flightplanAltFt = static_cast<float>(routeController->getFlightplan().getCruisingAlt());
   maxAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
@@ -648,7 +649,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   const atools::geo::Pos& pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
   // qDebug() << "pos" << pos;
 
-  float maxElev = std::ceil((leg.maxElevation + 1000.f) / 500.f) * 500.f;
+  float maxElev =
+    std::ceil((leg.maxElevation + OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
 
   // Get from/to text
   QString from = legList.routeMapObjects.at(index).getIdent();

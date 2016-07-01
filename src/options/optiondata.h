@@ -281,13 +281,13 @@ private:
   int mapTooltipSensitivity = 10;
 
   // ui->spinBoxOptionsMapSymbolSize
-  int mapSymbolSize = 100;
+  int mapSymbolSize = 100; // TODO
 
   // ui->spinBoxOptionsMapTextSize
-  int mapTextSize = 100;
+  int mapTextSize = 100; // TODO
 
   // ui->doubleSpinBoxOptionsMapZoomShowMap
-  float mapZoomShow = 1.5f;
+  float mapZoomShow = 1.5f; // TODO
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;

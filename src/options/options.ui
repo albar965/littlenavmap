@@ -380,10 +380,10 @@
             <string/>
            </property>
            <property name="minimum">
-            <number>2</number>
+            <number>4</number>
            </property>
            <property name="maximum">
-            <number>40</number>
+            <number>20</number>
            </property>
            <property name="value">
             <number>10</number>
@@ -458,10 +458,10 @@
             <string/>
            </property>
            <property name="minimum">
-            <number>2</number>
+            <number>4</number>
            </property>
            <property name="maximum">
-            <number>40</number>
+            <number>20</number>
            </property>
            <property name="value">
             <number>10</number>
@@ -578,7 +578,7 @@
           <number>100</number>
          </property>
          <property name="maximum">
-          <number>4000</number>
+          <number>8000</number>
          </property>
          <property name="singleStep">
           <number>100</number>
@@ -651,7 +651,8 @@
        <item row="3" column="0" alignment="Qt::AlignTop">
         <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
          <property name="text">
-          <string>&amp;Minmum altitude buffer to ground in elevation profile (red line):</string>
+          <string>&amp;Minmum altitude buffer to ground in elevation profile (red line):
+The red line value is always rounded up to the next 500 ft.</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
