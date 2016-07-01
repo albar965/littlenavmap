@@ -27,17 +27,20 @@
 #include "gui/actiontextsaver.h"
 #include "export/csvexporter.h"
 #include "mapgui/mapquery.h"
+#include "options/optiondata.h"
 
 #include <QTimer>
 #include <QClipboard>
 
-const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 600;
+const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
 
 Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                MapQuery *mapQuery, int tabWidgetIndex)
   : QObject(parent), query(mapQuery), columns(columnList), view(tableView), mainWindow(parent),
     tabIndex(tabWidgetIndex)
 {
+  zoomHandler = new atools::gui::TableZoomHandler(view);
+
   Ui::MainWindow *ui = mainWindow->getUi();
   // Avoid stealing of Ctrl - C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -62,6 +65,8 @@ Search::Search(MainWindow *parent, QTableView *tableView, ColumnList *columnList
 
   connect(ui->actionSearchShowInformation, &QAction::triggered, this, &Search::showInformationMenu);
   connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &Search::showOnMapMenu);
+
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 }
 
 Search::~Search()
@@ -69,6 +74,7 @@ Search::~Search()
   delete boolIcon;
   delete csvExporter;
   delete updateTimer;
+  delete zoomHandler;
 }
 
 void Search::tableCopyClipboard()
@@ -108,6 +114,8 @@ void Search::optionsChanged()
 {
   preDatabaseLoad();
   postDatabaseLoad();
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
+
   view->update();
 }
 

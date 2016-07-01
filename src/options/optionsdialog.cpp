@@ -24,11 +24,15 @@
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
 #include "settings/settings.h"
+#include "mapgui/mapwidget.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
+
+#include <marble/MarbleModel.h>
+#include <marble/MarbleDirs.h>
 
 const int MAX_RANGE_RING_SIZE = 4000;
 const int MAX_RANGE_RINGS = 10;
@@ -557,9 +561,24 @@ void OptionsDialog::selectAsnPathClicked()
 void OptionsDialog::clearMemCachedClicked()
 {
   qDebug() << "OptionsDialog::clearMemCachedClicked";
+  mainWindow->getMapWidget()->clearVolatileTileCache();
+  mainWindow->setStatusMessage(tr("Memory cache cleared."));
 }
 
 void OptionsDialog::clearDiskCachedClicked()
 {
   qDebug() << "OptionsDialog::clearDiskCachedClicked";
+  QMessageBox::StandardButton result =
+    QMessageBox::question(this, QApplication::applicationName(),
+                          tr("Clear the disk cache?\n"
+                             "All files in the directory %1 will be deleted").
+                          arg(Marble::MarbleDirs::localPath()));
+
+  if(result == QMessageBox::Yes)
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    mainWindow->getMapWidget()->model()->clearPersistentTileCache();
+    mainWindow->setStatusMessage(tr("Disk cache cleared."));
+    QGuiApplication::restoreOverrideCursor();
+  }
 }

@@ -25,6 +25,10 @@
 #include <QObject>
 
 namespace atools {
+namespace gui {
+class TableZoomHandler;
+}
+
 namespace fs {
 namespace pln {
 class Flightplan;
@@ -190,6 +194,8 @@ private:
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
+
+  atools::gui::TableZoomHandler *zoomHandler = nullptr;
 
   // Need a workaround since QUndoStack does not report current indices and clean state
   int undoIndex = 0, undoIndexClean = 0;

@@ -28,6 +28,7 @@
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
+#include "options/optiondata.h"
 
 #include <QScrollBar>
 
@@ -39,6 +40,10 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
 
   info = new HtmlInfoBuilder(mapQuery, infoQuery, true);
+
+  Ui::MainWindow *ui = mainWindow->getUi();
+  infoFontPtSize = ui->textEditAirportInfo->font().pointSizeF();
+  simInfoFontPtSize = ui->textEditAircraftInfo->font().pointSizeF();
 }
 
 InfoController::~InfoController()
@@ -82,6 +87,7 @@ void InfoController::restoreState()
                                maptypes::MapObjectTypes(refsStrList.at(i + 1).toInt()),
                                refsStrList.at(i).toInt());
 
+  updateTextEditFontSizes();
   showInformation(res);
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -303,5 +309,33 @@ void InfoController::disconnectedFromSimulator()
 
 void InfoController::optionsChanged()
 {
+  updateTextEditFontSizes();
   showInformation(currentSearchResult);
+}
+
+void InfoController::updateTextEditFontSizes()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  int sizePercent = OptionData::instance().getGuiInfoTextSize();
+  setTextEditFontSize(ui->textEditAirportInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textEditRunwayInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textEditComInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textEditApproachInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textEditNavaidInfo, infoFontPtSize, sizePercent);
+
+  sizePercent = OptionData::instance().getGuiInfoSimSize();
+  setTextEditFontSize(ui->textEditAircraftInfo, simInfoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textEditAircraftProgressInfo, simInfoFontPtSize, sizePercent);
+}
+
+void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent)
+{
+  QFont f = textEdit->font();
+  float newSize = origSize * percent / 100.f;
+  if(newSize > 0.1f)
+  {
+    f.setPointSizeF(newSize);
+    textEdit->setFont(f);
+  }
 }

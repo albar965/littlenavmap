@@ -22,6 +22,12 @@
 
 #include <QObject>
 
+namespace atools {
+namespace gui {
+class TableZoomHandler;
+}
+}
+
 class QTableView;
 class Controller;
 class ColumnList;
@@ -94,6 +100,8 @@ protected:
   void editTimeout();
   void connectSearchWidgets();
   void contextMenu(const QPoint& pos);
+
+  atools::gui::TableZoomHandler *zoomHandler = nullptr;
 
   QIcon *boolIcon = nullptr;
   CsvExporter *csvExporter = nullptr;

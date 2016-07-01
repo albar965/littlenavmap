@@ -26,6 +26,7 @@
 #include "route/routecontroller.h"
 #include "common/aircrafttrack.h"
 #include "mapgui/mapwidget.h"
+#include "options/optiondata.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -35,6 +36,19 @@
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
+
+static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+  {
+    {
+      opts::FAST, {1, 1.f}
+    },
+    {
+      opts::MEDIUM, {2, 10.f}
+    },
+    {
+      opts::LOW, {4, 100.f}
+    }
+  });
 
 using Marble::GeoDataCoordinates;
 using atools::geo::Pos;
@@ -114,9 +128,13 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           }
         }
 
+        const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+
         using atools::almostNotEqual;
-        if(!lastSimData.getPosition().isValid() || (lastPt - pt).manhattanLength() > 0 ||
-           almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
+        if(!lastSimData.getPosition().isValid() ||
+           (lastPt - pt).manhattanLength() > deltas.manhattanLengthDelta ||
+           almostNotEqual(lastSimData.getPosition().getAltitude(),
+                          simData.getPosition().getAltitude(), deltas.altitudeDelta))
         {
           lastSimData = simData;
           if(simData.getPosition().getAltitude() > maxAlt)

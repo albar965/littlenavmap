@@ -67,9 +67,12 @@ public:
 
   void optionsChanged();
 
+  void updateTextEditFontSizes();
+
 private:
   bool canTextEditUpdate(const QTextEdit *textEdit);
   void updateTextEdit(QTextEdit *textEdit, const QString& text);
+  void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -82,6 +85,8 @@ private:
   InfoQuery *infoQuery;
   QColor iconBackColor;
   HtmlInfoBuilder *info;
+
+  float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 
 };
 

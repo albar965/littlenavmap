@@ -176,6 +176,16 @@ public:
 
   void mainWindowShown();
 
+  struct SimUpdateDelta
+  {
+    int manhattanLengthDelta;
+    float headingDelta;
+    float speedDelta;
+    float altitudeDelta;
+  };
+
+  void optionsChanged();
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -253,6 +263,9 @@ private:
   int curZoom = -1;
   Marble::GeoDataLatLonAltBox curBox;
 
+  void updateCacheSizes();
 };
+
+Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

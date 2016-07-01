@@ -138,14 +138,14 @@ public:
     return simUpdateRate;
   }
 
-  int getCacheSizeDisk() const
+  unsigned int getCacheSizeDiskMb() const
   {
-    return cacheSizeDisk;
+    return static_cast<unsigned int>(cacheSizeDisk);
   }
 
-  int getCacheSizeMemory() const
+  unsigned int getCacheSizeMemoryMb() const
   {
-    return cacheSizeMemory;
+    return static_cast<unsigned int>(cacheSizeMemory);
   }
 
   int getGuiInfoTextSize() const
@@ -198,7 +198,7 @@ public:
     return routeGroundBuffer;
   }
 
-  int getMapSimUpdateBox() const
+  int getSimUpdateBox() const
   {
     return simUpdateBox;
   }
@@ -265,14 +265,14 @@ private:
   // ui->spinBoxOptionsGuiInfoText
   int guiInfoTextSize = 100;
 
+  // ui->spinBoxOptionsGuiSimInfoText
+  int guiInfoSimSize = 100;
+
   // ui->spinBoxOptionsGuiRouteText
   int guiRouteTableTextSize = 100;
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;
-
-  // ui->spinBoxOptionsGuiSimInfoText
-  int guiInfoSimSize = 100;
 
   // ui->spinBoxOptionsMapClickRect
   int mapClickSensitivity = 16;

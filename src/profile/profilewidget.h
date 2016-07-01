@@ -56,6 +56,12 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  struct SimUpdateDelta
+  {
+    int manhattanLengthDelta;
+    float altitudeDelta;
+  };
+
 signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
@@ -115,5 +121,7 @@ private:
   float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
 
 };
+
+Q_DECLARE_TYPEINFO(ProfileWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
 
 #endif // LITTLENAVMAP_PROFILEWIDGET_H

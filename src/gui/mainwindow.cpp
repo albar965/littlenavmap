@@ -235,8 +235,6 @@ void MainWindow::createNavMap()
   // Create a Marble QWidget without a parent
   mapWidget = new MapWidget(this, mapQuery);
 
-  mapWidget->setVolatileTileCacheLimit(512 * 1024);
-
   // mapWidget->setShowSunShading(true);
 
   // navMapWidget->model()->addGeoDataFile("/home/alex/Dokumente/Google Earth/BC Airports.kmz");
@@ -390,6 +388,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           profileWidget, static_cast<void (ProfileWidget::*)(void)>(&ProfileWidget::update));
 

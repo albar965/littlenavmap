@@ -47,6 +47,19 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
 
+static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+  {
+    {
+      opts::FAST, {1, 1.f, 1.f, 1.f}
+    },
+    {
+      opts::MEDIUM, {2, 1.f, 10.f, 10.f}
+    },
+    {
+      opts::LOW, {4, 4.f, 10.f, 100.f}
+    }
+  });
+
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
@@ -54,6 +67,8 @@ using atools::gui::MapPosHistory;
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
 {
+  updateCacheSizes();
+
   installEventFilter(this);
 
   // Set the map quality to gain speed
@@ -111,6 +126,19 @@ void MapWidget::setTheme(const QString& theme, int index)
 
   setMapThemeId(theme);
   updateMapShowFeatures();
+}
+
+void MapWidget::optionsChanged()
+{
+  updateCacheSizes();
+}
+
+void MapWidget::updateCacheSizes()
+{
+  // kb
+  setVolatileTileCacheLimit(OptionData::instance().getCacheSizeMemoryMb() * 1000L);
+  // kb
+  model()->setPersistentTileCacheLimit(OptionData::instance().getCacheSizeDiskMb() * 1000L);
 }
 
 void MapWidget::updateMapShowFeatures()
@@ -420,16 +448,26 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   if(paintLayer->getShownMapFeatures() & maptypes::AIRCRAFT)
   {
+    const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+
     using atools::almostNotEqual;
-    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 1 ||
-       almostNotEqual(lastSimData.getHeadingDegMag(), simData.getHeadingDegMag(), 1.f) ||
-       almostNotEqual(lastSimData.getIndicatedSpeedKts(), simData.getIndicatedSpeedKts(), 10.f) ||
-       almostNotEqual(lastSimData.getPosition().getAltitude(), simData.getPosition().getAltitude(), 10.f))
+    if(!lastSimData.getPosition().isValid() ||
+       diff.manhattanLength() >= deltas.manhattanLengthDelta ||
+       almostNotEqual(lastSimData.getHeadingDegMag(),
+                      simData.getHeadingDegMag(), deltas.headingDelta) ||
+       almostNotEqual(lastSimData.getIndicatedSpeedKts(),
+                      simData.getIndicatedSpeedKts(),
+                      deltas.speedDelta) ||
+       almostNotEqual(lastSimData.getPosition().getAltitude(),
+                      simData.getPosition().getAltitude(),
+                      deltas.altitudeDelta))
     {
       lastSimData = simulatorData;
 
-      int dx = width() / 3;
-      int dy = height() / 3;
+      // Calculate the amount that has to be substracted from each side of the rectangle
+      float boxFactor = (100.f - OptionData::instance().getSimUpdateBox()) / 100.f / 2.f;
+      int dx = static_cast<int>(width() * boxFactor);
+      int dy = static_cast<int>(height() * boxFactor);
 
       QRect widgetRect = geometry();
       widgetRect.adjust(dx, dy, -dx, -dy);

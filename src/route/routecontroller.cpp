@@ -84,8 +84,7 @@ using namespace atools::geo;
 RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
 {
-  atools::gui::TableZoomHandler zoomHandler(view);
-  Q_UNUSED(zoomHandler);
+  zoomHandler = new atools::gui::TableZoomHandler(view);
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -163,6 +162,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
+
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
 }
 
 RouteController::~RouteController()
@@ -172,6 +173,7 @@ RouteController::~RouteController()
   delete undoStack;
   delete routeNetworkRadio;
   delete routeNetworkAirway;
+  delete zoomHandler;
 }
 
 void RouteController::undoTriggered()
@@ -883,6 +885,7 @@ void RouteController::undoMerge()
 
 void RouteController::optionsChanged()
 {
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   updateModel();
   view->update();
 }
