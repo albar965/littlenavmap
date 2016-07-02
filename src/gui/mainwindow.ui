@@ -2191,12 +2191,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditAirportInfo">
+          <widget class="QTextBrowser" name="textBrowserAirportInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>No airport seleced.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2223,12 +2226,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditRunwayInfo">
+          <widget class="QTextBrowser" name="textBrowserRunwayInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>No airport seleced.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2255,12 +2261,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditComInfo">
+          <widget class="QTextBrowser" name="textBrowserComInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>No airport seleced.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2287,12 +2296,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditApproachInfo">
+          <widget class="QTextBrowser" name="textBrowserApproachInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>No airport seleced.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2319,12 +2331,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditNavaidInfo">
+          <widget class="QTextBrowser" name="textBrowserNavaidInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>No Waypoint, VOR or NDB seleced.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -4406,11 +4421,11 @@
   <tabstop>comboBoxRouteType</tabstop>
   <tabstop>tableViewRoute</tabstop>
   <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textEditAirportInfo</tabstop>
-  <tabstop>textEditRunwayInfo</tabstop>
-  <tabstop>textEditComInfo</tabstop>
-  <tabstop>textEditApproachInfo</tabstop>
-  <tabstop>textEditNavaidInfo</tabstop>
+  <tabstop>textBrowserAirportInfo</tabstop>
+  <tabstop>textBrowserRunwayInfo</tabstop>
+  <tabstop>textBrowserComInfo</tabstop>
+  <tabstop>textBrowserApproachInfo</tabstop>
+  <tabstop>textBrowserNavaidInfo</tabstop>
   <tabstop>textBrowserNavmapLegendInfo</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textEditAircraftInfo</tabstop>

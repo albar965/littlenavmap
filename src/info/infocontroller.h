@@ -69,10 +69,15 @@ public:
 
   void updateTextEditFontSizes();
 
+signals:
+  void showPos(const atools::geo::Pos& pos, int zoom);
+  void showRect(const atools::geo::Rect& rect);
+
 private:
   bool canTextEditUpdate(const QTextEdit *textEdit);
   void updateTextEdit(QTextEdit *textEdit, const QString& text);
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
+  void anchorClicked(const QUrl& url);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;

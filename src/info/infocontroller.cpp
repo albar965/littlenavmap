@@ -31,6 +31,7 @@
 #include "options/optiondata.h"
 
 #include <QScrollBar>
+#include <QUrlQuery>
 
 using atools::util::HtmlBuilder;
 
@@ -42,13 +43,41 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
   info = new HtmlInfoBuilder(mapQuery, infoQuery, true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  infoFontPtSize = ui->textEditAirportInfo->font().pointSizeF();
-  simInfoFontPtSize = ui->textEditAircraftInfo->font().pointSizeF();
+  infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
+  simInfoFontPtSize = static_cast<float>(ui->textEditAircraftInfo->font().pointSizeF());
+
+  connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 }
 
 InfoController::~InfoController()
 {
   delete info;
+}
+
+void InfoController::anchorClicked(const QUrl& url)
+{
+  qDebug() << "InfoController::anchorClicked" << url;
+
+  if(url.scheme() == "lnm" && url.host() == "show")
+  {
+    QUrlQuery query(url);
+
+    if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+    {
+      emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
+                                    query.queryItemValue("laty").toFloat()), -1);
+    }
+    else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
+    {
+      maptypes::MapAirport airport;
+      mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
+      emit showRect(airport.bounding);
+    }
+  }
 }
 
 void InfoController::saveState()
@@ -111,7 +140,7 @@ void InfoController::updateAirport()
     info->airportText(ap, html,
                       &mainWindow->getRouteController()->getRouteMapObjects(),
                       mainWindow->getWeatherReporter(), iconBackColor);
-    mainWindow->getUi()->textEditAirportInfo->setText(html.getHtml());
+    mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
   }
 }
 
@@ -139,15 +168,15 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
     html.clear();
     info->runwayText(airport, html, iconBackColor);
-    ui->textEditRunwayInfo->setText(html.getHtml());
+    ui->textBrowserRunwayInfo->setText(html.getHtml());
 
     html.clear();
     info->comText(airport, html, iconBackColor);
-    ui->textEditComInfo->setText(html.getHtml());
+    ui->textBrowserComInfo->setText(html.getHtml());
 
     html.clear();
     info->approachText(airport, html, iconBackColor);
-    ui->textEditApproachInfo->setText(html.getHtml());
+    ui->textBrowserApproachInfo->setText(html.getHtml());
   }
 
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
@@ -170,7 +199,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     if(result.airports.isEmpty())
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->vorText(vor, html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
+    ui->textBrowserNavaidInfo->setText(html.getHtml());
   }
 
   for(const maptypes::MapNdb& ndb : result.ndbs)
@@ -180,7 +209,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     if(result.airports.isEmpty())
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->ndbText(ndb, html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
+    ui->textBrowserNavaidInfo->setText(html.getHtml());
   }
 
   for(const maptypes::MapWaypoint& waypoint : result.waypoints)
@@ -190,7 +219,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     if(result.airports.isEmpty())
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->waypointText(waypoint, html, iconBackColor);
-    ui->textEditNavaidInfo->setText(html.getHtml());
+    ui->textBrowserNavaidInfo->setText(html.getHtml());
   }
 
   for(const maptypes::MapAirway& airway : result.airways)
@@ -200,7 +229,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     if(result.airports.isEmpty())
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->airwayText(airway, html);
-    ui->textEditNavaidInfo->setText(html.getHtml());
+    ui->textBrowserNavaidInfo->setText(html.getHtml());
   }
 
   idx = ui->tabWidgetInformation->currentIndex();
@@ -318,11 +347,11 @@ void InfoController::updateTextEditFontSizes()
   Ui::MainWindow *ui = mainWindow->getUi();
 
   int sizePercent = OptionData::instance().getGuiInfoTextSize();
-  setTextEditFontSize(ui->textEditAirportInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textEditRunwayInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textEditComInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textEditApproachInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textEditNavaidInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserAirportInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
 
   sizePercent = OptionData::instance().getGuiInfoSimSize();
   setTextEditFontSize(ui->textEditAircraftInfo, simInfoFontPtSize, sizePercent);

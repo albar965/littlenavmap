@@ -80,7 +80,12 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     titleFlags |= atools::util::html::ITALIC;
 
   if(info)
+  {
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
+    html.nbsp().nbsp();
+    html.a(tr("Show Airport on Map"),
+           QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
+  }
   else
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
 }
@@ -94,6 +99,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     rec = infoQuery->getAirportInformation(airport.id);
 
   airportTitle(airport, html, background);
+  html.br();
 
   QString city, state, country;
   mapQuery->getAirportAdminById(airport.id, city, state, country);
@@ -581,6 +587,12 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   QString type = maptypes::vorType(vor);
   title(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
 
+  html.nbsp().nbsp();
+
+  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+         arg(vor.position.getLonX()).arg(vor.position.getLatY()));
+  html.br();
+
   html.table();
   if(vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
@@ -611,6 +623,12 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.nbsp().nbsp();
 
   title(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
+
+  html.nbsp().nbsp();
+  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+         arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
+  html.br();
+
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
@@ -639,6 +657,12 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.nbsp().nbsp();
 
   title(html, tr("Waypoint: ") + waypoint.ident);
+
+  html.nbsp().nbsp();
+  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+         arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
+  html.br();
+
   html.table();
   if(waypoint.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));

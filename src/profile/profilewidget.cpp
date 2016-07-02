@@ -568,7 +568,7 @@ void ProfileWidget::updateElevation()
   if(!visible || databaseLoadStatus)
     return;
 
-  qDebug() << "Profile update elevation";
+  // qDebug() << "Profile update elevation";
   updateTimer->start(UPDATE_TIMEOUT);
 }
 

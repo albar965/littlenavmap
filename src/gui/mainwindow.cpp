@@ -424,6 +424,10 @@ void MainWindow::connectAllSlots()
   connect(searchController->getNavSearch(), &NavSearch::showInformation,
           infoController, &InfoController::showInformation);
 
+  connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
+  connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
+
+
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
 
