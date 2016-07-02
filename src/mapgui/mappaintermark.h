@@ -36,17 +36,16 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  void paintMark(Marble::GeoPainter *painter);
-  void paintHome(Marble::GeoPainter *painter);
-  void paintHighlights(const MapLayer *mapLayerEff, Marble::GeoPainter *painter,
-                       bool fast);
+  void paintMark(const PaintContext* context);
+  void paintHome(const PaintContext* context);
+  void paintHighlights(const PaintContext* context);
 
-  void paintRangeRings(Marble::GeoPainter *painter, const atools::geo::Rect& viewBox, bool fast);
+  void paintRangeRings(const PaintContext* context);
 
-  void paintDistanceMarkers(Marble::GeoPainter *painter, bool fast);
-  void paintRouteDrag(Marble::GeoPainter *painter);
+  void paintDistanceMarkers(const PaintContext* context);
+  void paintRouteDrag(const PaintContext* context);
 
-  void paintMagneticPoles(Marble::GeoPainter *painter);
+  void paintMagneticPoles(const PaintContext* context);
 
 };
 

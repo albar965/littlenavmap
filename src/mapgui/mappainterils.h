@@ -34,8 +34,7 @@ public:
 private:
   static Q_DECL_CONSTEXPR float ILS_FEATHER_LEN_METER = 8.f;
 
-  void drawIlsSymbol(Marble::GeoPainter *painter, const maptypes::MapIls& ils,
-                     const MapLayer *mapLayer, bool fast);
+  void drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils);
 
 };
 

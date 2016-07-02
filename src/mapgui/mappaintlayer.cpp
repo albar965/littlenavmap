@@ -29,6 +29,7 @@
 #include "mapgui/mappainterroute.h"
 #include "mapgui/mapscale.h"
 #include "route/routecontroller.h"
+#include "options/optiondata.h"
 
 #include <QElapsedTimer>
 
@@ -231,11 +232,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     // Check if no painting wanted during scroll
     if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation))
     {
-      // Set default font to bold and reduce size a bit
-      QFont font = painter->font();
-      font.setBold(true);
-      // font.setPointSizeF(font.pointSizeF() * 9.f / 10.f);
-      painter->setFont(font);
 
       QElapsedTimer t;
       t.start();
@@ -253,6 +249,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                          Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
 
+      context.defaultFont = painter->font();
+      context.defaultFont.setBold(true);
+      context.defaultFontScaled = context.defaultFont;
+      context.defaultFontScaled.setPointSizeF(context.defaultFontScaled.pointSizeF() *
+                                              OptionData::instance().getMapTextSize() / 100.f);
+      painter->setFont(context.defaultFontScaled);
+
       const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
       context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
                                                box.north(GeoDataCoordinates::Degree),
@@ -263,6 +266,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         context.forcePaintObjects = &forcePaint;
       else
         context.forcePaintObjects = nullptr;
+
+      context.symbolScale = OptionData::instance().getMapSymbolSize() / 100.f;
 
       if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
       {

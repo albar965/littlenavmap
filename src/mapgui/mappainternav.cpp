@@ -274,15 +274,14 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
 
     if(visible)
     {
+      int size = context->symSize(context->mapLayerEffective->getWaypointSymbolSize());
       symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
-                                        context->mapLayerEffective->getWaypointSymbolSize(), false,
-                                        drawFast);
+                                        size, false, drawFast);
 
       if(context->mapLayer->isWaypointName() ||
          (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
-                                        context->mapLayerEffective->getWaypointSymbolSize(),
-                                        false, drawFast);
+                                        size, false, drawFast);
     }
   }
 }
@@ -296,10 +295,10 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
 
     if(visible)
     {
+      int size = context->symSize(context->mapLayerEffective->getVorSymbolSize());
       symbolPainter->drawVorSymbol(context->painter, vor, x, y,
-                                   context->mapLayerEffective->getVorSymbolSize(), false, drawFast,
-                                   context->mapLayerEffective->isVorLarge() ?
-                                   context->mapLayerEffective->getVorSymbolSize() * 5 : 0);
+                                   size, false, drawFast,
+                                   context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
 
       textflags::TextFlags flags;
 
@@ -309,7 +308,7 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
         flags = textflags::IDENT;
 
       symbolPainter->drawVorText(context->painter, vor, x, y,
-                                 flags, context->mapLayerEffective->getVorSymbolSize(), false, drawFast);
+                                 flags, size, false, drawFast);
     }
   }
 }
@@ -323,8 +322,8 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
 
     if(visible)
     {
-      symbolPainter->drawNdbSymbol(context->painter, ndb, x, y,
-                                   context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
+      int size = context->symSize(context->mapLayerEffective->getNdbSymbolSize());
+      symbolPainter->drawNdbSymbol(context->painter, ndb, x, y, size, false, drawFast);
 
       textflags::TextFlags flags;
 
@@ -333,8 +332,7 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
       else if(context->mapLayer->isNdbIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawNdbText(context->painter, ndb, x, y,
-                                 flags, context->mapLayerEffective->getNdbSymbolSize(), false, drawFast);
+      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, false, drawFast);
     }
   }
 }
@@ -348,14 +346,14 @@ void MapPainterNav::paintMarkers(const PaintContext *context, const QList<MapMar
 
     if(visible)
     {
-      symbolPainter->drawMarkerSymbol(context->painter, marker, x, y,
-                                      context->mapLayerEffective->getMarkerSymbolSize(), drawFast);
+      int size = context->symSize(context->mapLayerEffective->getMarkerSymbolSize());
+      symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 
       if(context->mapLayer->isMarkerInfo())
       {
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
-        x -= context->mapLayerEffective->getMarkerSymbolSize() / 2 + 2;
+        x -= size / 2 + 2;
         symbolPainter->textBox(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
                                textatt::BOLD | textatt::RIGHT, 0);
       }

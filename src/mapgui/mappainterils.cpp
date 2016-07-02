@@ -84,7 +84,7 @@ void MapPainterIls::render(const PaintContext *context)
       }
 
       if(visible)
-        drawIlsSymbol(context->painter, ils, context->mapLayer, context->drawFast);
+        drawIlsSymbol(context, ils);
     }
   }
   if(context->viewContext == Marble::Still && verbose)
@@ -92,15 +92,14 @@ void MapPainterIls::render(const PaintContext *context)
   }
 }
 
-void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& ils,
-                                  const MapLayer *mapLayer, bool fast)
+void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils)
 {
-  painter->save();
+  context->painter->save();
 
-  painter->setBackgroundMode(Qt::TransparentMode);
+  context->painter->setBackgroundMode(Qt::TransparentMode);
 
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+  context->painter->setBrush(Qt::NoBrush);
+  context->painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
@@ -110,18 +109,18 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
 
-  painter->drawLine(origin, p1);
-  painter->drawLine(p1, pmid);
-  painter->drawLine(pmid, p2);
-  painter->drawLine(p2, origin);
+  context->painter->drawLine(origin, p1);
+  context->painter->drawLine(p1, pmid);
+  context->painter->drawLine(pmid, p2);
+  context->painter->drawLine(p2, origin);
 
   if(ils.slope > 0)
-    painter->drawLine(p1, p2);
+    context->painter->drawLine(p1, p2);
 
-  if(!fast)
+  if(!context->drawFast)
   {
     QString text;
-    if(mapLayer->isIlsInfo())
+    if(context->mapLayer->isIlsInfo())
     {
       text = ils.ident + " / " +
              QLocale().toString(ils.frequency / 1000., 'f', 2) + " / " +
@@ -132,14 +131,14 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
       if(ils.dme)
         text += tr(" / DME");
     }
-    else if(mapLayer->isIlsIdent())
+    else if(context->mapLayer->isIlsIdent())
       text = ils.ident;
 
     if(!text.isEmpty())
     {
       // painter->setBrush(mapcolors::textBoxColor);
-      painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
-      painter->translate(origin);
+      context->painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
+      context->painter->translate(origin);
 
       float rotate;
       if(ils.heading > 180)
@@ -152,7 +151,7 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
 
       if(featherLen > 40)
       {
-        QFontMetrics metrics = painter->fontMetrics();
+        QFontMetrics metrics = context->painter->fontMetrics();
         int texth = metrics.descent();
 
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
@@ -164,12 +163,12 @@ void MapPainterIls::drawIlsSymbol(GeoPainter *painter, const maptypes::MapIls& i
         else
           textpos = -(featherLen + textw) / 2;
 
-        painter->rotate(rotate);
+        context->painter->rotate(rotate);
         // painter->drawRect(textpos - 2, 2, textw + 2, -metrics.height() - 2);
-        painter->drawText(textpos, -texth, text);
-        painter->resetTransform();
+        context->painter->drawText(textpos, -texth, text);
+        context->painter->resetTransform();
       }
     }
   }
-  painter->restore();
+  context->painter->restore();
 }

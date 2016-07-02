@@ -72,6 +72,7 @@ private:
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
 
+  void showDiskCacheClicked();
   void updateDatabaseButtonState();
 
   QVector<int> ringStrToVector(const QString& string) const;

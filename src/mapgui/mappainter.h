@@ -58,6 +58,14 @@ struct PaintContext
   QSet<ForcePaintType> *forcePaintObjects;
   atools::geo::Rect viewportRect;
   opts::MapScrollDetail mapScrollDetail;
+  QFont defaultFont, defaultFontScaled;
+  float symbolScale = 1.0f;
+
+  int symSize(int size) const
+  {
+    return static_cast<int>(std::round(symbolScale * size));
+  }
+
 };
 
 class MapPainter :

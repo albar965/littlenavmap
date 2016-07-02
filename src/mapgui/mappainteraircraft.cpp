@@ -52,12 +52,12 @@ void MapPainterAircraft::render(const PaintContext *context)
     paintAircraftTrack(context->painter);
 
   if(context->objectTypes.testFlag(AIRCRAFT))
-    paintAircraft(context->painter);
+    paintAircraft(context);
 
   context->painter->restore();
 }
 
-void MapPainterAircraft::paintAircraft(GeoPainter *painter)
+void MapPainterAircraft::paintAircraft(const PaintContext *context)
 {
   const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
   const Pos& pos = simData.getPosition();
@@ -68,13 +68,15 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
   int x, y;
   if(wToS(pos, x, y))
   {
-    painter->translate(x, y);
-    painter->rotate(atools::geo::normalizeCourse(simData.getHeadingDegTrue()));
+    context->painter->translate(x, y);
+    context->painter->rotate(atools::geo::normalizeCourse(simData.getHeadingDegTrue()));
 
-    symbolPainter->drawAircraftSymbol(painter, 0, 0, 40,
+    int size = context->symSize(40);
+
+    symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
                                       simData.getFlags() & atools::fs::sc::ON_GROUND);
 
-    painter->resetTransform();
+    context->painter->resetTransform();
 
     QStringList texts;
     // texts.append("Title " + simData.getAirplaneTitle());
@@ -105,7 +107,8 @@ void MapPainterAircraft::paintAircraft(GeoPainter *painter)
                                           simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0)).
                  arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
 
-    symbolPainter->textBox(painter, texts, QPen(Qt::black), x + 20, y + 20, textatt::BOLD, 255);
+    symbolPainter->textBox(context->painter, texts,
+                           QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
   }
 }
 

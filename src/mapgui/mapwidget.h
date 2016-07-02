@@ -74,7 +74,7 @@ public:
   void saveState();
   void restoreState();
 
-  void showPos(const atools::geo::Pos& pos, int zoomValue = 3000);
+  void showPos(const atools::geo::Pos& pos, int distanceNm = -1);
   void showRect(const atools::geo::Rect& rect);
 
   void showMark();
@@ -264,6 +264,7 @@ private:
   Marble::GeoDataLatLonAltBox curBox;
 
   void updateCacheSizes();
+
 };
 
 Q_DECLARE_TYPEINFO(MapWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);

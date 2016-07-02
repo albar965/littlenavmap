@@ -391,7 +391,7 @@ void Search::doubleClick(const QModelIndex& index)
       {
         atools::geo::Pos p(leftLon, topLat);
         qDebug() << "emit showPos" << p;
-        emit showPos(p, 2700);
+        emit showPos(p, -1);
       }
       else
       {
@@ -405,7 +405,7 @@ void Search::doubleClick(const QModelIndex& index)
       atools::geo::Pos p(controller->getRawData(index.row(), "lonx").toFloat(),
                          controller->getRawData(index.row(), "laty").toFloat());
       qDebug() << "emit showPos" << p;
-      emit showPos(p, 2700);
+      emit showPos(p, -1);
     }
 
     maptypes::MapObjectTypes navType = maptypes::NONE;
@@ -623,11 +623,11 @@ void Search::showOnMapMenu()
       else
       {
         if(!result.vors.isEmpty())
-          emit showPos(result.vors.first().getPosition(), 2700);
+          emit showPos(result.vors.first().getPosition(), -1);
         else if(!result.ndbs.isEmpty())
-          emit showPos(result.ndbs.first().getPosition(), 2700);
+          emit showPos(result.ndbs.first().getPosition(), -1);
         else if(!result.waypoints.isEmpty())
-          emit showPos(result.waypoints.first().getPosition(), 2700);
+          emit showPos(result.waypoints.first().getPosition(), -1);
         mainWindow->setStatusMessage(tr("Showing navaid on map."));
       }
     }

@@ -40,31 +40,31 @@ public:
 private:
   RouteController *routeController;
 
-  void paintRoute(const MapLayer *mapLayer, Marble::GeoPainter *painter, bool fast);
+  void paintRoute(const PaintContext* context);
 
-  void paintAirport(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintAirport(const PaintContext* context, int x, int y,
                     const maptypes::MapAirport& obj);
-  void paintVor(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintVor(const PaintContext* context, int x, int y,
                 const maptypes::MapVor& obj);
-  void paintNdb(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintNdb(const PaintContext* context, int x, int y,
                 const maptypes::MapNdb& obj);
-  void paintWaypoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, const QColor& col, int x, int y,
+  void paintWaypoint(const PaintContext* context, const QColor& col, int x, int y,
                      const maptypes::MapWaypoint& obj);
 
-  void paintWaypointText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintWaypointText(const PaintContext* context, int x, int y,
                          const maptypes::MapWaypoint& obj);
-  void paintNdbText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintNdbText(const PaintContext* context, int x, int y,
                     const maptypes::MapNdb& obj);
-  void paintVorText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintVorText(const PaintContext* context, int x, int y,
                     const maptypes::MapVor& obj);
 
-  void paintAirportText(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y,
+  void paintAirportText(const PaintContext* context, int x, int y,
                         const maptypes::MapAirport& obj);
 
-  void paintText(const MapLayer *mapLayer, Marble::GeoPainter *painter, const QColor& color, int x, int y,
+  void paintText(const PaintContext* context, const QColor& color, int x, int y,
                  const QString& text);
 
-  void paintUserpoint(const MapLayer *mapLayer, Marble::GeoPainter *painter, int x, int y);
+  void paintUserpoint(const PaintContext* context, int x, int y);
 
 };
 

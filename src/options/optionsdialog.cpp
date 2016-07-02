@@ -30,6 +30,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
+#include <QDesktopServices>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -167,10 +168,12 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   connect(ui->listWidgetOptionsDatabaseAddon, &QListWidget::currentRowChanged,
           this, &OptionsDialog::updateDatabaseButtonState);
 
-  connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked,
-          this, &OptionsDialog::clearDiskCachedClicked);
   connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked,
           this, &OptionsDialog::clearMemCachedClicked);
+  connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked,
+          this, &OptionsDialog::clearDiskCachedClicked);
+  connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked,
+          this, &OptionsDialog::showDiskCacheClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -581,4 +584,15 @@ void OptionsDialog::clearDiskCachedClicked()
     mainWindow->setStatusMessage(tr("Disk cache cleared."));
     QGuiApplication::restoreOverrideCursor();
   }
+}
+
+void OptionsDialog::showDiskCacheClicked()
+{
+  const QString& localPath = Marble::MarbleDirs::localPath();
+
+  QUrl url = QUrl::fromLocalFile(localPath);
+
+  if(!QDesktopServices::openUrl(url))
+    QMessageBox::warning(this, QApplication::applicationName(), QString(
+                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }

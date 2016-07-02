@@ -47,7 +47,8 @@
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
 
-static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+const int DEFAULT_MAP_DISTANCE = 7000;
+const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   {
     {
       opts::FAST, {1, 1.f, 1.f, 1.f}
@@ -72,7 +73,6 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   installEventFilter(this);
 
   // Set the map quality to gain speed
-  // TODO configuration option
   setMapQualityForViewContext(HighQuality, Still);
   setMapQualityForViewContext(LowQuality, Animation);
 
@@ -145,7 +145,7 @@ void MapWidget::updateCacheSizes()
   qDebug() << "Volatile cache to" << OptionData::instance().getCacheSizeMemoryMb() * 1000L << "kb";
   setVolatileTileCacheLimit(OptionData::instance().getCacheSizeMemoryMb() * 1000L);
   // kb
-  qDebug() << "Persistend cache to" << OptionData::instance().getCacheSizeDiskMb() * 1000L << "kb";
+  qDebug() << "Persistent cache to" << OptionData::instance().getCacheSizeDiskMb() * 1000L << "kb";
   model()->setPersistentTileCacheLimit(OptionData::instance().getCacheSizeDiskMb() * 1000L);
 }
 
@@ -342,17 +342,21 @@ void MapWidget::showSavedPos()
     else
     {
       centerOn(0.f, 0.f, false);
-      setDistance(7000);
+      setDistance(DEFAULT_MAP_DISTANCE);
     }
   }
 }
 
-void MapWidget::showPos(const atools::geo::Pos& pos, int zoomValue)
+void MapWidget::showPos(const atools::geo::Pos& pos, int distanceNm)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
   QToolTip::hideText();
   tooltipPos = QPoint();
-  setZoom(zoomValue);
+
+  if(distanceNm == -1)
+    setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
+  else
+    setDistance(atools::geo::nmToKm(distanceNm));
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 
@@ -374,7 +378,7 @@ void MapWidget::showMark()
 
   if(markPos.isValid())
   {
-    setZoom(2700);
+    setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
     centerOn(markPos.getLonX(), markPos.getLatY(), false);
     mainWindow->setStatusMessage(tr("Showing distance search center."));
   }
@@ -386,8 +390,8 @@ void MapWidget::showAircraft(bool state)
 
   if(state && simData.getPosition().isValid())
   {
-    if(zoom() < 1800)
-      setZoom(1800);
+    // if(zoom() < 1800)
+    // setZoom(1800);
     centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
     // mainWindow->statusMessage(tr("Showing simulator aircraft."));
   }

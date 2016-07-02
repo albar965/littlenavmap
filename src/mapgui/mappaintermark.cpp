@@ -50,73 +50,84 @@ void MapPainterMark::render(const PaintContext *context)
   setRenderHints(context->painter);
 
   context->painter->save();
-  paintHighlights(context->mapLayerEffective, context->painter, context->drawFast);
-  paintMark(context->painter);
-  paintHome(context->painter);
-  paintRangeRings(context->painter, context->viewportRect, context->drawFast);
-  paintDistanceMarkers(context->painter, context->drawFast);
-  paintRouteDrag(context->painter);
-  paintMagneticPoles(context->painter);
+  paintHighlights(context);
+  paintMark(context);
+  paintHome(context);
+  paintRangeRings(context);
+  paintDistanceMarkers(context);
+  paintRouteDrag(context);
+  paintMagneticPoles(context);
   context->painter->restore();
 }
 
-void MapPainterMark::paintMark(GeoPainter *painter)
+void MapPainterMark::paintMark(const PaintContext *context)
 {
   int x, y;
   if(wToS(mapWidget->getMarkPos(), x, y))
   {
-    painter->setPen(mapcolors::markBackPen);
+    int size = context->symSize(10);
+    int size2 = context->symSize(8);
 
-    painter->drawLine(x, y - 10, x, y + 10);
-    painter->drawLine(x - 10, y, x + 10, y);
+    context->painter->setPen(mapcolors::markBackPen);
 
-    painter->setPen(mapcolors::markFillPen);
-    painter->drawLine(x, y - 8, x, y + 8);
-    painter->drawLine(x - 8, y, x + 8, y);
+    context->painter->drawLine(x, y - size, x, y + size);
+    context->painter->drawLine(x - size, y, x + size, y);
+
+    context->painter->setPen(mapcolors::markFillPen);
+    context->painter->drawLine(x, y - size2, x, y + size2);
+    context->painter->drawLine(x - size2, y, x + size2, y);
   }
 }
 
-void MapPainterMark::paintMagneticPoles(GeoPainter *painter)
+void MapPainterMark::paintMagneticPoles(const PaintContext *context)
 {
-  int x, y;
+  GeoPainter *painter = context->painter;
 
   painter->setPen(mapcolors::magneticPolePen);
 
+  int size = context->symSize(5);
+
+  int x, y;
   if(wToS(MAG_NORTH_POLE_2007, x, y))
   {
-    painter->drawEllipse(x, y, 5, 5);
+    painter->drawEllipse(x, y, size, size);
     symbolPainter->textBox(painter, {tr("Magnetic North"), tr("2007")},
-                           painter->pen(), x + 5, y, textatt::NONE, 0);
+                           painter->pen(), x + size, y, textatt::NONE, 0);
   }
 
   if(wToS(MAG_SOUTH_POLE_2007, x, y))
   {
-    painter->drawEllipse(x, y, 5, 5);
+    painter->drawEllipse(x, y, size, size);
     symbolPainter->textBox(painter, {tr("Magnetic South"), tr("2007")},
-                           painter->pen(), x + 5, y, textatt::NONE, 0);
+                           painter->pen(), x + size, y, textatt::NONE, 0);
   }
 }
 
-void MapPainterMark::paintHome(GeoPainter *painter)
+void MapPainterMark::paintHome(const PaintContext *context)
 {
+  GeoPainter *painter = context->painter;
+
   int x, y;
   if(wToS(mapWidget->getHomePos(), x, y))
   {
     painter->setPen(mapcolors::homeBackPen);
     painter->setBrush(mapcolors::homeFillColor);
 
+    int size = context->symSize(10);
+
+    painter->drawRect(x - (size / 2), y - (size / 2), size, size);
+
     QPolygon roof;
-    painter->drawRect(x - 5, y - 5, 10, 10);
-    roof << QPoint(x, y - 10) << QPoint(x + 7, y - 3) << QPoint(x - 7, y - 3);
+    roof << QPoint(x, y - size) << QPoint(x + size - 3, y - 3) << QPoint(x - size + 3, y - 3);
     painter->drawConvexPolygon(roof);
     painter->drawPoint(x, y);
   }
 }
 
-void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *painter, bool fast)
+void MapPainterMark::paintHighlights(const PaintContext *context)
 {
   const MapSearchResult& highlightResults = mapWidget->getHighlightMapObjects();
-  int size = 6;
+  int size = context->symSize(6);
 
   QList<Pos> positions;
 
@@ -129,8 +140,9 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
   for(const MapNdb& ndb : highlightResults.ndbs)
     positions.append(ndb.position);
 
-  if(mapLayerEff->isAirport())
-    size = std::max(size, mapLayerEff->getAirportSymbolSize());
+  GeoPainter *painter = context->painter;
+  if(context->mapLayerEffective->isAirport())
+    size = context->symSize(std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -139,7 +151,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
     int x, y;
     if(wToS(pos, x, y))
     {
-      if(!fast)
+      if(!context->drawFast)
       {
         painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);
@@ -149,8 +161,8 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
     }
   }
 
-  if(mapLayerEff->isAirport())
-    size = std::max(size, mapLayerEff->getAirportSymbolSize());
+  if(context->mapLayerEffective->isAirport())
+    size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
   const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlightMapObjects();
   positions.clear();
@@ -164,7 +176,7 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
     int x, y;
     if(wToS(pos, x, y))
     {
-      if(!fast)
+      if(!context->drawFast)
       {
         painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
                              Qt::FlatCap));
@@ -176,9 +188,10 @@ void MapPainterMark::paintHighlights(const MapLayer *mapLayerEff, GeoPainter *pa
   }
 }
 
-void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rect& viewBox, bool fast)
+void MapPainterMark::paintRangeRings(const PaintContext *context)
 {
   const QList<maptypes::RangeMarker>& rangeRings = mapWidget->getRangeRings();
+  GeoPainter *painter = context->painter;
 
   painter->setBrush(Qt::NoBrush);
 
@@ -192,7 +205,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rec
 
       Rect rect(rings.center, nmToMeter(maxDiameter));
 
-      if(viewBox.overlaps(rect) /*&& !fast*/)
+      if(context->viewportRect.overlaps(rect) /*&& !fast*/)
       {
         QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
         if(rings.type == maptypes::VOR)
@@ -225,7 +238,7 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rec
         for(int diameter : rings.ranges)
         {
           int xt, yt;
-          paintCircle(painter, rings.center, diameter, fast, xt, yt);
+          paintCircle(painter, rings.center, diameter, context->drawFast, xt, yt);
 
           if(xt != -1 && yt != -1)
           {
@@ -249,8 +262,10 @@ void MapPainterMark::paintRangeRings(GeoPainter *painter, const atools::geo::Rec
   }
 }
 
-void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
+void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 {
+  GeoPainter *painter = context->painter;
+
   QFontMetrics metrics = painter->fontMetrics();
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
@@ -318,7 +333,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
 
       // Approximate the needed number of line segments
       int pixel = scale->getPixelIntForMeter(distanceMeter);
-      int numPoints = std::min(std::max(pixel / (fast ? 200 : 20), 4), 72);
+      int numPoints = std::min(std::max(pixel / (context->drawFast ? 200 : 20), 4), 72);
 
       Pos p1 = m.from, p2;
 
@@ -359,7 +374,7 @@ void MapPainterMark::paintDistanceMarkers(GeoPainter *painter, bool fast)
   }
 }
 
-void MapPainterMark::paintRouteDrag(GeoPainter *painter)
+void MapPainterMark::paintRouteDrag(const PaintContext *context)
 {
   atools::geo::Pos from, to;
   QPoint cur;
@@ -381,8 +396,9 @@ void MapPainterMark::paintRouteDrag(GeoPainter *painter)
 
       if(linestring.size() > 1)
       {
-        painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        painter->drawPolyline(linestring);
+        context->painter->setPen(QPen(mapcolors::routeDragColor, 3, Qt::SolidLine, Qt::RoundCap,
+                                      Qt::RoundJoin));
+        context->painter->drawPolyline(linestring);
       }
     }
   }

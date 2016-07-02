@@ -99,9 +99,9 @@ void MapPainterAirport::render(const PaintContext *context)
       if(context->mapLayerEffective->isAirportDiagram())
         drawAirportDiagram(context, airport, context->drawFast);
       else
-        drawAirportSymbolOverview(context, airport, context->drawFast);
+        drawAirportSymbolOverview(context, airport);
 
-      drawAirportSymbol(context, airport, x, y, context->drawFast);
+      drawAirportSymbol(context, airport, x, y);
 
       textflags::TextFlags flags;
 
@@ -114,7 +114,7 @@ void MapPainterAirport::render(const PaintContext *context)
         flags |= textflags::NAME;
 
       symbolPainter->drawAirportText(context->painter, airport, x, y, flags,
-                                     context->mapLayerEffective->getAirportSymbolSize(),
+                                     context->symSize(context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram(), true, context->drawFast);
     }
   }
@@ -129,6 +129,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   Marble::GeoPainter *painter = context->painter;
   painter->save();
   painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setFont(context->defaultFont);
 
   painter->setBrush(mapcolors::airportDetailBackColor);
   painter->setPen(QPen(mapcolors::airportDetailBackColor, scale->getPixelIntForMeter(200.f),
@@ -521,7 +522,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   // Draw runway texts --------------------------------
   if(!fast)
   {
-    QFont rwTextFont = painter->font();
+    QFont rwTextFont = context->defaultFont;
     rwTextFont.setPixelSize(RUNWAY_TEXT_FONT_SIZE);
     painter->setFont(rwTextFont);
     QFontMetrics rwMetrics = painter->fontMetrics();
@@ -678,8 +679,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   painter->restore();
 }
 
-void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap,
-                                                  bool fast)
+void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -707,7 +707,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
       painter->resetTransform();
     }
 
-    if(!fast || context->mapLayerEffective->isAirportDiagram())
+    if(!context->drawFast || context->mapLayerEffective->isAirportDiagram())
     {
       painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), 1, Qt::SolidLine, Qt::FlatCap));
       painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
@@ -724,15 +724,15 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 }
 
 void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap,
-                                          int x, int y, bool fast)
+                                          int x, int y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < 8000 || context->mapLayerEffective->isAirportDiagram())
   {
-    int size = context->mapLayerEffective->getAirportSymbolSize();
+    int size = context->symSize(context->mapLayerEffective->getAirportSymbolSize());
     bool isAirportDiagram = context->mapLayerEffective->isAirportDiagram();
 
-    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, fast);
+    symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);
   }
 }
 

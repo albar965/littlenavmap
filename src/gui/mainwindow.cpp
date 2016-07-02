@@ -361,14 +361,17 @@ void MainWindow::setupUi()
 
   renderStatusLabel = new QLabel();
   renderStatusLabel->setMinimumWidth(120);
+  renderStatusLabel->setToolTip(tr("Map rendering and download status."));
   ui->statusBar->addPermanentWidget(renderStatusLabel);
 
   mapDistanceLabel = new QLabel();
   mapDistanceLabel->setMinimumWidth(80);
+  mapDistanceLabel->setToolTip(tr("View distance to ground."));
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
   mapPosLabel = new QLabel();
   mapPosLabel->setMinimumWidth(200);
+  mapPosLabel->setToolTip(tr("Cursor position on map."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
 }
 
