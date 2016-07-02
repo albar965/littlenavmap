@@ -392,8 +392,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged,
-          profileWidget, static_cast<void (ProfileWidget::*)(void)>(&ProfileWidget::update));
+  connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
 
   connect(ui->actionMapSetHome, &QAction::triggered, mapWidget, &MapWidget::changeHome);
 
@@ -426,7 +425,6 @@ void MainWindow::connectAllSlots()
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
-
 
   // Use this event to show path dialog after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);

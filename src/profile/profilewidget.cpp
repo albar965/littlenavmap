@@ -707,6 +707,12 @@ void ProfileWidget::postDatabaseLoad()
   routeChanged(true);
 }
 
+void ProfileWidget::optionsChanged()
+{
+  updateScreenCoords();
+  update();
+}
+
 void ProfileWidget::updateProfileShowFeatures()
 {
   Ui::MainWindow *ui = mainWindow->getUi();

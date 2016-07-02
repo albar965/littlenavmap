@@ -62,6 +62,8 @@ public:
     float altitudeDelta;
   };
 
+  void optionsChanged();
+
 signals:
   void highlightProfilePoint(atools::geo::Pos pos);
 
