@@ -273,6 +273,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     if(result == QMessageBox::Yes)
     {
       OptionData::instanceInternal() = OptionData();
+      OptionData::instanceInternal().valid = true;
       fromOptionData();
       saveState();
       emit optionsChanged();
