@@ -186,6 +186,15 @@ public:
 
   void optionsChanged();
 
+  enum MapThemeComboIndex
+  {
+    OPENSTREETMAP,
+    OPENTOPOMAP,
+    SIMPLE,
+    PLAIN,
+    INVALID = -1
+  };
+
 signals:
   void markChanged(const atools::geo::Pos& mark);
   void homeChanged(const atools::geo::Pos& mark);
@@ -219,14 +228,6 @@ private:
 
   QStringList kmlFiles;
   bool databaseLoadStatus = false;
-  enum MapThemeComboIndex
-  {
-    OSM,
-    OPENTOPOMAP,
-    POLITICAL,
-    PLAIN,
-    INVALID = -1
-  };
 
   int screenSearchDistance = 16, screenSearchDistanceTooltip = 10;
   MapThemeComboIndex currentComboIndex = INVALID;

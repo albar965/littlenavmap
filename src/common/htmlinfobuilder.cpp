@@ -587,11 +587,13 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   QString type = maptypes::vorType(vor);
   title(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
 
-  html.nbsp().nbsp();
-
-  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
-         arg(vor.position.getLonX()).arg(vor.position.getLatY()));
-  html.br();
+  if(info)
+  {
+    html.nbsp().nbsp();
+    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+           arg(vor.position.getLonX()).arg(vor.position.getLatY()));
+    html.br();
+  }
 
   html.table();
   if(vor.routeIndex >= 0)
@@ -624,10 +626,13 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
 
   title(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
 
-  html.nbsp().nbsp();
-  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
-         arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
-  html.br();
+  if(info)
+  {
+    html.nbsp().nbsp();
+    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
+    html.br();
+  }
 
   html.table();
   if(ndb.routeIndex >= 0)
@@ -658,10 +663,13 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   title(html, tr("Waypoint: ") + waypoint.ident);
 
-  html.nbsp().nbsp();
-  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
-         arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
-  html.br();
+  if(info)
+  {
+    html.nbsp().nbsp();
+    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
+    html.br();
+  }
 
   html.table();
   if(waypoint.routeIndex >= 0)
@@ -790,6 +798,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, H
   aircraftTitle(data, html);
 
   head(html, tr("Aircraft"));
+
   html.table();
   if(!data.getAirplaneTitle().isEmpty())
     html.row2(tr("Title:"), data.getAirplaneTitle());
@@ -1072,6 +1081,12 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& data, 
     title += " (" + title2 + ")";
 
   html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
+
+  html.nbsp().nbsp();
+  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+         arg(data.getPosition().getLonX()).arg(data.getPosition().getLatY()));
+  html.br();
+
 }
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)

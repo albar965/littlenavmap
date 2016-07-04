@@ -95,6 +95,22 @@
     <property name="title">
      <string>&amp;Map</string>
     </property>
+    <widget class="QMenu" name="menuMapProjection">
+     <property name="title">
+      <string>&amp;Projection</string>
+     </property>
+     <addaction name="actionMapProjectionMercator"/>
+     <addaction name="actionMapProjectionSpherical"/>
+    </widget>
+    <widget class="QMenu" name="menuMapTheme">
+     <property name="title">
+      <string>&amp;Theme</string>
+     </property>
+     <addaction name="actionMapThemeOpenStreetMap"/>
+     <addaction name="actionMapThemeOpenTopoMap"/>
+     <addaction name="actionMapThemeSimple"/>
+     <addaction name="actionMapThemePlain"/>
+    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
@@ -108,6 +124,9 @@
     <addaction name="actionMapMoreDetails"/>
     <addaction name="actionMapDefaultDetails"/>
     <addaction name="actionMapLessDetails"/>
+    <addaction name="separator"/>
+    <addaction name="menuMapProjection"/>
+    <addaction name="menuMapTheme"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAddonAirports"/>
     <addaction name="actionMapShowAirports"/>
@@ -2569,12 +2588,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditAircraftInfo">
+          <widget class="QTextBrowser" name="textBrowserAircraftInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>Not connected to Simulator.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -2601,12 +2623,15 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextEdit" name="textEditAircraftProgressInfo">
+          <widget class="QTextBrowser" name="textBrowserAircraftProgressInfo">
            <property name="readOnly">
             <bool>true</bool>
            </property>
            <property name="placeholderText">
             <string>Not connected to Simulator.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -4366,6 +4391,92 @@
     <string>Ctrl+M</string>
    </property>
   </action>
+  <action name="actionText">
+   <property name="text">
+    <string>Text</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
+   </property>
+  </action>
+  <action name="actionMercator">
+   <property name="text">
+    <string>Mercator</string>
+   </property>
+  </action>
+  <action name="actionSpherical">
+   <property name="text">
+    <string>Spherical</string>
+   </property>
+  </action>
+  <action name="actionMapProjectionMercator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Mercator</string>
+   </property>
+   <property name="toolTip">
+    <string>Mercator Map Projection (flat)</string>
+   </property>
+   <property name="statusTip">
+    <string>Mercator Map Projection (flat)</string>
+   </property>
+  </action>
+  <action name="actionMapProjectionSpherical">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Spherical</string>
+   </property>
+   <property name="toolTip">
+    <string>Spherical map Projection</string>
+   </property>
+   <property name="statusTip">
+    <string>Spherical map Projection</string>
+   </property>
+  </action>
+  <action name="actionMapThemeOpenStreetMap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;OpenStreetMap</string>
+   </property>
+  </action>
+  <action name="actionMapThemeOpenTopoMap">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Open&amp;TopoMap</string>
+   </property>
+  </action>
+  <action name="actionMapThemePlain">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Plain</string>
+   </property>
+  </action>
+  <action name="actionMapThemeSimple">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Simple</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -4428,8 +4539,8 @@
   <tabstop>textBrowserNavaidInfo</tabstop>
   <tabstop>textBrowserNavmapLegendInfo</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
-  <tabstop>textEditAircraftInfo</tabstop>
-  <tabstop>textEditAircraftProgressInfo</tabstop>
+  <tabstop>textBrowserAircraftInfo</tabstop>
+  <tabstop>textBrowserAircraftProgressInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

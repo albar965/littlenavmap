@@ -44,13 +44,17 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
 
   Ui::MainWindow *ui = mainWindow->getUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
-  simInfoFontPtSize = static_cast<float>(ui->textEditAircraftInfo->font().pointSizeF());
+  simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+
+  connect(ui->textBrowserAircraftInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::anchorClicked, this,
+          &InfoController::anchorClicked);
 }
 
 InfoController::~InfoController()
@@ -73,6 +77,7 @@ void InfoController::anchorClicked(const QUrl& url)
     }
     else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
     {
+      // Only airport used for id variable
       maptypes::MapAirport airport;
       mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
       emit showRect(airport.bounding);
@@ -303,17 +308,17 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 
       if(ui->dockWidgetAircraft->isVisible())
       {
-        if(canTextEditUpdate(ui->textEditAircraftInfo))
+        if(canTextEditUpdate(ui->textBrowserAircraftInfo))
         {
           info->aircraftText(data, html);
-          updateTextEdit(ui->textEditAircraftInfo, html.getHtml());
+          updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
         }
 
-        if(canTextEditUpdate(ui->textEditAircraftProgressInfo))
+        if(canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
         {
           html.clear();
           info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
-          updateTextEdit(ui->textEditAircraftProgressInfo, html.getHtml());
+          updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
         }
       }
       lastSimData = data;
@@ -325,15 +330,15 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textEditAircraftInfo->setText(tr("Connected. Waiting for update."));
-  ui->textEditAircraftProgressInfo->setText(tr("Connected. Waiting for update."));
+  ui->textBrowserAircraftInfo->setText(tr("Connected. Waiting for update."));
+  ui->textBrowserAircraftProgressInfo->setText(tr("Connected. Waiting for update."));
 }
 
 void InfoController::disconnectedFromSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textEditAircraftInfo->setText(tr("Disconnected."));
-  ui->textEditAircraftProgressInfo->setText(tr("Disconnected."));
+  ui->textBrowserAircraftInfo->setText(tr("Disconnected."));
+  ui->textBrowserAircraftProgressInfo->setText(tr("Disconnected."));
 }
 
 void InfoController::optionsChanged()
@@ -354,8 +359,8 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
 
   sizePercent = OptionData::instance().getGuiInfoSimSize();
-  setTextEditFontSize(ui->textEditAircraftInfo, simInfoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textEditAircraftProgressInfo, simInfoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserAircraftProgressInfo, simInfoFontPtSize, sizePercent);
 }
 
 void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent)

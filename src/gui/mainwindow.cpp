@@ -169,6 +169,8 @@ MainWindow::~MainWindow()
   delete errorHandler;
 
   delete databaseManager;
+  delete actionGroupMapProjection;
+  delete actionGroupMapTheme;
 
   Settings::shutdown();
   atools::gui::Translator::unload();
@@ -270,6 +272,7 @@ void MainWindow::setupUi()
 {
   ui->mapToolBar->addSeparator();
 
+  // Projection combo box
   mapProjectionComboBox = new QComboBox(this);
   mapProjectionComboBox->setObjectName("mapProjectionComboBox");
   QString helpText = tr("Select map projection");
@@ -279,11 +282,18 @@ void MainWindow::setupUi()
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
   ui->mapToolBar->addWidget(mapProjectionComboBox);
 
+  // Projection menu items
+  actionGroupMapProjection = new QActionGroup(ui->menuMapProjection);
+  ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
+  ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
+
+  // Projection combo box
   mapThemeComboBox = new QComboBox(this);
   mapThemeComboBox->setObjectName("mapThemeComboBox");
   helpText = tr("Select map theme");
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
+  // Item order has to match MapWidget::MapThemeComboIndex
   mapThemeComboBox->addItem(tr("OpenStreetMap"),
                             "earth/openstreetmap/openstreetmap.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"),
@@ -294,6 +304,14 @@ void MainWindow::setupUi()
                             "earth/plain/plain.dgml");
   ui->mapToolBar->addWidget(mapThemeComboBox);
 
+  // Theme menu items
+  actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
+  ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
+
+  // Dock widget actions
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
   ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
   ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
@@ -477,6 +495,37 @@ void MainWindow::connectAllSlots()
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   connect(mapProjectionComboBox, indexChangedPtr, this, &MainWindow::changeMapProjection);
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
+  connect(ui->actionMapProjectionMercator, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapProjectionComboBox->setCurrentIndex(0);
+          });
+
+  connect(ui->actionMapProjectionSpherical, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapProjectionComboBox->setCurrentIndex(1);
+          });
+  connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::OPENSTREETMAP);
+          });
+  connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::OPENTOPOMAP);
+          });
+  connect(ui->actionMapThemeSimple, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::SIMPLE);
+          });
+  connect(ui->actionMapThemePlain, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::PLAIN);
+          });
 
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
@@ -603,6 +652,10 @@ void MainWindow::changeMapProjection(int index)
   Marble::Projection proj = static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
   qDebug() << "Changing projection to" << proj;
   mapWidget->setProjection(proj);
+
+  ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
+  ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
+
   setStatusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
 }
 
@@ -612,6 +665,12 @@ void MainWindow::changeMapTheme(int index)
   QString theme = mapThemeComboBox->currentData().toString();
   qDebug() << "Changing theme to" << theme << "index" << index;
   mapWidget->setTheme(theme, index);
+
+  ui->actionMapThemeOpenStreetMap->setChecked(index == MapWidget::OPENSTREETMAP);
+  ui->actionMapThemeOpenTopoMap->setChecked(index == MapWidget::OPENTOPOMAP);
+  ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
+  ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
+
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }
 

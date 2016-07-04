@@ -36,6 +36,7 @@ class ConnectClient;
 class ProfileWidget;
 class InfoController;
 class OptionsDialog;
+class QActionGroup;
 
 namespace Marble {
 class LegendWidget;
@@ -190,6 +191,8 @@ private:
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
+
+  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;
 
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
