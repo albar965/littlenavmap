@@ -46,6 +46,16 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
   simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
 
+  // Set search path to silence text browser warnings
+  QStringList paths({QApplication::applicationDirPath()});
+  ui->textBrowserAirportInfo->setSearchPaths(paths);
+  ui->textBrowserRunwayInfo->setSearchPaths(paths);
+  ui->textBrowserComInfo->setSearchPaths(paths);
+  ui->textBrowserApproachInfo->setSearchPaths(paths);
+  ui->textBrowserNavaidInfo->setSearchPaths(paths);
+  ui->textBrowserAircraftInfo->setSearchPaths(paths);
+  ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
+
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
