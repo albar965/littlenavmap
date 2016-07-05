@@ -87,6 +87,8 @@ const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
 const QString FILE_PATTERN_ASN_SNAPSHOT = "(current_wx_snapshot.txt)";
 
+const QString DATABASE_DIR = "little_navmap_db";
+
 } // namespace lnm
 
 #endif // LITTLENAVMAP_CONSTANTS_H

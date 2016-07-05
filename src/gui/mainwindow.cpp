@@ -18,6 +18,7 @@
 #include "gui/mainwindow.h"
 
 #include "common/constants.h"
+#include "gui/application.h"
 #include "logging/loggingdefs.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -42,6 +43,7 @@
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
 #include "options/optionsdialog.h"
+#include "exception.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -63,85 +65,98 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   qDebug() << "MainWindow constructor";
 
-  QString aboutMessage =
-    tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
-         "<p>This software is licensed under "
-           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
-             "<p>The source code for this application is available at "
-               "<a href=\"https://github.com/albar965\">Github</a>.</p>"
-                 "<p><b>Copyright 2015-2016 Alexander Barthel (albar965@mailbox.org).</b></p>");
+  try
+  {
+    // Have to handle exceptions here since no message handler is active yet
+    QString aboutMessage =
+      tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
+           "<p>This software is licensed under "
+             "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
+               "<p>The source code for this application is available at "
+                 "<a href=\"https://github.com/albar965\">Github</a>.</p>"
+                   "<p><b>Copyright 2015-2016 Alexander Barthel (albar965@mailbox.org).</b></p>");
 
-  ui->setupUi(this);
+    ui->setupUi(this);
 
-  dialog = new atools::gui::Dialog(this);
-  errorHandler = new atools::gui::ErrorHandler(this);
-  helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+    dialog = new atools::gui::Dialog(this);
+    errorHandler = new atools::gui::ErrorHandler(this);
+    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
 
-  marbleAbout = new Marble::MarbleAboutDialog(this);
-  marbleAbout->setApplicationTitle(QApplication::applicationName());
+    marbleAbout = new Marble::MarbleAboutDialog(this);
+    marbleAbout->setApplicationTitle(QApplication::applicationName());
 
-  setupUi();
+    setupUi();
 
-  optionsDialog = new OptionsDialog(this);
-  optionsDialog->restoreState();
+    optionsDialog = new OptionsDialog(this);
+    optionsDialog->restoreState();
 
-  mainWindowTitle = windowTitle();
+    mainWindowTitle = windowTitle();
 
-  databaseManager = new DatabaseManager(this);
+    databaseManager = new DatabaseManager(this);
 
-  databaseManager->openDatabase();
-  databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
+    databaseManager->openDatabase();
 
-  weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
+    mapQuery = new MapQuery(this, databaseManager->getDatabase());
+    mapQuery->initQueries();
 
-  mapQuery = new MapQuery(this, databaseManager->getDatabase());
-  mapQuery->initQueries();
+    infoQuery = new InfoQuery(this, databaseManager->getDatabase());
+    infoQuery->initQueries();
 
-  infoQuery = new InfoQuery(this, databaseManager->getDatabase());
-  infoQuery->initQueries();
+    databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
+    weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
 
-  routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
-                                            ui->actionRecentRoutesClear);
-  routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
+    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
+                                              ui->actionRecentRoutesClear);
+    routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
 
-  kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
-                                          ui->actionClearKmlMenu);
+    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
+                                            ui->actionClearKmlMenu);
 
-  createNavMap();
+    createNavMap();
 
-  profileWidget = new ProfileWidget(this);
-  ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
+    profileWidget = new ProfileWidget(this);
+    ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
 
-  legendWidget = new Marble::LegendWidget(this);
-  legendWidget->setMarbleModel(mapWidget->model());
-  ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
+    legendWidget = new Marble::LegendWidget(this);
+    legendWidget->setMarbleModel(mapWidget->model());
+    ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
 
-  // Have to create searches in the same order as the tabs
-  searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
-  searchController->createAirportSearch(ui->tableViewAirportSearch);
-  searchController->createNavSearch(ui->tableViewNavSearch);
+    // Have to create searches in the same order as the tabs
+    searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
+    searchController->createAirportSearch(ui->tableViewAirportSearch);
+    searchController->createNavSearch(ui->tableViewNavSearch);
 
-  connectClient = new ConnectClient(this);
+    connectClient = new ConnectClient(this);
 
-  infoController = new InfoController(this, mapQuery, infoQuery);
+    infoController = new InfoController(this, mapQuery, infoQuery);
 
-  connectAllSlots();
-  readSettings();
-  updateMapShowFeatures();
-  updateActionStates();
+    connectAllSlots();
+    readSettings();
+    updateMapShowFeatures();
+    updateActionStates();
 
-  mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
-  mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
-  setMapDetail(mapDetailFactor);
+    mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+    mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
+    setMapDetail(mapDetailFactor);
 
-  // Wait until everything is set up
-  updateMapShowFeatures();
-  // navMapWidget->showSavedPos();
-  searchController->updateTableSelection();
+    // Wait until everything is set up
+    updateMapShowFeatures();
+    // navMapWidget->showSavedPos();
+    searchController->updateTableSelection();
 
-  profileWidget->updateProfileShowFeatures();
-  connectClient->tryConnect();
-  loadNavmapLegend();
+    profileWidget->updateProfileShowFeatures();
+    connectClient->tryConnect();
+    loadNavmapLegend();
+
+  }
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
 }
 
 MainWindow::~MainWindow()

@@ -17,6 +17,7 @@
 
 #include "search/sqlmodel.h"
 
+#include "gui/application.h"
 #include "gui/errorhandler.h"
 #include "search/columnlist.h"
 #include "sql/sqldatabase.h"
@@ -592,11 +593,11 @@ void SqlModel::buildQuery()
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(parentWidget).handleException(e, tr("While executing query"));
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(parentWidget).handleUnknownException(tr("While executing query"));
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
 

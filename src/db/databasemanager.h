@@ -114,7 +114,7 @@ private:
   QString databaseFile, databaseDirectory;
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *db = nullptr;
-  MainWindow *mainWindow;
+  MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
   QActionGroup *group = nullptr;

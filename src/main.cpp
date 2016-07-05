@@ -23,11 +23,10 @@
 #include "settings/settings.h"
 #include "gui/translator.h"
 #include "gui/mapposhistory.h"
+#include "gui/application.h"
 #include "exception.h"
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
-
-#include <QApplication>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -39,6 +38,7 @@
 #include <marble/MarbleDebug.h>
 
 using namespace Marble;
+using atools::gui::Application;
 
 int main(int argc, char *argv[])
 {
@@ -59,12 +59,12 @@ int main(int argc, char *argv[])
 
   // Set application information
   int retval = 0;
-  QApplication app(argc, argv);
-  QApplication::setWindowIcon(QIcon(":/littlenavmap/resources/icons/navroute.svg"));
-  QCoreApplication::setApplicationName("Little Navmap");
-  QCoreApplication::setOrganizationName("ABarthel");
-  QCoreApplication::setOrganizationDomain("abarthel.org");
-  QCoreApplication::setApplicationVersion("0.9.0.develop");
+  Application app(argc, argv);
+  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/navroute.svg"));
+  Application::setApplicationName("Little Navmap");
+  Application::setOrganizationName("ABarthel");
+  Application::setOrganizationDomain("abarthel.org");
+  Application::setApplicationVersion("0.9.0.develop");
 
   DatabaseManager *dbManager = nullptr;
 
@@ -82,6 +82,11 @@ int main(int argc, char *argv[])
     // Initialize logging and force logfiles into the system or user temp directory
     LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
                                         ":/littlenavmap/resources/config/logging.cfg"));
+    Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
+
+    Application::addReportPath(QObject::tr("Database directory:"),
+                               {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
+    Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
 
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();

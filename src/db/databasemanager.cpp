@@ -17,6 +17,7 @@
 
 #include "databasemanager.h"
 
+#include "gui/application.h"
 #include "options/optiondata.h"
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
@@ -122,7 +123,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Also loads list of simulators
   restoreState();
 
-  databaseDirectory = Settings::getPath() + QDir::separator() + "little_navmap_db";
+  databaseDirectory = Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR;
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
@@ -322,11 +323,11 @@ void DatabaseManager::fillPathsFromDatabases()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, tr("While looking for databases"));
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException(tr("While looking for databases"));
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
 
@@ -352,11 +353,11 @@ void DatabaseManager::openDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, tr("While opening database"));
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException(tr("While opening database"));
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
 
@@ -370,11 +371,11 @@ void DatabaseManager::closeDatabase()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e, tr("While closing database"));
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException(tr("While closing database"));
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
 
@@ -457,11 +458,11 @@ bool DatabaseManager::runInternal(bool& loaded)
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e);
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException();
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
   return reopenDialog;
 }
@@ -668,11 +669,11 @@ bool DatabaseManager::hasSchema()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e);
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException();
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
   return false;
 }
@@ -685,11 +686,11 @@ bool DatabaseManager::hasData()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e);
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException();
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
   return false;
 }
@@ -702,13 +703,12 @@ bool DatabaseManager::isDatabaseCompatible()
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e);
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException();
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
-  return false;
 }
 
 void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
@@ -721,11 +721,11 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
   }
   catch(atools::Exception& e)
   {
-    ErrorHandler(mainWindow).handleException(e);
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    ErrorHandler(mainWindow).handleUnknownException();
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
 
@@ -800,10 +800,12 @@ void DatabaseManager::freeActions()
 {
   if(group != nullptr)
   {
-    delete group;
+    group->deleteLater();
     group = nullptr;
   }
-  qDeleteAll(actions);
+
+  for(QAction *action : actions)
+    action->deleteLater();
   actions.clear();
 }
 

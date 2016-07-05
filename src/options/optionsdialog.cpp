@@ -293,12 +293,14 @@ void OptionsDialog::saveState()
   QStringList paths;
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
     paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
-  settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
+  if(!paths.isEmpty())
+    settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
 
   paths.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
     paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
-  settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
+  if(!paths.isEmpty())
+    settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 }
 
 void OptionsDialog::restoreState()
@@ -307,8 +309,10 @@ void OptionsDialog::restoreState()
   saver.restore(widgets);
 
   Settings& settings = Settings::instance();
-  ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
-  ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
+  if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
+    ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
+  if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
+    ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
   toOptionData();
 }
