@@ -32,6 +32,8 @@ struct MapRunway;
 class MapPainterAirport :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                     bool verboseMsg);

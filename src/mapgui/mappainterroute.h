@@ -30,6 +30,8 @@ class RouteController;
 class MapPainterRoute :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                   RouteController *controller, bool verbose);
@@ -40,31 +42,31 @@ public:
 private:
   RouteController *routeController;
 
-  void paintRoute(const PaintContext* context);
+  void paintRoute(const PaintContext *context);
 
-  void paintAirport(const PaintContext* context, int x, int y,
+  void paintAirport(const PaintContext *context, int x, int y,
                     const maptypes::MapAirport& obj);
-  void paintVor(const PaintContext* context, int x, int y,
+  void paintVor(const PaintContext *context, int x, int y,
                 const maptypes::MapVor& obj);
-  void paintNdb(const PaintContext* context, int x, int y,
+  void paintNdb(const PaintContext *context, int x, int y,
                 const maptypes::MapNdb& obj);
-  void paintWaypoint(const PaintContext* context, const QColor& col, int x, int y,
+  void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y,
                      const maptypes::MapWaypoint& obj);
 
-  void paintWaypointText(const PaintContext* context, int x, int y,
+  void paintWaypointText(const PaintContext *context, int x, int y,
                          const maptypes::MapWaypoint& obj);
-  void paintNdbText(const PaintContext* context, int x, int y,
+  void paintNdbText(const PaintContext *context, int x, int y,
                     const maptypes::MapNdb& obj);
-  void paintVorText(const PaintContext* context, int x, int y,
+  void paintVorText(const PaintContext *context, int x, int y,
                     const maptypes::MapVor& obj);
 
-  void paintAirportText(const PaintContext* context, int x, int y,
+  void paintAirportText(const PaintContext *context, int x, int y,
                         const maptypes::MapAirport& obj);
 
-  void paintText(const PaintContext* context, const QColor& color, int x, int y,
+  void paintText(const PaintContext *context, const QColor& color, int x, int y,
                  const QString& text);
 
-  void paintUserpoint(const PaintContext* context, int x, int y);
+  void paintUserpoint(const PaintContext *context, int x, int y);
 
 };
 

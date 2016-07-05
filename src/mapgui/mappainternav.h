@@ -27,6 +27,8 @@ class SymbolPainter;
 class MapPainterNav :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterNav();

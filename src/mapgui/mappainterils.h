@@ -25,6 +25,8 @@ class SymbolPainter;
 class MapPainterIls :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterIls();

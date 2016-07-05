@@ -29,6 +29,8 @@ class MapWidget;
 class MapPainterMark :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainter)
+
 public:
   MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
   virtual ~MapPainterMark();
@@ -36,16 +38,16 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  void paintMark(const PaintContext* context);
-  void paintHome(const PaintContext* context);
-  void paintHighlights(const PaintContext* context);
+  void paintMark(const PaintContext *context);
+  void paintHome(const PaintContext *context);
+  void paintHighlights(const PaintContext *context);
 
-  void paintRangeRings(const PaintContext* context);
+  void paintRangeRings(const PaintContext *context);
 
-  void paintDistanceMarkers(const PaintContext* context);
-  void paintRouteDrag(const PaintContext* context);
+  void paintDistanceMarkers(const PaintContext *context);
+  void paintRouteDrag(const PaintContext *context);
 
-  void paintMagneticPoles(const PaintContext* context);
+  void paintMagneticPoles(const PaintContext *context);
 
 };
 
