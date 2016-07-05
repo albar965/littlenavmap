@@ -172,26 +172,27 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
   {
     if(network->isAirwayRouting())
     {
-      bool preferRadionav = false;
+      float airwayTransCost = 1.f;
+
       if(preferVorToAirway)
       {
         if(currentNode.type == nw::START &&
            (successorNode.type2 == nw::VOR || successorNode.type2 == nw::VORDME))
-          preferRadionav = true;
+          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
         else if((currentNode.type2 == nw::VOR || currentNode.type2 == nw::VORDME) &&
                 successorNode.type == nw::DESTINATION)
-          preferRadionav = true;
+          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
       }
 
       if(preferNdbToAirway)
       {
         if((currentNode.type == nw::START && successorNode.type2 == nw::NDB) ||
            (currentNode.type2 == nw::NDB && successorNode.type == nw::DESTINATION))
-          preferRadionav = true;
+          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB;
       }
 
-      if(preferRadionav)
-        costs *= COST_FACTOR_FORCE_CLOSE_RADIONAV;
+      if(airwayTransCost > 1.f)
+        costs *= airwayTransCost;
       else
         costs *= COST_FACTOR_FORCE_CLOSE_NODES;
     }

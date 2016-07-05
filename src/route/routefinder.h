@@ -66,7 +66,9 @@ private:
   const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
 
   // Force algortihm to use closest radio navaids near start and destination before waypoints
-  const float COST_FACTOR_FORCE_CLOSE_RADIONAV = 1.2f;
+  // Has to be smaller than COST_FACTOR_FORCE_CLOSE_NODES
+  const float COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR = 1.1f;
+  const float COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB = 1.2f;
 
   // Increase costs to force reception of at least one radio navaid along the route
   const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
