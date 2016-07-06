@@ -18,12 +18,12 @@
 #ifndef LITTLENAVMAP_DATABASEMANAGER_H
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
-#include <QAction>
-#include <QObject>
-
 #include "sql/sqldatabase.h"
 #include "fs/fspaths.h"
 #include "db/dbtypes.h"
+
+#include <QAction>
+#include <QObject>
 
 namespace atools {
 namespace fs {

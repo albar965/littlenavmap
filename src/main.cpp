@@ -27,6 +27,7 @@
 #include "exception.h"
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
+#include "common/settingsmigrate.h"
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -46,14 +47,14 @@ int main(int argc, char *argv[])
   Q_INIT_RESOURCE(atools);
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
-  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
-  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<FsPathType>();
   qRegisterMetaTypeStreamOperators<FsPathTypeMap>();
   qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
+  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
   qRegisterMetaTypeStreamOperators<QList<maptypes::DistanceMarker> >();
   qRegisterMetaTypeStreamOperators<QList<maptypes::RangeMarker> >();
 
@@ -93,10 +94,12 @@ int main(int argc, char *argv[])
     LoggingUtil::logStandardPaths();
     Settings::logSettingsInformation();
 
-    Settings& s = Settings::instance();
+    migrate::checkAndMigrateSettings();
+
+    Settings& settings = Settings::instance();
 
     // Load local and Qt system translations from various places
-    Translator::load(s.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
+    Translator::load(settings.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
 
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
@@ -122,7 +125,7 @@ int main(int argc, char *argv[])
 
     MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
     MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
-    MarbleDebug::setEnabled(s.getAndStoreValue(lnm::OPTIONS_MARBLEDEBUG, false).toBool());
+    MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLEDEBUG, false).toBool());
 
     qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
     qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
@@ -131,13 +134,7 @@ int main(int argc, char *argv[])
     qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
     qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
-    // Write version to configuration file
-    QString oldVersion = s.valueStr(lnm::OPTIONS_LANGUAGE);
-    qInfo() << "Found version" << oldVersion << "in configuration file";
-    s.getAndStoreValue(lnm::OPTIONS_VERSION, QCoreApplication::applicationVersion());
-    s.syncSettings();
-
-    // Check if database is compatible as the user to erase all incomatible ones
+    // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
     dbManager = new DatabaseManager(nullptr);
     if(dbManager->checkIncompatibleDatabases())
@@ -156,18 +153,15 @@ int main(int argc, char *argv[])
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(nullptr).handleException(e);
-    retval = 1;
+    ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(nullptr).handleUnknownException();
-    retval = 1;
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 
   delete dbManager;
   dbManager = nullptr;
 
   return retval;
-
 }

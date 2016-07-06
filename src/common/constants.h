@@ -33,6 +33,7 @@ const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning
 const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
 const QString ACTIONS_SHOWROUTEERROR = "Actions/ShowRouteError";
 
+/* Other setting key names */
 const QString DATABASE_BASEPATH = "Database/BasePath";
 const QString DATABASE_LOADINGSIMULATOR = "Database/LoadingSimulator";
 const QString DATABASE_PATHS = "Database/Paths";
@@ -72,10 +73,8 @@ const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExcl
 const QString OPTIONS_LANGUAGE = "Options/Language";
 const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
 const QString OPTIONS_VERSION = "Options/Version";
-const QString OPTIONS_SETTINGS_VERSION = "Options/SettingsVersion";
 
-// File dialog patterns
-
+/* File dialog patterns */
 #if defined(Q_OS_WIN32)
 const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg)";
 const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln)";
@@ -87,7 +86,13 @@ const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
 const QString FILE_PATTERN_ASN_SNAPSHOT = "(current_wx_snapshot.txt)";
 
+/* Sqlite database names */
 const QString DATABASE_DIR = "little_navmap_db";
+const QString DATABASE_PREFIX = "little_navmap_";
+const QString DATABASE_SUFFIX = ".sqlite";
+const QString DATABASE_BACKUP_SUFFIX = "-backup";
+
+const QString DATABASE_NAVDATAREADER_CONFIG = ":/littlenavmap/resources/config/navdatareader.cfg";
 
 } // namespace lnm
 

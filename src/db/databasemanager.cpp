@@ -83,27 +83,23 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                    "</td> "
                                                    "<td width=\"60\">%L8"
                                                    "</td> "
-                                                   "<td width=\"60\"><b>Boundaries:</b>"
-                                                   "</td> <td width=\"60\">%L11"
-                                                 "</td>"
-                                               "</tr>"
-                                               "<tr> "
-                                                 "<td width=\"60\">"
-                                                 "</td>"
-                                                 "<td width=\"60\">"
-                                                 "</td>"
-                                                 "<td width=\"60\"><b>NDB:</b>"
-                                                 "</td> "
-                                                 "<td width=\"60\">%L9"
-                                                 "</td> "
-                                                 "<td width=\"60\"><b>Waypoints:"
-                                                 "</b>"
-                                               "</td>  "
-                                               "<td width=\"60\">%L12"
-                                               "</td>"
-                                             "</tr>"
-                                           "</tbody>"
-                                         "</table>"
+                                                   "<td width=\"60\"><b>Waypoints:</b>"
+                                                   "</td>  "
+                                                   "<td width=\"60\">%L11"
+                                                   "</td>"
+                                                 "</tr>"
+                                                 "<tr> "
+                                                   "<td width=\"60\">"
+                                                   "</td>"
+                                                   "<td width=\"60\">"
+                                                   "</td>"
+                                                   "<td width=\"60\"><b>NDB:</b>"
+                                                   "</td> "
+                                                   "<td width=\"60\">%L9"
+                                                   "</td> "
+                                                 "</tr>"
+                                               "</tbody>"
+                                             "</table>"
                                              ));
 
 const QString DATABASE_TIME_TEXT(QObject::tr(
@@ -130,7 +126,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Find simulators by default registry entries
   paths.fillDefault();
 
-  // Find any stale databases that do not belong to a simulators
+  // Find any stale databases that do not belong to a simulator
   fillPathsFromDatabases();
 
   for(atools::fs::FsPaths::SimulatorType t : paths.keys())
@@ -146,10 +142,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   qDebug() << "fs type" << currentFsType << "db file" << databaseFile;
 
-  databaseDialog = new DatabaseDialog(mainWindow, paths);
+  if(mainWindow != nullptr)
+  {
+    databaseDialog = new DatabaseDialog(mainWindow, paths);
 
-  connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
-          &DatabaseManager::simulatorChangedFromCombo);
+    connect(databaseDialog, &DatabaseDialog::simulatorChanged, this,
+            &DatabaseManager::simulatorChangedFromCombo);
+  }
 
   if(!SqlDatabase::contains(DB_NAME))
     db = new SqlDatabase(SqlDatabase::addDatabase(DB_TYPE, DB_NAME));
@@ -207,7 +206,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
                  "%1<br/><br/>Erase it?");
       else
         msg = tr("The databases for the simulators "
-                 "below are not compatible with this program version or was incompletly loaded:<br/><br/>"
+                 "below are not compatible with this program version or were incompletly loaded:<br/><br/>"
                  "%1<br/><br/>Erase them?");
 
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
@@ -472,7 +471,7 @@ bool DatabaseManager::loadScenery()
   using atools::fs::BglReaderOptions;
 
   bool success = true;
-  QString config = Settings::getOverloadedPath(":/littlenavmap/resources/config/navdatareader.cfg");
+  QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
   qInfo() << "loadScenery: Config file" << config;
 
   QSettings settings(config, QSettings::IniFormat);
@@ -504,8 +503,8 @@ bool DatabaseManager::loadScenery()
   bglReaderOpts.setBasepath(paths.value(loadingFsType).basePath);
 
   QElapsedTimer timer;
-  bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this, std::placeholders::_1,
-                                              timer));
+  bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
+                                              std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -564,7 +563,7 @@ void DatabaseManager::backupDatabaseFile()
   qDebug() << "Creating database backup";
   db->close();
 
-  QString backupName(db->databaseName() + "-backup");
+  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
   QFile backupFile(backupName);
   bool removed = backupFile.remove();
   qDebug() << "removed database backup" << backupFile.fileName() << removed;
@@ -585,7 +584,7 @@ void DatabaseManager::restoreDatabaseFileBackup()
   bool removed = dbFile.remove();
   qDebug() << "removed database" << dbFile.fileName() << removed;
 
-  QString backupName(db->databaseName() + "-backup");
+  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
   QFile backupFile(backupName);
   bool copied = backupFile.copy(db->databaseName());
   qDebug() << "copied database from" << backupName << "to" << db->databaseName() << copied;
@@ -596,7 +595,7 @@ void DatabaseManager::restoreDatabaseFileBackup()
 void DatabaseManager::removeDatabaseFileBackup()
 {
   qDebug() << "Removing database backup";
-  QString backupName(db->databaseName() + "-backup");
+  QString backupName(db->databaseName() + lnm::DATABASE_BACKUP_SUFFIX);
   QFile backupFile(backupName);
   bool removed = backupFile.remove();
   qDebug() << "removed database" << backupFile.fileName() << removed;
@@ -625,7 +624,6 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
       arg(progress.getNumIls()).
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
       arg(progress.getNumWaypoints()));
   else if(progress.isNewSceneryArea() || progress.isNewFile())
     progressDialog->setLabelText(
@@ -639,7 +637,6 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
       arg(progress.getNumIls()).
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
       arg(progress.getNumWaypoints()));
   else if(progress.isLastCall())
     progressDialog->setLabelText(
@@ -653,7 +650,6 @@ bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& 
       arg(progress.getNumIls()).
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
-      arg(progress.getNumBoundaries()).
       arg(progress.getNumWaypoints()));
 
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -675,7 +671,6 @@ bool DatabaseManager::hasSchema()
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
-  return false;
 }
 
 bool DatabaseManager::hasData()
@@ -692,7 +687,6 @@ bool DatabaseManager::hasData()
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
-  return false;
 }
 
 bool DatabaseManager::isDatabaseCompatible()
@@ -781,19 +775,18 @@ void DatabaseManager::updateDialogInfo()
                 arg(util.rowCount("ils")).
                 arg(util.rowCount("ndb")).
                 arg(util.rowCount("marker")).
-                arg(util.rowCount("boundary")).
                 arg(util.rowCount("waypoint"));
   }
   else
-    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
+    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
   databaseDialog->setHeader(metaText + tr("<p><b>Currently Loaded:</b></p><p>%1</p>").arg(tableText));
 }
 
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)
 {
-  return databaseDirectory + QDir::separator() + "little_navmap_" +
-         atools::fs::FsPaths::typeToShortName(type).toLower() + ".sqlite";
+  return databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX +
+         atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
 }
 
 void DatabaseManager::freeActions()

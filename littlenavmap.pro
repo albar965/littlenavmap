@@ -99,7 +99,8 @@ SOURCES += src/main.cpp\
     src/common/htmlinfobuilder.cpp \
     src/mapgui/mapscreenindex.cpp \
     src/options/optionsdialog.cpp \
-    src/options/optiondata.cpp
+    src/options/optiondata.cpp \
+    src/common/settingsmigrate.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -161,7 +162,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/htmlinfobuilder.h \
     src/mapgui/mapscreenindex.h \
     src/options/optionsdialog.h \
-    src/options/optiondata.h
+    src/options/optiondata.h \
+    src/common/settingsmigrate.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
