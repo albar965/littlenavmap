@@ -1,0 +1,21 @@
+Known Problems for version 0.9.0.beta
+
+* Support for FSX SE and P3D is untested.
+
+* Scrolling ist jerky when using OpenStreetMap or OpenTopoMap and the spherical projection.
+  Either use the Plain or Simple map themes or use the Mercator projection.
+
+* OpenStreetMap or OpenTopoMap maps can end up fuzzy when using functionality like "center route"
+  or "show on map". Zoom once in and out using the scrollwheel to fix this.
+
+* Zoom is too fast when using a touchpad with OpenStreetMap or OpenTopoMap. Use the Plain or
+  Simple map themes or use either the zoom buttons or the keyboard.
+
+* Flight plan and airways are drawn using great circle lines instead of rhumb lines.
+  Distance and course are not affected by this.
+
+* In rare cases KML files can cause crashes on loading.
+
+* Occasional crashes when the elevation data is updated in background.
+
+

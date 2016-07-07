@@ -187,7 +187,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
         DatabaseMeta meta(&sqlDb);
         if(!meta.hasSchema())
           createEmptySchema(&sqlDb);
-        else if(!meta.isDatabaseCompatible(DB_VERSION_MAJOR))
+        else if(!meta.isDatabaseCompatible())
         {
           databaseNames.append(FsPaths::typeToName(type));
           databaseFiles.append(dbName);
@@ -437,8 +437,7 @@ bool DatabaseManager::runInternal(bool& loaded)
           {
             // Successfully loaded
             DatabaseMeta dbmeta(db);
-            dbmeta.updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
-            dbmeta.updateTimestamp();
+            dbmeta.updateAll();
             reopenDialog = false;
             loaded = true;
           }
@@ -693,7 +692,7 @@ bool DatabaseManager::isDatabaseCompatible()
 {
   try
   {
-    return DatabaseMeta(db).isDatabaseCompatible(DB_VERSION_MAJOR);
+    return DatabaseMeta(db).isDatabaseCompatible();
   }
   catch(atools::Exception& e)
   {
@@ -711,7 +710,7 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
   {
     BglReaderOptions opts;
     Navdatabase(&opts, sqlDatabase).createSchema();
-    DatabaseMeta(sqlDatabase).updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
+    DatabaseMeta(sqlDatabase).updateVersion();
   }
   catch(atools::Exception& e)
   {
@@ -753,15 +752,15 @@ void DatabaseManager::updateDialogInfo()
     metaText = DATABASE_META_TEXT.arg(tr("None")).
                arg(tr("None")).
                arg(tr("None")).
-               arg(DB_VERSION_MAJOR).
-               arg(DB_VERSION_MINOR);
+               arg(DatabaseMeta::DB_VERSION_MAJOR).
+               arg(DatabaseMeta::DB_VERSION_MINOR);
   else
     metaText = DATABASE_META_TEXT.
                arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
                arg(dbmeta.getMajorVersion()).
                arg(dbmeta.getMinorVersion()).
-               arg(DB_VERSION_MAJOR).
-               arg(DB_VERSION_MINOR);
+               arg(DatabaseMeta::DB_VERSION_MAJOR).
+               arg(DatabaseMeta::DB_VERSION_MINOR);
 
   QString tableText;
   if(hasSchema())

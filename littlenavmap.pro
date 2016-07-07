@@ -208,7 +208,8 @@ DISTFILES += \
     help/en/index.html \
     help/en/images/gpl-v3-logo.svg \
     help/en/legend.html \
-    help/en/legend_inline.html
+    help/en/legend_inline.html \
+    KNOWN_PROBLEMS.txt
 
 RESOURCES += \
     littlenavmap.qrc

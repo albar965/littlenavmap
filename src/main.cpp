@@ -40,6 +40,10 @@
 
 using namespace Marble;
 using atools::gui::Application;
+using atools::logging::LoggingHandler;
+using atools::logging::LoggingUtil;
+using atools::settings::Settings;
+using atools::gui::Translator;
 
 int main(int argc, char *argv[])
 {
@@ -75,11 +79,6 @@ int main(int argc, char *argv[])
 
   try
   {
-    using atools::logging::LoggingHandler;
-    using atools::logging::LoggingUtil;
-    using atools::settings::Settings;
-    using atools::gui::Translator;
-
     // Initialize logging and force logfiles into the system or user temp directory
     LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
                                         ":/littlenavmap/resources/config/logging.cfg"));
@@ -154,10 +153,12 @@ int main(int argc, char *argv[])
   catch(atools::Exception& e)
   {
     ATOOLS_HANDLE_EXCEPTION(e);
+    // Does not return in case of fatal error
   }
   catch(...)
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+    // Does not return in case of fatal error
   }
 
   delete dbManager;
