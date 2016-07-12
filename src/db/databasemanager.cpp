@@ -24,8 +24,8 @@
 #include "db/databasedialog.h"
 #include "logging/loggingdefs.h"
 #include "settings/settings.h"
-#include "fs/bglreaderoptions.h"
-#include "fs/bglreaderprogressinfo.h"
+#include "fs/navdatabaseoptions.h"
+#include "fs/navdatabaseprogress.h"
 #include "common/formatter.h"
 #include "fs/fspaths.h"
 #include "fs/navdatabase.h"
@@ -49,8 +49,8 @@
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
 using atools::fs::FsPaths;
-using atools::fs::BglReaderOptions;
-using atools::fs::Navdatabase;
+using atools::fs::NavDatabaseOptions;
+using atools::fs::NavDatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
@@ -429,9 +429,9 @@ bool DatabaseManager::runInternal(bool& loaded)
     if(retval == QDialog::Accepted)
     {
       QString err;
-      if(atools::fs::Navdatabase::isBasePathValid(databaseDialog->getBasePath(), err))
+      if(atools::fs::NavDatabase::isBasePathValid(databaseDialog->getBasePath(), err))
       {
-        if(atools::fs::Navdatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), err))
+        if(atools::fs::NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), err))
         {
           if(loadScenery())
           {
@@ -467,7 +467,7 @@ bool DatabaseManager::runInternal(bool& loaded)
 
 bool DatabaseManager::loadScenery()
 {
-  using atools::fs::BglReaderOptions;
+  using atools::fs::NavDatabaseOptions;
 
   bool success = true;
   QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
@@ -475,7 +475,7 @@ bool DatabaseManager::loadScenery()
 
   QSettings settings(config, QSettings::IniFormat);
 
-  BglReaderOptions bglReaderOpts;
+  NavDatabaseOptions bglReaderOpts;
   bglReaderOpts.loadFromSettings(settings);
 
   const OptionData& optionData = OptionData::instance();
@@ -512,7 +512,7 @@ bool DatabaseManager::loadScenery()
   {
     // Create a backup and delete the original file
     backupDatabaseFile();
-    atools::fs::Navdatabase nd(&bglReaderOpts, db);
+    atools::fs::NavDatabase nd(&bglReaderOpts, db);
     nd.create();
   }
   catch(atools::Exception& e)
@@ -600,7 +600,7 @@ void DatabaseManager::removeDatabaseFileBackup()
   qDebug() << "removed database" << backupFile.fileName() << removed;
 }
 
-bool DatabaseManager::progressCallback(const atools::fs::BglReaderProgressInfo& progress,
+bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& progress,
                                        QElapsedTimer& timer)
 {
   if(progress.isFirstCall())
@@ -708,8 +708,8 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
 {
   try
   {
-    BglReaderOptions opts;
-    Navdatabase(&opts, sqlDatabase).createSchema();
+    NavDatabaseOptions opts;
+    NavDatabase(&opts, sqlDatabase).createSchema();
     DatabaseMeta(sqlDatabase).updateVersion();
   }
   catch(atools::Exception& e)

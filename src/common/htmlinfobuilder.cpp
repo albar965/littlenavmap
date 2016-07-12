@@ -812,8 +812,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, H
   if(!data.getAirplaneModel().isEmpty())
     html.row2(tr("Model:"), data.getAirplaneModel());
 
-  if(!data.getAirplaneReg().isEmpty())
-    html.row2(tr("Registration:"), data.getAirplaneReg());
+  if(!data.getAirplaneRegistration().isEmpty())
+    html.row2(tr("Registration:"), data.getAirplaneRegistration());
 
   if(!data.getAirplaneType().isEmpty())
     html.row2(tr("Type:"), data.getAirplaneType());
@@ -1068,7 +1068,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& data, 
   html.img(*icon, tr("Aircraft"), QString(), QSize(24, 24));
   html.nbsp().nbsp();
 
-  QString title(data.getAirplaneReg());
+  QString title(data.getAirplaneRegistration());
 
   QString title2;
   if(!data.getAirplaneType().isEmpty())

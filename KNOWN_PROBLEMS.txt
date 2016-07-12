@@ -18,4 +18,6 @@ Known Problems for version 0.9.0.beta
 
 * Occasional crashes when the elevation data is updated in background.
 
+* Magnetic variance in FS is partially not set - this should be fixed with a workaround when
+  loading the database
 

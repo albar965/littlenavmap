@@ -27,7 +27,7 @@
 
 namespace atools {
 namespace fs {
-class BglReaderProgressInfo;
+class NavDatabaseProgress;
 namespace db {
 class DatabaseMeta;
 }
@@ -53,7 +53,7 @@ public:
   void saveState();
   void restoreState();
 
-  bool progressCallback(const atools::fs::BglReaderProgressInfo& progress, QElapsedTimer& timer);
+  bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
 
   bool hasSchema();
   bool hasData();

@@ -81,8 +81,8 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
     QStringList texts;
     // texts.append("Title " + simData.getAirplaneTitle());
     // texts.append("Model " + simData.getAirplaneModel());
-    if(!simData.getAirplaneReg().isEmpty())
-      texts.append(simData.getAirplaneReg());
+    if(!simData.getAirplaneRegistration().isEmpty())
+      texts.append(simData.getAirplaneRegistration());
     // texts.append("Type " + simData.getAirplaneType());
 
     if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
