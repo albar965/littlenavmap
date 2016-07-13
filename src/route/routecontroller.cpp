@@ -418,7 +418,7 @@ void RouteController::calculateHighAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALT,
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::HIGH_ALTITUDE,
                             tr("High altitude Flight Plan Calculation"), true, false))
     mainWindow->setStatusMessage(tr("Calculated high altitude (Jet airways) flight plan."));
   else
@@ -432,7 +432,7 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALT, tr("Low altitude Flight Plan Calculation"),
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE, tr("Low altitude Flight Plan Calculation"),
                             true, false))
     mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
@@ -447,10 +447,10 @@ void RouteController::calculateSetAlt()
   RouteFinder routeFinder(routeNetworkAirway);
 
   atools::fs::pln::RouteType type;
-  if(route.getFlightplan().getCruisingAlt() > 20000)
-    type = atools::fs::pln::HIGH_ALT;
+  if(route.getFlightplan().getCruisingAltitude() > 20000)
+    type = atools::fs::pln::HIGH_ALTITUDE;
   else
-    type = atools::fs::pln::LOW_ALT;
+    type = atools::fs::pln::LOW_ALTITUDE;
 
   if(calculateRouteInternal(&routeFinder, type, tr("Low altitude flight plan"), true, true))
     mainWindow->setStatusMessage(tr("Calculated high/low flight plan for given altitude."));
@@ -466,13 +466,13 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
   Flightplan& flightplan = route.getFlightplan();
 
-  int altitude = useSetAltitude ? flightplan.getCruisingAlt() : 0;
+  int altitude = useSetAltitude ? flightplan.getCruisingAltitude() : 0;
 
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
 
-  bool found = routeFinder->calculateRoute(flightplan.getDeparturePos(),
-                                           flightplan.getDestinationPos(), altitude);
+  bool found = routeFinder->calculateRoute(flightplan.getDeparturePosition(),
+                                           flightplan.getDestinationPosition(), altitude);
 
   if(found)
   {
@@ -480,7 +480,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     QVector<rf::RouteEntry> calculatedRoute;
     routeFinder->extractRoute(calculatedRoute, distance);
 
-    float directDistance = flightplan.getDeparturePos().distanceMeterTo(flightplan.getDestinationPos());
+    float directDistance = flightplan.getDeparturePosition().distanceMeterTo(flightplan.getDestinationPosition());
     float ratio = distance / directDistance;
     qDebug() << "route distance" << QString::number(distance, 'f', 0)
              << "direct distance" << QString::number(directDistance, 'f', 0) << "ratio" << ratio;
@@ -517,7 +517,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       {
         if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
         {
-          float fpDir = flightplan.getDeparturePos().angleDegToRhumb(flightplan.getDestinationPos());
+          float fpDir = flightplan.getDeparturePosition().angleDegToRhumb(flightplan.getDestinationPosition());
 
           qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
 
@@ -534,7 +534,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
           qDebug() << "corrected minAltitude" << minAltitude;
         }
 
-        flightplan.setCruisingAlt(minAltitude);
+        flightplan.setCruisingAltitude(minAltitude);
       }
 
       QGuiApplication::restoreOverrideCursor();
@@ -1372,14 +1372,14 @@ void RouteController::updateFlightplanData()
 
       if(!firstRmo.getParking().name.isEmpty())
         flightplan.setDepartureParkingName(maptypes::parkingNameForFlightplan(firstRmo.getParking()));
-      flightplan.setDeparturePos(firstRmo.getPosition());
+      flightplan.setDeparturePosition(firstRmo.getPosition());
     }
     else
     {
       flightplan.setDepartureAiportName(QString());
       flightplan.setDepartureIdent(QString());
       flightplan.setDepartureParkingName(QString());
-      flightplan.setDeparturePos(Pos());
+      flightplan.setDeparturePosition(Pos());
     }
 
     const RouteMapObject& lastRmo = route.last();
@@ -1388,13 +1388,13 @@ void RouteController::updateFlightplanData()
       destinationIcao = lastRmo.getAirport().ident;
       flightplan.setDestinationAiportName(lastRmo.getAirport().name);
       flightplan.setDestinationIdent(destinationIcao);
-      flightplan.setDestinationPos(lastRmo.getPosition());
+      flightplan.setDestinationPosition(lastRmo.getPosition());
     }
     else
     {
       flightplan.setDestinationAiportName(QString());
       flightplan.setDestinationIdent(QString());
-      flightplan.setDestinationPos(Pos());
+      flightplan.setDestinationPosition(Pos());
     }
 
     // <Descr>LFHO, EDRJ</Descr>
@@ -1416,7 +1416,7 @@ void RouteController::updateFlightplanFromWidgets()
   flightplan.setFlightplanType(
     ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   // <CruisingAlt>19000</CruisingAlt>
-  flightplan.setCruisingAlt(ui->spinBoxRouteAlt->value());
+  flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 }
 
 void RouteController::updateRouteMapObjects()
@@ -1598,7 +1598,7 @@ void RouteController::updateModel()
   Flightplan& flightplan = route.getFlightplan();
 
   ui->spinBoxRouteAlt->blockSignals(true);
-  ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAlt());
+  ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
   ui->spinBoxRouteAlt->blockSignals(false);
 
   ui->comboBoxRouteType->blockSignals(true);
@@ -1638,10 +1638,10 @@ void RouteController::updateLabel()
     {
       case atools::fs::pln::UNKNOWN_ROUTE:
         break;
-      case atools::fs::pln::LOW_ALT:
+      case atools::fs::pln::LOW_ALTITUDE:
         routeType = tr(", Low Altitude");
         break;
-      case atools::fs::pln::HIGH_ALT:
+      case atools::fs::pln::HIGH_ALTITUDE:
         routeType = tr(", High Altitude");
         break;
       case atools::fs::pln::VOR:

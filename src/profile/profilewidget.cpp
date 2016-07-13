@@ -173,7 +173,7 @@ void ProfileWidget::updateScreenCoords()
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = std::ceil((legList.maxElevationFt +
                                  OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
-  flightplanAltFt = static_cast<float>(routeController->getFlightplan().getCruisingAlt());
+  flightplanAltFt = static_cast<float>(routeController->getFlightplan().getCruisingAltitude());
   maxAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getPosition().isValid() &&
@@ -400,7 +400,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + tr(" ft")},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAlt()) + tr(" ft");
+  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAltitude()) + tr(" ft");
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
