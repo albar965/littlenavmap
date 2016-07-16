@@ -330,9 +330,12 @@ void NavSearch::updateMenu()
     ui->actionNavSearchShowAllOptions->setChecked(false);
   ui->actionNavSearchShowAllOptions->blockSignals(false);
 
+  bool distanceSearchChanged = false;
+  if(ui->checkBoxNavDistSearch->isChecked())
+    distanceSearchChanged = WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
+
+  WidgetTools::changeStarIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
+
   WidgetTools::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
                                     WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
-
-  WidgetTools::changeStarIndication(ui->actionNavSearchShowDistOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch}));
 }

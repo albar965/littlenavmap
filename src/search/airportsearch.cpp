@@ -486,8 +486,11 @@ void AirportSearch::updateMenu()
   WidgetTools::changeStarIndication(ui->actionAirportSearchShowAltOptions,
                                     WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
 
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowDistOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch}));
+  bool distanceSearchChanged = false;
+  if(ui->checkBoxAirportDistSearch->isChecked())
+    distanceSearchChanged = WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch});
+
+  WidgetTools::changeStarIndication(ui->actionAirportSearchShowDistOptions, distanceSearchChanged);
 
   WidgetTools::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
                                     WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));

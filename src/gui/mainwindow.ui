@@ -3007,6 +3007,9 @@
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
   </action>
   <action name="actionShowStatusbar">
    <property name="checkable">
@@ -3051,6 +3054,9 @@
    <property name="statusTip">
     <string>About Little Navmap</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
   </action>
   <action name="actionHelpAboutQt">
    <property name="icon">
@@ -3062,6 +3068,9 @@
    </property>
    <property name="statusTip">
     <string>About Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -3077,6 +3086,9 @@
    </property>
    <property name="statusTip">
     <string>Open the options dialog</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">

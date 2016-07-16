@@ -97,8 +97,6 @@ void Search::initViewAndController()
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  atools::gui::TableZoomHandler zoomHandler(view);
-  Q_UNUSED(zoomHandler);
   controller = new Controller(mainWindow, query->getDatabase(), columns, view);
   controller->prepareModel();
 

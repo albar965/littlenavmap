@@ -501,22 +501,22 @@ QString vorType(const MapVor& vor)
 
 QString vorText(const MapVor& vor)
 {
-  return vorType(vor) + " " + atools::capString(vor.name) + " (" + vor.ident + ")";
+  return QObject::tr("%1 %2 (%3)").arg(vorType(vor)).arg(atools::capString(vor.name)).arg(vor.ident);
 }
 
 QString ndbText(const MapNdb& ndb)
 {
-  return QObject::tr("NDB %1 (%2").arg(atools::capString(ndb.name)).arg(ndb.ident);
+  return QObject::tr("NDB %1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
 }
 
 QString waypointText(const MapWaypoint& waypoint)
 {
-  return QObject::tr("Waypoint ") + waypoint.ident;
+  return QObject::tr("Waypoint %1").arg(waypoint.ident);
 }
 
 QString userpointText(const MapUserpoint& userpoint)
 {
-  return QObject::tr("User point ") + userpoint.name;
+  return QObject::tr("User point %1").arg(userpoint.name);
 }
 
 QString airportText(const MapAirport& airport)
