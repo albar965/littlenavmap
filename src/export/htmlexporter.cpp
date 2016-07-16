@@ -25,9 +25,9 @@
 #include "settings/settings.h"
 #include "search/controller.h"
 #include "sql/sqlquery.h"
-#include "logging/loggingdefs.h"
 
 #include <algorithm>
+#include <QDebug>
 #include <QUrl>
 #include <QFile>
 #include <QDir>

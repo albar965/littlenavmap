@@ -21,9 +21,9 @@
 #include "db/databasemanager.h"
 #include "fs/fspaths.h"
 #include "gui/dialog.h"
-#include "logging/loggingdefs.h"
 #include "ui_databasedialog.h"
 
+#include <QDebug>
 #include <QDialog>
 
 using atools::fs::FsPaths;

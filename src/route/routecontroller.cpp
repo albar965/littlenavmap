@@ -432,7 +432,8 @@ void RouteController::calculateLowAlt()
 
   RouteFinder routeFinder(routeNetworkAirway);
 
-  if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE, tr("Low altitude Flight Plan Calculation"),
+  if(calculateRouteInternal(&routeFinder, atools::fs::pln::LOW_ALTITUDE,
+                            tr("Low altitude Flight Plan Calculation"),
                             true, false))
     mainWindow->setStatusMessage(tr("Calculated low altitude (Victor airways) flight plan."));
   else
@@ -480,7 +481,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     QVector<rf::RouteEntry> calculatedRoute;
     routeFinder->extractRoute(calculatedRoute, distance);
 
-    float directDistance = flightplan.getDeparturePosition().distanceMeterTo(flightplan.getDestinationPosition());
+    float directDistance = flightplan.getDeparturePosition().distanceMeterTo(
+      flightplan.getDestinationPosition());
     float ratio = distance / directDistance;
     qDebug() << "route distance" << QString::number(distance, 'f', 0)
              << "direct distance" << QString::number(directDistance, 'f', 0) << "ratio" << ratio;

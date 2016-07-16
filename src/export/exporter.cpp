@@ -19,9 +19,9 @@
 #include "search/controller.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
-#include "logging/loggingdefs.h"
 #include "search/column.h"
 
+#include <QDebug>
 #include <QUrl>
 #include <QDesktopServices>
 #include <QApplication>

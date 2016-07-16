@@ -19,7 +19,6 @@
 
 #include "common/constants.h"
 #include "gui/application.h"
-#include "logging/loggingdefs.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
@@ -49,6 +48,7 @@
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 
+#include <QDebug>
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QFileInfo>

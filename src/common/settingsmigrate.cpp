@@ -19,9 +19,9 @@
 
 #include "settings/settings.h"
 #include "common/constants.h"
-#include "logging/loggingdefs.h"
 #include "util/version.h"
 
+#include <QDebug>
 #include <QApplication>
 #include <QRegularExpression>
 

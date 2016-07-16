@@ -17,8 +17,9 @@
 
 #include "optiondata.h"
 
-#include "logging/loggingdefs.h"
 #include "exception.h"
+
+#include <QDebug>
 
 OptionData *OptionData::optionData = nullptr;
 
@@ -56,5 +57,3 @@ OptionData& OptionData::instanceInternal()
   return *optionData;
 
 }
-
-

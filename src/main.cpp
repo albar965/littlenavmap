@@ -17,7 +17,6 @@
 
 #include "gui/mainwindow.h"
 #include "common/constants.h"
-#include "logging/loggingdefs.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
 #include "settings/settings.h"
@@ -28,6 +27,8 @@
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
 #include "common/settingsmigrate.h"
+
+#include <QDebug>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>

@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_LAYER_H
 #define LITTLENAVMAP_LAYER_H
 
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace layer {
 enum AirportSource

@@ -17,8 +17,7 @@
 
 #include "db/dbtypes.h"
 
-#include "logging/loggingdefs.h"
-
+#include <QDebug>
 #include <QDataStream>
 
 using atools::fs::FsPaths;

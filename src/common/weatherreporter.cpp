@@ -17,11 +17,11 @@
 
 #include "common/weatherreporter.h"
 
-#include "logging/loggingdefs.h"
 #include "gui/mainwindow.h"
 #include "settings/settings.h"
 #include "options/optiondata.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>

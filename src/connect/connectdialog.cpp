@@ -19,10 +19,10 @@
 
 #include "common/constants.h"
 #include "gui/widgetstate.h"
-#include "logging/loggingdefs.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 
+#include <QDebug>
 #include <QPushButton>
 
 using atools::settings::Settings;

@@ -22,7 +22,6 @@
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
-#include "logging/loggingdefs.h"
 #include "mapgui/mapquery.h"
 #include "route/routecontroller.h"
 #include "settings/settings.h"
@@ -30,6 +29,7 @@
 #include "util/htmlbuilder.h"
 #include "options/optiondata.h"
 
+#include <QDebug>
 #include <QScrollBar>
 #include <QUrlQuery>
 

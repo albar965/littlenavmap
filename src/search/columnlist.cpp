@@ -16,9 +16,9 @@
 *****************************************************************************/
 
 #include "search/columnlist.h"
-#include "logging/loggingdefs.h"
 #include "search/column.h"
 
+#include <QDebug>
 #include <QLineEdit>
 #include <QComboBox>
 #include <QCheckBox>

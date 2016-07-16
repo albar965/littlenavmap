@@ -24,9 +24,9 @@
 #include "sql/sqlexport.h"
 #include "search/controller.h"
 
-#include "logging/loggingdefs.h"
 #include "sql/sqlrecord.h"
 
+#include <QDebug>
 #include <QFile>
 #include <QTextCodec>
 #include <QIODevice>

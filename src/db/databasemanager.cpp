@@ -22,7 +22,6 @@
 #include "common/constants.h"
 #include "fs/db/databasemeta.h"
 #include "db/databasedialog.h"
-#include "logging/loggingdefs.h"
 #include "settings/settings.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/navdatabaseprogress.h"
@@ -33,6 +32,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 
+#include <QDebug>
 #include <QElapsedTimer>
 #include <QLabel>
 #include <QProgressDialog>

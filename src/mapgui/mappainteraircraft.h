@@ -38,7 +38,7 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  void paintAircraft(const PaintContext* context);
+  void paintAircraft(const PaintContext *context);
   void paintAircraftTrack(Marble::GeoPainter *painter);
 
 };

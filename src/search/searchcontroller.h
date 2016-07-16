@@ -67,7 +67,7 @@ public:
 
   void updateTableSelection();
 
-void optionsChanged();
+  void optionsChanged();
 
 private:
   MapQuery *mapQuery;
