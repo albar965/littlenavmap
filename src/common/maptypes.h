@@ -235,6 +235,24 @@ struct MapParking
 
 };
 
+struct MapStart
+{
+  QString type, runwayName;
+  int id, airportId;
+  atools::geo::Pos position;
+  int heading, helipadNumber;
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return id;
+  }
+
+};
+
 struct MapHelipad
 {
   QString surface, type;
@@ -500,6 +518,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApron, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapTaxiPath, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapParking, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapStart, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapHelipad, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapVor, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapNdb, Q_MOVABLE_TYPE);

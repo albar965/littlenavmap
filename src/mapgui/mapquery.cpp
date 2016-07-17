@@ -574,6 +574,71 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
   }
 }
 
+const QList<maptypes::MapStart> *MapQuery::getStartPosForAirport(int airportId)
+{
+  if(startCache.contains(airportId))
+    return startCache.object(airportId);
+  else
+  {
+    qDebug() << "starts cache miss";
+    startQuery->bindValue(":airportId", airportId);
+    startQuery->exec();
+
+    QList<maptypes::MapStart> *ps = new QList<maptypes::MapStart>;
+    while(startQuery->next())
+    {
+      maptypes::MapStart p;
+      mapTypesFactory->fillStart(startQuery->record(), p);
+      ps->append(p);
+    }
+    startCache.insert(airportId, ps);
+    return ps;
+  }
+}
+
+void MapQuery::getStartByNameAndPos(QList<maptypes::MapStart>& starts, int airportId,
+                                    const QString& name, const atools::geo::Pos& position)
+{
+  int number = name.toInt();
+
+  SqlQuery query(db);
+  query.prepare(
+    "select start_id, airport_id, type, heading, number, name, altitude, lonx, laty from ("
+    "select s.start_id, s.airport_id, s.type, s.heading, s.number, null as name, s.altitude, s.lonx, s.laty "
+    "from start s where airport_id = :airportId and s.number = :number "
+    "union "
+    "select s.start_id, s.airport_id, s.type, s.heading, s.number, e.name, s.altitude, s.lonx, s.laty "
+    "from start s left outer join runway_end e on s.runway_end_id = e.runway_end_id "
+    "where airport_id = :airportId and e.name = :name)");
+
+  query.bindValue(":number", number);
+  query.bindValue(":name", name);
+  query.bindValue(":airportId", airportId);
+  query.exec();
+
+  while(query.next())
+  {
+    maptypes::MapStart start;
+    mapTypesFactory->fillStart(query.record(), start);
+    starts.append(start);
+  }
+
+  maptypes::MapStart minStart;
+  float minDistance = std::numeric_limits<float>::max();
+  for(const maptypes::MapStart& start : starts)
+  {
+    float dist = position.distanceMeterTo(start.position);
+
+    if(dist < minDistance)
+    {
+      minDistance = dist;
+      minStart = start;
+    }
+  }
+  starts.clear();
+  starts.append(minStart);
+}
+
 void MapQuery::getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, int airportId,
                                          const QString& name, int number)
 {
@@ -868,6 +933,12 @@ void MapQuery::initQueries()
   parkingQuery = new SqlQuery(db);
   parkingQuery->prepare(parkingQueryBase + " from parking where airport_id = :airportId");
 
+  startQuery = new SqlQuery(db);
+  startQuery->prepare(
+    "select s.start_id, s.airport_id, s.type, s.heading, s.number, e.name, s.altitude, s.lonx, s.laty "
+    "from start s left outer join runway_end e on s.runway_end_id = e.runway_end_id "
+    "where airport_id = :airportId");
+
   parkingTypeAndNumberQuery = new SqlQuery(db);
   parkingTypeAndNumberQuery->prepare(
     parkingQueryBase +
@@ -962,6 +1033,8 @@ void MapQuery::deInitQueries()
   apronQuery = nullptr;
   delete parkingQuery;
   parkingQuery = nullptr;
+  delete startQuery;
+  startQuery = nullptr;
   delete parkingTypeAndNumberQuery;
   parkingTypeAndNumberQuery = nullptr;
   delete helipadQuery;

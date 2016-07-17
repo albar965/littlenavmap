@@ -39,11 +39,18 @@ public:
   virtual ~ParkingDialog();
 
   bool getSelectedParking(maptypes::MapParking& parking);
+  bool getSelectedStartPosition(maptypes::MapStart& start);
 
 private:
   void updateButtons();
 
-  QList<maptypes::MapParking> parkings;
+  struct StartPosition
+  {
+    maptypes::MapParking parking;
+    maptypes::MapStart start;
+  };
+
+  QList<StartPosition> entries;
   Ui::ParkingDialog *ui;
 };
 

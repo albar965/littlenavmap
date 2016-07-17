@@ -49,7 +49,10 @@ public:
   void fillAirway(const atools::sql::SqlRecord& record, maptypes::MapAirway& airway);
   void fillMarker(const atools::sql::SqlRecord& record, maptypes::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, maptypes::MapIls& ils);
+
   void fillParking(const atools::sql::SqlRecord& record, maptypes::MapParking& parking);
+  void fillStart(const atools::sql::SqlRecord& record, maptypes::MapStart& start);
+
   maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
                                         maptypes::MapAirportFlags airportFlag);
   maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);

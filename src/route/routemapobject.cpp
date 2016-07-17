@@ -28,9 +28,8 @@ using namespace atools::geo;
 const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
 const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 
-RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan,
-                               const Marble::ElevationModel *elevationModel)
-  : flightplan(parentFlightplan), elevation(elevationModel)
+RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan)
+  : flightplan(parentFlightplan)
 {
 
 }
@@ -90,7 +89,7 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
 
   QString region = entry->getIcaoRegion();
 
-  if(region == "KK") // Invalid route finder stuff
+  if(region == "KK") // Invalid route finder region
     region.clear();
 
   bool found;
@@ -106,27 +105,59 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
         airport = res.airports.first();
         valid = true;
 
-        if(!flightplan->getDepartureParkingName().isEmpty() && predRouteMapObj == nullptr)
+        QString name = flightplan->getDepartureParkingName();
+        if(!name.isEmpty() && predRouteMapObj == nullptr)
         {
           // Resolve parking if first airport
-          QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(flightplan->getDepartureParkingName());
-          QString name = match.captured(1).trimmed().toUpper().replace(" ", "_");
-          int number = QString(match.captured(2)).toInt();
-          QList<maptypes::MapParking> parkings;
-          query->getParkingByNameAndNumber(parkings, airport.id, name, number);
+          QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
+          QString parkingName = match.captured(1).trimmed().toUpper().replace(" ", "_");
 
-          if(parkings.isEmpty())
+          if(!parkingName.isEmpty())
           {
-            qWarning() << "Found no parking spots";
-            flightplan->setDepartureParkingName(QString());
+            // Seems to be a parking position
+            int number = QString(match.captured(2)).toInt();
+            QList<maptypes::MapParking> parkings;
+            query->getParkingByNameAndNumber(parkings, airport.id, parkingName, number);
+
+            if(parkings.isEmpty())
+            {
+              qWarning() << "Found no parking spots";
+              flightplan->setDepartureParkingName(QString());
+            }
+            else
+            {
+              if(parkings.size() > 1)
+                qWarning() << "Found multiple parking spots";
+
+              parking = parkings.first();
+              flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+            }
           }
           else
           {
-            if(parkings.size() > 1)
-              qWarning() << "Found multiple parking spots";
+            // Runway or helipad
+            QList<maptypes::MapStart> starts;
+            query->getStartByNameAndPos(starts, airport.id, name, flightplan->getDeparturePosition());
 
-            parking = parkings.first();
-            flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+            if(starts.isEmpty())
+            {
+              qWarning() << "Found no start positions";
+              flightplan->setDepartureParkingName(QString());
+            }
+            else
+            {
+              if(starts.size() > 1)
+                qWarning() << "Found multiple start positions";
+
+              start = starts.first();
+              if(start.helipadNumber > 0)
+                // Helicopter pad
+                flightplan->setDepartureParkingName(QString::number(start.helipadNumber));
+              else
+                // Runway name
+                flightplan->setDepartureParkingName(start.runwayName);
+            }
+
           }
         }
       }
@@ -208,6 +239,13 @@ void RouteMapObject::update(const RouteMapObject *predRouteMapObj)
 void RouteMapObject::updateParking(const maptypes::MapParking& departureParking)
 {
   parking = departureParking;
+  start = maptypes::MapStart();
+}
+
+void RouteMapObject::updateStart(const maptypes::MapStart& departureStart)
+{
+  start = departureStart;
+  parking = maptypes::MapParking();
 }
 
 void RouteMapObject::updateDistAndCourse(const RouteMapObject *predRouteMapObj)

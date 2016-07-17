@@ -117,6 +117,7 @@ const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
 const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
 
 // Functions
+const QIcon& iconForStartType(const QString& type);
 const QIcon& iconForParkingType(const QString& type);
 const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);

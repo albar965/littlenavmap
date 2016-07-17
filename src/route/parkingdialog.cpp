@@ -20,6 +20,7 @@
 #include "ui_parkingdialog.h"
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
+#include "atools.h"
 
 #include <QPushButton>
 
@@ -31,30 +32,77 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
 
-  const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
+  const QList<maptypes::MapStart> *startCache = mapQuery->getStartPosForAirport(departureAirport.id);
+  // Create a copy from the cached objects to allow sorting
+  for(const maptypes::MapStart& start : *startCache)
+    entries.append({maptypes::MapParking(), start});
 
+  const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
   // Create a copy from the cached objects and exclude fuel
-  for(const maptypes::MapParking& p : *parkingCache)
-    if(p.type != "FUEL")
-      parkings.append(p);
+  for(const maptypes::MapParking& parking : *parkingCache)
+    if(parking.type != "FUEL")
+      entries.append({parking, maptypes::MapStart()});
 
   // Sort by name and numbers
-  std::sort(parkings.begin(), parkings.end(),
-            [ = ](const maptypes::MapParking & p1, const maptypes::MapParking & p2)->bool
+  std::sort(entries.begin(), entries.end(),
+            [ = ](const StartPosition &p1, const StartPosition &p2)->bool
             {
-              if(p1.name == p2.name)
-                return p1.number < p2.number;
-              else
-                return p1.name < p2.name;
+              if(p1.parking.position.isValid() == p2.parking.position.isValid() &&
+                 p1.start.position.isValid() == p2.start.position.isValid())
+              {
+                // Same type
+                if(p1.parking.position.isValid())
+                {
+                  // Compare parking
+                  if(p1.parking.name == p2.parking.name)
+                    return p1.parking.number < p2.parking.number;
+                  else
+                    return p1.parking.name < p2.parking.name;
+
+                }
+                else if(p1.start.position.isValid())
+                {
+                  // Compare start
+                  if(p1.start.type == p2.start.type)
+                  {
+                    if(p1.start.runwayName == p2.start.runwayName)
+                      return p1.start.helipadNumber < p2.start.helipadNumber;
+                    else
+                      return p1.start.runwayName < p2.start.runwayName;
+                  }
+                  else
+                    return p1.start.type > p2.start.type;
+                }
+              }
+              // Sort runway before parking
+              return p1.parking.position.isValid() < p2.parking.position.isValid();
             });
 
   // Add to list widget
-  for(const maptypes::MapParking& p : parkings)
+  for(const StartPosition& startPos : entries)
   {
-    QString text = maptypes::parkingNameNumberType(p) + ", " + QLocale().toString(p.radius * 2) + " ft" +
-                   (p.jetway ? tr(", Has Jetway") : "");
+    if(startPos.parking.position.isValid())
+    {
+      QString text = tr("%1, %2 ft%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
+                     arg(QLocale().toString(startPos.parking.radius * 2)).
+                     arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
 
-    new QListWidgetItem(mapcolors::iconForParkingType(p.type), text, ui->listWidgetSelectParking);
+      new QListWidgetItem(
+        mapcolors::iconForParkingType(startPos.parking.type), text, ui->listWidgetSelectParking);
+    }
+    else if(startPos.start.position.isValid())
+    {
+      QString number;
+      if(startPos.start.helipadNumber > 0)
+        number = QString::number(startPos.start.helipadNumber);
+
+      QString text = tr("%1 %2 %3").
+                     arg(atools::capString(startPos.start.type)).
+                     arg(startPos.start.runwayName).
+                     arg(number);
+
+      new QListWidgetItem(mapcolors::iconForStartType(startPos.start.type), text, ui->listWidgetSelectParking);
+    }
   }
 
   updateButtons();
@@ -77,8 +125,20 @@ bool ParkingDialog::getSelectedParking(maptypes::MapParking& parking)
 {
   if(ui->listWidgetSelectParking->currentItem() != nullptr)
   {
-    parking = parkings.at(ui->listWidgetSelectParking->currentRow());
-    return true;
+    parking = entries.at(ui->listWidgetSelectParking->currentRow()).parking;
+    if(parking.position.isValid())
+      return true;
+  }
+  return false;
+}
+
+bool ParkingDialog::getSelectedStartPosition(maptypes::MapStart& start)
+{
+  if(ui->listWidgetSelectParking->currentItem() != nullptr)
+  {
+    start = entries.at(ui->listWidgetSelectParking->currentRow()).start;
+    if(start.position.isValid())
+      return true;
   }
   return false;
 }

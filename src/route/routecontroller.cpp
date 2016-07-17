@@ -37,6 +37,7 @@
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
+#include "atools.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -250,9 +251,15 @@ bool RouteController::selectDepartureParking()
   if(result == QDialog::Accepted)
   {
     maptypes::MapParking parking;
+    maptypes::MapStart start;
     if(dialog.getSelectedParking(parking))
     {
       routeSetParking(parking);
+      return true;
+    }
+    else if(dialog.getSelectedStartPosition(start))
+    {
+      routeSetStartPosition(start);
       return true;
     }
   }
@@ -1045,6 +1052,39 @@ void RouteController::select(QList<int>& rows, int offset)
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
+void RouteController::routeSetStartPosition(maptypes::MapStart start)
+{
+  qDebug() << "route set start id" << start.id;
+
+  RouteCommand *undoCommand = preChange(tr("Set Start Position"));
+
+  // No need to update airport since this is called from dialog only
+
+  // Update the current airport which is new or the same as the one used by the parking spot
+  if(start.helipadNumber > 0)
+    // Use helipad number
+    route.getFlightplan().setDepartureParkingName(QString::number(start.helipadNumber));
+  else
+    // Use runway name
+    route.getFlightplan().setDepartureParkingName(start.runwayName);
+
+  route.getFlightplan().setDeparturePosition(start.position);
+  route.first().updateStart(start);
+
+  updateRouteMapObjects();
+  updateFlightplanData();
+  updateModel();
+  updateLabel();
+
+  postChange(undoCommand);
+  updateWindowTitle();
+
+  emit routeChanged(true);
+
+  mainWindow->setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.first().getIdent()).
+                               arg(start.runwayName));
+}
+
 void RouteController::routeSetParking(maptypes::MapParking parking)
 {
   qDebug() << "route set parking id" << parking.id;
@@ -1062,6 +1102,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 
   // Update the current airport which is new or the same as the one used by the parking spot
   route.getFlightplan().setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+  route.getFlightplan().setDeparturePosition(parking.position);
   route.first().updateParking(parking);
 
   updateRouteMapObjects();
@@ -1098,7 +1139,7 @@ void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
 
   flightplan.getEntries().prepend(entry);
 
-  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan);
   rmo.loadFromAirport(&flightplan.getEntries().first(), airport, nullptr);
   route.prepend(rmo);
 }
@@ -1131,7 +1172,7 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   if(flightplan.getEntries().size() > 1)
     rmoPred = &route.at(route.size() - 1);
 
-  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan);
   rmo.loadFromAirport(&flightplan.getEntries().last(), airport, rmoPred);
   route.append(rmo);
 
@@ -1189,7 +1230,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   const RouteMapObject *rmoPred = nullptr;
 
-  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan);
   rmo.loadFromDatabaseByEntry(&flightplan.getEntries()[legIndex], query, rmoPred);
 
   route.replace(legIndex, rmo);
@@ -1234,7 +1275,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   if(flightplan.isEmpty() && insertIndex > 0)
     rmoPred = &route.at(insertIndex - 1);
-  RouteMapObject rmo(&flightplan, mainWindow->getElevationModel());
+  RouteMapObject rmo(&flightplan);
   rmo.loadFromDatabaseByEntry(&flightplan.getEntries()[insertIndex], query, rmoPred);
 
   route.insert(insertIndex, rmo);
@@ -1372,9 +1413,23 @@ void RouteController::updateFlightplanData()
       flightplan.setDepartureAiportName(firstRmo.getAirport().name);
       flightplan.setDepartureIdent(departureIcao);
 
-      if(!firstRmo.getParking().name.isEmpty())
+      if(firstRmo.getParking().position.isValid())
+      {
         flightplan.setDepartureParkingName(maptypes::parkingNameForFlightplan(firstRmo.getParking()));
-      flightplan.setDeparturePosition(firstRmo.getPosition());
+        flightplan.setDeparturePosition(firstRmo.getParking().position);
+      }
+      else if(firstRmo.getStart().position.isValid())
+      {
+        if(firstRmo.getStart().helipadNumber > 0)
+          // Use helipad number
+          flightplan.setDepartureParkingName(QString::number(firstRmo.getStart().helipadNumber));
+        else
+          // Use runway name
+          flightplan.setDepartureParkingName(firstRmo.getStart().runwayName);
+        flightplan.setDeparturePosition(firstRmo.getStart().position);
+      }
+      else
+        flightplan.setDeparturePosition(firstRmo.getPosition());
     }
     else
     {
@@ -1461,7 +1516,7 @@ void RouteController::createRouteMapObjects()
   {
     FlightplanEntry& entry = flightplan.getEntries()[i];
 
-    RouteMapObject mapobj(&flightplan, mainWindow->getElevationModel());
+    RouteMapObject mapobj(&flightplan);
     mapobj.loadFromDatabaseByEntry(&entry, query, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
@@ -1623,11 +1678,18 @@ void RouteController::updateLabel()
     {
       startAirport = flightplan.getDepartureAiportName() +
                      " (" + flightplan.getDepartureIdent() + ")";
-      if(!flightplan.getDepartureParkingName().isEmpty())
+
+      if(route.first().getParking().position.isValid())
+        startAirport += " " + atools::capString(flightplan.getDepartureParkingName());
+      else if(route.first().getStart().position.isValid())
       {
-        QString park = flightplan.getDepartureParkingName().toLower();
-        park[0] = park.at(0).toUpper();
-        startAirport += " " + park;
+        const maptypes::MapStart& start = route.first().getStart();
+        if(start.helipadNumber > 0)
+          startAirport += tr(" Helipad %1").arg(start.helipadNumber);
+        else if(!start.runwayName.isEmpty())
+          startAirport += tr(" Runway %1").arg(start.runwayName);
+        else
+          startAirport += tr(" Unknown Start");
       }
     }
 

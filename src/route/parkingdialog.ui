@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Select Parking for Flight Plan</string>
+   <string>Little Navmap - Select Start Position for Flight Plan</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="labelSelectParking">
      <property name="text">
-      <string>&amp;Select a Parking Position for Departure %1</string>
+      <string>&amp;Select a Start Position for Departure %1</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

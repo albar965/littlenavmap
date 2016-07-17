@@ -78,10 +78,28 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   if(!routeMapObjects.isEmpty())
   {
     const RouteMapObject& first = routeMapObjects.at(0);
-    if(first.getMapObjectType() == maptypes::AIRPORT && first.getParking().position.isValid())
+    if(first.getMapObjectType() == maptypes::AIRPORT)
     {
-      const Pos& p = first.getParking().position;
-      linestring.append(GeoDataCoordinates(p.getLonX(), p.getLatY(), 0, DEG));
+      Pos startPos;
+      if(first.getParking().position.isValid())
+        startPos = first.getParking().position;
+      else if(first.getStart().position.isValid())
+        startPos = first.getStart().position;
+
+      if(startPos.isValid())
+      {
+        QPoint pt = wToS(startPos);
+
+        if(!pt.isNull())
+        {
+          context->painter->setPen(QPen(mapcolors::routeOutlineColor, 7,
+                                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->drawEllipse(pt, 10, 10);
+          context->painter->setPen(QPen(mapcolors::routeColor, 3,
+                                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->drawEllipse(pt, 10, 10);
+        }
+      }
     }
   }
 

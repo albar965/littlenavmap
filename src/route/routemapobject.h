@@ -31,10 +31,6 @@ class Flightplan;
 }
 }
 
-namespace Marble {
-class ElevationModel;
-}
-
 class MapQuery;
 
 class RouteMapObject
@@ -42,7 +38,7 @@ class RouteMapObject
   Q_DECLARE_TR_FUNCTIONS(RouteMapObject)
 
 public:
-  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan, const Marble::ElevationModel *elevationModel);
+  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan);
   ~RouteMapObject();
 
   void loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
@@ -52,6 +48,7 @@ public:
 
   void update(const RouteMapObject *predRouteMapObj);
   void updateParking(const maptypes::MapParking& departureParking);
+  void updateStart(const maptypes::MapStart& departureStart);
 
   int getId() const;
   const atools::geo::Pos& getPosition() const;
@@ -84,6 +81,11 @@ public:
   const maptypes::MapParking& getParking() const
   {
     return parking;
+  }
+
+  const maptypes::MapStart& getStart() const
+  {
+    return start;
   }
 
   const maptypes::MapVor& getVor() const
@@ -145,12 +147,12 @@ private:
   void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
 
   atools::fs::pln::Flightplan *flightplan = nullptr;
-  const Marble::ElevationModel *elevation = nullptr;
   atools::fs::pln::FlightplanEntry *entry = nullptr;
   int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
   maptypes::MapParking parking;
+  maptypes::MapStart start;
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;

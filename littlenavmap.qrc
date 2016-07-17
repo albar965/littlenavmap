@@ -101,5 +101,8 @@
         <file>resources/icons/offline.svg</file>
         <file>resources/icons/kmlfileopen.svg</file>
         <file>resources/icons/showonmap.svg</file>
+        <file>resources/icons/startwater.svg</file>
+        <file>resources/icons/startrunway.svg</file>
+        <file>resources/icons/starthelipad.svg</file>
     </qresource>
 </RCC>

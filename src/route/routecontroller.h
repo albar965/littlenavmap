@@ -84,6 +84,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeDelete(int id, maptypes::MapObjectTypes type);
   void routeSetParking(maptypes::MapParking parking);
+  void routeSetStartPosition(maptypes::MapStart start);
   bool selectDepartureParking();
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 

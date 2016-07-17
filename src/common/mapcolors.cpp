@@ -80,6 +80,23 @@ const QColor& colorForParkingType(const QString& type)
     return unknown;
 }
 
+const QIcon& iconForStartType(const QString& type)
+{
+  static QIcon runway(":/littlenavmap/resources/icons/startrunway.svg");
+  static QIcon helipad(":/littlenavmap/resources/icons/starthelipad.svg");
+  static QIcon water(":/littlenavmap/resources/icons/startwater.svg");
+
+  static QIcon empty;
+  if(type == "RUNWAY")
+    return runway;
+  else if(type == "HELIPAD")
+    return helipad;
+  else if(type == "WATER")
+    return water;
+  else
+    return empty;
+}
+
 const QIcon& iconForParkingType(const QString& type)
 {
   static QIcon cargo(":/littlenavmap/resources/icons/parkingrampcargo.svg");
