@@ -42,7 +42,6 @@
 #include <QClipboard>
 #include <QFile>
 #include <QStandardItemModel>
-#include <QMessageBox>
 
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
@@ -339,9 +338,18 @@ bool RouteController::loadFlightplan(const QString& filename)
     routeFilename = filename;
     route.setFlightplan(newFlightplan);
     createRouteMapObjects();
+    if(updateStartPositionBestRunway(false, true))
+    {
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
+                                                     tr("The flight plan had no valid start position.\n"
+                                                        "The start position was set to the longest "
+                                                        "primary runway of the departure airport."),
+                                                     tr("Do not &show this dialog again."));
+    }
     updateModel();
     updateWindowTitle();
     updateLabel();
+
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -577,6 +585,7 @@ void RouteController::reverse()
   route.getFlightplan().reverse();
 
   createRouteMapObjects();
+  updateStartPositionBestRunway(true);
   updateModel();
   updateLabel();
   postChange(undoCommand);
@@ -617,21 +626,17 @@ QString RouteController::getDefaultFilename() const
 
 bool RouteController::isFlightplanEmpty() const
 {
-  return route.getFlightplan().isEmpty();
+  return route.isFlightplanEmpty();
 }
 
 bool RouteController::hasValidStart() const
 {
-  return !route.getFlightplan().isEmpty() &&
-         route.getFlightplan().getEntries().first().getWaypointType() ==
-         atools::fs::pln::entry::AIRPORT;
+  return route.hasValidDeparture();
 }
 
 bool RouteController::hasValidDestination() const
 {
-  return !route.getFlightplan().isEmpty() &&
-         route.getFlightplan().getEntries().last().getWaypointType() ==
-         atools::fs::pln::entry::AIRPORT;
+  return route.hasValidDestination();
 }
 
 bool RouteController::hasValidParking() const
@@ -646,7 +651,7 @@ bool RouteController::hasValidParking() const
         numParking++;
 
     if(numParking > 0)
-      return !route.getFlightplan().getDepartureParkingName().isEmpty();
+      return route.hasDepartureParking() || route.hasDepartureHelipad();
     else
       // No parking available - so no parking selection is ok
       return true;
@@ -657,12 +662,12 @@ bool RouteController::hasValidParking() const
 
 bool RouteController::hasEntries() const
 {
-  return route.getFlightplan().getEntries().size() > 2;
+  return route.hasEntries();
 }
 
 bool RouteController::hasRoute() const
 {
-  return !route.getFlightplan().isEmpty();
+  return route.hasRoute();
 }
 
 void RouteController::preDatabaseLoad()
@@ -1142,6 +1147,8 @@ void RouteController::routeSetStartInternal(const maptypes::MapAirport& airport)
   RouteMapObject rmo(&flightplan);
   rmo.loadFromAirport(&flightplan.getEntries().first(), airport, nullptr);
   route.prepend(rmo);
+
+  updateStartPositionBestRunway(true);
 }
 
 void RouteController::routeSetDest(maptypes::MapAirport airport)
@@ -1197,10 +1204,6 @@ void RouteController::routeSetStart(maptypes::MapAirport airport)
 
   routeSetStartInternal(airport);
 
-  // Reset parking
-  route.getFlightplan().setDepartureParkingName(QString());
-  route.first().updateParking(maptypes::MapParking());
-
   updateRouteMapObjects();
   updateFlightplanData();
   updateModel();
@@ -1236,6 +1239,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   route.replace(legIndex, rmo);
 
   updateRouteMapObjects();
+  updateStartPositionBestRunway(false);
   updateFlightplanData();
   updateModel();
   updateLabel();
@@ -1281,6 +1285,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   route.insert(insertIndex, rmo);
 
   updateRouteMapObjects();
+  updateStartPositionBestRunway(false);
   updateFlightplanData();
   updateModel();
   updateLabel();
@@ -1413,14 +1418,14 @@ void RouteController::updateFlightplanData()
       flightplan.setDepartureAiportName(firstRmo.getAirport().name);
       flightplan.setDepartureIdent(departureIcao);
 
-      if(firstRmo.getParking().position.isValid())
+      if(route.hasDepartureParking())
       {
         flightplan.setDepartureParkingName(maptypes::parkingNameForFlightplan(firstRmo.getParking()));
         flightplan.setDeparturePosition(firstRmo.getParking().position);
       }
-      else if(firstRmo.getStart().position.isValid())
+      else if(route.hasDepartureStart())
       {
-        if(firstRmo.getStart().helipadNumber > 0)
+        if(route.hasDepartureHelipad())
           // Use helipad number
           flightplan.setDepartureParkingName(QString::number(firstRmo.getStart().helipadNumber));
         else
@@ -1674,7 +1679,7 @@ void RouteController::updateLabel()
   QString startAirport(tr("No airport")), destAirport(tr("No airport"));
   if(!flightplan.isEmpty())
   {
-    if(flightplan.getEntries().first().getWaypointType() == entry::AIRPORT)
+    if(hasValidStart())
     {
       startAirport = flightplan.getDepartureAiportName() +
                      " (" + flightplan.getDepartureIdent() + ")";
@@ -1684,7 +1689,7 @@ void RouteController::updateLabel()
       else if(route.first().getStart().position.isValid())
       {
         const maptypes::MapStart& start = route.first().getStart();
-        if(start.helipadNumber > 0)
+        if(route.hasDepartureHelipad())
           startAirport += tr(" Helipad %1").arg(start.helipadNumber);
         else if(!start.runwayName.isEmpty())
           startAirport += tr(" Runway %1").arg(start.runwayName);
@@ -1755,4 +1760,31 @@ void RouteController::postChange(RouteCommand *undoCommand)
 
   undoIndex++;
   undoStack->push(undoCommand);
+}
+
+bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
+{
+  if(hasValidStart())
+  {
+    RouteMapObject& rmo = route.first();
+
+    if(force || (!route.hasDepartureParking() && !route.hasDepartureStart()))
+    {
+      RouteCommand *undoCommand = nullptr;
+
+      if(undo)
+        undoCommand = preChange(tr("Set Start Position"));
+
+      // Reset departure position to best runway
+      maptypes::MapStart start;
+      query->getBestStartPositionForAirport(start, rmo.getAirport().id);
+      rmo.updateStart(start);
+      updateFlightplanData();
+
+      if(undo)
+        postChange(undoCommand);
+      return true;
+    }
+  }
+  return false;
 }

@@ -107,7 +107,9 @@ public:
 
   const QList<maptypes::MapParking> *getParkingsForAirport(int airportId);
 
-  const QList<maptypes::MapStart> *getStartPosForAirport(int airportId);
+  const QList<maptypes::MapStart> *getStartPositionsForAirport(int airportId);
+
+  void getBestStartPositionForAirport(maptypes::MapStart& start, int airportId);
 
   const QList<maptypes::MapHelipad> *getHelipads(int airportId);
 

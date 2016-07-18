@@ -52,6 +52,32 @@ const QHash<QString, QString> surfaceMap(
     {"UNKNOWN", QObject::tr("Unknown")}
   });
 
+/* The higher the better */
+const QHash<QString, int> surfaceQualityMap(
+  {
+    {"CONCRETE", 20},
+    {"ASPHALT", 20},
+    {"BITUMINOUS", 20},
+    {"TARMAC", 20},
+    {"MACADAM", 15},
+    {"CEMENT", 15},
+    {"OIL_TREATED", 15},
+    {"BRICK", 10},
+    {"STEEL_MATS", 10},
+    {"PLANKS", 10},
+    {"GRAVEL", 5},
+    {"CORAL", 5},
+    {"DIRT", 5},
+    {"SHALE", 5},
+    {"CLAY", 5},
+    {"SAND", 5},
+    {"GRASS", 5},
+    {"SNOW", 5},
+    {"ICE", 5},
+    {"WATER", 1},
+    {"UNKNOWN", 0}
+  });
+
 const QHash<QString, QString> parkingMapGate(
   {
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -211,6 +237,11 @@ QString navName(const QString& type)
 QString surfaceName(const QString& surface)
 {
   return surfaceMap.value(surface);
+}
+
+int surfaceQuality(const QString& surface)
+{
+  return surfaceQualityMap.value(surface, 0);
 }
 
 QString parkingGateName(const QString& gate)
@@ -554,6 +585,21 @@ QString magvarText(float magvar)
            arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr(" East"));
   else
     return "0°";
+}
+
+bool isHardSurface(const QString& surface)
+{
+  return surface == "CONCRETE" || surface == "ASPHALT" || surface == "BITUMINOUS" || surface == "TARMAC";
+}
+
+bool isWaterSurface(const QString& surface)
+{
+  return surface == "WATER";
+}
+
+bool isSoftSurface(const QString& surface)
+{
+  return !isWaterSurface(surface) && !isHardSurface(surface);
 }
 
 } // namespace types

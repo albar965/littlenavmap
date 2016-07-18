@@ -32,6 +32,7 @@ const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
 const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
 const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
 const QString ACTIONS_SHOWROUTEERROR = "Actions/ShowRouteError";
+const QString ACTIONS_SHOWROUTE_START_CHANGED = "Actions/ShowRouteStartChanged";
 
 /* Other setting key names */
 const QString DATABASE_BASEPATH = "Database/BasePath";

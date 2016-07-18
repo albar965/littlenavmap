@@ -83,7 +83,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   {
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
     html.nbsp().nbsp();
-    html.a(tr("Show Airport on Map"),
+    html.a(tr("Map"),
            QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
   }
   else
@@ -590,7 +590,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(info)
   {
     html.nbsp().nbsp();
-    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(vor.position.getLonX()).arg(vor.position.getLatY()));
     html.br();
   }
@@ -629,7 +629,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   if(info)
   {
     html.nbsp().nbsp();
-    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
     html.br();
   }
@@ -666,7 +666,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info)
   {
     html.nbsp().nbsp();
-    html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
     html.br();
   }
@@ -1083,10 +1083,9 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& data, 
   html.text(title, atools::util::html::BOLD | atools::util::html::BIG);
 
   html.nbsp().nbsp();
-  html.a(tr("Show on Map"), QString("lnm://show?lonx=%1&laty=%2").
+  html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
          arg(data.getPosition().getLonX()).arg(data.getPosition().getLatY()));
   html.br();
-
 }
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)

@@ -770,7 +770,7 @@ bool MainWindow::routeValidate()
     {
       atools::gui::DialogButtonList buttons({
                                               {QString(), QMessageBox::Cancel},
-                                              {tr("Select Parking"), QMessageBox::Yes},
+                                              {tr("Select Start Position"), QMessageBox::Yes},
                                               {QString(), QMessageBox::Save}
                                             });
 
@@ -1080,6 +1080,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEERROR, true);
+  s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
   s.syncSettings();
   setStatusMessage(tr("All message dialogs reset."));
 }

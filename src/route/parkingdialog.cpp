@@ -32,7 +32,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
 
-  const QList<maptypes::MapStart> *startCache = mapQuery->getStartPosForAirport(departureAirport.id);
+  const QList<maptypes::MapStart> *startCache = mapQuery->getStartPositionsForAirport(departureAirport.id);
   // Create a copy from the cached objects to allow sorting
   for(const maptypes::MapStart& start : *startCache)
     entries.append({maptypes::MapParking(), start});

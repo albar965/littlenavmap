@@ -108,57 +108,66 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
         QString name = flightplan->getDepartureParkingName();
         if(!name.isEmpty() && predRouteMapObj == nullptr)
         {
-          // Resolve parking if first airport
-          QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
-          QString parkingName = match.captured(1).trimmed().toUpper().replace(" ", "_");
-
-          if(!parkingName.isEmpty())
+          if(!name.isEmpty())
           {
-            // Seems to be a parking position
-            int number = QString(match.captured(2)).toInt();
-            QList<maptypes::MapParking> parkings;
-            query->getParkingByNameAndNumber(parkings, airport.id, parkingName, number);
+            // Resolve parking if first airport
+            QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
+            QString parkingName = match.captured(1).trimmed().toUpper().replace(" ", "_");
 
-            if(parkings.isEmpty())
+            if(!parkingName.isEmpty())
             {
-              qWarning() << "Found no parking spots";
-              flightplan->setDepartureParkingName(QString());
-            }
-            else
-            {
-              if(parkings.size() > 1)
-                qWarning() << "Found multiple parking spots";
+              // Seems to be a parking position
+              int number = QString(match.captured(2)).toInt();
+              QList<maptypes::MapParking> parkings;
+              query->getParkingByNameAndNumber(parkings, airport.id, parkingName, number);
 
-              parking = parkings.first();
-              flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
-            }
-          }
-          else
-          {
-            // Runway or helipad
-            QList<maptypes::MapStart> starts;
-            query->getStartByNameAndPos(starts, airport.id, name, flightplan->getDeparturePosition());
-
-            if(starts.isEmpty())
-            {
-              qWarning() << "Found no start positions";
-              flightplan->setDepartureParkingName(QString());
-            }
-            else
-            {
-              if(starts.size() > 1)
-                qWarning() << "Found multiple start positions";
-
-              start = starts.first();
-              if(start.helipadNumber > 0)
-                // Helicopter pad
-                flightplan->setDepartureParkingName(QString::number(start.helipadNumber));
+              if(parkings.isEmpty())
+              {
+                qWarning() << "Found no parking spots";
+                flightplan->setDepartureParkingName(QString());
+              }
               else
-                // Runway name
-                flightplan->setDepartureParkingName(start.runwayName);
-            }
+              {
+                if(parkings.size() > 1)
+                  qWarning() << "Found multiple parking spots";
 
+                parking = parkings.first();
+                flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+              }
+            }
+            else
+            {
+              // Runway or helipad
+              QList<maptypes::MapStart> starts;
+              query->getStartByNameAndPos(starts, airport.id, name, flightplan->getDeparturePosition());
+
+              if(starts.isEmpty())
+              {
+                qWarning() << "Found no start positions";
+                flightplan->setDepartureParkingName(QString());
+              }
+              else
+              {
+                if(starts.size() > 1)
+                  qWarning() << "Found multiple start positions";
+
+                start = starts.first();
+                if(start.helipadNumber > 0)
+                  // Helicopter pad
+                  flightplan->setDepartureParkingName(QString::number(start.helipadNumber));
+                else
+                  // Runway name
+                  flightplan->setDepartureParkingName(start.runwayName);
+              }
+
+            }
           }
+        }
+        else
+        {
+          // Airport is not departure reset start and parking
+          start = maptypes::MapStart();
+          parking = maptypes::MapParking();
         }
       }
       break;

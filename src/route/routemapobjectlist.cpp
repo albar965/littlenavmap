@@ -217,3 +217,56 @@ void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int
     i++;
   }
 }
+
+bool RouteMapObjectList::hasDepartureParking() const
+{
+  if(hasValidDeparture())
+    return first().getParking().position.isValid();
+
+  return false;
+}
+
+bool RouteMapObjectList::hasDepartureHelipad() const
+{
+  if(hasDepartureStart())
+    return first().getStart().helipadNumber > 0;
+
+  return false;
+}
+
+bool RouteMapObjectList::hasDepartureStart() const
+{
+  if(hasValidDeparture())
+    return first().getStart().position.isValid();
+
+  return false;
+}
+
+bool RouteMapObjectList::isFlightplanEmpty() const
+{
+  return getFlightplan().isEmpty();
+}
+
+bool RouteMapObjectList::hasValidDeparture() const
+{
+  return !getFlightplan().isEmpty() &&
+         getFlightplan().getEntries().first().getWaypointType() ==
+         atools::fs::pln::entry::AIRPORT;
+}
+
+bool RouteMapObjectList::hasValidDestination() const
+{
+  return !getFlightplan().isEmpty() &&
+         getFlightplan().getEntries().last().getWaypointType() ==
+         atools::fs::pln::entry::AIRPORT;
+}
+
+bool RouteMapObjectList::hasEntries() const
+{
+  return getFlightplan().getEntries().size() > 2;
+}
+
+bool RouteMapObjectList::hasRoute() const
+{
+  return !getFlightplan().isEmpty();
+}

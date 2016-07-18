@@ -105,6 +105,10 @@ enum MapAirportFlag
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(MapAirportFlags);
 
+bool isHardSurface(const QString& surface);
+bool isWaterSurface(const QString& surface);
+bool isSoftSurface(const QString& surface);
+
 struct MapAirport
 {
   QString ident, name;
@@ -166,17 +170,17 @@ struct MapRunway
 
   bool isHard() const
   {
-    return surface == "CONCRETE" || surface == "ASPHALT" || surface == "BITUMINOUS" || surface == "TARMAC";
+    return isHardSurface(surface);
   }
 
   bool isWater() const
   {
-    return surface == "WATER";
+    return isWaterSurface(surface);
   }
 
   bool isSoft() const
   {
-    return !isWater() && !isHard();
+    return isSoftSurface(surface);
   }
 
   const atools::geo::Pos& getPosition() const
@@ -490,6 +494,7 @@ QString navTypeName(const QString& type);
 QString navName(const QString& type);
 
 QString surfaceName(const QString& surface);
+int surfaceQuality(const QString& surface);
 QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
 QString parkingTypeName(const QString& type);

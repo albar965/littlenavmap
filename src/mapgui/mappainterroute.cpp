@@ -23,6 +23,7 @@
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "route/routecontroller.h"
+#include "mapgui/mapscale.h"
 
 #include <QBitArray>
 #include <marble/GeoDataLineString.h>
@@ -75,15 +76,20 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
-  if(!routeMapObjects.isEmpty())
+  if(!routeMapObjects.isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
     const RouteMapObject& first = routeMapObjects.at(0);
     if(first.getMapObjectType() == maptypes::AIRPORT)
     {
+      int size = 100;
+
       Pos startPos;
-      if(first.getParking().position.isValid())
+      if(routeMapObjects.hasDepartureParking())
+      {
         startPos = first.getParking().position;
-      else if(first.getStart().position.isValid())
+        size = first.getParking().radius;
+      }
+      else if(routeMapObjects.hasDepartureStart())
         startPos = first.getStart().position;
 
       if(startPos.isValid())
@@ -92,12 +98,15 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
         if(!pt.isNull())
         {
-          context->painter->setPen(QPen(mapcolors::routeOutlineColor, 7,
+          int w = std::max(10, scale->getPixelIntForFeet(size, 90));
+          int h = std::max(10, scale->getPixelIntForFeet(size, 0));
+
+          context->painter->setPen(QPen(mapcolors::routeOutlineColor, 9,
                                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-          context->painter->drawEllipse(pt, 10, 10);
-          context->painter->setPen(QPen(mapcolors::routeColor, 3,
+          context->painter->drawEllipse(pt, w, h);
+          context->painter->setPen(QPen(mapcolors::routeColor, 5,
                                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-          context->painter->drawEllipse(pt, 10, 10);
+          context->painter->drawEllipse(pt, w, h);
         }
       }
     }

@@ -574,7 +574,7 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
   }
 }
 
-const QList<maptypes::MapStart> *MapQuery::getStartPosForAirport(int airportId)
+const QList<maptypes::MapStart> *MapQuery::getStartPositionsForAirport(int airportId)
 {
   if(startCache.contains(airportId))
     return startCache.object(airportId);
@@ -593,6 +593,33 @@ const QList<maptypes::MapStart> *MapQuery::getStartPosForAirport(int airportId)
     }
     startCache.insert(airportId, ps);
     return ps;
+  }
+}
+
+void MapQuery::getBestStartPositionForAirport(maptypes::MapStart& start, int airportId)
+{
+  SqlQuery query(db);
+  query.prepare(
+    "select s.start_id, s.airport_id, s.type, s.heading, s.number, e.name, s.altitude, s.lonx, s.laty, "
+    "r.surface from start s join runway_end e on s.runway_end_id = e.runway_end_id "
+    "join runway r on r.primary_end_id = e.runway_end_id "
+    "where r.airport_id = :airportId "
+    "order by length desc");
+  query.bindValue(":airportId", airportId);
+  query.exec();
+
+  int bestSurfaceQuality = 0;
+  while(query.next())
+  {
+    QString surface = query.value("surface").toString();
+    int quality = maptypes::surfaceQuality(surface);
+    if(quality > bestSurfaceQuality)
+    {
+      bestSurfaceQuality = quality;
+      mapTypesFactory->fillStart(query.record(), start);
+    }
+    if(maptypes::isHardSurface(surface))
+      break;
   }
 }
 

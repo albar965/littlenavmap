@@ -69,6 +69,18 @@ public:
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
                   maptypes::MapSearchResult& mapobjects) const;
 
+  bool hasDepartureParking() const;
+
+  bool hasDepartureStart() const;
+
+  bool isFlightplanEmpty() const;
+  bool hasValidDeparture() const;
+  bool hasValidDestination() const;
+  bool hasDepartureHelipad() const;
+
+  bool hasEntries() const;
+  bool hasRoute() const;
+
 private:
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
