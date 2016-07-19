@@ -289,24 +289,27 @@ void MapWidget::restoreState()
   readPluginSettings(*s.getQSettings());
 
   if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
-  {
     markPos = atools::geo::Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
-    emit markChanged(markPos);
-  }
+  else
+    markPos = atools::geo::Pos(0.f, 0.f);
+  emit markChanged(markPos);
 
   if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
     homePos = atools::geo::Pos(s.valueFloat(lnm::MAP_HOMELONX), s.valueFloat(lnm::MAP_HOMELATY));
     homeDistance = s.valueFloat(lnm::MAP_HOMEDISTANCE);
-    emit homeChanged(homePos);
   }
+  else
+  {
+    homePos = atools::geo::Pos(0.f, 0.f);
+    homeDistance = 1800.f;
+  }
+  emit homeChanged(homePos);
+
   history.restoreState(lnm::MAP_HISTORY);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
-  {
-    if(s.contains(lnm::MAP_KMLFILES))
-      kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
-  }
+    kmlFiles = s.valueStrList(lnm::MAP_KMLFILES);
   screenIndex->restoreState();
 }
 
