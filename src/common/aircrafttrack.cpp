@@ -29,7 +29,9 @@ AircraftTrack::~AircraftTrack()
 
 void AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
 {
+  // Use a larger distance on ground before storing position
   float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_1M : atools::geo::Pos::POS_EPSILON_100M;
+
   if(isEmpty() || !pos.almostEqual(last().pos, epsilon))
-    append({pos, onGround, 0, 0});
+    append({pos, onGround});
 }

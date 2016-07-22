@@ -19,16 +19,16 @@
     margin: 4em;
     }
     * {
-    font-size: 15px;
+    font-size: 16px;
     }
-    h1, h2, h3, h4, h5 {
+    h1, h2, h3, h4, h5, h6 {
     color: #004703
     }
     h1, h2 {
     margin-top: 1em;
     margin-bottom: 0.5em;
     }
-    h3, h4 {
+    h3, h4, h5, h6 {
     margin-top: 0.3em;
     margin-bottom: 0.2em;
     }
@@ -68,35 +68,44 @@
     margin-left: 1.5em;
     margin-top: 0.4em;
     margin-bottom: 0.4em;
+    width:50%;
     }
     code {
-    font-size: 14px;
+    font-size: 16px;
     font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
     font-weight: bold;
     color: darkgreen;
     }
     em {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     color: darkgreen;
     }
 
     h1 {
-    font-size: 28px;
+    font-size: 34px;
     border-bottom: 4px solid #004703;
     width:80%;
     }
     h2 {
-    font-size: 24px;
+    font-size: 28px;
     border-bottom: 2px solid #004703;
     width:70%;
     }
     h3 {
-    font-size: 20px;
+    font-size: 24px;
     border-bottom: 1px solid #004703;
     width:60%;
     }
     h4 {
+    font-size: 20px;
+    border-bottom: 1px solid #004703;
+    width:40%;
+    }
+    h5 {
+    font-size: 18px;
+    }
+    h6 {
     font-size: 16px;
     }
 
@@ -119,6 +128,7 @@
 
     body.c3 { color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);}
     img.gplimg {width: 166px; height: 82px;}
+    img.icon {width: 24px; height: 24px;}
     span.bold {font-weight: bold;}
     /*]]>*/
     </style>
@@ -127,50 +137,993 @@
     <h1>
       Little Navmap Help
     </h1>
+
     <p>
-      Version develop
+      Version 0.9.5.develop
     </p>
+
     <p>
-      <img class="textimg" style="width: 180px; height:auto"
-      alt="Little Navmap"  title="Little Navmap" src="images/navroute.svg" />
+      <img class="textimg" style="width: 180px; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/navroute.svg" />
     </p>
+    <!-- ===================================================================== -->
+
     <h2>
       Installation
     </h2>
+
     <p>
       An installer or setup program is not available.
     </p>
+
     <p>
-      <span class="bold">Do not extract the archive into the folder <code>c:\Program Files\</code>
-      or <code>c:\Program Files (x86)\</code> since you will need administrative privileges in some
-      Windows versions. Since Windows keeps control on these folders other problems might occur
-      like replaced or deleted files.</span>
+      <span class="bold">Do not extract the archive into the folder <code>c:\Program Files\</code> or <code>c:\Program
+      Files (x86)\</code> since you will need administrative privileges in some Windows versions. Since Windows keeps
+      control on these folders other problems might occur like replaced or deleted files.</span>
     </p>
+
     <p>
-      Extract the Zip archive into a folder like <code>c:\Own Programs\Little Navmap</code>. Then
-      start the program by double-clicking <code>littlenavmap.exe</code>.
+      Extract the Zip archive into a folder like <code>c:\Own Programs\Little Navmap</code>. Then start the program by
+      double-clicking <code>littlenavmap.exe</code>.
     </p>
+
     <p>
-      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP 32-bit,
-      Windows 7 64-bit and Windows 8.1 64-bit.
+      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP 32-bit, Windows 7 64-bit and
+      Windows 8.1 64-bit.
     </p>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Features
+    </h2>
+
+    <h3>
+      General
+    </h3>
+
+    <ul>
+      <li>Supported platforms: Windows XP/7/8/10, Linux, Mac OS X
+      </li>
+
+      <li>Conservative user interface without experiments: Using a main menu, context menus, toolbars, dock windows,
+      undo, recent file lists and more.
+      </li>
+
+      <li>Written using C++ and Qt - it is fast
+      </li>
+
+      <li>The program saves almost all settings, like flight plan, windows positions, searches and more and restores
+      everything on startup
+      </li>
+
+      <li>Most question or information dialogs can be disabled.
+      </li>
+
+      <li>Support for Flight Simulator X, Flight Simulator - Steam Edition, Prepar3D v2 and Prepar3D v3 (partially
+      untested)
+      </li>
+
+      <li>Weather display from ActiveSkyNext, NOAA or Vatsim in tooltips and information panels
+      </li>
+
+      <li>Databases for simulators are kept separate and can be changed on the fly
+      </li>
+
+      <li>
+        <em>Little Navmap</em> can be run on computers that do not contain any simulator installation at all. Just copy
+        the database from your flight simulator computer.
+      </li>
+
+      <li>Airport and navaid icons used throughout the whole program for easier recognition
+      </li>
+
+      <li>Information panels showing all about airports or navaids
+      </li>
+
+      <li>Exhaustive search function for airports and navaids that allows to filter by an unimaginable amount of
+      options
+      </li>
+
+      <li>Distance based search for airports or navaids around a center point. Can be combined with all other search
+      options.
+      </li>
+    </ul>
+
+    <h3>
+      Flight Plan and routing
+    </h3>
+
+    <ul>
+      <li>Can read and write FSX PLN format (XML).
+      </li>
+
+      <li>Drag and drop flight plan editing on the map
+      </li>
+
+      <li>Easy flight plan editing in the table view, like moving and deleting waypoints
+      </li>
+
+      <li>Automatic routing (does not require online services) for high/low altitude airways, VOR/NDB and preset cruise
+      altitude
+      </li>
+
+      <li>Elevation profile display for flightplan
+      </li>
+
+      <li>Undo/redo for flight plan edits
+      </li>
+
+      <li>Robust against malformed flight plans - does not put unknown waypoints "into the desert"
+      </li>
+    </ul>
+
+    <h3>
+      Map
+    </h3>
+
+    <ul>
+      <li>No need to download and install any additional elevation or map data.
+      </li>
+
+      <li>Uses two free online maps (OpenStreetMap amd OpenTopoMap) as well as two simple offline maps
+      </li>
+
+      <li>Multiple map themes including hillshading and two map projections selectable
+      </li>
+
+      <li>Airport display iconography based on real world VFR maps thus combining plenty of information in a small
+      symbol
+      </li>
+
+      <li>Detailed airport diagrams displayed in the map (not a separate window) including parking, taxiways, displaced
+      threshold, overrun areas and much more.
+      </li>
+
+      <li>Add-on airports are highlighted in a different text format for easier regognition
+      </li>
+
+      <li>History of map position and zoom levels like a web browser.
+      </li>
+
+      <li>Distance measurement lines and range rings
+      </li>
+
+      <li>Map display configuration including detail level on the toolbar
+      </li>
+
+      <li>Symbol and text sizes configurable in options dialog
+      </li>
+
+      <li>Can load and display Google Earth KML files
+      </li>
+
+      <li>Detailed tooltips on map display
+      </li>
+    </ul>
+
+    <h3>
+      Simulator aircraft
+    </h3>
+
+    <ul>
+      <li>Shows simulator aircraft on the map including flight plan progress display (needs <em>Little Navconnect</em>)
+      </li>
+
+      <li>Track of simulator aircraft
+      </li>
+
+      <li>Using <em>Little Navconnect</em> as an agent between the simulator and <em>Little Navmap</em> saves the pain
+      of remote simconnect setup
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
+    <h2>
+      General Remarks
+    </h2>
+
+    <p>
+      The user interface of <em>Little Navmap</em> consists of multipe dock windows that are arranged around the main
+      window containing the map view. The dock windows can be detached from the main window and also moved around in
+      their docked position. All docks can be closed if they are not needed. You can even drop docks on each other to
+      create a tabbed view (tabs will appear at the bottom of the dock stack). Toolbars are also movable if you click
+      on the left handle and can be closed or undocked from the main window too.
+    </p>
+
+    <p>
+      Please note that due to a variety of external data like KML or BGL files that can be loaded by <em>Little
+      Navmap</em> crashes or malfunctions can occur. If that is the case send me the offending file and <em>Little
+      Navmap</em>'s log file and configuration which can be located in the about dialog. My e-mail address is shown in
+      the about dialog of <em>Little Navmap</em> too.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2>
+      First Start
+    </h2>
+
+    <p>
+      When starting the first time <em>Little Navmap</em> will show the <code>Load Scenery Library</code> dialog. From
+      there your can select all recognized Flight Simulators and load their scenery libaries into <em>Little
+      Navmap</em>'s internal database. One database is kept for each simulator and it can be changed on the fly in the
+      <code>Scenery Library</code> menu.
+    </p>
+
+    <p>
+      See the description of the <a href="#scenerylibrary">Scenery Library</a> for more information.
+    </p>
+
+    <p>
+      See chapter <a href="#nosim">Running without Simulator Installation</a> for information how to run <em>Little
+      Navmap</em> without a Flight Simulator installation.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Quick Overview
+    </h2>
+
+    <p>
+      Screenshot
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Menus and Toolbar
+    </h2>
+
+    <p>
+      This chapter describes the menu structure of <em>Little Navmap</em>. You will find parts of this functionality on
+      the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
+      are not listed separately.
+    </p>
+
+    <h3>
+      File
+    </h3>
+
+    <h4>
+      Flight Plans
+    </h4>
+
+    <p>
+      You can load, save or create new FSX PLN files. FS9 PLN files are not supported.
+    </p>
+
+    <p>
+      An opened flight plan file will be reloaded on startup (reload and centering can be switched off in the <a href=
+      "#options">Options dialog</a>).
+    </p>
+
+    <h4>
+      Google Earth KML Files
+    </h4>
+
+    <p>
+      You can add one or more Google Earth KML or KMZ file to the map display. All added KML or KMZ files will be
+      reloaded on startup (reload and centering can be switched off in the <a href="#options">Options dialog</a>).
+    </p>
+
+    <p>
+      All loaded KML files can be removed from the map with the menu item <code>Clear KML from Map</code>
+    </p>
+
+    <h4>
+      Work Offline
+    </h4>
+
+    <p>
+      Stops loading of map data from the internet. This affects only the OpenStreetMap and OpenTopoMap map themes.
+    </p>
+
+    <h3>
+      Flight Plan
+    </h3>
+
+    <h4>
+      Undo/Redo
+    </h4>
+
+    <p>
+      Allows to undo and redo all flight plan changes.
+    </p>
+
+    <h4>
+      Select a Start Position for Departure
+    </h4>
+
+    <p>
+      A parking/gate/ramp, runway or helipad can be selected as a start position on the departure airport. A parking
+      position can also be selected in the map context menu item <a href="#fpdeparture">Set as Flight Plan
+      Departure</a>. If no position is selected the longest primary runway end is selected automatically as start.
+    </p>
+
+    <h4>
+      Edit Flight Plan on Map
+    </h4>
+
+    <p>
+      Switches flight plan edit mode on the map on or off. See <a href="#fpedit">Flight Plan Editing</a>.
+    </p>
+
+    <h4>
+      Calculate Direct
+    </h4>
+
+    <p>
+      Deletes any intermediate waypoints and connects departure and destination using a great circle route.
+    </p>
+
+    <h4>
+      Calculate Radionav
+    </h4>
+
+    <p>
+      Creates a flight plan that uses only VOR and NDB stations as waypoints and ensures that reception of at least one
+      station is ensured along the whole flight plan. Note that VOR stations are preferred before NDB and DME stations
+      are not used at all. Calculation will fail if not enough radio navaids can be found between departure and
+      destination.
+    </p>
+
+    <h4>
+      Calculate high Altitude
+    </h4>
+
+    <p>
+      Uses Jet Airways to create a flight plan. The resulting minimum altitude is set into the flight plan altitude
+      field. A simplified east/west rule is used to adjust the cruise altitude (can be switched off in the <a href=
+      "#options">Options dialog</a>).
+    </p>
+
+    <h4>
+      Calculate low Altitude
+    </h4>
+
+    <p>
+      Uses Victor Airways to create a flight plan. Everything else is the same as in <code>Calculate low
+      Altitude</code>.
+    </p>
+
+    <h4>
+      Calculate based on given Altitude
+    </h4>
+
+    <p>
+      Use the value in the altitude field of the flight plan to find a flight plan along Victor and/or Jet airways. If
+      the altitude value is too low calculation will fail.
+    </p>
+
+    <h4>
+      Reverse Flight Plan
+    </h4>
+
+    <p>
+      Swaps departure and destination and reverses order of all intermediate waypoints.
+    </p>
+
+    <h3>
+      Map
+    </h3>
+
+    <h4>
+      Goto Home
+    </h4>
+
+    <p>
+      Goes to home area <a href="#mapsethome">Set Home</a> using the saved position and zoom factor.
+    </p>
+
+    <h4>
+      Go to Center for Distance Search
+    </h4>
+
+    <p>
+      Go to the center point used for distance searches.<a href="#mapsetdistcenter">Set Center for Distance Search</a>
+    </p>
+
+    <h4>
+      Center Flight Plan
+    </h4>
+
+    <p>
+      Shows the whole flight plan on the map.
+    </p>
+
+    <h4>
+      Center Aircraft
+    </h4>
+
+    <p>
+      Zooms to the aircraft if connected to a Flight Simulator and keeps the aircraft centered.
+    </p>
+
+    <h4>
+      Delete Aircraft Trail
+    </h4>
+
+    <p>
+      Removes the aircraft trail if connected to a Flight Simulator.
+    </p>
+
+    <h4>
+      Map Position Back Forward
+    </h4>
+
+    <p>
+      Jumps forward or backward in the map position history. The complete history is saved and restored when starting
+      <em>Little Navmap</em>.
+    </p>
+
+    <h4>
+      More/Default/Less Details
+    </h4>
+
+    <p>
+      Increases or decreases details on the map. More details mean more content, more text information and bigger
+      icons.
+    </p>
+
+    <h4>
+      Projection
+    </h4>
+
+    <h5>
+      Mercator
+    </h5>
+
+    <p>
+      A flat projection that gives the most fluid movement when using the <code>OpenStreetMap</code> and
+      <code>OpenTopoMap</code> themes.
+    </p>
+
+    <h5>
+      Spherical
+    </h5>
+
+    <p>
+      Shows earth as a globe which is the most natural projection. Movement can stutter when using the
+      <code>OpenStreetMap</code> and <code>OpenTopoMap</code> themes. Use the <code>Simple</code> or <code>Plain</code>
+      map themes to prevent this.
+    </p>
+
+    <h4 id="maptheme">
+      Theme
+    </h4>
+
+    <h5>
+      OpenStreeMap
+    </h5>
+
+    <p>
+      This is an online raster map that includes and hillshading option. Note that hillshading does not cover the whole
+      globe.
+    </p>
+
+    <h5>
+      OpenTopoMap
+    </h5>
+
+    <p>
+      A beautiful online raster map that aims to mimic a paper topographic map as much as possible. Includes
+      hillshading and elevation contour lines at lower zoom levels. Disadvantage is that airports and navaids are hard
+      to recognize in the colorful map.
+    </p>
+
+    <h5>
+      Simple
+    </h5>
+
+    <p>
+      This is an offline political map using colored countries. The map is simple and included in <em>Little
+      Navmap</em>. Has an option to display city and country names.
+    </p>
+
+    <h5>
+      Plain
+    </h5>
+
+    <p>
+      A very simple offline map. The map is and included in <em>Little Navmap</em>. Has an option to display city and
+      country names.
+    </p>
+
+    <h4>
+      Force Show Addon Airports
+    </h4>
+
+    <p>
+      If this option is selected add-on airports are always shown independent of the other airport map settings.
+    </p>
+
+    <h4>
+      Show Airports with hard Runways
+    </h4>
+
+    <p>
+      Show airports that have at least one runway with a hard surface.
+    </p>
+
+    <h4>
+      Show Airports with soft Runways
+    </h4>
+
+    <p>
+      Show airports that only soft surfaced runways.
+    </p>
+
+    <h4>
+      Show empty Airports
+    </h4>
+
+    <p>
+      Shows empty airports. This button can be hidden depending on settings in the <a href="#options">Options
+      dialog</a>.
+    </p>
+
+    <p>
+      An empty airport is defined as one which has neither parking nor taxiways nor aprons and is no add-on. These
+      airports are treated differently in <em>Little Navmap</em> since they are the most boring of all default
+      airports.
+    </p>
+
+    <h4>
+      Show VOR Stations, Show NDB Stations, Show Waypoints, Show ILS Feathers, Show Victor/Jet Airways, Show Flight
+      Plan, Show Aircraft Trail
+    </h4>
+
+    <p>
+      Simply shows or hides these facilities or navaids on the map.
+    </p>
+
+    <h4>
+      Show Map Grid
+    </h4>
+
+    <p>
+      Shows a latitude/longitude grid as well as the meridian and anti meridian (date line) on the map.
+    </p>
+
+    <h4>
+      Show Country and City Names, Show Hillshading
+    </h4>
+
+    <p>
+      Availability of these options depends on the selected map theme. See <a href="#maptheme">Theme</a>.
+    </p>
+
+    <h3 id="scenerylibrary">
+      Scenery Library
+    </h3>
+
+    <h4>
+      Flight Simulators
+    </h4>
+
+    <p>
+      For each Flight Simulator installation or database found one menu entry is created that allows switching of
+      databases on the fly. The menu item is hidden if only one Flight Simulator was found.
+    </p>
+
+    <h4>
+      Show Database Files
+    </h4>
+
+    <p>
+      This opens <em>Little Navmap</em>'s database directory in explorer. See <a href="#nosim">Running without
+      Simulator Installation</a> for more information on copying database files between different computers.
+    </p>
+
+    <h4>
+      Load Scenery Library
+    </h4>
+
+    <p>
+      Opens the <code>Load Scenery Library</code> dialog. See <a href="#scenerylib">Load Scenery Library Dialog</a> for
+      more information.
+    </p>
+
+    <h3>
+      Tools
+    </h3>
+
+    <h4>
+      Connect to Simulator
+    </h4>
+
+    <p>
+      Opens the <code>Connect</code> dialog that allows to connect to a Flight Simulator using <em>Little
+      Navconnect</em>. See <a href="#connect">Connecting to a Flight Simulator</a> for more information.
+    </p>
+
+    <h4>
+      Reset all Messages
+    </h4>
+
+    <p>
+      This will re-enable all dialogs that were disabled by clicking <code>Do not show this dialog again</code> or
+      similar text.
+    </p>
+
+    <h4>
+      Options
+    </h4>
+
+    <p>
+      Opens the <a href="#options">Options dialog</a>.
+    </p>
+
+    <h3>
+      Window
+    </h3>
+
+    <h4>
+      Search, Flight Plan, Information, Flight Plan Profile, Simulator Aircraft
+    </h4>
+
+    <p>
+      Opens or closes these dock windows.
+    </p>
+
+    <h4>
+      Main, Map, Flight Plan, View Toolbar, Statusbar
+    </h4>
+
+    <p>
+      Shows or hides these toolbars
+    </p>
+
+    <h3>
+      Help
+    </h3>
+
+    <h4>
+      Contents
+    </h4>
+
+    <p>
+      Shows this help in a web browser
+    </p>
+
+    <h4>
+      NavMap Legend, Map Legend
+    </h4>
+
+    <p>
+      Shows the map legends in the information dock window.
+    </p>
+
+    <h4>
+      About Little Navmap
+    </h4>
+
+    <p>
+      Shows version, revision about <em>Little Navmap</em>. Also links to the database directory, configuration file
+      and log file.
+    </p>
+
+    <h4>
+      Marble Widget, Qt
+    </h4>
+
+    <p>
+      Information about the libraries <em>Little Navmap</em> uses.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Map Display
+    </h2>
+
+    <h3>
+      Moving
+    </h3>
+
+    <p>
+      Use click an drag to move the map and the mousewheel to zoom in or out. You can also use the overlay buttons on
+      the right side of the map.
+    </p>
+
+    <p>
+      Use the cursor keys to scroll the map and <code>+</code> and <code>-</code> to zoom in and out. Use
+      <code>Alt+Left</code> and <code>Alt+Right</code> to go forward or backward in the map position history. Do not
+      forget to activate the map window by clicking into it before using any keys for movements.
+    </p>
+
+    <h3>
+      Tooltips
+    </h3>
+
+    <p>
+      Hovering the mouse over the map will show tooltips for all objects like aiports, VOR, airways and more nearby the
+      cursor. The tooltip is truncated if it gets too long. In that case reduce details or zoom in. The sensitivity for
+      tooltip display can be adjusted in the <a href="#options">Options dialog</a>.
+    </p>
+
+    <h3>
+      Mouse Clicks
+    </h3>
+
+    <p>
+      A single click on an airport or navaid shows details in the information dock window. A double click zooms in
+      showing either the airport diagram or the navaid closely and additionally shows details in the information dock
+      window.
+    </p>
+
+    <h3 id="fpedit">
+      Flight Plan Editing
+    </h3>
+
+    <h3>
+      Context Menu
+    </h3>
+
+    <h4>
+      Show Information
+    </h4>
+
+    <h4>
+      Measure GC Distance from here
+    </h4>
+
+    <h4>
+      Measure Rhumb Distance from here
+    </h4>
+
+    <h4>
+      Remove Distance measurement
+    </h4>
+
+    <h4>
+      Show Range Rings
+    </h4>
+
+    <h4>
+      Show Navaid range
+    </h4>
+
+    <h4>
+      Remove Range Ring
+    </h4>
+
+    <h4>
+      Remove all Range Rings and Distance measurements
+    </h4>
+
+    <h4 id="fpdeparture">
+      Set as Flight Plan Departure
+    </h4>
+
+    <h4>
+      Set as Flight Plan Destination
+    </h4>
+
+    <h4>
+      Add Position to Flight Plan
+    </h4>
+
+    <h4>
+      Delete from Flight Plan
+    </h4>
+
+    <h4>
+      Show in Search
+    </h4>
+
+    <h4 id="mapsetdistcenter">
+      Set Center for Distance Search
+    </h4>
+
+    <h4 id="mapsethome">
+      Set Home
+    </h4>
+    <!-- ===================================================================== -->
+
+    <h2 id="search">
+      Search Dock Window
+    </h2>
+
+    <h3>
+      General
+    </h3>
+
+    <h3>
+      Mouse Clicks
+    </h3>
+
+    <h3>
+      Context Menu
+    </h3>
+
+    <h4>
+      Show Information
+    </h4>
+
+    <h4>
+      Show on Map
+    </h4>
+
+    <h4>
+      Filter by Entries including/excluding
+    </h4>
+
+    <h4>
+      Reset Search
+    </h4>
+
+    <h4>
+      Show All
+    </h4>
+
+    <h4>
+      Show Range Rings
+    </h4>
+
+    <h4>
+      Show Navaid range
+    </h4>
+
+    <h4>
+      Remove all Range Rings and Distance measurements
+    </h4>
+
+    <h4>
+      Set as Flight Plan Departure
+    </h4>
+
+    <h4>
+      Set as Flight Plan Destination
+    </h4>
+
+    <h4>
+      Add Position to Flight Plan
+    </h4>
+
+    <h4>
+      Copy
+    </h4>
+
+    <h4>
+      Select All
+    </h4>
+
+    <h4>
+      Reset View
+    </h4>
+
+    <h4>
+      Set Center for Distance Search
+    </h4>
+
+    <h3>
+      Airport Tab
+    </h3>
+
+    <h3>
+      Navaid Tab
+    </h3>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Flight Plan Dock Window
+    </h2>
+
+    <h3>
+      Mouse Clicks
+    </h3>
+
+    <h3>
+      Context Menu
+    </h3>
+
+    <h4>
+      Move Selected Legs up/down
+    </h4>
+
+    <h4>
+      Delete Selected Legs
+    </h4>
+
+    <h4>
+      Show Information
+    </h4>
+
+    <h4>
+      Show on Map
+    </h4>
+
+    <h4>
+      Show Range Rings
+    </h4>
+
+    <h4>
+      Show Navaid range
+    </h4>
+
+    <h4>
+      Remove all Range Rings and Distance measurements
+    </h4>
+
+    <h4>
+      Copy
+    </h4>
+
+    <h4>
+      Select All
+    </h4>
+
+    <h4>
+      Reset View
+    </h4>
+
+    <h4>
+      Set Center for Distance Search
+    </h4>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Information Dock Window
+    </h2>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Simulator Aircraft Dock Window
+    </h2>
+
+    <h3>
+      Aircraft Tab
+    </h3>
+
+    <h3>
+      Progress Tab
+    </h3>
+    <!-- ===================================================================== -->
+
+    <h2>
+      Flight Plan Elevation Profile
+    </h2>
+    <!-- ===================================================================== -->
+
+    <h2 id="options">
+      Options
+    </h2>
+    <!-- ===================================================================== -->
+
+    <h2 id="scenerylib">
+      Load Scenery Library Dialog
+    </h2>
+    <!-- ===================================================================== -->
+
+    <h2 id="nosim">
+      Running without Simulator Installation
+    </h2>
+    <!-- ===================================================================== -->
+
+    <h2 id="connect">
+      Connecting to a Flight Simulator
+    </h2>
+    <!-- ===================================================================== -->
+
     <h2>
       License
     </h2>
+
     <p>
-      This program is free software: you can redistribute it and/or modify it under the terms of
-      the GNU General Public License as published by the Free Software Foundation, either version 3
-      of the License, or (at your option) any later version.
+      This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+      License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
+      later version.
     </p>
+
     <p>
-      This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-      without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
-      the GNU General Public License for more details.
+      This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+      implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+      more details.
     </p>
+
     <p>
-      You should have received a copy of the GNU General Public License along with this program. If
-      not, see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+      You should have received a copy of the GNU General Public License along with this program. If not, see
+      &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
     </p>
+
     <p>
       <img alt="GPL V3" title="GPL V3" class="gplimg" src="images/gpl-v3-logo.svg" />
     </p>

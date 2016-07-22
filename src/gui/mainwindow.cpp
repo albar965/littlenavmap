@@ -74,7 +74,8 @@ MainWindow::MainWindow(QWidget *parent) :
              "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
                "<p>The source code for this application is available at "
                  "<a href=\"https://github.com/albar965\">Github</a>.</p>"
-                   "<p><b>Copyright 2015-2016 Alexander Barthel (albar965@mailbox.org).</b></p>");
+                   "<p><b>Copyright 2015-2016 Alexander Barthel</b> "
+                     "(<a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a>).</p>");
 
     ui->setupUi(this);
 
@@ -199,13 +200,20 @@ void MainWindow::showNavmapLegend()
   {
     ui->dockWidgetInformation->show();
     ui->tabWidgetInformation->setCurrentIndex(ic::NAVMAP_LEGEND);
-    setStatusMessage(tr("Opened map legend."));
+    setStatusMessage(tr("Opened navigation map legend."));
   }
   else
   {
     helpHandler->openHelpUrl(legendUrl);
     setStatusMessage(tr("Opened map legend in browser."));
   }
+}
+
+void MainWindow::showMapLegend()
+{
+  ui->dockWidgetInformation->show();
+  ui->tabWidgetInformation->setCurrentIndex(ic::MAP_LEGEND);
+  setStatusMessage(tr("Opened map legend."));
 }
 
 void MainWindow::loadNavmapLegend()
@@ -659,6 +667,7 @@ void MainWindow::connectAllSlots()
           infoController, &InfoController::updateAirport);
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
+  connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 }
 
 void MainWindow::changeMapProjection(int index)

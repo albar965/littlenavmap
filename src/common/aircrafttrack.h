@@ -24,12 +24,13 @@ struct AircraftTrackPos
 {
   atools::geo::Pos pos;
   bool onGround;
-  char padding;
-  short padding2;
 };
 
 Q_DECLARE_TYPEINFO(AircraftTrackPos, Q_PRIMITIVE_TYPE);
 
+/*
+ * Stores the track of the flight simulator aircraft
+ */
 class AircraftTrack :
   public QList<AircraftTrackPos>
 {
@@ -37,6 +38,10 @@ public:
   AircraftTrack();
   ~AircraftTrack();
 
+  /*
+   * Add a track position. Accurracy depends on the ground flag which will cause more
+   * or less points skipped.
+   */
   void appendTrackPos(const atools::geo::Pos& pos, bool onGround);
 
 };

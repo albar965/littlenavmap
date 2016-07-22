@@ -146,6 +146,7 @@ private:
   bool routeValidate();
   void loadNavmapLegend();
   void showNavmapLegend();
+  void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
 

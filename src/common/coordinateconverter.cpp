@@ -187,6 +187,7 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
   if(numPoints == 0)
     visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
 
+  // Do not paint repetitions for the Mercator projection
   // The fist coordinate is good enough here
   x = xordinates[0];
 

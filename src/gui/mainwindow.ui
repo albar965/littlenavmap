@@ -76,6 +76,7 @@
     </property>
     <addaction name="actionHelpContents"/>
     <addaction name="actionHelpNavmapLegend"/>
+    <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
     <addaction name="separator"/>
@@ -2842,8 +2843,11 @@
    <property name="text">
     <string>&amp;Open Flight Plan ...</string>
    </property>
+   <property name="toolTip">
+    <string>Open flight plan</string>
+   </property>
    <property name="statusTip">
-    <string>Open Flight Plan</string>
+    <string>Open flight plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -2858,10 +2862,10 @@
     <string>&amp;Save Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Save Flight Plan</string>
+    <string>Save flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Save Flight Plan</string>
+    <string>Save flight plan</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -3957,13 +3961,13 @@
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select &amp;Parking Position for Departure</string>
+    <string>Select a &amp;Start Position for Departure</string>
    </property>
    <property name="toolTip">
-    <string>Select parking position for flight plan departure</string>
+    <string>Select start position for flight plan departure</string>
    </property>
    <property name="statusTip">
-    <string>Select parking position for flight plan departure</string>
+    <string>Select start position for flight plan departure</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+P</string>
@@ -4257,13 +4261,13 @@
      <normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</normaloff>:/littlenavmap/resources/icons/kmlfileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>Open Google Earth &amp;KML ...</string>
+    <string>Add Google Earth &amp;KML ...</string>
    </property>
    <property name="toolTip">
-    <string>Open Google Earth KML files</string>
+    <string>Add Google Earth KML files to map</string>
    </property>
    <property name="statusTip">
-    <string>Open Google Earth KML files</string>
+    <string>Add Google Earth KML files to map</string>
    </property>
   </action>
   <action name="actionClearKmlMenu">
@@ -4283,13 +4287,13 @@
      <normaloff>:/littlenavmap/resources/icons/cancel.svg</normaloff>:/littlenavmap/resources/icons/cancel.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Clear KML from Map</string>
+    <string>&amp;Clear Google Earth KML from Map</string>
    </property>
    <property name="toolTip">
-    <string>Remove all KML files from the map</string>
+    <string>Remove all Google Earth KML files from the map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all KML files from the map</string>
+    <string>Remove all Google Earth KML files from the map</string>
    </property>
   </action>
   <action name="actionWorkOffline">
@@ -4487,6 +4491,21 @@
    </property>
    <property name="text">
     <string>&amp;Simple</string>
+   </property>
+  </action>
+  <action name="actionHelpMapLegend">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Map Legend</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the map legend for the current map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the navigation map legend</string>
    </property>
   </action>
  </widget>

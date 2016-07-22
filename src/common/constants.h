@@ -65,12 +65,14 @@ const QString ROUTE_VIEW = "Route/View";
 const QString SEARCHPANEAIRPORT_WIDGET = "SearchPaneAirport/Widget";
 const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
 
+/* Options dialog */
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
 const QString OPTIONS_DIALOG_ASN_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
 const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
 const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
 const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
 
+/* Other options that are only accessible in the configuration file */
 const QString OPTIONS_LANGUAGE = "Options/Language";
 const QString OPTIONS_MARBLEDEBUG = "Options/MarbleDebug";
 const QString OPTIONS_VERSION = "Options/Version";
@@ -93,6 +95,9 @@ const QString DATABASE_PREFIX = "little_navmap_";
 const QString DATABASE_SUFFIX = ".sqlite";
 const QString DATABASE_BACKUP_SUFFIX = "-backup";
 
+/* This is the default configuration file for reading the scenery library.
+ * It can be overridden by placing a  file with the same name into
+ * the configuration directory. */
 const QString DATABASE_NAVDATAREADER_CONFIG = ":/littlenavmap/resources/config/navdatareader.cfg";
 
 } // namespace lnm

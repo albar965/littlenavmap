@@ -23,6 +23,8 @@
 class QElapsedTimer;
 
 namespace formatter {
+
+/* Capitalize the string using exceptions for any aviation acronyms */
 QString capNavString(const QString& str);
 
 /* All formatters are locale aware */
