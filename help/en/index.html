@@ -438,7 +438,7 @@
       Departure</a>. If no position is selected the longest primary runway end is selected automatically as start.
     </p>
 
-    <h4>
+    <h4 >
       Edit Flight Plan on Map
     </h4>
 
@@ -835,8 +835,9 @@
 
     <p>
       Hovering the mouse over the map will show tooltips for all objects like aiports, VOR, airways and more nearby the
-      cursor. The tooltip is truncated if it gets too long. In that case reduce details or zoom in. The sensitivity for
-      tooltip display can be adjusted in the <a href="#options">Options dialog</a>.
+      cursor. The tooltip is truncated if it gets too long. In that case reduce details or zoom in.</p>
+      <p> The sensitivity for
+      tooltip display can be adjusted in the <a href="#options">Options dialog</a>.</p>
     </p>
 
     <h3>
@@ -849,75 +850,169 @@
       window.
     </p>
 
+    <p>
+    The mouse click sensitivity can be adjusted in the <a href="#options">Options dialog</a>.
+    </p>
+
     <h3 id="fpedit">
       Flight Plan Editing
     </h3>
 
-    <h3>
+    <p>
+    The flight plan editing mode is switched on per default but can be disabled if it gets too annoying e.g. during flight.
+      The following functionality is available:
+    </p>
+
+    <ul>
+    <li><span class="bold">Click on line:</span> Adds a new intermediate waypoint depending on where the next click is done:</li>
+    <ul>
+    <li><span class="bold">On a single airport and navaid:</span> Object is added to the flight plan segment.</li>
+    <li><span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object to be added.</li>
+    <li><span class="bold">No airport and no navaid:</span> A user defined position is added to the flight plan.</li>
+    </ul>
+    <li><span class="bold">Click on waypoint:</span> Replaces the clicked waypoint with an object depending on where the next click is done:</li>
+    <ul>
+    <li><span class="bold">On a single airport and navaid:</span> Object replaces the clicked waypoint.</li>
+    <li><span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object that replaces the clicked waypoint.</li>
+    <li><span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint.</li>
+    </ul>
+    <li><span class="bold">Click on departure or destination:</span> Replaces the departure or destination an object depending on where the next click is done:</li>
+    <ul>
+    <li><span class="bold">On a single airport:</span> Airport replaces the departure (with default runway as start position) or destination.</li>
+    <li><span class="bold">On a navaid:</span> Object replaces departure or destination which results in an invalid flight plan. The flight plan can be saved and loaded but will be unusable by the Flight Simulator.</li>
+    <li><span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object that replaces departure or destination.</li>
+    <li><span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint.</li>
+    </ul>
+    </ul>
+
+    <h3 id="mapcontextmenu">
       Context Menu
     </h3>
 
     <h4>
       Show Information
     </h4>
+    <p>
+    Shows detailed information in the information panels for the nearest airport or all navaids near the cursor.
+    </p>
 
     <h4>
       Measure GC Distance from here
     </h4>
+    <p>
+    Starts a measurment line on the first click. Second click ends measuring and keeps the line. All measurement lines
+    are saved and will be restored on next startup.
+    </p>
+    <p>Measurement lines use nautical miles as unit. If they are short enough feet will be added as unit so one
+    can measure e.g. takeoff distance for crossing takeoffs and more.
+    </p>
+    <p>A great circle gives the shortest distance from point to point on earth but does not use a constant course.
+    For that reason
+    the measurement line will indicate the course at the start and end position.
+    </p>
+    <p>Course is indicated in degrees true. Additional information like ident or frequency will be added to the line if
+    the measurement starts at a navaid or an airport.
+    </p>
+
 
     <h4>
       Measure Rhumb Distance from here
     </h4>
+    <p>A rhumb line is a line of constant course and used between the waypoints of an airway or when approaching a
+    VOR or NDB station. Distance between points is longer that the great circle route.
+    </p>
+    <p>The course for a rhumb line is normally indicated in degrees true. If the measurement starts at a navaid or an airport that have
+    magnetic variation course will be indicated in degrees magnetic. Additional information like ident and frequency
+    will be added to the line.
+    </p>
 
     <h4>
       Remove Distance measurement
     </h4>
+    <p>This menu item is active if you right click on the end of a distance measurement line. Removes only the selected line.
+    </p>
 
     <h4>
       Show Range Rings
     </h4>
+    <p>Shows multiple red range rings around the clicked position. Number and distance of the range rings
+    can be confgured in the <a href="#options">Options dialog</a>. A label indicates the distance of each ring.
+    </p>
 
     <h4>
       Show Navaid range
     </h4>
+    <p>Shows a range ring around the clicked radio navaid indicating its range.
+    A label shows ident and frequency.
+    </p>
 
     <h4>
       Remove Range Ring
     </h4>
+    <p>Active if the click is at the center of a range ring. Removes the ring.
+    </p>
 
     <h4>
       Remove all Range Rings and Distance measurements
     </h4>
+    <p>
+    Removes all rings and distance measurement lines from the map.
+    </p>
 
     <h4 id="fpdeparture">
       Set as Flight Plan Departure
     </h4>
+    <p>This is active if the click is at an airport or an airport parking position. It will either replace
+    the flight plan departure or add a departure if the flight plan is empty.
+    </p>
+    <p>If the clicked object is an airport the default runway will be used as starting position. If a parking position
+    is clicked the airport and parking position will replace the current departure and start position.
+    </p>
 
     <h4>
       Set as Flight Plan Destination
     </h4>
+    <p>This is active if the click is at an airport. It will either replace
+    the flight plan destination or add the aiport if the flight plan is empty.
+    </p>
 
     <h4>
       Add Position to Flight Plan
     </h4>
+    <p>Adds the clicked object to the nearest flight plan segment. If no airport or navaid is near the clicked
+    position a user position will be added to the flight plan.
+    </p>
 
     <h4>
       Delete from Flight Plan
     </h4>
+    <p>
+    Deletes the clicked airport, navaid or user position from the flight plan.
+    </p>
 
     <h4>
       Show in Search
     </h4>
+    <p>
+    Shows the clicked airport or navaid in the search dialog. The current search parameters are reset.
+    </p>
 
     <h4 id="mapsetdistcenter">
       Set Center for Distance Search
     </h4>
+    <p>
+    Sets the center point for the distance search function. See <a href="#search">Search Dock Window</a>.
+    </p>
 
     <h4 id="mapsethome">
       Set Home
     </h4>
-    <!-- ===================================================================== -->
+    <p>
+    Sets the home postion and zoom value.
+    </p>
 
+
+    <!-- ===================================================================== -->
     <h2 id="search">
       Search Dock Window
     </h2>
@@ -925,23 +1020,80 @@
     <h3>
       General
     </h3>
+<p>Two search tabs are available for airport and navaid (VOR, NDB and waypoints) search.</p>
+<p>These tabs contain multiple rows of search filters that can be switched on and off with the
+drop down hamburger menu button on the top left.</p>
+<p>Filters are defined by various controls which are mostly self explaining. Only text filters and the
+tri state checkboxes like <code>Lighted</code>, <code>Approach</code> or <code>Closed</code> need a few extra remarks.</p>
+<p>All filters can be used in parallel where all conditions have to be met (<code>and</code> operator). All except the distance search filter are applied immediately. The distance search is applied after a short delay after each change.</p>
+
+<p>A short tooltip on the blue question mark gives a quick help about searching.</p>
+
+<h4>Text filters</h4>
+<p>The standard is to search for entries that start with the entered text.</p>
+
+<p>The placholder <code>*</code> stands for any text. Once a <code>*</code> is included in the term, the standard search is no longer used.</p>
+
+<p>If the first character in a search box is a <code>-</code> that search is negated (find all entries that do not match).</p>
+<p>Note that all of the above does not apply to numeric fields like <code>Runway length</code>.
+<h4>Tri state checkboxes</h4>
+<ul>
+<li><span class="bold">Gray means:</span> Condition is ignored.</li>
+<li><span class="bold">Checked means:</span> Condition must match.</li>
+<li><span class="bold">Unchecked means:</span> Condition must not match.</li>
+</ul>
+<h4>Distance search</h4>
+<p>This function allows you to combine all other search options with simple spatial search.</p>
+<p>When the checkbox <code>Distance</code> is checked the results will include only airports or navaids that are within
+the given minimum and maximum range of nautical miles of the search center.
+This allows you to quickly search for an destination that is within the range of your aircraft and fulfills other criteria like having lighted runways and fuel.</p>
+<p>Additionally you can select a direction (North, East, South and West) to restrict the distance search.</p>
+<h3 id="tableview">Table View</h3>
+<p>All selected elements in the table view will be highlighted on the map using a black/yellow circle. Multi selection using <code>Shift</code>- or <code>Ctrl</code>-Click are possible.</p>
+<p>If you want to get an quick overview of your results on the map select all the results which will be hightlighted on the ma.</p>
+<p>The header of the table view allows the following manipulations (the same applies to the flight plan table view):</p>
+    </p>
+    <div class="tabbed20">
+      <ul>
+        <li>
+          <span class="bold">Click on column header:</span> Sort ascending or descending.
+        </li>
+        <li>
+          <span class="bold">Click and drag on the column header:</span> Move column.
+        </li>
+        <li>
+          <span class="bold">Double click on column border:</span> Auto fit column size.
+        </li>
+        <li>
+          <span class="bold">Click and drag on column border:</span> Change column width.
+        </li>
+      </ul>
+    </div>
+    <p>
+      The program remembers the column widths and positions until <code>Reset View</code> is
+      executed.
+    </p>
+
 
     <h3>
       Mouse Clicks
     </h3>
+    <p>
+A double click on an entry in the table view shows either an airport diagram or zooms to the navaid. Additionally
+details are shown in the information panel. Single click selects and object and highlights it on the map using a black/yellow circle.
+    </p>
 
     <h3>
-      Context Menu
-    </h3>
+      Context Menu</h3>
 
-    <h4>
-      Show Information
+      <h4>Show Information
     </h4>
 
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
     <h4>
       Show on Map
     </h4>
-
+<p>Shows either the airport diagram or zooms to the navaid on the map.</p>
     <h4>
       Filter by Entries including/excluding
     </h4>
@@ -949,67 +1101,48 @@
     <h4>
       Reset Search
     </h4>
+<p>Deletes all search filters and shows all entries again in the table view.</p>
 
     <h4>
       Show All
     </h4>
-
+<p> The table view does not show all entries initially. This menu item allows to load and show all entries. Only a part of the entries is shown again after a search filter is modified or the sort order is changed.
+The number of all, visible and selected entries is shown at the bottom of the tab. </p>
     <h4>
-      Show Range Rings
+      Show Range Rings, Show Navaid range, Remove all Range Rings and Distance measurements, Set as Flight Plan Departure, Set as Flight Plan Destination, Add Position to Flight Plan
     </h4>
-
-    <h4>
-      Show Navaid range
-    </h4>
-
-    <h4>
-      Remove all Range Rings and Distance measurements
-    </h4>
-
-    <h4>
-      Set as Flight Plan Departure
-    </h4>
-
-    <h4>
-      Set as Flight Plan Destination
-    </h4>
-
-    <h4>
-      Add Position to Flight Plan
-    </h4>
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
     <h4>
       Copy
     </h4>
-
+<p>Copies the selected entries in CSV format into the clipboard. This will consider changes to the table view like column order and sort order.</p>
     <h4>
       Select All
     </h4>
-
+<p>Selects all visible entries. To select all available entries the function <code>Show All</code> has to be used first.</p>
     <h4>
       Reset View
     </h4>
-
+<p>Resets the sort order, the column order and column widths back to the default view.</p>
     <h4>
       Set Center for Distance Search
     </h4>
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
-    <h3>
-      Airport Tab
-    </h3>
-
-    <h3>
-      Navaid Tab
-    </h3>
     <!-- ===================================================================== -->
 
     <h2>
       Flight Plan Dock Window
     </h2>
-
+<h3>General</h3>
     <h3>
       Mouse Clicks
     </h3>
+    <p>
+A double click on an entry in the table view shows either an airport diagram or zooms to the navaid. Additionally
+details are shown in the information panel. Single click selects and object and highlights it on the map using a black/green circle.
+    </p>
 
     <h3>
       Context Menu
@@ -1018,46 +1151,57 @@
     <h4>
       Move Selected Legs up/down
     </h4>
-
+<p>Moves all selected flight plan legs up or down in the list.</p>
     <h4>
       Delete Selected Legs
     </h4>
+<p>Deletes all selected flight plan legs.</p>
 
     <h4>
       Show Information
     </h4>
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
     <h4>
       Show on Map
     </h4>
+<p>Shows either the airport diagram or zooms to the navaid on the map.</p>
 
     <h4>
       Show Range Rings
     </h4>
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
     <h4>
       Show Navaid range
     </h4>
+    <p>Will show the range rings for all selected radio navaids in the flight plan.</p>
+<p>Otherwise the same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
     <h4>
       Remove all Range Rings and Distance measurements
     </h4>
+<p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
 
     <h4>
       Copy
     </h4>
+<p>Copies the selected entries in CSV format into the clipboard. This will consider changes to the table view like column order and sort order.</p>
 
     <h4>
       Select All
     </h4>
-
+<p>Selects all flight plan legs.</p>
     <h4>
       Reset View
     </h4>
+<p>Resets the the column order and column widths back to the default view.</p>
 
     <h4>
       Set Center for Distance Search
     </h4>
+    <p>Same as the map <a href="#mapcontextmenu">Context Menu</a>.</p>
+
     <!-- ===================================================================== -->
 
     <h2>
