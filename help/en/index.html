@@ -37,6 +37,7 @@
     margin-bottom: 0.3em;
     margin-left: 0.2em;
     line-height: 1.5;
+    width:50%;
     }
     img {
     margin-top: 0.2em;
@@ -75,6 +76,15 @@
     font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
     font-weight: bold;
     color: darkgreen;
+    width:50%;
+    }
+    pre {
+    margin-left: 1.5em;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    font-size: 15px;
+    font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
+    font-weight: bold;
     }
     em {
     font-size: 16px;
@@ -139,12 +149,8 @@
     </h1>
 
     <p>
-      Version 0.9.5.develop
-    </p>
-
-    <p>
-      <img class="textimg" style="width: 180px; height:auto" alt="Little Navmap" title="Little Navmap" src=
-      "images/navroute.svg" />
+      <img class="textimg" style="width: 100px; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/navroute.svg" /> Version 0.9.5.develop.
     </p>
     <!-- ===================================================================== -->
 
@@ -171,156 +177,19 @@
       <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP 32-bit, Windows 7 64-bit and
       Windows 8.1 64-bit.
     </p>
-    <!-- ===================================================================== -->
 
-    <h2>
-      Features
-    </h2>
-
-    <h3>
-      General
-    </h3>
-
-    <ul>
-      <li>Supported platforms: Windows XP/7/8/10, Linux, Mac OS X
-      </li>
-
-      <li>Conservative user interface without experiments: Using a main menu, context menus, toolbars, dock windows,
-      undo, recent file lists and more.
-      </li>
-
-      <li>Written using C++ and Qt - it is fast
-      </li>
-
-      <li>The program saves almost all settings, like flight plan, windows positions, searches and more and restores
-      everything on startup
-      </li>
-
-      <li>Most question or information dialogs can be disabled.
-      </li>
-
-      <li>Support for Flight Simulator X, Flight Simulator - Steam Edition, Prepar3D v2 and Prepar3D v3 (partially
-      untested)
-      </li>
-
-      <li>Weather display from ActiveSkyNext, NOAA or Vatsim in tooltips and information panels
-      </li>
-
-      <li>Databases for simulators are kept separate and can be changed on the fly
-      </li>
-
-      <li>
-        <em>Little Navmap</em> can be run on computers that do not contain any simulator installation at all. Just copy
-        the database from your flight simulator computer.
-      </li>
-
-      <li>Airport and navaid icons used throughout the whole program for easier recognition
-      </li>
-
-      <li>Information panels showing all about airports or navaids
-      </li>
-
-      <li>Exhaustive search function for airports and navaids that allows to filter by an unimaginable amount of
-      options
-      </li>
-
-      <li>Distance based search for airports or navaids around a center point. Can be combined with all other search
-      options.
-      </li>
-    </ul>
-
-    <h3>
-      Flight Plan and routing
-    </h3>
-
-    <ul>
-      <li>Can read and write FSX PLN format (XML).
-      </li>
-
-      <li>Drag and drop flight plan editing on the map
-      </li>
-
-      <li>Easy flight plan editing in the table view, like moving and deleting waypoints
-      </li>
-
-      <li>Automatic routing (does not require online services) for high/low altitude airways, VOR/NDB and preset cruise
-      altitude
-      </li>
-
-      <li>Elevation profile display for flight plan.
-      </li>
-
-      <li>Undo/redo for flight plan edits
-      </li>
-
-      <li>Robust against malformed flight plans - does not put unknown waypoints "into the desert"
-      </li>
-    </ul>
-
-    <h3>
-      Map
-    </h3>
-
-    <ul>
-      <li>No need to download and install any additional elevation or map data.
-      </li>
-
-      <li>Uses two free online maps (OpenStreetMap amd OpenTopoMap) as well as two simple offline maps
-      </li>
-
-      <li>Multiple map themes including hillshading and two map projections selectable
-      </li>
-
-      <li>Airport display iconography based on real world VFR maps thus combining plenty of information in a small
-      symbol
-      </li>
-
-      <li>Detailed airport diagrams displayed in the map (not a separate window) including parking, taxiways, displaced
-      threshold, overrun areas and much more.
-      </li>
-
-      <li>Add-on airports are highlighted in a different text format for easier regognition
-      </li>
-
-      <li>History of map position and zoom levels like a web browser.
-      </li>
-
-      <li>Distance measurement lines and range rings
-      </li>
-
-      <li>Map display configuration including detail level on the toolbar
-      </li>
-
-      <li>Symbol and text sizes configurable in options dialog
-      </li>
-
-      <li>Can load and display Google Earth KML files
-      </li>
-
-      <li>Detailed tooltips on map display
-      </li>
-    </ul>
-
-    <h3>
-      Simulator aircraft
-    </h3>
-
-    <ul>
-      <li>Shows simulator aircraft on the map including flight plan progress display (needs <em>Little Navconnect</em>)
-      </li>
-
-      <li>Track of simulator aircraft
-      </li>
-
-      <li>Using <em>Little Navconnect</em> as an agent between the simulator and <em>Little Navmap</em> saves the pain
-      of remote simconnect setup
-      </li>
-    </ul>
-    <!-- ===================================================================== -->
 
     <h2>
       General Remarks
     </h2>
+
+    <p>
+      See <a href="features.html">here</a> for a list of features.
+    </p>
+
+    <h3>
+      User Interface
+    </h3>
 
     <p>
       The user interface of <em>Little Navmap</em> consists of multipe dock windows that are arranged around the main
@@ -330,27 +199,38 @@
       on the left handle and can be closed or undocked from the main window too.
     </p>
 
+    <h3>
+      Translation and Locale
+    </h3>
+
     <p>
-      Please note that due to a variety of external data like KML or BGL files that can be loaded by <em>Little
-      Navmap</em> crashes or malfunctions can occur. If that is the case send me the offending file and <em>Little
-      Navmap</em>'s log file and configuration which can be located in the about dialog. My e-mail address is shown in
-      the about dialog of <em>Little Navmap</em> too.
+      <em>Little Navmap</em> is currently only available in English. I will happily support anybody who would like to
+      translate the user interface into any other language. Despite using English in the user interface the locale
+      settings of the operating system will be used. So e.g. on a Germany operating system you will see <code>,</code>
+      as a decimal separator instead of the English <code>.</code>.
     </p>
 
     <p>
-      TODO translation and locale
+      Units cannot be changed currently and are adapted to aviation needs. So feet, nautical miles, knots and others
+      are used.
     </p>
 
-    <p>
-      TODO units
-    </p>
+    <h3>
+      Elevation Data Limitations
+    </h3>
 
     <p>
-      TODO limitations of elevation data
+      World coverage for elevation data is not available for all countries and currently ends at 60 degree north. Also
+      strange artifacts can occur which I cannot influence (like south of the Alps).
     </p>
 
+    <h3>
+      Map Legend
+    </h3>
+
     <p>
-      TODO legend
+      The map legend explaining the icons on the map and the <code>Flight Plan Profile</code> is available in the
+      <code>Information</code> dock window or <a href="legend.html">right here</a>.
     </p>
 
     <h3>
@@ -375,10 +255,78 @@
       <li>
         <span class="bold">Radio navaid:</span> VOR or NDB
       </li>
+
+      <li>
+        <span class="bold">Rating:</span> Airports are given a zero to five star rating depending on facilities.
+        Airports that have no rating are considered boring and will be displayed using a gray symbol below all other
+        airports on the map. This behavior can be switched off in the <code>Options</code> dialog on the <code>Map
+        Display</code> tab.
+        <ol>
+          <li>Add-on
+          </li>
+
+          <li>Parking spots
+          </li>
+
+          <li>Taxiways
+          </li>
+
+          <li>Aprons
+          </li>
+
+          <li>Tower building (only if at least one of the other conditions is met).
+          </li>
+        </ol>
+      </li>
     </ul>
 
     <h3>
       Known Problems
+    </h3>
+
+    <p>
+      Please note that due to a variety of external data like KML or BGL files that can be loaded by <em>Little
+      Navmap</em> crashes or malfunctions can occur. If that is the case send me the offending file and <em>Little
+      Navmap</em>'s log file and configuration which can be located in the about dialog. My e-mail address is shown in
+      the about dialog of <em>Little Navmap</em> too.
+    </p>
+
+    <ul>
+      <li>Support for FSX SE and P3D is untested.
+      </li>
+
+      <li>Scrolling ist jerky when using OpenStreetMap or OpenTopoMap and the spherical projection. Either use the
+      Plain or Simple map themes or use the Mercator projection.
+      </li>
+
+      <li>OpenStreetMap or OpenTopoMap maps can end up fuzzy when using functionality like "center route" or "show on
+      map". Zoom once in and out using the scrollwheel to fix this.
+      </li>
+
+      <li>Zoom is too fast when using a touchpad with OpenStreetMap or OpenTopoMap. Use the Plain or Simple map themes
+      or use the zoom buttons or the keyboard.
+      </li>
+
+      <li>Flight plan and airways are drawn using great circle lines instead of rhumb lines. Distance and course are
+      not affected by this.
+      </li>
+
+      <li>In rare cases KML files can cause crashes.
+      </li>
+
+      <li>Magnetic variance in FS is partially not set - this is an error in the flight simulator source data and
+      should be fixed with a workaround when loading the database
+      </li>
+
+      <li>Elevation data coverage is limited
+      </li>
+
+      <li>Elevation data errors (south of the Alps, e.g.)
+      </li>
+    </ul>
+
+    <h3>
+      How to report a Bug
     </h3>
     <!-- ===================================================================== -->
 
@@ -435,8 +383,8 @@
     </p>
 
     <p>
-      An opened flight plan file will be reloaded on startup (reload and centering can be switched off in the <a href=
-      "#options">Options dialog</a>).
+      An opened flight plan file will be reloaded on startup (reload and centering can be switched off in the
+      <code>Options</code> dialog on the <code>Startup</code> tab).
     </p>
 
     <h4>
@@ -445,7 +393,8 @@
 
     <p>
       You can add one or more Google Earth KML or KMZ file to the map display. All added KML or KMZ files will be
-      reloaded on startup (reload and centering can be switched off in the <a href="#options">Options dialog</a>).
+      reloaded on startup (reload and centering can be switched off in the <code>Options</code> dialog on the
+      <code>Startup</code> and <code>User Interface</code> tab).
     </p>
 
     <p>
@@ -515,8 +464,8 @@
 
     <p>
       Uses Jet Airways to create a flight plan. The resulting minimum altitude is set into the flight plan altitude
-      field. A simplified east/west rule is used to adjust the cruise altitude (can be switched off in the <a href=
-      "#options">Options dialog</a>).
+      field. A simplified east/west rule is used to adjust the cruise altitude (can be switched off in the
+      <code>Options</code> dialog on the <code>Flight Plan</code> tab).
     </p>
 
     <h4>
@@ -700,8 +649,8 @@
     </h4>
 
     <p>
-      Shows empty airports. This button can be hidden depending on settings in the <a href="#options">Options
-      dialog</a>.
+      Shows empty airports. This button can be hidden depending on settings in the <code>Options</code> dialog on the
+      <code>Map Display</code> tab.
     </p>
 
     <p>
@@ -883,7 +832,8 @@
     </p>
 
     <p>
-      The sensitivity for tooltip display can be adjusted in the <a href="#options">Options dialog</a>.
+      The sensitivity for tooltip display can be adjusted in the <code>Options</code> dialog on the <code>Map
+      Display</code> tab.
     </p>
 
     <h3>
@@ -897,7 +847,8 @@
     </p>
 
     <p>
-      The mouse click sensitivity can be adjusted in the <a href="#options">Options dialog</a>.
+      The mouse click sensitivity can be adjusted in the <code>Options</code> dialog on the <code>Map Display</code>
+      tab.
     </p>
 
     <h3 id="fpedit">
@@ -1049,7 +1000,8 @@
 
     <p>
       Shows multiple red range rings around the clicked position. Number and distance of the range rings can be
-      confgured in the <a href="#options">Options dialog</a>. A label indicates the distance of each ring.
+      confgured in the <code>Options</code> dialog on the <code>Map Display</code> tab. A label indicates the distance
+      of each ring.
     </p>
 
     <h4>
@@ -1530,16 +1482,33 @@
     </p>
 
     <p>
+      Since elevation processing is CPU intense it is done in background after creating or changing the flight plan.
+      The elevation display will be updated accordingly whenever new data is available. Close the <code>Flight Plan
+      Profile</code> window if you think this causes problems. All updates will stop then.
+    </p>
+
+    <p>
+      Note that the world coverage for elevation data is limited here. Also strange artifacts can occur which I cannot
+      influence (like south of the Alps).
+    </p>
+
+    <p>
+      Be aware that the elevation display only covers the route and will not change the depiction if you get off flight
+      plan with your aircraft. Also aircraft climb is not depicted (no aircraft profiles yet). The flight plan is only
+      shown at cruise level.
+    </p>
+
+    <p>
       Additional information is shown in a label on top of the window if the mouse is hovered over the diagram. The
       corresponding position within the flight plan is highlighted on the map too.
     </p>
 
     <p>
-      Following information is shown in the top label
+      Following information is shown in the top label when hovering the mouse over the diagram:
     </p>
 
     <ul>
-      <li>From &gt; to waypoint
+      <li>From and to waypoint
       </li>
 
       <li>Distance from departure and to destination
@@ -1556,28 +1525,122 @@
     </ul>
 
     <p>
-      For more information see the <code>Navmap Legend</code> tab in the <code>Information</code> dock window.
+      For more information see the <code>Navmap Legend</code> tab in the <code>Information</code> dock window or access
+      the <a href="legend.html#profile">legend right here</a>.
     </p>
     <!-- ===================================================================== -->
 
     <h2 id="options">
       Options
     </h2>
+
+    <p>
+      Most options are self explaining and tooltips contain more detailed explanations if applicable. Therefore a more
+      detailed description is not needed.
+    </p>
+
+    <p>
+      Note that the button <code>Restore Defaults</code> only restores the options of this dialog back to default.
+      Other settings like map display or table views are not affected.
+    </p>
     <!-- ===================================================================== -->
 
     <h2 id="scenerylib">
       Load Scenery Library Dialog
     </h2>
+
+    <p>
+      This dialog allows to load the scenery library from all four supported simulators. It shows some information
+      about the currently selected database like number of loaded airports, database version and more.
+    </p>
+
+    <p>
+      You can select the simulator in a drop down box which will show the base path and <code>scenery.cfg</code> in two
+      text edit fields. There are populated with default values first but you can change these to any other valid
+      location.
+    </p>
+
+    <p>
+      Loading a scenery library can take three to six minutes depending on your setup and amount of scenery add-ons.
+      You can speed this up by excluding directories containing no airport or navigation data in the
+      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
+    </p>
+
+    <p>
+      All airports that are not located in the default <code>scenery</code> directory are considered add-on airports
+      and will be highligthed appropriately. Directories can be excluded from this behaviour in the
+      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
+    </p>
     <!-- ===================================================================== -->
 
     <h2 id="nosim">
       Running without Simulator Installation
     </h2>
+
+    <ol>
+      <li>Install <em>Little Navmap</em> on both your flying computer and your client computer (without simulator).
+      </li>
+
+      <li>Start it on the flying computer and generate the scenery library databases. See <a href="#scenerylib">Load
+      Scenery Library Dialog</a> for more information.
+      </li>
+
+      <li>Select <code>Main Menu</code> -&gt; <code>Scenery Library</code> -&gt; <code>Show Database Files</code>. This
+      will open the directory containing the database files in explorer. You will find one or more database files like
+      <code>little_navmap_fsx.sqlite</code>.
+      </li>
+
+      <li>Start <em>Little Navmap</em> on the client computer and select <code>Scenery Library</code> -&gt; <code>Show
+      Database Files</code>.
+      </li>
+
+      <li>Exit <em>Little Navmap</em> on the client computer
+      </li>
+
+      <li>Copy these afore mentioned database files to your client computer using network shares or USB sticks. Move
+      the files into the directory opened by <em>Little Navmap</em> before.
+      </li>
+
+      <li>Start <em>Little Navmap</em> on the client computer. The menu <code>Scenery Library</code> should contain an
+      entry for each copied database file or no entry at all if only one file was copied. Airport icons should be
+      visible on the map.
+      </li>
+    </ol>
     <!-- ===================================================================== -->
 
     <h2 id="connect">
       Connecting to a Flight Simulator
     </h2>
+
+    <ol>
+      <li>Install <em>Little Navconnect</em> on the computer that is running the simulator. Start it and take note of
+      the message that is printed on the logging window. You only need the colored values:
+
+        <pre xml:space="preserve">
+[2016-07-24 17:31:40] Server is running on hostname <span style=
+"color: blue;">windows-pc</span> (IP address <span style="color: blue;">192.168.1.4</span>) port <span style=
+"color: red;">51968</span>.
+</pre>
+      </li>
+
+      <li>Start <em>Little Navmap</em> on the flying computer or the remote client computer.
+      </li>
+
+      <li>Open the connection dialog by selecting <code>Main Menu</code> -&gt; <code>Tools</code> -&gt; <code>Connect
+      to Simulator</code>.
+      </li>
+
+      <li>Add the value for hostname. This can be either the hostname printed by <em>Little Navconnect</em> or the IP
+      address. If both programs are running on the same computer you can also use <code>localhost</code>.
+      </li>
+
+      <li>Add the value for the port. <code>51968</code> is the default value.
+      </li>
+
+      <li>Click connect. Once a flight is set up and loaded on the simulator your aircraft will show up on the map and
+      the <code>Simulator Aircraft</code> dock window.
+      </li>
+    </ol>
     <!-- ===================================================================== -->
 
     <h2>
