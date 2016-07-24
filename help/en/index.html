@@ -46,10 +46,10 @@
     border-top: 2px solid lightgreen;
     border-left: 2px solid lightgreen;
     border-right: 2px solid lightgreen;
-    padding-bottom: 10px;
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
     background-color: white;
     }
     .textimg {
@@ -178,7 +178,6 @@
       Windows 8.1 64-bit.
     </p>
 
-
     <h2>
       General Remarks
     </h2>
@@ -192,11 +191,12 @@
     </h3>
 
     <p>
-      The user interface of <em>Little Navmap</em> consists of multipe dock windows that are arranged around the main
-      window containing the map view. The dock windows can be detached from the main window and also moved around in
-      their docked position. All docks can be closed if they are not needed. You can even drop docks on each other to
-      create a tabbed view (tabs will appear at the bottom of the dock stack). Toolbars are also movable if you click
-      on the left handle and can be closed or undocked from the main window too.
+      <img style="width: 100%; height:auto" alt="Little Navmap" title="Little Navmap" src="images/all.png" /> The user
+      interface of <em>Little Navmap</em> consists of multipe dock windows that are arranged around the main window
+      containing the map view. The dock windows can be detached from the main window and also moved around in their
+      docked position. All docks can be closed if they are not needed. You can even drop docks on each other to create
+      a tabbed view (tabs will appear at the bottom of the dock stack). Toolbars are also movable if you click on the
+      left handle and can be closed or undocked from the main window too.
     </p>
 
     <h3>
@@ -208,6 +208,11 @@
       translate the user interface into any other language. Despite using English in the user interface the locale
       settings of the operating system will be used. So e.g. on a Germany operating system you will see <code>,</code>
       as a decimal separator instead of the English <code>.</code>.
+    </p>
+
+    <p>
+      <span class="bold">To avoid confusion: The screenshots in this manual were taken using German locale. This means
+      that comma is used as a decimal separator and dot as a thousands separator.</span>
     </p>
 
     <p>
@@ -295,6 +300,9 @@
       <li>Support for FSX SE and P3D is untested.
       </li>
 
+      <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually.
+      </li>
+
       <li>Scrolling ist jerky when using OpenStreetMap or OpenTopoMap and the spherical projection. Either use the
       Plain or Simple map themes or use the Mercator projection.
       </li>
@@ -328,6 +336,10 @@
     <h3>
       How to report a Bug
     </h3>
+
+    <p>
+      TODO
+    </p>
     <!-- ===================================================================== -->
 
     <h2>
@@ -335,10 +347,11 @@
     </h2>
 
     <p>
-      When starting the first time <em>Little Navmap</em> will show the <code>Load Scenery Library</code> dialog. From
-      there your can select all recognized Flight Simulators and load their scenery libaries into <em>Little
-      Navmap</em>'s internal database. One database is kept for each simulator and it can be changed on the fly in the
-      <code>Scenery Library</code> menu.
+      <img style="width: 100%; height:auto" alt="Little Navmap First Start" title="Little Navmap First Start" src=
+      "images/firststart.png" /> When starting the first time <em>Little Navmap</em> will show the <code>Load Scenery
+      Library</code> dialog. From there your can select all recognized Flight Simulators and load their scenery
+      libaries into <em>Little Navmap</em>'s internal database. One database is kept for each simulator and it can be
+      changed on the fly in the <code>Scenery Library</code> menu.
     </p>
 
     <p>
@@ -352,26 +365,18 @@
     <!-- ===================================================================== -->
 
     <h2>
-      Quick Overview
-    </h2>
-
-    <p>
-      Screenshot
-    </p>
-    <!-- ===================================================================== -->
-
-    <h2>
       Menus and Toolbar
     </h2>
 
     <p>
-      This chapter describes the menu structure of <em>Little Navmap</em>. You will find parts of this functionality on
-      the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
-      are not listed separately.
+      <img alt="Little Navmap Menu and Toolbars" title="Little Navmap Menu and Toolbars" src=
+      "images/menutoolbar.png" /> This chapter describes the menu structure of <em>Little Navmap</em>. You will find
+      parts of this functionality on the toolbars as well which are not be described separately. Key combinations can
+      be seen on the menu items and are not listed separately.
     </p>
 
     <h3>
-      File
+      File Menu
     </h3>
 
     <h4>
@@ -406,11 +411,12 @@
     </h4>
 
     <p>
-      Stops loading of map data from the internet. This affects only the OpenStreetMap and OpenTopoMap map themes.
+      Stops loading of map data from the internet. This affects only the OpenStreetMap and OpenTopoMap online map
+      themes.
     </p>
 
     <h3>
-      Flight Plan
+      Flight Plan Menu
     </h3>
 
     <h4>
@@ -495,7 +501,7 @@
     </p>
 
     <h3>
-      Map
+      Map Menu
     </h3>
 
     <h4>
@@ -574,9 +580,10 @@
     </h5>
 
     <p>
-      Shows earth as a globe which is the most natural projection. Movement can stutter when using the
-      <code>OpenStreetMap</code> and <code>OpenTopoMap</code> themes. Use the <code>Simple</code> or <code>Plain</code>
-      map themes to prevent this.
+      <img style="width: 50%; height:auto" alt="Little Navmap Spherical projection and Simple Map Theme" title=
+      "Little Navmap Spherical projection and Simple Map Theme" src="images/sphericalpolitical.png" /> Shows earth as a
+      globe which is the most natural projection. Movement can stutter when using the <code>OpenStreetMap</code> and
+      <code>OpenTopoMap</code> themes. Use the <code>Simple</code> or <code>Plain</code> map themes to prevent this.
     </p>
 
     <h4 id="maptheme">
@@ -588,8 +595,9 @@
     </h5>
 
     <p>
-      This is an online raster map that includes and hillshading option. Note that hillshading does not cover the whole
-      globe.
+      <img style="width: 50%; height:auto" alt="OpenStreeMap and Hillshading" title="OpenStreeMap and Hillshading" src=
+      "images/osmhillshading.png" /> This is an online raster map that includes and hillshading option. Note that
+      hillshading does not cover the whole globe.
     </p>
 
     <h5>
@@ -597,9 +605,10 @@
     </h5>
 
     <p>
-      A beautiful online raster map that aims to mimic a paper topographic map as much as possible. Includes
-      hillshading and elevation contour lines at lower zoom levels. Disadvantage is that airports and navaids are hard
-      to recognize in the colorful map.
+      <img style="width: 50%; height:auto" alt="OpenTopoMap" title="OpenTopoMap" src="images/otm.png" /> A beautiful
+      online raster map that aims to mimic a paper topographic map as much as possible. Includes hillshading and
+      elevation contour lines at lower zoom levels. Disadvantage is that airports and navaids are hard to recognize in
+      the colorful map.
     </p>
 
     <h5>
@@ -685,7 +694,7 @@
     </p>
 
     <h3 id="scenerylibrary">
-      Scenery Library
+      Scenery Library Menu
     </h3>
 
     <h4>
@@ -716,7 +725,7 @@
     </p>
 
     <h3>
-      Tools
+      Tools Menu
     </h3>
 
     <h4>
@@ -746,7 +755,7 @@
     </p>
 
     <h3>
-      Window
+      Window Menu
     </h3>
 
     <h4>
@@ -766,7 +775,7 @@
     </p>
 
     <h3>
-      Help
+      Help Menu
     </h3>
 
     <h4>
@@ -782,7 +791,8 @@
     </h4>
 
     <p>
-      Shows the map legends in the information dock window.
+      Shows the map legends in the information dock window. You can also access the navmap legend <a href=
+      "legend.html">here</a>.
     </p>
 
     <h4>
@@ -827,8 +837,9 @@
     </h3>
 
     <p>
-      Hovering the mouse over the map will show tooltips for all objects like aiports, VOR, airways and more nearby the
-      cursor. The tooltip is truncated if it gets too long. In that case reduce details or zoom in.
+      <img alt="Tooltip" title="Tooltip" src="images/tooltip.png" /> Hovering the mouse over the map will show tooltips
+      for all objects like aiports, VOR, airways and more nearby the cursor. The tooltip is truncated if it gets too
+      long. In that case reduce details or zoom in.
     </p>
 
     <p>
@@ -851,13 +862,29 @@
       tab.
     </p>
 
+    <h3>
+      Airport Diagram
+    </h3>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram1.png" /> If you zoom in deep enough
+      to an airport the display will change from a single icon to an airport diagram. This shows all taxiways, parking
+      spots, gates, runway and much more.
+    </p>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram2.png" /> The airport diagram
+      provides more information through tooltips for parking and tower positions.
+    </p>
+
     <h3 id="fpedit">
       Flight Plan Editing
     </h3>
 
     <p>
-      The flight plan editing mode is switched on per default but can be disabled if it gets too annoying e.g. during
-      flight. The following functionality is available:
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.png" /> The flight plan editing mode is
+      switched on per default but can be disabled if it gets too annoying e.g. during flight. The following
+      functionality is available:
     </p>
 
     <ul>
@@ -932,10 +959,14 @@
           </li>
         </ul>
       </li>
+
+      <li>
+        <span class="bold">Right click:</span> Cancel currend operation.
+      </li>
     </ul>
 
     <h3 id="mapcontextmenu">
-      Context Menu
+      Map Context Menu
     </h3>
 
     <h4>
@@ -1112,7 +1143,7 @@
 
     <p>
       Filters are defined by various controls which are mostly self explaining. Only text filters and the tri state
-      checkboxes like <code>Lighted</code>, <code>Approach</code> or <code>Closed</code> need a few extra remarks.
+      checkboxes like <code>Lighted</code>, <code>Approach</code> or <code>Closed</code> need extra remarks.
     </p>
 
     <p>
@@ -1153,24 +1184,29 @@
 
     <ul>
       <li>
-        <span class="bold">Gray means:</span> Condition is ignored.
+        <span class="bold">Gray:</span> Condition is ignored.
       </li>
 
       <li>
-        <span class="bold">Checked means:</span> Condition must match.
+        <span class="bold">Checked:</span> Condition must match.
       </li>
 
       <li>
-        <span class="bold">Unchecked means:</span> Condition must not match.
+        <span class="bold">Unchecked:</span> Condition must not match.
       </li>
     </ul>
+
+    <p>
+      Colors and look of these checkboxes vary with theme and operation system. So above might not be precise
+    </p>
 
     <h4>
       Distance search
     </h4>
 
     <p>
-      This function allows you to combine all other search options with simple spatial search.
+      <img alt="Complex Distance Search" title="Complex Distance Search" src="images/complexsearch.png" /> This
+      function allows you to combine all other search options with simple spatial search.
     </p>
 
     <p>
@@ -1185,17 +1221,20 @@
     </p>
 
     <h3 id="tableview">
-      Table View
+      Search Result Table View
     </h3>
 
     <p>
-      All selected elements in the table view will be highlighted on the map using a black/yellow circle. Multi
-      selection using <code>Shift</code>- or <code>Ctrl</code>-Click are possible.
+      <img style="width: 100%; height:auto" alt="Airport Search Result Table" title="Airport Search Result Table" src=
+      "images/airportsearchtable.png" /> <img style="width: 100%; height:auto" alt="Navaid Search Result Table" title=
+      "Navaid Search Result Table" src="images/navaidsearchtable.png" /> All selected elements in the table view will
+      be highlighted on the map using a black/yellow circle. Multi selection using <code>Shift</code>- or
+      <code>Ctrl</code>-Click are possible.
     </p>
 
     <p>
       If you want to get an quick overview of your results on the map select all the results which will be hightlighted
-      on the ma.
+      on the map.
     </p>
 
     <p>
@@ -1237,7 +1276,7 @@
     </p>
 
     <h3>
-      Context Menu
+      Search Result Table View Context Menu
     </h3>
 
     <h4>
@@ -1259,6 +1298,10 @@
     <h4>
       Filter by Entries including/excluding
     </h4>
+
+    <p>
+      TODO
+    </p>
 
     <h4>
       Reset Search
@@ -1326,9 +1369,26 @@
       Flight Plan Dock Window
     </h2>
 
-    <h3>
-      General
-    </h3>
+    <p>
+      <img style="width: 100%; height:auto" alt="Flight Plan" title="Flight Plan" src="images/flightplan.png" /> The
+      user Besides the table view there are three input fields on top of this dock window:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold">Speed (kts):</span> The value of this field is used only for calculating travelling times in
+        the table view. It is not saved with the flight plan and not used for simulator aircraft calculations.
+      </li>
+
+      <li>
+        <span class="bold">Cruise altitude (ft):</span> This value will be saved with the flight plan and is also used
+        to calculate an airway flight plan based on given altitude.
+      </li>
+
+      <li>
+        <span class="bold">Flight Plan Type (IFR or VFR):</span> This is saved with the flight plan.
+      </li>
+    </ul>
 
     <h3>
       Mouse Clicks
@@ -1340,8 +1400,13 @@
       black/green circle.
     </p>
 
+    <p>
+      The header of the flight plan table view has the same functionality as the search result <a href=
+      "#tableview">Table View</a>.
+    </p>
+
     <h3>
-      Context Menu
+      Flight Plan Table View Context Menu
     </h3>
 
     <h4>
@@ -1550,8 +1615,9 @@
     </h2>
 
     <p>
-      This dialog allows to load the scenery library from all four supported simulators. It shows some information
-      about the currently selected database like number of loaded airports, database version and more.
+      <img alt="Load Scenery Dialog" title="Load Scenery Dialog" src="images/loadscenery.png" /> This dialog allows to
+      load the scenery library from all four supported simulators. It shows some information about the currently
+      selected database like number of loaded airports, database version and more.
     </p>
 
     <p>
@@ -1561,9 +1627,10 @@
     </p>
 
     <p>
-      Loading a scenery library can take three to six minutes depending on your setup and amount of scenery add-ons.
-      You can speed this up by excluding directories containing no airport or navigation data in the
-      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
+      <img alt="Load Scenery Progress Dialog" title="Load Scenery Progress Dialog" src=
+      "images/loadsceneryprogress.png" /> Loading a scenery library can take three to six minutes depending on your
+      setup and amount of scenery add-ons. You can speed this up by excluding directories containing no airport or
+      navigation data in the <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
     </p>
 
     <p>
@@ -1623,7 +1690,8 @@
 </pre>
       </li>
 
-      <li>Start <em>Little Navmap</em> on the flying computer or the remote client computer.
+      <li>Start <em>Little Navmap</em> on the flying computer or the remote client computer. <img alt=
+      "Little Navconnect" title="Little Navconnect" src="images/littlenavconnect.png" />
       </li>
 
       <li>Open the connection dialog by selecting <code>Main Menu</code> -&gt; <code>Tools</code> -&gt; <code>Connect
