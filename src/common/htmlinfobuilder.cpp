@@ -456,8 +456,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   int threshold = rec->valueInt("offset_threshold");
   if(threshold > 0)
   {
-    html.row2(tr("Offset Threshold:"), QString(tr("%1 ft")).arg(threshold));
-    html.row2(tr("Effective Landing Distance:"), QString(tr("%1 ft")).arg(length - threshold));
+    html.row2(tr("Offset Threshold:"), QString(tr("%1 ft")).arg(locale.toString(threshold)));
+    html.row2(tr("Effective Landing Distance:"), QString(tr("%1 ft")).arg(locale.toString(length - threshold)));
   }
 
   rowForInt(html, rec, "blast_pad", tr("Blast Pad:"), tr("%1 ft"));

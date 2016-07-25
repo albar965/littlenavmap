@@ -17,7 +17,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = littlenavmap
 TEMPLATE = app
 
-# Adapt these variables to compile on Windows
+# =======================================================================
+# Adapt these paths for each operating system
+# =======================================================================
+
+# Windows ==================
 win32 {
   QT_BIN=C:\\Qt\\5.5\\mingw492_32\\bin
   GIT_BIN='C:\\Git\\bin\\git'
@@ -25,15 +29,20 @@ win32 {
   CONFIG(release, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-release"
 }
 
+# Linux ==================
 unix:!macx {
   CONFIG(debug, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-debug
   CONFIG(release, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-release
 }
 
+# Mac OS X ==================
 macx {
   CONFIG(debug, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-debug
   CONFIG(release, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-release
 }
+
+# End of configuration section
+# =======================================================================
 
 CONFIG += c++11
 

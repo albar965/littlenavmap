@@ -1185,11 +1185,13 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
 
   updateRouteMapObjects();
   updateFlightplanData();
+  updateStartPositionBestRunway(false);
   updateModel();
   updateLabel();
 
   postChange(undoCommand);
   updateWindowTitle();
+
 
   emit routeChanged(true);
 
