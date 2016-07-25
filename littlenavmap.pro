@@ -25,9 +25,14 @@ win32 {
   CONFIG(release, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-release"
 }
 
-unix {
-  CONFIG(debug, debug|release):MARBLE_BASE=${HOME}/Programme/Marble-debug
-  CONFIG(release, debug|release):MARBLE_BASE=${HOME}/Programme/Marble-release
+unix:!macx {
+  CONFIG(debug, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-debug
+  CONFIG(release, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-release
+}
+
+macx {
+  CONFIG(debug, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-debug
+  CONFIG(release, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-release
 }
 
 CONFIG += c++11
@@ -179,15 +184,15 @@ win32 {
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
-macx {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
-  DEPENDPATH += $$MARBLE_BASE/include
-}
-
 unix:!macx {
   INCLUDEPATH += $$MARBLE_BASE/include
   LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
