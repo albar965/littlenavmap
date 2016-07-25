@@ -112,8 +112,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\nnm")).filter().condition(">")).
   append(Column("mag_var", tr("Mag\nVar°"))).
   append(Column("altitude", tr("Altitude\nft"))).
-  append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery")).filter()).
-  append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("File")).filter()).
+  append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery Path")).filter()).
+  append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("BGL File")).filter()).
   append(Column("waypoint_num_victor_airway").hidden()).
   append(Column("waypoint_num_jet_airway").hidden()).
   append(Column("vor_id").hidden()).

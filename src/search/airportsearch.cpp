@@ -146,7 +146,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country")).filter()).
 
   append(Column("rating", ui->checkBoxAirportScenerySearch,
-                tr("Scenery\nRating")).conditions("> 0", "== 0")).
+                tr("Rating")).conditions("> 0", "== 0")).
 
   append(Column("altitude", tr("Altitude\nft"))).
   append(Column("mag_var", tr("Mag\nVar°"))).
@@ -197,8 +197,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("longest_runway_heading").hidden()).
   append(Column("num_runway_end_closed").hidden()).
 
-  append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery")).filter()).
-  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("File")).filter()).
+  append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery Path")).filter()).
+  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("BGL File")).filter()).
 
   append(Column("num_apron").hidden()).
   append(Column("num_taxi_path").hidden()).
