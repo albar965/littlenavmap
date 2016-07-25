@@ -23,7 +23,7 @@
 #include <QStyle>
 
 namespace maptypes {
-class MapAirport;
+struct MapAirport;
 }
 
 namespace mapcolors {

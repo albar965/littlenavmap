@@ -26,6 +26,7 @@
 #include "search/controller.h"
 #include "sql/sqlquery.h"
 
+#include <cmath>
 #include <algorithm>
 #include <QDebug>
 #include <QUrl>
@@ -110,7 +111,7 @@ int HtmlExporter::exportAll(bool open)
   SqlQuery query(db);
   query.exec(controller->getCurrentSqlQuery());
   totalToExport = controller->getTotalRowCount();
-  totalPages = static_cast<int>(ceil(static_cast<float>(totalToExport) / static_cast<float>(pageSize)));
+  totalPages = static_cast<int>(std::ceil(static_cast<float>(totalToExport) / static_cast<float>(pageSize)));
 
   if(!askOverwriteDialog(filename, totalPages))
     return exported;
@@ -183,7 +184,7 @@ int HtmlExporter::exportSelected(bool open)
   const QItemSelection sel = controller->getSelection();
   for(QItemSelectionRange rng : sel)
     totalToExport += rng.height();
-  totalPages = static_cast<int>(ceil(static_cast<float>(totalToExport) / static_cast<float>(pageSize)));
+  totalPages = static_cast<int>(std::ceil(static_cast<float>(totalToExport) / static_cast<float>(pageSize)));
 
   if(!askOverwriteDialog(filename, totalPages))
     return exported;

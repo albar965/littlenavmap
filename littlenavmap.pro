@@ -26,8 +26,8 @@ win32 {
 }
 
 unix {
-  CONFIG(debug, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-debug
-  CONFIG(release, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-release
+  CONFIG(debug, debug|release):MARBLE_BASE=${HOME}/Programme/Marble-debug
+  CONFIG(release, debug|release):MARBLE_BASE=${HOME}/Programme/Marble-release
 }
 
 CONFIG += c++11
@@ -179,7 +179,13 @@ win32 {
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
-unix {
+macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+unix:!macx {
   INCLUDEPATH += $$MARBLE_BASE/include
   LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5
   DEPENDPATH += $$MARBLE_BASE/include
@@ -216,7 +222,7 @@ RESOURCES += \
     littlenavmap.qrc
 
 # Create additional makefile targets to copy help files
-unix {
+unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
   copydata.commands += cp -avfu $${MARBLE_BASE}/lib/marble/plugins/libAprsPlugin.so \
                                 $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
@@ -251,6 +257,40 @@ unix {
   cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
+macx {
+  copydata.commands = mkdir -p $$OUT_PWD/plugins &&
+  copydata.commands += cp -avf $${MARBLE_BASE}/lib/plugins/libAprsPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
+                                $${MARBLE_BASE}/lib/plugins/libElevationProfileFloatItem.so \
+                                $${MARBLE_BASE}/lib/plugins/libElevationProfileMarker.so \
+                                $${MARBLE_BASE}/lib/plugins/libGpxPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libGraticulePlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libJsonPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libKmlPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libLatLonPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libLicense.so \
+                                $${MARBLE_BASE}/lib/plugins/libLocalDatabasePlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libLogPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libMapQuestPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libMapScaleFloatItem.so \
+                                $${MARBLE_BASE}/lib/plugins/libMonavPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libNavigationFloatItem.so \
+                                $${MARBLE_BASE}/lib/plugins/libOpenCachingComPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libOpenDesktopPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libOpenRouteServicePlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libOsmPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libOSRMPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libOverviewMap.so \
+                                $${MARBLE_BASE}/lib/plugins/libPn2Plugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libPntPlugin.so \
+                                $${MARBLE_BASE}/lib/plugins/libPositionMarker.so \
+                                $${MARBLE_BASE}/lib/plugins/libProgressFloatItem.so  $$OUT_PWD/plugins &&
+  copydata.commands += cp -avf $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/marble/data $$OUT_PWD
+
+  cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
+}
 
 # Windows specific deploy target
 win32 {

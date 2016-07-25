@@ -17,6 +17,7 @@
 
 #include "common/maptypesfactory.h"
 
+#include <cmath>
 #include "sql/sqlrecord.h"
 
 using namespace atools::geo;
@@ -110,7 +111,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirp
     ap.ident = record.valueStr("ident");
     ap.name = record.valueStr("name");
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
-    ap.longestRunwayHeading = static_cast<int>(std::roundf(record.valueFloat("longest_runway_heading")));
+    ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
@@ -287,7 +288,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, maptypes::MapMarker& m
 {
   marker.id = record.valueInt("marker_id");
   marker.type = record.valueStr("type");
-  marker.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
+  marker.heading = static_cast<int>(std::round(record.valueFloat("heading")));
   marker.position = Pos(record.valueFloat("lonx"),
                         record.valueFloat("laty"));
 }
@@ -329,8 +330,8 @@ void MapTypesFactory::fillParking(const SqlRecord& record, maptypes::MapParking&
   parking.jetway = record.valueInt("has_jetway") > 0;
   parking.number = record.valueInt("number");
 
-  parking.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
-  parking.radius = static_cast<int>(std::roundf(record.valueFloat("radius")));
+  parking.heading = static_cast<int>(std::round(record.valueFloat("heading")));
+  parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 }
 
 void MapTypesFactory::fillStart(const SqlRecord& record, maptypes::MapStart& start)
