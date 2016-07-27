@@ -127,15 +127,21 @@
     <h1>
       Little Navmap Legend
     </h1>
+
     <p>
-      <img class="textimg" style="width: 5em; height:auto"
-      alt="Little Navmap"  title="Little Navmap" src="images/navroute.svg" />
+      <img class="textimg" style="width: 5em; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/navroute.svg" />
     </p>
-  <p>All speeds are in knots, distances in nm, altitude in feet.
-  Heading and course are suffixed with °T for true course or °M for magnetic course.</p>
-    <h3>
+
+    <p>
+      All speeds are in knots, distances in nm, altitude in feet. Heading and course are suffixed with °T for true
+      course or °M for magnetic course.
+    </p>
+
+    <h3 id="mapmarks">
       Map Marks
     </h3>
+
     <table style="text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
@@ -146,6 +152,7 @@
             Center of the home position.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Mark" src="images/legend/mark.png" />
@@ -154,6 +161,7 @@
             Center point that will be used for distance searches.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Flight Plan" src="images/legend/route_leg.png" />
@@ -162,18 +170,19 @@
             Flight plan with direction, distance and magnetic course at each leg.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Aircraft" src="images/legend/aircraft.png" />&nbsp;&nbsp;&nbsp;&nbsp;
-            <img alt="Aircraft" src="images/legend/aircraft_text.png" />
+            <img alt="Aircraft" src="images/legend/aircraft.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Aircraft" src=
+            "images/legend/aircraft_text.png" />
           </td>
           <td>
-            Current aircraft position if connected to the flight simulator. Labels include
-            registration number, airline (if available), flight number (if available), indicated
-            speed, ground speed, magnetic heading, altitude, climb/sink arrow and wind magnetic
-            heading and speed.
+            Current aircraft position if connected to the flight simulator. Labels include registration number, airline
+            (if available), flight number (if available), indicated speed, ground speed, magnetic heading, altitude,
+            climb/sink arrow and wind magnetic heading and speed.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Aircraft" src="images/legend/aircraft_ground.png" />
@@ -182,6 +191,7 @@
             Aircraft on ground.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Track" src="images/legend/aircraft_track.png" />
@@ -190,6 +200,7 @@
             Aircraft track if connected to the flight simulator.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Range" src="images/legend/range_rings.png" />
@@ -198,137 +209,147 @@
             Range rings labelled with distance.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Range VOR" src=
-            "images/legend/range_vor.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Range NDB" src=
+            <img alt="Range VOR" src="images/legend/range_vor.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Range NDB" src=
             "images/legend/range_ndb.png" />
           </td>
           <td>
             VOR or NDB range rings labelled with ident and frequency. Color indicates Navaid type.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Distance GC" src="images/legend/distance_gc.png" />
           </td>
           <td>
-            <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a>
-            distance measurement line indicating length and true heading at start and destination.
-            For shorter distances length is also shown in feet.
+            <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a> distance measurement line
+            indicating length and true heading at start and destination. For shorter distances length is also shown in
+            feet.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Distance Rhumb" src="images/legend/distance_rhumb.png" />
           </td>
           <td>
-          <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance
-          measurement indicating distance and true heading. Rhumb lines are used to approach a VOR or NDB
-          or travel along airways.
+            <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance measurement
+            indicating distance and true heading. Rhumb lines are used to approach a VOR or NDB or travel along
+            airways.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Distance VOR" src="images/legend/distance_vor.png" />
           </td>
           <td>
-            Measurement lines starting from an airport or navaid have the same color and additional
-            ident and frequency labels. Course for rhumb lines will be shown in magnetic if the
-            navaid has a magnetic variation attribute.
+            Measurement lines starting from an airport or navaid have the same color and additional ident and frequency
+            labels. Course for rhumb lines will be shown in magnetic if the navaid has a magnetic variation attribute.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Search Hightlight" src="images/legend/highlight_search.png" />
           </td>
           <td>
-          An airport or navaid selected in the search result table.
+            An airport or navaid selected in the search result table.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Flight Plan Hightlight" src="images/legend/highlight_route.png" />
           </td>
           <td>
-          An airport or navaid selected in the flight plan table.
+            An airport or navaid selected in the flight plan table.
           </td>
         </tr>
       </tbody>
     </table>
+
     <h3 id="aiports">
       Airports
     </h3>
-      Airports having control towers are shown in <span style=
-      "color: rgb(15, 70, 130);font-weight: bold;">dark blue</span> others in
-      <span style="color: rgb(126, 58, 91);font-weight: bold;">magenta</span>.
-      Add-on airport names and idents are shown
-      <span style="font-weight: bold;text-decoration: underline;font-style: italic;">italic and underlined</span>.
-      Airports that are part of the flight plan
-      have a <span style="background-color: rgb(255, 255, 153);font-weight: bold;">light yellow</span> text background.
+
+    <p>
+      Airports having control towers are shown in <span style="color: rgb(15, 70, 130);font-weight: bold;">dark
+      blue</span> others in <span style="color: rgb(126, 58, 91);font-weight: bold;">magenta</span>. Add-on airport
+      names and idents are shown <span style="font-weight: bold;text-decoration: underline;font-style: italic;">italic
+      and underlined</span>. Airports that are part of the flight plan have a <span style=
+      "background-color: rgb(255, 255, 153);font-weight: bold;">light yellow</span> text background.
+    </p>
+
     <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
-            <img alt="Large Airport" src=
-            "images/legend/airport_tower_8000.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            <img alt="Large Airport" src="images/legend/airport_tower_8000.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
             "Large Airport" src="images/legend/airport_8000.png" />
           </td>
           <td style="text-align: left;">
-            Airports with hard surface runways longer than 8,000 ft. All runways longer than 4,000
-            ft are shown the diagram. Only for lower zoom levels.
+            Airports with hard surface runways longer than 8,000 ft. All runways longer than 4,000 ft are shown the
+            diagram. Only for lower zoom levels.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Airport with Tower" src=
-            "images/legend/airport_tower.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Airport"
-            src="images/legend/airport.png" />
+            <img alt="Airport with Tower" src="images/legend/airport_tower.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Airport" src="images/legend/airport.png" />
           </td>
           <td style="text-align: left;">
             Airports with hard surface runways. White line shows heading of longest runway.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Airport with soft runways and Tower" src=
-            "images/legend/airport_tower_soft.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "Airport with soft Runways" src="images/legend/airport_soft.png" />
+            "images/legend/airport_tower_soft.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Airport with soft Runways" src=
+            "images/legend/airport_soft.png" />
           </td>
           <td style="text-align: left;">
             Airports with soft surface runways.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Airport Empty" src=
-            "images/legend/airport_empty.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            <img alt="Airport Empty" src="images/legend/airport_empty.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
             "Airport Empty Soft" src="images/legend/airport_empty_soft.png" />
           </td>
           <td style="text-align: left;">
             Empty airport. No taxiways, no parking spots and no aprons.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Seaplane Base with Tower" src=
-            "images/legend/airport_tower_water.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "Seaplane Base" src="images/legend/airport_water.png" />
+            "images/legend/airport_tower_water.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Seaplane Base" src=
+            "images/legend/airport_water.png" />
           </td>
           <td style="text-align: left;">
             Seaplane base (has only water runways).
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Military Airport with Tower" src=
-            "images/legend/airport_tower_mil.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "Military Airport" src="images/legend/airport_mil.png" />
+            "images/legend/airport_tower_mil.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Military Airport" src=
+            "images/legend/airport_mil.png" />
           </td>
           <td style="text-align: left;">
             Military airport.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Heliport" src="images/legend/heliport.png" />
@@ -337,67 +358,73 @@
             Heliport (only helipads - no runways).
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Closed Airport with Tower" src=
-            "images/legend/airport_tower_closed.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "Closed Airport" src="images/legend/airport_closed.png" />
+            "images/legend/airport_tower_closed.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Closed Airport" src=
+            "images/legend/airport_closed.png" />
           </td>
           <td style="text-align: left;">
             Abandoned airport. All runways are closed.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Airport with Fuel" src=
-            "images/legend/airport_tower_fuel.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            <img alt="Airport with Fuel" src="images/legend/airport_tower_fuel.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
             "Airport with soft Runways and Fuel" src="images/legend/airport_soft_fuel.png" />
           </td>
           <td style="text-align: left;">
             Airports that have fuel available.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Airport Text" src="images/legend/airport_text.png" />
           </td>
           <td style="text-align: left;">
-            Airport label showing (if available): Name, ident, control tower (CT - 119.550) and
-            weather service frequencies (ATIS 127.150 or AWOS/ASOS), elevation (152 ft),
-            availability of lighted runways (L), longest runway in ft * 100 (7400 ft) and Unicom
-            frequency (122.95).
+            Airport label showing (if available): Name, ident, control tower (CT - 119.550) and weather service
+            frequencies (ATIS 127.150 or AWOS/ASOS), elevation (152 ft), availability of lighted runways (L), longest
+            runway in ft * 100 (7400 ft) and Unicom frequency (122.95).
           </td>
         </tr>
       </tbody>
     </table>
+
     <h3 id="navaids">
       Navaids
     </h3>
-      Navaids that are part of the flight plan have a <span style=
-      "background-color: rgb(255, 255, 150);"><span style="font-weight: bold;">light
-      yellow</span></span> text background.
+
+    <p>
+      Navaids that are part of the flight plan have a <span style="background-color: rgb(255, 255, 150);"><span style=
+      "font-weight: bold;">light yellow</span></span> text background.
+    </p>
+
     <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
-            <img alt="VORDME" src=
-            "images/legend/vordme_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="VORDME" src=
+            <img alt="VORDME" src="images/legend/vordme_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="VORDME" src=
             "images/legend/vordme_large.png" />
           </td>
           <td>
-            VOR DME including ident, range (Hight, Low or Terminal) and frequency. Detailed compass
-            rose shows magnetic variation on lower zoom levels.
+            VOR DME including ident, range (Hight, Low or Terminal) and frequency. Detailed compass rose shows magnetic
+            variation on lower zoom levels.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="VOR" src="images/legend/vor_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "VOR" src="images/legend/vor_large.png" />
+            <img alt="VOR" src="images/legend/vor_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="VOR" src=
+            "images/legend/vor_large.png" />
           </td>
           <td>
             VOR including ident, range and frequency.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="DME" src="images/legend/dme.png" />
@@ -406,15 +433,17 @@
             DME including ident, range and frequency.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="NDB" src="images/legend/ndb_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
-            "NDB" src="images/legend/ndb_large.png" />
+            <img alt="NDB" src="images/legend/ndb_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="NDB" src=
+            "images/legend/ndb_large.png" />
           </td>
           <td>
             NDB including ident, range (HH, H, MH or CL - compass locator) and frequency.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Waypoint" src="images/legend/waypoint.png" />
@@ -423,24 +452,28 @@
             Waypoint or intersection with name.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Waypoint" src="images/legend/waypoint_invalid.png" />
           </td>
           <td>
-            Invalid Waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery Database.
+            Invalid Waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery
+            Database.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Marker" src= "images/legend/marker_outer.png" />&nbsp;&nbsp;&nbsp;&nbsp;
-            <img alt="Marker" src= "images/legend/marker_middle.png" />&nbsp;&nbsp;&nbsp;&nbsp;
-            <img alt="Marker" src= "images/legend/marker_inner.png" />
+            <img alt="Marker" src="images/legend/marker_outer.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Marker" src=
+            "images/legend/marker_middle.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Marker" src=
+            "images/legend/marker_inner.png" />
           </td>
           <td>
             Marker with type and heading indicated by lens shape.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Jet Airway" src="images/legend/airway_jet.png" />
@@ -449,6 +482,7 @@
             Jet airway with label showing name, type (Jet or Both) and minimum altitude.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Victor Airway" src="images/legend/airway_victor.png" />
@@ -459,34 +493,38 @@
         </tr>
       </tbody>
     </table>
+
     <table style=" text-align: left; vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="vertical-align: top;">
-            <img alt="ILS" src=
-            "images/legend/ils_gs_small.png" />&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
-            "images/legend/ils_gs.png" /><br/> ILS with
-            glideslope. Label shows ident, frequency, magnetic heading, glideslope pitch and DME
-            indication if available.
+            <img alt="ILS" src="images/legend/ils_gs_small.png" />&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
+            "images/legend/ils_gs.png" />
+            <br />
+            ILS with glideslope. Label shows ident, frequency, magnetic heading, glideslope pitch and DME indication if
+            available.
           </td>
         </tr>
+
         <tr>
           <td style=" vertical-align: top;">
-            <img alt="ILS" src=
-            "images/legend/ils_small.png" />&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
+            <img alt="ILS" src="images/legend/ils_small.png" />&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
             "images/legend/ils_large.png" />
-            <br/>Localizer. Label shows ident, frequency, magnetic heading and DME indication if
-            available.
+            <br />
+            Localizer. Label shows ident, frequency, magnetic heading and DME indication if available.
           </td>
         </tr>
       </tbody>
     </table>
-    <h3  id="airportdiagram">
+
+    <h3 id="airportdiagram">
       Airport Diagram
     </h3>
+
+    <p>
       Runway, taxiway, helipad and apron colors indicate surface type.
+    </p>
+
     <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
@@ -497,15 +535,16 @@
             Runway with length, width, light indicator (L) and surface type.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Runway End" src=
-            "images/legend/runway_end.png" />
+            <img alt="Runway End" src="images/legend/runway_end.png" />
           </td>
           <td>
             Runway end with ident and magnetic heading.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Runway Threshold" src="images/legend/runway_threshold.png" />
@@ -514,6 +553,7 @@
             Displaced threshold. Do not use for landing.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Runway Overrun" src="images/legend/runway_overrun.png" />
@@ -522,6 +562,7 @@
             Overrun area. Do not use for taxi, takeoff or landing.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Runway Blastpad" src="images/legend/runway_blastpad.png" />
@@ -530,6 +571,7 @@
             Blast pad. Do not use for taxi, takeoff or landing.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Taxiway" src="images/legend/taxiway.png" />
@@ -544,20 +586,21 @@
             <img alt="Taxiway" src="images/legend/apron_transparent.png" />
           </td>
           <td>
-            Semi transparent aprons and taxiways indicate that no surface is drawn.
-            It might be a photo texture or just the default background.
+            Semi transparent aprons and taxiways indicate that no surface is drawn. It might be a photo texture or just
+            the default background.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Tower" src=
-            "images/legend/tower_active.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Tower" src=
+            <img alt="Tower" src="images/legend/tower_active.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Tower" src=
             "images/legend/tower_inactive.png" />
           </td>
           <td>
             Tower. Red if a tower frequency is available. Otherwise just view position.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Fuel" src="images/legend/parking_fuel.png" />
@@ -566,6 +609,7 @@
             Fuel
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Parking" src="images/legend/parking_ga_ramp.png" />
@@ -574,16 +618,17 @@
             GA ramp with heading tick mark.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Parking" src=
-            "images/legend/parking_gate_no_jetway.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img style=
+            <img alt="Parking" src="images/legend/parking_gate_no_jetway.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img style=
             " width: 51px; height: 49px;" alt="Parking" src="images/legend/parking_gate.png" />
           </td>
           <td>
             Gate. Second ring indicates availability of jetway.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Parking" src="images/legend/parking_ramp_cargo.png" />
@@ -592,15 +637,16 @@
             Cargo ramp
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
-            <img alt="Parking" src=
-            "images/legend/parking_mil.png" />
+            <img alt="Parking" src="images/legend/parking_mil.png" />
           </td>
           <td>
             Military combat parking or cargo ramp.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Helipad" src="images/legend/helipad.png" />
@@ -611,21 +657,23 @@
         </tr>
       </tbody>
     </table>
+
     <h3 id="profile">
       Profile Legend
     </h3>
+
     <table style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
       <tbody>
         <tr>
           <td style="text-align: center;">
-            <img alt="Profile Start" src=
-            "images/legend/profile_start.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Profile End" src=
-            "images/legend/profile_end.png" />
+            <img alt="Profile Start" src="images/legend/profile_start.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Profile End" src="images/legend/profile_end.png" />
           </td>
           <td>
             Ground with start and destination airport elevation.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Profile Safe Alt" src="images/legend/profile_safe_alt.png" />
@@ -634,6 +682,7 @@
             Minimum safe altitude for flight plan.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Flight Plan Profile" src="images/legend/profile_route.png" />
@@ -642,15 +691,17 @@
             Flight plan altitude.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Aircraft" src="images/legend/profile_aircraft.png" />
           </td>
           <td>
-            Aircraft if connected to the simulator. Labels are: Altitude, climb/sink arrow,
-            distance flown and distance to destination.
+            Aircraft if connected to the simulator. Labels are: Altitude, climb/sink arrow, distance flown and distance
+            to destination.
           </td>
         </tr>
+
         <tr>
           <td style="text-align: center;">
             <img alt="Track" src="images/legend/profile_track.png" />

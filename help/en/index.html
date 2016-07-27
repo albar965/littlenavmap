@@ -8,9 +8,9 @@
     <meta http-equiv="language" content="EN" />
     <meta name="author" content="Alexander Barthel" />
     <meta name="date" content="2016-01-20T14:00:00+01:00" />
-    <meta content="Little Navmap Help" name="description" />
+    <meta content="Little Navmap User Manual" name="description" />
     <title>
-      Little Navmap Help
+      Little Navmap User Manual
     </title>
     <style type="text/css" xml:space="preserve">
 /*<![CDATA[*/
@@ -37,7 +37,7 @@
     margin-bottom: 0.3em;
     margin-left: 0.2em;
     line-height: 1.5;
-    width:50%;
+    width:75%;
     }
     img {
     margin-top: 0.2em;
@@ -69,14 +69,14 @@
     margin-left: 1.5em;
     margin-top: 0.4em;
     margin-bottom: 0.4em;
-    width:50%;
+    width:75%;
     }
     code {
     font-size: 16px;
     font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
     font-weight: bold;
     color: darkgreen;
-    width:50%;
+    width:75%;
     }
     pre {
     margin-left: 1.5em;
@@ -145,12 +145,20 @@
   </head>
   <body class="c3">
     <h1>
-      Little Navmap Help
+      Little Navmap User Manual
     </h1>
 
     <p>
       <img class="textimg" style="width: 100px; height:auto" alt="Little Navmap" title="Little Navmap" src=
-      "images/navroute.svg" /> Version 0.9.5.develop.
+      "images/navroute.svg" />
+    </p>
+
+    <p>
+      <span class="bold">Version 0.9.5.develop</span>
+    </p>
+
+    <p>
+      <span class="bold"><a href="features.html">List of Features</a></span>
     </p>
     <!-- ===================================================================== -->
 
@@ -182,24 +190,24 @@
       General Remarks
     </h2>
 
-    <p>
-      See <a href="features.html">here</a> for a list of features.
-    </p>
-
     <h3>
       User Interface
     </h3>
+
+    <p>
+      The user interface of <em>Little Navmap</em> consists of multiple dock windows that are arranged around the main
+      window which contains the map view. The dock windows can be detached from the main window and can also be moved
+      around in their docked position. All docks can be closed if they are not needed. You can even drop docks on each
+      other to create a tabbed view (tabs will appear at the bottom of the dock stack). Toolbars are also movable if
+      you click on the left handle and can be closed or undocked from the main window too.
+    </p>
 
     <p>
       <img style="width: 100%; height:auto" alt="Little Navmap" title="Little Navmap" src="images/all.png" />
     </p>
 
     <p>
-      The user interface of <em>Little Navmap</em> consists of multipe dock windows that are arranged around the main
-      window containing the map view. The dock windows can be detached from the main window and also moved around in
-      their docked position. All docks can be closed if they are not needed. You can even drop docks on each other to
-      create a tabbed view (tabs will appear at the bottom of the dock stack). Toolbars are also movable if you click
-      on the left handle and can be closed or undocked from the main window too.
+      <span class="bold">Picture above:</span> <em>Little Navmap</em> with map and sourrounding docked windows.
     </p>
 
     <h3>
@@ -208,9 +216,9 @@
 
     <p>
       <em>Little Navmap</em> is currently only available in English. I will happily support anybody who would like to
-      translate the user interface into any other language. Despite using English in the user interface the locale
-      settings of the operating system will be used. So e.g. on a Germany operating system you will see <code>,</code>
-      as a decimal separator instead of the English <code>.</code>.
+      translate the user interface into any other language. Despite using the English language in the user interface
+      the locale settings of the operating system will be used. So e.g. on a Germany operating system you will see
+      comma as a decimal separator instead of the English dot.
     </p>
 
     <p>
@@ -229,7 +237,7 @@
 
     <p>
       World coverage for elevation data is not available for all countries and currently ends at 60 degree north. Also
-      strange artifacts can occur which I cannot influence (like south of the Alps).
+      strange artifacts can occur which I cannot influence (like in Italy south of the Alps).
     </p>
 
     <h3>
@@ -237,12 +245,12 @@
     </h3>
 
     <p>
-      The map legend explaining the icons on the map and the <code>Flight Plan Profile</code> is available in the
+      The legend explaining all the map icons and the <code>Flight Plan Profile</code> is available in the
       <code>Information</code> dock window or <a href="legend.html">right here</a>.
     </p>
 
     <h3>
-      Naming Conventions
+      Naming Conventions used in this Manual
     </h3>
 
     <ul>
@@ -252,8 +260,8 @@
       </li>
 
       <li>
-        <span class="bold">Add-on airport:</span> Airport that was found outside the Flight Simulator default scenery
-        folder when loading the database.
+        <span class="bold">Add-on airport:</span> This is an airport that was found outside the Flight Simulator
+        default scenery folder when loading the database.
       </li>
 
       <li>
@@ -268,7 +276,7 @@
         <span class="bold">Rating:</span> Airports are given a zero to five star rating depending on facilities.
         Airports that have no rating are considered boring and will be displayed using a gray symbol below all other
         airports on the map. This behavior can be switched off in the <code>Options</code> dialog on the <code>Map
-        Display</code> tab.
+        Display</code> tab. The criteria below are used to calculate the rating. Each item gives on star:
         <ol>
           <li>Add-on
           </li>
@@ -292,56 +300,67 @@
       Known Problems
     </h3>
 
-    <p>
-      Please note that due to a variety of external data like KML or BGL files that can be loaded by <em>Little
-      Navmap</em> crashes or malfunctions can occur. If that is the case send me the offending file and <em>Little
-      Navmap</em>'s log file and configuration which can be located in the about dialog. My e-mail address is shown in
-      the about dialog of <em>Little Navmap</em> too.
-    </p>
-
     <ul>
-      <li>Support for FSX SE and P3D is untested.
+      <li>Support for FSX SE and P3D is untested yet.
       </li>
 
-      <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually.
+      <li>Scenery.cfg files is not found automatically in Windows XP. As a workaround set the path manually.
       </li>
 
-      <li>Scrolling ist jerky when using OpenStreetMap or OpenTopoMap and the spherical projection. Either use the
-      Plain or Simple map themes or use the Mercator projection.
+      <li>Scrolling ist jerky when using <em>OpenStreetMap</em> or <em>OpenTopoMap</em> and the spherical projection.
+      Either use the <code>Plain</code> or <code>Simple</code> map themes or use the <code>Mercator</code> projection.
       </li>
 
-      <li>OpenStreetMap or OpenTopoMap maps can end up fuzzy when using functionality like "center route" or "show on
-      map". Zoom once in and out using the scrollwheel to fix this.
+      <li>
+        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up fuzzy when using functionality like <code>Center
+        Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mousewheel to fix this.
       </li>
 
-      <li>Zoom is too fast when using a touchpad with OpenStreetMap or OpenTopoMap. Use the Plain or Simple map themes
-      or use the zoom buttons or the keyboard.
+      <li>Zoom is too fast when using a touchpad with <em>OpenStreetMap</em> or <em>OpenTopoMap</em>. Use the
+      <code>Plain</code> or <code>Simple</code> map themes or use the zoom buttons or the keyboard or the map controls.
       </li>
 
       <li>Flight plan and airways are drawn using great circle lines instead of rhumb lines. Distance and course are
       not affected by this.
       </li>
 
-      <li>In rare cases KML files can cause crashes.
+      <li>In very rare cases KML files can cause crashes.
       </li>
 
-      <li>Magnetic variance in FS is partially not set - this is an error in the flight simulator source data and
-      should be fixed with a workaround when loading the database
+      <li>Magnetic variance in the Flight Simulator source data is partially not set. This is an error in source data
+      and should be fixed with a workaround when loading the database in the future.
       </li>
 
-      <li>Elevation data coverage is limited
+      <li>Elevation data coverage is limited up to 60 degrees north and certain countries only. Use the
+      <em>OpenTopoMap</em> which contains hillshading.
       </li>
 
-      <li>Elevation data errors (south of the Alps, e.g.)
+      <li>
+        <em>OpenTopoMap</em> is loading slowly. Keep in mind that the data is free.
+      </li>
+
+      <li>Elevation data errors (south of the Alps, e.g.).
       </li>
     </ul>
 
-    <h3>
+    <h3 id="bugreport">
       How to report a Bug
     </h3>
 
     <p>
-      TODO
+      If something goes wrong send me the offending files (KML, BGL, PLN, etc.) and <em>Little Navmap</em>'s log file
+      and configuration file which can be located in the about dialog. My e-mail address is shown in the about dialog
+      of <em>Little Navmap</em> too.
+    </p>
+
+    <h3>
+      Troubleshoot
+    </h3>
+
+    <p>
+      If the program crashes during startup delete the settings and the database files. In Windows 7 these can be found
+      in <code>c:\Users\YOURUSERNAME\Appdata\Roaming/ABarthel</code>. Delete the file <code>little_navmap.ini</code>
+      and the directory <code>little_navmap_db</code>.
     </p>
     <!-- ===================================================================== -->
 
@@ -350,24 +369,15 @@
     </h2>
 
     <p>
-      <img style="width: 100%; height:auto" alt="Little Navmap First Start" title="Little Navmap First Start" src=
-      "images/firststart.png" />
+      The <a href="#scenerylibdialog">Scenery Library Dialog</a> dialog will be shown when starting <em>Little
+      Navmap</em> the first time. From there your can select all recognized Flight Simulators and load their scenery
+      libraries into <em>Little Navmap</em>'s internal database. One database is kept for each simulator and can be
+      changed on the fly in the <a href="#scenerylibrary">Scenery Library</a> menu.
     </p>
 
     <p>
-      When starting the first time <em>Little Navmap</em> will show the <code>Load Scenery Library</code> dialog. From
-      there your can select all recognized Flight Simulators and load their scenery libaries into <em>Little
-      Navmap</em>'s internal database. One database is kept for each simulator and it can be changed on the fly in the
-      <code>Scenery Library</code> menu.
-    </p>
-
-    <p>
-      See the description of the <a href="#scenerylibrary">Scenery Library</a> for more information.
-    </p>
-
-    <p>
-      See chapter <a href="#nosim">Running without Simulator Installation</a> for information how to run <em>Little
-      Navmap</em> without a Flight Simulator installation.
+      See chapter <a href="#nosim">Running without Flight Simulator Installation</a> for information how to run
+      <em>Little Navmap</em> without a Flight Simulator installation.
     </p>
     <!-- ===================================================================== -->
 
@@ -376,14 +386,18 @@
     </h2>
 
     <p>
+      This chapter describes all the menu items of <em>Little Navmap</em>. You will find most of this functionality on
+      the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
+      are not listed separately in this manual.
+    </p>
+
+    <p>
       <img alt="Little Navmap Menu and Toolbars" title="Little Navmap Menu and Toolbars" src=
       "images/menutoolbar.png" />
     </p>
 
     <p>
-      This chapter describes the menu structure of <em>Little Navmap</em>. You will find parts of this functionality on
-      the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
-      are not listed separately.
+      <span class="bold">Picture above:</span> Menu and toolbars.
     </p>
 
     <h3>
@@ -395,12 +409,12 @@
     </h4>
 
     <p>
-      You can load, save or create new FSX PLN files. FS9 PLN files are not supported.
+      You can load, save or create new Flight Simulator PLN files. FS9 files are not supported.
     </p>
 
     <p>
       An opened flight plan file will be reloaded on startup (reload and centering can be switched off in the
-      <code>Options</code> dialog on the <code>Startup</code> tab).
+      <code>Options</code> dialog on the <code>Startup</code> and <code>User Interface</code> tab).
     </p>
 
     <h4>
@@ -408,7 +422,7 @@
     </h4>
 
     <p>
-      You can add one or more Google Earth KML or KMZ file to the map display. All added KML or KMZ files will be
+      You can add one or more Google Earth KML or KMZ files to the map display. All added KML or KMZ files will be
       reloaded on startup (reload and centering can be switched off in the <code>Options</code> dialog on the
       <code>Startup</code> and <code>User Interface</code> tab).
     </p>
@@ -422,8 +436,8 @@
     </h4>
 
     <p>
-      Stops loading of map data from the internet. This affects only the OpenStreetMap and OpenTopoMap online map
-      themes.
+      Stops loading of map data from the internet. This affects the <em>OpenStreetMap</em>, <em>OpenTopoMap</em> and
+      elevation data.
     </p>
 
     <h3>
@@ -443,9 +457,18 @@
     </h4>
 
     <p>
-      A parking/gate/ramp, runway or helipad can be selected as a start position on the departure airport. A parking
-      position can also be selected in the map context menu item <a href="#fpdeparture">Set as Flight Plan
+      A parking spot/gate/ramp, runway or helipad can be selected as a start position on the departure airport. A
+      parking position can also be selected in the map context menu item <a href="#fpdeparture">Set as Flight Plan
       Departure</a>. If no position is selected the longest primary runway end is selected automatically as start.
+    </p>
+
+    <p>
+      <img alt="Select Start Position Dialog" title="Select Start Position Dialog" src=
+      "images/selectstartposition.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> The start position selection dialog for EDDN.
     </p>
 
     <h4>
@@ -453,7 +476,7 @@
     </h4>
 
     <p>
-      Switches flight plan edit mode on the map on or off. See <a href="#fpedit">Flight Plan Editing</a>.
+      Switches flight plan drag and drop edit mode on the map on or off. See <a href="#fpedit">Flight Plan Editing</a>.
     </p>
 
     <h4>
@@ -461,7 +484,7 @@
     </h4>
 
     <p>
-      Deletes any intermediate waypoints and connects departure and destination using a great circle route.
+      Deletes any intermediate waypoints and connects departure and destination using a great circle line.
     </p>
 
     <h4>
@@ -469,10 +492,9 @@
     </h4>
 
     <p>
-      Creates a flight plan that uses only VOR and NDB stations as waypoints and ensures that reception of at least one
-      station is ensured along the whole flight plan. Note that VOR stations are preferred before NDB and DME stations
-      are not used at all. Calculation will fail if not enough radio navaids can be found between departure and
-      destination.
+      Creates a flight plan that uses only VOR and NDB stations as waypoints and ensures reception of at least one
+      station along the whole flight plan. Note that VOR stations are preferred before NDB. DME stations are not used
+      at all. Calculation will fail if not enough radio navaids can be found between departure and destination.
     </p>
 
     <h4>
@@ -481,8 +503,20 @@
 
     <p>
       Uses Jet Airways to create a flight plan. The resulting minimum altitude is set into the flight plan altitude
-      field. A simplified east/west rule is used to adjust the cruise altitude (can be switched off in the
-      <code>Options</code> dialog on the <code>Flight Plan</code> tab).
+      field. A simplified east/west rule is used to adjust the cruise altitude to odd/even values (can be switched off
+      in the <code>Options</code> dialog on the <code>Flight Plan</code> tab).
+    </p>
+
+    <p>
+      The default behavior is to jump from the departure airport to the next waypoint of a suitable route and vice
+      versa for the destination. This can be changed in <code>Options</code> dialog on the <code>Flight Plan</code> tab
+      if VOR or NDB stations are preferred as transtion points to airways.
+    </p>
+
+    <p>
+      The airway network of Flight Simulator is not complete (the north atlantic tracks are missing for example - these
+      change daily). Therefore calculation across large ocean areas will fail. Create the route manually as a
+      workaround.
     </p>
 
     <h4>
@@ -490,17 +524,18 @@
     </h4>
 
     <p>
-      Uses Victor Airways to create a flight plan. Everything else is the same as in <code>Calculate low
+      Uses Victor Airways to create a flight plan. Everything else is the same as in <code>Calculate high
       Altitude</code>.
     </p>
 
-    <h4>
+    <h4 id="calcfpalt">
       Calculate based on given Altitude
     </h4>
 
     <p>
       Use the value in the altitude field of the flight plan to find a flight plan along Victor and/or Jet airways. If
-      the altitude value is too low calculation will fail.
+      the altitude value is too low calculation will fail. Everything else is the same as in <code>Calculate high
+      Altitude</code>.
     </p>
 
     <h4>
@@ -508,7 +543,8 @@
     </h4>
 
     <p>
-      Swaps departure and destination and reverses order of all intermediate waypoints.
+      Swaps departure and destination and reverses order of all intermediate waypoints. A default runway is assigned as
+      the new departure start position.
     </p>
 
     <h3>
@@ -582,8 +618,8 @@
     </h5>
 
     <p>
-      A flat projection that gives the most fluid movement when using the <code>OpenStreetMap</code> and
-      <code>OpenTopoMap</code> themes.
+      A flat projection that gives the most fluid movement when using the <em>OpenStreetMap</em> and
+      <em>OpenTopoMap</em> themes.
     </p>
 
     <h5>
@@ -591,14 +627,18 @@
     </h5>
 
     <p>
+      Shows earth as a globe which is the most natural projection. Movement can stutter when using the
+      <em>OpenStreetMap</em> and <em>OpenTopoMap</em> themes. Use the <code>Simple</code> or <code>Plain</code> map
+      themes to prevent this.
+    </p>
+
+    <p>
       <img style="width: 50%; height:auto" alt="Little Navmap Spherical projection and Simple Map Theme" title=
       "Little Navmap Spherical projection and Simple Map Theme" src="images/sphericalpolitical.png" />
     </p>
 
     <p>
-      Shows earth as a globe which is the most natural projection. Movement can stutter when using the
-      <code>OpenStreetMap</code> and <code>OpenTopoMap</code> themes. Use the <code>Simple</code> or <code>Plain</code>
-      map themes to prevent this.
+      <span class="bold">Picture above:</span> Spherical map projection with <code>Simple</code> map theme selected.
     </p>
 
     <h4 id="maptheme">
@@ -606,17 +646,22 @@
     </h4>
 
     <h5>
-      OpenStreeMap
+      OpenStreetMap
     </h5>
 
     <p>
-      <img style="width: 50%; height:auto" alt="OpenStreeMap and Hillshading" title="OpenStreeMap and Hillshading" src=
-      "images/osmhillshading.png" />
+      This is an online raster map that includes a hillshading option. Note that hillshading does not cover the whole
+      globe.
     </p>
 
     <p>
-      This is an online raster map that includes and hillshading option. Note that hillshading does not cover the whole
-      globe.
+      <img style="width: 50%; height:auto" alt="OpenStreetMap and Hillshading" title="OpenStreetMap and Hillshading"
+      src="images/osmhillshading.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> View at a Swiss airport using <em>OpenStreetMap</em> theme and
+      hillshading.
     </p>
 
     <h5>
@@ -624,13 +669,17 @@
     </h5>
 
     <p>
+      A beautiful online raster map that mimics a topographic map. Includes hillshading and elevation contour lines at
+      lower zoom levels. Disadvantage is that airports and navaids are hard to recognize in the colorful map.
+    </p>
+
+    <p>
       <img style="width: 50%; height:auto" alt="OpenTopoMap" title="OpenTopoMap" src="images/otm.png" />
     </p>
 
     <p>
-      A beautiful online raster map that aims to mimic a paper topographic map as much as possible. Includes
-      hillshading and elevation contour lines at lower zoom levels. Disadvantage is that airports and navaids are hard
-      to recognize in the colorful map.
+      <span class="bold">Picture above:</span> View at the eastern Alps using <em>OpenTopoMap</em> theme. A route is
+      drawn north of the Alps.
     </p>
 
     <h5>
@@ -638,8 +687,8 @@
     </h5>
 
     <p>
-      This is an offline political map using colored countries. The map is simple and included in <em>Little
-      Navmap</em>. Has an option to display city and country names.
+      This is an offline political map using colored countries. The boundaries and water bodies are depicted fairly
+      coarse. The map is included in <em>Little Navmap</em>. Has an option to display city and country names.
     </p>
 
     <h5>
@@ -648,7 +697,7 @@
 
     <p>
       A very simple offline map. The map is and included in <em>Little Navmap</em>. Has an option to display city and
-      country names.
+      country names. Boundaries and water bodies are depicted fairly coarse.
     </p>
 
     <h4>
@@ -672,7 +721,8 @@
     </h4>
 
     <p>
-      Show airports that only soft surfaced runways.
+      Show airports that only soft surfaced runways. This kind of airport might be hidden on the map depending on zoom
+      level.
     </p>
 
     <h4>
@@ -680,14 +730,14 @@
     </h4>
 
     <p>
-      Shows empty airports. This button can be hidden depending on settings in the <code>Options</code> dialog on the
-      <code>Map Display</code> tab.
+      Shows empty airports. This button or menu item might not be visible depending on settings in the
+      <code>Options</code> dialog on the <code>Map Display</code> tab.
     </p>
 
     <p>
       An empty airport is defined as one which has neither parking nor taxiways nor aprons and is no add-on. These
       airports are treated differently in <em>Little Navmap</em> since they are the most boring of all default
-      airports.
+      airports. Empty airports are drawn grey and behind all other airports on the map.
     </p>
 
     <h4>
@@ -696,7 +746,8 @@
     </h4>
 
     <p>
-      Simply shows or hides these facilities or navaids on the map.
+      Shows or hides these facilities or navaids on the map. Some navaids might be hidden on the map depending on zoom
+      level. The flight plan and aircraft trail are shown independent of the zoom level.
     </p>
 
     <h4>
@@ -724,8 +775,8 @@
     </h4>
 
     <p>
-      For each Flight Simulator installation or database found one menu entry is created that allows switching of
-      databases on the fly. The menu item is hidden if only one Flight Simulator was found.
+      One menu item is created for each Flight Simulator installation or database found. These menu items allow
+      switching of databases on the fly. The menu item is hidden if only one Flight Simulator was found.
     </p>
 
     <h4>
@@ -733,7 +784,7 @@
     </h4>
 
     <p>
-      This opens <em>Little Navmap</em>'s database directory in explorer. See <a href="#nosim">Running without
+      This opens <em>Little Navmap</em>'s database directory in explorer. See <a href="#nosim">Running without Flight
       Simulator Installation</a> for more information on copying database files between different computers.
     </p>
 
@@ -742,8 +793,8 @@
     </h4>
 
     <p>
-      Opens the <code>Load Scenery Library</code> dialog. See <a href="#scenerylib">Load Scenery Library Dialog</a> for
-      more information.
+      Opens the <code>Load Scenery Library</code> dialog. See <a href="#scenerylibdialog">Load Scenery Library
+      Dialog</a> for more information.
     </p>
 
     <h3>
@@ -755,8 +806,8 @@
     </h4>
 
     <p>
-      Opens the <code>Connect</code> dialog that allows to connect to a Flight Simulator using <em>Little
-      Navconnect</em>. See <a href="#connect">Connecting to a Flight Simulator</a> for more information.
+      Opens the <code>Connect</code> dialog that allows to connect to a Flight Simulator using the <em>Little
+      Navconnect</em> agent. See <a href="#connect">Connecting to a Flight Simulator</a> for more information.
     </p>
 
     <h4>
@@ -765,7 +816,7 @@
 
     <p>
       This will re-enable all dialogs that were disabled by clicking <code>Do not show this dialog again</code> or
-      similar text.
+      similar messages.
     </p>
 
     <h4>
@@ -793,7 +844,7 @@
     </h4>
 
     <p>
-      Shows or hides these toolbars
+      Shows or hides these toolbars and the statusbar.
     </p>
 
     <h3>
@@ -805,7 +856,7 @@
     </h4>
 
     <p>
-      Shows this help in a web browser
+      Shows this help in a web browser.
     </p>
 
     <h4>
@@ -814,7 +865,7 @@
 
     <p>
       Shows the map legends in the information dock window. You can also access the navmap legend <a href=
-      "legend.html">here</a>.
+      "legend.html">right here</a>.
     </p>
 
     <h4>
@@ -822,8 +873,8 @@
     </h4>
 
     <p>
-      Shows version, revision about <em>Little Navmap</em>. Also links to the database directory, configuration file
-      and log file.
+      Shows version and revision number for <em>Little Navmap</em>. Also contains links to the database directory,
+      configuration file, log file and the author's e-mail address.
     </p>
 
     <h4>
@@ -836,6 +887,41 @@
     <!-- ===================================================================== -->
 
     <h2>
+      Statusbar
+    </h2>
+
+    <p>
+      The statusbar show various indications (from left to right):
+    </p>
+
+    <ul>
+      <li>Last action or short help explaining a menu item or toolbar button.
+      </li>
+
+      <li>Indicator that shows currently visible airport types and navaids. Tooltip gives more details.
+      </li>
+
+      <li>Detail level.
+      </li>
+
+      <li>Zoom distance in nautical miles.
+      </li>
+
+      <li>Cursor position on map in degree latitude longitude.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Statusbar" title="Statusbar" src="images/statusbar.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Status bar with message about the last action on the left side and a
+      tooltip that indicates what is currently shown on the map. Detail level was increased once. Map coordinates not
+      shown since cursor is not on the map.
+    </p>
+
+    <h2>
       Map Display
     </h2>
 
@@ -844,7 +930,7 @@
     </h3>
 
     <p>
-      Use click an drag to move the map and the mousewheel to zoom in or out. You can also use the overlay buttons on
+      Use click and drag to move the map and the mousewheel to zoom in or out. You can also use the overlay buttons on
       the right side of the map.
     </p>
 
@@ -859,17 +945,21 @@
     </h3>
 
     <p>
-      <img alt="Tooltip" title="Tooltip" src="images/tooltip.png" />
-    </p>
-
-    <p>
-      Hovering the mouse over the map will show tooltips for all objects like aiports, VOR, airways and more nearby the
-      cursor. The tooltip is truncated if it gets too long. In that case reduce details or zoom in.
+      Hovering the mouse over the map will show tooltips for all objects like aiports, VOR, NDB, airways and more. The
+      tooltip is truncated if it gets too long. In that case reduce details or zoom in.
     </p>
 
     <p>
       The sensitivity for tooltip display can be adjusted in the <code>Options</code> dialog on the <code>Map
       Display</code> tab.
+    </p>
+
+    <p>
+      <img alt="Tooltip" title="Tooltip" src="images/tooltip.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Tooltip with information for a French airport.
     </p>
 
     <h3>
@@ -892,17 +982,29 @@
     </h3>
 
     <p>
-      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram1.png" />
-    </p>
-
-    <p>
       If you zoom in deep enough to an airport the display will change from a single icon to an airport diagram. This
       shows all taxiways, parking spots, gates, runway and much more.
     </p>
 
     <p>
-      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram2.png" /> The airport diagram
-      provides more information through tooltips for parking and tower positions.
+      The airport diagram provides more information through tooltips for parking and tower positions.
+    </p>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram1.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> High level view of the airport diagram of EDDH.
+    </p>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram2.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Detailed view of the airport diagram. Shows blue gates on the right and
+      a few green general aviation ramp parking on the left. Long displaced threshold of runway 33 is visible.
     </p>
 
     <h3 id="fpedit">
@@ -910,41 +1012,36 @@
     </h3>
 
     <p>
-      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.png" /> <img alt="Flight Plan Edit"
-      title="Flight Plan Edit" src="images/fpedit2.png" />
-    </p>
-
-    <p>
-      The flight plan editing mode is switched on per default but can be disabled if it gets too annoying e.g. during
+      The flight plan editing mode is switched on per default but can be disabled if it gets too annoying during
       flight. The following functionality is available:
     </p>
 
     <ul>
       <li>
-        <span class="bold">Click on line:</span> Adds a new intermediate waypoint depending on where the next click is
-        done:
+        <span class="bold">Click on a flight plan leg:</span> Starts editing and adds a new intermediate waypoint
+        depending on where the next click is done:
       </li>
 
       <li style="list-style: none; display: inline">
         <ul>
           <li>
-            <span class="bold">On a single airport and navaid:</span> Object is added to the flight plan segment.
+            <span class="bold">On a single airport and navaid:</span> Object is inserted into the flight plan segment.
           </li>
 
           <li>
             <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
-            to be added.
+            to be insert.
           </li>
 
           <li>
-            <span class="bold">No airport and no navaid:</span> A user defined position is added to the flight plan.
+            <span class="bold">No airport and no navaid:</span> A user defined position is inserted to the flight plan.
           </li>
         </ul>
       </li>
 
       <li>
-        <span class="bold">Click on waypoint:</span> Replaces the clicked waypoint with an object depending on where
-        the next click is done:
+        <span class="bold">Click on waypoint:</span> Starts editing and replaces the clicked waypoint with an object
+        depending on where the next click is done:
       </li>
 
       <li style="list-style: none; display: inline">
@@ -978,7 +1075,7 @@
 
           <li>
             <span class="bold">On a navaid:</span> Object replaces departure or destination which results in an invalid
-            flight plan. The flight plan can be saved and loaded but will be unusable by the Flight Simulator.
+            flight plan. The flight plan can be saved and loaded but will be unusable by Flight Simulator.
           </li>
 
           <li>
@@ -993,9 +1090,27 @@
       </li>
 
       <li>
-        <span class="bold">Right click:</span> Cancel currend operation.
+        <span class="bold">Right click:</span> Cancel current operation.
       </li>
     </ul>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Inserting a navaid into a flight plan leg by clicking and moving the leg
+      line. A tool tip for the navaid is shown.
+    </p>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit2.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Replacing VOR TRA in the flight plan with another one by simply clicking
+      and moving the waypoint TRA onto KLO. Selection menu pops up for disambiguation.
+    </p>
 
     <h3 id="mapcontextmenu">
       Map Context Menu
@@ -1019,18 +1134,22 @@
     </p>
 
     <p>
-      Measurement lines use nautical miles as unit. If they are short enough feet will be added as unit so one can
+      Measurement lines use nautical miles as unit. Feet will be added as unit if they are short enough so one can
       measure e.g. takeoff distance for crossing takeoffs and more.
     </p>
 
     <p>
       A great circle gives the shortest distance from point to point on earth but does not use a constant course. For
-      that reason the measurement line will indicate the course at the start and end position.
+      that reason the measurement line will show two course values. One for the start and one for the end position.
     </p>
 
     <p>
       Course is indicated in degrees true. Additional information like ident or frequency will be added to the line if
       the measurement starts at a navaid or an airport.
+    </p>
+
+    <p>
+      See the <a href="legend.html#mapmarks">Nav Map Legend</a> for details on measurement lines.
     </p>
 
     <h4>
@@ -1053,7 +1172,7 @@
     </h4>
 
     <p>
-      This menu item is active if you right click on the end of a distance measurement line. Removes only the selected
+      This menu item is active if you right click ot the end of a distance measurement line. Removes only the selected
       line.
     </p>
 
@@ -1062,9 +1181,9 @@
     </h4>
 
     <p>
-      Shows multiple red range rings around the clicked position. Number and distance of the range rings can be
-      confgured in the <code>Options</code> dialog on the <code>Map Display</code> tab. A label indicates the distance
-      of each ring.
+      Shows multiple red range rings around the clicked position. Number and distance of the range rings can be changed
+      in the <code>Options</code> dialog on the <code>Map Display</code> tab. A label indicates the radius of each ring
+      in nautical miles.
     </p>
 
     <h4>
@@ -1072,7 +1191,7 @@
     </h4>
 
     <p>
-      Shows a range ring around the clicked radio navaid indicating its range. A label shows ident and frequency.
+      Shows a ring around the clicked radio navaid indicating its range. A label shows ident and frequency.
     </p>
 
     <h4>
@@ -1080,7 +1199,7 @@
     </h4>
 
     <p>
-      Active if the click is at the center of a range ring. Removes the ring.
+      Menu item is active if the click is at the center of a range ring. Removes the ring.
     </p>
 
     <h4>
@@ -1119,8 +1238,10 @@
     </h4>
 
     <p>
-      Adds the clicked object to the nearest flight plan segment. If no airport or navaid is near the clicked position
-      a user position will be added to the flight plan.
+      Adds the clicked object to the nearest flight plan leg. If the postition is not along a leg but nearby departure
+      or destination the object will be prependend before departure or appendend after the destination. If no airport
+      or navaid is near the clicked position a user position will be added to the flight plan. The name of the navaid
+      to add is shown in the menu item.
     </p>
 
     <h4>
@@ -1136,7 +1257,7 @@
     </h4>
 
     <p>
-      Shows the clicked airport or navaid in the search dialog. The current search parameters are reset.
+      Shows the nearest airport or navaid in the search dialog. The current search parameters are reset.
     </p>
 
     <h4 id="mapsetdistcenter">
@@ -1169,8 +1290,8 @@
     </p>
 
     <p>
-      These tabs contain multiple rows of search filters that can be switched on and off with the drop down hamburger
-      menu button on the top left.
+      These tabs contain multiple rows of search filters that can be switched on and off with the drop down menu on the
+      hamburger button on the top right.
     </p>
 
     <p>
@@ -1179,8 +1300,8 @@
     </p>
 
     <p>
-      All filters can be used in parallel where all conditions have to be met (<code>and</code> operator). All except
-      the distance search filter are applied immediately. The distance search is applied after a short delay after each
+      All filters can be used together where all conditions have to be met (<code>and</code> operator). All except the
+      distance search filter are applied immediately. The distance search is applied after a short delay after each
       change.
     </p>
 
@@ -1198,7 +1319,7 @@
 
     <p>
       The placholder <code>*</code> stands for any text. Once a <code>*</code> is included in the term, the standard
-      search is no longer used.
+      search (match start of text) is no longer used.
     </p>
 
     <p>
@@ -1207,7 +1328,7 @@
     </p>
 
     <p>
-      Note that all of the above does not apply to numeric fields like <code>Runway length</code>.
+      Note that all of the above does not apply to numeric fields like <code>Runways: Min</code>.
     </p>
 
     <h4>
@@ -1229,7 +1350,8 @@
     </ul>
 
     <p>
-      Colors and look of these checkboxes vary with theme and operation system. So above might not be precise
+      Colors and look of these checkboxes vary with theme and operation system. So instead of gray another color might
+      be used.
     </p>
 
     <h4>
@@ -1237,22 +1359,29 @@
     </h4>
 
     <p>
-      <img alt="Complex Distance Search" title="Complex Distance Search" src="images/complexsearch.png" />
-    </p>
-
-    <p>
       This function allows you to combine all other search options with simple spatial search.
     </p>
 
     <p>
-      When the checkbox <code>Distance</code> is checked the results will include only airports or navaids that are
-      within the given minimum and maximum range of nautical miles of the search center. This allows you to quickly
-      search for an destination that is within the range of your aircraft and fulfills other criteria like having
-      lighted runways and fuel.
+      The checkbox <code>Distance</code> has to be selected to enable this search. The result will include only
+      airports or navaids that are within the given minimum and maximum range of nautical miles from the search center.
+      This allows you to quickly search for a destination that is within the range of your aircraft and fulfills other
+      criteria like having lighted runways and fuel.
     </p>
 
     <p>
-      Additionally you can select a direction (North, East, South and West) to restrict the distance search.
+      Additionally you can select a direction (North, East, South and West) to restrict the search result.
+    </p>
+
+    <p>
+      <img alt="Complex Distance Search" title="Complex Distance Search" src="images/complexsearch.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> A complex search. Find all airports within a distance between 200 and
+      400 nautical miles from Frankfurt (EDDF). Airports should have a rating greater than 0 and should have at least
+      one lighted runway. Military and closed airports are excluded. The resulting airports are highlighted on the map
+      by selecting them in the search result table.
     </p>
 
     <h3 id="tableview">
@@ -1260,23 +1389,12 @@
     </h3>
 
     <p>
-      <img style="width: 100%; height:auto" alt="Airport Search Result Table" title="Airport Search Result Table" src=
-      "images/airportsearchtable.png" /> <img style="width: 100%; height:auto" alt="Navaid Search Result Table" title=
-      "Navaid Search Result Table" src="images/navaidsearchtable.png" />
-    </p>
-
-    <p>
       All selected elements in the table view will be highlighted on the map using a black/yellow circle. Multi
       selection using <code>Shift</code>- or <code>Ctrl</code>-Click are possible.
     </p>
 
-    <p>
-      If you want to get an quick overview of your results on the map select all the results which will be hightlighted
-      on the map.
-    </p>
-
-    <p>
-      The header of the table view allows the following manipulations (the same applies to the flight plan table view):
+    <p id="tableviewops">
+      The header of the table view allows the following manipulations (like all other table views):
     </p>
 
     <div class="tabbed20">
@@ -1300,7 +1418,25 @@
     </div>
 
     <p>
-      The program remembers the column widths and positions until <code>Reset View</code> is executed.
+      The program saves the column widths and positions until <code>Reset View</code> is executed.
+    </p>
+
+    <p>
+      <img alt="Airport Search Result Table" title="Airport Search Result Table" src="images/airportsearchtable.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Airport search result table. All additional search options are hidden by
+      using the drop down menu of the hamburger button on the top right.
+    </p>
+
+    <p>
+      <img alt="Navaid Search Result Table" title="Navaid Search Result Table" src="images/navaidsearchtable.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Navaid search. All search options are visible. Search is limited to ICAO
+      region <code>LI</code> (Italy) and VOR and NDB stations.
     </p>
 
     <h3>
@@ -1338,7 +1474,8 @@
     </h4>
 
     <p>
-      TODO
+      Takes the text of the field under the cursor and sets the search filter for an including or an excluding search.
+      This only enabled to text columns.
     </p>
 
     <h4>
@@ -1346,7 +1483,7 @@
     </h4>
 
     <p>
-      Deletes all search filters and shows all entries again in the table view.
+      Clears search filters and shows all entries again in the table view.
     </p>
 
     <h4>
@@ -1408,28 +1545,63 @@
     </h2>
 
     <p>
-      <img style="width: 100%; height:auto" alt="Flight Plan" title="Flight Plan" src="images/flightplan.png" />
+      The top shows a label that contains departure, departure position (parking, runway or helipad), destination,
+      travelling time and flight plan type.
     </p>
 
     <p>
-      The user Besides the table view there are three input fields on top of this dock window:
+      Besides the label there are three input fields on top of this dock window:
     </p>
 
     <ul>
       <li>
         <span class="bold">Speed (kts):</span> The value of this field is used only for calculating travelling times in
-        the table view. It is not saved with the flight plan and not used for simulator aircraft calculations.
+        the table view (columns <code>Leg Time</code> and <code>ETA</code> (estimate time of arrival at waypoint given
+        0:00 as start time). It is not saved with the flight plan and not used for simulator aircraft calculations.
       </li>
 
       <li>
         <span class="bold">Cruise altitude (ft):</span> This value will be saved with the flight plan and is also used
-        to calculate an airway flight plan based on given altitude.
+        to calculate an airway flight plan based on given altitude. See <a href="#calcfpalt">Calculate based on given
+        Altitude</a>.
       </li>
 
       <li>
         <span class="bold">Flight Plan Type (IFR or VFR):</span> This is saved with the flight plan.
       </li>
     </ul>
+
+    <p>
+      The table view allows the same operations as the search table view except sorting. See <a href=
+      "#tableviewops">here</a>.
+    </p>
+
+    <p>
+      <span class="bold">Note on the table columns <code>Course °M</code> and <code>Direct °M</code>:</span>
+      <br />
+    </p>
+
+    <ul>
+      <li>
+        <code>Direct °M:</code> This is the rhumb line of constant course connecting two waypoints of a leg. Depending
+        on route and distance it can differ significantly from the course of the great circle line. Use this course if
+        you travel along airways or towards VOR or NDB. Opposed to the Flight Simulator GPS course this will give you
+        the precise radial when approaching a VOR or NDB on a flight plan.
+      </li>
+
+      <li>
+        <code>Course °M:</code> This is the start course of the great circle route connecting the two waypoints of the
+        leg. Use this course if you travel long distances without navaids.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Flight Plan" title="Flight Plan" src="images/flightplan.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> The flight plan dock window.
+    </p>
 
     <h3>
       Mouse Clicks
@@ -1439,11 +1611,6 @@
       A double click on an entry in the table view shows either an airport diagram or zooms to the navaid. Additionally
       details are shown in the information panel. Single click selects and object and highlights it on the map using a
       black/green circle.
-    </p>
-
-    <p>
-      The header of the flight plan table view has the same functionality as the search result <a href=
-      "#tableview">Table View</a>.
     </p>
 
     <h3>
@@ -1463,7 +1630,7 @@
     </h4>
 
     <p>
-      Deletes all selected flight plan legs.
+      Deletes all selected flight plan legs. Use <code>Undo</code> if you deleted legs accidentally.
     </p>
 
     <h4>
@@ -1495,7 +1662,8 @@
     </h4>
 
     <p>
-      Will show the range rings for all selected radio navaids in the flight plan.
+      Will show the range rings for all selected radio navaids in the flight plan. If you simply select all legs of the
+      flight plan and use this function you will get a range circle for each radio navaid on the flight plan.
     </p>
 
     <p>
@@ -1515,8 +1683,8 @@
     </h4>
 
     <p>
-      Copies the selected entries in CSV format into the clipboard. This will consider changes to the table view like
-      column order and sort order.
+      Copies the selected entries in CSV format into the clipboard. The CSV will include a header. This will consider
+      changes to the table view like column order and sort order.
     </p>
 
     <h4>
@@ -1549,8 +1717,9 @@
     </h2>
 
     <p>
-      This dock window contains text information about airports in several tabs, information for one or more navaid in
-      one tab, the legend for the navigation symbols and the general map legend (depends on map theme).
+      This dock window contains text information about airports in several tabs and information for one or more navaid
+      in another tab. Also included are the legend for the navigation symbols and the general map legend (depends on
+      map theme).
     </p>
 
     <p>
@@ -1562,9 +1731,20 @@
     </p>
 
     <p>
-      <img alt="Airport Information" title="Airport Information" src="images/infoairport.png" /> <img alt=
-      "Runway Information" title="Runway Information" src="images/inforunway.png" /> <img alt="Navaid Information"
-      title="Navaid Information" src="images/infonavaid.png" />
+      <img alt="Airport Information" title="Airport Information" src="images/infoairport.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Airport information overview. Additional tabs show information for
+      runways, COM frequencies and approaches.
+    </p>
+
+    <p>
+      <img alt="Navaid Information" title="Navaid Information" src="images/infonavaid.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Navaid information. Two navaids were close to the cursor when clicked.
     </p>
     <!-- ===================================================================== -->
 
@@ -1573,9 +1753,10 @@
     </h2>
 
     <p>
-      This dock window show information similar to a flight management computer about the user aircraft if connected to
-      the simulator. It contains one tab that shows general aircraft data like gross weight and another tab that
-      displays flight data, route progress and ambient parameters.
+      This dock window shows information similar to a flight management computer about the user aircraft. <em>Little
+      Navmap</em> has to be connected to the simulator to enable this functionality. The dock window contains one tab
+      that shows general aircraft data like gross weight and another tab that displays flight data, flight plan
+      progress and ambient parameters.
     </p>
 
     <p>
@@ -1583,8 +1764,21 @@
     </p>
 
     <p>
-      <img alt="Aircraft Information" title="Aircraft Information" src="images/infoac.png" /> <img alt=
-      "Aircraft Progresss Information" title="Aircraft Progresss Information" src="images/infoacprogress.png" />
+      <img alt="Aircraft Information" title="Aircraft Information" src="images/infoac.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Aircraft information when connected to a Flight Simulator.
+    </p>
+
+    <p>
+      <img alt="Aircraft Progresss Information" title="Aircraft Progresss Information" src=
+      "images/infoacprogress.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Progress and ambient information of the current flight situation. Some
+      fields are only available when a flight plan is loaded.
     </p>
     <!-- ===================================================================== -->
 
@@ -1595,28 +1789,25 @@
     <p>
       This dock window will show the ground elevation and flight plan cruise altitude together will all flight plan
       waypoints. It is only available if a flight plan is loaded. If <em>Little Navmap</em> is connected to the
-      simulator the user aircraft is shown too.
+      simulator the user aircraft will be shown too.
     </p>
 
     <p>
-      Since elevation processing is CPU intense it is done in background after creating or changing the flight plan.
-      The elevation display will be updated accordingly whenever new data is available. Close the <code>Flight Plan
-      Profile</code> window if you think this causes problems. All updates will stop then.
+      Since elevation processing is CPU intense it is done in background after creating or changing the flight plan and
+      when new data arrives. The elevation display will be updated accordingly whenever new data is available. Close
+      the <code>Flight Plan Profile</code> window if you think this causes performance problems. All updates will stop
+      then.
     </p>
 
     <p>
       Note that the world coverage for elevation data is limited here. Also strange artifacts can occur which I cannot
-      influence (like south of the Alps).
+      influence (like gaps south of the Alps).
     </p>
 
     <p>
-      Be aware that the elevation display only covers the route and will not change the depiction if you get off flight
-      plan with your aircraft. Also aircraft climb is not depicted (no aircraft profiles yet). The flight plan is only
-      shown at cruise level.
-    </p>
-
-    <p>
-      <img alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src="images/profile.png" />
+      Be aware that the elevation display only covers the flight plan and will not change the depiction if you get off
+      flight plan with your aircraft. Also aircraft climb is not depicted (no aircraft profiles yet). The flight plan
+      is only shown at cruise level.
     </p>
 
     <p>
@@ -1629,25 +1820,34 @@
     </p>
 
     <ul>
-      <li>From and to waypoint
+      <li>From and to waypoint.
       </li>
 
-      <li>Distance from departure and to destination
+      <li>Distance from departure and to destination.
       </li>
 
-      <li>Ground altitude
+      <li>Ground altitude.
       </li>
 
-      <li>Flight plan cruise altitude above ground
+      <li>Flight plan cruise altitude above ground.
       </li>
 
-      <li>Safe altitude for the current leg
+      <li>Safe altitude for the current leg.
       </li>
     </ul>
 
     <p>
       For more information see the <code>Navmap Legend</code> tab in the <code>Information</code> dock window or access
       the <a href="legend.html#profile">legend right here</a>.
+    </p>
+
+    <p>
+      <img alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src="images/profile.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Flight plan elevation profile with line indicating the mouse hovering
+      position.
     </p>
     <!-- ===================================================================== -->
 
@@ -1656,27 +1856,27 @@
     </h2>
 
     <p>
-      <img alt="Options" title="Options" src="images/options.png" />
-    </p>
-
-    <p>
       Most options are self explaining and tooltips contain more detailed explanations if applicable. Therefore a more
-      detailed description is not needed.
+      detailed description is not needed here.
     </p>
 
     <p>
       Note that the button <code>Restore Defaults</code> only restores the options of this dialog back to default.
-      Other settings like map display or table views are not affected.
+      Other settings like map display, table views or dock window positions are not affected.
+    </p>
+
+    <p>
+      <img alt="Options" title="Options" src="images/options.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Startup tab of the options dialog.
     </p>
     <!-- ===================================================================== -->
 
-    <h2 id="scenerylib">
+    <h2 id="scenerylibdialog">
       Load Scenery Library Dialog
     </h2>
-
-    <p>
-      <img alt="Load Scenery Dialog" title="Load Scenery Dialog" src="images/loadscenery.png" />
-    </p>
 
     <p>
       This dialog allows to load the scenery library from all four supported simulators. It shows some information
@@ -1685,8 +1885,28 @@
 
     <p>
       You can select the simulator in a drop down box which will show the base path and <code>scenery.cfg</code> in two
-      text edit fields. There are populated with default values first but you can change these to any other valid
-      location.
+      text edit fields. These fields are populated with default values first but you can change these to any other
+      valid location. All values are saved.
+    </p>
+
+    <p>
+      Loading a scenery library can take three to six minutes depending on your setup and amount of scenery add-ons.
+      You can speed this up by excluding directories containing neither airport nor navigation data in the
+      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
+    </p>
+
+    <p>
+      All airports that are not located in the default <code>scenery</code> directory are considered add-on airports
+      and will be highlighted appropriately. Directories can be excluded from this behavior in the <code>Options</code>
+      dialog on the <code>Scenery Library Database</code> tab.
+    </p>
+
+    <p>
+      <img alt="Load Scenery Dialog" title="Load Scenery Dialog" src="images/loadscenery.png" />
+    </p>
+
+    <p>
+      <span class="bold">Picture above:</span> Load Scenery Dialog. Nothing is loaded yet for FSX.
     </p>
 
     <p>
@@ -1695,49 +1915,42 @@
     </p>
 
     <p>
-      Loading a scenery library can take three to six minutes depending on your setup and amount of scenery add-ons.
-      You can speed this up by excluding directories containing no airport or navigation data in the
-      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
-    </p>
-
-    <p>
-      All airports that are not located in the default <code>scenery</code> directory are considered add-on airports
-      and will be highligthed appropriately. Directories can be excluded from this behaviour in the
-      <code>Options</code> dialog on the <code>Scenery Library Database</code> tab.
+      <span class="bold">Picture above:</span> Progress dialog shown while loading the scenery library into <em>Little
+      Navmap</em>'s internal database.
     </p>
     <!-- ===================================================================== -->
 
     <h2 id="nosim">
-      Running without Simulator Installation
+      Running without Flight Simulator Installation
     </h2>
 
     <ol>
       <li>Install <em>Little Navmap</em> on both your flying computer and your client computer (without simulator).
       </li>
 
-      <li>Start it on the flying computer and generate the scenery library databases. See <a href="#scenerylib">Load
-      Scenery Library Dialog</a> for more information.
+      <li>Start it on the flying computer and generate the scenery library databases. See <a href="#scenerylibdialog">
+        Load Scenery Library Dialog</a> for more information.
       </li>
 
       <li>Select <code>Main Menu</code> -&gt; <code>Scenery Library</code> -&gt; <code>Show Database Files</code>. This
-      will open the directory containing the database files in explorer. You will find one or more database files like
-      <code>little_navmap_fsx.sqlite</code>.
+      will open the directory containing the database files in Windows explorer. You will find one or more database
+      files like <code>little_navmap_fsx.sqlite</code>.
       </li>
 
       <li>Start <em>Little Navmap</em> on the client computer and select <code>Scenery Library</code> -&gt; <code>Show
       Database Files</code>.
       </li>
 
-      <li>Exit <em>Little Navmap</em> on the client computer
+      <li>Exit <em>Little Navmap</em> on the client computer.
       </li>
 
-      <li>Copy these afore mentioned database files to your client computer using network shares or USB sticks. Move
+      <li>Copy the database files to your client computer using network shares, USB sticks or whatever you like. Move
       the files into the directory opened by <em>Little Navmap</em> before.
       </li>
 
       <li>Start <em>Little Navmap</em> on the client computer. The menu <code>Scenery Library</code> should contain an
-      entry for each copied database file or no entry at all if only one file was copied. Airport icons should be
-      visible on the map.
+      entry for each copied database file or no entry at all if only one file was copied. Anyway airport icons should
+      be visible on the map.
       </li>
     </ol>
     <!-- ===================================================================== -->
@@ -1748,17 +1961,21 @@
 
     <ol>
       <li>Install <em>Little Navconnect</em> on the computer that is running the simulator. Start it and take note of
-      the message that is printed on the logging window. You only need the colored values:
+      the message that is printed on the logging window. You only need the colored values. You can use the IP address
+      or the hostname.
 
         <pre xml:space="preserve">
 [2016-07-24 17:31:40] Server is running on hostname <span style=
 "color: blue;">windows-pc</span> (IP address <span style="color: blue;">192.168.1.4</span>) port <span style=
 "color: red;">51968</span>.
-</pre>
+</pre><img alt="Little Navconnect" title="Little Navconnect" src="images/littlenavconnect.png" />
+        <p>
+          <span class="bold">Picture above:</span> <em>Little Navconnect</em> is running and waiting for a Flight
+          Simulator.
+        </p>
       </li>
 
-      <li>Start <em>Little Navmap</em> on the flying computer or the remote client computer. <img alt=
-      "Little Navconnect" title="Little Navconnect" src="images/littlenavconnect.png" />
+      <li>Start <em>Little Navmap</em> on the flying computer or the remote client computer.
       </li>
 
       <li>Open the connection dialog by selecting <code>Main Menu</code> -&gt; <code>Tools</code> -&gt; <code>Connect
@@ -1766,10 +1983,10 @@
       </li>
 
       <li>Add the value for hostname. This can be either the hostname printed by <em>Little Navconnect</em> or the IP
-      address. If both programs are running on the same computer you can also use <code>localhost</code>.
+      address. If both programs are running on the same computer you can use <code>localhost</code>.
       </li>
 
-      <li>Add the value for the port. <code>51968</code> is the default value.
+      <li>Add the value for the port. <code>51968</code> is the default value. Usually this can be left default.
       </li>
 
       <li>Click connect. Once a flight is set up and loaded on the simulator your aircraft will show up on the map and
