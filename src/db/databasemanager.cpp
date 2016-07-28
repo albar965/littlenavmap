@@ -332,20 +332,27 @@ void DatabaseManager::fillPathsFromDatabases()
 
 void DatabaseManager::openDatabase()
 {
+  static const QString cacheSize("PRAGMA cache_size = -20000");
+
   try
   {
     qDebug() << "Opening database" << databaseFile;
     db->setDatabaseName(databaseFile);
+    // size * 1024 bytes if value is negative
 
     if(Settings::instance().getAndStoreValue(lnm::OPTIONS_FOREIGNKEYS, false).toBool())
-      db->open({"PRAGMA foreign_keys = ON"});
+      db->open({"PRAGMA foreign_keys = ON", cacheSize});
     else
-      db->open({"PRAGMA foreign_keys = OFF"});
+      db->open({"PRAGMA foreign_keys = OFF", cacheSize});
 
     atools::sql::SqlQuery query(db);
     query.exec("PRAGMA foreign_keys");
     if(query.next())
       qDebug() << "Foreign keys are" << query.value(0).toBool();
+
+    query.exec("PRAGMA cache_size");
+    if(query.next())
+      qDebug() << "Cache size is" << query.value(0).toInt();
 
     if(!hasSchema())
       createEmptySchema(db);

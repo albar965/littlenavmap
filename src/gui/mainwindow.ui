@@ -4008,6 +4008,9 @@
    <property name="statusTip">
     <string>About the Marble Widget</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
+   </property>
   </action>
   <action name="actionRouteCalcSetAlt">
    <property name="icon">

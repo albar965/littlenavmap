@@ -337,7 +337,7 @@ DISTFILES += \
 RESOURCES += \
     littlenavmap.qrc
 
-# Create additional makefile targets to copy help files
+# Linux - Copy help and Marble plugins and data
 unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
   copydata.commands += cp -avfu $${MARBLE_BASE}/lib/marble/plugins/libAprsPlugin.so \
@@ -373,6 +373,7 @@ unix:!macx {
   cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
+# Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rv $${MARBLE_BASE}/lib/plugins/libAprsPlugin.so \
@@ -413,7 +414,7 @@ macx {
 macx {
   deploy.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/lib &&
   deploy.commands += cp -Rv $${MARBLE_BASE}/lib/*.dylib littlenavmap.app/Contents/MacOS/lib/ &&
-  deploy.commands += macdeployqt littlenavmap.app -always-overwrite -verbose=3 -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib 
+  deploy.commands += macdeployqt littlenavmap.app -always-overwrite -verbose=3 -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
 }
 
 
