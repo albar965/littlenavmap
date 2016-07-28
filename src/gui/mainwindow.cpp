@@ -1208,14 +1208,14 @@ void MainWindow::readSettings()
   atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
-  const QRect geo = QApplication::desktop()->screenGeometry();
+  const QRect geo = QApplication::desktop()->availableGeometry(this);
 
   // Check if window if off screen
-  qDebug() << "Screen geometry" << geo << "Win geometry" << geometry();
-  if(!geo.intersects(geometry()))
+  qDebug() << "Screen geometry" << geo << "Win geometry" << frameGeometry();
+  if(!geo.intersects(frameGeometry()))
   {
     qDebug() << "Getting window back on screen";
-    setGeometry(QRect(QPoint(0, 0), geometry().size()));
+    move(geo.topLeft());
   }
 
   // Need to be loaded in constructor first since it reads all options
