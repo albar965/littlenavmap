@@ -52,6 +52,9 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QFileInfo>
+#include <QScreen>
+#include <QWindow>
+#include <QDesktopWidget>
 
 #include "ui_mainwindow.h"
 
@@ -1204,6 +1207,16 @@ void MainWindow::readSettings()
 
   atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
   ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
+
+  const QRect geo = QApplication::desktop()->screenGeometry();
+
+  // Check if window if off screen
+  qDebug() << "Screen geometry" << geo << "Win geometry" << geometry();
+  if(!geo.intersects(geometry()))
+  {
+    qDebug() << "Getting window back on screen";
+    setGeometry(QRect(QPoint(0, 0), geometry().size()));
+  }
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
