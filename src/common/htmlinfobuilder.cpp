@@ -639,7 +639,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
   html.row2(tr("Type:"), maptypes::navTypeName(ndb.type));
   html.row2(tr("Region:"), ndb.region);
-  html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" kHz"));
+  html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
   html.row2(tr("Altitude:"), locale.toString(ndb.getPosition().getAltitude(), 'f', 0) + tr(" ft"));
   html.row2(tr("Range:"), locale.toString(ndb.range) + tr(" nm"));

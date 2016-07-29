@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>422</height>
+    <width>852</width>
+    <height>438</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -117,6 +117,9 @@
        </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
+         <property name="toolTip">
+          <string>Does not apply to the flight plan loaded after startup.</string>
+         </property>
          <property name="text">
           <string>Center &amp;flight plan after loading</string>
          </property>
@@ -150,7 +153,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="labelOptionsGuiSearchText">
          <property name="text">
-          <string>Text size for &amp;search tables:</string>
+          <string>Text size for &amp;search result tables:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiSearchText</cstring>
@@ -233,6 +236,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterKml">
+         <property name="toolTip">
+          <string>Does not apply to the KML files loaded after startup.</string>
+         </property>
          <property name="text">
           <string>Center Google Earth &amp;KML after loading</string>
          </property>
@@ -258,8 +264,13 @@
          </property>
          <item row="0" column="0" colspan="2">
           <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+           <property name="toolTip">
+            <string>Empty airports are not add-on, have no taxiways, no parking and no aprons.
+Display underneath all other airports, use gray color for symbol and
+provide a toolbar button for disabling if this checkbox is enabled.</string>
+           </property>
            <property name="text">
-            <string>&amp;Treat empty airports special - Display underneath all other airports and use gray color</string>
+            <string>&amp;Treat empty airports special</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -269,7 +280,7 @@
          <item row="1" column="0" colspan="2">
           <widget class="QGroupBox" name="groupBoxOptionsMapScrollDetails">
            <property name="title">
-            <string>Details while Scrolling</string>
+            <string>Details while scrolling (click and drag, zoom in and out):</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -278,7 +289,7 @@
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollFull">
               <property name="text">
-               <string>&amp;Full - Show all airports, navaids and texts while scrolling</string>
+               <string>&amp;Full - Show all airport details, navaids and texts while scrolling</string>
               </property>
              </widget>
             </item>
@@ -295,7 +306,7 @@
             <item>
              <widget class="QRadioButton" name="radioButtonOptionsMapScrollNone">
               <property name="text">
-               <string>N&amp;one - Do not display airports or navaids while scrolling</string>
+               <string>N&amp;one - Do not display any airports or navaids while scrolling</string>
               </property>
              </widget>
             </item>
@@ -328,6 +339,9 @@
          </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
+           <property name="toolTip">
+            <string>Space separated list of range ring radii. A range ring will be added for each radius value.</string>
+           </property>
            <property name="text">
             <string>50 100 200 500</string>
            </property>
@@ -335,6 +349,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
+           <property name="toolTip">
+            <string>Smaller values will zoom in closer to an airport or navaid on double click into a list view or other.</string>
+           </property>
            <property name="suffix">
             <string> nm</string>
            </property>
@@ -354,6 +371,9 @@
          </item>
          <item row="5" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapSymbolSize">
+           <property name="toolTip">
+            <string>Size of airport and navaid symbols.</string>
+           </property>
            <property name="suffix">
             <string> %</string>
            </property>
@@ -373,6 +393,9 @@
          </item>
          <item row="2" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
+           <property name="toolTip">
+            <string>Bigger values will catch more objects. Smaller values allow a finer selection.</string>
+           </property>
            <property name="suffix">
             <string> pixels</string>
            </property>
@@ -402,8 +425,11 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="labelOptionsMapRangeRings">
+           <property name="toolTip">
+            <string/>
+           </property>
            <property name="text">
-            <string>&amp;Range ring sizes (nautical miles):</string>
+            <string>&amp;Range ring radii for red range rings(nautical miles):</string>
            </property>
            <property name="buddy">
             <cstring>lineEditOptionsMapRangeRings</cstring>
@@ -422,6 +448,9 @@
          </item>
          <item row="4" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapTextSize">
+           <property name="toolTip">
+            <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+           </property>
            <property name="suffix">
             <string> %</string>
            </property>
@@ -451,6 +480,9 @@
          </item>
          <item row="3" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
+           <property name="toolTip">
+            <string>Bigger values will list more more objects in the tooltip.</string>
+           </property>
            <property name="suffix">
             <string> pixels</string>
            </property>
@@ -480,7 +512,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="labelOptionsSimUpdateBox">
          <property name="text">
-          <string>&amp;Simulator aircraft scroll box size:</string>
+          <string>&amp;Simulator aircraft scroll box size (percent of map window size):</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsMapSymbolSize</cstring>
@@ -489,6 +521,10 @@
        </item>
        <item row="1" column="1">
         <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
+         <property name="toolTip">
+          <string>Smaller values keep the aircraft centered and will move the map often.
+Bigger values will update map only when aircraft reaches map boundary.</string>
+         </property>
          <property name="suffix">
           <string> %</string>
          </property>
@@ -515,7 +551,7 @@
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsSimUpdateLow">
             <property name="text">
-             <string>&amp;Low - Map is updated only every second. Can increase battery life on notebooks</string>
+             <string>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</string>
             </property>
            </widget>
           </item>
@@ -532,7 +568,7 @@
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsSimUpdateFast">
             <property name="text">
-             <string>&amp;High - Fluid movement. Can decrease battery life on notebooks</string>
+             <string>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</string>
             </property>
            </widget>
           </item>
@@ -607,7 +643,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="labelOptionsCacheDisk">
          <property name="text">
-          <string>&amp;Disk cache:</string>
+          <string>Maximum size of &amp;disk cache:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsCacheDiskSize</cstring>
@@ -617,7 +653,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="labelOptionsCacheMemory">
          <property name="text">
-          <string>&amp;Memory cache:</string>
+          <string>&amp;Maximum size of memory cache:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsCacheMemorySize</cstring>
@@ -660,27 +696,34 @@
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
+         <property name="toolTip">
+          <string>Prefer nearest VOR that is part of an airway instead a nearest waypoint
+when transitioning from airport to airway.</string>
+         </property>
          <property name="text">
-          <string>Prefer &amp;VOR stations as transition to airway</string>
+          <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" alignment="Qt::AlignTop">
+       <item row="3" column="0" alignment="Qt::AlignVCenter">
         <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
          <property name="text">
-          <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):
-The red line value is always rounded up to the next 500 ft.</string>
+          <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="3" column="1" alignment="Qt::AlignVCenter">
         <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
+         <property name="toolTip">
+          <string>The red line value is always rounded up to the next 500 ft.
+Note that this value does not affect flight plan calculation or saving.</string>
+         </property>
          <property name="suffix">
           <string> ft</string>
          </property>
@@ -697,8 +740,12 @@ The red line value is always rounded up to the next 500 ft.</string>
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
+         <property name="toolTip">
+          <string>Prefer nearest NDB that is part of an airway instead a nearest waypoint
+when transitioning from airport to airway.</string>
+         </property>
          <property name="text">
-          <string>Prefer &amp;NDB stations as  transition to airway</string>
+          <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -707,6 +754,13 @@ The red line value is always rounded up to the next 500 ft.</string>
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRouteEastWestRule">
+         <property name="toolTip">
+          <string>Rounds up flight plan cruise altitude to nearest odd thousand feet for easterly flight plans and
+nearest even thousand feet for westerly flight plans if checked.</string>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
          <property name="text">
           <string>&amp;Use simplified east/west rule to determine cruise altitude</string>
          </property>
@@ -715,7 +769,7 @@ The red line value is always rounded up to the next 500 ft.</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="4" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -864,12 +918,39 @@ This file will be used for all simulators.</string>
        <string>Scenenery Library Database</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_9">
-       <item row="3" column="2">
-        <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
+       <item row="3" column="3">
+        <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <item alignment="Qt::AlignTop">
+          <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
+           <property name="text">
+            <string>A&amp;dd ...</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignTop">
+          <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
+           <property name="text">
+            <string>R&amp;emove</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacerOptionsDatabaseAddon">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item row="1" column="3">
         <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase">
@@ -907,6 +988,10 @@ This file will be used for all simulators.</string>
        </item>
        <item row="1" column="2">
         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
+         <property name="toolTip">
+          <string>All directories including sub-directories in this list will be omitted when loading the scenery library into the Little Navmap database.
+These paths apply to all Flight Simulators.</string>
+         </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -915,64 +1000,21 @@ This file will be used for all simulators.</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="3">
-        <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <item alignment="Qt::AlignTop">
-          <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
-           <property name="text">
-            <string>A&amp;dd ...</string>
-           </property>
-          </widget>
-         </item>
-         <item alignment="Qt::AlignTop">
-          <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
-           <property name="text">
-            <string>R&amp;emove</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacerOptionsDatabaseAddon">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item row="2" column="2" colspan="2">
-        <widget class="QLabel" name="labelOptionsDatabaseAddon">
-         <property name="text">
-          <string>Select &amp;Paths to exclude from add-on recognition.
-Directories including their sub-directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.
+       <item row="3" column="2">
+        <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
+         <property name="toolTip">
+          <string>Directories and respective sub-directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.
 These paths apply to all Flight Simulators.</string>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="buddy">
-          <cstring>listWidgetOptionsDatabaseAddon</cstring>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
          </property>
         </widget>
        </item>
        <item row="0" column="2" colspan="2">
         <widget class="QLabel" name="labelOptionsDatabaseExclude">
          <property name="text">
-          <string>&amp;Select Paths to exclude from loading.
-All directories including their sub-directories in this list will be skipped when loading the scenery library into the Little Navmap database.
-These paths apply to all Flight Simulators.</string>
+          <string>&amp;Select Paths to exclude from loading:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -982,6 +1024,22 @@ These paths apply to all Flight Simulators.</string>
          </property>
          <property name="buddy">
           <cstring>listWidgetOptionsDatabaseExclude</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" colspan="2">
+        <widget class="QLabel" name="labelOptionsDatabaseAddon">
+         <property name="text">
+          <string>Select &amp;Paths to exclude from add-on recognition:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="buddy">
+          <cstring>listWidgetOptionsDatabaseAddon</cstring>
          </property>
         </widget>
        </item>

@@ -2044,10 +2044,10 @@
        <item>
         <widget class="QSpinBox" name="spinBoxRouteAlt">
          <property name="toolTip">
-          <string>Flight plan altitude which is also used to calculate route based on given altitude</string>
+          <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
          </property>
          <property name="statusTip">
-          <string>Flight plan altitude which is also used to calculate route based on given altitude</string>
+          <string>Flight plan altitude which is also used to calculate flight plan based on given altitude</string>
          </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
@@ -3038,7 +3038,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>Contents</string>
+    <string>&amp;Contents</string>
    </property>
    <property name="toolTip">
     <string>Show the help in a browser</string>
@@ -3053,7 +3053,7 @@
      <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
    </property>
    <property name="text">
-    <string>About Little Navmap</string>
+    <string>&amp;About Little Navmap</string>
    </property>
    <property name="statusTip">
     <string>About Little Navmap</string>
@@ -3068,7 +3068,7 @@
      <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
    </property>
    <property name="text">
-    <string>About Qt</string>
+    <string>About &amp;Qt</string>
    </property>
    <property name="statusTip">
     <string>About Qt</string>
@@ -3874,10 +3874,10 @@
     <string>Calculate &amp;high Altitude</string>
    </property>
    <property name="toolTip">
-    <string>Calculate a high altitude (Jet airways) route</string>
+    <string>Calculate a high altitude (Jet airways) flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a high altitude (Jet airways) route</string>
+    <string>Calculate a high altitude (Jet airways) flight plan</string>
    </property>
   </action>
   <action name="actionRouteCalcLowAlt">
@@ -3889,10 +3889,10 @@
     <string>Calculate &amp;low Altitude</string>
    </property>
    <property name="toolTip">
-    <string>Calculate a low altitude (Victor airways) route</string>
+    <string>Calculate a low altitude (Victor airways) flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a low altitude (Victor airways) route</string>
+    <string>Calculate a low altitude (Victor airways) flight plan</string>
    </property>
   </action>
   <action name="actionRouteCalcRadionav">
@@ -3904,10 +3904,10 @@
     <string>Calculate Radio&amp;nav</string>
    </property>
    <property name="toolTip">
-    <string>Calculate a radio navaid (VOR and NDB) route</string>
+    <string>Calculate a radio navaid (VOR and NDB) flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a radio navaid (VOR and NDB) route</string>
+    <string>Calculate a radio navaid (VOR and NDB) flight plan</string>
    </property>
   </action>
   <action name="actionRouteCalcDirect">
@@ -3919,10 +3919,10 @@
     <string>Calculate &amp;Direct</string>
    </property>
    <property name="toolTip">
-    <string>Calculate a direct route</string>
+    <string>Calculate a direct flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a direct route</string>
+    <string>Calculate a direct flight plan</string>
    </property>
   </action>
   <action name="actionRouteReverse">
@@ -4000,7 +4000,7 @@
      <normaloff>:/littlenavmap/resources/icons/marble.svg</normaloff>:/littlenavmap/resources/icons/marble.svg</iconset>
    </property>
    <property name="text">
-    <string>About Marble</string>
+    <string>A&amp;bout Marble</string>
    </property>
    <property name="toolTip">
     <string>About the Marble Widget</string>
@@ -4021,10 +4021,10 @@
     <string>Calculate based on given &amp;Altitude</string>
    </property>
    <property name="toolTip">
-    <string>Calculate route based on given altitude using Victor or Jet airways</string>
+    <string>Calculate flight plan based on given altitude using Victor or Jet airways</string>
    </property>
    <property name="statusTip">
-    <string>Calculate route based on given altitude using Victor or Jet airways</string>
+    <string>Calculate flight plan based on given altitude using Victor or Jet airways</string>
    </property>
   </action>
   <action name="actionMapShowAddonAirports">
@@ -4227,7 +4227,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>Navmap Legend</string>
+    <string>&amp;Navmap Legend</string>
    </property>
    <property name="toolTip">
     <string>Show the navigation map legend</string>
@@ -4502,7 +4502,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>Map Legend</string>
+    <string>&amp;Map Legend</string>
    </property>
    <property name="toolTip">
     <string>Show the map legend for the current map theme</string>
