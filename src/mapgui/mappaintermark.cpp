@@ -286,7 +286,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
     }
 
     painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-    if(!m.rhumbLine)
+    if(!m.isRhumbLine)
     {
       // Draw great circle route
       float distanceMeter = m.from.distanceMeterTo(m.to);

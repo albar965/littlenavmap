@@ -1192,7 +1192,6 @@ void RouteController::routeSetDest(maptypes::MapAirport airport)
   postChange(undoCommand);
   updateWindowTitle();
 
-
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
@@ -1313,7 +1312,7 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
   maptypes::MapAirway airway;
   query->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
-  minAltitude = airway.minalt;
+  minAltitude = airway.minAltitude;
 
   // qDebug() << "airway id" << airwayId << "name" << airway.name << "alt" << airway.minalt
   // << "type" << airway.type;

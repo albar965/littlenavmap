@@ -43,17 +43,18 @@ struct MapMarker;
 }
 
 namespace textflags {
+/* Flags that determine what information is added to an icon */
 enum TextFlag
 {
   NONE = 0x00,
-  IDENT = 0x01,
-  TYPE = 0x02,
-  FREQ = 0x04,
+  IDENT = 0x01, /* Draw airport or navaid ICAO ident */
+  TYPE = 0x02, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
+  FREQ = 0x04, /* Draw navaid frequency */
   NAME = 0x08,
-  MORSE = 0x10,
-  INFO = 0x20,
-  ROUTE_TEXT = 0x40,
-  ABS_POS = 0x80,
+  MORSE = 0x10, /* Draw navaid morse code */
+  INFO = 0x20, /* Additional airport information like tower frequency, etc. */
+  ROUTE_TEXT = 0x40, /* Object is part of route */
+  ABS_POS = 0x80, /* Use absolute text positioning */
   ALL = 0xff
 };
 
@@ -62,6 +63,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
 }
 
 namespace textatt {
+/* Low level text attributes for custom text boxes */
 enum TextAttribute
 {
   NONE = 0x00,
@@ -71,59 +73,82 @@ enum TextAttribute
   RIGHT = 0x08,
   LEFT = 0x10,
   CENTER = 0x20,
-  ROUTE_BG_COLOR = 0x40
+  ROUTE_BG_COLOR = 0x40 /* Use light yellow background for route objects */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
 Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
 }
 
+/*
+ * Draws all kind of map symbols and texts into an icon or a QPainter. Icons can change shape depending on size.
+ * Separate functions are available for texts/captions.
+ * An additional parameter "fast" is used to draw icons with less details while scrolling the map.
+ * Instead of using a text collision detection text are placed on different sides of the symbols.
+ */
 class SymbolPainter
 {
   Q_DECLARE_TR_FUNCTIONS(SymbolPainter)
 
 public:
+  /*
+   * @param backgroundColor used for tooltips of table view icons
+   */
   SymbolPainter(QColor backgroundColor);
   SymbolPainter();
 
+  /* Create icons for tooltips, table views and more. Size is pixel. */
   QIcon createAirportIcon(const maptypes::MapAirport& airport, int size);
   QIcon createVorIcon(const maptypes::MapVor& vor, int size);
   QIcon createNdbIcon(const maptypes::MapNdb& ndb, int size);
   QIcon createWaypointIcon(const maptypes::MapWaypoint& waypoint, int size);
   QIcon createUserpointIcon(int size);
 
-  void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& ap, int x, int y, int size,
+  /* Airport symbol. For airport diagram use a transparent text background */
+  void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, int x, int y, int size,
                          bool isAirportDiagram, bool fast);
+  void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
+                       textflags::TextFlags flags, int size, bool diagram, bool fill, bool fast);
 
-  void drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& wp, const QColor& col, int x, int y,
-                          int size, bool fill, bool fast);
-  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool routeFill,
-                     bool fast, int largeSize);
-  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool routeFill,
-                     bool fast);
-  void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
-                        bool fast);
+  /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
+  void drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& waypoint, const QColor& col, int x,
+                          int y, int size, bool fill, bool fast);
 
-  void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
-  QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
-
+  /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
                         textflags::TextFlags flags, int size, bool fill, bool fast);
 
+  /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
+  void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool routeFill,
+                     bool fast, int largeSize);
+
+  /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y, textflags::TextFlags flags,
                    int size, bool fill, bool fast);
 
+  /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
+  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool routeFill,
+                     bool fast);
+
+  /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, textflags::TextFlags flags,
                    int size, bool fill, bool fast);
 
-  void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
-                       textflags::TextFlags flags, int size, bool diagram, bool fill,
-                       bool fast);
+  void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
+                        bool fast);
 
+  /* User defined flight plan waypoint */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
+  /* Simulator aircraft symbol */
   void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
+
+  /* Draw a custom text box */
+  void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
+               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+
+  /* Get dimensions of a custom text box */
+  QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
 private:
   QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);

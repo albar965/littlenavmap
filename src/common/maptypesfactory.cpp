@@ -22,6 +22,7 @@
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
+using namespace maptypes;
 
 MapTypesFactory::MapTypesFactory()
 {
@@ -69,36 +70,37 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, maptypes:
   if(!overview)
   {
     runway.surface = record.valueStr("surface");
-    runway.primName = record.valueStr("primary_name");
-    runway.secName = record.valueStr("secondary_name");
+    runway.primaryName = record.valueStr("primary_name");
+    runway.secondaryName = record.valueStr("secondary_name");
     runway.edgeLight = record.valueStr("edge_light");
     runway.width = record.valueInt("width");
-    runway.primOffset = record.valueInt("primary_offset_threshold");
-    runway.secOffset = record.valueInt("secondary_offset_threshold");
-    runway.primBlastPad = record.valueInt("primary_blast_pad");
-    runway.secBlastPad = record.valueInt("secondary_blast_pad");
-    runway.primOverrun = record.valueInt("primary_overrun");
-    runway.secOverrun = record.valueInt("secondary_overrun");
-    runway.primClosed = record.valueBool("primary_closed_markings");
-    runway.secClosed = record.valueBool("secondary_closed_markings");
+    runway.primaryOffset = record.valueInt("primary_offset_threshold");
+    runway.secondaryOffset = record.valueInt("secondary_offset_threshold");
+    runway.primaryBlastPad = record.valueInt("primary_blast_pad");
+    runway.secondaryBlastPad = record.valueInt("secondary_blast_pad");
+    runway.primaryOverrun = record.valueInt("primary_overrun");
+    runway.secondaryOverrun = record.valueInt("secondary_overrun");
+    runway.primaryClosed = record.valueBool("primary_closed_markings");
+    runway.secondaryClosed = record.valueBool("secondary_closed_markings");
   }
   else
   {
     runway.width = 0;
-    runway.primOffset = 0;
-    runway.secOffset = 0;
-    runway.primBlastPad = 0;
-    runway.secBlastPad = 0;
-    runway.primOverrun = 0;
-    runway.secOverrun = 0;
-    runway.primClosed = 0;
-    runway.secClosed = 0;
+    runway.primaryOffset = 0;
+    runway.secondaryOffset = 0;
+    runway.primaryBlastPad = 0;
+    runway.secondaryBlastPad = 0;
+    runway.primaryOverrun = 0;
+    runway.secondaryOverrun = 0;
+    runway.primaryClosed = 0;
+    runway.secondaryClosed = 0;
   }
+
   runway.length = record.valueInt("length");
   runway.heading = record.valueFloat("heading");
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
-  runway.primary = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
-  runway.secondary = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
+  runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
+  runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirport& ap, bool complete)
@@ -116,14 +118,12 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirp
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                        record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
-    ap.flags |= maptypes::AP_COMPLETE;
+    ap.flags |= AP_COMPLETE;
   }
 }
 
 maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, bool overview)
 {
-  using namespace maptypes;
-
   MapAirportFlags flags = 0;
   flags |= airportFlag(record, "num_helipad", AP_HELIPAD);
   flags |= airportFlag(record, "has_avgas", AP_AVGAS);
@@ -138,24 +138,24 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
 
   if(!overview)
   {
-  flags |= airportFlag(record, "num_approach", AP_APPR);
-  flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
-  flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);
+    flags |= airportFlag(record, "num_approach", AP_APPR);
+    flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
+    flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);
 
-  flags |= airportFlag(record, "num_apron", AP_APRON);
-  flags |= airportFlag(record, "num_taxi_path", AP_TAXIWAY);
-  flags |= airportFlag(record, "has_tower_object", AP_TOWER_OBJ);
+    flags |= airportFlag(record, "num_apron", AP_APRON);
+    flags |= airportFlag(record, "num_taxi_path", AP_TAXIWAY);
+    flags |= airportFlag(record, "has_tower_object", AP_TOWER_OBJ);
 
-  flags |= airportFlag(record, "num_parking_gate", AP_PARKING);
-  flags |= airportFlag(record, "num_parking_ga_ramp", AP_PARKING);
-  flags |= airportFlag(record, "num_parking_cargo", AP_PARKING);
-  flags |= airportFlag(record, "num_parking_mil_cargo", AP_PARKING);
-  flags |= airportFlag(record, "num_parking_mil_combat", AP_PARKING);
+    flags |= airportFlag(record, "num_parking_gate", AP_PARKING);
+    flags |= airportFlag(record, "num_parking_ga_ramp", AP_PARKING);
+    flags |= airportFlag(record, "num_parking_cargo", AP_PARKING);
+    flags |= airportFlag(record, "num_parking_mil_cargo", AP_PARKING);
+    flags |= airportFlag(record, "num_parking_mil_combat", AP_PARKING);
 
-  flags |= airportFlag(record, "num_runway_end_vasi", AP_VASI);
-  flags |= airportFlag(record, "num_runway_end_als", AP_ALS);
-  flags |= airportFlag(record, "num_boundary_fence", AP_FENCE);
-  flags |= airportFlag(record, "num_runway_end_closed", AP_RW_CLOSED);
+    flags |= airportFlag(record, "num_runway_end_vasi", AP_VASI);
+    flags |= airportFlag(record, "num_runway_end_als", AP_ALS);
+    flags |= airportFlag(record, "num_boundary_fence", AP_FENCE);
+    flags |= airportFlag(record, "num_runway_end_closed", AP_RW_CLOSED);
 
   }
   else
@@ -176,7 +176,7 @@ maptypes::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, 
                                                        maptypes::MapAirportFlags flag)
 {
   if(record.isNull(field) || record.valueInt(field) == 0)
-    return maptypes::AP_NONE;
+    return AP_NONE;
   else
     return flag;
 }
@@ -249,8 +249,8 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, maptypes::MapWaypoin
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
   waypoint.magvar = record.valueFloat("mag_var");
-  waypoint.hasVictor = record.valueInt("num_victor_airway") > 0;
-  waypoint.hasJet = record.valueInt("num_jet_airway") > 0;
+  waypoint.hasVictorAirways = record.valueInt("num_victor_airway") > 0;
+  waypoint.hasJetAirways = record.valueInt("num_jet_airway") > 0;
   waypoint.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 }
 
@@ -261,21 +261,21 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, maptypes::Map
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
   waypoint.magvar = record.valueFloat("mag_var");
-  waypoint.hasVictor = record.valueInt("waypoint_num_victor_airway") > 0;
-  waypoint.hasJet = record.valueInt("waypoint_num_jet_airway") > 0;
+  waypoint.hasVictorAirways = record.valueInt("waypoint_num_victor_airway") > 0;
+  waypoint.hasJetAirways = record.valueInt("waypoint_num_jet_airway") > 0;
   waypoint.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 }
 
 void MapTypesFactory::fillAirway(const SqlRecord& record, maptypes::MapAirway& airway)
 {
   airway.id = record.valueInt("airway_id");
-  airway.type = maptypes::airwayTypeFromString(record.valueStr("airway_type"));
+  airway.type = airwayTypeFromString(record.valueStr("airway_type"));
   airway.name = record.valueStr("airway_name");
-  airway.minalt = record.valueInt("minimum_altitude");
+  airway.minAltitude = record.valueInt("minimum_altitude");
   airway.fragment = record.valueInt("airway_fragment_no");
   airway.sequence = record.valueInt("sequence_no");
-  airway.fromWpId = record.valueInt("from_waypoint_id");
-  airway.toWpId = record.valueInt("to_waypoint_id");
+  airway.fromWaypointId = record.valueInt("from_waypoint_id");
+  airway.toWaypointId = record.valueInt("to_waypoint_id");
   airway.from = Pos(record.valueFloat("from_lonx"),
                     record.valueFloat("from_laty"));
   airway.to = Pos(record.valueFloat("to_lonx"),
@@ -305,7 +305,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, maptypes::MapIls& ils)
 
   ils.frequency = record.valueInt("frequency");
   ils.range = record.valueInt("range");
-  ils.dme = record.valueInt("dme_range") > 0;
+  ils.hasDme = record.valueInt("dme_range") > 0;
 
   ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
                      record.valueFloat("altitude"));

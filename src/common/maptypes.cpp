@@ -503,8 +503,7 @@ QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj)
   dataStream >> obj.magvar;
   qint32 t;
   dataStream >> t;
-  obj.type = static_cast<maptypes::MapObjectTypes>(t);
-  dataStream >> obj.rhumbLine >> obj.hasMagvar;
+  dataStream >> obj.isRhumbLine >> obj.hasMagvar;
 
   return dataStream;
 }
@@ -514,7 +513,7 @@ QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker&
   dataStream << obj.text << obj.color
   << obj.from.getLonX() << obj.from.getLatY() << obj.to.getLonX() << obj.to.getLatY();
 
-  dataStream << obj.magvar << static_cast<qint32>(obj.type) << obj.rhumbLine << obj.hasMagvar;
+  dataStream << obj.magvar << obj.isRhumbLine << obj.hasMagvar;
 
   return dataStream;
 }

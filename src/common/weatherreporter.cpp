@@ -32,7 +32,8 @@
 #include <QTimer>
 #include <QRegularExpression>
 
-QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
+// Checks the first line of an ASN file if it has valid content
+const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
 
 using atools::fs::FsPaths;
 
@@ -44,8 +45,10 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
 WeatherReporter::~WeatherReporter()
 {
-  clearNoaaReply();
-  clearVatsimReply();
+  // Remove any outstanding requests
+  cancelNoaaReply();
+  cancelVatsimReply();
+
   delete fsWatcher;
 }
 
@@ -53,7 +56,9 @@ void WeatherReporter::initActiveSkyNext()
 {
   if(fsWatcher != nullptr)
   {
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
+    // Remove watcher just in case the file changes
+    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
+                          &WeatherReporter::asnWeatherFileChanged);
     delete fsWatcher;
     fsWatcher = nullptr;
   }
@@ -70,8 +75,10 @@ void WeatherReporter::initActiveSkyNext()
     loadActiveSkySnapshot(asnPath);
     if(fsWatcher == nullptr)
     {
+      // Watch file for changes
       fsWatcher = new QFileSystemWatcher(this);
-      fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &WeatherReporter::fileChanged);
+      fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
+                         &WeatherReporter::asnWeatherFileChanged);
     }
 
     if(!fsWatcher->addPath(asnPath))
@@ -79,12 +86,14 @@ void WeatherReporter::initActiveSkyNext()
   }
 }
 
-// C:\Users\USER\AppData\Roaming\HiFi\ASNFSX\Weather\wx_station_list.txt
-// AGGH::AGGH 261800Z 20002KT 9999 FEW014 SCT027 25/24 Q1009::AGGH 261655Z 2618/2718 VRB03KT 9999 FEW017 SCT028 FM270000
-// 34010KT 9999 -SH SCT019 SCT03 FM271200 VRB03KT 9999 -SH FEW017 SCT028 PROB30 INTER 2703/27010 5000 TSSH SCT016 FEW017CB BKN028
-// T 25 27 31 32 Q 1009 1011 1011 1009::278,11,24.0/267,12,19.0/263,13,16.1/233,12,7.2/290,7,-3.0/338,8,-13.0/348,18,-27.9/9,19,-37.9/26,15,-51.3
+/* Loads complete ASN file into a hash map */
 void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 {
+  // C:\Users\USER\AppData\Roaming\HiFi\ASNFSX\Weather\wx_station_list.txt
+  // AGGH::AGGH 261800Z 20002KT 9999 FEW014 SCT027 25/24 Q1009::AGGH 261655Z 2618/2718 VRB03KT 9999 FEW017 SCT028 FM270000
+  // 34010KT 9999 -SH SCT019 SCT03 FM271200 VRB03KT 9999 -SH FEW017 SCT028 PROB30 INTER 2703/27010 5000 TSSH SCT016 FEW017CB BKN028
+  // T 25 27 31 32 Q 1009 1011 1011 1009::278,11,24.0/267,12,19.0/263,13,16.1/233,12,7.2/290,7,-3.0/338,8,-13.0/348,18,-27.9/9,19,-37.9/26,15,-51.3
+
   // TODO overrride with settings
   if(path.isEmpty())
     return;
@@ -117,6 +126,7 @@ bool WeatherReporter::validateAsnFile(const QString& path)
     QTextStream sceneryCfg(&file);
     QString line;
     if(sceneryCfg.readLineInto(&line))
+      // Check if the first line matches
       if(ASN_VALIDATE_REGEXP.match(line.trimmed()).hasMatch())
         retval = true;
     file.close();
@@ -128,7 +138,6 @@ bool WeatherReporter::validateAsnFile(const QString& path)
 
 QString WeatherReporter::findAsnSnapshotPath()
 {
-  // TODO find better way to get to Roaming directory
   QString appdata = atools::settings::Settings::instance().getPath();
 
   QDir dir(appdata);
@@ -145,6 +154,7 @@ QString WeatherReporter::findAsnSnapshotPath()
 
   if(!simPath.isEmpty())
   {
+    // TODO find better way to get to Roaming directory
     if(dir.cdUp() && dir.cd("HiFi") && dir.cd(simPath) && dir.cd("Weather"))
     {
       QString file = dir.filePath("current_wx_snapshot.txt");
@@ -168,7 +178,7 @@ QString WeatherReporter::findAsnSnapshotPath()
   return QString();
 }
 
-void WeatherReporter::clearVatsimReply()
+void WeatherReporter::cancelVatsimReply()
 {
   if(vatsimReply != nullptr)
   {
@@ -184,7 +194,7 @@ void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
 {
   // http://metar.vatsim.net/metar.php?id=EDDF
   qDebug() << "Vatsim Request for" << airportIcao;
-  clearVatsimReply();
+  cancelVatsimReply();
 
   vatsimRequestIcao = airportIcao;
   QNetworkRequest request(QUrl("http://metar.vatsim.net/metar.php?id=" + airportIcao));
@@ -198,7 +208,7 @@ void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
   qDebug() << "Vatsim Request for" << airportIcao << "done";
 }
 
-void WeatherReporter::clearNoaaReply()
+void WeatherReporter::cancelNoaaReply()
 {
   if(noaaReply != nullptr)
   {
@@ -218,7 +228,7 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
   // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
   qDebug() << "NOAA Request for" << airportIcao;
 
-  clearNoaaReply();
+  cancelNoaaReply();
 
   noaaRequestIcao = airportIcao;
   QNetworkRequest request(QUrl("http://weather.noaa.gov/pub/data/observations/metar/stations/" +
@@ -233,6 +243,7 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
   qDebug() << "NOAA Request for" << airportIcao << "done";
 }
 
+/* Called by network reply signal */
 void WeatherReporter::httpFinishedNoaa()
 {
   httpFinished(noaaReply, noaaRequestIcao, noaaMetars);
@@ -241,6 +252,7 @@ void WeatherReporter::httpFinishedNoaa()
   noaaReply = nullptr;
 }
 
+/* Called by network reply signal */
 void WeatherReporter::httpFinishedVatsim()
 {
   httpFinished(vatsimReply, vatsimRequestIcao, vatsimMetars);
@@ -257,8 +269,10 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
     {
       QString metar(reply->readAll());
       if(!metar.contains("no metar available", Qt::CaseInsensitive))
+        // Add metar with current time
         metars.insert(icao, {metar, QDateTime::currentDateTime()});
       else
+        // Add empty record so we know there is not weather station
         metars.insert(icao, Report());
       qDebug() << "Request for" << icao << "succeeded.";
       // mainWindow->setStatusMessage(tr("Weather information updated."));
@@ -281,6 +295,7 @@ QString WeatherReporter::getAsnMetar(const QString& airportIcao)
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
   if(!noaaMetars.contains(airportIcao))
+    // Not in cache
     loadNoaaMetar(airportIcao);
   else
   {
@@ -288,8 +303,10 @@ QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
     if(!report.metar.isEmpty())
     {
       if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
+        // In cache but timed out
         loadNoaaMetar(airportIcao);
       else
+        // In cache and valid
         return report.metar;
     }
   }
@@ -299,6 +316,7 @@ QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
   if(!vatsimMetars.contains(airportIcao))
+    // Not in cache
     loadVatsimMetar(airportIcao);
   else
   {
@@ -306,8 +324,10 @@ QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
     if(!report.metar.isEmpty())
     {
       if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
+        // In cache but timed out
         loadVatsimMetar(airportIcao);
       else
+        // In cache and valid
         return report.metar;
     }
   }
@@ -323,6 +343,7 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   if(type != simType)
   {
+    // Simulator has changed - reload ASN file
     simType = type;
     initActiveSkyNext();
   }
@@ -333,10 +354,11 @@ void WeatherReporter::optionsChanged()
   initActiveSkyNext();
 }
 
-void WeatherReporter::fileChanged(const QString& path)
+void WeatherReporter::asnWeatherFileChanged(const QString& path)
 {
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
   loadActiveSkySnapshot(path);
   mainWindow->setStatusMessage(tr("Active Sky Next weather information updated."));
+  emit weatherUpdated();
 }

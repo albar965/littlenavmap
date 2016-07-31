@@ -20,6 +20,7 @@
 
 namespace migrate {
 
+/* Delete incompatible settings if an older settings file was found. */
 void checkAndMigrateSettings();
 
 } // namespace migrate

@@ -67,35 +67,138 @@ class MorseCode;
 }
 }
 
+/*
+ * Builds HTML snippets (no <html> and no <body> tags) for QTextEdits or tooltips.
+ */
 class HtmlInfoBuilder
 {
   Q_DECLARE_TR_FUNCTIONS(MapHtmlInfoBuilder)
 
 public:
-  HtmlInfoBuilder(MapQuery *mapQuery, InfoQuery *infoDbQuery, bool formatInfo);
+  /*
+   * @param mapDbQuery Initialized database query object
+   * @param infoDbQuery Initialized database query object
+   * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
+   * (i.e. generate alternating background color for tables)
+   */
+  HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo);
 
   virtual ~HtmlInfoBuilder();
 
+  /*
+   * Creates a HTML description for an airport.
+   * @param airport
+   * @param html Result containing HTML snippet
+   * @param routeMapObjects
+   * @param weather
+   * @param background Background color for icons
+   */
   void airportText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
                    WeatherReporter *weather, QColor background);
+
+  /*
+   * Creates a HTML description for all runways of an airport.
+   * @param airport
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void runwayText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+
+  /*
+   * Creates a HTML description for all COM frequencies of an airport.
+   * @param airport
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void comText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+
+  /*
+   * Creates a HTML description for all approaches of an airport.
+   * @param airport
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
 
+  /*
+   * Creates a HTML description for a VOR station.
+   * @param vor
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void vorText(const maptypes::MapVor& vor, atools::util::HtmlBuilder& html, QColor background);
+
+  /*
+   * Creates a HTML description for a NDB station.
+   * @param ndb
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void ndbText(const maptypes::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background);
+
+  /*
+   * Creates a HTML description for a waypoint including all attached airways.
+   * @param waypoint
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void waypointText(const maptypes::MapWaypoint& waypoint, atools::util::HtmlBuilder& html, QColor background);
 
+  /*
+   * Creates a HTML description of an airway. For info this includes all waypoints.
+   * @param airway
+   * @param html Result containing HTML snippet
+   */
   void airwayText(const maptypes::MapAirway& airway, atools::util::HtmlBuilder& html);
-  void markerText(const maptypes::MapMarker& m, atools::util::HtmlBuilder& html);
+
+  /*
+   * Creates a HTML description for a marker.
+   * @param marker
+   * @param html Result containing HTML snippet
+   */
+  void markerText(const maptypes::MapMarker& marker, atools::util::HtmlBuilder& html);
+
+  /*
+   * Creates a HTML description for an airport's tower including frequency if available.
+   * @param airport
+   * @param html Result containing HTML snippet
+   */
   void towerText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html);
+
+  /*
+   * Creates a HTML description for a parking spot (ramp GA, gate, etc.).
+   * @param parking
+   * @param html Result containing HTML snippet
+   */
   void parkingText(const maptypes::MapParking& parking, atools::util::HtmlBuilder& html);
+
+  /*
+   * Creates a HTML description for a helipad.
+   * @param helipad
+   * @param html Result containing HTML snippet
+   */
   void helipadText(const maptypes::MapHelipad& helipad, atools::util::HtmlBuilder& html);
+
+  /*
+   * Creates a HTML description for a user defined flight plan point.
+   * @param userpoint
+   * @param html Result containing HTML snippet
+   */
   void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html);
 
+  /*
+   * Creates an overview HTML description for the user aircraft in the simulator.
+   * @param data
+   * @param html Result containing HTML snippet
+   */
   void aircraftText(const atools::fs::sc::SimConnectData& data, atools::util::HtmlBuilder& html);
 
+  /*
+   * Creates a HTML description for simulator user aircraft progress and ambient values.
+   * @param html
+   * @param html Result containing HTML snippet
+   */
   void aircraftProgressText(const atools::fs::sc::SimConnectData& data, atools::util::HtmlBuilder& html,
                             const RouteMapObjectList& rmoList);
 

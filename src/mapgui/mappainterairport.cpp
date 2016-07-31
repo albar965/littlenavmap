@@ -279,30 +279,30 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       painter->translate(runwayCenters.at(i));
       painter->rotate(runways->at(i).heading);
 
-      if(runway.primOverrun > 0)
+      if(runway.primaryOverrun > 0)
       {
-        int offs = scale->getPixelIntForFeet(runway.primOverrun, runway.heading);
+        int offs = scale->getPixelIntForFeet(runway.primaryOverrun, runway.heading);
         painter->setBrush(mapcolors::runwayOverrunBrush);
         painter->setBackground(col);
         painter->drawRect(rect.left(), rect.bottom(), rect.width(), offs);
       }
-      if(runway.secOverrun > 0)
+      if(runway.secondaryOverrun > 0)
       {
-        int offs = scale->getPixelIntForFeet(runway.secOverrun, runway.heading);
+        int offs = scale->getPixelIntForFeet(runway.secondaryOverrun, runway.heading);
         painter->setBrush(mapcolors::runwayOverrunBrush);
         painter->setBackground(col);
         painter->drawRect(rect.left(), rect.top() - offs, rect.width(), offs);
       }
-      if(runway.primBlastPad > 0)
+      if(runway.primaryBlastPad > 0)
       {
-        int offs = scale->getPixelIntForFeet(runway.primBlastPad, runway.heading);
+        int offs = scale->getPixelIntForFeet(runway.primaryBlastPad, runway.heading);
         painter->setBrush(mapcolors::runwayBlastpadBrush);
         painter->setBackground(col);
         painter->drawRect(rect.left(), rect.bottom(), rect.width(), offs);
       }
-      if(runway.secBlastPad > 0)
+      if(runway.secondaryBlastPad > 0)
       {
-        int offs = scale->getPixelIntForFeet(runway.secBlastPad, runway.heading);
+        int offs = scale->getPixelIntForFeet(runway.secondaryBlastPad, runway.heading);
         painter->setBrush(mapcolors::runwayBlastpadBrush);
         painter->setBackground(col);
         painter->drawRect(rect.left(), rect.top() - offs, rect.width(), offs);
@@ -352,16 +352,16 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     {
       const MapRunway& runway = runways->at(i);
 
-      if(runway.primOffset > 0 || runway.secOffset > 0)
+      if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
       {
         const QRect& rect = runwayRects.at(i);
 
         painter->translate(runwayCenters.at(i));
         painter->rotate(runway.heading);
 
-        if(runway.primOffset > 0)
+        if(runway.primaryOffset > 0)
         {
-          int offs = scale->getPixelIntForFeet(runway.primOffset, runway.heading);
+          int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
           painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
           painter->drawLine(rect.left(), rect.bottom() - offs, rect.right(), rect.bottom() - offs);
 
@@ -369,9 +369,9 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
           painter->drawLine(0, rect.bottom(), 0, rect.bottom() - offs);
         }
 
-        if(runway.secOffset > 0)
+        if(runway.secondaryOffset > 0)
         {
-          int offs = scale->getPixelIntForFeet(runway.secOffset, runway.heading);
+          int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
           painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
           painter->drawLine(rect.left(), rect.top() + offs, rect.right(), rect.top() + offs);
 
@@ -630,8 +630,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     {
       const MapRunway& runway = runways->at(i);
       bool primaryVisible, secondaryVisible;
-      QPoint prim = wToS(runway.primary, DEFAULT_WTOS_SIZE, &primaryVisible);
-      QPoint sec = wToS(runway.secondary, DEFAULT_WTOS_SIZE, &secondaryVisible);
+      QPoint prim = wToS(runway.primaryPosition, DEFAULT_WTOS_SIZE, &primaryVisible);
+      QPoint sec = wToS(runway.secondaryPosition, DEFAULT_WTOS_SIZE, &secondaryVisible);
 
       // TODO why is primary and secondary reversed
       if(primaryVisible)
@@ -639,13 +639,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->translate(prim);
         painter->rotate(runway.heading + 180.f);
 
-        QRect rectSec = rwTextMetrics.boundingRect(runway.secName);
+        QRect rectSec = rwTextMetrics.boundingRect(runway.secondaryName);
         rectSec.moveTo(-rectSec.width() / 2, 4);
 
         painter->fillRect(rectSec, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(-rectSec.width() / 2, rwTextMetrics.ascent() + 4, runway.secName);
+        painter->drawText(-rectSec.width() / 2, rwTextMetrics.ascent() + 4, runway.secondaryName);
 
-        if(runway.secClosed)
+        if(runway.secondaryClosed)
         {
           // Cross out runway number
           painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
@@ -659,13 +659,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->translate(sec);
         painter->rotate(runway.heading);
 
-        QRect rectPrim = rwTextMetrics.boundingRect(runway.primName);
+        QRect rectPrim = rwTextMetrics.boundingRect(runway.primaryName);
         rectPrim.moveTo(-rectPrim.width() / 2, 4);
 
         painter->fillRect(rectPrim, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(-rectPrim.width() / 2, rwTextMetrics.ascent() + 4, runway.primName);
+        painter->drawText(-rectPrim.width() / 2, rwTextMetrics.ascent() + 4, runway.primaryName);
 
-        if(runway.primClosed)
+        if(runway.primaryClosed)
         {
           // Cross out runway number
           painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
@@ -741,14 +741,14 @@ void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *rw, QList
 {
   for(const maptypes::MapRunway& r : *rw)
   {
-    Rect bounding(r.primary);
-    bounding.extend(r.secondary);
+    Rect bounding(r.primaryPosition);
+    bounding.extend(r.secondaryPosition);
     QSize size = scale->getScreeenSizeForRect(bounding);
 
     // Get the two endpoints as screen coords
     float xr1, yr1, xr2, yr2;
-    wToS(r.primary, xr1, yr1, size);
-    wToS(r.secondary, xr2, yr2, size);
+    wToS(r.primaryPosition, xr1, yr1, size);
+    wToS(r.secondaryPosition, xr2, yr2, size);
 
     // Get the center point as screen coords
     float xc, yc;

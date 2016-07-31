@@ -26,12 +26,14 @@
 #include <QApplication>
 #include <marble/GeoPainter.h>
 
+using namespace Marble;
+using namespace maptypes;
+
+/* Simulator aircraft symbol */
 const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
                                     QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2), // Wings
                                     QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
                                    });
-
-using namespace Marble;
 
 SymbolPainter::SymbolPainter(QColor backgroundColor)
 {
@@ -108,21 +110,19 @@ QIcon SymbolPainter::createUserpointIcon(int size)
   return QIcon(pixmap);
 }
 
-void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& ap, int x, int y,
-                                      int size, bool isAirportDiagram, bool fast)
+void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport,
+                                      int x, int y, int size, bool isAirportDiagram, bool fast)
 {
-  using namespace maptypes;
-
-  if(ap.longestRunwayLength == 0)
+  if(airport.longestRunwayLength == 0)
     size = size * 4 / 5;
 
   painter->save();
-  QColor apColor = mapcolors::colorForAirport(ap);
+  QColor apColor = mapcolors::colorForAirport(airport);
 
   int radius = size / 2;
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  if(ap.flags.testFlag(AP_HARD) && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED))
+  if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
     // Use filled circle
     painter->setBrush(QBrush(apColor));
   else
@@ -130,35 +130,41 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     painter->setBrush(QBrush(mapcolors::airportSymbolFillColor));
 
   if((!fast || isAirportDiagram) && size > 5)
-    if(ap.anyFuel() && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
+  {
+    // Draw spikes only for larger symbols
+    if(airport.anyFuel() && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED) && size > 6)
     {
-    // Draw fuel spikes
-    int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
-    if(fuelRadius < radius + 2)
-      fuelRadius = radius + 2;
-    painter->setPen(QPen(QBrush(apColor), size / 4, Qt::SolidLine, Qt::FlatCap));
-    painter->drawLine(x, y - fuelRadius, x, y + fuelRadius);
-    painter->drawLine(x - fuelRadius, y, x + fuelRadius, y);
+      // Draw fuel spikes
+      int fuelRadius = static_cast<int>(std::round(static_cast<double>(radius) * 1.4));
+      if(fuelRadius < radius + 2)
+        fuelRadius = radius + 2;
+      painter->setPen(QPen(QBrush(apColor), size / 4, Qt::SolidLine, Qt::FlatCap));
+      painter->drawLine(x, y - fuelRadius, x, y + fuelRadius);
+      painter->drawLine(x - fuelRadius, y, x + fuelRadius, y);
     }
+  }
 
   painter->setPen(QPen(QBrush(apColor), size / 5, Qt::SolidLine, Qt::FlatCap));
   painter->drawEllipse(QPoint(x, y), radius, radius);
 
   if((!fast || isAirportDiagram) && size > 5)
   {
-    if(ap.flags.testFlag(AP_MIL))
+    if(airport.flags.testFlag(AP_MIL))
+      // Military airport
       painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
 
-    if(ap.waterOnly() && size > 6)
+    if(airport.waterOnly() && size > 6)
     {
+      // Water only runways - draw an anchor
       int lineWidth = size / 7;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
       painter->drawLine(x - lineWidth / 4, y - radius / 2, x - lineWidth / 4, y + radius / 2);
       painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
     }
 
-    if(ap.helipadOnly() && size > 6)
+    if(airport.helipadOnly() && size > 6)
     {
+      // Only helipads - draw an H
       int lineWidth = size / 7;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
       painter->drawLine(x - lineWidth / 4 - size / 5, y - radius / 2,
@@ -171,7 +177,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
                         x - lineWidth / 4 + size / 5, y + radius / 2);
     }
 
-    if(ap.flags.testFlag(AP_CLOSED) && size > 6)
+    if(airport.flags.testFlag(AP_CLOSED) && size > 6)
     {
       // Cross out whatever was painted before
       painter->setPen(QPen(QBrush(apColor), size / 6.f, Qt::SolidLine, Qt::FlatCap));
@@ -181,11 +187,12 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   }
 
   if((!fast || isAirportDiagram) && size > 5)
-    if(ap.flags.testFlag(AP_HARD) && !ap.flags.testFlag(AP_MIL) && !ap.flags.testFlag(AP_CLOSED) && size > 6)
+    if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) &&
+       !airport.flags.testFlag(AP_CLOSED) && size > 6)
     {
       // Draw line inside circle
       painter->translate(x, y);
-      painter->rotate(ap.longestRunwayHeading);
+      painter->rotate(airport.longestRunwayHeading);
       painter->setPen(QPen(QBrush(mapcolors::airportSymbolFillColor), size / 5, Qt::SolidLine, Qt::RoundCap));
       painter->drawLine(0, -radius + 2, 0, radius - 2);
       painter->resetTransform();
@@ -194,10 +201,10 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   painter->restore();
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& wp, const QColor& col,
-                                       int x, int y, int size, bool fill, bool fast)
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& waypoint,
+                                       const QColor& col, int x, int y, int size, bool fill, bool fast)
 {
-  Q_UNUSED(wp);
+  Q_UNUSED(waypoint);
   painter->save();
   painter->setBackgroundMode(Qt::TransparentMode);
   if(fill)
@@ -214,11 +221,10 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWay
 
   if(!fast && size > 5)
   {
+    // Draw a triangle
     int radius = size / 2;
     QPolygon polygon;
-    polygon << QPoint(x, y - radius)
-            << QPoint(x + radius, y + radius)
-            << QPoint(x - radius, y + radius);
+    polygon << QPoint(x, y - radius) << QPoint(x + radius, y + radius) << QPoint(x - radius, y + radius);
 
     painter->drawConvexPolygon(polygon);
   }
@@ -254,11 +260,13 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
 
 void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
 {
+  // Create a copy of the line vector
   QVector<QLine> lines(AIRCRAFTLINES);
   for(QLine& l : lines)
   {
     if(size != 40)
     {
+      // Scale points of the copy to new size
       l.setP1(QPoint(l.x1() * size / 40, l.y1() * size / 40));
       l.setP2(QPoint(l.x2() * size / 40, l.y2() * size / 40));
     }
@@ -293,13 +301,17 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
     painter->translate(x, y);
 
     if(largeSize > 0 && !vor.dmeOnly)
+      // If compass ticks are drawn rotate center symbol too
       painter->rotate(vor.magvar);
 
     int radius = size / 2;
     if(vor.hasDme)
+      // DME rectangle
       painter->drawRect(-size / 2, -size / 2, size, size);
+
     if(!vor.dmeOnly)
     {
+      // Draw VOR symbol
       int corner = 2;
       QPolygon polygon;
       polygon << QPoint(-radius / corner, -radius)
@@ -314,6 +326,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 
     if(largeSize > 0 && !vor.dmeOnly)
     {
+      // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
       painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPoint(0, 0), radius * 5, radius * 5);
@@ -358,6 +371,8 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb
     painter->setBrush(Qt::NoBrush);
 
   float penSize = fast ? 6.f : 1.5f;
+
+  // Use dotted or solid line depending on size
   painter->setPen(QPen(mapcolors::ndbSymbolColor, penSize,
                        size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
@@ -365,20 +380,16 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb
 
   if(!fast)
   {
-    // Draw outer dotted circle
+    // Draw outer dotted/solid circle
     painter->drawEllipse(QPoint(x, y), radius, radius);
 
     if(size > 12)
-    {
-      if(!fast)
-        // If big enought draw inner dotted circle
-        painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
-      painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
-    }
-    else
-      painter->setPen(QPen(mapcolors::ndbSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
+      // If big enought draw inner dotted circle
+      painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
   }
 
+  int pointSize = size > 12 ? size / 4 : size / 3;
+  painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
   painter->drawPoint(x, y);
 
   painter->restore();
@@ -447,16 +458,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-  {
-    QString range;
-    if(vor.range < 40)
-      range = "T";
-    else if(vor.range < 62)
-      range = "L";
-    else if(vor.range < 200)
-      range = "H";
-    texts.append(vor.ident + " (" + range + ")");
-  }
+    texts.append(vor.ident + " (" + vor.type.left(1) + ")");
   else if(flags & textflags::IDENT)
     texts.append(vor.ident);
 
@@ -582,14 +584,17 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   if(transparency != 255)
   {
     if(transparency == 0)
+      // Do not fill at all
       painter->setBrush(Qt::NoBrush);
     else
     {
+      // Use an alpha channel for semi transparency
       backColor.setAlpha(transparency);
       painter->setBrush(backColor);
     }
   }
   else
+    // Fill background
     painter->setBrush(backColor);
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
@@ -607,6 +612,7 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   int yoffset = 0;
   if(transparency != 0)
   {
+    // Draw filled rectangles in the background
     painter->setPen(mapcolors::textBackgroundPen);
     for(const QString& text : texts)
     {
@@ -625,6 +631,7 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
     }
   }
 
+  // Draw the text
   yoffset = 0;
   painter->setPen(textPen);
   for(const QString& t : texts)
@@ -662,6 +669,7 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
   QFontMetrics metrics = painter->fontMetrics();
   int h = metrics.height();
 
+  // Increase text box size for each bounding rectangle of text
   int yoffset = 0;
   for(const QString& t : texts)
   {

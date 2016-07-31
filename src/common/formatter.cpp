@@ -133,9 +133,11 @@ QString formatElapsed(const QElapsedTimer& timer)
 
 QString capNavString(const QString& str)
 {
-  static QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME", "ATIS",
-                               "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III", "H", "HH", "MH",
-                               "VASI", "PAPI", "ALS"});
+  // Ignore aviation acronym in capitalization
+  static const QSet<QString> ignore({"VOR", "VORDME", "DME", "NDB", "GA", "RNAV", "GPS", "ILS", "NDBDME",
+                                     "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
+                                     "H", "HH", "MH", "VASI", "PAPI",
+                                     "ALS"});
   return atools::capString(str, {}, {}, ignore);
 }
 

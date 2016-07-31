@@ -27,15 +27,29 @@ class SqlRecord;
 }
 }
 
+/*
+ * Create all map objects (namespace maptypes) from sql records. The sql records can be
+ * a result from sql queries or manually built.
+ */
 class MapTypesFactory
 {
 public:
   MapTypesFactory();
   ~MapTypesFactory();
 
+  /*
+   * Populate airport object.
+   * @param complete if false only id and position are present in the record. Used for creating the object
+   * based on incomplete records in the search.
+   */
   void fillAirport(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport, bool complete);
+
+  /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
   void fillAirportForOverview(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport);
 
+  /*
+   * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
+   */
   void fillRunway(const atools::sql::SqlRecord& record, maptypes::MapRunway& runway, bool overview);
 
   void fillVor(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
@@ -53,14 +67,14 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, maptypes::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, maptypes::MapStart& start);
 
-  maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
-                                        maptypes::MapAirportFlags airportFlag);
-  maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
-
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
 
   void fillAirportBase(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
+
+  maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
+                                        maptypes::MapAirportFlags airportFlag);
+  maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
 
 };
 

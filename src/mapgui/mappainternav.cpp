@@ -202,8 +202,8 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
         if(context->mapLayer->isAirwayInfo())
         {
           text += QString(tr(" / ")) + maptypes::airwayTypeToShortString(airway.type);
-          if(airway.minalt)
-            text += QString(tr(" / ")) + QLocale().toString(airway.minalt) + tr(" ft");
+          if(airway.minAltitude)
+            text += QString(tr(" / ")) + QLocale().toString(airway.minAltitude) + tr(" ft");
         }
 
         if(!text.isEmpty())
@@ -266,7 +266,7 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
 
   for(const MapWaypoint& waypoint : *waypoints)
   {
-    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictor) || (drawAirwayJ && waypoint.hasJet)))
+    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
       continue;
 
     int x, y;

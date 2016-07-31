@@ -513,7 +513,7 @@ void OptionsDialog::fromFlags(QRadioButton *checkBox, opts::Flags flag)
 void OptionsDialog::updateAsnButtonState()
 {
   WeatherReporter *wr = mainWindow->getWeatherReporter();
-  bool hasAsn = wr->isAsnDefaultFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
+  bool hasAsn = wr->isAsnDefaultPathFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
   ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
   ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
   updateAsnPathStatus();

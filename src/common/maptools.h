@@ -30,8 +30,10 @@ class CoordinateConverter;
 
 namespace maptools {
 
+/* Functions will stop adding of number of elements exceeds this value */
 static Q_DECL_CONSTEXPR int MAX_LIST_ENTRIES = 5;
 
+/* Inserts element into list sorted by screen distance to xs/ys using ids set for deduplication */
 template<typename TYPE>
 void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, QSet<int> *ids,
                             int xs, int ys, TYPE type)
@@ -57,6 +59,7 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
   }
 }
 
+/* Inserts element into list sorted by screen distance of tower to xs/ys using ids set for deduplication */
 template<typename TYPE>
 void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& list, int xs, int ys,
                                  TYPE type)

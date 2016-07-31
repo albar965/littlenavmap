@@ -128,7 +128,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
 
       if(ils.slope > 0)
         text += tr(" / GS ") + QLocale().toString(ils.slope, 'f', 1) + tr("°");
-      if(ils.dme)
+      if(ils.hasDme)
         text += tr(" / DME");
     }
     else if(context->mapLayer->isIlsIdent())

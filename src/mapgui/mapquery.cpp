@@ -254,8 +254,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
       const MapWaypoint& wp = waypointCache.list.at(i);
-      if((wp.hasVictor && types.testFlag(maptypes::AIRWAYV)) ||
-         (wp.hasJet && types.testFlag(maptypes::AIRWAYJ)))
+      if((wp.hasVictorAirways && types.testFlag(maptypes::AIRWAYV)) ||
+         (wp.hasJetAirways && types.testFlag(maptypes::AIRWAYJ)))
         if(conv.wToS(wp.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
             insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);

@@ -958,20 +958,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(maptypes::VOR, vor->ident, vor->region, vor->apIdent);
+        emit objectSelected(maptypes::VOR, vor->ident, vor->region, vor->airportIdent);
       }
       else if(ndb != nullptr)
       {
         ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
         // TODO check airport ident (probably not loaded)
-        emit objectSelected(maptypes::NDB, ndb->ident, ndb->region, ndb->apIdent);
+        emit objectSelected(maptypes::NDB, ndb->ident, ndb->region, ndb->airportIdent);
       }
       else if(waypoint != nullptr)
       {
         ui->dockWidgetSearch->raise();
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit objectSelected(maptypes::WAYPOINT, waypoint->ident, waypoint->region, waypoint->apIdent);
+        emit objectSelected(maptypes::WAYPOINT, waypoint->ident, waypoint->region, waypoint->airportIdent);
       }
     }
     else if(action == ui->actionMapNavaidRange)
@@ -1001,7 +1001,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     {
       // Distance line
       maptypes::DistanceMarker dm;
-      dm.rhumbLine = action == ui->actionMapMeasureRhumbDistance;
+      dm.isRhumbLine = action == ui->actionMapMeasureRhumbDistance;
       dm.to = pos;
 
       if(vor != nullptr)
@@ -1011,7 +1011,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.magvar = vor->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::vorSymbolColor;
-        dm.type = maptypes::VOR;
       }
       else if(ndb != nullptr)
       {
@@ -1020,7 +1019,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.magvar = ndb->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::ndbSymbolColor;
-        dm.type = maptypes::NDB;
       }
       else if(waypoint != nullptr)
       {
@@ -1029,7 +1027,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.magvar = waypoint->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::waypointSymbolColor;
-        dm.type = maptypes::WAYPOINT;
       }
       else if(airport != nullptr)
       {
@@ -1038,13 +1035,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.magvar = airport->magvar;
         dm.hasMagvar = true;
         dm.color = mapcolors::colorForAirport(*airport);
-        dm.type = maptypes::AIRPORT;
       }
       else
       {
         dm.hasMagvar = false;
         dm.from = pos;
-        dm.color = dm.rhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
+        dm.color = dm.isRhumbLine ? mapcolors::distanceRhumbColor : mapcolors::distanceColor;
       }
 
       screenIndex->getDistanceMarks().append(dm);

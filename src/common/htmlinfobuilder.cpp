@@ -73,6 +73,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
+  // Adapt title to airport status
   Flags titleFlags = atools::util::html::BOLD;
   if(airport.closed())
     titleFlags |= atools::util::html::STRIKEOUT;
@@ -83,6 +84,8 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   {
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
     html.nbsp().nbsp();
+
+    // Add link to map
     html.a(tr("Map"),
            QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
   }
@@ -107,6 +110,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   html.table();
   if(routeMapObjects != nullptr && airport.routeIndex != -1)
   {
+    // Add flight plan information if airport is a part of it
     if(airport.routeIndex == 0)
       html.row2(tr("Departure Airport"), QString());
     else if(airport.routeIndex == routeMapObjects->size() - 1)
@@ -114,6 +118,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     else
       html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
   }
+
+  // Administrative information
   html.row2(tr("City:"), city);
   if(!state.isEmpty())
     html.row2(tr("State or Province:"), state);
@@ -122,11 +128,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   html.row2(tr("Magvar:"), maptypes::magvarText(airport.magvar));
   if(rec != nullptr)
   {
+    // Add rating and coordinates for info panel
     html.row2(tr("Rating:"), atools::ratingString(rec->valueInt("rating"), 5));
     addCoordinates(rec, html);
   }
   html.tableEnd();
 
+  // Create a list of facilities
   if(info)
     head(html, tr("Facilities"));
   html.table();
@@ -176,6 +184,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
   html.tableEnd();
 
+  // Create a list of runway attributes
   if(info)
     head(html, tr("Runways"));
   html.table();
@@ -197,6 +206,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
   if(!info)
   {
+    // Add longest for tooltip
     html.table();
     html.row2(tr("Longest Runway Length:"), QString("%1 ft").arg(locale.toString(airport.longestRunwayLength)));
     html.tableEnd();
@@ -204,6 +214,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
   if(weather != nullptr)
   {
+    // Add weather information
     opts::Flags flags = OptionData::instance().getFlags();
     bool showAsn = info ? flags & opts::WEATHER_INFO_ASN : flags & opts::WEATHER_TOOLTIP_ASN;
     bool showNoaa = info ? flags & opts::WEATHER_INFO_NOAA : flags & opts::WEATHER_TOOLTIP_NOAA;
@@ -256,6 +267,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     html.tableEnd();
   }
 
+  // Add most important COM frequencies
   if(airport.towerFrequency > 0 || airport.atisFrequency > 0 || airport.awosFrequency > 0 ||
      airport.asosFrequency > 0 || airport.unicomFrequency > 0)
   {
@@ -277,6 +289,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
   if(rec != nullptr)
   {
+    // Parking overview
     int numParkingGate = rec->valueInt("num_parking_gate");
     int numJetway = rec->valueInt("num_jetway");
     int numParkingGaRamp = rec->valueInt("num_parking_ga_ramp");
@@ -292,7 +305,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
        numParkingMilCargo > 0 || numParkingMilCombat > 0 ||
        !rec->isNull("largest_parking_ramp") || !rec->isNull("largest_parking_gate"))
     {
-
       if(numParkingGate > 0)
         html.row2(tr("Gates:"), numParkingGate);
       if(numJetway > 0)
@@ -333,7 +345,6 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
     {
-
       html.table();
       html.tr(QColor(Qt::lightGray));
       html.td(tr("Type"), atools::util::html::BOLD).
@@ -349,7 +360,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
         if(rec.valueStr("type") != tr("ATIS"))
           html.td(capString(rec.valueStr("name")));
         else
-          // ATIS contains the airport code - do not capitalize
+          // ATIS contains the airport code - do not capitalize this
           html.td(rec.valueStr("name"));
         html.trEnd();
       }
@@ -389,10 +400,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         html.row2(tr("Surface:"), maptypes::surfaceName(rec.valueStr("surface")));
         html.row2(tr("Pattern Altitude:"), locale.toString(rec.valueInt("pattern_altitude")) + tr(" ft"));
 
+        // Lights information
         rowForStrCap(html, &rec, "edge_light", tr("Edge Lights:"), tr("%1"));
         rowForStrCap(html, &rec, "center_light", tr("Center Lights:"), tr("%1"));
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
+        // Add a list of runway markings
         RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
         QStringList markings;
         if(flags & atools::fs::bgl::rw::EDGES)
@@ -464,10 +477,12 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   rowForInt(html, rec, "overrun", tr("Overrun:"), tr("%1 ft"));
 
   rowForBool(html, rec, "has_stol_markings", tr("Has STOL Markings"), false);
+  // Two flags below only are probably only for AI
   // rowForBool(html, recPrim, "is_takeoff", tr("Closed for Takeoff"), true);
   // rowForBool(html, recPrim, "is_landing", tr("Closed for Landing"), true);
   rowForStrCap(html, rec, "is_pattern", tr("Pattern:"), tr("%1"));
 
+  // Approach indicators
   rowForStr(html, rec, "left_vasi_type", tr("Left VASI Type:"), tr("%1"));
   rowForFloat(html, rec, "left_vasi_pitch", tr("Left VASI Pitch:"), tr("%1°"), 1);
   rowForStr(html, rec, "right_vasi_type", tr("Right VASI Type:"), tr("%1"));
@@ -475,6 +490,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
 
   rowForStr(html, rec, "app_light_system_type", tr("ALS Type:"), tr("%1"));
 
+  // End lights
   QStringList lights;
   if(rec->valueBool("has_end_lights"))
     lights.append(tr("Lights"));
@@ -489,6 +505,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
   if(ilsRec != nullptr)
   {
+    // Add ILS information
     bool dme = !ilsRec->isNull("dme_altitude");
     bool gs = !ilsRec->isNull("gs_altitude");
 
@@ -525,6 +542,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
     {
       for(const SqlRecord& recApp : *recAppVector)
       {
+        // Approach information
         QString runway;
         if(!recApp.isNull("runway_name"))
           runway = tr(" - Runway ") + recApp.valueStr("runway_name");
@@ -550,6 +568,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
         if(recTransVector != nullptr)
         {
+          // Transitions for this approach
           for(const SqlRecord& recTrans : *recTransVector)
           {
             html.h4(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
@@ -589,6 +608,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
 
   if(info)
   {
+    // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(vor.position.getLonX()).arg(vor.position.getLatY()));
@@ -628,6 +648,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
 
   if(info)
   {
+    // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
@@ -665,6 +686,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(info)
   {
+    // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
            arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
@@ -686,22 +708,28 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(!airways.isEmpty())
   {
+    // Add airway information
+
+    // Add airway name/text to vector
     QVector<std::pair<QString, QString> > airwayTexts;
     for(const MapAirway& aw : airways)
     {
       QString txt(maptypes::airwayTypeToString(aw.type));
-      if(aw.minalt > 0)
-        txt += tr(", ") + locale.toString(aw.minalt) + tr(" ft");
+      if(aw.minAltitude > 0)
+        txt += tr(", ") + locale.toString(aw.minAltitude) + tr(" ft");
       airwayTexts.append(std::make_pair(aw.name, txt));
     }
 
     if(!airwayTexts.isEmpty())
     {
+      // Sort airways by name
       std::sort(airwayTexts.begin(), airwayTexts.end(),
                 [ = ](const std::pair<QString, QString> &item1, const std::pair<QString, QString> &item2)
                 {
                   return item1.first < item2.first;
                 });
+
+      // Remove duplicates
       airwayTexts.erase(std::unique(airwayTexts.begin(), airwayTexts.end()), airwayTexts.end());
 
       if(info)
@@ -726,8 +754,8 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   html.table();
   html.row2(tr("Type:"), maptypes::airwayTypeToString(airway.type));
 
-  if(airway.minalt > 0)
-    html.row2(tr("Min altitude:"), locale.toString(airway.minalt) + tr(" ft"));
+  if(airway.minAltitude > 0)
+    html.row2(tr("Min altitude:"), locale.toString(airway.minAltitude) + tr(" ft"));
 
   if(infoQuery != nullptr && info)
   {
@@ -748,9 +776,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::markerText(const MapMarker& m, HtmlBuilder& html)
+void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html)
 {
-  head(html, tr("Marker: ") + m.type);
+  head(html, tr("Marker: ") + marker.type);
 }
 
 void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
