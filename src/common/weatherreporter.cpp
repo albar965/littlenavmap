@@ -84,6 +84,8 @@ void WeatherReporter::initActiveSkyNext()
     if(!fsWatcher->addPath(asnPath))
       qWarning() << "cannot watch" << asnPath;
   }
+  else
+    asnMetars.clear();
 }
 
 /* Loads complete ASN file into a hash map */

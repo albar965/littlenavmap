@@ -539,14 +539,23 @@ void OptionsDialog::updateAsnPathStatus()
       ui->labelOptionsWeatherAsnPathState->setText(tr("Weather snapshot file is valid."));
   }
   else
-    ui->labelOptionsWeatherAsnPathState->setText(tr("No weather snapshot file selected. Using default."));
+  {
+    WeatherReporter *wr = mainWindow->getWeatherReporter();
+    bool hasAsn = wr->isAsnDefaultPathFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
+
+    if(hasAsn)
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("No weather snapshot file selected. Using default."));
+    else
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("No weather snapshot file selected and no default found. ASN weather not available."));
+  }
 }
 
 void OptionsDialog::asnPathEditingFinished()
 {
   qDebug() << "OptionsDialog::asnPathEditingFinished";
 
-  updateAsnPathStatus();
   updateAsnButtonState();
 }
 
@@ -562,7 +571,6 @@ void OptionsDialog::selectAsnPathClicked()
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherAsnPath->setText(path);
 
-  updateAsnPathStatus();
   updateAsnButtonState();
 }
 
