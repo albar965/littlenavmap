@@ -62,15 +62,19 @@ class MapWidget;
 class MapQuery;
 class InfoQuery;
 
+/*
+ * Main window contains all instances of controllers, widgets and managment classes.
+ */
 class MainWindow :
   public QMainWindow
 {
   Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr);
+  MainWindow();
   virtual ~MainWindow();
 
+  /* Get main user interface instance */
   Ui::MainWindow *getUi() const
   {
     return ui;
@@ -98,10 +102,16 @@ public:
     return connectClient;
   }
 
+  /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
 
+  /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+
+  /* Sets a general status bar message which is shared with all widgets/actions status text */
   void setStatusMessage(const QString& message);
+
+void setDetailLabelText(const QString& text);
 
   atools::fs::FsPaths::SimulatorType getCurrentSimulator();
 
@@ -127,10 +137,6 @@ private:
 
   void updateMapShowFeatures();
 
-  void increaseMapDetail();
-  void decreaseMapDetail();
-  void defaultMapDetail();
-  void setMapDetail(int factor);
   void selectionChanged(const Search *source, int selected, int visible, int total);
   void routeSelectionChanged(int selected, int total);
 
@@ -166,14 +172,16 @@ private:
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
 
+  /* Original unchanged window title */
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
   atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+  /* URL of the inline nav map legend */
   QUrl legendUrl;
 
+  /* Combo boxes that are added to the toolbar */
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
-  int mapDetailFactor;
 
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;

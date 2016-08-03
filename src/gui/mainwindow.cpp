@@ -63,8 +63,8 @@ using atools::settings::Settings;
 using atools::gui::FileHistoryHandler;
 using atools::gui::MapPosHistory;
 
-MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow()
+  : QMainWindow(nullptr), ui(new Ui::MainWindow)
 {
   qDebug() << "MainWindow constructor";
 
@@ -142,7 +142,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
-    setMapDetail(mapDetailFactor);
 
     // Wait until everything is set up
     updateMapShowFeatures();
@@ -590,9 +589,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
   connect(ui->actionWorkOffline, &QAction::toggled, mapWidget, &MapWidget::workOffline);
 
-  connect(ui->actionMapMoreDetails, &QAction::triggered, this, &MainWindow::increaseMapDetail);
-  connect(ui->actionMapLessDetails, &QAction::triggered, this, &MainWindow::decreaseMapDetail);
-  connect(ui->actionMapDefaultDetails, &QAction::triggered, this, &MainWindow::defaultMapDetail);
+  connect(ui->actionMapMoreDetails, &QAction::triggered, mapWidget, &MapWidget::increaseMapDetail);
+  connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
+  connect(ui->actionMapDefaultDetails, &QAction::triggered, mapWidget, &MapWidget::defaultMapDetail);
 
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
 
@@ -992,52 +991,6 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
-void MainWindow::defaultMapDetail()
-{
-  mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
-  setMapDetail(mapDetailFactor);
-}
-
-void MainWindow::increaseMapDetail()
-{
-  if(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR)
-  {
-    mapDetailFactor++;
-    setMapDetail(mapDetailFactor);
-  }
-}
-
-void MainWindow::decreaseMapDetail()
-{
-  if(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR)
-  {
-    mapDetailFactor--;
-    setMapDetail(mapDetailFactor);
-  }
-}
-
-void MainWindow::setMapDetail(int factor)
-{
-  mapDetailFactor = factor;
-  mapWidget->setDetailFactor(mapDetailFactor);
-  ui->actionMapMoreDetails->setEnabled(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR);
-  ui->actionMapLessDetails->setEnabled(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR);
-  ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
-  mapWidget->update();
-
-  int det = mapDetailFactor - MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
-  QString detStr;
-  if(det == 0)
-    detStr = tr("Normal");
-  else if(det > 0)
-    detStr = "+" + QString::number(det);
-  else if(det < 0)
-    detStr = QString::number(det);
-
-  detailLabel->setText(tr("Detail %1").arg(detStr));
-  setStatusMessage(tr("Map detail level changed."));
-}
-
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected);
@@ -1107,6 +1060,11 @@ void MainWindow::setStatusMessage(const QString& message)
     statusMessages.removeAt(0);
 
   ui->statusBar->showMessage(statusMessages.join(" "));
+}
+
+void MainWindow::setDetailLabelText(const QString& text)
+{
+  detailLabel->setText(text);
 }
 
 atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator()
@@ -1238,12 +1196,8 @@ void MainWindow::readSettings()
                 ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                 ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                 ui->actionMapShowAircraftTrack});
-    mapDetailFactor = Settings::instance().valueInt(lnm::MAP_DETAILFACTOR,
-                                                    MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
     ws.setBlockSignals(false);
   }
-  else
-    mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
 
   ws.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
               ui->actionMapShowHillshading, ui->actionRouteEditMode, ui->actionWorkOffline});
@@ -1289,7 +1243,6 @@ void MainWindow::writeSettings()
            ui->actionRouteEditMode,
            ui->actionWorkOffline});
 
-  Settings::instance().setValue(lnm::MAP_DETAILFACTOR, mapDetailFactor);
   Settings::instance().setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
   if(databaseManager != nullptr)

@@ -145,7 +145,10 @@ public:
 
   void setShowMapPois(bool show);
   void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
-  void setDetailFactor(int factor);
+  void increaseMapDetail();
+  void decreaseMapDetail();
+  void defaultMapDetail();
+  void setMapDetail(int factor);
 
   maptypes::MapObjectTypes getShownMapFeatures();
 
@@ -211,6 +214,8 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
+  void setDetailFactor(int factor);
+
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
   virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
@@ -225,6 +230,8 @@ private:
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);
+
+  int mapDetailFactor;
 
   QStringList kmlFiles;
   bool databaseLoadStatus = false;

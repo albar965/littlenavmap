@@ -35,7 +35,7 @@
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
 #include "util/htmlbuilder.h"
-
+#include "mapgui/maplayersettings.h"
 #include "zip/zipreader.h"
 
 #include <QContextMenuEvent>
@@ -279,6 +279,9 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_HOMELATY, homePos.getLatY());
   s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
   s.setValue(lnm::MAP_KMLFILES, kmlFiles);
+
+  s.setValue(lnm::MAP_DETAILFACTOR, mapDetailFactor);
+
   history.saveState(lnm::MAP_HISTORY);
   screenIndex->saveState();
 }
@@ -287,6 +290,12 @@ void MapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
   readPluginSettings(*s.getQSettings());
+
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+    mapDetailFactor = s.valueInt(lnm::MAP_DETAILFACTOR, MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
+  else
+    mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
+  setMapDetail(mapDetailFactor);
 
   if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
     markPos = atools::geo::Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
@@ -1690,4 +1699,52 @@ bool MapWidget::loadKml(const QString& filename, bool center)
                          tr("File %1 does not exist.").arg(filename));
 
   return retval;
+}
+
+void MapWidget::defaultMapDetail()
+{
+  mapDetailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
+  setMapDetail(mapDetailFactor);
+}
+
+void MapWidget::increaseMapDetail()
+{
+  if(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR)
+  {
+    mapDetailFactor++;
+    setMapDetail(mapDetailFactor);
+  }
+}
+
+void MapWidget::decreaseMapDetail()
+{
+  if(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR)
+  {
+    mapDetailFactor--;
+    setMapDetail(mapDetailFactor);
+  }
+}
+
+void MapWidget::setMapDetail(int factor)
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  mapDetailFactor = factor;
+  setDetailFactor(mapDetailFactor);
+  ui->actionMapMoreDetails->setEnabled(mapDetailFactor < MapLayerSettings::MAP_MAX_DETAIL_FACTOR);
+  ui->actionMapLessDetails->setEnabled(mapDetailFactor > MapLayerSettings::MAP_MIN_DETAIL_FACTOR);
+  ui->actionMapDefaultDetails->setEnabled(mapDetailFactor != MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
+  update();
+
+  int det = mapDetailFactor - MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
+  QString detStr;
+  if(det == 0)
+    detStr = tr("Normal");
+  else if(det > 0)
+    detStr = "+" + QString::number(det);
+  else if(det < 0)
+    detStr = QString::number(det);
+
+  mainWindow->setDetailLabelText(tr("Detail %1").arg(detStr));
+  mainWindow->setStatusMessage(tr("Map detail level changed."));
 }
