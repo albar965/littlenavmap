@@ -159,6 +159,17 @@ void InfoController::updateAirport()
   }
 }
 
+void InfoController::clearInfoTextBrowsers()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  ui->textBrowserAirportInfo->clear();
+  ui->textBrowserRunwayInfo->clear();
+  ui->textBrowserComInfo->clear();
+  ui->textBrowserApproachInfo->clear();
+  ui->textBrowserNavaidInfo->clear();
+}
+
 void InfoController::showInformation(maptypes::MapSearchResult result)
 {
   qDebug() << "InfoController::showInformation";
@@ -259,6 +270,7 @@ void InfoController::preDatabaseLoad()
   currentSearchResult = maptypes::MapSearchResult();
 
   databaseLoadStatus = true;
+  clearInfoTextBrowsers();
 }
 
 void InfoController::postDatabaseLoad()

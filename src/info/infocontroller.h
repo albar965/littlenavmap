@@ -78,6 +78,7 @@ private:
   void updateTextEdit(QTextEdit *textEdit, const QString& text);
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
+  void clearInfoTextBrowsers();
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
