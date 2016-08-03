@@ -60,6 +60,7 @@ void MapPainterAircraft::render(const PaintContext *context)
 void MapPainterAircraft::paintAircraft(const PaintContext *context)
 {
   const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
+
   const Pos& pos = simData.getPosition();
 
   if(!pos.isValid())

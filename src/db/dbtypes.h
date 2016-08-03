@@ -24,10 +24,13 @@
 #include <QString>
 #include <QObject>
 
+/* Combines path and scenery information for a flight simulator type */
 struct FsPathType
 {
-  QString basePath, sceneryCfg;
-  bool hasDatabase = false, hasRegistry = false;
+  QString basePath /* Base path where fsx.exe or prepar3d.exe can be found */,
+          sceneryCfg /* full path and name of scenery.cfg file */;
+  bool hasDatabase = false, /* true if a database was found in the configuration direcory */
+       hasRegistry = false /* True if the simulator is installed on the system */;
 };
 
 QDebug operator<<(QDebug out, const FsPathType& record);
@@ -38,26 +41,51 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj);
 Q_DECLARE_METATYPE(FsPathType);
 Q_DECLARE_TYPEINFO(FsPathType, Q_MOVABLE_TYPE);
 
-class FsPathTypeMap :
-  public QHash<atools::fs::FsPaths::SimulatorType, FsPathType>
+/* Hash map for simulator type and FsPathType. Can be converted to QVariant */
+class SimulatorTypeMap :
+  private QHash<atools::fs::FsPaths::SimulatorType, FsPathType>
 {
 public:
+  SimulatorTypeMap()
+  {
+  }
+
+  /* Checks for fs installtions and databases and populates the hash map */
   void fillDefault();
-  atools::fs::FsPaths::SimulatorType getBestSimulator();
 
-  QList<atools::fs::FsPaths::SimulatorType> getAllRegistryPaths() const;
+  /* Get the latest/newest simulator from all installed ones or databases found */
+  atools::fs::FsPaths::SimulatorType getBest();
 
-  QList<atools::fs::FsPaths::SimulatorType> getAllDatabasePaths() const;
-  atools::fs::FsPaths::SimulatorType getBestLoadingSimulator();
+  /* Get lastest/newest installed simulator */
+  atools::fs::FsPaths::SimulatorType getBestInstalled();
+
+  /* Get all installed simulators */
+  QList<atools::fs::FsPaths::SimulatorType> getAllInstalled() const;
+
+  /* Get all simulators that have a database */
+  QList<atools::fs::FsPaths::SimulatorType> getAllHavingDatabase() const;
+
+  /* Make needed base class methods public */
+  using QHash::keys;
+  using QHash::isEmpty;
+  using QHash::value;
+  using QHash::contains;
+  using QHash::remove;
+  using QHash::size;
+  using QHash::operator[];
 
 private:
+  friend QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj);
+
+  friend QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
+
   void fillOneDefault(atools::fs::FsPaths::SimulatorType type);
 
 };
 
-QDataStream& operator<<(QDataStream& out, const FsPathTypeMap& obj);
-QDataStream& operator>>(QDataStream& in, FsPathTypeMap& obj);
+QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj);
+QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
 
-Q_DECLARE_METATYPE(FsPathTypeMap);
+Q_DECLARE_METATYPE(SimulatorTypeMap);
 
 #endif // LITTLENAVMAP_DBTYPES_H

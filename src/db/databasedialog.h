@@ -27,48 +27,64 @@ namespace Ui {
 class DatabaseDialog;
 }
 
+/*
+ * Load scenery database dialog
+ */
 class DatabaseDialog
   : public QDialog
 {
   Q_OBJECT
 
 public:
-  DatabaseDialog(QWidget *parent, const FsPathTypeMap& value);
+  /*
+   * @param pathMap which might be changed by the dialog
+   */
+  DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap);
   virtual ~DatabaseDialog();
 
+  /* Get the base path of the currently selected simulator in the combo box */
   QString getBasePath() const;
+
+  /* Get the path and filename of the scenery.cfg file of the currently selected simulator in the combo box */
   QString getSceneryConfigFile() const;
 
-  const FsPathTypeMap& getPaths() const
+  /* Get the paths which might be modified (changed paths and more) */
+  const SimulatorTypeMap& getPaths() const
   {
     return paths;
   }
 
+  /* Set the databast information into the header */
   void setHeader(const QString& header);
 
+  /* Get the simulator currently selected in the combo box */
   atools::fs::FsPaths::SimulatorType getCurrentFsType() const
   {
     return currentFsType;
   }
 
+  /* Set simulator */
   void setCurrentFsType(atools::fs::FsPaths::SimulatorType value);
 
 signals:
+  /* Emitted if the user changed the fligh simulator in the combo box */
   void simulatorChanged(atools::fs::FsPaths::SimulatorType value);
 
 private:
   void basePathEdited(const QString& text);
-  void resetPaths();
+  void resetPathsClicked();
   void sceneryConfigFileEdited(const QString& text);
-  void selectBasePath();
-  void selectSceneryConfig();
+  void selectBasePathClicked();
+  void selectSceneryConfigClicked();
   void simComboChanged(int index);
   void updateComboBox();
   void updateLineEdits();
 
   Ui::DatabaseDialog *ui;
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
-  FsPathTypeMap paths;
+
+  // Copy of the FS path map which can be used or not (in case of cancel)
+  SimulatorTypeMap paths;
 
 };
 

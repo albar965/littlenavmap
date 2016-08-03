@@ -39,57 +39,92 @@ class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
 
+/*
+ * Takes care of all scenery database management. Switching between flight simulators, loading of scenery
+ * databases, validation of databases and comparing versions.
+ */
 class DatabaseManager :
   public QObject
 {
   Q_OBJECT
 
 public:
+  /*
+   * @param parent can be null if only checkIncompatibleDatabases is to be called
+   */
   DatabaseManager(MainWindow *parent);
+
+  /* Also closes database if not already done */
   virtual ~DatabaseManager();
 
+  /* Opens the dialog that allows to (re)load a new scenery database. */
   void run();
 
+  /* Save and restore all paths and current simulator settings */
   void saveState();
   void restoreState();
 
-  bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
+  /* Returns true if there are any flight simulator installations found in the registry */
+  bool hasInstalledSimulators() const;
 
-  bool hasSchema();
-  bool hasData();
-  bool isDatabaseCompatible();
-  void createEmptySchema(atools::sql::SqlDatabase *sqlDatabase);
-  bool hasRegistrySims() const;
-
+  /* Opens a Sqlite database. If the database is new or does not contain a schema an empty schema is created.
+   * Will not return if an exception is caught during opening. */
   void openDatabase();
-  void closeDatabase();
-  QString getSimShortName() const;
 
+  /* Close database.
+   * Will not return if an exception is caught during opening. */
+  void closeDatabase();
+
+  /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
+  QString getSimulatorShortName() const;
+
+  /* Get the database. Will return null if not opened before. */
   atools::sql::SqlDatabase *getDatabase();
 
-  /* Actions have to be freed by the caller and are connected to switchSim */
+  /*
+   * Insert actions for switching between installed flight simulators.
+   * Actions have to be freed by the caller and are connected to switchSim
+   * @param before Actions will be added to menu before this one
+   * @param menu Add actions to this menu
+   */
   void insertSimSwitchActions(QAction *before, QMenu *menu);
 
+  /* if false quit application */
+  bool checkIncompatibleDatabases();
+
+  /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const
   {
     return databaseDirectory;
   }
 
-  /* if false quit application */
-  bool checkIncompatibleDatabases();
-
+  /* Get currently selected simulator type (using insertSimSwitchActions). */
   atools::fs::FsPaths::SimulatorType getCurrentSimulator() const
   {
     return currentFsType;
   }
 
 signals:
+  /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
+   * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
+   * just the connection behind it.*/
   void preDatabaseLoad();
+
+  /* Emitted when a database was loaded, the loading database dialog was closed or a new simulator was selected
+   * @param type new simulator
+   */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
-  void simulatorChangedFromCombo(atools::fs::FsPaths::SimulatorType value);
-  bool runInternal(bool& loaded);
+  void createEmptySchema(atools::sql::SqlDatabase *sqlDatabase);
+  bool isDatabaseCompatible();
+  bool hasSchema();
+  bool hasData();
+
+  bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
+
+  void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
+  bool runInternal();
   void backupDatabaseFile();
   void restoreDatabaseFileBackup();
   QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
@@ -99,27 +134,34 @@ private:
   void freeActions();
   void updateSimSwitchActions();
   void removeDatabaseFileBackup();
-  void fillPathsFromDatabases();
-  void updatePathsFromDialog();
+  void updateSimulatorFlags();
+  void updateSimulatorPathsFromDialog();
   bool loadScenery();
-  void runNoMessages();
 
-  const QString DB_NAME = "LNMDB";
-  const QString DB_TYPE = "QSQLITE";
+  const QString DATABASE_NAME = "LNMDB";
+  const QString DATABASE_TYPE = "QSQLITE";
 
   DatabaseDialog *databaseDialog = nullptr;
   QString databaseFile, databaseDirectory;
+
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *db = nullptr;
+
   MainWindow *mainWindow = nullptr;
   QProgressDialog *progressDialog = nullptr;
 
+  /* Switch simulator actions */
   QActionGroup *group = nullptr;
   QList<QAction *> actions;
 
-  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN,
-                                     loadingFsType = atools::fs::FsPaths::UNKNOWN;
-  FsPathTypeMap paths;
+  atools::fs::FsPaths::SimulatorType
+  /* Currently selected simulator which will be used in the map, search, etc. */
+    currentFsType = atools::fs::FsPaths::UNKNOWN,
+  /* Currently selected simulator in the load scenery database dialog */
+    loadingFsType = atools::fs::FsPaths::UNKNOWN;
+
+  /* List of simulator installations and databases */
+  SimulatorTypeMap simulators;
 
 };
 

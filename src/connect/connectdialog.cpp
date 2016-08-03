@@ -35,10 +35,12 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
   ui->comboBoxConnectHostname->setAutoCompletion(true);
   ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
+  // Change button texts
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
   ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setText(tr("&Disconnect"));
 
-  connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonClicked);
+  // Get a signal for any button
+  connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonBoxClicked);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -46,7 +48,8 @@ ConnectDialog::~ConnectDialog()
   delete ui;
 }
 
-void ConnectDialog::buttonClicked(QAbstractButton *button)
+/* A button box button was clicked */
+void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "host" << ui->comboBoxConnectHostname->currentText();
 
@@ -58,26 +61,30 @@ void ConnectDialog::buttonClicked(QAbstractButton *button)
   {
     disconnectClicked = false;
 
-    bool found = false;
+    bool foundEntryInComboList = false;
     int cnt = ui->comboBoxConnectHostname->count();
-    QString ctxt = ui->comboBoxConnectHostname->currentText();
+    QString curtxt = ui->comboBoxConnectHostname->currentText();
+
+    // Check if the current text from the edit is already in the combo box history
     for(int i = 0; i < cnt; i++)
     {
-      QString itxt = ui->comboBoxConnectHostname->itemText(i);
-      if(itxt.compare(ctxt, Qt::CaseInsensitive) == 0)
+      QString itemtxt = ui->comboBoxConnectHostname->itemText(i);
+      if(itemtxt.compare(curtxt, Qt::CaseInsensitive) == 0)
       {
-        found = true;
+        foundEntryInComboList = true;
         break;
       }
     }
 
-    if(!found)
+    if(!foundEntryInComboList)
+      // Add to combo box
       ui->comboBoxConnectHostname->addItem(ui->comboBoxConnectHostname->currentText());
 
     QDialog::accept();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Reset))
   {
+    // Disconnect button clicked
     disconnectClicked = true;
     QDialog::reject();
   }
@@ -113,6 +120,7 @@ void ConnectDialog::saveState()
   atools::gui::WidgetState saver(lnm::NAVCONNECT_REMOTE);
   saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 
+  // Save combo entries separately
   QStringList entries;
   for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
     entries.append(ui->comboBoxConnectHostname->itemText(i));
@@ -126,6 +134,7 @@ void ConnectDialog::restoreState()
   entries.removeDuplicates();
 
   if(entries.isEmpty())
+    // Use localhost as default
     ui->comboBoxConnectHostname->addItem("localhost");
   else
   {

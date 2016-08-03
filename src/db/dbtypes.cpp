@@ -22,34 +22,13 @@
 
 using atools::fs::FsPaths;
 
-void FsPathTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
-{
-  if(FsPaths::hasSim(type))
-  {
-    FsPathType& path = (*this)[type];
-    if(path.basePath.isEmpty())
-      path.basePath = FsPaths::getBasePath(type);
-    if(path.sceneryCfg.isEmpty())
-      path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
-
-    // If already present or not - this one has a registry entry
-    path.hasRegistry = true;
-  }
-  else
-  {
-    // Not in the list anymore - remove it - can be adder later again if database is found
-    if(contains(type))
-      remove(type);
-  }
-}
-
-void FsPathTypeMap::fillDefault()
+void SimulatorTypeMap::fillDefault()
 {
   for(atools::fs::FsPaths::SimulatorType type : FsPaths::ALL_SIMULATOR_TYPES)
     fillOneDefault(type);
 }
 
-atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestSimulator()
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest()
 {
   if(contains(atools::fs::FsPaths::P3D_V3))
     return atools::fs::FsPaths::P3D_V3;
@@ -63,7 +42,7 @@ atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestSimulator()
   return atools::fs::FsPaths::UNKNOWN;
 }
 
-atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestLoadingSimulator()
+atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 {
   if(contains(atools::fs::FsPaths::P3D_V3) && value(atools::fs::FsPaths::P3D_V3).hasRegistry)
     return atools::fs::FsPaths::P3D_V3;
@@ -77,7 +56,7 @@ atools::fs::FsPaths::SimulatorType FsPathTypeMap::getBestLoadingSimulator()
   return atools::fs::FsPaths::UNKNOWN;
 }
 
-QList<atools::fs::FsPaths::SimulatorType> FsPathTypeMap::getAllRegistryPaths() const
+QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() const
 {
   QList<atools::fs::FsPaths::SimulatorType> retval;
   for(atools::fs::FsPaths::SimulatorType p : keys())
@@ -86,13 +65,32 @@ QList<atools::fs::FsPaths::SimulatorType> FsPathTypeMap::getAllRegistryPaths() c
   return retval;
 }
 
-QList<atools::fs::FsPaths::SimulatorType> FsPathTypeMap::getAllDatabasePaths() const
+QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
 {
   QList<atools::fs::FsPaths::SimulatorType> retval;
   for(atools::fs::FsPaths::SimulatorType p : keys())
     if(value(p).hasDatabase)
       retval.append(p);
   return retval;
+}
+
+void SimulatorTypeMap::fillOneDefault(atools::fs::FsPaths::SimulatorType type)
+{
+  if(FsPaths::hasSim(type))
+  {
+    // Simulator is installed - create a new entry or update the present one
+    FsPathType& path = (*this)[type];
+    if(path.basePath.isEmpty())
+      path.basePath = FsPaths::getBasePath(type);
+    if(path.sceneryCfg.isEmpty())
+      path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+
+    // If already present or not - this one has a registry entry
+    path.hasRegistry = true;
+  }
+  else
+    // Not in the list anymore - remove it - can be adder later again if database is found
+    remove(type);
 }
 
 QDebug operator<<(QDebug out, const FsPathType& record)
@@ -119,14 +117,14 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj)
   return in;
 }
 
-QDataStream& operator<<(QDataStream& out, const FsPathTypeMap& obj)
+QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj)
 {
   QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash(obj);
   out << hash;
   return out;
 }
 
-QDataStream& operator>>(QDataStream& in, FsPathTypeMap& obj)
+QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj)
 {
   QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash;
   in >> hash;

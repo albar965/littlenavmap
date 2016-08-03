@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
   qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<FsPathType>();
-  qRegisterMetaTypeStreamOperators<FsPathTypeMap>();
+  qRegisterMetaTypeStreamOperators<SimulatorTypeMap>();
   qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();

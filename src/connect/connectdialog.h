@@ -26,6 +26,9 @@ class ConnectDialog;
 
 class QAbstractButton;
 
+/*
+ * Simulator connection dialog.
+ */
 class ConnectDialog :
   public QDialog
 {
@@ -35,30 +38,32 @@ public:
   ConnectDialog(QWidget *parent);
   ~ConnectDialog();
 
+  /* Get hostname as entered in the edit field */
   QString getHostname() const;
+
+  /* Port number as set in the spin box */
   quint16 getPort() const;
 
+  /* Saves and restores all values */
   void saveState();
   void restoreState();
 
+  /* Set status to connected */
   void setConnected(bool connected);
 
+  /* true if the disconnect button was clicked */
   bool isDisconnectClicked() const
   {
     return disconnectClicked;
   }
 
-  void setDisconnectClicked(bool value)
-  {
-    disconnectClicked = value;
-  }
-
+  /* true if the connect on startup checkbox was checked */
   bool isConnectOnStartup() const;
 
 private:
   bool disconnectClicked = false;
   Ui::ConnectDialog *ui;
-  void buttonClicked(QAbstractButton *button);
+  void buttonBoxClicked(QAbstractButton *button);
 
 };
 

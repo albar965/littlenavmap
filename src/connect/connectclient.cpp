@@ -40,46 +40,48 @@ ConnectClient::ConnectClient(MainWindow *parent)
 ConnectClient::~ConnectClient()
 {
   closeSocket();
-  delete data;
+  delete simConnectData;
   delete dialog;
 }
 
-void ConnectClient::readFromServer()
+/* Called by signal QTcpSocket::readyRead - read data from socket */
+void ConnectClient::readFromSocket()
 {
-  if(data == nullptr)
-    data = new atools::fs::sc::SimConnectData;
+  if(simConnectData == nullptr)
+    simConnectData = new atools::fs::sc::SimConnectData;
 
-  bool read = data->read(socket);
-  if(data->getStatus() != atools::fs::sc::OK)
+  bool read = simConnectData->read(socket);
+  if(simConnectData->getStatus() != atools::fs::sc::OK)
   {
+    // Something went wrong - shutdown
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
                           QString(tr("Error reading data  from Little Navconnect: %1.")).
-                          arg(data->getStatusText()));
+                          arg(simConnectData->getStatusText()));
     closeSocket();
     return;
   }
 
   if(read)
   {
+    // Data was read completely and successfully - reply to server
     writeReply();
 
-    if(data->getPosition().isValid())
-      emit dataPacketReceived(*data);
+    if(simConnectData->getPosition().isValid())
+      emit dataPacketReceived(*simConnectData);
 
-    delete data;
-    data = nullptr;
+    delete simConnectData;
+    simConnectData = nullptr;
   }
 }
 
 void ConnectClient::writeReply()
 {
-  // QThread::sleep(2);
-
   atools::fs::sc::SimConnectReply reply;
   reply.write(socket);
 
   if(reply.getStatus() != atools::fs::sc::OK)
   {
+    // Something went wrong - shutdown
     QMessageBox::critical(mainWindow, QApplication::applicationName(),
                           QString(tr("Error writing reply to Little Navconnect: %1.")).
                           arg(reply.getStatusText()));
@@ -91,15 +93,19 @@ void ConnectClient::writeReply()
     qWarning() << "Reply to server not flushed";
 }
 
+/* Called by signal QTcpSocket::connected */
 void ConnectClient::connectedToServer()
 {
   qInfo() << "Connected to" << socket->peerName() << ":" << socket->peerPort();
   silent = false;
+
+  // Let other program parts know about the new connection
   emit connectedToSimulator();
   mainWindow->setStatusMessage(tr("Connected to %1.").arg(socket->peerName()));
 }
 
-void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
+/* Called by signal QAbstractSocket::error */
+void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 {
   Q_UNUSED(error);
 
@@ -110,11 +116,13 @@ void ConnectClient::readFromServerError(QAbstractSocket::SocketError error)
   {
     if(socket->error() == QAbstractSocket::RemoteHostClosedError)
     {
+      // Nicely closed on the other end
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWDISCONNECTINFO,
                                                      tr("Little Navconnect closed connection."),
                                                      tr("Do not &show this dialog again."));
     }
     else
+      // Closed due to error
       QMessageBox::critical(mainWindow, QApplication::applicationName(),
                             tr("Error in server connection: \"%1\" (%2)").
                             arg(socket->errorString()).arg(socket->error()),
@@ -129,6 +137,7 @@ void ConnectClient::connectToServer()
 {
   dialog->setConnected(isConnected());
 
+  // Show dialog
   int retval = dialog->exec();
   dialog->hide();
 
@@ -155,13 +164,14 @@ void ConnectClient::connectInternal()
 {
   if(socket == nullptr)
   {
+    // Create new socket and connect signals
     socket = new QTcpSocket(this);
 
-    connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromServer);
+    connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromSocket);
     connect(socket, &QTcpSocket::connected, this, &ConnectClient::connectedToServer);
     connect(socket,
             static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-            this, &ConnectClient::readFromServerError);
+            this, &ConnectClient::readFromSocketError);
 
     qDebug() << "Connecting to" << dialog->getHostname() << ":" << dialog->getPort();
     socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadWrite);
@@ -194,8 +204,8 @@ void ConnectClient::closeSocket()
     socket = nullptr;
   }
 
-  delete data;
-  data = nullptr;
+  delete simConnectData;
+  simConnectData = nullptr;
   emit disconnectedFromSimulator();
 
   if(peer.isEmpty())

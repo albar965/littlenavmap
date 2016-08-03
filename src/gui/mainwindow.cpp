@@ -807,7 +807,7 @@ bool MainWindow::routeValidate()
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  newTitle += " - " + databaseManager->getSimShortName();
+  newTitle += " - " + databaseManager->getSimulatorShortName();
 
   if(!routeController->getRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getRouteFilename()).fileName() +
@@ -1134,7 +1134,7 @@ void MainWindow::mainWindowShown()
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
-    if(databaseManager->hasRegistrySims())
+    if(databaseManager->hasInstalledSimulators())
       databaseManager->run();
     else
       QMessageBox::information(this, QApplication::applicationName(), tr("No Simulators found."));
@@ -1151,7 +1151,7 @@ void MainWindow::updateActionStates()
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
-  ui->actionReloadScenery->setEnabled(databaseManager->hasRegistrySims());
+  ui->actionReloadScenery->setEnabled(databaseManager->hasInstalledSimulators());
 
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);

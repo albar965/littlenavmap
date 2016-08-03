@@ -28,37 +28,44 @@
 
 using atools::fs::FsPaths;
 
-DatabaseDialog::DatabaseDialog(QWidget *parent, const FsPathTypeMap& pathMap)
+DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), paths(pathMap)
 {
   ui->setupUi(this);
 
   ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));
 
-  // Add an action to the toolbutton for each simulator
-  for(atools::fs::FsPaths::SimulatorType type : paths.getAllRegistryPaths())
+  bool hasInstalled = !paths.getAllInstalled().isEmpty();
+
+  // Add an item to the combo box for each installed simulator
+  for(atools::fs::FsPaths::SimulatorType type : paths.getAllInstalled())
     ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
 
   if(paths.isEmpty())
-    ui->labelDatabaseInformation->setText(tr("<b>No Simulator Found</b>"));
-  ui->comboBoxSimulator->setDisabled(paths.isEmpty());
-  ui->pushButtonDatabaseBasePath->setDisabled(paths.isEmpty());
-  ui->pushButtonDatabaseSceneryFile->setDisabled(paths.isEmpty());
-  ui->pushButtonDatabaseResetPaths->setDisabled(paths.isEmpty());
-  ui->lineEditDatabaseBasePath->setDisabled(paths.isEmpty());
-  ui->lineEditDatabaseSceneryFile->setDisabled(paths.isEmpty());
-  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setDisabled(paths.isEmpty());
+    ui->labelDatabaseInformation->setText(tr("<b>No Simulator Found and no database found.</b>"));
+
+  // Disable everything if no installed simulators are found
+  // (normally not needed since the action is already disabled)
+  ui->comboBoxSimulator->setEnabled(hasInstalled);
+  ui->pushButtonDatabaseBasePath->setEnabled(hasInstalled);
+  ui->pushButtonDatabaseSceneryFile->setEnabled(hasInstalled);
+  ui->pushButtonDatabaseResetPaths->setEnabled(hasInstalled);
+  ui->lineEditDatabaseBasePath->setEnabled(hasInstalled);
+  ui->lineEditDatabaseSceneryFile->setEnabled(hasInstalled);
+  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setEnabled(hasInstalled);
 
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
   connect(ui->comboBoxSimulator, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &DatabaseDialog::simComboChanged);
-  connect(ui->pushButtonDatabaseBasePath, &QPushButton::clicked, this, &DatabaseDialog::selectBasePath);
-  connect(ui->pushButtonDatabaseSceneryFile, &QPushButton::clicked, this,
-          &DatabaseDialog::selectSceneryConfig);
-  connect(ui->pushButtonDatabaseResetPaths, &QPushButton::clicked, this, &DatabaseDialog::resetPaths);
+  connect(ui->pushButtonDatabaseBasePath, &QPushButton::clicked,
+          this, &DatabaseDialog::selectBasePathClicked);
+  connect(ui->pushButtonDatabaseSceneryFile, &QPushButton::clicked,
+          this, &DatabaseDialog::selectSceneryConfigClicked);
+  connect(ui->pushButtonDatabaseResetPaths, &QPushButton::clicked,
+          this, &DatabaseDialog::resetPathsClicked);
 
   connect(ui->lineEditDatabaseBasePath, &QLineEdit::textEdited,
           this, &DatabaseDialog::basePathEdited);
@@ -74,17 +81,16 @@ DatabaseDialog::~DatabaseDialog()
 
 void DatabaseDialog::basePathEdited(const QString& text)
 {
-  qDebug() << text;
   paths[currentFsType].basePath = text;
 }
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 {
-  qDebug() << text;
   paths[currentFsType].sceneryCfg = text;
 }
 
-void DatabaseDialog::resetPaths()
+/* Reset paths of the current simulator back to default */
+void DatabaseDialog::resetPathsClicked()
 {
   paths[currentFsType].basePath = FsPaths::getBasePath(currentFsType);
   paths[currentFsType].sceneryCfg = FsPaths::getSceneryLibraryPath(currentFsType);
@@ -103,17 +109,19 @@ void DatabaseDialog::simComboChanged(int index)
   emit simulatorChanged(currentFsType);
 }
 
-void DatabaseDialog::selectBasePath()
+void DatabaseDialog::selectBasePathClicked()
 {
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
     tr("Select Flight Simulator Basepath"), lnm::DATABASE_BASEPATH, ui->lineEditDatabaseBasePath->text());
 
   if(!path.isEmpty())
+  {
     paths[currentFsType].basePath = path;
-  updateLineEdits();
+    updateLineEdits();
+  }
 }
 
-void DatabaseDialog::selectSceneryConfig()
+void DatabaseDialog::selectSceneryConfigClicked()
 {
   QString path = atools::gui::Dialog(this).openFileDialog(
     tr("Open Scenery Configuration File"),
@@ -121,8 +129,10 @@ void DatabaseDialog::selectSceneryConfig()
     lnm::DATABASE_SCENERYCONFIG, ui->lineEditDatabaseSceneryFile->text());
 
   if(!path.isEmpty())
+  {
     paths[currentFsType].sceneryCfg = path;
-  updateLineEdits();
+    updateLineEdits();
+  }
 }
 
 void DatabaseDialog::setHeader(const QString& header)

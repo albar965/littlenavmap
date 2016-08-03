@@ -26,6 +26,10 @@ class QTcpSocket;
 class ConnectDialog;
 class MainWindow;
 
+/*
+ * Client for the Little Navconnect Simconnect agent/server. Receives data and passes it around by emitting a signal.
+ * Does not use multithreading - runs completely in the event loop.
+ */
 class ConnectClient :
   public QObject
 {
@@ -35,22 +39,32 @@ public:
   ConnectClient(MainWindow *parent);
   virtual ~ConnectClient();
 
+  /* Opens the connect dialog and depending on result connects to the server/agent */
   void connectToServer();
+
+  /* Connects directly if the connect on startup option is set */
   void tryConnect();
 
+  /* true if connected to Little Navconnect */
   bool isConnected() const;
 
+  /* Just saves and restores the state of the dialog */
   void saveState();
   void restoreState();
 
 signals:
-  void dataPacketReceived(atools::fs::sc::SimConnectData data);
+  /* Emitted when a new SimConnect data was received from the server (Little Navconnect) */
+  void dataPacketReceived(atools::fs::sc::SimConnectData simConnectData);
+
+  /* Emitted when a connection was established */
   void connectedToSimulator();
+
+  /* Emitted when disconnected manually or due to error */
   void disconnectedFromSimulator();
 
 private:
-  void readFromServer();
-  void readFromServerError(QAbstractSocket::SocketError error);
+  void readFromSocket();
+  void readFromSocketError(QAbstractSocket::SocketError error);
   void connectedToServer();
   void closeSocket();
   void connectInternal();
@@ -58,7 +72,7 @@ private:
 
   bool silent = false;
   ConnectDialog *dialog = nullptr;
-  atools::fs::sc::SimConnectData *data = nullptr;
+  atools::fs::sc::SimConnectData *simConnectData = nullptr;
   QTcpSocket *socket = nullptr;
   MainWindow *mainWindow;
 
