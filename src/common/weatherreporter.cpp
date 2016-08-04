@@ -31,6 +31,7 @@
 #include <QNetworkReply>
 #include <QTimer>
 #include <QRegularExpression>
+#include <QEventLoop>
 
 // Checks the first line of an ASN file if it has valid content
 const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -199,7 +200,7 @@ void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
   cancelVatsimReply();
 
   vatsimRequestIcao = airportIcao;
-  QNetworkRequest request(QUrl("http://metar.vatsim.net/metar.php?id=" + airportIcao));
+  QNetworkRequest request(QUrl(OptionData::instance().getWeatherVatsimUrl().arg(airportIcao)));
 
   vatsimReply = networkManager.get(request);
 
@@ -222,6 +223,29 @@ void WeatherReporter::cancelNoaaReply()
   }
 }
 
+bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QString& result)
+{
+  QNetworkRequest request(QUrl(url.arg(airportIcao)));
+  QNetworkReply *reply = networkManager.get(request);
+
+  QEventLoop eventLoop;
+  QObject::connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+  eventLoop.exec();
+
+  if(reply->error() == QNetworkReply::NoError)
+  {
+    result = reply->readAll();
+    reply->deleteLater();
+    return true;
+  }
+  else
+  {
+    result = reply->errorString();
+    reply->deleteLater();
+    return false;
+  }
+}
+
 void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
 {
   // http://www.aviationweather.gov/static/adds/metars/stations.txt
@@ -233,8 +257,7 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
   cancelNoaaReply();
 
   noaaRequestIcao = airportIcao;
-  QNetworkRequest request(QUrl("http://weather.noaa.gov/pub/data/observations/metar/stations/" +
-                               airportIcao + ".TXT"));
+  QNetworkRequest request(QUrl(OptionData::instance().getWeatherNoaaUrl().arg(airportIcao)));
 
   noaaReply = networkManager.get(request);
 

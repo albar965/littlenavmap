@@ -115,6 +115,8 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsWeatherTooltipVatsim);
   widgets.append(ui->lineEditOptionsMapRangeRings);
   widgets.append(ui->lineEditOptionsWeatherAsnPath);
+  widgets.append(ui->lineEditOptionsWeatherNoaaUrl);
+  widgets.append(ui->lineEditOptionsWeatherVatsimUrl);
   widgets.append(ui->listWidgetOptionsDatabaseAddon);
   widgets.append(ui->listWidgetOptionsDatabaseExclude);
   widgets.append(ui->radioButtonOptionsMapScrollFull);
@@ -174,12 +176,38 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
           this, &OptionsDialog::clearDiskCachedClicked);
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked,
           this, &OptionsDialog::showDiskCacheClicked);
+
+  connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherNoaaUrlClicked);
+  connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
+          this, &OptionsDialog::testWeatherVatsimUrlClicked);
 }
 
 OptionsDialog::~OptionsDialog()
 {
   delete rangeRingValidator;
   delete ui;
+}
+
+void OptionsDialog::testWeatherNoaaUrlClicked()
+{
+  qDebug() << "OptionsDialog::testWeatherNoaaUrlClicked";
+  testWeatherUrl(ui->lineEditOptionsWeatherNoaaUrl->text());
+}
+
+void OptionsDialog::testWeatherVatsimUrlClicked()
+{
+  qDebug() << "OptionsDialog::testWeatherVatsimUrlClicked";
+  testWeatherUrl(ui->lineEditOptionsWeatherVatsimUrl->text());
+}
+
+void OptionsDialog::testWeatherUrl(const QString& url)
+{
+  QString result;
+  if(mainWindow->getWeatherReporter()->testUrl(url, "KORD", result))
+    QMessageBox::information(this, QApplication::applicationName(), tr("Success. Result:\n%1").arg(result));
+  else
+    QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
 }
 
 void OptionsDialog::addDatabaseExcludePathClicked()
@@ -360,6 +388,8 @@ void OptionsDialog::toOptionData()
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
   data.weatherActiveSkyPath = ui->lineEditOptionsWeatherAsnPath->text();
+  data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaUrl->text();
+  data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
 
   data.databaseAddonExclude.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
@@ -433,6 +463,8 @@ void OptionsDialog::fromOptionData()
   }
   ui->lineEditOptionsMapRangeRings->setText(txt);
   ui->lineEditOptionsWeatherAsnPath->setText(data.weatherActiveSkyPath);
+  ui->lineEditOptionsWeatherNoaaUrl->setText(data.weatherNoaaUrl);
+  ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
 
   ui->listWidgetOptionsDatabaseAddon->clear();
   for(const QString& str : data.databaseAddonExclude)

@@ -108,22 +108,32 @@ public:
     return flags;
   }
 
-  QVector<int> getMapRangeRings() const
+  const QVector<int>& getMapRangeRings() const
   {
     return mapRangeRings;
   }
 
-  QString getWeatherActiveSkyPath() const
+  const QString& getWeatherActiveSkyPath() const
   {
     return weatherActiveSkyPath;
   }
 
-  QStringList getDatabaseAddonExclude() const
+  const QString& getWeatherNoaaUrl() const
+  {
+    return weatherNoaaUrl;
+  }
+
+  const QString& getWeatherVatsimUrl() const
+  {
+    return weatherVatsimUrl;
+  }
+
+  const QStringList& getDatabaseAddonExclude() const
   {
     return databaseAddonExclude;
   }
 
-  QStringList getDatabaseExclude() const
+  const QStringList& getDatabaseExclude() const
   {
     return databaseExclude;
   }
@@ -235,7 +245,9 @@ private:
   QVector<int> mapRangeRings = QVector<int>({50, 100, 200, 500});
 
   // ui->lineEditOptionsWeatherAsnPath
-  QString weatherActiveSkyPath;
+  QString weatherActiveSkyPath,
+          weatherNoaaUrl = "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT",
+          weatherVatsimUrl = "http://metar.vatsim.net/metar.php?id=%1";
 
   // ui->listWidgetOptionsDatabaseAddon
   QStringList databaseAddonExclude;

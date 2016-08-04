@@ -75,6 +75,10 @@ private:
   void showDiskCacheClicked();
   void updateDatabaseButtonState();
 
+  void testWeatherNoaaUrlClicked();
+  void testWeatherVatsimUrlClicked();
+  void testWeatherUrl(const QString& url);
+
   QVector<int> ringStrToVector(const QString& string) const;
 
   Ui::Options *ui;

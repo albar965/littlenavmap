@@ -902,7 +902,27 @@ If this field is empty, the default ASN weather file path will be used which is 
          </layout>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
+         <property name="text">
+          <string>&amp;Vatsim Weather Service URL:</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditOptionsWeatherVatsimUrl</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
+         <property name="text">
+          <string>&amp;NOAA Weather Service URL:</string>
+         </property>
+         <property name="buddy">
+          <cstring>lineEditOptionsWeatherNoaaUrl</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
         <spacer name="verticalSpacer_4">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -914,6 +934,48 @@ If this field is empty, the default ASN weather file path will be used which is 
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaUrl">
+         <property name="toolTip">
+          <string>Complete URL of the NOAA weather service.
+&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+         </property>
+         <property name="statusTip">
+          <string>Complete URL of the NOAA weather service.\n&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+         </property>
+         <property name="text">
+          <string>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
+         <property name="toolTip">
+          <string>Complete URL of the Vatsim network weather service.
+&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+         </property>
+         <property name="statusTip">
+          <string>Complete URL of the Vatsim network weather service.\n&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+         </property>
+         <property name="text">
+          <string>http://metar.vatsim.net/metar.php?id=%1</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
+         <property name="text">
+          <string>&amp;Test</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
+         <property name="text">
+          <string>&amp;Test</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1086,10 +1148,15 @@ These paths apply to all Flight Simulators.</string>
   <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
   <tabstop>spinBoxOptionsMapTextSize</tabstop>
   <tabstop>spinBoxOptionsMapSymbolSize</tabstop>
+  <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
+  <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
+  <tabstop>radioButtonOptionsSimUpdateFast</tabstop>
+  <tabstop>spinBoxOptionsSimUpdateBox</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
-  <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
+  <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>pushButtonOptionsCacheClearDisk</tabstop>
+  <tabstop>pushButtonOptionsCacheShow</tabstop>
   <tabstop>checkBoxOptionsRoutePreferVor</tabstop>
   <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
@@ -1102,6 +1169,10 @@ These paths apply to all Flight Simulators.</string>
   <tabstop>checkBoxOptionsWeatherInfoVatsim</tabstop>
   <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
   <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
+  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveExclude</tabstop>

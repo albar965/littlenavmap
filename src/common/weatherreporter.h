@@ -82,6 +82,15 @@ public:
   /* Return true if the file at the given path exists and has valid content */
   static bool validateAsnFile(const QString& path);
 
+  /*
+   * Test the weather server URL synchronously
+   * @param url URL containing a %1 placeholder for the metar
+   * @param url an airport ICAO
+   * @param result metar if successfull - otherwise error message
+   * @return true if successfull
+   */
+  bool testUrl(const QString& url, const QString& airportIcao, QString& result);
+
 signals:
   /* Emitted when ASN file changes or a request to weather was fullfilled */
   void weatherUpdated();
