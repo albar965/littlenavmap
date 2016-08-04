@@ -42,6 +42,10 @@ class MapPainterMark;
 class MapPainterRoute;
 class MapPainterAircraft;
 
+/*
+ * Implements the Marble layer interface that paints upon the Marble map. Contains all painter instances
+ * and calls them in order for each paint event.
+ */
 class MapPaintLayer :
   public Marble::LayerInterface
 {
@@ -93,6 +97,7 @@ private:
   static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   maptypes::MapObjectTypes objectTypes;
+  /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;
 
   bool databaseLoadStatus = false;
