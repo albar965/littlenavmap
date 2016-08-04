@@ -40,9 +40,11 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
 {
   using namespace std::placeholders;
 
+  // Get the layer with the next lowest zoom distance
   QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distance,
                                                         std::bind(&MapLayerSettings::compare, this, _1, _2));
 
+  // Adjust iterator for detail level changes
   if(detailFactor > MAP_DEFAULT_DETAIL_FACTOR)
     it -= detailFactor - MAP_DEFAULT_DETAIL_FACTOR;
   else if(detailFactor < MAP_DEFAULT_DETAIL_FACTOR)
@@ -57,10 +59,10 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
   return &(*it);
 }
 
-bool MapLayerSettings::compare(const MapLayer& ml, float distance) const
+bool MapLayerSettings::compare(const MapLayer& layer, float distance) const
 {
   // The value returned indicates whether the first argument is considered to go before the second.
-  return ml.getMaxRange() < distance;
+  return layer.getMaxRange() < distance;
 }
 
 QDebug operator<<(QDebug out, const MapLayerSettings& record)

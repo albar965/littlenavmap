@@ -27,14 +27,17 @@ class GeoDataLineString;
 class MapWidget;
 class RouteController;
 
+/*
+ * Draws the flight plan line and all enroute navaid and departure and destination airports (airport symbols only).
+ * Airport diagrams and route overview are drawn by the airport painter.
+ */
 class MapPainterRoute :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                  RouteController *controller, bool verbose);
+  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
   virtual ~MapPainterRoute();
 
   virtual void render(const PaintContext *context) override;
@@ -44,29 +47,23 @@ private:
 
   void paintRoute(const PaintContext *context);
 
-  void paintAirport(const PaintContext *context, int x, int y,
-                    const maptypes::MapAirport& obj);
-  void paintVor(const PaintContext *context, int x, int y,
-                const maptypes::MapVor& obj);
-  void paintNdb(const PaintContext *context, int x, int y,
-                const maptypes::MapNdb& obj);
+  void paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
+  void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
+  void paintNdb(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y,
                      const maptypes::MapWaypoint& obj);
 
-  void paintWaypointText(const PaintContext *context, int x, int y,
-                         const maptypes::MapWaypoint& obj);
-  void paintNdbText(const PaintContext *context, int x, int y,
-                    const maptypes::MapNdb& obj);
-  void paintVorText(const PaintContext *context, int x, int y,
-                    const maptypes::MapVor& obj);
+  void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj);
+  void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);
+  void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
 
-  void paintAirportText(const PaintContext *context, int x, int y,
-                        const maptypes::MapAirport& obj);
+  void paintAirportText(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
 
-  void paintText(const PaintContext *context, const QColor& color, int x, int y,
-                 const QString& text);
+  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QString& text);
 
   void paintUserpoint(const PaintContext *context, int x, int y);
+
+  static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
 
 };
 

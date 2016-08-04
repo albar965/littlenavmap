@@ -541,6 +541,9 @@ QString parkingTypeName(const QString& type);
 QString parkingName(const QString& name);
 QString parkingNameNumberType(const maptypes::MapParking& parking);
 
+/* Get short name for a parking spot */
+QString parkingShortName(const QString& name);
+
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
 

@@ -31,8 +31,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
-  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
+MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
+  : MapPainter(mapWidget, mapQuery, mapScale)
 {
 }
 
@@ -43,11 +43,10 @@ MapPainterNav::~MapPainterNav()
 void MapPainterNav::render(const PaintContext *context)
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  QElapsedTimer t;
-  t.start();
 
   setRenderHints(context->painter);
 
+  // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
                     (context->objectTypes.testFlag(maptypes::AIRWAYJ) ||
                      context->objectTypes.testFlag(maptypes::AIRWAYV));
@@ -56,106 +55,56 @@ void MapPainterNav::render(const PaintContext *context)
     // Draw airway lines
     const QList<MapAirway> *airways = query->getAirways(curBox, context->mapLayer, context->drawFast);
     if(airways != nullptr)
-    {
-      if(context->viewContext == Marble::Still && verbose)
-      {
-        qDebug() << "Number of airways" << airways->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *context->mapLayer;
-        t.restart();
-      }
-
-      paintAirways(context, airways, curBox, context->drawFast);
-    }
+      paintAirways(context, airways, context->drawFast);
   }
 
+  // Waypoints -------------------------------------------------
   bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT);
-
   if(drawWaypoint || drawAirway)
   {
+    // If airways are drawn we also have to go through waypoints
     const QList<MapWaypoint> *waypoints = query->getWaypoints(curBox, context->mapLayer, context->drawFast);
     if(waypoints != nullptr)
-    {
-      if(context->viewContext == Marble::Still && verbose)
-      {
-        qDebug() << "Number of waypoints" << waypoints->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *context->mapLayer;
-        t.restart();
-      }
-
       paintWaypoints(context, waypoints, drawWaypoint, context->drawFast);
-    }
   }
 
+  // VOR -------------------------------------------------
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(maptypes::VOR))
   {
     const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->drawFast);
     if(vors != nullptr)
-    {
-      if(context->viewContext == Marble::Still && verbose)
-      {
-        qDebug() << "Number of vors" << vors->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *context->mapLayer;
-        t.restart();
-      }
-
       paintVors(context, vors, context->drawFast);
-    }
   }
 
+  // NDB -------------------------------------------------
   if(context->mapLayer->isNdb() && context->objectTypes.testFlag(maptypes::NDB))
   {
     const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->drawFast);
     if(ndbs != nullptr)
-    {
-      if(context->viewContext == Marble::Still && verbose)
-      {
-        qDebug() << "Number of ndbs" << ndbs->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *context->mapLayer;
-        t.restart();
-      }
-
       paintNdbs(context, ndbs, context->drawFast);
-    }
   }
 
+  // Marker -------------------------------------------------
   if(context->mapLayer->isMarker() && context->objectTypes.testFlag(maptypes::ILS))
   {
     const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->drawFast);
     if(markers != nullptr)
-    {
-      if(context->viewContext == Marble::Still && verbose)
-      {
-        qDebug() << "Number of marker" << markers->size();
-        qDebug() << "Time for query" << t.elapsed() << " ms";
-        qDebug() << curBox.toString();
-        qDebug() << *context->mapLayer;
-        t.restart();
-      }
-
       paintMarkers(context, markers, context->drawFast);
-    }
   }
-
-  if(context->viewContext == Marble::Still && verbose)
-    qDebug() << "Time for paint" << t.elapsed() << " ms";
 }
 
-void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAirway> *airways,
-                                 const GeoDataLatLonAltBox& curBox, bool fast)
+/* Draw airways and texts */
+void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAirway> *airways, bool fast)
 {
   QFontMetrics metrics = context->painter->fontMetrics();
-  // Line as text (avoid floating point compare) and index into texts
+
+  // Used to combine texts of different airway lines with the same coordinates into one text
+  // Key is line coordinates as text (avoid floating point compare) and value is index into texts and airwayIndex
   QHash<QString, int> lines;
+  // Contains combined text for overlapping airway lines
   QList<QString> texts;
-  QList<int> awIndex;
+  // points to index or airway in airway list
+  QList<int> airwayIndex;
 
   for(int i = 0; i < airways->size(); i++)
   {
@@ -173,29 +122,28 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
     else if(airway.type == maptypes::BOTH)
       context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
 
+    // Get start and end point of airway segment in screen coordinates
     int x1, y1, x2, y2;
     bool visible1 = wToS(airway.from, x1, y1);
     bool visible2 = wToS(airway.to, x2, y2);
 
     if(!visible1 && !visible2)
-    {
-      GeoDataLatLonBox airwaybox(airway.bounding.getNorth(), airway.bounding.getSouth(),
-                                 airway.bounding.getEast(), airway.bounding.getWest(), DEG);
-      visible1 = airwaybox.intersects(curBox);
-    }
+      // Check bounding rect for visibility
+      visible1 = airway.bounding.overlaps(context->viewportRect);
 
     if(visible1 || visible2)
     {
+      // Draw line if both points are visible or line intersects screen coordinates
       GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0, DEG);
       GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0, DEG);
       GeoDataLineString line;
       line.setTessellate(true);
       line << from << to;
-
       context->painter->drawPolyline(line);
 
       if(!fast)
       {
+        // Build text index
         QString text;
         if(context->mapLayer->isAirwayIdent())
           text += airway.name;
@@ -208,35 +156,43 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
 
         if(!text.isEmpty())
         {
-          QString lineText = line.first().toString(GeoDataCoordinates::Decimal, 3) + tr("|") +
-                             line.last().toString(GeoDataCoordinates::Decimal, 3);
-          int index = lines.value(lineText, -1);
+          QString firstStr = line.first().toString(GeoDataCoordinates::Decimal, 3);
+          QString lastStr = line.last().toString(GeoDataCoordinates::Decimal, 3);
+
+          // Create string key for index by using the coordinates
+          QString lineTextKey = firstStr + "|" + lastStr;
+
+          // Does it already exist in the map?
+          int index = lines.value(lineTextKey, -1);
           if(index == -1)
-            index = lines.value(line.last().toString(GeoDataCoordinates::Decimal, 3) + tr("|") +
-                                line.first().toString(GeoDataCoordinates::Decimal, 3), -1);
+            // Try with reversed coordinates
+            index = lines.value(lastStr + "|" + firstStr, -1);
 
           if(index != -1)
           {
+            // Index already found - add the new text to the present one
             QString oldTxt(texts.at(index));
             if(oldTxt != text)
               texts[index] = texts.at(index) + ", " + text;
           }
           else if(!text.isEmpty())
           {
+            // Neither with forward nor reversed coordinates found - insert a new entry
             texts.append(text);
-            lines.insert(lineText, texts.size() - 1);
-            awIndex.append(i);
+            lines.insert(lineTextKey, texts.size() - 1);
+            airwayIndex.append(i);
           }
         }
       }
     }
   }
 
+  // Draw texts ----------------------------------------
   int i = 0;
   context->painter->setPen(mapcolors::airwayTextColor);
   for(const QString& text : texts)
   {
-    const MapAirway& airway = airways->at(awIndex.at(i));
+    const MapAirway& airway = airways->at(airwayIndex.at(i));
     int xt = -1, yt = -1;
     float textBearing;
     if(findTextPos(airway.from, airway.to, context->painter, metrics.width(text), metrics.height() * 2,
@@ -258,6 +214,7 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
   }
 }
 
+/* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
 void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapWaypoint> *waypoints,
                                    bool drawWaypoint, bool drawFast)
 {
@@ -266,6 +223,7 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
 
   for(const MapWaypoint& waypoint : *waypoints)
   {
+    // If waypoints are off, airways are on and waypoint has no airways skip it
     if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
       continue;
 
@@ -278,6 +236,7 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
       symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
                                         size, false, drawFast);
 
+      // If airways are drawn force display of the respecive waypoints
       if(context->mapLayer->isWaypointName() ||
          (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
@@ -307,8 +266,7 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
       else if(context->mapLayer->isVorIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawVorText(context->painter, vor, x, y,
-                                 flags, size, false, drawFast);
+      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, false, drawFast);
     }
   }
 }

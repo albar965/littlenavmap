@@ -28,9 +28,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                                       bool verboseMsg)
-  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
+MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
+  : MapPainter(mapWidget, mapQuery, mapScale)
 {
 }
 
@@ -42,6 +41,7 @@ MapPainterAircraft::~MapPainterAircraft()
 void MapPainterAircraft::render(const PaintContext *context)
 {
   if(!context->objectTypes.testFlag(AIRCRAFT) && !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
+    // If actions are unchecked return
     return;
 
   setRenderHints(context->painter);
@@ -69,22 +69,21 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
   int x, y;
   if(wToS(pos, x, y))
   {
+    int size = context->symSize(AIRCRAFT_SYMBOL_SIZE);
+
+    // Position is visible
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(simData.getHeadingDegTrue()));
 
-    int size = context->symSize(40);
-
+    // Draw symbol
     symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
                                       simData.getFlags() & atools::fs::sc::ON_GROUND);
-
     context->painter->resetTransform();
 
+    // Build text label
     QStringList texts;
-    // texts.append("Title " + simData.getAirplaneTitle());
-    // texts.append("Model " + simData.getAirplaneModel());
     if(!simData.getAirplaneRegistration().isEmpty())
       texts.append(simData.getAirplaneRegistration());
-    // texts.append("Type " + simData.getAirplaneType());
 
     if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
       texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
@@ -108,6 +107,7 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
                                           simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0)).
                  arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
 
+    // Draw text label
     symbolPainter->textBox(context->painter, texts,
                            QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
   }
@@ -133,7 +133,9 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 
       if(visible || lastVisible)
       {
-        if(i == 0 || i == aircraftTrack.size() - 1 || atools::geo::manhattanDistance(x, y, lastX, lastY) > 5)
+        // Only draw if both points are visible - this ok for short line segments
+        if(i == 0 || i == aircraftTrack.size() - 1 ||
+           atools::geo::manhattanDistance(x, y, lastX, lastY) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
         {
           polyline.append(QPoint(x, y));
 
@@ -150,6 +152,8 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
         }
       }
     }
+
+    // Draw rest
     if(!polyline.isEmpty())
       painter->drawPolyline(polyline);
   }

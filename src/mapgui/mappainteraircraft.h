@@ -26,13 +26,16 @@ class GeoDataLineString;
 
 class MapWidget;
 
+/*
+ * Draws the simulator user aircraft and aircraft track
+ */
 class MapPainterAircraft :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterAircraft();
 
   virtual void render(const PaintContext *context) override;
@@ -41,6 +44,11 @@ private:
   void paintAircraft(const PaintContext *context);
   void paintAircraftTrack(Marble::GeoPainter *painter);
 
+  /* Aircraft symbol size in pixel */
+  static Q_DECL_CONSTEXPR int AIRCRAFT_SYMBOL_SIZE = 40;
+
+  /* Minimum length in pixel of a track segment to be drawn */
+  static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

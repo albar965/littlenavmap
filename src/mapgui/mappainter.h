@@ -43,24 +43,23 @@ class MapQuery;
 class MapScale;
 class MapWidget;
 
-/* Map of id and type */
-typedef maptypes::MapObjectRef ForcePaintType;
-
+/* Struct that is passed on each paint event to all painters */
 struct PaintContext
 {
-  const MapLayer *mapLayer;
-  const MapLayer *mapLayerEffective;
+  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level */
+  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not  affected by detail level */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
-  bool drawFast;
-  maptypes::MapObjectTypes objectTypes;
-  QSet<ForcePaintType> *forcePaintObjects;
-  atools::geo::Rect viewportRect;
-  opts::MapScrollDetail mapScrollDetail;
-  QFont defaultFont, defaultFontScaled;
-  float symbolScale = 1.0f;
+  bool drawFast; /* true if reduced details should be used */
+  maptypes::MapObjectTypes objectTypes; /* Object types that should be drawn */
+  atools::geo::Rect viewportRect; /* Rectangle of current viewport */
+  opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
+  QFont defaultFont /* Default widget font */,
+        defaultFontScaled /* Default widget font scaled by option settings */;
+  float symbolScale = 1.0f; /* Symbol size scale factor */
 
+  /* Calculate real symbol size */
   int symSize(int size) const
   {
     return static_cast<int>(std::round(symbolScale * size));
@@ -68,39 +67,67 @@ struct PaintContext
 
 };
 
+/*
+ * Base class for all map painters
+ */
 class MapPainter :
   public CoordinateConverter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainter();
 
   virtual void render(const PaintContext *context) = 0;
 
 protected:
+  /* Set render hints for anti aliasing depending on the view context (still or animation) */
   void setRenderHints(Marble::GeoPainter *painter);
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& pos,
+
+  /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
+   * for the circle depends on the zoom distance */
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
                    int radiusNm, bool fast, int& xtext, int& ytext);
 
+  /* Find text position along a great circle route
+   *  @param x,y resulting text position
+   *  @param pos1,pos2 start and end coordinates of the line
+   *  @param bearing text bearing at the returned position
+   */
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   int w, int h, int& x, int& y, float *bearing);
+                   int textWidth, int textHeight, int& x, int& y, float *bearing);
+
+  /* Find text position along a great circle route
+   *  @param x,y resulting text position
+   *  @param pos1,pos2 start and end coordinates of the line
+   *  @param bearing text bearing at the returned position
+   *  @param distanceMeter distance between points
+   */
   bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   float distance, int w, int h, int& x, int& y, float *bearing);
+                   float distanceMeter, int textWidth, int textHeight, int& x, int& y, float *bearing);
+
+  /* Find text position along a rhumb line route
+   *  @param x,y resulting text position
+   *  @param pos1,pos2 start and end coordinates of the line
+   *  @param distanceMeter distance between points
+   */
   bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                        Marble::GeoPainter *painter, float distance, int w, int h, int& x, int& y);
+                        Marble::GeoPainter *painter, float distanceMeter, int textWidth, int textHeight,
+                        int& x, int& y);
 
   /* Evaluate 50 text placement positions along line */
   const float FIND_TEXT_POS_STEP = 0.02f;
+
+  /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
+  /* Maximum points to use for a circle */
   const int CIRCLE_MAX_POINTS = 72;
 
   SymbolPainter *symbolPainter;
   MapWidget *mapWidget;
   MapQuery *query;
   MapScale *scale;
-  bool verbose = false;
 
 };
 

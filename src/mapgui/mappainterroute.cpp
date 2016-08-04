@@ -33,8 +33,8 @@ using namespace Marble;
 using namespace atools::geo;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                                 RouteController *controller, bool verbose)
-  : MapPainter(mapWidget, mapQuery, mapScale, verbose), routeController(controller)
+                                 RouteController *controller)
+  : MapPainter(mapWidget, mapQuery, mapScale), routeController(controller)
 {
 }
 
@@ -52,7 +52,6 @@ void MapPainterRoute::render(const PaintContext *context)
 
   context->painter->save();
 
-  // Use layer independent of declutter factor
   paintRoute(context);
 
   context->painter->restore();
@@ -64,20 +63,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   context->painter->setBrush(Qt::NoBrush);
 
-  // Collect coordinates for text placement and lines first
-  QList<QPoint> textCoords;
-  QList<float> textBearing;
-  QStringList texts;
-  QList<int> textLineLengths;
-
-  // Collect start and end points of legs and visibility
-  QList<QPoint> startPoints;
-  QBitArray visibleStartPoints(routeMapObjects.size(), false);
-  GeoDataLineString linestring;
-  linestring.setTessellate(true);
-
+  // Use a layer that is independent of the declutter factor
   if(!routeMapObjects.isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
+    // Draw start position or parking circle into the airport diagram
     const RouteMapObject& first = routeMapObjects.at(0);
     if(first.getMapObjectType() == maptypes::AIRPORT)
     {
@@ -98,6 +87,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
         if(!pt.isNull())
         {
+          // At least 10 pixel size
           int w = std::max(10, scale->getPixelIntForFeet(size, 90));
           int h = std::max(10, scale->getPixelIntForFeet(size, 0));
 
@@ -112,6 +102,18 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
+  // Collect coordinates for text placement and lines first
+  QList<QPoint> textCoords;
+  QList<float> textBearing;
+  QStringList texts;
+  QList<int> textLineLengths;
+
+  // Collect start and end points of legs and visibility
+  QList<QPoint> startPoints;
+  QBitArray visibleStartPoints(routeMapObjects.size(), false);
+  GeoDataLineString linestring;
+  linestring.setTessellate(true);
+
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
@@ -123,18 +125,21 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     if(i > 0 && !context->drawFast)
     {
       int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
-      if(lineLength > 80)
+      if(lineLength > MIN_LENGTH_FOR_TEXT)
       {
+        // Build text
         QString text(QLocale().toString(obj.getDistanceTo(), 'f', 0) + tr(" nm  / ") +
                      QLocale().toString(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
 
         int textw = context->painter->fontMetrics().width(text);
         if(textw > lineLength)
+          // Limit text length to line for elide
           textw = lineLength;
 
         int xt, yt;
         float brg;
         Pos p1(obj.getPosition()), p2(routeMapObjects.at(i - 1).getPosition());
+
         if(findTextPos(p1, p2, context->painter,
                        textw, context->painter->fontMetrics().height(), xt, yt, &brg))
         {
@@ -146,6 +151,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       }
       else
       {
+        // No text - append all dummy values
         textCoords.append(QPoint());
         textBearing.append(0.f);
         texts.append(QString());
@@ -165,8 +171,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   if(!context->drawFast)
   {
-    // Draw text along lines
-    // painter->setBrush(mapcolors::routeTextBoxColor);
+    // Draw text with direction arrow along lines
     context->painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
     int i = 0;
     for(const QPoint& textCoord : textCoords)
@@ -174,6 +179,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       QString text = texts.at(i);
       if(!text.isEmpty())
       {
+        // Cut text right or left depending on direction
         Qt::TextElideMode elide = Qt::ElideRight;
         float rotate, brg = textBearing.at(i);
         if(brg < 180.)
@@ -189,14 +195,15 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
           rotate = brg + 90.f;
         }
 
+        // Draw text
         QFontMetrics metrics = context->painter->fontMetrics();
 
+        // Both points are visible - cut text for full line length
         if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
           text = metrics.elidedText(text, elide, textLineLengths.at(i));
 
         context->painter->translate(textCoord.x(), textCoord.y());
         context->painter->rotate(rotate);
-        // painter->drawRect(-metrics.width(text) / 2 - 2, -metrics.height(), metrics.width(text) + 4, metrics.height());
         context->painter->drawText(-metrics.width(text) / 2, -metrics.descent() - 2, text);
         context->painter->resetTransform();
       }
@@ -204,7 +211,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
-  // Draw symbols
+  // Draw airport and navaid symbols
   int i = 0;
   for(const QPoint& pt : startPoints)
   {
@@ -217,6 +224,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       switch(type)
       {
         case maptypes::INVALID:
+          // name and region not found in database
           paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y, obj.getWaypoint());
           break;
         case maptypes::USER:
@@ -286,6 +294,7 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
 {
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT;
 
+  // Use more more detailed text for flight plan
   if(context->mapLayer->isAirportRouteInfo())
     flags |= textflags::NAME | textflags::INFO;
 
@@ -305,6 +314,7 @@ void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const 
 void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
 {
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
+  // Use more more detailed VOR text for flight plan
   if(context->mapLayer->isVorRouteIdent())
     flags |= textflags::IDENT;
 
@@ -324,6 +334,7 @@ void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y, const 
 void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
 {
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
+  // Use more more detailed NDB text for flight plan
   if(context->mapLayer->isNdbRouteIdent())
     flags |= textflags::IDENT;
 
@@ -352,6 +363,7 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
                                   context->symSize(context->mapLayer->getWaypointSymbolSize()), true, false);
 }
 
+/* Paint user defined waypoint */
 void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 {
   symbolPainter->drawUserpointSymbol(context->painter, x, y,
@@ -359,6 +371,7 @@ void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
                                        context->mapLayer->getWaypointSymbolSize()), true, false);
 }
 
+/* Draw text with light yellow background for flight plan */
 void MapPainterRoute::paintText(const PaintContext *context, const QColor& color, int x, int y,
                                 const QString& text)
 {

@@ -22,19 +22,24 @@
 
 class SymbolPainter;
 
+/*
+ * Draws the ILS feathers and text.
+ */
 class MapPainterIls :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterIls();
 
   virtual void render(const PaintContext *context) override;
 
 private:
-  static Q_DECL_CONSTEXPR float ILS_FEATHER_LEN_METER = 8.f;
+  /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
+  static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
+  static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
 
   void drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils);
 

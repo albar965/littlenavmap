@@ -28,10 +28,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
-MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                       bool verboseMsg)
+MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery),
-    scale(mapScale), verbose(verboseMsg)
+    scale(mapScale)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -57,14 +56,13 @@ void MapPainter::setRenderHints(GeoPainter *painter)
   }
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, bool fast,
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radiusNm, bool fast,
                              int& xtext, int& ytext)
 {
   QRect vpRect(painter->viewport());
 
   // Calculate the number of points to use depending in screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
-
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
 
   int radiusMeter = nmToMeter(radiusNm);
@@ -77,24 +75,29 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   QVector<int> xtexts;
   QVector<int> ytexts;
 
-  Pos startPoint = pos.endpoint(radiusMeter, 0).normalize();
+  // Use north endpoint of radius as start position
+  Pos startPoint = centerPos.endpoint(radiusMeter, 0).normalize();
   Pos p1 = startPoint;
-  bool h1 = true, h2 = true;
-  bool v1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &h1);
+  bool hidden1 = true, hidden2 = true;
+  bool visible1 = wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
 
   bool ringVisible = false, lastVisible = false;
   GeoDataLineString ellipse;
   ellipse.setTessellate(true);
+  // Draw ring segments and collect potential text positions
   for(int i = 0; i <= 360; i += step)
   {
-    Pos p2 = pos.endpoint(radiusMeter, i).normalize();
+    // Line segment from p1 to p2
+    Pos p2 = centerPos.endpoint(radiusMeter, i).normalize();
 
-    bool v2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &h2);
+    bool visible2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
     QRect r(QPoint(x1, y1), QPoint(x2, y2));
+    // Current line is visible (most likely)
     bool nowVisible = r.normalized().intersects(vpRect);
 
     if(lastVisible || nowVisible)
+      // Last line or this one are visible add coords
       ellipse.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
 
     if(lastVisible && !nowVisible)
@@ -106,20 +109,23 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
 
     if(lastVisible || nowVisible)
     {
+      // At least one segment of the ring is visible
       ringVisible = true;
 
-      if((v1 || v2) && !h1 && !h2)
-        if(v1 && v2)
+      if((visible1 || visible2) && !hidden1 && !hidden2)
+      {
+        if(visible1 && visible2)
         {
-          // Remember visible positions for the text
+          // Remember visible positions for the text (center of the line segment)
           xtexts.append((x1 + x2) / 2);
           ytexts.append((y1 + y2) / 2);
         }
+      }
     }
     x1 = x2;
     y1 = y2;
-    v1 = v2;
-    h1 = h2;
+    visible1 = visible2;
+    hidden1 = hidden2;
     p1 = p2;
     lastVisible = nowVisible;
   }
@@ -128,14 +134,14 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
   {
     if(!ellipse.isEmpty())
     {
-      // Last one always need closing the circle
+      // Last one always needs closing the circle
       ellipse.append(GeoDataCoordinates(startPoint.getLonX(), startPoint.getLatY(), 0, DEG));
       painter->drawPolyline(ellipse);
     }
 
     if(!xtexts.isEmpty() && !ytexts.isEmpty())
     {
-      // Take the position at one third
+      // Take the position at one third of the visible text points to avoid half hidden texts
       xtext = xtexts.at(xtexts.size() / 3);
       ytext = ytexts.at(ytexts.size() / 3);
     }
@@ -148,21 +154,23 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& pos, int radiusNm, 
 }
 
 bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter,
-                             int w, int h, int& x, int& y, float *bearing)
+                             int textWidth, int textHeight, int& x, int& y, float *bearing)
 {
-  return findTextPos(pos1, pos2, painter, pos1.distanceMeterTo(pos2), w, h, x, y, bearing);
+  return findTextPos(pos1, pos2, painter, pos1.distanceMeterTo(pos2), textWidth, textHeight, x, y, bearing);
 }
 
-bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter, float distance,
-                             int w, int h, int& x, int& y, float *bearing)
+bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *painter, float distanceMeter,
+                             int textWidth, int textHeight, int& x, int& y, float *bearing)
 {
-  int size = std::max(w, h);
-  Pos center = pos1.interpolate(pos2, distance, 0.5);
+  int size = std::max(textWidth, textHeight);
+  Pos center = pos1.interpolate(pos2, distanceMeter, 0.5);
   bool visible = wToS(center, x, y);
   if(visible && painter->window().contains(QRect(x - size / 2, y - size / 2, size, size)))
   {
+    // Center point is already visible
     if(bearing != nullptr)
     {
+      // Calculate bearing at the center point
       float xtp1, ytp1, xtp2, ytp2;
       wToS(pos1.interpolate(pos2, 0.5f - FIND_TEXT_POS_STEP), xtp1, ytp1);
       wToS(pos1.interpolate(pos2, 0.5f + FIND_TEXT_POS_STEP), xtp2, ytp2);
@@ -178,10 +186,11 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
     // Check for 50 positions along the line starting below and above the center position
     for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
     {
-      center = pos1.interpolate(pos2, distance, 0.5f - i);
+      center = pos1.interpolate(pos2, distanceMeter, 0.5f - i);
       visible = wToS(center, x1, y1);
       if(visible && painter->window().contains(QRect(x1 - size / 2, y1 - size / 2, size, size)))
       {
+        // Point is visible - return
         if(bearing != nullptr)
         {
           float xtp1, ytp1, xtp2, ytp2;
@@ -195,10 +204,11 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
         return true;
       }
 
-      center = pos1.interpolate(pos2, distance, 0.5f + i);
+      center = pos1.interpolate(pos2, distanceMeter, 0.5f + i);
       visible = wToS(center, x2, y2);
       if(visible && painter->window().contains(QRect(x2 - size / 2, y2 - size / 2, size, size)))
       {
+        // Point is visible - return
         if(bearing != nullptr)
         {
           float xtp1, ytp1, xtp2, ytp2;
@@ -216,28 +226,30 @@ bool MapPainter::findTextPos(const Pos& pos1, const Pos& pos2, GeoPainter *paint
   return false;
 }
 
-bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2,
-                                  GeoPainter *painter, float distance, int w, int h, int& x, int& y)
+bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2, GeoPainter *painter,
+                                  float distanceMeter, int textWidth, int textHeight, int& x, int& y)
 {
-  using namespace atools::geo;
-
-  Pos center = pos1.interpolateRhumb(pos2, distance, 0.5);
+  Pos center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5);
   bool visible = wToS(center, x, y);
-  if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
+  if(visible && painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
     return true;
   else
+  {
     // Check for 50 positions along the line starting below and above the center position
     for(float i = 0.; i <= 0.5; i += FIND_TEXT_POS_STEP)
     {
-    center = pos1.interpolateRhumb(pos2, distance, 0.5f - i);
-    visible = wToS(center, x, y);
-    if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
-      return true;
+      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f - i);
+      visible = wToS(center, x, y);
+      if(visible &&
+         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
+        return true;
 
-    center = pos1.interpolateRhumb(pos2, distance, 0.5f + i);
-    visible = wToS(center, x, y);
-    if(visible && painter->window().contains(QRect(x - w / 2, y - h / 2, w, h)))
-      return true;
+      center = pos1.interpolateRhumb(pos2, distanceMeter, 0.5f + i);
+      visible = wToS(center, x, y);
+      if(visible &&
+         painter->window().contains(QRect(x - textWidth / 2, y - textHeight / 2, textWidth, textHeight)))
+        return true;
     }
+  }
   return false;
 }

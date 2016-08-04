@@ -29,14 +29,19 @@ struct MapRunway;
 
 }
 
+class RouteController;
+
+/*
+ * Draws airport symbols, runway overview and complete airport diagram. Airport details are also drawn for
+ * the flight plan.
+ */
 class MapPainterAirport :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                    bool verboseMsg);
+  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
   virtual ~MapPainterAirport();
 
   virtual void render(const PaintContext *context) override;
@@ -45,13 +50,17 @@ private:
   void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
   void drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport, bool fast);
   void drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap);
-  void runwayCoords(const QList<maptypes::MapRunway> *rw, QList<QPoint> *centers, QList<QRect> *rects,
-                    QList<QRect> *innerRects, QList<QRect> *backRects);
-  QString parkingName(const QString& name);
+  void runwayCoords(const QList<maptypes::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
+                    QList<QRect> *innerRects, QList<QRect> *outlineRects);
 
+  /* All sizes in pixel */
   static Q_DECL_CONSTEXPR int RUNWAY_HEADING_FONT_SIZE = 12;
   static Q_DECL_CONSTEXPR int RUNWAY_TEXT_FONT_SIZE = 16;
   static Q_DECL_CONSTEXPR int RUNWAY_NUMBER_FONT_SIZE = 20;
+  static Q_DECL_CONSTEXPR int TAXIWAY_TEXT_MIN_LENGTH = 40;
+  static Q_DECL_CONSTEXPR int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
+  static Q_DECL_CONSTEXPR float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
+  RouteController *routeController;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

@@ -233,9 +233,6 @@ void ProfileWidget::updateScreenCoords()
 
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
-  // QElapsedTimer etimer;
-  // etimer.start();
-
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
   QPainter painter(this);

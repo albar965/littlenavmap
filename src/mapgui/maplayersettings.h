@@ -22,24 +22,29 @@
 
 #include <QList>
 
+/* A list of map layers that defines what is painted at what zoom distance */
 class MapLayerSettings
 {
 public:
   MapLayerSettings();
 
+  /* Add a map layer. Call finishAppend when done. */
   MapLayerSettings& append(const MapLayer& layer);
+
+  /* Call when done appending layers. Sorts all layers by zoom distance. */
   void finishAppend();
 
   static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_FACTOR = 10;
   static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_FACTOR = 15;
   static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 5;
 
+  /* Get a layer for current zoom distance and detail factor */
   const MapLayer *getLayer(float distance, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);
 
-  bool compare(const MapLayer& ml, float distance) const;
+  bool compare(const MapLayer& layer, float distance) const;
 
   QList<MapLayer> layers;
 };

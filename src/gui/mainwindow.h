@@ -106,12 +106,12 @@ public:
   void updateWindowTitle();
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
-  void setShownMapObjectsMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+  void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
   void setStatusMessage(const QString& message);
 
-void setDetailLabelText(const QString& text);
+  void setDetailLabelText(const QString& text);
 
   atools::fs::FsPaths::SimulatorType getCurrentSimulator();
 
@@ -128,16 +128,15 @@ private:
   void updateActionStates();
   void setupUi();
 
-  void createNavMap();
   void options();
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
-  void updateHistActions(int minIndex, int curIndex, int maxIndex);
+  void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
-  void updateMapShowFeatures();
+  void updateMapObjectsShown();
 
-  void selectionChanged(const Search *source, int selected, int visible, int total);
+  void searchSelectionChanged(const Search *source, int selected, int visible, int total);
   void routeSelectionChanged(int selected, int total);
 
   void routeNew();
@@ -186,26 +185,39 @@ private:
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;
   ProfileWidget *profileWidget = nullptr;
+
+  /* Status bar labels */
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
+
+  /* List of status bar messages (currently only one) */
   QStringList statusMessages;
+
+  /* true if database is currently switched off (i.e. the scenery library loading is open) */
   bool hasDatabaseLoadStatus = false;
 
+  /* Dialog classes and helper classes */
   Marble::LegendWidget *legendWidget = nullptr;
   Marble::MarbleAboutDialog *marbleAbout = nullptr;
   OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+
+  /* Managment and controller classes */
   DatabaseManager *databaseManager = nullptr;
   WeatherReporter *weatherReporter = nullptr;
   ConnectClient *connectClient = nullptr;
   InfoController *infoController = nullptr;
 
+  /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr;
 
+  /* Database query helpers and caches */
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
-  bool firstStart = true, firstApplicationStart = false;
+
+  bool firstStart = true /* emit window shown only once after startup */,
+       firstApplicationStart = false /* first starup on a system after installation */;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

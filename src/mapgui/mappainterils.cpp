@@ -30,10 +30,10 @@
 
 using namespace Marble;
 using namespace atools::geo;
+using maptypes::MapIls;
 
-MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                             bool verboseMsg)
-  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
+MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
+  : MapPainter(mapWidget, mapQuery, mapScale)
 {
 }
 
@@ -43,52 +43,32 @@ MapPainterIls::~MapPainterIls()
 
 void MapPainterIls::render(const PaintContext *context)
 {
-  using namespace maptypes;
-
-  if(!context->objectTypes.testFlag(ILS))
-    return;
-
-  if(context->mapLayerEffective->isAirportDiagram())
+  if(!context->objectTypes.testFlag(maptypes::ILS))
     return;
 
   if(context->mapLayer->isIls())
   {
-  const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
-  QElapsedTimer t;
-  t.start();
+    const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
-  const QList<MapIls> *ilss = query->getIls(curBox, context->mapLayer, context->drawFast);
-  if(ilss != nullptr)
-  {
-    setRenderHints(context->painter);
-    if(context->viewContext == Marble::Still && verbose)
+    const QList<MapIls> *ilsList = query->getIls(curBox, context->mapLayer, context->drawFast);
+    if(ilsList != nullptr)
     {
-      qDebug() << "Number of ils" << ilss->size();
-      qDebug() << "Time for query" << t.elapsed() << " ms";
-      qDebug() << curBox.toString();
-      qDebug() << *context->mapLayer;
-      t.restart();
-    }
+      setRenderHints(context->painter);
 
-    for(const MapIls& ils : *ilss)
-    {
-      int x, y;
-      bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
-
-      if(!visible)
+      for(const MapIls& ils : *ilsList)
       {
-        GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                ils.bounding.getEast(), ils.bounding.getWest(),
-                                DEG);
-        visible = curBox.intersects(ilsbox);
-      }
+        int x, y;
+        // Need to get the real ILS size on the screen for mercator projection - otherwise feather may vanish
+        bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
 
-      if(visible)
-        drawIlsSymbol(context, ils);
+        if(!visible)
+          // Check bounding rect for visibility
+          visible = ils.bounding.overlaps(context->viewportRect);
+
+        if(visible)
+          drawIlsSymbol(context, ils);
+      }
     }
-  }
-  if(context->viewContext == Marble::Still && verbose)
-    qDebug() << "Time for paint" << t.elapsed() << " ms";
   }
 }
 
@@ -103,6 +83,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
+  // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QPoint pmid = wToS(ils.posmid, size, &visible);
   QPoint origin = wToS(ils.position, size, &visible);
 
@@ -115,10 +96,12 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
   context->painter->drawLine(p2, origin);
 
   if(ils.slope > 0)
+    // Close the end to for a triangle to indicate GS
     context->painter->drawLine(p1, p2);
 
   if(!context->drawFast)
   {
+    // Draw ILS text -----------------------------------
     QString text;
     if(context->mapLayer->isIlsInfo())
     {
@@ -136,24 +119,26 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
 
     if(!text.isEmpty())
     {
-      // painter->setBrush(mapcolors::textBoxColor);
       context->painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
+      // Rotate to draw the text upwards so it is readable
       float rotate;
       if(ils.heading > 180)
         rotate = ils.heading + 90.f - ils.width / 2.f;
       else
         rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + ils.width / 2.f;
 
+      // get an approximation of the ILS length
       int featherLen =
-        static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(ILS_FEATHER_LEN_METER), rotate)));
+        static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
 
-      if(featherLen > 40)
+      if(featherLen > MIN_LENGHT_FOR_TEXT)
       {
         QFontMetrics metrics = context->painter->fontMetrics();
         int texth = metrics.descent();
 
+        // Cut text to feather length
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
         int textw = metrics.width(text);
 
@@ -164,7 +149,6 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
           textpos = -(featherLen + textw) / 2;
 
         context->painter->rotate(rotate);
-        // painter->drawRect(textpos - 2, 2, textw + 2, -metrics.height() - 2);
         context->painter->drawText(textpos, -texth, text);
         context->painter->resetTransform();
       }

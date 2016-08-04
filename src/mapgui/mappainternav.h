@@ -24,13 +24,16 @@
 
 class SymbolPainter;
 
+/*
+ * Draws VOR, NDB, markers, waypoints and airways. Flight plan navaids are drawn separately in MapPainterRoute.
+ */
 class MapPainterNav :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterNav();
 
   virtual void render(const PaintContext *context) override;
@@ -41,8 +44,7 @@ private:
   void paintVors(const PaintContext *context, const QList<maptypes::MapVor> *vors, bool drawFast);
   void paintWaypoints(const PaintContext *context, const QList<maptypes::MapWaypoint> *waypoints,
                       bool drawWaypoint, bool drawFast);
-  void paintAirways(const PaintContext *context, const QList<maptypes::MapAirway> *airways,
-                    const Marble::GeoDataLatLonAltBox& curBox, bool fast);
+  void paintAirways(const PaintContext *context, const QList<maptypes::MapAirway> *airways, bool fast);
 
 };
 

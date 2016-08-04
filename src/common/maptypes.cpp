@@ -601,4 +601,34 @@ bool isSoftSurface(const QString& surface)
   return !isWaterSurface(surface) && !isHardSurface(surface);
 }
 
+QString parkingShortName(const QString& name)
+{
+  if(name == "PARKING")
+    return QObject::tr("P");
+  else if(name == "N_PARKING")
+    return QObject::tr("N");
+  else if(name == "NE_PARKING")
+    return QObject::tr("NE");
+  else if(name == "E_PARKING")
+    return QObject::tr("E");
+  else if(name == "SE_PARKING")
+    return QObject::tr("SE");
+  else if(name == "S_PARKING")
+    return QObject::tr("S");
+  else if(name == "SW_PARKING")
+    return QObject::tr("SW");
+  else if(name == "W_PARKING")
+    return QObject::tr("W");
+  else if(name == "NW_PARKING")
+    return QObject::tr("NW");
+  else if(name == "GATE")
+    return QString();
+  else if(name == "DOCK")
+    return QObject::tr("D");
+  else if(name.startsWith("GATE_"))
+    return name.right(1);
+  else
+    return QString();
+}
+
 } // namespace types

@@ -102,12 +102,15 @@ atools::sql::SqlRecordVector InfoQuery::getAirwayWaypointInformation(const QStri
   return rec;
 }
 
+/* Get a record from the cache of get it from a database query */
 const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery *query, int id)
 {
   SqlRecord *rec = cache.object(id);
   if(rec != nullptr)
   {
+    // Found record in cache
     if(rec->isEmpty())
+      // Empty record that indicates that no result was found
       return nullptr;
     else
       return rec;
@@ -118,6 +121,7 @@ const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery
     query->exec();
     if(query->next())
     {
+      // Insert it into the cache
       rec = new SqlRecord(query->record());
       cache.insert(id, rec);
       return rec;
@@ -129,13 +133,16 @@ const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery
   return nullptr;
 }
 
+/* Get a record vector from the cache of get it from a database query */
 const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<int, SqlRecordVector>& cache,
                                                      SqlQuery *query, int id)
 {
   SqlRecordVector *rec = cache.object(id);
   if(rec != nullptr)
   {
+    // Found record in cache
     if(rec->isEmpty())
+      // Empty record that indicates that no result was found
       return nullptr;
     else
       return rec;
@@ -150,6 +157,7 @@ const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<int, SqlRecordVector
     while(query->next())
       rec->append(query->record());
 
+    // Insert it into the cache
     cache.insert(id, rec);
 
     if(rec->isEmpty())
@@ -157,6 +165,7 @@ const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<int, SqlRecordVector
     else
       return rec;
   }
+  // Keep this here although it is never executed since some compilers throw an error
   return nullptr;
 }
 
@@ -164,7 +173,7 @@ void InfoQuery::initQueries()
 {
   deInitQueries();
 
-  // TODO limit number of columns
+  // TODO limit number of columns - remove star query
   airportQuery = new SqlQuery(db);
   airportQuery->prepare("select * from airport "
                         "join bgl_file on airport.file_id = bgl_file.bgl_file_id "

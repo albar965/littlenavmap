@@ -128,7 +128,7 @@ void MapWidget::setTheme(const QString& theme, int index)
   }
 
   setMapThemeId(theme);
-  updateMapShowFeatures();
+  updateMapObjectsShown();
 }
 
 void MapWidget::optionsChanged()
@@ -149,7 +149,7 @@ void MapWidget::updateCacheSizes()
   model()->setPersistentTileCacheLimit(OptionData::instance().getCacheSizeDiskMb() * 1000L);
 }
 
-void MapWidget::updateMapShowFeatures()
+void MapWidget::updateMapObjectsShown()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
@@ -445,7 +445,6 @@ void MapWidget::routeChanged(bool geometryChanged)
 {
   if(geometryChanged)
   {
-    paintLayer->routeChanged();
     screenIndex->updateRouteScreenGeometry();
     update();
   }
@@ -453,7 +452,6 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-
   if(databaseLoadStatus)
     return;
 
@@ -1218,7 +1216,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
-const maptypes::MapSearchResult& MapWidget::getHighlightMapObjects() const
+const maptypes::MapSearchResult& MapWidget::getSearchHighlightMapObjects() const
 {
   return screenIndex->getHighlights();
 }
@@ -1607,7 +1605,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
     }
     visibleTooltip.tableEnd();
 
-    mainWindow->setShownMapObjectsMessageText(visible.join(","), visibleTooltip.getHtml());
+    mainWindow->setMapObjectsShownMessageText(visible.join(","), visibleTooltip.getHtml());
   }
 }
 
@@ -1630,13 +1628,7 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     changed = true;
   }
 
-  // QElapsedTimer t;
-  // t.start();
-
   MarbleWidget::paintEvent(paintEvent);
-
-  // if(viewContext() == Marble::Still)
-  // qDebug() << "Time for all rendering" << t.elapsed() << "ms";
 
   if(changed)
   {

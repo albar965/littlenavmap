@@ -42,6 +42,9 @@ enum TabIndex
 
 }
 
+/*
+ * Takes care of the information and simulator aircraft dock windows and tabs
+ */
 class InfoController :
   public QObject
 {
@@ -51,29 +54,39 @@ public:
   InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery);
   virtual ~InfoController();
 
+  /* Populates all tabs in the information dock with the given results. Only one airport is shown
+   * but multiple navaids can be shown in the tab. */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();
   void restoreState();
 
+  /* Update the currently shown airport information if weather data has changed */
   void updateAirport();
 
+  /* Clear all panels and result set */
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Update aircraft and aircraft progress tab */
   void dataPacketReceived(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
   void disconnectedFromSimulator();
 
+  /* Program options have changed */
   void optionsChanged();
 
-  void updateTextEditFontSizes();
-
 signals:
+  /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, int zoom);
   void showRect(const atools::geo::Rect& rect);
 
 private:
+  /* Do not update aircraft information more than every 0.5 seconds */
+  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
+
+  void updateTextEditFontSizes();
   bool canTextEditUpdate(const QTextEdit *textEdit);
   void updateTextEdit(QTextEdit *textEdit, const QString& text);
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
@@ -84,6 +97,7 @@ private:
   atools::fs::sc::SimConnectData lastSimData;
   qint64 lastSimUpdate = 0;
 
+  /* Airport and navaids that are currently shown in the tabs */
   maptypes::MapSearchResult currentSearchResult;
 
   MainWindow *mainWindow;
@@ -93,7 +107,6 @@ private:
   HtmlInfoBuilder *info;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
-
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

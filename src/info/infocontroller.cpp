@@ -56,6 +56,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
 
+  // Create connections for "Map" links in text browsers
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -72,6 +73,7 @@ InfoController::~InfoController()
   delete info;
 }
 
+/* User clicked on "Map" link in text browsers */
 void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << "InfoController::anchorClicked" << url;
@@ -102,6 +104,7 @@ void InfoController::saveState()
   atools::gui::WidgetState ws(lnm::INFOWINDOW_WIDGET);
   ws.save({ui->tabWidgetInformation, ui->tabWidgetAircraft});
 
+  // Store currently shown map objects in a string list containing id and type
   maptypes::MapObjectRefList refs;
   for(const maptypes::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, maptypes::AIRPORT});
@@ -125,6 +128,7 @@ void InfoController::restoreState()
   QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
   QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
+  // Go through the string and collect all objects in the MapSearchResult
   maptypes::MapSearchResult res;
   for(int i = 0; i < refsStrList.size(); i += 2)
     mapQuery->getMapObjectById(res,
@@ -181,12 +185,15 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
   if(!result.airports.isEmpty())
   {
+    // Only one airport shown
     const maptypes::MapAirport& airport = result.airports.first();
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
+    // Remember one airport
     currentSearchResult.airports.append(airport);
 
+    // If no airport related tab is shown bring airport tab to front
     if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::APPROACHES)
       ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
 
@@ -208,6 +215,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
      !result.airways.isEmpty())
   {
+    // if any navaids are to be shown clear search result before
     currentSearchResult.vors.clear();
     currentSearchResult.vorIds.clear();
     currentSearchResult.ndbs.clear();
@@ -223,7 +231,9 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     currentSearchResult.vors.append(vor);
 
     if(result.airports.isEmpty())
+      // If the result does not contain an airport bring navaid tab to front
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
+
     info->vorText(vor, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
   }
@@ -267,8 +277,8 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
 void InfoController::preDatabaseLoad()
 {
+  // Clear current airport and navaids result
   currentSearchResult = maptypes::MapSearchResult();
-
   databaseLoadStatus = true;
   clearInfoTextBrowsers();
 }
@@ -276,9 +286,46 @@ void InfoController::preDatabaseLoad()
 void InfoController::postDatabaseLoad()
 {
   databaseLoadStatus = false;
-  showInformation(maptypes::MapSearchResult());
 }
 
+void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  if(!databaseLoadStatus)
+  {
+    if(!lastSimData.getPosition().isValid() ||
+       // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||
+       atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+                              lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
+    {
+      // Last update was more than 500 ms ago
+      HtmlBuilder html(true /* has background color */);
+
+      if(ui->dockWidgetAircraft->isVisible())
+      {
+        if(canTextEditUpdate(ui->textBrowserAircraftInfo))
+        {
+          // ok - scrollbars not pressed
+          info->aircraftText(data, html);
+          updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+        }
+
+        if(canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+        {
+          // ok - scrollbars not pressed
+          html.clear();
+          info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
+          updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+        }
+      }
+      lastSimData = data;
+      lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    }
+  }
+}
+
+/* @return true if no scrollbar is pressed in the text edit */
 bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)
 {
   // Do not update if scrollbar is clicked
@@ -286,6 +333,7 @@ bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)
          !textEdit->horizontalScrollBar()->isSliderDown();
 }
 
+/* Update text edit and keep selection and scrollbar position */
 void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
 {
   // Remember cursor position
@@ -300,53 +348,22 @@ void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
 
   if(anchor != pos)
   {
-    // Reset cursor
+    // There is a selection - Reset cursor
     int maxPos = textEdit->document()->characterCount() - 1;
 
     // Probably the document changed its size
     anchor = std::min(maxPos, anchor);
     pos = std::min(maxPos, pos);
 
+    // Create selection again
     cursor.setPosition(anchor, QTextCursor::MoveAnchor);
     cursor.setPosition(pos, QTextCursor::KeepAnchor);
     textEdit->setTextCursor(cursor);
   }
+
+  // Reset scroll bars
   textEdit->verticalScrollBar()->setValue(vScrollPos);
   textEdit->horizontalScrollBar()->setValue(hScrollPos);
-}
-
-void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
-{
-  Ui::MainWindow *ui = mainWindow->getUi();
-
-  if(!databaseLoadStatus)
-  {
-    if(!lastSimData.getPosition().isValid() ||
-       // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||
-       atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
-                              lastSimUpdate, static_cast<qint64>(500)))
-    {
-      HtmlBuilder html(true);
-
-      if(ui->dockWidgetAircraft->isVisible())
-      {
-        if(canTextEditUpdate(ui->textBrowserAircraftInfo))
-        {
-          info->aircraftText(data, html);
-          updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
-        }
-
-        if(canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
-        {
-          html.clear();
-          info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
-          updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
-        }
-      }
-      lastSimData = data;
-      lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
-    }
-  }
 }
 
 void InfoController::connectedToSimulator()
@@ -369,6 +386,7 @@ void InfoController::optionsChanged()
   showInformation(currentSearchResult);
 }
 
+/* Update font size in text browsers if options have changed */
 void InfoController::updateTextEditFontSizes()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -385,6 +403,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserAircraftProgressInfo, simInfoFontPtSize, sizePercent);
 }
 
+/* Set font size in text edit based on percent of original size */
 void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent)
 {
   QFont f = textEdit->font();

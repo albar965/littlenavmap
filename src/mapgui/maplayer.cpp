@@ -35,12 +35,6 @@ MapLayer& MapLayer::airport(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::airportDetail(bool value)
-{
-  layerAirportDetail = value;
-  return *this;
-}
-
 MapLayer& MapLayer::airportSource(layer::AirportSource source)
 {
   src = source;

@@ -21,72 +21,103 @@
 #include <QDebug>
 
 namespace layer {
+/* Defines which table to use for airport queries */
 enum AirportSource
 {
-  ALL,
-  MEDIUM,
-  LARGE
+  ALL, /* use airport table as source */
+  MEDIUM, /* use airport_medium table as source */
+  LARGE /* use airport_large table as source */
 };
 
 }
 
+/*
+ * A map layer defines what should be shown on the map for a certain zoom level. It follows the builder pattern.
+ */
 class MapLayer
 {
 public:
+  /*
+   * @param maximumRange create a layer for the maximum zoom distance
+   */
   MapLayer(float maximumRange);
 
+  /*
+   * create a clone of this layer with the maximum zoom distance
+   */
   MapLayer clone(float maximumRange) const;
 
+  /* Show airports */
   MapLayer& airport(bool value = true);
 
-  /* Draw fuel ticks, etc. */
-  MapLayer& airportDetail(bool value = true);
+  /* Define source table for airports */
   MapLayer& airportSource(layer::AirportSource source);
+
+  /* Show airport runway overview symbol for airports with runways > 8000 ft */
   MapLayer& airportOverviewRunway(bool value = true);
+
+  /* Show airport diagram with runways, taxiways, etc. */
   MapLayer& airportDiagram(bool value = true);
   MapLayer& airportDiagramDetail(bool value = true);
   MapLayer& airportDiagramDetail2(bool value = true);
+
+  /* Show airports having only soft runways */
   MapLayer& airportSoft(bool value = true);
+
+  /* Show empty airports */
   MapLayer& airportNoRating(bool value = true);
+
+  /* Symbol size in pixel */
   MapLayer& airportSymbolSize(int size);
   MapLayer& airportIdent(bool = true);
   MapLayer& airportName(bool = true);
+
+  /* Show Tower, ATIS, etc. */
   MapLayer& airportInfo(bool = true);
+
+  /* Show airport information if it is part of the route */
   MapLayer& airportRouteInfo(bool = true);
+
+  /* Display only airport that have a minimum runway length in feet */
   MapLayer& minRunwayLength(int length);
 
+  /* Waypoint options */
   MapLayer& waypoint(bool value = true);
   MapLayer& waypointName(bool value = true);
   MapLayer& waypointRouteName(bool value = true);
+  MapLayer& waypointSymbolSize(int size);
 
+  /* VOR options */
   MapLayer& vor(bool value = true);
-  MapLayer& vorLarge(bool value = true);
+  MapLayer& vorLarge(bool value = true); /* Show large with compass circle and ticks */
   MapLayer& vorIdent(bool value = true);
   MapLayer& vorInfo(bool value = true);
   MapLayer& vorRouteIdent(bool value = true);
   MapLayer& vorRouteInfo(bool value = true);
+  MapLayer& vorSymbolSize(int size);
 
+  /* NDB options */
   MapLayer& ndb(bool value = true);
   MapLayer& ndbIdent(bool value = true);
   MapLayer& ndbInfo(bool value = true);
   MapLayer& ndbRouteIdent(bool value = true);
   MapLayer& ndbRouteInfo(bool value = true);
+  MapLayer& ndbSymbolSize(int size);
 
+  /* Marker options */
   MapLayer& marker(bool value = true);
   MapLayer& markerInfo(bool value = true);
+  MapLayer& markerSymbolSize(int size);
 
+  /* ILS options */
   MapLayer& ils(bool value = true);
   MapLayer& ilsIdent(bool value = true);
   MapLayer& ilsInfo(bool value = true);
 
+  /* Airway options (Jet and Victor airways are filtered out in the paint method) */
   MapLayer& airway(bool value = true);
   MapLayer& airwayIdent(bool value = true);
   MapLayer& airwayInfo(bool value = true);
-
-  MapLayer& waypointSymbolSize(int size);
-  MapLayer& vorSymbolSize(int size);
-  MapLayer& ndbSymbolSize(int size);
-  MapLayer& markerSymbolSize(int size);
 
   bool operator<(const MapLayer& other) const;
 
@@ -98,11 +129,6 @@ public:
   bool isAirport() const
   {
     return layerAirport;
-  }
-
-  bool isAirportDetail() const
-  {
-    return layerAirportDetail;
   }
 
   bool isAirportOverviewRunway() const
@@ -311,7 +337,7 @@ private:
   float maxRange = -1.;
 
   layer::AirportSource src;
-  bool layerAirport = false, layerAirportDetail = false, layerAirportOverviewRunway = false,
+  bool layerAirport = false, layerAirportOverviewRunway = false,
        layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
        layerAirportName = false, layerAirportInfo = false;

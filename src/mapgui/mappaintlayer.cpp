@@ -44,13 +44,12 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   initLayers();
 
   mapScale = new MapScale();
-  mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale, false);
-  mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale, false);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, false);
-  mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale, false);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale,
-                                        mapWidget->getRouteController(), false);
-  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale, false);
+  mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
+  mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, mapWidget->getRouteController());
+  mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, mapWidget->getRouteController());
+  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
 
   objectTypes = maptypes::MapObjectTypes(
     maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
@@ -91,16 +90,6 @@ void MapPaintLayer::setDetailFactor(int factor)
 {
   detailFactor = factor;
   updateLayers();
-}
-
-void MapPaintLayer::routeChanged()
-{
-  qDebug() << "route changed";
-  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteMapObjects();
-
-  forcePaint.clear();
-  for(const RouteMapObject& obj : routeMapObjects)
-    forcePaint.insert({obj.getId(), obj.getMapObjectType()});
 }
 
 void MapPaintLayer::initLayers()
@@ -232,10 +221,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
     // Check if no painting wanted during scroll
     if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation))
     {
-
-      QElapsedTimer t;
-      t.start();
-
       updateLayers();
 
       PaintContext context;
@@ -261,11 +246,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                                                box.north(GeoDataCoordinates::Degree),
                                                box.east(GeoDataCoordinates::Degree),
                                                box.south(GeoDataCoordinates::Degree));
-
-      if(objectTypes.testFlag(maptypes::ROUTE) && !forcePaint.isEmpty())
-        context.forcePaintObjects = &forcePaint;
-      else
-        context.forcePaintObjects = nullptr;
 
       context.symbolScale = OptionData::instance().getMapSymbolSize() / 100.f;
 

@@ -26,13 +26,17 @@ class GeoDataLineString;
 
 class MapWidget;
 
+/*
+ * Paint all marks, distance measure lines, range rings, selected object highlights
+ * and magnetic pole indications.
+ */
 class MapPainterMark :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg);
+  MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterMark();
 
   virtual void render(const PaintContext *context) override;

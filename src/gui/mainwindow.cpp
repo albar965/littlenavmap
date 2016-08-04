@@ -68,18 +68,20 @@ MainWindow::MainWindow()
 {
   qDebug() << "MainWindow constructor";
 
+  static const QString aboutMessage =
+    tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
+         "<p>This software is licensed under "
+           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
+             "<p>The source code for this application is available at "
+               "<a href=\"https://github.com/albar965\">Github</a>.</p>"
+                 "<p><b>Copyright 2015-2016 Alexander Barthel</b></p> "
+                   "<p><a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a> or "
+                     "<a href=\"mailto:albar965@t-online.de\">albar965@t-online.de</a></p>");
+
   try
   {
-    // Have to handle exceptions here since no message handler is active yet
-    QString aboutMessage =
-      tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
-           "<p>This software is licensed under "
-             "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
-               "<p>The source code for this application is available at "
-                 "<a href=\"https://github.com/albar965\">Github</a>.</p>"
-                   "<p><b>Copyright 2015-2016 Alexander Barthel</b></p> "
-                     "<p><a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a> or "
-                       "<a href=\"mailto:albar965@t-online.de\">albar965@t-online.de</a></p>");
+    // Have to handle exceptions here since no message handler is active yet and no
+    // atools::Application method can catch it
 
     ui->setupUi(this);
 
@@ -93,12 +95,14 @@ MainWindow::MainWindow()
     setupUi();
 
     optionsDialog = new OptionsDialog(this);
+    // Has to load the state now to options are available for all controller and manager classes
     optionsDialog->restoreState();
 
+    // Remember original title
     mainWindowTitle = windowTitle();
 
+    // Prepare database and queries
     databaseManager = new DatabaseManager(this);
-
     databaseManager->openDatabase();
 
     mapQuery = new MapQuery(this, databaseManager->getDatabase());
@@ -107,6 +111,7 @@ MainWindow::MainWindow()
     infoQuery = new InfoQuery(this, databaseManager->getDatabase());
     infoQuery->initQueries();
 
+    // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
     weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
 
@@ -117,11 +122,15 @@ MainWindow::MainWindow()
     kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
 
-    createNavMap();
+    // Create map widget and replace dummy widget in window
+    mapWidget = new MapWidget(this, mapQuery);
+    ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
 
+    // Create elevation profile widget and replace dummy widget in window
     profileWidget = new ProfileWidget(this);
     ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
 
+    // Create marble legend and add it to informtation tab
     legendWidget = new Marble::LegendWidget(this);
     legendWidget->setMarbleModel(mapWidget->model());
     ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
@@ -137,22 +146,24 @@ MainWindow::MainWindow()
 
     connectAllSlots();
     readSettings();
-    updateMapShowFeatures();
     updateActionStates();
 
     mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
 
-    // Wait until everything is set up
-    updateMapShowFeatures();
-    // navMapWidget->showSavedPos();
+    // Wait until everything is set up and update map
+    updateMapObjectsShown();
+    // Update status label indication in search tabs
     searchController->updateTableSelection();
 
     profileWidget->updateProfileShowFeatures();
+
+    // If enabled connect to simulator without showing dialog
     connectClient->tryConnect();
     loadNavmapLegend();
 
   }
+  // Exit application if something goes wrong
   catch(atools::Exception& e)
   {
     ATOOLS_HANDLE_EXCEPTION(e);
@@ -167,6 +178,7 @@ MainWindow::~MainWindow()
 {
   qDebug() << "MainWindow destructor";
 
+  // Close all queries
   preDatabaseLoad();
 
   delete connectClient;
@@ -191,12 +203,15 @@ MainWindow::~MainWindow()
   delete actionGroupMapProjection;
   delete actionGroupMapTheme;
 
+  // Delete settings singleton
   Settings::shutdown();
   atools::gui::Translator::unload();
+
   qDebug() << "MainWindow destructor about to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 }
 
+/* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
@@ -207,11 +222,13 @@ void MainWindow::showNavmapLegend()
   }
   else
   {
+    // URL is empty loading failed - show it in browser
     helpHandler->openHelpUrl(legendUrl);
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
 
+/* Show marble legend */
 void MainWindow::showMapLegend()
 {
   ui->dockWidgetInformation->show();
@@ -219,6 +236,7 @@ void MainWindow::showMapLegend()
   setStatusMessage(tr("Opened map legend."));
 }
 
+/* Load the navmap legend into the text browser */
 void MainWindow::loadNavmapLegend()
 {
   legendUrl = helpHandler->getHelpUrl("help", "legend_inline.html");
@@ -239,10 +257,9 @@ void MainWindow::loadNavmapLegend()
     else
       errorHandler->handleIOError(legendFile, tr("While opening Navmap Legend file:"));
   }
-  // else
-  // helpHandler->openHelpUrl(legendUrl);
 }
 
+/* User clicked "show in browser" in legend */
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   qDebug() << "MainWindow::legendAnchorClicked" << url;
@@ -258,42 +275,7 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
     setStatusMessage(tr("Opened legend link in browser."));
 }
 
-void MainWindow::createNavMap()
-{
-  // Create a Marble QWidget without a parent
-  mapWidget = new MapWidget(this, mapQuery);
-
-  // mapWidget->setShowSunShading(true);
-
-  // navMapWidget->model()->addGeoDataFile("/home/alex/Dokumente/Google Earth/BC Airports.kmz");
-  // mapWidget->model()->addGeoDataFile( "/home/alex/Downloads/map.osm" );
-
-  ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
-
-  // QSet<QString> pluginEnable;
-  // pluginEnable << "Compass" << "Coordinate Grid" << "License" << "Scale Bar" << "Navigation"
-  // << "Overview Map" << "Position Marker" << "Elevation Profile" << "Elevation Profile Marker"
-  // << "Download Progress Indicator";
-
-  // pluginDisable << "Annotation" << "Amateur Radio Aprs Plugin" << "Atmosphere" << "Compass" <<
-  // "Crosshairs" << "Earthquakes" << "Eclipses" << "Elevation Profile" << "Elevation Profile Marker" <<
-  // "Places" << "GpsInfo" << "Coordinate Grid" << "License" << "Scale Bar" << "Measure Tool" << "Navigation" <<
-  // "OpenCaching.Com" << "OpenDesktop Items" << "Overview Map" << "Photos" << "Position Marker" <<
-  // "Postal Codes" << "Download Progress Indicator" << "Routing" << "Satellites" << "Speedometer" << "Stars" <<
-  // "Sun" << "Weather" << "Wikipedia Articles";
-
-  // QList<RenderPlugin *> localRenderPlugins = mapWidget->renderPlugins();
-  // for(RenderPlugin *p : localRenderPlugins)
-  // if(!pluginEnable.contains(p->name()))
-  // {
-  // qDebug() << "Disabled plugin" << p->name();
-  // p->setEnabled(false);
-  // }
-  // else
-  // qDebug() << "Found plugin" << p->name();
-
-}
-
+/* Set up own UI elements that cannot be created in designer */
 void MainWindow::setupUi()
 {
   ui->mapToolBar->addSeparator();
@@ -313,7 +295,7 @@ void MainWindow::setupUi()
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
 
-  // Projection combo box
+  // Theme combo box
   mapThemeComboBox = new QComboBox(this);
   mapThemeComboBox->setObjectName("mapThemeComboBox");
   helpText = tr("Select map theme");
@@ -337,7 +319,7 @@ void MainWindow::setupUi()
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
 
-  // Dock widget actions
+  // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
   ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
   ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
@@ -372,6 +354,7 @@ void MainWindow::setupUi()
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
     ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
+  // Add dock actions to main menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
@@ -381,6 +364,7 @@ void MainWindow::setupUi()
 
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
+  // Add toobar actions to menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->mainToolBar->toggleViewAction(),
                                ui->mapToolBar->toggleViewAction(),
@@ -388,6 +372,7 @@ void MainWindow::setupUi()
                                ui->viewToolBar->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
+  // Add toobar actions to toolbar
   ui->viewToolBar->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->viewToolBar->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
@@ -401,6 +386,7 @@ void MainWindow::setupUi()
 
   detailLabel = new QLabel();
   detailLabel->setMinimumWidth(100);
+  detailLabel->setToolTip(tr("Map detail level."));
   ui->statusBar->addPermanentWidget(detailLabel);
 
   renderStatusLabel = new QLabel();
@@ -410,7 +396,7 @@ void MainWindow::setupUi()
 
   mapDistanceLabel = new QLabel();
   mapDistanceLabel->setMinimumWidth(80);
-  mapDistanceLabel->setToolTip(tr("View distance to ground."));
+  mapDistanceLabel->setToolTip(tr("Map view distance to ground."));
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
   mapPosLabel = new QLabel();
@@ -423,13 +409,14 @@ void MainWindow::connectAllSlots()
 {
   qDebug() << "Connecting slots";
 
+  // Get "show in browser"  click
   connect(ui->textBrowserNavmapLegendInfo, &QTextBrowser::anchorClicked, this,
           &MainWindow::legendAnchorClicked);
 
+  // Notify others of options change
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
-
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapShowFeatures);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
@@ -447,18 +434,16 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showInformation,
           infoController, &InfoController::showInformation);
 
+  // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint,
           mapWidget, &MapWidget::highlightProfilePoint);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
 
-  connect(searchController->getAirportSearch(), &AirportSearch::showRect,
-          mapWidget, &MapWidget::showRect);
-  connect(searchController->getAirportSearch(), &AirportSearch::showPos,
-          mapWidget, &MapWidget::showPos);
-  connect(searchController->getAirportSearch(), &AirportSearch::changeMark,
-          mapWidget, &MapWidget::changeMark);
+  connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(searchController->getAirportSearch(), &AirportSearch::changeMark, mapWidget, &MapWidget::changeMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
 
@@ -470,7 +455,7 @@ void MainWindow::connectAllSlots()
   connect(infoController, &InfoController::showPos, mapWidget, &MapWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapWidget::showRect);
 
-  // Use this event to show path dialog after main windows is shown
+  // Use this event to show scenery library dialog on first start after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
 
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
@@ -481,6 +466,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::options);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
 
+  // Flight plan file actions
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
@@ -488,10 +474,12 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
+  // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
+  // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered,
           routeController, &RouteController::calculateDirect);
   connect(ui->actionRouteCalcRadionav, &QAction::triggered,
@@ -505,6 +493,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteReverse, &QAction::triggered,
           routeController, &RouteController::reverse);
 
+  // Help menu
   connect(ui->actionHelpContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
@@ -518,9 +507,12 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
 
+  // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   connect(mapProjectionComboBox, indexChangedPtr, this, &MainWindow::changeMapProjection);
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
+
+  // Let projection and theme menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
@@ -553,29 +545,30 @@ void MainWindow::connectAllSlots()
               mapThemeComboBox->setCurrentIndex(MapWidget::PLAIN);
           });
 
-  connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowHillshading, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowEmptyAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowAddonAirports, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  // Map object/feature display
+  connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowHillshading, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAirports, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowSoftAirports, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowEmptyAirports, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAddonAirports, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
-  connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
-  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapShowFeatures);
+  connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget,
           &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget,
           &ProfileWidget::updateProfileShowFeatures);
 
-  // Order is important. First let the mapwidget delete the track then notify the profile
+  // Order is important here. First let the mapwidget delete the track then notify the profile
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, mapWidget,
           &MapWidget::deleteAircraftTrack);
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget,
@@ -593,18 +586,19 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
   connect(ui->actionMapDefaultDetails, &QAction::triggered, mapWidget, &MapWidget::defaultMapDetail);
 
-  connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateHistActions);
+  connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
   connect(routeController, &RouteController::routeSelectionChanged,
           this, &MainWindow::routeSelectionChanged);
   connect(searchController->getAirportSearch(), &Search::selectionChanged,
-          this, &MainWindow::selectionChanged);
+          this, &MainWindow::searchSelectionChanged);
   connect(searchController->getNavSearch(), &Search::selectionChanged,
-          this, &MainWindow::selectionChanged);
+          this, &MainWindow::searchSelectionChanged);
 
   connect(ui->actionRouteSelectParking, &QAction::triggered,
           routeController, &RouteController::selectDepartureParking);
 
+  // Route editing
   connect(mapWidget, &MapWidget::routeSetStart,
           routeController, &RouteController::routeSetStart);
   connect(mapWidget, &MapWidget::routeSetParkingStart,
@@ -628,13 +622,16 @@ void MainWindow::connectAllSlots()
   connect(searchController->getNavSearch(), &Search::routeAdd,
           routeController, &RouteController::routeAdd);
 
+  // Messages about database query result status
   connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
 
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
-  connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
-          mapWidget, &MapWidget::setPropertyValue);
+  // Not needed. All properties removed from legend since they are not persistent
+  // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
+  // mapWidget, &MapWidget::setPropertyValue);
+
   connect(ui->actionAboutMarble, &QAction::triggered,
           marbleAbout, &Marble::MarbleAboutDialog::exec);
 
@@ -673,6 +670,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 }
 
+/* Called by the toolbar combo box */
 void MainWindow::changeMapProjection(int index)
 {
   Q_UNUSED(index);
@@ -680,12 +678,14 @@ void MainWindow::changeMapProjection(int index)
   qDebug() << "Changing projection to" << proj;
   mapWidget->setProjection(proj);
 
+  // Update menu items
   ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
   ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
 
   setStatusMessage(tr("Map projection changed to %1").arg(mapProjectionComboBox->currentText()));
 }
 
+/* Called by the toolbar combo box */
 void MainWindow::changeMapTheme(int index)
 {
   Q_UNUSED(index);
@@ -701,6 +701,7 @@ void MainWindow::changeMapTheme(int index)
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }
 
+/* Menu item */
 void MainWindow::showDatabaseFiles()
 {
 
@@ -711,7 +712,8 @@ void MainWindow::showDatabaseFiles()
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
-void MainWindow::setShownMapObjectsMessageText(const QString& text, const QString& tooltipText)
+/* Updates label and tooltip for objects shown on map */
+void MainWindow::setMapObjectsShownMessageText(const QString& text, const QString& tooltipText)
 {
   messageLabel->setText(text);
   messageLabel->setToolTip(tooltipText);
@@ -722,14 +724,17 @@ const ElevationModel *MainWindow::getElevationModel()
   return mapWidget->model()->elevationModel();
 }
 
+/* Called after each query */
 void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
 {
   if(truncatedTo > 0)
+  {
     qDebug() << "resultTruncated" << type << "num" << truncatedTo;
-  if(truncatedTo > 0)
     messageLabel->setText(tr("Too many objects."));
+  }
 }
 
+/* Render status from marble widget */
 void MainWindow::renderStatusChanged(RenderStatus status)
 {
   switch(status)
@@ -749,6 +754,7 @@ void MainWindow::renderStatusChanged(RenderStatus status)
   }
 }
 
+/* Route center action */
 void MainWindow::routeCenter()
 {
   if(routeController->hasRoute())
@@ -758,6 +764,8 @@ void MainWindow::routeCenter()
   }
 }
 
+/* Check if route has valid departure  and destination and departure parking.
+ *  @return true if route can be saved anyway */
 bool MainWindow::routeValidate()
 {
   if(!routeController->hasValidStart() || !routeController->hasValidDestination())
@@ -772,6 +780,7 @@ bool MainWindow::routeValidate()
                                             QMessageBox::Cancel, QMessageBox::Save);
 
     if(result == QMessageBox::Save)
+      // Save anyway
       return true;
     else if(result == QMessageBox::Cancel)
       return false;
@@ -780,6 +789,7 @@ bool MainWindow::routeValidate()
   {
     if(!routeController->hasValidParking())
     {
+      // Airport has parking but no one is selected
       atools::gui::DialogButtonList buttons({
                                               {QString(), QMessageBox::Cancel},
                                               {tr("Select Start Position"), QMessageBox::Yes},
@@ -793,8 +803,10 @@ bool MainWindow::routeValidate()
         buttons, QMessageBox::Yes, QMessageBox::Save);
 
       if(result == QMessageBox::Yes)
+        // saving depends if user selects parking or  cancels out of the dialog
         return routeController->selectDepartureParking();
       else if(result == QMessageBox::Save)
+        // Save right away
         return true;
       else if(result == QMessageBox::Cancel)
         return false;
@@ -803,6 +815,30 @@ bool MainWindow::routeValidate()
   return true;
 }
 
+/* Check if route has valid departure parking.
+ *  @return true if route can be saved anyway */
+bool RouteController::hasValidParking() const
+{
+  if(hasValidStart())
+  {
+    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
+
+    int numParking = 0;
+    for(const maptypes::MapParking& p : *parkingCache)
+      if(p.type != "FUEL")
+        numParking++;
+
+    if(numParking > 0)
+      return route.hasDepartureParking() || route.hasDepartureHelipad();
+    else
+      // No parking available - so no parking selection is ok
+      return true;
+  }
+  else
+    return false;
+}
+
+/* Updates main window title with simulator type, flight plan name and change status */
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
@@ -817,6 +853,8 @@ void MainWindow::updateWindowTitle()
   setWindowTitle(newTitle);
 }
 
+/* Ask user if flight plan can be deleted when quitting.
+ * @return true continue with new flight plan, exit, etc. */
 bool MainWindow::routeCheckForChanges()
 {
   if(!routeController->hasChanged())
@@ -839,16 +877,17 @@ bool MainWindow::routeCheckForChanges()
         return routeSave();
 
     case QMessageBox::No:
-      // ok to erase route
+      // ok to erase flight plan
       return true;
 
     case QMessageBox::Cancel:
-      // stop any route erasing actions
+      // stop any flight plan erasing actions
       return false;
   }
   return false;
 }
 
+/* Called from menu or toolbar by action */
 void MainWindow::routeNew()
 {
   if(routeCheckForChanges())
@@ -859,6 +898,7 @@ void MainWindow::routeNew()
   }
 }
 
+/* Called from menu or toolbar by action */
 void MainWindow::routeOpen()
 {
   if(routeCheckForChanges())
@@ -882,6 +922,7 @@ void MainWindow::routeOpen()
   }
 }
 
+/* Called from menu or toolbar by action */
 void MainWindow::routeOpenRecent(const QString& routeFile)
 {
   if(routeCheckForChanges())
@@ -897,6 +938,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     }
     else
     {
+      // File not valid remove from history
       QMessageBox::warning(this, QApplication::applicationName(),
                            tr("File \"%1\" does not exist").arg(routeFile));
       routeFileHistory->removeFile(routeFile);
@@ -904,6 +946,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
   }
 }
 
+/* Called from menu or toolbar by action */
 bool MainWindow::routeSave()
 {
   if(routeController->getRouteFilename().isEmpty())
@@ -924,6 +967,7 @@ bool MainWindow::routeSave()
   return false;
 }
 
+/* Called from menu or toolbar by action */
 bool MainWindow::routeSaveAs()
 {
   if(routeValidate())
@@ -949,6 +993,7 @@ bool MainWindow::routeSaveAs()
   return false;
 }
 
+/* Called from menu or toolbar by action. Remove all KML from map */
 void MainWindow::kmlClear()
 {
   mapWidget->clearKmlFiles();
@@ -956,6 +1001,7 @@ void MainWindow::kmlClear()
   setStatusMessage(tr("Google Earth KML files removed from map."));
 }
 
+/* Called from menu or toolbar by action */
 void MainWindow::kmlOpen()
 {
   QString kmlFile = dialog->openFileDialog(
@@ -977,6 +1023,7 @@ void MainWindow::kmlOpen()
   }
 }
 
+/* Called from menu or toolbar by action */
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
   if(mapWidget->addKmlFile(kmlFile))
@@ -991,6 +1038,7 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
+/* Selection in flight plan table has changed */
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected);
@@ -1000,7 +1048,8 @@ void MainWindow::routeSelectionChanged(int selected, int total)
   mapWidget->changeRouteHighlight(result);
 }
 
-void MainWindow::selectionChanged(const Search *source, int selected, int visible, int total)
+/* Selection in one of the search result tables has changed */
+void MainWindow::searchSelectionChanged(const Search *source, int selected, int visible, int total)
 {
   static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;
@@ -1020,20 +1069,23 @@ void MainWindow::selectionChanged(const Search *source, int selected, int visibl
   mapWidget->changeHighlight(result);
 }
 
-void MainWindow::updateMapShowFeatures()
+/* A button like airport, vor, ndb, etc. was pressed - update the map */
+void MainWindow::updateMapObjectsShown()
 {
-  mapWidget->updateMapShowFeatures();
+  mapWidget->updateMapObjectsShown();
   profileWidget->update();
   setStatusMessage(tr("Map settigs changed."));
 }
 
-void MainWindow::updateHistActions(int minIndex, int curIndex, int maxIndex)
+/* Map history has changed */
+void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxIndex)
 {
   qDebug() << "History changed min" << minIndex << "cur" << curIndex << "max" << maxIndex;
   ui->actionMapBack->setEnabled(curIndex > minIndex);
   ui->actionMapNext->setEnabled(curIndex < maxIndex);
 }
 
+/* Reset all "do not show this again" message box status values */
 void MainWindow::resetMessages()
 {
   qDebug() << "resetMessages";
@@ -1051,6 +1103,7 @@ void MainWindow::resetMessages()
   setStatusMessage(tr("All message dialogs reset."));
 }
 
+/* Set a general status message */
 void MainWindow::setStatusMessage(const QString& message)
 {
   if(statusMessages.isEmpty() || statusMessages.last() != message)
@@ -1072,6 +1125,7 @@ atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator()
   return databaseManager->getCurrentSimulator();
 }
 
+/* From menu: Show options dialog */
 void MainWindow::options()
 {
   int retval = optionsDialog->exec();
@@ -1082,6 +1136,7 @@ void MainWindow::options()
     setStatusMessage(tr("Options changed."));
 }
 
+/* Called by window shown event when the main window is visible the first time */
 void MainWindow::mainWindowShown()
 {
   qDebug() << "MainWindow::mainWindowShown()";
@@ -1095,10 +1150,14 @@ void MainWindow::mainWindowShown()
     if(databaseManager->hasInstalledSimulators())
       databaseManager->run();
     else
-      QMessageBox::information(this, QApplication::applicationName(), tr("No Simulators found."));
+      QMessageBox::information(this, QApplication::applicationName(),
+                               tr("No Flight Simulator installtions found.\n"
+                                  "You can copy a Little Navmap database from another computer.\n"
+                                  "See the manual for more information about this."));
   }
 }
 
+/* Enable or disable actions */
 void MainWindow::updateActionStates()
 {
   qDebug() << "Updating action states";
@@ -1159,6 +1218,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMark->setEnabled(mapWidget->getMarkPos().isValid());
 }
 
+/* Read settings for all windows, docks, controller and manager classes */
 void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
@@ -1208,6 +1268,7 @@ void MainWindow::readSettings()
   // databaseLoader->restoreState();
 }
 
+/* Write settings for all windows, docks, controller and manager classes */
 void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
@@ -1290,6 +1351,7 @@ void MainWindow::showEvent(QShowEvent *event)
   event->ignore();
 }
 
+/* Call other other classes to close queries and clear caches */
 void MainWindow::preDatabaseLoad()
 {
   qDebug() << "MainWindow::preDatabaseLoad";
@@ -1310,6 +1372,7 @@ void MainWindow::preDatabaseLoad()
     qWarning() << "Already in database loading status";
 }
 
+/* Call other other classes to reopen queries */
 void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   qDebug() << "MainWindow::postDatabaseLoad";

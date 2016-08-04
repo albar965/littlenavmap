@@ -35,8 +35,8 @@ using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
 
-MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, bool verboseMsg)
-  : MapPainter(mapWidget, mapQuery, mapScale, verboseMsg)
+MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
+  : MapPainter(mapWidget, mapQuery, mapScale)
 {
 }
 
@@ -60,6 +60,7 @@ void MapPainterMark::render(const PaintContext *context)
   context->painter->restore();
 }
 
+/* Draw black yellow cross for search distance marker */
 void MapPainterMark::paintMark(const PaintContext *context)
 {
   int x, y;
@@ -79,6 +80,7 @@ void MapPainterMark::paintMark(const PaintContext *context)
   }
 }
 
+/* Draw two indications for the magnetic poles in 2007 */
 void MapPainterMark::paintMagneticPoles(const PaintContext *context)
 {
   GeoPainter *painter = context->painter;
@@ -103,6 +105,7 @@ void MapPainterMark::paintMagneticPoles(const PaintContext *context)
   }
 }
 
+/* Paint the center of the home position */
 void MapPainterMark::paintHome(const PaintContext *context)
 {
   GeoPainter *painter = context->painter;
@@ -124,9 +127,11 @@ void MapPainterMark::paintHome(const PaintContext *context)
   }
 }
 
+/* Draw rings around objects that are selected on the search or flight plan tables */
 void MapPainterMark::paintHighlights(const PaintContext *context)
 {
-  const MapSearchResult& highlightResults = mapWidget->getHighlightMapObjects();
+  // Draw hightlights from the search result view ------------------------------------------
+  const MapSearchResult& highlightResults = mapWidget->getSearchHighlightMapObjects();
   int size = context->symSize(6);
 
   QList<Pos> positions;
@@ -164,6 +169,7 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
   if(context->mapLayerEffective->isAirport())
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
+  // Draw hightlights from the flight plan view ------------------------------------------
   const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlightMapObjects();
   positions.clear();
   for(const RouteMapObject& rmo : routeHighlightResults)
@@ -188,6 +194,7 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
   }
 }
 
+/* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
 void MapPainterMark::paintRangeRings(const PaintContext *context)
 {
   const QList<maptypes::RangeMarker>& rangeRings = mapWidget->getRangeRings();
@@ -197,16 +204,20 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 
   for(const maptypes::RangeMarker& rings : rangeRings)
   {
-    QVector<int>::const_iterator maxIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+    // Get the biggest ring to check visibility
+    QVector<int>::const_iterator maxRingIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
 
-    if(maxIter != rings.ranges.end())
+    if(maxRingIter != rings.ranges.end())
     {
-      int maxDiameter = *maxIter;
+      int maxRadiusNm = *maxRingIter;
 
-      Rect rect(rings.center, nmToMeter(maxDiameter));
+      Rect rect(rings.center, nmToMeter(maxRadiusNm));
 
       if(context->viewportRect.overlaps(rect) /*&& !fast*/)
       {
+        // Ring is visible - the rest of the visibility check is done in paintCircle
+
+        // Select color according to source
         QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
         if(rings.type == maptypes::VOR)
         {
@@ -218,35 +229,38 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
           color = mapcolors::ndbSymbolColor;
           textColor = mapcolors::ndbSymbolColor;
         }
-        else if(rings.type == maptypes::ILS)
-        {
-          color = mapcolors::ilsSymbolColor;
-          textColor = mapcolors::ilsTextColor;
-        }
+        // ILS is currently not used
+        // else if(rings.type == maptypes::ILS)
+        // {
+        // color = mapcolors::ilsSymbolColor;
+        // textColor = mapcolors::ilsTextColor;
+        // }
+
         painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
         bool centerVisible;
         QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &centerVisible);
         if(centerVisible)
         {
-          painter->setPen(QPen(QBrush(textColor), 4, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-          painter->drawEllipse(center, 4, 4);
+          // Draw small center point
           painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           painter->drawEllipse(center, 4, 4);
         }
 
-        for(int diameter : rings.ranges)
+        // Draw all rings
+        for(int radius : rings.ranges)
         {
           int xt, yt;
-          paintCircle(painter, rings.center, diameter, context->drawFast, xt, yt);
+          paintCircle(painter, rings.center, radius, context->drawFast, xt, yt);
 
           if(xt != -1 && yt != -1)
           {
+            // paintCirle found a text position - draw text
             painter->setPen(textColor);
 
             QString txt;
             if(rings.text.isEmpty())
-              txt = QLocale().toString(diameter) + tr(" nm");
+              txt = QLocale().toString(radius) + tr(" nm");
             else
               txt = rings.text;
 
@@ -262,25 +276,28 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
   }
 }
 
+/* Draw great circle and rhumb line distance measurment lines */
 void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 {
   GeoPainter *painter = context->painter;
-
   QFontMetrics metrics = painter->fontMetrics();
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
+    // Get color from marker
     painter->setPen(QPen(m.color, 2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
     const int SYMBOL_SIZE = 5;
     int x, y;
     if(wToS(m.from, x, y))
+      // Draw ellipse at start point
       painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
 
     if(wToS(m.to, x, y))
     {
+      // Draw cross at end point
       painter->drawLine(x - SYMBOL_SIZE, y, x + SYMBOL_SIZE, y);
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
     }
@@ -288,22 +305,22 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
     painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     if(!m.isRhumbLine)
     {
-      // Draw great circle route
+      // Draw great circle line
       float distanceMeter = m.from.distanceMeterTo(m.to);
 
       GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
       GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
 
+      // Draw line
       GeoDataLineString line;
       line.append(from);
       line.append(to);
       line.setTessellate(true);
       painter->drawPolyline(line);
 
-      qreal initBearing = normalizeCourse(
-        from.bearing(to, DEG, INITBRG));
-      qreal finalBearing = normalizeCourse(
-        from.bearing(to, DEG, FINALBRG));
+      // Build and draw text
+      qreal initBearing = normalizeCourse(from.bearing(to, DEG, INITBRG));
+      qreal finalBearing = normalizeCourse(from.bearing(to, DEG, FINALBRG));
 
       QStringList texts;
       if(!m.text.isEmpty())
@@ -312,6 +329,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
                    QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
       texts.append(atools::numberToString(meterToNm(distanceMeter)) + tr(" nm"));
       if(distanceMeter < 6000)
+        // Add feet to text for short distances
         texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + tr(" ft"));
 
       if(m.from != m.to)
@@ -337,6 +355,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 
       Pos p1 = m.from, p2;
 
+      // Draw line segments
       for(float d = 0.f; d < distanceMeter; d += distanceMeter / numPoints)
       {
         p2 = m.from.endpointRhumb(d, bearing);
@@ -347,12 +366,14 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
         p1 = p2;
       }
 
+      // Draw rest
       p2 = m.from.endpointRhumb(distanceMeter, bearing);
       GeoDataLineString line;
       line.append(GeoDataCoordinates(p1.getLonX(), p1.getLatY(), 0, DEG));
       line.append(GeoDataCoordinates(p2.getLonX(), p2.getLatY(), 0, DEG));
       painter->drawPolyline(line);
 
+      // Build and draw text
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
@@ -374,11 +395,13 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   }
 }
 
+/* Draw route dragging/moving lines */
 void MapPainterMark::paintRouteDrag(const PaintContext *context)
 {
   atools::geo::Pos from, to;
   QPoint cur;
 
+  // Flight plan editing use always three points except at the end
   mapWidget->getRouteDragPoints(from, to, cur);
   if(!cur.isNull())
   {
@@ -402,5 +425,4 @@ void MapPainterMark::paintRouteDrag(const PaintContext *context)
       }
     }
   }
-
 }

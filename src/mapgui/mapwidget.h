@@ -105,7 +105,7 @@ public:
     return homePos;
   }
 
-  const maptypes::MapSearchResult& getHighlightMapObjects() const;
+  const maptypes::MapSearchResult& getSearchHighlightMapObjects() const;
   const RouteMapObjectList& getRouteHighlightMapObjects() const;
 
   const QList<maptypes::RangeMarker>& getRangeRings() const;
@@ -159,7 +159,7 @@ public:
     return currentProjection;
   }
 
-  void updateMapShowFeatures();
+  void updateMapObjectsShown();
   void updateTooltip();
 
   const atools::fs::sc::SimConnectData& getSimData() const

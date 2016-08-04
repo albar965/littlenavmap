@@ -639,27 +639,6 @@ bool RouteController::hasValidDestination() const
   return route.hasValidDestination();
 }
 
-bool RouteController::hasValidParking() const
-{
-  if(hasValidStart())
-  {
-    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
-
-    int numParking = 0;
-    for(const maptypes::MapParking& p : *parkingCache)
-      if(p.type != "FUEL")
-        numParking++;
-
-    if(numParking > 0)
-      return route.hasDepartureParking() || route.hasDepartureHelipad();
-    else
-      // No parking available - so no parking selection is ok
-      return true;
-  }
-  else
-    return false;
-}
-
 bool RouteController::hasEntries() const
 {
   return route.hasEntries();
