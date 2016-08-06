@@ -64,7 +64,7 @@ void MapPainterMark::render(const PaintContext *context)
 void MapPainterMark::paintMark(const PaintContext *context)
 {
   int x, y;
-  if(wToS(mapWidget->getMarkPos(), x, y))
+  if(wToS(mapWidget->getSearchMarkPos(), x, y))
   {
     int size = context->symSize(10);
     int size2 = context->symSize(8);
@@ -131,7 +131,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 void MapPainterMark::paintHighlights(const PaintContext *context)
 {
   // Draw hightlights from the search result view ------------------------------------------
-  const MapSearchResult& highlightResults = mapWidget->getSearchHighlightMapObjects();
+  const MapSearchResult& highlightResults = mapWidget->getSearchHighlights();
   int size = context->symSize(6);
 
   QList<Pos> positions;
@@ -170,7 +170,7 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
   // Draw hightlights from the flight plan view ------------------------------------------
-  const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlightMapObjects();
+  const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlights();
   positions.clear();
   for(const RouteMapObject& rmo : routeHighlightResults)
     positions.append(rmo.getPosition());

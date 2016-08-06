@@ -429,7 +429,7 @@ void MainWindow::connectAllSlots()
 
   connect(routeController, &RouteController::showRect, mapWidget, &MapWidget::showRect);
   connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
-  connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeMark);
+  connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
   connect(routeController, &RouteController::showInformation,
           infoController, &InfoController::showInformation);
@@ -443,12 +443,13 @@ void MainWindow::connectAllSlots()
 
   connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(searchController->getAirportSearch(), &AirportSearch::changeMark, mapWidget, &MapWidget::changeMark);
+  connect(
+    searchController->getAirportSearch(), &AirportSearch::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &MapWidget::changeMark);
+  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getNavSearch(), &NavSearch::showInformation,
           infoController, &InfoController::showInformation);
 
@@ -499,7 +500,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
   // Map widget related connections
-  connect(mapWidget, &MapWidget::objectSelected, searchController, &SearchController::objectSelected);
+  connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
   connect(mapWidget, &MapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
   connect(mapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
@@ -574,7 +575,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, profileWidget,
           &ProfileWidget::deleteAircraftTrack);
 
-  connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showMark);
+  connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapWidget::showAircraft);
 
@@ -1045,7 +1046,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
   Q_UNUSED(total);
   RouteMapObjectList result;
   routeController->getSelectedRouteMapObjects(result);
-  mapWidget->changeRouteHighlight(result);
+  mapWidget->changeRouteHighlights(result);
 }
 
 /* Selection in one of the search result tables has changed */
@@ -1066,7 +1067,7 @@ void MainWindow::searchSelectionChanged(const Search *source, int selected, int 
 
   maptypes::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
-  mapWidget->changeHighlight(result);
+  mapWidget->changeSearchHighlights(result);
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
@@ -1123,6 +1124,11 @@ void MainWindow::setDetailLabelText(const QString& text)
 atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator()
 {
   return databaseManager->getCurrentSimulator();
+}
+
+atools::sql::SqlDatabase *MainWindow::getDatabase() const
+{
+  return databaseManager->getDatabase();
 }
 
 /* From menu: Show options dialog */
@@ -1215,7 +1221,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteReverse->setEnabled(hasFlightplan);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
-  ui->actionMapShowMark->setEnabled(mapWidget->getMarkPos().isValid());
+  ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
 }
 
 /* Read settings for all windows, docks, controller and manager classes */

@@ -45,6 +45,10 @@ class ElevationModel;
 }
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+
 namespace gui {
 class Dialog;
 class ErrorHandler;
@@ -114,6 +118,8 @@ public:
   void setDetailLabelText(const QString& text);
 
   atools::fs::FsPaths::SimulatorType getCurrentSimulator();
+
+  atools::sql::SqlDatabase *getDatabase() const;
 
 signals:
   /* Emitted when window is shown the first time */

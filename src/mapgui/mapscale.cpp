@@ -30,33 +30,38 @@ MapScale::MapScale()
 
 }
 
-bool MapScale::update(ViewportParams *viewportParams, double distance)
+bool MapScale::update(ViewportParams *viewport, double distance)
 {
-  viewport = viewportParams;
-  CoordinateConverter converter(viewportParams);
+  CoordinateConverter converter(viewport);
 
   if(distance != lastDistance ||
-     viewport->centerLatitude() != lastCenterLatY || viewport->centerLongitude() !=
-     lastCenterLonX || viewport->projection() != lastProjection)
+     viewport->centerLatitude() != lastCenterLatYRad ||
+     viewport->centerLongitude() != lastCenterLonXRad ||
+     viewport->projection() != lastProjection)
   {
+    // zoom, center of projection has changed
     lastDistance = distance;
-    lastCenterLonX = viewportParams->centerLongitude();
-    lastCenterLatY = viewportParams->centerLatitude();
+    lastCenterLonXRad = viewport->centerLongitude();
+    lastCenterLatYRad = viewport->centerLatitude();
     lastProjection = viewport->projection();
 
-    scales.clear();
-    Pos center(lastCenterLonX, lastCenterLatY);
+    // Calculate center point on screen
+    Pos center(lastCenterLonXRad, lastCenterLatYRad);
     center.toDeg();
     double screenCenterX, screenCenterY;
     converter.wToS(center, screenCenterX, screenCenterY);
 
-    for(int i = 0; i <= 360; i += 45)
+    // Fill the scale vector
+    scales.clear();
+    for(int compassDirection = 0; compassDirection <= 360; compassDirection += 45)
     {
       double screenEndX, screenEndY;
-      converter.wToS(center.endpoint(1000., i).normalize(), screenEndX, screenEndY);
 
-      scales.append(sqrt((screenCenterX - screenEndX) * (screenCenterX - screenEndX) +
-                         (screenCenterY - screenEndY) * (screenCenterY - screenEndY)));
+      // Calculate screen coordinates for an point that is in the given direction in 1 km distance
+      converter.wToS(center.endpoint(1000.f, compassDirection).normalize(), screenEndX, screenEndY);
+
+      // Calculate the screen distance in pixels between the two points that are 1 km apart
+      scales.append(atools::geo::simpleDistanceF(screenCenterX, screenCenterY, screenEndX, screenEndY));
     }
     return true;
   }
@@ -68,12 +73,9 @@ QSize MapScale::getScreeenSizeForRect(const atools::geo::Rect& rect) const
   int topWidth = getPixelIntForMeter(rect.getTopLeft().distanceMeterTo(rect.getTopRight()), 90.f);
   int bottomWidth = getPixelIntForMeter(rect.getBottomLeft().distanceMeterTo(rect.getBottomRight()), 90.f);
   int height = getPixelIntForMeter(rect.getBottomCenter().distanceMeterTo(rect.getTopCenter()), 180);
-  return QSize(std::max(topWidth, bottomWidth) * 2, height * 2);
-}
 
-float MapScale::getDegreePerPixel(int px) const
-{
-  return static_cast<float>(toDegree(viewport->angularResolution()) * static_cast<double>(px));
+  // Use maximum of top width and bottom width
+  return QSize(std::max(topWidth, bottomWidth) * 2, height * 2);
 }
 
 int MapScale::getPixelIntForMeter(float meter, float directionDeg) const
@@ -88,22 +90,19 @@ int MapScale::getPixelIntForFeet(int feet, float directionDeg) const
 
 float MapScale::getPixelForMeter(float meter, float directionDeg) const
 {
-  while(directionDeg >= 360.f)
-    directionDeg -= 360.f;
-  while(directionDeg < 0.f)
-    directionDeg += 360.f;
+  directionDeg = atools::geo::normalizeCourse(directionDeg);
 
   int octant = static_cast<int>(directionDeg / 45);
   int lowerDeg = octant * 45;
   int upperDeg = (octant + 1) * 45;
-  double lowerScale = scales.at(octant);
-  double upperScale = scales.at(octant + 1);
+  float lowerScale = scales.at(octant);
+  float upperScale = scales.at(octant + 1);
 
-  // Screen pixel per km
-  double interpolatedScale = lowerScale + (upperScale - lowerScale) *
-                             (directionDeg - lowerDeg) /
-                             (upperDeg - lowerDeg);
-  return static_cast<float>(interpolatedScale * static_cast<double>(meter) / 1000.);
+  // Screen pixel per km interpolated between upper and lower calculated octant value
+  float pixelPerKm = lowerScale + (upperScale - lowerScale) * (directionDeg - lowerDeg) /
+                     (upperDeg - lowerDeg);
+
+  return pixelPerKm * meter / 1000.f;
 }
 
 float MapScale::getPixelForFeet(int feet, float directionDeg) const
@@ -117,8 +116,8 @@ QDebug operator<<(QDebug out, const MapScale& scale)
 
   out << "Scale["
   << "lastDistance" << scale.lastDistance
-  << "lastCenterLonX" << scale.lastCenterLonX
-  << "lastCenterLatY" << scale.lastCenterLatY
+  << "lastCenterLonX" << scale.lastCenterLonXRad
+  << "lastCenterLatY" << scale.lastCenterLatYRad
   << scale.scales << "]";
   return out;
 }

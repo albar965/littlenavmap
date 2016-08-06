@@ -88,8 +88,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  routeNetworkRadio = new RouteNetworkRadio(query->getDatabase());
-  routeNetworkAirway = new RouteNetworkAirway(query->getDatabase());
+  routeNetworkRadio = new RouteNetworkRadio(mainWindow->getDatabase());
+  routeNetworkAirway = new RouteNetworkAirway(mainWindow->getDatabase());
 
   undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);

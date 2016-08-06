@@ -33,6 +33,7 @@ MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *wea
 #if defined(Q_OS_WIN32)
   iconBackColor = QColor(Qt::transparent);
 #else
+  // Avoid unreadable icons for some linux distributions that have a black tooltip background
   iconBackColor = QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase);
 #endif
 }
@@ -50,10 +51,10 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   HtmlInfoBuilder info(query, nullptr, false);
   int numEntries = 0;
 
+  // Append HTML text for all objects found in order of importance (airports first, etc.)
+  // Objects are separated by a horizontal ruler
   for(const MapAirport& ap : mapSearchResult.airports)
   {
-    qDebug() << "Airport" << ap.ident << "id" << ap.id;
-
     if(checkText(html, numEntries))
       break;
 
@@ -68,8 +69,6 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapVor& vor : mapSearchResult.vors)
   {
-    qDebug() << "Vor" << vor.ident << "id" << vor.id;
-
     if(checkText(html, numEntries))
       break;
 
@@ -84,8 +83,6 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapNdb& ndb : mapSearchResult.ndbs)
   {
-    qDebug() << "Ndb" << ndb.ident << "id" << ndb.id;
-
     if(checkText(html, numEntries))
       break;
 
@@ -100,8 +97,6 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapWaypoint& wp : mapSearchResult.waypoints)
   {
-    qDebug() << "Waypoint" << wp.ident << "id" << wp.id;
-
     if(checkText(html, numEntries))
       break;
 
@@ -116,8 +111,6 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
   for(const MapAirway& airway : mapSearchResult.airways)
   {
-    qDebug() << "Airway" << airway.name << "id" << airway.id;
-
     if(checkText(html, numEntries))
       break;
 
@@ -199,10 +192,10 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     html.pEnd();
     numEntries++;
   }
-  // qDebug() << html.getHtml();
   return html.getHtml();
 }
 
+/* Check if the result HTML has more than the allowed number of lines and add a "more" text */
 bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
 {
   if(numEntries > 3)

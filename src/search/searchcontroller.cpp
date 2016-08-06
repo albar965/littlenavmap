@@ -126,8 +126,8 @@ void SearchController::postDatabaseLoad()
     search->postDatabaseLoad();
 }
 
-void SearchController::objectSelected(maptypes::MapObjectTypes type, const QString& ident,
-                                      const QString& region, const QString& airportIdent)
+void SearchController::showInSearch(maptypes::MapObjectTypes type, const QString& ident,
+                                    const QString& region, const QString& airportIdent)
 {
   qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
 

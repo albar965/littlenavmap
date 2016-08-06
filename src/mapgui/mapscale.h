@@ -30,24 +30,33 @@ class Rect;
 }
 }
 
+/*
+ * Provides functionality to approximate a screen distance in pixel for the map.
+ * Updates internal values for eight compass directions on zoom distance change
+ * to avoid complex calculations during painting.
+ */
 class MapScale
 {
-private:
-  static Q_DECL_CONSTEXPR float DEFAULT_ANGLE = 45.f;
-
 public:
   MapScale();
 
-  bool update(Marble::ViewportParams *viewportParams, double distance);
+  /* Update internal values */
+  bool update(Marble::ViewportParams *viewport, double distance);
 
+  /* Use if angle is unknown */
+  static Q_DECL_CONSTEXPR float DEFAULT_ANGLE = 45.f;
+
+  /* Convert length unit into screen pixels for the given direction. This approximation loses accuracy with
+   *  higher zoom distances. */
   float getPixelForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
   float getPixelForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
   int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
   int getPixelIntForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
 
-  float getDegreePerPixel(int px) const;
+  /*Get an approximation in screen pixes for the given coordinate rectangle */
   QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;
 
+  /* @return true if initialized */
   bool isValid() const
   {
     return !scales.isEmpty();
@@ -56,12 +65,12 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const MapScale& scale);
 
-  Marble::ViewportParams *viewport;
-  double lastDistance = 0., lastCenterLonX = 0., lastCenterLatY = 0.;
-  Marble::Projection lastProjection = Marble::VerticalPerspective; // never used
+  /* Store some values that can be used to check if the view has changed */
+  Marble::Projection lastProjection = Marble::VerticalPerspective; // VerticalPerspective is never used
+  double lastDistance = 0., lastCenterLonXRad = 0., lastCenterLatYRad = 0.;
 
   /* Screen pixel per km for eight directions */
-  QVector<double> scales;
+  QVector<float> scales;
 };
 
 #endif // LITTLENAVMAP_MAPSCALE_H

@@ -47,6 +47,12 @@ public:
    */
   MapLayer clone(float maximumRange) const;
 
+  /* @return true if a query for this layer will give the same result set */
+  bool hasSameQueryParameters(const MapLayer *other) const
+  {
+    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
+  }
+
   /* Show airports */
   MapLayer& airport(bool value = true);
 
@@ -304,11 +310,6 @@ public:
   bool isAirwayInfo() const
   {
     return layerAirwayInfo;
-  }
-
-  bool hasSameQueryParameters(const MapLayer *other) const
-  {
-    return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
   }
 
   int getWaypointSymbolSize() const

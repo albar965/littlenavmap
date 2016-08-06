@@ -65,7 +65,7 @@ public:
   void optionsChanged();
 
 signals:
-  void highlightProfilePoint(atools::geo::Pos pos);
+  void highlightProfilePoint(const atools::geo::Pos& pos);
 
 private:
   struct ElevationLeg

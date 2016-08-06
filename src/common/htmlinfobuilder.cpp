@@ -105,7 +105,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   html.br();
 
   QString city, state, country;
-  mapQuery->getAirportAdminById(airport.id, city, state, country);
+  mapQuery->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
   if(routeMapObjects != nullptr && airport.routeIndex != -1)

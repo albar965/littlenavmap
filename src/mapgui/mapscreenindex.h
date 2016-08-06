@@ -32,42 +32,97 @@ class GeoDataLatLonAltBox;
 class MapWidget;
 class MapPaintLayer;
 
+/*
+ * Keeps an indes of certain map objects like flight plan lines, airway lines in screen coordinates
+ * to allow mouse over reaction.
+ * Also maintains distance measurement lines and range rings.
+ * All get nearest methods return objects sorted by distance
+ */
 class MapScreenIndex
 {
 public:
   MapScreenIndex(MapWidget *parentWidget, MapQuery *mapQueryParam, MapPaintLayer *mapPaintLayer);
   ~MapScreenIndex();
 
-  void getAllNearest(int xs, int ys, int screenDistance, maptypes::MapSearchResult& mapSearchResult);
-  void getNearestAirways(int xs, int ys, int screenDistance, maptypes::MapSearchResult& result);
-  void getNearestHighlights(int xs, int ys, int screenDistance, maptypes::MapSearchResult& mapobjects);
+  /*
+   * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
+   * Gets airways, visible map objects like airports, navaids and lightlighted objects.
+   * @param result Result ordered by distance to xs/ys
+   * @param xs/ys Screen coordinates.
+   * @param maxDistance maximum distance to xs/ys
+   */
+  void getAllNearest(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
 
-  int getNearestDistanceMarksIndex(int xs, int ys, int screenDistance);
-  int getNearestRangeMarkIndex(int xs, int ys, int screenDistance);
-  int getNearestRouteLegIndex(int xs, int ys, int screenDistance);
-  int getNearestRoutePointIndex(int xs, int ys, int screenDistance);
+  /* Get nearest distance measurement line index (only the endpoint)
+   * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
+  int getNearestDistanceMarkIndex(int xs, int ys, int maxDistance);
 
+  /* Get nearest range rings index (only the centerpoint)
+   * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
+  int getNearestRangeMarkIndex(int xs, int ys, int maxDistance);
+
+  /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
+  int getNearestRouteLegIndex(int xs, int ys, int maxDistance);
+
+  /* Get index of nearest flight plan waypoint or -1 if nothing was found nearby. */
+  int getNearestRoutePointIndex(int xs, int ys, int maxDistance);
+
+  /* Update geometry after a route or scroll or map change */
   void updateRouteScreenGeometry();
-  void updateAirwayScreenLines(const Marble::GeoDataLatLonAltBox& curBox);
+  void updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBox& curBox);
 
+  /* Save and restore distance markers and range rings */
   void saveState();
   void restoreState();
 
-  RouteMapObjectList& getRouteHighlights();
-  const RouteMapObjectList& getRouteHighlights() const;
+  /* Get objects that are highlighted because of selected flight plan legs in the table */
+  RouteMapObjectList& getRouteHighlights()
+  {
+    return routeHighlights;
+  }
 
-  maptypes::MapSearchResult& getHighlights();
-  const maptypes::MapSearchResult& getHighlights() const;
+  const RouteMapObjectList& getRouteHighlights() const
+  {
+    return routeHighlights;
+  }
 
-  QList<maptypes::RangeMarker>& getRangeMarks();
+  /* Get objects that are highlighted because of selected rows in a search result table */
+  maptypes::MapSearchResult& getSearchHighlights()
+  {
+    return highlights;
+  }
 
-  const QList<maptypes::RangeMarker>& getRangeMarks() const;
+  const maptypes::MapSearchResult& getSearchHighlights() const
+  {
+    return highlights;
+  }
 
-  QList<maptypes::DistanceMarker>& getDistanceMarks();
+  /* Get range rings */
+  QList<maptypes::RangeMarker>& getRangeMarks()
+  {
+    return rangeMarks;
+  }
 
-  const QList<maptypes::DistanceMarker>& getDistanceMarks() const;
+  const QList<maptypes::RangeMarker>& getRangeMarks() const
+  {
+    return rangeMarks;
+  }
+
+  /* Get distance measurment lines */
+  QList<maptypes::DistanceMarker>& getDistanceMarks()
+  {
+    return distanceMarks;
+  }
+
+  const QList<maptypes::DistanceMarker>& getDistanceMarks() const
+  {
+    return distanceMarks;
+  }
 
 private:
+  void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+  void getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+
   MapWidget *mapWidget;
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;

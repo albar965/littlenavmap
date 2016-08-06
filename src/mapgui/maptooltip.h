@@ -36,6 +36,9 @@ class HtmlBuilder;
 }
 }
 
+/*
+ * Builds a HTML tooltip for map display with a maximum length of 20 lines.
+ */
 class MapTooltip :
   public QObject
 {
@@ -45,6 +48,15 @@ public:
   MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter);
   virtual ~MapTooltip();
 
+  /*
+   * Build a HTML map tooltip also containing icons. Content is similar to the information panel.
+   * @param mapSearchResult filled from get nearest methods. All objects will be added until the
+   * maximum number of lines is reached.
+   * @param routeMapObjects Needed to access route objects
+   * @param airportDiagram set to true if the tooltip should also cover objects that are
+   * displayed in airport diagrams.
+   * @return HTML code of the tooltip
+   */
   QString buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
                        const RouteMapObjectList& routeMapObjects,
                        bool airportDiagram);

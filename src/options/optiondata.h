@@ -95,7 +95,7 @@ enum SimUpdateRate
 
 }
 
-/* All default values are defined in this class */
+/* All default values are defined in this class. TODO not true */
 class OptionData
 {
 public:

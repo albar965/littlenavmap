@@ -138,20 +138,15 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
             else
             {
               // Runway or helipad
-              QList<maptypes::MapStart> starts;
-              query->getStartByNameAndPos(starts, airport.id, name, flightplan->getDeparturePosition());
+              query->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
 
-              if(starts.isEmpty())
+              if(!start.position.isValid())
               {
                 qWarning() << "Found no start positions";
                 flightplan->setDepartureParkingName(QString());
               }
               else
               {
-                if(starts.size() > 1)
-                  qWarning() << "Found multiple start positions";
-
-                start = starts.first();
                 if(start.helipadNumber > 0)
                   // Helicopter pad
                   flightplan->setDepartureParkingName(QString::number(start.helipadNumber));
@@ -159,7 +154,6 @@ void RouteMapObject::loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *p
                   // Runway name
                   flightplan->setDepartureParkingName(start.runwayName);
               }
-
             }
           }
         }

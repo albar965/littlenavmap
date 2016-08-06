@@ -22,7 +22,9 @@
 
 #include <QList>
 
-/* A list of map layers that defines what is painted at what zoom distance */
+/*
+ * A list of map layers that defines what is painted at what zoom distance
+ */
 class MapLayerSettings
 {
 public:

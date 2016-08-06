@@ -403,7 +403,7 @@ void DatabaseManager::run()
 }
 
 /* Shows scenery database loading dialog.
- * @return true if execution was successfull. false if it was canceled */
+ * @return true if execution was successfull. false if it was cancelled */
 bool DatabaseManager::runInternal()
 {
   bool reopenDialog = true;
@@ -458,7 +458,7 @@ bool DatabaseManager::runInternal()
 }
 
 /* Opens progress dialog and loads scenery
- * @return true if loading was successfull. false if canceled or an error occured */
+ * @return true if loading was successfull. false if cancelled or an error occured */
 bool DatabaseManager::loadScenery()
 {
   using atools::fs::NavDatabaseOptions;
@@ -538,7 +538,7 @@ bool DatabaseManager::loadScenery()
     success = false;
 
   if(!success)
-    // Something went wrong of loading was canceled - restore backup
+    // Something went wrong of loading was cancelled - restore backup
     restoreDatabaseFileBackup();
 
   // Delete backup file anyway after success of restore

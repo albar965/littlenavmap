@@ -53,37 +53,45 @@ public:
   MapPaintLayer(MapWidget *widget, MapQuery *mapQueries);
   virtual ~MapPaintLayer();
 
+  /* Sets databaseLoadStatus to avoid painting while database is offline */
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Get the current map layer for the zoom distance and detail level */
   const MapLayer *getMapLayer() const
   {
     return mapLayer;
   }
 
+  /* Get the current map layer for the zoom distance. This layer is independent of any detail level changes */
   const MapLayer *getMapLayerEffective() const
   {
     return mapLayerEffective;
   }
 
-  void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
+  /* Set the flags for map objects on or off depending on value show. Does not repaint */
+  void setShowMapObjects(maptypes::MapObjectTypes type, bool show);
+
+  /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
 
-  maptypes::MapObjectTypes getShownMapFeatures() const
+  /* Get all shown map objects like airports, VOR, NDB, etc. */
+  maptypes::MapObjectTypes getShownMapObjects() const
   {
     return objectTypes;
   }
 
+  /* Get the map scale that allows simple distance approximations for screen coordinates */
   const MapScale *getMapScale() const
   {
     return mapScale;
   }
 
 private:
-  void initLayers();
+  void initMapLayerSettings();
   void updateLayers();
 
-  // Implemented from LayerInterface
+  /* Implemented from LayerInterface: We  draw above all but below user tools */
   virtual QStringList renderPosition() const override
   {
     return QStringList("ORBIT");
@@ -93,14 +101,18 @@ private:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
-  /* Do not show anything at all above this limit */
+  /* Do not show anything at all above this zoom distance */
   static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
+  /* Map objects currently shown */
   maptypes::MapObjectTypes objectTypes;
+
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;
 
   bool databaseLoadStatus = false;
+
+  /* All painters */
   MapPainterAirport *mapPainterAirport;
   MapPainterNav *mapPainterNav;
   MapPainterIls *mapPainterIls;
@@ -108,7 +120,9 @@ private:
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
 
+  /* Database source */
   MapQuery *mapQuery = nullptr;
+
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapWidget *mapWidget = nullptr;

@@ -58,8 +58,8 @@ public:
   AirportSearch *getAirportSearch() const;
   NavSearch *getNavSearch() const;
 
-  void objectSelected(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
-                      const QString& airportIdent);
+  void showInSearch(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
+                    const QString& airportIdent);
 
   void tabChanged(int index);
 
