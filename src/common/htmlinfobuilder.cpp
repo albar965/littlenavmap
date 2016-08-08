@@ -766,11 +766,11 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
     {
       QStringList waypointTexts;
       for(const SqlRecord& wprec : waypoints)
-        waypointTexts.append(wprec.valueStr("from_ident") + tr(", ") + wprec.valueStr("from_region"));
-      waypointTexts.append(waypoints.last().valueStr("to_ident") + ", " +
+        waypointTexts.append(wprec.valueStr("from_ident") + tr("/") + wprec.valueStr("from_region"));
+      waypointTexts.append(waypoints.last().valueStr("to_ident") + "/" +
                            waypoints.last().valueStr("to_region"));
 
-      html.row2(tr("Waypoints Ident and Region:"), waypointTexts.join(", "));
+      html.row2(tr("Waypoints Ident/Region:"), waypointTexts.join(", "));
     }
   }
   html.tableEnd();
