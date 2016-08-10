@@ -30,8 +30,7 @@ class QSpinBox;
 /*
  * A column descriptor defines query and view behaviour for each column. Key is
  * the column or alias name of the query result. The column name for the table
- * view header is also stored. This also includes columns in group by queries
- * that aggregate values.
+ * view header is also stored.
  */
 class Column
 {
@@ -47,23 +46,8 @@ public:
   Column(const QString& columnName, const QString& columnDisplayName = QString());
   Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName = QString());
 
-  /* Show column in grouping queries */
-  Column& groupShow(bool b = true);
-
-  /* Can calculate minimum value in grouping query */
-  Column& canMin(bool b = true);
-
-  /* Can calculate maximum value in grouping query */
-  Column& canMax(bool b = true);
-
-  /* Can summarize value in grouping query */
-  Column& canSum(bool b = true);
-
   /* Column can be used in filters */
   Column& filter(bool b = true);
-
-  /* Column can be used in group by */
-  Column& group(bool b = true);
 
   /* Table can not be sorted by this column */
   Column& noSort(bool b = true);
@@ -76,9 +60,6 @@ public:
 
   /* Column is defining sort order in default view */
   Column& defaultSort(bool b = true);
-
-  /* Column is always add using "and" to the search criteria */
-  Column& alwaysAnd(bool b = true);
 
   /* Sort function for column */
   Column& sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc);
@@ -102,34 +83,9 @@ public:
 
   Column& condition(const QString& cond);
 
-  bool isGroupShow() const
-  {
-    return colGroupByShow;
-  }
-
-  bool isMin() const
-  {
-    return colGroupByMin;
-  }
-
-  bool isMax() const
-  {
-    return colGroupByMax;
-  }
-
-  bool isSum() const
-  {
-    return colGroupBySum;
-  }
-
   bool isFilter() const
   {
     return colCanBeFiltered;
-  }
-
-  bool isGroup() const
-  {
-    return colCanBeGrouped;
   }
 
   bool isNoSort() const
@@ -276,12 +232,7 @@ private:
 
   int index = -1;
 
-  bool colGroupByShow = false;
-  bool colGroupByMin = false;
-  bool colGroupByMax = false;
-  bool colGroupBySum = false;
   bool colCanBeFiltered = false;
-  bool colCanBeGrouped = false;
   bool colCanNotBeSorted = false;
   bool colIsNoDefaultColumn = false;
   bool colIsDefaultSortColumn = false;

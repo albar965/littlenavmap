@@ -34,39 +34,9 @@ Column::Column(const QString& columnName, QWidget *widget, const QString& column
 
 }
 
-Column& Column::groupShow(bool b)
-{
-  colGroupByShow = b;
-  return *this;
-}
-
-Column& Column::canMin(bool b)
-{
-  colGroupByMin = b;
-  return *this;
-}
-
-Column& Column::canMax(bool b)
-{
-  colGroupByMax = b;
-  return *this;
-}
-
-Column& Column::canSum(bool b)
-{
-  colGroupBySum = b;
-  return *this;
-}
-
 Column& Column::filter(bool b)
 {
   colCanBeFiltered = b;
-  return *this;
-}
-
-Column& Column::group(bool b)
-{
-  colCanBeGrouped = b;
   return *this;
 }
 
@@ -94,11 +64,6 @@ Column& Column::defaultSort(bool b)
   return *this;
 }
 
-Column& Column::alwaysAnd(bool b)
-{
-  colIsAlwaysAndColumn = b;
-  return *this;
-}
 
 Column& Column::sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc)
 {

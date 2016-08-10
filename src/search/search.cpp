@@ -424,7 +424,7 @@ void Search::contextMenu(const QPoint& pos)
 
   Ui::MainWindow *ui = mainWindow->getUi();
   QString header, fieldData = "Data";
-  bool columnCanFilter = false, columnCanGroup = false;
+  bool columnCanFilter = false;
   maptypes::MapObjectTypes navType = maptypes::NONE;
   int id = -1;
 
@@ -440,15 +440,6 @@ void Search::contextMenu(const QPoint& pos)
     const Column *columnDescriptor = columns->getColumn(index.column());
     Q_ASSERT(columnDescriptor != nullptr);
     columnCanFilter = columnDescriptor->isFilter();
-    columnCanGroup = columnDescriptor->isGroup();
-
-    if(columnCanGroup)
-    {
-      header = controller->getHeaderNameAt(index);
-      Q_ASSERT(!header.isNull());
-      // strip LF and other from header name
-      header.replace("-\n", "").replace("\n", " ");
-    }
 
     if(columnCanFilter)
       // Disabled menu items don't need any content

@@ -153,12 +153,6 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
   buildQuery();
 }
 
-void SqlModel::filterOperator(const QString& op)
-{
-  whereOperator = op;
-  buildQuery();
-}
-
 QVariant SqlModel::getFormattedFieldData(const QModelIndex& index) const
 {
   return data(index);
@@ -257,16 +251,6 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
   whereConditionMap.insert(whereCol, {whereOp, whereValue, col});
 }
 
-void SqlModel::groupByColumn(QModelIndex index)
-{
-  groupByCol = record().fieldName(index.column());
-  orderByCol = groupByCol;
-  orderByOrder = "asc";
-  clearWhereConditions();
-  buildQuery();
-  fillHeaderData();
-}
-
 void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
 {
   orderByColIndex = record().indexOf(colname);
@@ -298,7 +282,6 @@ void SqlModel::reset()
 {
   orderByCol.clear();
   orderByOrder.clear();
-  groupByCol.clear();
   clearWhereConditions();
   buildQuery();
   fillHeaderData();
@@ -317,19 +300,6 @@ void SqlModel::clearWhereConditions()
   boundingRect = atools::geo::Rect();
 }
 
-void SqlModel::ungroup()
-{
-  clearWhereConditions();
-  groupByCol.clear();
-
-  // Restore last sort order
-  orderByCol = lastOrderByCol;
-  orderByOrder = sortOrderToSql(lastOrderByOrder);
-
-  buildQuery();
-  fillHeaderData();
-}
-
 void SqlModel::fillHeaderData()
 {
   int cnt = record().count();
@@ -343,21 +313,6 @@ void SqlModel::fillHeaderData()
     if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isDistance()))
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
   }
-}
-
-bool SqlModel::isGrouped() const
-{
-  return !groupByCol.isEmpty();
-}
-
-int SqlModel::getLastSortIndex() const
-{
-  return record().indexOf(lastOrderByCol);
-}
-
-Qt::SortOrder SqlModel::getLastSortOrder() const
-{
-  return lastOrderByOrder;
 }
 
 const Column *SqlModel::getColumnModel(const QString& colName) const
@@ -393,12 +348,6 @@ void SqlModel::sort(int column, Qt::SortOrder order)
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
 
-  if(groupByCol.isEmpty())
-  {
-    // Remember this sort order for the next ungroup
-    lastOrderByCol = orderByCol;
-    lastOrderByOrder = order;
-  }
   buildQuery();
 }
 
@@ -409,29 +358,9 @@ QString SqlModel::buildColumnList()
   {
     if(col->isDistance())
       colNames.append("null as " + col->getColumnName());
-    else if(groupByCol.isEmpty())
-      // Not grouping - default view
-      // if(col->isNoDefaultCol() /*|| !col->isHiddenCol()*/)
-      colNames.append(col->getColumnName());
-    else if(col->getColumnName() == groupByCol || col->isGroupShow())
-      // Add the group by column
-      colNames.append(col->getColumnName());
     else
-    {
-      // Add all aggregate columns
-      QString cname = col->getColumnName();
-      if(col->isMin())
-        colNames.append("min(" + cname + ") as " + cname + "_min");
-      if(col->isMax())
-        colNames.append("max(" + cname + ") as " + cname + "_max");
-      if(col->isSum())
-        colNames.append("sum(" + cname + ") as " + cname + "_sum");
-    }
+      colNames.append(col->getColumnName());
   }
-
-  if(!groupByCol.isEmpty())
-    // Always add total count when grouping
-    colNames.append("count(*) as num_flights");
 
   // Concatenate to one string
   QString queryCols;
@@ -470,28 +399,14 @@ QString SqlModel::buildWhere()
   int numCond = 0, numAndCond = 0;
   for(const WhereCondition& cond : whereConditionMap)
   {
-    if(!cond.col->alwaysAnd())
-    {
-      if(numCond++ > 0)
-        queryWhere += " " + whereOperator + " ";
-      if(cond.col->isIncludesName())
-        queryWhere += " " + cond.oper + " ";
-      else
-        queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
-      if(!cond.value.isNull())
-        queryWhere += buildWhereValue(cond);
-    }
+    if(numCond++ > 0)
+      queryWhere += " " + WHERE_OPERATOR + " ";
+    if(cond.col->isIncludesName())
+      queryWhere += " " + cond.oper + " ";
     else
-    {
-      if(numAndCond++ > 0)
-        queryWhereAnd += " and ";
-      if(cond.col->isIncludesName())
-        queryWhereAnd += " " + cond.oper + " ";
-      else
-        queryWhereAnd += cond.col->getColumnName() + " " + cond.oper + " ";
-      if(!cond.value.isNull())
-        queryWhereAnd += buildWhereValue(cond);
-    }
+      queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
+    if(!cond.value.isNull())
+      queryWhere += buildWhereValue(cond);
   }
 
   if(boundingRect.isValid())
@@ -514,7 +429,7 @@ QString SqlModel::buildWhere()
                  arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
 
     if(numCond > 0)
-      queryWhere += " " + whereOperator + " ";
+      queryWhere += " " + WHERE_OPERATOR + " ";
     queryWhere += rectCond;
     numCond++;
   }
@@ -541,10 +456,6 @@ void SqlModel::buildQuery()
 
   QString queryWhere = buildWhere();
 
-  QString queryGroup;
-  if(!groupByCol.isEmpty())
-    queryGroup += "group by " + groupByCol;
-
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
   if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isDistance())
@@ -566,17 +477,11 @@ void SqlModel::buildQuery()
   }
 
   currentSqlQuery = "select " + queryCols + " from " + columns->getTablename() +
-                    " " + queryWhere + " " + queryGroup + " " + queryOrder;
+                    " " + queryWhere + " " + queryOrder;
 
   // Build a query to find the total row count of the result
   totalRowCount = 0;
-  QString queryCount;
-  if(isGrouped())
-    queryCount = "select count(1) from "
-                 "(select count(" + groupByCol + ") from " +
-                 columns->getTablename() + " " + queryWhere + " " + queryGroup + ")";
-  else
-    queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
+  QString queryCount = "select count(1) from " + columns->getTablename() + " " + queryWhere;
 
   try
   {

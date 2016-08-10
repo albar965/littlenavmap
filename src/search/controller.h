@@ -47,11 +47,6 @@ public:
   Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~Controller();
 
-  /* Update logbook status if it has been loaded later */
-  void setHasLogbook(bool value);
-
-  void setHasAirports(bool value);
-
   /* Create a new SqlModel, build and execute a query */
   void prepareModel();
 
@@ -73,12 +68,6 @@ public:
   /* Filter excluding by text at the given index */
   void filterExcluding(const QModelIndex& index);
 
-  /* Group by column at the given index */
-  void groupByColumn(const QModelIndex& index);
-
-  /* Release grouping */
-  void ungroup();
-
   /* Set a filter by text from a line edit */
   void filterByLineEdit(const Column *col, const QString& text);
 
@@ -88,10 +77,6 @@ public:
   void filterBySpinBox(const Column *col, int value);
   void filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue);
 
-  /* Use "and" or "or" to combine searches */
-  void filterOperator(bool useAnd);
-
-  bool isGrouped() const;
   const QItemSelection getSelection() const;
 
   /* Get model index for the given cursor position */
@@ -123,10 +108,6 @@ public:
   /* Return field data formatted as in the table view */
   QString formatModelData(const QString& col, const QVariant& var) const;
   QVariantList getFormattedModelData(int row) const;
-
-  /* get values from the database */
-  QVariantList getRawModelData(int row) const;
-  QStringList getRawModelColumns() const;
 
   QVariant getRawData(int row, const QString& colname) const;
   QVariant getRawData(int row, int col) const;
@@ -174,11 +155,6 @@ public:
   SqlModel *getModel() const
   {
     return model;
-  }
-
-  SqlProxyModel *getProxyModel() const
-  {
-    return proxyModel;
   }
 
   void initRecord(atools::sql::SqlRecord& rec);

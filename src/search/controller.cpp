@@ -43,8 +43,7 @@ Controller::~Controller()
 
 void Controller::clearModel()
 {
-  if(!isGrouped())
-    saveTempViewState();
+  saveTempViewState();
 
   viewSetModel(nullptr);
 
@@ -254,58 +253,11 @@ void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int 
   }
 }
 
-void Controller::filterOperator(bool useAnd)
-{
-  view->clearSelection();
-  Q_ASSERT(model != nullptr);
-  if(useAnd)
-    model->filterOperator("and");
-  else
-    model->filterOperator("or");
-}
-
 void Controller::viewSetModel(QAbstractItemModel *newModel)
 {
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(newModel);
   delete m;
-}
-
-void Controller::groupByColumn(const QModelIndex& index)
-{
-  Q_ASSERT(model != nullptr);
-  Q_ASSERT(columns != nullptr);
-  Q_ASSERT(!isGrouped());
-
-  view->clearSelection();
-
-  saveTempViewState();
-
-  columns->clearWidgets();
-  // Disable all search widgets except the one for the group by column
-  columns->enableWidgets(false, {model->getSqlRecord().fieldName(index.column())});
-
-  model->groupByColumn(index);
-  processViewColumns();
-  // No column order or size stored for grouped views
-  view->resizeColumnsToContents();
-}
-
-void Controller::ungroup()
-{
-  Q_ASSERT(model != nullptr);
-  Q_ASSERT(columns != nullptr);
-
-  view->clearSelection();
-
-  columns->clearWidgets();
-  columns->enableWidgets(true);
-
-  model->ungroup();
-  processViewColumns();
-
-  if(!isGrouped())
-    restoreViewState();
 }
 
 void Controller::selectAll()
@@ -448,14 +400,6 @@ int Controller::getIdForRow(const QModelIndex& index)
     return -1;
 }
 
-bool Controller::isGrouped() const
-{
-  if(model != nullptr)
-    return model->isGrouped();
-  else
-    return false;
-}
-
 void Controller::processViewColumns()
 {
   Q_ASSERT(model != nullptr);
@@ -518,8 +462,7 @@ void Controller::prepareModel()
 
   model->fillHeaderData();
   processViewColumns();
-  if(!isGrouped())
-    restoreViewState();
+  restoreViewState();
 }
 
 void Controller::saveTempViewState()
@@ -607,11 +550,6 @@ QVariantList Controller::getFormattedModelData(int row) const
   return model->getFormattedRowData(row);
 }
 
-QVariantList Controller::getRawModelData(int row) const
-{
-  return model->getRawRowData(row);
-}
-
 void Controller::initRecord(atools::sql::SqlRecord& rec)
 {
   atools::sql::SqlRecord from = model->getSqlRecord();
@@ -644,11 +582,6 @@ QVariant Controller::getRawData(int row, int col) const
   if(proxyModel != nullptr)
     srow = toS(proxyModel->index(row, 0)).row();
   return model->getRawData(srow, col);
-}
-
-QStringList Controller::getRawModelColumns() const
-{
-  return model->getRawColumns();
 }
 
 QString Controller::getSortColumn() const

@@ -36,8 +36,7 @@ class Column;
 class ColumnList;
 
 /*
- * Extends the QSqlQueryModel and adds query building based on filters, ordering
- * and grouping.
+ * Extends the QSqlQueryModel and adds query building based on filters and ordering.
  */
 class SqlModel :
   public QSqlQueryModel
@@ -54,13 +53,7 @@ public:
   /* Creates an exclude filer for value at index in the table */
   void filterExcluding(QModelIndex index);
 
-  /* Group by the column at index */
-  void groupByColumn(QModelIndex index);
-
-  /* Release grouping and go back to default view */
-  void ungroup();
-
-  /* Clear all filters, sort order and grouping and go back to default view */
+  /* Clear all filters, sort order and go back to default view */
   void reset();
 
   /* clear all filters */
@@ -69,15 +62,6 @@ public:
   /* Set header captions based on current query and the descriptions in
    * ColumnList*/
   void fillHeaderData();
-
-  /* @return true if group by view is enabled */
-  bool isGrouped() const;
-
-  /* Get the sorted column index that was saved before grouping */
-  int getLastSortIndex() const;
-
-  /* Get the sort order that was saved before grouping */
-  Qt::SortOrder getLastSortOrder() const;
 
   /* Get descriptor for column name */
   const Column *getColumnModel(const QString& colName) const;
@@ -88,9 +72,6 @@ public:
   /* Add a filter for a column. Placeholder and negation will be adapted to SQL
    * query */
   void filter(const Column *col, const QVariant& value, const QVariant& maxValue = QVariant());
-
-  /* Operator to connect all conditions ("and" or "or") */
-  void filterOperator(const QString& op);
 
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
@@ -111,11 +92,6 @@ public:
   int getSortColumnIndex() const
   {
     return orderByColIndex;
-  }
-
-  QString groupByColumn() const
-  {
-    return groupByCol;
   }
 
   int getTotalRowCount() const
@@ -191,8 +167,7 @@ private:
 
   atools::geo::Rect boundingRect;
 
-  /* Build full list of columns to query including group by and aggregated
-   * columns */
+  /* Build full list of columns to query */
   QString buildColumnList();
 
   /* Build where statement */
@@ -208,7 +183,9 @@ private:
   void filterBy(QModelIndex index, bool exclude);
   QString  sortOrderToSql(Qt::SortOrder order);
 
-  QString groupByCol, orderByCol, orderByOrder, whereOperator = "and";
+  const QString WHERE_OPERATOR = "and";
+
+  QString orderByCol, orderByOrder;
   QString currentSqlQuery;
 
   int orderByColIndex = 0;
@@ -217,9 +194,6 @@ private:
   const ColumnList *columns;
   QWidget *parentWidget;
   int totalRowCount = 0;
-
-  QString lastOrderByCol;
-  Qt::SortOrder lastOrderByOrder = Qt::DescendingOrder;
 
   void clearWhereConditions();
 
