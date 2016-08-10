@@ -108,15 +108,14 @@ public:
   void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, int x, int y, int size,
                          bool isAirportDiagram, bool fast);
   void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
-                       textflags::TextFlags flags, int size, bool diagram, bool fill, bool fast);
+                       textflags::TextFlags flags, int size, bool diagram);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& waypoint, const QColor& col, int x,
-                          int y, int size, bool fill, bool fast);
+  void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
 
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
-                        textflags::TextFlags flags, int size, bool fill, bool fast);
+                        textflags::TextFlags flags, int size, bool fill);
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
   void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool routeFill,
@@ -124,15 +123,14 @@ public:
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y, textflags::TextFlags flags,
-                   int size, bool fill, bool fast);
+                   int size, bool fill);
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
-  void drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size, bool routeFill,
-                     bool fast);
+  void drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, textflags::TextFlags flags,
-                   int size, bool fill, bool fast);
+                   int size, bool fill);
 
   void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
                         bool fast);

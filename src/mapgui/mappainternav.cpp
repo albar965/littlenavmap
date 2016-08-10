@@ -233,14 +233,12 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
     if(visible)
     {
       int size = context->symSize(context->mapLayerEffective->getWaypointSymbolSize());
-      symbolPainter->drawWaypointSymbol(context->painter, waypoint, QColor(), x, y,
-                                        size, false, drawFast);
+      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false, drawFast);
 
       // If airways are drawn force display of the respecive waypoints
       if(context->mapLayer->isWaypointName() ||
          (context->mapLayer->isAirwayIdent() && (drawAirwayV || drawAirwayJ)))
-        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT,
-                                        size, false, drawFast);
+        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, false);
     }
   }
 }
@@ -266,7 +264,7 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
       else if(context->mapLayer->isVorIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, false, drawFast);
+      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, false);
     }
   }
 }
@@ -281,7 +279,7 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
     if(visible)
     {
       int size = context->symSize(context->mapLayerEffective->getNdbSymbolSize());
-      symbolPainter->drawNdbSymbol(context->painter, ndb, x, y, size, false, drawFast);
+      symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
 
       textflags::TextFlags flags;
 
@@ -290,7 +288,7 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
       else if(context->mapLayer->isNdbIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, false, drawFast);
+      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, false);
     }
   }
 }

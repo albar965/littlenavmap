@@ -339,10 +339,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     switch(rmo.getMapObjectType())
     {
       case maptypes::WAYPOINT:
-        symPainter.drawWaypointSymbol(&painter, rmo.getWaypoint(),
-                                      QColor(), symx, flightplanY, 8, true, false);
-        symPainter.drawWaypointText(&painter, rmo.getWaypoint(), symx - 5, flightplanY + 18,
-                                    flags, 10, true, false);
+        symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
+        symPainter.drawWaypointText(&painter, rmo.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
         break;
       case maptypes::USER:
         symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
@@ -350,8 +348,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
         break;
       case maptypes::INVALID:
-        symPainter.drawWaypointSymbol(&painter, rmo.getWaypoint(), mapcolors::routeInvalidPointColor,
-                                      symx, flightplanY, 8, true, false);
+        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true,
+                                      false);
         symPainter.textBox(&painter, {rmo.getIdent()}, mapcolors::routeInvalidPointColor,
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
         break;
@@ -367,14 +365,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     switch(rmo.getMapObjectType())
     {
       case maptypes::NDB:
-        symPainter.drawNdbSymbol(&painter, rmo.getNdb(), symx, flightplanY, 12, true, false);
+        symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
         symPainter.drawNdbText(&painter, rmo.getNdb(), symx - 5, flightplanY + 18,
-                               flags, 10, true, false);
+                               flags, 10, true);
         break;
       case maptypes::VOR:
         symPainter.drawVorSymbol(&painter, rmo.getVor(), symx, flightplanY, 12, true, false, false);
         symPainter.drawVorText(&painter, rmo.getVor(), symx - 5, flightplanY + 18,
-                               flags, 10, true, false);
+                               flags, 10, true);
         break;
     }
   }
@@ -391,8 +389,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(rmo.getMapObjectType() == maptypes::AIRPORT)
     {
       symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22,
-                                 flags, 10, false, true, false);
+      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22, flags, 10, false);
     }
   }
 

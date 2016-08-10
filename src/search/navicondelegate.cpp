@@ -43,6 +43,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());
   if(sqlModel == nullptr)
   {
+    // Convert index to source if distance search proxy is used
     const SqlProxyModel *sqlProxyModel = dynamic_cast<const SqlProxyModel *>(index.model());
     Q_ASSERT(sqlProxyModel != nullptr);
     sqlModel = dynamic_cast<const SqlModel *>(sqlProxyModel->sourceModel());
@@ -55,28 +56,30 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   opt.displayAlignment = Qt::AlignRight;
   opt.font.setBold(true);
 
-  int symSize = option.rect.height() - 4;
-  int x = option.rect.x() + symSize;
-  int y = option.rect.y() + symSize / 2 + 2;
-
   painter->setRenderHint(QPainter::Antialiasing);
   painter->setRenderHint(QPainter::TextAntialiasing);
 
   // Draw the text
   QStyledItemDelegate::paint(painter, opt, index);
 
+  // Get nav type from SQL model
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
 
+  int symbolSize = option.rect.height() - 4;
+  int x = option.rect.x() + symbolSize;
+  int y = option.rect.y() + symbolSize / 2 + 2;
+
   if(type == maptypes::WAYPOINT)
-    symbolPainter->drawWaypointSymbol(painter, maptypes::MapWaypoint(), QColor(), x, y, symSize, false, false);
+    // An empty waypoint is enough to draw the symbol
+    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
   else if(type == maptypes::NDB)
-    symbolPainter->drawNdbSymbol(painter, maptypes::MapNdb(), x, y, symSize, false, false);
+    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
   else if(type == maptypes::VOR)
   {
     maptypes::MapVor vor;
     vor.dmeOnly = navtype == "DME";
     vor.hasDme = navtype == "VORDME" || navtype == "DME";
-    symbolPainter->drawVorSymbol(painter, vor, x, y, symSize, false, false, 0);
+    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize, false, false, 0);
   }
 }

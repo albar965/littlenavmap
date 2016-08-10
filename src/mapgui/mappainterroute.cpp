@@ -300,7 +300,7 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
 
   symbolPainter->drawAirportText(context->painter, obj, x, y, flags,
                                  context->symSize(context->mapLayer->getAirportSymbolSize()),
-                                 context->mapLayer->isAirportDiagram(), true, false);
+                                 context->mapLayer->isAirportDiagram());
 }
 
 void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
@@ -322,12 +322,12 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   symbolPainter->drawVorText(context->painter, obj, x, y, flags,
-                             context->symSize(context->mapLayer->getVorSymbolSize()), true, false);
+                             context->symSize(context->mapLayer->getVorSymbolSize()), true);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
 {
-  symbolPainter->drawNdbSymbol(context->painter, obj, x, y,
+  symbolPainter->drawNdbSymbol(context->painter, x, y,
                                context->symSize(context->mapLayer->getNdbSymbolSize()), true, false);
 }
 
@@ -342,13 +342,13 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   symbolPainter->drawNdbText(context->painter, obj, x, y, flags,
-                             context->symSize(context->mapLayer->getNdbSymbolSize()), true, false);
+                             context->symSize(context->mapLayer->getNdbSymbolSize()), true);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y,
                                     const maptypes::MapWaypoint& obj)
 {
-  symbolPainter->drawWaypointSymbol(context->painter, obj, col, x, y,
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y,
                                     context->symSize(context->mapLayer->getWaypointSymbolSize()), true, false);
 }
 
@@ -360,7 +360,7 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
     flags |= textflags::IDENT;
 
   symbolPainter->drawWaypointText(context->painter, obj, x, y, flags,
-                                  context->symSize(context->mapLayer->getWaypointSymbolSize()), true, false);
+                                  context->symSize(context->mapLayer->getWaypointSymbolSize()), true);
 }
 
 /* Paint user defined waypoint */

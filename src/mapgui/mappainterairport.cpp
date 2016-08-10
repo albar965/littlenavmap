@@ -127,8 +127,7 @@ void MapPainterAirport::render(const PaintContext *context)
 
         symbolPainter->drawAirportText(context->painter, *airport, x, y, flags,
                                        context->symSize(context->mapLayerEffective->getAirportSymbolSize()),
-                                       context->mapLayerEffective->isAirportDiagram(), true,
-                                       context->drawFast);
+                                       context->mapLayerEffective->isAirportDiagram());
       }
     }
   }

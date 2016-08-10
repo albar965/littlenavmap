@@ -46,6 +46,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());
   if(sqlModel == nullptr)
   {
+    // Convert index to source if distance search proxy is used
     const SqlProxyModel *sqlProxyModel = dynamic_cast<const SqlProxyModel *>(index.model());
     Q_ASSERT(sqlProxyModel != nullptr);
     sqlModel = dynamic_cast<const SqlModel *>(sqlProxyModel->sourceModel());
@@ -53,6 +54,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   }
   Q_ASSERT(sqlModel != nullptr);
 
+  // Get airport from the SQL model
   maptypes::MapAirport ap;
   mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true);
 
@@ -70,7 +72,8 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Draw the text
   QStyledItemDelegate::paint(painter, opt, index);
 
-  int symSize = option.rect.height() - 4;
-  symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symSize, option.rect.y() + symSize / 2 + 2,
-                                   symSize, false, false);
+  // Draw the symbol
+  int symbolSize = option.rect.height() - 4;
+  symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symbolSize,
+                                   option.rect.y() + symbolSize / 2 + 2, symbolSize, false, false);
 }

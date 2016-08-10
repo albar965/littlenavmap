@@ -23,6 +23,9 @@
 class ColumnList;
 class SymbolPainter;
 
+/*
+ * Paints navaid icons into the "ident" cell of the search result table view.
+ */
 class NavIconDelegate :
   public QStyledItemDelegate
 {

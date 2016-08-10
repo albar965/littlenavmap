@@ -70,12 +70,12 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   else if(mapObj.getMapObjectType() == maptypes::VOR)
     symbolPainter->drawVorSymbol(painter, mapObj.getVor(), x, y, symbolSize, false, false, 0);
   else if(mapObj.getMapObjectType() == maptypes::NDB)
-    symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symbolSize, false, false);
+    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
-    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), QColor(), x, y, symbolSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::USER)
     symbolPainter->drawUserpointSymbol(painter, x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::INVALID)
-    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), mapcolors::routeInvalidPointColor,
-                                      x, y, symbolSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, mapcolors::routeInvalidPointColor, x, y, symbolSize,
+                                      false, false);
 }

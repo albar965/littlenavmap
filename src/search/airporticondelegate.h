@@ -24,6 +24,9 @@ class ColumnList;
 class SymbolPainter;
 class MapTypesFactory;
 
+/*
+ * Paints airport icons into the "ident" cell of the search result table view.
+ */
 class AirportIconDelegate :
   public QStyledItemDelegate
 {

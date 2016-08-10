@@ -80,7 +80,7 @@ QIcon SymbolPainter::createNdbIcon(const maptypes::MapNdb& ndb, int size)
   painter.setRenderHint(QPainter::TextAntialiasing, true);
   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-  SymbolPainter().drawNdbSymbol(&painter, ndb, size / 2, size / 2, size * 8 / 10, false, false);
+  SymbolPainter().drawNdbSymbol(&painter, size / 2, size / 2, size * 8 / 10, false, false);
   return QIcon(pixmap);
 }
 
@@ -93,7 +93,7 @@ QIcon SymbolPainter::createWaypointIcon(const maptypes::MapWaypoint& waypoint, i
   painter.setRenderHint(QPainter::TextAntialiasing, true);
   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-  SymbolPainter().drawWaypointSymbol(&painter, waypoint, QColor(), size / 2, size / 2, size / 2, false, false);
+  SymbolPainter().drawWaypointSymbol(&painter, QColor(), size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }
 
@@ -201,10 +201,9 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   painter->restore();
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const maptypes::MapWaypoint& waypoint,
-                                       const QColor& col, int x, int y, int size, bool fill, bool fast)
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size,
+                                       bool fill, bool fast)
 {
-  Q_UNUSED(waypoint);
   painter->save();
   painter->setBackgroundMode(Qt::TransparentMode);
   if(fill)
@@ -358,10 +357,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
   painter->restore();
 }
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, int size,
-                                  bool routeFill, bool fast)
+void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
-  Q_UNUSED(ndb);
   painter->save();
 
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -398,7 +395,6 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, const maptypes::MapNdb& ndb
 void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y,
                                      int size, bool fast)
 {
-  Q_UNUSED(marker);
   painter->save();
   int radius = size / 2;
 
@@ -423,9 +419,8 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill, bool fast)
+                                textflags::TextFlags flags, int size, bool fill)
 {
-  Q_UNUSED(fast);
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
@@ -451,10 +446,8 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill, bool fast)
+                                textflags::TextFlags flags, int size, bool fill)
 {
-  Q_UNUSED(fast);
-
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
@@ -480,10 +473,8 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
 }
 
 void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
-                                     textflags::TextFlags flags, int size, bool fill, bool fast)
+                                     textflags::TextFlags flags, int size, bool fill)
 {
-  Q_UNUSED(fast);
-
   QStringList texts;
 
   if(flags & textflags::IDENT)
@@ -504,11 +495,8 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
-                                    textflags::TextFlags flags, int size, bool diagram, bool fill, bool fast)
+                                    textflags::TextFlags flags, int size, bool diagram)
 {
-  Q_UNUSED(fill);
-  Q_UNUSED(fast);
-
   QStringList texts = airportTexts(flags, airport);
   if(!texts.isEmpty())
   {
