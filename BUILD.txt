@@ -5,17 +5,17 @@ Qt development packages of Core, Widgets, XML and SQL are needed with minimum ve
 Additionally my atools static library is needed.
 
 - Clone atools GIT repository
-- Clone littlelogbook GIT repository into the same directory
+- Clone littlenavmap GIT repository into the same directory
 
 Windows
 ------------------------------------------------------
 
 - Get and install Qt Creator from http://www.qt.io.
-- Import atools and littlelogbook into the workspace.
+- Import atools and littlenavmap into the workspace.
 - Configure the projects and enable shadow build for release or debug versions.
 -- For atools use the build directory of e.g.: "C:\Projects\atools\release"
--- For littlelogbook use the build directory of e.g.: "C:\Projects\littlelogbook\release"
-- Adapt the QT_BIN and GIT_BIN variables in "littlelogbook.pro".
+-- For littlenavmap use the build directory of e.g.: "C:\Projects\littlenavmap\release"
+- Adapt the QT_BIN and GIT_BIN variables in "littlenavmap.pro".
 - Run qmake from Qt Creator
 - Run lupdate Qt Creator
 - Build and run.
@@ -30,13 +30,13 @@ Linux
 Build atools according to instructions in BUILD.txt.
 
 To build release
-- mkdir littlelogbook/release
-- cd littlelogbook/release
-- qmake ../littlelogbook.pro
+- mkdir littlenavmap/release
+- cd littlenavmap/release
+- qmake ../littlenavmap.pro
 - make
 
 To build debug
-- mkdir littlelogbook/debug
-- cd littlelogbook/debug
-- qmake ../littlelogbook.pro CONFIG+=debug
+- mkdir littlenavmap/debug
+- cd littlenavmap/debug
+- qmake ../littlenavmap.pro CONFIG+=debug
 - make
