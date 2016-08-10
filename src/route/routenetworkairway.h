@@ -26,6 +26,7 @@ class SqlDatabase;
 }
 }
 
+/* Creates a route network that uses the airway routing tables */
 class RouteNetworkAirway :
   public RouteNetwork
 {

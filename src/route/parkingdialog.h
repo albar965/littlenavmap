@@ -29,6 +29,10 @@ class ParkingDialog;
 class QListWidget;
 class MapQuery;
 
+/*
+ * Allows to select the flight plan departure parking or start position.
+ * The latter one can be a runway or helipad.
+ */
 class ParkingDialog :
   public QDialog
 {
@@ -38,12 +42,18 @@ public:
   ParkingDialog(QWidget *parent, MapQuery *mapQuery, const maptypes::MapAirport& departureAirport);
   virtual ~ParkingDialog();
 
+  /* Get selected parking spot
+   * @return true if parking was selected */
   bool getSelectedParking(maptypes::MapParking& parking);
+
+  /* Get selected start position.
+   * @return true if a start was selected */
   bool getSelectedStartPosition(maptypes::MapStart& start);
 
 private:
   void updateButtons();
 
+  // Used to fill the list
   struct StartPosition
   {
     maptypes::MapParking parking;

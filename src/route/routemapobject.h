@@ -33,6 +33,10 @@ class Flightplan;
 
 class MapQuery;
 
+/*
+ * A flight plan waypoint, departure or destination. Data is loaded from the database. Provides
+ * methods to get route table information, like distance, course and more.
+ */
 class RouteMapObject
 {
   Q_DECLARE_TR_FUNCTIONS(RouteMapObject)
@@ -41,27 +45,63 @@ public:
   RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan);
   ~RouteMapObject();
 
-  void loadFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
-                               const RouteMapObject *predRouteMapObj);
-  void loadFromAirport(atools::fs::pln::FlightplanEntry *planEntry, const maptypes::MapAirport& newAirport,
-                       const RouteMapObject *predRouteMapObj);
+  /*
+   * Creates a route map object from a flight plan entry. Queries the database for existing navaids and airports.
+   * If the flight plan entry is incomplete it will be updated. If no database object can be found
+   * the flight plan entry will remain unchanged. The flight plan entry will be assigned to this object.
+   *
+   * @param planEntry Flight plan entry used to query database objects. Valid data is written back to the entry.
+   * @param query Database query object
+   * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
+   */
+  void createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
+                                 const RouteMapObject *predRouteMapObj);
 
-  void update(const RouteMapObject *predRouteMapObj);
-  void updateParking(const maptypes::MapParking& departureParking);
-  void updateStart(const maptypes::MapStart& departureStart);
+  /*
+   * Creates a route map object from an airport database object.
+   * @param planEntry Complete flight plan entry. Assigned to this object but not updated.
+   * @param newAirport
+   * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
+   */
+  void createFromAirport(atools::fs::pln::FlightplanEntry *planEntry, const maptypes::MapAirport& newAirport,
+                         const RouteMapObject *predRouteMapObj);
 
+  /*
+   * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
+   * @param predRouteMapObj
+   */
+  void updateDistanceAndCourse(const RouteMapObject *predRouteMapObj);
+
+  /* Set parking and start position. Does not modify the flight plan entry. */
+  void setDepartureParking(const maptypes::MapParking& departureParking);
+  void setDepartureStart(const maptypes::MapStart& departureStart);
+
+  /* Get database id of airport or navaid. -1 for invalid or user position. */
   int getId() const;
+
+  /* Get position of airport or navaid. Source can be flight plan entry or database. */
   const atools::geo::Pos& getPosition() const;
+
+  /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
+
   QString getRegion() const;
+
+  /* Get name of airport or navaid. Empty for waypoint or user. Source can be flight plan entry or database. */
   QString getName() const;
+
+  /* Get frequency of radio navaid. 0 if not a radio navaid. Source is always database. */
   int getFrequency() const;
+
+  /* Get magnetic variation. Source is always database. */
   float getMagvar() const;
+
+  /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
   const atools::fs::pln::FlightplanEntry *getFlightplanEntry() const
   {
-    return entry;
+    return flightplanEntry;
   }
 
   maptypes::MapObjectTypes getMapObjectType() const
@@ -73,31 +113,37 @@ public:
 
   bool isUser();
 
+  /* Get airport or empty airport object if not an airport. Use position.isValid to check for empty */
   const maptypes::MapAirport& getAirport() const
   {
     return airport;
   }
 
-  const maptypes::MapParking& getParking() const
+  /* Get parking or empty parking object if parking is not assigned. Use position.isValid to check for empty */
+  const maptypes::MapParking& getDepartureParking() const
   {
     return parking;
   }
 
-  const maptypes::MapStart& getStart() const
+  /* Get start position or empty object if not assigned. Use position.isValid to check for empty */
+  const maptypes::MapStart& getDepartureStart() const
   {
     return start;
   }
 
+  /* Get VOR or empty object if not assigned. Use position.isValid to check for empty */
   const maptypes::MapVor& getVor() const
   {
     return vor;
   }
 
+  /* Get NDB or empty object if not assigned. Use position.isValid to check for empty */
   const maptypes::MapNdb& getNdb() const
   {
     return ndb;
   }
 
+  /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
   const maptypes::MapWaypoint& getWaypoint() const
   {
     return waypoint;
@@ -108,21 +154,25 @@ public:
     return predecessor;
   }
 
+  /* Great circle distance to this route map object from the predecessor in nautical miles or 0 if first in route */
   float getDistanceTo() const
   {
     return distanceTo;
   }
 
+  /* Rhumb line distance to this route map object from the predecessor in nautical miles or 0 if first in route */
   float getDistanceToRhumb() const
   {
     return distanceToRhumb;
   }
 
+  /* Great circle start course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseTo() const
   {
     return courseTo;
   }
 
+  /* Rhumb line course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToRhumb() const
   {
     return courseRhumbTo;
@@ -144,10 +194,12 @@ public:
   }
 
 private:
-  void updateDistAndCourse(const RouteMapObject *predRouteMapObj);
-
+  /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;
-  atools::fs::pln::FlightplanEntry *entry = nullptr;
+  /* Associated flight plan entry */
+  atools::fs::pln::FlightplanEntry *flightplanEntry = nullptr;
+
+  /* Used defined waypoint numbering */
   int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
@@ -156,10 +208,15 @@ private:
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;
+
   bool predecessor = false;
   bool valid = false;
 
-  float distanceTo = 0.f, distanceToRhumb = 0.f, courseTo = 0.f, courseRhumbTo = 0.f, groundAltitude = 0.f;
+  float distanceTo = 0.f,
+        distanceToRhumb = 0.f,
+        courseTo = 0.f,
+        courseRhumbTo = 0.f,
+        groundAltitude = 0.f;
 
 };
 

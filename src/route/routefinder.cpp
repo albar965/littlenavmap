@@ -43,8 +43,8 @@ RouteFinder::~RouteFinder()
 bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude)
 {
   altitude = flownAltitude;
-  network->addStartAndDestinationNodes(from, to);
-  Node startNode = network->getStartNode();
+  network->addDepartureAndDestinationNodes(from, to);
+  Node startNode = network->getDepartureNode();
   Node destNode = network->getDestinationNode();
 
   int numNodesTotal = network->getNumberOfNodesDatabase();
@@ -56,7 +56,7 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   nodeCosts[startNode.id] = 0.f;
 
   Node currentNode;
-  bool found = false;
+  bool destinationFound = false;
   while(!openNodesHeap.isEmpty())
   {
     // Contains known nodes
@@ -64,7 +64,7 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
 
     if(currentNode.id == destNode.id)
     {
-      found = true;
+      destinationFound = true;
       break;
     }
 
@@ -79,13 +79,13 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     expandNode(currentNode, destNode);
   }
 
-  qDebug() << "found" << found << "heap size" << openNodesHeap.size()
+  qDebug() << "found" << destinationFound << "heap size" << openNodesHeap.size()
            << "close nodes size" << closedNodes.size();
 
   qDebug() << "num nodes database" << network->getNumberOfNodesDatabase()
            << "num nodes cache" << network->getNumberOfNodesCache();
 
-  return found;
+  return destinationFound;
 }
 
 void RouteFinder::extractRoute(QVector<rf::RouteEntry>& route, float& distanceMeter)
@@ -98,10 +98,10 @@ void RouteFinder::extractRoute(QVector<rf::RouteEntry>& route, float& distanceMe
   while(pred.id != -1)
   {
     int navId;
-    nw::Type type;
+    nw::NodeType type;
     network->getNavIdAndTypeForNode(pred.id, navId, type);
 
-    if(type != nw::START && type != nw::DESTINATION)
+    if(type != nw::DEPARTURE && type != nw::DESTINATION)
     {
       rf::RouteEntry entry;
       entry.ref = {navId, toMapObjectType(type)};
@@ -116,6 +116,7 @@ void RouteFinder::extractRoute(QVector<rf::RouteEntry>& route, float& distanceMe
   }
 }
 
+/* Expands a node by investigating all successors */
 void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNode)
 {
   successorNodes.clear();
@@ -127,26 +128,29 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     const Node& successor = successorNodes.at(i);
 
     if(closedNodes.contains(successor.id))
+      // Already has a shortest path
       continue;
 
     const Edge& edge = successorEdges.at(i);
 
     if(altitude > 0 && edge.minAltFt > 0 && altitude < edge.minAltFt)
+      // Altitude restrictions do not match - ignore this edge to the node
       continue;
 
-    int distanceMeter = edge.distanceMeter;
+    int lengthMeter = edge.lengthMeter;
 
-    if(distanceMeter == 0)
+    if(lengthMeter == 0)
       // No distance given for airways - have to calculate this here
-      distanceMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos));
+      lengthMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos));
 
-    float successorEdgeCosts = cost(currentNode, successor, distanceMeter);
+    float successorEdgeCosts = calculateEdgeCost(currentNode, successor, lengthMeter);
     float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
 
     if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
       // New path is not cheaper
       continue;
 
+    // New path is cheaper - update node
     nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
     nodePredecessor[successor.id] = currentNode.id;
     nodeCosts[successor.id] = successorNodeCosts;
@@ -155,63 +159,75 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
     float totalCost = successorNodeCosts + costEstimate(successor, destNode);
 
     if(openNodesHeap.contains(successor))
+      // Update node and resort heap
       openNodesHeap.change(successor, totalCost);
     else
       openNodesHeap.push(successor, totalCost);
   }
 }
 
-float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNode, int distanceMeter)
+/* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
+ * will have several factors applied to get reasonable routes */
+float RouteFinder::calculateEdgeCost(const nw::Node& currentNode, const nw::Node& successorNode,
+                                     int lengthMeter)
 {
-  float costs = distanceMeter;
+  float costs = lengthMeter;
 
-  if(currentNode.type == nw::START && successorNode.type == nw::DESTINATION)
-    // Avoid direct routes
+  if(currentNode.type == nw::DEPARTURE && successorNode.type == nw::DESTINATION)
+    // Avoid direct connections between departure and destination
     costs *= COST_FACTOR_DIRECT;
-  else if(currentNode.type == nw::START || successorNode.type == nw::DESTINATION)
+  else if(currentNode.type == nw::DEPARTURE || successorNode.type == nw::DESTINATION)
   {
     if(network->isAirwayRouting())
     {
+      // From departure node to network or from network to destination
+      // Calculate transition to next airway
       float airwayTransCost = 1.f;
 
       if(preferVorToAirway)
       {
-        if(currentNode.type == nw::START &&
-           (successorNode.type2 == nw::VOR || successorNode.type2 == nw::VORDME))
+        if(currentNode.type == nw::DEPARTURE &&
+           (successorNode.subtype == nw::VOR || successorNode.subtype == nw::VORDME))
           airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
-        else if((currentNode.type2 == nw::VOR || currentNode.type2 == nw::VORDME) &&
+        else if((currentNode.subtype == nw::VOR || currentNode.subtype == nw::VORDME) &&
                 successorNode.type == nw::DESTINATION)
           airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
       }
 
       if(preferNdbToAirway)
       {
-        if((currentNode.type == nw::START && successorNode.type2 == nw::NDB) ||
-           (currentNode.type2 == nw::NDB && successorNode.type == nw::DESTINATION))
+        if((currentNode.type == nw::DEPARTURE && successorNode.subtype == nw::NDB) ||
+           (currentNode.subtype == nw::NDB && successorNode.type == nw::DESTINATION))
           airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB;
       }
 
       if(airwayTransCost > 1.f)
+        // Prefer VOR or NDB
         costs *= airwayTransCost;
       else
+        // Prefer any waypoint to get to the next airway
         costs *= COST_FACTOR_FORCE_CLOSE_NODES;
     }
   }
 
   if(network->isAirwayRouting())
   {
-    if(distanceMeter > DISTANCE_LONG_AIRWAY)
+    if(lengthMeter > DISTANCE_LONG_AIRWAY_METER)
+      // Avoid certain airway segments that have an excessive length
       costs *= COST_FACTOR_LONG_AIRWAY;
   }
   else
   {
     if((currentNode.range != 0 || successorNode.range != 0) &&
-       currentNode.range + successorNode.range < distanceMeter)
+       currentNode.range + successorNode.range < lengthMeter)
+      // Put higher costs on radio navaids that are not withing range
       costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
     if(successorNode.type == nw::DME)
+      // Avoid DME
       costs *= COST_FACTOR_DME;
     else if(successorNode.type == nw::VOR)
+      // Prefer VOR before NDB
       costs *= COST_FACTOR_VOR;
     else if(successorNode.type == nw::NDB)
       costs *= COST_FACTOR_NDB;
@@ -220,12 +236,14 @@ float RouteFinder::cost(const nw::Node& currentNode, const nw::Node& successorNo
   return costs;
 }
 
+/* GC distance in meter as costs between nodes */
 float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& destNode)
 {
   return currentNode.pos.distanceMeterTo(destNode.pos);
 }
 
-maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::Type type)
+/* Convert internal network type to MapObjectTypes for extract route */
+maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
 {
   switch(type)
   {
@@ -242,7 +260,7 @@ maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::Type type)
     case nw::NDB:
       return maptypes::NDB;
 
-    case nw::START:
+    case nw::DEPARTURE:
     case nw::DESTINATION:
       return maptypes::USER;
 

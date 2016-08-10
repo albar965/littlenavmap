@@ -36,45 +36,46 @@ RouteIconDelegate::~RouteIconDelegate()
 void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
                               const QModelIndex& index) const
 {
-  int symSize = option.rect.height() - 4;
-  int x = option.rect.x() + symSize;
-  int y = option.rect.y() + symSize / 2 + 2;
+  int symbolSize = option.rect.height() - 4;
+  int x = option.rect.x() + symbolSize;
+  int y = option.rect.y() + symbolSize / 2 + 2;
 
-  // Create a style copy
-  QStyleOptionViewItem opt(option);
-  opt.font.setBold(true);
-  opt.displayAlignment = Qt::AlignRight;
+  // Create a style copy to catch all active, inactive, highlighted and more colors
+  QStyleOptionViewItem styleOption(option);
+  styleOption.font.setBold(true);
+  styleOption.displayAlignment = Qt::AlignRight;
 
   const RouteMapObject& mapObj = routeObjects.at(index.row());
   if(mapObj.getMapObjectType() == maptypes::AIRPORT && mapObj.getAirport().addon())
     // Italic for addons
-    opt.font.setItalic(true);
+    styleOption.font.setItalic(true);
 
   if(mapObj.getMapObjectType() == maptypes::INVALID)
   {
-    // Used red text for invalid entries
-    opt.palette.setColor(QPalette::Active, QPalette::Text, QColor(Qt::red));
-    opt.palette.setColor(QPalette::Inactive, QPalette::Text, QColor(Qt::red));
-    opt.palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::red));
+    // Used red text for invalid entries (for active window, inactive window an selected row)
+    styleOption.palette.setColor(QPalette::Active, QPalette::Text, QColor(Qt::red));
+    styleOption.palette.setColor(QPalette::Inactive, QPalette::Text, QColor(Qt::red));
+    styleOption.palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::red));
   }
 
+  painter->setRenderHint(QPainter::Antialiasing);
+  painter->setRenderHint(QPainter::TextAntialiasing);
+
   // Draw the text
-  QStyledItemDelegate::paint(painter, opt, index);
+  QStyledItemDelegate::paint(painter, styleOption, index);
 
   // Draw the icon
-  painter->setRenderHint(QPainter::Antialiasing);
   if(mapObj.getMapObjectType() == maptypes::AIRPORT)
-    symbolPainter->drawAirportSymbol(painter, mapObj.getAirport(), x, y, symSize, false, false);
+    symbolPainter->drawAirportSymbol(painter, mapObj.getAirport(), x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::VOR)
-    symbolPainter->drawVorSymbol(painter, mapObj.getVor(), x, y, symSize, false, false, 0);
+    symbolPainter->drawVorSymbol(painter, mapObj.getVor(), x, y, symbolSize, false, false, 0);
   else if(mapObj.getMapObjectType() == maptypes::NDB)
-    symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symSize, false, false);
+    symbolPainter->drawNdbSymbol(painter, mapObj.getNdb(), x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
-    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), QColor(), x, y, symSize, false, false);
+    symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), QColor(), x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::USER)
-    symbolPainter->drawUserpointSymbol(painter, x, y, symSize, false, false);
+    symbolPainter->drawUserpointSymbol(painter, x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::INVALID)
     symbolPainter->drawWaypointSymbol(painter, mapObj.getWaypoint(), mapcolors::routeInvalidPointColor,
-                                      x, y, symSize, false, false);
-
+                                      x, y, symbolSize, false, false);
 }

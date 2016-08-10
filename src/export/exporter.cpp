@@ -94,7 +94,7 @@ void Exporter::openDocument(const QString& file)
   {
     qWarning() << "openUrl failed for" << url;
     QMessageBox::warning(parentWidget, QApplication::applicationName(),
-                         QString(tr("Cannot open file <i>%1</i>")).arg(file),
+                         QString(tr("Cannot open file \"%1\"")).arg(file),
                          QMessageBox::Close, QMessageBox::NoButton);
   }
 }

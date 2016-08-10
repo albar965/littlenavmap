@@ -384,6 +384,6 @@ void WeatherReporter::asnWeatherFileChanged(const QString& path)
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
   loadActiveSkySnapshot(path);
-  mainWindow->setStatusMessage(tr("Active Sky Next weather information updated."));
+  mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
   emit weatherUpdated();
 }

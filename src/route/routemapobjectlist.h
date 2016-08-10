@@ -24,6 +24,9 @@
 
 class CoordinateConverter;
 
+/*
+ * Aggregates the flight plan and is a list of all route map objects.
+ */
 class RouteMapObjectList :
   public QList<RouteMapObject>
 {
@@ -31,14 +34,32 @@ public:
   RouteMapObjectList();
   virtual ~RouteMapObjectList();
 
+  /* Get nearest leg or waypoint index, whatever is closer to the position */
   int getNearestLegOrPointIndex(const atools::geo::Pos& pos) const;
-  int getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance) const;
-  int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const;
 
-  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStartNm, float *distToDestNm,
-                         float *nearestLegDistance = nullptr, float *crossTrackDistance = nullptr,
-                         int *nearestLegIndex = nullptr) const;
+  /* Get nearest leg index along the position and cross track distance in nautical miles to the leg. */
+  int getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm) const;
 
+  /* Get nearest waypoint index and distance in nautical miles to this point.  */
+  int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const;
+
+  /*
+   * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
+   * All distances in nautical miles.
+   * @param pos
+   * @param distFromStartNm Distance from departure
+   * @param distToDestNm Distance to destination
+   * @param nextLegDistance Distance to next leg
+   * @param crossTrackDistance Cross track distance to current leg. Positive and
+   * negative values indicate left or right of track.
+   * @param nextLegIndex Index of next leg
+   * @return false if no current/next leg was found
+   */
+  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStart, float *distToDest,
+                         float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
+                         int *nextLegIndex = nullptr) const;
+
+  /* Total route distance in nautical miles */
   float getTotalDistance() const
   {
     return totalDistance;
@@ -48,8 +69,6 @@ public:
   {
     totalDistance = value;
   }
-
-  const static float INVALID_DISTANCE_VALUE;
 
   const atools::fs::pln::Flightplan& getFlightplan() const
   {
@@ -66,20 +85,33 @@ public:
     flightplan = value;
   }
 
+  /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
                   maptypes::MapSearchResult& mapobjects) const;
 
+  /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
 
+  /* @return true if departure is an airport and a start position is set */
   bool hasDepartureStart() const;
 
+  /* @return true if flight plan has no departure, no destination and no intermediate waypoints */
   bool isFlightplanEmpty() const;
+
+  /* @return true if departure is an airport */
   bool hasValidDeparture() const;
+
+  /* @return true if destination is an airport */
   bool hasValidDestination() const;
+
+  /* @return true if departure start position is a helipad */
   bool hasDepartureHelipad() const;
 
+  /* @return true if has intermediate waypoints */
   bool hasEntries() const;
-  bool hasRoute() const;
+
+  /* Value for invalid/not found distances */
+  const static float INVALID_DISTANCE_VALUE;
 
 private:
   float totalDistance = 0.f;

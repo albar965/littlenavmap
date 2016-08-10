@@ -34,6 +34,11 @@ class RouteController;
 class QTimer;
 class QRubberBand;
 
+/*
+ * Loads and displays the flight plan elevation profile. The elevation data is
+ * calculated in a background thread that is triggered when new elevation data
+ * arrives from the Marble widget.
+ */
 class ProfileWidget :
   public QWidget
 {
@@ -43,19 +48,28 @@ public:
   ProfileWidget(MainWindow *parent);
   virtual ~ProfileWidget();
 
+  /* If geometry has changed the elevation calculation is started after a short delay */
   void routeChanged(bool geometryChanged);
 
+  /* Update user aircraft on profile display */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  /* Stops showing the user aircraft */
   void disconnectedFromSimulator();
 
+  /* Disables or enables aircraft and/or track display */
   void updateProfileShowFeatures();
 
+  /* Notification after track deletion */
   void deleteAircraftTrack();
 
+  /* Stops thread and disables all udpates */
   void preDatabaseLoad();
+
+  /* Restarts updates */
   void postDatabaseLoad();
 
+  /* Delta settings for option */
   struct SimUpdateDelta
   {
     int manhattanLengthDelta;
@@ -65,22 +79,29 @@ public:
   void optionsChanged();
 
 signals:
+  /* Emitted when the mouse cursor hovers over the map profile.
+   * @param pos Position on the map display.
+   */
   void highlightProfilePoint(const atools::geo::Pos& pos);
 
 private:
+  /* Route leg storing all elevation points */
   struct ElevationLeg
   {
-    QVector<atools::geo::Pos> elevation;
-    QVector<float> distances;
-    float maxElevation = 0.f;
+    QVector<atools::geo::Pos> elevation; /* Ground elevation (Pos.altitude) and position */
+    QVector<float> distances; /* Distances along the route for each elevation point.
+                               *  Measured from departure point. Nautical miles. */
+    float maxElevation = 0.f; /* Max ground altitude for this leg */
   };
 
   struct ElevationLegList
   {
-    RouteMapObjectList routeMapObjects;
-    QList<ElevationLeg> elevationLegs;
-    float maxElevationFt = 0.f, totalDistance = 0.f;
-    int totalNumPoints = 0;
+    RouteMapObjectList routeMapObjects; /* Copy from route controller.
+                                         * Need a copy to avoid thread synchronization problems. */
+    QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
+    float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
+          totalDistance = 0.f /* Total route distance in nautical miles */;
+    int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
   };
 
   virtual void paintEvent(QPaintEvent *) override;
@@ -91,36 +112,55 @@ private:
   virtual void leaveEvent(QEvent *) override;
 
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
-  void updateElevation();
+  void elevationUpdateAvailable();
   void updateTimeout();
   void updateThreadFinished();
   void updateScreenCoords();
   void terminateThread();
 
+  /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
+  /* Scales should be at least this amount of pixels apart */
   static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  static Q_DECL_CONSTEXPR int UPDATE_TIMEOUT = 1000;
-  const int X0 = 65, Y0 = 14;
+  const int X0 = 65; /* Left margin inside widget */
+  const int Y0 = 14; /* Top margin inside widget */
 
+  /* If any change arrives the thread will start after this delay */
+  static Q_DECL_CONSTEXPR int UPDATE_TIMEOUT_MS = 1000;
+
+  /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
   QPolygon aircraftTrackPoints;
+
   float aircraftDistanceFromStart, aircraftDistanceToDest;
   ElevationLegList legList;
-  QTimer *updateTimer = nullptr;
+
   const Marble::ElevationModel *elevationModel = nullptr;
   RouteController *routeController = nullptr;
   MainWindow *mainWindow;
+
+  /* Calls updateTimeout which will start the update thread in background */
+  QTimer *updateTimer = nullptr;
+
+  /* Used to fetch result from thread */
   QFuture<ElevationLegList> future;
+  /* Sends signal once thread is finished */
   QFutureWatcher<ElevationLegList> watcher;
+  bool terminateThreadSignal = false;
+
   bool databaseLoadStatus = false;
-  bool terminate = false;
+
   QRubberBand *rubberBand = nullptr;
-  bool visible = false;
-  bool showAircraft = false, showAircraftTrack = false;
-  QVector<int> waypointX;
-  QPolygon landPolygon;
-  float minSafeAltitudeFt, flightplanAltFt, maxAlt, vertScale, horizScale;
+
+  bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
+  QVector<int> waypointX; /* Flight plan waypoint screen coordinates */
+  QPolygon landPolygon; /* Green landmass polygon */
+  float minSafeAltitudeFt /* Red line */,
+        flightplanAltFt /* Cruise altitude */,
+        maxWindowAlt /* Maximum altitude at top of widget */,
+        verticalScale /* Factor to convert altitude in feet to screen coordinates*/,
+        horizontalScale /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
 
 };
 

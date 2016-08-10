@@ -30,20 +30,24 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 {
   ui->setupUi(this);
 
+  // Update label with airport name/ident
   ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
 
   const QList<maptypes::MapStart> *startCache = mapQuery->getStartPositionsForAirport(departureAirport.id);
-  // Create a copy from the cached objects to allow sorting
+  // Create a copy from the cached start objects to allow sorting
   for(const maptypes::MapStart& start : *startCache)
     entries.append({maptypes::MapParking(), start});
 
   const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
-  // Create a copy from the cached objects and exclude fuel
+  // Create a copy from the cached parking objects and exclude fuel
   for(const maptypes::MapParking& parking : *parkingCache)
+  {
+    // Ignore fuel, vehicles are already omitted in database creation
     if(parking.type != "FUEL")
       entries.append({parking, maptypes::MapStart()});
+  }
 
-  // Sort by name and numbers
+  // Sort by type (order: runway, helipad, parking), name and numbers
   std::sort(entries.begin(), entries.end(),
             [ = ](const StartPosition &p1, const StartPosition &p2)->bool
             {
@@ -87,6 +91,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
                      arg(QLocale().toString(startPos.parking.radius * 2)).
                      arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
 
+      // Item will insert itself in list widget
       new QListWidgetItem(
         mapcolors::iconForParkingType(startPos.parking.type), text, ui->listWidgetSelectParking);
     }
@@ -109,8 +114,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
   connect(ui->listWidgetSelectParking, &QListWidget::itemSelectionChanged, this,
           &ParkingDialog::updateButtons);
 
-  connect(ui->listWidgetSelectParking, &QListWidget::itemActivated, this,
-          &QDialog::accept);
+  // Activated on double click or return
+  connect(ui->listWidgetSelectParking, &QListWidget::itemActivated, this, &QDialog::accept);
 
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::rejected, this, &QDialog::reject);

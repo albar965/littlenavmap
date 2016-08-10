@@ -23,7 +23,7 @@ RouteCommand::RouteCommand(RouteController *routeController,
                            rctype::RouteCmdType rcType)
   : QUndoCommand(text), controller(routeController), type(rcType)
 {
-  planBefore = flightplanBefore;
+  planBeforeChange = flightplanBefore;
 }
 
 RouteCommand::~RouteCommand()
@@ -33,20 +33,21 @@ RouteCommand::~RouteCommand()
 
 void RouteCommand::setFlightplanAfter(const atools::fs::pln::Flightplan& flightplanAfter)
 {
-  planAfter = flightplanAfter;
+  planAfterChange = flightplanAfter;
 }
 
 void RouteCommand::undo()
 {
-  controller->changeRouteUndo(planBefore);
+  controller->changeRouteUndo(planBeforeChange);
 }
 
 void RouteCommand::redo()
 {
   if(!firstRedoExecuted)
+    // Skip first redo - I need to do the initial changes myself
     firstRedoExecuted = true;
   else
-    controller->changeRouteRedo(planAfter);
+    controller->changeRouteRedo(planAfterChange);
 }
 
 int RouteCommand::id() const
@@ -72,7 +73,9 @@ bool RouteCommand::mergeWith(const QUndoCommand *other)
     case rctype::DELETE:
     case rctype::MOVE:
     case rctype::ALTITUDE:
-      planAfter = newCmd->planAfter;
+      // Merge - overwrite the flight plan after the change
+      planAfterChange = newCmd->planAfterChange;
+      // Let controller know about the merge so the undo index can be adapted
       controller->undoMerge();
       return true;
   }

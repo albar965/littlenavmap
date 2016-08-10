@@ -40,6 +40,7 @@ const int MAX_RANGE_RINGS = 10;
 
 using atools::settings::Settings;
 
+/* Validates the space separated list of range ring sizes */
 class RangeRingValidator :
   public QValidator
 {
@@ -47,14 +48,16 @@ public:
   RangeRingValidator();
 
 private:
-  bool ringStrToVector(const QString& str) const;
   virtual QValidator::State validate(QString& input, int& pos) const override;
+
+  bool ringStrToVector(const QString& str) const;
 
   QRegularExpressionValidator regexpVal;
 };
 
 RangeRingValidator::RangeRingValidator()
 {
+  // Multiple numbers starting 1-9 max 4 digits separated by space
   regexpVal.setRegularExpression(QRegularExpression("^([1-9]\\d{0,3} )*[1-9]\\d{1,3}$"));
 }
 
@@ -63,12 +66,19 @@ QValidator::State RangeRingValidator::validate(QString& input, int& pos) const
   State state = regexpVal.validate(input, pos);
   if(state == Invalid)
     return Invalid;
-  else if(!ringStrToVector(input))
-    return Invalid;
+  else
+  {
+    // Half valid check number of rings and distance
+    if(!ringStrToVector(input))
+      return Invalid;
+  }
 
   return state;
 }
 
+/* Check for maximum of 10 rings with a maximum size of 4000 nautical miles.
+ * @return true if string is ok
+ */
 bool RangeRingValidator::ringStrToVector(const QString& input) const
 {
   int numRing = 0;
@@ -97,6 +107,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   rangeRingValidator = new RangeRingValidator;
 
+  // Create widget list for state saver
   widgets.append(ui->tabWidgetOptions);
   widgets.append(ui->checkBoxOptionsGuiCenterKml);
   widgets.append(ui->checkBoxOptionsGuiCenterRoute);
@@ -145,14 +156,19 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
 
-  // ASN widgets
+  // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
           this, &OptionsDialog::selectAsnPathClicked);
 
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::editingFinished,
-          this, &OptionsDialog::asnPathEditingFinished);
+          this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited,
           this, &OptionsDialog::updateAsnPathStatus);
+
+  connect(ui->lineEditOptionsWeatherNoaaUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherVatsimUrl, &QLineEdit::textEdited,
+          this, &OptionsDialog::updateWeatherButtonState);
 
   // Database exclude path
   connect(ui->pushButtonOptionsDatabaseAddExclude, &QPushButton::clicked,
@@ -170,6 +186,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   connect(ui->listWidgetOptionsDatabaseAddon, &QListWidget::currentRowChanged,
           this, &OptionsDialog::updateDatabaseButtonState);
 
+  // Cache
   connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked,
           this, &OptionsDialog::clearMemCachedClicked);
   connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked,
@@ -177,6 +194,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked,
           this, &OptionsDialog::showDiskCacheClicked);
 
+  // Weather test buttons
   connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherNoaaUrlClicked);
   connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
@@ -189,12 +207,101 @@ OptionsDialog::~OptionsDialog()
   delete ui;
 }
 
+int OptionsDialog::exec()
+{
+  optionDataToWidgets();
+  updateWeatherButtonState();
+  updateDatabaseButtonState();
+
+  return QDialog::exec();
+}
+
+void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  qDebug() << "Clicked" << button->text();
+
+  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
+  {
+    widgetsToOptionData();
+    saveState();
+    emit optionsChanged();
+  }
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
+  {
+    widgetsToOptionData();
+    saveState();
+    emit optionsChanged();
+    accept();
+  }
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
+    reject();
+
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
+  {
+    qDebug() << "OptionsDialog::resetDefaultClicked";
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, QApplication::applicationName(),
+                                                               tr("Reset all options to default?"));
+
+    if(result == QMessageBox::Yes)
+    {
+      // Reset option instance and set it to valid
+      OptionData::instanceInternal() = OptionData();
+      OptionData::instanceInternal().valid = true;
+      optionDataToWidgets();
+      saveState();
+      emit optionsChanged();
+    }
+  }
+}
+
+void OptionsDialog::saveState()
+{
+  optionDataToWidgets();
+
+  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /* save visibility */, true /* block signals */);
+
+  // Save widgets to settings
+  saver.save(widgets);
+
+  Settings& settings = Settings::instance();
+
+  // Save the path lists
+  QStringList paths;
+  for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
+    paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
+  if(!paths.isEmpty())
+    settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
+
+  paths.clear();
+  for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
+    paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
+  if(!paths.isEmpty())
+    settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
+}
+
+void OptionsDialog::restoreState()
+{
+  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
+  saver.restore(widgets);
+
+  Settings& settings = Settings::instance();
+  if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
+    ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
+  if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
+    ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
+
+  widgetsToOptionData();
+}
+
+/* Test NOAA weather URL and show a dialog with the result */
 void OptionsDialog::testWeatherNoaaUrlClicked()
 {
   qDebug() << "OptionsDialog::testWeatherNoaaUrlClicked";
   testWeatherUrl(ui->lineEditOptionsWeatherNoaaUrl->text());
 }
 
+/* Test Vatsim weather URL and show a dialog with the result */
 void OptionsDialog::testWeatherVatsimUrlClicked()
 {
   qDebug() << "OptionsDialog::testWeatherVatsimUrlClicked";
@@ -210,6 +317,7 @@ void OptionsDialog::testWeatherUrl(const QString& url)
     QMessageBox::warning(this, QApplication::applicationName(), tr("Failed. Reason:\n%1").arg(result));
 }
 
+/* Show directory dialog to add exclude path */
 void OptionsDialog::addDatabaseExcludePathClicked()
 {
   qDebug() << "OptionsDialog::addDatabaseExcludePathClicked";
@@ -220,18 +328,22 @@ void OptionsDialog::addDatabaseExcludePathClicked()
     atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
 
   if(!path.isEmpty())
+  {
     ui->listWidgetOptionsDatabaseExclude->addItem(path);
-  updateDatabaseButtonState();
+    updateDatabaseButtonState();
+  }
 }
 
 void OptionsDialog::removeDatabaseExcludePathClicked()
 {
   qDebug() << "OptionsDialog::removeDatabaseExcludePathClicked";
 
+  // Item removes itself from the list when deleted
   delete ui->listWidgetOptionsDatabaseExclude->currentItem();
   updateDatabaseButtonState();
 }
 
+/* Show directory dialog to add add-on exclude path */
 void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 {
   qDebug() << "OptionsDialog::addDatabaseAddOnExcludePathClicked";
@@ -262,89 +374,7 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
-int OptionsDialog::exec()
-{
-  fromOptionData();
-  updateAsnButtonState();
-  updateDatabaseButtonState();
-
-  return QDialog::exec();
-}
-
-void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
-{
-  qDebug() << "Clicked" << button->text();
-
-  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
-  {
-    toOptionData();
-    saveState();
-    emit optionsChanged();
-  }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
-  {
-    toOptionData();
-    saveState();
-    emit optionsChanged();
-    accept();
-  }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
-    reject();
-
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
-  {
-    qDebug() << "OptionsDialog::resetDefaultClicked";
-
-    QMessageBox::StandardButton result = QMessageBox::question(this, QApplication::applicationName(),
-                                                               tr("Reset all options to default?"));
-
-    if(result == QMessageBox::Yes)
-    {
-      OptionData::instanceInternal() = OptionData();
-      OptionData::instanceInternal().valid = true;
-      fromOptionData();
-      saveState();
-      emit optionsChanged();
-    }
-  }
-}
-
-void OptionsDialog::saveState()
-{
-  fromOptionData();
-
-  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false, true);
-  saver.save(widgets);
-
-  Settings& settings = Settings::instance();
-
-  QStringList paths;
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
-    paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
-  if(!paths.isEmpty())
-    settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
-
-  paths.clear();
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
-    paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
-  if(!paths.isEmpty())
-    settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
-}
-
-void OptionsDialog::restoreState()
-{
-  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
-  saver.restore(widgets);
-
-  Settings& settings = Settings::instance();
-  if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
-    ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
-  if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
-    ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
-
-  toOptionData();
-}
-
+/* Convert the range ring string to an int vector */
 QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
 {
   QVector<int> rings;
@@ -363,7 +393,8 @@ QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
   return rings;
 }
 
-void OptionsDialog::toOptionData()
+/* Copy widget states to OptionData object */
+void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
 
@@ -429,7 +460,8 @@ void OptionsDialog::toOptionData()
   data.valid = true;
 }
 
-void OptionsDialog::fromOptionData()
+/* Copy OptionData object to widget */
+void OptionsDialog::optionDataToWidgets()
 {
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
@@ -516,6 +548,7 @@ void OptionsDialog::fromOptionData()
   ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
 }
 
+/* Add flag from checkbox to OptionData flags */
 void OptionsDialog::toFlags(QCheckBox *checkBox, opts::Flags flag)
 {
   if(checkBox->isChecked())
@@ -524,9 +557,10 @@ void OptionsDialog::toFlags(QCheckBox *checkBox, opts::Flags flag)
     OptionData::instanceInternal().flags &= ~flag;
 }
 
-void OptionsDialog::toFlags(QRadioButton *checkBox, opts::Flags flag)
+/* Add flag from radio button to OptionData flags */
+void OptionsDialog::toFlags(QRadioButton *radioButton, opts::Flags flag)
 {
-  if(checkBox->isChecked())
+  if(radioButton->isChecked())
     OptionData::instanceInternal().flags |= flag;
   else
     OptionData::instanceInternal().flags &= ~flag;
@@ -537,20 +571,24 @@ void OptionsDialog::fromFlags(QCheckBox *checkBox, opts::Flags flag)
   checkBox->setChecked(OptionData::instanceInternal().flags & flag);
 }
 
-void OptionsDialog::fromFlags(QRadioButton *checkBox, opts::Flags flag)
+void OptionsDialog::fromFlags(QRadioButton *radioButton, opts::Flags flag)
 {
-  checkBox->setChecked(OptionData::instanceInternal().flags & flag);
+  radioButton->setChecked(OptionData::instanceInternal().flags & flag);
 }
 
-void OptionsDialog::updateAsnButtonState()
+void OptionsDialog::updateWeatherButtonState()
 {
   WeatherReporter *wr = mainWindow->getWeatherReporter();
   bool hasAsn = wr->isAsnDefaultPathFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
   ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
   ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+
+  ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaUrl->text().isEmpty());
+  ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
   updateAsnPathStatus();
 }
 
+/* Checks the path to the ASN weather file and its contents. Display an error message in the label */
 void OptionsDialog::updateAsnPathStatus()
 {
   const QString& path = ui->lineEditOptionsWeatherAsnPath->text();
@@ -584,26 +622,19 @@ void OptionsDialog::updateAsnPathStatus()
   }
 }
 
-void OptionsDialog::asnPathEditingFinished()
-{
-  qDebug() << "OptionsDialog::asnPathEditingFinished";
-
-  updateAsnButtonState();
-}
-
 void OptionsDialog::selectAsnPathClicked()
 {
   qDebug() << "OptionsDialog::selectAsnPathClicked";
 
   QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open Active Sky Next Weather Snapshot File"),
+    tr("Open Active Sky Weather Snapshot File"),
     tr("ASN Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_ASN_SNAPSHOT),
     lnm::OPTIONS_DIALOG_ASN_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherAsnPath->setText(path);
 
-  updateAsnButtonState();
+  updateWeatherButtonState();
 }
 
 void OptionsDialog::clearMemCachedClicked()
@@ -619,7 +650,8 @@ void OptionsDialog::clearDiskCachedClicked()
   QMessageBox::StandardButton result =
     QMessageBox::question(this, QApplication::applicationName(),
                           tr("Clear the disk cache?\n"
-                             "All files in the directory %1 will be deleted").
+                             "All files in the directory \"%1\" will be deleted.\n"
+                             "This process will run in background and can take a while.").
                           arg(Marble::MarbleDirs::localPath()));
 
   if(result == QMessageBox::Yes)
@@ -631,6 +663,7 @@ void OptionsDialog::clearDiskCachedClicked()
   }
 }
 
+/* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
   const QString& localPath = Marble::MarbleDirs::localPath();
@@ -639,5 +672,5 @@ void OptionsDialog::showDiskCacheClicked()
 
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+                           tr("Error opening help URL \"%1\"")).arg(url.toDisplayString()));
 }

@@ -41,7 +41,7 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeT
   : db(sqlDb), nodeTable(nodeTableName), edgeTable(edgeTableName), nodeExtraCols(nodeExtraColumns),
     edgeExtraCols(edgeExtraColumns)
 {
-  nodes.reserve(60000);
+  nodeCache.reserve(60000);
   destinationNodePredecessors.reserve(1000);
   airwayRouting = mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
   initQueries();
@@ -61,7 +61,7 @@ int RouteNetwork::getNumberOfNodesDatabase()
 
 int RouteNetwork::getNumberOfNodesCache() const
 {
-  return nodes.size();
+  return nodeCache.size();
 }
 
 void RouteNetwork::setMode(nw::Modes routeMode)
@@ -70,18 +70,16 @@ void RouteNetwork::setMode(nw::Modes routeMode)
   airwayRouting = mode & nw::ROUTE_JET || mode & nw::ROUTE_VICTOR;
 }
 
-void RouteNetwork::clear()
+void RouteNetwork::clearStartAndDestinationNodes()
 {
-  startNodeRect = atools::geo::EMPTY_RECT;
-  destinationNodeRect = atools::geo::EMPTY_RECT;
-  startPos = atools::geo::EMPTY_POS;
+  departurePos = atools::geo::EMPTY_POS;
   destinationPos = atools::geo::EMPTY_POS;
-  nodes.clear();
+  nodeCache.clear();
   destinationNodePredecessors.clear();
   numNodesDb = -1;
   nodeIndexesCreated = false;
   edgeIndexesCreated = false;
-  nodes.reserve(60000);
+  nodeCache.reserve(60000);
   destinationNodePredecessors.reserve(1000);
 }
 
@@ -104,18 +102,18 @@ void RouteNetwork::getNeighbours(const nw::Node& from, QVector<nw::Node>& neighb
 
     if(add)
     {
-      // TODO single query fetch is expensive
+      // Add nodes and edges only if they match airway mode
       neighbours.append(fetchNode(e.toNodeId));
       edges.append(e);
     }
   }
 }
 
-void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
+void RouteNetwork::addDepartureAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
 {
   qDebug() << "adding start and  destination to network";
 
-  if(startPos == from && destinationPos == to)
+  if(departurePos == from && destinationPos == to)
     return;
 
   if(destinationPos != to)
@@ -123,33 +121,35 @@ void RouteNetwork::addStartAndDestinationNodes(const atools::geo::Pos& from, con
     // Remove all references to destination node
     cleanDestNodeEdges();
 
+    // Add destination first so it can be added to start successors
     destinationPos = to;
 
-    // Add destination first so it can be added to start successors
-    destinationNodeRect = Rect(to, NODE_SEARCH_RADIUS);
+    destinationNodeRect = Rect(to, NODE_SEARCH_RADIUS_METER);
+
+    // Will use the bounding rectangle to add any neighbor nodes to dest
     fetchNode(to.getLonX(), to.getLatY(), false, DESTINATION_NODE_ID);
 
-    for(int id : nodes.keys())
-      addDestNodeEdges(nodes[id]);
+    for(int id : nodeCache.keys())
+      // Fill destination node predecessor index
+      addDestNodeEdges(nodeCache[id]);
   }
 
-  if(startPos != from)
+  if(departurePos != from)
   {
-    startPos = from;
-    startNodeRect = Rect(from, NODE_SEARCH_RADIUS);
-    fetchNode(from.getLonX(), from.getLatY(), true, START_NODE_ID);
+    departurePos = from;
+    fetchNode(from.getLonX(), from.getLatY(), true, DEPARTURE_NODE_ID);
   }
   qDebug() << "adding start and  destination to network done";
 }
 
-nw::Node RouteNetwork::getStartNode() const
+nw::Node RouteNetwork::getDepartureNode() const
 {
-  return nodes.value(START_NODE_ID);
+  return nodeCache.value(DEPARTURE_NODE_ID);
 }
 
 nw::Node RouteNetwork::getDestinationNode() const
 {
-  return nodes.value(DESTINATION_NODE_ID);
+  return nodeCache.value(DESTINATION_NODE_ID);
 }
 
 nw::Node RouteNetwork::getNode(int id)
@@ -160,15 +160,17 @@ nw::Node RouteNetwork::getNode(int id)
     return fetchNode(id);
 }
 
+/* Remove all references to the destination node from the cache */
 void RouteNetwork::cleanDestNodeEdges()
 {
   // Remove all references to destination node
   for(int i : destinationNodePredecessors)
   {
-    if(nodes.contains(i))
+    if(nodeCache.contains(i))
     {
-      QVector<Edge>& edges = nodes[i].edges;
-
+      // node is in cache
+      // Remove all edges from the node that point to the destination node
+      QVector<Edge>& edges = nodeCache[i].edges;
       QVector<Edge>::iterator it = std::remove_if(edges.begin(), edges.end(),
                                                   [ = ](const Edge &e)->bool
                                                   {
@@ -176,43 +178,49 @@ void RouteNetwork::cleanDestNodeEdges()
                                                   });
 
       if(it == edges.end())
-        qWarning() << "No node destination predecessors deleted for node" << nodes.value(i).id;
+        qWarning() << "No node destination predecessors deleted for node" << nodeCache.value(i).id;
       else
         edges.erase(it, edges.end());
     }
     else
-      qWarning() << "No node destination found" << nodes.value(i).id;
+      qWarning() << "No node destination found" << nodeCache.value(i).id;
   }
+
+  // Clear predecessor cache
   destinationNodePredecessors.clear();
 }
 
+/* Add a destination node virtual edge to the node if it is inside the destination bounding rectangle */
 void RouteNetwork::addDestNodeEdges(nw::Node& node)
 {
   if(destinationNodeRect.contains(node.pos) && !destinationNodePredecessors.contains(node.id) &&
      node.id != DESTINATION_NODE_ID)
   {
-    nw::Edge edge(DESTINATION_NODE_ID,
-                  static_cast<int>(node.pos.distanceMeterTo(destinationPos)));
+    // Node is not dest and not indexed yet - create virtual edge
+    nw::Edge edge(DESTINATION_NODE_ID, static_cast<int>(node.pos.distanceMeterTo(destinationPos)));
 
     // Near destination - add as successor
     node.edges.append(edge);
-    // Remember for later cleanup
+    // Remember in cache for later cleanup
     destinationNodePredecessors.insert(node.id);
   }
 }
 
-nw::Node RouteNetwork::getNodeByNavId(int id, nw::Type type)
+/* Get a node by navaid id (waypoint_id, vor_id, ...) */
+nw::Node RouteNetwork::fetchNodeByNavId(int id, nw::NodeType type)
 {
   nodeByNavIdQuery->bindValue(":id", id);
   nodeByNavIdQuery->bindValue(":type", type);
   nodeByNavIdQuery->exec();
 
   if(nodeByNavIdQuery->next())
+    // Found fetch node into the cache
     return fetchNode(nodeByNavIdQuery->value("node_id").toInt());
   else
   {
     if(type == nw::WAYPOINT_JET || type == nw::WAYPOINT_VICTOR)
     {
+      // Not found and is an airway - look for waypoints
       nodeByNavIdQuery->bindValue(":type", nw::WAYPOINT_BOTH);
       nodeByNavIdQuery->exec();
       if(nodeByNavIdQuery->next())
@@ -223,17 +231,17 @@ nw::Node RouteNetwork::getNodeByNavId(int id, nw::Type type)
   return Node();
 }
 
-void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type)
+void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type)
 {
-  if(nodeId == START_NODE_ID)
+  if(nodeId == DEPARTURE_NODE_ID)
   {
-    type = START;
-    navId = -1;
+    type = DEPARTURE;
+    navId = -1; // No database id available
   }
   else if(nodeId == DESTINATION_NODE_ID)
   {
     type = DESTINATION;
-    navId = -1;
+    navId = -1; // No database id available
   }
   else
   {
@@ -247,9 +255,10 @@ void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type
       int typeVal = nodeNavIdAndTypeQuery->value("type").toInt();
 
       if(airwayRouting)
-        type = static_cast<nw::Type>(typeVal >> 4);
+        // This is an airway network which has the type in the upper four bits
+        type = static_cast<nw::NodeType>(typeVal >> 4);
       else
-        type = static_cast<nw::Type>(typeVal);
+        type = static_cast<nw::NodeType>(typeVal);
     }
     else
     {
@@ -259,16 +268,17 @@ void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type
   }
 }
 
+/* Create a virtual node at the given coordinates with the given id */
 nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
 {
-  nodes.remove(id);
+  nodeCache.remove(id);
 
   Node node;
   node.id = id;
   node.range = 0;
 
-  if(id == START_NODE_ID)
-    node.type = START;
+  if(id == DEPARTURE_NODE_ID)
+    node.type = DEPARTURE;
   else if(id == DESTINATION_NODE_ID)
     node.type = DESTINATION;
   else
@@ -279,7 +289,10 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
 
   if(loadSuccessors)
   {
-    Rect queryRect(Pos(lonx, laty), NODE_SEARCH_RADIUS);
+    // Load all successor nodes within the query rectangle
+    Rect queryRect(Pos(lonx, laty), NODE_SEARCH_RADIUS_METER);
+
+    // Use a set for de-duplication
     QSet<Edge> tempEdges;
     tempEdges.reserve(1000);
 
@@ -290,27 +303,29 @@ nw::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, in
       while(nearestNodesQuery->next())
       {
         int nodeId = nearestNodesQuery->value("node_id").toInt();
-        if(checkType(static_cast<nw::Type>(nearestNodesQuery->value("type").toInt())))
+        if(testType(static_cast<nw::NodeType>(nearestNodesQuery->value("type").toInt())))
         {
-          // TODO build edge add minAltFt and type
           Pos otherPos(nearestNodesQuery->value("lonx").toFloat(), nearestNodesQuery->value("laty").toFloat());
           tempEdges.insert(Edge(nodeId, static_cast<int>(node.pos.distanceMeterTo(otherPos))));
         }
       }
     }
     node.edges = tempEdges.values().toVector();
+
+    // Add edges to destination node if there are any
     addDestNodeEdges(node);
   }
 
-  nodes.insert(node.id, node);
+  nodeCache.insert(node.id, node);
 
   return node;
 }
 
+/* Get the node either from cache of from the database. The node will include all edges. */
 nw::Node RouteNetwork::fetchNode(int id)
 {
-  if(nodes.contains(id))
-    return nodes.value(id);
+  if(nodeCache.contains(id))
+    return nodeCache.value(id);
 
   nodeByIdQuery->bindValue(":id", id);
   nodeByIdQuery->exec();
@@ -323,30 +338,32 @@ nw::Node RouteNetwork::fetchNode(int id)
     QSet<Edge> tempEdges;
     tempEdges.reserve(1000);
 
+    // Add ingoing edges
     edgeToQuery->bindValue(":id", id);
     edgeToQuery->exec();
 
     while(edgeToQuery->next())
     {
       int nodeId = edgeToQuery->value("to_node_id").toInt();
-      if(nodeId != id && checkType(static_cast<nw::Type>(edgeToQuery->value("to_node_type").toInt())))
+      if(nodeId != id && testType(static_cast<nw::NodeType>(edgeToQuery->value("to_node_type").toInt())))
         tempEdges.insert(createEdge(edgeToQuery->record(), nodeId));
     }
 
+    // Add outgoing edges
     edgeFromQuery->bindValue(":id", id);
     edgeFromQuery->exec();
 
     while(edgeFromQuery->next())
     {
       int nodeId = edgeFromQuery->value("from_node_id").toInt();
-      if(nodeId != id && checkType(static_cast<nw::Type>(edgeFromQuery->value("from_node_type").toInt())))
+      if(nodeId != id && testType(static_cast<nw::NodeType>(edgeFromQuery->value("from_node_type").toInt())))
         tempEdges.insert(createEdge(edgeFromQuery->record(), nodeId));
     }
 
     node.edges = tempEdges.values().toVector();
     addDestNodeEdges(node);
 
-    nodes.insert(node.id, node);
+    nodeCache.insert(node.id, node);
     return node;
   }
   return Node();
@@ -390,6 +407,8 @@ void RouteNetwork::initQueries()
 
 void RouteNetwork::deInitQueries()
 {
+  clearStartAndDestinationNodes();
+
   delete nodeByNavIdQuery;
   nodeByNavIdQuery = nullptr;
 
@@ -409,26 +428,30 @@ void RouteNetwork::deInitQueries()
   edgeFromQuery = nullptr;
 }
 
+/* Create node from SQL record */
 nw::Node RouteNetwork::createNode(const SqlRecord& rec)
 {
+  // Update indexes into SQL record
   updateNodeIndexes(rec);
   Node node;
 
   if(airwayRouting)
   {
-    node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex) >> 4);
-    node.type2 = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex) & 0x0f);
+    node.type = static_cast<nw::NodeType>(rec.valueInt(nodeTypeIndex) >> 4);
+    node.subtype = static_cast<nw::NodeType>(rec.valueInt(nodeTypeIndex) & 0x0f);
   }
   else
-    node.type = static_cast<nw::Type>(rec.valueInt(nodeTypeIndex));
+    node.type = static_cast<nw::NodeType>(rec.valueInt(nodeTypeIndex));
 
   if(nodeRangeIndex != -1)
+    // Add range if part of the extra columns
     node.range = rec.valueInt(nodeRangeIndex);
   node.pos.setLonX(rec.valueFloat(nodeLonXIndex));
   node.pos.setLatY(rec.valueFloat(nodeLatYIndex));
   return node;
 }
 
+/* Update node index caches to avoid string lookups in SqlRecord */
 void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
 {
   if(!nodeIndexesCreated)
@@ -444,6 +467,7 @@ void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
   }
 }
 
+/* Create edge from SQL record */
 nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeId)
 {
   updateEdgeIndexes(rec);
@@ -456,10 +480,11 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
   if(edgeAirwayIdIndex != -1)
     edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
   if(edgeDistanceIndex != -1)
-    edge.distanceMeter = rec.valueInt(edgeDistanceIndex);
+    edge.lengthMeter = rec.valueInt(edgeDistanceIndex);
   return edge;
 }
 
+/* Update edge index caches to avoid string lookups in SqlRecord */
 void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
 {
   if(!edgeIndexesCreated)
@@ -488,11 +513,12 @@ void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
   }
 }
 
-bool RouteNetwork::checkType(nw::Type type)
+/* Check if the node type is part of the network and usable for the current mode */
+bool RouteNetwork::testType(nw::NodeType type)
 {
-  nw::Type tmp = type;
+  nw::NodeType tmp = type;
   if(airwayRouting)
-    tmp = static_cast<nw::Type>(static_cast<int>(type) >> 4);
+    tmp = static_cast<nw::NodeType>(static_cast<int>(type) >> 4);
 
   switch(tmp)
   {
@@ -507,7 +533,7 @@ bool RouteNetwork::checkType(nw::Type type)
     case nw::DME:
       return mode & ROUTE_RADIONAV;
 
-    case nw::START:
+    case nw::DEPARTURE:
     case nw::DESTINATION:
       return true;
 

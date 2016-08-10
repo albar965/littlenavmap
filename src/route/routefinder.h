@@ -24,6 +24,7 @@
 #include "geo/calculations.h"
 
 namespace rf {
+/* Used when fetching the route points after calculation. Adds airway id to node */
 struct RouteEntry
 {
   maptypes::MapObjectRef ref;
@@ -32,73 +33,99 @@ struct RouteEntry
 
 }
 
+/*
+ * Calculates flight plans within a route network which can be an airway or radio navaid network.
+ * Use A* algorithm and several cost factor adjustments to get reasonable routes.
+ */
 class RouteFinder
 {
 public:
+  /* Creates a route finder that uses the given network */
   RouteFinder(RouteNetwork *routeNetwork);
   virtual ~RouteFinder();
 
+  /*
+   * Calculates a flight plan between two points. The points are added to the network but will not be returned
+   * in extractRoute.
+   * @param from departure position
+   * @param to destination position
+   * @param flownAltitude create a flight plan using airways for the given altitude. Set to 0 to ignore.
+   * @return true if a route was found
+   */
   bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude);
 
-  void extractRoute(QVector<rf::RouteEntry>& route, float& distance);
+  /* Extract route points and total distance if calculateRoute was successfull.
+   * From and to are not included in the list */
+  void extractRoute(QVector<rf::RouteEntry>& route, float& distanceMeter);
 
+  /* Prefer VORs to transition from departure to airway network */
   void setPreferVorToAirway(bool value)
   {
     preferVorToAirway = value;
   }
 
+  /* Prefer NDBs to transition from departure to airway network */
   void setPreferNdbToAirway(bool value)
   {
     preferNdbToAirway = value;
   }
 
 private:
-  RouteNetwork *network;
   void expandNode(const nw::Node& node, const nw::Node& destNode);
-
-  float cost(const nw::Node& node, const nw::Node& successorNode, int distanceMeter);
+  float calculateEdgeCost(const nw::Node& node, const nw::Node& successorNode, int lengthMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
+  maptypes::MapObjectTypes toMapObjectType(nw::NodeType type);
 
-  // Force algortihm to avoid direct route from start to destination
-  const float COST_FACTOR_DIRECT = 2.f;
+  /* Force algortihm to avoid direct route from start to destination */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;
 
-  // Force algortihm to use close waypoints near start and destination
-  const float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
+  /* Force algortihm to use close waypoints near start and destination */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
 
-  // Force algortihm to use closest radio navaids near start and destination before waypoints
-  // Has to be smaller than COST_FACTOR_FORCE_CLOSE_NODES
-  const float COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR = 1.1f;
-  const float COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB = 1.2f;
+  /* Force algortihm to use closest radio navaids near start and destination before waypoints */
+  /* Has to be smaller than COST_FACTOR_FORCE_CLOSE_NODES */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR = 1.1f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB = 1.2f;
 
-  // Increase costs to force reception of at least one radio navaid along the route
-  const float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
+  /* Increase costs to force reception of at least one radio navaid along the route */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
 
-  // Try to avoid NDBs
-  const float COST_FACTOR_NDB = 1.5f;
+  /* Try to avoid NDBs */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_NDB = 1.5f;
 
-  // Try to avoid VORs (no DME)
-  const float COST_FACTOR_VOR = 1.2f;
+  /* Try to avoid VORs (no DME) */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_VOR = 1.2f;
 
-  // Avoid DMEs
-  const float COST_FACTOR_DME = 4.f;
+  /* Avoid DMEs */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_DME = 4.f;
 
-  // Avoid too long airway segments
-  const float COST_FACTOR_LONG_AIRWAY = 1.2f;
-  // Distance to define a long airway segment in meter
-  const float DISTANCE_LONG_AIRWAY = atools::geo::nmToMeter(200.f);
+  /* Avoid too long airway segments */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_LONG_AIRWAY = 1.2f;
+
+  /* Distance to define a long airway segment in meter */
+  static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(200.f);
 
   int altitude = 0;
 
+  RouteNetwork *network;
+
+  /* Heap structure storing open nodes.
+   * Sort order is defined by costs from start to node + estimate to destination */
   atools::util::Heap<nw::Node> openNodesHeap;
+
+  /* Nodes that have been processed already and have a known shortest path */
   QSet<int> closedNodes;
+
+  /* Costs from start to this node. Maps node id to costs. Costs are distance in meter
+   * adjusted by some factors. */
   QHash<int, float> nodeCosts;
+
+  /* Maps node id to predecessor node id */
   QHash<int, int> nodePredecessor;
+  /* Maps node id to predecessor airway id */
   QHash<int, int> nodeAirwayId;
-  maptypes::MapObjectTypes toMapObjectType(nw::Type type);
 
-  QVector<int> airwayAltitudes;
-
-  // For RouteNetwork::getNeighbours
+  /* For RouteNetwork::getNeighbours to avoid instantiations */
   QVector<nw::Node> successorNodes;
   QVector<nw::Edge> successorEdges;
 

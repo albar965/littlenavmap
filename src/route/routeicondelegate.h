@@ -24,6 +24,9 @@
 
 class SymbolPainter;
 
+/*
+ * Paints airport and navaid icons into the "ident" cell of the flight plan table view.
+ */
 class RouteIconDelegate :
   public QStyledItemDelegate
 {
@@ -34,12 +37,11 @@ public:
   virtual ~RouteIconDelegate();
 
 private:
-  SymbolPainter *symbolPainter;
-
-  const QList<RouteMapObject>& routeObjects;
-
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
                      const QModelIndex& index) const override;
+
+  SymbolPainter *symbolPainter;
+  const QList<RouteMapObject>& routeObjects;
 
 };
 

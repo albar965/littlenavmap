@@ -64,14 +64,13 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   if(ap.addon())
     opt.font.setItalic(true);
 
+  painter->setRenderHint(QPainter::Antialiasing);
+  painter->setRenderHint(QPainter::TextAntialiasing);
+
   // Draw the text
   QStyledItemDelegate::paint(painter, opt, index);
 
-  painter->setRenderHint(QPainter::Antialiasing);
   int symSize = option.rect.height() - 4;
-  symbolPainter->drawAirportSymbol(painter, ap,
-                                   option.rect.x() + symSize,
-                                   option.rect.y() + symSize / 2 + 2,
-                                   symSize,
-                                   false, false);
+  symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symSize, option.rect.y() + symSize / 2 + 2,
+                                   symSize, false, false);
 }

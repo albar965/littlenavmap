@@ -21,7 +21,6 @@
 #include "common/maptypes.h"
 #include "geo/calculations.h"
 
-#include <QElapsedTimer>
 #include <QHash>
 #include <QVector>
 
@@ -39,31 +38,34 @@ class Rect;
 
 namespace nw {
 
+/* Network mode. Changes some internal behavior of the network. */
 enum Mode
 {
   ROUTE_NONE = 0x00,
-  ROUTE_RADIONAV = 0x01,
-  ROUTE_VICTOR = 0x02,
-  ROUTE_JET = 0x04
+  ROUTE_RADIONAV = 0x01, /* VOR/NDB to VOR/NDB */
+  ROUTE_VICTOR = 0x02, /* Low airways  */
+  ROUTE_JET = 0x04 /* High airways */
 };
 
 Q_DECLARE_FLAGS(Modes, Mode);
 Q_DECLARE_OPERATORS_FOR_FLAGS(nw::Modes);
 
-enum Type
+/* Type and subtype of a node */
+enum NodeType
 {
   NONE = 0,
-  VOR = 1,
-  VORDME = 2,
-  DME = 3,
-  NDB = 4,
-  WAYPOINT_VICTOR = 5,
-  WAYPOINT_JET = 6,
-  WAYPOINT_BOTH = 7,
-  START = 10,
-  DESTINATION = 11
+  VOR = 1, /* Type or subtype for an airway waypoint */
+  VORDME = 2, /* Type or subtype for an airway waypoint */
+  DME = 3, /* Type or subtype for an airway waypoint */
+  NDB = 4, /* Type or subtype for an airway waypoint */
+  WAYPOINT_VICTOR = 5, /* Airway waypoint */
+  WAYPOINT_JET = 6, /* Airway waypoint */
+  WAYPOINT_BOTH = 7, /* Airway waypoint */
+  DEPARTURE = 10, /* User defined departure virtual node */
+  DESTINATION = 11 /* User defined destination virtual node */
 };
 
+/* Edge type for airway routing */
 enum EdgeType
 {
   AIRWAY_NONE = 0,
@@ -72,19 +74,20 @@ enum EdgeType
   AIRWAY_BOTH = 7
 };
 
+/* Network edge that connects two nodes. Is loaded from the database. */
 struct Edge
 {
   Edge()
-    : toNodeId(-1), distanceMeter(0), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
+    : toNodeId(-1), lengthMeter(0), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
   {
   }
 
   Edge(int to, int distance)
-    : toNodeId(to), distanceMeter(distance), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
+    : toNodeId(to), lengthMeter(distance), minAltFt(0), airwayId(-1), type(nw::AIRWAY_NONE)
   {
   }
 
-  int toNodeId, distanceMeter, minAltFt, airwayId;
+  int toNodeId /* database "node_id" */, lengthMeter, minAltFt, airwayId;
   nw::EdgeType type;
 
   bool operator==(const nw::Edge& other) const
@@ -105,28 +108,31 @@ inline int qHash(const nw::Edge& edge)
   return edge.toNodeId ^ edge.type;
 }
 
+/* Network node. VOR, NDB, waypoint or user defined departure/destination */
 struct Node
 {
   Node()
-    : id(-1), range(0), type(nw::NONE), type2(nw::NONE)
+    : id(-1), range(0), type(nw::NONE), subtype(nw::NONE)
   {
   }
 
-  Node(int nodeId, nw::Type nodeType, nw::Type nodeType2,
+  Node(int nodeId, nw::NodeType nodeType, nw::NodeType nodeType2,
        const atools::geo::Pos& position, int nodeRange = 0)
-    : id(nodeId), range(nodeRange), pos(position), type(nodeType), type2(nodeType2)
+    : id(nodeId), range(nodeRange), pos(position), type(nodeType), subtype(nodeType2)
   {
   }
 
-  int id = -1;
-  int range;
-  QVector<Edge> edges;
+  int id = -1; /* Database id ("node_id") */
+  int range; /* Range for a radio navaid or 0 if not applicable */
+  QVector<Edge> edges; /* Attached edges leading to adjacent nodes */
   atools::geo::Pos pos;
-  nw::Type type, type2;
+
+  nw::NodeType type /* VOR, NDB, ..., WAYPOINT_VICTOR, ... */,
+               subtype /* VOR, VORDME, NDB, ... for airway network if type is one of WAYPOINT_* */;
 
   bool operator==(const nw::Node& other) const
   {
-    return id == other.id && type == other.type && type2 == other.type2;
+    return id == other.id && type == other.type && subtype == other.subtype;
   }
 
   bool operator!=(const nw::Node& other) const
@@ -146,42 +152,69 @@ inline int qHash(const nw::Node& node)
 Q_DECLARE_TYPEINFO(nw::Node, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(nw::Edge, Q_PRIMITIVE_TYPE);
 
+/*
+ * Routing network that loads and caches nodes and edges from the database.
+ * Allows to resolve relations between objects and walk through the network.
+ */
 class RouteNetwork
 {
 public:
+  /*
+   * Create network object and provide the needed tables. Tables need to have a certain layout.
+   * @param sqlDb Database to use
+   * @param nodeTableName Where nodes are loaded from
+   * @param edgeTableName Where edges are loaded from
+   * @param nodeExtraColumns Extra columns that are loaded with the nodes
+   * @param edgeExtraColumns Extra columns that are loaded with the edges
+   */
   RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
                const QString& edgeTableName, const QStringList& nodeExtraColumns,
                const QStringList& edgeExtraColumns);
   virtual ~RouteNetwork();
 
-  void getNavIdAndTypeForNode(int nodeId, int& navId, nw::Type& type);
+  /* Get the navaid id and type for the given network node id. */
+  void getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type);
 
+  /* Set up and prepare all queries */
   void initQueries();
+
+  /* Disconnect queries from database and remove departure and destination nodes */
   void deInitQueries();
 
+  /* Get all adjacent nodes and attached edges for the given node */
   void getNeighbours(const nw::Node& from, QVector<nw::Node>& neighbours, QVector<nw::Edge>& edges);
-  void addStartAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
 
-  void clear();
+  /* Integrate departure and destination positions into the network as virtual nodes/edges */
+  void addDepartureAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
 
-  nw::Node getStartNode() const;
+  /* Get the virtual departure node that was added using addDepartureAndDestinationNodes */
+  nw::Node getDepartureNode() const;
+
+  /* Get the virtual destination node that was added using addDepartureAndDestinationNodes */
   nw::Node getDestinationNode() const;
 
+  /* Get a node by routing network node id. If id is -1 an invalid node with id -1 is returned */
   nw::Node getNode(int id);
 
+  /* Number of nodes in the database */
   int getNumberOfNodesDatabase();
+
+  /* Number of nodes in the memory cache */
   int getNumberOfNodesCache() const;
 
+  /* true if mode is either ROUTE_VICTOR, ROUTE_JET  or both flags */
   bool isAirwayRouting() const
   {
     return airwayRouting;
   }
 
+  /* Sets the route mode. This will change some internal behavior like checking subtypes and more */
   void setMode(nw::Modes routeMode);
 
-protected:
-  nw::Node getNodeByNavId(int id, nw::Type type);
+private:
+  void clearStartAndDestinationNodes();
 
+  nw::Node fetchNodeByNavId(int id, nw::NodeType type);
   nw::Node fetchNode(int id);
   nw::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
 
@@ -189,43 +222,53 @@ protected:
   void cleanDestNodeEdges();
 
   void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
-  bool checkType(nw::Type type);
+  bool testType(nw::NodeType type);
   nw::Node createNode(const atools::sql::SqlRecord& rec);
   nw::Edge createEdge(const atools::sql::SqlRecord& rec, int toNodeId);
 
   void updateNodeIndexes(const atools::sql::SqlRecord& rec);
   void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
 
-  static Q_DECL_CONSTEXPR int NODE_SEARCH_RADIUS = atools::geo::nmToMeter(200);
-  const int START_NODE_ID = -10;
+  /* Search radius for nodes around departure and destination position */
+  static Q_DECL_CONSTEXPR int NODE_SEARCH_RADIUS_METER = atools::geo::nmToMeter(200);
+
+  /* Departure virtual node id */
+  const int DEPARTURE_NODE_ID = -10;
+  /* Destination virtual node id */
   const int DESTINATION_NODE_ID = -20;
+
+  /* Cache the number of nodes in the database */
   int numNodesDb = -1;
 
   atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
   *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
   *edgeFromQuery = nullptr;
 
-  atools::geo::Rect startNodeRect, destinationNodeRect;
-  atools::geo::Pos startPos, destinationPos;
+  /* Bounding rectangle around destination used to find virtual successor edges */
+  atools::geo::Rect destinationNodeRect;
+  atools::geo::Pos departurePos, destinationPos;
+
+  /* Collected destination predecessor node ids */
   QSet<int> destinationNodePredecessors;
 
   atools::sql::SqlDatabase *db;
   nw::Modes mode;
-  QHash<int, nw::Node> nodes;
-  QElapsedTimer timer;
 
+  /* Cache for nodes (also containing edges) for the whole network. Filled on demand. */
+  QHash<int, nw::Node> nodeCache;
+
+  /* Database tables and extra columns */
   QString nodeTable, edgeTable;
   QStringList nodeExtraCols, edgeExtraCols;
 
+  /* Index caches to avoid string lookups in SqlRecord */
   bool nodeIndexesCreated = false;
   int nodeIdIndex = -1, nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
-
   bool edgeIndexesCreated = false;
   int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
       edgeDistanceIndex = -1;
 
   bool airwayRouting;
-
 };
 
 #endif // LITTLENAVMAP_ROUTENETWORK_H

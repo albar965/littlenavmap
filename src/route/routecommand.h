@@ -25,17 +25,22 @@
 class RouteController;
 
 namespace rctype {
+/* Command type used to merge undo actions */
 enum RouteCmdType
 {
   EDIT = -1, /* Unmergeable edit */
-  DELETE = 0,
-  MOVE = 1,
-  ALTITUDE = 2,
-  REVERSE = 3
+  DELETE = 0, /* Waypoint(s) deleted in table */
+  MOVE = 1, /* Waypoint(s) moved in table */
+  ALTITUDE = 2, /*Altitude changed in spin box */
+  REVERSE = 3 /* Route reverse action */
 };
 
 }
 
+/*
+ * Flight plan undo command including a few workaround for QUndoCommand inflexibilities.
+ * Keeps a copy of the flight plan before and after the change.
+ */
 class RouteCommand :
   public QUndoCommand
 {
@@ -54,10 +59,11 @@ private:
   virtual int id() const override;
   virtual bool mergeWith(const QUndoCommand *other) override;
 
+  /* Avoid the first redo action when inserting the command. This not usable for complex interactions. */
   bool firstRedoExecuted = false;
   RouteController *controller;
   rctype::RouteCmdType type;
-  atools::fs::pln::Flightplan planBefore, planAfter;
+  atools::fs::pln::Flightplan planBeforeChange, planAfterChange;
 };
 
 #endif // LITTLENAVMAP_ROUTECOMMAND_H

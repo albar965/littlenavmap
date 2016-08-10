@@ -24,61 +24,79 @@
 namespace opts {
 enum Flag
 {
-  // ui->checkBoxOptionsStartupLoadKml
+  /* Reload KML files on startup.
+   * ui->checkBoxOptionsStartupLoadKml  */
   STARTUP_LOAD_KML = 1 << 0,
 
-  // ui->checkBoxOptionsStartupLoadMapSettings
+  /* Reload all map settings on startup.
+   * ui->checkBoxOptionsStartupLoadMapSettings */
   STARTUP_LOAD_MAP_SETTINGS = 1 << 1,
 
-  // ui->checkBoxOptionsStartupLoadRoute
+  /* Reload route on startup.
+   * ui->checkBoxOptionsStartupLoadRoute */
   STARTUP_LOAD_ROUTE = 1 << 2,
 
-  // ui->radioButtonOptionsStartupShowHome
+  /* Show home on starup.
+   * ui->radioButtonOptionsStartupShowHome */
   STARTUP_SHOW_HOME = 1 << 3,
 
-  // ui->radioButtonOptionsStartupShowLast
+  /* Show last position on startup.
+   * ui->radioButtonOptionsStartupShowLast */
   STARTUP_SHOW_LAST = 1 << 4,
 
-  // ui->checkBoxOptionsGuiCenterKml
+  /* Center KML after loading.
+   * ui->checkBoxOptionsGuiCenterKml */
   GUI_CENTER_KML = 1 << 5,
 
-  // ui->checkBoxOptionsGuiCenterRoute
+  /* Center flight plan after loading.
+   * ui->checkBoxOptionsGuiCenterRoute */
   GUI_CENTER_ROUTE = 1 << 6,
 
-  // ui->checkBoxOptionsMapEmptyAirports
+  /* Treat empty airports special.
+   * ui->checkBoxOptionsMapEmptyAirports */
   MAP_EMPTY_AIRPORTS = 1 << 7,
 
-  // ui->checkBoxOptionsRouteEastWestRule
+  /* East/west rule for flight plan calculation.
+   * ui->checkBoxOptionsRouteEastWestRule */
   ROUTE_EAST_WEST_RULE = 1 << 8,
 
-  // ui->checkBoxOptionsRoutePreferNdb
+  /* Start airway route at NDB.
+   * ui->checkBoxOptionsRoutePreferNdb */
   ROUTE_PREFER_NDB = 1 << 9,
 
-  // ui->checkBoxOptionsRoutePreferVor
+  /* Start airway route at VOR.
+   * ui->checkBoxOptionsRoutePreferVor */
   ROUTE_PREFER_VOR = 1 << 10,
 
-  // ui->checkBoxOptionsWeatherInfoAsn
+  /* Show ASN weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoAsn */
   WEATHER_INFO_ASN = 1 << 11,
 
-  // ui->checkBoxOptionsWeatherInfoNoaa
+  /* Show NOAA weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoNoaa */
   WEATHER_INFO_NOAA = 1 << 12,
 
-  // ui->checkBoxOptionsWeatherInfoVatsim
+  /* Show Vatsim weather in info panel.
+   * ui->checkBoxOptionsWeatherInfoVatsim */
   WEATHER_INFO_VATSIM = 1 << 13,
 
-  // ui->checkBoxOptionsWeatherTooltipAsn
+  /* Show ASN weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipAsn */
   WEATHER_TOOLTIP_ASN = 1 << 14,
 
-  // ui->checkBoxOptionsWeatherTooltipNoaa
+  /* Show NOAA weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipNoaa */
   WEATHER_TOOLTIP_NOAA = 1 << 15,
 
-  // ui->checkBoxOptionsWeatherTooltipVatsim
+  /* Show Vatsim weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipVatsim */
   WEATHER_TOOLTIP_VATSIM = 1 << 16
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
 
+/* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
   FULL,
@@ -86,6 +104,7 @@ enum MapScrollDetail
   NONE
 };
 
+/* Speed of simualator aircraft updates */
 enum SimUpdateRate
 {
   FAST,
@@ -95,24 +114,34 @@ enum SimUpdateRate
 
 }
 
-/* All default values are defined in this class. TODO not true */
+/*
+ * Contains global options that are provided using a singelton pattern.
+ * All default values are defined in the widgets in the options.ui file.
+ * This class will be populated by the OptionsDialog which loads widget data from the settings
+ * and transfers this data into this class.
+ */
 class OptionData
 {
 public:
+  /* Get a the global options instance. Not thread safe.
+   * OptionsDialog.restoreState() has to be called before getting an instance */
   static const OptionData& instance();
 
   ~OptionData();
 
+  /* Get option flags */
   opts::Flags getFlags() const
   {
     return flags;
   }
 
+  /* Vector of (red) range ring distances in nautical miles */
   const QVector<int>& getMapRangeRings() const
   {
     return mapRangeRings;
   }
 
+  /* ASN path that overrides the default */
   const QString& getWeatherActiveSkyPath() const
   {
     return weatherActiveSkyPath;
@@ -128,11 +157,13 @@ public:
     return weatherVatsimUrl;
   }
 
+  /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
   const QStringList& getDatabaseAddonExclude() const
   {
     return databaseAddonExclude;
   }
 
+  /* List of directories that are excluded from scenery database loading */
   const QStringList& getDatabaseExclude() const
   {
     return databaseExclude;
@@ -148,66 +179,79 @@ public:
     return simUpdateRate;
   }
 
+  /* Disk cache size for OSM, OTM and elevation map data */
   unsigned int getCacheSizeDiskMb() const
   {
     return static_cast<unsigned int>(cacheSizeDisk);
   }
 
+  /* RAM cache size for OSM, OTM and elevation map data */
   unsigned int getCacheSizeMemoryMb() const
   {
     return static_cast<unsigned int>(cacheSizeMemory);
   }
 
+  /* Info panel text size in percent */
   int getGuiInfoTextSize() const
   {
     return guiInfoTextSize;
   }
 
-  int getGuiRouteTableTextSize() const
-  {
-    return guiRouteTableTextSize;
-  }
-
-  int getGuiSearchTableTextSize() const
-  {
-    return guiSearchTableTextSize;
-  }
-
+  /* User aircraft panel text size in percent */
   int getGuiInfoSimSize() const
   {
     return guiInfoSimSize;
   }
 
+  /* Route table view text size in percent */
+  int getGuiRouteTableTextSize() const
+  {
+    return guiRouteTableTextSize;
+  }
+
+  /* Search result table view text size in percent */
+  int getGuiSearchTableTextSize() const
+  {
+    return guiSearchTableTextSize;
+  }
+
+  /* Map click recognition radius in pixel */
   int getMapClickSensitivity() const
   {
     return mapClickSensitivity;
   }
 
+  /* Map tooltip recognition radius in pixel */
   int getMapTooltipSensitivity() const
   {
     return mapTooltipSensitivity;
   }
 
+  /* Map symbol size in percent */
   int getMapSymbolSize() const
   {
     return mapSymbolSize;
   }
 
+  /* Map text size in percent */
   int getMapTextSize() const
   {
     return mapTextSize;
   }
 
+  /* Default zoom distance for point objects */
   float getMapZoomShow() const
   {
     return mapZoomShow;
   }
 
+  /* Ground buffer in feet for red line in profile view */
   int getRouteGroundBuffer() const
   {
     return routeGroundBuffer;
   }
 
+  /* Bounding box for aircraft updates in percent */
   int getSimUpdateBox() const
   {
     return simUpdateBox;
@@ -219,6 +263,7 @@ private:
   OptionData();
   static OptionData& instanceInternal();
 
+  // Singleton instance
   static OptionData *optionData;
 
   opts::Flags flags =
@@ -230,8 +275,8 @@ private:
     opts::GUI_CENTER_KML |
     opts::GUI_CENTER_ROUTE |
     opts::MAP_EMPTY_AIRPORTS |
-    opts::ROUTE_PREFER_NDB |
-    opts::ROUTE_PREFER_VOR |
+    // opts::ROUTE_PREFER_NDB |
+    // opts::ROUTE_PREFER_VOR |
     opts::ROUTE_EAST_WEST_RULE |
     opts::WEATHER_INFO_ASN |
     opts::WEATHER_INFO_NOAA |
@@ -304,6 +349,7 @@ private:
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
 
+  // Used in the singelton to check if data was already loaded
   bool valid = false;
 };
 
