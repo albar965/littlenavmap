@@ -270,7 +270,7 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
 
   if(!QDesktopServices::openUrl(newUrl))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening URL <i>%1</i>")).arg(url.toDisplayString()));
+                           tr("Error opening URL \"%1\"")).arg(url.toDisplayString()));
   else
     setStatusMessage(tr("Opened legend link in browser."));
 }
@@ -601,11 +601,11 @@ void MainWindow::connectAllSlots()
 
   // Route editing
   connect(mapWidget, &MapWidget::routeSetStart,
-          routeController, &RouteController::routeSetStart);
+          routeController, &RouteController::routeSetDeparture);
   connect(mapWidget, &MapWidget::routeSetParkingStart,
           routeController, &RouteController::routeSetParking);
   connect(mapWidget, &MapWidget::routeSetDest,
-          routeController, &RouteController::routeSetDest);
+          routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAdd,
           routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace,
@@ -614,9 +614,9 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::routeDelete);
 
   connect(searchController->getAirportSearch(), &Search::routeSetStart,
-          routeController, &RouteController::routeSetStart);
+          routeController, &RouteController::routeSetDeparture);
   connect(searchController->getAirportSearch(), &Search::routeSetDest,
-          routeController, &RouteController::routeSetDest);
+          routeController, &RouteController::routeSetDestination);
   connect(searchController->getAirportSearch(), &Search::routeAdd,
           routeController, &RouteController::routeAdd);
 
@@ -710,7 +710,7 @@ void MainWindow::showDatabaseFiles()
 
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+                           tr("Error opening help URL \"%1\"")).arg(url.toDisplayString()));
 }
 
 /* Updates label and tooltip for objects shown on map */
@@ -758,7 +758,7 @@ void MainWindow::renderStatusChanged(RenderStatus status)
 /* Route center action */
 void MainWindow::routeCenter()
 {
-  if(routeController->hasRoute())
+  if(!routeController->isFlightplanEmpty())
   {
     mapWidget->showRect(routeController->getBoundingRect());
     setStatusMessage(tr("Flight plan shown on map."));
@@ -769,7 +769,7 @@ void MainWindow::routeCenter()
  *  @return true if route can be saved anyway */
 bool MainWindow::routeValidate()
 {
-  if(!routeController->hasValidStart() || !routeController->hasValidDestination())
+  if(!routeController->hasValidDeparture() || !routeController->hasValidDestination())
   {
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
                                             tr("Flight Plan must have an airport as "
@@ -820,7 +820,7 @@ bool MainWindow::routeValidate()
  *  @return true if route can be saved anyway */
 bool RouteController::hasValidParking() const
 {
-  if(hasValidStart())
+  if(hasValidDeparture())
   {
     const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
 
@@ -845,8 +845,8 @@ void MainWindow::updateWindowTitle()
   QString newTitle = mainWindowTitle;
   newTitle += " - " + databaseManager->getSimulatorShortName();
 
-  if(!routeController->getRouteFilename().isEmpty())
-    newTitle += " - " + QFileInfo(routeController->getRouteFilename()).fileName() +
+  if(!routeController->getCurrentRouteFilename().isEmpty())
+    newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
                 (routeController->hasChanged() ? " *" : QString());
   else if(routeController->hasChanged())
     newTitle += " - *";
@@ -872,7 +872,7 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getRouteFilename().isEmpty())
+      if(routeController->getCurrentRouteFilename().isEmpty())
         return routeSaveAs();
       else
         return routeSave();
@@ -950,7 +950,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSave()
 {
-  if(routeController->getRouteFilename().isEmpty())
+  if(routeController->getCurrentRouteFilename().isEmpty())
     return routeSaveAs();
   else
   {
@@ -958,7 +958,7 @@ bool MainWindow::routeSave()
     {
       if(routeController->saveFlightplan())
       {
-        routeFileHistory->addFile(routeController->getRouteFilename());
+        routeFileHistory->addFile(routeController->getCurrentRouteFilename());
         updateActionStates();
         setStatusMessage(tr("Flight plan saved."));
         return true;
@@ -978,7 +978,7 @@ bool MainWindow::routeSaveAs()
       tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
       "pln", "Route/",
       atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
-      routeController->getDefaultFilename());
+      routeController->buildDefaultFilename());
 
     if(!routeFile.isEmpty())
     {
@@ -1170,7 +1170,7 @@ void MainWindow::updateActionStates()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
   bool hasFlightplan = !routeController->isFlightplanEmpty();
-  bool hasStartAndDest = routeController->hasValidStart() && routeController->hasValidDestination();
+  bool hasStartAndDest = routeController->hasValidDeparture() && routeController->hasValidDestination();
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
@@ -1179,7 +1179,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
-  ui->actionRouteSelectParking->setEnabled(routeController->hasValidStart());
+  ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
 

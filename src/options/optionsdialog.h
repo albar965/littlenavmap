@@ -33,6 +33,10 @@ class QCheckBox;
 class QRadioButton;
 class RangeRingValidator;
 
+/* Takes care about loading, changing and saving of global options.
+ * All default options are defined in the widgets in the options.ui file.
+ * OptionData will be populated by the OptionsDialog which loads widget data from the settings
+ * and transfers this data into the OptionData class. */
 class OptionsDialog :
   public QDialog
 {
@@ -42,29 +46,33 @@ public:
   OptionsDialog(MainWindow *parentWindow);
   virtual ~OptionsDialog();
 
+  /* Saves the state of all widgets */
   void saveState();
+
+  /* Restores state of all widgets. Has to be called before getting the OptionData instance. */
   void restoreState();
 
+  /* Show the dialog */
   virtual int exec() override;
 
 signals:
+  /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
-  void toOptionData();
-  void fromOptionData();
+  void widgetsToOptionData();
+  void optionDataToWidgets();
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
-  void toFlags(QRadioButton *checkBox, opts::Flags flag);
+  void toFlags(QRadioButton *radioButton, opts::Flags flag);
 
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
-  void fromFlags(QRadioButton *checkBox, opts::Flags flag);
+  void fromFlags(QRadioButton *radioButton, opts::Flags flag);
 
   void selectAsnPathClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
-  void asnPathEditingFinished();
-  void updateAsnButtonState();
+  void updateWeatherButtonState();
   void updateAsnPathStatus();
 
   void addDatabaseExcludePathClicked();
@@ -84,6 +92,8 @@ private:
   Ui::Options *ui;
   MainWindow *mainWindow;
   QList<QObject *> widgets;
+
+  // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
 
 };

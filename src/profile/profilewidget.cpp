@@ -37,6 +37,7 @@
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
 
+/* Maximum delta values depending on update rate in options */
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   {
     {
@@ -60,14 +61,19 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
   elevationModel = mainWindow->getElevationModel();
   routeController = mainWindow->getRouteController();
 
+  // Create single shot timer that will restart the thread after a delay
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
   connect(updateTimer, &QTimer::timeout, this, &ProfileWidget::updateTimeout);
 
-  connect(elevationModel, &Marble::ElevationModel::updateAvailable,
-          this, &ProfileWidget::updateElevation);
+  // Marble will let us know when updates are available
+  connect(elevationModel, &Marble::ElevationModel::updateAvailable, this,
+          &ProfileWidget::elevationUpdateAvailable);
+
+  // Notification from thread that it has finished and we can get the result from the future
   connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateThreadFinished);
 
+  // Want mouse events even when no button is pressed
   setMouseTracking(true);
 }
 
@@ -78,16 +84,18 @@ ProfileWidget::~ProfileWidget()
 
 void ProfileWidget::routeChanged(bool geometryChanged)
 {
-  if(!visible)
+  if(!widgetVisible)
     return;
 
   if(geometryChanged)
   {
+    // Start thread after delay to calculate new data
     qDebug() << "Profile route geometry changed";
-    updateTimer->start(UPDATE_TIMEOUT);
+    updateTimer->start(UPDATE_TIMEOUT_MS);
   }
   else
   {
+    // Only update screen
     updateScreenCoords();
     update();
   }
@@ -98,7 +106,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   if(databaseLoadStatus)
     return;
 
-  bool updateProfile = false;
+  bool updateWidget = false;
 
   if(!routeController->isFlightplanEmpty())
   {
@@ -109,22 +117,25 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       simData = simulatorData;
       if(rmoList.getRouteDistances(simData.getPosition(), &aircraftDistanceFromStart, &aircraftDistanceToDest))
       {
-        QPoint lastPt;
+        // Get screen point from last update
+        QPoint lastPoint;
         if(lastSimData.getPosition().isValid())
-          lastPt = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
-                          Y0 + static_cast<int>(rect().height() - Y0 -
-                                                lastSimData.getPosition().getAltitude() * vertScale));
+          lastPoint = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
+                             Y0 + static_cast<int>(rect().height() - Y0 -
+                                                   lastSimData.getPosition().getAltitude() * verticalScale));
 
-        QPoint pt(X0 + static_cast<int>(aircraftDistanceFromStart * horizScale),
-                  Y0 + static_cast<int>(rect().height() - Y0 -
-                                        simData.getPosition().getAltitude() * vertScale));
+        // Get screen point for current update
+        QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
+                            Y0 + static_cast<int>(rect().height() - Y0 -
+                                                  simData.getPosition().getAltitude() * verticalScale));
 
-        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
+        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
         {
+          // Add track point and update widget if delta value between last and current update is large enough
           if(simData.getPosition().isValid())
           {
-            aircraftTrackPoints.append(pt);
-            updateProfile = true;
+            aircraftTrackPoints.append(currentPoint);
+            updateWidget = true;
           }
         }
 
@@ -132,27 +143,29 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
         using atools::almostNotEqual;
         if(!lastSimData.getPosition().isValid() ||
-           (lastPt - pt).manhattanLength() > deltas.manhattanLengthDelta ||
+           (lastPoint - currentPoint).manhattanLength() > deltas.manhattanLengthDelta ||
            almostNotEqual(lastSimData.getPosition().getAltitude(),
                           simData.getPosition().getAltitude(), deltas.altitudeDelta))
         {
+          // Aircraft position has changed enough
           lastSimData = simData;
-          if(simData.getPosition().getAltitude() > maxAlt)
+          if(simData.getPosition().getAltitude() > maxWindowAlt)
             // Scale up to keep the aircraft visible
             updateScreenCoords();
-          updateProfile = true;
+          updateWidget = true;
         }
       }
     }
     else
     {
+      // Neither aircraft nor track shown - update simulator data only
       bool valid = simData.getPosition().isValid();
       simData = atools::fs::sc::SimConnectData();
       if(valid)
-        updateProfile = true;
+        updateWidget = true;
     }
   }
-  if(updateProfile)
+  if(updateWidget)
     update();
 }
 
@@ -163,40 +176,46 @@ void ProfileWidget::disconnectedFromSimulator()
   update();
 }
 
+/* Update all screen coordinates and scale factors */
 void ProfileWidget::updateScreenCoords()
 {
   MapWidget *mapWidget = mainWindow->getMapWidget();
 
+  // Widget drawing region width and height
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = std::ceil((legList.maxElevationFt +
                                  OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
-  flightplanAltFt = static_cast<float>(routeController->getFlightplan().getCruisingAltitude());
-  maxAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
+  flightplanAltFt =
+    static_cast<float>(routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude());
+  maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getPosition().isValid() &&
      (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
-    maxAlt = std::max(maxAlt, simData.getPosition().getAltitude());
+    maxWindowAlt = std::max(maxWindowAlt, simData.getPosition().getAltitude());
 
-  vertScale = h / maxAlt;
-  horizScale = w / legList.totalDistance;
+  verticalScale = h / maxWindowAlt;
+  horizontalScale = w / legList.totalDistance;
 
+  // Calculate the landmass polygon
   waypointX.clear();
   landPolygon.clear();
+
+  // First point
   landPolygon.append(QPoint(X0, h + Y0));
 
   for(const ElevationLeg& leg : legList.elevationLegs)
   {
-    waypointX.append(X0 + static_cast<int>(leg.distances.first() * horizScale));
+    waypointX.append(X0 + static_cast<int>(leg.distances.first() * horizontalScale));
 
     QPoint lastPt;
     for(int i = 0; i < leg.elevation.size(); i++)
     {
       float alt = leg.elevation.at(i).getAltitude();
-      QPoint pt(X0 + static_cast<int>(leg.distances.at(i) * horizScale),
-                Y0 + static_cast<int>(h - alt * vertScale));
+      QPoint pt(X0 + static_cast<int>(leg.distances.at(i) * horizontalScale),
+                Y0 + static_cast<int>(h - alt * verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -205,7 +224,9 @@ void ProfileWidget::updateScreenCoords()
       }
     }
   }
+  // Destination point
   waypointX.append(X0 + w);
+  // Last point closing polygon
   landPolygon.append(QPoint(X0 + w, h + Y0));
 
   aircraftTrackPoints.clear();
@@ -221,8 +242,8 @@ void ProfileWidget::updateScreenCoords()
       float distFromStart = 0.f;
       if(rmoList.getRouteDistances(p, &distFromStart, nullptr))
       {
-        QPoint pt(X0 + static_cast<int>(distFromStart * horizScale),
-                  Y0 + static_cast<int>(rect().height() - Y0 - p.getAltitude() * vertScale));
+        QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
+                  Y0 + static_cast<int>(rect().height() - Y0 - p.getAltitude() * verticalScale));
 
         if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
           aircraftTrackPoints.append(pt);
@@ -242,7 +263,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   SymbolPainter symPainter;
 
-  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
   {
     symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
@@ -250,17 +271,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw the mountains
-  // QLinearGradient gradient(QPointF(0.5f,1),QPointF(0.5f,0));
-  // gradient.setCoordinateMode(QGradient::ObjectBoundingMode);
-  // gradient.setColorAt(0, Qt::darkGreen);
-  // gradient.setColorAt(1, Qt::lightGray);
-  // QBrush mountainBrush(gradient);
-  painter.setBrush( /*mountainBrush */ mapcolors::profileLandColor);
+  painter.setBrush(mapcolors::profileLandColor);
   painter.setPen(mapcolors::profileLandOutlineColor);
   painter.drawPolygon(landPolygon);
 
   // Draw grey vertical lines for waypoints
-  int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * vertScale);
+  int flightplanY = Y0 + static_cast<int>(h - flightplanAltFt * verticalScale);
   painter.setPen(mapcolors::profileWaypointLinePen);
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
@@ -269,29 +285,30 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int step = 10000;
   for(int s : SCALE_STEPS)
   {
-    if(s * vertScale > MIN_SCALE_SCREEN_DISTANCE)
+    // Loop through all scale steps and check which one fits best
+    if(s * verticalScale > MIN_SCALE_SCREEN_DISTANCE)
     {
       step = s;
       break;
     }
   }
 
-  // Draw elevation scale
+  // Draw elevation scale line and texts
   painter.setPen(mapcolors::profleElevationScalePen);
-  for(int i = Y0 + h, a = 0; i > Y0; i -= step * vertScale, a += step)
+  for(int i = Y0 + h, alt = 0; i > Y0; i -= step * verticalScale, alt += step)
   {
     painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
 
-    symPainter.textBox(&painter, {QLocale().toString(a)},
+    symPainter.textBox(&painter, {QLocale().toString(alt)},
                        mapcolors::profleElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
 
-    symPainter.textBox(&painter, {QLocale().toString(a)},
+    symPainter.textBox(&painter, {QLocale().toString(alt)},
                        mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
   // Draw the red maximum elevation line
   painter.setPen(mapcolors::profileSafeAltLinePen);
-  int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * vertScale);
+  int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
   // Draw the flightplan line
@@ -313,7 +330,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
-  // Draw the most unimportant symbols first
+  // Draw the most unimportant symbols and texts first
   for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
   {
     const RouteMapObject& rmo = legList.routeMapObjects.at(i);
@@ -380,24 +397,29 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw text lables
+  // Departure altitude label
   float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
   QString startAltStr = QLocale().toString(startAlt, 'f', 0) + tr(" ft");
   symPainter.textBox(&painter, {startAltStr},
                      QPen(Qt::black), X0 - 8,
-                     Y0 + static_cast<int>(h - startAlt * vertScale),
+                     Y0 + static_cast<int>(h - startAlt * verticalScale),
                      textatt::BOLD | textatt::RIGHT, 255);
 
+  // Destination altitude label
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
   QString destAltStr = QLocale().toString(destAlt, 'f', 0) + tr(" ft");
   symPainter.textBox(&painter, {destAltStr},
                      QPen(Qt::black), X0 + w + 4,
-                     Y0 + static_cast<int>(h - destAlt * vertScale),
+                     Y0 + static_cast<int>(h - destAlt * verticalScale),
                      textatt::BOLD | textatt::LEFT, 255);
 
+  // Safe altitude label
   symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + tr(" ft")},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
-  QString routeAlt = QLocale().toString(routeController->getFlightplan().getCruisingAltitude()) + tr(" ft");
+  // Route cruise altitude
+  QString routeAlt = QLocale().toString(
+    routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude()) + tr(" ft");
   symPainter.textBox(&painter, {routeAlt},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
@@ -413,13 +435,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Draw user aircraft
     if(simData.getPosition().isValid() && showAircraft)
     {
-      int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizScale);
-      int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * vertScale);
+      int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale);
+      int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * verticalScale);
+
+      // Draw aircraft symbol
       painter.translate(acx, acy);
       painter.rotate(90);
       symPainter.drawAircraftSymbol(&painter, 0, 0, 20, simData.getFlags() & atools::fs::sc::ON_GROUND);
       painter.resetTransform();
 
+      // Draw aircraft label
       font.setPointSizeF(defaultFontSize);
       painter.setFont(font);
 
@@ -439,45 +464,53 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       QRect rect = symPainter.textBoxSize(&painter, texts, att);
       if(textx + rect.right() > X0 + w)
+        // Move text to the left when approaching the right corner
         att |= textatt::RIGHT;
 
       if(texty + rect.bottom() > Y0 + h)
+        // Move text down when approaching top boundary
         texty -= rect.bottom() + 20;
 
       symPainter.textBox(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
   }
-
-  // qDebug() << "profile paint" << etimer.elapsed() << "ms";
 }
 
+/* Called by updateTimer after any route or elevation updates and starts the thread */
 void ProfileWidget::updateTimeout()
 {
-  if(!visible || databaseLoadStatus)
+  if(!widgetVisible || databaseLoadStatus)
     return;
 
   qDebug() << "Profile update elevation timeout";
 
+  // Terminate and wait for thread
   terminateThread();
-  terminate = false;
+  terminateThreadSignal = false;
 
   // Need a copy of the leg list before starting thread to avoid synchronization problems
   // Start the computation in background
   ElevationLegList legs;
   legs.routeMapObjects = routeController->getRouteMapObjects();
+
+  // Start thread
   future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
+
+  // Watcher will call updateThreadFinished when finished
   watcher.setFuture(future);
 }
 
+/* Called by watcher when the thread is finished */
 void ProfileWidget::updateThreadFinished()
 {
-  if(!visible || databaseLoadStatus)
+  if(!widgetVisible || databaseLoadStatus)
     return;
 
   qDebug() << "Profile update finished";
 
-  if(!terminate)
+  if(!terminateThreadSignal)
   {
+    // Was not terminated in the middle of calculations - get result from the future
     legList = future.result();
     updateScreenCoords();
     update();
@@ -485,6 +518,7 @@ void ProfileWidget::updateThreadFinished()
   }
 }
 
+/* Background thread. Fetches elevation points from Marble elevation model and updates totals. */
 ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
 {
   using atools::geo::meterToNm;
@@ -495,14 +529,19 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   legs.maxElevationFt = 0.f;
   legs.elevationLegs.clear();
 
+  // Loop over all route legs
   for(int i = 1; i < legs.routeMapObjects.size(); i++)
   {
-    if(terminate)
+    if(terminateThreadSignal)
+      // Return empty result
       return ElevationLegList();
 
     const RouteMapObject& lastRmo = legs.routeMapObjects.at(i - 1);
     const RouteMapObject& rmo = legs.routeMapObjects.at(i);
 
+    // Get altitude points for the flight plan leg
+    // The might not be complete and will be more complete on further iterations when we get a signal
+    // from the elevation model
     QList<GeoDataCoordinates> elev = elevationModel->heightProfile(
       lastRmo.getPosition().getLonX(), lastRmo.getPosition().getLatY(),
       rmo.getPosition().getLonX(), rmo.getPosition().getLatY());
@@ -516,14 +555,15 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
                                      rmo.getPosition().getLatY(), 0., GeoDataCoordinates::Degree));
     }
 
+    // Loop over all elevation points for the current leg
     ElevationLeg leg;
     Pos lastPos;
     for(int j = 0; j < elev.size(); j++)
     {
-      const GeoDataCoordinates& coord = elev.at(j);
-      if(terminate)
+      if(terminateThreadSignal)
         return ElevationLegList();
 
+      const GeoDataCoordinates& coord = elev.at(j);
       Pos pos(coord.longitude(GeoDataCoordinates::Degree),
               coord.latitude(GeoDataCoordinates::Degree), meterToFeet(coord.altitude()));
 
@@ -534,6 +574,8 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         continue;
 
       float alt = pos.getAltitude();
+
+      // Adjust maximum
       if(alt > leg.maxElevation)
         leg.maxElevation = alt;
       if(alt > legs.maxElevationFt)
@@ -542,9 +584,11 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
       leg.elevation.append(pos);
       if(j > 0)
       {
+        // Update total distance
         float dist = meterToNm(lastPos.distanceMeterTo(pos));
         legs.totalDistance += dist;
       }
+      // Distance to elevation point from departure
       leg.distances.append(legs.totalDistance);
 
       legs.totalNumPoints++;
@@ -553,41 +597,41 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     legs.elevationLegs.append(leg);
   }
 
-  qDebug() << "elevation legs" << legs.elevationLegs.size()
-           << "total points" << legs.totalNumPoints
-           << "total distance" << legs.totalDistance
-           << "max route elevation" << legs.maxElevationFt;
   return legs;
 }
 
-void ProfileWidget::updateElevation()
+/* Update signal from Marble elevation model */
+void ProfileWidget::elevationUpdateAvailable()
 {
-  if(!visible || databaseLoadStatus)
+  if(!widgetVisible || databaseLoadStatus)
     return;
 
   // qDebug() << "Profile update elevation";
-  updateTimer->start(UPDATE_TIMEOUT);
+  updateTimer->start(UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::showEvent(QShowEvent *)
 {
-  visible = true;
+  widgetVisible = true;
+  // Start update immediately
   updateTimer->start(0);
 }
 
 void ProfileWidget::hideEvent(QHideEvent *)
 {
-  visible = false;
+  widgetVisible = false;
 }
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
     return;
 
   if(rubberBand == nullptr)
+    // Create rubber band line
     rubberBand = new QRubberBand(QRubberBand::Line, this);
 
+  // Limit x to drawing region
   int x = mouseEvent->pos().x();
   x = std::max(x, X0);
   x = std::min(x, rect().width() - X0);
@@ -606,7 +650,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   }
   const ElevationLeg& leg = legList.elevationLegs.at(index);
 
-  float distance = (x - X0) / horizScale;
+  // Calculate distance from screen coordinates
+  float distance = (x - X0) / horizontalScale;
   if(distance < 0.f)
     distance = 0.f;
 
@@ -614,6 +659,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   if(distanceToGo < 0.f)
     distanceToGo = 0.f;
 
+  // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
   QVector<float>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(),
                                                               leg.distances.end(), distance);
@@ -632,20 +678,20 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
     if(indexUpperDist < 0)
       indexUpperDist = 0;
   }
+
+  // Get altitude values before and after cursor and interpolate
   float alt1 = leg.elevation.at(indexLowDist).getAltitude();
   float alt2 = leg.elevation.at(indexUpperDist).getAltitude();
   float alt = std::abs(alt1 + alt2) / 2.f;
 
-  // Get Position for highlight
+  // Get Position for highlight on map
   float legdistpart = distance - leg.distances.first();
   float legdist = leg.distances.last() - leg.distances.first();
 
-  // qDebug() << "legdistpart" << legdistpart << "legdist" << legdist << "fraction" << legdistpart / legdist;
-  // qDebug() << "first" << leg.elevation.first() << "last" << leg.elevation.last();
-
+  // Calculate position along the flight plan
   const atools::geo::Pos& pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
-  // qDebug() << "pos" << pos;
 
+  // Calculate min altitude for this leg
   float maxElev =
     std::ceil((leg.maxElevation + OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
 
@@ -653,6 +699,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString from = legList.routeMapObjects.at(index).getIdent();
   QString to = legList.routeMapObjects.at(index + 1).getIdent();
 
+  // Add text to upper dock window label
   mainWindow->getUi()->labelElevationInfo->setText(
     tr("<b>") + from + tr(" ► ") + to + tr("</b>, ") +
     QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + tr(" ► ") +
@@ -663,12 +710,14 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   mouseEvent->accept();
 
+  // Tell map widget to create a rubberband rectangle on the map
   emit highlightProfilePoint(pos);
 }
 
+/* Cursor leaves widget. Stop displaying the rubberband */
 void ProfileWidget::leaveEvent(QEvent *)
 {
-  if(!visible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
     return;
 
   qDebug() << "leave";
@@ -678,26 +727,31 @@ void ProfileWidget::leaveEvent(QEvent *)
 
   mainWindow->getUi()->labelElevationInfo->setText(tr("<b>No information.</b>"));
 
+  // Tell map widget to erase rubberband
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }
 
+/* Resizing needs an update of the screen coordinates */
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
   updateScreenCoords();
 }
 
+/* Deleting aircraft track needs an update of the screen coordinates */
 void ProfileWidget::deleteAircraftTrack()
 {
   updateScreenCoords();
   update();
 }
 
+/* Stop thread */
 void ProfileWidget::preDatabaseLoad()
 {
   terminateThread();
   databaseLoadStatus = true;
 }
 
+/* Force new thread creation */
 void ProfileWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
@@ -714,6 +768,7 @@ void ProfileWidget::updateProfileShowFeatures()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // Compare own values with action values
   bool updateProfile = showAircraft != ui->actionMapShowAircraft->isChecked() ||
                        showAircraftTrack != ui->actionMapShowAircraftTrack->isChecked();
 
@@ -731,7 +786,7 @@ void ProfileWidget::terminateThread()
 {
   if(future.isRunning() || future.isStarted())
   {
-    terminate = true;
+    terminateThreadSignal = true;
     future.waitForFinished();
   }
 }

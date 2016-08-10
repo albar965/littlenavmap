@@ -266,7 +266,7 @@ signals:
   /* Add, replace or delete object from flight plan from context menu or drag and drop */
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
-  void routeDelete(int id, maptypes::MapObjectTypes type);
+  void routeDelete(int routeIndex);
 
   /* Update action state (disabled/enabled) */
   void updateActionStates();

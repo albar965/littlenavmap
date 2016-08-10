@@ -75,11 +75,11 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       Pos startPos;
       if(routeMapObjects.hasDepartureParking())
       {
-        startPos = first.getParking().position;
-        size = first.getParking().radius;
+        startPos = first.getDepartureParking().position;
+        size = first.getDepartureParking().radius;
       }
       else if(routeMapObjects.hasDepartureStart())
-        startPos = first.getStart().position;
+        startPos = first.getDepartureStart().position;
 
       if(startPos.isValid())
       {

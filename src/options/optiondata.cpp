@@ -35,15 +35,15 @@ OptionData::~OptionData()
 
 const OptionData& OptionData::instance()
 {
-  OptionData& od = instanceInternal();
+  OptionData& optData = instanceInternal();
 
-  if(!od.valid)
+  if(!optData.valid)
   {
     qCritical() << "OptionData not initialized yet";
     throw new atools::Exception("OptionData not initialized yet");
   }
 
-  return od;
+  return optData;
 }
 
 OptionData& OptionData::instanceInternal()
@@ -55,5 +55,4 @@ OptionData& OptionData::instanceInternal()
   }
 
   return *optionData;
-
 }

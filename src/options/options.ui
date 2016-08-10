@@ -704,7 +704,7 @@ when transitioning from airport to airway.</string>
           <string>Prefer &amp;VOR stations as transition to airway in flight plan calculation. </string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -748,7 +748,7 @@ when transitioning from airport to airway.</string>
           <string>Prefer &amp;NDB stations as  transition to airway in flight plan calculation.</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -792,8 +792,11 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
          <property name="toolTip">
-          <string>This file will be used for all simulators if set here. 
+          <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here. 
 If this field is empty, the default ASN weather file path will be used which is different for each flight simulator.</string>
+         </property>
+         <property name="placeholderText">
+          <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
          </property>
         </widget>
        </item>
@@ -813,7 +816,7 @@ If this field is empty, the default ASN weather file path will be used which is 
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
             <property name="text">
-             <string>&amp;Active Sky Next</string>
+             <string>&amp;Active Sky</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -843,7 +846,7 @@ If this field is empty, the default ASN weather file path will be used which is 
        <item row="2" column="0">
         <widget class="QLabel" name="labelOptionsWeatherAsnPath">
          <property name="text">
-          <string>Active Sky Next weather &amp;File:</string>
+          <string>Active Sky weather &amp;File:</string>
          </property>
          <property name="buddy">
           <cstring>lineEditOptionsWeatherAsnPath</cstring>
@@ -872,7 +875,7 @@ If this field is empty, the default ASN weather file path will be used which is 
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
             <property name="text">
-             <string>Active &amp;Sky Next</string>
+             <string>Active &amp;Sky</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -947,6 +950,9 @@ If this field is empty, the default ASN weather file path will be used which is 
          <property name="text">
           <string>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
          </property>
+         <property name="placeholderText">
+          <string>No URL set. NOAA weather reports are disabled.</string>
+         </property>
         </widget>
        </item>
        <item row="5" column="1">
@@ -960,6 +966,9 @@ If this field is empty, the default ASN weather file path will be used which is 
          </property>
          <property name="text">
           <string>http://metar.vatsim.net/metar.php?id=%1</string>
+         </property>
+         <property name="placeholderText">
+          <string>No URL set. Vatsim weather reports are disabled.</string>
          </property>
         </widget>
        </item>

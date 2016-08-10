@@ -54,14 +54,17 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   QStyleOptionViewItem opt(option);
   opt.displayAlignment = Qt::AlignRight;
   opt.font.setBold(true);
-  // Draw the text
-  QStyledItemDelegate::paint(painter, opt, index);
 
   int symSize = option.rect.height() - 4;
   int x = option.rect.x() + symSize;
   int y = option.rect.y() + symSize / 2 + 2;
 
   painter->setRenderHint(QPainter::Antialiasing);
+  painter->setRenderHint(QPainter::TextAntialiasing);
+
+  // Draw the text
+  QStyledItemDelegate::paint(painter, opt, index);
+
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
 

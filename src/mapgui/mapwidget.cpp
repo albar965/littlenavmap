@@ -824,7 +824,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapShowInformation->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
-  ui->actionRouteAdd->setEnabled(false);
+  ui->actionRouteAdd->setEnabled(visibleOnMap);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
@@ -1105,7 +1105,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
     else if(action == ui->actionRouteDeleteWaypoint)
-      emit routeDelete(deleteRouteIndex, deleteType);
+      emit routeDelete(deleteRouteIndex);
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
@@ -1747,11 +1747,11 @@ bool MapWidget::loadKml(const QString& filename, bool center)
 
     if(!retval)
       QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("File %1 is malformed or neither KML nor KMZ.").arg(filename));
+                           tr("File \"%1\" is malformed or neither KML nor KMZ.").arg(filename));
   }
   else
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("File %1 does not exist.").arg(filename));
+                         tr("File \"%1\" does not exist.").arg(filename));
 
   return retval;
 }

@@ -45,12 +45,12 @@ int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) c
     return legIndex;
 }
 
-int RouteMapObjectList::getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const
+int RouteMapObjectList::getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const
 {
   int nearest = -1;
   float minDistance = INVALID_DISTANCE_VALUE;
 
-  pointDistance = INVALID_DISTANCE_VALUE;
+  pointDistanceNm = INVALID_DISTANCE_VALUE;
 
   for(int i = 0; i < size(); i++)
   {
@@ -63,17 +63,17 @@ int RouteMapObjectList::getNearestPointIndex(const atools::geo::Pos& pos, float&
   }
 
   if(minDistance != INVALID_DISTANCE_VALUE)
-    pointDistance = atools::geo::meterToNm(minDistance);
+    pointDistanceNm = atools::geo::meterToNm(minDistance);
   return nearest;
 }
 
-int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance) const
+int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm) const
 {
   int nearestLeg = -1;
 
   float minDistance = std::numeric_limits<float>::max();
 
-  crossTrackDistance = INVALID_DISTANCE_VALUE;
+  crossTrackDistanceNm = INVALID_DISTANCE_VALUE;
 
   for(int i = 1; i < size(); i++)
   {
@@ -84,21 +84,21 @@ int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& c
     if(valid && distance < minDistance)
     {
       minDistance = distance;
-      crossTrackDistance = crossTrack;
+      crossTrackDistanceNm = crossTrack;
       nearestLeg = i;
     }
   }
 
-  if(crossTrackDistance != INVALID_DISTANCE_VALUE)
-    crossTrackDistance = atools::geo::meterToNm(crossTrackDistance);
+  if(crossTrackDistanceNm != INVALID_DISTANCE_VALUE)
+    crossTrackDistanceNm = atools::geo::meterToNm(crossTrackDistanceNm);
 
   return nearestLeg;
 }
 
 bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
-                                           float *distFromStartNm, float *distToDestNm,
-                                           float *nearestLegDistance, float *crossTrackDistance,
-                                           int *nearestLegIndex) const
+                                           float *distFromStart, float *distToDest,
+                                           float *nextLegDistance, float *crossTrackDistance,
+                                           int *nextLegIndex) const
 {
   float crossDist;
   int legIndex = getNearestLegIndex(pos, crossDist);
@@ -119,31 +119,31 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(legIndex >= size())
       legIndex = size() - 1;
 
-    if(nearestLegIndex != nullptr)
-      *nearestLegIndex = legIndex;
+    if(nextLegIndex != nullptr)
+      *nextLegIndex = legIndex;
 
     const atools::geo::Pos& position = at(legIndex).getPosition();
     float distToCur = atools::geo::meterToNm(position.distanceMeterTo(pos));
 
-    if(nearestLegDistance != nullptr)
-      *nearestLegDistance = distToCur;
+    if(nextLegDistance != nullptr)
+      *nextLegDistance = distToCur;
 
-    if(distFromStartNm != nullptr)
+    if(distFromStart != nullptr)
     {
-      *distFromStartNm = 0.f;
+      *distFromStart = 0.f;
       for(int i = 0; i <= legIndex; i++)
-        *distFromStartNm += at(i).getDistanceTo();
-      *distFromStartNm -= distToCur;
-      *distFromStartNm = std::abs(*distFromStartNm);
+        *distFromStart += at(i).getDistanceTo();
+      *distFromStart -= distToCur;
+      *distFromStart = std::abs(*distFromStart);
     }
 
-    if(distToDestNm != nullptr)
+    if(distToDest != nullptr)
     {
-      *distToDestNm = 0.f;
+      *distToDest = 0.f;
       for(int i = legIndex + 1; i < size(); i++)
-        *distToDestNm += at(i).getDistanceTo();
-      *distToDestNm += distToCur;
-      *distToDestNm = std::abs(*distToDestNm);
+        *distToDest += at(i).getDistanceTo();
+      *distToDest += distToCur;
+      *distToDest = std::abs(*distToDest);
     }
 
     return true;
@@ -221,7 +221,7 @@ void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int
 bool RouteMapObjectList::hasDepartureParking() const
 {
   if(hasValidDeparture())
-    return first().getParking().position.isValid();
+    return first().getDepartureParking().position.isValid();
 
   return false;
 }
@@ -229,7 +229,7 @@ bool RouteMapObjectList::hasDepartureParking() const
 bool RouteMapObjectList::hasDepartureHelipad() const
 {
   if(hasDepartureStart())
-    return first().getStart().helipadNumber > 0;
+    return first().getDepartureStart().helipadNumber > 0;
 
   return false;
 }
@@ -237,7 +237,7 @@ bool RouteMapObjectList::hasDepartureHelipad() const
 bool RouteMapObjectList::hasDepartureStart() const
 {
   if(hasValidDeparture())
-    return first().getStart().position.isValid();
+    return first().getDepartureStart().position.isValid();
 
   return false;
 }
@@ -264,9 +264,4 @@ bool RouteMapObjectList::hasValidDestination() const
 bool RouteMapObjectList::hasEntries() const
 {
   return getFlightplan().getEntries().size() > 2;
-}
-
-bool RouteMapObjectList::hasRoute() const
-{
-  return !getFlightplan().isEmpty();
 }

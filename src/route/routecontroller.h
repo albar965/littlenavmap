@@ -45,6 +45,13 @@ class RouteIconDelegate;
 class RouteNetwork;
 class RouteFinder;
 
+/*
+ * All flight plan related tasks like saving, loading, modification, calculation and table
+ * view display are managed in this class.
+ *
+ * Flight plan and route map objects are maintained in parallel to keep flight plan structure
+ * similar to the loaded original (i.e. waypoints not in database, missing airways)
+ */
 class RouteController :
   public QObject
 {
@@ -54,11 +61,20 @@ public:
   RouteController(MainWindow *parent, MapQuery *mapQuery, QTableView *tableView);
   virtual ~RouteController();
 
+  /* Creates a new plan and emits routeChanged */
   void newFlightplan();
+
+  /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
+   * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
+
+  /* Saves flight plan using the given name and uses file name as new current name */
   bool saveFlighplanAs(const QString& filename);
+
+  /* Saves flight plan using current name */
   bool saveFlightplan();
 
+  /* Save widget state and current flight plan name */
   void saveState();
   void restoreState();
 
@@ -67,76 +83,138 @@ public:
     return route;
   }
 
-  const atools::fs::pln::Flightplan& getFlightplan() const
-  {
-    return route.getFlightplan();
-  }
-
+  /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
   void getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const;
 
+  /* Get bounding rectangle for flight plan */
   const atools::geo::Rect& getBoundingRect() const
   {
     return boundingRect;
   }
 
-  void routeSetStart(maptypes::MapAirport airport);
-  void routeSetDest(maptypes::MapAirport airport);
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
-  void routeDelete(int id, maptypes::MapObjectTypes type);
-  void routeSetParking(maptypes::MapParking parking);
-  void routeSetStartPosition(maptypes::MapStart start);
-  bool selectDepartureParking();
-  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
-
+  /* Has flight plan changed */
   bool hasChanged() const;
 
-  const QString& getRouteFilename() const
+  /* Get the current flight plan name or empty if no plan is loaded */
+  const QString& getCurrentRouteFilename() const
   {
     return routeFilename;
   }
 
-  QString getDefaultFilename() const;
-  bool isFlightplanEmpty() const;
-  bool hasValidStart() const;
-  bool hasValidDestination() const;
-  bool hasEntries() const;
-  bool hasValidParking() const;
-  bool hasRoute() const;
+  /* Create a default filename based on departure and destination names */
+  QString buildDefaultFilename() const;
 
+  /* @return true if no flight plan loaded (no departure, no destination and no waypoints) */
+  bool isFlightplanEmpty() const;
+
+  /* @return true if flight plan is not empty and first entry (departure) is an airport */
+  bool hasValidDeparture() const;
+
+  /* @return true if flight plan is not empty and last entry (destination) is an airport */
+  bool hasValidDestination() const;
+
+  /* @return true if flight plan has intermediate waypoints */
+  bool hasEntries() const;
+
+  /* @return true if departure is valid and departure airport has no parking or departure of flight plan
+   *  has parking or helipad as start position */
+  bool hasValidParking() const;
+
+  /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Replaces departure airport or adds departure if not valid. Adds best start position (runway). */
+  void routeSetDeparture(maptypes::MapAirport airport);
+
+  /* Replaces destination airport or adds destination if not valid */
+  void routeSetDestination(maptypes::MapAirport airport);
+
+  /*
+   * Adds a navaid, airport or user defined position to flight plan.
+   * @param id Id of object to insert
+   * @param userPos Coordinates of user defined position if no navaid is to be inserted.
+   * @param type Type of object to insert. maptypes::USER if userPos is set.
+   * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1.
+   */
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+
+  /* Same as above but replaces waypoint at legIndex */
+  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+
+  /* Delete waypoint at the given index. Will also delete departure or destination */
+  void routeDelete(int index);
+
+  /* Set departure parking position. If the airport of the parking spot is different to
+   * the current departure it will be replaced too. */
+  void routeSetParking(maptypes::MapParking parking);
+
+  /* Shows the dialog to select departure parking or start position.
+   *  @return true if position was set. false is dialog was canceled. */
+  bool selectDepartureParking();
+
+  /* "Calculate" a direct flight plan that has no waypoints. */
   void calculateDirect();
+
+  /* Calculate a flight plan from radio navaid to radio navaid */
   void calculateRadionav();
+
+  /* Calculate a flight plan along high altitude (Jet) airways */
   void calculateHighAlt();
+
+  /* Calculate a flight plan along low altitude (Victor) airways */
   void calculateLowAlt();
+
+  /* Calculate a flight plan along low and high altitude airways that have the given altitude from
+   *  the spin box as minimum altitude */
   void calculateSetAlt();
+
+  /* Reverse order of all waypoints, swap departure and destination and automatically
+   * select a new start position (best runway) */
   void reverse();
-
-  void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
-  void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
-
-  void undoMerge();
 
   void optionsChanged();
 
 signals:
+  /* Show airport on map */
   void showRect(const atools::geo::Rect& rect);
+
+  /* Show flight plan waypoint or user position on map */
   void showPos(const atools::geo::Pos& pos, int zoom);
+
+  /* Change distance search center */
   void changeMark(const atools::geo::Pos& pos);
+
+  /* Selection in table view has changed. Update hightlights on map */
   void routeSelectionChanged(int selected, int total);
+
+  /* Route has changed */
   void routeChanged(bool geometryChanged);
+
+  /* Show information about the airports or navaids in the search result */
   void showInformation(maptypes::MapSearchResult result);
 
 private:
-  void updateWindowTitle();
+  friend class RouteCommand;
+  /* Called by route command */
+  void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
 
-  void updateLabel();
+  /* Called by route command */
+  void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
+
+  /* Called by route command */
+  void undoMerge();
+
+  RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
+  void postChange(RouteCommand *undoCommand);
+
+  void routeSetStartPosition(maptypes::MapStart start);
+
+  void updateWindowLabel();
 
   void doubleClick(const QModelIndex& index);
   void tableContextMenu(const QPoint& pos);
 
-  void tableSelectionChanged();
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
   void moveLegsDown();
@@ -153,12 +231,12 @@ private:
   void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints = -1);
 
-  void updateFlightplanData();
+  void routeToFlightPlan();
 
-  void routeSetStartInternal(const maptypes::MapAirport& airport);
+  void routeSetDepartureInternal(const maptypes::MapAirport& airport);
   void createRouteMapObjects();
 
-  void updateModel();
+  void updateTableModel();
 
   void updateRouteMapObjects();
 
@@ -166,9 +244,6 @@ private:
   void routeTypeChanged();
 
   void clearRoute();
-
-  RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
-  void postChange(RouteCommand *undoCommand);
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,
@@ -199,13 +274,17 @@ private:
 
   atools::gui::TableZoomHandler *zoomHandler = nullptr;
 
-  // Need a workaround since QUndoStack does not report current indices and clean state
+  /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
   int undoIndex = 0, undoIndexClean = 0;
 
+  /* Used to number user defined positions */
   int curUserpointNumber = 1;
+
+  /* Network cache for flight plan calculation */
   RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
   atools::geo::Rect boundingRect;
   RouteMapObjectList route;
+  /* Current filename of empty if no route */
   QString routeFilename;
   MainWindow *mainWindow;
   QTableView *view;

@@ -26,6 +26,7 @@ class SqlDatabase;
 }
 }
 
+/* Creates a route network that uses the radio navaid routing tables */
 class RouteNetworkRadio :
   public RouteNetwork
 {
