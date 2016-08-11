@@ -64,7 +64,6 @@ Column& Column::defaultSort(bool b)
   return *this;
 }
 
-
 Column& Column::sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc)
 {
   colSortFuncAsc = sortFuncAsc;

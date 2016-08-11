@@ -143,7 +143,6 @@ public:
 
   void loadAllRowsForRectQuery();
 
-  void setFormatCallback(const SqlModel::FormatFunctionType& value);
   void setDataCallback(const SqlModel::DataFunctionType& value);
   void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
 
@@ -162,6 +161,11 @@ public:
 
   void preDatabaseLoad();
   void postDatabaseLoad();
+
+  bool isDistanceSearch()
+  {
+    return proxyModel != nullptr;
+  }
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

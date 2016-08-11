@@ -38,7 +38,6 @@ SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *column
   : QSqlQueryModel(parent), db(sqlDb), columns(columnList), parentWidget(parent)
 {
   handlerRoles << Qt::DisplayRole << Qt::BackgroundRole << Qt::TextAlignmentRole;
-  setFormatCallback(nullptr);
   setDataCallback(nullptr);
 
   buildQuery();
@@ -256,16 +255,6 @@ void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
   orderByColIndex = record().indexOf(colname);
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
-}
-
-void SqlModel::setFormatCallback(const FormatFunctionType& value)
-{
-  using namespace std::placeholders;
-
-  if(value == nullptr)
-    formatFunc = std::bind(&SqlModel::defaultFormatHandler, this, _1, _2, _3);
-  else
-    formatFunc = value;
 }
 
 void SqlModel::setDataCallback(const DataFunctionType& value)
@@ -516,7 +505,7 @@ void SqlModel::resetSqlQuery()
 
 QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
 {
-  return formatFunc(columns->getColumn(colName), value, value);
+  return formatFunc(columns->getColumn(colName), value);
 }
 
 Qt::SortOrder SqlModel::getSortOrder() const
@@ -529,21 +518,13 @@ void SqlModel::setHandlerRoles(const QSet<Qt::ItemDataRole>& value)
   handlerRoles = value;
 }
 
-QString SqlModel::defaultFormatHandler(const Column *col, const QVariant& value,
-                                       const QVariant& dataValue) const
-{
-  Q_UNUSED(col);
-  Q_UNUSED(dataValue);
-  return value.toString();
-}
-
 QVariant SqlModel::defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                                       const QVariant& dataValue, Qt::ItemDataRole role) const
 {
   Q_UNUSED(colIndex);
   Q_UNUSED(rowIndex);
   if(role == Qt::DisplayRole)
-    return formatFunc(col, value, dataValue);
+    return formatFunc(col, dataValue);
 
   return QVariant();
 }

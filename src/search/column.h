@@ -67,20 +67,26 @@ public:
   /* Widget that is used for filtering this column */
   Column& widget(QWidget *widget);
 
+  /* Widgets that are used for filtering this column with min and max values */
   Column& minWidget(QWidget *widget);
   Column& maxWidget(QWidget *widget);
 
+  /* Conditions used when filtering this colum. Can be like ">0" or "is null" and are triggered by a checkbox. */
   Column& conditions(const QString& include, const QString& exclude);
 
   /* Sort order if this is the sort by column in default view */
   Column& defaultSortOrder(Qt::SortOrder order);
 
+  /* SQL conditions that are used by a combo box. Combo box index matches index in list. */
   Column& indexCondMap(const QStringList& indexMap);
 
+  /* Set to true if a condition map includes the column name */
   Column& includesName(bool value = true);
 
+  /* Can be set to indicate that this is one of the tow distance search special columns "distance" and "heading". */
   Column& distanceCol(bool value = true);
 
+  /* Indicates a condition that should be use for a spin box value, i.e. ">", "<" etc. */
   Column& condition(const QString& cond);
 
   bool isFilter() const
@@ -111,6 +117,7 @@ public:
     return colQueryIncludesName;
   }
 
+  /* Get widgets of the special type. Returns null if no widget of this type exists */
   QLineEdit *getLineEditWidget() const;
   QComboBox *getComboBoxWidget() const;
   QCheckBox *getCheckBoxWidget() const;
@@ -123,24 +130,9 @@ public:
     return colWidget;
   }
 
-  QWidget *getMinWidget() const
-  {
-    return colMinWidget;
-  }
-
-  QWidget *getMaxWidget() const
-  {
-    return colMaxWidget;
-  }
-
   bool isNoDefault() const
   {
     return colIsNoDefaultColumn;
-  }
-
-  bool alwaysAnd() const
-  {
-    return colIsAlwaysAndColumn;
   }
 
   QString getSortFuncAsc() const
@@ -236,7 +228,6 @@ private:
   bool colCanNotBeSorted = false;
   bool colIsNoDefaultColumn = false;
   bool colIsDefaultSortColumn = false;
-  bool colIsAlwaysAndColumn = false;
   bool colIsHiddenColumn = false;
   bool colQueryIncludesName = false;
   bool colIsDistance = false;

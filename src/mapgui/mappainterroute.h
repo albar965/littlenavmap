@@ -49,9 +49,8 @@ private:
 
   void paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
-  void paintNdb(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);
-  void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y,
-                     const maptypes::MapWaypoint& obj);
+  void paintNdb(const PaintContext *context, int x, int y);
+  void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
 
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);

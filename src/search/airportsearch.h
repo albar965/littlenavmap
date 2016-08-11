@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_APSEARCHPANE_H
 #define LITTLENAVMAP_APSEARCHPANE_H
 
-#include "search/search.h"
+#include "search/searchbase.h"
 
 #include <QObject>
 
@@ -32,8 +32,11 @@ class SqlDatabase;
 }
 }
 
+/*
+ * Airport search tab including all search widgets and the result table view.
+ */
 class AirportSearch :
-  public Search
+  public SearchBase
 {
   Q_OBJECT
 
@@ -42,27 +45,31 @@ public:
                 MapQuery *query, int tabWidgetIndex);
   virtual ~AirportSearch();
 
+  /* All state saving is done through the widget state */
   virtual void saveState() override;
   virtual void restoreState() override;
+
   virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
-
   virtual void connectSlots() override;
-
   virtual void postDatabaseLoad() override;
 
 private:
-  void setCallbacks();
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                            const QVariant& dataValue, Qt::ItemDataRole role) const;
-  QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
-  virtual void updateMenu() override;
+  virtual void updateButtonMenu() override;
 
-  static const QSet<QString> BOOL_COLUMNS;
+  void setCallbacks();
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+
   static const QSet<QString> NUMBER_COLUMNS;
 
+  /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;
+
+  /* All drop down menu actions */
   QList<QAction *> airportSearchMenuActions;
 
+  /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
 
 };

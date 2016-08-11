@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVSEARCHPANE_H
 #define LITTLENAVMAP_NAVSEARCHPANE_H
 
-#include "search/search.h"
+#include "search/searchbase.h"
 
 #include <QObject>
 
@@ -37,8 +37,11 @@ class SqlDatabase;
 }
 }
 
+/*
+ * Navaid (VOR, NDB, and waypoint) search tab including all search widgets and the result table view.
+ */
 class NavSearch :
-  public Search
+  public SearchBase
 {
   Q_OBJECT
 
@@ -47,23 +50,29 @@ public:
             MapQuery *query, int tabWidgetIndex);
   virtual ~NavSearch();
 
+  /* All state saving is done through the widget state */
   virtual void saveState() override;
   virtual void restoreState() override;
-  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
 
+  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
   virtual void connectSlots() override;
   virtual void postDatabaseLoad() override;
 
 private:
-  virtual void updateMenu() override;
+  virtual void updateButtonMenu() override;
 
   void setCallbacks();
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                            const QVariant& dataValue, Qt::ItemDataRole role) const;
-  QString modelFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
+  QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
 
+  /* All layouts, lines and drop down menu items */
   QList<QObject *> navSearchWidgets;
+
+  /* All drop down menu actions */
   QList<QAction *> navSearchMenuActions;
+
+  /* Draw navaid icon into ident table column */
   NavIconDelegate *iconDelegate = nullptr;
 
 };

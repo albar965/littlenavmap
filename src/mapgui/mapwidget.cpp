@@ -320,7 +320,7 @@ void MapWidget::restoreState()
     searchMarkPos = atools::geo::Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
   else
     searchMarkPos = atools::geo::Pos(0.f, 0.f);
-  emit markChanged(searchMarkPos);
+  emit searchMarkChanged(searchMarkPos);
 
   if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
@@ -443,7 +443,7 @@ void MapWidget::changeSearchMark(const atools::geo::Pos& pos)
   searchMarkPos = pos;
 
   // Will update any active distance search
-  emit markChanged(searchMarkPos);
+  emit searchMarkChanged(searchMarkPos);
   update();
   mainWindow->setStatusMessage(tr("Distance search center position changed."));
 }

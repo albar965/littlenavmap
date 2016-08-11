@@ -250,7 +250,7 @@ public:
 
 signals:
   /* Search center has changed by context menu */
-  void markChanged(const atools::geo::Pos& mark);
+  void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Show a map object in the search panel (context menu) */
   void showInSearch(maptypes::MapObjectTypes type, const QString& ident, const QString& region,

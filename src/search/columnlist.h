@@ -31,8 +31,8 @@ class QCheckBox;
 class QPushButton;
 
 /*
- * A list of column descriptors that define behaviour and display in the table
- * view.
+ * A list of column descriptors that define behavior and display in the table
+ * view for one database table.
  */
 class ColumnList :
   public QObject
@@ -40,11 +40,7 @@ class ColumnList :
   Q_OBJECT
 
 public:
-  /*
-   * @param hasAirports true if the airports table (from runways.xml file)
-   * exists.
-   */
-  ColumnList(const QString& table, const QString& idColumnName);
+  ColumnList(const QString& tableName, const QString& idColumnName);
   virtual ~ColumnList();
 
   /* Get column descriptor for the given query column name or alias */
@@ -53,6 +49,7 @@ public:
   bool hasColumn(const QString& field) const;
   const Column *getIdColumn() const;
 
+  /* Get the default sort that is used after reset view */
   const Column *getDefaultSortColumn() const;
 
   /* Get all column descriptors */
@@ -65,8 +62,8 @@ public:
   void assignWidget(const QString& field, QWidget *widget);
   void assignMinMaxWidget(const QString& field, QWidget *minWidget, QWidget *maxWidget);
 
-  /* Clear all LineEdit widgets and ComboBox widgets */
-  void clearWidgets(const QStringList& exceptColNames = QStringList());
+  /* Clear all LineEdit widgets and reset other back to default state */
+  void resetWidgets(const QStringList& exceptColNames = QStringList());
 
   /* Enable or disable widgets except the ones with the give column names */
   void enableWidgets(bool enabled = true, const QStringList& exceptColNames = QStringList());
@@ -75,14 +72,13 @@ public:
 
   QString getTablename() const
   {
-    return tablename;
+    return table;
   }
 
-  void clear();
-
+  /* Assign widgets for distance search */
   void assignDistanceSearchWidgets(QCheckBox *checkBox, QComboBox *directionWidget,
-                                   QSpinBox *minWidget,
-                                   QSpinBox *maxWidget);
+                                   QSpinBox *minWidget, QSpinBox *maxWidget);
+  void clear();
 
   QSpinBox *getMinDistanceWidget() const
   {
@@ -113,7 +109,7 @@ private:
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
   QCheckBox *distanceCheckBox = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
-  QString tablename, idColumn;
+  QString table, idColumn;
   QVector<Column *> columns;
   QHash<QString, Column *> nameColumnMap;
 };

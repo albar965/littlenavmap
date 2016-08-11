@@ -23,7 +23,7 @@
 #define LITTLENAVMAP_SEARCHPANELIST_H
 
 class MainWindow;
-class Search;
+class SearchBase;
 class AirportSearch;
 class NavSearch;
 class ColumnList;
@@ -73,7 +73,7 @@ private:
   MapQuery *mapQuery;
   ColumnList *airportColumns = nullptr;
   AirportSearch *airportSearch = nullptr;
-  QList<Search *> allSearchTabs;
+  QList<SearchBase *> allSearchTabs;
 
   ColumnList *navColumns = nullptr;
   NavSearch *navSearch = nullptr;

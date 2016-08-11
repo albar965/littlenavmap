@@ -29,7 +29,7 @@ class SearchController;
 class RouteController;
 class QComboBox;
 class QLabel;
-class Search;
+class SearchBase;
 class DatabaseManager;
 class WeatherReporter;
 class ConnectClient;
@@ -142,7 +142,7 @@ private:
 
   void updateMapObjectsShown();
 
-  void searchSelectionChanged(const Search *source, int selected, int visible, int total);
+  void searchSelectionChanged(const SearchBase *source, int selected, int visible, int total);
   void routeSelectionChanged(int selected, int total);
 
   void routeNew();

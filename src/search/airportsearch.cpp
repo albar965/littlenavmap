@@ -33,9 +33,7 @@
 
 using atools::gui::WidgetTools;
 
-const QSet<QString> AirportSearch::BOOL_COLUMNS({"has_avgas", "has_jetfuel", "has_tower", "is_closed",
-                                                 "is_military",
-                                                 "is_addon"});
+// Align right and omit if value is 0
 const QSet<QString> AirportSearch::NUMBER_COLUMNS(
   {"num_approach", "num_runway_hard", "num_runway_soft",
    "num_runway_water", "num_runway_light", "num_runway_end_ils",
@@ -45,10 +43,11 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
 
 AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                              MapQuery *mapQuery, int tabWidgetIndex)
-  : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
+  : SearchBase(parent, tableView, columnList, mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // All widgets that will have their state and visibility saved and restored
   airportSearchWidgets =
   {
     ui->tableViewAirportSearch,
@@ -74,6 +73,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
     ui->actionAirportSearchShowSceneryOptions
   };
 
+  // All drop down menu actions
   airportSearchMenuActions =
   {
     ui->actionAirportSearchShowAllOptions,
@@ -85,6 +85,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
     ui->actionAirportSearchShowSceneryOptions
   };
 
+  // set tri state checkboxes to partially checked
   ui->checkBoxAirportScenerySearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportMilSearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportLightSearch->setCheckState(Qt::PartiallyChecked);
@@ -96,14 +97,14 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   ui->checkBoxAirportJetASearch->setCheckState(Qt::PartiallyChecked);
   ui->checkBoxAirportAvgasSearch->setCheckState(Qt::PartiallyChecked);
 
-  /* *INDENT-OFF* */
-  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, [=](bool state)
-  {
-    for(QAction *a : airportSearchMenuActions)
-      a->setChecked(state);
-  });
-  /* *INDENT-ON* */
+  // Show/hide all search options menu action
+  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
+          {
+            for(QAction *a: airportSearchMenuActions)
+              a->setChecked(state);
+          });
 
+  // Build SQL query conditions
   QStringList gateCondMap;
   gateCondMap << QString()
               << "like 'GATE_%'"
@@ -135,18 +136,20 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
      "num_runway_soft = 0 and num_runway_water = 0";
 
   // Default view column descriptors
+  // Hidden columns are part of the query and can be used as search criteria but are not shown in the table.
+  // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("airport_id").hidden()).
   append(Column("distance", tr("Distance\nnm")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
+
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
   append(Column("state", ui->lineEditAirportStateSearch, tr("State")).filter()).
   append(Column("country", ui->lineEditAirportCountrySearch, tr("Country")).filter()).
 
-  append(Column("rating", ui->checkBoxAirportScenerySearch,
-                tr("Rating")).conditions("> 0", "== 0")).
+  append(Column("rating", ui->checkBoxAirportScenerySearch, tr("Rating")).conditions("> 0", "== 0")).
 
   append(Column("altitude", tr("Altitude\nft"))).
   append(Column("mag_var", tr("Mag\nVar°"))).
@@ -219,11 +222,13 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnLi
   append(Column("laty", tr("Latitude")).hidden())
   ;
 
+  // Add icon delegate for the ident column
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  Search::initViewAndController();
+  SearchBase::initViewAndController();
 
+  // Add model data handler and model format handler as callbacks
   setCallbacks();
 }
 
@@ -234,7 +239,7 @@ AirportSearch::~AirportSearch()
 
 void AirportSearch::connectSlots()
 {
-  Search::connectSlots();
+  SearchBase::connectSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -254,7 +259,7 @@ void AirportSearch::connectSlots()
                                        ui->spinBoxAirportDistMaxSearch);
 
   // Connect widgets to the controller
-  Search::connectSearchWidgets();
+  SearchBase::connectSearchWidgets();
   ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
                                            ui->actionAirportSearchShowExtOptions,
                                            ui->actionAirportSearchShowFuelParkOptions,
@@ -265,43 +270,47 @@ void AirportSearch::connectSlots()
 
   // Drop down menu actions
   using atools::gui::WidgetTools;
-  /* *INDENT-OFF* */
-  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch});
-    updateMenu();
-  });
+  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
+                                                {ui->lineAirportExtSearch});
+            updateButtonMenu();
+          });
 
-  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state, {ui->lineAirportFuelParkSearch});
-    updateMenu();
-  });
+  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
+                                                {ui->lineAirportFuelParkSearch});
+            updateButtonMenu();
+          });
 
-  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state, {ui->lineAirportRunwaySearch});
-    updateMenu();
-  });
+  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
+                                                {ui->lineAirportRunwaySearch});
+            updateButtonMenu();
+          });
 
-  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch});
-    updateMenu();
-  });
+  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
+                                                {ui->lineAirportAltSearch});
+            updateButtonMenu();
+          });
 
-  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch});
-    updateMenu();
-  });
+  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
+                                                {ui->lineAirportDistSearch});
+            updateButtonMenu();
+          });
 
-  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch});
-    updateMenu();
-  });
-  /* *INDENT-ON* */
+  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
+                                                {ui->lineAirportScenerySearch});
+            updateButtonMenu();
+          });
 }
 
 void AirportSearch::saveState()
@@ -316,104 +325,83 @@ void AirportSearch::restoreState()
   saver.restore(airportSearchWidgets);
 }
 
-QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                                         const QVariant& dataValue, Qt::ItemDataRole role) const
+/* Callback for the controller. Is called for each table cell and should return a formatted value. */
+QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col,
+                                         const QVariant& roleValue, const QVariant& displayRoleValue,
+                                         Qt::ItemDataRole role) const
 {
+  Q_UNUSED(roleValue);
+
   switch(role)
   {
     case Qt::DisplayRole:
-      return modelFormatHandler(col, value, dataValue);
+      return formatModelData(col, displayRoleValue);
 
-    case Qt::DecorationRole:
-      if(BOOL_COLUMNS.contains(col->getColumnName()) && dataValue.toInt() > 0)
-        return *boolIcon;
-
-      break;
     case Qt::TextAlignmentRole:
-      if(BOOL_COLUMNS.contains(col->getColumnName()) && dataValue.toInt() > 0)
-        return Qt::AlignCenter;
-      else if(col->getColumnName() == "rating")
+      if(col->getColumnName() == "rating")
         return Qt::AlignLeft;
       else if(col->getColumnName() == "ident" ||
-              dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt ||
-              dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong ||
-              dataValue.type() == QVariant::Double)
+              displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
+              displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() ==
+              QVariant::ULongLong ||
+              displayRoleValue.type() == QVariant::Double)
+        // Align all numeric columns right
         return Qt::AlignRight;
 
       break;
     case Qt::BackgroundRole:
       if(colIndex == controller->getSortColumnIndex())
+        // Use another alternating color if this is a field in the sort column
         return mapcolors::alternatingRowColor(rowIndex, true);
 
       break;
-    case Qt::CheckStateRole:
-      // if(boolColumns.contains(col->getColumnName()))
-      // return dataValue.toInt() > 0 ? Qt::Checked : Qt::Unchecked;
-
-      break;
-    case Qt::ForegroundRole:
-    case Qt::EditRole:
-    case Qt::ToolTipRole:
-    case Qt::StatusTipRole:
-    case Qt::WhatsThisRole:
-    case Qt::FontRole:
-    case Qt::AccessibleTextRole:
-    case Qt::AccessibleDescriptionRole:
-    case Qt::SizeHintRole:
-    case Qt::InitialSortOrderRole:
-    case Qt::DisplayPropertyRole:
-    case Qt::DecorationPropertyRole:
-    case Qt::ToolTipPropertyRole:
-    case Qt::StatusTipPropertyRole:
-    case Qt::WhatsThisPropertyRole:
-    case Qt::UserRole:
+    default:
       break;
   }
 
   return QVariant();
 }
 
-QString AirportSearch::modelFormatHandler(const Column *col, const QVariant& value,
-                                          const QVariant& dataValue) const
+/* Formats the QVariant to a QString depending on column name */
+QString AirportSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
   if(col->getColumnName() == "tower_frequency" || col->getColumnName() == "atis_frequency" ||
      col->getColumnName() == "awos_frequency" || col->getColumnName() == "asos_frequency" ||
      col->getColumnName() == "unicom_frequency")
   {
-    if(value.isNull())
+    if(displayRoleValue.isNull())
       return QString();
     else
-      return QLocale().toString(value.toDouble() / 1000, 'f', 3);
+      return QLocale().toString(displayRoleValue.toDouble() / 1000, 'f', 3);
   }
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(value.toFloat());
+    return maptypes::magvarText(displayRoleValue.toFloat());
   else if(NUMBER_COLUMNS.contains(col->getColumnName()))
-    return dataValue.toInt() > 0 ? dataValue.toString() : QString();
-  else if(BOOL_COLUMNS.contains(col->getColumnName()))
-    return QString();
+    return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QString();
   else if(col->getColumnName() == "longest_runway_surface")
-    return maptypes::surfaceName(dataValue.toString());
+    return maptypes::surfaceName(displayRoleValue.toString());
   else if(col->getColumnName() == "largest_parking_ramp")
-    return maptypes::parkingRampName(dataValue.toString());
+    return maptypes::parkingRampName(displayRoleValue.toString());
   else if(col->getColumnName() == "largest_parking_gate")
-    return maptypes::parkingGateName(dataValue.toString());
+    return maptypes::parkingGateName(displayRoleValue.toString());
   else if(col->getColumnName() == "rating")
-    return atools::ratingString(dataValue.toInt(), 5);
-  else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
-    return QLocale().toString(dataValue.toInt());
-  else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)
-    return QLocale().toString(dataValue.toLongLong());
-  else if(dataValue.type() == QVariant::Double)
-    return QLocale().toString(dataValue.toDouble());
+    return atools::ratingString(displayRoleValue.toInt(), 5);
+  else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
+    return QLocale().toString(displayRoleValue.toInt());
+  else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
+    return QLocale().toString(displayRoleValue.toLongLong());
+  else if(displayRoleValue.type() == QVariant::Double)
+    return QLocale().toString(displayRoleValue.toDouble());
 
-  return value.toString();
+  return displayRoleValue.toString();
 }
 
 void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   const QString idColumnName = columns->getIdColumnName();
 
+  // Build a SQL record with three fields
   atools::sql::SqlRecord rec;
   rec.appendField(idColumnName, QVariant::Int);
   rec.appendField("lonx", QVariant::Double);
@@ -421,6 +409,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 
   MapTypesFactory factory;
 
+  // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
   {
@@ -440,19 +429,21 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 
 void AirportSearch::postDatabaseLoad()
 {
-  Search::postDatabaseLoad();
+  SearchBase::postDatabaseLoad();
   setCallbacks();
 }
 
+/* Sets controller data formatting callback and desired data roles */
 void AirportSearch::setCallbacks()
 {
   using namespace std::placeholders;
   controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setFormatCallback(std::bind(&AirportSearch::modelFormatHandler, this, _1, _2, _3));
-  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole, Qt::DecorationRole});
+  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }
 
-void AirportSearch::updateMenu()
+/* Update the button menu actions. Add * for changed search criteria and toggle show/hide all
+ * action depending on other action states */
+void AirportSearch::updateButtonMenu()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   QList<const QAction *> menus =
@@ -465,6 +456,7 @@ void AirportSearch::updateMenu()
     ui->actionAirportSearchShowSceneryOptions
   };
 
+  // Change state of show all action
   ui->actionAirportSearchShowAllOptions->blockSignals(true);
   if(WidgetTools::allChecked(menus))
     ui->actionAirportSearchShowAllOptions->setChecked(true);
@@ -474,6 +466,7 @@ void AirportSearch::updateMenu()
     ui->actionAirportSearchShowAllOptions->setChecked(false);
   ui->actionAirportSearchShowAllOptions->blockSignals(false);
 
+  // Show star in action for all widgets that are not in default state
   WidgetTools::changeStarIndication(ui->actionAirportSearchShowExtOptions,
                                     WidgetTools::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
 

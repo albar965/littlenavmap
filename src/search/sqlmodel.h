@@ -123,10 +123,8 @@ public:
   typedef std::function<QVariant(int, int, const Column *, const QVariant&, const QVariant&,
                                  Qt::ItemDataRole)> DataFunctionType;
 
-  typedef std::function<QString(const Column *,
-                                const QVariant&, const QVariant&)> FormatFunctionType;
+  typedef std::function<QString(const Column *, const QVariant&)> FormatFunctionType;
 
-  void setFormatCallback(const FormatFunctionType& value);
   void setDataCallback(const DataFunctionType& value);
   void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
 
@@ -152,7 +150,6 @@ private:
 
   QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
                               const QVariant& dataValue, Qt::ItemDataRole role) const;
-  QString defaultFormatHandler(const Column *col, const QVariant& value, const QVariant& dataValue) const;
 
   QSet<Qt::ItemDataRole> handlerRoles;
 

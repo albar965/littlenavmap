@@ -1078,7 +1078,7 @@
                 <string> nm</string>
                </property>
                <property name="maximum">
-                <number>5000</number>
+                <number>3000</number>
                </property>
                <property name="singleStep">
                 <number>10</number>
@@ -1755,7 +1755,7 @@
                 <string> nm</string>
                </property>
                <property name="maximum">
-                <number>5000</number>
+                <number>3000</number>
                </property>
                <property name="singleStep">
                 <number>10</number>

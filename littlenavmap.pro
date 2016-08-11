@@ -60,7 +60,6 @@ SOURCES += src/main.cpp\
     src/search/column.cpp \
     src/search/sqlproxymodel.cpp \
     src/search/searchcontroller.cpp \
-    src/search/search.cpp \
     src/search/airportsearch.cpp \
     src/search/navsearch.cpp \
     src/mapgui/mapquery.cpp \
@@ -114,7 +113,8 @@ SOURCES += src/main.cpp\
     src/mapgui/mapscreenindex.cpp \
     src/options/optionsdialog.cpp \
     src/options/optiondata.cpp \
-    src/common/settingsmigrate.cpp
+    src/common/settingsmigrate.cpp \
+    src/search/searchbase.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -123,7 +123,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/column.h \
     src/search/sqlproxymodel.h \
     src/search/searchcontroller.h \
-    src/search/search.h \
     src/search/airportsearch.h \
     src/search/navsearch.h \
     src/mapgui/mapquery.h \
@@ -177,7 +176,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mapscreenindex.h \
     src/options/optionsdialog.h \
     src/options/optiondata.h \
-    src/common/settingsmigrate.h
+    src/common/settingsmigrate.h \
+    src/search/searchbase.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

@@ -51,29 +51,29 @@ void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) 
 void SearchController::updateTableSelection()
 {
   // Force signal to display correct status bar indication
-  allSearchTabs.at(tabWidget->currentIndex())->tableSelectionChanged();
+  allSearchTabs.at(tabWidget->currentIndex())->updateTableSelection();
 }
 
 void SearchController::optionsChanged()
 {
-  for(Search *search : allSearchTabs)
+  for(SearchBase *search : allSearchTabs)
     search->optionsChanged();
 }
 
 void SearchController::tabChanged(int index)
 {
-  allSearchTabs.at(index)->tableSelectionChanged();
+  allSearchTabs.at(index)->updateTableSelection();
 }
 
 void SearchController::saveState()
 {
-  for(Search *s : allSearchTabs)
+  for(SearchBase *s : allSearchTabs)
     s->saveState();
 }
 
 void SearchController::restoreState()
 {
-  for(Search *s : allSearchTabs)
+  for(SearchBase *s : allSearchTabs)
     s->restoreState();
 }
 
@@ -95,8 +95,8 @@ void SearchController::createAirportSearch(QTableView *tableView)
 
   airportSearch->connectSlots();
 
-  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
-                                      airportSearch, &Search::markChanged);
+  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
+                                      airportSearch, &SearchBase::searchMarkChanged);
 
   allSearchTabs.append(airportSearch);
 }
@@ -108,21 +108,21 @@ void SearchController::createNavSearch(QTableView *tableView)
   navSearch = new NavSearch(mainWindow, tableView, navColumns, mapQuery, 1);
   navSearch->connectSlots();
 
-  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::markChanged,
-                                      navSearch, &Search::markChanged);
+  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
+                                      navSearch, &SearchBase::searchMarkChanged);
 
   allSearchTabs.append(navSearch);
 }
 
 void SearchController::preDatabaseLoad()
 {
-  for(Search *search : allSearchTabs)
+  for(SearchBase *search : allSearchTabs)
     search->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  for(Search *search : allSearchTabs)
+  for(SearchBase *search : allSearchTabs)
     search->postDatabaseLoad();
 }
 

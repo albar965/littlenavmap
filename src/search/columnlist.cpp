@@ -25,8 +25,8 @@
 #include <QSpinBox>
 #include <QPushButton>
 
-ColumnList::ColumnList(const QString& table, const QString& idColumnName)
-  : tablename(table), idColumn(idColumnName)
+ColumnList::ColumnList(const QString& tableName, const QString& idColumnName)
+  : table(tableName), idColumn(idColumnName)
 {
 }
 
@@ -40,7 +40,7 @@ void ColumnList::clear()
   qDeleteAll(columns);
   columns.clear();
   nameColumnMap.clear();
-  tablename.clear();
+  table.clear();
   minDistanceWidget = nullptr;
   maxDistanceWidget = nullptr;
   distanceDirectionWidget = nullptr;
@@ -120,13 +120,15 @@ void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QW
     qWarning() << "Cannot assign widget to" << field;
 }
 
-void ColumnList::clearWidgets(const QStringList& exceptColNames)
+void ColumnList::resetWidgets(const QStringList& exceptColNames)
 {
   for(Column *cd : columns)
+  {
+    // Reset widgets assigned to columns
     if(!exceptColNames.contains(cd->getColumnName()))
     {
       if(QLineEdit * le = cd->getLineEditWidget())
-        le->setText("");
+        le->setText(QString());
       if(QComboBox * cb = cd->getComboBoxWidget())
         cb->setCurrentIndex(0);
       if(QCheckBox * check = cd->getCheckBoxWidget())
@@ -144,19 +146,23 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
       if(QSpinBox * minspin = cd->getMinSpinBoxWidget())
         minspin->setValue(minspin->minimum());
     }
+  }
 
+  // Reset distance search widgets
   if(minDistanceWidget != nullptr)
   {
+    // Values should match the GUI values
     minDistanceWidget->setValue(0);
     minDistanceWidget->setMinimum(0);
-    minDistanceWidget->setMaximum(5000);
+    minDistanceWidget->setMaximum(3000);
   }
 
   if(maxDistanceWidget != nullptr)
   {
+    // Values should match the GUI values
     maxDistanceWidget->setValue(100);
     maxDistanceWidget->setMinimum(100);
-    maxDistanceWidget->setMaximum(5000);
+    maxDistanceWidget->setMaximum(3000);
   }
   if(distanceDirectionWidget != nullptr)
     distanceDirectionWidget->setCurrentIndex(0);
@@ -167,11 +173,14 @@ void ColumnList::clearWidgets(const QStringList& exceptColNames)
 
 void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
 {
+  // Enable widgets assigned to columns
   for(Column *cd : columns)
-    if(!exceptColNames.contains(cd->getColumnName()))
-      if(cd->getWidget() != nullptr)
-        cd->getWidget()->setEnabled(enabled);
+  {
+    if(!exceptColNames.contains(cd->getColumnName()) && cd->getWidget() != nullptr)
+      cd->getWidget()->setEnabled(enabled);
+  }
 
+  // Enable distance search widgets
   if(minDistanceWidget != nullptr)
     minDistanceWidget->setEnabled(enabled);
 

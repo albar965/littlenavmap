@@ -225,7 +225,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       {
         case maptypes::INVALID:
           // name and region not found in database
-          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y, obj.getWaypoint());
+          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y);
           break;
         case maptypes::USER:
           paintUserpoint(context, x, y);
@@ -237,10 +237,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
           paintVor(context, x, y, obj.getVor());
           break;
         case maptypes::NDB:
-          paintNdb(context, x, y, obj.getNdb());
+          paintNdb(context, x, y);
           break;
         case maptypes::WAYPOINT:
-          paintWaypoint(context, QColor(), x, y, obj.getWaypoint());
+          paintWaypoint(context, QColor(), x, y);
           break;
       }
     }
@@ -325,7 +325,7 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
                              context->symSize(context->mapLayer->getVorSymbolSize()), true);
 }
 
-void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
+void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
 {
   symbolPainter->drawNdbSymbol(context->painter, x, y,
                                context->symSize(context->mapLayer->getNdbSymbolSize()), true, false);
@@ -345,8 +345,7 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
                              context->symSize(context->mapLayer->getNdbSymbolSize()), true);
 }
 
-void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y,
-                                    const maptypes::MapWaypoint& obj)
+void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
 {
   symbolPainter->drawWaypointSymbol(context->painter, col, x, y,
                                     context->symSize(context->mapLayer->getWaypointSymbolSize()), true, false);

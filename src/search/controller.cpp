@@ -323,7 +323,7 @@ void Controller::resetView()
   Q_ASSERT(model != nullptr);
   if(columns != nullptr)
   {
-    columns->clearWidgets();
+    columns->resetWidgets();
     columns->enableWidgets(true);
   }
 
@@ -343,7 +343,7 @@ void Controller::resetView()
 void Controller::resetSearch()
 {
   if(columns != nullptr)
-    columns->clearWidgets();
+    columns->resetWidgets();
 
   currentDistanceCenter = atools::geo::Pos();
   if(proxyModel != nullptr)
@@ -490,13 +490,6 @@ void Controller::loadAllRowsForRectQuery()
     QGuiApplication::restoreOverrideCursor();
     changed = false;
   }
-}
-
-void Controller::setFormatCallback(const SqlModel::FormatFunctionType& value)
-{
-  Q_ASSERT(model != nullptr);
-
-  model->setFormatCallback(value);
 }
 
 void Controller::setDataCallback(const SqlModel::DataFunctionType& value)

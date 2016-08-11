@@ -444,12 +444,14 @@ void MainWindow::connectAllSlots()
   connect(searchController->getAirportSearch(), &AirportSearch::showRect, mapWidget, &MapWidget::showRect);
   connect(searchController->getAirportSearch(), &AirportSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(
-    searchController->getAirportSearch(), &AirportSearch::changeMark, mapWidget, &MapWidget::changeSearchMark);
+    searchController->getAirportSearch(), &AirportSearch::changeSearchMark, mapWidget,
+    &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
-  connect(searchController->getNavSearch(), &NavSearch::changeMark, mapWidget, &MapWidget::changeSearchMark);
+  connect(
+    searchController->getNavSearch(), &NavSearch::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(searchController->getNavSearch(), &NavSearch::showInformation,
           infoController, &InfoController::showInformation);
 
@@ -591,9 +593,9 @@ void MainWindow::connectAllSlots()
 
   connect(routeController, &RouteController::routeSelectionChanged,
           this, &MainWindow::routeSelectionChanged);
-  connect(searchController->getAirportSearch(), &Search::selectionChanged,
+  connect(searchController->getAirportSearch(), &SearchBase::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
-  connect(searchController->getNavSearch(), &Search::selectionChanged,
+  connect(searchController->getNavSearch(), &SearchBase::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
 
   connect(ui->actionRouteSelectParking, &QAction::triggered,
@@ -613,14 +615,14 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeDelete,
           routeController, &RouteController::routeDelete);
 
-  connect(searchController->getAirportSearch(), &Search::routeSetStart,
+  connect(searchController->getAirportSearch(), &SearchBase::routeSetDeparture,
           routeController, &RouteController::routeSetDeparture);
-  connect(searchController->getAirportSearch(), &Search::routeSetDest,
+  connect(searchController->getAirportSearch(), &SearchBase::routeSetDestination,
           routeController, &RouteController::routeSetDestination);
-  connect(searchController->getAirportSearch(), &Search::routeAdd,
+  connect(searchController->getAirportSearch(), &SearchBase::routeAdd,
           routeController, &RouteController::routeAdd);
 
-  connect(searchController->getNavSearch(), &Search::routeAdd,
+  connect(searchController->getNavSearch(), &SearchBase::routeAdd,
           routeController, &RouteController::routeAdd);
 
   // Messages about database query result status
@@ -1050,7 +1052,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 }
 
 /* Selection in one of the search result tables has changed */
-void MainWindow::searchSelectionChanged(const Search *source, int selected, int visible, int total)
+void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, int visible, int total)
 {
   static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;

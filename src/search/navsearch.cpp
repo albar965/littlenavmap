@@ -35,10 +35,11 @@ using atools::gui::WidgetTools;
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                      MapQuery *mapQuery, int tabWidgetIndex)
-  : Search(parent, tableView, columnList, mapQuery, tabWidgetIndex)
+  : SearchBase(parent, tableView, columnList, mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // All widgets that will have their state and visibility saved and restored
   navSearchWidgets =
   {
     ui->tableViewNavSearch,
@@ -53,6 +54,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
     ui->actionNavSearchShowSceneryOptions
   };
 
+  // All drop down menu actions
   navSearchMenuActions =
   {
     ui->actionNavSearchShowAllOptions,
@@ -60,14 +62,14 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
     ui->actionNavSearchShowSceneryOptions
   };
 
-  /* *INDENT-OFF* */
-  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, [=](bool state)
-  {
-    for(QAction *a : navSearchMenuActions)
-      a->setChecked(state);
-  });
-  /* *INDENT-ON* */
+  // Show/hide all search options menu action
+  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, [ = ](bool state)
+          {
+            for(QAction *a: navSearchMenuActions)
+              a->setChecked(state);
+          });
 
+  // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
               << "= 'HIGH'"
@@ -95,6 +97,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
      "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
+  // Hidden columns are part of the query and can be used as search criteria but are not shown in the table
+  // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("nav_search_id").hidden()).
   append(Column("distance", tr("Distance\nnm")).distanceCol()).
@@ -123,11 +127,13 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *colu
   append(Column("laty").hidden())
   ;
 
+  // Add icon delegate for the ident column
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  Search::initViewAndController();
+  SearchBase::initViewAndController();
 
+  // Add model data handler and model format handler as callbacks
   setCallbacks();
 }
 
@@ -138,7 +144,7 @@ NavSearch::~NavSearch()
 
 void NavSearch::connectSlots()
 {
-  Search::connectSlots();
+  SearchBase::connectSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -149,25 +155,25 @@ void NavSearch::connectSlots()
                                        ui->spinBoxNavDistMaxSearch);
 
   // Connect widgets to the controller
-  Search::connectSearchWidgets();
+  SearchBase::connectSearchWidgets();
   ui->toolButtonNavSearch->addActions({ui->actionNavSearchShowAllOptions,
                                        ui->actionNavSearchShowDistOptions,
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
   using atools::gui::WidgetTools;
-  /* *INDENT-OFF* */
-  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state, {ui->lineNavDistSearch});
-    updateMenu();
-  });
-  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [=](bool state)
-  {
-    WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state, {ui->lineNavScenerySearch});
-    updateMenu();
-  });
-  /* *INDENT-ON* */
+  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
+                                                {ui->lineNavDistSearch});
+            updateButtonMenu();
+          });
+  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
+          {
+            WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
+                                                {ui->lineNavScenerySearch});
+            updateButtonMenu();
+          });
 }
 
 void NavSearch::saveState()
@@ -182,94 +188,82 @@ void NavSearch::restoreState()
   saver.restore(navSearchWidgets);
 }
 
-QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                                     const QVariant& dataValue, Qt::ItemDataRole role) const
+/* Callback for the controller. Will be called for each table cell and should return a formatted value */
+QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                                     const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
+  Q_UNUSED(roleValue);
+
   switch(role)
   {
     case Qt::DisplayRole:
-      return modelFormatHandler(col, value, dataValue);
+      return formatModelData(col, displayRoleValue);
 
     case Qt::TextAlignmentRole:
       if(col->getColumnName() == "ident" || col->getColumnName() == "airport_ident" ||
-         dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt ||
-         dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong ||
-         dataValue.type() == QVariant::Double)
+         displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
+         displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong ||
+         displayRoleValue.type() == QVariant::Double)
+        // Align all numeric columns right
         return Qt::AlignRight;
 
       break;
     case Qt::BackgroundRole:
       if(colIndex == controller->getSortColumnIndex())
+        // Use another alternating color if this is a field in the sort column
         return mapcolors::alternatingRowColor(rowIndex, true);
 
       break;
-    case Qt::CheckStateRole:
-    case Qt::DecorationRole:
-    case Qt::ForegroundRole:
-    case Qt::EditRole:
-    case Qt::ToolTipRole:
-    case Qt::StatusTipRole:
-    case Qt::WhatsThisRole:
-    case Qt::FontRole:
-    case Qt::AccessibleTextRole:
-    case Qt::AccessibleDescriptionRole:
-    case Qt::SizeHintRole:
-    case Qt::InitialSortOrderRole:
-    case Qt::DisplayPropertyRole:
-    case Qt::DecorationPropertyRole:
-    case Qt::ToolTipPropertyRole:
-    case Qt::StatusTipPropertyRole:
-    case Qt::WhatsThisPropertyRole:
-    case Qt::UserRole:
+    default:
       break;
   }
 
   return QVariant();
 }
 
-QString NavSearch::modelFormatHandler(const Column *col, const QVariant& value,
-                                      const QVariant& dataValue) const
+/* Formats the QVariant to a QString depending on column name */
+QString NavSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
   if(col->getColumnName() == "type")
-    return maptypes::navTypeName(value.toString());
+    return maptypes::navTypeName(displayRoleValue.toString());
   else if(col->getColumnName() == "nav_type")
-    return maptypes::navName(value.toString());
+    return maptypes::navName(displayRoleValue.toString());
   else if(col->getColumnName() == "name")
-    return atools::capString(value.toString());
-  else if(col->getColumnName() == "frequency" && !value.isNull())
+    return atools::capString(displayRoleValue.toString());
+  else if(col->getColumnName() == "frequency" && !displayRoleValue.isNull())
   {
-    double freq = value.toDouble();
+    double freq = displayRoleValue.toDouble();
 
     // VOR and DME are scaled up in nav_search to easily differentiate from NDB
     if(freq >= 1000000 && freq <= 1200000)
-      return QLocale().toString(value.toDouble() / 10000., 'f', 2);
+      return QLocale().toString(displayRoleValue.toDouble() / 10000., 'f', 2);
     else if(freq >= 10000 && freq <= 120000)
-      return QLocale().toString(value.toDouble() / 100., 'f', 1);
+      return QLocale().toString(displayRoleValue.toDouble() / 100., 'f', 1);
     else
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(value.toFloat());
-  else if(dataValue.type() == QVariant::Int || dataValue.type() == QVariant::UInt)
-    return QLocale().toString(dataValue.toInt());
-  else if(dataValue.type() == QVariant::LongLong || dataValue.type() == QVariant::ULongLong)
-    return QLocale().toString(dataValue.toLongLong());
-  else if(dataValue.type() == QVariant::Double)
-    return QLocale().toString(dataValue.toDouble());
+    return maptypes::magvarText(displayRoleValue.toFloat());
+  else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
+    return QLocale().toString(displayRoleValue.toInt());
+  else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
+    return QLocale().toString(displayRoleValue.toLongLong());
+  else if(displayRoleValue.type() == QVariant::Double)
+    return QLocale().toString(displayRoleValue.toDouble());
 
-  return value.toString();
+  return displayRoleValue.toString();
 }
 
 void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
-  const QString idColumnName = columns->getIdColumnName();
-
+  // Build a SQL record with all available fields
   atools::sql::SqlRecord rec;
   controller->initRecord(rec);
 
   MapTypesFactory factory;
 
+  // Fill the result with all (mixed) navaids
   const QItemSelection& selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
   {
@@ -305,22 +299,25 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 
 void NavSearch::postDatabaseLoad()
 {
-  Search::postDatabaseLoad();
+  SearchBase::postDatabaseLoad();
   setCallbacks();
 }
 
+/* Sets controller data formatting callback and desired data roles */
 void NavSearch::setCallbacks()
 {
   using namespace std::placeholders;
   controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setFormatCallback(std::bind(&NavSearch::modelFormatHandler, this, _1, _2, _3));
   controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }
 
-void NavSearch::updateMenu()
+/* Update the button menu actions. Add * for changed search criteria and toggle show/hide all
+ * action depending on other action states */
+void NavSearch::updateButtonMenu()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  // Change state of show all action
   ui->actionNavSearchShowAllOptions->blockSignals(true);
   if(WidgetTools::allChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
     ui->actionNavSearchShowAllOptions->setChecked(true);
@@ -330,6 +327,7 @@ void NavSearch::updateMenu()
     ui->actionNavSearchShowAllOptions->setChecked(false);
   ui->actionNavSearchShowAllOptions->blockSignals(false);
 
+  // Show star in action for all widgets that are not in default state
   bool distanceSearchChanged = false;
   if(ui->checkBoxNavDistSearch->isChecked())
     distanceSearchChanged = WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
