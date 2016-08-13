@@ -796,7 +796,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
                                             !mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
-    ui->actionRouteShowInformation->setEnabled(true);
+    ui->actionRouteShowInformation->setEnabled(routeMapObject.isValid());
 
     ui->actionRouteShowOnMap->setEnabled(true);
 

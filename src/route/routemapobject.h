@@ -178,6 +178,7 @@ public:
     return courseRhumbTo;
   }
 
+  /* @return false if this waypoint was not found in the database */
   bool isValid() const
   {
     return valid;
