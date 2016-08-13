@@ -170,6 +170,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
+  connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
+
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
 }
@@ -320,11 +322,14 @@ void RouteController::restoreState()
 
 void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const
 {
-  QItemSelection sm = view->selectionModel()->selection();
-  for(const QItemSelectionRange& rng : sm)
+  if(mainWindow->getUi()->dockWidgetRoute->isVisible())
   {
-    for(int row = rng.top(); row <= rng.bottom(); ++row)
-      selRouteMapObjects.append(route.at(row));
+    QItemSelection sm = view->selectionModel()->selection();
+    for(const QItemSelectionRange& rng : sm)
+    {
+      for(int row = rng.top(); row <= rng.bottom(); ++row)
+        selRouteMapObjects.append(route.at(row));
+    }
   }
 }
 
@@ -868,7 +873,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                                         rmo.getIdent(), rmo.getFrequency(),
                                                         rmo.getRange());
         }
-
       }
       else if(action == ui->actionMapHideRangeRings)
         mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
@@ -876,6 +880,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
       // Other actions emit signals directly
     }
   }
+}
+
+/* Hide or show map hightlights if dock visibility changes */
+void RouteController::dockVisibilityChanged(bool visible)
+{
+  Q_UNUSED(visible);
+
+  // Visible - send update to show map highlights
+  // Not visible - send update to hide highlights
+  tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

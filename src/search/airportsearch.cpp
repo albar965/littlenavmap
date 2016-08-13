@@ -399,6 +399,9 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
 
 void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
+  if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
+    return;
+
   const QString idColumnName = columns->getIdColumnName();
 
   // Build a SQL record with three fields

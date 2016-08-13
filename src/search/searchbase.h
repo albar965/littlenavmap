@@ -140,6 +140,7 @@ private:
   void showInformationTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
+  void dockVisibilityChanged(bool visible);
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::TableZoomHandler *zoomHandler = nullptr;

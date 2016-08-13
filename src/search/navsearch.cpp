@@ -257,6 +257,9 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
 
 void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
+  if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
+    return;
+
   // Build a SQL record with all available fields
   atools::sql::SqlRecord rec;
   controller->initRecord(rec);

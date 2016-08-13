@@ -297,6 +297,8 @@ void SearchBase::connectSearchSlots()
   connect(controller->getSqlModel(), &SqlModel::modelReset, this, &SearchBase::reconnectSelectionModel);
   void (SearchBase::*selChangedPtr)() = &SearchBase::tableSelectionChanged;
   connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, selChangedPtr);
+
+  connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchBase::dockVisibilityChanged);
 }
 
 /* Connect selection model again after a SQL model reset */
@@ -316,6 +318,14 @@ void SearchBase::tableSelectionChanged(const QItemSelection& selected, const QIt
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
+
+  tableSelectionChanged();
+}
+
+/* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
+void SearchBase::dockVisibilityChanged(bool visible)
+{
+  Q_UNUSED(visible);
 
   tableSelectionChanged();
 }
