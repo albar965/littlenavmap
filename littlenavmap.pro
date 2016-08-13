@@ -229,7 +229,6 @@ DISTFILES += \
     help/en/images/gpl-v3-logo.svg \
     help/en/legend.html \
     help/en/legend_inline.html \
-    KNOWN_PROBLEMS.txt \
     help/en/features.html \
     help/en/images/legend/highlight_route.png \
     help/en/images/legend/highlight_search.png \

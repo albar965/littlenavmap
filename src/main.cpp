@@ -29,6 +29,7 @@
 #include "common/settingsmigrate.h"
 
 #include <QDebug>
+#include <QSplashScreen>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -66,6 +67,13 @@ int main(int argc, char *argv[])
   // Set application information
   int retval = 0;
   Application app(argc, argv);
+
+  // Start splash screen
+  QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
+  QSplashScreen splash(pixmap);
+  splash.show();
+  app.processEvents();
+
   Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/navroute.svg"));
   Application::setApplicationName("Little Navmap");
   Application::setOrganizationName("ABarthel");
@@ -80,7 +88,10 @@ int main(int argc, char *argv[])
 
   try
   {
+    app.processEvents();
+
     // Initialize logging and force logfiles into the system or user temp directory
+    // This will prefix all log files with orgranization and application name and append ".log"
     LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
                                         ":/littlenavmap/resources/config/logging.cfg"));
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
@@ -144,6 +155,9 @@ int main(int argc, char *argv[])
 
       MainWindow mainWindow;
       mainWindow.show();
+
+      // Hide splash once main window is shown
+      splash.finish(&mainWindow);
 
       qDebug() << "Before app.exec()";
       retval = app.exec();
