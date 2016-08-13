@@ -302,9 +302,13 @@ void SearchBase::connectSearchSlots()
 /* Connect selection model again after a SQL model reset */
 void SearchBase::reconnectSelectionModel()
 {
-  void (SearchBase::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
-    &SearchBase::tableSelectionChanged;
-  connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+  if(view->selectionModel() != nullptr)
+  {
+    void (SearchBase::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+      &SearchBase::tableSelectionChanged;
+
+    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+  }
 }
 
 /* Slot for table selection changed */
