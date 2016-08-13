@@ -53,6 +53,8 @@ HtmlExporter::~HtmlExporter()
 {
 }
 
+#ifdef ENABLE_HTML_EXPORT
+
 QString HtmlExporter::saveHtmlFileDialog()
 {
   return dialog->saveFileDialog(tr("Export HTML Document"),
@@ -454,3 +456,5 @@ void HtmlExporter::writeHtmlTableCellRaw(QXmlStreamWriter& stream,
   stream.writeCharacters(value);
   stream.writeEndElement();
 }
+
+#endif

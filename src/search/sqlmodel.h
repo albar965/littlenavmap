@@ -44,6 +44,11 @@ class SqlModel :
   Q_OBJECT
 
 public:
+  /*
+   * @param parent parent widget
+   * @param sqlDb database to use
+   * @param columnList column descriptors that will be used to build the SQL queries
+   */
   SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
   virtual ~SqlModel();
 
@@ -54,7 +59,7 @@ public:
   void filterExcluding(QModelIndex index);
 
   /* Clear all filters, sort order and go back to default view */
-  void reset();
+  void resetView();
 
   /* clear all filters */
   void resetSearch();
@@ -75,12 +80,6 @@ public:
 
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
-
-  /* Get row data formatted for display as seen in the table view */
-  QVariantList getFormattedRowData(int row);
-
-  /* Format given data for display */
-  QString formatValue(const QString& colName, const QVariant& value) const;
 
   Qt::SortOrder getSortOrder() const;
 
@@ -104,95 +103,110 @@ public:
     return currentSqlQuery;
   }
 
-  /* Emit signal fetchedMore */
+  /* Fetch more data and emit signal fetchedMore */
   virtual void fetchMore(const QModelIndex& parent) override;
 
   /* Get unformatted data from the model */
-  QVariantList getRawRowData(int row) const;
   QVariant getRawData(int row, int col) const;
   QVariant getRawData(int row, const QString& colname) const;
-  QStringList getRawColumns() const;
 
+  /* Sets the SQL query into the model. This will start the query and fetch data from the database. */
   void resetSqlQuery();
 
+  /* Set a filter for objects within the given bounding rectangle */
   void filterByBoundingRect(const atools::geo::Rect& boundingRectangle);
 
   QString getColumnName(int col) const;
+
+  /* Set sort order for the given column name. Does not update or restart the query */
   void setSort(const QString& colname, Qt::SortOrder order);
 
-  typedef std::function<QVariant(int, int, const Column *, const QVariant&, const QVariant&,
-                                 Qt::ItemDataRole)> DataFunctionType;
-
-  typedef std::function<QString(const Column *, const QVariant&)> FormatFunctionType;
-
-  void setDataCallback(const DataFunctionType& value);
-  void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
-
+  /* Reset search and filter by ident, region and airport */
   void filterByIdent(const QString& ident, const QString& region, const QString& airportIdent);
 
+  /* Get empty record (no data) containing field/column information */
   atools::sql::SqlRecord getSqlRecord() const;
+
+  /* Get a SQL record that contains field/column information and data for the given row */
   atools::sql::SqlRecord getSqlRecord(int row) const;
 
-  /* Format data for display */
+  /* Fetch and format data for display */
   virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
+  /*
+   * Callback function/method type defintion.
+   * @param colIndex Column index
+   * @param rowIndex Row index
+   * @param col column Descriptor
+   * @param roleValue Role value depending on role like color, font, etc.
+   * @param displayRoleValue actual column data
+   * @param role Data role
+   * @return a variant. Mostly string for display role.
+   */
+  typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                                 const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
+
+  /*
+   * Sets a data callback that is called for each table cell and the given item data roles.
+   * @param func callback function or method. Use std::bind to create callbacks to non static methods.
+   * @param roles Roles that this callback should be called for
+   */
+  void setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles);
+
 signals:
-  /* Emitted when more data was fetched*/
+  /* Emitted when more data was fetched */
   void fetchedMore();
 
 private:
+  // Hide the record method
   using QSqlQueryModel::record;
-
-  void filterBy(bool exclude, QString whereCol, QVariant whereValue);
-
-  FormatFunctionType formatFunc = nullptr;
-  DataFunctionType dataFunc = nullptr;
-
-  QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                              const QVariant& dataValue, Qt::ItemDataRole role) const;
-
-  QSet<Qt::ItemDataRole> handlerRoles;
-
-  virtual void sort(int column, Qt::SortOrder order) override;
 
   struct WhereCondition
   {
     QString oper; /* operator (like, not like) */
-    QVariant value;
-    const Column *col;
+    QVariant value; /* Condition value */
+    const Column *col; /* Column descriptor */
   };
 
-  atools::geo::Rect boundingRect;
+  virtual void sort(int column, Qt::SortOrder order) override;
 
-  /* Build full list of columns to query */
+  void filterBy(bool exclude, QString whereCol, QVariant whereValue);
   QString buildColumnList();
-
-  /* Build where statement */
   QString buildWhere();
-
-  /* Convert a value to string for the where clause */
   QString buildWhereValue(const WhereCondition& cond);
-
-  /* Create SQL query and set it into the model */
   void buildQuery();
-
-  /* Filter by value at index (context menu in table view) */
+  void clearWhereConditions();
   void filterBy(QModelIndex index, bool exclude);
   QString  sortOrderToSql(Qt::SortOrder order);
+  QVariant defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                              const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
 
+  /* Default - all conditions are combined using "and" */
   const QString WHERE_OPERATOR = "and";
 
-  QString orderByCol, orderByOrder;
+  QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
+  int orderByColIndex = 0;
+
   QString currentSqlQuery;
 
-  int orderByColIndex = 0;
+  /* Data callback */
+  DataFunctionType dataFunction = nullptr;
+  /* Roles for the data callback */
+  QSet<Qt::ItemDataRole> handlerRoles;
+
+  /* A bounding rectangle query is used if this is valid */
+  atools::geo::Rect boundingRect;
+
+  /* Maps column name to where condition struct */
   QHash<QString, WhereCondition> whereConditionMap;
+
   atools::sql::SqlDatabase *db;
+
+  /* List of column descriptors */
   const ColumnList *columns;
+
   QWidget *parentWidget;
   int totalRowCount = 0;
-
-  void clearWhereConditions();
 
 };
 

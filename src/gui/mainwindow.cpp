@@ -153,8 +153,6 @@ MainWindow::MainWindow()
 
     // Wait until everything is set up and update map
     updateMapObjectsShown();
-    // Update status label indication in search tabs
-    searchController->updateTableSelection();
 
     profileWidget->updateProfileShowFeatures();
 

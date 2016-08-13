@@ -19,8 +19,8 @@
 
 #include <QObject>
 
-#ifndef LITTLENAVMAP_SEARCHPANELIST_H
-#define LITTLENAVMAP_SEARCHPANELIST_H
+#ifndef LITTLENAVMAP_SEARCHCONTROLLER_H
+#define LITTLENAVMAP_SEARCHCONTROLLER_H
 
 class MainWindow;
 class SearchBase;
@@ -37,6 +37,9 @@ class Pos;
 }
 }
 
+/*
+ * Manages all search tabs.
+ */
 class SearchController :
   public QObject
 {
@@ -46,41 +49,54 @@ public:
   SearchController(MainWindow *parent, MapQuery *mQuery, QTabWidget *tabWidgetSearch);
   virtual ~SearchController();
 
+  /* Create the airport search tab */
   void createAirportSearch(QTableView *tableView);
+
+  AirportSearch *getAirportSearch() const
+  {
+    return airportSearch;
+  }
+
+  /* Create the navaid search tab */
   void createNavSearch(QTableView *tableView);
 
+  NavSearch *getNavSearch() const
+  {
+    return navSearch;
+  }
+
+  /* Disconnect and reconnect all queries if a new database is loaded or changed */
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Save table view and search parameters to settings file */
   void saveState();
   void restoreState();
 
-  AirportSearch *getAirportSearch() const;
-  NavSearch *getNavSearch() const;
-
+  /* Reset search and show the given type in the search result. Search widgets are populated with the
+   * given parameters. Types can be airport, VOR, NDB or waypoint */
   void showInSearch(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
                     const QString& airportIdent);
 
-  void tabChanged(int index);
-
+  /* Get all selected airports or navaids from the active search tab */
   void getSelectedMapObjects(maptypes::MapSearchResult& result) const;
 
-  void updateTableSelection();
-
+  /* Options have changed. Update table font, empty airport handling etc. */
   void optionsChanged();
 
 private:
-  MapQuery *mapQuery;
-  ColumnList *airportColumns = nullptr;
-  AirportSearch *airportSearch = nullptr;
-  QList<SearchBase *> allSearchTabs;
+  void tabChanged(int index);
+  void postCreateSearch(SearchBase *search);
 
-  ColumnList *navColumns = nullptr;
+  MapQuery *mapQuery;
+
+  AirportSearch *airportSearch = nullptr;
   NavSearch *navSearch = nullptr;
 
   MainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;
+  QList<SearchBase *> allSearchTabs;
 
 };
 
-#endif // LITTLENAVMAP_SEARCHPANELIST_H
+#endif // LITTLENAVMAP_SEARCHCONTROLLER_H

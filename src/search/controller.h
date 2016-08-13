@@ -50,9 +50,6 @@ public:
   /* Create a new SqlModel, build and execute a query */
   void prepareModel();
 
-  /* Delete any SqlModl */
-  void clearModel();
-
   /* Load all rows into the view */
   void loadAllRows();
 
@@ -82,17 +79,14 @@ public:
   /* Get model index for the given cursor position */
   QModelIndex getModelIndexAt(const QPoint& pos) const;
 
-  /* Get header caption for column at given model index */
-  QString getHeaderNameAt(const QModelIndex& index) const;
-
   /* Get data at given model index */
   QString getFieldDataAt(const QModelIndex& index) const;
 
   /* Get descriptor for column name */
-  const Column *getColumn(const QString& colName) const;
+  const Column *getColumnDescriptor(const QString& colName) const;
 
   /* Get descriptor for column at physical index */
-  const Column *getColumn(int physicalIndex) const;
+  const Column *getColumnDescriptor(int physicalIndex) const;
 
   /* Number of rows currently loaded into the table view */
   int getVisibleRowCount() const;
@@ -100,15 +94,13 @@ public:
   /* Total number of rows returned by the last query */
   int getTotalRowCount() const;
 
+  /* Get the SQL query that was used to populate the table */
   QString getCurrentSqlQuery() const;
 
   /* Get all descriptors for currently displayed columns */
   QVector<const Column *> getCurrentColumns() const;
 
-  /* Return field data formatted as in the table view */
-  QString formatModelData(const QString& col, const QVariant& var) const;
-  QVariantList getFormattedModelData(int row) const;
-
+  /* Get variant from model for row and column */
   QVariant getRawData(int row, const QString& colname) const;
   QVariant getRawData(int row, int col) const;
 
@@ -124,48 +116,59 @@ public:
    * by column reordering */
   int getColumnVisualIndex(int physicalIndex) const;
 
+  /* Get SQL database from model */
   atools::sql::SqlDatabase *getSqlDatabase() const
   {
     return db;
   }
 
   /* Select all rows in view */
-  void selectAll();
+  void selectAllRows();
 
+  /* Get the database id for the row at the index or -1 if the index is not valid */
   int getIdForRow(const QModelIndex& index);
 
-  /* Initial search */
+  /* Reset search and filter by ident, region and airport */
+  void filterByIdent(const QString& ident, const QString& region = QString(),
+                     const QString& airportIdent = QString());
+
+  /* Start or end distance search depending if center is valid or not */
   void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
                         int minDistance, int maxDistance);
 
-  /* Distance updates from spin box widgets */
+  /* Update distance search for changed values from spin box widgets */
   void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
 
-  void loadAllRowsForRectQuery();
+  /* Load all rows if a distance search is active. */
+  void loadAllRowsForDistanceSearch();
 
-  void setDataCallback(const SqlModel::DataFunctionType& value);
-  void setHandlerRoles(const QSet<Qt::ItemDataRole>& value);
-
-  void filterByIdent(const QString& ident,
-                     const QString& region = QString(), const QString& airportIdent = QString());
-
-  atools::geo::Pos getGeoPos(const QModelIndex& index);
-
-  SqlModel *getModel() const
-  {
-    return model;
-  }
-
-  void initRecord(atools::sql::SqlRecord& rec);
-  void fillRecord(int row, atools::sql::SqlRecord& rec);
-
-  void preDatabaseLoad();
-  void postDatabaseLoad();
-
+  /* True if distance search is active */
   bool isDistanceSearch()
   {
     return proxyModel != nullptr;
   }
+
+  /* Set the callback that will handle data rows and values, i.e. format values to strings.
+   * Set the desired data roles that the callback should be called for */
+  void setDataCallback(const SqlModel::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles);
+
+  /* Get position for the row at the given index. The query needs to have a lonx and laty column */
+  atools::geo::Pos getGeoPos(const QModelIndex& index);
+
+  /* Get SQL model */
+  SqlModel *getSqlModel() const
+  {
+    return model;
+  }
+
+  /* Initializes the record with all column names from the current query */
+  void initRecord(atools::sql::SqlRecord& rec);
+
+  /* Fills a initialized record with data from the current model query */
+  void fillRecord(int row, atools::sql::SqlRecord& rec);
+
+  void preDatabaseLoad();
+  void postDatabaseLoad();
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);
@@ -173,24 +176,36 @@ private:
   /* Adapt columns to query change */
   void processViewColumns();
 
-  /* Save view state to settings */
+  /* Save view state to temp byte array */
   void saveTempViewState();
 
-  /* Load view state from settings */
+  /* Load view state from temp byte array */
   void restoreViewState();
 
-  QModelIndex toS(const QModelIndex& index) const;
-  QModelIndex fromS(const QModelIndex& index) const;
+  /* Convert indexes if proxy model for distance search is used */
+  QModelIndex toSource(const QModelIndex& index) const;
+  QModelIndex fromSource(const QModelIndex& index) const;
 
+  /* Proxy model used to distance search. null if distance search is not active.
+   * While the normal SQL model acts as a primary (rectangle based) filter the proxy
+   * model will do proper min/max radius filtering at a secondary stage.
+   * To get correct results all rows have to be loaded from the SQL model and have to be piped through the
+   * proxy model. */
   SqlProxyModel *proxyModel = nullptr;
+
   SqlModel *model = nullptr;
   QWidget *parentWidget = nullptr;
   atools::sql::SqlDatabase *db = nullptr;
   QTableView *view = nullptr;
   ColumnList *columns = nullptr;
+
+  /* Used to temporarily save the view state before switching to distance search */
   QByteArray viewState;
 
-  bool changed = false;
+  /* The model query is executed immediately if distance search is not used. For distance search
+   * use a delayed approach that checks if any query parameters are changed. Changed parameters
+   * are indicated by this bool */
+  bool searchParamsChanged = false;
   atools::geo::Pos currentDistanceCenter;
 };
 

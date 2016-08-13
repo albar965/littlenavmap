@@ -71,7 +71,7 @@ QIcon SymbolPainter::createVorIcon(const maptypes::MapVor& vor, int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createNdbIcon(const maptypes::MapNdb& ndb, int size)
+QIcon SymbolPainter::createNdbIcon(int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
@@ -84,7 +84,7 @@ QIcon SymbolPainter::createNdbIcon(const maptypes::MapNdb& ndb, int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createWaypointIcon(const maptypes::MapWaypoint& waypoint, int size)
+QIcon SymbolPainter::createWaypointIcon(int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);

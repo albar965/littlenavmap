@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_WEATHERLOADER_H
-#define LITTLENAVMAP_WEATHERLOADER_H
+#ifndef LITTLENAVMAP_WEATHERREPORTER_H
+#define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
 
@@ -139,4 +139,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_WEATHERLOADER_H
+#endif // LITTLENAVMAP_WEATHERREPORTER_H

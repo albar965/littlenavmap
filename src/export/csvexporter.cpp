@@ -54,6 +54,7 @@ QString CsvExporter::saveCsvFileDialog()
                                 "csv", lnm::EXPORT_FILEDIALOG);
 }
 
+#ifdef ENABLE_CSV_EXPORT
 int CsvExporter::exportAll(bool open)
 {
   int exported = 0;
@@ -150,6 +151,8 @@ int CsvExporter::exportSelected(bool open)
   }
   return exported;
 }
+
+#endif
 
 int CsvExporter::selectionAsCsv(QTableView *view, bool includeHeader, QString& result)
 {

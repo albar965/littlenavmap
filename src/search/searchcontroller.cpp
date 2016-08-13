@@ -31,27 +31,17 @@ SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
   : mapQuery(mQuery), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
-
 }
 
 SearchController::~SearchController()
 {
   delete airportSearch;
-  delete airportColumns;
-
   delete navSearch;
-  delete navColumns;
 }
 
 void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 {
   allSearchTabs.at(tabWidget->currentIndex())->getSelectedMapObjects(result);
-}
-
-void SearchController::updateTableSelection()
-{
-  // Force signal to display correct status bar indication
-  allSearchTabs.at(tabWidget->currentIndex())->updateTableSelection();
 }
 
 void SearchController::optionsChanged()
@@ -60,6 +50,7 @@ void SearchController::optionsChanged()
     search->optionsChanged();
 }
 
+/* Forces an emit of selection changed signal if the active tab changes */
 void SearchController::tabChanged(int index)
 {
   allSearchTabs.at(index)->updateTableSelection();
@@ -77,41 +68,26 @@ void SearchController::restoreState()
     s->restoreState();
 }
 
-AirportSearch *SearchController::getAirportSearch() const
-{
-  return airportSearch;
-}
-
-NavSearch *SearchController::getNavSearch() const
-{
-  return navSearch;
-}
-
 void SearchController::createAirportSearch(QTableView *tableView)
 {
-  airportColumns = new ColumnList("airport", "airport_id");
-
-  airportSearch = new AirportSearch(mainWindow, tableView, airportColumns, mapQuery, 0);
-
-  airportSearch->connectSlots();
-
-  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
-                                      airportSearch, &SearchBase::searchMarkChanged);
-
-  allSearchTabs.append(airportSearch);
+  airportSearch = new AirportSearch(mainWindow, tableView, mapQuery, 0);
+  postCreateSearch(airportSearch);
 }
 
 void SearchController::createNavSearch(QTableView *tableView)
 {
-  navColumns = new ColumnList("nav_search", "nav_search_id");
+  navSearch = new NavSearch(mainWindow, tableView, mapQuery, 1);
+  postCreateSearch(navSearch);
+}
 
-  navSearch = new NavSearch(mainWindow, tableView, navColumns, mapQuery, 1);
-  navSearch->connectSlots();
+/* Connect signals and append search object to all search tabs list */
+void SearchController::postCreateSearch(SearchBase *search)
+{
+  search->connectSearchSlots();
 
   mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
-                                      navSearch, &SearchBase::searchMarkChanged);
-
-  allSearchTabs.append(navSearch);
+                                      search, &SearchBase::searchMarkChanged);
+  allSearchTabs.append(search);
 }
 
 void SearchController::preDatabaseLoad()
@@ -134,20 +110,23 @@ void SearchController::showInSearch(maptypes::MapObjectTypes type, const QString
   switch(type)
   {
     case maptypes::AIRPORT:
+      // Shown in airport tab
       airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);
       break;
     case maptypes::NDB:
     case maptypes::VOR:
-    case maptypes::ILS:
     case maptypes::WAYPOINT:
+      // Shown in navaid tab
       navSearch->resetSearch();
       navSearch->filterByIdent(ident, region, airportIdent);
       break;
+    case maptypes::ILS:
     case maptypes::MARKER:
     case maptypes::NONE:
     case maptypes::ALL_NAV:
     case maptypes::ALL:
+      qWarning() << "showInSearch invalid type" << type;
       break;
   }
 }

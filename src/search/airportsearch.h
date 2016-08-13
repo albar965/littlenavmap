@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_APSEARCHPANE_H
-#define LITTLENAVMAP_APSEARCHPANE_H
+#ifndef LITTLENAVMAP_AIRPORTSEARCH_H
+#define LITTLENAVMAP_AIRPORTSEARCH_H
 
 #include "search/searchbase.h"
 
@@ -41,7 +41,7 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+  AirportSearch(MainWindow *parent, QTableView *tableView,
                 MapQuery *query, int tabWidgetIndex);
   virtual ~AirportSearch();
 
@@ -50,7 +50,7 @@ public:
   virtual void restoreState() override;
 
   virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
-  virtual void connectSlots() override;
+  virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
 private:
@@ -74,4 +74,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_APSEARCHPANE_H
+#endif // LITTLENAVMAP_AIRPORTSEARCH_H

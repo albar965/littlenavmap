@@ -100,8 +100,8 @@ public:
   /* Create icons for tooltips, table views and more. Size is pixel. */
   QIcon createAirportIcon(const maptypes::MapAirport& airport, int size);
   QIcon createVorIcon(const maptypes::MapVor& vor, int size);
-  QIcon createNdbIcon(const maptypes::MapNdb& ndb, int size);
-  QIcon createWaypointIcon(const maptypes::MapWaypoint& waypoint, int size);
+  QIcon createNdbIcon(int size);
+  QIcon createWaypointIcon(int size);
   QIcon createUserpointIcon(int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */

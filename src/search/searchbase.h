@@ -47,8 +47,9 @@ class SearchBase :
   Q_OBJECT
 
 public:
-  SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-             MapQuery *mapQuery, int tabWidgetIndex);
+  /* Class will take ownership of columnList */
+  SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
+             int tabWidgetIndex);
   virtual ~SearchBase();
 
   /* Disconnect and reconnect queries on database change */
@@ -77,6 +78,9 @@ public:
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
   void updateTableSelection();
+
+  /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
+  virtual void connectSearchSlots();
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
@@ -107,9 +111,6 @@ protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;
 
-  /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
-  virtual void connectSlots();
-
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
   void initViewAndController();
 
@@ -118,6 +119,7 @@ protected:
 
   /* Table/view controller */
   Controller *controller;
+
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;
   QTableView *view;

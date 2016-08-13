@@ -41,9 +41,9 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
    "num_parking_mil_cargo", "num_parking_mil_combat",
    "num_helipad"});
 
-AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                             MapQuery *mapQuery, int tabWidgetIndex)
-  : SearchBase(parent, tableView, columnList, mapQuery, tabWidgetIndex)
+AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery *mapQuery,
+                             int tabWidgetIndex)
+  : SearchBase(parent, tableView, new ColumnList("airport", "airport_id"), mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -237,9 +237,9 @@ AirportSearch::~AirportSearch()
   delete iconDelegate;
 }
 
-void AirportSearch::connectSlots()
+void AirportSearch::connectSearchSlots()
 {
-  SearchBase::connectSlots();
+  SearchBase::connectSearchSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -437,8 +437,8 @@ void AirportSearch::postDatabaseLoad()
 void AirportSearch::setCallbacks()
 {
   using namespace std::placeholders;
-  controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
+  controller->setDataCallback(std::bind(&AirportSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6),
+                              {Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }
 
 /* Update the button menu actions. Add * for changed search criteria and toggle show/hide all

@@ -44,6 +44,8 @@ public:
   CsvExporter(QWidget *parentWidget, Controller *controller);
   virtual ~CsvExporter();
 
+  // Disabled unused export functionality since it is not compatible with other classes
+#ifdef ENABLE_CSV_EXPORT
   /* Export all rows.
    *
    * @param open Open file in default application after export.
@@ -57,6 +59,8 @@ public:
    * @return number of rows exported.
    */
   virtual int exportSelected(bool open) override;
+
+#endif
 
   static int selectionAsCsv(QTableView *view, bool includeHeader, QString& result);
 

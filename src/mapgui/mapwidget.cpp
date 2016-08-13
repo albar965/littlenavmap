@@ -691,14 +691,14 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
     }
     for(const maptypes::MapNdb& obj : result.ndbs)
     {
-      QAction *action = new QAction(symbolPainter.createNdbIcon(obj, ICON_SIZE),
+      QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE),
                                     menuPrefix + maptypes::ndbText(obj) + menuSuffix, this);
       action->setData(QVariantList({obj.id, maptypes::NDB}));
       menu.addAction(action);
     }
     for(const maptypes::MapWaypoint& obj : result.waypoints)
     {
-      QAction *action = new QAction(symbolPainter.createWaypointIcon(obj, ICON_SIZE),
+      QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
                                     menuPrefix + maptypes::waypointText(obj) + menuSuffix, this);
       action->setData(QVariantList({obj.id, maptypes::WAYPOINT}));
       menu.addAction(action);

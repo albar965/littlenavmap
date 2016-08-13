@@ -24,8 +24,8 @@
 
 using namespace atools::geo;
 
-SqlProxyModel::SqlProxyModel(QObject *parent, SqlModel *parentSqlModel)
-  : QSortFilterProxyModel(parent), sqlModel(parentSqlModel)
+SqlProxyModel::SqlProxyModel(QObject *parent, SqlModel *sqlModel)
+  : QSortFilterProxyModel(parent), sourceSqlModel(sqlModel)
 {
 }
 
@@ -37,8 +37,8 @@ SqlProxyModel::~SqlProxyModel()
 void SqlProxyModel::setDistanceFilter(const Pos& center, sqlproxymodel::SearchDirection dir,
                                       int minDistance, int maxDistance)
 {
-  minDist = minDistance;
-  maxDist = maxDistance;
+  minDistMeter = nmToMeter(minDistance);
+  maxDistMeter = nmToMeter(maxDistance);
   centerPos = center;
   direction = dir;
 }
@@ -48,6 +48,7 @@ void SqlProxyModel::clearDistanceFilter()
   centerPos = Pos();
 }
 
+/* Does the filtering by minmum and maximum distance and direction */
 bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
 {
   Q_UNUSED(sourceParent);
@@ -58,46 +59,50 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourcePar
   switch(direction)
   {
     case sqlproxymodel::ALL:
-      return matchDist(pos);
+      // All directions
+      return matchDistance(pos);
 
     case sqlproxymodel::NORTH:
-      if(292.5f <= heading || heading <= 67.5f)
-        return matchDist(pos);
+      if(MIN_NORTH_DEG <= heading || heading <= MAX_NORTH_DEG)
+        return matchDistance(pos);
       else
         return false;
 
     case sqlproxymodel::EAST:
-      if(22.5f <= heading && heading <= 157.5f)
-        return matchDist(pos);
+      if(MIN_EAST_DEG <= heading && heading <= MAX_EAST_DEG)
+        return matchDistance(pos);
       else
         return false;
 
     case sqlproxymodel::SOUTH:
-      if(112.5f <= heading && heading <= 247.5f)
-        return matchDist(pos);
+      if(MIN_SOUTH_DEG <= heading && heading <= MAX_SOUTH_DEG)
+        return matchDistance(pos);
       else
         return false;
 
     case sqlproxymodel::WEST:
-      if(202.5f <= heading && heading <= 337.5f)
-        return matchDist(pos);
+      if(MIN_WEST_DEG <= heading && heading <= MAX_WEST_DEG)
+        return matchDistance(pos);
       else
         return false;
   }
   return true;
 }
 
-bool SqlProxyModel::matchDist(const Pos& pos) const
+bool SqlProxyModel::matchDistance(const Pos& pos) const
 {
-  float dist = meterToNm(pos.distanceMeterTo(centerPos));
-  return dist >= minDist && dist <= maxDist;
+  float distMeter = pos.distanceMeterTo(centerPos);
+  return distMeter >= minDistMeter && distMeter <= maxDistMeter;
 }
 
 void SqlProxyModel::sort(int column, Qt::SortOrder order)
 {
   QSortFilterProxyModel::sort(column, order);
-  sqlModel->setSort(sqlModel->getColumnName(column), order);
 
+  // Update query in underlying SQL model
+  sourceSqlModel->setSort(sourceSqlModel->getColumnName(column), order);
+
+  // Fetch all data and set wait cursor
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   while(canFetchMore(QModelIndex()))
     fetchMore(QModelIndex());
@@ -109,29 +114,35 @@ QVariant SqlProxyModel::headerData(int section, Qt::Orientation orientation, int
   return sourceModel()->headerData(section, orientation, role);
 }
 
+/* Defines greater and lower than for sorting of the two columns distance and heading */
 bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {
-  if(sqlModel->getColumnName(sourceLeft.column()) == "distance" &&
-     sqlModel->getColumnName(sourceRight.column()) == "distance")
+  QString leftCol = sourceSqlModel->getColumnName(sourceLeft.column());
+  QString rightCol = sourceSqlModel->getColumnName(sourceRight.column());
+
+  if(leftCol == "distance" && rightCol == "distance")
   {
+    // Sort by distance
     float distLeft = buildPos(sourceLeft.row()).distanceMeterTo(centerPos);
     float distRight = buildPos(sourceRight.row()).distanceMeterTo(centerPos);
     return distLeft < distRight;
   }
-  else if(sqlModel->getColumnName(sourceLeft.column()) == "heading" &&
-          sqlModel->getColumnName(sourceRight.column()) == "heading")
+  else if(leftCol == "heading" && rightCol == "heading")
   {
+    // Sort by heading
     float headingLeft = normalizeCourse(centerPos.angleDegTo(buildPos(sourceLeft.row())));
     float headingRight = normalizeCourse(centerPos.angleDegTo(buildPos(sourceRight.row())));
     return headingLeft < headingRight;
   }
   else
+    // Let the model do the sorting for other columns
     return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
 }
 
+/* Returns the formatted data for the "distance" and "heading" column */
 QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
 {
-  if(sqlModel->getColumnName(index.column()) == "distance")
+  if(sourceSqlModel->getColumnName(index.column()) == "distance")
   {
     if(role == Qt::DisplayRole)
     {
@@ -141,7 +152,7 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;
   }
-  else if(sqlModel->getColumnName(index.column()) == "heading")
+  else if(sourceSqlModel->getColumnName(index.column()) == "heading")
   {
     if(role == Qt::DisplayRole)
     {
@@ -157,6 +168,6 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
 
 Pos SqlProxyModel::buildPos(int row) const
 {
-  return Pos(sqlModel->getRawData(row, "lonx").toFloat(),
-             sqlModel->getRawData(row, "laty").toFloat());
+  return Pos(sourceSqlModel->getRawData(row, "lonx").toFloat(),
+             sourceSqlModel->getRawData(row, "laty").toFloat());
 }

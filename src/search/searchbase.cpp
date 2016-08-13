@@ -77,6 +77,7 @@ SearchBase::~SearchBase()
   delete csvExporter;
   delete updateTimer;
   delete zoomHandler;
+  delete columns;
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -142,7 +143,7 @@ void SearchBase::searchMarkChanged(const atools::geo::Pos& mark)
                                  static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
                                  minDistanceWidget->value(), maxDistanceWidget->value());
 
-    controller->loadAllRowsForRectQuery();
+    controller->loadAllRowsForDistanceSearch();
   }
 }
 
@@ -228,7 +229,7 @@ void SearchBase::connectSearchWidgets()
               maxDistanceWidget->setEnabled(state == Qt::Checked);
               distanceDirWidget->setEnabled(state == Qt::Checked);
               if(state == Qt::Checked)
-                controller->loadAllRowsForRectQuery();
+                controller->loadAllRowsForDistanceSearch();
               updateButtonMenu();
             });
 
@@ -278,10 +279,10 @@ void SearchBase::editStartTimer()
 void SearchBase::editTimeout()
 {
   qDebug() << "editTimeout";
-  controller->loadAllRowsForRectQuery();
+  controller->loadAllRowsForDistanceSearch();
 }
 
-void SearchBase::connectSlots()
+void SearchBase::connectSearchSlots()
 {
   connect(view, &QTableView::doubleClicked, this, &SearchBase::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &SearchBase::contextMenu);
@@ -293,9 +294,9 @@ void SearchBase::connectSlots()
 
   reconnectSelectionModel();
 
-  connect(controller->getModel(), &SqlModel::modelReset, this, &SearchBase::reconnectSelectionModel);
+  connect(controller->getSqlModel(), &SqlModel::modelReset, this, &SearchBase::reconnectSelectionModel);
   void (SearchBase::*selChangedPtr)() = &SearchBase::tableSelectionChanged;
-  connect(controller->getModel(), &SqlModel::fetchedMore, this, selChangedPtr);
+  connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, selChangedPtr);
 }
 
 /* Connect selection model again after a SQL model reset */
@@ -532,7 +533,7 @@ void SearchBase::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchFilterExcluding)
       controller->filterExcluding(index);
     else if(action == ui->actionSearchTableSelectAll)
-      controller->selectAll();
+      controller->selectAllRows();
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(controller->getGeoPos(index));
     else if(action == ui->actionMapRangeRings)

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H
-#define LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H
+#ifndef LITTLENAVMAP_SQLPROXYMODEL_H
+#define LITTLENAVMAP_SQLPROXYMODEL_H
 
 #include "geo/pos.h"
 
@@ -25,9 +25,12 @@
 class SqlModel;
 
 namespace sqlproxymodel {
+
+/* Search direction. This is not the precise direction but an approximation where the ranges overlap.
+ * E.g. EAST is 22.5f <= heading && heading <= 157.5f */
 enum SearchDirection
 {
-  // Numbers have to match index in the combo box
+  /* Numbers have to match index in the combo box */
   ALL = 0,
   NORTH = 1,
   EAST = 2,
@@ -37,35 +40,61 @@ enum SearchDirection
 
 }
 
+/*
+ * Proxy that does the second stage (fine) filtering for distance searches. The default model does a simple
+ * rectangle base query and passes the results to this proxy which filters by minimumn and maximum radius
+ * and direction.
+ * Dynamic loading on demand (like the SQL model does) does not work with this model. Therefore all results
+ * have to be fetched.
+ */
 class SqlProxyModel :
   public QSortFilterProxyModel
 {
   Q_OBJECT
 
 public:
-  SqlProxyModel(QObject *parent, SqlModel *parentSqlModel);
+  SqlProxyModel(QObject *parent, SqlModel *sqlModel);
   virtual ~SqlProxyModel();
 
+  /*
+   * Sets new distance search parameters.
+   * @param center center point for filter
+   * @param dir direction
+   * @param minDistance minimum distance to center point in nautical miles
+   * @param maxDistance maximum distance to center point in nautical miles
+   */
   void setDistanceFilter(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
                          int minDistance, int maxDistance);
+
+  /* Clear distance search and stop all filtering */
   void clearDistanceFilter();
 
+  /* Sorts the model by column in the given order and fetches all data from the underlying model. */
   virtual void sort(int column, Qt::SortOrder order) override;
 
 private:
-  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
-  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-  virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
   virtual QVariant data(const QModelIndex& index, int role) const override;
+  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+  virtual bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
+  virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 
-  bool matchDist(const atools::geo::Pos& pos) const;
+  bool matchDistance(const atools::geo::Pos& pos) const;
   atools::geo::Pos buildPos(int row) const;
 
-  SqlModel *sqlModel = nullptr;
+  /* Direction filter ranges are decreased by this value on each side */
+  static float Q_DECL_CONSTEXPR DIR_RANGE_DEG = 22.5f;
+
+  /* Direction filter parameters */
+  static float Q_DECL_CONSTEXPR MIN_NORTH_DEG = 270.f + DIR_RANGE_DEG, MAX_NORTH_DEG = 90.f - DIR_RANGE_DEG;
+  static float Q_DECL_CONSTEXPR MIN_EAST_DEG = 0.f + DIR_RANGE_DEG, MAX_EAST_DEG = 180.f - DIR_RANGE_DEG;
+  static float Q_DECL_CONSTEXPR MIN_SOUTH_DEG = 90.f + DIR_RANGE_DEG, MAX_SOUTH_DEG = 270.f - DIR_RANGE_DEG;
+  static float Q_DECL_CONSTEXPR MIN_WEST_DEG = 180.f + DIR_RANGE_DEG, MAX_WEST_DEG = 360.f - DIR_RANGE_DEG;
+
+  SqlModel *sourceSqlModel = nullptr;
   atools::geo::Pos centerPos;
   sqlproxymodel::SearchDirection direction;
-  int minDist = 0, maxDist = 0;
+  int minDistMeter = 0, maxDistMeter = 0;
 
 };
 
-#endif // LITTLENAVMAP_SQLSORTFILTERPROXYMODEL_H
+#endif // LITTLENAVMAP_SQLPROXYMODEL_H

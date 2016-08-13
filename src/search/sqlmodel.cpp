@@ -33,12 +33,13 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 using atools::gui::ErrorHandler;
+using atools::sql::SqlRecord;
 
 SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *columnList)
   : QSqlQueryModel(parent), db(sqlDb), columns(columnList), parentWidget(parent)
 {
-  handlerRoles << Qt::DisplayRole << Qt::BackgroundRole << Qt::TextAlignmentRole;
-  setDataCallback(nullptr);
+  // Set default handler
+  setDataCallback(nullptr, QSet<Qt::ItemDataRole>());
 
   buildQuery();
 }
@@ -47,6 +48,92 @@ SqlModel::~SqlModel()
 {
 }
 
+void SqlModel::filterIncluding(QModelIndex index)
+{
+  filterBy(index, false);
+  buildQuery();
+}
+
+void SqlModel::filterExcluding(QModelIndex index)
+{
+  filterBy(index, true);
+  buildQuery();
+}
+
+void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
+{
+  boundingRect = boundingRectangle;
+  buildQuery();
+}
+
+void SqlModel::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+{
+  // Build filter conditions
+  filterBy(false, "ident", ident);
+
+  if(!region.isEmpty() && columns->getColumn("region") != nullptr)
+    filterBy(false, "region", region);
+
+  if(!airportIdent.isEmpty() && columns->getColumn("airport_ident") != nullptr)
+    filterBy(false, "airport_ident", airportIdent);
+
+  // Build and run query
+  buildQuery();
+}
+
+/* Filter by value at index (context menu in table view) */
+void SqlModel::filterBy(QModelIndex index, bool exclude)
+{
+  QString whereCol = getSqlRecord().fieldName(index.column());
+  filterBy(exclude, whereCol, QSqlQueryModel::data(index));
+}
+
+/* Simple include/exclude filter. Updates the attached search widgets */
+void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
+{
+  // If there is already a filter on the same column remove it
+  if(whereConditionMap.contains(whereCol))
+    whereConditionMap.remove(whereCol);
+
+  QString whereOp;
+  if(whereValue.isNull())
+    whereOp = exclude ? "is not null" : "is null";
+  else
+    whereOp = exclude ? " not like " : " like ";
+
+  const Column *colDescr = columns->getColumn(whereCol);
+
+  if(QLineEdit * edit = columns->getColumn(whereCol)->getLineEditWidget())
+    // Set the search text into the corresponding line edit
+    edit->setText((exclude ? "-" : "") + whereValue.toString());
+  else if(QCheckBox * check = columns->getColumn(whereCol)->getCheckBoxWidget())
+  {
+    if(check->isTristate())
+    {
+      // Update check box state for tri state boxes
+      if(whereValue.isNull())
+        check->setCheckState(Qt::PartiallyChecked);
+      else
+      {
+        bool val = whereValue.toInt() > 0;
+        if(exclude)
+          val = !val;
+        check->setCheckState(val ? Qt::Checked : Qt::Unchecked);
+      }
+    }
+    else
+    {
+      // Update check box state for normal boxes
+      bool val = whereValue.isNull() || whereValue.toInt() == 0;
+      if(exclude)
+        val = !val;
+      check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
+    }
+  }
+  whereConditionMap.insert(whereCol, {whereOp, whereValue, colDescr});
+}
+
+/* Changes the whereConditionMap. Removes, replaces or adds where conditions based on input */
 void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& maxValue)
 {
   Q_ASSERT(col != nullptr);
@@ -69,17 +156,21 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
 
     if(col->hasMinMaxSpinbox())
     {
+      // Two spinboxes giving min and max values
       if(!value.isNull() && maxValue.isNull())
       {
+        // Only min value set
         oper = ">";
         newVariant = value;
       }
       else if(value.isNull() && !maxValue.isNull())
       {
+        // Only max value set
         oper = "<";
         newVariant = maxValue;
       }
       else
+        // Min and max values set - use range and leave newVariant invalid
         oper = QString("between %1 and %2").arg(value.toInt()).arg(maxValue.toInt());
     }
     else if(!col->getCondition().isEmpty())
@@ -93,7 +184,7 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
       oper = col->getIndexConditionMap().at(value.toInt());
     else if(col->hasIncludeExcludeCond())
     {
-      // A checkbox
+      // A checkbox - tri state is already filtered by the caller
       if(value.toInt() == 0)
         oper = col->getExcludeCondition();
       else
@@ -103,7 +194,7 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
     {
       if(value.type() == QVariant::String)
       {
-        // Use like queries for string
+        // Use like queries for strings so we will query case insensitive
         QString newVal = value.toString();
 
         if(newVal.startsWith("-"))
@@ -131,7 +222,9 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
 
         newVariant = newVal;
       }
-      else if(value.type() == QVariant::Int)
+      else if(value.type() == QVariant::Int || value.type() == QVariant::UInt ||
+              value.type() == QVariant::LongLong || value.type() == QVariant::ULongLong ||
+              value.type() == QVariant::Double)
       {
         // Use equal for numbers
         newVariant = value;
@@ -147,127 +240,37 @@ void SqlModel::filter(const Column *col, const QVariant& value, const QVariant& 
       whereConditionMap[colName].col = col;
     }
     else
+      // Insert new condition
       whereConditionMap.insert(colName, {oper, newVariant, col});
   }
   buildQuery();
 }
 
-QVariant SqlModel::getFormattedFieldData(const QModelIndex& index) const
-{
-  return data(index);
-}
-
-void SqlModel::filterIncluding(QModelIndex index)
-{
-  filterBy(index, false);
-  buildQuery();
-}
-
-void SqlModel::filterExcluding(QModelIndex index)
-{
-  filterBy(index, true);
-  buildQuery();
-}
-
-void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
-{
-  boundingRect = boundingRectangle;
-  buildQuery();
-}
-
-void SqlModel::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
-{
-  filterBy(false, "ident", ident);
-
-  if(!region.isEmpty() && columns->getColumn("region") != nullptr)
-    filterBy(false, "region", region);
-
-  if(!airportIdent.isEmpty() && columns->getColumn("airport_ident") != nullptr)
-    filterBy(false, "airport_ident", airportIdent);
-
-  buildQuery();
-}
-
-atools::sql::SqlRecord SqlModel::getSqlRecord() const
-{
-  return atools::sql::SqlRecord(record(), currentSqlQuery);
-}
-
-atools::sql::SqlRecord SqlModel::getSqlRecord(int row) const
-{
-  return atools::sql::SqlRecord(record(row), currentSqlQuery);
-}
-
-void SqlModel::filterBy(QModelIndex index, bool exclude)
-{
-  QString whereCol = atools::sql::SqlRecord(record()).fieldName(index.column());
-  QVariant whereValue = QSqlQueryModel::data(index);
-
-  filterBy(exclude, whereCol, whereValue);
-}
-
-void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValue)
-{
-  // If there is already a filter on the same column remove it
-
-  if(whereConditionMap.contains(whereCol))
-    whereConditionMap.remove(whereCol);
-
-  QString whereOp;
-  if(whereValue.isNull())
-    whereOp = exclude ? "is not null" : "is null";
-  else
-    whereOp = exclude ? " not like " : " like ";
-
-  const Column *col = columns->getColumn(whereCol);
-  Q_ASSERT(col != nullptr);
-
-  // Set the search text into the corresponding line edit
-  if(QLineEdit * edit = columns->getColumn(whereCol)->getLineEditWidget())
-    edit->setText((exclude ? "-" : "") + whereValue.toString());
-  else if(QCheckBox * check = columns->getColumn(whereCol)->getCheckBoxWidget())
-  {
-    if(check->isTristate())
-    {
-      if(whereValue.isNull())
-        check->setCheckState(Qt::PartiallyChecked);
-      else
-      {
-        bool val = whereValue.toInt() > 0;
-        if(exclude)
-          val = !val;
-        check->setCheckState(val ? Qt::Checked : Qt::Unchecked);
-      }
-    }
-    else
-    {
-      bool val = whereValue.isNull() || whereValue.toInt() == 0;
-      if(exclude)
-        val = !val;
-      check->setCheckState(val ? Qt::Unchecked : Qt::Checked);
-    }
-  }
-  whereConditionMap.insert(whereCol, {whereOp, whereValue, col});
-}
-
 void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
 {
-  orderByColIndex = record().indexOf(colname);
+  orderByColIndex = getSqlRecord().indexOf(colname);
   orderByCol = colname;
   orderByOrder = sortOrderToSql(order);
 }
 
-void SqlModel::setDataCallback(const DataFunctionType& value)
+void SqlModel::setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles)
 {
-  using namespace std::placeholders;
-
-  if(value == nullptr)
-    dataFunc = std::bind(&SqlModel::defaultDataHandler, this, _1, _2, _3, _4, _5, _6);
+  if(func == nullptr)
+  {
+    // Set all back to default
+    handlerRoles.clear();
+    handlerRoles << Qt::DisplayRole << Qt::BackgroundRole << Qt::TextAlignmentRole;
+    using namespace std::placeholders;
+    dataFunction = std::bind(&SqlModel::defaultDataHandler, this, _1, _2, _3, _4, _5, _6);
+  }
   else
-    dataFunc = value;
+  {
+  handlerRoles = roles;
+  dataFunction = func;
+  }
 }
 
-void SqlModel::reset()
+void SqlModel::resetView()
 {
   orderByCol.clear();
   orderByOrder.clear();
@@ -283,22 +286,21 @@ void SqlModel::resetSearch()
   // no need to rebuild header - view remains the same
 }
 
+/* Clear all query conditions */
 void SqlModel::clearWhereConditions()
 {
   whereConditionMap.clear();
   boundingRect = atools::geo::Rect();
 }
 
+/* Set header captions */
 void SqlModel::fillHeaderData()
 {
-  int cnt = record().count();
+  SqlRecord sqlRecord = getSqlRecord();
+  int cnt = sqlRecord.count();
   for(int i = 0; i < cnt; ++i)
   {
-    QString field = record().fieldName(i);
-    const Column *cd = columns->getColumn(field);
-
-    Q_ASSERT_X(cd != nullptr, "fillHeaderData", QString("field \"" + field + "\" is null").toLocal8Bit());
-
+    const Column *cd = columns->getColumn(sqlRecord.fieldName(i));
     if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isDistance()))
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
   }
@@ -311,7 +313,7 @@ const Column *SqlModel::getColumnModel(const QString& colName) const
 
 const Column *SqlModel::getColumnModel(int colIndex) const
 {
-  return columns->getColumn(record().fieldName(colIndex));
+  return columns->getColumn(getSqlRecord().fieldName(colIndex));
 }
 
 QString SqlModel::sortOrderToSql(Qt::SortOrder order)
@@ -327,9 +329,10 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
   return QString();
 }
 
+/* Do own sorting in the SQL model */
 void SqlModel::sort(int column, Qt::SortOrder order)
 {
-  QString colname = atools::sql::SqlRecord(record()).fieldName(column);
+  QString colname = getSqlRecord().fieldName(column);
   if(columns->getColumn(colname)->isNoSort())
     return;
 
@@ -340,12 +343,14 @@ void SqlModel::sort(int column, Qt::SortOrder order)
   buildQuery();
 }
 
+/* Build full list of columns to query */
 QString SqlModel::buildColumnList()
 {
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
     if(col->isDistance())
+      // Add null for special distance columns
       colNames.append("null as " + col->getColumnName());
     else
       colNames.append(col->getColumnName());
@@ -365,80 +370,7 @@ QString SqlModel::buildColumnList()
   return queryCols;
 }
 
-QString SqlModel::buildWhereValue(const WhereCondition& cond)
-{
-  QString val;
-  if(cond.value.type() == QVariant::String || cond.value.type() == QVariant::Char)
-    val = " '" + cond.value.toString().replace("'", "''") + "'";
-  else if(cond.value.type() == QVariant::Bool ||
-          cond.value.type() == QVariant::Int ||
-          cond.value.type() == QVariant::UInt ||
-          cond.value.type() == QVariant::LongLong ||
-          cond.value.type() == QVariant::ULongLong ||
-          cond.value.type() == QVariant::Double)
-    val = " " + cond.value.toString();
-  return val;
-}
-
-QString SqlModel::buildWhere()
-{
-  QString queryWhere;
-  QString queryWhereAnd;
-
-  int numCond = 0, numAndCond = 0;
-  for(const WhereCondition& cond : whereConditionMap)
-  {
-    if(numCond++ > 0)
-      queryWhere += " " + WHERE_OPERATOR + " ";
-    if(cond.col->isIncludesName())
-      queryWhere += " " + cond.oper + " ";
-    else
-      queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
-    if(!cond.value.isNull())
-      queryWhere += buildWhereValue(cond);
-  }
-
-  if(boundingRect.isValid())
-  {
-    QString rectCond;
-    if(boundingRect.crossesAntiMeridian())
-    {
-      QList<atools::geo::Rect> split = boundingRect.splitAtAntiMeridian();
-
-      rectCond = QString("((lonx between %1 and %2 and laty between %3 and %4) or "
-                         "(lonx between %5 and %6 and laty between %7 and %8))").
-                 arg(split.at(0).getTopLeft().getLonX()).arg(split.at(0).getBottomRight().getLonX()).
-                 arg(split.at(0).getBottomRight().getLatY()).arg(split.at(0).getTopLeft().getLatY()).
-                 arg(split.at(1).getTopLeft().getLonX()).arg(split.at(1).getBottomRight().getLonX()).
-                 arg(split.at(1).getBottomRight().getLatY()).arg(split.at(1).getTopLeft().getLatY());
-    }
-    else
-      rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
-                 arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
-                 arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
-
-    if(numCond > 0)
-      queryWhere += " " + WHERE_OPERATOR + " ";
-    queryWhere += rectCond;
-    numCond++;
-  }
-
-  if(numCond > 0)
-    queryWhere = "(" + queryWhere + ")";
-
-  if(numAndCond > 0)
-  {
-    if(numCond > 0)
-      queryWhere += " and ";
-    queryWhere += queryWhereAnd;
-  }
-
-  if(numCond > 0 || numAndCond > 0)
-    queryWhere = " where " + queryWhere;
-
-  return queryWhere;
-}
-
+/* Create SQL query and set it into the model */
 void SqlModel::buildQuery()
 {
   QString queryCols = buildColumnList();
@@ -474,15 +406,14 @@ void SqlModel::buildQuery()
 
   try
   {
+    // Count total rows
     SqlQuery countStmt(db);
     countStmt.exec(queryCount);
     if(countStmt.next())
       totalRowCount = countStmt.value(0).toInt();
 
-    qDebug() << "Query" << currentSqlQuery;
-    qDebug() << "Query Count" << queryCount;
-
     if(!boundingRect.isValid())
+      // Delay query for bounding rectangle query with proxy model
       resetSqlQuery();
   }
   catch(atools::Exception& e)
@@ -495,6 +426,79 @@ void SqlModel::buildQuery()
   }
 }
 
+/* Build where statement */
+QString SqlModel::buildWhere()
+{
+  QString queryWhere;
+  QString queryWhereAnd;
+
+  int numCond = 0;
+  for(const WhereCondition& cond : whereConditionMap)
+  {
+    if(numCond++ > 0)
+      queryWhere += " " + WHERE_OPERATOR + " ";
+
+    if(cond.col->isIncludesName())
+      // Condition includes column name
+      queryWhere += " " + cond.oper + " ";
+    else
+      queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
+
+    if(!cond.value.isNull())
+      queryWhere += buildWhereValue(cond);
+  }
+
+  if(boundingRect.isValid())
+  {
+    QString rectCond;
+    if(boundingRect.crossesAntiMeridian())
+    {
+      QList<atools::geo::Rect> rect = boundingRect.splitAtAntiMeridian();
+
+      rectCond = QString("((lonx between %1 and %2 and laty between %3 and %4) or "
+                         "(lonx between %5 and %6 and laty between %7 and %8))").
+                 arg(rect.at(0).getTopLeft().getLonX()).arg(rect.at(0).getBottomRight().getLonX()).
+                 arg(rect.at(0).getBottomRight().getLatY()).arg(rect.at(0).getTopLeft().getLatY()).
+                 arg(rect.at(1).getTopLeft().getLonX()).arg(rect.at(1).getBottomRight().getLonX()).
+                 arg(rect.at(1).getBottomRight().getLatY()).arg(rect.at(1).getTopLeft().getLatY());
+    }
+    else
+      rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
+                 arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
+                 arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
+
+    if(numCond > 0)
+      queryWhere += " " + WHERE_OPERATOR + " ";
+    queryWhere += rectCond;
+    numCond++;
+  }
+
+  if(numCond > 0)
+    queryWhere = "(" + queryWhere + ")";
+
+  if(numCond > 0)
+    queryWhere = " where " + queryWhere;
+
+  return queryWhere;
+}
+
+/* Convert a value to string for the where clause */
+QString SqlModel::buildWhereValue(const WhereCondition& cond)
+{
+  QString val;
+  if(cond.value.type() == QVariant::String || cond.value.type() == QVariant::Char)
+    // Use semicolons for string
+    val = " '" + cond.value.toString().replace("'", "''") + "'";
+  else if(cond.value.type() == QVariant::Bool ||
+          cond.value.type() == QVariant::Int ||
+          cond.value.type() == QVariant::UInt ||
+          cond.value.type() == QVariant::LongLong ||
+          cond.value.type() == QVariant::ULongLong ||
+          cond.value.type() == QVariant::Double)
+    val = " " + cond.value.toString();
+  return val;
+}
+
 void SqlModel::resetSqlQuery()
 {
   QSqlQueryModel::setQuery(currentSqlQuery, db->getQSqlDatabase());
@@ -503,28 +507,21 @@ void SqlModel::resetSqlQuery()
     atools::gui::ErrorHandler(parentWidget).handleSqlError(lastError());
 }
 
-QString SqlModel::formatValue(const QString& colName, const QVariant& value) const
-{
-  return formatFunc(columns->getColumn(colName), value);
-}
-
 Qt::SortOrder SqlModel::getSortOrder() const
 {
   return orderByOrder == "desc" ? Qt::DescendingOrder : Qt::AscendingOrder;
 }
 
-void SqlModel::setHandlerRoles(const QSet<Qt::ItemDataRole>& value)
-{
-  handlerRoles = value;
-}
-
+/* Default data handler - simply returns the value */
 QVariant SqlModel::defaultDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant& value,
-                                      const QVariant& dataValue, Qt::ItemDataRole role) const
+                                      const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
   Q_UNUSED(colIndex);
   Q_UNUSED(rowIndex);
+  Q_UNUSED(col);
+  Q_UNUSED(value);
   if(role == Qt::DisplayRole)
-    return formatFunc(col, dataValue);
+    return displayRoleValue;
 
   return QVariant();
 }
@@ -535,11 +532,17 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
     return QVariant();
 
   Qt::ItemDataRole dataRole = static_cast<Qt::ItemDataRole>(role);
+
+  // Get the default value for this role. Can be a font, color, etc.
   QVariant roleValue = QSqlQueryModel::data(index, role);
+
   if(handlerRoles.contains(dataRole))
   {
+    // Callback wants to be called for this role
+
+    // Get data to display
     QVariant dataValue = QSqlQueryModel::data(index, Qt::DisplayRole);
-    QString col = atools::sql::SqlRecord(record()).fieldName(index.column());
+    QString col = getSqlRecord().fieldName(index.column());
     const Column *column = columns->getColumn(col);
 
     int row = -1;
@@ -547,7 +550,7 @@ QVariant SqlModel::data(const QModelIndex& index, int role) const
       // no reliable row information with proxy
       row = index.row();
 
-    QVariant retval = dataFunc(index.column(), row, column, roleValue, dataValue, dataRole);
+    QVariant retval = dataFunction(index.column(), row, column, roleValue, dataValue, dataRole);
     if(retval.isValid())
       return retval;
   }
@@ -560,17 +563,9 @@ void SqlModel::fetchMore(const QModelIndex& parent)
   emit fetchedMore();
 }
 
-QVariantList SqlModel::getRawRowData(int row) const
-{
-  QVariantList values;
-  for(int i = 0; i < columnCount(); ++i)
-    values.append(QSqlQueryModel::data(createIndex(row, i)));
-  return values;
-}
-
 QVariant SqlModel::getRawData(int row, const QString& colname) const
 {
-  return getRawData(row, record().indexOf(colname));
+  return getRawData(row, getSqlRecord().indexOf(colname));
 }
 
 QVariant SqlModel::getRawData(int row, int col) const
@@ -578,27 +573,22 @@ QVariant SqlModel::getRawData(int row, int col) const
   return QSqlQueryModel::data(createIndex(row, col));
 }
 
-QStringList SqlModel::getRawColumns() const
-{
-  QStringList cols;
-  for(int i = 0; i < columnCount(); ++i)
-    cols.append(atools::sql::SqlRecord(record()).fieldName(i));
-  return cols;
-}
-
 QString SqlModel::getColumnName(int col) const
 {
-  return record().fieldName(col);
+  return getSqlRecord().fieldName(col);
 }
 
-QVariantList SqlModel::getFormattedRowData(int row)
+QVariant SqlModel::getFormattedFieldData(const QModelIndex& index) const
 {
-  QVariantList values;
-  for(int i = 0; i < columnCount(); ++i)
-  {
-    QModelIndex idx = createIndex(row, i);
-    values.append(formatValue(atools::sql::SqlRecord(record()).fieldName(idx.column()),
-                              QSqlQueryModel::data(idx)));
-  }
-  return values;
+  return data(index);
+}
+
+atools::sql::SqlRecord SqlModel::getSqlRecord() const
+{
+  return atools::sql::SqlRecord(record(), currentSqlQuery);
+}
+
+atools::sql::SqlRecord SqlModel::getSqlRecord(int row) const
+{
+  return atools::sql::SqlRecord(record(row), currentSqlQuery);
 }

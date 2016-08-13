@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_LAYER_H
-#define LITTLENAVMAP_LAYER_H
+#ifndef LITTLENAVMAP_MAPLAYER_H
+#define LITTLENAVMAP_MAPLAYER_H
 
 #include <QDebug>
 
@@ -361,4 +361,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_LAYER_H
+#endif // LITTLENAVMAP_MAPLAYER_H

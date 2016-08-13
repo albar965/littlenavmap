@@ -640,7 +640,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   if(info && infoQuery != nullptr)
     rec = infoQuery->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter(background).createNdbIcon(ndb, SYMBOL_SIZE);
+  QIcon icon = SymbolPainter(background).createNdbIcon(SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
@@ -678,7 +678,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info && infoQuery != nullptr)
     rec = infoQuery->getWaypointInformation(waypoint.id);
 
-  QIcon icon = SymbolPainter(background).createWaypointIcon(waypoint, SYMBOL_SIZE);
+  QIcon icon = SymbolPainter(background).createWaypointIcon(SYMBOL_SIZE);
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_OPTIONS_H
-#define LITTLENAVMAP_OPTIONS_H
+#ifndef LITTLENAVMAP_OPTIONSDIALOG_H
+#define LITTLENAVMAP_OPTIONSDIALOG_H
 
 #include "options/optiondata.h"
 
@@ -98,4 +98,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_OPTIONS_H
+#endif // LITTLENAVMAP_OPTIONSDIALOG_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_TYPES_H
-#define LITTLENAVMAP_TYPES_H
+#ifndef LITTLENAVMAP_MAPTYPES_H
+#define LITTLENAVMAP_MAPTYPES_H
 
 #include "geo/pos.h"
 #include "geo/rect.h"
@@ -588,4 +588,4 @@ Q_DECLARE_METATYPE(maptypes::RangeMarker);
 Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(maptypes::DistanceMarker);
 
-#endif // LITTLENAVMAP_TYPES_H
+#endif // LITTLENAVMAP_MAPTYPES_H

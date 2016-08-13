@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_NAVSEARCHPANE_H
-#define LITTLENAVMAP_NAVSEARCHPANE_H
+#ifndef LITTLENAVMAP_NAVSEARCH_H
+#define LITTLENAVMAP_NAVSEARCH_H
 
 #include "search/searchbase.h"
 
@@ -46,8 +46,7 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-            MapQuery *query, int tabWidgetIndex);
+  NavSearch(MainWindow *parent, QTableView *tableView, MapQuery *query, int tabWidgetIndex);
   virtual ~NavSearch();
 
   /* All state saving is done through the widget state */
@@ -55,7 +54,7 @@ public:
   virtual void restoreState() override;
 
   virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
-  virtual void connectSlots() override;
+  virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
 
 private:
@@ -77,4 +76,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_NAVSEARCHPANE_H
+#endif // LITTLENAVMAP_NAVSEARCH_H

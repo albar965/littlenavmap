@@ -41,6 +41,8 @@ public:
   HtmlExporter(QWidget *parentWidget, Controller *controller, int rowsPerPage);
   virtual ~HtmlExporter();
 
+  // Disabled unused export functionality since it is not compatible with other classes
+#ifdef ENABLE_HTML_EXPORT
   /* Export all rows.
    *
    * @param open Open file in default browser after export.
@@ -56,8 +58,6 @@ public:
   virtual int exportSelected(bool open) override;
 
 private:
-  int pageSize = 500;
-
   /* Get filename from save dialog */
   QString saveHtmlFileDialog();
 
@@ -114,6 +114,9 @@ private:
   /* Get the filename for the page including page number */
   QString filenameForPage(const QString& filename, int currentPage);
 
+#endif
+
+  int pageSize = 500;
 };
 
 #endif // LITTLELOGBOOK_HTMLEXPORTER_H

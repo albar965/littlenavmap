@@ -33,9 +33,9 @@
 
 using atools::gui::WidgetTools;
 
-NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
                      MapQuery *mapQuery, int tabWidgetIndex)
-  : SearchBase(parent, tableView, columnList, mapQuery, tabWidgetIndex)
+  : SearchBase(parent, tableView, new ColumnList("nav_search", "nav_search_id"), mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -142,9 +142,9 @@ NavSearch::~NavSearch()
   delete iconDelegate;
 }
 
-void NavSearch::connectSlots()
+void NavSearch::connectSearchSlots()
 {
-  SearchBase::connectSlots();
+  SearchBase::connectSearchSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -307,8 +307,8 @@ void NavSearch::postDatabaseLoad()
 void NavSearch::setCallbacks()
 {
   using namespace std::placeholders;
-  controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6));
-  controller->setHandlerRoles({Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
+  controller->setDataCallback(std::bind(&NavSearch::modelDataHandler, this, _1, _2, _3, _4, _5, _6),
+                              {Qt::DisplayRole, Qt::BackgroundRole, Qt::TextAlignmentRole});
 }
 
 /* Update the button menu actions. Add * for changed search criteria and toggle show/hide all

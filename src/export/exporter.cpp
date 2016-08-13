@@ -67,7 +67,7 @@ QStringList Exporter::headerNames(int cnt, const QVector<int>& visualToIndex)
   for(int i = 0; i < cnt; ++i)
     if(visualToIndex[i] != -1)
     {
-      QString cname = controller->getColumn(visualToIndex[i])->getDisplayName();
+      QString cname = controller->getColumnDescriptor(visualToIndex[i])->getDisplayName();
       columnNames.append(cname.replace("-\n", "").replace("\n", " "));
     }
   return columnNames;
@@ -79,7 +79,7 @@ QStringList Exporter::headerNames(int cnt)
 
   for(int i = 0; i < cnt; ++i)
   {
-    QString cname = controller->getColumn(i)->getDisplayName();
+    QString cname = controller->getColumnDescriptor(i)->getDisplayName();
     columnNames.append(cname.replace("-\n", "").replace("\n", " "));
   }
   return columnNames;
