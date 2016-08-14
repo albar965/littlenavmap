@@ -17,7 +17,7 @@
 
 #include "search/searchbase.h"
 #include "gui/tablezoomhandler.h"
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"
@@ -101,7 +101,7 @@ void SearchBase::initViewAndController()
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  controller = new Controller(mainWindow, mainWindow->getDatabase(), columns, view);
+  controller = new SqlController(mainWindow, mainWindow->getDatabase(), columns, view);
   controller->prepareModel();
 
   csvExporter = new CsvExporter(mainWindow, controller);

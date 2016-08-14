@@ -27,7 +27,7 @@ class ErrorHandler;
 }
 }
 
-class Controller;
+class SqlController;
 class QWidget;
 class QSqlRecord;
 
@@ -40,7 +40,7 @@ class Exporter :
   Q_OBJECT
 
 public:
-  Exporter(QWidget *parentWidget, Controller *controllerObj);
+  Exporter(QWidget *parentWidget, SqlController *controllerObj);
   virtual ~Exporter();
 
   // Disabled unused export functionality since it is not compatible with other classes
@@ -53,7 +53,7 @@ public:
 
 protected:
   QWidget *parentWidget = nullptr;
-  Controller *controller = nullptr;
+  SqlController *controller = nullptr;
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
 

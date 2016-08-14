@@ -55,7 +55,6 @@ win32:DEFINES +=_USE_MATH_DEFINES
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
     src/search/columnlist.cpp \
-    src/search/controller.cpp \
     src/search/sqlmodel.cpp \
     src/search/column.cpp \
     src/search/sqlproxymodel.cpp \
@@ -114,11 +113,11 @@ SOURCES += src/main.cpp\
     src/options/optionsdialog.cpp \
     src/options/optiondata.cpp \
     src/common/settingsmigrate.cpp \
-    src/search/searchbase.cpp
+    src/search/searchbase.cpp \
+    src/search/sqlcontroller.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
-    src/search/controller.h \
     src/search/sqlmodel.h \
     src/search/column.h \
     src/search/sqlproxymodel.h \
@@ -177,7 +176,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/options/optionsdialog.h \
     src/options/optiondata.h \
     src/common/settingsmigrate.h \
-    src/search/searchbase.h
+    src/search/searchbase.h \
+    src/search/sqlcontroller.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

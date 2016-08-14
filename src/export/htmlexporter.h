@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-class Controller;
+class SqlController;
 class QWidget;
 class QXmlStreamWriter;
 class QFile;
@@ -38,7 +38,7 @@ class HtmlExporter :
   Q_OBJECT
 
 public:
-  HtmlExporter(QWidget *parentWidget, Controller *controller, int rowsPerPage);
+  HtmlExporter(QWidget *parentWidget, SqlController *controller, int rowsPerPage);
   virtual ~HtmlExporter();
 
   // Disabled unused export functionality since it is not compatible with other classes

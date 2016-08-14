@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-class Controller;
+class SqlController;
 class QWidget;
 class QTextStream;
 class QTableView;
@@ -41,7 +41,7 @@ class CsvExporter :
   Q_OBJECT
 
 public:
-  CsvExporter(QWidget *parentWidget, Controller *controller);
+  CsvExporter(QWidget *parentWidget, SqlController *controller);
   virtual ~CsvExporter();
 
   // Disabled unused export functionality since it is not compatible with other classes

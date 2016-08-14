@@ -29,7 +29,7 @@ class TableZoomHandler;
 }
 
 class QTableView;
-class Controller;
+class SqlController;
 class ColumnList;
 class MainWindow;
 class QItemSelection;
@@ -118,7 +118,7 @@ protected:
   void connectSearchWidgets();
 
   /* Table/view controller */
-  Controller *controller;
+  SqlController *controller;
 
   /* Column definitions that will be used to create the SQL queries */
   ColumnList *columns;

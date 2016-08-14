@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "export/exporter.h"
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "search/column.h"
@@ -31,7 +31,7 @@
 using atools::gui::Dialog;
 using atools::gui::ErrorHandler;
 
-Exporter::Exporter(QWidget *parent, Controller *controllerObj)
+Exporter::Exporter(QWidget *parent, SqlController *controllerObj)
   : parentWidget(parent), controller(controllerObj)
 {
   dialog = new Dialog(parent);

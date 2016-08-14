@@ -38,14 +38,14 @@ class ColumnList;
  * Combines all functionality around the table SQL model, view, view header and
  * more.
  */
-class Controller :
+class SqlController :
   public QObject
 {
   Q_OBJECT
 
 public:
-  Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
-  virtual ~Controller();
+  SqlController(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
+  virtual ~SqlController();
 
   /* Create a new SqlModel, build and execute a query */
   void prepareModel();

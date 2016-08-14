@@ -18,7 +18,7 @@
 #include "search/airportsearch.h"
 
 #include "common/constants.h"
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
 #include "ui_mainwindow.h"

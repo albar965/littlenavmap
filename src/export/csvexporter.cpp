@@ -22,7 +22,7 @@
 #include "search/sqlmodel.h"
 #include "gui/dialog.h"
 #include "sql/sqlexport.h"
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 
 #include "sql/sqlrecord.h"
 
@@ -38,7 +38,7 @@ using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 
-CsvExporter::CsvExporter(QWidget *parent, Controller *controller) :
+CsvExporter::CsvExporter(QWidget *parent, SqlController *controller) :
   Exporter(parent, controller)
 {
 }

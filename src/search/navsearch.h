@@ -24,7 +24,7 @@
 
 class QWidget;
 class QTableView;
-class Controller;
+class SqlController;
 class ColumnList;
 class QAction;
 class MainWindow;

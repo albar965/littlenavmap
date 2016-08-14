@@ -23,7 +23,7 @@
 #include "search/sqlmodel.h"
 #include "gui/dialog.h"
 #include "settings/settings.h"
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 #include "sql/sqlquery.h"
 
 #include <cmath>
@@ -44,7 +44,7 @@ using atools::gui::ErrorHandler;
 using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 
-HtmlExporter::HtmlExporter(QWidget *parent, Controller *controller, int rowsPerPage)
+HtmlExporter::HtmlExporter(QWidget *parent, SqlController *controller, int rowsPerPage)
   : Exporter(parent, controller), pageSize(rowsPerPage)
 {
 }

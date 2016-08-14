@@ -1678,8 +1678,8 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     currentZoom = zoom();
     currentViewBoundingBox = visibleLatLonAltBox;
 
-    qDebug() << "paintEvent map view has changed zoom" << currentZoom
-             << "distance" << distance() << " (" << atools::geo::meterToNm(distance() * 1000.) << " km)";
+    // qDebug() << "paintEvent map view has changed zoom" << currentZoom
+    // << "distance" << distance() << " (" << atools::geo::meterToNm(distance() * 1000.) << " km)";
 
     if(!changedByHistory)
       // Not changed by next/last in history

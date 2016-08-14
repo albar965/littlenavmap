@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "search/controller.h"
+#include "search/sqlcontroller.h"
 
 #include "geo/calculations.h"
 #include "search/column.h"
@@ -30,13 +30,13 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 
-Controller::Controller(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols,
-                       QTableView *tableView)
+SqlController::SqlController(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols,
+                             QTableView *tableView)
   : parentWidget(parent), db(sqlDb), view(tableView), columns(cols)
 {
 }
 
-Controller::~Controller()
+SqlController::~SqlController()
 {
   viewSetModel(nullptr);
 
@@ -51,7 +51,7 @@ Controller::~Controller()
   model = nullptr;
 }
 
-void Controller::preDatabaseLoad()
+void SqlController::preDatabaseLoad()
 {
   viewSetModel(nullptr);
 
@@ -59,7 +59,7 @@ void Controller::preDatabaseLoad()
     model->clear();
 }
 
-void Controller::postDatabaseLoad()
+void SqlController::postDatabaseLoad()
 {
   if(proxyModel != nullptr)
     viewSetModel(proxyModel);
@@ -69,21 +69,21 @@ void Controller::postDatabaseLoad()
   model->fillHeaderData();
 }
 
-void Controller::filterIncluding(const QModelIndex& index)
+void SqlController::filterIncluding(const QModelIndex& index)
 {
   view->clearSelection();
   model->filterIncluding(toSource(index));
   searchParamsChanged = true;
 }
 
-void Controller::filterExcluding(const QModelIndex& index)
+void SqlController::filterExcluding(const QModelIndex& index)
 {
   view->clearSelection();
   model->filterExcluding(toSource(index));
   searchParamsChanged = true;
 }
 
-atools::geo::Pos Controller::getGeoPos(const QModelIndex& index)
+atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index)
 {
   if(index.isValid())
   {
@@ -98,14 +98,14 @@ atools::geo::Pos Controller::getGeoPos(const QModelIndex& index)
   return atools::geo::Pos();
 }
 
-void Controller::filterByLineEdit(const Column *col, const QString& text)
+void SqlController::filterByLineEdit(const Column *col, const QString& text)
 {
   view->clearSelection();
   model->filter(col, text);
   searchParamsChanged = true;
 }
 
-void Controller::filterBySpinBox(const Column *col, int value)
+void SqlController::filterBySpinBox(const Column *col, int value)
 {
   view->clearSelection();
   if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
@@ -116,14 +116,14 @@ void Controller::filterBySpinBox(const Column *col, int value)
   searchParamsChanged = true;
 }
 
-void Controller::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SqlController::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
 {
   view->clearSelection();
   model->filterByIdent(ident, region, airportIdent);
   searchParamsChanged = true;
 }
 
-void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
+void SqlController::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
 {
   view->clearSelection();
   QVariant minVal(minValue), maxVal(maxValue);
@@ -139,7 +139,7 @@ void Controller::filterByMinMaxSpinBox(const Column *col, int minValue, int maxV
   searchParamsChanged = true;
 }
 
-void Controller::filterByCheckbox(const Column *col, int state, bool triState)
+void SqlController::filterByCheckbox(const Column *col, int state, bool triState)
 {
   view->clearSelection();
   if(triState)
@@ -164,7 +164,7 @@ void Controller::filterByCheckbox(const Column *col, int state, bool triState)
   searchParamsChanged = true;
 }
 
-void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
+void SqlController::filterByComboBox(const Column *col, int value, bool noFilter)
 {
   view->clearSelection();
   if(noFilter)
@@ -175,8 +175,8 @@ void Controller::filterByComboBox(const Column *col, int value, bool noFilter)
   searchParamsChanged = true;
 }
 
-void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                                  int minDistance, int maxDistance)
+void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
+                                     int minDistance, int maxDistance)
 {
   if(center.isValid())
   {
@@ -238,7 +238,8 @@ void Controller::filterByDistance(const atools::geo::Pos& center, sqlproxymodel:
   searchParamsChanged = true;
 }
 
-void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance)
+void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance,
+                                           int maxDistance)
 {
   if(proxyModel != nullptr)
   {
@@ -255,20 +256,20 @@ void Controller::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int 
 }
 
 /* Set new model into view and delete old selection model to avoid memory leak */
-void Controller::viewSetModel(QAbstractItemModel *newModel)
+void SqlController::viewSetModel(QAbstractItemModel *newModel)
 {
   QItemSelectionModel *m = view->selectionModel();
   view->setModel(newModel);
   delete m;
 }
 
-void Controller::selectAllRows()
+void SqlController::selectAllRows()
 {
   Q_ASSERT(view->selectionModel() != nullptr);
   view->selectAll();
 }
 
-const QItemSelection Controller::getSelection() const
+const QItemSelection SqlController::getSelection() const
 {
   if(view->selectionModel() != nullptr)
     return view->selectionModel()->selection();
@@ -276,7 +277,7 @@ const QItemSelection Controller::getSelection() const
     return QItemSelection();
 }
 
-int Controller::getVisibleRowCount() const
+int SqlController::getVisibleRowCount() const
 {
   if(proxyModel != nullptr)
     // Proxy fine second stage filter knows precise count
@@ -287,7 +288,7 @@ int Controller::getVisibleRowCount() const
   return 0;
 }
 
-int Controller::getTotalRowCount() const
+int SqlController::getTotalRowCount() const
 {
   if(proxyModel != nullptr)
     // Proxy fine second stage filter knows precise count
@@ -298,28 +299,28 @@ int Controller::getTotalRowCount() const
     return 0;
 }
 
-bool Controller::isColumnVisibleInView(int physicalIndex) const
+bool SqlController::isColumnVisibleInView(int physicalIndex) const
 {
   return view->columnWidth(physicalIndex) > view->horizontalHeader()->minimumSectionSize() + 1;
 }
 
-int Controller::getColumnVisualIndex(int physicalIndex) const
+int SqlController::getColumnVisualIndex(int physicalIndex) const
 {
 
   return view->horizontalHeader()->visualIndex(physicalIndex);
 }
 
-const Column *Controller::getColumnDescriptor(const QString& colName) const
+const Column *SqlController::getColumnDescriptor(const QString& colName) const
 {
   return model->getColumnModel(colName);
 }
 
-const Column *Controller::getColumnDescriptor(int physicalIndex) const
+const Column *SqlController::getColumnDescriptor(int physicalIndex) const
 {
   return model->getColumnModel(physicalIndex);
 }
 
-void Controller::resetView()
+void SqlController::resetView()
 {
   if(columns != nullptr)
     columns->resetWidgets();
@@ -337,7 +338,7 @@ void Controller::resetView()
   saveTempViewState();
 }
 
-void Controller::resetSearch()
+void SqlController::resetSearch()
 {
   if(columns != nullptr)
     // Will also delete proxy by check box message
@@ -347,22 +348,22 @@ void Controller::resetSearch()
     model->resetSearch();
 }
 
-QString Controller::getCurrentSqlQuery() const
+QString SqlController::getCurrentSqlQuery() const
 {
   return model->getCurrentSqlQuery();
 }
 
-QModelIndex Controller::getModelIndexAt(const QPoint& pos) const
+QModelIndex SqlController::getModelIndexAt(const QPoint& pos) const
 {
   return view->indexAt(pos);
 }
 
-QString Controller::getFieldDataAt(const QModelIndex& index) const
+QString SqlController::getFieldDataAt(const QModelIndex& index) const
 {
   return model->getFormattedFieldData(toSource(index)).toString();
 }
 
-QModelIndex Controller::toSource(const QModelIndex& index) const
+QModelIndex SqlController::toSource(const QModelIndex& index) const
 {
   if(proxyModel != nullptr)
     return proxyModel->mapToSource(index);
@@ -370,7 +371,7 @@ QModelIndex Controller::toSource(const QModelIndex& index) const
     return index;
 }
 
-QModelIndex Controller::fromSource(const QModelIndex& index) const
+QModelIndex SqlController::fromSource(const QModelIndex& index) const
 {
   if(proxyModel != nullptr)
     return proxyModel->mapFromSource(index);
@@ -378,7 +379,7 @@ QModelIndex Controller::fromSource(const QModelIndex& index) const
     return index;
 }
 
-int Controller::getIdForRow(const QModelIndex& index)
+int SqlController::getIdForRow(const QModelIndex& index)
 {
   if(index.isValid())
     return model->getRawData(toSource(index).row(), columns->getIdColumnName()).toInt();
@@ -387,7 +388,7 @@ int Controller::getIdForRow(const QModelIndex& index)
 }
 
 /* Adapt view to model columns - hide/show, indicate sort, sort, etc. */
-void Controller::processViewColumns()
+void SqlController::processViewColumns()
 {
   const Column *colDescrCurSort = nullptr;
   atools::sql::SqlRecord rec = model->getSqlRecord();
@@ -439,7 +440,7 @@ void Controller::processViewColumns()
   }
 }
 
-void Controller::prepareModel()
+void SqlController::prepareModel()
 {
   model = new SqlModel(parentWidget, db, columns);
 
@@ -450,18 +451,18 @@ void Controller::prepareModel()
   restoreViewState();
 }
 
-void Controller::saveTempViewState()
+void SqlController::saveTempViewState()
 {
   viewState = view->horizontalHeader()->saveState();
 }
 
-void Controller::restoreViewState()
+void SqlController::restoreViewState()
 {
   if(!viewState.isEmpty())
     view->horizontalHeader()->restoreState(viewState);
 }
 
-void Controller::loadAllRowsForDistanceSearch()
+void SqlController::loadAllRowsForDistanceSearch()
 {
   if(searchParamsChanged && proxyModel != nullptr)
   {
@@ -482,12 +483,13 @@ void Controller::loadAllRowsForDistanceSearch()
   }
 }
 
-void Controller::setDataCallback(const SqlModel::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles)
+void SqlController::setDataCallback(const SqlModel::DataFunctionType& value,
+                                    const QSet<Qt::ItemDataRole>& roles)
 {
   model->setDataCallback(value, roles);
 }
 
-void Controller::loadAllRows()
+void SqlController::loadAllRows()
 {
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -506,7 +508,7 @@ void Controller::loadAllRows()
   QGuiApplication::restoreOverrideCursor();
 }
 
-QVector<const Column *> Controller::getCurrentColumns() const
+QVector<const Column *> SqlController::getCurrentColumns() const
 {
   QVector<const Column *> cols;
   atools::sql::SqlRecord rec = model->getSqlRecord();
@@ -515,14 +517,14 @@ QVector<const Column *> Controller::getCurrentColumns() const
   return cols;
 }
 
-void Controller::initRecord(atools::sql::SqlRecord& rec)
+void SqlController::initRecord(atools::sql::SqlRecord& rec)
 {
   atools::sql::SqlRecord from = model->getSqlRecord();
   for(int i = 0; i < from.count(); i++)
     rec.appendField(from.fieldName(i), from.fieldType(i));
 }
 
-void Controller::fillRecord(int row, atools::sql::SqlRecord& rec)
+void SqlController::fillRecord(int row, atools::sql::SqlRecord& rec)
 {
   int srow = row;
   if(proxyModel != nullptr)
@@ -532,7 +534,7 @@ void Controller::fillRecord(int row, atools::sql::SqlRecord& rec)
     rec.setValue(i, model->getRawData(srow, i));
 }
 
-QVariant Controller::getRawData(int row, const QString& colname) const
+QVariant SqlController::getRawData(int row, const QString& colname) const
 {
   int srow = row;
   if(proxyModel != nullptr)
@@ -542,7 +544,7 @@ QVariant Controller::getRawData(int row, const QString& colname) const
   return model->getRawData(srow, colIdx);
 }
 
-QVariant Controller::getRawData(int row, int col) const
+QVariant SqlController::getRawData(int row, int col) const
 {
   int srow = row;
   if(proxyModel != nullptr)
@@ -550,12 +552,12 @@ QVariant Controller::getRawData(int row, int col) const
   return model->getRawData(srow, col);
 }
 
-QString Controller::getSortColumn() const
+QString SqlController::getSortColumn() const
 {
   return model->getSortColumn();
 }
 
-int Controller::getSortColumnIndex() const
+int SqlController::getSortColumnIndex() const
 {
   return model->getSortColumnIndex();
 }
