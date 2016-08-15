@@ -1155,11 +1155,12 @@ void MainWindow::mainWindowShown()
     firstApplicationStart = false;
     if(databaseManager->hasInstalledSimulators())
       databaseManager->run();
-    else
+    else if(!databaseManager->hasSimulatorDatabases())
       QMessageBox::information(this, QApplication::applicationName(),
-                               tr("No Flight Simulator installtions found.\n"
-                                  "You can copy a Little Navmap database from another computer.\n"
-                                  "See the manual for more information about this."));
+                               tr(
+                                 "No Flight Simulator installations and no scenery library databases found.\n"
+                                 "You can copy a Little Navmap scenery library database from another computer.\n"
+                                 "See the user manual for more information about this."));
   }
 }
 

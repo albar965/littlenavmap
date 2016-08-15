@@ -67,6 +67,9 @@ public:
   /* Returns true if there are any flight simulator installations found in the registry */
   bool hasInstalledSimulators() const;
 
+  /* Returns true if there are any flight simulator databases found (probably copied by the user) */
+  bool hasSimulatorDatabases() const;
+
   /* Opens a Sqlite database. If the database is new or does not contain a schema an empty schema is created.
    * Will not return if an exception is caught during opening. */
   void openDatabase();

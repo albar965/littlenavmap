@@ -743,6 +743,11 @@ bool DatabaseManager::hasInstalledSimulators() const
   return !simulators.getAllInstalled().isEmpty();
 }
 
+bool DatabaseManager::hasSimulatorDatabases() const
+{
+  return !simulators.getAllHavingDatabase().isEmpty();
+}
+
 void DatabaseManager::saveState()
 {
   Settings& s = Settings::instance();

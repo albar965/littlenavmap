@@ -59,18 +59,18 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled()
 QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() const
 {
   QList<atools::fs::FsPaths::SimulatorType> retval;
-  for(atools::fs::FsPaths::SimulatorType p : keys())
-    if(value(p).hasRegistry)
-      retval.append(p);
+  for(atools::fs::FsPaths::SimulatorType simType : keys())
+    if(value(simType).hasRegistry)
+      retval.append(simType);
   return retval;
 }
 
 QList<atools::fs::FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
 {
   QList<atools::fs::FsPaths::SimulatorType> retval;
-  for(atools::fs::FsPaths::SimulatorType p : keys())
-    if(value(p).hasDatabase)
-      retval.append(p);
+  for(atools::fs::FsPaths::SimulatorType simType : keys())
+    if(value(simType).hasDatabase)
+      retval.append(simType);
   return retval;
 }
 
