@@ -413,7 +413,8 @@ macx {
 macx {
   deploy.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/lib &&
   deploy.commands += cp -Rv $${MARBLE_BASE}/lib/*.dylib littlenavmap.app/Contents/MacOS/lib/ &&
-  deploy.commands += macdeployqt littlenavmap.app -always-overwrite -verbose=3 -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
+  deploy.commands += macdeployqt littlenavmap.app -always-overwrite -dmg -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
+#-verbose=3
 }
 
 

@@ -263,7 +263,7 @@ private:
 
   /* Index caches to avoid string lookups in SqlRecord */
   bool nodeIndexesCreated = false;
-  int nodeIdIndex = -1, nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
+  int nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
   bool edgeIndexesCreated = false;
   int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
       edgeDistanceIndex = -1;
