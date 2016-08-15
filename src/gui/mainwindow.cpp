@@ -273,10 +273,26 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
     setStatusMessage(tr("Opened legend link in browser."));
 }
 
+void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
+{
+  QSizeF size = toolbar->iconSize();
+  size *= scale;
+  toolbar->setIconSize(size.toSize());
+}
+
 /* Set up own UI elements that cannot be created in designer */
 void MainWindow::setupUi()
 {
-  ui->mapToolBar->addSeparator();
+  // Reduce large icons on mac
+#if defined(Q_OS_MAC)
+  scaleToolbar(ui->mainToolBar, 0.72f);
+  scaleToolbar(ui->mapToolBar, 0.72f);
+  scaleToolbar(ui->mapToolBarOptions, 0.72f);
+  scaleToolbar(ui->routeToolBar, 0.72f);
+  scaleToolbar(ui->viewToolBar, 0.72f);
+#endif
+
+  ui->mapToolBarOptions->addSeparator();
 
   // Projection combo box
   mapProjectionComboBox = new QComboBox(this);
@@ -286,7 +302,7 @@ void MainWindow::setupUi()
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
-  ui->mapToolBar->addWidget(mapProjectionComboBox);
+  ui->mapToolBarOptions->addWidget(mapProjectionComboBox);
 
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuMapProjection);
@@ -308,7 +324,7 @@ void MainWindow::setupUi()
                             "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain"),
                             "earth/plain/plain.dgml");
-  ui->mapToolBar->addWidget(mapThemeComboBox);
+  ui->mapToolBarOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
@@ -366,6 +382,7 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->mainToolBar->toggleViewAction(),
                                ui->mapToolBar->toggleViewAction(),
+                               ui->mapToolBarOptions->toggleViewAction(),
                                ui->routeToolBar->toggleViewAction(),
                                ui->viewToolBar->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
@@ -824,11 +841,7 @@ bool RouteController::hasValidParking() const
   {
     const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
 
-    int numParking = 0;
-    for(const maptypes::MapParking& p : *parkingCache)
-      numParking++;
-
-    if(numParking > 0)
+    if(!parkingCache->isEmpty())
       return route.hasDepartureParking() || route.hasDepartureHelipad();
     else
       // No parking available - so no parking selection is ok
@@ -1189,8 +1202,8 @@ void MainWindow::updateActionStates()
     // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setEnabled(true);
 
-    if(!ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->mapToolBar->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+    if(!ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->mapToolBarOptions->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
 
     if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
       ui->menuMap->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
@@ -1201,8 +1214,8 @@ void MainWindow::updateActionStates()
     // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setDisabled(true);
 
-    if(ui->mapToolBar->actions().contains(ui->actionMapShowEmptyAirports))
-      ui->mapToolBar->removeAction(ui->actionMapShowEmptyAirports);
+    if(ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+      ui->mapToolBarOptions->removeAction(ui->actionMapShowEmptyAirports);
 
     if(ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
       ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);

@@ -169,6 +169,7 @@ private:
 
   void changeMapProjection(int index);
   void changeMapTheme(int index);
+  void scaleToolbar(QToolBar *toolbar, float scale);
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
