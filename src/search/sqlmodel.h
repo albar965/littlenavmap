@@ -60,6 +60,7 @@ public:
 
   /* Clear all filters, sort order and go back to default view */
   void resetView();
+  void resetSort();
 
   /* clear all filters */
   void resetSearch();

@@ -218,20 +218,7 @@ void SearchBase::connectSearchWidgets()
      distanceDirWidget != nullptr && distanceCheckBox != nullptr)
   {
     // If all distance widgets are present connect them
-    connect(distanceCheckBox, &QCheckBox::stateChanged, [ = ](int state)
-            {
-              controller->filterByDistance(
-                state == Qt::Checked ? mainWindow->getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
-                static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                minDistanceWidget->value(), maxDistanceWidget->value());
-
-              minDistanceWidget->setEnabled(state == Qt::Checked);
-              maxDistanceWidget->setEnabled(state == Qt::Checked);
-              distanceDirWidget->setEnabled(state == Qt::Checked);
-              if(state == Qt::Checked)
-                controller->loadAllRowsForDistanceSearch();
-              updateButtonMenu();
-            });
+    connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBase::distanceSearchStateChanged);
 
     connect(minDistanceWidget, valueChangedPtr, [ = ](int value)
             {
@@ -256,12 +243,39 @@ void SearchBase::connectSearchWidgets()
     connect(distanceDirWidget, curIndexChangedPtr, [ = ](int index)
             {
               controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
-                                                 minDistanceWidget->value(),
-                                                 maxDistanceWidget->value());
+                                                 minDistanceWidget->value(), maxDistanceWidget->value());
               updateButtonMenu();
               editStartTimer();
             });
   }
+}
+
+void SearchBase::distanceSearchStateChanged(int state)
+{
+  distanceSearchChanged(state == Qt::Checked, true);
+}
+
+void SearchBase::distanceSearchChanged(bool checked, bool changeViewState)
+{
+  QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
+  QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
+  QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
+
+  if(changeViewState)
+    saveViewState(!checked);
+
+  controller->filterByDistance(
+    checked ? mainWindow->getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
+    static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+    minDistanceWidget->value(), maxDistanceWidget->value());
+
+  minDistanceWidget->setEnabled(checked);
+  maxDistanceWidget->setEnabled(checked);
+  distanceDirWidget->setEnabled(checked);
+  if(checked)
+    controller->loadAllRowsForDistanceSearch();
+  restoreViewState(checked);
+  updateButtonMenu();
 }
 
 /* Search criteria editing has started. Start or restart the timer for a
@@ -343,14 +357,14 @@ void SearchBase::tableSelectionChanged()
 
 void SearchBase::preDatabaseLoad()
 {
-  saveState();
+  saveViewState(controller->isDistanceSearch());
   controller->preDatabaseLoad();
 }
 
 void SearchBase::postDatabaseLoad()
 {
   controller->postDatabaseLoad();
-  restoreState();
+  restoreViewState(controller->isDistanceSearch());
 }
 
 /* Reset view sort order, column width and column order back to default values */

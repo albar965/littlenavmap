@@ -208,8 +208,6 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
     if(proxyWasNull)
     {
       // New proxy created so set ordering and more
-      proxyModel->sort(0, Qt::DescendingOrder);
-      model->setSort("distance", Qt::DescendingOrder);
       model->fillHeaderData();
       view->reset();
       processViewColumns();
@@ -322,20 +320,24 @@ const Column *SqlController::getColumnDescriptor(int physicalIndex) const
 
 void SqlController::resetView()
 {
-  if(columns != nullptr)
-    columns->resetWidgets();
-
   // Reorder columns to match model order
   QHeaderView *header = view->horizontalHeader();
   for(int i = 0; i < header->count(); ++i)
     header->moveSection(header->visualIndex(i), i);
 
-  model->resetView();
+  if(proxyModel != nullptr)
+  {
+    // For distance search switch back to distance column sort - tell proxy ...
+    proxyModel->sort(0, Qt::DescendingOrder);
+    // ... and adjust query
+    model->setSort("distance", Qt::DescendingOrder);
+  }
+  else
+    model->resetSort();
 
   processViewColumns();
 
   view->resizeColumnsToContents();
-  saveTempViewState();
 }
 
 void SqlController::resetSearch()
@@ -448,18 +450,6 @@ void SqlController::prepareModel()
 
   model->fillHeaderData();
   processViewColumns();
-  restoreViewState();
-}
-
-void SqlController::saveTempViewState()
-{
-  viewState = view->horizontalHeader()->saveState();
-}
-
-void SqlController::restoreViewState()
-{
-  if(!viewState.isEmpty())
-    view->horizontalHeader()->restoreState(viewState);
 }
 
 void SqlController::loadAllRowsForDistanceSearch()

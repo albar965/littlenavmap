@@ -42,10 +42,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   // All widgets that will have their state and visibility saved and restored
   navSearchWidgets =
   {
-    ui->tableViewNavSearch,
     ui->horizontalLayoutNavNameSearch,
     ui->horizontalLayoutNavExtSearch,
-    ui->horizontalLayoutNavDistanceSearch,
     ui->horizontalLayoutNavScenerySearch,
     ui->lineNavDistSearch,
     ui->lineNavScenerySearch,
@@ -178,14 +176,45 @@ void NavSearch::connectSearchSlots()
 
 void NavSearch::saveState()
 {
-  atools::gui::WidgetState saver(lnm::SEARCHPANENAV_WIDGET);
+  atools::gui::WidgetState saver(lnm::SEARCHTAB_NAV_WIDGET);
   saver.save(navSearchWidgets);
+
+  Ui::MainWindow *ui = mainWindow->getUi();
+  saver.save(ui->horizontalLayoutNavDistanceSearch);
+  saveViewState(ui->checkBoxNavDistSearch->isChecked());
 }
 
 void NavSearch::restoreState()
 {
-  atools::gui::WidgetState saver(lnm::SEARCHPANENAV_WIDGET);
+  atools::gui::WidgetState saver(lnm::SEARCHTAB_NAV_WIDGET);
   saver.restore(navSearchWidgets);
+
+  // Need to block signals here to avoid unwanted behavior (will enable
+  // distance search and avoid saving of wrong view widget state)
+  saver.setBlockSignals(true);
+  Ui::MainWindow *ui = mainWindow->getUi();
+  saver.restore(ui->horizontalLayoutNavDistanceSearch);
+  restoreViewState(ui->checkBoxNavDistSearch->isChecked());
+
+  bool distSearchChecked = ui->checkBoxNavDistSearch->isChecked();
+  if(distSearchChecked)
+    // Activate distance search if it was active - otherwise leave default behavior
+    distanceSearchChanged(distSearchChecked, false /* Change view state */);
+}
+
+void NavSearch::saveViewState(bool distSearchActive)
+{
+  // Save layout for normal and distance search separately
+  atools::gui::WidgetState saver(
+    distSearchActive ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET);
+  saver.save(mainWindow->getUi()->tableViewNavSearch);
+}
+
+void NavSearch::restoreViewState(bool distSearchActive)
+{
+  atools::gui::WidgetState saver(
+    distSearchActive ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET);
+  saver.restore(mainWindow->getUi()->tableViewNavSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */

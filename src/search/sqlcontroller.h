@@ -176,12 +176,6 @@ private:
   /* Adapt columns to query change */
   void processViewColumns();
 
-  /* Save view state to temp byte array */
-  void saveTempViewState();
-
-  /* Load view state from temp byte array */
-  void restoreViewState();
-
   /* Convert indexes if proxy model for distance search is used */
   QModelIndex toSource(const QModelIndex& index) const;
   QModelIndex fromSource(const QModelIndex& index) const;
@@ -198,9 +192,6 @@ private:
   atools::sql::SqlDatabase *db = nullptr;
   QTableView *view = nullptr;
   ColumnList *columns = nullptr;
-
-  /* Used to temporarily save the view state before switching to distance search */
-  QByteArray viewState;
 
   /* The model query is executed immediately if distance search is not used. For distance search
    * use a delayed approach that checks if any query parameters are changed. Changed parameters

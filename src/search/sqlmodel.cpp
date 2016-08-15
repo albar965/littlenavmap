@@ -270,6 +270,14 @@ void SqlModel::setDataCallback(const DataFunctionType& func, const QSet<Qt::Item
   }
 }
 
+void SqlModel::resetSort()
+{
+  orderByCol.clear();
+  orderByOrder.clear();
+  buildQuery();
+  fillHeaderData();
+}
+
 void SqlModel::resetView()
 {
   orderByCol.clear();
@@ -379,6 +387,7 @@ void SqlModel::buildQuery()
 
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
+  // Distance columns are no search criteria
   if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isDistance())
   {
     Q_ASSERT(col != nullptr);

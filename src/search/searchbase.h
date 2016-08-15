@@ -117,6 +117,8 @@ protected:
   /* Connect widgets to the controller */
   void connectSearchWidgets();
 
+  void distanceSearchChanged(bool checked, bool changeViewState);
+
   /* Table/view controller */
   SqlController *controller;
 
@@ -126,6 +128,9 @@ protected:
   MainWindow *mainWindow;
 
 private:
+  virtual void saveViewState(bool distSearchActive) = 0;
+  virtual void restoreViewState(bool distSearchActive) = 0;
+
   void tableSelectionChanged();
   void resetView();
   void editStartTimer();
@@ -141,6 +146,7 @@ private:
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool visible);
+  void distanceSearchStateChanged(int state);
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::TableZoomHandler *zoomHandler = nullptr;

@@ -62,8 +62,12 @@ const QString ROUTE_FILENAME = "Route/Filename";
 const QString ROUTE_FILENAMESRECENT = "Route/FilenamesRecent";
 const QString ROUTE_FILENAMESKMLRECENT = "Route/FilenamesKmlRecent";
 const QString ROUTE_VIEW = "Route/View";
-const QString SEARCHPANEAIRPORT_WIDGET = "SearchPaneAirport/Widget";
-const QString SEARCHPANENAV_WIDGET = "SearchPaneNav/Widget";
+const QString SEARCHTAB_AIRPORT_WIDGET = "SearchPaneAirport/Widget";
+const QString SEARCHTAB_NAV_WIDGET = "SearchPaneNav/Widget";
+const QString SEARCHTAB_AIRPORT_VIEW_WIDGET = "SearchPaneAirport/WidgetView";
+const QString SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET = "SearchPaneAirport/WidgetDistView";
+const QString SEARCHTAB_NAV_VIEW_WIDGET = "SearchPaneNav/WidgetView";
+const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
 
 /* Options dialog */
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
