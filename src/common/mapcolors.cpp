@@ -103,6 +103,7 @@ const QIcon& iconForParkingType(const QString& type)
   static const QIcon ga(":/littlenavmap/resources/icons/parkingrampga.svg");
   static const QIcon mil(":/littlenavmap/resources/icons/parkingrampmil.svg");
   static const QIcon gate(":/littlenavmap/resources/icons/parkinggate.svg");
+  static const QIcon fuel(":/littlenavmap/resources/icons/parkingfuel.svg");
   static const QIcon empty;
 
   if(type.startsWith("RAMP_MIL"))
@@ -113,6 +114,8 @@ const QIcon& iconForParkingType(const QString& type)
     return ga;
   else if(type.startsWith("RAMP_CARGO"))
     return cargo;
+  else if(type.startsWith("FUEL"))
+    return fuel;
 
   return empty;
 }

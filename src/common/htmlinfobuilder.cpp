@@ -791,18 +791,13 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html)
 {
-  if(parking.type != "FUEL")
-  {
-    head(html, maptypes::parkingName(parking.name) + " " + locale.toString(parking.number));
-    html.brText(maptypes::parkingTypeName(parking.type));
-    html.brText(locale.toString(parking.radius * 2) + tr(" ft"));
-    if(parking.jetway)
-      html.brText(tr("Has Jetway"));
-    if(!parking.airlineCodes.isEmpty())
-      html.brText(tr("Airline Codes: ") + parking.airlineCodes);
-  }
-  else
-    html.text(tr("Fuel"));
+  head(html, maptypes::parkingName(parking.name) + " " + locale.toString(parking.number));
+  html.brText(maptypes::parkingTypeName(parking.type));
+  html.brText(locale.toString(parking.radius * 2) + tr(" ft"));
+  if(parking.jetway)
+    html.brText(tr("Has Jetway"));
+  if(!parking.airlineCodes.isEmpty())
+    html.brText(tr("Airline Codes: ") + parking.airlineCodes);
 }
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html)

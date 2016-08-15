@@ -41,11 +41,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
   const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
   // Create a copy from the cached parking objects and exclude fuel
   for(const maptypes::MapParking& parking : *parkingCache)
-  {
-    // Ignore fuel, vehicles are already omitted in database creation
-    if(parking.type != "FUEL")
-      entries.append({parking, maptypes::MapStart()});
-  }
+    // Vehicles are already omitted in database creation
+    entries.append({parking, maptypes::MapStart()});
 
   // Sort by type (order: runway, helipad, parking), name and numbers
   std::sort(entries.begin(), entries.end(),

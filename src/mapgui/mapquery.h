@@ -89,7 +89,9 @@ public:
   void getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id);
 
   /*
-   * Get objects near a screen coordinate
+   * Get objects near a screen coordinate from the cache which will cover all visible objects.
+   * No objects are loaded from the database.
+   *
    * @param conv Converter to calcualte screen coordinates
    * @param mapLayer current map layer
    * @param airportDiagram get nearest parking and helipads too

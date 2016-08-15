@@ -105,5 +105,6 @@
         <file>resources/icons/startrunway.svg</file>
         <file>resources/icons/starthelipad.svg</file>
         <file>resources/icons/splash.png</file>
+        <file>resources/icons/parkingfuel.svg</file>
     </qresource>
 </RCC>

@@ -604,12 +604,9 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
     {
       maptypes::MapParking p;
 
-      // Do not add vehicle paths - these are filtered out in the compiler
-      // if(parkingQuery->value("type").toString() != "VEHICLES")
-      // {
+      // Vehicle paths are filtered out in the compiler
       mapTypesFactory->fillParking(parkingQuery->record(), p);
       ps->append(p);
-      // }
     }
     parkingCache.insert(airportId, ps);
     return ps;

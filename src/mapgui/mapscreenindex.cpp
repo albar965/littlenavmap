@@ -177,8 +177,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
 
   if(paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
     // Get copies from flight plan if visible
-    mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance,
-                                                                     result);
+    mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
   getNearestHighlights(xs, ys, maxDistance, result);

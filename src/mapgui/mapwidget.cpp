@@ -843,7 +843,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Get only one object of each type
   if(!result.airports.isEmpty())
     airport = &result.airports.first();
-  if(!result.parkings.isEmpty() && result.parkings.first().type != "FUEL")
+  if(!result.parkings.isEmpty())
     parking = &result.parkings.first();
   if(!result.vors.isEmpty())
     vor = &result.vors.first();
@@ -1101,7 +1101,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
       // Start mouse dragging and disable context menu so we can catch the right button click as cancel
       mouseState = DRAG_DISTANCE;
-      setContextMenuPolicy(Qt::NoContextMenu);
+      setContextMenuPolicy(Qt::PreventContextMenu);
       currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
     else if(action == ui->actionRouteDeleteWaypoint)
@@ -1429,7 +1429,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       // Found an end - create a backup and start dragging
       mouseState = DRAG_CHANGE_DISTANCE;
       distanceMarkerBackup = screenIndex->getDistanceMarks().at(currentDistanceMarkerIndex);
-      setContextMenuPolicy(Qt::NoContextMenu);
+      setContextMenuPolicy(Qt::PreventContextMenu);
     }
     else
     {
@@ -1460,7 +1460,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
               routeDragTo = rmos.at(routePoint + 1).getPosition();
             else
               routeDragTo = atools::geo::EMPTY_POS;
-            setContextMenuPolicy(Qt::NoContextMenu);
+            setContextMenuPolicy(Qt::PreventContextMenu);
           }
           else
           {
@@ -1477,7 +1477,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
               routeDragFrom = rmos.at(routeLeg).getPosition();
               routeDragTo = rmos.at(routeLeg + 1).getPosition();
-              setContextMenuPolicy(Qt::NoContextMenu);
+              setContextMenuPolicy(Qt::PreventContextMenu);
             }
           }
         }

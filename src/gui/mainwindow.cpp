@@ -826,8 +826,7 @@ bool RouteController::hasValidParking() const
 
     int numParking = 0;
     for(const maptypes::MapParking& p : *parkingCache)
-      if(p.type != "FUEL")
-        numParking++;
+      numParking++;
 
     if(numParking > 0)
       return route.hasDepartureParking() || route.hasDepartureHelipad();
@@ -1147,7 +1146,7 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << "MainWindow::mainWindowShown()";
 
-  // Postpone loading of KML etc. until now when everything is set ups
+  // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
 
   if(firstApplicationStart)

@@ -1764,7 +1764,7 @@ void RouteController::updateWindowLabel()
                      " (" + flightplan.getDepartureIdent() + ")";
 
       if(route.first().getDepartureParking().position.isValid())
-        startAirport += " " + atools::capString(flightplan.getDepartureParkingName());
+        startAirport += " " + maptypes::parkingNameNumberType(route.first().getDepartureParking());
       else if(route.first().getDepartureStart().position.isValid())
       {
         const maptypes::MapStart& start = route.first().getDepartureStart();
@@ -1803,7 +1803,7 @@ void RouteController::updateWindowLabel()
     float totalDistance = route.getTotalDistance();
 
     float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
-    ui->labelRouteInfo->setText(tr("<b>%1</b> to <b>%2</b>, %3 nm, %4, %5").
+    ui->labelRouteInfo->setText(tr("<b>%1</b> to <b>%2</b><br/>%3 nm, %4, %5").
                                 arg(startAirport).
                                 arg(destAirport).
                                 arg(QLocale().toString(totalDistance, 'f', 0)).
