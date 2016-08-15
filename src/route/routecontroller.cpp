@@ -283,8 +283,9 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
-  atools::gui::WidgetState saver(lnm::ROUTE_VIEW);
-  saver.save({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->spinBoxRouteSpeed,
+                                                  ui->comboBoxRouteType,
+                                                  ui->spinBoxRouteAlt});
 
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 }
@@ -292,9 +293,10 @@ void RouteController::saveState()
 void RouteController::restoreState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  atools::gui::WidgetState saver(lnm::ROUTE_VIEW);
   model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
-  saver.restore({view, ui->spinBoxRouteSpeed, ui->comboBoxRouteType, ui->spinBoxRouteAlt});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed,
+                                                     ui->comboBoxRouteType,
+                                                     ui->spinBoxRouteAlt});
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
   {

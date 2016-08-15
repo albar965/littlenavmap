@@ -313,24 +313,24 @@ void AirportSearch::connectSearchSlots()
 
 void AirportSearch::saveState()
 {
-  atools::gui::WidgetState saver(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  saver.save(airportSearchWidgets);
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
+  widgetState.save(airportSearchWidgets);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  saver.save(ui->horizontalLayoutAirportDistanceSearch);
+  widgetState.save(ui->horizontalLayoutAirportDistanceSearch);
   saveViewState(ui->checkBoxAirportDistSearch->isChecked());
 }
 
 void AirportSearch::restoreState()
 {
-  atools::gui::WidgetState saver(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  saver.restore(airportSearchWidgets);
+  atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
+  widgetState.restore(airportSearchWidgets);
 
   // Need to block signals here to avoid unwanted behavior (will enable
-  // distance search and avoid saveing of wrong view widget state)
-  saver.setBlockSignals(true);
+  // distance search and avoid saving of wrong view widget state)
+  widgetState.setBlockSignals(true);
   Ui::MainWindow *ui = mainWindow->getUi();
-  saver.restore(ui->horizontalLayoutAirportDistanceSearch);
+  widgetState.restore(ui->horizontalLayoutAirportDistanceSearch);
   restoreViewState(ui->checkBoxAirportDistSearch->isChecked());
 
   bool distSearchChecked = ui->checkBoxAirportDistSearch->isChecked();
@@ -342,16 +342,16 @@ void AirportSearch::restoreState()
 void AirportSearch::saveViewState(bool distSearchActive)
 {
   // Save layout for normal and distance search separately
-  atools::gui::WidgetState saver(
-    distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET);
-  saver.save(mainWindow->getUi()->tableViewAirportSearch);
+  atools::gui::WidgetState(
+    distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET
+    ).save(mainWindow->getUi()->tableViewAirportSearch);
 }
 
 void AirportSearch::restoreViewState(bool distSearchActive)
 {
-  atools::gui::WidgetState saver(
-    distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET);
-  saver.restore(mainWindow->getUi()->tableViewAirportSearch);
+  atools::gui::WidgetState(
+    distSearchActive ? lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET : lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET
+    ).restore(mainWindow->getUi()->tableViewAirportSearch);
 }
 
 /* Callback for the controller. Is called for each table cell and should return a formatted value. */

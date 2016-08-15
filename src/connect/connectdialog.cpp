@@ -117,8 +117,8 @@ quint16 ConnectDialog::getPort() const
 
 void ConnectDialog::saveState()
 {
-  atools::gui::WidgetState saver(lnm::NAVCONNECT_REMOTE);
-  saver.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
+  atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
+  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
 
   // Save combo entries separately
   QStringList entries;
@@ -143,6 +143,7 @@ void ConnectDialog::restoreState()
         ui->comboBoxConnectHostname->addItem(entry);
   }
 
-  atools::gui::WidgetState saver(lnm::NAVCONNECT_REMOTE);
-  saver.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
+  atools::gui::WidgetState(lnm::NAVCONNECT_REMOTE).restore({ui->comboBoxConnectHostname,
+                                                            ui->spinBoxConnectPort,
+                                                            ui->checkBoxConnectOnStartup});
 }

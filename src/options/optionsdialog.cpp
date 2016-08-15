@@ -259,10 +259,9 @@ void OptionsDialog::saveState()
 {
   optionDataToWidgets();
 
-  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /* save visibility */, true /* block signals */);
-
   // Save widgets to settings
-  saver.save(widgets);
+  atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
+                           false /* save visibility */, true /* block signals */).save(widgets);
 
   Settings& settings = Settings::instance();
 
@@ -282,8 +281,8 @@ void OptionsDialog::saveState()
 
 void OptionsDialog::restoreState()
 {
-  atools::gui::WidgetState saver(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
-  saver.restore(widgets);
+  atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
+                           false /*save visibility*/, true /*block signals*/).restore(widgets);
 
   Settings& settings = Settings::instance();
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))

@@ -100,9 +100,7 @@ void InfoController::anchorClicked(const QUrl& url)
 void InfoController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-
-  atools::gui::WidgetState ws(lnm::INFOWINDOW_WIDGET);
-  ws.save({ui->tabWidgetInformation, ui->tabWidgetAircraft});
+  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetInformation, ui->tabWidgetAircraft});
 
   // Store currently shown map objects in a string list containing id and type
   maptypes::MapObjectRefList refs;
@@ -139,8 +137,7 @@ void InfoController::restoreState()
   showInformation(res);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  atools::gui::WidgetState ws(lnm::INFOWINDOW_WIDGET);
-  ws.restore({ui->tabWidgetInformation, ui->tabWidgetAircraft});
+  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft});
 }
 
 void InfoController::updateAirport()

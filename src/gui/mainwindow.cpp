@@ -1229,8 +1229,8 @@ void MainWindow::readSettings()
 {
   qDebug() << "readSettings";
 
-  atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
-  ws.restore({this, ui->statusBar, ui->tabWidgetSearch});
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
+  widgetState.restore({this, ui->statusBar, ui->tabWidgetSearch});
 
   const QRect geo = QApplication::desktop()->availableGeometry(this);
 
@@ -1255,18 +1255,22 @@ void MainWindow::readSettings()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-    ws.setBlockSignals(true);
-    ws.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-                ui->actionMapShowAddonAirports,
-                ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
-                ui->actionMapShowAircraftTrack});
-    ws.setBlockSignals(false);
+    widgetState.setBlockSignals(true);
+    widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
+                         ui->actionMapShowEmptyAirports,
+                         ui->actionMapShowAddonAirports,
+                         ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+                         ui->actionMapShowIls,
+                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                         ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                         ui->actionMapShowAircraftTrack});
+    widgetState.setBlockSignals(false);
   }
 
-  ws.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
-              ui->actionMapShowHillshading, ui->actionRouteEditMode, ui->actionWorkOffline});
+  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
+                       ui->actionMapShowCities,
+                       ui->actionMapShowHillshading, ui->actionRouteEditMode,
+                       ui->actionWorkOffline});
 
   firstApplicationStart = Settings::instance().valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
@@ -1279,8 +1283,8 @@ void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
 
-  atools::gui::WidgetState ws(lnm::MAINWINDOW_WIDGET);
-  ws.save({this, ui->statusBar, ui->tabWidgetSearch});
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
+  widgetState.save({this, ui->statusBar, ui->tabWidgetSearch});
 
   if(searchController != nullptr)
     searchController->saveState();
@@ -1299,23 +1303,23 @@ void MainWindow::writeSettings()
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
 
-  ws.save({mapProjectionComboBox, mapThemeComboBox,
-           ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-           ui->actionMapShowAddonAirports,
-           ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-           ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-           ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
-           ui->actionMapShowAircraftTrack,
-           ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-           ui->actionRouteEditMode,
-           ui->actionWorkOffline});
+  widgetState.save({mapProjectionComboBox, mapThemeComboBox,
+                    ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+                    ui->actionMapShowAddonAirports,
+                    ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+                    ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                    ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                    ui->actionMapShowAircraftTrack,
+                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                    ui->actionRouteEditMode,
+                    ui->actionWorkOffline});
 
   Settings::instance().setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
   if(databaseManager != nullptr)
     databaseManager->saveState();
 
-  ws.syncSettings();
+  widgetState.syncSettings();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
