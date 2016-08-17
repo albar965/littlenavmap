@@ -2510,7 +2510,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Flight Plan Profile</string>
+    <string>Flight Plan Elevation Profile</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -2655,7 +2655,7 @@
   </widget>
   <widget class="QToolBar" name="viewToolBar">
    <property name="windowTitle">
-    <string>View Toolbar</string>
+    <string>Dock Window Toolbar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>

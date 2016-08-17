@@ -1,21 +1,26 @@
 <?xml version="1.0"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="language" content="EN" />
+    <meta name="author" content="Alexander Barthel" />
+    <meta name="date" content="2016-08-16T22:40:00+01:00" />
+    <meta content="Little Navmap Legend" name="description" />
     <title>
+    Little Navmap Legend
     </title>
   </head>
   <body>
     <p>
-      <a href="file:///legend.html">Open in Browser.</a>
+      <a href="file:///legend.html">Open in Browser</a>
     </p>
 
     <p>
-      All speeds are in knots, distances in nm, altitude in feet. Heading and course are suffixed with °T for true
-      course or °M for magnetic course.
+      All speeds are in knots, distances in nautical miles, altitude in feet. Heading and course are suffixed with °T
+      for true course or °M for magnetic course.
     </p>
 
     <h3 id="mapmarks">
@@ -47,7 +52,16 @@
             <img alt="Flight Plan" src="images/legend/route_leg.png" />
           </td>
           <td>
-            Flight plan with direction, distance and magnetic course at each leg.
+            Flight plan with distance, direction and magnetic course at each leg.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Flight Plan Departure Position" src="images/legend/route_start.png" />
+          </td>
+          <td>
+            Flight plan departure position on airport. Either parking, fuel box, helipad, water or runway.
           </td>
         </tr>
 
@@ -57,9 +71,9 @@
             "images/legend/aircraft_text.png" />
           </td>
           <td>
-            Current aircraft position if connected to the flight simulator. Labels include registration number, airline
-            (if available), flight number (if available), indicated speed, ground speed, magnetic heading, altitude,
-            climb/sink arrow and wind magnetic heading and speed.
+            Current user aircraft position if connected to the flight simulator. Labels include registration number,
+            airline (if available), flight number (if available), indicated speed, ground speed, magnetic heading,
+            altitude, climb/sink arrow and wind magnetic heading and speed.
           </td>
         </tr>
 
@@ -68,7 +82,7 @@
             <img alt="Aircraft" src="images/legend/aircraft_ground.png" />
           </td>
           <td>
-            Aircraft on ground.
+            User aircraft gray outline on ground.
           </td>
         </tr>
 
@@ -77,7 +91,7 @@
             <img alt="Track" src="images/legend/aircraft_track.png" />
           </td>
           <td>
-            Aircraft track if connected to the flight simulator.
+            User aircraft track if connected to the flight simulator.
           </td>
         </tr>
 
@@ -86,7 +100,7 @@
             <img alt="Range" src="images/legend/range_rings.png" />
           </td>
           <td>
-            Range rings labelled with distance.
+            Range rings labeled with distance.
           </td>
         </tr>
 
@@ -96,7 +110,7 @@
             "images/legend/range_ndb.png" />
           </td>
           <td>
-            VOR or NDB range rings labelled with ident and frequency. Color indicates Navaid type.
+            VOR or NDB range rings labeled with ident and frequency. Color indicates Navaid type.
           </td>
         </tr>
 
@@ -106,8 +120,8 @@
           </td>
           <td>
             <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great circle</a> distance measurement line
-            indicating length and true heading at start and destination. For shorter distances length is also shown in
-            feet.
+            indicating length and true heading at start and destination (usually equal for small distances). For
+            shorter distances length is also shown in feet.
           </td>
         </tr>
 
@@ -118,7 +132,7 @@
           <td>
             <a href="https://en.wikipedia.org/wiki/Rhumb_line">Rhumb line</a> of equal bearing distance measurement
             indicating distance and true heading. Rhumb lines are used to approach a VOR or NDB or travel along
-            airways.
+            airways. For shorter distances length is also shown in feet.
           </td>
         </tr>
 
@@ -137,7 +151,7 @@
             <img alt="Search Hightlight" src="images/legend/highlight_search.png" />
           </td>
           <td>
-            An airport or navaid selected in the search result table.
+            A highlighted airport or navaid selected in the search result table.
           </td>
         </tr>
 
@@ -146,7 +160,7 @@
             <img alt="Flight Plan Hightlight" src="images/legend/highlight_route.png" />
           </td>
           <td>
-            An airport or navaid selected in the flight plan table.
+            A highlighted airport or navaid selected in the flight plan table.
           </td>
         </tr>
       </tbody>
@@ -157,10 +171,11 @@
     </h3>
 
     <p>
-      Airports having control towers are shown in <span style="color: rgb(15, 70, 130);font-weight: bold;">dark
-      blue</span> others in <span style="color: rgb(126, 58, 91);font-weight: bold;">magenta</span>. Add-on airport
-      names and idents are shown <span style="font-weight: bold;text-decoration: underline;font-style: italic;">italic
-      and underlined</span>. Airports that are part of the flight plan have a <span style=
+      Airports having control towers are shown in <span style=
+      "background-color: rgb(15, 70, 130);color: white;font-weight: bold;">dark blue</span> others in <span style=
+      "background-color: rgb(126, 58, 91);color: white;font-weight: bold;">magenta</span>. Add-on airport names and
+      idents are shown <span style="font-weight: bold;text-decoration: underline;font-style: italic;">italic and
+      underlined</span>. Airports that are part of the flight plan have a <span style=
       "background-color: rgb(255, 255, 153);font-weight: bold;">light yellow</span> text background.
     </p>
 
@@ -172,8 +187,8 @@
             "Large Airport" src="images/legend/airport_8000.png" />
           </td>
           <td style="text-align: left;">
-            Airports with hard surface runways longer than 8,000 ft. All runways longer than 4,000 ft are shown the
-            diagram. Only for lower zoom levels.
+            Airports with hard surface runways longer than 8,000 ft. All runways longer than 4,000 ft are shown. Only
+            for lower zoom levels.
           </td>
         </tr>
 
@@ -204,7 +219,7 @@
             "Airport Empty Soft" src="images/legend/airport_empty_soft.png" />
           </td>
           <td style="text-align: left;">
-            Empty airport. No taxiways, no parking spots and no aprons.
+            Empty airports shown in gray. No taxiways, no parking spots and no aprons.
           </td>
         </tr>
 
@@ -215,7 +230,7 @@
             "images/legend/airport_water.png" />
           </td>
           <td style="text-align: left;">
-            Seaplane base (has only water runways).
+            Seaplane base having only water runways.
           </td>
         </tr>
 
@@ -235,7 +250,7 @@
             <img alt="Heliport" src="images/legend/heliport.png" />
           </td>
           <td style="text-align: left;">
-            Heliport (only helipads - no runways).
+            Heliport having only helipads and no runways.
           </td>
         </tr>
 
@@ -290,8 +305,8 @@
             "images/legend/vordme_large.png" />
           </td>
           <td>
-            VOR DME including ident, range (Hight, Low or Terminal) and frequency. Detailed compass rose shows magnetic
-            variation on lower zoom levels.
+            VOR DME including ident, type (High, Low or Terminal) and frequency. Compass rose shows magnetic variation
+            on lower zoom levels.
           </td>
         </tr>
 
@@ -301,7 +316,7 @@
             "images/legend/vor_large.png" />
           </td>
           <td>
-            VOR including ident, range and frequency.
+            VOR including ident, type and frequency.
           </td>
         </tr>
 
@@ -310,7 +325,7 @@
             <img alt="DME" src="images/legend/dme.png" />
           </td>
           <td>
-            DME including ident, range and frequency.
+            DME including ident, type and frequency.
           </td>
         </tr>
 
@@ -320,7 +335,7 @@
             "images/legend/ndb_large.png" />
           </td>
           <td>
-            NDB including ident, range (HH, H, MH or CL - compass locator) and frequency.
+            NDB including ident, type (HH, H, MH or CL - compass locator) and frequency.
           </td>
         </tr>
 
@@ -329,7 +344,7 @@
             <img alt="Waypoint" src="images/legend/waypoint.png" />
           </td>
           <td>
-            Waypoint or intersection with name.
+            Waypoint with name.
           </td>
         </tr>
 
@@ -338,7 +353,7 @@
             <img alt="Waypoint" src="images/legend/waypoint_invalid.png" />
           </td>
           <td>
-            Invalid Waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery
+            Invalid airport, waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery
             Database.
           </td>
         </tr>
@@ -359,7 +374,7 @@
             <img alt="Jet Airway" src="images/legend/airway_jet.png" />
           </td>
           <td>
-            Jet airway with label showing name, type (Jet or Both) and minimum altitude.
+            Jet airway with label showing name, type (Jet or Both) and minimum altitude. Text depends on zoom distance.
           </td>
         </tr>
 
@@ -368,7 +383,8 @@
             <img alt="Victor Airway" src="images/legend/airway_victor.png" />
           </td>
           <td>
-            Victor airway with label showing name, type (Victor or Both) and minimum altitude.
+            Victor airway with label showing name, type (Victor or Both) and minimum altitude. Text depends on zoom
+            distance.
           </td>
         </tr>
       </tbody>
@@ -466,8 +482,8 @@
             <img alt="Taxiway" src="images/legend/apron_transparent.png" />
           </td>
           <td>
-            Semi transparent aprons and taxiways indicate that no surface is drawn. It might be a photo texture or just
-            the default background.
+            Semi transparent dotted aprons and taxiways indicate that no surface is drawn. It might use a photo texture
+            or simply the default background.
           </td>
         </tr>
 
@@ -495,7 +511,7 @@
             <img alt="Parking" src="images/legend/parking_ga_ramp.png" />
           </td>
           <td>
-            GA ramp with heading tick mark.
+            GA ramp with parking number and heading tick mark.
           </td>
         </tr>
 
@@ -505,7 +521,7 @@
             " width: 51px; height: 49px;" alt="Parking" src="images/legend/parking_gate.png" />
           </td>
           <td>
-            Gate. Second ring indicates availability of jetway.
+            Gate with number and heading tick mark. Second ring indicates availability of jetway.
           </td>
         </tr>
 
