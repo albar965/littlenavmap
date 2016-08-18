@@ -48,6 +48,7 @@ class QRubberBand;
 class MapScreenIndex;
 class RouteMapObjectList;
 
+namespace mw {
 /* State of click, drag and drop actions on the map */
 enum MouseState
 {
@@ -57,11 +58,14 @@ enum MouseState
   DRAG_ROUTE_LEG = 0x04, /* Changing a flight plan leg by adding a new point */
   DRAG_ROUTE_POINT = 0x08, /* Changing the flight plan by replacing a present waypoint */
   DRAG_POST = 0x10, /* Mouse released - all done */
-  DRAG_POST_CANCEL = 0x20 /* Right mousebutton clicked - cancel all actions */
+  DRAG_POST_MENU = 0x20, /* A menu is opened after selecting multiple objects.
+                          * Avoid cancelling all drag when loosing focus */
+  DRAG_POST_CANCEL = 0x40 /* Right mousebutton clicked - cancel all actions */
 };
 
 Q_DECLARE_FLAGS(MouseStates, MouseState);
-Q_DECLARE_OPERATORS_FOR_FLAGS(MouseStates);
+Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates);
+}
 
 class MapWidget :
   public Marble::MarbleWidget
@@ -228,6 +232,9 @@ public:
   /* The main window show event was triggered after program startup. */
   void mainWindowShown();
 
+  /* End all distance line and route dragging modes */
+  void cancelAllDrag();
+
   /* Stores delta values depending on fast or slow update. User aircraft is only updated if
    * delta values are exceeded. */
   struct SimUpdateDelta
@@ -289,13 +296,17 @@ private:
   virtual bool event(QEvent *event) override;
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void paintEvent(QPaintEvent *paintEvent) override;
+  virtual void focusOutEvent(QFocusEvent *event) override;
 
-  void updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point);
+  void updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point);
   void updateVisibleObjectsStatusBar();
 
   void handleInfoClick(QPoint pos);
   bool loadKml(const QString& filename, bool center);
   void updateCacheSizes();
+
+  void cancelDragDistance();
+  void cancelDragRoute();
 
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
@@ -311,7 +322,7 @@ private:
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
   MapThemeComboIndex currentComboIndex = INVALID;
-  MouseStates mouseState = NONE;
+  mw::MouseStates mouseState = mw::NONE;
   /* Current position when dragging a flight plan point or leg */
   QPoint routeDragCur;
   atools::geo::Pos routeDragFrom /* Fist fixed point of route drag */,

@@ -249,6 +249,7 @@ void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to,
 
 void MapWidget::preDatabaseLoad()
 {
+  cancelAllDrag();
   databaseLoadStatus = true;
   paintLayer->preDatabaseLoad();
 }
@@ -466,6 +467,7 @@ void MapWidget::routeChanged(bool geometryChanged)
 {
   if(geometryChanged)
   {
+    cancelAllDrag();
     screenIndex->updateRouteScreenGeometry();
     update();
   }
@@ -606,7 +608,7 @@ void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& position
 
 /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are
  * found at the button release position. */
-void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg, int point)
+void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point)
 {
   qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
 
@@ -661,6 +663,9 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, MouseStates state, int leg,
   }
   else
   {
+    // Avoid drag cancel when loosing focus
+    mouseState |= mw::DRAG_POST_MENU;
+
     // Multiple entries - build a menu with icons
     // Add id and type to actions
     const int ICON_SIZE = 20;
@@ -755,7 +760,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     point = event->pos();
 
-  if(mouseState != NONE)
+  if(mouseState != mw::NONE)
     return;
 
   hideTooltip();
@@ -1100,7 +1105,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       screenIndex->getDistanceMarks().append(dm);
 
       // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-      mouseState = DRAG_DISTANCE;
+      mouseState = mw::DRAG_DISTANCE;
       setContextMenuPolicy(Qt::PreventContextMenu);
       currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
@@ -1248,7 +1253,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     }
   }
 
-  if(e->type() == QEvent::MouseMove && mouseState != NONE)
+  if(e->type() == QEvent::MouseMove && mouseState != mw::NONE)
   {
     // Do not allow mouse scrolling during drag actions
     e->accept();
@@ -1263,12 +1268,47 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
+void MapWidget::cancelAllDrag()
+{
+  cancelDragRoute();
+  cancelDragDistance();
+
+  mouseState = mw::NONE;
+  setViewContext(Marble::Still);
+  update();
+}
+
+/* Stop route editing and reset all coordinates */
+void MapWidget::cancelDragRoute()
+{
+  if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
+  {
+    routeDragCur = QPoint();
+    routeDragFrom = atools::geo::EMPTY_POS;
+    routeDragTo = atools::geo::EMPTY_POS;
+    routeDragPoint = -1;
+    routeDragLeg = -1;
+  }
+}
+
+/* Stop new distance line or change dragging and restore backup or delete new line */
+void MapWidget::cancelDragDistance()
+{
+  if(mouseState & mw::DRAG_DISTANCE)
+    // Remove new one
+    screenIndex->getDistanceMarks().removeAt(currentDistanceMarkerIndex);
+  else if(mouseState & mw::DRAG_CHANGE_DISTANCE)
+    // Replace modified one with backup
+    screenIndex->getDistanceMarks()[currentDistanceMarkerIndex] = distanceMarkerBackup;
+  currentDistanceMarkerIndex = -1;
+}
+
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
   if(!isActiveWindow())
     return;
 
-  if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
+  if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
     // Currently dragging a measurement line
     if(cursor().shape() != Qt::CrossCursor)
@@ -1287,7 +1327,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     setViewContext(Marble::Animation);
     update();
   }
-  else if(mouseState & DRAG_ROUTE_LEG || mouseState & DRAG_ROUTE_POINT)
+  else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
   {
     // Currently dragging a flight plan leg
     if(cursor().shape() != Qt::CrossCursor)
@@ -1302,7 +1342,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     setViewContext(Marble::Animation);
     update();
   }
-  else if(mouseState == NONE)
+  else if(mouseState == mw::NONE)
   {
     if(event->buttons() == Qt::NoButton)
     {
@@ -1339,20 +1379,20 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
   // Remember mouse position to check later if mouse was moved during click (drag map scroll)
   mouseMoved = event->pos();
-  if(mouseState == DRAG_DISTANCE || mouseState == DRAG_CHANGE_DISTANCE ||
-     mouseState == DRAG_ROUTE_POINT || mouseState == DRAG_ROUTE_LEG)
+  if(mouseState == mw::DRAG_DISTANCE || mouseState == mw::DRAG_CHANGE_DISTANCE ||
+     mouseState == mw::DRAG_ROUTE_POINT || mouseState == mw::DRAG_ROUTE_LEG)
   {
     if(cursor().shape() != Qt::ArrowCursor)
       setCursor(Qt::ArrowCursor);
 
     if(event->button() == Qt::LeftButton)
       // Done with any dragging
-      mouseState |= DRAG_POST;
+      mouseState |= mw::DRAG_POST;
     else if(event->button() == Qt::RightButton)
       // Cancel any dragging
-      mouseState |= DRAG_POST_CANCEL;
+      mouseState |= mw::DRAG_POST_CANCEL;
   }
-  else if(mouseState == NONE && event->buttons() & Qt::RightButton)
+  else if(mouseState == mw::NONE && event->buttons() & Qt::RightButton)
     // First right click after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
@@ -1361,10 +1401,10 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   hideTooltip();
 
-  if(mouseState & DRAG_ROUTE_POINT || mouseState & DRAG_ROUTE_LEG)
+  if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
     // End route point dragging
-    if(mouseState & DRAG_POST)
+    if(mouseState & mw::DRAG_POST)
     {
       // Ending route dragging - update route
       qreal lon, lat;
@@ -1374,22 +1414,18 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     }
 
     // End all dragging
-    mouseState = NONE;
-    routeDragCur = QPoint();
-    routeDragFrom = atools::geo::EMPTY_POS;
-    routeDragTo = atools::geo::EMPTY_POS;
-    routeDragPoint = -1;
-    routeDragLeg = -1;
+    cancelDragRoute();
+    mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
   }
-  else if(mouseState & DRAG_DISTANCE || mouseState & DRAG_CHANGE_DISTANCE)
+  else if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
     // End distance marker dragging
     if(!screenIndex->getDistanceMarks().isEmpty())
     {
       setCursor(Qt::ArrowCursor);
-      if(mouseState & DRAG_POST)
+      if(mouseState & mw::DRAG_POST)
       {
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
@@ -1397,16 +1433,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           // Update distance measurment line
           screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
       }
-      else if(mouseState & DRAG_POST_CANCEL)
-      {
-        if(mouseState & DRAG_DISTANCE)
-          // Remove new one
-          screenIndex->getDistanceMarks().removeAt(currentDistanceMarkerIndex);
-        else if(mouseState & DRAG_CHANGE_DISTANCE)
-          // Replace modified one with backup
-          screenIndex->getDistanceMarks()[currentDistanceMarkerIndex] = distanceMarkerBackup;
-        currentDistanceMarkerIndex = -1;
-      }
+      else if(mouseState & mw::DRAG_POST_CANCEL)
+        cancelDragDistance();
     }
     else
     {
@@ -1414,7 +1442,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         setCursor(Qt::ArrowCursor);
     }
 
-    mouseState = NONE;
+    mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
   }
@@ -1427,7 +1455,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     if(currentDistanceMarkerIndex != -1)
     {
       // Found an end - create a backup and start dragging
-      mouseState = DRAG_CHANGE_DISTANCE;
+      mouseState = mw::DRAG_CHANGE_DISTANCE;
       distanceMarkerBackup = screenIndex->getDistanceMarks().at(currentDistanceMarkerIndex);
       setContextMenuPolicy(Qt::PreventContextMenu);
     }
@@ -1447,7 +1475,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             qDebug() << "route point" << routePoint;
 
             // Found a leg - start dragging
-            mouseState = DRAG_ROUTE_POINT;
+            mouseState = mw::DRAG_ROUTE_POINT;
 
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
@@ -1471,7 +1499,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
               routeDragLeg = routeLeg;
               qDebug() << "route leg" << routeLeg;
               // Found a leg - start dragging
-              mouseState = DRAG_ROUTE_LEG;
+              mouseState = mw::DRAG_ROUTE_LEG;
 
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
@@ -1483,7 +1511,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         }
       }
 
-      if(mouseState == NONE)
+      if(mouseState == mw::NONE)
       {
         qDebug() << "Single click info";
         handleInfoClick(event->pos());
@@ -1521,6 +1549,15 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.userPoints.at(0).position);
     mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
+}
+
+/* Stop all line drag and drop if the map looses focus */
+void MapWidget::focusOutEvent(QFocusEvent *event)
+{
+  Q_UNUSED(event);
+
+  if(!(mouseState & mw::DRAG_POST_MENU))
+    cancelAllDrag();
 }
 
 const RouteMapObjectList& MapWidget::getRouteHighlights() const
@@ -1616,12 +1653,12 @@ void MapWidget::updateVisibleObjectsStatusBar()
       }
       else if(layer->getDataSource() == layer::MEDIUM)
       {
-        ap.append(">40");
+        ap.append(tr(">40"));
         apTooltip.append(tr(" with runway length > %1 ft").arg(QLocale().toString(4000)));
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
-        ap.append(">80,H");
+        ap.append(tr(">80,H"));
         apTooltip.append(tr(" with runway length > %1 ft and hard runways").arg(QLocale().toString(8000)));
       }
 
