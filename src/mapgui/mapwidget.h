@@ -297,6 +297,7 @@ private:
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void paintEvent(QPaintEvent *paintEvent) override;
   virtual void focusOutEvent(QFocusEvent *event) override;
+  virtual void keyPressEvent(QKeyEvent *event) override;
 
   void updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int leg, int point);
   void updateVisibleObjectsStatusBar();

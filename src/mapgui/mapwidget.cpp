@@ -1560,6 +1560,14 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
     cancelAllDrag();
 }
 
+void MapWidget::keyPressEvent(QKeyEvent *event)
+{
+  Q_UNUSED(event);
+
+  if(event->key() == Qt::Key_Escape)
+    cancelAllDrag();
+}
+
 const RouteMapObjectList& MapWidget::getRouteHighlights() const
 {
   return screenIndex->getRouteHighlights();
