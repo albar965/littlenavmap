@@ -388,6 +388,45 @@ bool RouteController::loadFlightplan(const QString& filename)
   return true;
 }
 
+bool RouteController::appendFlightplan(const QString& filename)
+{
+  Flightplan flightplan;
+  try
+  {
+    // Will throw an exception if something goes wrong
+    flightplan.load(filename);
+
+    RouteCommand *undoCommand = preChange(tr("Flight Plan append"));
+
+    for(const FlightplanEntry& entry : flightplan.getEntries())
+      route.getFlightplan().getEntries().append(entry);
+
+    route.getFlightplan().setDestinationAiportName(flightplan.getDestinationAiportName());
+    route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
+    route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
+
+    createRouteMapObjects();
+
+    updateTableModel();
+    postChange(undoCommand);
+    mainWindow->updateWindowTitle();
+    updateWindowLabel();
+
+    emit routeChanged(true);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
 bool RouteController::saveFlighplanAs(const QString& filename)
 {
   routeFilename = filename;

@@ -488,6 +488,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
+  connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
@@ -942,6 +943,27 @@ void MainWindow::routeOpen()
 }
 
 /* Called from menu or toolbar by action */
+void MainWindow::routeAppend()
+{
+  QString routeFile = dialog->openFileDialog(
+    tr("Append Flightplan"),
+    tr("Flightplan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN),
+    "Route/",
+    atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX));
+
+  if(!routeFile.isEmpty())
+  {
+    if(routeController->appendFlightplan(routeFile))
+    {
+      routeFileHistory->addFile(routeFile);
+      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        routeCenter();
+      setStatusMessage(tr("Flight plan appended."));
+    }
+  }
+}
+
+/* Called from menu or toolbar by action */
 void MainWindow::routeOpenRecent(const QString& routeFile)
 {
   if(routeCheckForChanges())
@@ -1195,6 +1217,7 @@ void MainWindow::updateActionStates()
 
   ui->actionReloadScenery->setEnabled(databaseManager->hasInstalledSimulators());
 
+  ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
