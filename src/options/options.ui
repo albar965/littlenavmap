@@ -185,7 +185,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="labelOptionsGuiInfoText">
          <property name="text">
-          <string>Text size for &amp;information panels:</string>
+          <string>Text size for &amp;information dock window:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiInfoText</cstring>
@@ -217,7 +217,7 @@
        <item row="6" column="0" alignment="Qt::AlignTop">
         <widget class="QLabel" name="labelOptionsGuiSimInfoText">
          <property name="text">
-          <string>Text size for &amp;simulator aircraft information panels:</string>
+          <string>Text size for &amp;simulator aircraft information dock window:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiSimInfoText</cstring>
@@ -340,7 +340,8 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
            <property name="toolTip">
-            <string>Space separated list of range ring radii. A range ring will be added for each radius value.</string>
+            <string>Space separated list of range ring radii.
+A range ring will be added for each radius value.</string>
            </property>
            <property name="text">
             <string>50 100 200 500</string>
@@ -350,7 +351,8 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
            <property name="toolTip">
-            <string>Smaller values will zoom in closer to an airport or navaid on double click into a list view or other.</string>
+            <string>Viewpoint distance above earth surface.
+Smaller values will zoom in closer to an airport or navaid.</string>
            </property>
            <property name="suffix">
             <string> nm</string>
@@ -394,7 +396,8 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
          <item row="2" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
            <property name="toolTip">
-            <string>Bigger values will catch more objects. Smaller values allow a finer selection.</string>
+            <string>Bigger values will catch more objects.
+Smaller values allow a finer selection.</string>
            </property>
            <property name="suffix">
             <string> pixels</string>
@@ -429,7 +432,7 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
             <string/>
            </property>
            <property name="text">
-            <string>&amp;Range ring radii for red range rings(nautical miles):</string>
+            <string>&amp;Range ring radii for red range rings (nautical miles):</string>
            </property>
            <property name="buddy">
             <cstring>lineEditOptionsMapRangeRings</cstring>
@@ -635,6 +638,12 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        </item>
        <item row="1" column="2">
         <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
+         <property name="toolTip">
+          <string>Clears the disk cache. This process will run in background and take some time.</string>
+         </property>
+         <property name="statusTip">
+          <string>Clears the disk cache.\nThis process will run in background and take some time.</string>
+         </property>
          <property name="text">
           <string>C&amp;lear Disk Cache</string>
          </property>
@@ -669,8 +678,14 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        </item>
        <item row="2" column="2" alignment="Qt::AlignTop">
         <widget class="QPushButton" name="pushButtonOptionsCacheShow">
+         <property name="toolTip">
+          <string>Opens the cache directory in a file manager.</string>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
          <property name="text">
-          <string>&amp;Show Disk Cache in Explorer</string>
+          <string>&amp;Show Disk Cache in File Manager</string>
          </property>
         </widget>
        </item>
@@ -687,6 +702,13 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
          </property>
         </spacer>
        </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+         <property name="text">
+          <string>Items in the disk cache expire after two weeks.</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabOptionsRoute">
@@ -697,7 +719,7 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferVor">
          <property name="toolTip">
-          <string>Prefer nearest VOR that is part of an airway instead a nearest waypoint
+          <string>Prefer nearest VOR that is part of an airway instead of the nearest waypoint
 when transitioning from airport to airway.</string>
          </property>
          <property name="text">
@@ -741,7 +763,7 @@ Note that this value does not affect flight plan calculation or saving.</string>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsRoutePreferNdb">
          <property name="toolTip">
-          <string>Prefer nearest NDB that is part of an airway instead a nearest waypoint
+          <string>Prefer nearest NDB that is part of an airway instead the nearest waypoint
 when transitioning from airport to airway.</string>
          </property>
          <property name="text">
@@ -792,8 +814,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
          <property name="toolTip">
-          <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here. 
-If this field is empty, the default ASN weather file path will be used which is different for each flight simulator.</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This file (usually &amp;quot;current_wx_snapshot.txt&amp;quot;) will be used for all simulators if set here. &lt;/p&gt;&lt;p&gt;If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="placeholderText">
           <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
@@ -945,7 +966,7 @@ If this field is empty, the default ASN weather file path will be used which is 
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
          </property>
          <property name="statusTip">
-          <string>Complete URL of the NOAA weather service.\n&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+          <string/>
          </property>
          <property name="text">
           <string>http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</string>
@@ -962,7 +983,7 @@ If this field is empty, the default ASN weather file path will be used which is 
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
          </property>
          <property name="statusTip">
-          <string>Complete URL of the Vatsim network weather service.\n&quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
+          <string/>
          </property>
          <property name="text">
           <string>http://metar.vatsim.net/metar.php?id=%1</string>
@@ -1065,7 +1086,8 @@ If this field is empty, the default ASN weather file path will be used which is 
         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
          <property name="toolTip">
           <string>All directories including sub-directories in this list will be omitted when loading the scenery library into the Little Navmap database.
-These paths apply to all Flight Simulators.</string>
+These paths apply to all Flight Simulators.
+You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
@@ -1078,7 +1100,7 @@ These paths apply to all Flight Simulators.</string>
        <item row="3" column="2">
         <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
          <property name="toolTip">
-          <string>Directories and respective sub-directories in this list will not be considered add-on if they are outside the flight simulator scenery directory.
+          <string>Directories and respective sub-directories in this list will not be considered add-ons.
 These paths apply to all Flight Simulators.</string>
          </property>
          <property name="editTriggers">
