@@ -4262,10 +4262,10 @@
     <string>&amp;Show Database Files</string>
    </property>
    <property name="toolTip">
-    <string>Open the Little Navmap database directory in Explorer</string>
+    <string>Open the Little Navmap database directory in a file manager</string>
    </property>
    <property name="statusTip">
-    <string>Open the Little Navmap database directory in Explorer</string>
+    <string>Open the Little Navmap database directory in a file manager</string>
    </property>
   </action>
   <action name="actionLoadKml">
