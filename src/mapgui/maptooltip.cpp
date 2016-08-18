@@ -47,16 +47,16 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
                                  bool airportDiagram)
 {
   HtmlBuilder html(false);
-
   HtmlInfoBuilder info(query, nullptr, false);
   int numEntries = 0;
 
   // Append HTML text for all objects found in order of importance (airports first, etc.)
   // Objects are separated by a horizontal ruler
+  // If max number of entries or lines is exceeded return the html
   for(const MapAirport& ap : mapSearchResult.airports)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -70,7 +70,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   for(const MapVor& vor : mapSearchResult.vors)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -84,7 +84,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   for(const MapNdb& ndb : mapSearchResult.ndbs)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -98,7 +98,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   for(const MapWaypoint& wp : mapSearchResult.waypoints)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -112,7 +112,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   for(const MapAirway& airway : mapSearchResult.airways)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -126,7 +126,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   for(const MapMarker& m : mapSearchResult.markers)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -142,7 +142,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     for(const MapAirport& ap : mapSearchResult.towers)
     {
       if(checkText(html, numEntries))
-        break;
+        return html.getHtml();
 
       if(!html.isEmpty())
         html.hr();
@@ -155,7 +155,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     for(const MapParking& p : mapSearchResult.parkings)
     {
       if(checkText(html, numEntries))
-        break;
+        return html.getHtml();
 
       if(!html.isEmpty())
         html.hr();
@@ -168,7 +168,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     for(const MapHelipad& p : mapSearchResult.helipads)
     {
       if(checkText(html, numEntries))
-        break;
+        return html.getHtml();
 
       if(!html.isEmpty())
         html.hr();
@@ -179,10 +179,11 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       numEntries++;
     }
   }
+
   for(const MapUserpoint& up : mapSearchResult.userPoints)
   {
     if(checkText(html, numEntries))
-      break;
+      return html.getHtml();
 
     if(!html.isEmpty())
       html.hr();
@@ -198,11 +199,11 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 /* Check if the result HTML has more than the allowed number of lines and add a "more" text */
 bool MapTooltip::checkText(HtmlBuilder& html, int numEntries)
 {
-  if(numEntries > 3)
+  if(numEntries >= MAX_ENTRIES)
   {
     html.hr().b(tr("More ..."));
     return true;
   }
 
-  return html.checklength(MAXLINES, tr("More ..."));
+  return html.checklength(MAX_LINES, tr("More ..."));
 }
