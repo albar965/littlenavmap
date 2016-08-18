@@ -26,9 +26,8 @@
       <canvas/>
       <target/>
       <layer name="opentopomap" backend="texture">
-        <!-- OpenStreetMap mapnik rendered tiles expire after seven days
-                     or 604800 seconds -->
-        <texture name="opentopomap_data" expire="604800">
+        <!-- OpenStreetMap mapnik rendered tiles expire after 14 days -->
+        <texture name="opentopomap_data" expire="1209600">
           <sourcedir format="PNG"> earth/opentopomap </sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
