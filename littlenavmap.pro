@@ -376,7 +376,7 @@ unix:!macx {
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
-  copydata.commands += cp -Rv $${MARBLE_BASE}/lib/plugins/libAprsPlugin.so \
+  copydata.commands += cp -Rvf $${MARBLE_BASE}/lib/plugins/libAprsPlugin.so \
                                 $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
                                 $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
                                 $${MARBLE_BASE}/lib/plugins/libElevationProfileFloatItem.so \
@@ -407,13 +407,13 @@ macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
-  cleandata.commands = rm -Rv $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
+  cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
 # Mac specific deploy target
 macx {
   deploy.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/lib &&
-  deploy.commands += cp -Rv $${MARBLE_BASE}/lib/*.dylib littlenavmap.app/Contents/MacOS/lib/ &&
+  deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.dylib littlenavmap.app/Contents/MacOS/lib/ &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite -dmg -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
 #-verbose=3
 }
