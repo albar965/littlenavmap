@@ -733,6 +733,8 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       id = data.at(0).toInt();
       type = maptypes::MapObjectTypes(data.at(1).toInt());
     }
+
+    mouseState &= ~mw::DRAG_POST_MENU;
   }
 
   if(type == maptypes::USER)

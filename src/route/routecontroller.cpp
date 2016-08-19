@@ -163,9 +163,9 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
     &RouteController::tableSelectionChanged;
   connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
-  connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveLegsDown);
-  connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveLegsUp);
-  connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteLegs);
+  connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDown);
+  connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUp);
+  connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegs);
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
@@ -365,7 +365,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     {
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
                                                      tr("The flight plan had no valid start position.\n"
-                                                        "The start position was set to the longest "
+                                                        "The start position is now set to the longest "
                                                         "primary runway of the departure airport."),
                                                      tr("Do not &show this dialog again."));
     }
@@ -664,7 +664,7 @@ void RouteController::reverse()
   route.getFlightplan().reverse();
 
   createRouteMapObjects();
-  updateStartPositionBestRunway(true);
+  updateStartPositionBestRunway(true /* force */, false /* undo */);
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
@@ -999,19 +999,21 @@ bool RouteController::hasChanged() const
   return undoIndexClean != undoIndex;
 }
 
-void RouteController::moveLegsDown()
+/* Called by action */
+void RouteController::moveSelectedLegsDown()
 {
   qDebug() << "Leg down";
-  moveLegsInternal(1);
+  moveSelectedLegsInternal(MOVE_DOWN);
 }
 
-void RouteController::moveLegsUp()
+/* Called by action */
+void RouteController::moveSelectedLegsUp()
 {
   qDebug() << "Leg up";
-  moveLegsInternal(-1);
+  moveSelectedLegsInternal(MOVE_UP);
 }
 
-void RouteController::moveLegsInternal(int dir)
+void RouteController::moveSelectedLegsInternal(int dir)
 {
   // Get the selected rows. Depending on move direction order can be reversed to ease moving
   QList<int> rows;
@@ -1034,6 +1036,18 @@ void RouteController::moveLegsInternal(int dir)
       model->insertRow(row + dir, model->takeRow(row));
     }
     updateRouteMapObjects();
+
+    bool forceDeparturePosition = false;
+    if(dir == MOVE_DOWN)
+      // Departure moved down and was replaced by something else jumping up
+      forceDeparturePosition = rows.contains(0);
+    else if(dir == MOVE_UP)
+      // Something moved up and departure jumped up
+      forceDeparturePosition = rows.contains(1);
+
+    // Force update of start if departure airport was moved
+    updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
+
     routeToFlightPlan();
     updateTableModel();
     updateWindowLabel();
@@ -1053,34 +1067,12 @@ void RouteController::moveLegsInternal(int dir)
   }
 }
 
-void RouteController::routeDelete(int index)
-{
-  qDebug() << "route delete routeIndex" << index;
-
-  RouteCommand *undoCommand = preChange(tr("Delete"));
-
-  route.getFlightplan().getEntries().removeAt(index);
-
-  route.removeAt(index);
-
-  updateRouteMapObjects();
-  routeToFlightPlan();
-  updateTableModel();
-  updateWindowLabel();
-
-  postChange(undoCommand);
-  mainWindow->updateWindowTitle();
-
-  emit routeChanged(true);
-
-  mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
-}
-
-void RouteController::deleteLegs()
+/* Called by action */
+void RouteController::deleteSelectedLegs()
 {
   qDebug() << "Leg delete";
 
-  // Get selected rows in reverse order
+  // Get selected rows
   QList<int> rows;
   selectedRows(rows, true /* reverse */);
 
@@ -1097,6 +1089,10 @@ void RouteController::deleteLegs()
       model->removeRow(row);
     }
     updateRouteMapObjects();
+
+    // Force update of start if departure airport was removed
+    updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
+
     routeToFlightPlan();
     updateTableModel();
     updateWindowLabel();
@@ -1238,7 +1234,7 @@ void RouteController::routeSetDepartureInternal(const maptypes::MapAirport& airp
   rmo.createFromAirport(&flightplan.getEntries().first(), airport, nullptr);
   route.prepend(rmo);
 
-  updateStartPositionBestRunway(true);
+  updateStartPositionBestRunway(true /* force */, false /* undo */);
 }
 
 void RouteController::routeSetDeparture(maptypes::MapAirport airport)
@@ -1296,8 +1292,8 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   route.append(rmo);
 
   updateRouteMapObjects();
+  updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
-  updateStartPositionBestRunway(false);
   updateTableModel();
   updateWindowLabel();
 
@@ -1309,47 +1305,10 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
-void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                                   int legIndex)
-{
-  qDebug() << "route replace" << "user pos" << userPos << "id" << id
-           << "type" << type << "old index" << legIndex;
-
-  RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
-
-  FlightplanEntry entry;
-  buildFlightplanEntry(id, userPos, type, entry);
-
-  Flightplan& flightplan = route.getFlightplan();
-
-  flightplan.getEntries().replace(legIndex, entry);
-
-  const RouteMapObject *rmoPred = nullptr;
-  if(legIndex > 0 && !route.isFlightplanEmpty())
-    // Get predecessor of replaced entry
-    rmoPred = &route.at(legIndex - 1);
-
-  RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(&flightplan.getEntries()[legIndex], query, rmoPred);
-
-  route.replace(legIndex, rmo);
-
-  updateRouteMapObjects();
-  updateStartPositionBestRunway(false);
-  routeToFlightPlan();
-  updateTableModel();
-  updateWindowLabel();
-
-  postChange(undoCommand);
-  mainWindow->updateWindowTitle();
-
-  emit routeChanged(true);
-  mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
-}
-
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
-  qDebug() << "route add id" << id << "type" << type;
+  qDebug() << "route add" << "user pos" << userPos << "id" << id
+           << "type" << type << "leg index" << legIndex;
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
@@ -1384,7 +1343,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   route.insert(insertIndex, rmo);
 
   updateRouteMapObjects();
-  updateStartPositionBestRunway(false);
+  // Force update of start if departure airport was added
+  updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
   updateTableModel();
   updateWindowLabel();
@@ -1395,6 +1355,72 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Added waypoint to flight plan."));
+}
+
+void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
+                                   int legIndex)
+{
+  qDebug() << "route replace" << "user pos" << userPos << "id" << id
+           << "type" << type << "leg index" << legIndex;
+
+  RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
+
+  FlightplanEntry entry;
+  buildFlightplanEntry(id, userPos, type, entry);
+
+  Flightplan& flightplan = route.getFlightplan();
+
+  flightplan.getEntries().replace(legIndex, entry);
+
+  const RouteMapObject *rmoPred = nullptr;
+  if(legIndex > 0 && !route.isFlightplanEmpty())
+    // Get predecessor of replaced entry
+    rmoPred = &route.at(legIndex - 1);
+
+  RouteMapObject rmo(&flightplan);
+  rmo.createFromDatabaseByEntry(&flightplan.getEntries()[legIndex], query, rmoPred);
+
+  route.replace(legIndex, rmo);
+
+  updateRouteMapObjects();
+
+  // Force update of start if departure airport was changed
+  updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
+
+  routeToFlightPlan();
+  updateTableModel();
+  updateWindowLabel();
+
+  postChange(undoCommand);
+  mainWindow->updateWindowTitle();
+
+  emit routeChanged(true);
+  mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
+}
+
+void RouteController::routeDelete(int index)
+{
+  qDebug() << "route delete routeIndex" << index;
+
+  RouteCommand *undoCommand = preChange(tr("Delete"));
+
+  route.getFlightplan().getEntries().removeAt(index);
+
+  route.removeAt(index);
+
+  updateRouteMapObjects();
+  // Force update of start if departure airport was removed
+  updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
+  routeToFlightPlan();
+  updateTableModel();
+  updateWindowLabel();
+
+  postChange(undoCommand);
+  mainWindow->updateWindowTitle();
+
+  emit routeChanged(true);
+
+  mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
 }
 
 /* Update airway attribute in flight plan entry and return minimum altitude for this airway segment */
@@ -1889,7 +1915,7 @@ void RouteController::postChange(RouteCommand *undoCommand)
  */
 bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
 {
-  if(hasValidDeparture())
+  if(route.hasValidDeparture())
   {
     RouteMapObject& rmo = route.first();
 

@@ -78,7 +78,7 @@ public:
   /* Saves flight plan using current name */
   bool saveFlightplan();
 
-  /* Save widget state and current flight plan name */
+  /* Save and reload widgets state and current flight plan name */
   void saveState();
   void restoreState();
 
@@ -221,10 +221,10 @@ private:
 
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
-  void moveLegsDown();
-  void moveLegsUp();
-  void moveLegsInternal(int dir);
-  void deleteLegs();
+  void moveSelectedLegsDown();
+  void moveSelectedLegsUp();
+  void moveSelectedLegsInternal(int dir);
+  void deleteSelectedLegs();
   void selectedRows(QList<int>& rows, bool reverse);
 
   void select(QList<int>& rows, int offset);
@@ -269,7 +269,7 @@ private:
 
   void undoTriggered();
   void redoTriggered();
-  bool updateStartPositionBestRunway(bool force, bool undo = false);
+  bool updateStartPositionBestRunway(bool force, bool undo);
 
   void dockVisibilityChanged(bool visible);
 
@@ -277,6 +277,10 @@ private:
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
+
+  /* Move selected rows */
+  static Q_DECL_CONSTEXPR int MOVE_DOWN = 1;
+  static Q_DECL_CONSTEXPR int MOVE_UP = -1;
 
   atools::gui::TableZoomHandler *zoomHandler = nullptr;
 
