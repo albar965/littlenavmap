@@ -341,6 +341,8 @@ DISTFILES += \
 RESOURCES += \
     littlenavmap.qrc
 
+ICON=resources/icons/littlenavmap.icns
+
 # =====================================================================
 # Copy data commands
 # =====================================================================
