@@ -1193,14 +1193,19 @@ void MainWindow::mainWindowShown()
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
-    if(databaseManager->hasInstalledSimulators())
-      databaseManager->run();
-    else if(!databaseManager->hasSimulatorDatabases())
-      QMessageBox::information(this, QApplication::applicationName(),
-                               tr(
-                                 "No Flight Simulator installations and no scenery library databases found.\n"
-                                 "You can copy a Little Navmap scenery library database from another computer.\n"
-                                 "See the user manual for more information about this."));
+    if(!databaseManager->hasSimulatorDatabases())
+    {
+      if(databaseManager->hasInstalledSimulators())
+        // No databases but simulators let the user create new databases
+        databaseManager->run();
+      else
+        QMessageBox::information(this, QApplication::applicationName(),
+                                 tr(
+                                   "No Flight Simulator installations and no scenery library databases found.\n"
+                                   "You can copy a Little Navmap scenery library database from another computer.\n"
+                                   "See the user manual for more information about this."));
+    }
+    // else have databases do nothing
   }
 }
 

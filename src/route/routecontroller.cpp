@@ -1800,18 +1800,21 @@ void RouteController::updateTableModel()
 
   Flightplan& flightplan = route.getFlightplan();
 
-  // Set spin box and block signals to avoid recursive call
-  ui->spinBoxRouteAlt->blockSignals(true);
-  ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
-  ui->spinBoxRouteAlt->blockSignals(false);
+  if(!flightplan.isEmpty())
+  {
+    // Set spin box and block signals to avoid recursive call
+    ui->spinBoxRouteAlt->blockSignals(true);
+    ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
+    ui->spinBoxRouteAlt->blockSignals(false);
 
-  // Set combo box and block signals to avoid recursive call
-  ui->comboBoxRouteType->blockSignals(true);
-  if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
-    ui->comboBoxRouteType->setCurrentIndex(0);
-  else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-    ui->comboBoxRouteType->setCurrentIndex(1);
-  ui->comboBoxRouteType->blockSignals(false);
+    // Set combo box and block signals to avoid recursive call
+    ui->comboBoxRouteType->blockSignals(true);
+    if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+      ui->comboBoxRouteType->setCurrentIndex(0);
+    else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+      ui->comboBoxRouteType->setCurrentIndex(1);
+    ui->comboBoxRouteType->blockSignals(false);
+  }
 }
 
 /* Update the dock window top level label */

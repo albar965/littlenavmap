@@ -291,7 +291,7 @@ private:
   int curUserpointNumber = 1;
 
   /* Network cache for flight plan calculation */
-  RouteNetwork *routeNetworkRadio, *routeNetworkAirway;
+  RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
   atools::geo::Rect boundingRect;
   RouteMapObjectList route;
   /* Current filename of empty if no route */
@@ -300,8 +300,8 @@ private:
   QTableView *view;
   MapQuery *query;
   QStandardItemModel *model;
-  RouteIconDelegate *iconDelegate;
-  QUndoStack *undoStack;
+  RouteIconDelegate *iconDelegate = nullptr;
+  QUndoStack *undoStack = nullptr;
 
 };
 
