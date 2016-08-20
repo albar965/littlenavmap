@@ -185,23 +185,15 @@ FORMS    += src/gui/mainwindow.ui \
     src/connect/connectdialog.ui \
     src/options/options.ui
 
+# =====================================================================
+# Dependencies
+# =====================================================================
+
 # Marble dependencies
 win32 {
   INCLUDEPATH += $$MARBLE_BASE/include
   CONFIG(debug, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
   CONFIG(release, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5
-  DEPENDPATH += $$MARBLE_BASE/include
-}
-
-unix:!macx {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5
-  DEPENDPATH += $$MARBLE_BASE/include
-}
-
-macx {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
   DEPENDPATH += $$MARBLE_BASE/include
 }
 
@@ -216,6 +208,18 @@ CONFIG(debug, debug|release) {
 CONFIG(release, debug|release) {
   LIBS += -L $$PWD/../atools/release -l atools
   PRE_TARGETDEPS += $$PWD/../atools/release/libatools.a
+}
+
+unix:!macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
+  DEPENDPATH += $$MARBLE_BASE/include
 }
 
 DISTFILES += \
@@ -337,6 +341,10 @@ DISTFILES += \
 RESOURCES += \
     littlenavmap.qrc
 
+# =====================================================================
+# Copy data commands
+# =====================================================================
+
 # Linux - Copy help and Marble plugins and data
 unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
@@ -410,6 +418,26 @@ macx {
   cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }
 
+# =====================================================================
+# Deployment commands
+# =====================================================================
+
+# Linux specific deploy target
+unix:!macx {
+  deploy.commands = rm -Rfv $$PWD/deploy/LittleNavmap &&
+  deploy.commands += mkdir -pv $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/plugins $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/data $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/help $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -vf $$PWD/desktop/littlenavmap-run.sh $$PWD/deploy/LittleNavmap &&
+  deploy.commands += chmod -v a+x $$PWD/deploy/LittleNavmap/littlenavmap-run.sh &&
+  deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -vf $${PWD}/README.txt $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -vf $${PWD}/LICENSE.txt $$PWD/deploy/LittleNavmap
+}
+
 # Mac specific deploy target
 macx {
   deploy.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/lib &&
@@ -417,7 +445,6 @@ macx {
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite -dmg -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
 #-verbose=3
 }
-
 
 # Windows specific deploy target
 win32 {
