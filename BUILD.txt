@@ -26,6 +26,7 @@ break project dependencies.
 
 Linux
 ------------------------------------------------------
+Install Qt development packages. Version at least 5.5.
 
 Build atools according to instructions in BUILD.txt.
 

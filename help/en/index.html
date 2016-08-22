@@ -12,139 +12,7 @@
     <title>
       Little Navmap User Manual
     </title>
-    <style type="text/css" xml:space="preserve">
-/*<![CDATA[*/
-    BODY {
-    font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
-    margin: 4em;
-    }
-    * {
-    font-size: 16px;
-    }
-    h1, h2, h3, h4, h5, h6 {
-    color: #004703
-    }
-    h1, h2 {
-    margin-top: 1em;
-    margin-bottom: 0.5em;
-    }
-    h3, h4, h5, h6 {
-    margin-top: 0.3em;
-    margin-bottom: 0.2em;
-    }
-    ul, ol {
-    margin-top: 0.3em;
-    margin-bottom: 0.3em;
-    margin-left: 0.2em;
-    line-height: 1.5;
-    width:75%;
-    }
-    img {
-    margin-top: 0.2em;
-    margin-bottom: 0.2em;
-    border-bottom: 2px solid lightgreen;
-    border-top: 2px solid lightgreen;
-    border-left: 2px solid lightgreen;
-    border-right: 2px solid lightgreen;
-    padding-bottom: 4px;
-    padding-top: 4px;
-    padding-left: 4px;
-    padding-right: 4px;
-    background-color: white;
-    }
-    .textimg {
-    margin-top: 0em;
-    margin-bottom: 0em;
-    border-bottom: 0px;
-    border-top: 0px;
-    border-left: 0px;
-    border-right: 0px;
-    padding-bottom: 0px;
-    padding-top: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
-    background-color: white;
-    }
-    p {
-    margin-left: 1.5em;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
-    width:75%;
-    }
-    code {
-    font-size: 16px;
-    font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
-    font-weight: bold;
-    color: darkgreen;
-    background-color: #d0f0d0;
-    width:75%;
-    }
-    pre {
-    margin-left: 1.5em;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
-    font-size: 15px;
-    font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
-    font-weight: bold;
-    }
-    em {
-    font-size: 16px;
-    font-weight: bold;
-    color: darkgreen;
-    }
-
-    h1 {
-    font-size: 34px;
-    border-bottom: 4px solid #004703;
-    width:80%;
-    }
-    h2 {
-    font-size: 28px;
-    border-bottom: 2px solid #004703;
-    width:70%;
-    }
-    h3 {
-    font-size: 24px;
-    border-bottom: 1px solid #004703;
-    width:60%;
-    }
-    h4 {
-    font-size: 20px;
-    border-bottom: 1px solid #004703;
-    width:40%;
-    }
-    h5 {
-    font-size: 18px;
-    }
-    h6 {
-    font-size: 16px;
-    }
-
-    .tabbed20 span {
-    width: 20em;
-    display: inline-block;
-    }
-    .tabbed17 span {
-    width: 17em;
-    display: inline-block;
-    }
-    .tabbed15 span {
-    width: 15em;
-    display: inline-block;
-    }
-    .tabbed12 span {
-    width: 12em;
-    display: inline-block;
-    }
-
-    body.c3 { color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);}
-    img.gplimg {width: 166px; height: 82px;}
-    img.icon {width: 24px; height: 24px;}
-    span.bold {font-weight: bold;}
-    span.capthdg {font-weight: bold; font-style: italic;}
-    span.capt {font-style: italic;}
-    /*]]>*/
-    </style>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
   </head>
   <body class="c3">
     <h1>
@@ -418,7 +286,7 @@
     </h3>
 
     <ul>
-      <li>Support for FSX SE and P3D is untested yet.
+      <li>Support for FSX SE and P3D is yet.
       </li>
 
       <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually as a workaround.
@@ -703,8 +571,8 @@
     </h4>
 
     <p>
-      Zooms to the user aircraft if connected to a flight simulator using <em>Little Navconnect</em> and keeps the
-      aircraft centered.
+      Zooms to the user aircraft if connected to a flight simulator using <a href=
+      "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> and keeps the aircraft centered.
     </p>
 
     <h4>
@@ -933,8 +801,9 @@
     </h4>
 
     <p>
-      Opens the <code>Connect</code> dialog that allows to connect to a Flight Simulator using the <em>Little
-      Navconnect</em> agent. See <a href="#h2connect">Connecting to a Flight Simulator</a> for more information.
+      Opens the <code>Connect</code> dialog that allows to connect to a Flight Simulator using the <a href=
+      "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> agent. See <a href=
+      "#h2connect">Connecting to a Flight Simulator</a> for more information.
     </p>
 
     <h4>
@@ -2200,16 +2069,16 @@
     </h2>
 
     <p>
-      User aircraft information is transfered to <em>Little Navmap</em> by using the <em>Little Navconnect</em> agent
-      on the flying computer which saves the painful setup of a remote SimConnect connection. The procedure is the same
-      if no remote connection is needed. In this case all programs run on the same computer which is both flying and
-      client computer.
+      User aircraft information is transfered to <em>Little Navmap</em> by using the <a href=
+      "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> agent on the flying computer which saves
+      the painful setup of a remote SimConnect connection. The procedure is the same if no remote connection is needed.
+      In this case all programs run on the same computer which is both flying and client computer.
     </p>
 
     <ol>
-      <li>Install <em>Little Navconnect</em> on the computer that is running the flight simulator. Start it and take
-      note of the message that is printed on the logging window. You only need the colored values. You can use the IP
-      address or the hostname. <!--
+      <li>Install <a href="https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> on the computer that
+      is running the flight simulator. Start it and take note of the message that is printed on the logging window. You
+      only need the colored values. You can use the IP address or the hostname. <!--
         <pre xml:space="preserve">
 [2016-07-24 17:31:40] Server is running on hostname <span style=
 "color: blue;">windows-pc</span> (IP address <span style="color: blue;">192.168.1.4</span>) port <span style=
@@ -2221,8 +2090,9 @@
         </p>
 
         <p>
-          <span class="capthdg">Picture above:</span> <span class="capt"><em>Little Navconnect</em> is running and
-          waiting for a Flight Simulator.</span>
+          <span class="capthdg">Picture above:</span> <span class="capt"><a href=
+          "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> is running and waiting for a Flight
+          Simulator.</span>
         </p>
       </li>
 
@@ -2237,7 +2107,7 @@
 
         <p>
           <span class="capthdg">Picture above:</span> <span class="capt">Connect dialog with correct values to access
-          the <em>Little Navconnect</em> shown above.</span>
+          the <a href="https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> shown above.</span>
         </p>
       </li>
 

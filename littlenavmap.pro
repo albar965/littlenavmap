@@ -336,7 +336,8 @@ DISTFILES += \
     help/en/images/loadscenery.png \
     help/en/images/littlenavconnect.png \
     help/en/images/navroute.svg \
-    help/en/images/legend/route_start.png
+    help/en/images/legend/route_start.png \
+    help/en/css/style.css
 
 RESOURCES += \
     littlenavmap.qrc
