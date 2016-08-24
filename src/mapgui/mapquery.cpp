@@ -329,8 +329,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
 const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
                                                          const MapLayer *mapLayer, bool lazy)
 {
-  if(airportCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery airports cache miss";
+  airportCache.updateCache(rect, mapLayer, lazy);
 
   switch(mapLayer->getDataSource())
   {
@@ -353,8 +352,7 @@ const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLa
 const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
                                                            const MapLayer *mapLayer, bool lazy)
 {
-  if(waypointCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery waypoints cache miss";
+  waypointCache.updateCache(rect, mapLayer, lazy);
 
   if(waypointCache.list.isEmpty() && !lazy)
   {
@@ -377,8 +375,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
 const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
-  if(vorCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery vor cache miss";
+  vorCache.updateCache(rect, mapLayer, lazy);
 
   if(vorCache.list.isEmpty() && !lazy)
   {
@@ -401,8 +398,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
 const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                  bool lazy)
 {
-  if(ndbCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery ndb cache miss";
+  ndbCache.updateCache(rect, mapLayer, lazy);
 
   if(ndbCache.list.isEmpty() && !lazy)
   {
@@ -425,8 +421,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
 const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                        bool lazy)
 {
-  if(markerCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery marker cache miss";
+  markerCache.updateCache(rect, mapLayer, lazy);
 
   if(markerCache.list.isEmpty() && !lazy)
   {
@@ -448,8 +443,7 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
 const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                 bool lazy)
 {
-  if(ilsCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery ils cache miss";
+  ilsCache.updateCache(rect, mapLayer, lazy);
 
   if(ilsCache.list.isEmpty() && !lazy)
   {
@@ -471,8 +465,7 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
 const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                        bool lazy)
 {
-  if(airwayCache.updateCache(rect, mapLayer, lazy))
-    qDebug() << "MapQuery airway cache miss";
+  airwayCache.updateCache(rect, mapLayer, lazy);
 
   if(airwayCache.list.isEmpty() && !lazy)
   {
@@ -535,7 +528,6 @@ const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     return runwayOverwiewCache.object(airportId);
   else
   {
-    qDebug() << "runwaysOverwiew cache miss";
     using atools::geo::Pos;
 
     runwayOverviewQuery->bindValue(":airportId", airportId);
@@ -559,7 +551,6 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
     return apronCache.object(airportId);
   else
   {
-    qDebug() << "aprons cache miss";
     apronQuery->bindValue(":airportId", airportId);
     apronQuery->exec();
 
@@ -595,7 +586,6 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
     return parkingCache.object(airportId);
   else
   {
-    qDebug() << "parkings cache miss";
     parkingQuery->bindValue(":airportId", airportId);
     parkingQuery->exec();
 
@@ -619,7 +609,6 @@ const QList<maptypes::MapStart> *MapQuery::getStartPositionsForAirport(int airpo
     return startCache.object(airportId);
   else
   {
-    qDebug() << "starts cache miss";
     startQuery->bindValue(":airportId", airportId);
     startQuery->exec();
 
@@ -744,7 +733,6 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
     return helipadCache.object(airportId);
   else
   {
-    qDebug() << "helipads cache miss";
     helipadQuery->bindValue(":airportId", airportId);
     helipadQuery->exec();
 
@@ -776,7 +764,6 @@ const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
     return taxipathCache.object(airportId);
   else
   {
-    qDebug() << "taxipaths cache miss";
     taxiparthQuery->bindValue(":airportId", airportId);
     taxiparthQuery->exec();
 
@@ -807,7 +794,6 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
     return runwayCache.object(airportId);
   else
   {
-    qDebug() << "runways cache miss";
     runwaysQuery->bindValue(":airportId", airportId);
     runwaysQuery->exec();
 

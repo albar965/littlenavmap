@@ -196,7 +196,6 @@ void WeatherReporter::cancelVatsimReply()
 void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
 {
   // http://metar.vatsim.net/metar.php?id=EDDF
-  qDebug() << "Vatsim Request for" << airportIcao;
   cancelVatsimReply();
 
   vatsimRequestIcao = airportIcao;
@@ -208,7 +207,6 @@ void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
     connect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
   else
     qWarning() << "Vatsim Reply is null";
-  qDebug() << "Vatsim Request for" << airportIcao << "done";
 }
 
 void WeatherReporter::cancelNoaaReply()
@@ -252,7 +250,6 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
   // http://weather.noaa.gov/pub/data/observations/metar/stations/EDDL.TXT
   // http://weather.noaa.gov/pub/data/observations/metar/
   // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
-  qDebug() << "NOAA Request for" << airportIcao;
 
   cancelNoaaReply();
 
@@ -265,7 +262,6 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
     connect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
   else
     qWarning() << "NOAA Reply is null";
-  qDebug() << "NOAA Request for" << airportIcao << "done";
 }
 
 /* Called by network reply signal */
@@ -299,7 +295,6 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
       else
         // Add empty record so we know there is not weather station
         metars.insert(icao, Report());
-      qDebug() << "Request for" << icao << "succeeded.";
       // mainWindow->setStatusMessage(tr("Weather information updated."));
       emit weatherUpdated();
     }

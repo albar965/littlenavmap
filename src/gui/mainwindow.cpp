@@ -1121,7 +1121,6 @@ void MainWindow::updateMapObjectsShown()
 /* Map history has changed */
 void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxIndex)
 {
-  qDebug() << "History changed min" << minIndex << "cur" << curIndex << "max" << maxIndex;
   ui->actionMapBack->setEnabled(curIndex > minIndex);
   ui->actionMapNext->setEnabled(curIndex < maxIndex);
 }
