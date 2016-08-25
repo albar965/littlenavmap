@@ -3061,7 +3061,7 @@
   <action name="actionHelpAbout">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/navroute.svg</normaloff>:/littlenavmap/resources/icons/navroute.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</normaloff>:/littlenavmap/resources/icons/littlenavmap.svg</iconset>
    </property>
    <property name="text">
     <string>&amp;About Little Navmap</string>

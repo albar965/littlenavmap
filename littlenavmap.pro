@@ -335,7 +335,7 @@ DISTFILES += \
     help/en/images/loadsceneryprogress.png \
     help/en/images/loadscenery.png \
     help/en/images/littlenavconnect.png \
-    help/en/images/navroute.svg \
+    help/en/images/littlenavmap.svg \
     help/en/images/legend/route_start.png \
     help/en/css/style.css
 
@@ -434,11 +434,12 @@ unix:!macx {
   deploy.commands += cp -Rvf $${OUT_PWD}/data $$PWD/deploy/LittleNavmap &&
   deploy.commands += cp -Rvf $${OUT_PWD}/help $$PWD/deploy/LittleNavmap &&
   deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $$PWD/desktop/littlenavmap-run.sh $$PWD/deploy/LittleNavmap &&
-  deploy.commands += chmod -v a+x $$PWD/deploy/LittleNavmap/littlenavmap-run.sh &&
+  deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $$PWD/deploy/LittleNavmap &&
+  deploy.commands += chmod -v a+x $$PWD/deploy/LittleNavmap/littlenavmap.sh &&
   deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $$PWD/deploy/LittleNavmap &&
   deploy.commands += cp -vf $${PWD}/README.txt $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $${PWD}/LICENSE.txt $$PWD/deploy/LittleNavmap
+  deploy.commands += cp -vf $${PWD}/LICENSE.txt $$PWD/deploy/LittleNavmap &&
+  deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $$PWD/deploy/LittleNavmap
 }
 
 # Mac specific deploy target
@@ -451,7 +452,7 @@ macx {
 
 # Windows specific deploy target
 win32 {
-  RC_ICONS = resources/icons/navroute.ico
+  RC_ICONS = resources/icons/littlenavmap.ico
 
   # Create backslashed path
   WINPWD=$${PWD}

@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
   splash.show();
   app.processEvents();
 
-  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/navroute.svg"));
+  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
   Application::setApplicationName("Little Navmap");
   Application::setOrganizationName("ABarthel");
   Application::setOrganizationDomain("abarthel.org");

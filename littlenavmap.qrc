@@ -16,7 +16,7 @@
         <file>resources/icons/group-by.svg</file>
         <file>resources/icons/help.svg</file>
         <file>resources/icons/load-all.svg</file>
-        <file>resources/icons/navroute.svg</file>
+        <file>resources/icons/littlenavmap.svg</file>
         <file>resources/icons/reload.svg</file>
         <file>resources/icons/revert.svg</file>
         <file>resources/icons/search.svg</file>
@@ -25,7 +25,7 @@
         <file>resources/config/logging.cfg</file>
         <file>resources/config/navdatareader.cfg</file>
         <file>resources/css/export.css</file>
-        <file>resources/icons/navroute.ico</file>
+        <file>resources/icons/littlenavmap.ico</file>
         <file>resources/icons/AUTHORS.txt</file>
         <file>resources/icons/back.svg</file>
         <file>resources/icons/moredetails.svg</file>
