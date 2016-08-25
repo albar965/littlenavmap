@@ -375,18 +375,18 @@ unix:!macx {
 macx {
   copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rvf \
-    $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libCompassFloatItem.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libGraticulePlugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libKmlPlugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libLatLonPlugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libLicense.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libMapScaleFloatItem.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libNavigationFloatItem.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libOsmPlugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libOverviewMap.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
-    $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libGraticulePlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libKmlPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libLatLonPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libLicense.so \
+    $${MARBLE_BASE}/lib/plugins/libMapScaleFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libNavigationFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libOsmPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libOverviewMap.so \
+    $${MARBLE_BASE}/lib/plugins/libPn2Plugin.so \
+    $${MARBLE_BASE}/lib/plugins/libPntPlugin.so \
     $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
