@@ -109,6 +109,10 @@
       </li>
 
       <li>
+        <a href="#h2knownproblems">Known Problems</a>
+      </li>
+
+      <li>
         <a href="#h2bugreport">How to report a Bug</a>
       </li>
 
@@ -207,15 +211,6 @@
     </p>
 
     <h3>
-      Elevation Data Limitations
-    </h3>
-
-    <p>
-      World coverage for elevation data is not available for all countries and currently ends at 60 degree north, also
-      strange artifacts can occur which I cannot influence (like in Italy south of the Alps).
-    </p>
-
-    <h3>
       Map Legend
     </h3>
 
@@ -278,50 +273,6 @@
           <li>Tower building (only if at least one of the other conditions is met).
           </li>
         </ol>
-      </li>
-    </ul>
-
-    <h3>
-      Known Problems
-    </h3>
-
-    <ul>
-      <li>Support for FSX SE and P3D is yet.
-      </li>
-
-      <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually as a workaround.
-      </li>
-
-      <li>Scrolling can be slighly jerky when using <em>OpenStreetMap</em> or <em>OpenTopoMap</em> together with the
-      spherical map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
-      <code>Mercator</code> projection.
-      </li>
-
-      <li>
-        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up fuzzy when using functionality like <code>Center
-        Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel to fix this.
-      </li>
-
-      <li>Zoom is too fast when using a touchpad with <em>OpenStreetMap</em> or <em>OpenTopoMap</em>. Use the
-      <code>Plain</code> or <code>Simple</code> map themes or use the zoom buttons or the keyboard or the map controls.
-      </li>
-
-      <li>Flight plan and airways are drawn using great circle lines instead of rhumb lines. Distance and course are
-      not affected by this.
-      </li>
-
-      <li>Some Google Earth KML files might not be shown.
-      </li>
-
-      <li>Magnetic variance is partially not set. This is an error in source data and should be fixed with a workaround
-      when loading the database in the future.
-      </li>
-
-      <li>Elevation data coverage is limited up to 60 degrees north and certain countries only. Use the
-      <em>OpenTopoMap</em> which has a better coverage for hill shading and also displays elevation contour lines.
-      </li>
-
-      <li>Elevation data errors (south of the Alps, e.g.).
       </li>
     </ul>
 
@@ -1886,11 +1837,6 @@
     </p>
 
     <p>
-      Note that the world coverage for elevation data is limited here. Also, strange artifacts can occur which I cannot
-      influence (like gaps south of the Alps).
-    </p>
-
-    <p>
       Be aware that the elevation display only covers the flight plan and will not change the depiction if you get off
       flight plan with your aircraft. Also, aircraft climb is not depicted (no aircraft profiles yet). The flight plan
       is only shown at cruise level.
@@ -2125,6 +2071,51 @@
     </ol>
     <!-- ===================================================================== -->
 
+    <h2 id="h2knownproblems">
+      Known Problems
+    </h2>
+
+    <ul>
+      <li>Some KML/KMZ files do not show up on the map.
+      </li>
+
+      <li>World coverage for elevation and <em>OpenStreetMap</em> hillshading data is not available for all countries
+      and currently ends at 60 degree north. Also, artifacts can occur which I cannot influence (like in Italy south of
+      the Alps). Use the <em>OpenTopoMap</em> which has a better coverage for hill shading and also displays elevation
+      contour lines.
+      </li>
+
+      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or <em>OpenTopoMap</em> together with the spherical
+      map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
+      <code>Mercator</code> projection.
+      </li>
+
+      <li>
+        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up fuzzy when using functionality like <code>Center
+        Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel to fix this.
+      </li>
+
+      <li>Zoom is too fast when using a touchpad with <em>OpenStreetMap</em> or <em>OpenTopoMap</em>. Use the
+      <code>Plain</code> or <code>Simple</code> map themes, the overlay zoom buttons, the keyboard (<code>+</code> and
+      <code>-</code>) or the map controls.
+      </li>
+
+      <li>Flight plan and airways are drawn using great circle lines instead of rhumb lines. Distance and course are
+      not affected by this.
+      </li>
+
+      <li>Support for Flight Simulator - Steam Edition, Prepar3D and Active Sky 16 is untested.
+      </li>
+
+      <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually as a workaround.
+      </li>
+
+      <li>Magnetic variance is partially not set (for example VORDME Cambridge Bay YCB). This is an error in the source
+      data and should be fixed with a workaround when loading the database in the future.
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
     <h2 id="h2bugreport">
       How to report a Bug
     </h2>
@@ -2132,8 +2123,11 @@
     <p>
       If something goes wrong send me any involved files (KML, BGL, PLN, etc., if copyright permits), <em>Little
       Navmap</em>'s log file and configuration file which can be located in the about dialog. My e-mail address is
-      shown in the about dialog of <em>Little Navmap</em> as well. Please add all steps that are neccessary to
-      reproduce the error.
+      shown in the about dialog of <em>Little Navmap</em> as well.
+    </p>
+
+    <p>
+      Please add all steps that are neccessary to reproduce the error.
     </p>
 
     <h2 id="h2license">
@@ -2160,5 +2154,6 @@
     <p>
       <img alt="GPL V3" title="GPL V3" class="gplimg" src="images/gpl-v3-logo.svg" />
     </p>
+    <p><br/><br/><br/><br/><br/>Last update 2016-08-25</p>
   </body>
 </html>

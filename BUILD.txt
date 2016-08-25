@@ -2,6 +2,8 @@ Build Instructions
 ------------------------------------------------------
 
 Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.5.
+GIT command line tools are required.
+The marble widget is needed (see https://techbase.kde.org/Marble#Compiling_Marble).
 Additionally my atools static library is needed.
 
 - Clone atools GIT repository
@@ -15,9 +17,8 @@ Windows
 - Configure the projects and enable shadow build for release or debug versions.
 -- For atools use the build directory of e.g.: "C:\Projects\atools\release"
 -- For littlenavmap use the build directory of e.g.: "C:\Projects\littlenavmap\release"
-- Adapt the QT_BIN and GIT_BIN variables in "littlenavmap.pro".
+- Adapt the QT_BIN, GIT_BIN and MARBLE_BASE variables in "littlenavmap.pro".
 - Run qmake from Qt Creator
-- Run lupdate Qt Creator
 - Build and run.
 
 It is important that the shadow build directories reside within the project directories and are
