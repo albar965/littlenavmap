@@ -600,6 +600,9 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="1" column="1">
         <widget class="QSpinBox" name="spinBoxOptionsCacheDiskSize">
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
+         </property>
          <property name="suffix">
           <string> Mb</string>
          </property>
@@ -619,6 +622,9 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        </item>
        <item row="0" column="1">
         <widget class="QSpinBox" name="spinBoxOptionsCacheMemorySize">
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
+         </property>
          <property name="suffix">
           <string> Mb</string>
          </property>
@@ -745,6 +751,9 @@ when transitioning from airport to airway.</string>
          <property name="toolTip">
           <string>The red line value is always rounded up to the next 500 ft.
 Note that this value does not affect flight plan calculation or saving.</string>
+         </property>
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
          </property>
          <property name="suffix">
           <string> ft</string>

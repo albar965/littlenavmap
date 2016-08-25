@@ -351,33 +351,20 @@ ICON=resources/icons/littlenavmap.icns
 # Linux - Copy help and Marble plugins and data
 unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
-  copydata.commands += cp -avfu $${MARBLE_BASE}/lib/marble/plugins/libAprsPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libCompassFloatItem.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libElevationProfileFloatItem.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libElevationProfileMarker.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libGpxPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libGraticulePlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libJsonPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libKmlPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libLatLonPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libLicense.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libLocalDatabasePlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libLogPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libMapQuestPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libMapScaleFloatItem.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libMonavPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libNavigationFloatItem.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOpenCachingComPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOpenDesktopPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOpenRouteServicePlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOsmPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOSRMPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libOverviewMap.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libPositionMarker.so \
-                                $${MARBLE_BASE}/lib/marble/plugins/libProgressFloatItem.so  $$OUT_PWD/plugins &&
+  copydata.commands += cp -avfu \
+    $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libCompassFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libGraticulePlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libKmlPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libLatLonPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libLicense.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libMapScaleFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libNavigationFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libOsmPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libOverviewMap.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
+    $$OUT_PWD/plugins &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD
 
@@ -387,34 +374,20 @@ unix:!macx {
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
-  copydata.commands += cp -Rvf $${MARBLE_BASE}/lib/plugins/libAprsPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
-                                $${MARBLE_BASE}/lib/plugins/libElevationProfileFloatItem.so \
-                                $${MARBLE_BASE}/lib/plugins/libElevationProfileMarker.so \
-                                $${MARBLE_BASE}/lib/plugins/libGpxPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libGraticulePlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libJsonPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libKmlPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libLatLonPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libLicense.so \
-                                $${MARBLE_BASE}/lib/plugins/libLocalDatabasePlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libLogPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libMapQuestPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libMapScaleFloatItem.so \
-                                $${MARBLE_BASE}/lib/plugins/libMonavPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libNavigationFloatItem.so \
-                                $${MARBLE_BASE}/lib/plugins/libOpenCachingComPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libOpenDesktopPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libOpenRouteServicePlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libOsmPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libOSRMPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libOverviewMap.so \
-                                $${MARBLE_BASE}/lib/plugins/libPn2Plugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libPntPlugin.so \
-                                $${MARBLE_BASE}/lib/plugins/libPositionMarker.so \
-                                $${MARBLE_BASE}/lib/plugins/libProgressFloatItem.so \
-                                $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
+  copydata.commands += cp -Rvf \
+    $${MARBLE_BASE}/lib/marble/plugins/libCachePlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libCompassFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libGraticulePlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libKmlPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libLatLonPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libLicense.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libMapScaleFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libNavigationFloatItem.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libOsmPlugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libOverviewMap.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libPn2Plugin.so \
+    $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
+    $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
@@ -473,32 +446,18 @@ win32 {
   deploy.commands = rmdir /s /q $${DEPLOY_DIR_WIN} &
   deploy.commands += mkdir $${DEPLOY_DIR_WIN} &&
   deploy.commands += mkdir $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCachePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCompassFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libElevationProfileFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libElevationProfileMarker$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libGpxPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libGraticulePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libJsonPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libKmlPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLatLonPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLicense$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLocalDatabasePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLogPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libMapQuestPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libMapScaleFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libMonavPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libNavigationFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOpenCachingComPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOpenDesktopPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOpenRouteServicePlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOsmPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOSRMPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOverviewMap$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPn2Plugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPntPlugin$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPositionMarker$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libProgressFloatItem$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCachePlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libCompassFloatItem$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libGraticulePlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libKmlPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLatLonPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libLicense$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libMapScaleFloatItem$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libNavigationFloatItem$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOsmPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOverviewMap$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPn2Plugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
+  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPntPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${WINOUT_PWD}\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
