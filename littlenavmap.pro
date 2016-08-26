@@ -44,13 +44,52 @@ macx {
 # End of configuration section
 # =======================================================================
 
+# =====================================================================
+# Dependencies
+# =====================================================================
+
+# Marble dependencies
+win32 {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  CONFIG(debug, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
+  CONFIG(release, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+# Add dependencies to atools project and its static library to ensure relinking on changes
+DEPENDPATH += $$PWD/../atools/src
+INCLUDEPATH += $$PWD/../atools/src $$PWD/src
+
+CONFIG(debug, debug|release) {
+  LIBS += -L $$PWD/../atools/debug -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-debug/libatools.a
+}
+CONFIG(release, debug|release) {
+  LIBS += -L $$PWD/../atools/release -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-release/libatools.a
+}
+
+unix:!macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
+macx {
+  INCLUDEPATH += $$MARBLE_BASE/include
+  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
+  DEPENDPATH += $$MARBLE_BASE/include
+}
+
 CONFIG += c++11
+
+# =====================================================================
+# Files
+# =====================================================================
 
 # Get the current GIT revision to include it into the code
 win32:DEFINES += GIT_REVISION='\\"$$system($${GIT_BIN} rev-parse --short HEAD)\\"'
 unix:DEFINES += GIT_REVISION='\\"$$system(git rev-parse --short HEAD)\\"'
-
-win32:DEFINES +=_USE_MATH_DEFINES
 
 SOURCES += src/main.cpp\
         src/gui/mainwindow.cpp \
@@ -184,43 +223,6 @@ FORMS    += src/gui/mainwindow.ui \
     src/route/parkingdialog.ui \
     src/connect/connectdialog.ui \
     src/options/options.ui
-
-# =====================================================================
-# Dependencies
-# =====================================================================
-
-# Marble dependencies
-win32 {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  CONFIG(debug, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5d
-  CONFIG(release, debug|release):LIBS += -L$$MARBLE_BASE/ -llibmarblewidget-qt5
-  DEPENDPATH += $$MARBLE_BASE/include
-}
-
-# Add dependencies to atools project and its static library to ensure relinking on changes
-DEPENDPATH += $$PWD/../atools/src
-INCLUDEPATH += $$PWD/../atools/src $$PWD/src
-
-CONFIG(debug, debug|release) {
-  LIBS += -L $$PWD/../atools/debug -l atools
-  PRE_TARGETDEPS += $$PWD/../atools/debug/libatools.a
-}
-CONFIG(release, debug|release) {
-  LIBS += -L $$PWD/../atools/release -l atools
-  PRE_TARGETDEPS += $$PWD/../atools/release/libatools.a
-}
-
-unix:!macx {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
-  DEPENDPATH += $$MARBLE_BASE/include
-}
-
-macx {
-  INCLUDEPATH += $$MARBLE_BASE/include
-  LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
-  DEPENDPATH += $$MARBLE_BASE/include
-}
 
 DISTFILES += \
     uncrustify.cfg \

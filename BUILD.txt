@@ -6,8 +6,10 @@ GIT command line tools are required.
 The marble widget is needed (see https://techbase.kde.org/Marble#Compiling_Marble).
 Additionally my atools static library is needed.
 
-- Clone atools GIT repository
-- Clone littlenavmap GIT repository into the same directory
+- Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
+- Clone littlenavmap GIT repository (git clone https://github.com/albar965/littlenavmap.git) into the same
+  directory as atools
+
 
 Windows
 ------------------------------------------------------
@@ -15,30 +17,34 @@ Windows
 - Get and install Qt Creator from http://www.qt.io.
 - Import atools and littlenavmap into the workspace.
 - Configure the projects and enable shadow build for release or debug versions.
--- For atools use the build directory of e.g.: "C:\Projects\atools\release"
--- For littlenavmap use the build directory of e.g.: "C:\Projects\littlenavmap\release"
+-- Use "../build-%{CurrentProject:Name}-%{CurrentBuild:Name}" for "Default build directory"
+     in the Qt Creator options dialog.
+-- Clone atools from GIT to e.g.: "C:\Projects\atools"
+-- For atools use the build directory of e.g.: "C:\Projects\build-atools-release"
+-- Clone littlenavmap from GIT to e.g.: "C:\Projects\littlenavmap"
+-- For littlenavmap use the build directory of e.g.: "C:\Projects\build-littlenavmap-release"
 - Adapt the QT_BIN, GIT_BIN and MARBLE_BASE variables in "littlenavmap.pro".
 - Run qmake from Qt Creator
 - Build and run.
 
-It is important that the shadow build directories reside within the project directories and are
-named "release" and "debug" depending on desired build. Do not use the default shadow names, this will
-break project dependencies.
+Do not use the default shadow build directory names, this will break project dependencies.
 
-Linux
+Linux / Mac OS X
 ------------------------------------------------------
 Install Qt development packages. Version at least 5.5.
 
 Build atools according to instructions in BUILD.txt.
 
-To build release
-- mkdir littlenavmap/release
-- cd littlenavmap/release
-- qmake ../littlenavmap.pro
+Create all build directories on the same level as the source directories "atools" and "littlenavmap".
+
+To build the release version:
+- mkdir build-littlenavmap-release
+- cd build-littlenavmap-release
+- qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
 - make
 
-To build debug
-- mkdir littlenavmap/debug
-- cd littlenavmap/debug
-- qmake ../littlenavmap.pro CONFIG+=debug
+To build the debug version:
+- mkdir build-littlenavmap-debug
+- cd build-littlenavmap-debug
+- qmake ../littlenavmap/littlenavmap.pro CONFIG+=debug
 - make
