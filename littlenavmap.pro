@@ -27,6 +27,7 @@ win32 {
   GIT_BIN='C:\\Git\\bin\\git'
   CONFIG(debug, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-debug"
   CONFIG(release, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-release"
+
 }
 
 # Linux ==================
@@ -60,15 +61,28 @@ win32 {
 DEPENDPATH += $$PWD/../atools/src
 INCLUDEPATH += $$PWD/../atools/src $$PWD/src
 
+win32 {
+DEFINES += _USE_MATH_DEFINES
 CONFIG(debug, debug|release) {
-  LIBS += -L $$PWD/../atools/debug -l atools
+  LIBS += -L $$PWD/../build-atools-debug/debug -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-debug/debug/libatools.a
+}
+CONFIG(release, debug|release) {
+  LIBS += -L $$PWD/../build-atools-release/release -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-release/release/libatools.a
+}
+}
+
+unix {
+CONFIG(debug, debug|release) {
+  LIBS += -L $$PWD/../build-atools-debug -l atools
   PRE_TARGETDEPS += $$PWD/../build-atools-debug/libatools.a
 }
 CONFIG(release, debug|release) {
-  LIBS += -L $$PWD/../atools/release -l atools
+  LIBS += -L $$PWD/../build-atools-release -l atools
   PRE_TARGETDEPS += $$PWD/../build-atools-release/libatools.a
 }
-
+}
 unix:!macx {
   INCLUDEPATH += $$MARBLE_BASE/include
   LIBS += -L$$MARBLE_BASE/lib -lmarblewidget-qt5 -lz
@@ -435,7 +449,7 @@ win32 {
   WINOUT_PWD=$${OUT_PWD}
   WINOUT_PWD ~= s,/,\\,g
   DEPLOY_DIR_NAME=Little Navmap
-  DEPLOY_DIR_WIN=\"$${WINPWD}\\deploy\\$${DEPLOY_DIR_NAME}\"
+  DEPLOY_DIR_WIN=\"$${WINPWD}\\..\\deploy\\$${DEPLOY_DIR_NAME}\"
   MARBLE_BASE_WIN=\"$${MARBLE_BASE}\"
 
   copydata.commands = xcopy /i /s /e /f /y $${WINPWD}\\help $${WINOUT_PWD}\\help &&
@@ -460,7 +474,7 @@ win32 {
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOverviewMap$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPn2Plugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPntPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${WINOUT_PWD}\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${WINOUT_PWD}\\release\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&
