@@ -1189,6 +1189,9 @@ void MainWindow::mainWindowShown()
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
 
+  // Focus map widget instead of a random widget
+  mapWidget->setFocus();
+
   if(firstApplicationStart)
   {
     firstApplicationStart = false;
