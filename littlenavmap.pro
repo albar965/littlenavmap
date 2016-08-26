@@ -416,19 +416,21 @@ macx {
 
 # Linux specific deploy target
 unix:!macx {
-  deploy.commands = rm -Rfv $$PWD/deploy/LittleNavmap &&
-  deploy.commands += mkdir -pv $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -Rvf $${OUT_PWD}/plugins $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -Rvf $${OUT_PWD}/data $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -Rvf $${OUT_PWD}/help $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $$PWD/deploy/LittleNavmap &&
-  deploy.commands += chmod -v a+x $$PWD/deploy/LittleNavmap/littlenavmap.sh &&
-  deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $${PWD}/README.txt $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $${PWD}/LICENSE.txt $$PWD/deploy/LittleNavmap &&
-  deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $$PWD/deploy/LittleNavmap
+  DEPLOY_DIR=\"$$PWD/../deploy/Little Navmap\"
+
+  deploy.commands = rm -Rfv $${DEPLOY_DIR} &&
+  deploy.commands += mkdir -pv $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.so* $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/plugins $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/data $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/help $${DEPLOY_DIR} &&
+  deploy.commands += cp -Rvf $${OUT_PWD}/littlenavmap $${DEPLOY_DIR} &&
+  deploy.commands += cp -vf $$PWD/desktop/littlenavmap.sh $${DEPLOY_DIR} &&
+  deploy.commands += chmod -v a+x $${DEPLOY_DIR}/littlenavmap.sh &&
+  deploy.commands += cp -vf $${PWD}/CHANGELOG.txt $${DEPLOY_DIR} &&
+  deploy.commands += cp -vf $${PWD}/README.txt $${DEPLOY_DIR} &&
+  deploy.commands += cp -vf $${PWD}/LICENSE.txt $${DEPLOY_DIR} &&
+  deploy.commands += cp -vf $${PWD}/resources/icons/littlenavmap.svg $${DEPLOY_DIR}
 }
 
 # Mac specific deploy target
