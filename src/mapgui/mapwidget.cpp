@@ -756,14 +756,23 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
            << "modifiers" << event->modifiers() << "reason" << event->reason()
            << "pos" << event->pos();
 
+  if(mouseState != mw::NONE)
+    return;
+
   QPoint point;
   if(event->reason() == QContextMenuEvent::Keyboard)
+    // Event does not contain position if triggered by keyboard
     point = mapFromGlobal(QCursor::pos());
   else
     point = event->pos();
 
-  if(mouseState != mw::NONE)
-    return;
+  QPoint menuPos = QCursor::pos();
+  // Do not show context menu if point is not on the map
+  if(!rect().contains(point))
+  {
+    menuPos = mapToGlobal(rect().center());
+    point = QPoint();
+  }
 
   hideTooltip();
 
@@ -808,13 +817,24 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionMapSetMark);
   menu.addAction(ui->actionMapSetHome);
 
-  int distMarkerIndex = screenIndex->getNearestDistanceMarkIndex(point.x(), point.y(), screenSearchDistance);
-  int rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
+  int distMarkerIndex = -1;
+  int rangeMarkerIndex = -1;
+  bool visibleOnMap = false;
+  atools::geo::Pos pos;
 
-  qreal lon, lat;
-  // Cursor can be outside or map region
-  bool visibleOnMap = geoCoordinates(point.x(), point.y(), lon, lat);
-  atools::geo::Pos pos(lon, lat);
+  if(!point.isNull())
+  {
+    qreal lon, lat;
+    // Cursor can be outside or map region
+    visibleOnMap = geoCoordinates(point.x(), point.y(), lon, lat);
+
+    if(visibleOnMap)
+    {
+      pos = atools::geo::Pos(lon, lat);
+      distMarkerIndex = screenIndex->getNearestDistanceMarkIndex(point.x(), point.y(), screenSearchDistance);
+      rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
+    }
+  }
 
   // Disable all menu items that depend on position
   ui->actionMapSetMark->setEnabled(visibleOnMap);
@@ -999,7 +1019,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Show the menu ------------------------------------------------
-  QAction *action = menu.exec(QCursor::pos());
+  QAction *action = menu.exec(menuPos);
 
   if(action == ui->actionMapHideRangeRings)
   {

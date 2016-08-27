@@ -448,6 +448,12 @@ void SearchBase::doubleClick(const QModelIndex& index)
 void SearchBase::contextMenu(const QPoint& pos)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
+
+  QPoint menuPos = QCursor::pos();
+  // Use widget center if position is not inside widget
+  if(!view->rect().contains(view->mapFromGlobal(QCursor::pos())))
+    menuPos = view->mapToGlobal(view->rect().center());
+
   QString fieldData = "Data";
 
   // Save and restore action texts on return
@@ -547,7 +553,7 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionSearchSetMark);
 
-  QAction *action = menu.exec(QCursor::pos());
+  QAction *action = menu.exec(menuPos);
   if(action != nullptr)
   {
     // A menu item was selected

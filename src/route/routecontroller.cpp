@@ -820,9 +820,14 @@ void RouteController::showOnMapMenu()
 
 void RouteController::tableContextMenu(const QPoint& pos)
 {
-  qDebug() << "tableContextMenu";
-
   Ui::MainWindow *ui = mainWindow->getUi();
+
+  QPoint menuPos = QCursor::pos();
+  // Use widget center if position is not inside widget
+  if(!ui->tableViewRoute->rect().contains(ui->tableViewRoute->mapFromGlobal(QCursor::pos())))
+    menuPos = ui->tableViewRoute->mapToGlobal(ui->tableViewRoute->rect().center());
+
+  qDebug() << "tableContextMenu";
 
   // Save text which will be changed below
   atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
@@ -885,7 +890,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     menu.addAction(ui->actionSearchSetMark);
 
-    QAction *action = menu.exec(QCursor::pos());
+    QAction *action = menu.exec(menuPos);
     if(action != nullptr)
     {
       if(action == ui->actionSearchResetView)
