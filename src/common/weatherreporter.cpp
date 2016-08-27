@@ -301,7 +301,10 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
     else if(reply->error() != QNetworkReply::OperationCanceledError)
     {
       metars.insert(icao, Report());
-      qWarning() << "Request for" << icao << "failed. Reason:" << reply->errorString();
+      if(reply->error() == QNetworkReply::ContentNotFoundError)
+        qInfo() << "Request for" << icao << "failed. Reason:" << reply->errorString();
+      else
+        qWarning() << "Request for" << icao << "failed. Reason:" << reply->errorString();
     }
     reply->deleteLater();
   }
