@@ -57,7 +57,7 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBo
   {
     // Airways are visible on map - get them from the cache/database
     const QList<MapAirway> *airways = mapQuery->getAirways(curBox, paintLayer->getMapLayer(), false);
-    const QRect& mapGeo = mapWidget->geometry();
+    const QRect& mapGeo = mapWidget->rect();
 
     for(int i = 0; i < airways->size(); i++)
     {
@@ -124,7 +124,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
   if(scale->isValid())
   {
     Pos p1;
-    const QRect& mapGeo = mapWidget->geometry();
+    const QRect& mapGeo = mapWidget->rect();
 
     for(int i = 0; i < routeMapObjects.size(); i++)
     {

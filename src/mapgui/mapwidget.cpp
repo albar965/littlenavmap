@@ -489,27 +489,32 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                                simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
 
   if(wasEmpty != aircraftTrack.isEmpty())
-    // We have a track update toolbar and menu
+    // We have a track - update toolbar and menu
     emit updateActionStates();
 
   if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT)
   {
     // Show aircraft is enabled
 
+    bool centerAircraft = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
+
     // Get delta values for update rate
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
     using atools::almostNotEqual;
     if(!lastSimData.getPosition().isValid() ||
-       diff.manhattanLength() >= deltas.manhattanLengthDelta ||
+       diff.manhattanLength() >= deltas.manhattanLengthDelta || // Screen position has changed
        almostNotEqual(lastSimData.getHeadingDegMag(),
-                      simData.getHeadingDegMag(), deltas.headingDelta) ||
+                      simData.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
        almostNotEqual(lastSimData.getIndicatedSpeedKts(),
                       simData.getIndicatedSpeedKts(),
-                      deltas.speedDelta) ||
+                      deltas.speedDelta) || // Speed has changed
        almostNotEqual(lastSimData.getPosition().getAltitude(),
                       simData.getPosition().getAltitude(),
-                      deltas.altitudeDelta))
+                      deltas.altitudeDelta) || // Altitude has changed
+       (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
+       (!rect().contains(curPos) && centerAircraft) // Not in screen rectangle but centering required
+       )
     {
       lastSimData = simulatorData;
 
@@ -518,10 +523,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       int dx = static_cast<int>(width() * boxFactor);
       int dy = static_cast<int>(height() * boxFactor);
 
-      QRect widgetRect = geometry();
+      QRect widgetRect = rect();
       widgetRect.adjust(dx, dy, -dx, -dy);
 
-      if(!widgetRect.contains(curPos) && mainWindow->getUi()->actionMapAircraftCenter->isChecked())
+      if(!widgetRect.contains(curPos) && centerAircraft && mouseState == mw::NONE)
         centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
       else
         update();
