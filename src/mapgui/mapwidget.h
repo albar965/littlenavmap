@@ -233,7 +233,7 @@ public:
   void mainWindowShown();
 
   /* End all distance line and route dragging modes */
-  void cancelAllDrag();
+  void cancelDragAll();
 
   /* Stores delta values depending on fast or slow update. User aircraft is only updated if
    * delta values are exceeded. */

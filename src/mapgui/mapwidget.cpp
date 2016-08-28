@@ -249,7 +249,7 @@ void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to,
 
 void MapWidget::preDatabaseLoad()
 {
-  cancelAllDrag();
+  cancelDragAll();
   databaseLoadStatus = true;
   paintLayer->preDatabaseLoad();
 }
@@ -467,7 +467,7 @@ void MapWidget::routeChanged(bool geometryChanged)
 {
   if(geometryChanged)
   {
-    cancelAllDrag();
+    cancelDragAll();
     screenIndex->updateRouteScreenGeometry();
     update();
   }
@@ -1295,7 +1295,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   return false;
 }
 
-void MapWidget::cancelAllDrag()
+void MapWidget::cancelDragAll()
 {
   cancelDragRoute();
   cancelDragDistance();
@@ -1303,6 +1303,8 @@ void MapWidget::cancelAllDrag()
   mouseState = mw::NONE;
   setViewContext(Marble::Still);
   update();
+
+  setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 /* Stop route editing and reset all coordinates */
@@ -1445,6 +1447,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
+
+    setContextMenuPolicy(Qt::DefaultContextMenu);
   }
   else if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
@@ -1472,6 +1476,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
+
+    setContextMenuPolicy(Qt::DefaultContextMenu);
   }
   else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {
@@ -1552,6 +1558,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 {
   qDebug() << "mouseDoubleClickEvent";
 
+  if(mouseState != mw::NONE)
+    return;
+
   maptypes::MapSearchResult mapSearchResult;
   screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
@@ -1584,15 +1593,13 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
   Q_UNUSED(event);
 
   if(!(mouseState & mw::DRAG_POST_MENU))
-    cancelAllDrag();
+    cancelDragAll();
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
-  Q_UNUSED(event);
-
   if(event->key() == Qt::Key_Escape)
-    cancelAllDrag();
+    cancelDragAll();
 }
 
 const RouteMapObjectList& MapWidget::getRouteHighlights() const

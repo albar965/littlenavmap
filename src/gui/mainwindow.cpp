@@ -694,7 +694,7 @@ void MainWindow::changeMapProjection(int index)
 {
   Q_UNUSED(index);
 
-  mapWidget->cancelAllDrag();
+  mapWidget->cancelDragAll();
 
   Marble::Projection proj = static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
   qDebug() << "Changing projection to" << proj;
@@ -712,7 +712,7 @@ void MainWindow::changeMapTheme(int index)
 {
   Q_UNUSED(index);
 
-  mapWidget->cancelAllDrag();
+  mapWidget->cancelDragAll();
 
   QString theme = mapThemeComboBox->currentData().toString();
   qDebug() << "Changing theme to" << theme << "index" << index;
