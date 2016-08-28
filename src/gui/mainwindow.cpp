@@ -669,11 +669,13 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
 
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          infoController, &InfoController::disconnectedFromSimulator);
   connect(connectClient, &ConnectClient::connectedToSimulator,
           infoController, &InfoController::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          infoController, &InfoController::disconnectedFromSimulator);
 
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          mapWidget, &MapWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           mapWidget, &MapWidget::disconnectedFromSimulator);
 
@@ -1258,7 +1260,7 @@ void MainWindow::updateActionStates()
   }
 
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
-  ui->actionMapShowAircraftTrack->setEnabled(connectClient->isConnected());
+  ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 

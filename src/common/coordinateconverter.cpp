@@ -83,8 +83,8 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
                                bool *isHidden) const
 {
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0,
-                                                 DEG), x, y, size, &hidden);
+  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(),
+                                                 coords.getLatY(), 0, DEG), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;

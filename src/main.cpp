@@ -27,6 +27,7 @@
 #include "gui/errorhandler.h"
 #include "db/databasemanager.h"
 #include "common/settingsmigrate.h"
+#include "common/aircrafttrack.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -53,16 +54,23 @@ int main(int argc, char *argv[])
   Q_INIT_RESOURCE(atools);
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<FsPathType>();
+
+  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   qRegisterMetaTypeStreamOperators<SimulatorTypeMap>();
-  qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
-  qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
+
+  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
+
+  qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<maptypes::DistanceMarker> >();
+
+  qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<maptypes::RangeMarker> >();
+
+  qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
+  qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
 
   // Set application information
   int retval = 0;

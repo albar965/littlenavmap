@@ -469,52 +469,27 @@ MapAirwayType airwayTypeFromString(const QString& typeStr)
 
 QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj)
 {
-  dataStream >> obj.text >> obj.ranges;
-
-  float lon, lat;
-  dataStream >> lon >> lat;
-  obj.center = atools::geo::Pos(lon, lat);
-
-  qint32 t;
-  dataStream >> t;
-  obj.type = static_cast<maptypes::MapObjectTypes>(t);
+  qint32 types;
+  dataStream >> obj.text >> obj.ranges >> obj.center >> types;
+  obj.type = static_cast<maptypes::MapObjectTypes>(types);
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj)
 {
-  dataStream << obj.text
-  << obj.ranges
-  << obj.center.getLonX() << obj.center.getLatY()
-  << static_cast<qint32>(obj.type);
+  dataStream << obj.text << obj.ranges << obj.center << static_cast<qint32>(obj.type);
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj)
 {
-  dataStream >> obj.text >> obj.color;
-
-  float lon, lat;
-  dataStream >> lon >> lat;
-  obj.from = atools::geo::Pos(lon, lat);
-  dataStream >> lon >> lat;
-  obj.to = atools::geo::Pos(lon, lat);
-
-  dataStream >> obj.magvar;
-  qint32 t;
-  dataStream >> t;
-  dataStream >> obj.isRhumbLine >> obj.hasMagvar;
-
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.isRhumbLine >> obj.hasMagvar;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj)
 {
-  dataStream << obj.text << obj.color
-  << obj.from.getLonX() << obj.from.getLatY() << obj.to.getLonX() << obj.to.getLatY();
-
-  dataStream << obj.magvar << obj.isRhumbLine << obj.hasMagvar;
-
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.isRhumbLine << obj.hasMagvar;
   return dataStream;
 }
 

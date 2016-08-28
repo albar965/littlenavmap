@@ -17,6 +17,11 @@
 
 #include "common/aircrafttrack.h"
 
+#include "settings/settings.h"
+#include "common/constants.h"
+
+#include <QDataStream>
+
 AircraftTrack::AircraftTrack()
 {
 
@@ -27,11 +32,50 @@ AircraftTrack::~AircraftTrack()
 
 }
 
+namespace at {
+
+QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& obj)
+{
+  dataStream >> obj.pos >> obj.onGround;
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& obj)
+{
+  dataStream << obj.pos << obj.onGround;
+  return dataStream;
+}
+
+}
+
+void AircraftTrack::saveState()
+{
+  atools::settings::Settings& s = atools::settings::Settings::instance();
+
+  QVariant var = QVariant::fromValue<QList<at::AircraftTrackPos> >(*this);
+  s.setValueVar(lnm::MAP_AIRCRAFT_TRACK, var);
+}
+
+void AircraftTrack::restoreState()
+{
+  atools::settings::Settings& s = atools::settings::Settings::instance();
+  clear();
+
+  QVariant var = s.valueVar(lnm::MAP_AIRCRAFT_TRACK);
+  QList<at::AircraftTrackPos> list = var.value<QList<at::AircraftTrackPos> >();
+  append(list);
+}
+
 void AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
 {
   // Use a larger distance on ground before storing position
   float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_1M : atools::geo::Pos::POS_EPSILON_100M;
 
   if(isEmpty() || !pos.almostEqual(last().pos, epsilon))
+  {
+    if(size() > MAX_TRACK_ENTRIES)
+      removeFirst();
+
     append({pos, onGround});
+  }
 }

@@ -26,6 +26,7 @@
 #include "geo/calculations.h"
 #include "common/maptools.h"
 #include "common/mapcolors.h"
+#include "connect/connectclient.h"
 #include "route/routecontroller.h"
 #include "atools.h"
 #include "mapgui/mapquery.h"
@@ -304,6 +305,7 @@ void MapWidget::saveState()
 
   history.saveState(lnm::MAP_HISTORY);
   screenIndex->saveState();
+  aircraftTrack.saveState();
 }
 
 void MapWidget::restoreState()
@@ -340,6 +342,7 @@ void MapWidget::restoreState()
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
   screenIndex->restoreState();
+  aircraftTrack.restoreState();
 }
 
 void MapWidget::mainWindowShown()
@@ -571,11 +574,16 @@ void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
   profileRubberRect = nullptr;
 }
 
+void MapWidget::connectedToSimulator()
+{
+  aircraftTrack.clearTrack();
+  update();
+}
+
 void MapWidget::disconnectedFromSimulator()
 {
   // Clear all data on disconnect
   simData = atools::fs::sc::SimConnectData();
-  aircraftTrack.clear();
   update();
 }
 
@@ -1639,9 +1647,14 @@ void MapWidget::updateTooltip()
     hideTooltip();
 }
 
+bool MapWidget::isConnected() const
+{
+  return mainWindow->getConnectClient()->isConnected();
+}
+
 void MapWidget::deleteAircraftTrack()
 {
-  aircraftTrack.clear();
+  aircraftTrack.clearTrack();
   emit updateActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Aircraft track removed from map.")));

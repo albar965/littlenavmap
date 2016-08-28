@@ -117,6 +117,9 @@ public:
   /* Stop showing aircraft position on map */
   void disconnectedFromSimulator();
 
+  /* Clear previous aircraft track */
+  void connectedToSimulator();
+
   /* Add a KML file to map display. The file will be restored on program startup */
   bool addKmlFile(const QString& kmlFile);
 
@@ -223,6 +226,8 @@ public:
   {
     return mainWindow;
   }
+
+  bool isConnected() const;
 
   const QStringList& getKmlFiles() const
   {

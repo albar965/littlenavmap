@@ -47,6 +47,7 @@ const QString MAINWINDOW_FIRSTAPPLICATIONSTART = "MainWindow/FirstApplicationSta
 const QString MAINWINDOW_WIDGET = "MainWindow/Widget";
 const QString MAP_DETAILFACTOR = "Map/DetailFactor";
 const QString MAP_DISTANCEMARKERS = "Map/DistanceMarkers";
+const QString MAP_AIRCRAFT_TRACK = "Map/AircraftTrack";
 const QString MAP_HISTORY = "Map/History";
 const QString MAP_HOMEDISTANCE = "Map/HomeDistance";
 const QString MAP_HOMELATY = "Map/HomeLatY";

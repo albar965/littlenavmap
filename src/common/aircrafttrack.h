@@ -20,23 +20,39 @@
 
 #include "geo/pos.h"
 
+namespace at {
+/* Track position. Can be converted to QVariant and thus be saved to settings */
 struct AircraftTrackPos
 {
   atools::geo::Pos pos;
   bool onGround;
 };
 
-Q_DECLARE_TYPEINFO(AircraftTrackPos, Q_PRIMITIVE_TYPE);
+QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& obj);
+QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& obj);
+
+}
+
+Q_DECLARE_TYPEINFO(at::AircraftTrackPos, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(at::AircraftTrackPos);
 
 /*
  * Stores the track of the flight simulator aircraft
  */
 class AircraftTrack :
-  public QList<AircraftTrackPos>
+  private QList<at::AircraftTrackPos>
 {
 public:
   AircraftTrack();
   ~AircraftTrack();
+
+  void saveState();
+  void restoreState();
+
+  void clearTrack()
+  {
+    clear();
+  }
 
   /*
    * Add a track position. Accurracy depends on the ground flag which will cause more
@@ -44,6 +60,14 @@ public:
    */
   void appendTrackPos(const atools::geo::Pos& pos, bool onGround);
 
+  /* Pull only needed methods into public space */
+  using QList::isEmpty;
+  using QList::first;
+  using QList::last;
+  using QList::size;
+  using QList::at;
+
+  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 1000;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

@@ -52,7 +52,8 @@ void MapPainterAircraft::render(const PaintContext *context)
     paintAircraftTrack(context->painter);
 
   if(context->objectTypes.testFlag(AIRCRAFT))
-    paintAircraft(context);
+    if(mapWidget->isConnected())
+      paintAircraft(context);
 
   context->painter->restore();
 }
@@ -122,39 +123,48 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
     QPolygon polyline;
 
     painter->setPen(mapcolors::aircraftTrackPen);
-    bool lastVisible = true;
-    int lastX = -1, lastY = -1;
+    bool lastVisible = false;
 
-    for(int i = 0; i < aircraftTrack.size(); i++)
+    int x1, y1;
+    int x2 = -1, y2 = -1;
+    QRect vpRect(painter->viewport());
+    wToS(aircraftTrack.first().pos, x1, y1);
+
+    for(int i = 1; i < aircraftTrack.size(); i++)
     {
-      const AircraftTrackPos& trackPos = aircraftTrack.at(i);
-      int x, y;
-      bool visible = wToS(trackPos.pos, x, y);
+      const at::AircraftTrackPos& trackPos = aircraftTrack.at(i);
+      wToS(trackPos.pos, x2, y2);
 
-      if(visible || lastVisible)
+      QRect r(QPoint(x1, y1), QPoint(x2, y2));
+      // Current line is visible (most likely)
+      bool nowVisible = r.normalized().intersects(vpRect);
+
+      if(lastVisible || nowVisible)
       {
-        // Only draw if both points are visible - this ok for short line segments
-        if(i == 0 || i == aircraftTrack.size() - 1 ||
-           atools::geo::manhattanDistance(x, y, lastX, lastY) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
+        // Last line or this one are visible add coords
+        if(atools::geo::manhattanDistance(x1, y1, x2, y2) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
         {
-          polyline.append(QPoint(x, y));
-
-          if(!visible && lastVisible)
-          {
-            // End a segment and paint
-            painter->drawPolyline(polyline);
-            polyline.clear();
-          }
-
-          lastVisible = visible;
-          lastX = x;
-          lastY = y;
+          polyline.append(QPoint(x1, y1));
+          x1 = x2;
+          y1 = y2;
         }
       }
+
+      if(lastVisible && !nowVisible)
+      {
+        // Not visible anymore draw previous line segment
+        painter->drawPolyline(polyline);
+        polyline.clear();
+      }
+
+      lastVisible = nowVisible;
     }
 
     // Draw rest
     if(!polyline.isEmpty())
+    {
+      polyline.append(QPoint(x2, y2));
       painter->drawPolyline(polyline);
+    }
   }
 }

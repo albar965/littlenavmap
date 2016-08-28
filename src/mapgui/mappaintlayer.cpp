@@ -299,8 +299,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       mapPainterRoute->render(&context);
       mapPainterMark->render(&context);
 
-      if(mapWidget->getParentWindow()->getConnectClient()->isConnected())
-        mapPainterAircraft->render(&context);
+      mapPainterAircraft->render(&context);
     }
   }
 
