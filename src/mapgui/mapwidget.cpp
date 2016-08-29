@@ -1311,8 +1311,6 @@ void MapWidget::cancelDragAll()
   mouseState = mw::NONE;
   setViewContext(Marble::Still);
   update();
-
-  setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 /* Stop route editing and reset all coordinates */
@@ -1455,8 +1453,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
-
-    setContextMenuPolicy(Qt::DefaultContextMenu);
   }
   else if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
@@ -1484,8 +1480,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     mouseState = mw::NONE;
     setViewContext(Marble::Still);
     update();
-
-    setContextMenuPolicy(Qt::DefaultContextMenu);
   }
   else if(event->button() == Qt::LeftButton && (event->pos() - mouseMoved).manhattanLength() < 4)
   {
@@ -1608,6 +1602,10 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
   if(event->key() == Qt::Key_Escape)
     cancelDragAll();
+
+  if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
+    // First menu key press after dragging - enable context menu again
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 const RouteMapObjectList& MapWidget::getRouteHighlights() const
