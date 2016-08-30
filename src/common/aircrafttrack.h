@@ -46,6 +46,7 @@ public:
   AircraftTrack();
   ~AircraftTrack();
 
+  /* Saves and restores track into a separate file (little_navmap.track) */
   void saveState();
   void restoreState();
 
@@ -57,8 +58,9 @@ public:
   /*
    * Add a track position. Accurracy depends on the ground flag which will cause more
    * or less points skipped.
+   * @return true if the track was pruned
    */
-  void appendTrackPos(const atools::geo::Pos& pos, bool onGround);
+  bool appendTrackPos(const atools::geo::Pos& pos, bool onGround);
 
   /* Pull only needed methods into public space */
   using QList::isEmpty;
@@ -67,7 +69,10 @@ public:
   using QList::size;
   using QList::at;
 
-  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 1000;
+  /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
+  static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 10000;
+  /* Number of entries to remove at once */
+  static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

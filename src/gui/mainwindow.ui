@@ -546,10 +546,10 @@
              <item row="2" column="2">
               <widget class="QCheckBox" name="checkBoxAirportApprSearch">
                <property name="toolTip">
-                <string>Airports with approaches</string>
+                <string>Airports with approach procedures</string>
                </property>
                <property name="statusTip">
-                <string>Airports with approaches</string>
+                <string>Airports with approach procedures</string>
                </property>
                <property name="text">
                 <string>A&amp;pproach</string>

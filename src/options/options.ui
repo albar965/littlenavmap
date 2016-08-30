@@ -607,7 +607,7 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           <string> Mb</string>
          </property>
          <property name="minimum">
-          <number>100</number>
+          <number>500</number>
          </property>
          <property name="maximum">
           <number>8000</number>

@@ -488,8 +488,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
 
   bool wasEmpty = aircraftTrack.isEmpty();
-  aircraftTrack.appendTrackPos(simulatorData.getPosition(),
-                               simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
+  bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getPosition(),
+                                                  simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
+
+  if(trackPruned)
+    emit aircraftTrackPruned();
 
   if(wasEmpty != aircraftTrack.isEmpty())
     // We have a track - update toolbar and menu

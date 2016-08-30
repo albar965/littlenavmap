@@ -54,8 +54,14 @@ public:
   /* Update user aircraft on profile display */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  /* Track was shortened and needs a full update */
+  void aircraftTrackPruned();
+
   /* Stops showing the user aircraft */
   void disconnectedFromSimulator();
+
+  /* Deletes track */
+  void connectedToSimulator();
 
   /* Disables or enables aircraft and/or track display */
   void updateProfileShowFeatures();

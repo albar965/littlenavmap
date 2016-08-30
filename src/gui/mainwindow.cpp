@@ -679,8 +679,12 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           mapWidget, &MapWidget::disconnectedFromSimulator);
 
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          profileWidget, &ProfileWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           profileWidget, &ProfileWidget::disconnectedFromSimulator);
+
+  connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
   connect(weatherReporter, &WeatherReporter::weatherUpdated,
           mapWidget, &MapWidget::updateTooltip);

@@ -18,9 +18,9 @@
 #include "common/aircrafttrack.h"
 
 #include "settings/settings.h"
-#include "common/constants.h"
 
 #include <QDataStream>
+#include <QFile>
 
 AircraftTrack::AircraftTrack()
 {
@@ -50,32 +50,56 @@ QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& obj
 
 void AircraftTrack::saveState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
+  QFile trackFile(atools::settings::Settings::getConfigFilename(".track"));
 
-  QVariant var = QVariant::fromValue<QList<at::AircraftTrackPos> >(*this);
-  s.setValueVar(lnm::MAP_AIRCRAFT_TRACK, var);
+  if(trackFile.open(QIODevice::WriteOnly))
+  {
+    // No need for versioning here - if version is older migrate::checkAndMigrateSettings()
+    // will simply delete the file
+    QDataStream out(&trackFile);
+    out.setVersion(QDataStream::Qt_5_5);
+    out << *this;
+    trackFile.close();
+  }
+  else
+    qWarning() << "Cannot write track" << trackFile.fileName() << ":" << trackFile.errorString();
 }
 
 void AircraftTrack::restoreState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
   clear();
 
-  QVariant var = s.valueVar(lnm::MAP_AIRCRAFT_TRACK);
-  QList<at::AircraftTrackPos> list = var.value<QList<at::AircraftTrackPos> >();
-  append(list);
+  QFile trackFile(atools::settings::Settings::getConfigFilename(".track"));
+  if(trackFile.exists())
+  {
+    if(trackFile.open(QIODevice::ReadOnly))
+    {
+      QDataStream in(&trackFile);
+      in.setVersion(QDataStream::Qt_5_5);
+      in >> *this;
+      trackFile.close();
+    }
+    else
+      qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
+  }
 }
 
-void AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
+bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
 {
+  bool pruned = false;
   // Use a larger distance on ground before storing position
   float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_1M : atools::geo::Pos::POS_EPSILON_100M;
 
   if(isEmpty() || !pos.almostEqual(last().pos, epsilon))
   {
     if(size() > MAX_TRACK_ENTRIES)
-      removeFirst();
+    {
+      for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+        removeFirst();
+      pruned = true;
+    }
 
     append({pos, onGround});
   }
+  return pruned;
 }

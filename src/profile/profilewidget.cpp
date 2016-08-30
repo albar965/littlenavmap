@@ -101,6 +101,15 @@ void ProfileWidget::routeChanged(bool geometryChanged)
   }
 }
 
+void ProfileWidget::aircraftTrackPruned()
+{
+  if(!widgetVisible)
+    return;
+
+  updateScreenCoords();
+  update();
+}
+
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   if(databaseLoadStatus)
@@ -167,6 +176,11 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   }
   if(updateWidget)
     update();
+}
+
+void ProfileWidget::connectedToSimulator()
+{
+  disconnectedFromSimulator();
 }
 
 void ProfileWidget::disconnectedFromSimulator()

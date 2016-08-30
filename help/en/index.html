@@ -523,7 +523,9 @@
 
     <p>
       Zooms to the user aircraft if connected to a flight simulator using <a href=
-      "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> and keeps the aircraft centered.
+      "https://albar965.github.io/littlenavconnect.html">Little Navconnect</a> and keeps the aircraft centered. The
+      centering the aircraft can be changed in the <code>Options</code> dialog on the <code>Simulator Aircraft</code>
+      tab.
     </p>
 
     <h4>
@@ -531,7 +533,8 @@
     </h4>
 
     <p>
-      Removes the user aircraft trail if connected to a flight simulator.
+      Removes the user aircraft trail. It is also deleted when connecting to a flight simulator. The trail is saved and
+      will be reloaded on program startup.
     </p>
 
     <h4>
@@ -688,12 +691,40 @@
 
     <h4>
       Show VOR Stations, Show NDB Stations, Show Waypoints, Show ILS Feathers, Show Victor/Jet Airways, Show Flight
-      Plan, Show Aircraft Trail
+      Plan
     </h4>
 
     <p>
       Shows or hides these facilities or navaids on the map. Navaids might be hidden on the map depending on zoom
-      distance. The flight plan and aircraft trail are shown independent of the zoom distance.
+      distance. The flight plan is shown independent of the zoom distance.
+    </p>
+
+    <h4>
+      Show Aircraft
+    </h4>
+
+    <p>
+      Shows the user aircraft if connected to the simulator. The user aircraft is always shown independent of the zoom
+      distance.
+    </p>
+
+    <h4>
+      Show Aircraft Trail
+    </h4>
+
+    <p>
+      Shows the user aircraft trail. The trail is always shown independent of the zoom distance. It is saved and will
+      be reloaded on program startup.
+    </p>
+
+    <p>
+      The trail is deleted when connecting to a flight simulator or it can be deleted manually by selecting <code>Main
+      Menu</code> -&gt; <code>Map</code> -&gt; <code>Delete Aircraft Trail</code>.
+    </p>
+
+    <p>
+      The size of the trail is limited for performance reasons. The limitation will simply remove points from the
+      beginning when it gets too long.
     </p>
 
     <h4>
@@ -2096,7 +2127,7 @@
       </li>
 
       <li>
-        <em>OpenTopoMap</em> has names garbled in some asian countries.
+        <em>OpenTopoMap</em> has garbled names in some asian countries.
       </li>
 
       <li>Zoom can be too fast when using a touchpad with <em>OpenStreetMap</em> or <em>OpenTopoMap</em>. Use the

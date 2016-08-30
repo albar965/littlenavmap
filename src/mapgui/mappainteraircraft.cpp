@@ -141,13 +141,16 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 
       if(lastVisible || nowVisible)
       {
-        // Last line or this one are visible add coords
-        if(atools::geo::manhattanDistance(x1, y1, x2, y2) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
+        if(!polyline.isEmpty())
         {
-          polyline.append(QPoint(x1, y1));
-          x1 = x2;
-          y1 = y2;
+          const QPoint& lastPt = polyline.last();
+          // Last line or this one are visible add coords
+          if(atools::geo::manhattanDistance(lastPt.x(), lastPt.y(), x2, y2) > AIRCRAFT_TRACK_MIN_LINE_LENGTH)
+            polyline.append(QPoint(x1, y1));
         }
+        else
+          // Always add first visible point
+          polyline.append(QPoint(x1, y1));
       }
 
       if(lastVisible && !nowVisible)
@@ -158,6 +161,8 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
       }
 
       lastVisible = nowVisible;
+      x1 = x2;
+      y1 = y2;
     }
 
     // Draw rest

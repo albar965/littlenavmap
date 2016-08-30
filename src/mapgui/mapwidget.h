@@ -286,6 +286,9 @@ signals:
   /* Show information about objects from single click or context menu */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Aircraft track was pruned and needs to be updated */
+  void aircraftTrackPruned();
+
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
   void setDetailLevel(int factor);
