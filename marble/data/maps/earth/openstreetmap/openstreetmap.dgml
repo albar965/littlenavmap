@@ -32,15 +32,23 @@
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
           <projection name="Mercator"/>
-          <!-- OSM servers according to http://wiki.openstreetmap.org/wiki/Servers -->
-          <!-- <downloadUrl protocol="http" host="orm.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
-          <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/>
 
-          <!-- was 20 - adapted to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
-          <downloadPolicy usage="Browse" maximumConnections="2"/>
+          <!-- Free MapTiles CDN https://maptiles.xyz -->
+          <downloadUrl protocol="http" host="a.osm.maptiles.xyz" path="/"/>
+          <downloadUrl protocol="http" host="b.osm.maptiles.xyz" path="/"/>
+          <downloadUrl protocol="http" host="c.osm.maptiles.xyz" path="/"/>
+
+          <!-- OSM servers according to http://wiki.openstreetmap.org/wiki/Servers -->
+          <!-- <downloadUrl protocol="http" host="orm.openstreetmap.org" path="/"/>
+           <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
+
+          <!-- OSM content delivery network proxy servers seem to stall connections -->
+          <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/>
+          <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/> -->
+
+          <!-- Use 2 for adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
