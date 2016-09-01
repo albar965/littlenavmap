@@ -1861,16 +1861,21 @@
     </p>
 
     <p>
-      Elevation processing is done in the background since it is CPU intense. This background process is started after
-      creating or changing the flight plan and when new data arrives. The elevation display will be updated accordingly
-      whenever new data is available. Close the <code>Flight Plan Elevation Profile</code> window if you think this
-      causes performance problems. All updates will stop once the window is closed.
+      Elevation processing is done in the background since data has to be downloaded and it is CPU intense. Therefore,
+      the udpdate of the elevation display can take several seconds up to half a minute. This background update is
+      started after creating or changing the flight plan and when new data arrives. The display will be updated
+      accordingly whenever new data is available.
     </p>
 
     <p>
-      Be aware that the elevation display only covers the flight plan and will not change the depiction if you get off
-      flight plan with your aircraft. Also, aircraft climb is not depicted (no aircraft profiles yet). The flight plan
-      is only shown at cruise level.
+      Close the <code>Flight Plan Elevation Profile</code> window if you think this causes performance problems. All
+      updates will stop once the window is closed.
+    </p>
+
+    <p>
+      Be aware that the elevation display covers only the flight plan and will not change the depiction if you get off
+      flight plan with your simulator aircraft. Also, aircraft climb is not shown (no aircraft profiles yet). The
+      flight plan is only shown at cruise level.
     </p>
 
     <p>
@@ -2208,7 +2213,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-08-31
+      Last update 2016-09-01
     </p>
   </body>
 </html>

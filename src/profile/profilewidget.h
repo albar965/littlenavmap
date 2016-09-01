@@ -132,8 +132,10 @@ private:
   const int X0 = 65; /* Left margin inside widget */
   const int Y0 = 14; /* Top margin inside widget */
 
-  /* If any change arrives the thread will start after this delay */
-  static Q_DECL_CONSTEXPR int UPDATE_TIMEOUT_MS = 1000;
+  /* Thread will start after this delay if route was changed */
+  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 2000;
+  /* Thread will start after this delay if an elevation update arrives */
+  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_UPDATE_TIMEOUT_MS = 15000;
 
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;

@@ -82,25 +82,6 @@ ProfileWidget::~ProfileWidget()
   terminateThread();
 }
 
-void ProfileWidget::routeChanged(bool geometryChanged)
-{
-  if(!widgetVisible)
-    return;
-
-  if(geometryChanged)
-  {
-    // Start thread after delay to calculate new data
-    qDebug() << "Profile route geometry changed";
-    updateTimer->start(UPDATE_TIMEOUT_MS);
-  }
-  else
-  {
-    // Only update screen
-    updateScreenCoords();
-    update();
-  }
-}
-
 void ProfileWidget::aircraftTrackPruned()
 {
   if(!widgetVisible)
@@ -487,6 +468,40 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 }
 
+/* Update signal from Marble elevation model */
+void ProfileWidget::elevationUpdateAvailable()
+{
+  if(!widgetVisible || databaseLoadStatus)
+    return;
+
+  // Do not terminate thread here since this can lead to starving updates
+
+  // Start thread after long delay to calculate new data
+  updateTimer->start(ELEVATION_CHANGE_UPDATE_TIMEOUT_MS);
+}
+
+void ProfileWidget::routeChanged(bool geometryChanged)
+{
+  if(!widgetVisible || databaseLoadStatus)
+    return;
+
+  if(geometryChanged)
+  {
+    // Terminate and wait for thread
+    terminateThread();
+    terminateThreadSignal = false;
+
+    // Start thread after short delay to calculate new data
+    updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
+  }
+  else
+  {
+    // Only update screen
+    updateScreenCoords();
+    update();
+  }
+}
+
 /* Called by updateTimer after any route or elevation updates and starts the thread */
 void ProfileWidget::updateTimeout()
 {
@@ -609,16 +624,6 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   }
 
   return legs;
-}
-
-/* Update signal from Marble elevation model */
-void ProfileWidget::elevationUpdateAvailable()
-{
-  if(!widgetVisible || databaseLoadStatus)
-    return;
-
-  // qDebug() << "Profile update elevation";
-  updateTimer->start(UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::showEvent(QShowEvent *)
