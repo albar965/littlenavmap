@@ -54,11 +54,10 @@ void AircraftTrack::saveState()
 
   if(trackFile.open(QIODevice::WriteOnly))
   {
-    // No need for versioning here - if version is older migrate::checkAndMigrateSettings()
-    // will simply delete the file
     QDataStream out(&trackFile);
     out.setVersion(QDataStream::Qt_5_5);
-    out << *this;
+
+    out << FILE_MAGIC_NUMBER << FILE_VERSION << *this;
     trackFile.close();
   }
   else
@@ -74,9 +73,23 @@ void AircraftTrack::restoreState()
   {
     if(trackFile.open(QIODevice::ReadOnly))
     {
+      quint32 magic;
+      quint16 version;
       QDataStream in(&trackFile);
       in.setVersion(QDataStream::Qt_5_5);
-      in >> *this;
+      in >> magic;
+
+      if(magic == FILE_MAGIC_NUMBER)
+      {
+        in >> version;
+        if(version == FILE_VERSION)
+          in >> *this;
+        else
+          qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid version number:" << version;
+      }
+      else
+        qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid magic number:" << magic;
+
       trackFile.close();
     }
     else

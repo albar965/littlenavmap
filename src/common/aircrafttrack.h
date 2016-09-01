@@ -69,10 +69,14 @@ public:
   using QList::size;
   using QList::at;
 
+private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
   static Q_DECL_CONSTEXPR int MAX_TRACK_ENTRIES = 10000;
   /* Number of entries to remove at once */
   static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
+
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER= 0x5B6C1A2B;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION= 1;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

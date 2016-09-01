@@ -303,7 +303,7 @@ void MapWidget::saveState()
 
   s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
 
-  history.saveState(lnm::MAP_HISTORY);
+  history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
   aircraftTrack.saveState();
 }
@@ -337,7 +337,7 @@ void MapWidget::restoreState()
     homeDistance = DEFAULT_MAP_DISTANCE;
   }
 
-  history.restoreState(lnm::MAP_HISTORY);
+  history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);

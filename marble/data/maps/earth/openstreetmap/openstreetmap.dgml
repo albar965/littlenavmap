@@ -48,7 +48,7 @@
           <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/> -->
 
           <!-- Use 2 for adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
