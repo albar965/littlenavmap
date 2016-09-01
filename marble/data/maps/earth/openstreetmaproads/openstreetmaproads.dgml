@@ -32,23 +32,19 @@
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-
-          <!-- http://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z} -->
           <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/roads/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
-
           <downloadPolicy usage="Browse" maximumConnections="4"/>
-
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
         <texture name="hillshading" expire="31536000">
-          <sourcedir format="PNG"> earth/hillshading </sourcedir>
+          <sourcedir format="PNG"> earth/openstreetmaproadshs</sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="a.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
+          <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/asterh/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
           <blending name="AlphaBlending"/>
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
       </layer>
     </map>
