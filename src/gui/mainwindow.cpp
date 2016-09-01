@@ -318,8 +318,12 @@ void MainWindow::setupUi()
   // Item order has to match MapWidget::MapThemeComboIndex
   mapThemeComboBox->addItem(tr("OpenStreetMap"),
                             "earth/openstreetmap/openstreetmap.dgml");
+  mapThemeComboBox->addItem(tr("OpenStreetMap Roads"),
+                            "earth/openstreetmaproads/openstreetmaproads.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"),
                             "earth/opentopomap/opentopomap.dgml");
+  mapThemeComboBox->addItem(tr("Stamen Terrain"),
+                            "earth/stamenterrain/stamenterrain.dgml");
   mapThemeComboBox->addItem(tr("Simple"),
                             "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain"),
@@ -531,7 +535,7 @@ void MainWindow::connectAllSlots()
   connect(mapProjectionComboBox, indexChangedPtr, this, &MainWindow::changeMapProjection);
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
 
-  // Let projection and theme menus update combo boxes
+  // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
@@ -543,21 +547,38 @@ void MainWindow::connectAllSlots()
             if(checked)
               mapProjectionComboBox->setCurrentIndex(1);
           });
+
+  // Let theme menus update combo boxes
   connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
               mapThemeComboBox->setCurrentIndex(MapWidget::OPENSTREETMAP);
           });
+
+  connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::OPENSTREETMAPROADS);
+          });
+
   connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
               mapThemeComboBox->setCurrentIndex(MapWidget::OPENTOPOMAP);
           });
+
+  connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::STAMENTERRAIN);
+          });
+
   connect(ui->actionMapThemeSimple, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
               mapThemeComboBox->setCurrentIndex(MapWidget::SIMPLE);
           });
+
   connect(ui->actionMapThemePlain, &QAction::triggered, [ = ](bool checked)
           {
             if(checked)
@@ -725,7 +746,9 @@ void MainWindow::changeMapTheme(int index)
   mapWidget->setTheme(theme, index);
 
   ui->actionMapThemeOpenStreetMap->setChecked(index == MapWidget::OPENSTREETMAP);
+  ui->actionMapThemeOpenStreetMapRoads->setChecked(index == MapWidget::OPENSTREETMAPROADS);
   ui->actionMapThemeOpenTopoMap->setChecked(index == MapWidget::OPENTOPOMAP);
+  ui->actionMapThemeStamenTerrain->setChecked(index == MapWidget::STAMENTERRAIN);
   ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
   ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
 

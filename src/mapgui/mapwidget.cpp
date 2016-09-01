@@ -122,11 +122,16 @@ void MapWidget::setTheme(const QString& theme, int index)
   // Update theme specific options
   switch(index)
   {
+    case MapWidget::STAMENTERRAIN:
+      ui->actionMapShowCities->setEnabled(false);
+      ui->actionMapShowHillshading->setEnabled(false);
+      break;
     case MapWidget::OPENTOPOMAP:
       setPropertyValue("ice", false);
       ui->actionMapShowCities->setEnabled(false);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
+    case MapWidget::OPENSTREETMAPROADS:
     case MapWidget::OPENSTREETMAP:
       ui->actionMapShowCities->setEnabled(false);
       ui->actionMapShowHillshading->setEnabled(true);
@@ -168,8 +173,13 @@ void MapWidget::updateMapObjectsShown()
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
                  (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN));
   setShowGrid(ui->actionMapShowGrid->isChecked());
-  setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
-                   currentComboIndex == MapWidget::OPENSTREETMAP);
+
+  bool hillshading = ui->actionMapShowHillshading->isChecked() &&
+                     (currentComboIndex == MapWidget::OPENSTREETMAP ||
+                      currentComboIndex == MapWidget::OPENSTREETMAPROADS);
+  qDebug() << "hillshading" << hillshading;
+
+  setPropertyValue("hillshading", hillshading);
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());

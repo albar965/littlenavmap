@@ -29,7 +29,7 @@
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -109,7 +109,10 @@
       <string>&amp;Theme</string>
      </property>
      <addaction name="actionMapThemeOpenStreetMap"/>
+     <addaction name="actionMapThemeOpenStreetMapRoads"/>
      <addaction name="actionMapThemeOpenTopoMap"/>
+     <addaction name="actionMapThemeStamenTerrain"/>
+     <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
     </widget>
@@ -4483,6 +4486,22 @@
     <string>&amp;OpenStreetMap</string>
    </property>
   </action>
+  <action name="actionMapThemeOpenStreetMapRoads">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>OpenStreetMap &amp;Roads</string>
+   </property>
+  </action>
+  <action name="actionMapThemeStamenTerrain">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Stamen Terrain</string>
+   </property>
+  </action>
   <action name="actionMapThemeOpenTopoMap">
    <property name="checkable">
     <bool>true</bool>
@@ -4496,7 +4515,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Plain</string>
+    <string>&amp;Plain (Offline)</string>
    </property>
   </action>
   <action name="actionMapThemeSimple">
@@ -4504,7 +4523,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Simple</string>
+    <string>&amp;Simple (Offline)</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">

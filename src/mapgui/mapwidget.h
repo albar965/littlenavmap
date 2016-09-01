@@ -254,7 +254,9 @@ public:
   enum MapThemeComboIndex
   {
     OPENSTREETMAP,
+    OPENSTREETMAPROADS,
     OPENTOPOMAP,
+    STAMENTERRAIN,
     SIMPLE,
     PLAIN,
     INVALID = -1

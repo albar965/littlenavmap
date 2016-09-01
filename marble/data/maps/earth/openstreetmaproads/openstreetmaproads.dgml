@@ -10,10 +10,10 @@
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
       <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>OpenStreetMap</name>
+      <name>OpenStreetMap Roads</name>
       <target>earth</target>
-      <theme>openstreetmap</theme>
-      <icon pixmap="openstreetmap-preview.png"/>
+      <theme>openstreetmaproads</theme>
+      <icon pixmap="openstreetmaproads-preview.png"/>
       <visible>true</visible>
       <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
       <zoom>
@@ -25,29 +25,17 @@
     <map bgcolor="#000000">
       <canvas/>
       <target/>
-      <layer name="openstreetmap" backend="texture">
-        <!-- OpenStreetMap mapnik rendered tiles expire after 14 days -->
+      <layer name="openstreetmaproads" backend="texture">
+        <!-- Tiles expire after 14 days -->
         <texture name="mapnik_data" expire="1209600">
-          <sourcedir format="PNG"> earth/openstreetmap </sourcedir>
+          <sourcedir format="PNG"> earth/openstreetmaproads </sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <!-- Free MapTiles CDN - https://maptiles.xyz -->
-          <downloadUrl protocol="http" host="a.osm.maptiles.xyz" path="/"/>
-          <downloadUrl protocol="http" host="b.osm.maptiles.xyz" path="/"/>
-          <downloadUrl protocol="http" host="c.osm.maptiles.xyz" path="/"/>
+          <!-- http://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z} -->
+          <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/roads/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
 
-          <!-- OSM tile servers according to http://wiki.openstreetmap.org/wiki/Servers -->
-          <!-- <downloadUrl protocol="http" host="orm.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
-
-          <!-- OSM content delivery network proxy servers -->
-          <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="b.tile.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="c.tile.openstreetmap.org" path="/"/> -->
-
-          <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="4"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
