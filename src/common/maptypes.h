@@ -558,6 +558,7 @@ QString vorType(const maptypes::MapVor& vor);
 QString ndbText(const maptypes::MapNdb& ndb);
 QString waypointText(const maptypes::MapWaypoint& waypoint);
 QString userpointText(const maptypes::MapUserpoint& userpoint);
+QString airwayText(const maptypes::MapAirway& airway);
 QString magvarText(float magvar);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */

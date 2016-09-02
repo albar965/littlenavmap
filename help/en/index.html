@@ -626,13 +626,12 @@
     </p>
 
     <p>
-      <img alt="OpenMapSurfer and Hill shading" title="OpenMapSurfer and Hill shading" src=
-      "images/osmroad.png" />
+      <img alt="OpenMapSurfer and Hill shading" title="OpenMapSurfer and Hill shading" src="images/osmroad.png" />
     </p>
 
     <p>
-      <span class="capthdg">Picture above:</span> <span class="capt">View at a Italian airport using
-      <em>OpenStreetMap Roads</em> theme provided by <em>OpenMapSurfer</em> and hill shading.</span>
+      <span class="capthdg">Picture above:</span> <span class="capt">View at a Italian airport using <em>OpenStreetMap
+      Roads</em> theme provided by <em>OpenMapSurfer</em> and hill shading.</span>
     </p>
 
     <h5>
@@ -841,7 +840,7 @@
     </h4>
 
     <p>
-      This will re-enable all dialogs that were disabled by clicking <code>Do not show this dialog again</code> or
+      This will re-enable all dialogs that were disabled by selecting <code>Do not show this dialog again</code> or
       similar messages.
     </p>
 
@@ -972,7 +971,7 @@
     </h3>
 
     <p>
-      A single click on an airport or navaid shows details in the information dock window.
+      A single click on an airport, navaid or an airway line shows details in the information dock window.
     </p>
 
     <p>
@@ -1185,7 +1184,8 @@
     </h4>
 
     <p>
-      Shows detailed information in the information dock window for the nearest airport or all navaids near the cursor.
+      Shows detailed information in the information dock window for the nearest airport, airways or all navaids near
+      the cursor.
     </p>
 
     <p>
@@ -1830,13 +1830,18 @@
     </h2>
 
     <p>
-      This dock window contains text information about airports in several tabs and information for one or more navaid
-      in another tab. Also, included are the legend for the navigation symbols and the general map legend which depends
-      on the selected map theme.
+      This dock window contains text information about airports in several tabs and information for one or more navaids
+      or airways in another tab. Also, included are the legend for the navigation symbols and the general map legend
+      which depends on the selected map theme.
     </p>
 
     <p>
       All information can be copied into the clipboard as formatted text.
+    </p>
+
+    <p>
+      The airport or all related tabs are shown when only an airport or an airport and navaids are nearby the cursor.
+      <code>Navaid</code> tab is shown when no airport and only navaids or airways are nearby the cursor.
     </p>
 
     <p>
@@ -2202,7 +2207,11 @@
       </li>
 
       <li>Magnetic variance is partially not set (for example VORDME Cambridge Bay YCB). This is an error in the source
-      data and should be fixed with a workaround when loading the database in the future.
+      data and can be fixed with a workaround when loading the database in the future.
+      </li>
+
+      <li>Airports are misplaced compared to the background maps. This is an error in the source data and cannot be
+      fixed.
       </li>
 
       <li>Mac OS X: Dock windows cannot be resized when undocked from main window.
@@ -2261,7 +2270,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-01
+      Last update 2016-09-02
     </p>
   </body>
 </html>

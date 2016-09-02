@@ -21,25 +21,24 @@ TEMPLATE = app
 # Adapt these paths for each operating system
 # =======================================================================
 
+CONFIG(debug, debug|release):CONF_TYPE=debug
+CONFIG(release, debug|release):CONF_TYPE=release
+
 # Windows ==================
 win32 {
   QT_BIN=C:\\Qt\\5.5\\mingw492_32\\bin
   GIT_BIN='C:\\Git\\bin\\git'
-  CONFIG(debug, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-debug"
-  CONFIG(release, debug|release):MARBLE_BASE="c:\\Program Files (x86)\\marble-release"
-
+  MARBLE_BASE="c:\\Program Files (x86)\\marble-$${CONF_TYPE}"
 }
 
 # Linux ==================
 unix:!macx {
-  CONFIG(debug, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-debug
-  CONFIG(release, debug|release):MARBLE_BASE=/home/alex/Programme/Marble-release
+  MARBLE_BASE=/home/alex/Programme/Marble-$${CONF_TYPE}
 }
 
 # Mac OS X ==================
 macx {
-  CONFIG(debug, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-debug
-  CONFIG(release, debug|release):MARBLE_BASE=/Users/alex/Programme/Marble-release
+  MARBLE_BASE=/Users/alex/Programme/Marble-$${CONF_TYPE}
 }
 
 # End of configuration section
@@ -63,25 +62,13 @@ INCLUDEPATH += $$PWD/../atools/src $$PWD/src
 
 win32 {
 DEFINES += _USE_MATH_DEFINES
-CONFIG(debug, debug|release) {
-  LIBS += -L $$PWD/../build-atools-debug/debug -l atools
-  PRE_TARGETDEPS += $$PWD/../build-atools-debug/debug/libatools.a
-}
-CONFIG(release, debug|release) {
-  LIBS += -L $$PWD/../build-atools-release/release -l atools
-  PRE_TARGETDEPS += $$PWD/../build-atools-release/release/libatools.a
-}
+  LIBS += -L $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE} -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE}/libatools.a
 }
 
 unix {
-CONFIG(debug, debug|release) {
-  LIBS += -L $$PWD/../build-atools-debug -l atools
-  PRE_TARGETDEPS += $$PWD/../build-atools-debug/libatools.a
-}
-CONFIG(release, debug|release) {
-  LIBS += -L $$PWD/../build-atools-release -l atools
-  PRE_TARGETDEPS += $$PWD/../build-atools-release/libatools.a
-}
+  LIBS += -L $$PWD/../build-atools-$${CONF_TYPE} -l atools
+  PRE_TARGETDEPS += $$PWD/../build-atools-$${CONF_TYPE}/libatools.a
 }
 unix:!macx {
   INCLUDEPATH += $$MARBLE_BASE/include
@@ -476,7 +463,7 @@ win32 {
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libOverviewMap$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPn2Plugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\plugins\\libPntPlugin$${dll_suffix}.dll $${DEPLOY_DIR_WIN}\\plugins &&
-  deploy.commands += xcopy $${WINOUT_PWD}\\release\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${WINOUT_PWD}\\$${CONF_TYPE}\\littlenavmap.exe $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\CHANGELOG.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\README.txt $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${WINPWD}\\LICENSE.txt $${DEPLOY_DIR_WIN} &&

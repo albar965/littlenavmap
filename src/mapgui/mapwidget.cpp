@@ -174,12 +174,9 @@ void MapWidget::updateMapObjectsShown()
                  (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  bool hillshading = ui->actionMapShowHillshading->isChecked() &&
-                     (currentComboIndex == MapWidget::OPENSTREETMAP ||
-                      currentComboIndex == MapWidget::OPENSTREETMAPROADS);
-  qDebug() << "hillshading" << hillshading;
-
-  setPropertyValue("hillshading", hillshading);
+  setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
+                   (currentComboIndex == MapWidget::OPENSTREETMAP ||
+                    currentComboIndex == MapWidget::OPENSTREETMAPROADS));
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
@@ -891,6 +888,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   maptypes::MapNdb *ndb = nullptr;
   maptypes::MapWaypoint *waypoint = nullptr;
   maptypes::MapUserpoint *userpoint = nullptr;
+  maptypes::MapAirway *airway = nullptr;
   maptypes::MapParking *parking = nullptr;
 
   // Get only one object of each type
@@ -906,6 +904,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     waypoint = &result.waypoints.first();
   if(!result.userPoints.isEmpty())
     userpoint = &result.userPoints.first();
+  if(!result.airways.isEmpty())
+    airway = &result.airways.first();
+
+  // Add "more" text if multiple navaids will be added to the information panel
+  bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
+                  result.userPoints.size() + result.airways.size()) > 1 && airport == nullptr;
 
   // Collect information from the search result - build text only for one object
   QString mapObjectText;
@@ -921,6 +925,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     mapObjectText = maptypes::waypointText(*waypoint);
   else if(userpoint != nullptr)
     mapObjectText = maptypes::userpointText(*userpoint);
+  else if(airway != nullptr)
+    mapObjectText = maptypes::airwayText(*airway);
 
   // Collect information from the search result - only VOR and NDB can have range rings
   QString navRingText;
@@ -995,7 +1001,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "show in search" and "add to route" and "show information"
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr)
+  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || airway != nullptr)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(mapObjectText));
@@ -1004,7 +1010,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(mapObjectText));
 
     ui->actionMapShowInformation->setEnabled(true);
-    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(mapObjectText));
+    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().
+                                          arg(mapObjectText + (andMore ? tr(" and more") : QString())));
   }
   else
   {
@@ -1331,6 +1338,9 @@ void MapWidget::cancelDragRoute()
 {
   if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
+    if(cursor().shape() != Qt::ArrowCursor)
+      setCursor(Qt::ArrowCursor);
+
     routeDragCur = QPoint();
     routeDragFrom = atools::geo::EMPTY_POS;
     routeDragTo = atools::geo::EMPTY_POS;
@@ -1342,6 +1352,9 @@ void MapWidget::cancelDragRoute()
 /* Stop new distance line or change dragging and restore backup or delete new line */
 void MapWidget::cancelDragDistance()
 {
+  if(cursor().shape() != Qt::ArrowCursor)
+    setCursor(Qt::ArrowCursor);
+
   if(mouseState & mw::DRAG_DISTANCE)
     // Remove new one
     screenIndex->getDistanceMarks().removeAt(currentDistanceMarkerIndex);
@@ -1443,6 +1456,13 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   else if(mouseState == mw::NONE && event->buttons() & Qt::RightButton)
     // First right click after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
+  else
+  {
+    qDebug() << "press";
+    // No drag and drop mode - use hand to indicate scrolling
+    if(cursor().shape() != Qt::OpenHandCursor)
+      setCursor(Qt::OpenHandCursor);
+  }
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -1561,11 +1581,19 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
       if(mouseState == mw::NONE)
       {
-        qDebug() << "Single click info";
+        if(cursor().shape() != Qt::ArrowCursor)
+          setCursor(Qt::ArrowCursor);
         handleInfoClick(event->pos());
       }
     }
   }
+  else
+  {
+    // No drag and drop mode - switch back to arrow after scrolling
+    if(cursor().shape() != Qt::ArrowCursor)
+      setCursor(Qt::ArrowCursor);
+  }
+
   mouseMoved = QPoint();
 }
 
@@ -1608,13 +1636,19 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
   Q_UNUSED(event);
 
   if(!(mouseState & mw::DRAG_POST_MENU))
+  {
     cancelDragAll();
+    setContextMenuPolicy(Qt::DefaultContextMenu);
+  }
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
   if(event->key() == Qt::Key_Escape)
+  {
     cancelDragAll();
+    setContextMenuPolicy(Qt::DefaultContextMenu);
+  }
 
   if(event->key() == Qt::Key_Menu && mouseState == mw::NONE)
     // First menu key press after dragging - enable context menu again

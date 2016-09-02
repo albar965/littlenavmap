@@ -524,6 +524,11 @@ QString userpointText(const MapUserpoint& userpoint)
   return QObject::tr("User point %1").arg(userpoint.name);
 }
 
+QString airwayText(const MapAirway& airway)
+{
+  return QObject::tr("Airway %1").arg(airway.name);
+}
+
 QString airportText(const MapAirport& airport)
 {
   return QObject::tr("Airport %1 (%2)").arg(airport.name).arg(airport.ident);
