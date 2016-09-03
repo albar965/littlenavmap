@@ -324,10 +324,12 @@ void MainWindow::setupUi()
                             "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Stamen Terrain"),
                             "earth/stamenterrain/stamenterrain.dgml");
-  mapThemeComboBox->addItem(tr("Simple"),
+  mapThemeComboBox->addItem(tr("Simple (Offline)"),
                             "earth/political/political.dgml");
-  mapThemeComboBox->addItem(tr("Plain"),
+  mapThemeComboBox->addItem(tr("Plain (Offline)"),
                             "earth/plain/plain.dgml");
+  mapThemeComboBox->addItem(tr("Atlas (Offline)"),
+                            "earth/srtm/srtm.dgml");
   ui->mapToolBarOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
@@ -585,6 +587,12 @@ void MainWindow::connectAllSlots()
               mapThemeComboBox->setCurrentIndex(MapWidget::PLAIN);
           });
 
+  connect(ui->actionMapThemeAtlas, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::ATLAS);
+          });
+
   // Map object/feature display
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -751,6 +759,7 @@ void MainWindow::changeMapTheme(int index)
   ui->actionMapThemeStamenTerrain->setChecked(index == MapWidget::STAMENTERRAIN);
   ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
   ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
+  ui->actionMapThemeAtlas->setChecked(index == MapWidget::ATLAS);
 
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }
@@ -1168,7 +1177,6 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
-  s.syncSettings();
   setStatusMessage(tr("All message dialogs reset."));
 }
 
@@ -1364,23 +1372,39 @@ void MainWindow::writeSettings()
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
   widgetState.save({this, ui->statusBar, ui->tabWidgetSearch});
 
+  qDebug() << "searchController";
   if(searchController != nullptr)
     searchController->saveState();
+
+  qDebug() << "mapWidget";
   if(mapWidget != nullptr)
     mapWidget->saveState();
+
+  qDebug() << "routeController";
   if(routeController != nullptr)
     routeController->saveState();
+
+  qDebug() << "connectClient";
   if(connectClient != nullptr)
     connectClient->saveState();
+
+  qDebug() << "infoController";
   if(infoController != nullptr)
     infoController->saveState();
+
+  qDebug() << "routeFileHistory";
   if(routeFileHistory != nullptr)
     routeFileHistory->saveState();
+
+  qDebug() << "kmlFileHistory";
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
+
+  qDebug() << "optionsDialog";
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
 
+  qDebug() << "widgetState";
   widgetState.save({mapProjectionComboBox, mapThemeComboBox,
                     ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                     ui->actionMapShowAddonAirports,
@@ -1394,10 +1418,13 @@ void MainWindow::writeSettings()
 
   Settings::instance().setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
+  qDebug() << "databaseManager";
   if(databaseManager != nullptr)
     databaseManager->saveState();
 
-  widgetState.syncSettings();
+  // qDebug() << "syncSettings";
+  // widgetState.syncSettings();
+  qDebug() << "save state done";
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -115,6 +115,7 @@
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
+     <addaction name="actionMapThemeAtlas"/>
     </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
@@ -4516,6 +4517,14 @@
    </property>
    <property name="text">
     <string>&amp;Plain (Offline)</string>
+   </property>
+  </action>
+  <action name="actionMapThemeAtlas">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Atlas (Offline)</string>
    </property>
   </action>
   <action name="actionMapThemeSimple">

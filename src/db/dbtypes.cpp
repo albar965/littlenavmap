@@ -119,8 +119,7 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 
 QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj)
 {
-  QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash(obj);
-  out << hash;
+  out << static_cast<QHash<atools::fs::FsPaths::SimulatorType, FsPathType> >(obj);
   return out;
 }
 

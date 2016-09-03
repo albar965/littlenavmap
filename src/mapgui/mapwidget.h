@@ -259,6 +259,7 @@ public:
     STAMENTERRAIN,
     SIMPLE,
     PLAIN,
+    ATLAS,
     INVALID = -1
   };
 

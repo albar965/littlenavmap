@@ -138,10 +138,12 @@ void MapWidget::setTheme(const QString& theme, int index)
       break;
     case MapWidget::SIMPLE:
     case MapWidget::PLAIN:
+    case MapWidget::ATLAS:
       ui->actionMapShowCities->setEnabled(true);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
     case MapWidget::INVALID:
+      qWarning() << "Invalid theme index" << index;
       break;
   }
 
@@ -171,7 +173,8 @@ void MapWidget::updateMapObjectsShown()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   setShowMapPois(ui->actionMapShowCities->isChecked() &&
-                 (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN));
+                 (currentComboIndex == MapWidget::SIMPLE || currentComboIndex == MapWidget::PLAIN
+                  || currentComboIndex == MapWidget::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
