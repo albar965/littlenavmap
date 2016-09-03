@@ -487,9 +487,9 @@ void ProfileWidget::routeChanged(bool geometryChanged)
 
   if(geometryChanged)
   {
-    // Terminate and wait for thread
-    terminateThread();
-    terminateThreadSignal = false;
+    // // Terminate and wait for thread
+    // terminateThread();
+    // terminateThreadSignal = false;
 
     // Start thread after short delay to calculate new data
     updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
