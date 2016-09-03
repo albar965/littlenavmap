@@ -58,6 +58,18 @@
 
 #include "ui_mainwindow.h"
 
+static const QString ABOUT_MESSAGE =
+  QObject::tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
+                "<p>This software is licensed under "
+                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
+                    "<p>The source code for this application is available at "
+                      "<a href=\"https://github.com/albar965\">Github</a>.</p>"
+                        "<p>More about my projects at "
+                          "<a href=\"https://albar965.github.io\">albar965.github.io</a>.</p>"
+                            "<p><b>Copyright 2015-2016 Alexander Barthel</b></p> "
+                              "<p><a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a> or "
+                                "<a href=\"mailto:albar965@t-online.de\">albar965@t-online.de</a></p>");
+
 using namespace Marble;
 using atools::settings::Settings;
 using atools::gui::FileHistoryHandler;
@@ -68,16 +80,6 @@ MainWindow::MainWindow()
 {
   qDebug() << "MainWindow constructor";
 
-  static const QString aboutMessage =
-    tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
-         "<p>This software is licensed under "
-           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
-             "<p>The source code for this application is available at "
-               "<a href=\"https://github.com/albar965\">Github</a>.</p>"
-                 "<p><b>Copyright 2015-2016 Alexander Barthel</b></p> "
-                   "<p><a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a> or "
-                     "<a href=\"mailto:albar965@t-online.de\">albar965@t-online.de</a></p>");
-
   try
   {
     // Have to handle exceptions here since no message handler is active yet and no
@@ -87,7 +89,7 @@ MainWindow::MainWindow()
 
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
-    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+    helpHandler = new atools::gui::HelpHandler(this, ABOUT_MESSAGE, GIT_REVISION);
 
     marbleAbout = new Marble::MarbleAboutDialog(this);
     marbleAbout->setApplicationTitle(QApplication::applicationName());
