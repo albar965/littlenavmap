@@ -1463,7 +1463,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   {
     qDebug() << "press";
     // No drag and drop mode - use hand to indicate scrolling
-    if(cursor().shape() != Qt::OpenHandCursor)
+    if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
       setCursor(Qt::OpenHandCursor);
   }
 }
