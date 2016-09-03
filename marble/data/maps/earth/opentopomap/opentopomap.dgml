@@ -18,7 +18,7 @@
       <description><![CDATA[<p><i>OpenTopoMap</i> is a free topographic map which has been created from OpenStreetMap and SRTM data. The map style is inspired by official maps and focuses on legibility through high contrast and balanced signatures.</p>]]></description>
       <zoom>
         <minimum>   900  </minimum>
-        <maximum>  3500  </maximum>
+        <maximum>  3328  </maximum>
         <discrete> true</discrete>
       </zoom>
     </head>
@@ -30,7 +30,7 @@
         <texture name="opentopomap_data" expire="1209600">
           <sourcedir format="PNG"> earth/opentopomap </sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="16" mode="OpenStreetMap"/>
           <projection name="Mercator"/>
           <downloadUrl protocol="http" host="a.tile.opentopomap.org" path="/"/>
           <downloadUrl protocol="http" host="b.tile.opentopomap.org" path="/"/>

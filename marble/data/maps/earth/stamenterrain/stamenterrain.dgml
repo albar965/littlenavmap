@@ -18,7 +18,7 @@
       <description><![CDATA[<p>Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</p>]]></description>
       <zoom>
         <minimum>   900  </minimum>
-        <maximum>  3500  </maximum>
+        <maximum>  3328  </maximum>
         <discrete> true </discrete>
       </zoom>
     </head>
@@ -37,7 +37,7 @@
           <downloadUrl protocol="http" host="b.tile.stamen.com" path="/terrain/"/>
           <downloadUrl protocol="http" host="c.tile.stamen.com" path="/terrain/"/>
 
-          <downloadPolicy usage="Browse" maximumConnections="4"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
