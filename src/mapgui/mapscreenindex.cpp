@@ -85,7 +85,12 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonAltBo
           conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur), xs1, ys1);
           conv.wToS(airway.from.interpolate(airway.to, distanceMeter, cur + step), xs2, ys2);
 
-          if(mapGeo.intersects(QRect(QPoint(xs1, ys1), QPoint(xs2, ys2))))
+          QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
+          rect = rect.normalized();
+          // Avoid points or flat rectangles (lines)
+          rect.adjust(-1, -1, 1, 1);
+
+          if(mapGeo.intersects(rect))
             airwayLines.append(std::make_pair(airway.id, QLine(xs1, ys1, xs2, ys2)));
         }
       }
@@ -154,7 +159,12 @@ void MapScreenIndex::updateRouteScreenGeometry()
           conv.wToS(p1.interpolate(p2, distanceMeter, cur), xs1, ys1);
           conv.wToS(p1.interpolate(p2, distanceMeter, cur + step), xs2, ys2);
 
-          if(mapGeo.intersects(QRect(QPoint(xs1, ys1), QPoint(xs2, ys2))))
+          QRect rect(QPoint(xs1, ys1), QPoint(xs2, ys2));
+          rect = rect.normalized();
+          // Avoid points or flat rectangles (lines)
+          rect.adjust(-1, -1, 1, 1);
+
+          if(mapGeo.intersects(rect))
             routeLines.append(std::make_pair(i - 1, QLine(xs1, ys1, xs2, ys2)));
         }
       }

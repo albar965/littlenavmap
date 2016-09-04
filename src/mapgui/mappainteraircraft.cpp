@@ -135,9 +135,12 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
       const at::AircraftTrackPos& trackPos = aircraftTrack.at(i);
       wToS(trackPos.pos, x2, y2);
 
-      QRect r(QPoint(x1, y1), QPoint(x2, y2));
+      QRect rect(QPoint(x1, y1), QPoint(x2, y2));
+      rect = rect.normalized();
+      rect.adjust(-1, -1, 1, 1);
+
       // Current line is visible (most likely)
-      bool nowVisible = r.normalized().intersects(vpRect);
+      bool nowVisible = rect.intersects(vpRect);
 
       if(lastVisible || nowVisible)
       {

@@ -92,9 +92,13 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radi
 
     bool visible2 = wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
-    QRect r(QPoint(x1, y1), QPoint(x2, y2));
+    QRect rect(QPoint(x1, y1), QPoint(x2, y2));
+    rect = rect.normalized();
+    // Avoid points or flat rectangles (lines)
+    rect.adjust(-1, -1, 1, 1);
+
     // Current line is visible (most likely)
-    bool nowVisible = r.normalized().intersects(vpRect);
+    bool nowVisible = rect.intersects(vpRect);
 
     if(lastVisible || nowVisible)
       // Last line or this one are visible add coords
