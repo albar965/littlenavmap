@@ -109,6 +109,9 @@ public:
   /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
 
+  /* Update coordinate display in status bar */
+  void updateMapPosLabel(const atools::geo::Pos& pos);
+
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
 

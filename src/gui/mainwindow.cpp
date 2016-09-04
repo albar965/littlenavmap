@@ -404,26 +404,31 @@ void MainWindow::setupUi()
 
   // Create labels for the statusbar
   messageLabel = new QLabel();
-  messageLabel->setMinimumWidth(100);
+  messageLabel->setAlignment(Qt::AlignCenter);
+  messageLabel->setMinimumWidth(140);
   ui->statusBar->addPermanentWidget(messageLabel);
 
   detailLabel = new QLabel();
-  detailLabel->setMinimumWidth(100);
+  detailLabel->setAlignment(Qt::AlignCenter);
+  detailLabel->setMinimumWidth(120);
   detailLabel->setToolTip(tr("Map detail level."));
   ui->statusBar->addPermanentWidget(detailLabel);
 
   renderStatusLabel = new QLabel();
+  renderStatusLabel->setAlignment(Qt::AlignCenter);
   renderStatusLabel->setMinimumWidth(120);
   renderStatusLabel->setToolTip(tr("Map rendering and download status."));
   ui->statusBar->addPermanentWidget(renderStatusLabel);
 
   mapDistanceLabel = new QLabel();
-  mapDistanceLabel->setMinimumWidth(80);
+  mapDistanceLabel->setAlignment(Qt::AlignCenter);
+  mapDistanceLabel->setMinimumWidth(100);
   mapDistanceLabel->setToolTip(tr("Map view distance to ground."));
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
   mapPosLabel = new QLabel();
-  mapPosLabel->setMinimumWidth(200);
+  mapPosLabel->setAlignment(Qt::AlignCenter);
+  mapPosLabel->setMinimumWidth(220);
   mapPosLabel->setToolTip(tr("Cursor position on map."));
   ui->statusBar->addPermanentWidget(mapPosLabel);
 }
@@ -528,7 +533,6 @@ void MainWindow::connectAllSlots()
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
-  connect(mapWidget, &MapWidget::mouseMoveGeoPosition, mapPosLabel, &QLabel::setText);
   connect(mapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
   connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
@@ -896,6 +900,14 @@ bool RouteController::hasValidParking() const
   }
   else
     return false;
+}
+
+void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
+{
+  if(pos.isValid())
+    mapPosLabel->setText(pos.toHumanReadableString());
+  else
+    mapPosLabel->setText(tr("No position"));
 }
 
 /* Updates main window title with simulator type, flight plan name and change status */

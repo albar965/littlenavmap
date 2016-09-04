@@ -121,6 +121,10 @@
       </li>
     </ol>
 
+    <div style="margin-left: 1.5em;;margin-top:3em;margin-bottom:3em;">
+      <span class="bold">Do not use this program for real world navigation.</span>
+    </div>
+
     <h2 id="h2installation">
       Installation
     </h2>
@@ -170,14 +174,31 @@
 
     <p>
       The user interface of <em>Little Navmap</em> consists of several dock windows that are arranged around the main
-      window which contains the map view. The dock windows can be moved around in their docked position and can be
-      detached from the main window by simply dragging them outside of the main window. All docks can be closed if they
-      are not needed. You can even drop docks on each other to create a tabbed view (tabs will appear at the bottom of
-      the dock stack in this case).
+      window which contains the map view.
+    </p>
+
+    <p>
+      The dock windows can be moved around in their docked position and can be detached from the main window by simply
+      dragging them outside of the main window, by double clicking their title bar or clicking on the window symbol on
+      the top left.
+    </p>
+
+    <p>
+      Double click onto the title bar or click on the window symbol again to move the windows back into their docked
+      position.
+    </p>
+
+    <p>
+      All docks can be closed if they are not needed. You can even drop docks on each other to create a tabbed view
+      (tabs will appear at the bottom of the dock stack in this case).
     </p>
 
     <p>
       Toolbars are also movable if you click on the left handle and can be closed or undocked from the main window too.
+    </p>
+
+    <p>
+      Use the <code>Main Menu</code> -&gt; <code>Window</code> menu to bring dock windows or toolbars back.
     </p>
 
     <p>
@@ -580,6 +601,11 @@
     </p>
 
     <p>
+      Online maps can appear slightly blurred when using this projection. This is a result from converting the image
+      tiles to the spherical display.
+    </p>
+
+    <p>
       <img alt="Little Navmap Spherical projection and Simple Map Theme" title=
       "Little Navmap Spherical projection and Simple Map Theme" src="images/sphericalpolitical.png" />
     </p>
@@ -942,7 +968,7 @@
       <li>Zoom distance (viewpoint to earth surface) in nautical miles.
       </li>
 
-      <li>Cursor position on map in degree latitude longitude.
+      <li>Cursor position on map in degrees/minutes/seconds latitude longitude.
       </li>
     </ul>
 
@@ -987,6 +1013,12 @@
     <p>
       A double click zooms in showing either the airport diagram or the navaid closely and also shows details in the
       information dock window.
+    </p>
+
+    <p>
+      The double and single click functionality does not work for route waypoints or airports if the flight plan edit
+      mode is enabled. The edit mode can be disabled using the toolbar or <code>Main Menu</code> -&gt; <code>Flight
+      Plan</code> -&gt; <code>Edit Flight Plan on Map</code>.
     </p>
 
     <p>
@@ -2281,7 +2313,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-03
+      Last update 2016-09-04
     </p>
   </body>
 </html>

@@ -1305,10 +1305,19 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
 
     if(mouseEvent != nullptr && mouseEvent->modifiers() & Qt::ControlModifier)
-    {
       // Remove control modifer to disable Marble rectangle dragging
       mouseEvent->setModifiers(mouseEvent->modifiers() & ~Qt::ControlModifier);
-    }
+  }
+
+  if(e->type() == QEvent::MouseMove)
+  {
+    // Update coordinate display in status bar
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
+    qreal lon, lat;
+    if(geoCoordinates(mouseEvent->pos().x(), mouseEvent->pos().y(), lon, lat, GeoDataCoordinates::Degree))
+      mainWindow->updateMapPosLabel(atools::geo::Pos(lon, lat));
+    else
+      mainWindow->updateMapPosLabel(atools::geo::Pos());
   }
 
   if(e->type() == QEvent::MouseMove && mouseState != mw::NONE)
@@ -1317,6 +1326,16 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     e->accept();
     event(e);
 
+    // Do not process further
+    return true;
+  }
+
+  QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
+  if(e->type() == QEvent::MouseMove && mouseEvent->buttons() == Qt::NoButton && mouseState == mw::NONE)
+  {
+    // No not pass movements to marble widget to avoid cursor fighting
+    e->accept();
+    event(e);
     // Do not process further
     return true;
   }
@@ -1461,7 +1480,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     setContextMenuPolicy(Qt::DefaultContextMenu);
   else
   {
-    qDebug() << "press";
     // No drag and drop mode - use hand to indicate scrolling
     if(event->button() == Qt::LeftButton && cursor().shape() != Qt::OpenHandCursor)
       setCursor(Qt::OpenHandCursor);
@@ -1643,6 +1661,11 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
   }
+}
+
+void MapWidget::leaveEvent(QEvent *)
+{
+  mainWindow->updateMapPosLabel(atools::geo::Pos());
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
