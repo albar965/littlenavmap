@@ -1435,13 +1435,16 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
 
+      // Make distance a bit larger to prefer points
       if(routeEditMode &&
-         screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), 5) != -1 &&
+         screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                screenSearchDistance * 4 / 3) != -1 &&
          rmos.size() > 1)
         // Change cursor at one route point
         cursorShape = Qt::CrossCursor;
       else if(routeEditMode &&
-              screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), 5) != -1 &&
+              screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
+                                                   screenSearchDistance) != -1 &&
               rmos.size() > 1)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
@@ -1556,8 +1559,10 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
         if(rmos.size() > 1)
         {
-          int routePoint = screenIndex->getNearestRoutePointIndex(event->pos().x(),
-                                                                  event->pos().y(), screenSearchDistance);
+          // Make distance a bit larger to prefer points
+          int routePoint =
+            screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                   screenSearchDistance * 4 / 3);
           if(routePoint != -1)
           {
             routeDragPoint = routePoint;
