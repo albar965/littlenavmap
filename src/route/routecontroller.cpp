@@ -254,6 +254,7 @@ void RouteController::routeTypeChanged()
 
 bool RouteController::selectDepartureParking()
 {
+  qDebug() << "selectDepartureParking";
   const maptypes::MapAirport& airport = route.first().getAirport();
   ParkingDialog dialog(mainWindow, query, airport);
 
@@ -337,6 +338,7 @@ void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRoute
 
 void RouteController::newFlightplan()
 {
+  qDebug() << "newFlightplan";
   clearRoute();
 
   // Copy current alt and type from widgets to flightplan
@@ -354,6 +356,7 @@ bool RouteController::loadFlightplan(const QString& filename)
   Flightplan newFlightplan;
   try
   {
+    qDebug() << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     newFlightplan.load(filename);
 
@@ -393,6 +396,8 @@ bool RouteController::appendFlightplan(const QString& filename)
   Flightplan flightplan;
   try
   {
+    qDebug() << "appendFlightplan" << filename;
+
     // Will throw an exception if something goes wrong
     flightplan.load(filename);
 
@@ -429,6 +434,7 @@ bool RouteController::appendFlightplan(const QString& filename)
 
 bool RouteController::saveFlighplanAs(const QString& filename)
 {
+  qDebug() << "saveFlighplanAs" << filename;
   routeFilename = filename;
   return saveFlightplan();
 }
@@ -437,6 +443,7 @@ bool RouteController::saveFlightplan()
 {
   try
   {
+    qDebug() << "saveFlightplan";
     // Will throw an exception if something goes wrong
     route.getFlightplan().save(routeFilename);
 
@@ -444,6 +451,7 @@ bool RouteController::saveFlightplan()
     undoIndexClean = undoIndex;
     undoStack->setClean();
     mainWindow->updateWindowTitle();
+    qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   }
   catch(atools::Exception& e)
   {
@@ -956,27 +964,27 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 /* Called by undo command */
 void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan)
 {
-  qDebug() << "changeRouteUndo";
   // Keep our own index as a workaround
   undoIndex--;
 
+  qDebug() << "changeRouteUndo undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   changeRouteUndoRedo(newFlightplan);
 }
 
 /* Called by undo command */
 void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
-  qDebug() << "changeRouteRedo";
   // Keep our own index as a workaround
   undoIndex++;
+  qDebug() << "changeRouteRedo undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   changeRouteUndoRedo(newFlightplan);
 }
 
 /* Called by undo command when commands are merged */
 void RouteController::undoMerge()
 {
-  qDebug() << "undoMerge";
   undoIndex--;
+  qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
 }
 
 /* Update window after undo or redo action */
@@ -1001,7 +1009,7 @@ void RouteController::optionsChanged()
 
 bool RouteController::hasChanged() const
 {
-  return undoIndexClean != undoIndex;
+  return undoIndexClean == -1 || undoIndexClean != undoIndex;
 }
 
 /* Called by action */
@@ -1910,8 +1918,12 @@ void RouteController::postChange(RouteCommand *undoCommand)
 {
   undoCommand->setFlightplanAfter(route.getFlightplan());
 
+  if(undoIndex < undoIndexClean)
+    undoIndexClean = -1;
+
   // Index and clean index workaround
   undoIndex++;
+  qDebug() << "postChange undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   undoStack->push(undoCommand);
 }
 

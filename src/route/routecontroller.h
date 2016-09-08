@@ -285,7 +285,9 @@ private:
   atools::gui::TableZoomHandler *zoomHandler = nullptr;
 
   /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
-  int undoIndex = 0, undoIndexClean = 0;
+  int undoIndex = 0;
+  /* Clean index of the undo stack or -1 if not clean state exists */
+  int undoIndexClean = 0;
 
   /* Used to number user defined positions */
   int curUserpointNumber = 1;
