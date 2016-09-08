@@ -116,6 +116,8 @@
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
      <addaction name="actionMapThemeAtlas"/>
+     <addaction name="separator"/>
+     <addaction name="actionMapThemeCustom"/>
     </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
@@ -2825,9 +2827,6 @@
    <property name="statusTip">
     <string>Release column grouping</string>
    </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
    </property>
@@ -3070,6 +3069,9 @@
    <property name="text">
     <string>&amp;About Little Navmap</string>
    </property>
+   <property name="toolTip">
+    <string>About Little Navmap</string>
+   </property>
    <property name="statusTip">
     <string>About Little Navmap</string>
    </property>
@@ -3084,6 +3086,9 @@
    </property>
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+   <property name="toolTip">
+    <string>About Qt</string>
    </property>
    <property name="statusTip">
     <string>About Qt</string>
@@ -3496,6 +3501,9 @@
     <string>&amp;Default Details</string>
    </property>
    <property name="toolTip">
+    <string>Go back to default details on map</string>
+   </property>
+   <property name="statusTip">
     <string>Go back to default details on map</string>
    </property>
    <property name="shortcut">
@@ -4341,12 +4349,9 @@
     <string>&amp;Copy</string>
    </property>
    <property name="toolTip">
-    <string>Copy selected entries into the clipboard</string>
-   </property>
-   <property name="statusTip">
     <string>Copy selected entries in CSV format into the clipboard</string>
    </property>
-   <property name="whatsThis">
+   <property name="statusTip">
     <string>Copy selected entries in CSV format into the clipboard</string>
    </property>
    <property name="shortcut">
@@ -4456,10 +4461,10 @@
     <string>&amp;Mercator</string>
    </property>
    <property name="toolTip">
-    <string>Mercator Map Projection (flat)</string>
+    <string>Mercator Map projection (flat)</string>
    </property>
    <property name="statusTip">
-    <string>Mercator Map Projection (flat)</string>
+    <string>Mercator Map projection (flat)</string>
    </property>
   </action>
   <action name="actionMapProjectionSpherical">
@@ -4470,10 +4475,10 @@
     <string>&amp;Spherical</string>
    </property>
    <property name="toolTip">
-    <string>Spherical map Projection</string>
+    <string>Spherical map projection</string>
    </property>
    <property name="statusTip">
-    <string>Spherical map Projection</string>
+    <string>Spherical map projection</string>
    </property>
   </action>
   <action name="actionMapThemeOpenStreetMap">
@@ -4486,6 +4491,12 @@
    <property name="text">
     <string>&amp;OpenStreetMap</string>
    </property>
+   <property name="toolTip">
+    <string>OpenStreetMap Mapnik online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>OpenStreetMap Mapnik online map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeOpenStreetMapRoads">
    <property name="checkable">
@@ -4493,6 +4504,12 @@
    </property>
    <property name="text">
     <string>OpenStreetMap &amp;Roads</string>
+   </property>
+   <property name="toolTip">
+    <string>OpenStreetMap Roads online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>OpenStreetMap Roads online map theme</string>
    </property>
   </action>
   <action name="actionMapThemeStamenTerrain">
@@ -4502,6 +4519,12 @@
    <property name="text">
     <string>&amp;Stamen Terrain</string>
    </property>
+   <property name="toolTip">
+    <string>Stamen Terrain online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Stamen Terrain online map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeOpenTopoMap">
    <property name="checkable">
@@ -4509,6 +4532,12 @@
    </property>
    <property name="text">
     <string>Open&amp;TopoMap</string>
+   </property>
+   <property name="toolTip">
+    <string>OpenTopoMap online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>OpenTopoMap online map theme</string>
    </property>
   </action>
   <action name="actionMapThemePlain">
@@ -4518,6 +4547,12 @@
    <property name="text">
     <string>&amp;Plain (Offline)</string>
    </property>
+   <property name="toolTip">
+    <string>Plain offline map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Plain offline map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeAtlas">
    <property name="checkable">
@@ -4526,6 +4561,12 @@
    <property name="text">
     <string>&amp;Atlas (Offline)</string>
    </property>
+   <property name="toolTip">
+    <string>Atlas offline map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Atlas offline map theme</string>
+   </property>
   </action>
   <action name="actionMapThemeSimple">
    <property name="checkable">
@@ -4533,6 +4574,12 @@
    </property>
    <property name="text">
     <string>&amp;Simple (Offline)</string>
+   </property>
+   <property name="toolTip">
+    <string>Simple offline map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Simple offline map theme</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">
@@ -4547,7 +4594,7 @@
     <string>Show the map legend for the current map theme</string>
    </property>
    <property name="statusTip">
-    <string>Show the navigation map legend</string>
+    <string>Show the map legend for the current map theme</string>
    </property>
   </action>
   <action name="actionRouteAppend">
@@ -4563,6 +4610,20 @@
    </property>
    <property name="statusTip">
     <string>Append flight plan legs to current flight plan</string>
+   </property>
+  </action>
+  <action name="actionMapThemeCustom">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Custom</string>
+   </property>
+   <property name="toolTip">
+    <string>User defined map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>User defined map theme</string>
    </property>
   </action>
  </widget>

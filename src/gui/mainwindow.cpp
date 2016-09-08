@@ -318,28 +318,41 @@ void MainWindow::setupUi()
   mapThemeComboBox->setToolTip(helpText);
   mapThemeComboBox->setStatusTip(helpText);
   // Item order has to match MapWidget::MapThemeComboIndex
-  mapThemeComboBox->addItem(tr("OpenStreetMap"),
-                            "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenStreetMap Roads"),
-                            "earth/openstreetmaproads/openstreetmaproads.dgml");
-  mapThemeComboBox->addItem(tr("OpenTopoMap"),
-                            "earth/opentopomap/opentopomap.dgml");
-  mapThemeComboBox->addItem(tr("Stamen Terrain"),
-                            "earth/stamenterrain/stamenterrain.dgml");
-  mapThemeComboBox->addItem(tr("Simple (Offline)"),
-                            "earth/political/political.dgml");
-  mapThemeComboBox->addItem(tr("Plain (Offline)"),
-                            "earth/plain/plain.dgml");
-  mapThemeComboBox->addItem(tr("Atlas (Offline)"),
-                            "earth/srtm/srtm.dgml");
+  mapThemeComboBox->addItem(tr("OpenStreetMap"), "earth/openstreetmap/openstreetmap.dgml");
+  mapThemeComboBox->addItem(tr("OpenStreetMap Roads"), "earth/openstreetmaproads/openstreetmaproads.dgml");
+  mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
+  mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
+  mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
+  mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
+  mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
+
+  // Add a custom map if the DGML exists
+  QFileInfo customDgml("data/maps/earth/custom/custom.dgml");
+
+  if(customDgml.exists() && customDgml.isFile() && customDgml.isReadable())
+  {
+    qDebug() << "Found custom DGML" << customDgml.absoluteFilePath();
+    mapThemeComboBox->addItem(tr("Custom"), "earth/custom/custom.dgml");
+    ui->actionMapThemeCustom->setEnabled(true);
+  }
+  else
+  {
+    qDebug() << "Custom DGML not found" << customDgml.absoluteFilePath();
+    ui->actionMapThemeCustom->setEnabled(false);
+  }
+
   ui->mapToolBarOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeOpenStreetMapRoads->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeStamenTerrain->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
   ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeAtlas->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeCustom->setActionGroup(actionGroupMapTheme);
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
@@ -599,6 +612,12 @@ void MainWindow::connectAllSlots()
               mapThemeComboBox->setCurrentIndex(MapWidget::ATLAS);
           });
 
+  connect(ui->actionMapThemeCustom, &QAction::triggered, [ = ](bool checked)
+          {
+            if(checked)
+              mapThemeComboBox->setCurrentIndex(MapWidget::CUSTOM);
+          });
+
   // Map object/feature display
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGrid, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -766,6 +785,7 @@ void MainWindow::changeMapTheme(int index)
   ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
   ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
   ui->actionMapThemeAtlas->setChecked(index == MapWidget::ATLAS);
+  ui->actionMapThemeCustom->setChecked(index == MapWidget::CUSTOM);
 
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }

@@ -142,6 +142,10 @@ void MapWidget::setTheme(const QString& theme, int index)
       ui->actionMapShowCities->setEnabled(true);
       ui->actionMapShowHillshading->setEnabled(false);
       break;
+    case MapWidget::CUSTOM:
+      ui->actionMapShowCities->setEnabled(true);
+      ui->actionMapShowHillshading->setEnabled(true);
+      break;
     case MapWidget::INVALID:
       qWarning() << "Invalid theme index" << index;
       break;
@@ -179,7 +183,8 @@ void MapWidget::updateMapObjectsShown()
 
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    (currentComboIndex == MapWidget::OPENSTREETMAP ||
-                    currentComboIndex == MapWidget::OPENSTREETMAPROADS));
+                    currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
+                    currentComboIndex == MapWidget::CUSTOM));
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());

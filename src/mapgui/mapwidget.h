@@ -260,6 +260,7 @@ public:
     SIMPLE,
     PLAIN,
     ATLAS,
+    CUSTOM,
     INVALID = -1
   };
 
