@@ -119,36 +119,41 @@ void MapWidget::setTheme(const QString& theme, int index)
   Ui::MainWindow *ui = mainWindow->getUi();
   currentComboIndex = MapWidget::MapThemeComboIndex(index);
 
-  // Update theme specific options
-  switch(index)
+  if(index >= MapWidget::CUSTOM)
   {
-    case MapWidget::STAMENTERRAIN:
-      ui->actionMapShowCities->setEnabled(false);
-      ui->actionMapShowHillshading->setEnabled(false);
-      break;
-    case MapWidget::OPENTOPOMAP:
-      setPropertyValue("ice", false);
-      ui->actionMapShowCities->setEnabled(false);
-      ui->actionMapShowHillshading->setEnabled(false);
-      break;
-    case MapWidget::OPENSTREETMAPROADS:
-    case MapWidget::OPENSTREETMAP:
-      ui->actionMapShowCities->setEnabled(false);
-      ui->actionMapShowHillshading->setEnabled(true);
-      break;
-    case MapWidget::SIMPLE:
-    case MapWidget::PLAIN:
-    case MapWidget::ATLAS:
-      ui->actionMapShowCities->setEnabled(true);
-      ui->actionMapShowHillshading->setEnabled(false);
-      break;
-    case MapWidget::CUSTOM:
-      ui->actionMapShowCities->setEnabled(true);
-      ui->actionMapShowHillshading->setEnabled(true);
-      break;
-    case MapWidget::INVALID:
-      qWarning() << "Invalid theme index" << index;
-      break;
+    // Enable all buttons for custom maps
+    ui->actionMapShowCities->setEnabled(true);
+    ui->actionMapShowHillshading->setEnabled(true);
+  }
+  else
+  {
+    // Update theme specific options
+    switch(index)
+    {
+      case MapWidget::STAMENTERRAIN:
+        ui->actionMapShowCities->setEnabled(false);
+        ui->actionMapShowHillshading->setEnabled(false);
+        break;
+      case MapWidget::OPENTOPOMAP:
+        setPropertyValue("ice", false);
+        ui->actionMapShowCities->setEnabled(false);
+        ui->actionMapShowHillshading->setEnabled(false);
+        break;
+      case MapWidget::OPENSTREETMAPROADS:
+      case MapWidget::OPENSTREETMAP:
+        ui->actionMapShowCities->setEnabled(false);
+        ui->actionMapShowHillshading->setEnabled(true);
+        break;
+      case MapWidget::SIMPLE:
+      case MapWidget::PLAIN:
+      case MapWidget::ATLAS:
+        ui->actionMapShowCities->setEnabled(true);
+        ui->actionMapShowHillshading->setEnabled(false);
+        break;
+      case MapWidget::INVALID:
+        qWarning() << "Invalid theme index" << index;
+        break;
+    }
   }
 
   setMapThemeId(theme);
@@ -184,7 +189,7 @@ void MapWidget::updateMapObjectsShown()
   setPropertyValue("hillshading", ui->actionMapShowHillshading->isChecked() &&
                    (currentComboIndex == MapWidget::OPENSTREETMAP ||
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
-                    currentComboIndex == MapWidget::CUSTOM));
+                    currentComboIndex >= MapWidget::CUSTOM));
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());

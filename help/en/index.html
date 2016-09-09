@@ -109,7 +109,7 @@
       </li>
 
       <li>
-        <a href="#h2customtheme">Creating a Custom User Defined Map Theme</a>
+        <a href="#h2customtheme">Creating or adding Map Themes</a>
       </li>
 
       <li>
@@ -2219,42 +2219,56 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2customtheme">
-      Creating a Custom User Defined Map Theme
+      Creating or adding Map Themes
     </h2>
 
     <p>
-      To enable the custom map theme in <em>Little Navmap</em> create a <code>custom.dgml</code> file in the
-      <code>data\maps\earth\custom</code> directory. Full path should be, for example <code>c:\Own Programs\Little
-      Navmap\data\maps\earth\custom\custom.dgml</code>. This file can refer to an online map service or to included map
-      data.
+      To add an arbitrary online of offline map to <em>Little Navmap</em> simply add the map directory from a downloaded
+      or self created map theme to the <code>data\maps\earth</code> directory.
     </p>
 
     <p>
-      The menu item <code>Main Menu</code> -&gt; <code>Map</code> -&gt; <code>Theme</code> -&gt; <code>Custom</code>
-      will be enabled and an entry will be added to the toolbar drop down box if this file exists in the correct path
-      and is readable.
+      The full path to the DGML file (see links below for more details about DGML) describing the map must be <code>c:\Own Programs\Little
+      Navmap\data\maps\earth\opencyclemap\opencyclemap.dgml</code> if you like to add the <a href=
+      "http://www.opencyclemap.org" target="_blank">OpenCycleMap</a> for example. The DGML file can refer to an online map service
+      or to included map data. Usually a map theme contains more files than only the DGML.
     </p>
 
     <p>
-      The options <code>Show Country and City Names</code> and <code>Show Hillshading</code> are enabled for custom
-      maps but might not work depending on properties defined in the <code>custom.dgml</code> file.
+      The menu <code>Main Menu</code> -&gt; <code>Map</code> -&gt; <code>Theme</code> and the toolbar drop down box
+      will receive an entry for each additional map theme.
     </p>
 
     <p>
-      <span class="bold">More information about map configuration and DGML files can be found here:</span>
+      The options <code>Show Country and City Names</code> and <code>Show Hillshading</code> are enabled for all
+      additional map themes but might not work depending on properties defined in the DGML file of the map.
+    </p>
+
+    <p>
+      <span class="bold">More maps and information about map configuration and DGML files can be found here on the
+      Marble pages:</span>
     </p>
 
     <ul>
-      <li>
+      <li>Download more maps for the Marble widget (only Earth maps are supported):
+        <br />
+        <a href="https://marble.kde.org/maps.php" target="_blank">Additional Maps</a>
+      </li>
+
+      <li>A tutorial that shows how to create a map theme based on tiled images:
+        <br />
         <a href="https://techbase.kde.org/Marble/CustomMaps" target="_blank">Marble/CustomMaps</a>
       </li>
 
-      <li>
+      <li>A tutorial showing how to create a map theme based on <a href=
+      "http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames" target="_blank">OSM Slippy Maps</a>:
+        <br />
         <a href="https://techbase.kde.org/Marble/OSMSlippyMaps" target="_blank">How to create map themes based on OSM
         slippy maps</a>
       </li>
 
-      <li>
+      <li>How to create a historical map for Marble:
+        <br />
         <a href="https://techbase.kde.org/Marble/HistoricalMaps" target="_blank">Historical Maps for Marble</a>
       </li>
     </ul>
@@ -2371,7 +2385,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-08
+      Last update 2016-09-00
     </p>
   </body>
 </html>

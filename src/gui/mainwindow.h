@@ -23,6 +23,7 @@
 
 #include <QMainWindow>
 #include <QUrl>
+#include <QFileInfoList>
 #include <marble/MarbleGlobal.h>
 
 class SearchController;
@@ -174,6 +175,8 @@ private:
   void changeMapProjection(int index);
   void changeMapTheme(int index);
   void scaleToolbar(QToolBar *toolbar, float scale);
+  void findCustomMaps(QFileInfoList& customDgmlFiles);
+  void themeMenuTriggered(bool checked);
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
@@ -214,6 +217,9 @@ private:
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
 
+  /* Map theme submenu actions */
+  QList<QAction *> customMapThemeMenuActions;
+
   /* Managment and controller classes */
   DatabaseManager *databaseManager = nullptr;
   WeatherReporter *weatherReporter = nullptr;
@@ -228,7 +234,7 @@ private:
   InfoQuery *infoQuery = nullptr;
 
   bool firstStart = true /* emit window shown only once after startup */,
-       firstApplicationStart = false /* first starup on a system after installation */;
+  firstApplicationStart = false /* first starup on a system after installation */;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

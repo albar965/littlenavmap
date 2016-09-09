@@ -117,7 +117,6 @@
      <addaction name="actionMapThemePlain"/>
      <addaction name="actionMapThemeAtlas"/>
      <addaction name="separator"/>
-     <addaction name="actionMapThemeCustom"/>
     </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapShowMark"/>
@@ -4610,20 +4609,6 @@
    </property>
    <property name="statusTip">
     <string>Append flight plan legs to current flight plan</string>
-   </property>
-  </action>
-  <action name="actionMapThemeCustom">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Custom</string>
-   </property>
-   <property name="toolTip">
-    <string>User defined map theme</string>
-   </property>
-   <property name="statusTip">
-    <string>User defined map theme</string>
    </property>
   </action>
  </widget>

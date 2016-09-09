@@ -55,6 +55,8 @@
 #include <QScreen>
 #include <QWindow>
 #include <QDesktopWidget>
+#include <QDir>
+#include <QFileInfoList>
 
 #include "ui_mainwindow.h"
 
@@ -69,6 +71,11 @@ static const QString ABOUT_MESSAGE =
                             "<p><b>Copyright 2015-2016 Alexander Barthel</b></p> "
                               "<p><a href=\"mailto:albar965@mailbox.org\">albar965@mailbox.org</a> or "
                                 "<a href=\"mailto:albar965@t-online.de\">albar965@t-online.de</a></p>");
+
+// All known map themes
+static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
+                                           "openstreetmaproadshs", "opentopomap", "plain", "political",
+                                           "srtm", "srtm2", "stamenterrain"});
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -325,34 +332,55 @@ void MainWindow::setupUi()
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
   mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
   mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
-
-  // Add a custom map if the DGML exists
-  QFileInfo customDgml("data/maps/earth/custom/custom.dgml");
-
-  if(customDgml.exists() && customDgml.isFile() && customDgml.isReadable())
-  {
-    qDebug() << "Found custom DGML" << customDgml.absoluteFilePath();
-    mapThemeComboBox->addItem(tr("Custom"), "earth/custom/custom.dgml");
-    ui->actionMapThemeCustom->setEnabled(true);
-  }
-  else
-  {
-    qDebug() << "Custom DGML not found" << customDgml.absoluteFilePath();
-    ui->actionMapThemeCustom->setEnabled(false);
-  }
-
   ui->mapToolBarOptions->addWidget(mapThemeComboBox);
 
   // Theme menu items
   actionGroupMapTheme = new QActionGroup(ui->menuMapTheme);
   ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeOpenStreetMap->setData(MapWidget::OPENSTREETMAP);
+
   ui->actionMapThemeOpenStreetMapRoads->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeOpenStreetMapRoads->setData(MapWidget::OPENSTREETMAPROADS);
+
   ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeOpenTopoMap->setData(MapWidget::OPENTOPOMAP);
+
   ui->actionMapThemeStamenTerrain->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeStamenTerrain->setData(MapWidget::STAMENTERRAIN);
+
   ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeSimple->setData(MapWidget::SIMPLE);
+
   ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemePlain->setData(MapWidget::PLAIN);
+
   ui->actionMapThemeAtlas->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeCustom->setActionGroup(actionGroupMapTheme);
+  ui->actionMapThemeAtlas->setData(MapWidget::ATLAS);
+
+  // Add any custom map themes that were found besides the stock themes
+  QFileInfoList customDgmlFiles;
+  findCustomMaps(customDgmlFiles);
+
+  for(int i = 0; i < customDgmlFiles.size(); i++)
+  {
+    const QFileInfo& dgmlFile = customDgmlFiles.at(i);
+    QString name = tr("Custom (%1)").arg(dgmlFile.baseName());
+    QString helptext = tr("Custom map theme (%1)").arg(dgmlFile.baseName());
+
+    // Add item to combo box in toolbar
+    mapThemeComboBox->addItem(name, dgmlFile.filePath());
+
+    // Create action for map/theme submenu
+    QAction *action = ui->menuMapTheme->addAction(name);
+    action->setCheckable(true);
+    action->setToolTip(helptext);
+    action->setStatusTip(helptext);
+    action->setActionGroup(actionGroupMapTheme);
+    action->setData(MapWidget::CUSTOM + i);
+
+    // Add to list for connect signal etc.
+    customMapThemeMenuActions.append(action);
+  }
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
@@ -570,53 +598,16 @@ void MainWindow::connectAllSlots()
           });
 
   // Let theme menus update combo boxes
-  connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::OPENSTREETMAP);
-          });
+  connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeSimple, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemePlain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
+  connect(ui->actionMapThemeAtlas, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
-  connect(ui->actionMapThemeOpenStreetMapRoads, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::OPENSTREETMAPROADS);
-          });
-
-  connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::OPENTOPOMAP);
-          });
-
-  connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::STAMENTERRAIN);
-          });
-
-  connect(ui->actionMapThemeSimple, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::SIMPLE);
-          });
-
-  connect(ui->actionMapThemePlain, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::PLAIN);
-          });
-
-  connect(ui->actionMapThemeAtlas, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::ATLAS);
-          });
-
-  connect(ui->actionMapThemeCustom, &QAction::triggered, [ = ](bool checked)
-          {
-            if(checked)
-              mapThemeComboBox->setCurrentIndex(MapWidget::CUSTOM);
-          });
+  for(QAction *action : customMapThemeMenuActions)
+    connect(action, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
   // Map object/feature display
   connect(ui->actionMapShowCities, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -749,6 +740,44 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 }
 
+void MainWindow::themeMenuTriggered(bool checked)
+{
+  QAction *action = dynamic_cast<QAction *>(sender());
+  if(action != nullptr && checked)
+    mapThemeComboBox->setCurrentIndex(action->data().toInt());
+}
+
+/* Look for new directories with a valid DGML file in the earth dir */
+void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
+{
+  QDir dir("data/maps/earth");
+  QFileInfoList entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+  // Look for new map themes
+  for(const QFileInfo& info : entries)
+  {
+    if(!STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
+    {
+      // Found a new directory
+      qDebug() << "Custom theme" << info.absoluteFilePath();
+      QFileInfo dgml(info.filePath() + QDir::separator() + info.baseName() + ".dgml");
+      // Check if DGML exists
+      if(dgml.exists() && dgml.isFile() && dgml.isReadable())
+      {
+        // Create a new entry with path relative to "earth"
+        QString dgmlFileRelative(QString("earth") +
+                                 QDir::separator() + dir.relativeFilePath(info.absoluteFilePath()) +
+                                 QDir::separator() + info.baseName() + ".dgml");
+        qDebug() << "Custom theme DGML" << dgml.absoluteFilePath() << "relative path" << dgmlFileRelative;
+        customDgmlFiles.append(dgmlFileRelative);
+      }
+      else
+        qWarning() << "No DGML found for custom theme" << info.absoluteFilePath();
+    }
+    else
+      qDebug() << "Found stock theme" << info.baseName();
+  }
+}
+
 /* Called by the toolbar combo box */
 void MainWindow::changeMapProjection(int index)
 {
@@ -785,7 +814,9 @@ void MainWindow::changeMapTheme(int index)
   ui->actionMapThemeSimple->setChecked(index == MapWidget::SIMPLE);
   ui->actionMapThemePlain->setChecked(index == MapWidget::PLAIN);
   ui->actionMapThemeAtlas->setChecked(index == MapWidget::ATLAS);
-  ui->actionMapThemeCustom->setChecked(index == MapWidget::CUSTOM);
+
+  for(int i = 0; i < customMapThemeMenuActions.size(); i++)
+    customMapThemeMenuActions.at(i)->setChecked(index == MapWidget::CUSTOM + i);
 
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
 }

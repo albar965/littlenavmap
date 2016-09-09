@@ -260,7 +260,7 @@ public:
     SIMPLE,
     PLAIN,
     ATLAS,
-    CUSTOM,
+    CUSTOM, /* Custom maps count from this index up */
     INVALID = -1
   };
 
