@@ -28,6 +28,8 @@
 #include "db/databasemanager.h"
 #include "common/settingsmigrate.h"
 #include "common/aircrafttrack.h"
+#include "fs/sc/simconnectdata.h"
+#include "fs/sc/simconnectreply.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -112,6 +114,9 @@ int main(int argc, char *argv[])
     LoggingUtil::logSystemInformation();
     LoggingUtil::logStandardPaths();
     Settings::logSettingsInformation();
+
+    qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
+            << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
     migrate::checkAndMigrateSettings();
 
