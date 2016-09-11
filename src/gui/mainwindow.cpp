@@ -1311,6 +1311,7 @@ void MainWindow::mainWindowShown()
     }
     // else have databases do nothing
   }
+  setStatusMessage(tr("Ready."));
 }
 
 /* Enable or disable actions */
