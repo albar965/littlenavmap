@@ -255,7 +255,12 @@ void DatabaseManager::insertSimSwitchActions(QAction *before, QMenu *menu)
     // Create group to get radio button like behavior
     group = new QActionGroup(menu);
     int index = 1;
-    for(atools::fs::FsPaths::SimulatorType type : simulators.keys())
+
+    // Sort keys to avoid random order
+    QList<FsPaths::SimulatorType> keys = simulators.keys();
+    std::sort(keys.begin(), keys.end());
+
+    for(atools::fs::FsPaths::SimulatorType type : keys)
     {
       // Create an action for each simulator installation or database found
       QAction *action = new QAction("&" + QString::number(index++) + " " + FsPaths::typeToName(type), menu);
