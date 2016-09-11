@@ -161,13 +161,27 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     startPoints.append(QPoint(x, y));
   }
 
+  GeoDataLineString ls;
+  ls.setTessellate(true);
+
+  // Draw lines separately to avoid omission in mercator near anti meridian
   // Draw outer line
   context->painter->setPen(QPen(mapcolors::routeOutlineColor, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  context->painter->drawPolyline(linestring);
+  for(int i = 1; i < linestring.size(); i++)
+  {
+    ls.clear();
+    ls << linestring.at(i - 1) << linestring.at(i);
+    context->painter->drawPolyline(ls);
+  }
 
   // Draw innner line
   context->painter->setPen(QPen(mapcolors::routeColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  context->painter->drawPolyline(linestring);
+  for(int i = 1; i < linestring.size(); i++)
+  {
+    ls.clear();
+    ls << linestring.at(i - 1) << linestring.at(i);
+    context->painter->drawPolyline(ls);
+  }
 
   if(!context->drawFast)
   {
