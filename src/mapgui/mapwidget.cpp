@@ -68,6 +68,8 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
 using namespace Marble;
 using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
+using atools::geo::Rect;
+using atools::geo::Pos;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
@@ -340,20 +342,20 @@ void MapWidget::restoreState()
   setMapDetail(mapDetailLevel);
 
   if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
-    searchMarkPos = atools::geo::Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
+    searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
   else
-    searchMarkPos = atools::geo::Pos(0.f, 0.f);
+    searchMarkPos = Pos(0.f, 0.f);
   emit searchMarkChanged(searchMarkPos);
 
   if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
-    homePos = atools::geo::Pos(s.valueFloat(lnm::MAP_HOMELONX), s.valueFloat(lnm::MAP_HOMELATY));
+    homePos = Pos(s.valueFloat(lnm::MAP_HOMELONX), s.valueFloat(lnm::MAP_HOMELATY));
     homeDistance = s.valueFloat(lnm::MAP_HOMEDISTANCE);
   }
   else
   {
     // Looks like first start after installation
-    homePos = atools::geo::Pos(0.f, 0.f);
+    homePos = Pos(0.f, 0.f);
     homeDistance = DEFAULT_MAP_DISTANCE;
   }
 
@@ -419,6 +421,7 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
 {
   qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
+
   centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                             GeoDataCoordinates::Degree), false);
 }
@@ -474,7 +477,7 @@ void MapWidget::changeSearchMark(const atools::geo::Pos& pos)
 
 void MapWidget::changeHome()
 {
-  homePos = atools::geo::Pos(centerLongitude(), centerLatitude());
+  homePos = Pos(centerLongitude(), centerLatitude());
   homeDistance = distance();
   update();
   mainWindow->setStatusMessage(QString(tr("Changed home position.")));
@@ -664,7 +667,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
 
   int id = -1;
   maptypes::MapObjectTypes type = maptypes::NONE;
-  atools::geo::Pos pos = atools::geo::EMPTY_POS;
+  Pos pos = atools::geo::EMPTY_POS;
   if(totalSize == 0)
   {
     // Nothing at the position - add userpoint
@@ -856,7 +859,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   int distMarkerIndex = -1;
   int rangeMarkerIndex = -1;
   bool visibleOnMap = false;
-  atools::geo::Pos pos;
+  Pos pos;
 
   if(!point.isNull())
   {
@@ -866,7 +869,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
     if(visibleOnMap)
     {
-      pos = atools::geo::Pos(lon, lat);
+      pos = Pos(lon, lat);
       distMarkerIndex = screenIndex->getNearestDistanceMarkIndex(point.x(), point.y(), screenSearchDistance);
       rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDistance);
     }
@@ -1182,7 +1185,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
-      atools::geo::Pos position = pos;
+      Pos position = pos;
       maptypes::MapObjectTypes type;
 
       int id = -1;
@@ -1325,9 +1328,9 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
     qreal lon, lat;
     if(geoCoordinates(mouseEvent->pos().x(), mouseEvent->pos().y(), lon, lat, GeoDataCoordinates::Degree))
-      mainWindow->updateMapPosLabel(atools::geo::Pos(lon, lat));
+      mainWindow->updateMapPosLabel(Pos(lon, lat));
     else
-      mainWindow->updateMapPosLabel(atools::geo::Pos());
+      mainWindow->updateMapPosLabel(Pos());
   }
 
   if(e->type() == QEvent::MouseMove && mouseState != mw::NONE)
@@ -1413,7 +1416,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       // Position is valid update the distance mark continuously
       if(!screenIndex->getDistanceMarks().isEmpty())
-        screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
+        screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
     }
 
     // Force fast updates while dragging
@@ -1533,7 +1536,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
           // Update distance measurment line
-          screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = atools::geo::Pos(lon, lat);
+          screenIndex->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
       }
       else if(mouseState & mw::DRAG_POST_CANCEL)
         cancelDragDistance();
@@ -1680,7 +1683,7 @@ void MapWidget::focusOutEvent(QFocusEvent *event)
 
 void MapWidget::leaveEvent(QEvent *)
 {
-  mainWindow->updateMapPosLabel(atools::geo::Pos());
+  mainWindow->updateMapPosLabel(Pos());
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *event)
@@ -1857,11 +1860,11 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     currentViewBoundingBox = visibleLatLonAltBox;
 
     // qDebug() << "paintEvent map view has changed zoom" << currentZoom
-    // << "distance" << distance() << " (" << atools::geo::meterToNm(distance() * 1000.) << " km)";
+    // << "distance" << distance() << " (" << meterToNm(distance() * 1000.) << " km)";
 
     if(!changedByHistory)
       // Not changed by next/last in history
-      history.addEntry(atools::geo::Pos(centerLongitude(), centerLatitude()), distance());
+      history.addEntry(Pos(centerLongitude(), centerLatitude()), distance());
 
     changedByHistory = false;
     changed = true;

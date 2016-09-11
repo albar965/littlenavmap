@@ -43,6 +43,8 @@
 #include <QFile>
 #include <QStandardItemModel>
 
+#include <marble/GeoDataLineString.h>
+
 // Route table colum headings
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
@@ -81,6 +83,9 @@ enum RouteColumns
 
 using namespace atools::fs::pln;
 using namespace atools::geo;
+using Marble::GeoDataLatLonBox;
+using Marble::GeoDataLineString;
+using Marble::GeoDataCoordinates;
 
 RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
@@ -1634,18 +1639,14 @@ void RouteController::updateRouteMapObjects()
     mapobj.updateDistanceAndCourse(last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
     totalDistance += mapobj.getDistanceTo();
-
-    if(i == 0)
-      boundingRect = Rect(mapobj.getPosition());
-    else
-      boundingRect.extend(mapobj.getPosition());
-
     last = &mapobj;
   }
   route.setTotalDistance(totalDistance);
 
   // Next number for user point name
   curUserpointNumber++;
+
+  updateBoundingRect();
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
@@ -1676,10 +1677,6 @@ void RouteController::createRouteMapObjects()
                  << "is not valid";
 
     totalDistance += mapobj.getDistanceTo();
-    if(i == 0)
-      boundingRect = Rect(mapobj.getPosition());
-    else
-      boundingRect.extend(mapobj.getPosition());
 
     route.append(mapobj);
     last = &route.last();
@@ -1689,6 +1686,22 @@ void RouteController::createRouteMapObjects()
 
   // Next number for user point name
   curUserpointNumber++;
+
+  updateBoundingRect();
+}
+
+/* Update the bounding rect using marble functions to catch anti meridian overlap */
+void RouteController::updateBoundingRect()
+{
+  GeoDataLineString line;
+
+  for(const RouteMapObject& rmo : route)
+    line.append(GeoDataCoordinates(rmo.getPosition().getLonX(),
+                                   rmo.getPosition().getLatY(), 0., GeoDataCoordinates::Degree));
+
+  GeoDataLatLonBox box = GeoDataLatLonBox::fromLineString(line);
+  boundingRect = Rect(box.west(), box.north(), box.east(), box.south());
+  boundingRect.toDeg();
 }
 
 /* Update travel times in table view model after speed change */

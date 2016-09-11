@@ -238,11 +238,12 @@ private:
   void routeToFlightPlan();
 
   void routeSetDepartureInternal(const maptypes::MapAirport& airport);
-  void createRouteMapObjects();
 
   void updateTableModel();
 
+  void createRouteMapObjects();
   void updateRouteMapObjects();
+  void updateBoundingRect();
 
   void routeAltChanged();
   void routeTypeChanged();
