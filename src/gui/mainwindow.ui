@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>768</height>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2194,7 +2194,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
         <attribute name="title">
@@ -2508,6 +2508,18 @@
    <addaction name="actionRouteReverse"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetElevation">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>80</height>
+    </size>
+   </property>
    <property name="windowIcon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/profiledock.svg</normaloff>:/littlenavmap/resources/icons/profiledock.svg</iconset>
@@ -2541,7 +2553,10 @@
      <item>
       <widget class="QLabel" name="labelElevationInfo">
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;No information.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>No information.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -2582,7 +2597,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetAircraft">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">
