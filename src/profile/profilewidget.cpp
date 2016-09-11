@@ -36,6 +36,7 @@
 
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
+#include <marble/GeoDataLineString.h>
 
 /* Maximum delta values depending on update rate in options */
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
@@ -52,6 +53,7 @@ static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELT
   });
 
 using Marble::GeoDataCoordinates;
+using Marble::GeoDataLineString;
 using atools::geo::Pos;
 
 ProfileWidget::ProfileWidget(MainWindow *parent)
@@ -544,6 +546,71 @@ void ProfileWidget::updateThreadFinished()
   }
 }
 
+/* Get elevation points between the two points. This returns also correct results if the antimeridian is crossed
+ * @return true if not aborted */
+bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
+                                         const atools::geo::Pos& lastPos,
+                                         const atools::geo::Pos& curPos) const
+{
+  // Create a line string from the two points and split it at the date line if crossing
+  GeoDataLineString coords;
+  coords.setTessellate(true);
+  coords << GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree)
+         << GeoDataCoordinates(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
+
+  QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+  for(const Marble::GeoDataLineString *ls : coordsCorrected)
+  {
+    for(int j = 1; j < ls->size(); j++)
+    {
+      if(terminateThreadSignal)
+        return false;
+
+      const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
+      const Marble::GeoDataCoordinates& c2 = ls->at(j);
+
+      // qDebug() << c1.toString(GeoDataCoordinates::Decimal)
+      // << c2.toString(GeoDataCoordinates::Decimal);
+
+      // Get altitude points for the line segment
+      // The might not be complete and will be more complete on further iterations when we get a signal
+      // from the elevation model
+      QList<GeoDataCoordinates> temp = elevationModel->heightProfile(
+        c1.longitude(GeoDataCoordinates::Degree),
+        c1.latitude(GeoDataCoordinates::Degree),
+        c2.longitude(GeoDataCoordinates::Degree),
+        c2.latitude(GeoDataCoordinates::Degree));
+
+      // qDebug() << temp.first().toString(GeoDataCoordinates::Decimal)
+      // << temp.first().altitude();
+      // qDebug() << temp.at(temp.size() / 4).toString(GeoDataCoordinates::Decimal)
+      // << temp.at(temp.size() / 4).altitude();
+      // qDebug() << temp.at(temp.size() / 2).toString(GeoDataCoordinates::Decimal)
+      // << temp.at(temp.size() / 2).altitude();
+      // qDebug() << temp.at(temp.size() / 4 * 3).toString(GeoDataCoordinates::Decimal)
+      // << temp.at(temp.size() / 4 * 3).altitude();
+      // qDebug() << temp.last().toString(GeoDataCoordinates::Decimal)
+      // << temp.last().altitude();
+
+      for(const GeoDataCoordinates& c : temp)
+      {
+        if(terminateThreadSignal)
+          return false;
+
+        elevations.append(c);
+      }
+
+      if(elevations.isEmpty())
+      {
+        // Workaround for invalid geometry data - add void
+        elevations.append(c1);
+        elevations.append(c2);
+      }
+    }
+  }
+  return true;
+}
+
 /* Background thread. Fetches elevation points from Marble elevation model and updates totals. */
 ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
 {
@@ -565,36 +632,30 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     const RouteMapObject& lastRmo = legs.routeMapObjects.at(i - 1);
     const RouteMapObject& rmo = legs.routeMapObjects.at(i);
 
-    // Get altitude points for the flight plan leg
-    // The might not be complete and will be more complete on further iterations when we get a signal
-    // from the elevation model
-    QList<GeoDataCoordinates> elev = elevationModel->heightProfile(
-      lastRmo.getPosition().getLonX(), lastRmo.getPosition().getLatY(),
-      rmo.getPosition().getLonX(), rmo.getPosition().getLatY());
-
-    if(elev.isEmpty())
-    {
-      // Workaround for invalid geometry data - add void
-      elev.append(GeoDataCoordinates(lastRmo.getPosition().getLonX(),
-                                     lastRmo.getPosition().getLatY(), 0., GeoDataCoordinates::Degree));
-      elev.append(GeoDataCoordinates(rmo.getPosition().getLonX(),
-                                     rmo.getPosition().getLatY(), 0., GeoDataCoordinates::Degree));
-    }
+    GeoDataLineString elevations;
+    elevations.setTessellate(true);
+    if(!fetchRouteElevations(elevations, lastRmo.getPosition(), rmo.getPosition()))
+      return ElevationLegList();
 
     // Loop over all elevation points for the current leg
     ElevationLeg leg;
     Pos lastPos;
-    for(int j = 0; j < elev.size(); j++)
+    for(int j = 0; j < elevations.size(); j++)
     {
       if(terminateThreadSignal)
         return ElevationLegList();
 
-      const GeoDataCoordinates& coord = elev.at(j);
-      Pos pos(coord.longitude(GeoDataCoordinates::Degree),
-              coord.latitude(GeoDataCoordinates::Degree), meterToFeet(coord.altitude()));
+      const GeoDataCoordinates& coord = elevations.at(j);
+      qreal altFeet = meterToFeet(coord.altitude());
+
+      // Limit ground altitude to 30000 feet
+      altFeet = std::min(altFeet, 30000.);
+
+      Pos pos(coord.longitude(GeoDataCoordinates::Degree), coord.latitude(GeoDataCoordinates::Degree),
+              altFeet);
 
       // Drop points with similar altitude except the first and last one on a segment
-      if(lastPos.isValid() && j != 0 && j != elev.size() - 1 &&
+      if(lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
          legs.elevationLegs.size() > 2 &&
          atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
         continue;
@@ -635,7 +696,10 @@ void ProfileWidget::showEvent(QShowEvent *)
 
 void ProfileWidget::hideEvent(QHideEvent *)
 {
+  // Stop all updates
   widgetVisible = false;
+  updateTimer->stop();
+  terminateThread();
 }
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
@@ -741,7 +805,7 @@ void ProfileWidget::leaveEvent(QEvent *)
   delete rubberBand;
   rubberBand = nullptr;
 
-  mainWindow->getUi()->labelElevationInfo->setText(tr("<b>No information.</b>"));
+  mainWindow->getUi()->labelElevationInfo->setText(tr("No information."));
 
   // Tell map widget to erase rubberband
   emit highlightProfilePoint(atools::geo::EMPTY_POS);

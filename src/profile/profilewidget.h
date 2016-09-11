@@ -27,6 +27,7 @@
 
 namespace Marble {
 class ElevationModel;
+class GeoDataLineString;
 }
 
 class MainWindow;
@@ -117,6 +118,8 @@ private:
   virtual void resizeEvent(QResizeEvent *) override;
   virtual void leaveEvent(QEvent *) override;
 
+  bool fetchRouteElevations(Marble::GeoDataLineString& elevations, const atools::geo::Pos& lastPos,
+                            const atools::geo::Pos& curPos) const;
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
   void elevationUpdateAvailable();
   void updateTimeout();
