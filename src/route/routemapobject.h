@@ -54,7 +54,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
+  void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
                                  const RouteMapObject *predRouteMapObj);
 
   /*
@@ -63,14 +63,14 @@ public:
    * @param newAirport
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromAirport(atools::fs::pln::FlightplanEntry *planEntry, const maptypes::MapAirport& newAirport,
+  void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
                          const RouteMapObject *predRouteMapObj);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
    */
-  void updateDistanceAndCourse(const RouteMapObject *predRouteMapObj);
+  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
   void setDepartureParking(const maptypes::MapParking& departureParking);
@@ -90,6 +90,9 @@ public:
   /* Get name of airport or navaid. Empty for waypoint or user. Source can be flight plan entry or database. */
   QString getName() const;
 
+  /* Get airway  name. */
+  const QString& getAirway() const;
+
   /* Get frequency of radio navaid. 0 if not a radio navaid. Source is always database. */
   int getFrequency() const;
 
@@ -98,11 +101,6 @@ public:
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
-
-  const atools::fs::pln::FlightplanEntry *getFlightplanEntry() const
-  {
-    return flightplanEntry;
-  }
 
   maptypes::MapObjectTypes getMapObjectType() const
   {
@@ -194,11 +192,18 @@ public:
     return groundAltitude;
   }
 
+  void setFlightplan(atools::fs::pln::Flightplan *fp)
+  {
+    flightplan = fp;
+  }
+
 private:
+  const atools::fs::pln::FlightplanEntry& curEntry() const;
+
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;
   /* Associated flight plan entry */
-  atools::fs::pln::FlightplanEntry *flightplanEntry = nullptr;
+  int flightplanEntryIndex = -1;
 
   /* Used defined waypoint numbering */
   int userpointNum = 0;

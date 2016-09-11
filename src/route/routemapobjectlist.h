@@ -32,7 +32,10 @@ class RouteMapObjectList :
 {
 public:
   RouteMapObjectList();
+  RouteMapObjectList(const RouteMapObjectList& other);
   virtual ~RouteMapObjectList();
+
+  RouteMapObjectList& operator=(const RouteMapObjectList& other);
 
   /* Get nearest leg or waypoint index, whatever is closer to the position */
   int getNearestLegOrPointIndex(const atools::geo::Pos& pos) const;
@@ -42,6 +45,8 @@ public:
 
   /* Get nearest waypoint index and distance in nautical miles to this point.  */
   int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const;
+
+
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -112,6 +117,8 @@ public:
 
   /* Value for invalid/not found distances */
   const static float INVALID_DISTANCE_VALUE;
+
+  void copy(const RouteMapObjectList& other);
 
 private:
   float totalDistance = 0.f;

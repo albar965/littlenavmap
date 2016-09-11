@@ -233,9 +233,11 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, mapty
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
 }
 
+
+
 int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance)
 {
-  CoordinateConverter conv(mapWidget->viewport());
+    CoordinateConverter conv(mapWidget->viewport());
   int index = 0;
   int x, y;
   for(const maptypes::DistanceMarker& marker : distanceMarks)

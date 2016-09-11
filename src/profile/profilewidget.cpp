@@ -646,7 +646,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         return ElevationLegList();
 
       const GeoDataCoordinates& coord = elevations.at(j);
-      qreal altFeet = meterToFeet(coord.altitude());
+      double altFeet = meterToFeet(coord.altitude());
 
       // Limit ground altitude to 30000 feet
       altFeet = std::min(altFeet, 30000.);

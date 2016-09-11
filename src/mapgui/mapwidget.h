@@ -103,7 +103,7 @@ public:
 
   /* Update hightlighted objects */
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
-  void changeRouteHighlights(const RouteMapObjectList& routeHighlight);
+  void changeRouteHighlights(const QList<int>& routeHighlight);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -139,7 +139,7 @@ public:
   /* Getters used by the painters */
   const maptypes::MapSearchResult& getSearchHighlights() const;
 
-  const RouteMapObjectList& getRouteHighlights() const;
+  const QList<int>& getRouteHighlights() const;
 
   const QList<maptypes::RangeMarker>& getRangeRings() const;
 

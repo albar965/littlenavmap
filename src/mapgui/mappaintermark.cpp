@@ -27,6 +27,7 @@
 #include "common/constants.h"
 #include "route/routemapobject.h"
 #include "route/routemapobjectlist.h"
+#include "route/routecontroller.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -170,10 +171,13 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
     size = std::max(size, context->mapLayerEffective->getAirportSymbolSize());
 
   // Draw hightlights from the flight plan view ------------------------------------------
-  const RouteMapObjectList& routeHighlightResults = mapWidget->getRouteHighlights();
+  const QList<int>& routeHighlightResults = mapWidget->getRouteHighlights();
   positions.clear();
-  for(const RouteMapObject& rmo : routeHighlightResults)
+  for(int idx : routeHighlightResults)
+  {
+    const RouteMapObject& rmo = mapWidget->getRouteController()->getRouteMapObjects().at(idx);
     positions.append(rmo.getPosition());
+  }
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::routeHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));

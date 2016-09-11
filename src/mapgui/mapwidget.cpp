@@ -483,9 +483,9 @@ void MapWidget::changeHome()
   mainWindow->setStatusMessage(QString(tr("Changed home position.")));
 }
 
-void MapWidget::changeRouteHighlights(const RouteMapObjectList& routeHighlight)
+void MapWidget::changeRouteHighlights(const QList<int>& routeHighlight)
 {
-  screenIndex->getRouteHighlights() = routeHighlight;
+  screenIndex->setRouteHighlights(routeHighlight);
   update();
 }
 
@@ -1699,7 +1699,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
-const RouteMapObjectList& MapWidget::getRouteHighlights() const
+const QList<int>& MapWidget::getRouteHighlights() const
 {
   return screenIndex->getRouteHighlights();
 }

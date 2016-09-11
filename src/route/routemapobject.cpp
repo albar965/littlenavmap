@@ -72,25 +72,27 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
   return TYPE();
 }
 
-void RouteMapObject::createFromAirport(atools::fs::pln::FlightplanEntry *planEntry,
+void RouteMapObject::createFromAirport(int entryIndex,
                                        const maptypes::MapAirport& newAirport,
                                        const RouteMapObject *predRouteMapObj)
 {
-  flightplanEntry = planEntry;
+  flightplanEntryIndex = entryIndex;
   predecessor = predRouteMapObj != nullptr;
   type = maptypes::AIRPORT;
   airport = newAirport;
 
-  updateDistanceAndCourse(predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, predRouteMapObj);
   valid = true;
 }
 
-void RouteMapObject::createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry *planEntry, MapQuery *query,
+void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
                                                const RouteMapObject *predRouteMapObj)
 {
-  flightplanEntry = planEntry;
+  flightplanEntryIndex = entryIndex;
 
   predecessor = predRouteMapObj != nullptr;
+
+  atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[flightplanEntryIndex];
 
   QString region = flightplanEntry->getIcaoRegion();
 
@@ -181,7 +183,7 @@ void RouteMapObject::createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry 
         query->getMapObjectByIdent(mapobjectResult, maptypes::WAYPOINT,
                                    flightplanEntry->getIcaoIdent(), region);
         const maptypes::MapWaypoint& obj = findMapObject(mapobjectResult.waypoints,
-                                                         planEntry->getPosition(), found);
+                                                         flightplanEntry->getPosition(), found);
         if(found)
         {
           type = maptypes::WAYPOINT;
@@ -201,7 +203,8 @@ void RouteMapObject::createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry 
     case atools::fs::pln::entry::VOR:
       {
         query->getMapObjectByIdent(mapobjectResult, maptypes::VOR, flightplanEntry->getIcaoIdent(), region);
-        const maptypes::MapVor& obj = findMapObject(mapobjectResult.vors, planEntry->getPosition(), found);
+        const maptypes::MapVor& obj = findMapObject(mapobjectResult.vors,
+                                                    flightplanEntry->getPosition(), found);
         if(found)
         {
           type = maptypes::VOR;
@@ -220,7 +223,8 @@ void RouteMapObject::createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry 
     case atools::fs::pln::entry::NDB:
       {
         query->getMapObjectByIdent(mapobjectResult, maptypes::NDB, flightplanEntry->getIcaoIdent(), region);
-        const maptypes::MapNdb& obj = findMapObject(mapobjectResult.ndbs, planEntry->getPosition(), found);
+        const maptypes::MapNdb& obj = findMapObject(mapobjectResult.ndbs,
+                                                    flightplanEntry->getPosition(), found);
         if(found)
         {
           type = maptypes::NDB;
@@ -249,7 +253,7 @@ void RouteMapObject::createFromDatabaseByEntry(atools::fs::pln::FlightplanEntry 
   if(!valid)
     type = maptypes::INVALID;
 
-  updateDistanceAndCourse(predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, predRouteMapObj);
 }
 
 void RouteMapObject::setDepartureParking(const maptypes::MapParking& departureParking)
@@ -264,8 +268,9 @@ void RouteMapObject::setDepartureStart(const maptypes::MapStart& departureStart)
   parking = maptypes::MapParking();
 }
 
-void RouteMapObject::updateDistanceAndCourse(const RouteMapObject *predRouteMapObj)
+void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj)
 {
+  flightplanEntryIndex = entryIndex;
   if(predRouteMapObj != nullptr)
   {
     const Pos& prevPos = predRouteMapObj->getPosition();
@@ -296,7 +301,7 @@ int RouteMapObject::getId() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return -1;
@@ -324,7 +329,7 @@ float RouteMapObject::getMagvar() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return 0.f;
@@ -352,7 +357,7 @@ int RouteMapObject::getRange() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
@@ -374,7 +379,7 @@ QString RouteMapObject::getMapObjectTypeName() const
   if(type == maptypes::INVALID)
     return tr("Invalid");
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return tr("Unknown");
@@ -399,20 +404,20 @@ QString RouteMapObject::getMapObjectTypeName() const
 
 bool RouteMapObject::isUser()
 {
-  return flightplanEntry->getWaypointType() == atools::fs::pln::entry::USER;
+  return curEntry().getWaypointType() == atools::fs::pln::entry::USER;
 }
 
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {
   if(type == maptypes::INVALID)
   {
-    if(flightplanEntry->getPosition().isValid())
-      return flightplanEntry->getPosition();
+    if(curEntry().getPosition().isValid())
+      return curEntry().getPosition();
     else
       return atools::geo::EMPTY_POS;
   }
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return atools::geo::EMPTY_POS;
@@ -430,7 +435,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
       return ndb.position;
 
     case atools::fs::pln::entry::USER:
-      return flightplanEntry->getPosition();
+      return curEntry().getPosition();
   }
   return atools::geo::EMPTY_POS;
 }
@@ -438,9 +443,9 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
 QString RouteMapObject::getIdent() const
 {
   if(type == maptypes::INVALID)
-    return flightplanEntry->getIcaoIdent();
+    return curEntry().getIcaoIdent();
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       return tr("Unknown Waypoint Type");
@@ -466,14 +471,14 @@ QString RouteMapObject::getIdent() const
 QString RouteMapObject::getRegion() const
 {
   if(type == maptypes::INVALID)
-    return flightplanEntry->getIcaoRegion();
+    return curEntry().getIcaoRegion();
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::AIRPORT:
     case atools::fs::pln::entry::USER:
-      return flightplanEntry->getIcaoRegion();
+      return curEntry().getIcaoRegion();
 
     case atools::fs::pln::entry::INTERSECTION:
       return waypoint.region;
@@ -492,7 +497,7 @@ QString RouteMapObject::getName() const
   if(type == maptypes::INVALID)
     return QString();
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
@@ -511,12 +516,17 @@ QString RouteMapObject::getName() const
   return QString();
 }
 
+const QString& RouteMapObject::getAirway() const
+{
+  return curEntry().getAirway();
+}
+
 int RouteMapObject::getFrequency() const
 {
   if(type == maptypes::INVALID)
     return 0;
 
-  switch(flightplanEntry->getWaypointType())
+  switch(curEntry().getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
@@ -532,3 +542,10 @@ int RouteMapObject::getFrequency() const
   }
   return 0;
 }
+
+const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
+{
+  return flightplan->at(flightplanEntryIndex);
+}
+
+

@@ -891,7 +891,7 @@ bool MainWindow::routeValidate()
   if(!routeController->hasValidDeparture() || !routeController->hasValidDestination())
   {
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOWROUTEWARNING,
-                                            tr("Flight Plan must have an airport as "
+                                            tr("Flight Plan must have a valid airport as "
                                                "start and destination and "
                                                "will not be usable by the Simulator."),
                                             tr("Do not show this dialog again and"
@@ -969,9 +969,9 @@ void MainWindow::updateWindowTitle()
 
   if(!routeController->getCurrentRouteFilename().isEmpty())
     newTitle += " - " + QFileInfo(routeController->getCurrentRouteFilename()).fileName() +
-                (routeController->hasChanged() ? " *" : QString());
+                (routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
-    newTitle += " - *";
+    newTitle += tr(" - *");
 
   setWindowTitle(newTitle);
 }
@@ -1187,7 +1187,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected);
   Q_UNUSED(total);
-  RouteMapObjectList result;
+  QList<int> result;
   routeController->getSelectedRouteMapObjects(result);
   mapWidget->changeRouteHighlights(result);
 }
@@ -1574,4 +1574,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   // Database title might have changed
   updateWindowTitle();
+
+  // Update toolbar buttons
+  updateActionStates();
 }

@@ -76,14 +76,14 @@ public:
   void restoreState();
 
   /* Get objects that are highlighted because of selected flight plan legs in the table */
-  RouteMapObjectList& getRouteHighlights()
+  const QList<int>& getRouteHighlights() const
   {
     return routeHighlights;
   }
 
-  const RouteMapObjectList& getRouteHighlights() const
+  void setRouteHighlights(const QList<int>& value)
   {
-    return routeHighlights;
+    routeHighlights = value;
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
@@ -128,7 +128,7 @@ private:
   MapPaintLayer *paintLayer;
 
   maptypes::MapSearchResult highlights;
-  RouteMapObjectList routeHighlights;
+  QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;
   QList<maptypes::DistanceMarker> distanceMarks;
   QList<std::pair<int, QLine> > routeLines;

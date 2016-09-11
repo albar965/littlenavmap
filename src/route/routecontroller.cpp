@@ -63,8 +63,8 @@ namespace rc {
 // Route table column indexes
 enum RouteColumns
 {
-  FIRST_COL,
-  IDENT = FIRST_COL,
+  FIRST_COLUMN,
+  IDENT = FIRST_COLUMN,
   REGION,
   NAME,
   AIRWAY,
@@ -76,7 +76,7 @@ enum RouteColumns
   REMAINING_DISTANCE,
   LEG_TIME,
   ETA,
-  LAST_COL = ETA
+  LAST_COLUMN = ETA
 };
 
 }
@@ -328,7 +328,7 @@ void RouteController::restoreState()
   }
 }
 
-void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const
+void RouteController::getSelectedRouteMapObjects(QList<int>& selRouteMapObjectIndexes) const
 {
   if(mainWindow->getUi()->dockWidgetRoute->isVisible())
   {
@@ -336,7 +336,7 @@ void RouteController::getSelectedRouteMapObjects(QList<RouteMapObject>& selRoute
     for(const QItemSelectionRange& rng : sm)
     {
       for(int row = rng.top(); row <= rng.bottom(); ++row)
-        selRouteMapObjects.append(route.at(row));
+        selRouteMapObjectIndexes.append(row);
     }
   }
 }
@@ -448,7 +448,7 @@ bool RouteController::saveFlightplan()
 {
   try
   {
-    qDebug() << "saveFlightplan";
+    qDebug() << "saveFlighplan" << routeFilename;
     // Will throw an exception if something goes wrong
     route.getFlightplan().save(routeFilename);
 
@@ -477,10 +477,12 @@ void RouteController::calculateDirect()
   RouteCommand *undoCommand = preChange(tr("Direct Flight Plan Calculation"));
 
   Flightplan& flightplan = route.getFlightplan();
+
   flightplan.setRouteType(atools::fs::pln::DIRECT);
 
-  // Remove all waypoints
-  flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
+  if(flightplan.getEntries().size() >= 2)
+    // Remove all waypoints
+    flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
 
   createRouteMapObjects();
   updateTableModel();
@@ -867,11 +869,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapNavaidRange->setEnabled(false);
     ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
-    QList<RouteMapObject> selectedRouteMapObjects;
-    getSelectedRouteMapObjects(selectedRouteMapObjects);
+    QList<int> selectedRouteMapObjectIndexes;
+    getSelectedRouteMapObjects(selectedRouteMapObjectIndexes);
     // If there are any radio navaids in the selected list enable range menu item
-    for(const RouteMapObject& rmo : selectedRouteMapObjects)
+    for(int idx : selectedRouteMapObjectIndexes)
     {
+      const RouteMapObject& rmo = route.at(idx);
       if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
       {
         ui->actionMapNavaidRange->setEnabled(true);
@@ -925,8 +928,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else if(action == ui->actionMapNavaidRange)
       {
         // Show range rings for all radio navaids
-        for(const RouteMapObject& rmo : selectedRouteMapObjects)
+        for(int idx : selectedRouteMapObjectIndexes)
         {
+          const RouteMapObject& rmo = route.at(idx);
           if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
             mainWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
                                                         rmo.getIdent(), rmo.getFrequency(),
@@ -1103,6 +1107,10 @@ void RouteController::deleteSelectedLegs()
     for(int row : rows)
     {
       route.getFlightplan().getEntries().removeAt(row);
+
+      if(route.getFlightplan().getEntries().size() > row)
+        route.getFlightplan().getEntries()[row].setAirway(QString());
+
       route.removeAt(row);
       model->removeRow(row);
     }
@@ -1153,8 +1161,8 @@ void RouteController::select(QList<int>& rows, int offset)
 
   for(int row : rows)
     // Need to select all columns
-    newSel.append(QItemSelectionRange(model->index(row + offset, rc::FIRST_COL),
-                                      model->index(row + offset, rc::LAST_COL)));
+    newSel.append(QItemSelectionRange(model->index(row + offset, rc::FIRST_COLUMN),
+                                      model->index(row + offset, rc::LAST_COLUMN)));
 
   view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
@@ -1249,7 +1257,7 @@ void RouteController::routeSetDepartureInternal(const maptypes::MapAirport& airp
   flightplan.getEntries().prepend(entry);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(&flightplan.getEntries().first(), airport, nullptr);
+  rmo.createFromAirport(0, airport, nullptr);
   route.prepend(rmo);
 
   updateStartPositionBestRunway(true /* force */, false /* undo */);
@@ -1306,7 +1314,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
     rmoPred = &route.at(route.size() - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(&flightplan.getEntries().last(), airport, rmoPred);
+  rmo.createFromAirport(flightplan.getEntries().size() - 1, airport, rmoPred);
   route.append(rmo);
 
   updateRouteMapObjects();
@@ -1356,7 +1364,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   if(flightplan.isEmpty() && insertIndex > 0)
     rmoPred = &route.at(insertIndex - 1);
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(&flightplan.getEntries()[insertIndex], query, rmoPred);
+  rmo.createFromDatabaseByEntry(insertIndex, query, rmoPred);
 
   route.insert(insertIndex, rmo);
 
@@ -1396,7 +1404,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
     rmoPred = &route.at(legIndex - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(&flightplan.getEntries()[legIndex], query, rmoPred);
+  rmo.createFromDatabaseByEntry(legIndex, query, rmoPred);
 
   route.replace(legIndex, rmo);
 
@@ -1425,6 +1433,8 @@ void RouteController::routeDelete(int index)
   route.getFlightplan().getEntries().removeAt(index);
 
   route.removeAt(index);
+  if(route.size() > index)
+    route.getFlightplan().getEntries()[index].setAirway(QString());
 
   updateRouteMapObjects();
   // Force update of start if departure airport was removed
@@ -1636,7 +1646,7 @@ void RouteController::updateRouteMapObjects()
   for(int i = 0; i < route.size(); i++)
   {
     RouteMapObject& mapobj = route[i];
-    mapobj.updateDistanceAndCourse(last);
+    mapobj.updateDistanceAndCourse(i, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
     totalDistance += mapobj.getDistanceTo();
     last = &mapobj;
@@ -1665,16 +1675,14 @@ void RouteController::createRouteMapObjects()
   // Create map objects first and calculate total distance
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
-    FlightplanEntry& entry = flightplan.getEntries()[i];
-
     RouteMapObject mapobj(&flightplan);
-    mapobj.createFromDatabaseByEntry(&entry, query, last);
+    mapobj.createFromDatabaseByEntry(i, query, last);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
     if(mapobj.getMapObjectType() == maptypes::INVALID)
       // Not found in database
-      qWarning() << "Entry for ident" << entry.getIcaoIdent() << "region" << entry.getIcaoRegion()
-                 << "is not valid";
+      qWarning() << "Entry for ident" << flightplan.at(i).getIcaoIdent()
+                 << "region" << flightplan.at(i).getIcaoRegion() << "is not valid";
 
     totalDistance += mapobj.getDistanceTo();
 
@@ -1745,7 +1753,7 @@ void RouteController::updateTableModel()
     itemRow.append(new QStandardItem(mapobj.getIdent()));
     itemRow.append(new QStandardItem(mapobj.getRegion()));
     itemRow.append(new QStandardItem(mapobj.getName()));
-    itemRow.append(new QStandardItem(mapobj.getFlightplanEntry()->getAirway()));
+    itemRow.append(new QStandardItem(mapobj.getAirway()));
 
     // VOR/NDB type
     if(mapobj.getMapObjectType() == maptypes::VOR)

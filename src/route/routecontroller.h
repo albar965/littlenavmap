@@ -88,7 +88,7 @@ public:
   }
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
-  void getSelectedRouteMapObjects(QList<RouteMapObject>& selRouteMapObjects) const;
+  void getSelectedRouteMapObjects(QList<int>& selRouteMapObjectIndexes) const;
 
   /* Get bounding rectangle for flight plan */
   const atools::geo::Rect& getBoundingRect() const

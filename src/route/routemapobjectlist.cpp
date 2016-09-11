@@ -27,9 +27,34 @@ RouteMapObjectList::RouteMapObjectList()
 
 }
 
+RouteMapObjectList::RouteMapObjectList(const RouteMapObjectList& other)
+  : QList<RouteMapObject>(other)
+{
+  copy(other);
+}
+
 RouteMapObjectList::~RouteMapObjectList()
 {
 
+}
+
+RouteMapObjectList& RouteMapObjectList::operator=(const RouteMapObjectList& other)
+{
+  clear();
+  append(other);
+  copy(other);
+
+  return *this;
+}
+
+void RouteMapObjectList::copy(const RouteMapObjectList& other)
+{
+  totalDistance = other.totalDistance;
+  flightplan = other.flightplan;
+
+  // Update flightplan pointers to this instance
+  for(RouteMapObject& rmo : *this)
+    rmo.setFlightplan(&flightplan);
 }
 
 int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) const
@@ -250,15 +275,15 @@ bool RouteMapObjectList::isFlightplanEmpty() const
 bool RouteMapObjectList::hasValidDeparture() const
 {
   return !getFlightplan().isEmpty() &&
-         getFlightplan().getEntries().first().getWaypointType() ==
-         atools::fs::pln::entry::AIRPORT;
+         getFlightplan().getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
+         first().isValid();
 }
 
 bool RouteMapObjectList::hasValidDestination() const
 {
   return !getFlightplan().isEmpty() &&
-         getFlightplan().getEntries().last().getWaypointType() ==
-         atools::fs::pln::entry::AIRPORT;
+         getFlightplan().getEntries().last().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
+         last().isValid();
 }
 
 bool RouteMapObjectList::hasEntries() const
