@@ -198,8 +198,20 @@ signals:
   /* Show information about the airports or navaids in the search result */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Emitted before route calculation to stop any background tasks */
+  void preRouteCalc();
+
 private:
   friend class RouteCommand;
+
+  /* Move selected rows */
+  enum MoveDirection
+  {
+    MOVE_NONE = 0,
+    MOVE_DOWN = 1,
+    MOVE_UP = -1
+  };
+
   /* Called by route command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
 
@@ -223,7 +235,7 @@ private:
 
   void moveSelectedLegsDown();
   void moveSelectedLegsUp();
-  void moveSelectedLegsInternal(int dir);
+  void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
   void selectedRows(QList<int>& rows, bool reverse);
 
@@ -273,15 +285,12 @@ private:
   bool updateStartPositionBestRunway(bool force, bool undo);
 
   void dockVisibilityChanged(bool visible);
+  void eraseAirway(int row);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
-
-  /* Move selected rows */
-  static Q_DECL_CONSTEXPR int MOVE_DOWN = 1;
-  static Q_DECL_CONSTEXPR int MOVE_UP = -1;
 
   atools::gui::TableZoomHandler *zoomHandler = nullptr;
 

@@ -500,8 +500,9 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showPos, mapWidget, &MapWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
-  connect(routeController, &RouteController::showInformation,
-          infoController, &InfoController::showInformation);
+  connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
+  connect(routeController, &RouteController::showInformation, infoController,
+          &InfoController::showInformation);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint,
@@ -1321,7 +1322,6 @@ void MainWindow::updateActionStates()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
   bool hasFlightplan = !routeController->isFlightplanEmpty();
-  bool hasStartAndDest = routeController->hasValidDeparture() && routeController->hasValidDestination();
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
@@ -1365,11 +1365,11 @@ void MainWindow::updateActionStates()
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 
-  ui->actionRouteCalcDirect->setEnabled(hasStartAndDest && routeController->hasEntries());
-  ui->actionRouteCalcRadionav->setEnabled(hasStartAndDest);
-  ui->actionRouteCalcHighAlt->setEnabled(hasStartAndDest);
-  ui->actionRouteCalcLowAlt->setEnabled(hasStartAndDest);
-  ui->actionRouteCalcSetAlt->setEnabled(hasStartAndDest && ui->spinBoxRouteAlt->value() > 0);
+  ui->actionRouteCalcDirect->setEnabled(hasFlightplan && routeController->hasEntries());
+  ui->actionRouteCalcRadionav->setEnabled(hasFlightplan);
+  ui->actionRouteCalcHighAlt->setEnabled(hasFlightplan);
+  ui->actionRouteCalcLowAlt->setEnabled(hasFlightplan);
+  ui->actionRouteCalcSetAlt->setEnabled(hasFlightplan && ui->spinBoxRouteAlt->value() > 0);
   ui->actionRouteReverse->setEnabled(hasFlightplan);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());

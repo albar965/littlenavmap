@@ -85,6 +85,8 @@ public:
 
   void optionsChanged();
 
+  void preRouteCalc();
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.

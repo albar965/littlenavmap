@@ -81,6 +81,7 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
 
 ProfileWidget::~ProfileWidget()
 {
+  updateTimer->stop();
   terminateThread();
 }
 
@@ -827,6 +828,7 @@ void ProfileWidget::deleteAircraftTrack()
 /* Stop thread */
 void ProfileWidget::preDatabaseLoad()
 {
+  updateTimer->stop();
   terminateThread();
   databaseLoadStatus = true;
 }
@@ -842,6 +844,12 @@ void ProfileWidget::optionsChanged()
 {
   updateScreenCoords();
   update();
+}
+
+void ProfileWidget::preRouteCalc()
+{
+  updateTimer->stop();
+  terminateThread();
 }
 
 void ProfileWidget::updateProfileShowFeatures()

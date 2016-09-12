@@ -474,6 +474,10 @@ bool RouteController::saveFlightplan()
 void RouteController::calculateDirect()
 {
   qDebug() << "calculateDirect";
+
+  // Stop any background tasks
+  emit preRouteCalc();
+
   RouteCommand *undoCommand = preChange(tr("Direct Flight Plan Calculation"));
 
   Flightplan& flightplan = route.getFlightplan();
@@ -567,6 +571,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   // Create wait cursor if calculation takes too long
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
+  // Stop any background tasks
+  emit preRouteCalc();
+
   Flightplan& flightplan = route.getFlightplan();
 
   int altitude = useSetAltitude ? flightplan.getCruisingAltitude() : 0;
@@ -574,8 +581,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
 
-  bool found = routeFinder->calculateRoute(flightplan.getDeparturePosition(),
-                                           flightplan.getDestinationPosition(), altitude);
+  Pos departurePos = flightplan.getEntries().first().getPosition();
+  Pos destinationPos = flightplan.getEntries().last().getPosition();
+  bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude);
 
   if(found)
   {
@@ -587,8 +595,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
     routeFinder->extractRoute(calculatedRoute, distance);
 
     // Compare to direct connection and check if route is too long
-    float directDistance = flightplan.getDeparturePosition().distanceMeterTo(
-      flightplan.getDestinationPosition());
+    float directDistance = departurePos.distanceMeterTo(destinationPos);
     float ratio = distance / directDistance;
     qDebug() << "route distance" << QString::number(distance, 'f', 0)
              << "direct distance" << QString::number(directDistance, 'f', 0) << "ratio" << ratio;
@@ -627,7 +634,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
         if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
         {
           // Apply simplified east/west rule
-          float fpDir = flightplan.getDeparturePosition().angleDegToRhumb(flightplan.getDestinationPosition());
+          float fpDir = departurePos.angleDegToRhumb(destinationPos);
 
           qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
 
@@ -1035,11 +1042,11 @@ void RouteController::moveSelectedLegsUp()
   moveSelectedLegsInternal(MOVE_UP);
 }
 
-void RouteController::moveSelectedLegsInternal(int dir)
+void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 {
   // Get the selected rows. Depending on move direction order can be reversed to ease moving
   QList<int> rows;
-  selectedRows(rows, dir > 0 /* reverse order */);
+  selectedRows(rows, direction == MOVE_DOWN /* reverse order */);
 
   if(!rows.isEmpty())
   {
@@ -1051,21 +1058,45 @@ void RouteController::moveSelectedLegsInternal(int dir)
     for(int row : rows)
     {
       // Change flight plan
-      route.getFlightplan().getEntries().move(row, row + dir);
-      route.move(row, row + dir);
+      route.getFlightplan().getEntries().move(row, row + direction);
+      route.move(row, row + direction);
 
       // Move row
-      model->insertRow(row + dir, model->takeRow(row));
+      model->insertRow(row + direction, model->takeRow(row));
     }
-    updateRouteMapObjects();
+
+    int firstRow = rows.first();
+    int lastRow = rows.last();
 
     bool forceDeparturePosition = false;
-    if(dir == MOVE_DOWN)
+    if(direction == MOVE_DOWN)
+    {
+      qDebug() << "Move down" << firstRow << "to" << lastRow;
       // Departure moved down and was replaced by something else jumping up
       forceDeparturePosition = rows.contains(0);
-    else if(dir == MOVE_UP)
+
+      // Erase airway names at start of the moved block - last is smaller here
+      eraseAirway(lastRow);
+      eraseAirway(lastRow + 1);
+
+      // Erase airway name at end of the moved block
+      eraseAirway(firstRow + 2);
+    }
+    else if(direction == MOVE_UP)
+    {
+      qDebug() << "Move up" << firstRow << "to" << lastRow;
       // Something moved up and departure jumped up
       forceDeparturePosition = rows.contains(1);
+
+      // Erase airway name at start of the moved block - last is larger here
+      eraseAirway(firstRow - 1);
+
+      // Erase airway names at end of the moved block
+      eraseAirway(lastRow);
+      eraseAirway(lastRow + 1);
+    }
+
+    updateRouteMapObjects();
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -1075,9 +1106,9 @@ void RouteController::moveSelectedLegsInternal(int dir)
     updateWindowLabel();
 
     // Restore current position at new moved position
-    view->setCurrentIndex(model->index(curIdx.row() + dir, curIdx.column()));
+    view->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
     // Restore previous selection at new moved position
-    select(rows, dir);
+    select(rows, direction);
 
     updateMoveAndDeleteActions();
 
@@ -1087,6 +1118,12 @@ void RouteController::moveSelectedLegsInternal(int dir)
     emit routeChanged(true);
     mainWindow->setStatusMessage(tr("Moved flight plan legs."));
   }
+}
+
+void RouteController::eraseAirway(int row)
+{
+  if(0 <= row && row < route.getFlightplan().getEntries().size())
+    route.getFlightplan()[row].setAirway(QString());
 }
 
 /* Called by action */
@@ -1108,8 +1145,7 @@ void RouteController::deleteSelectedLegs()
     {
       route.getFlightplan().getEntries().removeAt(row);
 
-      if(route.getFlightplan().getEntries().size() > row)
-        route.getFlightplan().getEntries()[row].setAirway(QString());
+      eraseAirway(row);
 
       route.removeAt(row);
       model->removeRow(row);
@@ -1358,6 +1394,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
       insertIndex = 0;
   }
   flightplan.getEntries().insert(insertIndex, entry);
+  eraseAirway(insertIndex);
+  eraseAirway(insertIndex + 1);
 
   const RouteMapObject *rmoPred = nullptr;
 
@@ -1407,6 +1445,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   rmo.createFromDatabaseByEntry(legIndex, query, rmoPred);
 
   route.replace(legIndex, rmo);
+  eraseAirway(legIndex);
+  eraseAirway(legIndex + 1);
 
   updateRouteMapObjects();
 
@@ -1433,8 +1473,7 @@ void RouteController::routeDelete(int index)
   route.getFlightplan().getEntries().removeAt(index);
 
   route.removeAt(index);
-  if(route.size() > index)
-    route.getFlightplan().getEntries()[index].setAirway(QString());
+  eraseAirway(index);
 
   updateRouteMapObjects();
   // Force update of start if departure airport was removed
@@ -1857,31 +1896,39 @@ void RouteController::updateWindowLabel()
   const Flightplan& flightplan = route.getFlightplan();
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  QString startAirport(tr("No airport")), destAirport(tr("No airport"));
+  QString departure(tr("Invalid")), destination(tr("Invalid"));
   if(!flightplan.isEmpty())
   {
     if(hasValidDeparture())
     {
-      startAirport = flightplan.getDepartureAiportName() +
-                     " (" + flightplan.getDepartureIdent() + ")";
+      departure = flightplan.getDepartureAiportName() +
+                  " (" + flightplan.getDepartureIdent() + ")";
 
       if(route.first().getDepartureParking().position.isValid())
-        startAirport += " " + maptypes::parkingNameNumberType(route.first().getDepartureParking());
+        departure += " " + maptypes::parkingNameNumberType(route.first().getDepartureParking());
       else if(route.first().getDepartureStart().position.isValid())
       {
         const maptypes::MapStart& start = route.first().getDepartureStart();
         if(route.hasDepartureHelipad())
-          startAirport += tr(" Helipad %1").arg(start.helipadNumber);
+          departure += tr(" Helipad %1").arg(start.helipadNumber);
         else if(!start.runwayName.isEmpty())
-          startAirport += tr(" Runway %1").arg(start.runwayName);
+          departure += tr(" Runway %1").arg(start.runwayName);
         else
-          startAirport += tr(" Unknown Start");
+          departure += tr(" Unknown Start");
       }
     }
+    else
+      departure = QString("%1 (%2)").
+                  arg(flightplan.getEntries().first().getIcaoIdent()).
+                  arg(flightplan.getEntries().first().getWaypointTypeAsString());
 
     if(flightplan.getEntries().last().getWaypointType() == entry::AIRPORT)
-      destAirport = flightplan.getDestinationAiportName() +
+      destination = flightplan.getDestinationAiportName() +
                     " (" + flightplan.getDestinationIdent() + ")";
+    else
+      destination = QString("%1 (%2)").
+                    arg(flightplan.getEntries().last().getIcaoIdent()).
+                    arg(flightplan.getEntries().last().getWaypointTypeAsString());
 
     QString routeType;
     switch(flightplan.getRouteType())
@@ -1906,8 +1953,8 @@ void RouteController::updateWindowLabel()
 
     float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
     ui->labelRouteInfo->setText(tr("<b>%1</b> to <b>%2</b><br/>%3 nm, %4, %5").
-                                arg(startAirport).
-                                arg(destAirport).
+                                arg(departure).
+                                arg(destination).
                                 arg(QLocale().toString(totalDistance, 'f', 0)).
                                 arg(formatter::formatMinutesHoursLong(travelTime)).
                                 arg(routeType));
