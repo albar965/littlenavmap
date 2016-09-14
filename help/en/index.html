@@ -250,8 +250,8 @@
 
     <ul>
       <li>
-        <span class="bold">Empty airport:</span> An airport that has no taxiways, no parking spots or gates, no aprons
-        and is not an add-on airport.
+        <span class="bold">Empty airport:</span> An airport that has no taxiways, no parking positions or gates, no
+        aprons and is not an add-on airport.
       </li>
 
       <li>
@@ -270,23 +270,23 @@
       </li>
 
       <li>
-        <span class="bold">Parking:</span> GA ramp, cargo ramp, fuel box or gate.
-      </li>
-
-      <li>
         <span class="bold">Radio navaid:</span> VOR or NDB
       </li>
 
       <li>
-        <span class="bold">Rating:</span> Airports are given a zero to five star rating depending on facilities.
-        Airports that have no rating are considered boring and will be displayed using a gray symbol below all other
-        airports on the map. This behavior can be switched off in the <code>Options</code> dialog on the <code>Map
-        Display</code> tab. The criteria below are used to calculate the rating. Each item gives on star:
+        <span class="bold">Parking:</span> GA ramp, cargo ramp, fuel box or gate.
+      </li>
+
+      <li>
+        <span class="bold">Rating:</span> Airports get a zero to five star rating depending on facilities. Airports
+        that have no rating are considered boring and will be displayed using a gray symbol below all other airports on
+        the map (<em>Empty Airport</em>). This behavior can be switched off in the <code>Options</code> dialog on the
+        <code>Map Display</code> tab. The criteria below are used to calculate the rating. Each item gives one star:
         <ol>
           <li>Add-on
           </li>
 
-          <li>Parking spots
+          <li>Parking positions (ramp or gate)
           </li>
 
           <li>Taxiways
@@ -365,12 +365,16 @@
     <p>
       <em>Little Navmap</em> allows to create flight plans that unusable by the flight simulator. This can happen if a
       flight plan does not have an airport as departure or destination. A warning dialog will be shown when saving if
-      this is the case. You can use these flight plan fragments in <em>Little Navmap</em> to merge and edit new plans.
+      this is the case.
     </p>
 
     <p>
-      Using <code>Append Flight Plan</code> allows to load or merge complete flight plans or flight plan fragments into
-      new ones. All waypoints are added at the end of the current flight plan. Then you can use the <code>Delete
+      You can use these flight plan snippets in <em>Little Navmap</em> to merge and edit new plans.
+    </p>
+
+    <p>
+      Using <code>Append Flight Plan</code> allows to load or merge complete flight plans or flight plan snippets into
+      a new plan. All waypoints are added at the end of the current flight plan. Then you can use the <code>Delete
       selected Legs</code> and <code>Move selected Legs up/down</code> menu items to arrange the waypoints and airports
       as you like.
     </p>
@@ -422,8 +426,8 @@
     <p>
       A parking spot/gate/ramp/fuel box, runway or helipad can be selected as a start position at the departure
       airport. A parking position can also be selected in the map context menu item <a href="#fpdeparture">Set as
-      Flight Plan Departure</a>. If no position is selected the longest primary runway end is selected automatically as
-      start.
+      Flight Plan Departure</a> when right clicking on a parking position. If no position is selected the longest
+      primary runway end is selected automatically as start.
     </p>
 
     <p>
@@ -452,6 +456,13 @@
       Deletes all intermediate waypoints and connects departure and destination using a great circle line.
     </p>
 
+    <p>
+      You can calculate a flight plan between any kind of waypoints, even user defined waypoints (right click on the
+      map and select <code>Add Position to Flight plan</code> to create one). This allows to create snippets that can
+      be merged into flight plans. You can use this if you want to cross the North Atlantic with varying destinations
+      on both sides, for example. This applies to all flight plan calculation modes.
+    </p>
+
     <h4>
       Calculate Radionav
     </h4>
@@ -461,6 +472,10 @@
       one station along the whole flight plan. Note that VOR stations are preferred before NDB and DME stations are
       avoided if possible. Calculation will fail if not enough radio navaids can be found between departure and
       destination. Buid the flight plan manually if this is the case.
+    </p>
+
+    <p>
+      This calculation can also be used to create a flight plan snipped between any kind of waypoint.
     </p>
 
     <h4>
@@ -483,6 +498,10 @@
       The airway network of Flight Simulator is not complete (the north Atlantic tracks are missing for example - these
       change daily), therefore calculation across large ocean areas will fail. Create the route manually as a
       workaround.
+    </p>
+
+    <p>
+      This calculation can also be used to create a flight plan snipped between any kind of waypoint.
     </p>
 
     <h4>
@@ -748,7 +767,7 @@
 
     <p>
       Add-on airports are always shown independent of the other airport map settings if this option is selected. This
-      allows to view only add-on airports by checking this option and disabing display of hard, soft and empty
+      allows to view only add-on airports by checking this option and disabling display of hard, soft and empty
       airports.
     </p>
 
@@ -982,7 +1001,7 @@
       <li>Zoom distance (viewpoint to earth surface) in nautical miles.
       </li>
 
-      <li>Cursor position on map in degrees/minutes/seconds latitude longitude.
+      <li>Cursor position on map in degrees/minutes/seconds latitude and longitude.
       </li>
     </ul>
 
@@ -994,7 +1013,7 @@
       <span class="capthdg">Picture above:</span> <span class="capt">Status bar with message about the last action on
       the left side and a tooltip that indicates what is currently shown on the map. The map shows only airports with
       runways longer than 4000 feet. No navaids are shown. The map detail level was increased once and the map
-      coordinates not shown since cursor is not above the map.</span>
+      coordinates not shown since cursor is not inside the map window.</span>
     </p>
 
     <h2 id="h2mapdisplay">
@@ -1085,7 +1104,7 @@
 
     <p>
       The display will change from a single icon to an airport diagram if you zoom in deep enough to an airport. The
-      diagram shows all taxiways, parking spots, gates, runway and much more.
+      diagram shows all taxiways, parking positions, gates, runway and much more.
     </p>
 
     <p>
@@ -1234,6 +1253,10 @@
     <h3 id="mapcontextmenu">
       Map Context Menu
     </h3>
+
+    <p>
+      The map context menu can be activated using right click or the menu key.
+    </p>
 
     <h4>
       Show Information
@@ -1543,13 +1566,18 @@
     </p>
 
     <p id="tableviewops">
-      The header of the table view allows the following manipulations:
+      The header of the table view allows the following manipulation:
     </p>
 
-    <div class="tabbed20">
+    <div class="tabbed24">
       <ul>
         <li>
-          <span class="bold">Click on column header:</span>Sort ascending or descending.
+          <span class="bold">Click on the top left corner of the column header:</span>Select all.
+        </li>
+
+        <li>
+          <span class="bold">Click on a column header:</span>Sort ascending or descending (only for search result
+          tables).
         </li>
 
         <li>
@@ -1557,7 +1585,7 @@
         </li>
 
         <li>
-          <span class="bold">Double click on column border:</span>Auto fit column size.
+          <span class="bold">Double click on column border:</span>Automatically fit column size to content.
         </li>
 
         <li>
@@ -1567,7 +1595,11 @@
     </div>
 
     <p>
-      The program saves the column widths and positions until <code>Reset View</code> is executed.
+      The above applies to all table views in the program.
+    </p>
+
+    <p>
+      The program saves the sort order, column widths and positions until <code>Reset View</code> is executed.
     </p>
 
     <p>
@@ -1972,8 +2004,8 @@
     <p>
       Elevation processing is done in the background since data has to be downloaded and it is CPU intense. Therefore,
       the udpdate of the elevation display can take several seconds up to half a minute. This background update is
-      started after creating or changing the flight plan and when new data arrives. The display will be updated
-      accordingly whenever new data is available.
+      started after creating or changing the flight plan or when new elevation data was downloaded. The display will be
+      updated accordingly whenever new elevation data is available.
     </p>
 
     <p>
@@ -2223,15 +2255,15 @@
     </h2>
 
     <p>
-      To add an arbitrary online of offline map to <em>Little Navmap</em> simply add the map directory from a downloaded
-      or self created map theme to the <code>data\maps\earth</code> directory.
+      To add an arbitrary online of offline map to <em>Little Navmap</em> simply add the map directory from a
+      downloaded or self created map theme to the <code>data\maps\earth</code> directory.
     </p>
 
     <p>
-      The full path to the DGML file (see links below for more details about DGML) describing the map must be <code>c:\Own Programs\Little
-      Navmap\data\maps\earth\opencyclemap\opencyclemap.dgml</code> if you like to add the <a href=
-      "http://www.opencyclemap.org" target="_blank">OpenCycleMap</a> for example. The DGML file can refer to an online map service
-      or to included map data. Usually a map theme contains more files than only the DGML.
+      The full path to the DGML file (see links below for more details about DGML) describing the map must be
+      <code>c:\Own Programs\Little Navmap\data\maps\earth\opencyclemap\opencyclemap.dgml</code> if you like to add the
+      <a href="http://www.opencyclemap.org" target="_blank">OpenCycleMap</a> for example. The DGML file can refer to an
+      online map service or to included map data. Usually a map theme contains more files than only the DGML.
     </p>
 
     <p>
@@ -2279,23 +2311,26 @@
     </h2>
 
     <ul>
-      <li>Some KML/KMZ files do not show up on the map.
+      <li>Some KML/KMZ files do not show up on the map. Adding a centerpoint pushpin to the maps can fix this.
       </li>
 
-      <li>World coverage for elevation and <em>OpenStreetMap</em> hill shading data is not available for all countries
-      and currently ends at 60 degree north. Also, artifacts can occur which I cannot influence (like in Italy south of
-      the Alps). Use the <em>OpenTopoMap</em> which has a better coverage for hill shading and also displays elevation
-      contour lines.
+      <li>World coverage for elevation and <em>OpenStreetMap</em> hill shading data is limited and currently ends at 60
+      degree north. Use the <em>OpenTopoMap</em>, <em>OpenStreetMap Roads</em> or <em>Stamen Terrain</em> map themes
+      which have world wide coverage for hill shading.
       </li>
 
-      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or <em>OpenTopoMap</em> together with the spherical
-      map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
-      <code>Mercator</code> projection.
+      <li>There are errors in the elevation source data (like in northern Italy, Po Valley).
+      </li>
+
+      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or one of the other online map themes together with
+      the spherical map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
+      <code>Mercator</code> projection. The same applies to a blurred map appearance.
       </li>
 
       <li>
-        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up fuzzy when using functionality like <code>Center
-        Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel to fix this.
+        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up blurred when using functionality like
+        <code>Center Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel, overlay
+        zoom buttons or keyboard to fix this.
       </li>
 
       <li>
@@ -2303,9 +2338,8 @@
       </li>
 
       <li>Zoom can be too fast when using a touchpad with <em>OpenStreetMap</em>, <em>OpenTopoMap</em> or one of the
-      other picture tile based map themes. Use the <code>Plain</code>, <code>Simple</code> or <code>Atlas</code> map
-      themes. Alternatively, use the overlay zoom buttons, the keyboard (<code>+</code> and <code>-</code>) or the map
-      controls.
+      other online map themes. Use the <code>Plain</code>, <code>Simple</code> or <code>Atlas</code> map themes or use
+      the overlay zoom buttons, the keyboard (<code>+</code> and <code>-</code>) or the map controls.
       </li>
 
       <li>The Marble floating map overlays on the map can be configured but do not save all settings.
@@ -2322,7 +2356,7 @@
       </li>
 
       <li>Magnetic variance is partially not set (for example VORDME Cambridge Bay YCB). This is an error in the source
-      data and can be fixed with a workaround when loading the database in the future.
+      data and can be fixed with a workaround in the future.
       </li>
 
       <li>Airports are misplaced compared to the background maps. This is an error in the source data and cannot be
@@ -2332,7 +2366,7 @@
       <li>Mac OS X: Dock windows cannot be resized when undocked from main window.
       </li>
 
-      <li>Mac OS X: Start position on the map is not saved. Use home as start position instead.
+      <li>Mac OS X: Start position on the map is not restored properly. Use home as start position instead.
       </li>
 
       <li>Mac OS X: KML files are not centered after loading.
@@ -2385,7 +2419,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-00
+      Last update 2016-09-14
     </p>
   </body>
 </html>

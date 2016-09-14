@@ -117,6 +117,10 @@ h6 {
 font-size: 16px;
 }
 
+.tabbed24 span {
+width: 24em;
+display: inline-block;
+}
 .tabbed20 span {
 width: 20em;
 display: inline-block;
