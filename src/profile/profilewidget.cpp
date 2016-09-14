@@ -763,7 +763,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   // Get altitude values before and after cursor and interpolate
   float alt1 = leg.elevation.at(indexLowDist).getAltitude();
   float alt2 = leg.elevation.at(indexUpperDist).getAltitude();
-  float alt = std::abs(alt1 + alt2) / 2.f;
+  float alt = (alt1 + alt2) / 2.f;
 
   // Get Position for highlight on map
   float legdistpart = distance - leg.distances.first();
