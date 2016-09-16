@@ -406,7 +406,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     // Will throw an exception if something goes wrong
     flightplan.load(filename);
 
-    RouteCommand *undoCommand = preChange(tr("Flight Plan append"));
+    RouteCommand *undoCommand = preChange(tr("Append"));
 
     for(const FlightplanEntry& entry : flightplan.getEntries())
       route.getFlightplan().getEntries().append(entry);
@@ -478,7 +478,7 @@ void RouteController::calculateDirect()
   // Stop any background tasks
   emit preRouteCalc();
 
-  RouteCommand *undoCommand = preChange(tr("Direct Flight Plan Calculation"));
+  RouteCommand *undoCommand = preChange(tr("Direct Calculation"));
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -681,7 +681,7 @@ void RouteController::reverse()
 {
   qDebug() << "reverse";
 
-  RouteCommand *undoCommand = preChange(tr("Reverse Flight Plan"), rctype::REVERSE);
+  RouteCommand *undoCommand = preChange(tr("Reverse"), rctype::REVERSE);
 
   route.getFlightplan().reverse();
 
@@ -743,6 +743,11 @@ bool RouteController::hasValidDestination() const
 bool RouteController::hasEntries() const
 {
   return route.hasEntries();
+}
+
+bool RouteController::canCalcRoute() const
+{
+  return route.canCalcRoute();
 }
 
 void RouteController::preDatabaseLoad()
@@ -1385,11 +1390,12 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   else
   {
     // No leg index given - search for nearest
-    int leg = route.getNearestLegOrPointIndex(entry.getPosition());
-    qDebug() << "nearestLeg" << leg;
+    int legOrPt = route.getNearestLegOrPointIndex(entry.getPosition());
+    qDebug() << "nearestLeg" << legOrPt;
 
-    insertIndex = leg;
-    if(flightplan.isEmpty() || insertIndex == -1)
+    // Positive values are legs - negative are points
+    insertIndex = std::abs(legOrPt);
+    if(flightplan.isEmpty() || legOrPt == -1 /* First point - add before departure */)
       // Add at the beginning
       insertIndex = 0;
   }

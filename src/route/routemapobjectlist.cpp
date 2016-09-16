@@ -65,7 +65,7 @@ int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) c
   float pointDistance;
   int pointIndex = getNearestPointIndex(pos, pointDistance);
   if(pointDistance < std::abs(crossDist))
-    return pointIndex;
+    return -pointIndex;
   else
     return legIndex;
 }
@@ -289,4 +289,9 @@ bool RouteMapObjectList::hasValidDestination() const
 bool RouteMapObjectList::hasEntries() const
 {
   return getFlightplan().getEntries().size() > 2;
+}
+
+bool RouteMapObjectList::canCalcRoute() const
+{
+  return getFlightplan().getEntries().size() >= 2;
 }

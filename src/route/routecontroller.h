@@ -120,6 +120,9 @@ public:
   /* @return true if flight plan has intermediate waypoints */
   bool hasEntries() const;
 
+  /* @return true if flight plan has at least two waypoints */
+  bool canCalcRoute() const;
+
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan
    *  has parking or helipad as start position */
   bool hasValidParking() const;

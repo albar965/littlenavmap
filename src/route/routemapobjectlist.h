@@ -37,7 +37,8 @@ public:
 
   RouteMapObjectList& operator=(const RouteMapObjectList& other);
 
-  /* Get nearest leg or waypoint index, whatever is closer to the position */
+  /* Get nearest leg or waypoint index, whatever is closer to the position.
+   * @return positive leg or negative point index */
   int getNearestLegOrPointIndex(const atools::geo::Pos& pos) const;
 
   /* Get nearest leg index along the position and cross track distance in nautical miles to the leg. */
@@ -45,8 +46,6 @@ public:
 
   /* Get nearest waypoint index and distance in nautical miles to this point.  */
   int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const;
-
-
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -114,6 +113,9 @@ public:
 
   /* @return true if has intermediate waypoints */
   bool hasEntries() const;
+
+  /* @return true if it has at least two waypoints */
+  bool canCalcRoute() const;
 
   /* Value for invalid/not found distances */
   const static float INVALID_DISTANCE_VALUE;

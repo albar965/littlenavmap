@@ -1321,12 +1321,11 @@ void MainWindow::updateActionStates()
   qDebug() << "Updating action states";
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
-  bool hasFlightplan = !routeController->isFlightplanEmpty();
-
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
   ui->actionReloadScenery->setEnabled(databaseManager->hasInstalledSimulators());
 
+  bool hasFlightplan = !routeController->isFlightplanEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
@@ -1365,12 +1364,13 @@ void MainWindow::updateActionStates()
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 
-  ui->actionRouteCalcDirect->setEnabled(hasFlightplan && routeController->hasEntries());
-  ui->actionRouteCalcRadionav->setEnabled(hasFlightplan);
-  ui->actionRouteCalcHighAlt->setEnabled(hasFlightplan);
-  ui->actionRouteCalcLowAlt->setEnabled(hasFlightplan);
-  ui->actionRouteCalcSetAlt->setEnabled(hasFlightplan && ui->spinBoxRouteAlt->value() > 0);
-  ui->actionRouteReverse->setEnabled(hasFlightplan);
+  bool canCalcRoute = routeController->canCalcRoute();
+  ui->actionRouteCalcDirect->setEnabled(canCalcRoute && routeController->hasEntries());
+  ui->actionRouteCalcRadionav->setEnabled(canCalcRoute);
+  ui->actionRouteCalcHighAlt->setEnabled(canCalcRoute);
+  ui->actionRouteCalcLowAlt->setEnabled(canCalcRoute);
+  ui->actionRouteCalcSetAlt->setEnabled(canCalcRoute && ui->spinBoxRouteAlt->value() > 0);
+  ui->actionRouteReverse->setEnabled(canCalcRoute);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
