@@ -615,6 +615,9 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
 /* Background thread. Fetches elevation points from Marble elevation model and updates totals. */
 ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs) const
 {
+  QThread::currentThread()->setPriority(QThread::LowestPriority);
+  // qDebug() << "priority" << QThread::currentThread()->priority();
+
   using atools::geo::meterToNm;
   using atools::geo::meterToFeet;
 
