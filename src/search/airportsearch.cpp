@@ -337,6 +337,11 @@ void AirportSearch::restoreState()
   if(distSearchChecked)
     // Activate distance search if it was active - otherwise leave default behavior
     distanceSearchChanged(distSearchChecked, false /* Change view state */);
+
+  QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
+  QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
+  minDistanceWidget->setMaximum(maxDistanceWidget->value());
+  maxDistanceWidget->setMinimum(minDistanceWidget->value());
 }
 
 void AirportSearch::saveViewState(bool distSearchActive)

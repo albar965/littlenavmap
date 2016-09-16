@@ -70,6 +70,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
+
 }
 
 SearchBase::~SearchBase()
@@ -196,6 +197,7 @@ void SearchBase::connectSearchWidgets()
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [ = ](int value)
               {
                 controller->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value());
+                col->getMaxSpinBoxWidget()->setMinimum(value);
                 updateButtonMenu();
                 editStartTimer();
               });
@@ -203,6 +205,7 @@ void SearchBase::connectSearchWidgets()
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [ = ](int value)
               {
                 controller->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value);
+                col->getMinSpinBoxWidget()->setMaximum(value);
                 updateButtonMenu();
                 editStartTimer();
               });

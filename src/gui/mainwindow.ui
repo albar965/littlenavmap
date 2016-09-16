@@ -786,7 +786,7 @@
                 <string> ft</string>
                </property>
                <property name="maximum">
-                <number>20000</number>
+                <number>50000</number>
                </property>
                <property name="singleStep">
                 <number>100</number>
@@ -824,7 +824,7 @@
                 <string>Airports that have no runway that is longer than this value</string>
                </property>
                <property name="specialValueText">
-                <string>All</string>
+                <string/>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -1087,7 +1087,7 @@
                 <number>3000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
               </widget>
              </item>
@@ -1764,7 +1764,7 @@
                 <number>3000</number>
                </property>
                <property name="singleStep">
-                <number>10</number>
+                <number>100</number>
                </property>
               </widget>
              </item>
@@ -2597,7 +2597,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetAircraft">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">
