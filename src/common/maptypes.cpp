@@ -398,7 +398,7 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
   if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
     return false;
 
-  if((softOnly() || noRunways()) && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+  if((softOnly() || waterOnly() || noRunways())  && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
     return false;
 
   return true;
