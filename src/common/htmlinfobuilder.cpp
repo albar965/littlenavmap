@@ -340,11 +340,11 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
   if(info && infoQuery != nullptr)
   {
     airportTitle(airport, html, background);
-    html.h3(tr("COM Frequencies"));
 
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
     {
+      html.h3(tr("COM Frequencies"));
       html.table();
       html.tr(QColor(Qt::lightGray));
       html.td(tr("Type"), atools::util::html::BOLD).
@@ -367,7 +367,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
       html.tableEnd();
     }
     else
-      html.text(tr("None"));
+      html.p(tr("Airport has no COM Frequencies."));
   }
 }
 
@@ -453,6 +453,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         runwayEndText(html, recSec, hdgSec, length);
       }
     }
+    else
+      html.p(tr("Airport has no runways."));
   }
 }
 
@@ -590,6 +592,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         }
       }
     }
+    else
+      html.p(tr("Airport has no Approaches."));
   }
 }
 

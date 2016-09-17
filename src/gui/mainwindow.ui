@@ -2222,7 +2222,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No airport seleced.</string>
+            <string>No airport selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2257,7 +2257,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No airport seleced.</string>
+            <string>No airport selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2292,7 +2292,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No airport seleced.</string>
+            <string>No airport selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2327,7 +2327,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No airport seleced.</string>
+            <string>No airport selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2362,7 +2362,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No Waypoint, VOR or NDB seleced.</string>
+            <string>No VOR, NDB, Waypoint or Airway selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -3614,10 +3614,10 @@
     <string>Show Airports with &amp;soft Runways</string>
    </property>
    <property name="toolTip">
-    <string>Show airports with soft runways on map</string>
+    <string>Show airports with soft or water runways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show airports with soft runways on map</string>
+    <string>Show airports with soft or water runways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+S</string>
