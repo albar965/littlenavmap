@@ -206,13 +206,19 @@
     </p>
 
     <p>
+      The main window title indicates the currently selected flight simulator database (FSX, FSXSE, P3DV2 or P3DV3),
+      the flight plan file name and a trailing <code>*</code> if the flight plan was changed.
+    </p>
+
+    <p>
       <a href="images/all.png"><img style="width: 50%; height:auto" alt="Little Navmap" title="Little Navmap" src=
       "images/all.png" /></a>
     </p>
 
     <p>
       <span class="capthdg">Picture above (Click to see large version):</span> <span class="capt"><em>Little
-      Navmap</em> with map and sourrounding docked windows.</span>
+      Navmap</em> with map and sourrounding docked windows. Currently selected simulator database is FSX, current
+      changed flight plan is <code>IFR Les Eplatures (LSGC) to Dagali (ENDI).pln</code>.</span>
     </p>
 
     <h3>
@@ -251,7 +257,7 @@
     <ul>
       <li>
         <span class="bold">Empty airport:</span> An airport that has no taxiways, no parking positions or gates, no
-        aprons and is not an add-on airport.
+        aprons and is not an add-on airport and is not a water airport.
       </li>
 
       <li>
@@ -784,8 +790,8 @@
     </h4>
 
     <p>
-      Show airports that have only soft surfaced runways. This type of airport might be hidden on the map depending on
-      zoom distance.
+      Show airports that have only soft surfaced runways or only water runways. This type of airport might be hidden on
+      the map depending on zoom distance.
     </p>
 
     <h4>
@@ -803,6 +809,10 @@
       An empty airport is defined as one which has neither parking nor taxiways nor aprons and is no add-on. These
       airports are treated differently in <em>Little Navmap</em> since they are the most boring of all default
       airports. Empty airports are drawn gray and behind all other airports on the map.
+    </p>
+
+    <p>
+      Airports having only water runways are excluded from this definition to avoid unintentional hiding.
     </p>
 
     <h4>
@@ -1395,8 +1405,8 @@
     </h4>
 
     <p>
-      Inserts the clicked object into the nearest flight plan leg. The object will be added after the destination if
-      the position is not along a leg but nearby the destination. A new object will never be added before departure.
+      Inserts the clicked object into the nearest flight plan leg. The object will be added before departure or after
+      destination if the clicked position is nearby the flight plan ends.
     </p>
 
     <p>
@@ -2005,7 +2015,7 @@
       Elevation processing is done in the background since data has to be downloaded and it is CPU intense. Therefore,
       the udpdate of the elevation display can take several seconds up to half a minute. This background update is
       started after creating or changing the flight plan or when new elevation data was downloaded. The display will be
-      updated accordingly whenever new elevation data is available.
+      updated accordingly whenever new data is available.
     </p>
 
     <p>
@@ -2017,6 +2027,10 @@
       Be aware that the elevation display covers only the flight plan and will not change the depiction if you get off
       flight plan with your simulator aircraft. Also, aircraft climb is not shown (no aircraft profiles yet). The
       flight plan is only shown at cruise level.
+    </p>
+
+    <p>
+      Note that the elevation data does not cover all countries and currently ends at 60 degrees north.
     </p>
 
     <p>
