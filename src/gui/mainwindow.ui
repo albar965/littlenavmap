@@ -4517,13 +4517,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>OpenStreetMap &amp;Roads</string>
+    <string>OpenMap&amp;Surfer</string>
    </property>
    <property name="toolTip">
-    <string>OpenStreetMap Roads online map theme</string>
+    <string>OpenMapSurfer OSM Roads online map theme</string>
    </property>
    <property name="statusTip">
-    <string>OpenStreetMap Roads online map theme</string>
+    <string>OpenMapSurfer OSM Roads online map theme</string>
    </property>
   </action>
   <action name="actionMapThemeStamenTerrain">

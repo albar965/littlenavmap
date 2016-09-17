@@ -326,7 +326,7 @@ void MainWindow::setupUi()
   mapThemeComboBox->setStatusTip(helpText);
   // Item order has to match MapWidget::MapThemeComboIndex
   mapThemeComboBox->addItem(tr("OpenStreetMap"), "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenStreetMap Roads"), "earth/openstreetmaproads/openstreetmaproads.dgml");
+  mapThemeComboBox->addItem(tr("OpenMapSurfer"), "earth/openstreetmaproads/openstreetmaproads.dgml");
   mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
   mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
   mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
