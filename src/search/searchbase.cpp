@@ -462,7 +462,7 @@ void SearchBase::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
-                                      ui->actionRouteAdd});
+                                      ui->actionRouteAdd, ui->actionMapNavaidRange});
   Q_UNUSED(saver);
 
   bool columnCanFilter = false;
