@@ -1394,7 +1394,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
     qDebug() << "nearestLeg" << legOrPt;
 
     // Positive values are legs - negative are points
-    insertIndex = std::abs(legOrPt);
+    insertIndex = atools::absInt(legOrPt);
     if(flightplan.isEmpty() || legOrPt == -1 /* First point - add before departure */)
       // Add at the beginning
       insertIndex = 0;
