@@ -181,7 +181,7 @@ void InfoQuery::initQueries()
                         "where airport_id = :id");
 
   comQuery = new SqlQuery(db);
-  comQuery->prepare("select * from com where airport_id = :id");
+  comQuery->prepare("select * from com where airport_id = :id order by type, frequency");
 
   vorQuery = new SqlQuery(db);
   vorQuery->prepare("select * from vor "
