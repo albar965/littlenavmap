@@ -759,7 +759,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   html.row2(tr("Type:"), maptypes::airwayTypeToString(airway.type));
 
   if(airway.minAltitude > 0)
-    html.row2(tr("Min altitude:"), locale.toString(airway.minAltitude) + tr(" ft"));
+    html.row2(tr("Min altitude for this segment:"), locale.toString(airway.minAltitude) + tr(" ft"));
 
   if(infoQuery != nullptr && info)
   {
