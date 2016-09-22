@@ -134,7 +134,7 @@ void InfoController::restoreState()
                                refsStrList.at(i).toInt());
 
   updateTextEditFontSizes();
-  showInformation(res);
+  showInformationInternal(res);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft});
@@ -173,8 +173,17 @@ void InfoController::clearInfoTextBrowsers()
 
 void InfoController::showInformation(maptypes::MapSearchResult result)
 {
+  if(showInformationInternal(result))
+    mainWindow->getUi()->dockWidgetInformation->show();
+}
+
+/* Show information in all tabs but do not show dock
+ *  @return true if information was updated */
+bool InfoController::showInformationInternal(maptypes::MapSearchResult result)
+{
   qDebug() << "InfoController::showInformation";
 
+  bool found = false;
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -207,6 +216,8 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
     html.clear();
     info->approachText(airport, html, iconBackColor);
     ui->textBrowserApproachInfo->setText(html.getHtml());
+
+    found = true;
   }
 
   if(!result.vors.isEmpty() || !result.ndbs.isEmpty() || !result.waypoints.isEmpty() ||
@@ -233,6 +244,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
 
     info->vorText(vor, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
+    found = true;
   }
 
   for(const maptypes::MapNdb& ndb : result.ndbs)
@@ -243,6 +255,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->ndbText(ndb, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
+    found = true;
   }
 
   for(const maptypes::MapWaypoint& waypoint : result.waypoints)
@@ -253,6 +266,7 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->waypointText(waypoint, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
+    found = true;
   }
 
   for(const maptypes::MapAirway& airway : result.airways)
@@ -263,13 +277,19 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
       ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
     info->airwayText(airway, html);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
+    found = true;
   }
 
   idx = ui->tabWidgetInformation->currentIndex();
-  if(idx == ic::NAVAID)
-    mainWindow->setStatusMessage(tr("Showing information for navaid."));
-  else if(idx == ic::AIRPORT || idx == ic::RUNWAYS || idx == ic::COM || idx == ic::APPROACHES)
-    mainWindow->setStatusMessage(tr("Showing information for airport."));
+  if(found)
+  {
+    if(idx == ic::NAVAID)
+      mainWindow->setStatusMessage(tr("Showing information for navaid."));
+    else if(idx == ic::AIRPORT || idx == ic::RUNWAYS || idx == ic::COM || idx == ic::APPROACHES)
+      mainWindow->setStatusMessage(tr("Showing information for airport."));
+  }
+
+  return found;
 }
 
 void InfoController::preDatabaseLoad()
@@ -366,15 +386,17 @@ void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
 void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textBrowserAircraftInfo->setText(tr("Connected. Waiting for update."));
-  ui->textBrowserAircraftProgressInfo->setText(tr("Connected. Waiting for update."));
+  ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
+  ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
+  ui->dockWidgetAircraft->show();
 }
 
 void InfoController::disconnectedFromSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->textBrowserAircraftInfo->setText(tr("Disconnected."));
-  ui->textBrowserAircraftProgressInfo->setText(tr("Disconnected."));
+
+  ui->textBrowserAircraftInfo->setPlainText(tr("Disconnected."));
+  ui->textBrowserAircraftProgressInfo->setPlainText(tr("Disconnected."));
 }
 
 void InfoController::optionsChanged()

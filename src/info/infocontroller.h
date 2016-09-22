@@ -92,6 +92,7 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
+  bool showInformationInternal(maptypes::MapSearchResult result);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
