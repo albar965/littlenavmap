@@ -4112,13 +4112,13 @@
      <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Connect to Simulator ...</string>
+    <string>Flight Simulator &amp;Connection...</string>
    </property>
    <property name="toolTip">
-    <string>Connect to simulator via Little Navconnect</string>
+    <string>Connect to or disconnect from simulator via Little Navconnect</string>
    </property>
    <property name="statusTip">
-    <string>Connect to simulator via Little Navconnect</string>
+    <string>Connect to or disconnect from simulator via Little Navconnect</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+C</string>

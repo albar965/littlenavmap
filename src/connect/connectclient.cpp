@@ -35,6 +35,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   dialog = new ConnectDialog(mainWindow);
+  connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
 }
 
 ConnectClient::~ConnectClient()
@@ -93,6 +94,13 @@ void ConnectClient::writeReply()
     qWarning() << "Reply to server not flushed";
 }
 
+/* Called by signal ConnectDialog::disconnectClicked */
+void ConnectClient::disconnectClicked()
+{
+  closeSocket();
+  dialog->setConnected(false);
+}
+
 /* Called by signal QTcpSocket::connected */
 void ConnectClient::connectedToServer()
 {
@@ -147,8 +155,6 @@ void ConnectClient::connectToServer()
     closeSocket();
     connectInternal();
   }
-  else if(retval == QDialog::Rejected && dialog->isDisconnectClicked())
-    closeSocket();
 }
 
 void ConnectClient::tryConnect()

@@ -3,11 +3,10 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta name="generator" content="HTML Tidy for Linux (vers 25 March 2009), see www.w3.org" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="language" content="EN" />
     <meta name="author" content="Alexander Barthel" />
-    <meta name="date" content="2016-09-19T22:20:00+01:00" />
+    <meta name="date" content="2016-09-22T22:20:00+01:00" />
     <meta content="Little Navmap User Manual" name="description" />
     <title>
       Little Navmap User Manual
@@ -898,7 +897,7 @@
     </h3>
 
     <h4>
-      Connect to Simulator
+      Flight Simulator Connection
     </h4>
 
     <p>
@@ -961,8 +960,8 @@
     </h4>
 
     <p>
-      Shows the map legend in the information dock window. You can also access the navmap legend here: <a href=
-      "legend.html">Little Navmap Legend</a>
+      Shows the map legend in the <code>Information</code> dock window. You can also access the navmap legend here:
+      <a href="legend.html">Little Navmap Legend</a>
     </p>
 
     <h4>
@@ -1043,12 +1042,12 @@
     </h3>
 
     <p>
-      A single click on an airport, navaid or an airway line shows details in the information dock window.
+      A single click on an airport, navaid or an airway line shows details in the <code>Information</code> dock window.
     </p>
 
     <p>
       A double click zooms in showing either the airport diagram or the navaid closely and also shows details in the
-      information dock window.
+      <code>Information</code> dock window.
     </p>
 
     <p>
@@ -1266,8 +1265,8 @@
     </h4>
 
     <p>
-      Shows detailed information in the information dock window for the nearest airport, airways or all navaids near
-      the cursor.
+      Shows detailed information in the <code>Information</code> dock window for the nearest airport, airways or all
+      navaids near the cursor.
     </p>
 
     <p>
@@ -1629,8 +1628,8 @@
 
     <p>
       A double click on an entry in the table view shows either an airport diagram or zooms to the navaid.
-      Additionally, details are shown in the information dock window. Single click selects and object and highlights it
-      on the map using a black/yellow circle.
+      Additionally, details are shown in the <code>Information</code> dock window. Single click selects and object and
+      highlights it on the map using a black/yellow circle.
     </p>
 
     <h3>
@@ -1804,7 +1803,7 @@
     </p>
 
     <p>
-      <span class="capthdg">Picture above:</span> <span class="capt">The flight plan dock window.</span>
+      <span class="capthdg">Picture above:</span> <span class="capt">The <code>Flight Plan</code> dock window.</span>
     </p>
 
     <h3>
@@ -1813,8 +1812,8 @@
 
     <p>
       A double click on an entry in the table view shows either an airport diagram or zooms to the navaid.
-      Additionally, details are shown in the information dock window. Single click selects and object and highlights it
-      on the map using a black/green circle.
+      Additionally, details are shown in the <code>Information</code> dock window. Single click selects and object and
+      highlights it on the map using a black/green circle.
     </p>
 
     <h3>
@@ -2209,13 +2208,15 @@
     <ol>
       <li>Install <a href="https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> on
       the computer that is running the flight simulator. Start it and take note of the message that is printed on the
-      logging window. You only need the colored values. You can use the IP address or the hostname. <!--
-        <pre xml:space="preserve">
-[2016-07-24 17:31:40] Server is running on hostname <span style=
-"color: blue;">windows-pc</span> (IP address <span style="color: blue;">192.168.1.4</span>) port <span style=
-"color: red;">51968</span>.
-</pre>-->
-
+      logging window. You only need the colored values. You can use the IP address or the hostname.
+        <br />
+        <em>Little Navconnect</em> can print multiple IP addresses or hostnames depending on your network
+        configuration. This can happen if you have ethernet plugged in and are connected using wireless LAN too, for
+        example. You have to try if you are unsure which one to use.
+        <br />
+        <code>localhost</code> and <code>127.0.0.1</code> or similar will be used if you are not connected to a
+        network. In this case you have to run <em>Little Navconnect</em> and <em>Little Navmap</em> on the same
+        computer.
         <p>
           <img alt="Little Navconnect" title="Little Navconnect" src="images/littlenavconnect.jpg" />
         </p>
@@ -2231,7 +2232,7 @@
       </li>
 
       <li>Open the connection dialog in <em>Little Navmap</em> by selecting <code>Main Menu</code> -&gt;
-      <code>Tools</code> -&gt; <code>Connect to Simulator</code>.
+      <code>Tools</code> -&gt; <code>Flight Simulator Connection</code>.
         <p>
           <img alt="Little Navmap Connect Dialog" title="Little Navmap Connect Dialog" src="images/connect.jpg" />
         </p>
@@ -2253,6 +2254,11 @@
 
       <li>Click connect. Once a flight is set up and loaded on the simulator your aircraft will show up on the map and
       the <code>Simulator Aircraft</code> dock window.
+        <br />
+        You will see the message <code>Connected. Waiting for update.</code> in the <code>Simulator Aircraft</code>
+        dock window if no flight is loaded yet (i.e. the simulator still shows the opening screen).
+        <br />
+        Note that it sometimes can take a while until an error is shown if you used the wrong values.
       </li>
     </ol>
     <!-- ===================================================================== -->
@@ -2324,7 +2330,8 @@
       directory <code>little_navmap_db</code>.
       </li>
 
-      <li>Hiding the map screen overlays cannot be undone. Restart <em>Little Navmap</em> to get the overlays back.
+      <li>Hiding the map screen overlays cannot be undone in the GUI. Restart <em>Little Navmap</em> to get the
+      overlays back.
       </li>
     </ul>
 
@@ -2446,7 +2453,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-19
+      Last update 2016-09-22
     </p>
   </body>
 </html>

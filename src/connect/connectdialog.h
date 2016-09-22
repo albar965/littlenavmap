@@ -51,17 +51,13 @@ public:
   /* Set status to connected */
   void setConnected(bool connected);
 
-  /* true if the disconnect button was clicked */
-  bool isDisconnectClicked() const
-  {
-    return disconnectClicked;
-  }
-
   /* true if the connect on startup checkbox was checked */
   bool isConnectOnStartup() const;
 
+signals:
+  void disconnectClicked();
+
 private:
-  bool disconnectClicked = false;
   Ui::ConnectDialog *ui;
   void buttonBoxClicked(QAbstractButton *button);
 

@@ -59,8 +59,6 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
   {
-    disconnectClicked = false;
-
     bool foundEntryInComboList = false;
     int cnt = ui->comboBoxConnectHostname->count();
     QString curtxt = ui->comboBoxConnectHostname->currentText();
@@ -85,14 +83,10 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Reset))
   {
     // Disconnect button clicked
-    disconnectClicked = true;
-    QDialog::reject();
+    emit disconnectClicked();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
-  {
-    disconnectClicked = false;
     QDialog::reject();
-  }
 }
 
 void ConnectDialog::setConnected(bool connected)

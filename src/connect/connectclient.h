@@ -69,6 +69,7 @@ private:
   void closeSocket();
   void connectInternal();
   void writeReply();
+  void disconnectClicked();
 
   bool silent = false;
   ConnectDialog *dialog = nullptr;
