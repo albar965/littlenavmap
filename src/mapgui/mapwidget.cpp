@@ -47,6 +47,7 @@
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
+#include <marble/AbstractFloatItem.h>
 
 // Default zoom distance if start position was not set (usually first start after installation */
 const int DEFAULT_MAP_DISTANCE = 7000;
@@ -365,6 +366,15 @@ void MapWidget::restoreState()
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
   screenIndex->restoreState();
   aircraftTrack.restoreState();
+
+  // Show all map overlays again since the saving/restoring behavior is random
+  QList<AbstractFloatItem *> localFloatItems = floatItems();
+  for(AbstractFloatItem *fi : localFloatItems)
+  {
+    qDebug() << "showing float item" << fi->name() << "id" << fi->nameId();
+    fi->setVisible(true);
+    fi->show();
+  }
 }
 
 void MapWidget::mainWindowShown()
