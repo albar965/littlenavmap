@@ -1,8 +1,8 @@
 Little Navmap
 =============
 
-Little Navmap is a totally free open source flight planner, navigation tool,
-moving map, airport search and airport information system for Flight Simulator X and Prepar3D.
+Little Navmap is a free open source flight planner, navigation tool,
+moving map, airport and navaid search and information system for Flight Simulator X and Prepar3D.
 The main focus is general aviation IFR and VFR planning.
 
 All is based purely on flight simulator stock or add-on data, no third party data needed.
@@ -33,7 +33,7 @@ the free Little Navconnect program which eases network setup across two or more 
 
 See the Little Navmap user manual for more information. All online here: https://albar965.github.io/
 
-Little Navmap supports FSX, FSX Steam Edition and Prepar3d Versions 2 and 3.
+Little Navmap supports FSX, FSX Steam Edition (untested) and Prepar3d (untested) versions 2 and 3.
 
 ------------------------------------------------------------------------------
 
