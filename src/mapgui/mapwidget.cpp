@@ -1149,7 +1149,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         dm.text = vor->ident + " " + QLocale().toString(vor->frequency / 1000., 'f', 2);
         dm.from = vor->position;
         dm.magvar = vor->magvar;
-        dm.hasMagvar = true;
+        dm.hasMagvar = !vor->dmeOnly;
         dm.color = mapcolors::vorSymbolColor;
       }
       else if(ndb != nullptr)
