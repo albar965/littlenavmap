@@ -49,7 +49,8 @@ const QHash<QString, QString> surfaceMap(
     {"SAND", QObject::tr("Sand")},
     {"SHALE", QObject::tr("Shale")},
     {"TARMAC", QObject::tr("Tarmac")},
-    {"UNKNOWN", QObject::tr("Unknown")}
+    {"UNKNOWN", QObject::tr("Unknown")},
+    {"INVALID", QObject::tr("Invalid")}
   });
 
 /* The higher the better */
@@ -75,11 +76,13 @@ const QHash<QString, int> surfaceQualityMap(
     {"SNOW", 5},
     {"ICE", 5},
     {"WATER", 1},
-    {"UNKNOWN", 0}
+    {"UNKNOWN", 0},
+    {"INVALID", 0}
   });
 
 const QHash<QString, QString> parkingMapGate(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
     {"RAMP_GA", QObject::tr("Ramp GA")},
     {"RAMP_GA_SMALL", QObject::tr("Ramp GA Small")},
@@ -116,6 +119,7 @@ const QHash<QString, QString> parkingMapRamp(
 
 const QHash<QString, QString> parkingTypeMap(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
     {"RAMP_GA", QObject::tr("Ramp GA")},
     {"RAMP_GA_SMALL", QObject::tr("Ramp GA Small")},
@@ -134,6 +138,7 @@ const QHash<QString, QString> parkingTypeMap(
 
 const QHash<QString, QString> parkingNameMap(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
     {"NO_PARKING", QObject::tr("No Parking")},
     {"PARKING", QObject::tr("Parking")},
@@ -177,6 +182,7 @@ const QHash<QString, QString> parkingNameMap(
 
 const QHash<QString, QString> navTypeNames(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"HIGH", QObject::tr("High")},
     {"LOW", QObject::tr("Low")},
     {"TERMINAL", QObject::tr("Terminal")},
@@ -192,6 +198,7 @@ const QHash<QString, QString> navTypeNames(
 
 const QHash<QString, QString> navNames(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"VORDME", QObject::tr("VORDME")},
     {"VOR", QObject::tr("VOR")},
     {"DME", QObject::tr("DME")},
@@ -201,6 +208,7 @@ const QHash<QString, QString> navNames(
 
 const QHash<QString, QString> comTypeNames(
   {
+    {"INVALID", QObject::tr("Invalid")},
     {"NONE", QObject::tr("None")},
     {"ATIS", QObject::tr("ATIS")},
     {"MULTICOM", QObject::tr("Multicom")},
@@ -398,7 +406,7 @@ bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
   if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
     return false;
 
-  if((softOnly() || waterOnly() || noRunways())  && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+  if((softOnly() || waterOnly() || noRunways()) && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
     return false;
 
   return true;

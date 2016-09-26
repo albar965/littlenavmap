@@ -143,6 +143,7 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor shale("#F5DEB3");
   static const QColor tarmac(Qt::gray);
   static const QColor unknown(Qt::black);
+  static const QColor none("#202020");
 
   if(surface == "CONCRETE")
     return concrete;
@@ -184,9 +185,11 @@ const QColor& colorForSurface(const QString& surface)
     return shale;
   else if(surface == "TARMAC")
     return tarmac;
+  else if(surface == "UNKNOWN")
+    return unknown;
 
-  // else if(rw.surface == "UNKNOWN")
-  return unknown;
+  // else if(surface == "NONE")
+  return none;
 }
 
 } // namespace mapcolors
