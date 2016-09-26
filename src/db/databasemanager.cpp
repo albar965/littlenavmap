@@ -521,13 +521,15 @@ bool DatabaseManager::loadScenery()
   catch(atools::Exception& e)
   {
     // Show dialog if something went wrong
-    ErrorHandler(databaseDialog).handleException(e);
+    ErrorHandler(databaseDialog).handleException(
+      e, currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
   catch(...)
   {
     // Show dialog if something went wrong
-    ErrorHandler(databaseDialog).handleUnknownException();
+    ErrorHandler(databaseDialog).handleUnknownException(
+      currentBglFilePath.isEmpty() ? QString() : tr("Processed BGL file:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
 
@@ -626,6 +628,9 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
   progressDialog->setValue(progress.getCurrent());
 
   if(progress.isNewOther())
+  {
+    currentBglFilePath.clear();
+
     // Run script etc.
     progressDialog->setLabelText(
       DATABASE_TIME_TEXT.arg(progress.getOtherAction()).
@@ -639,12 +644,16 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
       arg(progress.getNumWaypoints()));
+  }
   else if(progress.isNewSceneryArea() || progress.isNewFile())
+  {
+    currentBglFilePath = progress.getBglFilePath();
+
     // Switched to a new scenery area
     progressDialog->setLabelText(
       DATABASE_FILE_TEXT.arg(progress.getSceneryTitle()).
       arg(progress.getSceneryPath()).
-      arg(progress.getBglFilename()).
+      arg(progress.getBglFileName()).
       arg(formatter::formatElapsed(timer)).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
@@ -653,7 +662,11 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
       arg(progress.getNumWaypoints()));
+  }
   else if(progress.isLastCall())
+  {
+    currentBglFilePath.clear();
+
     // Last report
     progressDialog->setLabelText(
       DATABASE_TIME_TEXT.arg(tr("Done")).
@@ -667,6 +680,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
       arg(progress.getNumNdbs()).
       arg(progress.getNumMarker()).
       arg(progress.getNumWaypoints()));
+  }
 
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 

@@ -166,6 +166,7 @@ private:
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;
 
+  QString currentBglFilePath;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H
