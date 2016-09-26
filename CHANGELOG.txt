@@ -1,3 +1,8 @@
+Version 1.0.1.beta
+* Distance lines from DME now use true course since DME have no magnetic variance.
+* Adapted to changes regarding invalid BGL values in database.
+* Better error reporting: Added BGL file path to error dialog in database loader.
+
 Version 1.0.0.beta
 
 * Public beta release
