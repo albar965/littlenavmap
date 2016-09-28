@@ -96,7 +96,7 @@
         <string>Select the scenery.cfg file for the given simulator.</string>
        </property>
        <property name="text">
-        <string>Se&amp;lect ...</string>
+        <string>S&amp;elect ...</string>
        </property>
       </widget>
      </item>

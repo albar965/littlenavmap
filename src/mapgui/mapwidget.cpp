@@ -432,8 +432,14 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
   qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
 
-  centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                            GeoDataCoordinates::Degree), false);
+  qDebug() << "rect w" << QString::number(rect.getWidthDegree(), 'f')
+           << "h" << QString::number(rect.getHeightDegree(), 'f');
+
+  if(rect.isPoint(POS_IS_POINT_EPSILON))
+    showPos(rect.getTopLeft(), -1);
+  else
+    centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                              GeoDataCoordinates::Degree), false);
 }
 
 void MapWidget::showSearchMark()
@@ -1658,11 +1664,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   if(!mapSearchResult.airports.isEmpty())
   {
-    if(mapSearchResult.airports.at(0).bounding.isPoint())
-      // Some airports just indicate a position and have no bounding rectangle
-      showPos(mapSearchResult.airports.at(0).bounding.getTopLeft());
-    else
-      showRect(mapSearchResult.airports.at(0).bounding);
+    showRect(mapSearchResult.airports.at(0).bounding);
     mainWindow->setStatusMessage(QString(tr("Showing airport on map.")));
   }
   else

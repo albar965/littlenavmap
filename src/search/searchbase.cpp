@@ -420,12 +420,7 @@ void SearchBase::doubleClick(const QModelIndex& index)
       float topLat = controller->getRawData(row, "top_laty").toFloat();
       float rightLon = controller->getRawData(row, "right_lonx").toFloat();
       float bottomLat = controller->getRawData(row, "bottom_laty").toFloat();
-      atools::geo::Rect rect(leftLon, topLat, rightLon, bottomLat);
-
-      if(rect.isPoint())
-        emit showPos(rect.getTopLeft(), -1);
-      else
-        emit showRect(rect);
+      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat));
     }
     else
     {
@@ -644,7 +639,7 @@ void SearchBase::showOnMapTriggered()
       maptypes::MapSearchResult result;
       query->getMapObjectById(result, navType, id);
 
-      if(!result.airports.isEmpty() && !result.airports.first().bounding.isPoint())
+      if(!result.airports.isEmpty())
       {
         emit showRect(result.airports.first().bounding);
         mainWindow->setStatusMessage(tr("Showing airport on map."));

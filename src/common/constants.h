@@ -23,6 +23,9 @@
 const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);
 const atools::geo::Pos MAG_SOUTH_POLE_2007 = atools::geo::Pos(137.684f, -64.497f, 0.f);
 
+/* If width and height of a bounding rect are smaller than this use show point */
+const float POS_IS_POINT_EPSILON = 0.0001f;
+
 namespace lnm {
 
 /* State of "do not show again" dialog buttons */
