@@ -1,3 +1,10 @@
+Version 1.0.2.beta
+* Older add-on airports using FS9 BGLs can now be read.
+* Fixed crash "locked database" on ILS update during scenery loading.
+* Several problems reading add-on airports are solved.
+* Fixed display/zoom problems for some add-on airports on double click or "Show on map".
+* Updates to legend and manual.
+
 Version 1.0.1.beta
 * Distance lines from DME now use true course since DME have no magnetic variance.
 * Adapted to changes regarding invalid BGL values in database.
