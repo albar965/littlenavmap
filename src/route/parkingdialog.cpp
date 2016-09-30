@@ -79,32 +79,42 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
               return p1.parking.position.isValid() < p2.parking.position.isValid();
             });
 
-  // Add to list widget
-  for(const StartPosition& startPos : entries)
+  if(entries.isEmpty())
   {
-    if(startPos.parking.position.isValid())
+    new QListWidgetItem(tr("No start positions found."), ui->listWidgetSelectParking);
+    ui->listWidgetSelectParking->setEnabled(false);
+  }
+  else
+  {
+    // Add to list widget
+    for(const StartPosition& startPos : entries)
     {
-      QString text = tr("%1, %2 ft%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
-                     arg(QLocale().toString(startPos.parking.radius * 2)).
-                     arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
+      if(startPos.parking.position.isValid())
+      {
+        QString text = tr("%1, %2 ft%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
+                       arg(QLocale().toString(startPos.parking.radius * 2)).
+                       arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
 
-      // Item will insert itself in list widget
-      new QListWidgetItem(
-        mapcolors::iconForParkingType(startPos.parking.type), text, ui->listWidgetSelectParking);
+        // Item will insert itself in list widget
+        new QListWidgetItem(
+          mapcolors::iconForParkingType(startPos.parking.type), text, ui->listWidgetSelectParking);
+      }
+      else if(startPos.start.position.isValid())
+      {
+        QString number;
+        if(startPos.start.helipadNumber > 0)
+          number = QString::number(startPos.start.helipadNumber);
+
+        QString text = tr("%1 %2 %3").
+                       arg(atools::capString(startPos.start.type)).
+                       arg(startPos.start.runwayName).
+                       arg(number);
+
+        new QListWidgetItem(mapcolors::iconForStartType(
+                              startPos.start.type), text, ui->listWidgetSelectParking);
+      }
     }
-    else if(startPos.start.position.isValid())
-    {
-      QString number;
-      if(startPos.start.helipadNumber > 0)
-        number = QString::number(startPos.start.helipadNumber);
-
-      QString text = tr("%1 %2 %3").
-                     arg(atools::capString(startPos.start.type)).
-                     arg(startPos.start.runwayName).
-                     arg(number);
-
-      new QListWidgetItem(mapcolors::iconForStartType(startPos.start.type), text, ui->listWidgetSelectParking);
-    }
+    ui->listWidgetSelectParking->setEnabled(true);
   }
 
   updateButtons();

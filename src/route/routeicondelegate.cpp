@@ -36,6 +36,10 @@ RouteIconDelegate::~RouteIconDelegate()
 void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
                               const QModelIndex& index) const
 {
+  // Fixed crash when error dialog is displayed
+  if(routeObjects.isEmpty())
+    return;
+
   int symbolSize = option.rect.height() - 4;
   int x = option.rect.x() + symbolSize;
   int y = option.rect.y() + symbolSize / 2 + 2;

@@ -2015,20 +2015,25 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
 
     if(force || (!route.hasDepartureParking() && !route.hasDepartureStart()))
     {
-      RouteCommand *undoCommand = nullptr;
-
-      if(undo)
-        undoCommand = preChange(tr("Set Start Position"));
-
       // Reset departure position to best runway
       maptypes::MapStart start;
       query->getBestStartPositionForAirport(start, rmo.getAirport().id);
-      rmo.setDepartureStart(start);
-      routeToFlightPlan();
 
-      if(undo)
-        postChange(undoCommand);
-      return true;
+      // Check if the airport has a start position - sone add-on airports don't
+      if(start.position.isValid())
+      {
+        RouteCommand *undoCommand = nullptr;
+
+        if(undo)
+          undoCommand = preChange(tr("Set Start Position"));
+
+        rmo.setDepartureStart(start);
+        routeToFlightPlan();
+
+        if(undo)
+          postChange(undoCommand);
+        return true;
+      }
     }
   }
   return false;

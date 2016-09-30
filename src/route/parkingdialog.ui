@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
-    <height>604</height>
+    <width>400</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="labelSelectParking">
      <property name="text">
-      <string>&amp;Select a Start Position for Departure %1</string>
+      <string>&amp;Select a Start Position for Departure&lt;br/&gt;%1:</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -30,7 +30,7 @@
    <item>
     <widget class="QListWidget" name="listWidgetSelectParking">
      <property name="toolTip">
-      <string>Choose a parking spot for the departure airport.</string>
+      <string>Choose a start position for the departure airport.</string>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
