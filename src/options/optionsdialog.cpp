@@ -328,7 +328,7 @@ void OptionsDialog::addDatabaseExcludePathClicked()
 
   if(!path.isEmpty())
   {
-    ui->listWidgetOptionsDatabaseExclude->addItem(path);
+    ui->listWidgetOptionsDatabaseExclude->addItem(QDir::toNativeSeparators(path));
     updateDatabaseButtonState();
   }
 }
@@ -353,7 +353,7 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
     atools::fs::FsPaths::getSceneryLibraryPath(mainWindow->getCurrentSimulator()));
 
   if(!path.isEmpty())
-    ui->listWidgetOptionsDatabaseAddon->addItem(path);
+    ui->listWidgetOptionsDatabaseAddon->addItem(QDir::toNativeSeparators(path));
   updateDatabaseButtonState();
 }
 
@@ -631,7 +631,7 @@ void OptionsDialog::selectAsnPathClicked()
     lnm::OPTIONS_DIALOG_ASN_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWeatherAsnPath->setText(path);
+    ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(path));
 
   updateWeatherButtonState();
 }

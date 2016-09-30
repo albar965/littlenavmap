@@ -25,6 +25,7 @@
 
 #include <QDebug>
 #include <QDialog>
+#include <QDir>
 
 using atools::fs::FsPaths;
 
@@ -116,7 +117,7 @@ void DatabaseDialog::selectBasePathClicked()
 
   if(!path.isEmpty())
   {
-    paths[currentFsType].basePath = path;
+    paths[currentFsType].basePath = QDir::toNativeSeparators(path);
     updateLineEdits();
   }
 }
@@ -130,7 +131,7 @@ void DatabaseDialog::selectSceneryConfigClicked()
 
   if(!path.isEmpty())
   {
-    paths[currentFsType].sceneryCfg = path;
+    paths[currentFsType].sceneryCfg = QDir::toNativeSeparators(path);
     updateLineEdits();
   }
 }
