@@ -417,7 +417,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
-  data.weatherActiveSkyPath = ui->lineEditOptionsWeatherAsnPath->text();
+  data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
   data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaUrl->text();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
 
@@ -493,7 +493,7 @@ void OptionsDialog::optionDataToWidgets()
     }
   }
   ui->lineEditOptionsMapRangeRings->setText(txt);
-  ui->lineEditOptionsWeatherAsnPath->setText(data.weatherActiveSkyPath);
+  ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
   ui->lineEditOptionsWeatherNoaaUrl->setText(data.weatherNoaaUrl);
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
 

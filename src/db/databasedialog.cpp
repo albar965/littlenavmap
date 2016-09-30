@@ -82,12 +82,12 @@ DatabaseDialog::~DatabaseDialog()
 
 void DatabaseDialog::basePathEdited(const QString& text)
 {
-  paths[currentFsType].basePath = text;
+  paths[currentFsType].basePath = QDir::toNativeSeparators(text);
 }
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 {
-  paths[currentFsType].sceneryCfg = text;
+  paths[currentFsType].sceneryCfg = QDir::toNativeSeparators(text);
 }
 
 /* Reset paths of the current simulator back to default */

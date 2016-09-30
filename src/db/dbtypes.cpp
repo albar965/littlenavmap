@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QDataStream>
+#include <QDir>
 
 using atools::fs::FsPaths;
 
@@ -114,6 +115,10 @@ QDataStream& operator<<(QDataStream& out, const FsPathType& obj)
 QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 {
   in >> obj.basePath >> obj.sceneryCfg;
+
+  obj.basePath = QDir::toNativeSeparators(obj.basePath);
+  obj.sceneryCfg = QDir::toNativeSeparators(obj.sceneryCfg);
+
   return in;
 }
 
@@ -126,6 +131,8 @@ QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj)
 QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj)
 {
   QHash<atools::fs::FsPaths::SimulatorType, FsPathType> hash;
+
+  // Copy all entries to a basic type first
   in >> hash;
   obj.swap(hash);
   return in;
