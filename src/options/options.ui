@@ -20,7 +20,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabOptionsStartup">
       <attribute name="title">
@@ -1095,8 +1095,8 @@ nearest even thousand feet for westerly flight plans if checked.</string>
         <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
          <property name="toolTip">
           <string>All directories including sub-directories in this list will be omitted when loading the scenery library into the Little Navmap database.
-These paths apply to all Flight Simulators.
-You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.</string>
+You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
+These paths apply to all Flight Simulators.</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
@@ -1109,7 +1109,9 @@ You can also use this list to speed up database loading if you exclude directori
        <item row="3" column="2">
         <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
          <property name="toolTip">
-          <string>Directories and respective sub-directories in this list will not be considered add-ons.
+          <string>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
+You can use this list to modify this behavior.
+Any airports found in these directories and their sub-directories will not be considered add-ons.
 These paths apply to all Flight Simulators.</string>
          </property>
          <property name="editTriggers">
