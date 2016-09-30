@@ -190,21 +190,26 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   html.table();
   QStringList runways;
 
-  if(airport.hard())
-    runways.append(tr("Hard"));
-  if(airport.soft())
-    runways.append(tr("Soft"));
-  if(airport.water())
-    runways.append(tr("Water"));
-  if(airport.closedRunways())
-    runways.append(tr("Closed"));
-  if(airport.flags.testFlag(AP_LIGHT))
-    runways.append(tr("Lighted"));
+  if(!airport.noRunways())
+  {
+    if(airport.hard())
+      runways.append(tr("Hard"));
+    if(airport.soft())
+      runways.append(tr("Soft"));
+    if(airport.water())
+      runways.append(tr("Water"));
+    if(airport.closedRunways())
+      runways.append(tr("Closed"));
+    if(airport.flags.testFlag(AP_LIGHT))
+      runways.append(tr("Lighted"));
+  }
+  else
+    runways.append(tr("None"));
 
   html.row2(info ? QString() : tr("Runways:"), runways.join(tr(", ")));
   html.tableEnd();
 
-  if(!info)
+  if(!info && !airport.noRunways())
   {
     // Add longest for tooltip
     html.table();
@@ -245,7 +250,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     }
   }
 
-  if(info)
+  if(info && !airport.noRunways())
   {
     head(html, tr("Longest Runway"));
     html.table();

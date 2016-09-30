@@ -125,7 +125,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
             << "num_runway_water > 0"
             << "num_runway_hard > 0 and num_runway_soft = 0 and num_runway_water = 0"
             << "num_runway_soft > 0 and num_runway_hard = 0 and num_runway_water = 0"
-            << "num_runway_water > 0 and num_runway_hard = 0 and num_runway_soft = 0";
+            << "num_runway_water > 0 and num_runway_hard = 0 and num_runway_soft = 0"
+            << "num_runway_water = 0 and num_runway_hard = 0 and num_runway_soft = 0";
 
   QStringList helipadCondMap;
   helipadCondMap << QString()
