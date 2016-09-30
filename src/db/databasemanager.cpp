@@ -349,6 +349,13 @@ void DatabaseManager::openDatabase()
 
     if(!hasSchema())
       createEmptySchema(db);
+
+    DatabaseMeta dbmeta(db);
+    qInfo().nospace() << "Database version "
+                      << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
+
+    qInfo().nospace() << "Application database version "
+                      << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
   }
   catch(atools::Exception& e)
   {
