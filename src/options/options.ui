@@ -853,7 +853,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="5" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
          <property name="toolTip">
-          <string>Complete URL of the Vatsim network weather service.
+          <string>Complete URL of the VATSIM network weather service.
 &quot;%1&quot; is a placeholder that will be substituted with the airport ICAO ident.</string>
          </property>
          <property name="statusTip">
@@ -863,7 +863,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
           <string>http://metar.vatsim.net/metar.php?id=%1</string>
          </property>
          <property name="placeholderText">
-          <string>No URL set. Vatsim weather reports are disabled.</string>
+          <string>No URL set. VATSIM weather reports are disabled.</string>
          </property>
         </widget>
        </item>
@@ -880,7 +880,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="5" column="3">
         <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
          <property name="toolTip">
-          <string>Send a test request to the Vatsim weather service.</string>
+          <string>Send a test request to the VATSIM weather service.</string>
          </property>
          <property name="text">
           <string>&amp;Test</string>
@@ -890,7 +890,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="2" column="1">
         <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
          <property name="toolTip">
-          <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here. 
+          <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
 If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
          </property>
          <property name="placeholderText">
@@ -911,7 +911,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
        <item row="0" column="0" alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
          <property name="toolTip">
-          <string>Define which weather service metars are to be shown in the map tooltip of an airport.</string>
+          <string>Define which weather service METARs are to be shown in the map tooltip of an airport.</string>
          </property>
          <property name="title">
           <string>Weather Display in Tooltip</string>
@@ -940,7 +940,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <item row="2" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipVatsim">
             <property name="text">
-             <string>&amp;Vatsim</string>
+             <string>&amp;VATSIM</string>
             </property>
            </widget>
           </item>
@@ -982,7 +982,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
        <item row="0" column="1" alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
          <property name="toolTip">
-          <string>Define which weather service metars are to be shown in the information dock window for an airport.</string>
+          <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
          </property>
          <property name="title">
           <string>Weather Display in Information Panels</string>
@@ -1011,7 +1011,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <item row="2" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
             <property name="text">
-             <string>Va&amp;tsim</string>
+             <string>VA&amp;TSIM</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -1024,7 +1024,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
        <item row="5" column="0">
         <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
          <property name="text">
-          <string>&amp;Vatsim Weather Service URL:</string>
+          <string>&amp;VATSIM Weather Service URL:</string>
          </property>
          <property name="buddy">
           <cstring>lineEditOptionsWeatherVatsimUrl</cstring>

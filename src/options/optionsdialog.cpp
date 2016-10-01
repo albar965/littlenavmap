@@ -625,7 +625,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
     switch(wr->getCurrentActiveSkyType())
     {
       case WeatherReporter::NONE:
-        text = tr("No Active Sky weather snapshot found. Active Sky metars are not available.");
+        text = tr("No Active Sky weather snapshot found. Active Sky METARs are not available.");
         break;
       case WeatherReporter::MANUAL:
         text = tr("Will use default weather snapshot after confirming change.");

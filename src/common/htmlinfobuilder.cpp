@@ -249,12 +249,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
         else if(weather->getCurrentActiveSkyType() == WeatherReporter::ASN)
           asText = tr("ASN");
 
-        html.row2(asText + (info ? tr(":") : tr(" Metar:")), activeSkyMetar);
+        html.row2(asText + (info ? tr(":") : tr(" METAR:")), activeSkyMetar);
       }
       if(!noaaMetar.isEmpty())
-        html.row2(QString(tr("NOAA")) + (info ? tr(":") : tr(" Metar:")), noaaMetar);
+        html.row2(QString(tr("NOAA")) + (info ? tr(":") : tr(" METAR:")), noaaMetar);
       if(!vatsimMetar.isEmpty())
-        html.row2(QString(tr("Vatsim")) + (info ? tr(":") : tr(" Metar:")), vatsimMetar);
+        html.row2(QString(tr("VATSIM")) + (info ? tr(":") : tr(" METAR:")), vatsimMetar);
       html.tableEnd();
     }
   }
