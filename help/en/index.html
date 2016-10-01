@@ -92,6 +92,10 @@
       </li>
 
       <li>
+        <a href="#h2weather">Weather</a>
+      </li>
+
+      <li>
         <a href="#h2options">Options Dialog</a>
       </li>
 
@@ -129,7 +133,7 @@
     </ol>
 
     <div style="margin-left: 1.5em;;margin-top:3em;margin-bottom:3em;">
-      <span class="bold">Do not use this program for real world navigation.</span>
+      <span class="bold" style="font-size:1.3em">Do not use this program for real world navigation.</span>
     </div>
 
     <h2 id="h2installation">
@@ -180,8 +184,8 @@
     </h3>
 
     <p>
-      The user interface of <em>Little Navmap</em> consists of several dock windows that are arranged around the main
-      window which contains the map view.
+      The user interface of <em>Little Navmap</em> consists of several <span class="bold">dock windows</span> that are
+      arranged around the main window which contains the map view.
     </p>
 
     <p>
@@ -191,8 +195,8 @@
     </p>
 
     <p>
-      Double click onto the title bar or click on the window symbol again to move the windows back into their docked
-      position.
+      Double click onto the dock window's title bar or click on the window symbol again to move the windows back into
+      their docked position.
     </p>
 
     <p>
@@ -201,7 +205,8 @@
     </p>
 
     <p>
-      Toolbars are also movable if you click on the left handle and can be closed or undocked from the main window too.
+      <span class="bold">Toolbars</span> are also movable if you click on the left handle and can be closed or undocked
+      from the main window too.
     </p>
 
     <p>
@@ -209,8 +214,14 @@
     </p>
 
     <p>
-      The main window title indicates the currently selected flight simulator database (FSX, FSXSE, P3DV2 or P3DV3),
-      the flight plan file name and a trailing <code>*</code> if the flight plan was changed.
+      The <span class="bold">main window title</span> indicates the currently selected flight simulator database (FSX,
+      FSXSE, P3DV2 or P3DV3), the flight plan file name and a trailing <code>*</code> if the flight plan was changed.
+    </p>
+
+    <p>
+      Almost all dialogs, text labels and all information windows in <em>Little Navmap</em> support <span class=
+      "bold">copy and paste</span>. You can select the text using the mouse and then either use <code>Ctrl-C</code> or
+      the context menu to copy it into the clipboard. The information windows even support copying of formatted text.
     </p>
 
     <p>
@@ -258,6 +269,10 @@
     </h3>
 
     <ul>
+      <li>
+        <code>Highlighted text</code> is used to denote window, menu, button, file or directory names.
+      </li>
+
       <li>
         <span class="bold">Empty airport:</span> An airport that has no taxiways, no parking positions or gates, no
         aprons and is not an add-on airport and is not a water airport.
@@ -326,6 +341,12 @@
       A warning dialog will be shown when starting <em>Little Navmap</em> the first time on a system without any flight
       simulator installations. See chapter <a href="#h2nosim">Running without Flight Simulator Installation</a> for
       more information on this.
+    </p>
+
+    <p>
+      It can happen that the scenery library database has to be updated when you install a new version of <em>Little
+      Navmap</em>. A question dialog will pop up and ask if the incompatible database can be erased. You can reload the
+      scenery in the <a href="#h2scenerylibdialog">Scenery Library Dialog</a> after erasing the database.
     </p>
     <!-- ===================================================================== -->
 
@@ -2074,6 +2095,48 @@
     </p>
     <!-- ===================================================================== -->
 
+    <h2 id="h2weather">
+      Weather
+    </h2>
+
+    <p>
+      <em>Little Navmap</em> can display METARs from four sources:
+    </p>
+
+    <ul>
+      <li>
+        <a href="http://www.weather.gov" target="_blank">NOAA</a> online weather service
+      </li>
+
+      <li>
+        <a href="http://www.vatsim.net" target="_blank">VATSIM</a> network online weather service
+      </li>
+
+      <li>
+        <a href="http://www.hifisimtech.com" target="_blank">HiFi Simulation Technologies</a> <em>Active Sky Next</em>
+      </li>
+
+      <li>
+        <a href="http://www.hifisimtech.com" target="_blank">HiFi Simulation Technologies</a> <em>AS16</em>
+      </li>
+    </ul>
+
+    <p>
+      You can define in the <code>Options</code> dialog on the <code>Weather</code> tab which sources are used to
+      display the METAR information in tooltips or the <code>Information</code> dock window.
+    </p>
+
+    <p>
+      Both Active Sky programs are recognized automatically on startup for each simulator. The
+      <code>current_wx_snapshot.txt</code> file is loaded and monitored for changes.
+    </p>
+
+    <p>
+      You can also select the <code>current_wx_snapshot.txt</code> file manually. In that case the METARs from this
+      file are displayed for all installed flight simulators.
+    </p>
+    <!-- ===================================================================== -->
+
     <h2 id="h2options">
       Options Dialog
     </h2>
@@ -2396,9 +2459,6 @@
       not affected by this.
       </li>
 
-      <li>Support for Flight Simulator - Steam Edition, Prepar3D and Active Sky 16 is untested.
-      </li>
-
       <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually as a workaround.
       </li>
 
@@ -2476,7 +2536,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-09-28
+      Last update 2016-10-01
     </p>
   </body>
 </html>

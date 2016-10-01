@@ -33,7 +33,7 @@ the free Little Navconnect program which eases network setup across two or more 
 
 See the Little Navmap user manual for more information. All online here: https://albar965.github.io/
 
-Little Navmap supports FSX, FSX Steam Edition (untested) and Prepar3d (untested) versions 2 and 3.
+Little Navmap supports FSX, FSX Steam Edition and Prepar3d versions 2 and 3.
 
 ------------------------------------------------------------------------------
 

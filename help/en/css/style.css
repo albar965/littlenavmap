@@ -69,12 +69,14 @@ margin-bottom: 0.4em;
 width:75%;
 }
 code {
-font-size: 16px;
-font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
+font-family: 'Courier', monospace;
 font-weight: bold;
 color: darkgreen;
-background-color: #e0e0e0;
+background-color: #e8e8e8;
 width:75%;
+border-radius: 3px;
+padding: 0px 3px 0px 3px;
+border: 1px solid #b0b0b0;
 }
 pre {
 margin-left: 1.5em;
