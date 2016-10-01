@@ -75,9 +75,6 @@ using atools::geo::Pos;
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
 {
-  // Read cache sizes from options
-  updateCacheSizes();
-
   // Event filter needed to disable some unwanted Marble default functionality
   installEventFilter(this);
 
@@ -173,12 +170,19 @@ void MapWidget::optionsChanged()
 
 void MapWidget::updateCacheSizes()
 {
-  // kb
-  qDebug() << "Volatile cache to" << OptionData::instance().getCacheSizeMemoryMb() * 1000L << "kb";
-  setVolatileTileCacheLimit(OptionData::instance().getCacheSizeMemoryMb() * 1000L);
-  // kb
-  qDebug() << "Persistent cache to" << OptionData::instance().getCacheSizeDiskMb() * 1000L << "kb";
-  model()->setPersistentTileCacheLimit(OptionData::instance().getCacheSizeDiskMb() * 1000L);
+  quint64 volCacheKb = OptionData::instance().getCacheSizeMemoryMb() * 1000L;
+  if(volCacheKb != volatileTileCacheLimit())
+  {
+    qDebug() << "Volatile cache to" << volCacheKb << "kb";
+    setVolatileTileCacheLimit(volCacheKb);
+  }
+
+  quint64 persCacheKb = OptionData::instance().getCacheSizeDiskMb() * 1000L;
+  if(persCacheKb != model()->persistentTileCacheLimit())
+  {
+    qDebug() << "Persistent cache to" << persCacheKb << "kb";
+    model()->setPersistentTileCacheLimit(persCacheKb);
+  }
 }
 
 void MapWidget::updateMapObjectsShown()
@@ -390,6 +394,9 @@ void MapWidget::mainWindowShown()
   kmlFilePaths = copyKml;
 
   showSavedPosOnStartup();
+
+  // Set cache sizes from option data. This is done later in the startup process to avoid disk trashing.
+  updateCacheSizes();
 }
 
 void MapWidget::showSavedPosOnStartup()

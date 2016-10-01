@@ -103,6 +103,7 @@ MainWindow::MainWindow()
 
     setupUi();
 
+    qDebug() << "MainWindow Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
     // Has to load the state now to options are available for all controller and manager classes
     optionsDialog->restoreState();
@@ -111,6 +112,7 @@ MainWindow::MainWindow()
     mainWindowTitle = windowTitle();
 
     // Prepare database and queries
+    qDebug() << "MainWindow Creating DatabaseManager";
     databaseManager = new DatabaseManager(this);
     databaseManager->openDatabase();
 
@@ -122,42 +124,61 @@ MainWindow::MainWindow()
 
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
+
+    qDebug() << "MainWindow Creating WeatherReporter";
     weatherReporter = new WeatherReporter(this, databaseManager->getCurrentSimulator());
 
+    qDebug() << "MainWindow Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESRECENT, ui->menuRecentRoutes,
                                               ui->actionRecentRoutesClear);
+
+    qDebug() << "MainWindow Creating RouteController";
     routeController = new RouteController(this, mapQuery, ui->tableViewRoute);
 
+    qDebug() << "MainWindow Creating FileHistoryHandler for KML files";
     kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKMLRECENT, ui->menuRecentKml,
                                             ui->actionClearKmlMenu);
 
     // Create map widget and replace dummy widget in window
+    qDebug() << "MainWindow Creating MapWidget";
     mapWidget = new MapWidget(this, mapQuery);
     ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
 
     // Create elevation profile widget and replace dummy widget in window
+    qDebug() << "MainWindow Creating ProfileWidget";
     profileWidget = new ProfileWidget(this);
     ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
 
     // Create marble legend and add it to informtation tab
+    qDebug() << "MainWindow Creating LegendWidget";
     legendWidget = new Marble::LegendWidget(this);
     legendWidget->setMarbleModel(mapWidget->model());
     ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
 
     // Have to create searches in the same order as the tabs
+    qDebug() << "MainWindow Creating SearchController";
     searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
 
+    qDebug() << "MainWindow Creating ConnectClient";
     connectClient = new ConnectClient(this);
 
+    qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this, mapQuery, infoQuery);
 
+    qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
+
+    qDebug() << "MainWindow Reading settings";
     readSettings();
+
     updateActionStates();
 
+    qDebug() << "MainWindow Setting theme";
     mapWidget->setTheme(mapThemeComboBox->currentData().toString(), mapThemeComboBox->currentIndex());
+
+    qDebug() << "MainWindow Setting projection";
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
 
     // Wait until everything is set up and update map
@@ -169,6 +190,7 @@ MainWindow::MainWindow()
     connectClient->tryConnect();
     loadNavmapLegend();
 
+    qDebug() << "MainWindow Constructor done";
   }
   // Exit application if something goes wrong
   catch(atools::Exception& e)
@@ -476,8 +498,6 @@ void MainWindow::setupUi()
 
 void MainWindow::connectAllSlots()
 {
-  qDebug() << "Connecting slots";
-
   // Get "show in browser"  click
   connect(ui->textBrowserNavmapLegendInfo, &QTextBrowser::anchorClicked, this,
           &MainWindow::legendAnchorClicked);
@@ -1379,7 +1399,7 @@ void MainWindow::updateActionStates()
 /* Read settings for all windows, docks, controller and manager classes */
 void MainWindow::readSettings()
 {
-  qDebug() << "readSettings";
+  qDebug() << "MainWindow::readSettings";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
   widgetState.restore({this, ui->statusBar, ui->tabWidgetSearch});
@@ -1397,12 +1417,25 @@ void MainWindow::readSettings()
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 
+  qDebug() << "MainWindow restoring state of kmlFileHistory";
   kmlFileHistory->restoreState();
+
+  qDebug() << "MainWindow restoring state of searchController";
   routeFileHistory->restoreState();
+
+  qDebug() << "MainWindow restoring state of searchController";
   searchController->restoreState();
+
+  qDebug() << "MainWindow restoring state of mapWidget";
   mapWidget->restoreState();
+
+  qDebug() << "MainWindow restoring state of routeController";
   routeController->restoreState();
+
+  qDebug() << "MainWindow restoring state of connectClient";
   connectClient->restoreState();
+
+  qDebug() << "MainWindow restoring state of infoController";
   infoController->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
@@ -1428,6 +1461,8 @@ void MainWindow::readSettings()
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
+
+  qDebug() << "MainWindow::readSettings done";
 }
 
 /* Write settings for all windows, docks, controller and manager classes */
