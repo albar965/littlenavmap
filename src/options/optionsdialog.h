@@ -69,11 +69,11 @@ private:
   void fromFlags(QCheckBox *checkBox, opts::Flags flag);
   void fromFlags(QRadioButton *radioButton, opts::Flags flag);
 
-  void selectAsnPathClicked();
+  void selectActiveSkyPathClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
   void updateWeatherButtonState();
-  void updateAsnPathStatus();
+  void updateActiveSkyPathStatus();
 
   void addDatabaseExcludePathClicked();
   void removeDatabaseExcludePathClicked();

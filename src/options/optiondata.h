@@ -70,7 +70,7 @@ enum Flag
 
   /* Show ASN weather in info panel.
    * ui->checkBoxOptionsWeatherInfoAsn */
-  WEATHER_INFO_ASN = 1 << 11,
+  WEATHER_INFO_ACTIVESKY = 1 << 11,
 
   /* Show NOAA weather in info panel.
    * ui->checkBoxOptionsWeatherInfoNoaa */
@@ -82,7 +82,7 @@ enum Flag
 
   /* Show ASN weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipAsn */
-  WEATHER_TOOLTIP_ASN = 1 << 14,
+  WEATHER_TOOLTIP_ACTIVESKY = 1 << 14,
 
   /* Show NOAA weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipNoaa */
@@ -278,10 +278,10 @@ private:
     // opts::ROUTE_PREFER_NDB |
     // opts::ROUTE_PREFER_VOR |
     opts::ROUTE_EAST_WEST_RULE |
-    opts::WEATHER_INFO_ASN |
+    opts::WEATHER_INFO_ACTIVESKY |
     opts::WEATHER_INFO_NOAA |
     opts::WEATHER_INFO_VATSIM |
-    opts::WEATHER_TOOLTIP_ASN |
+    opts::WEATHER_TOOLTIP_ACTIVESKY |
     opts::WEATHER_TOOLTIP_NOAA
     // opts::WEATHER_TOOLTIP_VATSIM
   ;

@@ -73,7 +73,7 @@ const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
 
 /* Options dialog */
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";
-const QString OPTIONS_DIALOG_ASN_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
+const QString OPTIONS_DIALOG_AS_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
 const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
 const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
 const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
@@ -93,7 +93,7 @@ const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.CFG)";
 const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.PLN)";
 const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
-const QString FILE_PATTERN_ASN_SNAPSHOT = "(current_wx_snapshot.txt)";
+const QString FILE_PATTERN_AS_SNAPSHOT = "(current_wx_snapshot.txt)";
 
 /* Sqlite database names */
 const QString DATABASE_DIR = "little_navmap_db";

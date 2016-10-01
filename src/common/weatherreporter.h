@@ -29,11 +29,11 @@ class MainWindow;
 
 /*
  * Provides a source of metar data for airports. Supports ActiveSkyNext, NOAA and VATSIM weather.
- * The ASN weather file if monitored for changes and the signal weatherUpdated will be emitted if
- * the file has changed.
+ * The Active Sky (Next and 16) weather files are monitored for changes and the signal
+ * weatherUpdated will be emitted if the file has changed.
  * NOAA and VATSIM start a request in background and emit the signal weatherUpdated.
  *
- * Uses hashmaps to cache requests. Cache entries will timeout after 15 minutes.
+ * Uses hashmaps to cache online requests. Cache entries will timeout after 15 minutes.
  *
  * Only one request is done. If a request is already waiting a new one will cancel the old one.
  */
@@ -44,14 +44,14 @@ class WeatherReporter :
   Q_OBJECT
 
 public:
-  /* @param type flight simulator type needed to find ASN weather file. */
+  /* @param type flight simulator type needed to find Active Sky weather file. */
   WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
   virtual ~WeatherReporter();
 
   /*
-   * @return ASN metar or empty if ASN was not found or the airport has no weather report
+   * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report
    */
-  QString getAsnMetar(const QString& airportIcao);
+  QString getActiveSkyMetar(const QString& airportIcao);
 
   /*
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
@@ -65,22 +65,17 @@ public:
    */
   QString getVatsimMetar(const QString& airportIcao);
 
-  bool isAsnDefaultPathFound()
-  {
-    return !asnSnapshotPath.isEmpty();
-  }
-
   /* Does nothing currently */
   void preDatabaseLoad();
 
-  /* Will reload new ASN data for the changed simulator type, but only if the path was not set manually */
+  /* Will reload new Active Sky data for the changed simulator type, but only if the path was not set manually */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
-  /* Options dialog changed settings. Will reinitialize ASN file */
+  /* Options dialog changed settings. Will reinitialize Active Sky file */
   void optionsChanged();
 
   /* Return true if the file at the given path exists and has valid content */
-  static bool validateAsnFile(const QString& path);
+  static bool validateActiveSkyFile(const QString& path);
 
   /*
    * Test the weather server URL synchronously
@@ -91,8 +86,27 @@ public:
    */
   bool testUrl(const QString& url, const QString& airportIcao, QString& result);
 
+  enum ActiveSkyType
+  {
+    NONE, /* not found */
+    MANUAL, /* Snapshot file is manually selected */
+    ASN, /* Active Sky Next */
+    AS16
+  };
+
+  /* Get type of active sky weather snapshot that was found */
+  ActiveSkyType getCurrentActiveSkyType()
+  {
+    return activeSkyType;
+  }
+
+  atools::fs::FsPaths::SimulatorType getSimType() const
+  {
+    return simType;
+  }
+
 signals:
-  /* Emitted when ASN file changes or a request to weather was fullfilled */
+  /* Emitted when Active Sky file changes or a request to weather was fullfilled */
   void weatherUpdated();
 
 private:
@@ -106,11 +120,11 @@ private:
     QDateTime reportTime;
   };
 
-  void asnWeatherFileChanged(const QString& path);
+  void activeSkyWeatherFileChanged(const QString& path);
 
   void loadActiveSkySnapshot(const QString& path);
   void initActiveSkyNext();
-  QString findAsnSnapshotPath();
+  QString findActiveSkySnapshotPath(const QString& activeSkyPrefix);
 
   void loadNoaaMetar(const QString& airportIcao);
   void loadVatsimMetar(const QString& airportIcao);
@@ -122,10 +136,10 @@ private:
   void cancelNoaaReply();
   void cancelVatsimReply();
 
-  QHash<QString, QString> asnMetars;
+  QHash<QString, QString> activeSkyMetars;
   QHash<QString, Report> noaaMetars, vatsimMetars;
 
-  QString asnSnapshotPath;
+  QString activeSkySnapshotPath;
   QFileSystemWatcher *fsWatcher = nullptr;
   QNetworkAccessManager networkManager;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
@@ -136,6 +150,8 @@ private:
   // Keeps the reply
   QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
   MainWindow *mainWindow;
+
+  ActiveSkyType activeSkyType = NONE;
 
 };
 

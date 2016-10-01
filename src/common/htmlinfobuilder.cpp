@@ -221,13 +221,14 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   {
     // Add weather information
     opts::Flags flags = OptionData::instance().getFlags();
-    bool showAsn = info ? flags & opts::WEATHER_INFO_ASN : flags & opts::WEATHER_TOOLTIP_ASN;
+    bool showActiveSky = info ? flags & opts::WEATHER_INFO_ACTIVESKY : flags &
+                         opts::WEATHER_TOOLTIP_ACTIVESKY;
     bool showNoaa = info ? flags & opts::WEATHER_INFO_NOAA : flags & opts::WEATHER_TOOLTIP_NOAA;
     bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
 
-    QString asnMetar, noaaMetar, vatsimMetar;
-    if(showAsn)
-      asnMetar = weather->getAsnMetar(airport.ident);
+    QString activeSkyMetar, noaaMetar, vatsimMetar;
+    if(showActiveSky)
+      activeSkyMetar = weather->getActiveSkyMetar(airport.ident);
 
     if(showNoaa)
       noaaMetar = weather->getNoaaMetar(airport.ident);
@@ -235,13 +236,21 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     if(showVatsim)
       vatsimMetar = weather->getVatsimMetar(airport.ident);
 
-    if(!asnMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
+    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
     {
       if(info)
         head(html, tr("Weather"));
       html.table();
-      if(!asnMetar.isEmpty())
-        html.row2(QString(tr("ASN")) + (info ? tr(":") : tr(" Metar:")), asnMetar);
+      if(!activeSkyMetar.isEmpty())
+      {
+        QString asText(tr("Active Sky"));
+        if(weather->getCurrentActiveSkyType() == WeatherReporter::AS16)
+          asText = tr("AS16");
+        else if(weather->getCurrentActiveSkyType() == WeatherReporter::ASN)
+          asText = tr("ASN");
+
+        html.row2(asText + (info ? tr(":") : tr(" Metar:")), activeSkyMetar);
+      }
       if(!noaaMetar.isEmpty())
         html.row2(QString(tr("NOAA")) + (info ? tr(":") : tr(" Metar:")), noaaMetar);
       if(!vatsimMetar.isEmpty())

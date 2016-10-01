@@ -158,12 +158,12 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
-          this, &OptionsDialog::selectAsnPathClicked);
+          this, &OptionsDialog::selectActiveSkyPathClicked);
 
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::editingFinished,
           this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited,
-          this, &OptionsDialog::updateAsnPathStatus);
+          this, &OptionsDialog::updateActiveSkyPathStatus);
 
   connect(ui->lineEditOptionsWeatherNoaaUrl, &QLineEdit::textEdited,
           this, &OptionsDialog::updateWeatherButtonState);
@@ -225,6 +225,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     widgetsToOptionData();
     saveState();
     emit optionsChanged();
+    updateActiveSkyPathStatus();
+    updateWeatherButtonState();
+    updateDatabaseButtonState();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
   {
@@ -251,6 +254,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       optionDataToWidgets();
       saveState();
       emit optionsChanged();
+      updateActiveSkyPathStatus();
+      updateWeatherButtonState();
+      updateDatabaseButtonState();
     }
   }
 }
@@ -408,10 +414,10 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
   toFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
   toFlags(ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
-  toFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ASN);
+  toFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   toFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
-  toFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ASN);
+  toFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   toFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
 
@@ -473,10 +479,10 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
   fromFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
   fromFlags(ui->checkBoxOptionsRoutePreferVor, opts::ROUTE_PREFER_VOR);
-  fromFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ASN);
+  fromFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
-  fromFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ASN);
+  fromFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
 
@@ -578,17 +584,17 @@ void OptionsDialog::fromFlags(QRadioButton *radioButton, opts::Flags flag)
 void OptionsDialog::updateWeatherButtonState()
 {
   WeatherReporter *wr = mainWindow->getWeatherReporter();
-  bool hasAsn = wr->isAsnDefaultPathFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
-  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAsn);
-  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAsn);
+  bool hasAs = wr->getCurrentActiveSkyType() != WeatherReporter::NONE;
+  ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAs);
+  ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAs);
 
   ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaUrl->text().isEmpty());
   ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
-  updateAsnPathStatus();
+  updateActiveSkyPathStatus();
 }
 
 /* Checks the path to the ASN weather file and its contents. Display an error message in the label */
-void OptionsDialog::updateAsnPathStatus()
+void OptionsDialog::updateActiveSkyPathStatus()
 {
   const QString& path = ui->lineEditOptionsWeatherAsnPath->text();
 
@@ -601,34 +607,52 @@ void OptionsDialog::updateAsnPathStatus()
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherAsnPathState->setText(
         tr("<span style=\"font-weight: bold; color: red;\">Is not a file.</span>"));
-    else if(!WeatherReporter::validateAsnFile(path))
+    else if(!WeatherReporter::validateActiveSkyFile(path))
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("<span style=\"font-weight: bold; color: red;\">Is not an ASN weather snapshot file.</span>"));
+        tr(
+          "<span style=\"font-weight: bold; color: red;\">Is not an Active Sky weather snapshot file.</span>"));
     else
-      ui->labelOptionsWeatherAsnPathState->setText(tr("Weather snapshot file is valid."));
+      ui->labelOptionsWeatherAsnPathState->setText(
+        tr("Weather snapshot file is valid. Using this one for all simulators"));
   }
   else
   {
+    // No manual path set
+    QString text;
     WeatherReporter *wr = mainWindow->getWeatherReporter();
-    bool hasAsn = wr->isAsnDefaultPathFound() || !ui->lineEditOptionsWeatherAsnPath->text().isEmpty();
+    QString sim = atools::fs::FsPaths::typeToShortName(wr->getSimType());
 
-    if(hasAsn)
-      ui->labelOptionsWeatherAsnPathState->setText(
-        tr("No weather snapshot file selected. Using default."));
-    else
-      ui->labelOptionsWeatherAsnPathState->setText(
-        tr("No weather snapshot file selected and no default found. ASN weather not available."));
+    switch(wr->getCurrentActiveSkyType())
+    {
+      case WeatherReporter::NONE:
+        text = tr("No Active Sky weather snapshot found. Active Sky metars are not available.");
+        break;
+      case WeatherReporter::MANUAL:
+        text = tr("Will use default weather snapshot after confirming change.");
+        break;
+      case WeatherReporter::ASN:
+        text =
+          tr("No Active Sky weather snapshot file selected. "
+             "Using default for Active Sky Next for %1.").arg(sim);
+        break;
+      case WeatherReporter::AS16:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for AS16 for %1.").arg(sim);
+        break;
+    }
+
+    ui->labelOptionsWeatherAsnPathState->setText(text);
   }
 }
 
-void OptionsDialog::selectAsnPathClicked()
+void OptionsDialog::selectActiveSkyPathClicked()
 {
   qDebug() << "OptionsDialog::selectAsnPathClicked";
 
   QString path = atools::gui::Dialog(this).openFileDialog(
     tr("Open Active Sky Weather Snapshot File"),
-    tr("ASN Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_ASN_SNAPSHOT),
-    lnm::OPTIONS_DIALOG_ASN_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
+    tr("Active Sky Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AS_SNAPSHOT),
+    lnm::OPTIONS_DIALOG_AS_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(path));

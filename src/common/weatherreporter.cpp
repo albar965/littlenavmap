@@ -59,40 +59,72 @@ void WeatherReporter::initActiveSkyNext()
   {
     // Remove watcher just in case the file changes
     fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
-                          &WeatherReporter::asnWeatherFileChanged);
+                          &WeatherReporter::activeSkyWeatherFileChanged);
     delete fsWatcher;
     fsWatcher = nullptr;
   }
 
-  QString manualAsnSnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
-  asnSnapshotPath = findAsnSnapshotPath();
+  QString asPath;
 
-  // Manual path overrides found path for all simulators
-  QString asnPath = manualAsnSnapshotPath.isEmpty() ? asnSnapshotPath : manualAsnSnapshotPath;
-
-  if(!asnPath.isEmpty())
+  activeSkyType = NONE;
+  QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
+  if(manualActiveSkySnapshotPath.isEmpty())
   {
-    qDebug() << "Using ASN path" << asnPath;
-    loadActiveSkySnapshot(asnPath);
+    QString asnSnapshotPath = findActiveSkySnapshotPath("ASN");
+    qInfo() << "ASN snapshot" << asnSnapshotPath;
+
+    QString as16SnapshotPath = findActiveSkySnapshotPath("AS16_");
+    qInfo() << "AS16 snapshot" << as16SnapshotPath;
+
+    if(!as16SnapshotPath.isEmpty())
+    {
+      // Prefer AS16 befor ASN
+      asPath = as16SnapshotPath;
+      activeSkyType = AS16;
+    }
+    else if(!asnSnapshotPath.isEmpty())
+    {
+      asPath = asnSnapshotPath;
+      activeSkyType = ASN;
+    }
+  }
+  else
+  {
+    // Manual path overrides found path for all simulators
+    asPath = manualActiveSkySnapshotPath;
+    activeSkyType = MANUAL;
+  }
+
+  if(!asPath.isEmpty())
+  {
+    qDebug() << "Using Active Sky path" << asPath;
+    loadActiveSkySnapshot(asPath);
     if(fsWatcher == nullptr)
     {
       // Watch file for changes
       fsWatcher = new QFileSystemWatcher(this);
       fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
-                         &WeatherReporter::asnWeatherFileChanged);
+                         &WeatherReporter::activeSkyWeatherFileChanged);
     }
 
-    if(!fsWatcher->addPath(asnPath))
-      qWarning() << "cannot watch" << asnPath;
+    if(!fsWatcher->addPath(asPath))
+      qWarning() << "cannot watch" << asPath;
   }
   else
-    asnMetars.clear();
+  {
+    qDebug() << "Active Sky path not found";
+    activeSkyMetars.clear();
+  }
 }
 
 /* Loads complete ASN file into a hash map */
 void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 {
-  // C:\Users\USER\AppData\Roaming\HiFi\ASNFSX\Weather\wx_station_list.txt
+  // ASN
+  // C:\Users\USER\AppData\Roaming\HiFi\ASNFSX\Weather\current_wx_snapshot.txt or wx_station_list.txt
+  // AS16
+  // C:\Users\USER\AppData\Roaming\HiFi\AS16_FSX\Weather\current_wx_snapshot.txt or wx_station_list.txt
+
   // AGGH::AGGH 261800Z 20002KT 9999 FEW014 SCT027 25/24 Q1009::AGGH 261655Z 2618/2718 VRB03KT 9999 FEW017 SCT028 FM270000
   // 34010KT 9999 -SH SCT019 SCT03 FM271200 VRB03KT 9999 -SH FEW017 SCT028 PROB30 INTER 2703/27010 5000 TSSH SCT016 FEW017CB BKN028
   // T 25 27 31 32 Q 1009 1011 1011 1009::278,11,24.0/267,12,19.0/263,13,16.1/233,12,7.2/290,7,-3.0/338,8,-13.0/348,18,-27.9/9,19,-37.9/26,15,-51.3
@@ -104,7 +136,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
   QFile file(path);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    asnMetars.clear();
+    activeSkyMetars.clear();
 
     QTextStream sceneryCfg(&file);
 
@@ -112,7 +144,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
     while(sceneryCfg.readLineInto(&line))
     {
       QStringList list = line.split("::");
-      asnMetars.insert(list.at(0), list.at(1));
+      activeSkyMetars.insert(list.at(0), list.at(1));
     }
     file.close();
   }
@@ -120,7 +152,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
 }
 
-bool WeatherReporter::validateAsnFile(const QString& path)
+bool WeatherReporter::validateActiveSkyFile(const QString& path)
 {
   bool retval = false;
   QFile file(path);
@@ -139,7 +171,7 @@ bool WeatherReporter::validateAsnFile(const QString& path)
   return retval;
 }
 
-QString WeatherReporter::findAsnSnapshotPath()
+QString WeatherReporter::findActiveSkySnapshotPath(const QString& activeSkyPrefix)
 {
   QString appdata = atools::settings::Settings::instance().getPath();
 
@@ -147,13 +179,13 @@ QString WeatherReporter::findAsnSnapshotPath()
 
   QString simPath;
   if(simType == atools::fs::FsPaths::FSX)
-    simPath = "ASNFSX";
+    simPath = activeSkyPrefix + "FSX";
   else if(simType == atools::fs::FsPaths::FSX_SE)
-    simPath = "ASNFSX";
+    simPath = activeSkyPrefix + "FSX";
   else if(simType == atools::fs::FsPaths::P3D_V2)
-    simPath = "ASNP3D";
+    simPath = activeSkyPrefix + "P3D";
   else if(simType == atools::fs::FsPaths::P3D_V3)
-    simPath = "ASNP3D";
+    simPath = activeSkyPrefix + "P3D";
 
   if(!simPath.isEmpty())
   {
@@ -164,7 +196,7 @@ QString WeatherReporter::findAsnSnapshotPath()
       if(QFile::exists(file))
       {
         qDebug() << "found ASN weather file" << file;
-        if(validateAsnFile(file))
+        if(validateActiveSkyFile(file))
           return file;
         else
           qWarning() << "is not an ASN weather snapshot file" << file;
@@ -310,9 +342,9 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
   }
 }
 
-QString WeatherReporter::getAsnMetar(const QString& airportIcao)
+QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
-  return asnMetars.value(airportIcao, QString());
+  return activeSkyMetars.value(airportIcao, QString());
 }
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
@@ -377,7 +409,7 @@ void WeatherReporter::optionsChanged()
   initActiveSkyNext();
 }
 
-void WeatherReporter::asnWeatherFileChanged(const QString& path)
+void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 {
   Q_UNUSED(path);
   qDebug() << "file" << path << "changed";
