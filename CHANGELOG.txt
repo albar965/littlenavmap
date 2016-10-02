@@ -26,6 +26,7 @@ Little Navmap
 * Additions to manual: Database update, weather, copy and paste from dialogs and hightlighted text.
 * Removed "untested" annotation since it is all beta anyway.
 * Marble cache is now initialized late to avoid disk trashing on startup for those without SSD.
+* Options - scenery database: Deleting the last path in the list was not saved.
 
 Version 1.0.2.beta
 * Older add-on airports using FS9 BGLs can now be read.
