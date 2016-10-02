@@ -275,14 +275,12 @@ void OptionsDialog::saveState()
   QStringList paths;
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
     paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
-  if(!paths.isEmpty())
-    settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
+  settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
 
   paths.clear();
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
     paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
-  if(!paths.isEmpty())
-    settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
+  settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 }
 
 void OptionsDialog::restoreState()
