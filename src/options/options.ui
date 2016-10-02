@@ -848,6 +848,9 @@ nearest even thousand feet for westerly flight plans if checked.</string>
          <property name="placeholderText">
           <string>No URL set. NOAA weather reports are disabled.</string>
          </property>
+         <property name="clearButtonEnabled">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="5" column="1">
@@ -864,6 +867,9 @@ nearest even thousand feet for westerly flight plans if checked.</string>
          </property>
          <property name="placeholderText">
           <string>No URL set. VATSIM weather reports are disabled.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -895,6 +901,9 @@ If this field is empty, the default Active Sky weather file path will be used wh
          </property>
          <property name="placeholderText">
           <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

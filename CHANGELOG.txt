@@ -1,3 +1,32 @@
+Version 1.0.3.beta
+
+Inherited from atools:
+* Removed not null constaints on type, ident and name columns since some add-ons leave fields empty.
+* Updated schema to keep runway names in start even if no assignment to runway was found.
+* Increased width of ident columns for some add-on sceneries.
+* Database minor updated to 4 - needs a scenery reload.
+* Fixed non working scenery exclusion when scenery folder is selected.
+
+Little Navmap
+* Using native paths across the whole application now to avoid confusion regarding slashes and backslashes.
+* Increased file history size to 20 files.
+* Clarification in database erase question dialog.
+* Fixed several problems setting flight plan departure for add-on airports that have either no
+  runways or no start positions.
+* Solved problem of parking dialog not showing all positions for some add-on airports.
+* Automatic start position assignment now adapted to add-on airports having no runway or no start positions.
+* Fixed crash in parking dialog when showing error message.
+* Added logging of database version.
+* Fixed display in info panel for runway-less airports.
+* Added search option for runway-less airports (many add-on heliports have neither runway nor helipad records).
+* Now using native file paths in all GUI elements to avoid confusion.
+* Added native support for AS16 metar display.
+* Fixed errors in options dialog weather tab.
+* Improved tooltips in weather tab.
+* Additions to manual: Database update, weather, copy and paste from dialogs and hightlighted text.
+* Removed "untested" annotation since it is all beta anyway.
+* Marble cache is now initialized late to avoid disk trashing on startup for those without SSD.
+
 Version 1.0.2.beta
 * Older add-on airports using FS9 BGLs can now be read.
 * Fixed crash "locked database" on ILS update during scenery loading.

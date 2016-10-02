@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   Application::setApplicationName("Little Navmap");
   Application::setOrganizationName("ABarthel");
   Application::setOrganizationDomain("abarthel.org");
-  Application::setApplicationVersion("1.0.2.beta");
+  Application::setApplicationVersion("1.0.3.beta");
 
   DatabaseManager *dbManager = nullptr;
 
