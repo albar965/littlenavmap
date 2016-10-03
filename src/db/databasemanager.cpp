@@ -55,6 +55,8 @@ using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
 
+const int MAX_ERROR_MESSAGES = 10;
+
 const QString DATABASE_META_TEXT(
   QObject::tr("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>"));
 
@@ -63,29 +65,29 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                  "<tr> "
                                                    "<td width=\"60\"><b>Files:</b>"
                                                    "</td>    "
-                                                   "<td width=\"60\">%L5"
+                                                   "<td width=\"60\">%L6"
                                                    "</td> "
                                                    "<td width=\"60\"><b>VOR:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L7"
+                                                   "<td width=\"60\">%L8"
                                                    "</td> "
                                                    "<td width=\"60\"><b>Marker:</b>"
                                                    "</td>     "
-                                                   "<td width=\"60\">%L10"
+                                                   "<td width=\"60\">%L11"
                                                    "</td>"
                                                  "</tr>"
                                                  "<tr> "
                                                    "<td width=\"60\"><b>Airports:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L6"
+                                                   "<td width=\"60\">%L7"
                                                    "</td> "
                                                    "<td width=\"60\"><b>ILS:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L8"
+                                                   "<td width=\"60\">%L9"
                                                    "</td> "
                                                    "<td width=\"60\"><b>Waypoints:</b>"
                                                    "</td>  "
-                                                   "<td width=\"60\">%L11"
+                                                   "<td width=\"60\">%L12"
                                                    "</td>"
                                                  "</tr>"
                                                  "<tr> "
@@ -95,7 +97,7 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                    "</td>"
                                                    "<td width=\"60\"><b>NDB:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L9"
+                                                   "<td width=\"60\">%L10"
                                                    "</td> "
                                                  "</tr>"
                                                "</tbody>"
@@ -105,13 +107,15 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
 const QString DATABASE_TIME_TEXT(QObject::tr(
                                    "<b>%1</b><br/><br/><br/>"
                                    "<b>Time:</b> %2<br/>%3%4"
+                                     "<b>Errors:</b> %5<br/>"
                                    ) + DATABASE_INFO_TEXT);
 
-const QString DATABASE_FILE_TEXT(QObject::tr(
-                                   "<b>Scenery:</b> %1 (%2)<br/>"
-                                   "<b>File:</b> %3<br/><br/>"
-                                   "<b>Time:</b> %4<br/>"
-                                   ) + DATABASE_INFO_TEXT);
+const QString DATABASE_LOADING_TEXT(QObject::tr(
+                                      "<b>Scenery:</b> %1 (%2)<br/>"
+                                      "<b>File:</b> %3<br/><br/>"
+                                      "<b>Time:</b> %4<br/>"
+                                      "<b>Errors:</b> %5<br/>"
+                                      ) + DATABASE_INFO_TEXT);
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -238,6 +242,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
       else if(result == QMessageBox::Yes)
       {
         // Create an empty schema for all incompatible databases
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         for(const QString& dbfile : databaseFiles)
         {
           sqlDb.setDatabaseName(dbfile);
@@ -245,6 +250,7 @@ bool DatabaseManager::checkIncompatibleDatabases()
           createEmptySchema(&sqlDb);
           sqlDb.close();
         }
+        QGuiApplication::restoreOverrideCursor();
       }
     }
   }
@@ -522,13 +528,14 @@ bool DatabaseManager::loadScenery()
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  atools::fs::NavDatabaseErrors errors;
 
   try
   {
     // Create a backup of the database and delete the original file
     backupDatabaseFile();
 
-    atools::fs::NavDatabase nd(&bglReaderOpts, db);
+    atools::fs::NavDatabase nd(&bglReaderOpts, db, &errors);
     nd.create();
   }
   catch(atools::Exception& e)
@@ -547,6 +554,41 @@ bool DatabaseManager::loadScenery()
   }
 
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+  if(!errors.sceneryErrors.isEmpty())
+  {
+    int numErrors = 0;
+    QString errorTexts;
+    errorTexts.append(tr("<h3>Found %1 errors in %2 scenery entries when loading the scenery database</h3>").
+                      arg(errors.getTotalErrors()).arg(errors.sceneryErrors.size()));
+    errorTexts.append(tr("<p>Some BGL files could not be read.<br/>"
+                         "You should check if the airports of the affected sceneries display "
+                         "correctly and show the correct information.</p>"));
+
+    for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : errors.sceneryErrors)
+    {
+      errorTexts.append(tr("<p><b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      for(const atools::fs::NavDatabaseErrors::BglFileError& bglErr : scErr.bglFileErrors)
+      {
+        errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
+                          arg(bglErr.bglFilepath).arg(bglErr.errorMessage));
+        if(numErrors++ > MAX_ERROR_MESSAGES)
+        {
+          errorTexts.append(tr("<p>More errors found.<br/>"
+                               "You may check the log file for affected sceneries.</p>"));
+          break;
+        }
+      }
+      errorTexts.append("</p>");
+
+      if(numErrors > MAX_ERROR_MESSAGES)
+        break;
+    }
+
+    QMessageBox::warning(progressDialog, QApplication::applicationName(), errorTexts);
+  }
+
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
   if(!progressDialog->wasCanceled() && success)
   {
     // Show results and wait until user selects ok
@@ -558,8 +600,12 @@ bool DatabaseManager::loadScenery()
     success = false;
 
   if(!success)
+  {
     // Something went wrong of loading was cancelled - restore backup
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     restoreDatabaseFileBackup();
+    QGuiApplication::restoreOverrideCursor();
+  }
 
   // Delete backup file anyway after success of restore
   removeDatabaseFileBackup();
@@ -650,6 +696,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
       arg(formatter::formatElapsed(timer)).
       arg(QString()).
       arg(QString()).
+      arg(progress.getNumErrors()).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).
@@ -664,10 +711,11 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
     // Switched to a new scenery area
     progressDialog->setLabelText(
-      DATABASE_FILE_TEXT.arg(progress.getSceneryTitle()).
+      DATABASE_LOADING_TEXT.arg(progress.getSceneryTitle()).
       arg(progress.getSceneryPath()).
       arg(progress.getBglFileName()).
       arg(formatter::formatElapsed(timer)).
+      arg(progress.getNumErrors()).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).
@@ -686,6 +734,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
       arg(formatter::formatElapsed(timer)).
       arg(QString()).
       arg(QString()).
+      arg(progress.getNumErrors()).
       arg(progress.getNumFiles()).
       arg(progress.getNumAirports()).
       arg(progress.getNumVors()).
@@ -757,7 +806,7 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *sqlDatabase)
   try
   {
     NavDatabaseOptions opts;
-    NavDatabase(&opts, sqlDatabase).createSchema();
+    NavDatabase(&opts, sqlDatabase, nullptr).createSchema();
     DatabaseMeta(sqlDatabase).updateVersion();
   }
   catch(atools::Exception& e)
