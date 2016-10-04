@@ -38,8 +38,12 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   bool hasInstalled = !paths.getAllInstalled().isEmpty();
 
+  // Sort keys to avoid random order
+  QList<FsPaths::SimulatorType> keys = paths.getAllInstalled();
+  std::sort(keys.begin(), keys.end());
+
   // Add an item to the combo box for each installed simulator
-  for(atools::fs::FsPaths::SimulatorType type : paths.getAllInstalled())
+  for(atools::fs::FsPaths::SimulatorType type : keys)
     ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
                                    QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
 
