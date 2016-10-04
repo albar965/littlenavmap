@@ -39,6 +39,7 @@ const QColor airportDetailBackColor = QColor(Qt::white);
 
 const QColor taxiwayNameColor = QColor(Qt::black);
 const QColor taxiwayNameBackgroundColor = QColor::fromRgb(255, 255, 120);
+const QBrush taxiwayClosedBrush = QBrush(QColor::fromRgb(255, 255, 0), Qt::BDiagPattern);
 
 const QColor runwayOutlineColor = QColor(Qt::black);
 const QColor runwayOffsetColor = QColor(Qt::white);

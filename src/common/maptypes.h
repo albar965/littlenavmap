@@ -235,7 +235,7 @@ struct MapTaxiPath
   atools::geo::Pos start, end;
   QString surface, name;
   int width; /* feet */
-  bool drawSurface;
+  bool drawSurface, closed;
 
   int getId() const
   {

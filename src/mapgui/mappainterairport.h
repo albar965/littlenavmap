@@ -49,6 +49,7 @@ public:
 private:
   void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
   void drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport, bool fast);
+  void drawAirportDiagramBackround(const PaintContext *context, const maptypes::MapAirport& airport);
   void drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap);
   void runwayCoords(const QList<maptypes::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects);

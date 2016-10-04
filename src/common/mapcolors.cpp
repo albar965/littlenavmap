@@ -122,28 +122,27 @@ const QIcon& iconForParkingType(const QString& type)
 
 const QColor& colorForSurface(const QString& surface)
 {
-  static const QColor concrete(Qt::gray);
+  static const QColor concrete("#888888");
   static const QColor grass("#00a000");
-  static const QColor water(133, 133, 255);
-  static const QColor asphalt(Qt::darkGray);
-  static const QColor cement(Qt::lightGray);
+  static const QColor water("#808585ff");
+  static const QColor asphalt("#707070");
+  static const QColor cement("#d0d0d0");
   static const QColor clay("#DEB887");
-  static const QColor snow("#f0f0f0");
-  static const QColor ice("#f0f0ff");
+  static const QColor snow("#dbdbdb");
+  static const QColor ice("#d0d0ff");
   static const QColor dirt("#CD853F");
   static const QColor coral("#FFE4C4");
-  static const QColor gravel(Qt::lightGray);
+  static const QColor gravel("#c0c0c0");
   static const QColor oilTreated("#2F4F4F");
-  static const QColor steelMats(Qt::lightGray);
-  static const QColor bituminous(Qt::darkGray);
+  static const QColor steelMats("#a0f0ff");
+  static const QColor bituminous("#808080");
   static const QColor brick("#A0522D");
-  static const QColor macadam(Qt::lightGray);
+  static const QColor macadam("#c8c8c8");
   static const QColor planks("#8B4513");
   static const QColor sand("#F4A460");
   static const QColor shale("#F5DEB3");
-  static const QColor tarmac(Qt::gray);
-  static const QColor unknown(Qt::black);
-  static const QColor none("#202020");
+  static const QColor tarmac("#909090");
+  static const QColor unknown("#ffffff");
 
   if(surface == "CONCRETE")
     return concrete;
@@ -185,11 +184,9 @@ const QColor& colorForSurface(const QString& surface)
     return shale;
   else if(surface == "TARMAC")
     return tarmac;
-  else if(surface == "UNKNOWN")
-    return unknown;
 
-  // else if(surface == "NONE")
-  return none;
+  // else if(surface == "NONE" || surface == "UNKNOWN" || surface == "INVALID")
+  return unknown;
 }
 
 } // namespace mapcolors

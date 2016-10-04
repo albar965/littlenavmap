@@ -85,10 +85,11 @@ void MapPainterAirport::render(const PaintContext *context)
 
   setRenderHints(context->painter);
 
+  // Collect all airports that are visible
+  QList<const MapAirport *> visibleAirports;
+  QList<QPoint> visiblePoints;
   for(const MapAirport *airport : airportMap.values())
   {
-    const MapLayer *layer = context->mapLayer;
-
     // Either part of the route or enabled in the actions/menus/toolbar
     if(!airport->isVisible(context->objectTypes) && !routeAirportIds.contains(airport->id))
       continue;
@@ -102,40 +103,57 @@ void MapPainterAirport::render(const PaintContext *context)
 
     if(visible)
     {
-      // Airport diagram is not influenced by detail level
-      if(context->mapLayerEffective->isAirportDiagram())
-        drawAirportDiagram(context, *airport, context->drawFast);
-      else
-        drawAirportSymbolOverview(context, *airport);
+      visibleAirports.append(airport);
+      visiblePoints.append(QPoint(x, y));
+    }
+  }
 
-      // More detailed symbol will be drawn by the route painter
-      if(!routeAirportIds.contains(airport->id))
-      {
-        // Symbol will be omitted for runway overview
-        drawAirportSymbol(context, *airport, x, y);
+  if(context->mapLayerEffective->isAirportDiagram())
+  {
+    // In diagram mode draw background first to avoid overwriting other airports
+    for(const MapAirport *airport : visibleAirports)
+      drawAirportDiagramBackround(context, *airport);
+  }
 
-        // Build and draw airport text
-        textflags::TextFlags flags;
+  for(int i = 0; i < visibleAirports.size(); i++)
+  {
+    const MapAirport *airport = visibleAirports.at(i);
+    QPoint pt = visiblePoints.at(i);
+    const MapLayer *layer = context->mapLayer;
 
-        if(layer->isAirportInfo())
-          flags = textflags::IDENT | textflags::NAME | textflags::INFO;
+    // Airport diagram is not influenced by detail level
+    if(context->mapLayerEffective->isAirportDiagram())
+      drawAirportDiagram(context, *airport, context->drawFast);
+    else
+      drawAirportSymbolOverview(context, *airport);
 
-        if(layer->isAirportIdent())
-          flags |= textflags::IDENT;
-        else if(layer->isAirportName())
-          flags |= textflags::NAME;
+    // More detailed symbol will be drawn by the route painter
+    if(!routeAirportIds.contains(airport->id))
+    {
+      // Symbol will be omitted for runway overview
+      drawAirportSymbol(context, *airport, pt.x(), pt.y());
 
-        symbolPainter->drawAirportText(context->painter, *airport, x, y, flags,
-                                       context->symSize(context->mapLayerEffective->getAirportSymbolSize()),
-                                       context->mapLayerEffective->isAirportDiagram());
-      }
+      // Build and draw airport text
+      textflags::TextFlags flags;
+
+      if(layer->isAirportInfo())
+        flags = textflags::IDENT | textflags::NAME | textflags::INFO;
+
+      if(layer->isAirportIdent())
+        flags |= textflags::IDENT;
+      else if(layer->isAirportName())
+        flags |= textflags::NAME;
+
+      symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), flags,
+                                     context->symSize(context->mapLayerEffective->getAirportSymbolSize()),
+                                     context->mapLayerEffective->isAirportDiagram());
     }
   }
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport,
-                                           bool fast)
+void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
+                                                    const maptypes::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
   painter->save();
@@ -193,8 +211,30 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->QPainter::drawPolyline(points.data(), points.size());
   }
 
+  painter->restore();
+}
+
+/* Draws the full airport diagram including runway, taxiways, apron, parking and more */
+void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport,
+                                           bool fast)
+{
+  Marble::GeoPainter *painter = context->painter;
+  painter->save();
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setFont(context->defaultFont);
+
+  // Get all runways for this airport
+  const QList<MapRunway> *runways = query->getRunways(airport.id);
+
+  // Calculate all runway screen coordinates
+  QList<QPoint> runwayCenters;
+  QList<QRect> runwayRects, runwayOutlineRects;
+  runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects);
+
   // Draw aprons ---------------------------------
   painter->setBackground(Qt::transparent);
+  const QList<MapApron> *aprons = query->getAprons(airport.id);
+  QVector<QPoint> points;
   for(const MapApron& apron : *aprons)
   {
     points.clear();
@@ -218,16 +258,25 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   }
 
   // Draw taxiways ---------------------------------
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
   for(const MapTaxiPath& taxipath : *taxipaths)
   {
     int pathThickness = scale->getPixelIntForFeet(taxipath.width);
     QColor col = mapcolors::colorForSurface(taxipath.surface);
 
-    if(!taxipath.drawSurface)
-      painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), pathThickness, Qt::SolidLine, Qt::RoundCap));
+    if(taxipath.closed)
+    {
+      painter->setPen(QPen(mapcolors::taxiwayClosedBrush, pathThickness, Qt::SolidLine, Qt::RoundCap));
+      painter->setBackground(col);
+    }
     else
-      painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
-
+    {
+      if(!taxipath.drawSurface)
+        painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), pathThickness, Qt::SolidLine, Qt::RoundCap));
+      else
+        painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
+    }
     // Do not do any clipping here
     bool visible;
     QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
@@ -347,10 +396,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setBrush(mapcolors::runwayOutlineColor);
     for(int i = 0; i < runwayCenters.size(); i++)
     {
-      painter->translate(runwayCenters.at(i));
-      painter->rotate(runways->at(i).heading);
-      painter->drawRect(runwayRects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
-      painter->resetTransform();
+      if(runways->at(i).surface != "WATER")
+      {
+        painter->translate(runwayCenters.at(i));
+        painter->rotate(runways->at(i).heading);
+        painter->drawRect(runwayRects.at(i).marginsAdded(QMargins(2, 2, 2, 2)));
+        painter->resetTransform();
+      }
     }
   }
 

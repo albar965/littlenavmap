@@ -772,7 +772,7 @@ const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
     {
       // TODO should be moved to MapTypesFactory
       maptypes::MapTaxiPath tp;
-      QString type = taxiparthQuery->value("type").toString();
+      tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
       tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
       tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
                        "start_laty").toFloat()),
