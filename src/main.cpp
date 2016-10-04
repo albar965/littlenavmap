@@ -118,6 +118,8 @@ int main(int argc, char *argv[])
     qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
             << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
+    atools::fs::FsPaths::logAllPaths();
+
     migrate::checkAndMigrateSettings();
 
     Settings& settings = Settings::instance();
