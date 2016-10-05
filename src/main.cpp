@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
     dbManager = new DatabaseManager(nullptr);
-    if(dbManager->checkIncompatibleDatabases())
+    if(dbManager->checkIncompatibleDatabases(&splash))
     {
       delete dbManager;
       dbManager = nullptr;

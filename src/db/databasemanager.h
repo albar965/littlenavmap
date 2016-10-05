@@ -38,6 +38,7 @@ class QProgressDialog;
 class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
+class QSplashScreen;
 
 /*
  * Takes care of all scenery database management. Switching between flight simulators, loading of scenery
@@ -93,7 +94,7 @@ public:
   void insertSimSwitchActions(QAction *before, QMenu *menu);
 
   /* if false quit application */
-  bool checkIncompatibleDatabases();
+  bool checkIncompatibleDatabases(QSplashScreen *splash);
 
   /* Get the settings directory where the database is stored */
   const QString& getDatabaseDirectory() const

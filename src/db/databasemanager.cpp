@@ -45,6 +45,7 @@
 #include <QMessageBox>
 #include <QAbstractButton>
 #include <QSettings>
+#include <QSplashScreen>
 
 using atools::gui::ErrorHandler;
 using atools::sql::SqlUtil;
@@ -174,7 +175,7 @@ DatabaseManager::~DatabaseManager()
   SqlDatabase::removeDatabase(DATABASE_NAME);
 }
 
-bool DatabaseManager::checkIncompatibleDatabases()
+bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
 {
   bool ok = true;
 
@@ -226,6 +227,10 @@ bool DatabaseManager::checkIncompatibleDatabases()
                  "%1<br/><br/>Erase them?<br/><br/>%2");
         trailingMsg = tr("You can reload these Scenery Library Databases again after erasing.");
       }
+
+      // Avoid the splash screen hiding the dialog
+      if(splash != nullptr)
+        splash->close();
 
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
                       msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
