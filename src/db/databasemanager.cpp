@@ -56,7 +56,7 @@ using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
 
-const int MAX_ERROR_MESSAGES = 10;
+const int MAX_ERROR_MESSAGES = 6;
 
 const QString DATABASE_META_TEXT(
   QObject::tr("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>"));
