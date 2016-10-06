@@ -27,7 +27,7 @@
 Use the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; and &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; values that Little Navconnect shows in its log.</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -123,7 +123,9 @@ Use the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&
    <item>
     <widget class="QCheckBox" name="checkBoxConnectOnStartup">
      <property name="toolTip">
-      <string>Automatically connect to given address/port when program starts.</string>
+      <string>Automatically connect to given address/port when program starts.
+The program will try only once to connect and no error dialog is shown if this fails.
+You have to start Little Navconnect before Little Navmap for this to work.</string>
      </property>
      <property name="statusTip">
       <string>Automatically connect to given address/port when program starts.</string>
