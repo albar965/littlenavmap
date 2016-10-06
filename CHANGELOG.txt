@@ -1,11 +1,27 @@
-Version 1.0.3.beta
+Version 1.0.4.beta
+
+Little Navmap
+* Scenery loading now continues if errors occur. Errors are shown after loading has finished.
+* Fixed drawing error where an airport can erase a close by airport when drawing the background.
+* Changed color for invalid or unknown airport surfaces (runway, taxiway, apron and helipad) to white.
+* Adjusted surface colors to be more distinguishable.
+* Added drawing style for closed taxiways.
+* Made simulator order in database dialog combo box deterministic.
+* Fixed problem where splash screen could hide the erase database dialog on startup.
 
 Inherited from atools:
-* Removed not null constaints on type, ident and name columns since some add-ons leave fields empty.
-* Updated schema to keep runway names in start even if no assignment to runway was found.
-* Increased width of ident columns for some add-on sceneries.
-* Database minor updated to 4 - needs a scenery reload.
-* Fixed non working scenery exclusion when scenery folder is selected.
+* Fixed multiple BGL reading errors:
+** Now stopping BGL reading early if magic number or header size do not match.
+** Skipping all BGL files with wrong magic number and wrong header size now.
+* Fixed problem with wrongly assigned surface id 3 (CEMENT) in BGL files.
+* Scenery reading now collects errors/exceptions instead of stopping at the first error.
+* Added number of collected errors/exceptions to progress report when reading scenery.
+* Made scenery.cfg reading more error tolerant to avoid problems with Scenery Config Editor.
+* Fixed scenery.cfg path detection to use Windows environment variables. Now more reliable and also working on Windows XP.
+* Fixed problem that could cause scenery areas to be omitted when section name is upper or mixed case.
+* Fixed error when loading PFPX flight plans PLN files with missing + or - prefix in altitude.
+
+Version 1.0.3.beta
 
 Little Navmap
 * Using native paths across the whole application now to avoid confusion regarding slashes and backslashes.
@@ -27,6 +43,13 @@ Little Navmap
 * Removed "untested" annotation since it is all beta anyway.
 * Marble cache is now initialized late to avoid disk trashing on startup for those without SSD.
 * Options - scenery database: Deleting the last path in the list was not saved.
+
+Inherited from atools:
+* Removed not null constaints on type, ident and name columns since some add-ons leave fields empty.
+* Updated schema to keep runway names in start even if no assignment to runway was found.
+* Increased width of ident columns for some add-on sceneries.
+* Database minor updated to 4 - needs a scenery reload.
+* Fixed non working scenery exclusion when scenery folder is selected.
 
 Version 1.0.2.beta
 * Older add-on airports using FS9 BGLs can now be read.
