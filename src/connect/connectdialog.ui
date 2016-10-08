@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
-    <height>274</height>
+    <width>494</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,13 +23,18 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>Start Little Navconnect on the Flight Simulatur computer before trying to connect.&lt;br/&gt;
-Use the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; and &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; values that Little Navconnect shows in its log.</string>
+      <string>&lt;em&gt;Little Navmap&lt;/em&gt; cannot connect to Flight Simulator directly.&lt;br/&gt;
+You always need  &lt;a href=&quot;https://albar965.github.io/littlenavconnect.html&quot;&gt;Little Navconnect&lt;/a&gt; also when running all programs on the same computer.&lt;br/&gt;&lt;br/&gt;
+Start &lt;em&gt;Little Navconnect&lt;/em&gt; on the Flight Simulator computer before trying to connect.&lt;br/&gt;
+Use the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; and &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;port&lt;/span&gt; values that Little Navconnect shows in its log or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;localhost&lt;/span&gt; when all is running on the same computer.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
      </property>
      <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
       <bool>true</bool>
      </property>
      <property name="textInteractionFlags">

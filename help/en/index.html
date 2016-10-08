@@ -28,7 +28,7 @@
     </p>
     <!-- ===================================================================== -->
 
-    <h2>
+    <h2 id="h2toc">
       Table of Contents
     </h2>
 
@@ -157,8 +157,8 @@
     </p>
 
     <p>
-      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP 32-bit, Windows 7 64-bit and
-      Windows 8.1 64-bit.
+      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP, Windows 7,
+      Windows 8.1 and Windows 10.
     </p>
 
     <h2 id="h2overview">
@@ -260,8 +260,8 @@
     </h3>
 
     <p>
-      The legend explaining all the map icons and the <code>Flight Plan Elevation Profile</code> is available in the
-      <code>Information</code> dock window or <a href="legend.html">Little Navmap Legend</a>.
+      The legend explains all the map icons and the <code>Flight Plan Elevation Profile</code> icons. It is available
+      in the <code>Information</code> dock window or online: <a href="legend.html">Little Navmap Legend</a>.
     </p>
 
     <h3>
@@ -359,36 +359,49 @@
       the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
       are not listed separately in this manual.
     </p>
-
-    <p>
+    <!--    <p>
       <img alt="Little Navmap Menu and Toolbars" title="Little Navmap Menu and Toolbars" src=
       "images/menutoolbar.jpg" />
     </p>
 
     <p>
       <span class="capthdg">Picture above:</span> <span class="capt">Menu and toolbars.</span>
-    </p>
+    </p>-->
 
     <h3>
       File Menu
     </h3>
 
     <h4>
-      Flight Plans
+      <img class="textimg" alt="New Flight Plan" title="New Flight Plan" src="images/icons/filenew.png" /> New Flight
+      Plan
     </h4>
 
     <p>
-      You can load, save or create new Flight Simulator PLN files. FS9 flight plan files are not supported.
+      Erases current plan and creates a new one.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Open Flight Plan" title="Open Flight Plan" src="images/icons/fileopen.png" /> Open
+      Flight Plan
+    </h4>
+
+    <p>
+      Opens a Flight Simulator PLN file. FS9 flight plan files are not supported.
     </p>
 
     <p>
-      <em>Little Navmap</em> allows to create flight plans that unusable by the flight simulator. This can happen if a
-      flight plan does not have an airport as departure or destination. A warning dialog will be shown when saving if
-      this is the case.
+      An opened flight plan file will be reloaded on start up (reload and centering can be switched off in the
+      <code>Options</code> dialog on the <code>Startup</code> and <code>User Interface</code> tab).
     </p>
 
+    <h4>
+      <img class="textimg" alt="Append flight plan" title="Append flight plan" src="images/icons/fileappend.png" />
+      Append Flight Plan
+    </h4>
+
     <p>
-      You can use these flight plan snippets in <em>Little Navmap</em> to merge and edit new plans.
+      Adds departure, destination and all waypoints to the current flight plan.
     </p>
 
     <p>
@@ -399,26 +412,56 @@
     </p>
 
     <p>
-      An opened flight plan file will be reloaded on start up (reload and centering can be switched off in the
-      <code>Options</code> dialog on the <code>Startup</code> and <code>User Interface</code> tab).
+      You can use these flight plan snippets in <em>Little Navmap</em> to merge and edit new plans.
     </p>
 
     <h4>
-      Google Earth KML Files
+      <img class="textimg" alt="Save Flight Plan" title="Save Flight Plan" src="images/icons/filesave.png" /> Save
+      Flight Plan
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Save Flight Plan as" title="Save Flight Plan as" src="images/icons/filesaveas.png" />
+      Save Flight Plan as
     </h4>
 
     <p>
-      You can add one or more Google Earth KML or KMZ files to the map display. All added KML or KMZ files will be
+      Saves the flight plan to a FSX PLN file (XML format).
+    </p>
+
+    <p>
+      <em>Little Navmap</em> allows to create flight plans that unusable by the flight simulator. This is the case if a
+      flight plan does not have an airport as departure or destination. A warning dialog will be shown when saving if
+      this is the case.
+    </p>
+
+    <p>
+      A warning dialog will also show up if the departure airport has parking positions but no one is assigned to the
+      flight plan.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Add Google Earth KML" title="Add Google Earth KML" src=
+      "images/icons/kmlfileopen.png" /> Add Google Earth KML
+    </h4>
+
+    <p>
+      Allows to add one or more Google Earth KML or KMZ file to the map display. All added KML or KMZ files will be
       reloaded on start up (reload and centering can be switched off in the <code>Options</code> dialog on the
       <code>Startup</code> and <code>User Interface</code> tab).
     </p>
 
+    <h4>
+      <img class="textimg" alt="Clear Google Earth KML from Map" title="Clear Google Earth KML from Map" src=
+      "images/icons/cancel.png" /> Clear Google Earth KML from Map
+    </h4>
+
     <p>
-      All loaded KML files can be removed from the map with the menu item <code>Clear KML from Map</code>.
+      Removes all loaded KML files from the map.
     </p>
 
     <h4>
-      Work Offline
+      <img class="textimg" alt="Offline" title="Offline" src="images/icons/offline.png" /> Work Offline
     </h4>
 
     <p>
@@ -435,7 +478,8 @@
     </h3>
 
     <h4>
-      Undo/Redo
+      <img class="textimg" alt="Undo" title="Undo" src="images/icons/undo.png" /> <img class="textimg" alt="Redo"
+      title="Redo" src="images/icons/redo.png" /> Undo/Redo
     </h4>
 
     <p>
@@ -443,7 +487,8 @@
     </p>
 
     <h4>
-      Select a Start Position for Departure
+      <img class="textimg" alt="Select a Start Position for Departure" title="Select a Start Position for Departure"
+      src="images/icons/parkingstartset.png" /> Select a Start Position for Departure
     </h4>
 
     <p>
@@ -464,7 +509,8 @@
     </p>
 
     <h4>
-      Edit Flight Plan on Map
+      <img class="textimg" alt="Edit Flight Plan on Map" title="Edit Flight Plan on Map" src=
+      "images/icons/routeedit.png" /> Edit Flight Plan on Map
     </h4>
 
     <p>
@@ -472,6 +518,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Calculate Direct" title="Calculate Direct" src="images/icons/routedirect.png" />
       Calculate Direct
     </h4>
 
@@ -487,6 +534,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Calculate Radionav" title="Calculate Radionav" src="images/icons/routeradio.png" />
       Calculate Radionav
     </h4>
 
@@ -502,7 +550,8 @@
     </p>
 
     <h4>
-      Calculate high Altitude
+      <img class="textimg" alt="Calculate high Altitude" title="Calculate high Altitude" src=
+      "images/icons/routehigh.png" /> Calculate high Altitude
     </h4>
 
     <p>
@@ -528,7 +577,8 @@
     </p>
 
     <h4>
-      Calculate low Altitude
+      <img class="textimg" alt="Calculate low Altitude" title="Calculate low Altitude" src=
+      "images/icons/routelow.png" /> Calculate low Altitude
     </h4>
 
     <p>
@@ -537,7 +587,8 @@
     </p>
 
     <h4 id="calcfpalt">
-      Calculate based on given Altitude
+      <img class="textimg" alt="Calculate based on given Altitude" title="Calculate based on given Altitude" src=
+      "images/icons/routealt.png" /> Calculate based on given Altitude
     </h4>
 
     <p>
@@ -547,6 +598,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Reverse Flight Plan" title="Reverse Flight Plan" src="images/icons/routereverse.png" />
       Reverse Flight Plan
     </h4>
 
@@ -560,24 +612,28 @@
     </h3>
 
     <h4>
-      Goto Home
+      <img class="textimg" alt="Goto Home" title="Goto Home" src="images/icons/home.png" /> Goto Home
     </h4>
 
     <p>
       Goes to home area that was set using <a href="#mapsethome">Set Home</a> using the saved position and zoom
-      distance.
+      distance. The center of the home area is highlighted by a <img class="textimg" alt="Home Symbol" title=
+      "Home Symbol" src="images/icons/homesymbol.png" /> symbol.
     </p>
 
     <h4>
-      Go to Center for Distance Search
+      <img class="textimg" alt="Go to Center for Distance Search" title="Go to Center for Distance Search" src=
+      "images/icons/centermark.png" /> Go to Center for Distance Search
     </h4>
 
     <p>
       Go to the center point used for distance searches. See <a href="#mapsetdistcenter">Set Center for Distance
-      Search</a>.
+      Search</a>.The center for the distance search is highlighted by a <img class="textimg" alt=
+      "Distance Search Symbol" title="Distance Search Symbol" src="images/icons/distancemark.png" /> symbol.
     </p>
 
     <h4>
+      <img class="textimg" alt="Center Flight Plan" title="Center Flight Plan" src="images/icons/centerroute.png" />
       Center Flight Plan
     </h4>
 
@@ -586,6 +642,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Center Aircraft" title="Center Aircraft" src="images/icons/centeraircraft.png" />
       Center Aircraft
     </h4>
 
@@ -597,7 +654,8 @@
     </p>
 
     <h4>
-      Delete Aircraft Trail
+      <img class="textimg" alt="Delete Aircraft Trail" title="Delete Aircraft Trail" src=
+      "images/icons/aircrafttraildelete.png" /> Delete Aircraft Trail
     </h4>
 
     <p>
@@ -606,7 +664,9 @@
     </p>
 
     <h4>
-      Map Position Back Forward
+      <img class="textimg" alt="Map Position Back" title="Map Position Back" src="images/icons/back.png" /> <img class=
+      "textimg" alt="Map Position Forward" title="Map Position Forward" src="images/icons/next.png" /> Map Position
+      Back/Forward
     </h4>
 
     <p>
@@ -615,7 +675,9 @@
     </p>
 
     <h4>
-      More/Default/Less Details
+      <img class="textimg" alt="More Details" title="More Details" src="images/icons/detailmore.png" /> <img class=
+      "textimg" alt="Default Details" title="Default Details" src="images/icons/detaildefault.png" /> <img class=
+      "textimg" alt="Less Details" title="Less Details" src="images/icons/detailless.png" /> More/Default/Less Details
     </h4>
 
     <p>
@@ -696,6 +758,10 @@
       The <a href="http://korona.geog.uni-heidelberg.de" target="_blank">OSM Roads</a> layer provided by <a href=
       "http://giscience.uni-hd.de" target="_blank">Heidelberg University</a>. This theme includes optional hill shading
       which is available worldwide.
+    </p>
+
+    <p>
+      Note that hill shading option of this map is marked experimental.
     </p>
 
     <p>
@@ -789,7 +855,8 @@
     </p>
 
     <h4>
-      Force Show Addon Airports
+      <img class="textimg" alt="Force Show Addon Airports" title="Force Show Addon Airports" src=
+      "images/icons/airportaddon.png" /> Force Show Addon Airports
     </h4>
 
     <p>
@@ -799,7 +866,8 @@
     </p>
 
     <h4>
-      Show Airports with hard Runways
+      <img class="textimg" alt="Show Airports with hard Runways" title="Show Airports with hard Runways" src=
+      "images/icons/airport.png" /> Show Airports with hard Runways
     </h4>
 
     <p>
@@ -807,7 +875,8 @@
     </p>
 
     <h4>
-      Show Airports with soft Runways
+      <img class="textimg" alt="Show Airports with soft Runways" title="Show Airports with soft Runways" src=
+      "images/icons/airportsoft.png" /> Show Airports with soft Runways
     </h4>
 
     <p>
@@ -816,6 +885,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Show empty Airports" title="Show empty Airports" src="images/icons/airportempty.png" />
       Show empty Airports
     </h4>
 
@@ -837,7 +907,37 @@
     </p>
 
     <h4>
-      Show VOR Stations, Show NDB Stations, Show Waypoints, Show ILS Feathers, Show Victor/Jet Airways, Show Flight
+      <img class="textimg" alt="Show VOR Stations" title="Show VOR Stations" src="images/icons/vor.png" /> Show VOR
+      Stations
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show NDB Stations" title="Show NDB Stations" src="images/icons/ndb.png" /> Show NDB
+      Stations
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Waypoints" title="Show Waypoints" src="images/icons/waypoint.png" /> Show
+      Waypoints
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show ILS Feathers" title="Show ILS Feathers" src="images/icons/ils.png" /> Show ILS
+      Feathers
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Jet Airways" title="Show Jet Airways" src="images/icons/airwayjet.png" /> Show Jet
+      Airways
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Victor Airways" title="Show Victor Airways" src="images/icons/airwayvictor.png" />
+      Show Victor Airways
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Flight Plan" title="Show Flight Plan" src="images/icons/route.png" /> Show Flight
       Plan
     </h4>
 
@@ -847,7 +947,7 @@
     </p>
 
     <h4>
-      Show Aircraft
+      <img class="textimg" alt="Show Aircraft" title="Show Aircraft" src="images/icons/aircraft.png" /> Show Aircraft
     </h4>
 
     <p>
@@ -856,7 +956,8 @@
     </p>
 
     <h4>
-      Show Aircraft Trail
+      <img class="textimg" alt="Show Aircraft Trail" title="Show Aircraft Trail" src=
+      "images/icons/aircrafttrail.png" /> Show Aircraft Trail
     </h4>
 
     <p>
@@ -875,7 +976,7 @@
     </p>
 
     <h4>
-      Show Map Grid
+      <img class="textimg" alt="Show Map Grid" title="Show Map Grid" src="images/icons/mapgrid.png" /> Show Map Grid
     </h4>
 
     <p>
@@ -883,11 +984,23 @@
     </p>
 
     <h4>
-      Show Country and City Names, Show Hillshading
+      <img class="textimg" alt="Show Country and City Names" title="Show Country and City Names" src=
+      "images/icons/cities.png" /> Show Country and City Names
     </h4>
 
     <p>
-      Availability of these options depends on the selected map theme. See <a href="#maptheme">Theme</a>.
+      Show county, city and other points of interest. Availability of these options depends on the selected map theme.
+      See <a href="#maptheme">Theme</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Hillshading" title="Show Hillshading" src="images/icons/hillshading.png" /> Show
+      Hillshading
+    </h4>
+
+    <p>
+      Shows hill shading on the map. Availability of these options depends on the selected map theme. See <a href=
+      "#maptheme">Theme</a>.
     </p>
 
     <h3 id="scenerylibrary">
@@ -913,6 +1026,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Load Scenery Library" title="Load Scenery Library" src="images/icons/database.png" />
       Load Scenery Library
     </h4>
 
@@ -926,7 +1040,8 @@
     </h3>
 
     <h4>
-      Flight Simulator Connection
+      <img class="textimg" alt="Flight Simulator Connection" title="Flight Simulator Connection" src=
+      "images/icons/network.png" /> Flight Simulator Connection
     </h4>
 
     <p>
@@ -945,7 +1060,7 @@
     </p>
 
     <h4>
-      Options
+      <img class="textimg" alt="Options" title="Options" src="images/icons/settings.png" /> Options
     </h4>
 
     <p>
@@ -957,7 +1072,25 @@
     </h3>
 
     <h4>
-      Search, Flight Plan, Information, Flight Plan Elevation Profile, Simulator Aircraft
+      <img class="textimg" alt="Search" title="Search" src="images/icons/searchdock.png" /> Search
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Flight Plan" title="Flight Plan" src="images/icons/routedock.png" /> Flight Plan
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Information" title="Information" src="images/icons/infodock.png" /> Information
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src=
+      "images/icons/profiledock.png" /> Flight Plan Elevation Profile
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Simulator Aircraft" title="Simulator Aircraft" src="images/icons/aircraftdock.png" />
+      Simulator Aircraft
     </h4>
 
     <p>
@@ -977,7 +1110,7 @@
     </h3>
 
     <h4>
-      Contents
+      <img class="textimg" alt="Contents" title="Contents" src="images/icons/help.png" /> Contents
     </h4>
 
     <p>
@@ -985,7 +1118,8 @@
     </p>
 
     <h4>
-      NavMap Legend, Map Legend
+      <img class="textimg" alt="NavMap Legend, Map Legend" title="NavMap Legend, Map Legend" src=
+      "images/icons/help.png" /> NavMap Legend, Map Legend
     </h4>
 
     <p>
@@ -994,6 +1128,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="About Little Navmap" title="About Little Navmap" src="images/icons/littlenavmap.png" />
       About Little Navmap
     </h4>
 
@@ -1003,11 +1138,21 @@
     </p>
 
     <h4>
-      Marble Widget, Qt
+      <img class="textimg" alt="About Marble" title="About Marble" src="images/icons/marble.png" /> About Marble
     </h4>
 
     <p>
-      Information about the application framework that is used by <em>Little Navmap</em>.
+      Information about the <a href="https://edu.kde.org/marble" target="_blank">Marble widget</a> that is used to
+      download and show the maps.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="About Marble" title="About Marble" src="images/icons/about.png" /> About Qt
+    </h4>
+
+    <p>
+      Information about the <a href="https://www.qt.io" target="_blank">Qt application framework</a> that is used by
+      <em>Little Navmap</em>.
     </p>
     <!-- ===================================================================== -->
 
@@ -1139,7 +1284,8 @@
     </p>
 
     <p>
-      The airport diagram provides more information through tooltips for parking and tower positions.
+      The airport diagram provides more information through tooltips for parking and tower positions. A right click on
+      a parking position allows to set this as a start position for a flight plan.
     </p>
 
     <p>
@@ -1290,7 +1436,8 @@
     </p>
 
     <h4>
-      Show Information
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
     </h4>
 
     <p>
@@ -1303,7 +1450,8 @@
     </p>
 
     <h4>
-      Measure GC Distance from here
+      <img class="textimg" alt="Measure GC Distance from here" title="Measure GC Distance from here" src=
+      "images/icons/distancemeasure.png" /> Measure GC Distance from here
     </h4>
 
     <p>
@@ -1339,7 +1487,8 @@
     </p>
 
     <h4>
-      Measure Rhumb Distance from here
+      <img class="textimg" alt="Measure Rhumb Distance from here" title="Measure Rhumb Distance from here" src=
+      "images/icons/distancemeasurerhumb.png" /> Measure Rhumb Distance from here
     </h4>
 
     <p>
@@ -1354,7 +1503,8 @@
     </p>
 
     <h4>
-      Remove Distance measurement
+      <img class="textimg" alt="Remove Distance measurement" title="Remove Distance measurement" src=
+      "images/icons/distancemeasureoff.png" /> Remove Distance measurement
     </h4>
 
     <p>
@@ -1363,7 +1513,8 @@
     </p>
 
     <h4>
-      Show Range Rings
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
     </h4>
 
     <p>
@@ -1373,7 +1524,8 @@
     </p>
 
     <h4>
-      Show Navaid range
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
     </h4>
 
     <p>
@@ -1382,6 +1534,7 @@
     </p>
 
     <h4>
+      <img class="textimg" alt="Remove Range Ring" title="Remove Range Ring" src="images/icons/rangeringoff.png" />
       Remove Range Ring
     </h4>
 
@@ -1390,7 +1543,9 @@
     </p>
 
     <h4>
-      Remove all Range Rings and Distance measurements
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
     </h4>
 
     <p>
@@ -1398,7 +1553,8 @@
     </p>
 
     <h4 id="fpdeparture">
-      Set as Flight Plan Departure
+      <img class="textimg" alt="Set as Flight Plan Departure" title="Set as Flight Plan Departure" src=
+      "images/icons/airportroutedest.png" /> Set as Flight Plan Departure
     </h4>
 
     <p>
@@ -1413,7 +1569,8 @@
     </p>
 
     <h4>
-      Set as Flight Plan Destination
+      <img class="textimg" alt="Set as Flight Plan Destination" title="Set as Flight Plan Destination" src=
+      "images/icons/airportroutestart.png" /> Set as Flight Plan Destination
     </h4>
 
     <p>
@@ -1422,7 +1579,8 @@
     </p>
 
     <h4>
-      Add Position to Flight Plan
+      <img class="textimg" alt="Add Position to Flight Plan" title="Add Position to Flight Plan" src=
+      "images/icons/routeadd.png" /> Add Position to Flight Plan
     </h4>
 
     <p>
@@ -1439,7 +1597,8 @@
     </p>
 
     <h4>
-      Delete from Flight Plan
+      <img class="textimg" alt="Delete from Flight Plan" title="Delete from Flight Plan" src=
+      "images/icons/routedeleteleg.png" /> Delete from Flight Plan
     </h4>
 
     <p>
@@ -1447,7 +1606,7 @@
     </p>
 
     <h4>
-      Show in Search
+      <img class="textimg" alt="Show in Search" title="Show in Search" src="images/icons/search.png" /> Show in Search
     </h4>
 
     <p>
@@ -1455,24 +1614,28 @@
     </p>
 
     <h4 id="mapsetdistcenter">
-      Set Center for Distance Search
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
     </h4>
 
     <p>
-      Sets the center point for the distance search function. See <a href="#h4distancesearch">Distance search</a>.
+      Sets the center point for the distance search function. See <a href="#h4distancesearch">Distance search</a>. The
+      center for the distance search is highlighted by a <img class="textimg" alt="Distance Search Symbol" title=
+      "Distance Search Symbol" src="images/icons/distancemark.png" /> symbol.
     </p>
 
     <h4 id="mapsethome">
-      Set Home
+      <img class="textimg" alt="Set Home" title="Set Home" src="images/icons/home.png" /> Set Home
     </h4>
 
     <p>
-      Sets the home position and zoom distance.
+      Sets the home position and zoom distance. The center of the home area is highlighted by a <img class="textimg"
+      alt="Home Symbol" title="Home Symbol" src="images/icons/homesymbol.png" /> symbol.
     </p>
     <!-- ===================================================================== -->
 
     <h2 id="h2search">
-      Search Dock Window
+      <img class="textimg" alt="Search" title="Search" src="images/icons/searchdock.png" /> Search Dock Window
     </h2>
 
     <h3>
@@ -1485,7 +1648,13 @@
 
     <p>
       These tabs contain multiple rows of search filters that can be switched on and off with the drop down menu on the
-      hamburger button on the top right.
+      hamburger button <img class="textimg" alt="Hamburger Button" title="Hamburger Button" src=
+      "images/icons/menubutton.png" /> on the top right.
+    </p>
+
+    <p>
+      The drop down menu prefixes menu items with a change indicator <code>*</code> to show that the related filters
+      row has modifications. You can use this to find out why a search does not give the expected results.
     </p>
 
     <p>
@@ -1552,7 +1721,7 @@
 
     <p>
       Colors and look of these checkboxes vary with theme and operation system. So instead of gray another color might
-      be used (red fill on Linux or a <code>-</code> for Mac OS X).
+      be used (red fill on Linux or a <code>-</code> for macOS).
     </p>
 
     <h4 id="h4distancesearch">
@@ -1571,7 +1740,17 @@
     </p>
 
     <p>
+      The center for the distance search is highlighted by a <img class="textimg" alt="Distance Search Symbol" title=
+      "Distance Search Symbol" src="images/icons/distancemark.png" /> symbol.
+    </p>
+
+    <p>
       To restrict the search further you can select a direction (North, East, South and West).
+    </p>
+
+    <p>
+      <span class="bold">Check the drop down menu for the change indicator <code>*</code> and the search fields
+      for any remaining text if the distance search does not give any or unexpected results.</span>
     </p>
 
     <p>
@@ -1666,7 +1845,8 @@
     </h3>
 
     <h4>
-      Show Information
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
     </h4>
 
     <p>
@@ -1674,7 +1854,7 @@
     </p>
 
     <h4>
-      Show on Map
+      <img class="textimg" alt="Show on Map" title="Show on Map" src="images/icons/showonmap.png" /> Show on Map
     </h4>
 
     <p>
@@ -1682,7 +1862,9 @@
     </p>
 
     <h4>
-      Filter by Entries including/excluding
+      <img class="textimg" alt="Filter by Entries including" title="Filter by Entries including" src=
+      "images/icons/filter-add.png" /> <img class="textimg" alt="Filter by Entries excluding" title=
+      "Filter by Entries excluding" src="images/icons/filter-remove.png" /> Filter by Entries including/excluding
     </h4>
 
     <p>
@@ -1691,7 +1873,7 @@
     </p>
 
     <h4>
-      Reset Search
+      <img class="textimg" alt="Reset Search" title="Reset Search" src="images/icons/clear.png" /> Reset Search
     </h4>
 
     <p>
@@ -1699,7 +1881,7 @@
     </p>
 
     <h4>
-      Show All
+      <img class="textimg" alt="Reset Search" title="Show All" src="images/icons/load-all.png" /> Show All
     </h4>
 
     <p>
@@ -1715,8 +1897,34 @@
     </p>
 
     <h4>
-      Show Range Rings, Show Navaid range, Remove all Range Rings and Distance measurements, Set as Flight Plan
-      Departure, Set as Flight Plan Destination, Add Position to Flight Plan
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Set as Flight Plan Departure" title="Set as Flight Plan Departure" src=
+      "images/icons/airportroutedest.png" /> Set as Flight Plan Departure
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Set as Flight Plan Destination" title="Set as Flight Plan Destination" src=
+      "images/icons/airportroutestart.png" /> Set as Flight Plan Destination
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Add Position to Flight Plan" title="Add Position to Flight Plan" src=
+      "images/icons/routeadd.png" /> Add Position to Flight Plan
     </h4>
 
     <p>
@@ -1724,7 +1932,7 @@
     </p>
 
     <h4>
-      Copy
+      <img class="textimg" alt="Copy" title="Copy" src="images/icons/copy.png" /> Copy
     </h4>
 
     <p>
@@ -1742,7 +1950,7 @@
     </p>
 
     <h4>
-      Reset View
+      <img class="textimg" alt="Reset View" title="Reset View" src="images/icons/cleartable.png" /> Reset View
     </h4>
 
     <p>
@@ -1750,7 +1958,8 @@
     </p>
 
     <h4>
-      Set Center for Distance Search
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
     </h4>
 
     <p>
@@ -1759,7 +1968,8 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2flightplan">
-      Flight Plan Dock Window
+      <img class="textimg" alt="Flight Plan" title="Flight Plan" src="images/icons/routedock.png" /> Flight Plan Dock
+      Window
     </h2>
 
     <h3>
@@ -1850,7 +2060,9 @@
     </h3>
 
     <h4>
-      Move Selected Legs up/down
+      <img class="textimg" alt="Move Selected Legs up" title="Move Selected Legs up" src=
+      "images/icons/routelegup.png" /> <img class="textimg" alt="Move Selected Legs down" title=
+      "Move Selected Legs down" src="images/icons/routelegdown.png" /> Move Selected Legs up/down
     </h4>
 
     <p>
@@ -1858,7 +2070,8 @@
     </p>
 
     <h4>
-      Delete Selected Legs
+      <img class="textimg" alt="Delete Selected Legs" title="Delete Selected Legs" src=
+      "images/icons/routedeleteleg.png" /> Delete Selected Legs
     </h4>
 
     <p>
@@ -1866,7 +2079,8 @@
     </p>
 
     <h4>
-      Show Information
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
     </h4>
 
     <p>
@@ -1874,7 +2088,7 @@
     </p>
 
     <h4>
-      Show on Map
+      <img class="textimg" alt="Show on Map" title="Show on Map" src="images/icons/showonmap.png" /> Show on Map
     </h4>
 
     <p>
@@ -1882,7 +2096,8 @@
     </p>
 
     <h4>
-      Show Range Rings
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
     </h4>
 
     <p>
@@ -1890,7 +2105,8 @@
     </p>
 
     <h4>
-      Show Navaid range
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
     </h4>
 
     <p>
@@ -1903,7 +2119,9 @@
     </p>
 
     <h4>
-      Remove all Range Rings and Distance measurements
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
     </h4>
 
     <p>
@@ -1911,7 +2129,7 @@
     </p>
 
     <h4>
-      Copy
+      <img class="textimg" alt="Copy" title="Copy" src="images/icons/copy.png" /> Copy
     </h4>
 
     <p>
@@ -1928,7 +2146,7 @@
     </p>
 
     <h4>
-      Reset View
+      <img class="textimg" alt="Reset View" title="Reset View" src="images/icons/cleartable.png" /> Reset View
     </h4>
 
     <p>
@@ -1936,7 +2154,8 @@
     </p>
 
     <h4>
-      Set Center for Distance Search
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
     </h4>
 
     <p>
@@ -1945,7 +2164,8 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2info">
-      Information Dock Window
+      <img class="textimg" alt="Information" title="Information" src="images/icons/infodock.png" /> Information Dock
+      Window
     </h2>
 
     <p>
@@ -1987,6 +2207,7 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2simaircraft">
+      <img class="textimg" alt="Simulator Aircraft" title="Simulator Aircraft" src="images/icons/aircraftdock.png" />
       Simulator Aircraft Dock Window
     </h2>
 
@@ -2023,7 +2244,8 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2profile">
-      Flight Plan Elevation Profile Dock Window
+      <img class="textimg" alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src=
+      "images/icons/profiledock.png" /> Flight Plan Elevation Profile Dock Window
     </h2>
 
     <p>
@@ -2138,7 +2360,7 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2options">
-      Options Dialog
+      <img class="textimg" alt="Options" title="Options" src="images/icons/settings.png" /> Options Dialog
     </h2>
 
     <p>
@@ -2162,6 +2384,7 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2scenerylibdialog">
+      <img class="textimg" alt="Load Scenery Library" title="Load Scenery Library" src="images/icons/database.png" />
       Load Scenery Library Dialog
     </h2>
 
@@ -2194,6 +2417,33 @@
     </p>
 
     <p>
+      The program tries to find the base path and <code>Scenery.cfg</code> automatically. The typical locations of the
+      <code>Scenery.cfg</code> are:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Flight Simulator X:</span>
+        <code>C:\ProgramData\Microsoft\FSX\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Flight Simulator - Steam Edition:</span>
+        <code>C:\ProgramData\Microsoft\FSX-SE\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Prepar3D v2:</span>
+        <code>C:\Users\YOUR_ACCOUNT_NAME\AppData\Roaming\Lockheed Martin\Prepar3D v2\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Prepar3D v3:</span> <code>C:\ProgramData\Lockheed
+        Martin\Prepar3D v3\Scenery.cfg</code>
+      </li>
+    </ul>
+
+    <p>
       <img alt="Load Scenery Dialog" title="Load Scenery Dialog" src="images/loadscenery.jpg" />
     </p>
 
@@ -2210,6 +2460,13 @@
     <p>
       <span class="capthdg">Picture above:</span> <span class="capt">Progress dialog shown while loading the scenery
       library into <em>Little Navmap</em>'s internal database.</span>
+    </p>
+
+    <p>
+      Note that the number of airports, navaids and other objects shown in the <code>Load Scenery Library</code> might
+      differ to the numbers shown in the progress dialog. This is the case since all found stock and add-on airports
+      are counted in the progress dialog and add-on replace stock which results in a different total number in the
+      <code>Load Scenery Library</code> dialog. Also duplicate navaids are removed after loading.
     </p>
     <!-- ===================================================================== -->
 
@@ -2265,15 +2522,24 @@
     <!-- ===================================================================== -->
 
     <h2 id="h2connect">
-      Connecting to a Flight Simulator
+      <img class="textimg" alt="Flight Simulator Connection" title="Flight Simulator Connection" src=
+      "images/icons/network.png" /> Connecting to a Flight Simulator
     </h2>
 
     <p>
       User aircraft information is transfered to <em>Little Navmap</em> by using the <a href=
       "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> agent on the flying
-      computer which saves the painful setup of a remote SimConnect connection. The procedure is the same if no remote
-      connection is needed. In this case all programs run on the same computer which is both flying and client
-      computer.
+      computer which saves the painful setup of a remote SimConnect connection.
+    </p>
+
+    <p>
+      The setup procedure is the same for both remote connections and local connections. In the latter case all
+      programs run on the same computer which is both flying and client computer.
+    </p>
+
+    <p>
+      <span class="bold"><em>Little Navmap</em> cannot connect to the flight simulator directly. The <em>Little
+      Navconnect</em> agent is always needed, even if all programs run on the same computer.</span>
     </p>
 
     <ol>
@@ -2297,6 +2563,15 @@
           "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> is running and
           waiting for a Flight Simulator.</span>
         </p>
+
+        <p>
+          <span class="bold">Change the port in <em>Little Navconnect</em> 's <code>Options</code> dialog if you see an
+          error message like shown below:</span>
+        </p>
+
+        <pre xml:space="preserve">
+[2016-07-27 16:45:35] <span style="color: red;">Unable to start the server: The bound address is already in use.</span>
+</pre>
       </li>
 
       <li>Start <em>Little Navmap</em> on the client computer.
@@ -2323,13 +2598,15 @@
       usually.
       </li>
 
-      <li>Click connect. Once a flight is set up and loaded on the simulator your aircraft will show up on the map and
-      the <code>Simulator Aircraft</code> dock window.
+      <li>Click connect. The dialog will close and <em>Little Navmap</em> will try to establish a connection in the
+      background which can take a few seconds. Your aircraft will show up on the map and on the <code>Simulator
+      Aircraft</code> dock window once a flight is set up and loaded on the simulator.
         <br />
         You will see the message <code>Connected. Waiting for update.</code> in the <code>Simulator Aircraft</code>
         dock window if no flight is loaded yet (i.e. the simulator still shows the opening screen).
         <br />
-        Note that it sometimes can take a while until an error is shown if you used the wrong values.
+        <span class="bold">Note that it sometimes can take a while until an error is shown if you used the wrong
+        values.</span>
       </li>
     </ol>
     <!-- ===================================================================== -->
@@ -2405,10 +2682,35 @@
       overlays back.
       </li>
 
+      <li>The Marble overview map overlay on the top left of the map sometimes does not show a map background. Right
+      click on it and select <code>Configure</code> to change this.
+      </li>
+
       <li>You can exclude scenery directories in the <code>Options</code> dialog on the <code>Scenery Library
-      Database</code> tab if loading of an add-on BGL fails. The path and name of the offending BGL file is shown on
-      top of the error dialog. Copy the directory part of the BGL and exclude the directory from loading in the <code>
-        Options</code> dialog.
+      Database</code> tab if loading of an add-on BGL fails. The path and name of the sceneries and filenames is shown
+      in an error dialog after loading. Copy the directory part of the BGL file from the error dialog or find the
+      directory containing the scenery and exclude it from loading in the <code>Options</code> dialog.
+      </li>
+
+      <li>Zoom can be too fast when using a touchpad with <em>OpenStreetMap</em>, <em>OpenTopoMap</em> or one of the
+      other online map themes. Use the <code>Plain</code>, <code>Simple</code> or <code>Atlas</code> map themes or use
+      the overlay zoom buttons, the keyboard (<code>+</code> and <code>-</code>) or the map controls.
+      </li>
+
+      <li>
+        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up blurred when using functionality like
+        <code>Center Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel, overlay
+        zoom buttons or keyboard to fix this.
+      </li>
+
+      <li>
+        <em>OpenStreetMap</em> shows a dark gray background on some places without coverage (for example New Zealand).
+        Use another map theme or switch off hill shading for the <em>OpenStreetMap</em>.
+      </li>
+
+      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or one of the other online map themes together with
+      the spherical map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
+      <code>Mercator</code> projection. The same applies to a blurred map appearance.
       </li>
     </ul>
 
@@ -2419,6 +2721,12 @@
     <ul>
       <li>Some airport add-ons do not modify the stock airports but add new scenery and buildings. These add-ons will
       not be recognized as such and are therefore not highlighted on the map (italic and underlined text).
+      </li>
+
+      <li>Add-on developers have to use all kind of workarounds to avoid FSX' limitations. So the display and
+      information given for add-on airports is not always correct. Typical examples are: Airports without runways,
+      airports with runway dimensions 0 by 0 ft or 0 ft runway width, taxiways with 0 ft width, duplicate airports and
+      more.
       </li>
 
       <li>Some KML/KMZ files do not show up on the map. Adding a centerpoint pushpin to the maps can fix this.
@@ -2432,24 +2740,8 @@
       <li>There are errors in the elevation source data (like in northern Italy, Po Valley).
       </li>
 
-      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or one of the other online map themes together with
-      the spherical map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
-      <code>Mercator</code> projection. The same applies to a blurred map appearance.
-      </li>
-
-      <li>
-        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up blurred when using functionality like
-        <code>Center Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel, overlay
-        zoom buttons or keyboard to fix this.
-      </li>
-
       <li>
         <em>OpenTopoMap</em> has garbled names in some asian countries.
-      </li>
-
-      <li>Zoom can be too fast when using a touchpad with <em>OpenStreetMap</em>, <em>OpenTopoMap</em> or one of the
-      other online map themes. Use the <code>Plain</code>, <code>Simple</code> or <code>Atlas</code> map themes or use
-      the overlay zoom buttons, the keyboard (<code>+</code> and <code>-</code>) or the map controls.
       </li>
 
       <li>The Marble floating map overlays on the map can be configured but do not save all settings.
@@ -2457,9 +2749,6 @@
 
       <li>Flight plan and airways are drawn using great circle lines instead of rhumb lines. Distance and course are
       not affected by this.
-      </li>
-
-      <li>Scenery.cfg files is not found automatically in Windows XP. Set the path manually as a workaround.
       </li>
 
       <li>Magnetic variance is partially not set (for example VORDME Cambridge Bay YCB). This is an error in the source
@@ -2475,13 +2764,13 @@
       as expected.
       </li>
 
-      <li>Mac OS X: Dock windows cannot be resized when undocked from main window.
+      <li>macOS: Dock windows cannot be resized when undocked from main window.
       </li>
 
-      <li>Mac OS X: Start position on the map is not restored properly. Use home as start position instead.
+      <li>macOS: Start position on the map is not restored properly. Use home as start position instead.
       </li>
 
-      <li>Mac OS X: KML files are not centered after loading.
+      <li>macOS: KML files are not centered after loading.
       </li>
     </ul>
     <!-- ===================================================================== -->
@@ -2536,7 +2825,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-10-02
+      Last update 2016-10-08
     </p>
   </body>
 </html>
