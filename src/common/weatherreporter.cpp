@@ -173,42 +173,40 @@ bool WeatherReporter::validateActiveSkyFile(const QString& path)
 
 QString WeatherReporter::findActiveSkySnapshotPath(const QString& activeSkyPrefix)
 {
-  QString appdata = atools::settings::Settings::instance().getPath();
+ #if defined(Q_OS_WIN32)
+  // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+  QString appdata = QString(qgetenv("APPDATA"));
+#else
+  // Use $HOME/.config for testing
+  QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
 
-  QDir dir(appdata);
-
-  QString simPath;
+  QString simPathComponent;
   if(simType == atools::fs::FsPaths::FSX)
-    simPath = activeSkyPrefix + "FSX";
+    simPathComponent = activeSkyPrefix + "FSX";
   else if(simType == atools::fs::FsPaths::FSX_SE)
-    simPath = activeSkyPrefix + "FSX";
+    simPathComponent = activeSkyPrefix + "FSX";
   else if(simType == atools::fs::FsPaths::P3D_V2)
-    simPath = activeSkyPrefix + "P3D";
+    simPathComponent = activeSkyPrefix + "P3D";
   else if(simType == atools::fs::FsPaths::P3D_V3)
-    simPath = activeSkyPrefix + "P3D";
+    simPathComponent = activeSkyPrefix + "P3D";
 
-  if(!simPath.isEmpty())
+  QString weatherFile = appdata +
+                        QDir::separator() + "HiFi" +
+                        QDir::separator() + simPathComponent +
+                        QDir::separator() + "Weather" +
+                        QDir::separator() + "current_wx_snapshot.txt";
+
+  if(QFile::exists(weatherFile))
   {
-    // TODO find better way to get to Roaming directory
-    if(dir.cdUp() && dir.cd("HiFi") && dir.cd(simPath) && dir.cd("Weather"))
-    {
-      QString file = dir.filePath("current_wx_snapshot.txt");
-      if(QFile::exists(file))
-      {
-        qDebug() << "found ASN weather file" << file;
-        if(validateActiveSkyFile(file))
-          return file;
-        else
-          qWarning() << "is not an ASN weather snapshot file" << file;
-      }
-      else
-        qWarning() << "file does not exist" << file;
-    }
+    qInfo() << "found ASN weather file" << weatherFile;
+    if(validateActiveSkyFile(weatherFile))
+      return weatherFile;
     else
-      qWarning().noquote().nospace() << "HiFi/" + simPath + "/Weather not found";
+      qWarning() << "is not an ASN weather snapshot file" << weatherFile;
   }
   else
-    qWarning() << "Invalid simulator type" << simType;
+    qWarning() << "file does not exist" << weatherFile;
 
   return QString();
 }
