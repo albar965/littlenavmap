@@ -109,6 +109,7 @@ int main(int argc, char *argv[])
     Application::addReportPath(QObject::tr("Database directory:"),
                                {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
+    Application::setEmailAddresses({"albar965@mailbox.org", "albar965@t-online.de"});
 
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();

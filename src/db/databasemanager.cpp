@@ -56,7 +56,8 @@ using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::fs::db::DatabaseMeta;
 
-const int MAX_ERROR_MESSAGES = 6;
+const int MAX_ERROR_BGL_MESSAGES = 2;
+const int MAX_ERROR_SCENERY_MESSAGES = 2;
 
 const QString DATABASE_META_TEXT(
   QObject::tr("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>"));
@@ -562,32 +563,47 @@ bool DatabaseManager::loadScenery()
 
   if(!errors.sceneryErrors.isEmpty())
   {
-    int numErrors = 0;
     QString errorTexts;
     errorTexts.append(tr("<h3>Found %1 errors in %2 scenery entries when loading the scenery database</h3>").
                       arg(errors.getTotalErrors()).arg(errors.sceneryErrors.size()));
-    errorTexts.append(tr("<p>Some BGL files could not be read.<br/>"
-                         "You should check if the airports of the affected sceneries display "
-                         "correctly and show the correct information.</p>"));
 
+    errorTexts.append(tr("<b>If you wish to report this error attach the log and configuration files "
+                           "to your report, add all other available information and send it to one "
+                           "of the contact addresses below.</b>"
+                           "<hr/>%1"
+                             "<hr/>%2").
+                      arg(atools::gui::Application::getEmailHtml()).
+                      arg(atools::gui::Application::getReportPathHtml()));
+
+    errorTexts.append(tr("<hr/>Some BGL files could not be read.<br/>"
+                         "You should check if the airports of the affected sceneries display "
+                         "correctly and show the correct information."));
+
+    int numScenery = 0;
     for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : errors.sceneryErrors)
     {
+      if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
+      {
+        errorTexts.append(tr("<b>More scenery entries ...</b>"));
+        break;
+      }
+
+      int numBgl = 0;
       errorTexts.append(tr("<p><b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
       for(const atools::fs::NavDatabaseErrors::BglFileError& bglErr : scErr.bglFileErrors)
       {
-        errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
-                          arg(bglErr.bglFilepath).arg(bglErr.errorMessage));
-        if(numErrors++ > MAX_ERROR_MESSAGES)
+        if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
-          errorTexts.append(tr("<p>More errors found.<br/>"
-                               "You may check the log file for affected sceneries.</p>"));
+          errorTexts.append(tr("<b>More files ...</b>"));
           break;
         }
+        numBgl++;
+
+        errorTexts.append(tr("<b>File:</b> <i>%1</i><br/><b>Error:</b> <i>%2</i><br/>").
+                          arg(bglErr.bglFilepath).arg(bglErr.errorMessage));
       }
       errorTexts.append("</p>");
-
-      if(numErrors > MAX_ERROR_MESSAGES)
-        break;
+      numScenery++;
     }
 
     QMessageBox::warning(progressDialog, QApplication::applicationName(), errorTexts);
