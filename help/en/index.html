@@ -157,8 +157,8 @@
     </p>
 
     <p>
-      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP, Windows 7,
-      Windows 8.1 and Windows 10.
+      <em>Little Navmap</em> is a 32-bit application and was tested with Windows XP, Windows 7, Windows 8.1 and Windows
+      10.
     </p>
 
     <h2 id="h2overview">
@@ -359,14 +359,15 @@
       the toolbars as well which are not be described separately. Key combinations can be seen on the menu items and
       are not listed separately in this manual.
     </p>
-    <!--    <p>
+
+    <p>
       <img alt="Little Navmap Menu and Toolbars" title="Little Navmap Menu and Toolbars" src=
       "images/menutoolbar.jpg" />
     </p>
 
     <p>
       <span class="capthdg">Picture above:</span> <span class="capt">Menu and toolbars.</span>
-    </p>-->
+    </p>
 
     <h3>
       File Menu
@@ -555,9 +556,17 @@
     </h4>
 
     <p>
-      Uses Jet Airways to create a flight plan. The resulting minimum altitude is set into the flight plan altitude
-      field. A simplified east/west rule is used to adjust the cruise altitude to odd/even values (this can be switched
-      off in the <code>Options</code> dialog on the <code>Flight Plan</code> tab).
+      Uses Jet airways to create a flight plan.
+    </p>
+
+    <p>
+      The resulting minimum altitude is set into the flight plan altitude field. The flight plan altitude field is not
+      changed if no altitude restrictions were found along the flight plan.
+    </p>
+
+    <p>
+      A simplified east/west rule is used to adjust the cruise altitude to odd/even values (this can be switched off in
+      the <code>Options</code> dialog on the <code>Flight Plan</code> tab).
     </p>
 
     <p>
@@ -582,7 +591,7 @@
     </h4>
 
     <p>
-      Uses Victor Airways to create a flight plan. Everything else is the same as in <code>Calculate high
+      Uses Victor airways to create a flight plan. Everything else is the same as in <code>Calculate high
       Altitude</code>.
     </p>
 
@@ -731,6 +740,11 @@
       Theme
     </h4>
 
+    <p>
+      Be aware that all the online maps here are delivered from free services which cannot guarantee any download speed
+      or availability.
+    </p>
+
     <h5>
       OpenStreetMap
     </h5>
@@ -738,6 +752,11 @@
     <p>
       This is an online raster (i.e. based on images) map that includes a hill shading option. Note that hill shading
       does not cover the whole globe.
+    </p>
+
+    <p>
+      <em>OpenStreetMap</em> data is not loaded directly from the OSM servers but from the <a href=
+      "https://maptiles.xyz" target="_blank">MapTiles proxy service</a>.
     </p>
 
     <p>
@@ -1749,8 +1768,8 @@
     </p>
 
     <p>
-      <span class="bold">Check the drop down menu for the change indicator <code>*</code> and the search fields
-      for any remaining text if the distance search does not give any or unexpected results.</span>
+      <span class="bold">Check the drop down menu for the change indicator <code>*</code> and the search fields for any
+      remaining text if the distance search does not give any or unexpected results.</span>
     </p>
 
     <p>
@@ -1994,8 +2013,12 @@
 
       <li>
         <span class="bold">Cruise altitude (ft):</span> This value is saved with the flight plan and is also used to
-        calculate an airway flight plan based on given altitude. See <a href="#calcfpalt">Calculate based on given
-        Altitude</a>.
+        calculate an airway flight plan based on given altitude.
+        <br />
+        This field receives the minimum altitude for a flight plan if a plan along Victor or Jet airways is calculated
+        and altitude restrictions were found.
+        <br />
+        See <a href="#calcfpalt">Calculate based on given Altitude</a>.
       </li>
 
       <li>
@@ -2825,7 +2848,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-10-08
+      Last update 2016-10-09
     </p>
   </body>
 </html>
