@@ -320,6 +320,20 @@ void MapWidget::saveState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
   writePluginSettings(*s.getQSettings());
 
+  // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
+  s.remove("plugin_overviewmap/path_earth");
+  s.remove("plugin_overviewmap/path_jupiter");
+  s.remove("plugin_overviewmap/path_mars");
+  s.remove("plugin_overviewmap/path_mercury");
+  s.remove("plugin_overviewmap/path_moon");
+  s.remove("plugin_overviewmap/path_neptune");
+  s.remove("plugin_overviewmap/path_pluto");
+  s.remove("plugin_overviewmap/path_saturn");
+  s.remove("plugin_overviewmap/path_sky");
+  s.remove("plugin_overviewmap/path_sun");
+  s.remove("plugin_overviewmap/path_uranus");
+  s.remove("plugin_overviewmap/path_venus");
+
   s.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
   s.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
 
