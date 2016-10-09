@@ -33,7 +33,7 @@
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
           <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/roads/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
-          <downloadPolicy usage="Browse" maximumConnections="4"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
         <texture name="hillshading" expire="31536000">
@@ -43,7 +43,7 @@
           <projection name="Mercator"/>
           <downloadUrl protocol="http" host="korona.geog.uni-heidelberg.de" path="/tiles/asterh/x={x}&amp;y={y}&amp;z={zoomLevel}"/>
           <blending name="AlphaBlending"/>
-          <downloadPolicy usage="Browse" maximumConnections="4"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
       </layer>
