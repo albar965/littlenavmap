@@ -129,12 +129,11 @@ int main(int argc, char *argv[])
     Translator::load(settings.valueStr(lnm::OPTIONS_LANGUAGE, QString()));
 
 #if defined(Q_OS_WIN32)
-    splash.close();
-
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
     QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd"); // generated GUID
     if(!shared.create(512, QSharedMemory::ReadWrite))
     {
+      splash.close();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
                             QObject::tr("%1 is already running.").arg(QApplication::applicationName()));
       return 1;
