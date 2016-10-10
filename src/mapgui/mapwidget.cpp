@@ -438,7 +438,7 @@ void MapWidget::showSavedPosOnStartup()
 
 void MapWidget::showPos(const atools::geo::Pos& pos, int distanceNm)
 {
-  qDebug() << "NavMapWidget::showPoint" << pos;
+  // qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
 
   if(distanceNm == -1)
@@ -450,7 +450,7 @@ void MapWidget::showPos(const atools::geo::Pos& pos, int distanceNm)
 
 void MapWidget::showRect(const atools::geo::Rect& rect)
 {
-  qDebug() << "NavMapWidget::showRect" << rect;
+  // qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
 
   qDebug() << "rect w" << QString::number(rect.getWidthDegree(), 'f')

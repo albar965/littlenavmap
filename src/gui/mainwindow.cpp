@@ -61,7 +61,8 @@
 #include "ui_mainwindow.h"
 
 static const QString ABOUT_MESSAGE =
-  QObject::tr("<p>is a fast flight planner and airport search tool for FSX.</p>"
+  QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
+                "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
                 "<p>This software is licensed under "
                   "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3</a> or any later version.</p>"
                     "<p>The source code for this application is available at "

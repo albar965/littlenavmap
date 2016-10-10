@@ -206,7 +206,7 @@ QString WeatherReporter::findActiveSkySnapshotPath(const QString& activeSkyPrefi
       qWarning() << "is not an ASN weather snapshot file" << weatherFile;
   }
   else
-    qWarning() << "file does not exist" << weatherFile;
+    qInfo() << "file does not exist" << weatherFile;
 
   return QString();
 }
