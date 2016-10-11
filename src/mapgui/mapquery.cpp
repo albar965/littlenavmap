@@ -656,8 +656,13 @@ void MapQuery::getBestStartPositionForAirport(maptypes::MapStart& start, int air
 void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
                                     const QString& runwayEndName, const atools::geo::Pos& position)
 {
-  // Get runway number for the second part of the query fetching start positions (before union)
-  int number = runwayEndName.toInt();
+  // Get runway number for the first part of the query fetching start positions (before union)
+  bool ok;
+  int number = runwayEndName.toInt(&ok);
+  QString endName = runwayEndName;
+  if(ok)
+    // If it is a number make sure to add a 0 prefix since runways numbers are stored as string
+    endName = QString("%1").arg(number, 2, 10, QChar('0'));
 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
@@ -673,7 +678,7 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
     "where airport_id = :airportId and s.runway_name = :runwayName)");
 
   query.bindValue(":number", number);
-  query.bindValue(":runwayName", runwayEndName);
+  query.bindValue(":runwayName", endName);
   query.bindValue(":airportId", airportId);
   query.exec();
 
