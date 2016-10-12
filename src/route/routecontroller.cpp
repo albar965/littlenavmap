@@ -1389,15 +1389,24 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
     insertIndex = legIndex + 1;
   else
   {
-    // No leg index given - search for nearest
-    int legOrPt = route.getNearestLegOrPointIndex(entry.getPosition());
-    qDebug() << "nearestLeg" << legOrPt;
-
-    // Positive values are legs - negative are points
-    insertIndex = atools::absInt(legOrPt);
-    if(flightplan.isEmpty() || legOrPt == -1 /* First point - add before departure */)
-      // Add at the beginning
+    if(flightplan.isEmpty())
+      // First is  departure
       insertIndex = 0;
+    else if(flightplan.getEntries().size() == 1)
+      // Keep first as departure
+      insertIndex = 1;
+    else
+    {
+      // No leg index given - search for nearest
+      int legOrPt = route.getNearestLegOrPointIndex(entry.getPosition());
+      qDebug() << "nearestLeg" << legOrPt;
+
+      // Positive values are legs - negative are points
+      insertIndex = atools::absInt(legOrPt);
+      if(legOrPt == -1 /* First point - add before departure */)
+        // Add at the beginning
+        insertIndex = 0;
+    }
   }
   flightplan.getEntries().insert(insertIndex, entry);
   eraseAirway(insertIndex);
