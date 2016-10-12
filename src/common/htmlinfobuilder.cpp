@@ -108,7 +108,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   mapQuery->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
-  if(routeMapObjects != nullptr && airport.routeIndex != -1)
+  if(routeMapObjects != nullptr && !routeMapObjects->isEmpty() && airport.routeIndex != -1)
   {
     // Add flight plan information if airport is a part of it
     if(airport.routeIndex == 0)
@@ -906,19 +906,26 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData&
 
       head(html, tr("Next Waypoint"));
       html.table();
-      const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
-      float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
-      html.row2(tr("Name and Type:"), rmo.getIdent() +
-                (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
 
-      QString timeStr;
-      if(data.getGroundSpeedKts() > 20.f)
-        timeStr = tr(", ") + formatter::formatMinutesHoursLong(nearestLegDistance / data.getGroundSpeedKts());
+      if(nearestLegIndex >= 0 && nearestLegIndex < rmoList.size())
+      {
+        const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
+        float crs = normalizeCourse(data.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
+        html.row2(tr("Name and Type:"), rmo.getIdent() +
+                  (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
 
-      html.row2(tr("Distance, Course and Time:"), locale.toString(nearestLegDistance, 'f', 0) + tr(" nm, ") +
-                locale.toString(crs, 'f', 0) +
-                tr("°M") + timeStr);
-      html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumb(), 'f', 0) + tr("°M"));
+        QString timeStr;
+        if(data.getGroundSpeedKts() > 20.f)
+          timeStr = tr(", ") + formatter::formatMinutesHoursLong(nearestLegDistance / data.getGroundSpeedKts());
+
+        html.row2(tr("Distance, Course and Time:"), locale.toString(nearestLegDistance, 'f', 0) + tr(
+                    " nm, ") +
+                  locale.toString(crs, 'f', 0) +
+                  tr("°M") + timeStr);
+        html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumb(), 'f', 0) + tr("°M"));
+      }
+      else
+        qWarning() << "Invalid route leg index" << nearestLegIndex;
 
       if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)
       {
