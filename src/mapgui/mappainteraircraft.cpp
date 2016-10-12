@@ -67,7 +67,7 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
   if(!pos.isValid())
     return;
 
-  int x, y;
+  float x, y;
   if(wToS(pos, x, y))
   {
     int size = context->symSize(AIRCRAFT_SYMBOL_SIZE);
@@ -109,8 +109,8 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
                  arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
 
     // Draw text label
-    symbolPainter->textBox(context->painter, texts,
-                           QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
+    symbolPainter->textBoxF(context->painter, texts,
+                            QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
   }
 }
 

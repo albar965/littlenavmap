@@ -558,6 +558,12 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
 void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                             textatt::TextAttributes atts, int transparency)
 {
+  textBoxF(painter, texts, textPen, x, y, atts, transparency);
+}
+
+void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen,
+                             float x, float y, textatt::TextAttributes atts, int transparency)
+{
   if(texts.isEmpty())
     return;
 
@@ -604,16 +610,16 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
     painter->setPen(mapcolors::textBackgroundPen);
     for(const QString& text : texts)
     {
-      QRect rect = metrics.boundingRect(text);
+      QRectF rect = metrics.boundingRect(text);
       rect.setWidth(rect.width() + 2);
 
-      int newx = x;
+      float newx = x;
       if(atts.testFlag(textatt::RIGHT))
         newx -= rect.width();
       else if(atts.testFlag(textatt::CENTER))
         newx -= rect.width() / 2;
 
-      rect.moveTo(newx, y - metrics.ascent() + yoffset - 1);
+      rect.moveTo(newx, y - metrics.ascent() + yoffset - 1.f);
       painter->drawRect(rect);
       yoffset += h;
     }
@@ -624,14 +630,14 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   painter->setPen(textPen);
   for(const QString& t : texts)
   {
-    int w = metrics.width(t);
-    int newx = x;
+    float w = metrics.width(t);
+    float newx = x;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
       newx -= w / 2;
 
-    painter->drawText(newx, y + yoffset, t);
+    painter->drawText(QPointF(newx, y + yoffset), t);
     yoffset += h;
   }
   painter->restore();
