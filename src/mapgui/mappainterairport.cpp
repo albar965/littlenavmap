@@ -259,29 +259,55 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 
   // Draw taxiways ---------------------------------
   painter->setBackgroundMode(Qt::OpaqueMode);
+  QVector<QPoint> startPts, endPts;
+  QVector<int> pathThickness;
+
+  // Collect coordinates first
   const QList<MapTaxiPath> *taxipaths = query->getTaxiPaths(airport.id);
   for(const MapTaxiPath& taxipath : *taxipaths)
   {
-    int pathThickness = scale->getPixelIntForFeet(taxipath.width);
+    bool visible;
+    // Do not do any clipping here
+    startPts.append(wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible));
+    endPts.append(wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible));
+    pathThickness.append(std::max(2, scale->getPixelIntForFeet(taxipath.width)));
+  }
+
+  // Draw closed and others first to have real taxiways on top
+  for(int i = 0; i < taxipaths->size(); i++)
+  {
+    const MapTaxiPath& taxipath = taxipaths->at(i);
+    int thickness = pathThickness.at(i);
     QColor col = mapcolors::colorForSurface(taxipath.surface);
+
+    const QPoint& start = startPts.at(i);
+    const QPoint& end = endPts.at(i);
 
     if(taxipath.closed)
     {
-      painter->setPen(QPen(mapcolors::taxiwayClosedBrush, pathThickness, Qt::SolidLine, Qt::RoundCap));
-      painter->setBackground(col);
+      painter->setPen(QPen(col, thickness, Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(start, end);
+
+      painter->setPen(QPen(mapcolors::taxiwayClosedBrush, thickness, Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(start, end);
+
     }
-    else
+    else if(!taxipath.drawSurface)
     {
-      if(!taxipath.drawSurface)
-        painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), pathThickness, Qt::SolidLine, Qt::RoundCap));
-      else
-        painter->setPen(QPen(col, pathThickness, Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(start, end);
     }
-    // Do not do any clipping here
-    bool visible;
-    QPoint start = wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
-    QPoint end = wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
-    painter->drawLine(start, end);
+  }
+
+  for(int i = 0; i < taxipaths->size(); i++)
+  {
+    const MapTaxiPath& taxipath = taxipaths->at(i);
+    if(!taxipath.closed && taxipath.drawSurface)
+    {
+      painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface),
+                           pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
+      painter->drawLine(startPts.at(i), endPts.at(i));
+    }
   }
 
   // Draw taxiway names ---------------------------------
