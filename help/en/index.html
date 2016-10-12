@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="language" content="EN" />
     <meta name="author" content="Alexander Barthel" />
-    <meta name="date" content="2016-10-02T22:20:00+01:00" />
+    <meta name="date" content="2016-10-12T22:20:00+01:00" />
     <meta content="Little Navmap User Manual" name="description" />
     <title>
       Little Navmap User Manual
@@ -125,6 +125,10 @@
 
       <li>
         <a href="#h2bugreport">How to report a Bug</a>
+      </li>
+
+      <li>
+        <a href="#h2files">Files</a>
       </li>
 
       <li>
@@ -2748,8 +2752,8 @@
 
       <li>Add-on developers have to use all kind of workarounds to avoid FSX' limitations. So the display and
       information given for add-on airports is not always correct. Typical examples are: Airports without runways,
-      airports with runway dimensions 0 by 0 ft or 0 ft runway width, taxiways with 0 ft width, duplicate airports and
-      more.
+      airports with runway dimensions 0 by 0 ft or 0 ft runway width, taxiways with 0 ft width, closed taxiways,
+      duplicate airports and more.
       </li>
 
       <li>Some KML/KMZ files do not show up on the map. Adding a centerpoint pushpin to the maps can fix this.
@@ -2817,6 +2821,107 @@
       name and path of the file is shown on top of the error dialog if a specific BGL is the cause.
     </p>
 
+    <p>
+      <span class="bold">If you're concerned about privacy when sending log files:</span>
+      <br />
+      The log files will contain all paths (like your <code>Documents</code> directory) which will also include your
+      username as a part of the path. In no case file names from anything else than flight simulator scenery or
+      configuration files are included. No names or content of personal files is included in the log files. They also
+      might contain your computer's name IP address in your network.
+    </p>
+
+    <p>
+      I'd suggest to remove this information if you're concerned about it.
+    </p>
+
+    <p>
+      I strongly recomment to send the log files by PM or by email and not attach them to forum posts where they are
+      publicly visible.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2files">
+      Files
+    </h2>
+
+    <p>
+      <span class="bold">Log files</span> of <em>Little Navmap</em> for Windows 7/8/10 are typically stored in the
+      directory:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Local\Temp</code>
+    </p>
+
+    <p>
+      The program keeps three log files and rotates these on each startup. So you can find up to three logs:
+    </p>
+
+    <p>
+      <code>abarthel-little_navmap.log</code>, <code>abarthel-little_navmap.log.1</code> and
+      <code>abarthel-little_navmap.log.2</code>.
+    </p>
+
+    <p>
+      All <span class="bold">configuration files</span> of my programs for Windows 7/8/10 are typically stored in the
+      directory:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel</code>
+    </p>
+
+    <p>
+      The <span class="bold">scenery library databases</span> are stored in the directory:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap_db</code>
+    </p>
+
+    <p>
+      There can be up to five files depending which simulators you have installed and which scenery libraries you've
+      loaded.
+    </p>
+
+    <p>
+      All these databases are <a href="http://sqlite.org" target="_blank">SQLite</a> files than can be viewed with e.g.
+      <a href="https://github.com/sqlitebrowser/sqlitebrowser/releases" target="_blank">DB Browser for SQLite</a> if
+      you're interested in relational databases.
+    </p>
+
+    <p>
+      The files are:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;"><code>little_navmap_.sqlite</code>:</span>An
+        empty dummy database.
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_fsx.sqlite</code>:</span>Flight Simulator X
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_fsxse.sqlite</code>:</span>Flight Simulator - Steam
+        Edition
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_p3dv2.sqlite</code>:</span>Prepar3D v2
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_p3dv3.sqlite</code>:</span>Prepar3D v3
+      </li>
+    </ul>
+
     <h2 id="h2license">
       License
     </h2>
@@ -2848,7 +2953,7 @@
       <br />
       <br />
       <br />
-      Last update 2016-10-09
+      Last update 2016-10-12
     </p>
   </body>
 </html>
