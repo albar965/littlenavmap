@@ -80,6 +80,7 @@ using namespace Marble;
 using atools::settings::Settings;
 using atools::gui::FileHistoryHandler;
 using atools::gui::MapPosHistory;
+using atools::gui::HelpHandler;
 
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
@@ -1323,11 +1324,22 @@ void MainWindow::mainWindowShown()
         // No databases but simulators let the user create new databases
         databaseManager->run();
       else
-        QMessageBox::information(this, QApplication::applicationName(),
-                                 tr(
-                                   "No Flight Simulator installations and no scenery library databases found.\n"
-                                   "You can copy a Little Navmap scenery library database from another computer.\n"
-                                   "See the user manual for more information about this."));
+      {
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle(QApplication::applicationName());
+        msgBox.setTextFormat(Qt::RichText);
+        msgBox.setText(
+          tr("No Flight Simulator installations and no scenery library databases found.<br/>"
+             "You can copy a Little Navmap scenery library database from another computer.<br/><br/>"
+             "Press the help button for more information about this.")
+          );
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Help);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+
+        int result = msgBox.exec();
+        if(result == QMessageBox::Help)
+          HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "indexnosim.html"));
+      }
     }
     // else have databases do nothing
   }

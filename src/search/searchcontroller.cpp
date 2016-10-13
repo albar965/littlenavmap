@@ -23,14 +23,23 @@
 #include "search/airportsearch.h"
 #include "search/navsearch.h"
 #include "mapgui/mapwidget.h"
+#include "gui/helphandler.h"
+#include "ui_mainwindow.h"
 
 #include <QTabWidget>
+#include <QUrl>
+
+using atools::gui::HelpHandler;
 
 SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
                                    QTabWidget *tabWidgetSearch)
   : mapQuery(mQuery), mainWindow(parent), tabWidget(tabWidgetSearch)
 {
   connect(tabWidget, &QTabWidget::currentChanged, this, &SearchController::tabChanged);
+  connect(parent->getUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressed);
+  connect(parent->getUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressed);
 }
 
 SearchController::~SearchController()
@@ -48,6 +57,11 @@ void SearchController::optionsChanged()
 {
   for(SearchBase *search : allSearchTabs)
     search->optionsChanged();
+}
+
+void SearchController::helpPressed()
+{
+  HelpHandler::openHelpUrl(mainWindow, HelpHandler::getHelpUrl(mainWindow, "help", "indexsearch.html"));
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

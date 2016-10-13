@@ -38,7 +38,6 @@
 #include <QProgressDialog>
 #include <QApplication>
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QList>
 #include <QMenu>
 #include <QDir>

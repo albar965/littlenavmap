@@ -87,6 +87,7 @@ public:
 private:
   void tabChanged(int index);
   void postCreateSearch(SearchBase *search);
+  void helpPressed();
 
   MapQuery *mapQuery;
 
