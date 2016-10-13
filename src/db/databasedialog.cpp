@@ -21,13 +21,16 @@
 #include "db/databasemanager.h"
 #include "fs/fspaths.h"
 #include "gui/dialog.h"
+#include "gui/helphandler.h"
 #include "ui_databasedialog.h"
 
 #include <QDebug>
 #include <QDialog>
 #include <QDir>
+#include <QUrl>
 
 using atools::fs::FsPaths;
+using atools::gui::HelpHandler;
 
 DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), paths(pathMap)
@@ -62,6 +65,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::rejected, this, &QDialog::reject);
+  connect(ui->buttonBoxDatabase, &QDialogButtonBox::helpRequested, this, &DatabaseDialog::helpClicked);
 
   connect(ui->comboBoxSimulator, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &DatabaseDialog::simComboChanged);
@@ -92,6 +96,12 @@ void DatabaseDialog::basePathEdited(const QString& text)
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 {
   paths[currentFsType].sceneryCfg = QDir::toNativeSeparators(text);
+}
+
+/* Show help in browser */
+void DatabaseDialog::helpClicked()
+{
+  HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "index.html", "h2scenerylibdialog"));
 }
 
 /* Reset paths of the current simulator back to default */

@@ -73,6 +73,7 @@ signals:
 private:
   void basePathEdited(const QString& text);
   void resetPathsClicked();
+  void helpClicked();
   void sceneryConfigFileEdited(const QString& text);
   void selectBasePathClicked();
   void selectSceneryConfigClicked();

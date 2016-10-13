@@ -19,13 +19,16 @@
 
 #include "common/constants.h"
 #include "gui/widgetstate.h"
+#include "gui/helphandler.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 
 #include <QDebug>
+#include <QUrl>
 #include <QPushButton>
 
 using atools::settings::Settings;
+using atools::gui::HelpHandler;
 
 ConnectDialog::ConnectDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::ConnectDialog)
@@ -85,6 +88,8 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     // Disconnect button clicked
     emit disconnectClicked();
   }
+  else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Help))
+    HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "index.html", "h2connect"));
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
     QDialog::reject();
 }
