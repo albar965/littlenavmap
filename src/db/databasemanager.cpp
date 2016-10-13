@@ -409,6 +409,10 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabase()
 
 void DatabaseManager::run()
 {
+  if(simulators.contains(currentFsType) && simulators.value(currentFsType).hasRegistry)
+    // Use what is currently displayed on the map
+    loadingFsType = currentFsType;
+
   // Disconnect all queries
   emit preDatabaseLoad();
 
@@ -461,6 +465,10 @@ bool DatabaseManager::runInternal()
             DatabaseMeta dbmeta(db);
             dbmeta.updateAll();
             reopenDialog = false;
+
+            // Syncronize display with loaded database
+            currentFsType = loadingFsType;
+            updateSimSwitchActions();
           }
         }
         else
@@ -561,6 +569,7 @@ bool DatabaseManager::loadScenery()
 
   QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
+  // Show errors that occured during loading, if any
   if(!errors.sceneryErrors.isEmpty())
   {
     QString errorTexts;
