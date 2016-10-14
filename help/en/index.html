@@ -72,6 +72,10 @@
       </li>
 
       <li>
+        <a href="#h2fpedit">Map Flight Plan Editing</a>
+      </li>
+
+      <li>
         <a href="#h2search">Search Dock Window</a>
       </li>
 
@@ -368,11 +372,6 @@
       Navmap</em>. A question dialog will pop up and ask if the incompatible database can be erased. You can reload the
       scenery in the <a href="#h2scenerylibdialog">Scenery Library Dialog</a> after erasing the database.
     </p>
-    <!-- ===================================================================== -->
-
-    <h2 id="h2fptutorial">
-      Quick Flight Plan Tutorial
-    </h2>
     <!-- ===================================================================== -->
 
     <h2 id="h2menu">
@@ -1373,122 +1372,6 @@
       33 is visible.</span>
     </p>
 
-    <h3 id="fpedit">
-      Flight Plan Editing
-    </h3>
-
-    <p>
-      The flight plan editing mode is switched on per default but can be disabled using the toolbar or <code>Main
-      Menu</code> -&gt; <code>Flight Plan</code> -&gt; <code>Edit Flight Plan on Map</code>.
-    </p>
-
-    <p>
-      You can use the keyboard, the mouse wheel or the map overlays to scroll and zoom while editing the route.
-    </p>
-
-    <p>
-      The following functionality is available:
-    </p>
-
-    <ul>
-      <li>
-        <span class="bold">Click on a flight plan leg:</span> Starts editing and adds a new waypoint depending on where
-        the next click is done:
-      </li>
-
-      <li style="list-style: none; display: inline">
-        <ul>
-          <li>
-            <span class="bold">On a single airport and navaid:</span> Object is inserted into the flight plan segment.
-          </li>
-
-          <li>
-            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
-            to be inserted.
-          </li>
-
-          <li>
-            <span class="bold">No airport and no navaid:</span> A user defined position is inserted to the flight plan.
-          </li>
-        </ul>
-      </li>
-
-      <li>
-        <span class="bold">Click on waypoint:</span> Starts editing and replaces the clicked waypoint with an object
-        depending on where the next click is done:
-      </li>
-
-      <li style="list-style: none; display: inline">
-        <ul>
-          <li>
-            <span class="bold">On a single airport and navaid:</span> Object replaces the clicked waypoint.
-          </li>
-
-          <li>
-            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
-            that should replace the clicked waypoint.
-          </li>
-
-          <li>
-            <span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint.
-          </li>
-        </ul>
-      </li>
-
-      <li>
-        <span class="bold">Click on departure or destination:</span> Replaces the departure or destination with an
-        object depending on where the next click is done:
-      </li>
-
-      <li style="list-style: none; display: inline">
-        <ul>
-          <li>
-            <span class="bold">On a single airport:</span> Airport replaces the departure or destination. A default
-            runway is assigned as start position if the departure is replaced with a new airport.
-          </li>
-
-          <li>
-            <span class="bold">On a navaid:</span> Object replaces departure or destination which results in an invalid
-            flight plan. The flight plan can be saved and loaded (a warning will be shown) but is unusable by Flight
-            Simulator.
-          </li>
-
-          <li>
-            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
-            that replaces departure or destination.
-          </li>
-
-          <li>
-            <span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint resulting
-            in an invalid flight plan.
-          </li>
-        </ul>
-      </li>
-
-      <li>
-        <span class="bold">Right click, pressing the escape key or any click outside of the map window:</span> Cancel
-        current operation.
-      </li>
-    </ul>
-
-    <p>
-      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.jpg" />
-    </p>
-
-    <p>
-      <span class="capthdg">Picture above:</span> <span class="capt">Inserting a navaid into a flight plan leg by
-      clicking and moving the leg line. A tool tip for the navaid is shown.</span>
-    </p>
-
-    <p>
-      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit2.jpg" />
-    </p>
-
-    <p>
-      <span class="capthdg">Picture above:</span> <span class="capt">Replacing VOR TRA in the flight plan with another
-      one by simply clicking and moving the waypoint TRA onto KLO. A selection menu pops up for disambiguation.</span>
-    </p>
-
     <h3 id="mapcontextmenu">
       Map Context Menu
     </h3>
@@ -1694,6 +1577,133 @@
     <p>
       Sets the home position and zoom distance. The center of the home area is highlighted by a <img class="textimg"
       alt="Home Symbol" title="Home Symbol" src="images/icons/homesymbol.png" /> symbol.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2fpedit">
+      Map Flight Plan Editing
+    </h2>
+
+    <p>
+      The flight plan drag and drop editing mode is switched on per default but can be disabled using the toolbar or
+      <code>Main Menu</code> -&gt; <code>Flight Plan</code> -&gt; <code>Edit Flight Plan on Map</code>.
+    </p>
+
+    <p>
+      You can use the keyboard, the mouse wheel or the map overlays to scroll and zoom while editing the route.
+    </p>
+
+    <p>
+      Note that the flight plan drag and drop editing is based on the assumption that a direct connection between
+      departure and destination already exists.
+    </p>
+
+    <p>
+      Always select departure and destination first if you like to build you flight plan manually. This will connect
+      both with a great circle line. Based on this line you can start to add navaids to your flight plan.
+    </p>
+
+    <p>
+      The following functionality is available:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold">Click on a flight plan leg:</span> Starts editing and adds a new waypoint depending on where
+        the next click is done:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">On a single airport and navaid:</span> Object is inserted into the flight plan segment.
+          </li>
+
+          <li>
+            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
+            to be inserted.
+          </li>
+
+          <li>
+            <span class="bold">No airport and no navaid:</span> A user defined position is inserted to the flight plan.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Click on waypoint:</span> Starts editing and replaces the clicked waypoint with an object
+        depending on where the next click is done:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">On a single airport and navaid:</span> Object replaces the clicked waypoint.
+          </li>
+
+          <li>
+            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
+            that should replace the clicked waypoint.
+          </li>
+
+          <li>
+            <span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Click on departure or destination:</span> Replaces the departure or destination with an
+        object depending on where the next click is done:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">On a single airport:</span> Airport replaces the departure or destination. A default
+            runway is assigned as start position if the departure is replaced with a new airport.
+          </li>
+
+          <li>
+            <span class="bold">On a navaid:</span> Object replaces departure or destination which results in an invalid
+            flight plan. The flight plan can be saved and loaded (a warning will be shown) but is unusable by Flight
+            Simulator.
+          </li>
+
+          <li>
+            <span class="bold">On multiple airports or navaids:</span> A menu pops up that allows to select the object
+            that replaces departure or destination.
+          </li>
+
+          <li>
+            <span class="bold">No airport and no navaid:</span> A user defined position replaces the waypoint resulting
+            in an invalid flight plan.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Right click, pressing the escape key or any click outside of the map window:</span> Cancel
+        current operation.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Picture above:</span> <span class="capt">Inserting a navaid into a flight plan leg by
+      clicking and moving the leg line. A tool tip for the navaid is shown.</span>
+    </p>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit2.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Picture above:</span> <span class="capt">Replacing VOR TRA in the flight plan with another
+      one by simply clicking and moving the waypoint TRA onto KLO. A selection menu pops up for disambiguation.</span>
     </p>
     <!-- ===================================================================== -->
 
@@ -2502,6 +2512,12 @@
     </p>
 
     <p>
+      The menu <code>Scenery Library</code> -&gt; <code>Flight Simulators</code> is synchronized with the simulator
+      selection in the dialog. Once a database is successfully loaded, the display, flight plan and search will switch
+      over to the newly loaded simulator data.
+    </p>
+
+    <p>
       The program tries to find the base path and <code>Scenery.cfg</code> automatically. The typical locations of the
       <code>Scenery.cfg</code> for Windows 7/8/10 are:
     </p>
@@ -2834,6 +2850,10 @@
       </li>
 
       <li>There are errors in the elevation source data (like in northern Italy, Po Valley).
+      </li>
+
+      <li>The Mercator projections shows occasional display problems depending on zoom distance like horizontal lines
+      near the anti meridian or missing flight plan segments.
       </li>
 
       <li>
