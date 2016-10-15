@@ -1,3 +1,36 @@
+Version 1.0.5 - Stable Release
+
+Little Navmap
+* Fixed error in flight plan order when adding waypoints to first entry.
+* Fixed problem with overview map overlay (top left of map) loosing background image when moving program
+  after first start.
+* Fixed problem where a valid start position could not be found for a flight plan after loading
+  and displayed a warning dialog.
+* Fixed potential crashes when updating HTML information.
+* Simulator selection in database dialog and map is now synchronized to avoid misunderstandings
+* Added: Disable aircraft tracking on double click and others (issue #28)
+* Lowered maximumConnections of OpenMapSurfer to 2 to avoid parallel connection blocking from single source.
+* Improvement to error handling dialogs to allow instant access to contact and log file.
+* Closing splash now before it hides the "application already running dialog".
+* Fixed display of closed taxiways and taxiways having width of 0 ft.
+* Made aircraft movement a bit smoother.
+* Added help buttons to connect and database dialog. Removed explanation label from connect dialog.
+* Improved help system. Converted help label in search to button linking to help document.
+* Added help to "no simulator found" dialog.
+
+Little Navmap Manual
+* Rework, clarifications and fixes in manual, legend and feature list. Added program menu icons to manual.
+* Made flight plan editing a separate chapter and added more explanations.
+* Additions to the manual regarding flight plan altitude and online services.
+* Added files section in manual.
+* Added closed taxiways to legend.
+
+Inherited from atools:
+* Fixed scenery loading error for airports without city names.
+* Improvement to error handling dialogs to allow instant access to contact and log file.
+* Scenery.cfg reading is now more error tolerant, only prints warnings and ignores invalid entries.
+* Fixed exclude and include directives for scenery not working for relative paths containing "..".
+
 Version 1.0.4.beta
 
 Little Navmap
