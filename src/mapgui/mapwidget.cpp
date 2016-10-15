@@ -487,9 +487,13 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
   qDebug() << "NavMapWidget::showAircraft" << searchMarkPos;
 
   // Adapt the menu item status if this method was not called by the action
-  mainWindow->getUi()->actionMapAircraftCenter->blockSignals(true);
-  mainWindow->getUi()->actionMapAircraftCenter->setChecked(centerAircraftChecked);
-  mainWindow->getUi()->actionMapAircraftCenter->blockSignals(false);
+  QAction *acAction = mainWindow->getUi()->actionMapAircraftCenter;
+  if(acAction->isEnabled())
+  {
+    acAction->blockSignals(true);
+    acAction->setChecked(centerAircraftChecked);
+    acAction->blockSignals(false);
+  }
 
   if(centerAircraftChecked && simData.getPosition().isValid())
     centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
