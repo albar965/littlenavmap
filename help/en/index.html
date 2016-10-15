@@ -1268,6 +1268,33 @@
       <li>Map detail level.
       </li>
 
+      <li>Online map download progress indicator. This shows the state of the current map download:
+        <ul>
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Done.</code>:</span>All map data loaded
+            successfully.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Waiting for Data ...</code>:</span>Map
+            data is missing in the cache and was requested. Now waiting for reply.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Waiting for Update
+            ...</code>:</span>Map data is already loaded but expired after two weeks. Waiting for new data after
+            requesting an update.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Incomplete.</code>:</span>Download
+            failed.
+          </li>
+        </ul>
+        Note that the progress indicator can look like it is stuck in the message <code>Waiting for Data ...</code> if
+        no hill shading is available for a <em>OpenStreetMap</em> region.
+      </li>
+
       <li>Zoom distance (viewpoint to earth surface) in nautical miles.
       </li>
 
