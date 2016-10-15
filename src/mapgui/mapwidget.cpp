@@ -300,6 +300,7 @@ void MapWidget::historyNext()
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
     mainWindow->setStatusMessage(tr("Map position history next."));
+    showAircraft(false);
   }
 }
 
@@ -312,6 +313,7 @@ void MapWidget::historyBack()
     centerOn(entry.getPos().getLonX(), entry.getPos().getLatY(), false);
     changedByHistory = true;
     mainWindow->setStatusMessage(tr("Map position history back."));
+    showAircraft(false);
   }
 }
 
@@ -440,6 +442,7 @@ void MapWidget::showPos(const atools::geo::Pos& pos, int distanceNm)
 {
   // qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
+  showAircraft(false);
 
   if(distanceNm == -1)
     setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
@@ -452,6 +455,7 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
 {
   // qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
+  showAircraft(false);
 
   qDebug() << "rect w" << QString::number(rect.getWidthDegree(), 'f')
            << "h" << QString::number(rect.getHeightDegree(), 'f');
@@ -468,6 +472,7 @@ void MapWidget::showSearchMark()
   qDebug() << "NavMapWidget::showMark" << searchMarkPos;
 
   hideTooltip();
+  showAircraft(false);
 
   if(searchMarkPos.isValid())
   {
@@ -481,6 +486,11 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
 {
   qDebug() << "NavMapWidget::showAircraft" << searchMarkPos;
 
+  // Adapt the menu item status if this method was not called by the action
+  mainWindow->getUi()->actionMapAircraftCenter->blockSignals(true);
+  mainWindow->getUi()->actionMapAircraftCenter->setChecked(centerAircraftChecked);
+  mainWindow->getUi()->actionMapAircraftCenter->blockSignals(false);
+
   if(centerAircraftChecked && simData.getPosition().isValid())
     centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
 }
@@ -490,7 +500,7 @@ void MapWidget::showHome()
   qDebug() << "NavMapWidget::showHome" << searchMarkPos;
 
   hideTooltip();
-
+  showAircraft(false);
   if(!atools::almostEqual(homeDistance, 0.))
     // Only center position is valid
     setDistance(homeDistance);
@@ -1951,8 +1961,11 @@ bool MapWidget::loadKml(const QString& filename, bool center)
     if(!kmlString.isEmpty() && kmlString.startsWith("<?xml") && kmlString.endsWith("</kml>"))
     {
       if(center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML)
+      {
         // add file always centers
         model()->addGeoDataFile(filename);
+        showAircraft(false);
+      }
       else
         // Have to read the data ourselves to avoid centering on startup
         model()->addGeoDataString(kmlString, filename);
