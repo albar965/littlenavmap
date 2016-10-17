@@ -576,7 +576,7 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
       // Get altitude points for the line segment
       // The might not be complete and will be more complete on further iterations when we get a signal
       // from the elevation model
-      QList<GeoDataCoordinates> temp = elevationModel->heightProfile(
+      QVector<GeoDataCoordinates> temp = elevationModel->heightProfile(
         c1.longitude(GeoDataCoordinates::Degree),
         c1.latitude(GeoDataCoordinates::Degree),
         c2.longitude(GeoDataCoordinates::Degree),
