@@ -26,7 +26,7 @@ CONFIG(release, debug|release):CONF_TYPE=release
 
 # Windows ==================
 win32 {
-  QT_BIN=C:\\Qt\\5.5\\mingw492_32\\bin
+  QT_BIN=C:\\Qt\\5.6\\mingw49_32\\bin
   GIT_BIN='C:\\Git\\bin\\git'
   MARBLE_BASE="c:\\Program Files (x86)\\marble-$${CONF_TYPE}"
 }
@@ -63,6 +63,7 @@ INCLUDEPATH += $$PWD/../atools/src $$PWD/src
 win32 {
 DEFINES += _USE_MATH_DEFINES
   LIBS += -L $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE} -l atools
+  LIBS += -lz
   PRE_TARGETDEPS += $$PWD/../build-atools-$${CONF_TYPE}/$${CONF_TYPE}/libatools.a
 }
 
@@ -474,24 +475,22 @@ win32 {
   deploy.commands += xcopy $${QT_BIN}\\libwinpthread*.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\libmarblewidget-qt5$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${MARBLE_BASE_WIN}\\libastro$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Qml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Quick$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Script$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5WebKit$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\icudt54.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\icuin54.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\icuuc54.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Positioning$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Multimedia$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Sensors$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5WebChannel$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5WebKitWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
-  deploy.commands += xcopy $${MARBLE_BASE_WIN}\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Qml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Quick$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Script$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\icudt54.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\icuin54.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\icuuc54.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Positioning$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Multimedia$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Sensors$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5WebChannel$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5OpenGL$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5MultimediaWidgets$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${QT_BIN}\\Qt5Xml$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += $${QT_BIN}\\windeployqt --compiler-runtime $${DEPLOY_DIR_WIN}
 }
 
