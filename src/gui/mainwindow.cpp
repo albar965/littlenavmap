@@ -149,12 +149,6 @@ MainWindow::MainWindow()
     profileWidget = new ProfileWidget(this);
     ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
 
-    // Create marble legend and add it to informtation tab
-    qDebug() << "MainWindow Creating LegendWidget";
-    legendWidget = new Marble::LegendWidget(this);
-    legendWidget->setMarbleModel(mapWidget->model());
-    ui->verticalLayoutMapLegendInfo->addWidget(legendWidget);
-
     // Have to create searches in the same order as the tabs
     qDebug() << "MainWindow Creating SearchController";
     searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
@@ -189,6 +183,7 @@ MainWindow::MainWindow()
     // If enabled connect to simulator without showing dialog
     connectClient->tryConnect();
     loadNavmapLegend();
+    updateLegend();
 
     qDebug() << "MainWindow Constructor done";
   }
@@ -217,7 +212,6 @@ MainWindow::~MainWindow()
   delete mapQuery;
   delete infoQuery;
   delete profileWidget;
-  delete legendWidget;
   delete marbleAbout;
   delete infoController;
   delete routeFileHistory;
@@ -839,7 +833,20 @@ void MainWindow::changeMapTheme(int index)
   for(int i = 0; i < customMapThemeMenuActions.size(); i++)
     customMapThemeMenuActions.at(i)->setChecked(index == MapWidget::CUSTOM + i);
 
+  updateLegend();
+
   setStatusMessage(tr("Map theme changed to %1").arg(mapThemeComboBox->currentText()));
+}
+
+void MainWindow::updateLegend()
+{
+  Marble::LegendWidget *legendWidget = new Marble::LegendWidget(this);
+  legendWidget->setMarbleModel(mapWidget->model());
+  QString basePath;
+  QString html = legendWidget->getHtml(basePath);
+  ui->textBrowserLegendInfo->setSearchPaths({basePath});
+  ui->textBrowserLegendInfo->setText(html);
+  delete legendWidget;
 }
 
 /* Menu item */

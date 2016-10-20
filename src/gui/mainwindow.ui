@@ -2410,7 +2410,11 @@
           <number>2</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayoutMapLegendInfo"/>
+          <widget class="QTextBrowser" name="textBrowserLegendInfo">
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

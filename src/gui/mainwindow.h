@@ -177,6 +177,7 @@ private:
   void scaleToolbar(QToolBar *toolbar, float scale);
   void findCustomMaps(QFileInfoList& customDgmlFiles);
   void themeMenuTriggered(bool checked);
+  void updateLegend();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
@@ -210,7 +211,6 @@ private:
   bool hasDatabaseLoadStatus = false;
 
   /* Dialog classes and helper classes */
-  Marble::LegendWidget *legendWidget = nullptr;
   Marble::MarbleAboutDialog *marbleAbout = nullptr;
   OptionsDialog *optionsDialog = nullptr;
   atools::gui::Dialog *dialog = nullptr;
