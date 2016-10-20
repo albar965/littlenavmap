@@ -1937,54 +1937,13 @@ void MapWidget::handleInfoClick(QPoint pos)
 
 bool MapWidget::loadKml(const QString& filename, bool center)
 {
-  bool retval = false;
-
   if(QFile::exists(filename))
   {
-    // Try if it is a zip file first - ignore extension
-    QString kmlString;
-    atools::zip::ZipReader reader(filename);
-    if(reader.exists() && reader.isReadable() &&
-       reader.status() == atools::zip::ZipReader::NoError)
-    {
-      QByteArray filedata = reader.fileData("doc.kml");
-      if(!filedata.isEmpty() && reader.status() == atools::zip::ZipReader::NoError)
-        kmlString = QString(filedata).trimmed();
-    }
-    reader.close();
-
-    if(kmlString.isEmpty())
-    {
-      // Try second if it is a text KML file if nothing was loaded in the last step
-      QFile file(filename);
-      if(file.open(QFile::ReadOnly | QFile::Text))
-        kmlString = QTextStream(&file).readAll().trimmed();
-    }
-
-    // Do some rudimentary file content checking
-    if(!kmlString.isEmpty() && kmlString.startsWith("<?xml") && kmlString.endsWith("</kml>"))
-    {
-      if(center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML)
-      {
-        // add file always centers
-        model()->addGeoDataFile(filename);
-        showAircraft(false);
-      }
-      else
-        // Have to read the data ourselves to avoid centering on startup
-        model()->addGeoDataString(kmlString, filename);
-      retval = true;
-    }
-
-    if(!retval)
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("File \"%1\" is malformed or neither KML nor KMZ.").arg(filename));
+    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML);
+    showAircraft(false);
+    return true;
   }
-  else
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("File \"%1\" does not exist.").arg(filename));
-
-  return retval;
+  return false;
 }
 
 void MapWidget::defaultMapDetail()
