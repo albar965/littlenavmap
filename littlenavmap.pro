@@ -369,7 +369,9 @@ unix:!macx {
     $${MARBLE_BASE}/lib/marble/plugins/libPntPlugin.so \
     $$OUT_PWD/plugins &&
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD
+  copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
+  copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
+  copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
 
   cleandata.commands = rm -Rvf $$OUT_PWD/help $$OUT_PWD/data $$OUT_PWD/plugins
 }

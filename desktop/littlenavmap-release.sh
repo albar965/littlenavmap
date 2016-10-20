@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=~/Programme/Marble-release/lib:~/Qt/5.5/gcc_64/lib
+export LD_LIBRARY_PATH=~/Programme/Marble-release/lib:~/Qt/5.6/gcc_64/lib
 
-cd /home/alex/Projekte/build-littlenavmap-release
-/home/alex/Projekte/build-littlenavmap-release/littlenavmap
+cd $HOME/Projekte/build-littlenavmap-release
+$HOME/Projekte/build-littlenavmap-release/littlenavmap
