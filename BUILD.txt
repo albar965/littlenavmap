@@ -48,3 +48,16 @@ To build the debug version:
 - cd build-littlenavmap-debug
 - qmake ../littlenavmap/littlenavmap.pro CONFIG+=debug
 - make
+
+Branches / Project Dependencies
+------------------------------------------------------
+
+Little Navmap has to be built using the mingw environment as Marble compiles only on the same.
+
+Make sure to use the correct branches to avoid breaking dependencies.
+The branch master is the unstable development branch but all software should compile there.
+
+For releases check the release/MAJOR.MINOR branches to get the correct dependencies.
+The atools branch is usually one MAJOR number ahead.
+
+So Little Navmap branch release/1.0 should work well with atools release/2.0 for example.

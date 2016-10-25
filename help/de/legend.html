@@ -1,0 +1,647 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="language" content="DE" />
+    <meta name="author" content="Alexander Barthel" />
+    <meta name="date" content="2016-10-25T22:30:00+01:00" />
+    <meta content="Little Navmap Kartenlegende" name="description" />
+    <title>
+      Little Navmap Kartenlegende
+    </title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body>
+    <h1>
+      Little Navmap Kartenlegende
+    </h1>
+
+    <p>
+      <img class="textimg" style="width: 5em; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/littlenavmap.svg" />
+    </p>
+
+    <p>
+      Alle Geschwindigkeiten werden in Knoten, Entfernungen in nautischen Meilen, Höhe in Fuß und Kurs in Grad. Wahre
+      Kursangaben werden mit °T und magnetische Kursangaben mit °M gekennzeichnet.
+    </p>
+
+    <h3 id="mapmarks">
+      Kartenmarkierungen
+    </h3>
+
+    <table summary="Map Marks" style="text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border=
+    "1">
+      <tbody>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Home" src="images/legend/home.png" />
+          </td>
+          <td>
+            Mittelpunkt der Home-Position.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Mark" src="images/legend/mark.png" />
+          </td>
+          <td>
+            Mittelpunkt für die Distanzsuche.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Flight Plan" src="images/legend/route_leg.png" />
+          </td>
+          <td>
+            Flugplan mit Entfernung, Richtung und magnetischem Kurs an jeden Abschnitt.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Flight Plan Departure Position" src="images/legend/route_start.png" />
+          </td>
+          <td>
+            Startposition des Flugplanes. Kann eine beliebige Parkposition sowie auch Landebahn oder
+            Helikopterlandeplatz sein.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Aircraft" src="images/legend/aircraft.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Aircraft" src=
+            "images/legend/aircraft_text.png" />
+          </td>
+          <td>
+            Aktuelle Flugzeugposition, wenn eine Verbindung mit dem Simulator besteht. Die Texte sind: Registrierung,
+            Fluglinie (wenn verfügbar), Flugnummer (wenn verfügbar), angezeigte Geschwindigkeit, Bodengeschwindigkeit,
+            magnetischer Kurs, Höhe, Steig- oder Sinkindikator, magnetische Windrichtung und Windgeschwindigkeit.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Aircraft" src="images/legend/aircraft_ground.png" />
+          </td>
+          <td>
+            Simulatorflugzeug am Boden.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Trail" src="images/legend/aircraft_track.png" />
+          </td>
+          <td>
+            Spur des Simulatorflugzeuges, wenn eine Verbindung besteht.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Range" src="images/legend/range_rings.png" />
+          </td>
+          <td>
+            Reichweitenringe mit Entfernung.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Range VOR" src="images/legend/range_vor.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Range NDB" src=
+            "images/legend/range_ndb.png" />
+          </td>
+          <td>
+            Reichweite einer VOR- or NDB-Station mit Kennung und Frequenz. Die Farbe zeigt den Typ an.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Distance GC" src="images/legend/distance_gc.png" />
+          </td>
+          <td>
+            Entfernungsmessung mittels <a href="https://de.wikipedia.org/wiki/Gro%C3%9Fkreis" target=
+            "_blank">Großkreisroute</a>. Texte zeigen Entfernung und wahren Kurs am Start und Ende der Messung (die
+            Kurse sind bei kurzen Entfernungen gleich). Für kürzere Entfernungen wird die Länge auch in Fuß angezeigt.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Distance Rhumb" src="images/legend/distance_rhumb.png" />
+          </td>
+          <td>
+            <a href="https://de.wikipedia.org/wiki/Loxodrome" target="_blank">Rhumb-Linie</a> von gleichen Kurs. Texte
+            zeigen Entfernung und wahren Kurs. Rhumb-Linie werden benutzt um entlang von Luftstraßen und Funkfeuern zu
+            navigieren. Für kürzere Entfernungen wird die Länge auch in Fuß angezeigt.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Distance VOR" src="images/legend/distance_vor.png" />
+          </td>
+          <td>
+            Entfernungsmessunge, die von einen Flugplatz oder Funkfeuer bzw. Wegpunkt starten erhalten die gleiche
+            Farbe, wie das Symbol und zusätzlich noch die Kennung und Frequenz. Rhumb-Linien erhalten eine magenetische
+            Kursangabe, wenn sie von einen Kartenobjekt aus starten, das eine magnetische Varianz hat.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Search Hightlight" src="images/legend/highlight_search.png" />
+          </td>
+          <td>
+            Ein Flugplatz oder Navigationspunkt, der in den Suchergebnissen selektiert ist.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Flight Plan Hightlight" src="images/legend/highlight_route.png" />
+          </td>
+          <td>
+            Ein Flugplatz oder Navigationspunkt, der in der Flugplantabelle selektiert ist.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="aiports">
+      Flugplatzsymbole
+    </h3>
+
+    <p>
+      Flugplätze mit Tower werden in <span style=
+      "background-color: rgb(15, 70, 130);color: white;font-weight: bold;">dunkelblau</span> und andere in <span style=
+      "background-color: rgb(126, 58, 91);color: white;font-weight: bold;">magenta</span> dargestellt. Texte von
+      Add-On-Flugplätzen werden <span style="font-weight: bold;text-decoration: underline;font-style: italic;">kursiv
+      und unterstrichen</span> hervorgehoben. Flugplätze, die ein Teil eines Flugplanes sind, werden <span style=
+      "background-color: rgb(255, 255, 153);font-weight: bold;">hellgelb</span> hervorgehoben.
+    </p>
+
+    <p>
+      Das Symbol wird kleiner gezeichnet, wenn der Flugplatz keine Landebahnen hat. Dies kann bei Add-On-Flugplätzen
+      vorkommen, die andere Techniken benutzen, um Landebahnen zu zeichnen.
+    </p>
+
+    <table summary="Airports" style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border=
+    "1">
+      <tbody>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Large Airport" src="images/legend/airport_tower_8000.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Large Airport" src="images/legend/airport_8000.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplätze mit festen Landebahnen, die länger als 8.000 Fuß sind. Alle Landebahnen, die länger als 4.000
+            Fuß sind werden dargestellt. Nur für niedrige Zoomstufen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Airport with Tower" src="images/legend/airport_tower.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Airport" src="images/legend/airport.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplätze mit festen Landebahnen. Die weiße Linie zeigt die Ausrichtung der längsten Landebahn.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Airport with soft runways and Tower" src=
+            "images/legend/airport_tower_soft.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Airport with soft Runways" src=
+            "images/legend/airport_soft.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplätze mit weichen Landebahnen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Airport Empty" src="images/legend/airport_empty.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Airport Empty Soft" src="images/legend/airport_empty_soft.png" />
+          </td>
+          <td style="text-align: left;">
+            Leerer Flugplatz ohne Rollbahnen, Parkpositionen und ohne Vorfelder.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Seaplane Base with Tower" src=
+            "images/legend/airport_tower_water.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Seaplane Base" src=
+            "images/legend/airport_water.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplatz nur für Wasserflugzeuge.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Military Airport with Tower" src=
+            "images/legend/airport_tower_mil.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Military Airport" src=
+            "images/legend/airport_mil.png" />
+          </td>
+          <td style="text-align: left;">
+            Militärischer Flugplatz.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Heliport" src="images/legend/heliport.png" />
+          </td>
+          <td style="text-align: left;">
+            Helikopterflugplatz.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Closed Airport with Tower" src=
+            "images/legend/airport_tower_closed.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Closed Airport" src=
+            "images/legend/airport_closed.png" />
+          </td>
+          <td style="text-align: left;">
+            Geschlossener bzw. aufgegebener Flugplatz. Alle Landebahnen sind geschlossen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Airport with Fuel" src="images/legend/airport_tower_fuel.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Airport with soft Runways and Fuel" src="images/legend/airport_soft_fuel.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplätze die Treibstoff anbieten.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Airport Text" src="images/legend/airport_text.png" />
+          </td>
+          <td style="text-align: left;">
+            Flugplatztext, der folgendes (wenn verfügbar) zeigt: Name, Kennun, Towerfrequenz (CT - 119.550) and
+            Frequenzen für Wetterdienste (ATIS 127.150 or AWOS/ASOS), Höhe (152 ft), Verfügbarkeit beleuchteter
+            Landebahnen (L), längste Landebahn in Fuß * 100 (7.400 Fuß) und Unicom Frequenz (122.95).
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="navaids">
+      Wegpunkte, Funkfeuer und Luftstraßen
+    </h3>
+
+    <p>
+      Navigationspunkte, die Teil eines Flugplanes sind, werden <span style=
+      "background-color: rgb(255, 255, 153);font-weight: bold;">hellgelb</span> hervorgehoben.
+    </p>
+
+    <table summary="Navaids" style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0" border=
+    "1">
+      <tbody>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="VORDME" src="images/legend/vordme_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="VORDME" src=
+            "images/legend/vordme_large.png" />
+          </td>
+          <td>
+            VOR-DME-Station mit Kennung, Type (High, Low oder Terminal) und Frequenz. Die Kompassrose zeigt die
+            magnetische Varianz auf niedrigen Zoomstufen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="VOR" src="images/legend/vor_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="VOR" src=
+            "images/legend/vor_large.png" />
+          </td>
+          <td>
+            VOR-Station mit Kennung, Typ und Frequenz.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="DME" src="images/legend/dme.png" />
+          </td>
+          <td>
+            DME-Station mit Kennung, Typ und Frequenz.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="NDB" src="images/legend/ndb_small.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="NDB" src=
+            "images/legend/ndb_large.png" />
+          </td>
+          <td>
+            NDB-Station mit Kennung, Type (HH, H, MH or CL - Compass Locator) und Frequenz.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Waypoint" src="images/legend/waypoint.png" />
+          </td>
+          <td>
+            Wegpunkt mit Namen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Waypoint" src="images/legend/waypoint_invalid.png" />
+          </td>
+          <td>
+            Ungültiger Flugplatz oder Navigationspunkt, der ein Teil des Flugplanes ist und nicht in der
+            Szeneriedatenbank gefunden wurde.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Marker" src="images/legend/marker_outer.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Marker" src=
+            "images/legend/marker_middle.png" />&nbsp;&nbsp;&nbsp;&nbsp; <img alt="Marker" src=
+            "images/legend/marker_inner.png" />
+          </td>
+          <td>
+            Einflugmarkierung mit Type und Kurs.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Jet Airway" src="images/legend/airway_jet.png" />
+          </td>
+          <td>
+            Jet-Luftstraße mit Namen, Typ (Jet oder Both) und Höhenrestriktion.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Victor Airway" src="images/legend/airway_victor.png" />
+          </td>
+          <td>
+            Victor-Luftstraße mit Namen, Typ (Victor oder Both) und Höhenrestriktion.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table summary="ILS" style=" text-align: left; vertical-align: middle;" cellpadding="2" cellspacing="0" border="1">
+      <tbody>
+        <tr>
+          <td style="vertical-align: top;">
+            <img alt="ILS" src="images/legend/ils_gs_small.png" />&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
+            "images/legend/ils_gs.png" />
+            <br />
+            ILS mit Gleitpfad. Text zeigt Kennung, Frequenz, magnetischen Kurs, Winkel des Gleitpfades und DME
+            Indikator, falls verfügbar.
+          </td>
+        </tr>
+
+        <tr>
+          <td style=" vertical-align: top;">
+            <img alt="ILS" src="images/legend/ils_small.png" />&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<img alt="ILS" src=
+            "images/legend/ils_large.png" />
+            <br />
+            Localizer. Text zeigt Kennung, Frequenz, magnetischen Kurs und DME Indikator, falls verfügbar.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="airportdiagram">
+      Flugplatzdiagramm
+    </h3>
+
+    <p>
+      Landebahn-, Rollbahn-, Helikoperlandeplatz- und Vorfeldfarben zeigen den Typ der Oberfläche an. Weiß wird für
+      einen ungültigen Oberfächentyp benutzt.
+    </p>
+
+    <table summary="Airport Diagram" style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing="0"
+    border="1">
+      <tbody>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Runway" src="images/legend/runway.png" />
+          </td>
+          <td>
+            Landebahn mit Länge, Breite, Lichtindikator und Oberflächentyp.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Runway End" src="images/legend/runway_end.png" />
+          </td>
+          <td>
+            Landebahnende mit Kennung und magnetischen Kurs.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Runway Threshold" src="images/legend/runway_threshold.png" />
+          </td>
+          <td>
+            Versetzte Anflugschwelle. Nicht zum Landen benutzen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Runway Overrun" src="images/legend/runway_overrun.png" />
+          </td>
+          <td>
+            Overrun-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Runway Blastpad" src="images/legend/runway_blastpad.png" />
+          </td>
+          <td>
+            Blast-Pad-Bereich. Nicht zum Rollen, Starten oder Landen benutzen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Taxiway" src="images/legend/taxiway.png" />
+          </td>
+          <td>
+            Rollbahn mit Namen.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Closed Taxiway" src="images/legend/closedtaxi.png" />
+          </td>
+          <td>
+            Geschlossene Rollbahn.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Taxiway" src="images/legend/apron_transparent.png" />
+          </td>
+          <td>
+            Halbtransparente Vorfelder und Rollbahnen zeigen, dass keine Oberfläche gezeichnet wird.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Tower" src="images/legend/tower_active.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt="Tower" src=
+            "images/legend/tower_inactive.png" />
+          </td>
+          <td>
+            Tower. Rot, wenn eine Funkfrequenz zugewiesen ist, ansonsten nur eine Sichtposition.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Fuel" src="images/legend/parking_fuel.png" />
+          </td>
+          <td>
+            Tankstelle
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Parking" src="images/legend/parking_ga_ramp.png" />
+          </td>
+          <td>
+            Parkposition der allgemeinen Luftfahrt (GA Ramp) mit Nummer und Richtungsanzeiger.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Parking" src="images/legend/parking_gate_no_jetway.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img style=
+            " width: 51px; height: 49px;" alt="Parking" src="images/legend/parking_gate.png" />
+          </td>
+          <td>
+            Flugsteig (Gate) mit Nummer und Richtungsanzeiger. Ein zweiter Ring zeigt die Verfügbarkeit eines Jetway
+            an.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Parking" src="images/legend/parking_ramp_cargo.png" />
+          </td>
+          <td>
+            Frachtrampe
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Parking" src="images/legend/parking_mil.png" />
+          </td>
+          <td>
+            Militärische Parkposition oder Frachtrampe.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Helipad" src="images/legend/helipad.png" />
+          </td>
+          <td>
+            Helikopterlandeplatz
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 id="profile">
+      Höhenprofile Legende
+    </h3>
+
+    <table summary="Elevation Profile" style=" text-align: left;vertical-align: middle;" cellpadding="2" cellspacing=
+    "0" border="1">
+      <tbody>
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Profile Start" src="images/legend/profile_start.png" />&nbsp;&nbsp;&nbsp;&nbsp;<img alt=
+            "Profile End" src="images/legend/profile_end.png" />
+          </td>
+          <td>
+            Boden mit Höhe von Start und Ziel.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Profile Safe Alt" src="images/legend/profile_safe_alt.png" />
+          </td>
+          <td>
+            Minimale sichere Flughöhe für den Flugplan.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Flight Plan Profile" src="images/legend/profile_route.png" />
+          </td>
+          <td>
+            Höhe des Flugplanes.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Aircraft" src="images/legend/profile_aircraft.png" />
+          </td>
+          <td>
+            Aktuelle Flugzeugposition, wenn eine Verbindung mit dem Simulator besteht. Die Texte sind: Flughöhe, Steig-
+            oder Sinkindikator, zurückgelegte Entfernung und Entfernung bis zum Ziel.
+          </td>
+        </tr>
+
+        <tr>
+          <td style="text-align: center;">
+            <img alt="Trail" src="images/legend/profile_track.png" />
+          </td>
+          <td>
+            Spur des Simulatorflugzeuges, wenn eine Verbindung besteht.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      Letzte Aktualisierung 25.10.2016
+    </p>
+  </body>
+</html>

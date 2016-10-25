@@ -1,0 +1,142 @@
+BODY {
+font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+margin: 4em;
+}
+* {
+font-size: 16px;
+}
+
+body.c3 { color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);}
+img.gplimg {width: 166px; height: 82px;}
+img.icon {width: 24px; height: 24px;}
+a:link {color:#000066;}
+a:visited {color:#000066;}
+a:hover {color:#6666ff;}
+a {text-decoration:none;}
+span.bold {font-weight: bold;}
+span.capthdg {font-weight: bold; font-style: italic;}
+span.capt {font-style: italic;}
+
+
+h1, h2, h3, h4, h5, h6 {
+color: #004703
+}
+h1, h2 {
+margin-top: 1em;
+margin-bottom: 0.5em;
+}
+h3, h4, h5, h6 {
+margin-top: 0.3em;
+margin-bottom: 0.2em;
+}
+ul, ol {
+margin-top: 0.3em;
+margin-bottom: 0.3em;
+margin-left: 0.2em;
+line-height: 1.5;
+width:75%;
+}
+img {
+margin-top: 0.2em;
+margin-bottom: 0.2em;
+border-bottom: 2px solid lightgreen;
+border-top: 2px solid lightgreen;
+border-left: 2px solid lightgreen;
+border-right: 2px solid lightgreen;
+padding-bottom: 4px;
+padding-top: 4px;
+padding-left: 4px;
+padding-right: 4px;
+background-color: white;
+}
+.textimg {
+margin-top: 0em;
+margin-bottom: 0em;
+border-bottom: 0px;
+border-top: 0px;
+border-left: 0px;
+border-right: 0px;
+padding-bottom: 0px;
+padding-top: 0px;
+padding-left: 0px;
+padding-right: 0px;
+background-color: white;
+}
+p {
+margin-left: 1.5em;
+margin-top: 0.4em;
+margin-bottom: 0.4em;
+width:75%;
+}
+code {
+font-family: 'Courier', monospace;
+font-weight: bold;
+color: darkgreen;
+background-color: #e8e8e8;
+width:75%;
+border-radius: 3px;
+padding: 0px 3px 0px 3px;
+border: 1px solid #b0b0b0;
+}
+pre {
+margin-left: 1.5em;
+margin-top: 0.4em;
+margin-bottom: 0.4em;
+font-size: 15px;
+font-family: 'Andale Mono', 'Courier New', Courier, sans-serif;
+font-weight: bold;
+}
+em {
+font-size: 16px;
+font-weight: bold;
+color: darkgreen;
+}
+
+h1 {
+font-size: 34px;
+border-bottom: 4px solid #004703;
+width:80%;
+}
+h2 {
+font-size: 28px;
+border-bottom: 2px solid #004703;
+width:70%;
+}
+h3 {
+font-size: 24px;
+border-bottom: 1px solid #004703;
+width:60%;
+}
+h4 {
+font-size: 20px;
+border-bottom: 1px solid #004703;
+width:40%;
+}
+h5 {
+font-size: 18px;
+}
+h6 {
+font-size: 16px;
+}
+
+.tabbed24 span {
+width: 24em;
+display: inline-block;
+}
+.tabbed20 span {
+width: 20em;
+display: inline-block;
+}
+.tabbed17 span {
+width: 17em;
+display: inline-block;
+}
+.tabbed15 span {
+width: 15em;
+display: inline-block;
+}
+.tabbed12 span {
+width: 12em;
+display: inline-block;
+}
+

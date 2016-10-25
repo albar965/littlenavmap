@@ -1,0 +1,3308 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="language" content="DE" />
+    <meta name="author" content="Alexander Barthel" />
+    <meta name="date" content="2016-10-22T10:37:47+0200" />
+    <meta content="Little Navmap User Manual" name="description" />
+    <title>
+      Little Navmap Benutzerhandbuch
+    </title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+  </head>
+  <body class="c3">
+    <h1>
+      Little Navmap Benutzerhandbuch
+    </h1>
+
+    <p>
+      <img class="textimg" style="width: 100px; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/littlenavmap.svg" />
+    </p>
+
+    <p>
+      <span class="bold">Version 1.1.0.devel</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2toc">
+      Inhalt
+    </h2>
+
+    <p>
+      <span class="bold"><a href="features.html">Eigenschaften und Einschränkungen</a></span>
+    </p>
+
+    <p>
+      <span class="bold"><a href="legend.html">Kartenlegende</a></span>
+    </p>
+
+    <hr width="70%" align="left" />
+
+    <ol>
+      <li>
+        <a href="#h2installation">Installation</a>
+      </li>
+
+      <li>
+        <a href="#h2overview">Schnellübersicht</a>
+      </li>
+
+      <li>
+        <a href="#h2general">Allgemeine Anmerkungen</a>
+      </li>
+
+      <li>
+        <a href="#h2start">Erster Start</a>
+      </li>
+
+      <li>
+        <a href="#h2menu">Menüs and Werkzeugleisten</a>
+      </li>
+
+      <li>
+        <a href="#h2statusbar">Statusleiste</a>
+      </li>
+
+      <li>
+        <a href="#h2mapdisplay">Kartenanzeige</a>
+      </li>
+
+      <li>
+        <a href="#h2fpedit">Flugplanbearbeitung auf der Karte</a>
+      </li>
+
+      <li>
+        <a href="#h2search">Suchfenster</a>
+      </li>
+
+      <li>
+        <a href="#h2flightplan">Flugplanfenster</a>
+      </li>
+
+      <li>
+        <a href="#h2info">Informationsfenster</a>
+      </li>
+
+      <li>
+        <a href="#h2simaircraft">Simulatorflugzeug</a>
+      </li>
+
+      <li>
+        <a href="#h2profile">Höhenprofil</a>
+      </li>
+
+      <li>
+        <a href="#h2weather">Wetter</a>
+      </li>
+
+      <li>
+        <a href="#h2options">Einstellungsdialog</a>
+      </li>
+
+      <li>
+        <a href="#h2scenerylibdialog">Szenerie laden Dialog</a>
+      </li>
+
+      <li>
+        <a href="#h2nosim">Ohne Flugsimulatorinstallation laufen lassen</a>
+      </li>
+
+      <li>
+        <a href="#h2connect">Mit dem Flugsimulator verbinden</a>
+      </li>
+
+      <li>
+        <a href="#h2customtheme">Kartenthemen hinzufügen</a>
+      </li>
+
+      <li>
+        <a href="#h2troubleshoot">Problemlösung</a>
+      </li>
+
+      <li>
+        <a href="#h2knownproblems">Bekannte Probleme</a>
+      </li>
+
+      <li>
+        <a href="#h2bugreport">Fehler berichten</a>
+      </li>
+
+      <li>
+        <a href="#h2files">Dateien</a>
+      </li>
+
+      <li>
+        <a href="#h2acknowlegments">Danksagungen</a>
+      </li>
+
+      <li>
+        <a href="#h2license">Lizenz</a>
+      </li>
+    </ol>
+
+    <div style="margin-left: 1.5em;;margin-top:3em;margin-bottom:3em;">
+      <span class="bold" style="font-size:1.3em">Diese Programm darf nicht für die Navigation in der realen Luftfahrt
+      verwendet werden.</span>
+    </div>
+
+    <h2 id="h2installation">
+      Installation
+    </h2>
+
+    <p>
+      <code>Hervorgehobener Text</code> zeigt Fenster-, Menü-, Schaltflächen-, Datei- or Verzeichnisnamen an.
+    </p>
+
+    <p>
+      Ein Installations- oder Setupprogramm steht nicht zur Verfügung.
+    </p>
+
+    <p>
+      <span class="bold">Das Archiv sollte nicht in <code>c:\Program Files\</code> or <code>c:\Program Files
+      (x86)\</code> installiert werden, da dazu unter manchen Windows Versionen Administratorrechte nötig sind. Da
+      Windows Kontrolle über diese Ordner behält, können weitere Probleme auftreten, wie durch das System gelöschte
+      oder ersetzte Dateien..</span>
+    </p>
+
+    <p>
+      Das Zip-Archiv in einen beliebigen Ordner, wie z.B. <code>c:\Meine Programme\Little Navmap</code> extrahieren.
+      Das Programm anschließend durch Doppelklick auf die <code>littlenavmap.exe</code> starten. Siehe auch <a href=
+      "#h2start">Erster Start</a> für mehr informationen.
+    </p>
+
+    <p>
+      <em>Little Navmap</em> ist ein 32-bit Programm und wurde mit Windows XP, Windows 7, Windows 8.1 and Windows 10
+      getestet.
+    </p>
+
+    <h2 id="h2overview">
+      Schnellübersicht
+    </h2>
+
+    <p>
+      <a href="images/overview.jpg"><img style="width: 80%; height:auto" alt="Little Navmap Übersicht" title=
+      "Little Navmap Übersicht" src="images/overview.jpg" /></a>
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben (anklicken für große Ansicht):</span> <span class="capt"><em>Little Navmap</em>
+      Übersicht der wichtigsten Funktionen.</span>
+    </p>
+
+    <h2 id="h2general">
+      Allgemeine Anmerkungen
+    </h2>
+
+    <h3>
+      Benutzerschnittstelle
+    </h3>
+
+    <p>
+      Die graphische Oberfläche von <em>Little Navmap</em> besteht aus mehreren <span class="bold">Dock-Fenstern</span>
+      , die um das Karten- bzw. Hauptfenster angeordnet sind.
+    </p>
+
+    <p>
+      Die Dock-Fenster können im angedockten Zustand verschoben und auch vom Hauptfenster abgelöst werden, indem sie
+      einfach vom Kartenfenster abgelöst werden. Alternativ kann man auch doppelt auf die Titelleiste oder auf das
+      Fenstersymbol oben rechts klicken.
+    </p>
+
+    <p>
+      Ein Doppelklick auf die Titelzeile oder das Fenstersymbol bringt das Fenster zurück in seine angedockte Position.
+    </p>
+
+    <p>
+      Alle Dock-Fenster kann man schließen, wenn sie nicht gebraucht werden. Man kann die Dock-Fenster auch aufeinander
+      stapeln, wobei dann eine Tableiste an der Unterseite des Stapels erscheint.
+    </p>
+
+    <p>
+      <span class="bold">Werkzeugleisten</span> können auch verschoben oder vom Hauptfenster abgelöst werden, wenn auf
+      das Symbol links auf der Leiste klickt.
+    </p>
+
+    <p>
+      Über das Menü <code>Main Menu</code> -&gt; <code>Window</code> können Fenster oder Werkzeugleisten wieder
+      hervorgeholt werden.
+    </p>
+
+    <p>
+      Der <span class="bold">Titel der Hauptfensters</span> zeigt die aktuell gewählte Simulator-Datenbank
+      (<code>FSX</code>, <code>FSXSE</code>, <code>P3DV2</code> oder <code>P3DV3</code>), den Dateinamen des Flugplanes
+      und ein angehängtes <code>*</code>, falls der Flugplan geändert wurde.
+    </p>
+
+    <p>
+      Fast alle Dialoge, Texte und alle Informationsfenster in <em>Little Navmap</em> <span class="bold">Kopieren und
+      Einfügen</span>. Der Text kann mit der Maus ausgewählt werden und dann entweder mit der Tastenkombination
+      <code>Strg-C</code> oder dem Kontextmenü in die Zwischenablage kopiert werden. Es ist sogar möglich, formatierten
+      Text zu kopieren.
+    </p>
+
+    <p>
+      Die Tabellenasichten des Flugplanes oder der Suche erlauben es, den Inhalt im CSV-Format in die Zwischenablage zu
+      kopieren.
+    </p>
+
+    <p>
+      <a href="images/all.jpg"><img style="width: 50%; height:auto" alt="Little Navmap" title="Little Navmap" src=
+      "images/all.jpg" /></a>
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben (anklicken für große Ansicht):</span> <span class="capt"><em>Little Navmap</em>
+      mit Karte und angedockten Fenstern. Die momentan ausgewählte Simulator-Datenbank ist FSX, der aktuelle Flugplan
+      ist <code>IFR Les Eplatures (LSGC) to Dagali (ENDI).pln</code>.</span>
+    </p>
+
+    <h3>
+      Übersetzung and Gebietsschema
+    </h3>
+
+    <p>
+      <em>Little Navmap</em> is momentan nur in Englisch verfügbar. Ich werden jeden unterstützen, der die
+      Benutzerschnittstelle in eine andere Sprache übersetzen will. Programmierkenntnisse sind dazu nicht notwendig.
+      Trotz der Englischen Sprache wird jedoch das Gebietsschema des Betriebssystems benutzt. Das heißt, dass z.B. im
+      Deutschen ein Komma als Dezimaltrennzeichen anstatt des Englischen Punkt benutzt wird
+    </p>
+
+    <p>
+      <span class="bold">Die Bildschirmfoto in dieser Anleitung wurden mit einem deutschen Gebietsschema erstellt.
+      Daher wird das Komma als Dezimaltrennzeichen gezeigt.</span>
+    </p>
+
+    <p>
+      Einheiten können momentan nicht eingestellt bzw. geändert werden. Es werden ausschließlich Fuß, Nautische Meilen
+      und Knoten verwendet.
+    </p>
+
+    <h3>
+      Kartenlegende
+    </h3>
+
+    <p>
+      Die Legende erklärt alle Kartensymbole und die Symbole des <code>Flight Plan Elevation Profile</code> Fensters.
+      Sie ist im <code>Information</code> Dock-Fenster sowie als Web-Dokument <a href="legend.html">Little Navmap
+      Legend</a> verfügbar.
+    </p>
+
+    <h3>
+      Namenskonventionen
+    </h3>
+
+    <ul>
+      <li>
+        <code>Hervorgehobener Text</code> zeigt Fenster-, Menü-, Schaltflächen-, Datei- or Verzeichnisnamen an.
+      </li>
+
+      <li>
+        <span class="bold">Leerer Flugplatz (Empty airport):</span> Ein Flugplatz, der keine Rollbahnen,
+        Parkpositionen, Flugsteige (Gates) und keine Vorfelder hat und auch kein Add-On Flugplatz ist. Ein Ausnahme
+        dieser Regel bilden Wasserflugplätze.
+      </li>
+
+      <li>
+        <span class="bold">Erweiterungsflugplatz (Add-on airport):</span> Dies ist ein Flugplatz, der während des
+        Ladens außerhalb der Standardszenerie im Flugsimulator gefunden wurde.
+      </li>
+
+      <li>
+        <span class="bold">Szeneriedatenbank (Scenery Library Database):</span> Dies ist die interne Datenbank
+        (<a href="http://sqlite.org" target="_blank">SQLite</a>) von, die von <em>Little Navmap</em> beim Lesen der
+        Szeneriedaten erzeugt wird. Sie erlaubt das Indizieren, die schnelle Suche und Kartenanzeige.
+      </li>
+
+      <li>
+        <span class="bold">Navigationspunkt (Navaid):</span> VOR- oder NDB-Funkfeuer sowie Wegpunkte.
+      </li>
+
+      <li>
+        <span class="bold">Funkfeuer (Radio navaid):</span> VOR or NDB
+      </li>
+
+      <li>
+        <span class="bold">Parkposition (Parking):</span> Parkposition der allgemeinen Luftfahrt, Frachtrampe,
+        Tankposition oder Flugsteig.
+      </li>
+
+      <li>
+        <span class="bold">Start Position:</span> Startposition für Flugpläne. Kann eine beliebige Parkposition sowie
+        auch Landebahn oder Helikopterlandeplatz.
+      </li>
+
+      <li>
+        <span class="bold">Wertung (Rating):</span> Flugplätze bekommen ein Null- bis Fünf-Sterne-Wertung, abhängig
+        davon, welche Einrichtungen vorhanden sind. Flugplätze ohne Wertung werden als langweilig erachtet und werden
+        mit einen grauen Symbol hinter allen anderen Flugplätzen auf der Karte angezeigt (<em>Empty Airport</em>).
+        Dieses Verhalten kann im Dialog <code>Options</code> auf dem Tab <code>Map Display</code> ausgeschaltet werden.
+        Die folgenden Kriterien werden benutzt, um die Wertung zu berechnen. Jeder Punkt ergibt einen Stern:
+        <ol>
+          <li>Erweiterung
+          </li>
+
+          <li>Parkpositionen (Rampe oder Flugsteig)
+          </li>
+
+          <li>Rollbahnen
+          </li>
+
+          <li>Vorfelder
+          </li>
+
+          <li>Tower-Gebäude (nur wenn mindestens eine der oben genannten Bedingungen erfüllt ist).
+          </li>
+        </ol>
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2start">
+      Erster Start
+    </h2>
+
+    <p>
+      Beim erstmaligen Starten von <em>Little Navmap</em> wird der <a href="#h2scenerylibdialog">Scenery Library
+      Dialog</a> angezeigt. Dort können alle erkannten Flugsimulatorinstallationen ausgewählt und ihre
+      Szeneriebibliotheken in die interne Datenbank geladen werden. Für jeden Simulator wird eine Datenbank erstellt,
+      die ohne Neustart des Programmes im Menü <a href="#scenerylibrary">Scenery Library</a> gewechselt werden kann.
+    </p>
+
+    <p>
+      Wenn beim ersten Start keine Flugsimulatorinstallation gefunden wurde, wird ein Warndialog angezeigt. Siehe
+      <a href="#h2nosim">Ohne Flugsimulatorinstallation laufen lassen</a> für mehr Informationen.
+    </p>
+
+    <p>
+      Falls eine neue Version von <em>Little Navmap</em> installiert wurde kann es sein, dass die Szeneriedatenbank
+      aktualisiert werden muss. Im diesem Fall wird ein Abfragedialog angezeigt, in dem das Löschen der inkompatiblen
+      Datenbank oder Datenbanken bestätigt werden muss. Nach dem Löschen kann die interne Szeneriedatenbank wieder im
+      <a href="#h2scenerylibdialog">Szenerie laden Dialog</a> neu befüllt werden.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2menu">
+      Menüs and Werkzeugleisten
+    </h2>
+
+    <p>
+      Dieses Kapitel beschreibt alle Menüpunkte von <em>Little Navmap</em>. Die meisten sind auch auf den
+      Werkzeugleisten aufzufinden, weswegen diese nicht gesondert beschrieben werden. Tastenkombinationen können in den
+      Menüpunkten eingesehen werden und werden nicht separat aufgeführt.
+    </p>
+
+    <p>
+      <img alt="Little Navmap Menüs and Werkzeugleisten" title="Little Navmap Menü und Werkzeugleisten" src=
+      "images/menutoolbar.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Menüs and Werkzeugleisten in ihren angedockten
+      Standardpositionen.</span>
+    </p>
+
+    <h3>
+      Menü File
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="New Flight Plan" title="New Flight Plan" src="images/icons/filenew.png" /> New Flight
+      Plan
+    </h4>
+
+    <p>
+      Löscht den aktuellen Flugplan und erstellt einen neuen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Open Flight Plan" title="Open Flight Plan" src="images/icons/fileopen.png" /> Open
+      Flight Plan
+    </h4>
+
+    <p>
+      Öffnet einen Flugplan (PLN-Datei). FS9 Flugpläne werden nicht unterstützt.
+    </p>
+
+    <p>
+      Ein geöffneter Flugplan wird beim Neustart wieder geladen. Das Neuladen und das Anzeigen bzw. Zentrieren des
+      Flugplanes kann im <code>Options</code> Dialog auf den <code>Startup</code> und <code>User Interface</code> Tabs
+      eingestellt werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Append flight plan" title="Append flight plan" src="images/icons/fileappend.png" />
+      Append Flight Plan
+    </h4>
+
+    <p>
+      Hängt den Start, das Ziel und alle Wegpunkte an den aktuellen Flugplan an.
+    </p>
+
+    <p>
+      Die Funktion <code>Append Flight Plan</code> erlaubt es, komplette Flugpläne oder Flugplanfragmente zu einem
+      neuen Flugplan zusammenzufügen. Alle Wegpunkte werden am Ende des aktuellen Flugplanes angehängt. Diese können
+      dann mit den Menüpunkten <code>Delete selected Legs</code> und <code>Move selected Legs up/down</code> aus dem
+      Kontextmenu verschoben werden. Siehe <a href="#h3fpcontext">Flugplantabelle Kontextmenü</a> für mehr
+      Informationen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Save Flight Plan" title="Save Flight Plan" src="images/icons/filesave.png" /> Save
+      Flight Plan
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Save Flight Plan as" title="Save Flight Plan as" src="images/icons/filesaveas.png" />
+      Save Flight Plan as
+    </h4>
+
+    <p>
+      Speichert den aktuellen Flugplan in eine FSX PLN Date (XML-Format).
+    </p>
+
+    <p>
+      <em>Little Navmap</em> erlaubt es Flugpläne zu erstellen, die vom Flugsimulator nicht nutzbar sind. Das ist der
+      Fall, wenn ein Flugplan keinen Flugplatz als Start- oder Zielposition hat. Ein Warndialog wird beim Speichern
+      angezeigt, wenn das der Fall ist.
+    </p>
+
+    <p>
+      Ein Warndialog wird außerdem angezeigt, wenn der Startflugplatz Parkpositionen hat, im Flugplan jedoch keine
+      benutzt wird.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Add Google Earth KML" title="Add Google Earth KML" src=
+      "images/icons/kmlfileopen.png" /> Add Google Earth KML
+    </h4>
+
+    <p>
+      Dieser Menüpunkt erlaubt es, Google Earth KML- bzw. KMZ-Dateien zur Kartenansicht hinzuzufügen. Die Dateien
+      werden beim Neustart wieder geladen. Das Neuladen und das Anzeigen bzw. Zentrieren des Flugplanes kann im
+      <code>Options</code> Dialog auf den <code>Startup</code> und <code>User Interface</code> Tabs eingestellt werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Clear Google Earth KML from Map" title="Clear Google Earth KML from Map" src=
+      "images/icons/cancel.png" /> Clear Google Earth KML from Map
+    </h4>
+
+    <p>
+      Entfernt alle geladenen Google Earth KML- bzw. KMZ-Dateien von der Karte.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Offline" title="Offline" src="images/icons/offline.png" /> Work Offline
+    </h4>
+
+    <p>
+      Stoppt das Laden von Kartendaten aus dem Internet. Dies betrifft alle Onlinekarten, wie die
+      <em>OpenStreetMap</em>, die <em>OpenTopoMap</em> sowie die Daten für das Flugplan-Höhenprofil.
+    </p>
+
+    <p>
+      Nachdem die Anwendung wieder auf Online Betrieb umgeschaltet wurde, sollte ein Neustart durchführt werden.
+    </p>
+
+    <h3>
+      Menü Flight Plan
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Undo" title="Undo" src="images/icons/undo.png" /> <img class="textimg" alt="Redo"
+      title="Redo" src="images/icons/redo.png" /> Undo/Redo
+    </h4>
+
+    <p>
+      Erlaubt es, Änderungen am Flugplan rückgängig zu machen oder zu wiederholen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Select a Start Position for Departure" title="Select a Start Position for Departure"
+      src="images/icons/parkingstartset.png" /> Select a Start Position for Departure
+    </h4>
+
+    <p>
+      Eine Parkposition (Rampe, Tankposition oder Flugsteig), Landebahn oder Helikopterlandeplatz können mit dieser
+      Funktion für den Startflugplatz festgelegt werden. Ein Startposition kann auch über das Kontextmenü der Karte mit
+      dem Menüpunkt <a href="#fpdeparture">Set as Flight Plan Departure</a> ausgewählt werden. Wenn keine Startposition
+      ausgewählt wurde, wird automatisch ein Startpunkt auf der längsten Landebahn gewählt.
+    </p>
+
+    <p>
+      <img alt="Select Start Position Dialog" title="Select Start Position Dialog" src=
+      "images/selectstartposition.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Der Auswahldialog für Startpositionen für Nürnberg
+      (EDDN).</span>
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Edit Flight Plan on Map" title="Edit Flight Plan on Map" src=
+      "images/icons/routeedit.png" /> Edit Flight Plan on Map
+    </h4>
+
+    <p>
+      Schaltet den Drag-and-Drop Bearbeitungsmodus für den Flugplan in der Karte an oder aus. Siehe auch <a href=
+      "#fpedit">Flugplanbearbeitung auf der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Calculate Direct" title="Calculate Direct" src="images/icons/routedirect.png" />
+      Calculate Direct
+    </h4>
+
+    <p>
+      Löscht alle Wegpunkte und verbindet Start und Ziel mit einer direkten Messlinie (Großkreisroute).
+    </p>
+
+    <p>
+      Flugpläne können zwischen allen Wegpunkttypen erstellt werden, sogar zwischen Benutzerdefinierten Wegpunkten (zum
+      Erzeugen eines benutzerdefinierten Wegpunktes in die Karte rechtsklicken und <code>Add Position to Flight
+      plan</code> auswählen). Dies ermöglicht das Erstellen von Flugplanfragmenten, die zu Flugplänen zusammengefügt
+      bzw. kombiniert werden können. Sämtliche Berechnungsmodi für Flugpläne können auch auf Fragmente angewand werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Calculate Radionav" title="Calculate Radionav" src="images/icons/routeradio.png" />
+      Calculate Radionav
+    </h4>
+
+    <p>
+      Berechnet einen Flugplan, der nur VOR- und NDB-Funkfeuer berücksichtigt. Bei der Berechnung wird, soweit möglich,
+      sichergestellt, dass sich das Flugzeug immer in Reichweite eines Funkfeuers befindet. VOR-Funkfeuer werdern
+      gegeüber NDB-Funkfeuern bevorzugt und DME Stationen werden vermieden. Die Berechnung kann fehlschlagen, wenn
+      nicht genügend Stationen zwischen Start und Ziel gefunden werden können. In diesem Fall kann der Flugplan manuell
+      erstellt werden.
+    </p>
+
+    <p>
+      Diese Berechnung kann auch dazu benutzt werden, um ein Flugplanfragment zwischen beliebigen Wegpunkten zu
+      erzeugen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Calculate high Altitude" title="Calculate high Altitude" src=
+      "images/icons/routehigh.png" /> Calculate high Altitude
+    </h4>
+
+    <p>
+      Erstellt einen Flugplan entlang von Jet Luftstraßen.
+    </p>
+
+    <p>
+      Die sich aus der Berechnung ergebende minimale Reiseflughöhe wird in das Feld im Flugplanfenster eingetragen. Die
+      Reiseflughöhe im Flugplanfenster wird nicht geändert, falls keine Höhenrestriktionen entlang der Luftstraßen
+      gefunden wurden.
+    </p>
+
+    <p>
+      Eine vereinfachte Ost/West-Regel wird benutzt, um die Reiseflughöhe an gerade bzw. ungerade Flughöhen anzupassen.
+      Diese Anpassung kann im <code>Options</code> Dialog auf dem <code>Flight Plan</code> Tab ausgeschaltet werden.
+    </p>
+
+    <p>
+      Das Standardverhalten ist ein Sprung zum nächsten Wegpunkt einer passenden Luftstraße von der Startposition aus
+      und umgekehrt für das Ziel. Diese Verhalten kann im <code>Options</code> Dialog im <code>Flight Plan</code> Tab
+      geändert werden, so dass VOR- oder NDB-Funkfeuer bevorzugt werden, um eine passende Luftstraße zu erreichen.
+    </p>
+
+    <p>
+      Das Luftstraßennetzwerk im Flugsimulator is nicht komplett, z.B. fehlen die Nordatlantik-Tracks, welche sich
+      täglich ändern. Daher kann die Berechnung über große Wasserflächen fehlschlagen. In diesem Fall kann der Flugplan
+      manuell erstellt werden oder aus Fragmenten zusammengeführt werden.
+    </p>
+
+    <p>
+      Diese Berechnung kann auch dazu benutzt werden, um ein Flugplanfragment zwischen beliebigen Wegpunkten zu
+      erzeugen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Calculate low Altitude" title="Calculate low Altitude" src=
+      "images/icons/routelow.png" /> Calculate low Altitude
+    </h4>
+
+    <p>
+      Benutz Victor Luftstraßen, um einen Flugplan zu erstellen. Alles Weitere is gleich zu <code>Calculate high
+      Altitude</code>.
+    </p>
+
+    <h4 id="calcfpalt">
+      <img class="textimg" alt="Calculate based on given Altitude" title="Calculate based on given Altitude" src=
+      "images/icons/routealt.png" /> Calculate based on given Altitude
+    </h4>
+
+    <p>
+      Benutzt das Feld Reiseflughöhe im Flugplanfenster, um eine geeigneten Flugplan entlang von Victor oder Jet
+      Luftstraßen zu berechnen. Die Berechnung kann fehlschlagen, wenn die Reiseflughöhe zu niedrig angesetzt wird.
+      Alles Weitere is gleich zu <code>Calculate high Altitude</code>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Reverse Flight Plan" title="Reverse Flight Plan" src="images/icons/routereverse.png" />
+      Reverse Flight Plan
+    </h4>
+
+    <p>
+      Vertauscht die Start- und Zielposition und kehrt die Reihenfolge aller Wegpunkte um. Die längste Landebahn wird
+      automatisch als Startposition zugewiesen.
+    </p>
+
+    <h3>
+      Menü Map
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Goto Home" title="Goto Home" src="images/icons/home.png" /> Goto Home
+    </h4>
+
+    <p>
+      Springt auf der Karte zu dem Bereich, der mit <a href="#mapsethome">Set Home</a> festgelegt wurde. Das Zentrum
+      dieses Bereiches wird duch das Symbol <img class="textimg" alt="Home Symbol" title="Home Symbol" src=
+      "images/icons/homesymbol.png" /> gekennzeichnet.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Go to Center for Distance Search" title="Go to Center for Distance Search" src=
+      "images/icons/centermark.png" /> Go to Center for Distance Search
+    </h4>
+
+    <p>
+      Springt auf der Karte zum Zentrum, das für die Distanzsuche festgelegt wurde. Siehe <a href=
+      "#mapsetdistcenter">Set Center for Distance Search</a> für mehr Informationen zur Distanzsuche. Das Zentrum für
+      die Distanzsuche wird durch das Symbol <img class="textimg" alt="Distance Search Symbol" title=
+      "Distance Search Symbol" src="images/icons/distancemark.png" /> markiert.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Center Flight Plan" title="Center Flight Plan" src="images/icons/centerroute.png" />
+      Center Flight Plan
+    </h4>
+
+    <p>
+      Zeigt den Flugplan auf der Karte.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Center Aircraft" title="Center Aircraft" src="images/icons/centeraircraft.png" />
+      Center Aircraft
+    </h4>
+
+    <p>
+      Zeigt das Simulatorflugzeug auf der Karte, wenn das Programm über <a href=
+      "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> mit dem Flugsimulator
+      verbunden ist.
+    </p>
+
+    <p>
+      Die Zentrierung des Flugzeuges kann im <code>Options</code> Dialog auf dem <code>Simulator Aircraft</code> Tab
+      eingestellt werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Delete Aircraft Trail" title="Delete Aircraft Trail" src=
+      "images/icons/aircrafttraildelete.png" /> Delete Aircraft Trail
+    </h4>
+
+    <p>
+      Löscht die Spur des Simulatorflugzeuges. Die Spur wird beim Neustart wieder geladen und sonst erst gelöscht, wenn
+      eine neue Verbindung mit dem Simulator aufgebaut wird.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Map Position Back" title="Map Position Back" src="images/icons/back.png" /> <img class=
+      "textimg" alt="Map Position Forward" title="Map Position Forward" src="images/icons/next.png" /> Map Position
+      Back/Forward
+    </h4>
+
+    <p>
+      Spring vor- oder rückwärts in der Historie der Kartenpositionen. Die Historie wird gespeichert und beim Neustart
+      wieder geladen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="More Details" title="More Details" src="images/icons/detailmore.png" /> <img class=
+      "textimg" alt="Default Details" title="Default Details" src="images/icons/detaildefault.png" /> <img class=
+      "textimg" alt="Less Details" title="Less Details" src="images/icons/detailless.png" /> More/Default/Less Details
+    </h4>
+
+    <p>
+      Stellt mehr oder weniger Details für die Kartendarstellung ein. Mehr Details bedeuten mehr Flugplätze, mehr
+      Navigationspunkte, mehr Textinformationen und größere Symbole.
+    </p>
+
+    <p>
+      Die maximale Anzahl von Kartenobjekten is auf 3000 begrenzt.
+    </p>
+
+    <h4>
+      Projection
+    </h4>
+
+    <h5>
+      Mercator
+    </h5>
+
+    <p>
+      Eine flache Projektion, welche die flüssigste Kartenbewegung und die schärfsten Kartendetails ergibt, wenn sie
+      mit einem Kachel- bzw. Bildbasierenden Kartenthema, wie der <em>OpenStreetMap</em> oder der <em>OpenTopoMap</em>
+      benutzt wird.
+    </p>
+
+    <h5>
+      Spherical
+    </h5>
+
+    <p>
+      Zeigt die Erde als runden Globus und ist die natürlichste Kartendarstellung. Kartenbewegungen sind nicht so
+      flüssig und die Darstellung nicht so scharf, wenn sie mit einem Kachel- bzw. Bildbasierenden Kartenthema, wie der
+      <em>OpenStreetMap</em> oder der <em>OpenTopoMap</em> benutzt wird. Die Kartenthemen <code>Simple</code>,
+      <code>Plain</code> oder <code>Atlas</code> vermeiden diese Nachteile.
+    </p>
+
+    <p>
+      Die unscharfe Darstellung der Karten is ein Ergebnis der Konvertierung von flachen Bildkacheln auf die
+      Globusdarstellung.
+    </p>
+
+    <p>
+      <img alt="Little Navmap Spherical projection and Simple Map Theme" title=
+      "Little Navmap Spherical projection and Simple Map Theme" src="images/sphericalpolitical.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Sphärische Kartenprojektion mit dem
+      <code>Simple</code> Offline Kartenthema.</span>
+    </p>
+
+    <h4 id="maptheme">
+      Theme
+    </h4>
+
+    <p>
+      Die Kartenthemen von <em>Little Navmap</em> werden von freien Kartendiensten ausgeliefert, die keine
+      Verfügbarkeit oder Ladegeschwindigkeit garantieren können. Auf jedem Fall könne eigene Konfigurationen für neue
+      Kartenthemen erstellt werden ohne eine neue Version von <em>Little Navmap</em> erstellen zu müssen. Siehe
+      <a href="#h2customtheme">Kartenthemen hinzufügen</a> für mehr Informationen zu diesem Thema.
+    </p>
+
+    <h5>
+      OpenStreetMap
+    </h5>
+
+    <p>
+      Dies ist eine Online-Rasterkarte (basierend auf Bildkacheln), die eine Option für Bergsschattierung zur Verfügung
+      stellt. Die Bergsschattierung der <em>OpenStreetMap</em> steht nicht weltweit zur Verfügung.
+    </p>
+
+    <p>
+      <em>OpenStreetMap</em> Daten werden nicht direkt von den <em>OpenStreetMap</em> Onlinedienst heruntergeladen,
+      sondern benutzen den <a href="https://maptiles.xyz" target="_blank">MapTiles proxy service</a>.
+    </p>
+
+    <p>
+      <img alt="OpenStreetMap and Hill shading" title="OpenStreetMap and Hill shading" src=
+      "images/osmhillshading.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Italienischer Flugplatz mit <em>OpenStreetMap</em>
+      Kartenthema und Bergschattierung.</span>
+    </p>
+
+    <h5>
+      OpenMapSurfer
+    </h5>
+
+    <p>
+      Die <a href="http://korona.geog.uni-heidelberg.de" target="_blank">OSM Roads</a> Online-Rasterkarten werden von
+      der <a href="http://giscience.uni-hd.de" target="_blank">Universität Heidelberg</a> zur Verfügung gestellt.
+      Dieses Kartenthema beinhaltet eine Option für Bergschattierung, die weltweit zur Verfügung steht.
+    </p>
+
+    <p>
+      Die Option für Bergschattierung ist in dieser Karte als experimentell markiert.
+    </p>
+
+    <p>
+      Die Kartendaten dieser Karte sind © <a href="http://osm.org" target="_blank">OpenStreetMap</a> Beiträger, die
+      Kartendarstellung <a href="http://giscience.uni-hd.de" target="_blank">GIScience Research Group @ Heidelberg
+      University</a> und der Kartenstil von Maxim Rylov.
+    </p>
+
+    <p>
+      <a href="http://srtm.csi.cgiar.org" target="_blank">SRTM</a>; ASTER GDEM is a product of <a href=
+      "http://www.meti.go.jp/english/index.html" target="_blank">METI</a> and <a href=
+      "https://lpdaac.usgs.gov/dataset_discovery/aster/aster_policies" target="_blank">NASA</a>.
+    </p>
+
+    <p>
+      <img alt="OSM Roads and Hill shading" title="OSM Roads and Hill shading" src="images/osmroad.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Italienischer Flugplatz mit <em>OpenMapSurfer</em>
+      Kartenthema und Bergschattierung.</span>
+    </p>
+
+    <h5>
+      OpenTopoMap
+    </h5>
+
+    <p>
+      Dies ist eine Online-Rasterkarte, die eine topographische Karte nachahmt. Sie beinhaltet Berschattierung und
+      Höhenkonturlinien auf niedrigen Zoomstufe.
+    </p>
+
+    <p>
+      Die Bildkacheln für diese Karte werden von <a href="http://www.opentopomap.org" target="_blank">OpenTopoMap</a>
+      zur Verfügung gestellt.
+    </p>
+
+    <p>
+      <img alt="OpenTopoMap" title="OpenTopoMap" src="images/otm.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Sicht auf die östlichen Alpen mit dem
+      <em>OpenTopoMap</em> Kartenthema. Nördlich der Alpen ist ein Flugplan zu sehen.</span>
+    </p>
+
+    <h5>
+      Stamen Terrain
+    </h5>
+
+    <p>
+      Eine Online-Rasterkarte und Geländekarte mit weltweit verfügbarer Bergschattierung und natürlichen
+      Vegetationsfarben.
+    </p>
+
+    <p>
+      Die Karte wird von <a href="http://stamen.com" target="_blank">Stamen Design</a>, unter der <a href=
+      "http://creativecommons.org/licenses/by/3.0" target="_blank">CC BY 3.0</a> Lizenz zur Verfügung gestellt. Die
+      Daten stehen von der <a href="http://openstreetmap.org" target="_blank">OpenStreetMap</a> unter der <a href=
+      "http://www.openstreetmap.org/copyright" target="_blank">ODbL</a> zur Verfügung.
+    </p>
+
+    <p>
+      <img alt="Stamen Terrain" title="Stamen Terrain" src="images/stamenterrain.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Das <em>Stamen Terrain</em> Kartenthema.</span>
+    </p>
+
+    <h5>
+      Simple (Offline)
+    </h5>
+
+    <p>
+      Eine politische Offline-Karte mit gefärbten Landesflächen. Grenzen und Wasserflächen werden nur grob dargestellt.
+      Die Karte wird zusammen mit <em>Little Navmap</em> ausgeliefert und hat einen Option, um Stadt- und Ländernamen
+      anzuzeigen.
+    </p>
+
+    <h5>
+      Plain (Offline)
+    </h5>
+
+    <p>
+      Eine sehr einfache Offline-Karte. Grenzen und Wasserflächen werden nur grob dargestellt. Die Karte wird zusammen
+      mit <em>Little Navmap</em> ausgeliefert und hat einen Option, um Stadt- und Ländernamen anzuzeigen.
+    </p>
+
+    <h5>
+      Atlas (Offline)
+    </h5>
+
+    <p>
+      Eine sehr einfache Offline-Karte, die auch Bergschattierung und Landfarben enthält. Grenzen und Wasserflächen
+      werden nur grob dargestellt. Die Karte wird zusammen mit <em>Little Navmap</em> ausgeliefert und hat einen
+      Option, um Stadt- und Ländernamen anzuzeigen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Force Show Addon Airports" title="Force Show Addon Airports" src=
+      "images/icons/airportaddon.png" /> Force Show Addon Airports
+    </h4>
+
+    <p>
+      Add-on Flugplätze werden unabhängig von den anderen Flugplatzeinstellungen (Hard oder Soft Runways) der Karte
+      immer angezeigt, wenn diese Option ausgewählt ist. Dies erlaubt es nur Add-on Flugplätze auf der Karte
+      anzuschauen, indem diese Option ausgewählt wird und alle anderen Flugplatzoptionen ausgeschaltet werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Airports with hard Runways" title="Show Airports with hard Runways" src=
+      "images/icons/airport.png" /> Show Airports with hard Runways
+    </h4>
+
+    <p>
+      Zeige Flugplätze, die mindestens eine feste Landebahn haben.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Airports with soft Runways" title="Show Airports with soft Runways" src=
+      "images/icons/airportsoft.png" /> Show Airports with soft Runways
+    </h4>
+
+    <p>
+      Zeige Flugplätze, die nur weiche oder Wasserlandebahnen haben. Dieser Typ Flugplatz wird abhängig von der
+      Zoomstufe nicht in der Karte angezeigt.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show empty Airports" title="Show empty Airports" src="images/icons/airportempty.png" />
+      Show empty Airports
+    </h4>
+
+    <p>
+      Zeige leere Flugplätze. Diese Schaltfläche bzw. dieser Menüpunkt kann abhängig von den Einstellungen im
+      <code>Options</code> Dialog auf dem <code>Map Display</code> Tab verborgen oder sichtbar sein. Die Funktion
+      dieses Menüpunktes wird zusammen mit den anderen Flugplatzeinstellungen kombiniert. Das heisst: Um leere
+      Fluplätze mit nur weichen Landebahnen zu sehen müssen Flugplätze mit weichen Landebahnen und diese Option
+      eingeschaltet sein.
+    </p>
+
+    <p>
+      Ein leerer Flugplatz ist kein Add-On, hat keine Rollbahnen, keine Parkpositionen, kein Flugsteige und auch keine
+      Vorfelder. Diese Flugplätze werden in <em>Little Navmap</em> anders behandelt, da sie die langweiligsten aller
+      Standardflugplätze sind. Leere Flugplätze werden grau hinter allen anderen Flugplätzen auf der Karte gezeichnet.
+    </p>
+
+    <p>
+      Wasserflugplätze sind von dieser Definiton ausgenommen um ein unabsichtliches Verbergen zu vermeiden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show VOR Stations" title="Show VOR Stations" src="images/icons/vor.png" /> Show VOR
+      Stations
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show NDB Stations" title="Show NDB Stations" src="images/icons/ndb.png" /> Show NDB
+      Stations
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Waypoints" title="Show Waypoints" src="images/icons/waypoint.png" /> Show
+      Waypoints
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show ILS Feathers" title="Show ILS Feathers" src="images/icons/ils.png" /> Show ILS
+      Feathers
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Jet Airways" title="Show Jet Airways" src="images/icons/airwayjet.png" /> Show Jet
+      Airways
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Victor Airways" title="Show Victor Airways" src="images/icons/airwayvictor.png" />
+      Show Victor Airways
+    </h4>
+
+    <p>
+      Zeigt oder verbirgt diese Einrichtungen auf derr Karte. Navigationspunkte könne abhängig von der Zoomstufe der
+      Karte versteckt werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Flight Plan" title="Show Flight Plan" src="images/icons/route.png" /> Show Flight
+      Plan
+    </h4>
+
+    <p>
+      Zeigt oder verbirgt den Flugplan auf der Karte. Der Flugplan wird unabhängig von der Zoomstufe immer angezeigt.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Aircraft" title="Show Aircraft" src="images/icons/aircraft.png" /> Show Aircraft
+    </h4>
+
+    <p>
+      Zeigt das Simulatorflugzeug, falls eine Verbindung besteht. Der Simulatorflugzeug wird unabhängig von der
+      Zoomstufe immer angezeigt.
+    </p>
+
+    <p>
+      Das Verfolgen des Simulatorflugzeugs wird ausgeschaltet, wenn eine der folgenden Funktionen aufgerufen wird:
+      <br />
+    </p>
+
+    <ul>
+      <li>Doppelklick in die Karte oder eine Tabellenansicht um einen Flugplan oder Navigationspunkt auf der Karte zu
+      zeigen.
+      </li>
+
+      <li>Aufruf der Menüpunktes <code>Show on map</code> in einem Kontexmenü.
+      </li>
+
+      <li>Aufruf von <code>Goto Home</code> oder <code>Goto Center for Distance Search</code>.
+      </li>
+
+      <li>Anklicken des <code>Map</code> Links im <code>Information</code> Dock-Fenster.
+      </li>
+
+      <li>Aufruf von <code>Show Flight Plan</code>. Entweder manuell im Menü oder nach dem Laden eines Flugplanes.
+      </li>
+
+      <li>Anzeigen einer Google Earth KML/KMZ Datei nach dem Laden.
+      </li>
+    </ul>
+
+    <p>
+      Dies erlaubt es einen schnellen Blick auf einen Flugplatz oder Navigationspunkt während eines Fluges zu werfen.
+      Um zum Simulatorflugzeug zurückzukehren, <code>Map Position Back</code> auswählen und <code>Show Aircraft</code>
+      wieder aktivieren.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Aircraft Trail" title="Show Aircraft Trail" src=
+      "images/icons/aircrafttrail.png" /> Show Aircraft Trail
+    </h4>
+
+    <p>
+      Zeigt die Spur des Simulatorflugzeuges. Der Sput wird unabhängig von der Zoomstufe immer angezeigt und beim
+      Neustart des Programmes wieder geladen.
+    </p>
+
+    <p>
+      Die Spur wird beim Verbindungsaufbau zu einem Flugsimulator gelöscht. Manuelles Löschen ist möglich, indem
+      <code>Main Menu</code> -&gt; <code>Map</code> -&gt; <code>Delete Aircraft Trail</code> ausgewählt wird.
+    </p>
+
+    <p>
+      Die Größe der Spur ist aus Performancegründen limitiert. Punkte werden vom Start der Spur entfernt, wenn sie zu
+      lang wird.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Map Grid" title="Show Map Grid" src="images/icons/mapgrid.png" /> Show Map Grid
+    </h4>
+
+    <p>
+      Zeigt ein Längen- und Breitengradgitter auf der Karte, sowie den <a href=
+      "http://de.wikipedia.org/wiki/Nullmeridian" target="_blank">Nullmeridian und Antimeridian</a> auf der Karte.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Country and City Names" title="Show Country and City Names" src=
+      "images/icons/cities.png" /> Show Country and City Names
+    </h4>
+
+    <p>
+      Zeigt Länder- und Stadtnamen sowie weitere interessante Punkte auf der Karte. Die Verfügbarkeit dieser Option
+      hängt von Kartenthema ab. Siehe auch Informationen zum Menüpunkt <a href="#maptheme">Theme</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Hillshading" title="Show Hillshading" src="images/icons/hillshading.png" /> Show
+      Hillshading
+    </h4>
+
+    <p>
+      Zeigt Bergschattierung auf der Karte. Die Verfügbarkeit dieser Option hängt von Kartenthema ab. Siehe auch
+      Informationen zum Menüpunkt <a href="#maptheme">Theme</a>.
+    </p>
+
+    <h3 id="scenerylibrary">
+      Menü Scenery Library
+    </h3>
+
+    <h4>
+      Flight Simulators
+    </h4>
+
+    <p>
+      Für jeden gefunden Flugsimulator oder jede gefundene Simulatordatenbank wird hier ein Menüeintrag erzeugt. Diese
+      Menüpunkte erlauben ein Umschalten zwischen den Simulatordatenbanken im laufenden Betrieb. Falls nur ein
+      Flugsimulator gefunden wurde, werden keine Menüpunkte angezeigt.
+    </p>
+
+    <p>
+      Das Menü ist mit der Auswahl im <a href="#h2scenerylibdialog">Load Scenery Library Dialog</a> synchronisiert.
+      Wenn eine Szeneriebibliothek erfolgreich geladen wurde, wird die Karte, Suche und alle anderen Funktionen auf die
+      neue Datenbank umgestellt.
+    </p>
+
+    <h4>
+      Show Database Files
+    </h4>
+
+    <p>
+      Dies öffnet das Verzeichnis mit den Datenbankdateien von <em>Little Navmap</em> in einem Dateimanager (Windows
+      Explorer, Apple Finder, etc.). Siehe <a href="#h2nosim">Ohne Flugsimulatorinstallation laufen lassen</a> für eine
+      Anleitung, wie die Flugsimulatordatenbanken zischen verschieden Rechnern kopiert werden können.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Load Scenery Library" title="Load Scenery Library" src="images/icons/database.png" />
+      Load Scenery Library
+    </h4>
+
+    <p>
+      Öffnet den <code>Load Scenery Library</code> Dialog. Siehe <a href="#h2scenerylibdialog">Szenerie laden
+      Dialog</a> für mehr Informationen. Dieser Menüpunkt ist deaktiviert, wenn keine Flugsimulatorinstallationen
+      gefunden wurden.
+    </p>
+
+    <h3>
+      Menü Tools
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Flight Simulator Connection" title="Flight Simulator Connection" src=
+      "images/icons/network.png" /> Flight Simulator Connection
+    </h4>
+
+    <p>
+      Öffnet den <code>Connect</code> Dialog der es erlaubt, sich mittels <a href=
+      "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> mit einem Flugimulator
+      zu verbinden. Siehe auch <a href="#h2connect">Mit dem Flugsimulator verbinden</a> für mehr Information.
+    </p>
+
+    <h4>
+      Reset all Messages
+    </h4>
+
+    <p>
+      Dies erlaubt wieder alle Dialoge, die mittels <code>Do not show this dialog again</code> ausgeschaltet wurden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Options" title="Options" src="images/icons/settings.png" /> Options
+    </h4>
+
+    <p>
+      Öffnet den <a href="#h2options">Einstellungsdialog</a>.
+    </p>
+
+    <h3>
+      Menü Window
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Search" title="Search" src="images/icons/searchdock.png" /> Search
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Flight Plan" title="Flight Plan" src="images/icons/routedock.png" /> Flight Plan
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Information" title="Information" src="images/icons/infodock.png" /> Information
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src=
+      "images/icons/profiledock.png" /> Flight Plan Elevation Profile
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Simulator Aircraft" title="Simulator Aircraft" src="images/icons/aircraftdock.png" />
+      Simulator Aircraft
+    </h4>
+
+    <p>
+      Öffnet oder schließt diese Dock-Fenster.
+    </p>
+
+    <h4>
+      Main Toolbar, Map Toolbar, Map Options Toolbar, Flight Plan Toolbar, Dock Window Toolbar, Statusbar
+    </h4>
+
+    <p>
+      Werkzeug- und Statusleiste verstecken oder anzeigen.
+    </p>
+
+    <h3>
+      Menü Help
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Contents" title="Contents" src="images/icons/help.png" /> Contents
+    </h4>
+
+    <p>
+      Zeigt diese Hilfe im Web-Browser.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="NavMap Legend, Map Legend" title="NavMap Legend, Map Legend" src=
+      "images/icons/help.png" /> NavMap Legend, Map Legend
+    </h4>
+
+    <p>
+      Zeigt die Kartenlegende im <code>Information</code> Dock-Fenster. Die Legende steht auch hier zum Anzeigen im
+      Web-Browser zur Verfügung: <a href="legend.html">Little Navmap Legend</a>
+    </p>
+
+    <h4>
+      <img class="textimg" alt="About Little Navmap" title="About Little Navmap" src="images/icons/littlenavmap.png" />
+      About Little Navmap
+    </h4>
+
+    <p>
+      Zeigt die Versions- und Revisionsnummern für <em>Little Navmap</em>. Enthält auch Verknüpfungen zum
+      Datenbankverzeichnis, der Konfiguratiuonsdate, der Logdatei und den E-Mail Adressen des Autors.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="About Marble" title="About Marble" src="images/icons/marble.png" /> About Marble
+    </h4>
+
+    <p>
+      Informationen über das <a href="https://marble.kde.org" target="_blank">Marble widget</a>, das zum Herunterladen
+      und Anzeigen der Karten benutzt wird.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="About Marble" title="About Marble" src="images/icons/about.png" /> About Qt
+    </h4>
+
+    <p>
+      Information über den <a href="https://www.qt.io" target="_blank">Qt application framework</a>, der von <em>Little
+      Navmap</em> benutzt wird.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2statusbar">
+      Statusleiste
+    </h2>
+
+    <p>
+      Die Statusleiste zeigt Verschiedenes an (von links nach rechts):
+    </p>
+
+    <ul>
+      <li>Zuletzt ausgeführte Aktion oder eine kleine Hilfe zum Menüpunkt oder zur Werkzeugleiste.
+      </li>
+
+      <li>Ein Indikator, der die aktuell dargestellten Fluplatztypen und Navigationspunkte anzeigt. Eine Kurzhilfe
+      (Tooltip) zeigt mehr Informationen an.
+      </li>
+
+      <li>Detail Level der Karte, wie mit <code>More Details</code> oder <code>Less Details</code> eingestellt.
+      </li>
+
+      <li>Fortschrittsindikator für das Herunterladen von Onlinekarten. Folgende Stati werden angezeigt:
+        <ul>
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Done.</code>:</span>Alle Bilderkacheln
+            wurden für den angezeigten Kartenausschnitt erfolgreich heruntergeladen.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Waiting for Data
+            ...</code>:</span>Bilderkacheln fehlen in Zwischenspeicher und wurden beim Server angefordert. Nun wird auf
+            die Anwtort gewartet.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Waiting for Update ...</code>:</span>
+            Kartendaten wurden schon geladen, sind aber nach zwei Wochen abgelaufen. Es wird versucht aktualisierte
+            Bilderkacheln herunterzuladen und nun wird auf eine Antwort gewarted.
+          </li>
+
+          <li>
+            <span class="bold" style="width: 16em;display: inline-block;"><code>Incomplete.</code>:</span>Das
+            Herunterladen ist fehlgeschlagen.
+          </li>
+        </ul>
+        Note that the progress indicator can look like it is stuck in the message <code>Waiting for Data ...</code> if
+        no hill shading is available for a <em>OpenStreetMap</em> region.
+      </li>
+
+      <li>Zoomstufe bzw. -distanz (Höhe über der Erdoberfläche) in Nautischen Meilen.
+      </li>
+
+      <li>Mauszeigerposition in Grad/Minuten/Sekunden in Breiten- und Längengrad.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Statusbar" title="Statusbar" src="images/statusbar.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Statusleiste mit einer Nachricht über die letzte
+      Aktion <code>Flight plan opened.</code> auf der linken Seite und eine Kurzhilfe, der anzeigt, was momentan auf
+      der Karte dargestellt wird. Die Karte zeigt nur Flugplätze, die eine Landebahn von mindestens 4000 Fuß Länge
+      haben. Navigationspunkte werden nicht angezeigt. Die Detailstufe der Karte wurde um eins erhöht und die
+      Koordinaten an der Mauszeigeposition werden nicht angezeigt, da sich der Zeiger nicht über der Karte befindet
+      (<code>not available</code>). Der Fortschrittsindikator für das Herunterladen von Karten ist leer.</span>
+    </p>
+
+    <h2 id="h2mapdisplay">
+      Kartenanzeige
+    </h2>
+
+    <h3>
+      Karte Verschieben
+    </h3>
+
+    <p>
+      Zum Bewegen der Karte einfach klicken und schieben. Das Mausrad kann zum Herein- und Herauszoomen benutzt werden.
+      Die Schaltflächen auf der Karte können ebenso zum Zoomen und Bewegen benutzt werden.
+    </p>
+
+    <p>
+      Alternative können die Cursor-Tasten zum Bewegen und die Tasten <code>+</code> und <code>-</code> zum Zoomen
+      benutzt werden. Dabei nicht vergessen, die Karte vorher durch Anklicken zu aktivieren.
+    </p>
+
+    <h3>
+      Mausklicks
+    </h3>
+
+    <p>
+      Ein einfacher Klick auf einen Flugplatz, Navigationspunkt oder eine Luftstraße zeigt Details über das Objekt im
+      <code>Information</code> Dock-Fenster.
+    </p>
+
+    <p>
+      Ein Doppelklick zoomt zu dem angeklickten Objekt hinein und zeigt gleichzeitig Details im
+      <code>Information</code> Dock-Fenster.
+    </p>
+
+    <p>
+      Die Klick Funktionalität funktioniert nicht für Wegpunkte oder Flugplätze, die Bestandteil von Flugplänen sind,
+      wenn der Modus Flugplanbearbeitung auf der Karte aktiviert ist. Der Bearbeitungmodus kann über die Werkzeugleiste
+      oder in <code>Main Menu</code> -&gt; <code>Flight Plan</code> -&gt; <code>Edit Flight Plan on Map</code>
+      abgestellt werden.
+    </p>
+
+    <p>
+      Die Empfindlichkeit für Mausklicks kann im <code>Options</code> Dialog auf dem <code>Map Display</code> Tab
+      eingestellt werden.
+    </p>
+
+    <h3>
+      Kurzhilfen (Tooltips)
+    </h3>
+
+    <p>
+      Für viele Kartenobjekte, wie Flugplätze, Wegpunkte, Funkfeuer, Luftstraßen, Parkpositionen, Tankpositionen und
+      den Tower wird eine Kurzhilfe angezeigt, wenn man mit dem Mauszeiger darüber fährt. Die Kurzhilfe wird in ihrer
+      Größe begrenzt wenn sie zu lang wird. In diesem Fall wird mit <code>More...</code> am Ende des Textes darauf
+      hingewiesen.
+    </p>
+
+    <p>
+      Die Empfindlichkeit für Kurzhilfen kann im <code>Options</code> Dialog auf dem <code>Map Display</code> Tab
+      eingestellt werden.
+    </p>
+
+    <p>
+      <img alt="Tooltip" title="Tooltip" src="images/tooltip.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Kurzhilfe mit Informationen über einen französischen
+      Flugplatz.</span>
+    </p>
+
+    <h3 id="h3highlights">
+      Hervorhebungen
+    </h3>
+
+    <p>
+      Flugplätze oder Navigationspunkte, die in der Flugplantabelle oder in the Ergebnistabelle der Suche selektiert
+      sind, werden in der Karte entsprechend mit einem grün-schwarzen oder einem gelb-schwarzen Ring markiert.
+    </p>
+
+    <p>
+      Diese Hervorhebungen stellen sämtliche Funktionalität von sichtbaren Kartenobjekten zur Verfügung, auch wenn die
+      hervorgehobenen Objekte nicht auf der Karte sichtbar sind (Markierungsring ist leer). Das beinhaltet den
+      Doppelklick zum Heranzoomen, den Einfachklick zu Anzeige von Informationen und alle Menüeinträge im Kontexmenü.
+    </p>
+
+    <h3>
+      Flugplatzdiagramm
+    </h3>
+
+    <p>
+      Wenn man nahe genug an einen Flugplatz heranzoomt, ändert sich das Flugplatzsymbol in ein komplettes
+      Flugplatzdiagramm, welches Rollbahnen, Landebahnen, Parkpositionen, Flugsteige und mehr.
+    </p>
+
+    <p>
+      Das Flugplatzdiagramm stellt auch zusätzliche Informationen mit Kurzhilfen für Park- und Tower-Positionen an. Ein
+      Rechtsklick auf eine Parkpositionerlaubt es, die Startposition in einem Flugplan festzulegen.
+    </p>
+
+    <p>
+      Siehe auch <a href="legend.html#airportdiagram">Nav Map Legend</a>.
+    </p>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram1.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Flugplatzdiagramm vom Hamburg (EDDH).</span>
+    </p>
+
+    <p>
+      <img alt="Airport Diagram" title="Airport Diagram" src="images/airportdiagram2.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Detaillierte Ansicht des Flugplatzdiagrammes. Es zeigt
+      blaue Flugsteige (Gates) an der rechten Seite und grüne Parkpositionen der Allgemeinen Luftfahrt links unten. Die
+      lange versetzte Anflugschwelle der Landebahn 33 ist sichtbar.</span>
+    </p>
+
+    <h3 id="mapcontextmenu">
+      Kontexmenü der Karte
+    </h3>
+
+    <p>
+      Das Kontextmenü der Karte kann mittels Rechtsklick oder der Menütaste aufgerufen werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
+    </h4>
+
+    <p>
+      Zeigt detaillierte Information im <code>Information</code> Dock-Fenster für den Flugplatz, die
+      Navigationspunktefor oder Luftstraßen, die den Mauszeiger am nächsten sind.
+    </p>
+
+    <p>
+      Siehe auch <a href="#h2info">Informationsfenster</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Measure GC Distance from here" title="Measure GC Distance from here" src=
+      "images/icons/distancemeasure.png" /> Measure GC Distance from here
+    </h4>
+
+    <p>
+      Started eine Entfernungsmessung mit dem ersten Klick. Der zweite Klick beendet das Messen und behält die Linie auf der
+      Karte. Alle Entfernungsmessungen werden gespeichert und beim Neustart wieder geladen.
+    </p>
+
+    <p>
+      Während des Ziehens der Messlinie kann die Tastatur, das Mausrad oder die Karten-Overlay-Schaltfächen benutzt
+      werden, um die Karte zu bewegen.
+    </p>
+
+    <p>
+      Ein Rechtsklick, das Drücken der Esc-Taste oder ein Klick außerhalb des Kartenfensters bricht das Ziehen der
+      Messlinie ab.
+    </p>
+
+    <p>
+      Entfernungsmessung benutzen nautische Meilen als Einheit. Wenn die Linien kurz genug sind, wird Fuß als Einheit
+      hinzugefügt, um z.B. die Startdistanz bei einem Kreuzungsstart oder andere Entfernungen innerhalb eines
+      Flugplatzes zu messen.
+    </p>
+
+    <p>
+      Eine Großkreisroute (Great Circle) gibt die kürzeste Distanz zwischen zwei Punkten auf der Erde, benutzt aber
+      keinen konstanten Kurs. Daher zeigt dies Entfernungsmessung den Start- und Endkurs and.
+    </p>
+
+    <p>
+      Der Kurs wird Grad als wahrer Kurs angezeigt. Zusätzliche Informationen, wie die Kennung oder die Funkfrequenz
+      werden angezeigt, falls die Entfernungsmessung an einem Navigationspunkt oder einem Flugplatz startet.
+    </p>
+
+    <p>
+      Siehe auch <a href="legend.html#mapmarks">Nav Map Legend</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Measure Rhumb Distance from here" title="Measure Rhumb Distance from here" src=
+      "images/icons/distancemeasurerhumb.png" /> Measure Rhumb Distance from here
+    </h4>
+
+    <p>
+      Eine Rhumb-Linie oder auch Loxodrome ist eine Linie von konstanten Kurs und benutzt wenn zwischen Wegpunkten
+      einer Luftstraße navigiert wird oder wenn man an ein Funkfeuer heranfliegt. Die Distanz zwischen zwei Punkten ist
+      größer, als bei der Großkreisroute.
+    </p>
+
+    <p>
+      Der Kurs der Messlinie wird normalerweise as wahrer Kurs in Grad angezeigt. Wenn die Messlinie an einem Flugplatz
+      oder Navigationspunkt startet, die eine magnetische Variation haben, wird ein magnetischer Kurs angezeigt. In
+      diesem Fall werden zusätzliche Informationen, wie Kennung oder Funkfrequenz an der Linie angezeigt.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Remove Distance measurement" title="Remove Distance measurement" src=
+      "images/icons/distancemeasureoff.png" /> Remove Distance measurement
+    </h4>
+
+    <p>
+      Dieser Menüpunkt ist aktiv, wenn auf das Ende einer Messlinie geklickt wird (das kleine Kreuz). Nur die
+      ausgewählte Linie wird entfernt.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
+    </h4>
+
+    <p>
+      Zeigt mehrere Entfernungsringe um die ageklickte Position. Die Anzahl und Entferung der Ringe kann im
+      <code>Options</code> Dialog auf dem <code>Map Display</code> Tab eingestellt werden. Die Entfernung des Ringes
+      wird als Text am Ring angezeigt. Entfernungsringe werden gespeichert und beim Neustart des Programmes neu
+      geladen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
+    </h4>
+
+    <p>
+      Zeigt einen Entfernungsring um das angeklickte Funkfeuer (VOR- oder NDB-Station). Ein Text zeigt die Kennung
+      und die Funkfrequenz und die Farbe des Ringes zeigt den Typ des Navigationspunktes. Die Entfernungsringe werden
+      gespeichert und beim Neustart des Programmes neu geladen.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Remove Range Ring" title="Remove Range Ring" src="images/icons/rangeringoff.png" />
+      Remove Range Ring
+    </h4>
+
+    <p>
+      Dieser Menüpunkt ist nur aktiv, wenn auf das Zentrum der Entfernungsringe geklickt wird (kleiner Kreis). Entfern
+      den Ring bzw. die Ringe von der Karte.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
+    </h4>
+
+    <p>
+      Löscht alle Entfernungsringe und Distanzmesslinien von der Karte.
+    </p>
+
+    <h4 id="fpdeparture">
+      <img class="textimg" alt="Set as Flight Plan Departure" title="Set as Flight Plan Departure" src=
+      "images/icons/airportroutedest.png" /> Set as Flight Plan Departure
+    </h4>
+
+    <p>
+      Dieser Menüpunkt erlaubt das Setzen der Startposition für einen Flugplan und ist aktiv, wenn der Rechtsklick über
+      einen Flugplatz, einer Park- oder Tankposition erfolgt. Diese Funktion ersetzt den aktuellen Start im Flugplan
+      oder fügt einen neuen hinzu, wenn der Flugplan leer ist.
+    </p>
+
+    <p>
+      Eine Startposition auf der längsten Landebahn wird hinzugefügt, wenn das angeklickte Objekt ein Flugplatz ist.
+      Der Flugplatz und die Startposition ersetzen den aktuellen Positionen im Flugplan, wenn auf eine Parkposition in
+      einem Flughafendiagramm geklickt wurde.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Set as Flight Plan Destination" title="Set as Flight Plan Destination" src=
+      "images/icons/airportroutestart.png" /> Set as Flight Plan Destination
+    </h4>
+
+    <p>
+      Dieser Menüpunkt ist aktiv, wenn auf einen Flugplatz geklickt wurde und ersetzt das aktuelle Ziel im Flugplan
+      oder fügt ein neues hinzu, wenn der Flugplan leer ist.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Add Position to Flight Plan" title="Add Position to Flight Plan" src=
+      "images/icons/routeadd.png" /> Add Position to Flight Plan
+    </h4>
+
+    <p>
+      Fügt das angeklickte Objekt in den nächsten Flugplanabschnitt ein. Das Objekt wird vor dem Start oder nach dem
+      Ziel eingefügt, wenn die angeklickte Position in der Nähe des Flugplanenden ist.
+    </p>
+
+    <p>
+      Der Name des Navigationspunktes oder Flugplatzes wird im Menüpunkt angezeigt.
+    </p>
+
+    <p>
+      Wenn kein Kartenobjekt in der Nähe der angeklickten Position ist, wird eine Benutzerdefinierte Position zum
+      Flugplan hinzugefügt-
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Delete from Flight Plan" title="Delete from Flight Plan" src=
+      "images/icons/routedeleteleg.png" /> Delete from Flight Plan
+    </h4>
+
+    <p>
+      Löscht das angeklickte Objekt von Flugplan.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show in Search" title="Show in Search" src="images/icons/search.png" /> Show in Search
+    </h4>
+
+    <p>
+      Zeigt das angeklickte Objekt im Suchdialog. Die aktuellen Suchparameter werden dabei zurückgesetzt-
+    </p>
+
+    <h4 id="mapsetdistcenter">
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
+    </h4>
+
+    <p>
+      Setzt das Zentrum für die Distanzsuche. Siehe <a href="#h4distancesearch">Distanzsuche</a>. Das Zentrum für die
+      Distanzsuche wird mit einen <img class="textimg" alt="Distance Search Symbol" title="Distance Search Symbol" src=
+      "images/icons/distancemark.png" /> Symbol hervorgehoben.
+    </p>
+
+    <h4 id="mapsethome">
+      <img class="textimg" alt="Set Home" title="Set Home" src="images/icons/home.png" /> Set Home
+    </h4>
+
+    <p>
+      Legt den Home-Bereich fest. Das Zentrum des Home-Bereiches wird mit einem <img class="textimg" alt="Home Symbol"
+      title="Home Symbol" src="images/icons/homesymbol.png" /> Symbol angezeigt.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2fpedit">
+      Flugplanbearbeitung auf der Karte
+    </h2>
+
+    <p>
+      Der Flugplanbearbeitungsmodus ist standarmäßig aktiviert und kann auf der Werkzeugleiste oder in <code>Main
+      Menu</code> -&gt; <code>Flight Plan</code> -&gt; <code>Edit Flight Plan on Map</code> ausgeschaltet werden.
+    </p>
+
+    <p>
+      Während des Bearbeitens kann die Tastatur, das Mausrad oder die Karten-Overlay-Schaltfächen benutzt werden, um
+      die Karte zu bewegen.
+    </p>
+
+    <p>
+      Der Flugplanbearbeitungsmodus ist dafür konzipiert, dass eine direkte Verbindung zwischen Start und Ziel schon
+      existiert.
+    </p>
+
+    <p>
+      Vor dem Bearbeiten des Planes sollte immer Start und Ziel zuerst festgelegt werden, wenn ein manuelles Erstellen
+      des Flugplanes gewünscht ist. Basierend auf der Direktverbindung können dann Navigationspunkte hinzugefügt
+      werden.
+    </p>
+
+    <p>
+      Die folgende Funktionalität ist verfügbar:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold">Klick auf einen Flugplanabschnitt:</span> Startet die Bearbeitung und fügt einen neuen
+        Wegpunkt zum Flugplan hinzu, abhängig davon, wo der nächste Klick erfolgt:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">Auf einen einzelnen Flugplatz oder Navigationspunkt:</span> Das Objekt wird in das
+            ausgewählte Flugplansegment eingefügt.
+          </li>
+
+          <li>
+            <span class="bold">Auf mehrere Flugplätze oder Navigationspunkte:</span> Ein Menü erscheint, das die
+            Auswahl des einzufügenden Objektes erlaubt.
+          </li>
+
+          <li>
+            <span class="bold">Kein Flugplatz oder Navigationspunkt:</span> Ein Benutzerdefinierte Position wird in das
+            ausgewählte Flugplansegment eingefügt.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Klick auf einen Wegpunkt im Flugplan:</span> Startet die Bearbeitung und ersetzt den
+        angeklickten Wegpunkt, abhängig davon, wo der nächste Klick erfolgt:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">Auf einen einzelnen Flugplatz oder Navigationspunkt:</span> Das Objekt ersetzt den
+            ausgewählten Wegpunkt.
+          </li>
+
+          <li>
+            <span class="bold">Auf mehrere Flugplätze oder Navigationspunkte:</span> Ein Menü erscheint, das die
+            Auswahl des Objektes erlaubt.
+          </li>
+
+          <li>
+            <span class="bold">Kein Flugplatz oder Navigationspunkt:</span> Der angeklickte Wegpunkt wird durch eine
+            Benutzerdefinierte Position ersetzt.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Klick auf Start- oder Zielposition:</span> Ersetzt Start oder Ziel, abhängig davon, wo der
+        nächste Klick erfolgt:
+      </li>
+
+      <li style="list-style: none; display: inline">
+        <ul>
+          <li>
+            <span class="bold">Auf einen Flugplatz:</span> Der Flugplatz ersezt Start oder Ziel. Eine Startposition auf
+            der längsten Landebahn wird zugewiesen, wenn der Start durch einen Flupgplatz ersetzt wird.
+          </li>
+
+          <li>
+            <span class="bold">Auf einen Navigationspunkt:</span> Das angeklickte Objekt ersetzt den Start oder Ziel,
+            was in einem ungültigen Flugplan resultiert. Der Flugplan kann gespeichert oder geladen werden (eine
+            Warnung wird im dem Fall angezeigt), ist aber im Flugsimulator nicht zu nutzen.
+          </li>
+
+          <li>
+            <span class="bold">Auf mehrere Flugplätze oder Navigationspunkte:</span> Ein Menü erlaubt die Auswahl des
+            neuen Starts oder Ziels.
+          </li>
+
+          <li>
+            <span class="bold">Kein Flugplatz oder Navigationspunkt:</span> Start oder Ziel werden durch
+            Benutzerdefinierte Position ersetzt was wiederum in einen ungültigen Flugplan resultiert.
+          </li>
+        </ul>
+      </li>
+
+      <li>
+        <span class="bold">Rechtklick, Esc-Taste oder Klick außerhalb des Kartenfensters:</span> Die Bearbeitung wird
+        abgebrochen.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Einfügen des VOR EUR in das Fluglansegment indem auf
+      das Flugplansegment geklickt wird. Eine Kurzhilfe wird für das Funkfeuer angezeigt.</span>
+    </p>
+
+    <p>
+      <img alt="Flight Plan Edit" title="Flight Plan Edit" src="images/fpedit2.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Das VOR TRA im Flugplan wird durch ein anderes ersetzt
+      indem der Wegpunkt TRA auf KLO gezogen wird. Ein Menü erscheint um das gewünschte Objekt auszuwählen.</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2search">
+      <img class="textimg" alt="Search" title="Search" src="images/icons/searchdock.png" /> Suchfenster
+    </h2>
+
+    <h3>
+      Allgemeines
+    </h3>
+
+    <p>
+      Zwei Such-Tabs sind verfügbar für die Suche nach Flugplätzen und Navigationspunktend (Funkfeuer und Wegpunkte).
+    </p>
+
+    <p>
+      Diese Tabs enthalten mehrere Reihen von Suchfiltern, die mit dem Menü auf der Hamburger-Schaltfläche <img class=
+      "textimg" alt="Hamburger Button" title="Hamburger Button" src="images/icons/menubutton.png" /> oben rechts
+      verborgen werden können.
+    </p>
+
+    <p>
+      In dem Menü wird einer Suchzeile ein <code>*</code> vorangestellt, um zu zeigen, dass der betroffene Filter eine
+      Änderung enthält. Dies kann benutzt werden, um herauszufinden, warum eine Suche keine oder unerwartete Ergebnisse
+      erbringt.
+    </p>
+
+    <p>
+      Die Suchfilter werden durch verschieden Kontrollelemnte definiert, die selbst erklärend sind. Nur die Textfilter
+      und die sogennanten Tri-State-Schaltflächen, wie <code>Lighted</code>, <code>Approach</code> oder
+      <code>Closed</code> benötigen nähere Erläuterungen weiter unten.
+    </p>
+
+    <p>
+      Alle Filter könne zusammen benutzt werden, wobei sämtliche Bedingungen für ein Objekt erfüllt sein müssen, um im
+      Ergebnis angezeigt zu werden (<code>und</code> Operator). Alle Filter werden sofort ausgeührt, außer der
+      Distanzsuche, die nach jeder Änderung erst nach einer kurzen Verzögerung ausgeführt wird.
+    </p>
+
+    <p>
+      Ein Kurzhilfe auf dem blauen Fragezeichen-Etikett oben rechts gibt Hinweise zu Suche.
+    </p>
+
+    <h4>
+      Textfilter
+    </h4>
+
+    <p>
+      Die Standardsuche für Texte findet alle Name, die mit dem eingegeben Text beginnen.
+    </p>
+
+    <p>
+      Der Platzhalter <code>*</code> steht für beliebigen Text. Wenn ein <code>*</code> im Suchbegriff entalten ist,
+      wird die Standardsuche nicht länger benutzt. In dem Fall kann es nötig sein, ein <code>*</code> am Ende des
+      Suchbegriffes einzufügen um das erwartete Ergebnis zu erhalten.
+    </p>
+
+    <p>
+      Die Suche wird negiert (d.h. finde alle Text die nicht passen), wenn das erste Zeichen im Text ein <code>-</code>
+      ist.
+    </p>
+
+    <p>
+      Obiges gilt nicht für numerische Felder, wie <code>Runways: Min</code> oder <code>Altitude: Max</code>.
+    </p>
+
+    <h4>
+      Tri-State-Schaltflächen
+    </h4>
+
+    <p>
+      Diese werden benutzt, um Flugplätze anhand des Vorhandenseins bestimmter Einrichtung oder Attribute zu filtern.
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold">Grau:</span> Bedingung wird ignoriert.
+      </li>
+
+      <li>
+        <span class="bold">Ausgewählt (Haken):</span> Bedingung muß erfüllt sein.
+      </li>
+
+      <li>
+        <span class="bold">Nicht ausgewählt (kein Haken):</span> Bedingung darf nicht erfüllt sein.
+      </li>
+    </ul>
+
+    <p>
+      Die Farbe und das Aussehen dieser Tri-State Schaltflächen variiert je nach Betriebssystem. Anstatt z.B. Grau
+      können andere Farben oder Symbole benutzt werden (rot gefüllt auf Linux oder ein <code>-</code> auf macOS).
+    </p>
+
+    <h4 id="h4distancesearch">
+      Distanzsuche
+    </h4>
+
+    <p>
+      Diese Funktion erlaubt es alle Suchkriterien mit einer einfachen räumlichen Suche zu kombinieren.
+    </p>
+
+    <p>
+      Die Schaltfläche <code>Distance</code> muss ausgewählt sein, um diese Suchfunktion einzuschalten. Das Ergebnis
+      wird nur Flugplätze oder Navigationspunkte enthalten, die in die minimale und maximale Entferung vom Suchzentrum
+      fallen. Das erlaubt die schnelle Suche nach einem Ziel, das innerhalb der Reichweite des gewählten Flugzeuges
+      befindet und gleichzeitig andere Kriterien, wie z.B. beleuchtete Landebahnen oder Treibstoff erfüllt.
+    </p>
+
+    <p>
+      Das Zentum für die Distanzsuche wird duch ein <img class="textimg" alt="Distance Search Symbol" title=
+      "Distance Search Symbol" src="images/icons/distancemark.png" /> Symbol angezeigt.
+    </p>
+
+    <p>
+      Für weitere Einschränkungen kann die Richtung auf Norden, Osten, Westen und Süden limitiert werden.
+    </p>
+
+    <p>
+      <span class="bold">Das Hamburger-Menü sollte auf das <code>*</code> Symbol überprüft werden, um herauszufinden,
+      ob andere Suchkriterien die Suche beeinflussen, falls nicht das erwünschte Ergebnis erscheint.</span>
+    </p>
+
+    <p>
+      <a href="images/complexsearch.jpg"><img style="width: 70%; height:auto" alt="Complex Distance Search" title=
+      "Complex Distance Search" src="images/complexsearch.jpg" /></a>
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben (anklicken für große Ansicht):</span> <span class="capt">Ein komplexe Suche, die
+      alle Flugplätze mit einer Entfernung zwischen 200 und 400 Nautischen Meilen von Frankfurt (EDDF) findet. Die
+      Flugplätze sollten eine Wertung größer als Null haben und mindestens eine beleuchtete Landebahn haben.
+      Militärische und geschlossene Flugplätze sind ausgeschlossen. Die Flugplätze sind auf der Karte hervorgehoben,
+      indem alle Einträge im Suchergebnis selektiert wurden.</span>
+    </p>
+
+    <h3 id="tableview">
+      Tabelle für das Suchergebnis
+    </h3>
+
+    <p>
+      Alle selektierten Elemente im Suchergebnis werden auf der Karte mit gelb-schwarzen Kreisen hervorgehoben. Siehe
+      <a href="#h3highlights">Hervorhebungen</a> für mehr Informationen. Mehrfachselektion mittlels
+      <code>Umschalt-Click</code> oder <code>Strg-Click</code> sind möglich.
+    </p>
+
+    <p id="tableviewops">
+      Die Titelzeile aller Tabellenansichten erlaubt folgenden Manipulationen:
+    </p>
+
+    <div class="tabbed24">
+      <ul>
+        <li>
+          <span class="bold">Klick auf die obere linke Ecke:</span>Alle Einträge auswählen.
+        </li>
+
+        <li>
+          <span class="bold">Klick auf die Kopfzeile einer Spalte:</span>Auf- oder absteigend sortieren (nur für
+          Suchergebnisse, nicht für die Flugplantabelle).
+        </li>
+
+        <li>
+          <span class="bold">Klicken und verschieben der Kopfzeile einer Spalte:</span>Spaltenreihenfolge ändern.
+        </li>
+
+        <li>
+          <span class="bold">Doppelklick auf den Rand eines Spaltenkopfes:</span>Spaltenbreit automatisch and Inhalt
+          anpassen.
+        </li>
+
+        <li>
+          <span class="bold">Klicken und verschieben auf dem Rand einer Kopfzeile:</span>Spaltenbreite ändern.
+        </li>
+      </ul>
+    </div>
+
+    <p>
+      Die Manipulationsmöglichkeiten oben stehen für alle Tabellenansichten im Programm zur Verfügung.
+    </p>
+
+    <p>
+      Das Programm speichert die Sortierreihenfolge, die Spaltenbreiten und -positionen und stellt sie bei einen
+      Neustart wieder her. Der Menüpunkt <code>Reset View</code> stellt die Standardeinstellungen wieder her.
+    </p>
+
+    <p>
+      <img alt="Airport Search Result Table" title="Airport Search Result Table" src="images/airportsearchtable.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Suchergebnisse für eine Flugplatzsuche. Alle
+      zusätzlichen Suchoptionen wurden verborgen.</span>
+    </p>
+
+    <p>
+      <img alt="Navaid Search Result Table" title="Navaid Search Result Table" src="images/navaidsearchtable.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Eine Suche nach Funkfeuern. Alle Suchoptionen sind
+      sichtbar. Das Suchergebnis is limitier auf die Region <code>LI</code> (Italien) und VOR- und
+      NDB-Funkfeuer.</span>
+    </p>
+
+    <h3>
+      Mausklicks
+    </h3>
+
+    <p>
+      Ein Dopplelklick auf einen Eintrag in den Suchergebnissen zeigt entweder das Flugplatzdiagramm oder den
+      entsprechenden Navigationspunkt. Zusätzlich werden Details im <code>Information</code> Dock-Fenster angezeigt.
+      Einfache Klicks selektieren das Objekt und heben es auf der Karte mit einem gelb-schwarzen Kreis hervor.
+    </p>
+
+    <h3>
+      Kontextmenü in den Suchergebnissen
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show on Map" title="Show on Map" src="images/icons/showonmap.png" /> Show on Map
+    </h4>
+
+    <p>
+      Zeigt entweder das Flugplatzdiagramm oder den Navigationspunkt
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Filter by Entries including" title="Filter by Entries including" src=
+      "images/icons/filter-add.png" /> <img class="textimg" alt="Filter by Entries excluding" title=
+      "Filter by Entries excluding" src="images/icons/filter-remove.png" /> Filter by Entries including/excluding
+    </h4>
+
+    <p>
+      Nimmt den Text unter dem Mauszeigen und setzt ihn als Suchkriterium in den entsprechenden Filter für die Spalte.
+      Der Menüpunkt is nur für Textspalten aktiviert.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Reset Search" title="Reset Search" src="images/icons/clear.png" /> Reset Search
+    </h4>
+
+    <p>
+      Löscht alle Suchfilter.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Reset Search" title="Show All" src="images/icons/load-all.png" /> Show All
+    </h4>
+
+    <p>
+      Die Tabelleansicht zeigt aus Performancegründen initial nicht alle Einträge an. Dieser Menüpunkt erlaubt es,
+      sämtliche Ergebnisse in die Tabelle zu laden. Die Tabellenansicht springt wieder zur limitierten Ansicht, wenn
+      Suchkriterien oder die Sortierung geändert werden. Die Anzahl der angezeigten, die Gesamtanzahl und die Anzahl
+      der selektierten Einträge wird im unteren Teil des Such-Tabs angezeigt.
+    </p>
+
+    <p>
+      Die Anzeige einer großen Menge Suchergebnisse und insbesondere das Hervorheben auf der Karte kann einige Zeit in
+      Anspruch nehmen. Das Programm stürzt nicht ab, braucht aber ein paar Sekunden um alle Einträge auf der Karte
+      hervorzuheben.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Set as Flight Plan Departure" title="Set as Flight Plan Departure" src=
+      "images/icons/airportroutedest.png" /> Set as Flight Plan Departure
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Set as Flight Plan Destination" title="Set as Flight Plan Destination" src=
+      "images/icons/airportroutestart.png" /> Set as Flight Plan Destination
+    </h4>
+
+    <h4>
+      <img class="textimg" alt="Add Position to Flight Plan" title="Add Position to Flight Plan" src=
+      "images/icons/routeadd.png" /> Add Position to Flight Plan
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Copy" title="Copy" src="images/icons/copy.png" /> Copy
+    </h4>
+
+    <p>
+      Kopiert die selektierten Einträge im CSV-Format in die Zwischenablage. Dies beinhaltet alle Änderungen in der
+      Tabellenansicht, wie die Spaltenreihenfolge und Sortierreihenfolge. Das kopierte CVS enthält eine Kopfzeile.
+    </p>
+
+    <h4>
+      Select All
+    </h4>
+
+    <p>
+      Wählt alle <span class="bold">sichbaren</span> Einträge aus. Um alle <span class="bold">verfügbaren</span>
+      Einträge auszuwählen muss die Funktion <code>Show All</code> erst benutzt werden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Reset View" title="Reset View" src="images/icons/cleartable.png" /> Reset View
+    </h4>
+
+    <p>
+      Setzt die Sortierreihenfolge, die Spaltenreihenfolge und die Spaltenbreiten zurück auf den Standardwert.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2flightplan">
+      <img class="textimg" alt="Flight Plan" title="Flight Plan" src="images/icons/routedock.png" /> Flugplanfenster
+    </h2>
+
+    <h3>
+      Oberer Teil
+    </h3>
+
+    <p>
+      Der obere Teil zeigt Start, Startposition (Parkposition, Landebahn oder Helikopterlandeplatz), Ziel,
+      Flugplandistanz, Reisezeit und den Typ des Flugplanes.
+    </p>
+
+    <p>
+      Abgesehen davon stehen drei weiter Eingabefelder zur Verfügung:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold">Geschwindigkeit (Knoten):</span> Der Wert dieses Feldes wird nur dazu benutzt, um die Reise-
+        und Ankfunftszeiten in der Tabellenansicht zu ermitteln: <code>Leg Time</code> (Flugzeit für den Abschnitt) und
+        <code>ETA</code> (geschätzte Ankunftszeit am Wegpunkt basierend auf der Startzeit 0:00). Der Wert des Feldes
+        wird nicht im Flugplan gespeichert und wird nicht für Berechnungen zum Simulatorflugzeug benutzt.
+      </li>
+
+      <li>
+        <span class="bold">Reiseflughöhe (Fuß):</span> Dieser Wert wird im Flugplan gespeichert und auch dazu benutzt
+        um einen Flugplan entlang Luftstraßen für eine gegebene Flughöhe zu berechnen.
+        <br />
+        Dieses Feld erhält die minimale Reiseflughöhe für den Flugplan, wenn bei einer Berechnug entlang von Victor
+        oder Jet Luftstraßen Höhenrestriktionen gefunden wurden.
+        <br />
+        Siehe auch <a href="#calcfpalt">Calculate based on given Altitude</a>.
+      </li>
+
+      <li>
+        <span class="bold">Type des Flugplanes (IFR or VFR):</span> Dies wird mit dem Flugplan gespeichert.
+      </li>
+    </ul>
+
+    <h3>
+      Flugplantabelle
+    </h3>
+
+    <p>
+      Die Tabelle erlaubt die gleichen Manipulationen, wie die Tabelle der Suchergebnisse mit Ausnahme der Sortierung.
+      Siehe <a href="#tableviewops">hier</a> für mehr Informationen.
+    </p>
+
+    <p>
+      Alle in der Flugplantabelle selektierten Elemente werden auf der Karte mit einem grün-schwarzen Kreis
+      hervorgehoben. Siehe auch <a href="#h3highlights">Hervorhebungen</a>. Mehrfachselektion mittlels
+      <code>Umschalt-Click</code> oder <code>Strg-Click</code> sind möglich.
+    </p>
+
+    <p>
+      <span class="bold">Anmerkungen zu den Spalten <code>Course °M</code> und <code>Direct °M</code>:</span>
+      <br />
+    </p>
+
+    <ul>
+      <li>
+        <code>Direct °M:</code> Dies ist der konstante Kurs der Rhumb-Linie die zwei Wegpunkte verbindet. Abhängig von
+        der Route und Entfernung kann diese sich vom Kurs der Großkreis-Route unterscheiden. Dieser Kurs sollte benutzt
+        werden wenn ein Flugplan Luftstraßen folgt oder Funkfeuer zum Navigieren benutzt. Im Gegensatz zum Kurs, den
+        das GPS im Flugsimulator anzeigt, ergibt dieser Kurs das genaue Radial, wenn ein NDB- oder VOR-Funkfeuer
+        angesteuert wird.
+      </li>
+
+      <li>
+        <code>Course °M:</code> Dies ist der Startkurs der Großkreis-Route, die zwei Wegpunkte eines Flugplansegmentes
+        verbindet. Dieser Kurs sollte benutzt werden, wenn die Flugplan entlang langer Segmente ohne Navigationspunkte
+        enthält. Dazu muß der Kurs beim Fliegen regelmäßig geändert werden.
+      </li>
+    </ul>
+
+    <p>
+      <img alt="Flight Plan" title="Flight Plan" src="images/flightplan.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Das <code>Flight Plan</code> Dock-Fenster.</span>
+    </p>
+
+    <h3>
+      Mausklicks
+    </h3>
+
+    <p>
+      Ein Doppelklick zoomt zu dem angeklickten Objekt hinein und zeigt gleichzeitig Details im
+      <code>Information</code> Dock-Fenster. Ein einfacher Mausklick selektiert das Object und hebt es auf der Karte
+      mit einem grün-schwarzen Kreis hervor.
+    </p>
+
+    <h3 id="h3fpcontext">
+      Flugplantabelle Kontextmenü
+    </h3>
+
+    <h4>
+      <img class="textimg" alt="Move Selected Legs up" title="Move Selected Legs up" src=
+      "images/icons/routelegup.png" /> <img class="textimg" alt="Move Selected Legs down" title=
+      "Move Selected Legs down" src="images/icons/routelegdown.png" /> Move Selected Legs up/down
+    </h4>
+
+    <p>
+      Verschiebt alle Flugplansegmente in der Liste hoch oder herunter. Das funktioniert auch, wenn mehrere Einträge
+      selektiert sind.
+    </p>
+
+    <p>
+      Die Namen von Luftstraßen werden entfernt, wenn Wegpunkte in Flugplan verschoben oder entfernt werden, da die
+      neuen Flugplansegmente keine Luftstraßen benutzen, sondern direkte Verbindungen sind.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Delete Selected Legs" title="Delete Selected Legs" src=
+      "images/icons/routedeleteleg.png" /> Delete Selected Legs
+    </h4>
+
+    <p>
+      Löscht alle markierten Flugplansegmente (auch Start und Ziel, wenn markiert). Die Änderungen können mit
+      <code>Undo</code> rückgängig gemacht werden, falls Segmente ungewollt gelöscht wurden.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Information" title="Show Information" src="images/icons/globals.png" /> Show
+      Information
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show on Map" title="Show on Map" src="images/icons/showonmap.png" /> Show on Map
+    </h4>
+
+    <p>
+      Zeigt entweder das Flugplatzdiagramm oder springt zum Navigationspunkt auf der Karte.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Range Rings" title="Show Range Rings" src="images/icons/rangerings.png" /> Show
+      Range Rings
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Show Navaid range" title="Show Navaid range" src="images/icons/navrange.png" /> Show
+      Navaid range
+    </h4>
+
+    <p>
+      Zeigt die Entfernungsringe für alle selektierten Funkfeuer auf der Karte. Für jedes ausgewählte Funkfeuer wird
+      ein Entfernungsring gezeichnet.
+    </p>
+
+    <p>
+      Sonst die gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Remove all Range Rings and Distance measurements" title=
+      "Remove all Range Rings and Distance measurements" src="images/icons/rangeringsoff.png" /> Remove all Range Rings
+      and Distance measurements
+    </h4>
+
+    <p>
+      Gleiche Funktion wie im <a href="#mapcontextmenu">Kontexmenü der Karte</a>.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Copy" title="Copy" src="images/icons/copy.png" /> Copy
+    </h4>
+
+    <p>
+      Kopiert die selektierten Einträge im CSV-Format in die Zwischenablage. Dies beinhaltet alle Änderungen in der
+      Tabellenansicht, wie die Spaltenreihenfolge. Das kopierte CVS enthält eine Kopfzeile.
+    </p>
+
+    <h4>
+      Select All
+    </h4>
+
+    <p>
+      Selektiert alle Flugplansegment.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Reset View" title="Reset View" src="images/icons/cleartable.png" /> Reset View
+    </h4>
+
+    <p>
+      Setzt die Spaltenreihenfolge und die Spaltenbreiten zurück auf den Standardwert.
+    </p>
+
+    <h4>
+      <img class="textimg" alt="Set Center for Distance Search" title="Set Center for Distance Search" src=
+      "images/icons/mark.png" /> Set Center for Distance Search
+    </h4>
+
+    <p>
+      Same as the <a href="#mapcontextmenu">Map Context Menu</a>.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2info">
+      <img class="textimg" alt="Information" title="Information" src="images/icons/infodock.png" /> Informationsfenster
+    </h2>
+
+    <p>
+      Dieses Dock-Fenster enthält in mehreren Tabs Informationen zu Flugplätzen. Ein weiterer Tab zeigt Details zu
+      mehreren Navigationspunkten oder Luftstraßen. Weiterhin ist die Legende für die Navigationskarte und eine
+      allgemeine Legende für das jeweilige Kartenthema enthalten.
+    </p>
+
+    <p>
+      Sämtliche Informationen können als formatierter Text in die Zwischenablage kopiert werden. Dazu kann das
+      Kontextmenü oder die Tastenkombinationen <code>Strg-A</code> um alles auszuwählen und <code>Strg-C</code> um die
+      Auswahl in die Zwischenablage zu kopieren, benutzt werden.
+    </p>
+
+    <p>
+      Beim Anzeigen der Informationen wird der Flugplatz-Tab bevorzugt. Wenn man also auf einen Flugplatz und z.B. ein
+      VOR-Funkfeuer klickt, wird der Flugplatz-Tab nach vorne geholt. Der Tab <code>Navaid</code> wird trotzdem
+      gleichzeitig mit Informationen zum VOR gefüllt.
+    </p>
+
+    <p>
+      Ein Verweis <code>Map</code> erlaubt es, das Objekt auf der Karte anzuzeigen.
+    </p>
+
+    <p>
+      <img alt="Airport Information" title="Airport Information" src="images/infoairport.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Flugplatzinformationen. Zusätzliche Tabs zeigen
+      Informationen zu Landebahnen <code>Runways</code>, Funkfrequnzen <code>Com</code> und Anflugprozeduren
+      <code>Approaches</code>.</span>
+    </p>
+
+    <p>
+      <img alt="Navaid Information" title="Navaid Information" src="images/infonavaid.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Information zu Navigationspunkten. Zwei Funkfeuer
+      waren nahe der Klickposition.</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2simaircraft">
+      <img class="textimg" alt="Simulator Aircraft" title="Simulator Aircraft" src="images/icons/aircraftdock.png" />
+      Simulatorflugzeug
+    </h2>
+
+    <p>
+      Diese Dock-Fenster zeigt Informationen über das Simulatorflugzeug ähnlich eines Flight Management Systems an.
+      <em>Little Navmap</em> muß mit dem Flugsimulator verbunden sein, um diese Funktionalität zu ermöglichen. Ein Tab
+      des Fensters zeigt allgemeine Flugzeugdaten, wie Gesamtgewicht, und ein weiterer Tab zeigt Flugdaten, Fortschritt
+      im Flugplan, Wetter und Umgebungsparameter.
+    </p>
+
+    <p>
+      Siehe auch <a href="#h2connect">Mit dem Flugsimulator verbinden</a>.
+    </p>
+
+    <p>
+      <img alt="Aircraft Information" title="Aircraft Information" src="images/infoac.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Fenster Simulatorflugzeug mit Verbindung zum
+      Flugsimulator.</span>
+    </p>
+
+    <p>
+      <img alt="Aircraft Progresss Information" title="Aircraft Progresss Information" src=
+      "images/infoacprogress.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Fortschritts- und Umgebungsinformationen der aktuellen
+      Flugsituation. Einige Felder, wie <code>Next Waypoint</code> sind nur verfügbar, wenn ein Flugplan geladen
+      wurde.</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2profile">
+      <img class="textimg" alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src=
+      "images/icons/profiledock.png" /> Höhenprofil
+    </h2>
+
+    <p>
+      Diese Dock-Fenster zeigt die Bodenhöhe und Reiseflughöhe zusammen mit allen Wegpunkten des Flugplanes. Es ist nur
+      verfügbar, wenn ein Flugplan geladen wurde. Wenn <em>Little Navmap</em> mit dem Flugsimulator verbunden ist, wird
+      auch das Simulatorflugzeug angezeigt.
+    </p>
+
+    <p>
+      Die Verarbeitung der Höhendaten findet im Hintergrund statt, da diese heruntergeladen werden müssen und die
+      Berechnung CPU intensiv ist. Daher kann die Aktualisiertung der Anzeige ein paar Sekunden bis zu einer halben
+      Minute dauern. Die Hintergrundverarbeitung startet nach dem Erzeugen oder Ändern eines Flugplanes oder wenn neue
+      Daten heruntergeladen wurden. Die Anzeige wird aktualisiert, sobald neue Höhendaten verfügbar sind.
+    </p>
+
+    <p>
+      Falls die Hintergrundverarbeitung Probleme oder Stottern im Flugsimulator verursacht, kann das Fenster
+      <code>Flight Plan Elevation Profile</code> geschlossen werden. Alle Hintergrundprozesse werden in diesem Fall
+      abgebrochen.
+    </p>
+
+    <p>
+      Das Höhenprofil deckt nur den Flugplan ab und wird die Darstellung nicht ändern, wenn das Simulatorflugzeug sich
+      vom Flugplan entfernt. Steig und Sinkflug wird in der Flugplandarstellung ebenfalls nicht berücksichtigt, da noch
+      keine Leistungsprofile für Flugzeuge zur Verfügung stehen. Der Flugplan wird nur in der Reiseflughöhe
+      dargestellt. Die Flugzeugspur jedoch zeigt Steig- und Sinkflüge an.
+    </p>
+
+    <p>
+      Die verwendenten Höhendaten stehen nicht weltweit zu Verfügung, schließen manche Länder, wie z.B. Neuseeland aus
+      und enden bei 60° nördlicher Breite.
+    </p>
+
+    <p>
+      Zusätzliche Information werden im oberen Teil des Fensters angezeigt, wenn der Mauszeiger über das Diagramm
+      bewegt wird. Die enstprechende Position wird auf der Karte ebenfalls hervorgehoben.
+    </p>
+
+    <p>
+      Folgendes wird angezeigt, wenn der Mauszeiger über das Diagramm bewegt wird:
+    </p>
+
+    <ul>
+      <li>Vorheriger und nächster Wegpunkt
+      </li>
+
+      <li>Distanz von Start und zum Ziel
+      </li>
+
+      <li>Bodenhöhe
+      </li>
+
+      <li>Flugplanhöhe über Grund
+      </li>
+
+      <li>Sichere Höhe über Grund für das entsprechende Flugplansegment
+      </li>
+    </ul>
+
+    <p>
+      Für mehr informationen siehe auch im <code>Navmap Legend</code> Tab im <code>Information</code> Dock-Fenster oder
+      der <a href="legend.html#profile">Little Navmap Legend</a>.
+    </p>
+
+    <p>
+      <img alt="Flight Plan Elevation Profile" title="Flight Plan Elevation Profile" src="images/profile.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Höhenprofile des FLugplanes mit einer vertikalen
+      Linie, die die Mauspoition anzeigt.</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2weather">
+      Wetter
+    </h2>
+
+    <p>
+      <em>Little Navmap</em> kann <a href="https://de.wikipedia.org/wiki/METAR" target="_blank">METAR</a>s aus vier
+      verschiedenen Quellen anzeigen:
+    </p>
+
+    <ul>
+      <li>
+        <a href="http://www.weather.gov" target="_blank">NOAA</a> Online Wetterdienst
+      </li>
+
+      <li>
+        <a href="http://www.vatsim.net" target="_blank">VATSIM</a> Netzwerk Online Wetterdienst
+      </li>
+
+      <li>
+        <a href="http://www.hifisimtech.com" target="_blank">HiFi Simulation Technologies</a> <em>Active Sky Next</em>
+      </li>
+
+      <li>
+        <a href="http://www.hifisimtech.com" target="_blank">HiFi Simulation Technologies</a> <em>AS16</em>
+      </li>
+    </ul>
+
+    <p>
+      Im <code>Options</code> Dialog auf dem <code>Weather</code> Tab kann eingestellt werden, welche Quellen benutzt
+      werden sollen um METARs in der Kurzhilfe der Karte oder im <code>Information</code> Dock-Fenster darzustellen.
+    </p>
+
+    <p>
+      Beide Active Sky Programme werden automatisch für jeden Simulator erkannt. Die Datei
+      <code>current_wx_snapshot.txt</code> wird geladen und auf Änderungen überwacht.
+    </p>
+
+    <p>
+      Die Datei <code>current_wx_snapshot.txt</code> kann auch manuell ausgewählt werden. In dem Fall werden die METARs
+      aus der Datei for alle installierten Simulatoren angezeigt.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2options">
+      <img class="textimg" alt="Options" title="Options" src="images/icons/settings.png" /> Einstellungsdialog
+    </h2>
+
+    <p>
+      Die meisten Einstellungen im Dialog <code>Options</code> sind selbst erklärend und durch Kurzhilfen (Tooltips)
+      ergänzt. Auf eine detaillierte Beschreibung wird daher hier verzichtet.
+    </p>
+
+    <p>
+      Die Schaltfläche <code>Restore Defaults</code> setzt nur die Einstellungen des Dialoges zurück. Andere, wie z.B.
+      die Einstellungen zur Kartenanzeige sind davon nicht betroffen. Siehe unter <a href=
+      "#h2troubleshoot">Problemlösung</a> wie alle Einstellungen im Falle von Fehlern komplett zurückgesetzt werden
+      können.
+    </p>
+
+    <p>
+      <img alt="Options" title="Options" src="images/options.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Der <code>Startup</code> Tab des Dialog
+      <code>Options</code>.</span>
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2scenerylibdialog">
+      <img class="textimg" alt="Load Scenery Library" title="Load Scenery Library" src="images/icons/database.png" />
+      Szenerie laden Dialog
+    </h2>
+
+    <p>
+      Dieser Dialog erlaubt es, die Daten aus der Szeneriebibliothek eines Flugsimulators in die interne Datenbank von
+      <em>Little Navmap</em> zu laden. Die zu ladende Szeneriebibliothek kann in dem Eingabefeld
+      <code>Simulator:</code> ausgewählt werden.
+    </p>
+
+    <p>
+      Der Dialog zeigt Informationen über die momentan ausgewählte Szeneriedatenbank, wie die Anzahl der geladenen
+      Flugplätze, die Datenbankversion und mehr an.
+    </p>
+
+    <p>
+      Der Pfad zum Flugsimulator und der <code>scenery.cfg</code> Datei werden in zwei Textfeldern für den momentan
+      ausgewählten Simulator angezeigt. Die Pfade werden automatisch ermittelt, können aber vom Benutzer geändert
+      werden. Alle Einstellungen werden für jeden Flugsimulator gespeichert.
+    </p>
+
+    <p>
+      Das Laden einer Szeneriebibliothek kann, je nach Rechener und der Menge der installierten Add-ons zwischen drei
+      und sechs Minuten dauern. Das Laden kann beschleunigt werden, indem Verzeichnisse ohne Navigationsdaten im
+      <code>Options</code> Dialog im <code>Scenery Library Database</code> Tab ausgeschlossen werden, indem man sie in
+      der oberen Liste einträgt.
+    </p>
+
+    <p>
+      Das Programm stellt die alte Szeneriedatenbank wieder her, falls der Ladeprozess mit einem Fehler abbricht oder
+      durch den Benutzer abgebrochen wird.
+    </p>
+
+    <p>
+      Alle Flugplätze, die nicht im Verzeichnis <code>Scenery</code> im Basisverzeichnis gefunden wurden, werden als
+      Add-On markiert und auf der Karte entsprechend hervorgehoben. Verzeichnisse können von diesen Verhalten
+      ausgeschlossen werden, indem man sie im <code>Options</code> Dialog auf dem <code>Scenery Library Database</code>
+      Tab in der unteren Liste einträgt. Das kann hilfreich sein, wenn Add-Ons z.B. lediglich die Flugplatzhöhe
+      korrigieren und die entsprechenden Plätze nicht auf der Karte in kursiv und unterstrichen hervorgehoben werden
+      sollen.
+    </p>
+
+    <p>
+      Das Menü <code>Scenery Library</code> -&gt; <code>Flight Simulators</code> wird mit den ausgewählten Simulator im
+      Dialog synchronisiert. Wenn eine Szeneriebibliothek erfolgreich geladen wurde, wird die Karte, Suche und alle
+      anderen Funktionen auf die neue Datenbank umgestellt.
+    </p>
+
+    <p>
+      Das Programm versucht die Flugsimulator Basispfade und die Pfade zu den jeweiligen
+      <code>Scenery.cfg</code>-Dateien automatisch zu ermitteln. Die typischen Pfade für die jeweiligen Simulatoren zur
+      <code>Scenery.cfg</code>-Datei unter Windows 7/8/10 sind:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Flight Simulator X:</span>
+        <code>C:\ProgramData\Microsoft\FSX\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Flight Simulator - Steam Edition:</span>
+        <code>C:\ProgramData\Microsoft\FSX-SE\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Prepar3D v2:</span>
+        <code>C:\Users\YOUR_ACCOUNT_NAME\AppData\Roaming\Lockheed Martin\Prepar3D v2\Scenery.cfg</code>
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;">Prepar3D v3:</span> <code>C:\ProgramData\Lockheed
+        Martin\Prepar3D v3\Scenery.cfg</code>
+      </li>
+    </ul>
+
+    <p>
+      Ein Fehlerdialog wird am Ende des Ladevorganges angezeigt, falls beim Laden der Szeneriebibliothek ein Fehler
+      aufgetreten ist und eine BGL-Datei nicht gelesen werden konnte. In dem Fall sollte die Szeneriedarstellung in
+      <em>Little Navmap</em> überprüft werden, ob alle Add-On Flugplätze erscheinen.
+    </p>
+
+    <p>
+      <img alt="Load Scenery Dialog" title="Load Scenery Dialog" src="images/loadscenery.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Der Ladedialog für die Szeneriedatenbank. FSX ist
+      ausgewählt und die Datenbank ist noch leer.</span>
+    </p>
+
+    <p>
+      <img alt="Load Scenery Progress Dialog" title="Load Scenery Progress Dialog" src=
+      "images/loadsceneryprogress.jpg" />
+    </p>
+
+    <p>
+      <span class="capthdg">Bild oben:</span> <span class="capt">Ladefortschritt während des Lesens der
+      Szeneriebibliothek aus dem Simulator in <em>Little Navmap</em>s interne Datenbank.</span>
+    </p>
+
+    <p>
+      Die Anzahl der Flugplätze, Navigationspunkte und anderer Objekte, die im <code>Load Scenery Library</code> Dialog
+      angezeigt werden, kann sich von der Anzahl Objekte im Fortschrittsdialog unterscheiden. Das rührt daher, dass
+      Add-On Flugplätze die Originalflugplätze ersetzen und im Fortschrittsdialog all gelesenen Flugplätze aufgelistet
+      werden, währed im <code>Load Scenery Library</code> Dialog nur das Endergebnis angezeigt wird. Ebenso werden nach
+      dem Laden Duplikate von Navigationspunkten gelöscht.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2nosim">
+      Ohne Flugsimulatorinstallation laufen lassen
+    </h2>
+
+    <p>
+      Diese Schritte beschreiben die Vorgehensweise, mit der man <em>Little Navmap</em> auf einen Rechner ohne
+      Flugsimulatorinstallation laufen lassen kann. Abgesehen von Laden der Szeneriebibliothek steht sämtliche
+      Funktionalität aus in dieser Konfiguration zur Verfügung.
+    </p>
+
+    <p>
+      Die gleiche Prozedur wird auch verwendet, wenn <em>Little Navmap</em> unter Linux oder macOS benutzt werden soll.
+    </p>
+
+    <p>
+      Typischerweise wird dieser Szenario benutzt um sich über ein Netzwerk mit dem Flugsimulator zu verbinden und den
+      Fortschritt des Fluges zu beobachten. Flugpläne können weiterhin erstellt, geladen und gespeichert werden. Es muß
+      lediglich sichergestellt werden, dass die Flugpläne über Windows Dateifreigaben oder andere Methoden zum Rechner
+      mit dem Flugsimulator kopiert werden.
+    </p>
+
+    <p>
+      Zwei Rechner werden in dem Szenario benutzt: Der Flugrechner auf dem der Simulator installiert ist und der
+      entfernte Netzwerkrechner auf dem lediglich <em>Little Navmap</em> läuft.
+    </p>
+
+    <ol>
+      <li>Zuerst muss <em>Little Navmap</em> für die Vorbereitung des Netzwerkbetriebes auf beiden Rechnern, nämlich
+      dem Flugrechner und dem Netzwerkrechner, installiert werden.
+      </li>
+
+      <li>Zuerst muss das Programm auf den Flugrechner gestartet und die Szeneriedatebbank erstellt werden. Siehe
+      <a href="#h2scenerylibdialog">Szenerie laden Dialog</a> für mehr Informationen.
+      </li>
+
+      <li>Nachdem die Datenbank generiert wurde, <code>Main Menu</code> -&gt; <code>Scenery Library</code> -&gt; <code>
+        Show Database Files</code> auf dem Flugrechner anklicken. Dies öffnet das Verzeichnis mit den
+        Szeneriedatenbanken in einen Dateimanager (z.B. Windows Explorer oder Apple Finder). Dort können eine oder
+        mehrere Datenbanken, wie <code>little_navmap_fsx.sqlite</code> oder <code>little_navmap_p3dv3.sqlite</code>
+        gespeichert sein.
+      </li>
+
+      <li>Nun <em>Little Navmap</em> auf dem Flugrechner beenden.
+      </li>
+
+      <li>Anschließend in <em>Little Navmap</em> auf dem Netzwerkrechner <code>Scenery Library</code> -&gt; <code>Show
+      Database Files</code> auswählen.
+      </li>
+
+      <li>
+        <em>Little Navmap</em> auf dem Netzwerkrechner beenden.
+      </li>
+
+      <li>Die Datenbankdateien nun über Windows Shares oder USB Sticks zum Netzwerkrechner kopieren. Dazu können die
+      Fenster der Dateimanager benutzt, die zuvor geöffnet wurden.
+      </li>
+
+      <li>Wenn jetzt <em>Little Navmap</em> auf dem Netzwerkrechner gestartet wird, sollta das Menü <code>Scenery
+      Library</code> einen Eintrag für jede kopierte Datenbank enthalten oder keinen Eintrag, wenn nur eine Datenbank
+      kopiert wurde. Auf jeden Fall sollten Flugplatzsymbole auf der Karte sichtbar sein.
+      </li>
+    </ol>
+
+    <p>
+      Siehe nächstes Kapitel für Informationen zum Verbindungsaufbau zum Flugsimulator.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2connect">
+      <img class="textimg" alt="Flight Simulator Connection" title="Flight Simulator Connection" src=
+      "images/icons/network.png" /> Mit dem Flugsimulator verbinden
+    </h2>
+
+    <p>
+      Daten zum Simulatorflugzeug werden zu <em>Little Navmap</em> mittels <a href=
+      "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> auf dem Flugrechner
+      übertragen. Dies erspart die fehleranfällige Einrichtung einer SimConnect-Verbindung über ein Netzwerk.
+    </p>
+
+    <p>
+      Die Einrichtungsprozedur ist die gleiche für entfernte Netzwerkverbindungen, wie auch lokale Verbindungen. In
+      letzteren Fall laufen alle Programme (Simulator, <em>Little Navmap</em> und <em>Little Navconnect</em>) auf dem
+      gleichen Rechner.
+    </p>
+
+    <p>
+      <span class="bold"><em>Little Navmap</em> kann sich nicht direkt mit dem Flugsimulator verbinden. <em>Little
+      Navconnect</em> ist auf jedem Fall notwendig, auch wenn alle Programme auf dem gleichen Rechner laufen.</span>
+    </p>
+
+    <ol>
+      <li>Zuerst <a href="https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> auf
+      dem Flugrechner installieren. Das Programm starten und die Meldung merken, die im Log-Fenster ausgegeben wird.
+      Nur die farbigen Werte werden gebraucht. Es kann die IP-Adresse oder der Rechnername (Hostname) benutzt werden.
+        <br />
+        Abhängig von der Netzwerkkonfiguration kann <em>Little Navconnect</em> kann mehrere IP-Adressen bzw. mehrere
+        Rechnernamen ausgeben. Das ist z.B. der Fall, wenn eine Ethernet- und WLAN-Verbindung bestehen. Im
+        Zweifelsfalle alle IP-Adressen bzw. Rechnernamen ausprobieren.
+        <br />
+        <code>localhost</code> and <code>127.0.0.1</code> wird benutzt, wenn keine Verbindung zu einem Netzwerk
+        besteht.
+        <p>
+          <img alt="Little Navconnect" title="Little Navconnect" src="images/littlenavconnect.jpg" />
+        </p>
+
+        <p>
+          <span class="capthdg">Bild oben:</span> <span class="capt"><a href=
+          "https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a> wurde gestartet und
+          wartet auf einen Flugsimulator.</span>
+        </p>
+
+        <p>
+          <span class="bold">Der Port muß in <em>Little Navconnect</em> s <code>Options</code> Dialog geändert werden,
+          wenn eine Fehlermeldung, wie unten erscheint:</span>
+        </p>
+
+        <pre xml:space="preserve">
+[2016-07-27 16:45:35] <span style="color: red;">Unable to start the server: The bound address is already in use.</span>
+</pre>
+      </li>
+
+      <li>
+        <em>Little Navmap</em> auf dem Netzwerkrechner starten.
+      </li>
+
+      <li>Den Verbindungsdialog in <em>Little Navmap</em> im <code>Main Menu</code> -&gt; <code>Tools</code> -&gt;
+      <code>Flight Simulator Connection</code> öffnen.
+        <p>
+          <img alt="Little Navmap Connect Dialog" title="Little Navmap Connect Dialog" src="images/connect.jpg" />
+        </p>
+
+        <p>
+          <span class="capthdg">Bild oben:</span> <span class="capt">Dialog mit den korrekten Werten, um mit der oben
+          gezeigten <a href="https://albar965.github.io/littlenavconnect.html" target="_blank">Little Navconnect</a>
+          Instanz Verbindung aufzunehmen.</span>
+        </p>
+      </li>
+
+      <li>Den Rechnernamen (Hostname) oder die IP-Adresse eingeben. Wenn alle Programme auf dem gleichen Rechner laufen
+      kann man <code>localhost</code> benutzen.
+      </li>
+
+      <li>Den Wert für Port überprüfen. <code>51968</code> ist der Standardwert und muß üblicherweise nicht geändert
+      werden.
+      </li>
+
+      <li>Jetzt <code>Connect</code> auswählen, um Verbindung aufzunehmen. Der Dialog wird nun geschlossen und
+      <em>Little Navmap</em> versucht im Hintergrund eine Verbindung aufzunehmen. Dies kann, abhängig von der
+      Netzwerkkonfiguration, eine Weile dauern. Das Simulatorflugzeug wird auf der Karte und im <code>Simulator
+      Aircraft</code> Dock-Fenster angezeigt, sobald ein Flug eingerichtet und geladen wurde.
+        <br />
+        Falls noch kein Flug geladen ist, wird eine Nachricht <code>Connected. Waiting for update.</code> im
+        <code>Simulator Aircraft</code> Dock-Fenster angezeigt. Dies z.B. kann der Fall sein, wenn der Simulator sich
+        noch im Eröffnungsbildschirm befindet.
+        <br />
+        <span class="bold">Es kann einige Zeit dauern, bis eine Fehlermeldung angezeigt wird, wenn fehlerhafte Werte
+        eingegeben wurden.</span>
+      </li>
+    </ol>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2customtheme">
+      Kartenthemen hinzufügen
+    </h2>
+
+    <p>
+      <em>Little Navmap</em> erlaubt das Hinzufügen von beliebigen Offline- und Online-Karten. Zu dem Zweck muß die
+      heruntergeladene oder selbst erstelle Karte in das Verzeichnis <code>data\maps\earth</code> kopiert werden.
+    </p>
+
+    <p>
+      Der komplette Pfad zur DGML-Datei (siehe weiter unten für Verweise zu DGML), welche die Karte beschreibt muß z.B.
+      <code>c:\Own Programs\Little Navmap\data\maps\earth\opencyclemap\opencyclemap.dgml</code> falls die <a href=
+      "http://www.opencyclemap.org" target="_blank">OpenCycleMap</a> hinzugefügt werden soll. Die DGML-Date kann
+      entwerder zu einen Online-Kartendienst oder eigenen Kartendaten verweisen. Ein Kartenthema enthält üblicherweise
+      mehr Dateien, als nur die DGML-Datei.
+    </p>
+
+    <p>
+      Das Menü <code>Main Menu</code> -&gt; <code>Map</code> -&gt; <code>Theme</code> und die Eingabeliste in der
+      Werkzeugleiste erhalten einen neuen Eintrag für jedes neue Kartenthema.
+    </p>
+
+    <p>
+      Die Optionen <code>Show Country and City Names</code> und <code>Show Hillshading</code> sind für alle neuen
+      Kartenthemen eingeschaltet können jedoch abhängig von den Eigenschaften des Kartenthemas nicht funktionieren.
+    </p>
+
+    <p>
+      <span class="bold">Mehr Karten, Kartenkonfigurationen und DGML-Dateien können auf den Marble/KDE-Seiten gefunden
+      werden:</span>
+    </p>
+
+    <ul>
+      <li>Karten für das Marble Widget (nur Karten für die Erde werden in <em>Little Navmap</em> unterstützt):
+        <br />
+        <a href="https://marble.kde.org/maps.php" target="_blank">Zusätzliche Karten (Englisch)</a>
+      </li>
+
+      <li>Eine Einführung, die zeigt, wie man Kartenthemen erstellt, die auf gekachelten Bildern basieren:
+        <br />
+        <a href="https://techbase.kde.org/Marble/CustomMaps" target="_blank">Marble/CustomMaps (Englisch)</a>
+      </li>
+
+      <li>Eine Einführung, die zeigt wie man Kartenthemen erstellt, die auf <a href=
+      "http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames" target="_blank">OSM Slippy Maps (Englisch)</a>
+      basieren:
+        <br />
+        <a href="https://techbase.kde.org/Marble/OSMSlippyMaps" target="_blank">How to create map themes based on OSM
+        slippy maps (Englisch)</a>
+      </li>
+
+      <li>Wie man eine historische Karte für Marble erstellt:
+        <br />
+        <a href="https://techbase.kde.org/Marble/HistoricalMaps" target="_blank">Historical Maps for Marble
+        (Englisch)</a>
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2troubleshoot">
+      Problemlösung
+    </h2>
+
+    <ul>
+      <li>Falls das Programm beim Starten abstürzt, sollten sämtliche Konfigurationsdateien und Datenbanken gelöscht
+      bzw. verschoben werden. In Windows 7, 8 oder 10 könne diese im Verzeichnis
+      <code>c:\Users\YOURUSERNAME\Appdata\Roaming\ABarthel</code> gefunden werden. In diesem Verzeichnis sollten die
+      Dateien <code>little_navmap.ini</code>, <code>little_navmap.track</code>, <code>little_navmap.history</code> und
+      das Unterverzeichnis <code>little_navmap_db</code> gelöscht werden.
+      </li>
+
+      <li>Die das Verstecken (Hide) Overlay-Schaltfächen in der Karte kann nicht rückgängig gemacht werden. Um die
+      Overlay-Schaltfächen wieder zu erhalten, muß <em>Little Navmap</em> neu gestartet werden.
+      </li>
+
+      <li>Das Zoomen in der Karte kann zu schnell sein, wenn eine Touchpad mit der <em>OpenStreetMap</em>,
+      <em>OpenTopoMap</em> oder einen anderen Online-Kartenthema benutzt wird. Als Abhilfe entweder eine der
+      Offline-Kartenthemen, wie <code>Plain</code>, <code>Simple</code> oder <code>Atlas</code> benutzen, die
+      Overlay-Schaltfächen benutzen oder die Tastatur benutzen (<code>+</code> und <code>-</code>).
+      </li>
+
+      <li>Online-Karten, wie die <em>OpenStreetMap</em> oder die <em>OpenTopoMap</em> können unscharf erscheien, wenn
+      Funktionalität wie <code>Center Flight Plan</code> oder <code>Go to Home</code> benutzt wird. Zum Beseitigen
+      einmal hinein- und herauszoomen.
+      </li>
+
+      <li>Die <em>OpenStreetMap</em> zeigt einen dunkelgrauen Hintergrund in manchen Ländern, die keine Abdeckung für
+      Bergschattierung benutzen (z.B. Neuseeland). Zum Beseitigen kann entweder ein anderes Kartenthema benutzt werden
+      oder die Bergschattierung ausgeschaltet werden.
+      </li>
+
+      <li>Falls das Programm beim Laden der Szeneriebibliothek abstürzt, kann im <code>Options</code> Dialog auf dem
+      Tab <code>Scenery Library Database</code> das betreffende Verzeichnis ausgeschlossen werden. Dazu das Programm
+      nach dem Absturz nicht neu starten, sondern die Datei
+      <code>C:\Users\YOURUSERNAME\AppData\Local\Temp\abarthel-little_navmap.log</code> öffnen. Der Pfad zu Log-Date
+      kann je nach Installation variieren.
+        <br />
+        In der Log-Date nach der letzten Zeile suchen, die ähnlich, wie unten aussieht:
+        <br />
+
+        <pre xml:space="preserve">
+[2016-10-14 22:58:21.903 default INFO ]  unknown: ==== "404 of 521 (77 %)" "APX41080.bgl"
+</pre>Nun die Datei <code>APX41080.bgl</code> suchen und ihr Verzeichnis <code>Options</code> Dialog vom Laden
+ausschließen.
+      </li>
+    </ul>
+
+    <h2 id="h2knownproblems">
+      Bekannte Probleme
+    </h2>
+
+    <ul>
+      <li>Manche Flugplatz-Add-On Szenerien ändern nicht die Standardflugplätze, sondern fügen nur neue Szenerie und
+      Gebäude hinzu. Diese Flugplätze können von <em>Little Navmap</em> nicht als Add-On erkannt werden und werden
+      daher in der Karte auch nicht mit kursiven und unterstrichenen Text hervorgehoben.
+      </li>
+
+      <li>Add-On Entwickler müssen alle möglichen Methoden anwenden um Fehler und Limitierungen im Flugsimulator zu
+      umgehen. Daher sind Darstellung und Informationen von Add-On-Flugplätzen nicht immer korrekt. Typische Beispiele
+      sind: Flugplätze ohne Landebahnen, Landebahndimensionen von null mal null Fuß, Landebahnbreite von null Fuß,
+      Rollbahnen ohne Breite, scheinbar geschlossene Rollbahnen, Flugplatzduplikate und mehr.
+      </li>
+
+      <li>Manche Google Earth KML- bzw. KMZ-Dateien lassen sich auf der Karte nicht darstellen. Das Hinzufügen eines
+      sogenannten Pushpins im Zentrum der Datei kann das Problem lösen..
+      </li>
+
+      <li>Die Abdeckung für Bergschattierung in der <em>OpenStreetMap</em> ist begrenzt und endet momentan bei 60°
+      nördlicher Breite. Alternativ können die <em>OpenTopoMap</em>, <em>OpenMapSurfer</em> oder <em>Stamen
+      Terrain</em> Kartenthemen benutzt werden, die weltweite Abdeckung für Bergschattierung haben.
+      </li>
+
+      <li>In den Höhendaten sind Fehler enthalten, die im Höhenprofil in Erscheinung treten (z.B. in Norditalien, Po
+      Ebene).
+      </li>
+
+      <li>Die Mercator-Projektion zeigt gelegentlich Darstellungsprobleme, die vom der Zoomstufe abhängen. Die Probleme
+      zeigen sich in verschwindenden Flugplansegmenten oder horizontalen Linien nahe der Datumsgrenze.
+      </li>
+
+      <li>Die <em>OpenTopoMap</em> zeigt Namen in manchen asiatischen Ländern nicht korrekt an.
+      </li>
+
+      <li>Die Marble Overlay-Schaltfächen können konfiguriert werden, speichern aber nicht alle Einstellungen.
+      </li>
+
+      <li>Flugpläne und Luftstraßen werden als Großkreisrouten gezeichnet anstatt Rhumb-Linien zu verwenden. Entfernung
+      und Kurs sind davon nicht betroffen.
+      </li>
+
+      <li>Die Magnetische Varianz ist für manche Szenerieobjekte nicht korrekt gesetzt (z.B. VORDME Cambridge Bay YCB).
+      Dies ist ein Fehler in den Quelldaten und wird in einen zukünfitgen Update von <em>Little Navmap</em> beseitigt
+      werden.
+      </li>
+
+      <li>Flugplätze sind im Vergleich zur Hintergrundkarte fehlplatziert. Dies sind Fehler in den Quelldaten und
+      können nicht beseitigt werden..
+      </li>
+
+      <li>Die Flugplanberechnung entlang Luftstraßen kann zu nutzlosen Fluplänen oder Abstürzen führen wenn die
+      Navigationsdaten von <a href="http://www.aero.sors.fr/navaids3.html" target="_blank">FSX/P3D Navaids update</a>
+      installiert wurden. Sämtliche weiter Funktionalität ist nicht betroffen.
+      </li>
+
+      <li>macOS: Dock-Fenster können nicht in der Größe geändert werden, wenn sie vom Hauptfenster abgelöst wurden.
+      </li>
+
+      <li>macOS: Die Startposition auf der Karte wird beim Neustart nicht wiederhergestellt. Stattdessen sollte die
+      Home-Position festgelegt werden.
+      </li>
+
+      <li>macOS: Google Earth KML- bzw. KMZ-Dateien werden beim Laden nicht auf der Karte zentriert.
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2bugreport">
+      Fehler berichten
+    </h2>
+
+    <p>
+      Im Falle eines Fehlers sollten mir sämtliche involvierten Dateien, wie KML, PLN or BGL (falls das Copyright
+      erlaubt), <em>Little Navmap</em>s Logdatei and Konfiurationsdatei geschickt werden. Der About-Dialog enthält
+      Verweise auf die Log- und Konfigurationsdateien. Mein E-mail Adresse wird ebenfallst im About-Dialog von
+      <em>Little Navmap</em> angezeigt.
+    </p>
+
+    <p>
+      Bitte alle Schritte erklären, die notwendig sind, um den Fehler zu reproduzieren.
+    </p>
+
+    <p>
+      Wenn ein Fehler während des Ladens der Szeneriebibliothek auftritt, sollte mir die BGL-Datei geschickt werden,
+      die den Fehler auslöst. Der Pfad und der Name der Datei kann im Fehlerdialog ermittelt werden, wenn eine
+      BGL-Datei den Fehler ausgelöst hat.
+    </p>
+
+    <p>
+      <span class="bold">Falls die Privatsphäre beim Verschicken der Logdateien ein Problem ist:</span>
+      <br />
+      Die Logdateien enthalten alle Systempfade, wie das <code>Dokumente</code>-Verzeichnis, wobei der Pfad auch den
+      Nutzernamen enthält. Unter Umständen können auch der Rechnername und die IP-Adresse enthalten sein.
+    </p>
+
+    <p>
+      In keinen Fall wird die Logdatei etwas andere Pfade oder Dateien, als vom Flugsimulator verwendete enthalten.
+      Keine Namen oder Inhalte von persönlichen Dateien sind in den Logdateien enthalten.
+    </p>
+
+    <p>
+      Die Informationen können auch aus der Logdatei entfernt werden, falls sie ein Problem darstellen.
+    </p>
+
+    <p>
+      Auf keinen Fall sollten die Logdateien in öffentlich einsehbaren Foren eingestellt werden, sondern per E-Mail
+      oder privater Forennachricht zugesendet werden.
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2files">
+      Dateien
+    </h2>
+
+    <p>
+      <span class="bold">Logdateien</span> von <em>Little Navmap</em> werden unter Windows 7/8/10 typischerweise im
+      folgenden Verzeichnis gespeichert:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Local\Temp</code>
+    </p>
+
+    <p>
+      <em>Little Navmap</em> behält drei Logdateien und rotiert diese mit jeden Neustart des Programmes. Daher können
+      bis zu drei Logdateien gefunden werden:
+    </p>
+
+    <p>
+      <code>abarthel-little_navmap.log</code>, <code>abarthel-little_navmap.log.1</code> und
+      <code>abarthel-little_navmap.log.2</code>.
+    </p>
+
+    <hr width="60%" align="left" />
+
+    <p>
+      Die <span class="bold">Konfigurationsdateien</span> aller meiner Programme werden unter Windows 7/8/10
+      typischerweise im folgenden Verzeichnis gespeichert:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel</code>
+    </p>
+
+    <p>
+      <em>Little Navmap</em> speichert drei Konfigurationsdateien:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;"><code>little_navmap.ini</code>:</span> Textdatei
+        im Windows INI-Stil.
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;"><code>little_navmap.history</code>:</span> Die
+        Historie der Kartenpositionen als Binärdate.
+      </li>
+
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;"><code>little_navmap.track</code>:</span> Die Spur
+        des Simulatorflugzeuges als Binärdatei.
+      </li>
+    </ul>
+
+    <hr width="60%" align="left" />
+
+    <p>
+      Der <span class="bold">Zwischenspeicher für Online-Karten</span>, der benutzt wird um die heruntergeladenen
+      Bildkacheln zu speichern befindet sich im Verzeichnis unten:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Local\.marble\data</code>
+    </p>
+
+    <hr width="60%" align="left" />
+
+    <p>
+      Die <span class="bold">Szeneriedatenbanken</span> werden im folgenden Verzeichnis abgelegt:
+    </p>
+
+    <p>
+      <code>C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap_db</code>
+    </p>
+
+    <p>
+      Bis zu fünf Datenbankddateien können in dem Verzeichnis gespeichert werden, abhängig davon welche Flugsimulatoren
+      installiert sind und welchen Szeneriebibliotheken geladen wurden.
+    </p>
+
+    <p>
+      All diese Datenbanken werden im <a href="http://sqlite.org" target="_blank">SQLite</a> Format abgelegt und können
+      z.B. mit dem <a href="https://github.com/sqlitebrowser/sqlitebrowser/releases" target="_blank">DB Browser for
+      SQLite</a> betrachtet werden, falls Interesse and relationalen Datenbanken besteht.
+    </p>
+
+    <p>
+      Die Datenbankdateien sind:
+    </p>
+
+    <ul>
+      <li>
+        <span class="bold" style="width: 18em;display: inline-block;"><code>little_navmap_.sqlite</code>:</span>Ein
+        leere Platzhalter.
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_fsx.sqlite</code>:</span>Flight Simulator X
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_fsxse.sqlite</code>:</span>Flight Simulator - Steam
+        Edition
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_p3dv2.sqlite</code>:</span>Prepar3D v2
+      </li>
+
+      <li>
+        <span class="bold" style=
+        "width: 18em;display: inline-block;"><code>little_navmap_p3dv3.sqlite</code>:</span>Prepar3D v3
+      </li>
+    </ul>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2acknowlegments">
+      Danksagungen
+    </h2>
+
+    <p>
+      <span class="bold">Ein großen Dankeschön an alle, die mich während der Beta-Phase unterstützt haben, die mir ihre
+      Logdateien, Bildschirmfotos, Ideen und Verbesserungsvorschläge, freundliche Worte und mehr geschickt
+      haben.</span>
+    </p>
+
+    <p>
+      <span class="bold">Ein ganz besonderes Dankeschön an Roberto S. aus der Schweiz für seine wertvollen
+      Rückmeldungen und seine Fähigkeit noch die verborgendsten Fehler zu finden.</span>
+    </p>
+
+    <p>
+      Danke an alle in den unten genannten Foren, die mir geduldig Unterstützung, wertvolle Rückmeldungen und
+      Fehlerberichte während der Testphase zukommen ließen:
+    </p>
+
+    <p>
+      <a href="http://www.avsim.com" target="_blank"><span class="bold">AVSIM</span></a>, <a href=
+      "http://www.sim-outhouse.com" target="_blank"><span class="bold">SimOuthouse</span></a>, <a href=
+      "http://flightx.net" target="_blank"><span class="bold">FlightX.net</span></a> und <a href=
+      "http://www.fsdeveloper.com" target="_blank"><span class="bold">FSDeveloper.com</span></a>.
+    </p>
+
+    <p>
+      Dieses Projekt und meine Bibliothek <a href="https://github.com/albar965/atools" target="_blank"><span class=
+      "bold">atools</span></a> würden nicht existieren ohne die fabelhafte Dokumentation des BGL-Formates im <a href=
+      "http://www.fsdeveloper.com/wiki" target="_blank"><span class="bold">FSDeveloper Wiki</span></a>.
+      <br />
+      Ein riesengroßes Dankeschön an alle Beteiligten.
+    </p>
+
+    <p>
+      Ohne die quelloffene <a href="https://marble.kde.org" target="_blank"><span class="bold">Marble</span></a>
+      Bibliothek, die es mir erlaubt die Karten zu laden und darzustellen, wäre ich noch ein paar Jahre noch damit
+      beschäftigt all das selbst zu erstellen..
+    </p>
+
+    <p>
+      Kein <a href="https://www.qt.io" target="_blank"><span class="bold">Qt application framework</span></a> und ich
+      könnte nicht einmal eine Schaltfäche zeichnen.
+    </p>
+
+    <p>
+      Nicht zu vergessen, all die Online-Dienste, die Karten kostenlos zur Verfügung stellen.
+    </p>
+
+    <p>
+      <a href="http://maps.stamen.com" target="_blank"><span class="bold">Stamen Design</span></a>, <a href=
+      "http://maptiles.xyz" target="_blank"><span class="bold">MapTiles</span></a> und <a href=
+      "http://www.opentopomap.org" target="_blank"><span class="bold">OpenTopoMap</span></a>.
+    </p>
+
+    <p>
+      Ein Dankeschön an die <span class="bold"><a href="http://www.geog.uni-heidelberg.de/gis/index_en.html" target=
+      "_blank">GIScience / Geoinformatics Research Group</a> der Universität Heidelberg</span> für ihre freundliche
+      Erlaubnis ihre Karte <a href="http://korona.geog.uni-heidelberg.de" target="_blank"><span class=
+      "bold">OpenMapSurfer</span></a> zu benutzen.
+    </p>
+
+    <p>
+      Und zu guter Letzt:
+      <br />
+      Wenn es keine <a href="http://www.openstreetmap.org" target="_blank"><span class="bold">OpenStreetMap</span></a>
+      und ihre vielzähligen Beiträger gäbe, hätten wir alle keine Karte.
+      <br />
+    </p>
+    <!-- ===================================================================== -->
+
+    <h2 id="h2license">
+      Lizenz
+    </h2>
+
+    <p>
+      Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von
+      der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version,
+      weiterverbreiten und/oder modifizieren.
+    </p>
+
+    <p>
+      Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt;
+      sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU
+      General Public License für weitere Details.
+    </p>
+
+    <p>
+      Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht,
+      siehe &lt;<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>&gt;.
+    </p>
+
+    <p>
+      <img alt="GPL V3" title="GPL V3" class="gplimg" src="images/gpl-v3-logo.svg" />
+    </p>
+
+    <p>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      Letzte Aktualisierung 25.10.2016
+    </p>
+  </body>
+</html>

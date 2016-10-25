@@ -3,6 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta http-equiv="language" content="EN" />
     <meta name="author" content="Alexander Barthel" />
@@ -595,14 +596,14 @@
     </p>
 
     <p>
-      The default behavior is to jump from the departure airport to the next waypoint of a suitable route and vice
+      The default behavior is to jump from the departure airport to the next waypoint of a suitable airway and vice
       versa for the destination. This can be changed in <code>Options</code> dialog on the <code>Flight Plan</code> tab
       if VOR or NDB stations are preferred as transition points to airways.
     </p>
 
     <p>
       The airway network of Flight Simulator is not complete (the north Atlantic tracks are missing for example - these
-      change daily), therefore calculation across large ocean areas will fail. Create the route manually as a
+      change daily), therefore calculation across large ocean areas will fail. Create the airway manually as a
       workaround.
     </p>
 
@@ -854,7 +855,7 @@
 
     <p>
       <span class="capthdg">Picture above:</span> <span class="capt">View at the eastern Alps using
-      <em>OpenTopoMap</em> theme. A route is drawn north of the Alps.</span>
+      <em>OpenTopoMap</em> theme. A flight plan is shown north of the Alps.</span>
     </p>
 
     <h5>
@@ -1033,7 +1034,7 @@
       </li>
 
       <li>
-        <code>Show Flight Plan</code> plan. Either manually in a menu item or after loading.
+        <code>Show Flight Plan</code>. Either manually in a menu item or after loading.
       </li>
 
       <li>Centering a Google Earth KML/KMZ file after loading
@@ -1110,8 +1111,8 @@
 
     <p>
       This menu is synchronized with simulator selection in the <a href="#h2scenerylibdialog">Load Scenery Library
-      Dialog</a> dialog. Once a database is successfully loaded, the display, flight plan and search will switch over
-      to the newly loaded simulator data.
+      Dialog</a>. Once a database is successfully loaded, the display, flight plan and search will switch over to the
+      newly loaded simulator data.
     </p>
 
     <h4>
@@ -1314,8 +1315,8 @@
       <span class="capthdg">Picture above:</span> <span class="capt">Status bar with message about the last action on
       the left side and a tooltip that indicates what is currently shown on the map. The map shows only airports with
       runways longer than 4000 feet. No navaids are shown. The map detail level was increased once and the map
-      coordinates not shown since cursor is not inside the map window. The online map download progress indicator is
-      empty.</span>
+      coordinates are not shown since cursor is not inside the map window. The online map download progress indicator
+      is empty.</span>
     </p>
 
     <h2 id="h2mapdisplay">
@@ -1351,9 +1352,9 @@
     </p>
 
     <p>
-      The double and single click functionality does not work for route waypoints or airports if the flight plan edit
-      mode is enabled. The edit mode can be disabled using the toolbar or <code>Main Menu</code> -&gt; <code>Flight
-      Plan</code> -&gt; <code>Edit Flight Plan on Map</code>.
+      The double and single click functionality does not work for flight plan waypoints or airports if the flight plan
+      edit mode is enabled. The edit mode can be disabled using the toolbar or <code>Main Menu</code> -&gt;
+      <code>Flight Plan</code> -&gt; <code>Edit Flight Plan on Map</code>.
     </p>
 
     <p>
@@ -1396,7 +1397,7 @@
 
     <p>
       These highlight rings provide all functionality of visible map objects, even if the objects are not shown at the
-      current zoom level (ring is empty). That covers double click for zoom in, single click for information dock
+      current zoom distance (ring is empty). That covers double click for zoom in, single click for information dock
       window and all context menu entries.
     </p>
 
@@ -1600,7 +1601,7 @@
     </p>
 
     <p>
-      The name of the navaid is shown in the menu item.
+      The name of the navaid or airport is shown in the menu item.
     </p>
 
     <p>
@@ -1914,7 +1915,7 @@
     </p>
 
     <p id="tableviewops">
-      The header of the table view allows the following manipulation:
+      The header of all table views allows the following manipulation:
     </p>
 
     <div class="tabbed24">
@@ -2169,10 +2170,10 @@
 
     <ul>
       <li>
-        <code>Direct °M:</code> This is the rhumb line of constant course connecting two waypoints of a leg. Depending
-        on route and distance it can differ from the course of the great circle line. Use this course if you travel
-        along airways or towards VOR or NDB stations. Opposed to the course shown by the flight simulator GPS unit this
-        will give you the precise radial when approaching a VOR or NDB on a flight plan.
+        <code>Direct °M:</code> This is the constant course of the rhumb line connecting two waypoints of a leg.
+        Depending on route and distance it can differ from the course of the great circle line. Use this course if you
+        travel along airways or towards VOR or NDB stations. Opposed to the course shown by the flight simulator GPS
+        unit this will give you the precise radial when approaching a VOR or NDB on a flight plan.
       </li>
 
       <li>
@@ -2523,7 +2524,7 @@
     <p>
       The button <code>Restore Defaults</code> only restores the options of this dialog back to default. Other settings
       like map display, table views or dock window positions are not affected. To reset all saved settings completely
-      see <a href="#h2troubleshoot">Troubleshoot.</a>
+      see <a href="#h2troubleshoot">Troubleshoot</a>.
     </p>
 
     <p>
@@ -2583,8 +2584,8 @@
     </p>
 
     <p>
-      The program tries to find the base path and <code>Scenery.cfg</code> automatically. The typical locations of the
-      <code>Scenery.cfg</code> for Windows 7/8/10 are:
+      The program tries to find the base paths and <code>Scenery.cfg</code> files automatically. The typical locations
+      of the <code>Scenery.cfg</code> for Windows 7/8/10 are:
     </p>
 
     <ul>
@@ -2649,6 +2650,10 @@
       You can follow these steps if you want to install <em>Little Navmap</em> on a computer not containing any flight
       simulator installation. No functionality is affected except scenery database loading which is not needed in this
       case.
+    </p>
+
+    <p>
+      The same procedure applies if you want to install <em>Little Navmap</em> on a Linux or macOS system.
     </p>
 
     <p>
@@ -2816,7 +2821,7 @@
     </p>
 
     <ul>
-      <li>Download more maps for the Marble widget (only Earth maps are supported):
+      <li>Download more maps for the Marble widget (only Earth maps are supported in <code>Little Navmap</code>):
         <br />
         <a href="https://marble.kde.org/maps.php" target="_blank">Additional Maps</a>
       </li>
@@ -2860,20 +2865,14 @@
       the overlay zoom buttons or the keyboard (<code>+</code> and <code>-</code>).
       </li>
 
-      <li>
-        <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up blurred when using functionality like
-        <code>Center Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the mouse wheel, overlay
-        zoom buttons or keyboard to fix this.
+      <li>Online maps like <em>OpenStreetMap</em> or <em>OpenTopoMap</em> maps can end up blurred when using
+      functionality like <code>Center Flight Plan</code> or <code>Go to Home</code>. Zoom once in and out using the
+      mouse wheel, overlay zoom buttons or keyboard to fix this.
       </li>
 
       <li>
         <em>OpenStreetMap</em> shows a dark gray background on some places without hill shading coverage (for example
         New Zealand). Use another map theme or switch off hill shading for the <em>OpenStreetMap</em>.
-      </li>
-
-      <li>Scrolling can be jerky when using <em>OpenStreetMap</em> or one of the other online map themes together with
-      the spherical map projection. Either use the <code>Plain</code> or <code>Simple</code> map themes or use the
-      <code>Mercator</code> projection. The same applies to a blurred map appearance.
       </li>
 
       <li>You can exclude scenery directories in the <code>Options</code> dialog on the <code>Scenery Library
@@ -2882,7 +2881,7 @@
       <code>C:\Users\YOURUSERNAME\AppData\Local\Temp\abarthel-little_navmap.log</code>. The path may vary depending on
       your Windows installation.
         <br />
-        Search for the last line that looks like:
+        Search for the last line in the log-file that looks like:
         <br />
 
         <pre xml:space="preserve">
@@ -2902,8 +2901,8 @@
 
       <li>Add-on developers have to use all kind of workarounds to avoid FSX' limitations. So the display and
       information given for add-on airports is not always correct. Typical examples are: Airports without runways,
-      airports with runway dimensions 0 by 0 ft or 0 ft runway width, taxiways with 0 ft width, closed taxiways,
-      duplicate airports and more.
+      airports with runway dimensions 0 by 0 ft or 0 ft runway width, taxiways with 0 ft width, seemingly closed
+      taxiways, duplicate airports and more.
       </li>
 
       <li>Some KML/KMZ files do not show up on the map. Adding a centerpoint pushpin to the KML/KMZ file can fix this.
@@ -2914,10 +2913,11 @@
       have world wide coverage for hill shading.
       </li>
 
-      <li>There are errors in the elevation source data (like in northern Italy, Po Valley).
+      <li>There are errors in the elevation source data (like in northern Italy, Po Valley) which will show up in the
+      flight plan elevation profile.
       </li>
 
-      <li>The Mercator projections shows occasional display problems depending on zoom distance like horizontal lines
+      <li>The Mercator projection shows occasional display problems depending on zoom distance like horizontal lines
       near the anti meridian or missing flight plan segments.
       </li>
 
@@ -2978,13 +2978,13 @@
     <p>
       <span class="bold">If you're concerned about privacy when sending log files:</span>
       <br />
-      The log files will contain all paths (like your <code>Documents</code> directory) which will also include your
-      username as a part of the path. They might also contain your computer's name IP address in your network.
+      The log files will contain all system paths (like your <code>Documents</code> directory) which will also include
+      your username as a part of the path. They might also contain your computer's name IP address in your network.
     </p>
 
     <p>
-      In no case file names from anything else than flight simulator scenery or configuration files are included. No
-      names or content of personal files is included in the log files.
+      In no case file names from anything else than flight simulator paths/files or configuration files are included.
+      No names or content of personal files is included in the log files.
     </p>
 
     <p>
@@ -3126,12 +3126,12 @@
     </p>
 
     <p>
-      <span class="bold">A very special thank-you to Roberto S. from Switzerland for his valuable input and
-      also helping with his capability to find the most obscure bugs.</span>
+      <span class="bold">A very special thank-you to Roberto S. from Switzerland for his valuable input and also
+      helping with his capability to find the most obscure bugs.</span>
     </p>
 
     <p>
-      Thanks to all in the forums who supported me and gave invaluable feedback during the public beta:
+      Thanks to all in the forums who patiently supported me and gave invaluable feedback during the public beta:
     </p>
 
     <p>
