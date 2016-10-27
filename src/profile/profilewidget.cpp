@@ -108,24 +108,27 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     if(showAircraft || showAircraftTrack)
     {
       simData = simulatorData;
-      if(rmoList.getRouteDistances(simData.getPosition(), &aircraftDistanceFromStart, &aircraftDistanceToDest))
+      if(rmoList.getRouteDistances(simData.getUserAircraft().getPosition(), &aircraftDistanceFromStart,
+                                   &aircraftDistanceToDest))
       {
         // Get screen point from last update
         QPoint lastPoint;
-        if(lastSimData.getPosition().isValid())
+        if(lastSimData.getUserAircraft().getPosition().isValid())
           lastPoint = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
                              Y0 + static_cast<int>(rect().height() - Y0 -
-                                                   lastSimData.getPosition().getAltitude() * verticalScale));
+                                                   lastSimData.getUserAircraft().getPosition().getAltitude()
+                                                   * verticalScale));
 
         // Get screen point for current update
         QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
                             Y0 + static_cast<int>(rect().height() - Y0 -
-                                                  simData.getPosition().getAltitude() * verticalScale));
+                                                  simData.getUserAircraft().getPosition().getAltitude() *
+                                                  verticalScale));
 
         if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
         {
           // Add track point and update widget if delta value between last and current update is large enough
-          if(simData.getPosition().isValid())
+          if(simData.getUserAircraft().getPosition().isValid())
           {
             aircraftTrackPoints.append(currentPoint);
             updateWidget = true;
@@ -135,14 +138,14 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
         const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
         using atools::almostNotEqual;
-        if(!lastSimData.getPosition().isValid() ||
+        if(!lastSimData.getUserAircraft().getPosition().isValid() ||
            (lastPoint - currentPoint).manhattanLength() > deltas.manhattanLengthDelta ||
-           almostNotEqual(lastSimData.getPosition().getAltitude(),
-                          simData.getPosition().getAltitude(), deltas.altitudeDelta))
+           almostNotEqual(lastSimData.getUserAircraft().getPosition().getAltitude(),
+                          simData.getUserAircraft().getPosition().getAltitude(), deltas.altitudeDelta))
         {
           // Aircraft position has changed enough
           lastSimData = simData;
-          if(simData.getPosition().getAltitude() > maxWindowAlt)
+          if(simData.getUserAircraft().getPosition().getAltitude() > maxWindowAlt)
             // Scale up to keep the aircraft visible
             updateScreenCoords();
           updateWidget = true;
@@ -152,7 +155,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     else
     {
       // Neither aircraft nor track shown - update simulator data only
-      bool valid = simData.getPosition().isValid();
+      bool valid = simData.getUserAircraft().getPosition().isValid();
       simData = atools::fs::sc::SimConnectData();
       if(valid)
         updateWidget = true;
@@ -190,9 +193,9 @@ void ProfileWidget::updateScreenCoords()
     static_cast<float>(routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude());
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
-  if(simData.getPosition().isValid() &&
+  if(simData.getUserAircraft().getPosition().isValid() &&
      (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
-    maxWindowAlt = std::max(maxWindowAlt, simData.getPosition().getAltitude());
+    maxWindowAlt = std::max(maxWindowAlt, simData.getUserAircraft().getPosition().getAltitude());
 
   verticalScale = h / maxWindowAlt;
   horizontalScale = w / legList.totalDistance;
@@ -428,15 +431,17 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
 
     // Draw user aircraft
-    if(simData.getPosition().isValid() && showAircraft)
+    if(simData.getUserAircraft().getPosition().isValid() && showAircraft)
     {
       int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale);
-      int acy = Y0 + static_cast<int>(h - simData.getPosition().getAltitude() * verticalScale);
+      int acy = Y0 +
+                static_cast<int>(h - simData.getUserAircraft().getPosition().getAltitude() * verticalScale);
 
       // Draw aircraft symbol
       painter.translate(acx, acy);
       painter.rotate(90);
-      symPainter.drawAircraftSymbol(&painter, 0, 0, 20, simData.getFlags() & atools::fs::sc::ON_GROUND);
+      symPainter.drawAircraftSymbol(&painter, 0, 0, 20,
+                                    simData.getUserAircraft().getFlags() & atools::fs::sc::ON_GROUND);
       painter.resetTransform();
 
       // Draw aircraft label
@@ -444,13 +449,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setFont(font);
 
       QString upDown;
-      if(simData.getVerticalSpeedFeetPerMin() > 100.f)
+      if(simData.getUserAircraft().getVerticalSpeedFeetPerMin() > 100.f)
         upDown = tr(" ▲");
-      else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
+      else if(simData.getUserAircraft().getVerticalSpeedFeetPerMin() < -100.f)
         upDown = tr(" ▼");
 
       QStringList texts;
-      texts.append(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0) + tr(" ft") + upDown);
+      texts.append(QLocale().toString(simData.getUserAircraft().getPosition().getAltitude(), 'f',
+                                      0) + tr(" ft") + upDown);
       texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + tr(" nm ► ") +
                    QLocale().toString(aircraftDistanceToDest, 'f', 0) + tr(" nm"));
 

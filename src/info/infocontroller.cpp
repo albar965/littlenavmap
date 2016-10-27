@@ -311,7 +311,7 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
 
   if(!databaseLoadStatus)
   {
-    if(!lastSimData.getPosition().isValid() ||
+    if(!lastSimData.getUserAircraft().getPosition().isValid() ||
        // !lastSimData.getPosition().fuzzyEqual(data.getPosition(), atools::geo::Pos::POS_EPSILON_10M) ||
        atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                               lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
@@ -324,7 +324,7 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
         if(canTextEditUpdate(ui->textBrowserAircraftInfo))
         {
           // ok - scrollbars not pressed
-          info->aircraftText(data, html);
+          info->aircraftText(data.getUserAircraft(), html);
           updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
         }
 
@@ -332,7 +332,8 @@ void InfoController::dataPacketReceived(atools::fs::sc::SimConnectData data)
         {
           // ok - scrollbars not pressed
           html.clear();
-          info->aircraftProgressText(data, html, mainWindow->getRouteController()->getRouteMapObjects());
+          info->aircraftProgressText(data.getUserAircraft(), html,
+                                     mainWindow->getRouteController()->getRouteMapObjects());
           updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
         }
       }

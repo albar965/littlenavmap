@@ -67,7 +67,7 @@ void ConnectClient::readFromSocket()
     // Data was read completely and successfully - reply to server
     writeReply();
 
-    if(simConnectData->getPosition().isValid())
+    if(simConnectData->getUserAircraft().getPosition().isValid())
       emit dataPacketReceived(*simConnectData);
 
     delete simConnectData;

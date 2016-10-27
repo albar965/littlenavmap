@@ -834,7 +834,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
   html.brText(userpoint.name);
 }
 
-void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html)
+void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectUserAircraft& data, HtmlBuilder& html)
 {
   aircraftTitle(data, html);
 
@@ -871,7 +871,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectData& data, H
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html,
+void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectUserAircraft& data,
+                                           HtmlBuilder& html,
                                            const RouteMapObjectList& rmoList)
 {
   aircraftTitle(data, html);
@@ -1105,7 +1106,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectData&
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectData& data, HtmlBuilder& html)
+void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectUserAircraft& data, HtmlBuilder& html)
 {
   QString *icon;
   if(data.getFlags() & atools::fs::sc::ON_GROUND)

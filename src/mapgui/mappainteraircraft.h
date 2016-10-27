@@ -24,6 +24,17 @@ namespace Marble {
 class GeoDataLineString;
 }
 
+namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectAircraft;
+class SimConnectUserAircraft;
+}
+
+}
+
+}
+
 class MapWidget;
 
 /*
@@ -41,14 +52,18 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  void paintAircraft(const PaintContext *context);
   void paintAircraftTrack(Marble::GeoPainter *painter);
+  void paintUserAircraft(const PaintContext *context,
+                         const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+  void paintAiAircraft(const PaintContext *context,
+                       const atools::fs::sc::SimConnectAircraft& userAircraft);
 
   /* Aircraft symbol size in pixel */
   static Q_DECL_CONSTEXPR int AIRCRAFT_SYMBOL_SIZE = 40;
 
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

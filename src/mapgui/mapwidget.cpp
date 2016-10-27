@@ -495,8 +495,9 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
     acAction->blockSignals(false);
   }
 
-  if(centerAircraftChecked && simData.getPosition().isValid())
-    centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
+  if(centerAircraftChecked && simData.getUserAircraft().getPosition().isValid())
+    centerOn(simData.getUserAircraft().getPosition().getLonX(),
+             simData.getUserAircraft().getPosition().getLatY(), false);
 }
 
 void MapWidget::showHome()
@@ -558,12 +559,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   simData = simulatorData;
 
   CoordinateConverter conv(viewport());
-  QPoint curPos = conv.wToS(simulatorData.getPosition());
-  QPoint diff = curPos - conv.wToS(lastSimData.getPosition());
+  QPoint curPos = conv.wToS(simulatorData.getUserAircraft().getPosition());
+  QPoint diff = curPos - conv.wToS(lastSimData.getUserAircraft().getPosition());
 
   bool wasEmpty = aircraftTrack.isEmpty();
-  bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getPosition(),
-                                                  simulatorData.getFlags() & atools::fs::sc::ON_GROUND);
+  bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getUserAircraft().getPosition(),
+                                                  simulatorData.getUserAircraft().getFlags() &
+                                                  atools::fs::sc::ON_GROUND);
 
   if(trackPruned)
     emit aircraftTrackPruned();
@@ -582,15 +584,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
     using atools::almostNotEqual;
-    if(!lastSimData.getPosition().isValid() ||
+    if(!lastSimData.getUserAircraft().getPosition().isValid() ||
        diff.manhattanLength() >= deltas.manhattanLengthDelta || // Screen position has changed
-       almostNotEqual(lastSimData.getHeadingDegMag(),
-                      simData.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
-       almostNotEqual(lastSimData.getIndicatedSpeedKts(),
-                      simData.getIndicatedSpeedKts(),
+       almostNotEqual(lastSimData.getUserAircraft().getHeadingDegMag(),
+                      simData.getUserAircraft().getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+       almostNotEqual(lastSimData.getUserAircraft().getIndicatedSpeedKts(),
+                      simData.getUserAircraft().getIndicatedSpeedKts(),
                       deltas.speedDelta) || // Speed has changed
-       almostNotEqual(lastSimData.getPosition().getAltitude(),
-                      simData.getPosition().getAltitude(),
+       almostNotEqual(lastSimData.getUserAircraft().getPosition().getAltitude(),
+                      simData.getUserAircraft().getPosition().getAltitude(),
                       deltas.altitudeDelta) || // Altitude has changed
        (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
        (!rect().contains(curPos) && centerAircraft) // Not in screen rectangle but centering required
@@ -607,7 +609,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       widgetRect.adjust(dx, dy, -dx, -dy);
 
       if(!widgetRect.contains(curPos) && centerAircraft && mouseState == mw::NONE)
-        centerOn(simData.getPosition().getLonX(), simData.getPosition().getLatY(), false);
+        centerOn(simData.getUserAircraft().getPosition().getLonX(),
+                 simData.getUserAircraft().getPosition().getLatY(), false);
       else
         update();
     }
@@ -615,7 +618,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   else if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_TRACK)
   {
     // No aircraft but track - update track only
-    if(!lastSimData.getPosition().isValid() || diff.manhattanLength() > 4)
+    if(!lastSimData.getUserAircraft().getPosition().isValid() || diff.manhattanLength() > 4)
     {
       lastSimData = simulatorData;
       update();

@@ -51,18 +51,45 @@ void MapPainterAircraft::render(const PaintContext *context)
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context->painter);
 
-  if(context->objectTypes.testFlag(AIRCRAFT))
-    if(mapWidget->isConnected())
-      paintAircraft(context);
+  if(context->objectTypes.testFlag(AIRCRAFT) && mapWidget->isConnected())
+  {
+    const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
+    paintUserAircraft(context, simData.getUserAircraft());
+
+    for(const atools::fs::sc::SimConnectAircraft& ac : simData.getAiAircraft())
+      paintAiAircraft(context, ac);
+  }
 
   context->painter->restore();
 }
 
-void MapPainterAircraft::paintAircraft(const PaintContext *context)
+void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
+                                         const atools::fs::sc::SimConnectAircraft& userAircraft)
 {
-  const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
+  const Pos& pos = userAircraft.getPosition();
 
-  const Pos& pos = simData.getPosition();
+  if(!pos.isValid())
+    return;
+
+  float x, y;
+  if(wToS(pos, x, y))
+  {
+    int size = context->symSize(AIRCRAFT_SYMBOL_SIZE / 2);
+    // Position is visible
+    context->painter->translate(x, y);
+    context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
+
+    // Draw symbol
+    symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
+                                      userAircraft.getFlags() & atools::fs::sc::ON_GROUND);
+    context->painter->resetTransform();
+  }
+}
+
+void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
+                                           const atools::fs::sc::SimConnectUserAircraft& userAircraft)
+{
+  const Pos& pos = userAircraft.getPosition();
 
   if(!pos.isValid())
     return;
@@ -74,39 +101,40 @@ void MapPainterAircraft::paintAircraft(const PaintContext *context)
 
     // Position is visible
     context->painter->translate(x, y);
-    context->painter->rotate(atools::geo::normalizeCourse(simData.getHeadingDegTrue()));
+    context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
 
     // Draw symbol
     symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
-                                      simData.getFlags() & atools::fs::sc::ON_GROUND);
+                                      userAircraft.getFlags() & atools::fs::sc::ON_GROUND);
     context->painter->resetTransform();
 
     // Build text label
     QStringList texts;
-    if(!simData.getAirplaneRegistration().isEmpty())
-      texts.append(simData.getAirplaneRegistration());
+    if(!userAircraft.getAirplaneRegistration().isEmpty())
+      texts.append(userAircraft.getAirplaneRegistration());
 
-    if(!simData.getAirplaneAirline().isEmpty() && !simData.getAirplaneFlightnumber().isEmpty())
-      texts.append(simData.getAirplaneAirline() + " / " + simData.getAirplaneFlightnumber());
+    if(!userAircraft.getAirplaneAirline().isEmpty() && !userAircraft.getAirplaneFlightnumber().isEmpty())
+      texts.append(userAircraft.getAirplaneAirline() + " / " + userAircraft.getAirplaneFlightnumber());
 
     texts.append(tr("IAS %1, GS %2, HDG %3°M").
-                 arg(QLocale().toString(simData.getIndicatedSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(simData.getGroundSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(simData.getHeadingDegMag(), 'f', 0)));
+                 arg(QLocale().toString(userAircraft.getIndicatedSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(userAircraft.getGroundSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(userAircraft.getHeadingDegMag(), 'f', 0)));
 
     QString upDown;
-    if(simData.getVerticalSpeedFeetPerMin() > 100.f)
+    if(userAircraft.getVerticalSpeedFeetPerMin() > 100.f)
       upDown = tr(" ▲");
-    else if(simData.getVerticalSpeedFeetPerMin() < -100.f)
+    else if(userAircraft.getVerticalSpeedFeetPerMin() < -100.f)
       upDown = tr(" ▼");
 
     texts.append(tr("ALT %1 ft%2").
-                 arg(QLocale().toString(simData.getPosition().getAltitude(), 'f', 0)).arg(upDown));
+                 arg(QLocale().toString(userAircraft.getPosition().getAltitude(), 'f', 0)).arg(upDown));
 
     texts.append(tr("Wind %1 °M / %2").
                  arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          simData.getWindDirectionDegT() - simData.getMagVarDeg()), 'f', 0)).
-                 arg(QLocale().toString(simData.getWindSpeedKts(), 'f', 0)));
+                                          userAircraft.getWindDirectionDegT() - userAircraft.getMagVarDeg()),
+                                        'f', 0)).
+                 arg(QLocale().toString(userAircraft.getWindSpeedKts(), 'f', 0)));
 
     // Draw text label
     symbolPainter->textBoxF(context->painter, texts,
