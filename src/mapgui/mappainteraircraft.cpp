@@ -31,6 +31,7 @@ using namespace maptypes;
 MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(mapWidget, mapQuery, mapScale)
 {
+
 }
 
 MapPainterAircraft::~MapPainterAircraft()
@@ -103,7 +104,10 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
 
-    // Draw symbol
+    // context->painter->drawPixmap(-32,-32,
+    // QIcon(":/littlenavmap/resources/icons/aircraft_small.svg").pixmap(QSize(64, 64)));
+
+    // // Draw symbol
     symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
                                       userAircraft.getFlags() & atools::fs::sc::ON_GROUND);
     context->painter->resetTransform();

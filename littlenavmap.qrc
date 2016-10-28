@@ -107,5 +107,8 @@
         <file>resources/icons/splash.png</file>
         <file>resources/icons/parkingfuel.svg</file>
         <file>resources/icons/fileappend.svg</file>
+        <file>resources/icons/aircraft_jet.svg</file>
+        <file>resources/icons/aircraft_small.svg</file>
+        <file>resources/icons/aircraft_helicopter.svg</file>
     </qresource>
 </RCC>
