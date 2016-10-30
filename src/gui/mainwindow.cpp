@@ -181,7 +181,7 @@ MainWindow::MainWindow()
     profileWidget->updateProfileShowFeatures();
 
     // If enabled connect to simulator without showing dialog
-    connectClient->tryConnect();
+    connectClient->tryConnectOnStartup();
     loadNavmapLegend();
     updateLegend();
 
@@ -460,6 +460,13 @@ void MainWindow::setupUi()
   ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
 
   // Create labels for the statusbar
+  connectStatusLabel = new QLabel();
+  connectStatusLabel->setAlignment(Qt::AlignCenter);
+  connectStatusLabel->setMinimumWidth(100);
+  connectStatusLabel->setText(tr("Not connected."));
+  connectStatusLabel->setToolTip(tr("Simulator connection status."));
+  ui->statusBar->addPermanentWidget(connectStatusLabel);
+
   messageLabel = new QLabel();
   messageLabel->setAlignment(Qt::AlignCenter);
   messageLabel->setMinimumWidth(140);
@@ -715,7 +722,7 @@ void MainWindow::connectAllSlots()
           marbleAbout, &Marble::MarbleAboutDialog::exec);
 
   connect(ui->actionConnectSimulator, &QAction::triggered,
-          connectClient, &ConnectClient::connectToServer);
+          connectClient, &ConnectClient::connectToServerDialog);
 
   connect(connectClient, &ConnectClient::dataPacketReceived,
           mapWidget, &MapWidget::simDataChanged);
@@ -858,6 +865,13 @@ void MainWindow::showDatabaseFiles()
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(this, QApplication::applicationName(), QString(
                            tr("Error opening help URL \"%1\"")).arg(url.toDisplayString()));
+}
+
+/* Updates label and tooltip for connection status */
+void MainWindow::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
+{
+  connectStatusLabel->setText(text);
+  connectStatusLabel->setToolTip(tooltipText);
 }
 
 /* Updates label and tooltip for objects shown on map */

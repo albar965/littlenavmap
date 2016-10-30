@@ -19,12 +19,21 @@
 #define LITTLENAVMAP_CONNECTCLIENT_H
 
 #include <QAbstractSocket>
+#include <QTimer>
 
 #include "fs/sc/simconnectdata.h"
 
 class QTcpSocket;
 class ConnectDialog;
 class MainWindow;
+
+namespace atools {
+namespace fs {
+namespace sc {
+class DataReaderThread;
+}
+}
+}
 
 /*
  * Client for the Little Navconnect Simconnect agent/server. Receives data and passes it around by emitting a signal.
@@ -40,10 +49,10 @@ public:
   virtual ~ConnectClient();
 
   /* Opens the connect dialog and depending on result connects to the server/agent */
-  void connectToServer();
+  void connectToServerDialog();
 
   /* Connects directly if the connect on startup option is set */
-  void tryConnect();
+  void tryConnectOnStartup();
 
   /* true if connected to Little Navconnect */
   bool isConnected() const;
@@ -63,20 +72,29 @@ signals:
   void disconnectedFromSimulator();
 
 private:
+  const int SOCKET_RECONNECT_SEC = 2;
+  const int DIRECT_RECONNECT_SEC = 2;
+  const int DIRECT_UPDATE_RATE_MS = 200;
+
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError error);
-  void connectedToServer();
-  void closeSocket();
+  void connectedToServerSocket();
+  void closeSocket(bool allowRestart);
   void connectInternal();
-  void writeReply();
+  void writeReplyToSocket();
   void disconnectClicked();
+  void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
+  void postLogMessage(QString message, bool warning);
+  void connectedToSimulatorDirect();
+  void disconnectedFromSimulatorDirect();
 
   bool silent = false;
   ConnectDialog *dialog = nullptr;
-  atools::fs::sc::SimConnectData *simConnectData = nullptr;
+  atools::fs::sc::DataReaderThread *dataReader = nullptr;
+  atools::fs::sc::SimConnectData *simConnectData = nullptr; // Have to keep it since it is read multiple times
   QTcpSocket *socket = nullptr;
   MainWindow *mainWindow;
-
+  QTimer reconnectNetworkTimer;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H

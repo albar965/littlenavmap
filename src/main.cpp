@@ -74,6 +74,9 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
   qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
 
+  // Needed to send SimConnectData through queued connections
+  qRegisterMetaType<atools::fs::sc::SimConnectData>();
+
   // Set application information
   int retval = 0;
   Application app(argc, argv);

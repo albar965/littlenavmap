@@ -115,6 +115,7 @@ public:
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+  void setConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
   void setStatusMessage(const QString& message);
@@ -202,7 +203,8 @@ private:
   ProfileWidget *profileWidget = nullptr;
 
   /* Status bar labels */
-  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel;
+  QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,
+  *connectStatusLabel;
 
   /* List of status bar messages (currently only one) */
   QStringList statusMessages;
@@ -234,7 +236,7 @@ private:
   InfoQuery *infoQuery = nullptr;
 
   bool firstStart = true /* emit window shown only once after startup */,
-  firstApplicationStart = false /* first starup on a system after installation */;
+       firstApplicationStart = false /* first starup on a system after installation */;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

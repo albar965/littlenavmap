@@ -4102,7 +4102,7 @@
     <string>Flight Simulator &amp;Connection...</string>
    </property>
    <property name="toolTip">
-    <string>Connect to or disconnect from simulator via Little Navconnect</string>
+    <string>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</string>
    </property>
    <property name="statusTip">
     <string>Connect to or disconnect from simulator via Little Navconnect</string>

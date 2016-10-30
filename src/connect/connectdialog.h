@@ -52,14 +52,18 @@ public:
   void setConnected(bool connected);
 
   /* true if the connect on startup checkbox was checked */
-  bool isConnectOnStartup() const;
+  bool isAutoConnect() const;
+  bool isConnectDirect() const;
 
 signals:
   void disconnectClicked();
+  void autoConnectToggled(bool state);
 
 private:
-  Ui::ConnectDialog *ui;
   void buttonBoxClicked(QAbstractButton *button);
+  void connectDirectToggled(bool state);
+
+  Ui::ConnectDialog *ui;
 
 };
 

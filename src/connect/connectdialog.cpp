@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QUrl>
 #include <QPushButton>
+#include <QRadioButton>
 
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
@@ -40,10 +41,22 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
   // Change button texts
   ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setText(tr("&Connect"));
+  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->
+  setToolTip(tr("Try to connect to a local or remote simulator.\n"
+                "Will retry to connect if \"Connect automatically\" "
+                "is checked."));
+
   ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setText(tr("&Disconnect"));
+  ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->
+  setToolTip(tr("Disconnect from a local or remote simulator and stop all reconnect attempts."));
+
+  ui->buttonBoxConnect->button(QDialogButtonBox::Close)->
+  setToolTip(tr("Close the dialog without changing the current connection status."));
 
   // Get a signal for any button
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonBoxClicked);
+  connect(ui->checkBoxConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::connectDirectToggled);
+  connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::autoConnectToggled);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -94,14 +107,27 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
+void ConnectDialog::connectDirectToggled(bool state)
+{
+  Q_UNUSED(state);
+  ui->comboBoxConnectHostname->setDisabled(ui->checkBoxConnectDirect->isChecked());
+  ui->spinBoxConnectPort->setDisabled(ui->checkBoxConnectDirect->isChecked());
+  ui->pushButtonDeleteHostname->setDisabled(ui->checkBoxConnectDirect->isChecked());
+}
+
 void ConnectDialog::setConnected(bool connected)
 {
   ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setEnabled(connected);
 }
 
-bool ConnectDialog::isConnectOnStartup() const
+bool ConnectDialog::isAutoConnect() const
 {
   return ui->checkBoxConnectOnStartup->isChecked();
+}
+
+bool ConnectDialog::isConnectDirect() const
+{
+  return ui->checkBoxConnectDirect->isChecked();
 }
 
 QString ConnectDialog::getHostname() const
@@ -117,7 +143,8 @@ quint16 ConnectDialog::getPort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup});
+  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup,
+                    ui->checkBoxConnectDirect});
 
   // Save combo entries separately
   QStringList entries;
@@ -144,5 +171,8 @@ void ConnectDialog::restoreState()
 
   atools::gui::WidgetState(lnm::NAVCONNECT_REMOTE).restore({ui->comboBoxConnectHostname,
                                                             ui->spinBoxConnectPort,
-                                                            ui->checkBoxConnectOnStartup});
+                                                            ui->checkBoxConnectOnStartup,
+                                                            ui->checkBoxConnectDirect});
+
+  connectDirectToggled(ui->checkBoxConnectDirect->isChecked());
 }
