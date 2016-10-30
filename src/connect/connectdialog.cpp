@@ -56,7 +56,12 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
   // Get a signal for any button
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonBoxClicked);
   connect(ui->checkBoxConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::connectDirectToggled);
+  connect(ui->checkBoxConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::autoConnectToggled);
+  connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
+  connect(ui->pushButtonDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::deleteClicked);
+
+  connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -107,6 +112,19 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
+void ConnectDialog::deleteClicked()
+{
+  ui->comboBoxConnectHostname->removeItem(ui->comboBoxConnectHostname->currentIndex());
+  updateButtonStates();
+}
+
+void ConnectDialog::updateButtonStates()
+{
+  ui->pushButtonDeleteHostname->setEnabled(ui->comboBoxConnectHostname->count() > 0);
+  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setEnabled(
+    !ui->comboBoxConnectHostname->currentText().isEmpty() || ui->checkBoxConnectDirect->isChecked());
+}
+
 void ConnectDialog::connectDirectToggled(bool state)
 {
   Q_UNUSED(state);
@@ -118,6 +136,7 @@ void ConnectDialog::connectDirectToggled(bool state)
 void ConnectDialog::setConnected(bool connected)
 {
   ui->buttonBoxConnect->button(QDialogButtonBox::Reset)->setEnabled(connected);
+  updateButtonStates();
 }
 
 bool ConnectDialog::isAutoConnect() const
@@ -159,15 +178,9 @@ void ConnectDialog::restoreState()
   QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
   entries.removeDuplicates();
 
-  if(entries.isEmpty())
-    // Use localhost as default
-    ui->comboBoxConnectHostname->addItem("localhost");
-  else
-  {
-    for(const QString& entry : entries)
-      if(!entry.isEmpty())
-        ui->comboBoxConnectHostname->addItem(entry);
-  }
+  for(const QString& entry : entries)
+    if(!entry.isEmpty())
+      ui->comboBoxConnectHostname->addItem(entry);
 
   atools::gui::WidgetState(lnm::NAVCONNECT_REMOTE).restore({ui->comboBoxConnectHostname,
                                                             ui->spinBoxConnectPort,
@@ -175,4 +188,5 @@ void ConnectDialog::restoreState()
                                                             ui->checkBoxConnectDirect});
 
   connectDirectToggled(ui->checkBoxConnectDirect->isChecked());
+  updateButtonStates();
 }

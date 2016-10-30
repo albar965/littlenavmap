@@ -62,6 +62,8 @@ signals:
 private:
   void buttonBoxClicked(QAbstractButton *button);
   void connectDirectToggled(bool state);
+  void deleteClicked();
+  void updateButtonStates();
 
   Ui::ConnectDialog *ui;
 

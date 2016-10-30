@@ -111,7 +111,7 @@ void ConnectClient::connectedToSimulatorDirect()
 
 void ConnectClient::disconnectedFromSimulatorDirect()
 {
-  mainWindow->setConnectionStatusMessageText(tr("Disonnected"),
+  mainWindow->setConnectionStatusMessageText(tr("Disconnected"),
                                              tr("Disconnected from local flight simulator."));
   dialog->setConnected(isConnected());
   emit disconnectedFromSimulator();
@@ -161,7 +161,7 @@ void ConnectClient::connectInternal()
     // Datareader has its own reconnect mechanism
     dataReader->start();
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
                                                tr("Connecting to local flight simulator."));
   }
   else if(socket == nullptr)
@@ -180,7 +180,7 @@ void ConnectClient::connectInternal()
     qDebug() << "Connecting to" << dialog->getHostname() << ":" << dialog->getPort();
     socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadWrite);
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
+    mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
                                                tr("Connecting to remote flight simulator on \"%1\".").
                                                arg(dialog->getHostname()));
   }
@@ -195,6 +195,8 @@ bool ConnectClient::isConnected() const
 void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 {
   Q_UNUSED(error);
+
+  reconnectNetworkTimer.stop();
 
   qWarning() << "Error reading from" << socket->peerName() << ":" << dialog->getPort()
              << socket->errorString();
@@ -258,7 +260,7 @@ void ConnectClient::closeSocket(bool allowRestart)
     }
     else
     {
-      msg = tr("<span style=\"color:red;font-weight:bold\">Error</span>");
+      msg = tr("Connect Error");
       msgTooltip = tr("Error in server connection to \"%1\": %2 (%3)").arg(peer).arg(errorStr).arg(error);
     }
   }
@@ -300,6 +302,7 @@ void ConnectClient::writeReplyToSocket()
 void ConnectClient::connectedToServerSocket()
 {
   qInfo() << "Connected to" << socket->peerName() << ":" << socket->peerPort();
+  reconnectNetworkTimer.stop();
 
   mainWindow->setConnectionStatusMessageText(tr("Connected"),
                                              tr("Connected to remote flight simulator on \"%1\".").

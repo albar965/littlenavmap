@@ -136,9 +136,9 @@
    <item>
     <widget class="QCheckBox" name="checkBoxConnectOnStartup">
      <property name="toolTip">
-      <string>Automatically connect to given address/port or to the local flight simulator when program starts.
-Once checked the program will constantly try to establish a connection.
-You need Little Navconnect to link to connect to a remote flight simultor on another computer.</string>
+      <string>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.
+You have to click &quot;Connect&quot; to start the constant connection checking.
+You need Little Navconnect to link to a remote flight simultor on another computer.</string>
      </property>
      <property name="statusTip">
       <string>Automatically connect to given address/port or to the local flight simulator when program starts. You need Little Navconnect to link to a remove flight simultor on another computer.</string>

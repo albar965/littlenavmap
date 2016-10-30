@@ -72,9 +72,9 @@ signals:
   void disconnectedFromSimulator();
 
 private:
-  const int SOCKET_RECONNECT_SEC = 2;
-  const int DIRECT_RECONNECT_SEC = 2;
-  const int DIRECT_UPDATE_RATE_MS = 200;
+  const int SOCKET_RECONNECT_SEC = 5;
+  const int DIRECT_RECONNECT_SEC = 5;
+  const unsigned int DIRECT_UPDATE_RATE_MS = 200;
 
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError error);
