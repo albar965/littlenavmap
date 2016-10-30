@@ -88,13 +88,19 @@ private:
   void connectedToSimulatorDirect();
   void disconnectedFromSimulatorDirect();
 
-  bool silent = false;
+  bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
+
+  /* Does automatic reconnect */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;
-  atools::fs::sc::SimConnectData *simConnectData = nullptr; // Have to keep it since it is read multiple times
+
+  /* Have to keep it since it is read multiple times */
+  atools::fs::sc::SimConnectData *simConnectData = nullptr;
+
   QTcpSocket *socket = nullptr;
-  MainWindow *mainWindow;
+  /* Used to trigger reconnects on socket base connections */
   QTimer reconnectNetworkTimer;
+  MainWindow *mainWindow;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H

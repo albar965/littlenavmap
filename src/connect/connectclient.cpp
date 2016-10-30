@@ -96,6 +96,8 @@ void ConnectClient::tryConnectOnStartup()
   if(dialog->isAutoConnect())
   {
     reconnectNetworkTimer.stop();
+
+    // Do not show an error dialog
     silent = true;
     connectInternal();
   }
@@ -111,10 +113,15 @@ void ConnectClient::connectedToSimulatorDirect()
 
 void ConnectClient::disconnectedFromSimulatorDirect()
 {
-  mainWindow->setConnectionStatusMessageText(tr("Disconnected"),
-                                             tr("Disconnected from local flight simulator."));
+  // Try to reconnect if it was not unlinked by using the disconnect button
+  if(dialog->isAutoConnect() && dialog->isConnectDirect() && !manualDisconnect)
+    connectInternal();
+  else
+    mainWindow->setConnectionStatusMessageText(tr("Disconnected"),
+                                               tr("Disconnected from local flight simulator."));
   dialog->setConnected(isConnected());
   emit disconnectedFromSimulator();
+  manualDisconnect = false;
 }
 
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
@@ -143,13 +150,16 @@ void ConnectClient::restoreState()
 /* Called by signal ConnectDialog::disconnectClicked */
 void ConnectClient::disconnectClicked()
 {
+  if(dataReader->isConnected())
+    // Tell disconnectedFromSimulatorDirect not to reconnect
+    manualDisconnect = true;
   reconnectNetworkTimer.stop();
 
   dataReader->setTerminate(true);
   dataReader->wait();
   dataReader->setTerminate(false);
 
-  // Close but do not allow reconnect
+  // Close but do not allow reconnect if auto is on
   closeSocket(false);
 }
 
@@ -162,7 +172,7 @@ void ConnectClient::connectInternal()
     dataReader->start();
 
     mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
-                                               tr("Connecting to local flight simulator."));
+                                               tr("Trying to connect to local flight simulator."));
   }
   else if(socket == nullptr)
   {
@@ -181,7 +191,7 @@ void ConnectClient::connectInternal()
     socket->connectToHost(dialog->getHostname(), dialog->getPort(), QAbstractSocket::ReadWrite);
 
     mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
-                                               tr("Connecting to remote flight simulator on \"%1\".").
+                                               tr("Trying to connect to remote flight simulator on \"%1\".").
                                                arg(dialog->getHostname()));
   }
 }
@@ -223,6 +233,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
     }
   }
 
+  // Close and allow restart if auto is on
   closeSocket(true);
 }
 
@@ -272,6 +283,7 @@ void ConnectClient::closeSocket(bool allowRestart)
 
   if(!dialog->isConnectDirect() && dialog->isAutoConnect() && allowRestart)
   {
+    // For socket based connection use a timer - direct connection reconnects automatically
     silent = true;
     reconnectNetworkTimer.start(SOCKET_RECONNECT_SEC * 1000);
   }
