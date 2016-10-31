@@ -110,5 +110,15 @@
         <file>resources/icons/aircraft_jet.svg</file>
         <file>resources/icons/aircraft_small.svg</file>
         <file>resources/icons/aircraft_helicopter.svg</file>
+        <file>resources/icons/aircraft_small_user.svg</file>
+        <file>resources/icons/aircraft_small_ground.svg</file>
+        <file>resources/icons/aircraft_small_ground_user.svg</file>
+        <file>resources/icons/aircraft_jet_user.svg</file>
+        <file>resources/icons/aircraft_jet_ground.svg</file>
+        <file>resources/icons/aircraft_jet_ground_user.svg</file>
+        <file>resources/icons/aircraft_helicopter_user.svg</file>
+        <file>resources/icons/aircraft_helicopter_ground.svg</file>
+        <file>resources/icons/aircraft_helicopter_ground_user.svg</file>
+        <file>resources/icons/aircraftai.svg</file>
     </qresource>
 </RCC>

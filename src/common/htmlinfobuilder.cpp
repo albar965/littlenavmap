@@ -1076,9 +1076,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectUserA
   QStringList precip;
   // if(data.getFlags() & atools::fs::sc::IN_CLOUD) // too unreliable
   // precip.append(tr("Cloud"));
-  if(data.getFlags() & atools::fs::sc::IN_RAIN)
+  if(data.inRain())
     precip.append(tr("Rain"));
-  if(data.getFlags() & atools::fs::sc::IN_SNOW)
+  if(data.inSnow())
     precip.append(tr("Snow"));
   if(precip.isEmpty())
     precip.append(tr("None"));
@@ -1109,7 +1109,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectUserA
 void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectUserAircraft& data, HtmlBuilder& html)
 {
   QString *icon;
-  if(data.getFlags() & atools::fs::sc::ON_GROUND)
+  if(data.isOnGround())
     icon = &aircraftGroundEncodedIcon;
   else
     icon = &aircraftEncodedIcon;

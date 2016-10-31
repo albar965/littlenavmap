@@ -648,6 +648,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget,
           &ProfileWidget::updateProfileShowFeatures);
@@ -1412,6 +1413,7 @@ void MainWindow::updateActionStates()
   }
 
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
+  ui->actionMapShowAircraftAi->setEnabled(connectClient->isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
@@ -1480,6 +1482,7 @@ void MainWindow::readSettings()
                          ui->actionMapShowIls,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                         ui->actionMapShowAircraftAi,
                          ui->actionMapShowAircraftTrack});
     widgetState.setBlockSignals(false);
   }
@@ -1544,6 +1547,7 @@ void MainWindow::writeSettings()
                     ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
+                    ui->actionMapShowAircraftAi,
                     ui->actionMapShowAircraftTrack,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,

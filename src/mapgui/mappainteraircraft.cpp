@@ -21,12 +21,27 @@
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "common/symbolpainter.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/maplayer.h"
 
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
 using namespace atools::geo;
 using namespace maptypes;
+using atools::fs::sc::SimConnectUserAircraft;
+using atools::fs::sc::SimConnectAircraft;
+using atools::fs::sc::SimConnectData;
+
+uint qHash(const MapPainterAircraft::Key& key)
+{
+  return key.size | (key.type << 8) | (key.ground << 10) | (key.user << 11);
+}
+
+bool MapPainterAircraft::Key::operator==(const MapPainterAircraft::Key& other) const
+{
+  return type == other.type && ground == other.ground && user == other.user && size == other.size;
+}
 
 MapPainterAircraft::MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(mapWidget, mapQuery, mapScale)
@@ -41,8 +56,13 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render(const PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(AIRCRAFT) && !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
+  if(!context->objectTypes.testFlag(AIRCRAFT) &&
+     !context->objectTypes.testFlag(AIRCRAFT_AI) &&
+     !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     // If actions are unchecked return
+    return;
+
+  if(!mapWidget->isConnected())
     return;
 
   setRenderHints(context->painter);
@@ -52,20 +72,56 @@ void MapPainterAircraft::render(const PaintContext *context)
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context->painter);
 
-  if(context->objectTypes.testFlag(AIRCRAFT) && mapWidget->isConnected())
+  if(context->objectTypes.testFlag(AIRCRAFT_AI))
   {
-    const atools::fs::sc::SimConnectData& simData = mapWidget->getSimData();
-    paintUserAircraft(context, simData.getUserAircraft());
+    const SimConnectData& simData = mapWidget->getSimData();
 
-    for(const atools::fs::sc::SimConnectAircraft& ac : simData.getAiAircraft())
+    for(const SimConnectAircraft& ac : simData.getAiAircraft())
       paintAiAircraft(context, ac);
   }
+
+  if(context->objectTypes.testFlag(AIRCRAFT))
+    paintUserAircraft(context, mapWidget->getSimData().getUserAircraft());
 
   context->painter->restore();
 }
 
 void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
-                                         const atools::fs::sc::SimConnectAircraft& userAircraft)
+                                         const SimConnectAircraft& aiAircraft)
+{
+  if(!context->mapLayerEffective->isAirportDiagram() && aiAircraft.isOnGround())
+    return;
+
+  if(aiAircraft.isUser())
+    return;
+
+  const Pos& pos = aiAircraft.getPosition();
+
+  if(!pos.isValid())
+    return;
+
+  float x, y;
+  if(wToS(pos, x, y))
+  {
+    int size = std::max(32, scale->getPixelIntForFeet(aiAircraft.getWingSpan()));
+    int offset = -(size / 2);
+
+    // Position is visible
+    context->painter->translate(x, y);
+    context->painter->rotate(atools::geo::normalizeCourse(aiAircraft.getHeadingDegTrue()));
+
+    // Draw symbol
+    context->painter->drawPixmap(offset, offset, *pixmapFromCache(aiAircraft, size, false));
+
+    context->painter->resetTransform();
+
+    // Build text label
+    paintTextLabel(size, context, x, y, aiAircraft);
+  }
+}
+
+void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
+                                           const SimConnectUserAircraft& userAircraft)
 {
   const Pos& pos = userAircraft.getPosition();
 
@@ -75,74 +131,19 @@ void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
   float x, y;
   if(wToS(pos, x, y))
   {
-    int size = context->symSize(AIRCRAFT_SYMBOL_SIZE / 2);
+    int size = std::max(48, scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+    int offset = -(size / 2);
+
     // Position is visible
     context->painter->translate(x, y);
     context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
 
     // Draw symbol
-    symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
-                                      userAircraft.getFlags() & atools::fs::sc::ON_GROUND);
-    context->painter->resetTransform();
-  }
-}
-
-void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
-                                           const atools::fs::sc::SimConnectUserAircraft& userAircraft)
-{
-  const Pos& pos = userAircraft.getPosition();
-
-  if(!pos.isValid())
-    return;
-
-  float x, y;
-  if(wToS(pos, x, y))
-  {
-    int size = context->symSize(AIRCRAFT_SYMBOL_SIZE);
-
-    // Position is visible
-    context->painter->translate(x, y);
-    context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
-
-    // context->painter->drawPixmap(-32,-32,
-    // QIcon(":/littlenavmap/resources/icons/aircraft_small.svg").pixmap(QSize(64, 64)));
-
-    // // Draw symbol
-    symbolPainter->drawAircraftSymbol(context->painter, 0, 0, size,
-                                      userAircraft.getFlags() & atools::fs::sc::ON_GROUND);
+    context->painter->drawPixmap(offset, offset, *pixmapFromCache(userAircraft, size, true));
     context->painter->resetTransform();
 
     // Build text label
-    QStringList texts;
-    if(!userAircraft.getAirplaneRegistration().isEmpty())
-      texts.append(userAircraft.getAirplaneRegistration());
-
-    if(!userAircraft.getAirplaneAirline().isEmpty() && !userAircraft.getAirplaneFlightnumber().isEmpty())
-      texts.append(userAircraft.getAirplaneAirline() + " / " + userAircraft.getAirplaneFlightnumber());
-
-    texts.append(tr("IAS %1, GS %2, HDG %3°M").
-                 arg(QLocale().toString(userAircraft.getIndicatedSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(userAircraft.getGroundSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(userAircraft.getHeadingDegMag(), 'f', 0)));
-
-    QString upDown;
-    if(userAircraft.getVerticalSpeedFeetPerMin() > 100.f)
-      upDown = tr(" ▲");
-    else if(userAircraft.getVerticalSpeedFeetPerMin() < -100.f)
-      upDown = tr(" ▼");
-
-    texts.append(tr("ALT %1 ft%2").
-                 arg(QLocale().toString(userAircraft.getPosition().getAltitude(), 'f', 0)).arg(upDown));
-
-    texts.append(tr("Wind %1 °M / %2").
-                 arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          userAircraft.getWindDirectionDegT() - userAircraft.getMagVarDeg()),
-                                        'f', 0)).
-                 arg(QLocale().toString(userAircraft.getWindSpeedKts(), 'f', 0)));
-
-    // Draw text label
-    symbolPainter->textBoxF(context->painter, texts,
-                            QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
+    paintTextLabel(size, context, x, y, userAircraft);
   }
 }
 
@@ -206,5 +207,107 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
       polyline.append(QPoint(x2, y2));
       painter->drawPolyline(polyline);
     }
+  }
+}
+
+void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, float x, float y,
+                                        const SimConnectAircraft& aircraft)
+{
+  if(!aircraft.isUser() &&
+     mapWidget->distance() > 10)
+    return;
+
+  QStringList texts;
+
+  if((aircraft.isOnGround() && context->mapLayerEffective->isAirportDiagramDetail2() &&
+      !aircraft.isUser()) ||
+     (!aircraft.isOnGround() && !aircraft.isUser()) ||
+     aircraft.isUser())
+  {
+    if(!aircraft.getAirplaneRegistration().isEmpty())
+      texts.append(aircraft.getAirplaneRegistration());
+
+    if(!aircraft.getAirplaneAirline().isEmpty() && !aircraft.getAirplaneFlightnumber().isEmpty())
+      texts.append(aircraft.getAirplaneAirline() + " / " + aircraft.getAirplaneFlightnumber());
+  }
+
+  if(!aircraft.isOnGround())
+  {
+    texts.append(tr("IAS %1, GS %2, HDG %3°M").
+                 arg(QLocale().toString(aircraft.getIndicatedSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(aircraft.getGroundSpeedKts(), 'f', 0)).
+                 arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+
+    QString upDown;
+    if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
+      upDown = tr(" ▲");
+    else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
+      upDown = tr(" ▼");
+
+    texts.append(tr("ALT %1 ft%2").
+                 arg(QLocale().toString(aircraft.getPosition().getAltitude(), 'f', 0)).arg(upDown));
+  }
+
+  const SimConnectUserAircraft *userAircraft =
+    dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
+  if(userAircraft != nullptr && !aircraft.isOnGround())
+  {
+    texts.append(tr("Wind %1 °M / %2").
+                 arg(QLocale().toString(atools::geo::normalizeCourse(
+                                          userAircraft->getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                        'f', 0)).
+                 arg(QLocale().toString(userAircraft->getWindSpeedKts(), 'f', 0)));
+  }
+
+  // Draw text label
+  symbolPainter->textBoxF(context->painter, texts,
+                          QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
+}
+
+const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac, int size,
+                                                   bool user)
+{
+  Key key;
+
+  if(ac.getCategory() == atools::fs::sc::HELICOPTER)
+    key.type = AC_HELICOPTER;
+  else if(ac.getEngineType() == atools::fs::sc::JET)
+    key.type = AC_JET;
+  else
+    key.type = AC_SMALL;
+
+  key.ground = ac.isOnGround();
+  key.user = user;
+  key.size = size;
+  return pixmapFromCache(key);
+}
+
+const QPixmap *MapPainterAircraft::pixmapFromCache(const Key& key)
+{
+  if(pixmaps.contains(key))
+    return pixmaps.object(key);
+  else
+  {
+    QString name = ":/littlenavmap/resources/icons/aircraft";
+    switch(key.type)
+    {
+      case AC_SMALL:
+        name += "_small";
+        break;
+      case AC_JET:
+        name += "_jet";
+        break;
+      case AC_HELICOPTER:
+        name += "_helicopter";
+        break;
+    }
+    if(key.ground)
+      name += "_ground";
+    if(key.user)
+      name += "_user";
+
+    QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(key.size, key.size)));
+    pixmaps.insert(key, newPx);
+    return newPx;
   }
 }

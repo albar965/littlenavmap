@@ -15,7 +15,7 @@
    id="svg3336"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="aircraft_helicopter.svg">
+   sodipodi:docname="aircraft_helicopter_ground_user.svg">
   <defs
      id="defs3342" />
   <sodipodi:namedview
@@ -51,19 +51,19 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.2961638;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:#808080;stroke-width:2.2961638;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3310"
      width="25.683849"
      height="5.6864443"
      x="51.139275"
      y="89.988686" />
   <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:5.68295479;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:#808080;stroke-width:5.68295479;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3304"
      width="18.886787"
      height="51.346333"
@@ -72,7 +72,7 @@
      rx="9.4433937"
      ry="10.801499" />
   <rect
-     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2.59119558;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:#808080;stroke-width:2.59119558;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3308"
      width="6.8404999"
      height="52.052021"
@@ -81,21 +81,21 @@
      rx="0"
      ry="0" />
   <ellipse
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:3.11127377;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#808080;stroke-width:3.11127377;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="path3316"
      cx="64.02655"
      cy="42.983315"
      rx="3.7398455"
      ry="3.5949371" />
   <rect
-     style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:2.76589394;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="opacity:1;fill:#ffff00;fill-opacity:1;stroke:#808080;stroke-width:2.76589394;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect3318"
      width="5.2167139"
      height="22.605761"
      x="67.92775"
      y="103.84499" />
   <path
-     style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:5.68295479;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:none;fill-rule:evenodd;stroke:#808080;stroke-width:5.68295479;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="M 23.011428,2.0944383 103.90508,82.423091"
      id="path3320"
      inkscape:connector-curvature="0" />

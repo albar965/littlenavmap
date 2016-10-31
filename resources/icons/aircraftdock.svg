@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -45,7 +45,7 @@
      inkscape:snap-object-midpoints="true"
      inkscape:snap-grids="true"
      inkscape:zoom="4.9166667"
-     inkscape:cx="-11.91444"
+     inkscape:cx="-48.422915"
      inkscape:cy="23.40679"
      inkscape:window-x="40"
      inkscape:window-y="24"
@@ -435,22 +435,22 @@
   </g>
   <g
      id="g4162"
-     style="fill:none;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:none;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      transform="matrix(0.27644468,0,0,0.27644468,-63.727572,10.635942)">
     <path
        inkscape:connector-curvature="0"
        id="path4156"
        d="m 286.91525,28.20339 39.59322,18.440678 17.89831,39.59322"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path4158"
        d="m 347.66102,25.491525 -52.61017,52.61017"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path4160"
        d="M 305.35593,96 296.67797,75.932203 276.0678,66.711864"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

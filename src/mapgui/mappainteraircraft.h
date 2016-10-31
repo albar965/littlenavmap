@@ -20,6 +20,8 @@
 
 #include "mapgui/mappainter.h"
 
+#include <QCache>
+
 namespace Marble {
 class GeoDataLineString;
 }
@@ -51,12 +53,31 @@ public:
 
   virtual void render(const PaintContext *context) override;
 
+  enum AircraftType
+  {
+    AC_SMALL,
+    AC_JET,
+    AC_HELICOPTER
+  };
+
+  struct Key
+  {
+    bool operator==(const MapPainterAircraft::Key& other) const;
+
+    AircraftType type;
+    bool ground;
+    bool user;
+    int size;
+  };
+
 private:
   void paintAircraftTrack(Marble::GeoPainter *painter);
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft);
   void paintAiAircraft(const PaintContext *context,
-                       const atools::fs::sc::SimConnectAircraft& userAircraft);
+                       const atools::fs::sc::SimConnectAircraft& aiAircraft);
+  const QPixmap *pixmapFromCache(const Key& key);
+  const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
 
   /* Aircraft symbol size in pixel */
   static Q_DECL_CONSTEXPR int AIRCRAFT_SYMBOL_SIZE = 40;
@@ -64,6 +85,9 @@ private:
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
+  QCache<Key, QPixmap> pixmaps;
+
+  void paintTextLabel(int size, const PaintContext *context, float x, float y, const atools::fs::sc::SimConnectAircraft& aircraft);
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

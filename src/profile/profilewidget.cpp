@@ -441,7 +441,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.translate(acx, acy);
       painter.rotate(90);
       symPainter.drawAircraftSymbol(&painter, 0, 0, 20,
-                                    simData.getUserAircraft().getFlags() & atools::fs::sc::ON_GROUND);
+                                    simData.getUserAircraft().isOnGround());
       painter.resetTransform();
 
       // Draw aircraft label

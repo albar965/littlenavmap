@@ -204,6 +204,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(maptypes::ROUTE, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapFeatures(maptypes::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
 
   setShowMapFeatures(maptypes::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
   setShowMapFeatures(maptypes::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
@@ -564,8 +565,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   bool wasEmpty = aircraftTrack.isEmpty();
   bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getUserAircraft().getPosition(),
-                                                  simulatorData.getUserAircraft().getFlags() &
-                                                  atools::fs::sc::ON_GROUND);
+                                                  simulatorData.getUserAircraft().isOnGround());
 
   if(trackPruned)
     emit aircraftTrackPruned();
@@ -574,7 +574,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // We have a track - update toolbar and menu
     emit updateActionStates();
 
-  if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT)
+  if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT ||
+     paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI)
   {
     // Show aircraft is enabled
 
@@ -595,7 +596,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                       simData.getUserAircraft().getPosition().getAltitude(),
                       deltas.altitudeDelta) || // Altitude has changed
        (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
-       (!rect().contains(curPos) && centerAircraft) // Not in screen rectangle but centering required
+       (!rect().contains(curPos) && centerAircraft) || // Not in screen rectangle but centering required
+       paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI // Paint always for AI
        )
     {
       lastSimData = simulatorData;

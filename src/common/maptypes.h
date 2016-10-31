@@ -35,27 +35,28 @@ namespace maptypes {
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
 {
-  NONE = 0x00000,
-  AIRPORT = 0x00001,
-  AIRPORT_HARD = 0x00002,
-  AIRPORT_SOFT = 0x00004,
-  AIRPORT_EMPTY = 0x00008,
-  AIRPORT_ADDON = 0x00010,
+  NONE = 0x00000000,
+  AIRPORT = 0x00000001,
+  AIRPORT_HARD = 0x00000002,
+  AIRPORT_SOFT = 0x00000004,
+  AIRPORT_EMPTY = 0x00000008,
+  AIRPORT_ADDON = 0x00000010,
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
-  VOR = 0x00020,
-  NDB = 0x00040,
-  ILS = 0x00080,
-  MARKER = 0x00100,
-  WAYPOINT = 0x00200,
-  AIRWAY = 0x00400,
-  AIRWAYV = 0x00800,
-  AIRWAYJ = 0x01000,
-  ROUTE = 0x02000, /* Flight plan */
-  AIRCRAFT = 0x04000, /* Simulator aircraft */
-  AIRCRAFT_TRACK = 0x08000, /* Simulator aircraft track */
-  USER = 0x10000, /* Flight plan user waypoint */
-  PARKING = 0x20000,
-  INVALID = 0x40000, /* Flight plan waypoint not found in database */
+  VOR = 0x00000020,
+  NDB = 0x00000040,
+  ILS = 0x00000080,
+  MARKER = 0x00000100,
+  WAYPOINT = 0x00000200,
+  AIRWAY = 0x00000400,
+  AIRWAYV = 0x00000800,
+  AIRWAYJ = 0x00001000,
+  ROUTE = 0x00002000, /* Flight plan */
+  AIRCRAFT = 0x00004000, /* Simulator aircraft */
+  AIRCRAFT_AI = 0x00008000, /* AI or multiplayer Simulator aircraft */
+  AIRCRAFT_TRACK = 0x00010000, /* Simulator aircraft track */
+  USER = 0x00020000, /* Flight plan user waypoint */
+  PARKING = 0x00040000,
+  INVALID = 0x00080000, /* Flight plan waypoint not found in database */
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffff
 };

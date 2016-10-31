@@ -36,14 +36,14 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1880"
+     inkscape:window-width="1882"
      inkscape:window-height="1056"
      id="namedview8"
      showgrid="false"
      inkscape:zoom="1.84375"
-     inkscape:cx="117.6309"
+     inkscape:cx="20.274968"
      inkscape:cy="64"
-     inkscape:window-x="40"
+     inkscape:window-x="38"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg1655" />
@@ -101,22 +101,22 @@
   </g>
   <g
      id="g4162"
-     style="fill:none;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     style="fill:none;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      transform="matrix(0.83816875,0,0,0.83816875,-183.92112,-7.7335212)">
     <path
        inkscape:connector-curvature="0"
        id="path4156"
        d="m 286.91525,28.20339 39.59322,18.440678 17.89831,39.59322"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path4158"
        d="m 347.66102,25.491525 -52.61017,52.61017"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path4160"
        d="M 305.35593,96 296.67797,75.932203 276.0678,66.711864"
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-rule:evenodd;stroke:#ffff00;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>

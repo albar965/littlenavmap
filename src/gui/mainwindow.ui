@@ -148,6 +148,7 @@
     <addaction name="actionMapShowRoute"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowAircraftAi"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
@@ -2470,6 +2471,7 @@
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
+   <addaction name="actionMapShowAircraftAi"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
@@ -2646,6 +2648,38 @@
            <property name="readOnly">
             <bool>true</bool>
            </property>
+           <property name="placeholderText">
+            <string>Not connected to Simulator.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabAircraftAiInfo">
+        <attribute name="title">
+         <string>AI / Multiplayer</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_18">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserAiInfo">
            <property name="placeholderText">
             <string>Not connected to Simulator.</string>
            </property>
@@ -4611,6 +4645,27 @@
    </property>
    <property name="statusTip">
     <string>Append flight plan legs to current flight plan</string>
+   </property>
+  </action>
+  <action name="actionMapShowAircraftAi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftai.svg</normaloff>:/littlenavmap/resources/icons/aircraftai.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show AI and &amp;Multiplayer Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
    </property>
   </action>
  </widget>
