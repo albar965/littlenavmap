@@ -496,9 +496,9 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
     acAction->blockSignals(false);
   }
 
-  if(centerAircraftChecked && simData.getUserAircraft().getPosition().isValid())
-    centerOn(simData.getUserAircraft().getPosition().getLonX(),
-             simData.getUserAircraft().getPosition().getLatY(), false);
+  if(centerAircraftChecked && screenIndex->getUserAircraft().getPosition().isValid())
+    centerOn(screenIndex->getUserAircraft().getPosition().getLonX(),
+             screenIndex->getUserAircraft().getPosition().getLatY(), false);
 }
 
 void MapWidget::showHome()
@@ -557,11 +557,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   if(databaseLoadStatus)
     return;
 
-  simData = simulatorData;
+  screenIndex->updateSimData(simulatorData);
+  const atools::fs::sc::SimConnectUserAircraft& lastUserAircraft = screenIndex->getLastUserAircraft();
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = screenIndex->getUserAircraft();
 
   CoordinateConverter conv(viewport());
   QPoint curPos = conv.wToS(simulatorData.getUserAircraft().getPosition());
-  QPoint diff = curPos - conv.wToS(lastSimData.getUserAircraft().getPosition());
+  QPoint diff = curPos - conv.wToS(lastUserAircraft.getPosition());
 
   bool wasEmpty = aircraftTrack.isEmpty();
   bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getUserAircraft().getPosition(),
@@ -585,22 +587,22 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
     using atools::almostNotEqual;
-    if(!lastSimData.getUserAircraft().getPosition().isValid() ||
+    if(!lastUserAircraft.getPosition().isValid() ||
        diff.manhattanLength() >= deltas.manhattanLengthDelta || // Screen position has changed
-       almostNotEqual(lastSimData.getUserAircraft().getHeadingDegMag(),
-                      simData.getUserAircraft().getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
-       almostNotEqual(lastSimData.getUserAircraft().getIndicatedSpeedKts(),
-                      simData.getUserAircraft().getIndicatedSpeedKts(),
+       almostNotEqual(lastUserAircraft.getHeadingDegMag(),
+                      userAircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+       almostNotEqual(lastUserAircraft.getIndicatedSpeedKts(),
+                      userAircraft.getIndicatedSpeedKts(),
                       deltas.speedDelta) || // Speed has changed
-       almostNotEqual(lastSimData.getUserAircraft().getPosition().getAltitude(),
-                      simData.getUserAircraft().getPosition().getAltitude(),
+       almostNotEqual(lastUserAircraft.getPosition().getAltitude(),
+                      userAircraft.getPosition().getAltitude(),
                       deltas.altitudeDelta) || // Altitude has changed
        (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
        (!rect().contains(curPos) && centerAircraft) || // Not in screen rectangle but centering required
        paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI // Paint always for AI
        )
     {
-      lastSimData = simulatorData;
+      screenIndex->updateLastSimData(simulatorData);
 
       // Calculate the amount that has to be substracted from each side of the rectangle
       float boxFactor = (100.f - OptionData::instance().getSimUpdateBox()) / 100.f / 2.f;
@@ -611,8 +613,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       widgetRect.adjust(dx, dy, -dx, -dy);
 
       if(!widgetRect.contains(curPos) && centerAircraft && mouseState == mw::NONE)
-        centerOn(simData.getUserAircraft().getPosition().getLonX(),
-                 simData.getUserAircraft().getPosition().getLatY(), false);
+        centerOn(userAircraft.getPosition().getLonX(),
+                 userAircraft.getPosition().getLatY(), false);
       else
         update();
     }
@@ -620,9 +622,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   else if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_TRACK)
   {
     // No aircraft but track - update track only
-    if(!lastSimData.getUserAircraft().getPosition().isValid() || diff.manhattanLength() > 4)
+    if(!lastUserAircraft.getPosition().isValid() || diff.manhattanLength() > 4)
     {
-      lastSimData = simulatorData;
+      screenIndex->updateLastSimData(simulatorData);
       update();
     }
   }
@@ -665,7 +667,7 @@ void MapWidget::connectedToSimulator()
 void MapWidget::disconnectedFromSimulator()
 {
   // Clear all data on disconnect
-  simData = atools::fs::sc::SimConnectData();
+  screenIndex->updateSimData(atools::fs::sc::SimConnectData());
   update();
 }
 
@@ -1786,6 +1788,16 @@ void MapWidget::updateTooltip()
     QToolTip::showText(tooltipPos, text, nullptr, QRect(), 3600 * 1000);
   else
     hideTooltip();
+}
+
+const atools::fs::sc::SimConnectUserAircraft& MapWidget::getUserAircraft() const
+{
+  return screenIndex->getUserAircraft();
+}
+
+const QVector<atools::fs::sc::SimConnectAircraft>& MapWidget::getAiAircraft() const
+{
+  return screenIndex->getAiAircraft();
 }
 
 bool MapWidget::isConnected() const

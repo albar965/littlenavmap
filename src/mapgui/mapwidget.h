@@ -217,10 +217,9 @@ public:
   /* Update tooltip in case of weather changes */
   void updateTooltip();
 
-  const atools::fs::sc::SimConnectData& getSimData() const
-  {
-    return simData;
-  }
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
+
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
 
   MainWindow *getParentWindow() const
   {
@@ -368,7 +367,6 @@ private:
   atools::gui::MapPosHistory history;
   Marble::Projection currentProjection;
 
-  atools::fs::sc::SimConnectData simData, lastSimData;
   AircraftTrack aircraftTrack;
 
   /* Need to check if the zoom and position was changed by the map history to avoid recursion */

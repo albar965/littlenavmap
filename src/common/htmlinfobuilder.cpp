@@ -858,6 +858,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectUserAircraft&
 
   if(!data.getAirplaneType().isEmpty())
     html.row2(tr("Type:"), data.getAirplaneType());
+
+  if(data.getWingSpan() > 0)
+    html.row2(tr("Wingspan:"), locale.toString(data.getWingSpan()) + tr(" ft"));
   html.tableEnd();
 
   head(html, tr("Weight and Fuel"));

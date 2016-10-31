@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_MAPSCREENINDEX_H
 #define LITTLENAVMAP_MAPSCREENINDEX_H
 
+#include "fs/sc/simconnectdata.h"
+
 #include "route/routemapobjectlist.h"
 
 namespace maptypes {
@@ -119,10 +121,36 @@ public:
     return distanceMarks;
   }
 
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft()
+  {
+    return simData.getUserAircraft();
+  }
+
+  const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft()
+  {
+    return lastSimData.getUserAircraft();
+  }
+
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
+  {
+    return simData.getAiAircraft();
+  }
+
+  void updateSimData(const atools::fs::sc::SimConnectData& data)
+  {
+    simData = data;
+  }
+
+  void updateLastSimData(const atools::fs::sc::SimConnectData& data)
+  {
+    lastSimData = data;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
   void getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
 
+  atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;

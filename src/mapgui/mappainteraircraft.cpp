@@ -74,14 +74,12 @@ void MapPainterAircraft::render(const PaintContext *context)
 
   if(context->objectTypes.testFlag(AIRCRAFT_AI))
   {
-    const SimConnectData& simData = mapWidget->getSimData();
-
-    for(const SimConnectAircraft& ac : simData.getAiAircraft())
+    for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
       paintAiAircraft(context, ac);
   }
 
   if(context->objectTypes.testFlag(AIRCRAFT))
-    paintUserAircraft(context, mapWidget->getSimData().getUserAircraft());
+    paintUserAircraft(context, mapWidget->getUserAircraft());
 
   context->painter->restore();
 }
@@ -248,8 +246,7 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
                  arg(QLocale().toString(aircraft.getPosition().getAltitude(), 'f', 0)).arg(upDown));
   }
 
-  const SimConnectUserAircraft *userAircraft =
-    dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
+  const SimConnectUserAircraft *userAircraft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
   if(userAircraft != nullptr && !aircraft.isOnGround())
   {
     texts.append(tr("Wind %1 °M / %2").
@@ -259,9 +256,13 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
                  arg(QLocale().toString(userAircraft->getWindSpeedKts(), 'f', 0)));
   }
 
+  textatt::TextAttributes atts(textatt::BOLD);
+
+  if(aircraft.isUser())
+    atts |= textatt::ROUTE_BG_COLOR;
+
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts,
-                          QPen(Qt::black), x + size / 2, y + size / 2, textatt::BOLD, 255);
+  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
 }
 
 const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac, int size,
