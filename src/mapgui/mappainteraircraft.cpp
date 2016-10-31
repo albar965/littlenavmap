@@ -251,7 +251,7 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
   {
     texts.append(tr("Wind %1 °M / %2").
                  arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          userAircraft->getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                          userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg()),
                                         'f', 0)).
                  arg(QLocale().toString(userAircraft->getWindSpeedKts(), 'f', 0)));
   }

@@ -124,6 +124,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   manualDisconnect = false;
 }
 
+/* Posts data received directly from simconnect */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
   emit dataPacketReceived(dataPacket);
