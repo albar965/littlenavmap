@@ -730,7 +730,7 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived,
           profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived,
-          infoController, &InfoController::dataPacketReceived);
+          infoController, &InfoController::simulatorDataReceived);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);

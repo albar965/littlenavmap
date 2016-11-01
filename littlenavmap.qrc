@@ -120,5 +120,6 @@
         <file>resources/icons/aircraft_helicopter_ground.svg</file>
         <file>resources/icons/aircraft_helicopter_ground_user.svg</file>
         <file>resources/icons/aircraftai.svg</file>
+        <file>resources/icons/aircraftaiground.svg</file>
     </qresource>
 </RCC>

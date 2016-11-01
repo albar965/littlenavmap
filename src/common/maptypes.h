@@ -21,6 +21,8 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 #include "geo/linestring.h"
+#include "fs/sc/simconnectaircraft.h"
+#include "fs/sc/simconnectuseraircraft.h"
 
 #include <QColor>
 #include <QString>
@@ -492,6 +494,9 @@ struct MapSearchResult
   QList<MapAirway> airways;
 
   QList<MapUserpoint> userPoints;
+
+  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
+  atools::fs::sc::SimConnectUserAircraft userAircraft;
 };
 
 /* Range rings marker. Can be converted to QVariant */

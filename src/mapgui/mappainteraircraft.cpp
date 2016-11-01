@@ -72,10 +72,13 @@ void MapPainterAircraft::render(const PaintContext *context)
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context->painter);
 
-  if(context->objectTypes.testFlag(AIRCRAFT_AI))
+  if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
   {
-    for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
-      paintAiAircraft(context, ac);
+    if(context->objectTypes.testFlag(AIRCRAFT_AI))
+    {
+      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+        paintAiAircraft(context, ac);
+    }
   }
 
   if(context->objectTypes.testFlag(AIRCRAFT))
@@ -129,7 +132,7 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
   float x, y;
   if(wToS(pos, x, y))
   {
-    int size = std::max(48, scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+    int size = std::max(36, scale->getPixelIntForFeet(userAircraft.getWingSpan()));
     int offset = -(size / 2);
 
     // Position is visible
@@ -211,31 +214,33 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
 void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, float x, float y,
                                         const SimConnectAircraft& aircraft)
 {
-  if(!aircraft.isUser() &&
-     mapWidget->distance() > 10)
+  if(!aircraft.isUser() && mapWidget->distance() > 10)
     return;
 
   QStringList texts;
 
   if((aircraft.isOnGround() && context->mapLayerEffective->isAirportDiagramDetail2() &&
-      !aircraft.isUser()) ||
-     (!aircraft.isOnGround() && !aircraft.isUser()) ||
-     aircraft.isUser())
+      !aircraft.isUser()) || // All AI on ground
+     (!aircraft.isOnGround() && !aircraft.isUser()) || // All AI in the air
+     aircraft.isUser()) // User aircraft
   {
     if(!aircraft.getAirplaneRegistration().isEmpty())
-      texts.append(aircraft.getAirplaneRegistration());
+      texts.append(aircraft.getAirplaneRegistration() + " / " + aircraft.getAirplaneModel());
 
     if(!aircraft.getAirplaneAirline().isEmpty() && !aircraft.getAirplaneFlightnumber().isEmpty())
       texts.append(aircraft.getAirplaneAirline() + " / " + aircraft.getAirplaneFlightnumber());
   }
 
-  if(!aircraft.isOnGround())
+  if(aircraft.getGroundSpeedKts() > 30)
   {
     texts.append(tr("IAS %1, GS %2, HDG %3°M").
                  arg(QLocale().toString(aircraft.getIndicatedSpeedKts(), 'f', 0)).
                  arg(QLocale().toString(aircraft.getGroundSpeedKts(), 'f', 0)).
                  arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+  }
 
+  if(!aircraft.isOnGround())
+  {
     QString upDown;
     if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
       upDown = tr(" ▲");

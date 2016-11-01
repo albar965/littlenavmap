@@ -26,6 +26,8 @@
 
 using namespace maptypes;
 using atools::util::HtmlBuilder;
+using atools::fs::sc::SimConnectAircraft;
+using atools::fs::sc::SimConnectUserAircraft;
 
 MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
   : QObject(parent), query(mapQuery), weather(weatherReporter)
@@ -53,6 +55,40 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
   // Append HTML text for all objects found in order of importance (airports first, etc.)
   // Objects are separated by a horizontal ruler
   // If max number of entries or lines is exceeded return the html
+
+  if(mapSearchResult.userAircraft.getPosition().isValid())
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.aircraftText(mapSearchResult.userAircraft, html);
+    info.aircraftProgressText(mapSearchResult.userAircraft, html, routeMapObjects);
+    html.pEnd();
+    numEntries++;
+  }
+
+  if(!mapSearchResult.aiAircraft.isEmpty())
+  {
+    for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
+    {
+      if(checkText(html, numEntries))
+        return html.getHtml();
+
+      if(!html.isEmpty())
+        html.hr();
+
+      html.p();
+      info.aircraftText(aircraft, html);
+      info.aircraftProgressText(aircraft, html, routeMapObjects);
+      html.pEnd();
+      numEntries++;
+    }
+  }
+
   for(const MapAirport& ap : mapSearchResult.airports)
   {
     if(checkText(html, numEntries))

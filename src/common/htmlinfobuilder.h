@@ -56,6 +56,7 @@ namespace atools {
 namespace fs {
 namespace sc {
 class SimConnectUserAircraft;
+class SimConnectAircraft;
 }
 }
 namespace sql {
@@ -192,14 +193,18 @@ public:
    * @param data
    * @param html Result containing HTML snippet
    */
-  void aircraftText(const atools::fs::sc::SimConnectUserAircraft& data, atools::util::HtmlBuilder& html);
+  void aircraftText(const atools::fs::sc::SimConnectAircraft& userAircraft,
+                    atools::util::HtmlBuilder& html);
+  void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
+                                 atools::util::HtmlBuilder& html);
 
   /*
    * Creates a HTML description for simulator user aircraft progress and ambient values.
    * @param html
    * @param html Result containing HTML snippet
    */
-  void aircraftProgressText(const atools::fs::sc::SimConnectUserAircraft& data, atools::util::HtmlBuilder& html,
+  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
+                            atools::util::HtmlBuilder& html,
                             const RouteMapObjectList& rmoList);
 
 private:
@@ -231,14 +236,14 @@ private:
                     const QString& msg,
                     const QString& val);
 
-  void aircraftTitle(const atools::fs::sc::SimConnectUserAircraft& data, atools::util::HtmlBuilder& html);
+  void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, atools::util::HtmlBuilder& html);
 
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   atools::util::MorseCode *morse;
   bool info;
   QLocale locale;
-  QString aircraftGroundEncodedIcon, aircraftEncodedIcon;
+  QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;
 };
 
 #endif // MAPHTMLINFOBUILDER

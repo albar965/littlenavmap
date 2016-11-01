@@ -40,6 +40,13 @@ enum TabIndex
   MAP_LEGEND = 6
 };
 
+enum TabIndexAircraft
+{
+  AIRCRAFT_USER = 0,
+  AIRCRAFT_USER_PROGRESS = 1,
+  AIRCRAFT_AI = 2
+};
+
 }
 
 /*
@@ -70,7 +77,7 @@ public:
   void postDatabaseLoad();
 
   /* Update aircraft and aircraft progress tab */
-  void dataPacketReceived(atools::fs::sc::SimConnectData data);
+  void simulatorDataReceived(atools::fs::sc::SimConnectData data);
   void connectedToSimulator();
   void disconnectedFromSimulator();
 
@@ -92,7 +99,8 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  bool showInformationInternal(maptypes::MapSearchResult result);
+  void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
+  void updateAiAirports(const atools::fs::sc::SimConnectData& data);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;

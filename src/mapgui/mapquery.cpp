@@ -65,6 +65,14 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
     mapTypesFactory->fillAirport(airportByIdQuery->record(), airport, true);
 }
 
+void MapQuery::getAirportByIdent(maptypes::MapAirport& airport, const QString& ident)
+{
+  airportByIdentQuery->bindValue(":ident", ident);
+  airportByIdentQuery->exec();
+  if(airportByIdentQuery->next())
+    mapTypesFactory->fillAirport(airportByIdentQuery->record(), airport, true);
+}
+
 void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
 {
   vorByWaypointIdQuery->bindValue(":id", waypointId);

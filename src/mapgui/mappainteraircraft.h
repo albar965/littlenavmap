@@ -79,15 +79,16 @@ private:
   const QPixmap *pixmapFromCache(const Key& key);
   const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
 
-  /* Aircraft symbol size in pixel */
-  static Q_DECL_CONSTEXPR int AIRCRAFT_SYMBOL_SIZE = 40;
-
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
+  static Q_DECL_CONSTEXPR int DISTANCE_CUT_OFF_AI_LIMIT = 500;
+
   QCache<Key, QPixmap> pixmaps;
 
-  void paintTextLabel(int size, const PaintContext *context, float x, float y, const atools::fs::sc::SimConnectAircraft& aircraft);
+  void paintTextLabel(int size, const PaintContext *context, float x, float y,
+                      const atools::fs::sc::SimConnectAircraft& aircraft);
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

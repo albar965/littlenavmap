@@ -80,6 +80,11 @@ int main(int argc, char *argv[])
   // Set application information
   int retval = 0;
   Application app(argc, argv);
+  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
+  Application::setApplicationName("Little Navmap");
+  Application::setOrganizationName("ABarthel");
+  Application::setOrganizationDomain("abarthel.org");
+  Application::setApplicationVersion("1.1.0.devel");
 
   // Start splash screen
   QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
@@ -87,11 +92,10 @@ int main(int argc, char *argv[])
   splash.show();
   app.processEvents();
 
-  Application::setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  Application::setApplicationName("Little Navmap");
-  Application::setOrganizationName("ABarthel");
-  Application::setOrganizationDomain("abarthel.org");
-  Application::setApplicationVersion("1.1.0.devel");
+  splash.showMessage(QObject::tr("Version %5 (revision %6)").
+                     arg(Application::applicationVersion()).arg(GIT_REVISION),
+                     Qt::AlignRight | Qt::AlignBottom, Qt::white);
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
   DatabaseManager *dbManager = nullptr;
 

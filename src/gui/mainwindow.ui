@@ -2679,7 +2679,7 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextBrowser" name="textBrowserAiInfo">
+          <widget class="QTextBrowser" name="textBrowserAircraftAiInfo">
            <property name="placeholderText">
             <string>Not connected to Simulator.</string>
            </property>

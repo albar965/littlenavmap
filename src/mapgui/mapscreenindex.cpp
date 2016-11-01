@@ -182,6 +182,32 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
   const MapLayer *mapLayer = paintLayer->getMapLayer();
   const MapLayer *mapLayerEffective = paintLayer->getMapLayerEffective();
 
+  // Check for user aircraft
+  result.userAircraft = atools::fs::sc::SimConnectUserAircraft();
+  if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT && mapWidget->isConnected())
+  {
+    int x, y;
+    if(conv.wToS(simData.getUserAircraft().getPosition(), x, y))
+      if(atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
+        result.userAircraft = simData.getUserAircraft();
+  }
+
+  // Check for AI / multiplayer aircraft
+  result.aiAircraft.clear();
+  if(mapWidget->distance() < 500 && paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI &&
+     mapWidget->isConnected())
+  {
+    using maptools::insertSortedByDistance;
+    int x, y;
+    for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraft())
+    {
+      if(mapLayerEffective->isAirportDiagram() || !obj.isOnGround())
+        if(conv.wToS(obj.getPosition(), x, y))
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+            insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, obj);
+    }
+  }
+
   // Airways use a screen coordinate buffer
   getNearestAirways(xs, ys, maxDistance, result);
 
@@ -233,11 +259,9 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, mapty
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
 }
 
-
-
 int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance)
 {
-    CoordinateConverter conv(mapWidget->viewport());
+  CoordinateConverter conv(mapWidget->viewport());
   int index = 0;
   int x, y;
   for(const maptypes::DistanceMarker& marker : distanceMarks)

@@ -59,6 +59,8 @@ public:
 
   void getAirportById(maptypes::MapAirport& airport, int airportId);
 
+  void getAirportByIdent(maptypes::MapAirport& airport, const QString& ident);
+
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId);
 

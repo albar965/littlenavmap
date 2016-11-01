@@ -27,6 +27,7 @@
 #include "common/maptools.h"
 #include "common/mapcolors.h"
 #include "connect/connectclient.h"
+#include "fs/sc/simconnectuseraircraft.h"
 #include "route/routecontroller.h"
 #include "atools.h"
 #include "mapgui/mapquery.h"
@@ -464,8 +465,12 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
   if(rect.isPoint(POS_IS_POINT_EPSILON))
     showPos(rect.getTopLeft(), -1);
   else
+  {
     centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                               GeoDataCoordinates::Degree), false);
+    if(distance() < OptionData::instance().getMapZoomShow())
+      setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
+  }
 }
 
 void MapWidget::showSearchMark()
@@ -827,7 +832,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     {
       // Get id and type from selected action
       QVariantList data = action->data().toList();
-      id = data.at(0).toInt();
+      id = data.first().toInt();
       type = maptypes::MapObjectTypes(data.at(1).toInt());
     }
 
@@ -1704,21 +1709,31 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   maptypes::MapSearchResult mapSearchResult;
   screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
 
-  if(!mapSearchResult.airports.isEmpty())
+  if(mapSearchResult.userAircraft.getPosition().isValid())
   {
-    showRect(mapSearchResult.airports.at(0).bounding);
+    showPos(mapSearchResult.userAircraft.getPosition());
+    mainWindow->setStatusMessage(QString(tr("Showing user aircraft on map.")));
+  }
+  else if(!mapSearchResult.aiAircraft.isEmpty())
+  {
+    showPos(mapSearchResult.aiAircraft.first().getPosition());
+    mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
+  }
+  else if(!mapSearchResult.airports.isEmpty())
+  {
+    showRect(mapSearchResult.airports.first().bounding);
     mainWindow->setStatusMessage(QString(tr("Showing airport on map.")));
   }
   else
   {
     if(!mapSearchResult.vors.isEmpty())
-      showPos(mapSearchResult.vors.at(0).position);
+      showPos(mapSearchResult.vors.first().position);
     else if(!mapSearchResult.ndbs.isEmpty())
-      showPos(mapSearchResult.ndbs.at(0).position);
+      showPos(mapSearchResult.ndbs.first().position);
     else if(!mapSearchResult.waypoints.isEmpty())
-      showPos(mapSearchResult.waypoints.at(0).position);
+      showPos(mapSearchResult.waypoints.first().position);
     else if(!mapSearchResult.userPoints.isEmpty())
-      showPos(mapSearchResult.userPoints.at(0).position);
+      showPos(mapSearchResult.userPoints.first().position);
     mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
 }
@@ -1779,7 +1794,7 @@ void MapWidget::updateTooltip()
   if(databaseLoadStatus)
     return;
 
-  // Build a new tooltip HTML for weather changes
+  // Build a new tooltip HTML for weather changes or aircraft updates
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
                                           mainWindow->getRouteController()->getRouteMapObjects(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
