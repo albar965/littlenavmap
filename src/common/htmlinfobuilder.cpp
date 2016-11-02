@@ -893,6 +893,14 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   }
 }
 
+void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html)
+{
+  html.row2(tr("Time and Date:"), locale.toString(userAircaft->getLocalTime(), QLocale::ShortFormat) +
+            tr(" ") + userAircaft->getLocalTime().timeZoneAbbreviation() + tr(", ") +
+            locale.toString(userAircaft->getZuluTime().time(), QLocale::ShortFormat) +
+            " " + userAircaft->getZuluTime().timeZoneAbbreviation());
+}
+
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html,
                                            const RouteMapObjectList& rmoList)
@@ -915,10 +923,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.table();
       // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
       html.row2(tr("To Destination:"), locale.toString(distToDestNm, 'f', 0) + tr(" nm"));
-      html.row2(tr("Time and Date:"), locale.toString(userAircaft->getLocalTime(), QLocale::ShortFormat) +
-                tr(" ") + userAircaft->getLocalTime().timeZoneAbbreviation() + tr(", ") +
-                locale.toString(userAircaft->getZuluTime().time(), QLocale::ShortFormat) +
-                " " + userAircaft->getZuluTime().timeZoneAbbreviation());
+
+      timeAndDate(userAircaft, html);
 
       if(aircraft.getGroundSpeedKts() > 20.f)
       {
@@ -974,7 +980,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.h4(tr("No Active Flight Plan Leg found."), atools::util::html::BOLD);
   }
   else if(info && userAircaft != nullptr)
-    html.h4(tr("No Flight Plan loaded."), atools::util::html::BOLD);
+  {
+    head(html, tr("No Flight Plan loaded."));
+    html.table();
+    timeAndDate(userAircaft, html);
+    html.tableEnd();
+  }
 
   if(userAircaft == nullptr && (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
   {

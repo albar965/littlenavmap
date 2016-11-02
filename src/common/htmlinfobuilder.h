@@ -244,6 +244,8 @@ private:
   bool info;
   QLocale locale;
   QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;
+  void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft, atools::util::HtmlBuilder& html);
+
 };
 
 #endif // MAPHTMLINFOBUILDER
