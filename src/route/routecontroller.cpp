@@ -1948,8 +1948,6 @@ void RouteController::updateWindowLabel()
     QString routeType;
     switch(flightplan.getRouteType())
     {
-      case atools::fs::pln::UNKNOWN_ROUTE:
-        break;
       case atools::fs::pln::LOW_ALTITUDE:
         routeType = tr("Low Altitude");
         break;
