@@ -1541,6 +1541,7 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
   else if(type == maptypes::WAYPOINT)
   {
     const maptypes::MapWaypoint& waypoint = result.waypoints.first();
+    bool useWaypoint = true;
 
     if(resolveWaypoints && waypoint.type == "VOR")
     {
@@ -1548,11 +1549,16 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
       maptypes::MapVor vor;
       query->getVorForWaypoint(vor, waypoint.id);
 
-      entry.setIcaoIdent(vor.ident);
-      entry.setPosition(vor.position);
-      entry.setIcaoRegion(vor.region);
-      entry.setWaypointType(entry::VOR);
-      entry.setWaypointId(entry.getIcaoIdent());
+      // Check for invalid references that are caused by the navdata update
+      if(!vor.ident.isEmpty())
+      {
+        useWaypoint = false;
+        entry.setIcaoIdent(vor.ident);
+        entry.setPosition(vor.position);
+        entry.setIcaoRegion(vor.region);
+        entry.setWaypointType(entry::VOR);
+        entry.setWaypointId(entry.getIcaoIdent());
+      }
     }
     else if(resolveWaypoints && waypoint.type == "NDB")
     {
@@ -1560,13 +1566,19 @@ void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, map
       maptypes::MapNdb ndb;
       query->getNdbForWaypoint(ndb, waypoint.id);
 
-      entry.setIcaoIdent(ndb.ident);
-      entry.setPosition(ndb.position);
-      entry.setIcaoRegion(ndb.region);
-      entry.setWaypointType(entry::NDB);
-      entry.setWaypointId(entry.getIcaoIdent());
+      // Check for invalid references that are caused by the navdata update
+      if(!ndb.ident.isEmpty())
+      {
+        useWaypoint = false;
+        entry.setIcaoIdent(ndb.ident);
+        entry.setPosition(ndb.position);
+        entry.setIcaoRegion(ndb.region);
+        entry.setWaypointType(entry::NDB);
+        entry.setWaypointId(entry.getIcaoIdent());
+      }
     }
-    else
+
+    if(useWaypoint)
     {
       entry.setIcaoIdent(waypoint.ident);
       entry.setPosition(waypoint.position);
