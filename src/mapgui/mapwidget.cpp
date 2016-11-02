@@ -72,6 +72,8 @@ using atools::gui::MapPosHistoryEntry;
 using atools::gui::MapPosHistory;
 using atools::geo::Rect;
 using atools::geo::Pos;
+using atools::fs::sc::SimConnectAircraft;
+using atools::fs::sc::SimConnectUserAircraft;
 
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
@@ -963,6 +965,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
 
   maptypes::MapAirport *airport = nullptr;
+  SimConnectAircraft *aiAircraft = nullptr;
+  SimConnectUserAircraft *userAircraft = nullptr;
   maptypes::MapVor *vor = nullptr;
   maptypes::MapNdb *ndb = nullptr;
   maptypes::MapWaypoint *waypoint = nullptr;
@@ -971,6 +975,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   maptypes::MapParking *parking = nullptr;
 
   // Get only one object of each type
+  if(result.userAircraft.getPosition().isValid())
+    userAircraft = &result.userAircraft;
+  if(!result.aiAircraft.isEmpty())
+    aiAircraft = &result.aiAircraft.first();
   if(!result.airports.isEmpty())
     airport = &result.airports.first();
   if(!result.parkings.isEmpty())
@@ -990,9 +998,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   bool andMore = (result.vors.size() + result.ndbs.size() + result.waypoints.size() +
                   result.userPoints.size() + result.airways.size()) > 1 && airport == nullptr;
 
+  bool isAircraft = false;
   // Collect information from the search result - build text only for one object
   QString mapObjectText;
-  if(airport != nullptr)
+  if(userAircraft != nullptr)
+  {
+    mapObjectText = tr("User Aircraft");
+    isAircraft = true;
+  }
+  else if(aiAircraft != nullptr)
+  {
+    mapObjectText = tr("%1 / %2").arg(aiAircraft->getAirplaneRegistration()).arg(aiAircraft->getAirplaneModel());
+    isAircraft = true;
+  }
+  else if(airport != nullptr)
     mapObjectText = maptypes::airportText(*airport);
   else if(parking != nullptr)
     mapObjectText = maptypes::parkingName(parking->name) + " " + QLocale().toString(parking->number);
@@ -1050,7 +1069,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "set airport as start/dest"
-  if(airport != nullptr || parking != nullptr)
+  if((airport != nullptr || parking != nullptr) && !isAircraft)
   {
     QString airportText;
 
@@ -1080,7 +1099,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "show in search" and "add to route" and "show information"
-  if(vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || airway != nullptr)
+  if((vor != nullptr || ndb != nullptr || waypoint != nullptr || airport != nullptr || airway != nullptr) &&
+     !isAircraft)
   {
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(mapObjectText));
@@ -1096,11 +1116,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
     ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(tr("Position")));
-    ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
+    if(isAircraft)
+    {
+      ui->actionMapShowInformation->setEnabled(true);
+      ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(mapObjectText));
+    }
+    else
+      ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
   // Update "delete in route"
-  if(deleteRouteIndex != -1)
+  if(deleteRouteIndex != -1 && !isAircraft)
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(deleteText));
@@ -1109,7 +1135,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
 
   // Update "show range rings for Navaid"
-  if(vor != nullptr || ndb != nullptr)
+  if((vor != nullptr || ndb != nullptr) && !isAircraft)
   {
     ui->actionMapNavaidRange->setEnabled(true);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(navRingText));
@@ -1117,7 +1143,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
 
-  if(parking == nullptr && !mapObjectText.isEmpty())
+  if((parking == nullptr && !mapObjectText.isEmpty()) && !isAircraft)
   {
     // Set text to measure "from airport" etc.
     ui->actionMapMeasureDistance->setText(ui->actionMapMeasureDistance->text().arg(mapObjectText));
