@@ -469,7 +469,7 @@ void MainWindow::setupUi()
 
   messageLabel = new QLabel();
   messageLabel->setAlignment(Qt::AlignCenter);
-  messageLabel->setMinimumWidth(140);
+  messageLabel->setMinimumWidth(150);
   ui->statusBar->addPermanentWidget(messageLabel);
 
   detailLabel = new QLabel();

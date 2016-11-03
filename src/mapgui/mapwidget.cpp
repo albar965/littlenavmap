@@ -212,20 +212,32 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(maptypes::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
   setShowMapFeatures(maptypes::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
 
-  bool showEmpty = ui->actionMapShowEmptyAirports->isChecked() ||
-                   !(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
-
-  setShowMapFeatures(maptypes::AIRPORT_EMPTY, showEmpty);
-
   // Force addon airport independent of other settings or not
   setShowMapFeatures(maptypes::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
 
-  // Set the general airport flag if any airport is selected
-  setShowMapFeatures(maptypes::AIRPORT,
-                     ui->actionMapShowAirports->isChecked() ||
-                     ui->actionMapShowSoftAirports->isChecked() ||
-                     showEmpty ||
-                     ui->actionMapShowAddonAirports->isChecked());
+  if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
+  {
+    // Treat empty airports special
+    setShowMapFeatures(maptypes::AIRPORT_EMPTY, ui->actionMapShowEmptyAirports->isChecked());
+
+    // Set the general airport flag if any airport is selected
+    setShowMapFeatures(maptypes::AIRPORT,
+                       ui->actionMapShowAirports->isChecked() ||
+                       ui->actionMapShowSoftAirports->isChecked() ||
+                       ui->actionMapShowEmptyAirports->isChecked() ||
+                       ui->actionMapShowAddonAirports->isChecked());
+  }
+  else
+  {
+    // Treat empty airports as all others
+    setShowMapFeatures(maptypes::AIRPORT_EMPTY, true);
+
+    // Set the general airport flag if any airport is selected
+    setShowMapFeatures(maptypes::AIRPORT,
+                       ui->actionMapShowAirports->isChecked() ||
+                       ui->actionMapShowSoftAirports->isChecked() ||
+                       ui->actionMapShowAddonAirports->isChecked());
+  }
 
   setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
   setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
@@ -251,7 +263,9 @@ void MapWidget::setShowMapPois(bool show)
 void MapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
 {
   paintLayer->setShowMapObjects(type, show);
-  screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
+
+  if(type & maptypes::AIRWAYV || type & maptypes::AIRWAYJ)
+    screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
 }
 
 void MapWidget::setDetailLevel(int factor)
@@ -1887,69 +1901,170 @@ void MapWidget::updateVisibleObjectsStatusBar()
     atools::util::HtmlBuilder visibleTooltip(false);
     visibleTooltip.b(tr("Currently shown on map:"));
     visibleTooltip.table();
+    bool foundMapObjects = false;
 
-    if(layer->isAirport() && shown & maptypes::AIRPORT_ALL)
+    qDebug() << "Visible objects" << shown;
+    if(layer->isAirport() && ((shown & maptypes::AIRPORT_HARD) || (shown & maptypes::AIRPORT_SOFT) ||
+                              (shown & maptypes::AIRPORT_ADDON)))
     {
-      QString ap(tr("AP")), apTooltip(tr("Airports"));
+      QString runway, runwayShort;
+      QString apShort, apTooltip, apTooltipAddon;
+      bool showAddon = shown & maptypes::AIRPORT_ADDON;
+      bool showStock = (shown & maptypes::AIRPORT_HARD) || (shown & maptypes::AIRPORT_SOFT);
+      bool showHard = shown & maptypes::AIRPORT_HARD;
+      bool showAny = showStock | showAddon;
+
+      // Prepare runway texts
+      if(!(shown & maptypes::AIRPORT_HARD) && (shown & maptypes::AIRPORT_SOFT))
+      {
+        runway = tr(" soft runways");
+        runwayShort = tr("/S");
+      }
+      else if((shown & maptypes::AIRPORT_HARD) && !(shown & maptypes::AIRPORT_SOFT))
+      {
+        runway = tr(" hard runways");
+        runwayShort = tr("/H");
+      }
+      else if((shown & maptypes::AIRPORT_HARD) && (shown & maptypes::AIRPORT_SOFT))
+      {
+        runway = tr(" all runway types");
+        runwayShort = tr("/H/S");
+      }
+      else if(!(shown & maptypes::AIRPORT_HARD) && !(shown & maptypes::AIRPORT_SOFT))
+      {
+        runway.clear();
+        runwayShort.clear();
+      }
+
+      // Prepare short airport indicator
+      if(showAddon)
+        apShort = tr("AP/A");
+      else if(showStock)
+        apShort = tr("AP");
+
+      // Build the rest of the strings
       if(layer->getDataSource() == layer::ALL)
       {
         if(layer->getMinRunwayLength() > 0)
         {
-          ap.append(">" + QLocale().toString(layer->getMinRunwayLength() / 100));
-          apTooltip.append(tr(" with runway length > %1 ft").
-                           arg(QLocale().toString(layer->getMinRunwayLength())));
+          if(showAny)
+            apShort.append(">").append(QLocale().toString(layer->getMinRunwayLength() / 100)).
+            append(runwayShort);
+
+          if(showStock)
+            apTooltip = tr("Airports with runway length > %1 ft and%2").
+                        arg(QLocale().toString(layer->getMinRunwayLength())).
+                        arg(runway);
+
+          if(showAddon)
+            apTooltipAddon = tr("Add-on airports with runway length > %1 ft").
+                             arg(QLocale().toString(layer->getMinRunwayLength()));
+        }
+        else
+        {
+          if(showStock)
+          {
+            apShort.append(runwayShort);
+            apTooltip = tr("Airports with%1").arg(runway);
+          }
+          if(showAddon)
+            apTooltipAddon = tr("Add-on airports");
         }
       }
       else if(layer->getDataSource() == layer::MEDIUM)
       {
-        ap.append(tr(">40"));
-        apTooltip.append(tr(" with runway length > %1 ft").arg(QLocale().toString(4000)));
+        if(showAny)
+          apShort.append(tr(">40%1").arg(runwayShort));
+
+        if(showStock)
+          apTooltip = tr("Airports with runway length > %1 ft and%2").
+                      arg(QLocale().toString(MapLayer::MAX_MEDIUM_RUNWAY_FT)).
+                      arg(runway);
+
+        if(showAddon)
+          apTooltipAddon.append(tr("Add-on airports with runway length > %1 ft").
+                                arg(QLocale().toString(MapLayer::MAX_MEDIUM_RUNWAY_FT)));
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
-        ap.append(tr(">80,H"));
-        apTooltip.append(tr(" with runway length > %1 ft and hard runways").arg(QLocale().toString(8000)));
+        if(showAddon || showHard)
+          apShort.append(tr(">80,H"));
+        else
+          apShort.clear();
+
+        if(showStock && showHard)
+          apTooltip = tr("Airports with runway length > %1 ft and hard runways").
+                      arg(QLocale().toString(MapLayer::MAX_LARGE_RUNWAY_FT));
+
+        if(showAddon)
+          apTooltipAddon.append(tr("Add-on airports with runway length > %1 ft").
+                                arg(QLocale().toString(MapLayer::MAX_LARGE_RUNWAY_FT)));
       }
 
-      visible.append(ap);
-      visibleTooltip.tr().td(apTooltip).trEnd();
+      visible.append(apShort);
+
+      if(!apTooltip.isEmpty())
+      {
+        visibleTooltip.tr().td(apTooltip).trEnd();
+        foundMapObjects = true;
+      }
+
+      if(!apTooltipAddon.isEmpty())
+      {
+        visibleTooltip.tr().td(apTooltipAddon).trEnd();
+        foundMapObjects = true;
+      }
+
+      // qDebug() << "=================== apTooltip" << apTooltip;
+      // qDebug() << "=================== apTooltipAddon" << apTooltipAddon;
     }
 
     if(layer->isVor() && shown & maptypes::VOR)
     {
       visible.append(tr("VOR"));
       visibleTooltip.tr().td(tr("VOR")).trEnd();
+      foundMapObjects = true;
     }
     if(layer->isNdb() && shown & maptypes::NDB)
     {
       visible.append(tr("NDB"));
       visibleTooltip.tr().td(tr("NDB")).trEnd();
+      foundMapObjects = true;
     }
     if(layer->isIls() && shown & maptypes::ILS)
     {
       visible.append(tr("ILS"));
       visibleTooltip.tr().td(tr("ILS")).trEnd();
+      foundMapObjects = true;
     }
     if(layer->isWaypoint() && shown & maptypes::WAYPOINT)
     {
       visible.append(tr("W"));
       visibleTooltip.tr().td(tr("Waypoints")).trEnd();
+      foundMapObjects = true;
     }
     if(layer->isAirway() && shown & maptypes::AIRWAYJ)
     {
       visible.append(tr("J"));
       visibleTooltip.tr().td(tr("Jet Airways")).trEnd();
+      foundMapObjects = true;
     }
     if(layer->isAirway() && shown & maptypes::AIRWAYV)
     {
       visible.append(tr("V"));
       visibleTooltip.tr().td(tr("Victor Airways")).trEnd();
+      foundMapObjects = true;
     }
+
+    if(!foundMapObjects)
+      visibleTooltip.tr().td(tr("Nothing")).trEnd();
+
     visibleTooltip.tableEnd();
 
     // Update the statusbar label text and tooltip of the label
     mainWindow->setMapObjectsShownMessageText(visible.join(","), visibleTooltip.getHtml());
   }
+
 }
 
 void MapWidget::paintEvent(QPaintEvent *paintEvent)

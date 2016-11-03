@@ -782,6 +782,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   if(airway.minAltitude > 0)
     html.row2(tr("Min altitude for this segment:"), locale.toString(airway.minAltitude) + tr(" ft"));
 
+  html.row2(tr("Segment length:"),
+            locale.toString(atools::geo::meterToNm(airway.from.distanceMeterTo(airway.to)), 'f',
+                            0) + tr(" nm"));
+
   if(infoQuery != nullptr && info)
   {
     atools::sql::SqlRecordVector waypoints =

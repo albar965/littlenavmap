@@ -332,6 +332,9 @@ public:
     return layerMarkerSymbolSize;
   }
 
+  static const int MAX_MEDIUM_RUNWAY_FT = 4000;
+  static const int MAX_LARGE_RUNWAY_FT = 8000;
+
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
