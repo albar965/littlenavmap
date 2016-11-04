@@ -42,6 +42,7 @@
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
 #include "options/optionsdialog.h"
+#include "print/printsupport.h"
 #include "exception.h"
 
 #include <marble/LegendWidget.h>
@@ -161,6 +162,9 @@ MainWindow::MainWindow()
     qDebug() << "MainWindow Creating InfoController";
     infoController = new InfoController(this, mapQuery, infoQuery);
 
+    qDebug() << "MainWindow Creating PrintSupport";
+    printSupport = new PrintSupport(this);
+
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
 
@@ -214,6 +218,7 @@ MainWindow::~MainWindow()
   delete profileWidget;
   delete marbleAbout;
   delete infoController;
+  delete printSupport;
   delete routeFileHistory;
   delete kmlFileHistory;
   delete optionsDialog;
@@ -568,6 +573,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
+
+  connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
+  connect(ui->actionPrintFlightplan, &QAction::triggered, printSupport, &PrintSupport::printFlightplan);
+  connect(ui->actionSaveMapAsImage, &QAction::triggered, this, &MainWindow::mapSaveImage);
 
   // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
@@ -1225,6 +1234,28 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
   }
 }
 
+void MainWindow::mapSaveImage()
+{
+  QString imageFile = dialog->saveFileDialog(
+    tr("Save Map as Image"), tr("Image Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_IMAGE),
+    "jpg", "MainWindow/",
+    atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX), tr("Little Navmap Screenshot.jpg"));
+
+  if(!imageFile.isEmpty())
+  {
+    QPixmap pixmap;
+    mapWidget->showOverlays(false);
+    pixmap = mapWidget->mapScreenShot();
+    mapWidget->showOverlays(true);
+
+    PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
+
+    if(!pixmap.save(imageFile))
+      QMessageBox::warning(this, QApplication::applicationName(), tr("Error saving image.\n"
+                                                                     "Only JPG, PNG and BMP are allowed."));
+  }
+}
+
 /* Selection in flight plan table has changed */
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
@@ -1386,6 +1417,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
+  ui->actionPrintFlightplan->setEnabled(hasFlightplan);
 
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)

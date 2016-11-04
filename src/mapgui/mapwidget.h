@@ -239,6 +239,8 @@ public:
   /* End all distance line and route dragging modes */
   void cancelDragAll();
 
+  void showOverlays(bool show);
+
   /* Stores delta values depending on fast or slow update. User aircraft is only updated if
    * delta values are exceeded. */
   struct SimUpdateDelta

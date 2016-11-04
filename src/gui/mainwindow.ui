@@ -63,6 +63,10 @@
     <addaction name="separator"/>
     <addaction name="actionWorkOffline"/>
     <addaction name="separator"/>
+    <addaction name="actionSaveMapAsImage"/>
+    <addaction name="actionPrintMap"/>
+    <addaction name="actionPrintFlightplan"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -4666,6 +4670,48 @@
    </property>
    <property name="statusTip">
     <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+   </property>
+  </action>
+  <action name="actionPrintMap">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/printmap.svg</normaloff>:/littlenavmap/resources/icons/printmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Print &amp;Map ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Print the current map view</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPrintFlightplan">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/printflightplan.svg</normaloff>:/littlenavmap/resources/icons/printflightplan.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Print &amp;Flight Plan ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Print the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+P</string>
+   </property>
+  </action>
+  <action name="actionSaveMapAsImage">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Map as Image ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save current map view as an image</string>
    </property>
   </action>
  </widget>

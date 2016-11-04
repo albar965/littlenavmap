@@ -48,6 +48,7 @@ const QString INFOWINDOW_CURRENTMAPOBJECTS = "InfoWindow/CurrentMapObjects";
 const QString INFOWINDOW_WIDGET = "InfoWindow/Widget";
 const QString MAINWINDOW_FIRSTAPPLICATIONSTART = "MainWindow/FirstApplicationStart";
 const QString MAINWINDOW_WIDGET = "MainWindow/Widget";
+const QString MAINWINDOW_PRINT_SIZE = "MainWindow/PrintPreviewSize";
 const QString MAP_DETAILFACTOR = "Map/DetailFactor";
 const QString MAP_DISTANCEMARKERS = "Map/DistanceMarkers";
 const QString MAP_HOMEDISTANCE = "Map/HomeDistance";
@@ -94,6 +95,8 @@ const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.PLN)";
 const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT = "(current_wx_snapshot.txt)";
+
+const QString FILE_PATTERN_IMAGE = "(*.jpg *.jpeg *.png *.bmp)";
 
 /* Sqlite database names */
 const QString DATABASE_DIR = "little_navmap_db";

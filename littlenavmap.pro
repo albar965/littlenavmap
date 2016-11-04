@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql xml network svg
+QT       += core gui sql xml network svg printsupport
 
 # axcontainer axserver concurrent core dbus declarative designer gui help multimedia
 # multimediawidgets network opengl printsupport qml qmltest x11extras quick script scripttools
@@ -157,7 +157,8 @@ SOURCES += src/main.cpp\
     src/options/optiondata.cpp \
     src/common/settingsmigrate.cpp \
     src/search/searchbase.cpp \
-    src/search/sqlcontroller.cpp
+    src/search/sqlcontroller.cpp \
+    src/print/printsupport.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -220,7 +221,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/options/optiondata.h \
     src/common/settingsmigrate.h \
     src/search/searchbase.h \
-    src/search/sqlcontroller.h
+    src/search/sqlcontroller.h \
+    src/print/printsupport.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

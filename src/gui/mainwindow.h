@@ -38,6 +38,7 @@ class ProfileWidget;
 class InfoController;
 class OptionsDialog;
 class QActionGroup;
+class PrintSupport;
 
 namespace Marble {
 class LegendWidget;
@@ -166,6 +167,7 @@ private:
   void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
+  void mapSaveImage();
 
   void kmlOpenRecent(const QString& kmlFile);
   void kmlOpen();
@@ -201,6 +203,7 @@ private:
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;
   ProfileWidget *profileWidget = nullptr;
+  PrintSupport *printSupport = nullptr;
 
   /* Status bar labels */
   QLabel *mapDistanceLabel, *mapPosLabel, *renderStatusLabel, *detailLabel, *messageLabel,

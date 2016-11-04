@@ -405,13 +405,21 @@ void MapWidget::restoreState()
   screenIndex->restoreState();
   aircraftTrack.restoreState();
 
+  showOverlays(true);
+}
+
+void MapWidget::showOverlays(bool show)
+{
   // Show all map overlays again since the saving/restoring behavior is random
   QList<AbstractFloatItem *> localFloatItems = floatItems();
   for(AbstractFloatItem *fi : localFloatItems)
   {
     qDebug() << "showing float item" << fi->name() << "id" << fi->nameId();
-    fi->setVisible(true);
-    fi->show();
+    fi->setVisible(show);
+    if(show)
+      fi->show();
+    else
+      fi->hide();
   }
 }
 
