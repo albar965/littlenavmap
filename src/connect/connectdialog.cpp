@@ -55,13 +55,16 @@ ConnectDialog::ConnectDialog(QWidget *parent) :
 
   // Get a signal for any button
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonBoxClicked);
-  connect(ui->checkBoxConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::connectDirectToggled);
-  connect(ui->checkBoxConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::autoConnectToggled);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
-  connect(ui->pushButtonDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::deleteClicked);
+  connect(ui->pushButtonConnectDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::deleteClicked);
+
+  connect(ui->radioButtonConnectDirect, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
+
+  connect(ui->spinBoxConnectUpdateRate, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+          this, &ConnectDialog::directUpdateRateChanged);
 }
 
 ConnectDialog::~ConnectDialog()
@@ -120,17 +123,15 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
-  ui->pushButtonDeleteHostname->setEnabled(ui->comboBoxConnectHostname->count() > 0);
-  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setEnabled(
-    !ui->comboBoxConnectHostname->currentText().isEmpty() || ui->checkBoxConnectDirect->isChecked());
-}
+  ui->pushButtonConnectDeleteHostname->setEnabled(
+    ui->comboBoxConnectHostname->count() > 0 && ui->radioButtonConnectRemote->isChecked());
 
-void ConnectDialog::connectDirectToggled(bool state)
-{
-  Q_UNUSED(state);
-  ui->comboBoxConnectHostname->setDisabled(ui->checkBoxConnectDirect->isChecked());
-  ui->spinBoxConnectPort->setDisabled(ui->checkBoxConnectDirect->isChecked());
-  ui->pushButtonDeleteHostname->setDisabled(ui->checkBoxConnectDirect->isChecked());
+  ui->buttonBoxConnect->button(QDialogButtonBox::Ok)->setEnabled(
+    !ui->comboBoxConnectHostname->currentText().isEmpty() || ui->radioButtonConnectDirect->isChecked());
+
+  ui->comboBoxConnectHostname->setEnabled(ui->radioButtonConnectRemote->isChecked());
+  ui->spinBoxConnectPort->setEnabled(ui->radioButtonConnectRemote->isChecked());
+  ui->spinBoxConnectUpdateRate->setEnabled(ui->radioButtonConnectDirect->isChecked());
 }
 
 void ConnectDialog::setConnected(bool connected)
@@ -146,7 +147,12 @@ bool ConnectDialog::isAutoConnect() const
 
 bool ConnectDialog::isConnectDirect() const
 {
-  return ui->checkBoxConnectDirect->isChecked();
+  return ui->radioButtonConnectDirect->isChecked();
+}
+
+int ConnectDialog::getDirectUpdateRateMs()
+{
+  return ui->spinBoxConnectUpdateRate->value();
 }
 
 QString ConnectDialog::getHostname() const
@@ -162,8 +168,8 @@ quint16 ConnectDialog::getPort() const
 void ConnectDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->checkBoxConnectOnStartup,
-                    ui->checkBoxConnectDirect});
+  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRate,
+                    ui->checkBoxConnectOnStartup, ui->radioButtonConnectDirect, ui->radioButtonConnectRemote});
 
   // Save combo entries separately
   QStringList entries;
@@ -184,9 +190,10 @@ void ConnectDialog::restoreState()
 
   atools::gui::WidgetState(lnm::NAVCONNECT_REMOTE).restore({ui->comboBoxConnectHostname,
                                                             ui->spinBoxConnectPort,
+                                                            ui->spinBoxConnectUpdateRate,
                                                             ui->checkBoxConnectOnStartup,
-                                                            ui->checkBoxConnectDirect});
+                                                            ui->radioButtonConnectDirect,
+                                                            ui->radioButtonConnectRemote});
 
-  connectDirectToggled(ui->checkBoxConnectDirect->isChecked());
   updateButtonStates();
 }

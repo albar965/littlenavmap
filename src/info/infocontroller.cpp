@@ -92,6 +92,13 @@ void InfoController::anchorClicked(const QUrl& url)
       emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
                                     query.queryItemValue("laty").toFloat()), -1);
     }
+    else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
+    {
+      // Only airport used for id variable
+      maptypes::MapAirport airport;
+      mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
+      emit showRect(airport.bounding);
+    }
     else if(query.hasQueryItem("airport"))
     {
       // Airport ident

@@ -55,13 +55,15 @@ public:
   bool isAutoConnect() const;
   bool isConnectDirect() const;
 
+  int getDirectUpdateRateMs();
+
 signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);
+  void directUpdateRateChanged(int value);
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
-  void connectDirectToggled(bool state);
   void deleteClicked();
   void updateButtonStates();
 

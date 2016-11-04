@@ -38,8 +38,6 @@ ConnectClient::ConnectClient(MainWindow *parent)
   dialog = new ConnectDialog(mainWindow);
   dataReader = new atools::fs::sc::DataReaderThread(mainWindow, false);
 
-  // TODO settings
-  dataReader->setUpdateRate(DIRECT_UPDATE_RATE_MS);
   dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
   connect(dataReader, &atools::fs::sc::DataReaderThread::postSimConnectData, this,
@@ -53,9 +51,13 @@ ConnectClient::ConnectClient(MainWindow *parent)
           &ConnectClient::disconnectedFromSimulatorDirect);
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
+  connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
+  connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader,
+          &atools::fs::sc::DataReaderThread::setUpdateRate);
 
   reconnectNetworkTimer.setSingleShot(true);
   connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternal);
+
 }
 
 ConnectClient::~ConnectClient()
@@ -146,6 +148,25 @@ void ConnectClient::saveState()
 void ConnectClient::restoreState()
 {
   dialog->restoreState();
+
+  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
+}
+
+void ConnectClient::autoConnectToggled(bool state)
+{
+  if(state == false)
+  {
+    reconnectNetworkTimer.stop();
+
+    if(dataReader->isReconnecting())
+    {
+      qDebug() << "Stopping reconnect";
+      dataReader->setTerminate(true);
+      dataReader->wait();
+      dataReader->setTerminate(false);
+      qDebug() << "Stopping reconnect done";
+    }
+  }
 }
 
 /* Called by signal ConnectDialog::disconnectClicked */

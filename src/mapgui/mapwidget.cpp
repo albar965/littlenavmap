@@ -523,6 +523,7 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
     acAction->blockSignals(true);
     acAction->setChecked(centerAircraftChecked);
     acAction->blockSignals(false);
+    qDebug() << "Aircraft center set to" << centerAircraftChecked;
   }
 
   if(centerAircraftChecked && screenIndex->getUserAircraft().getPosition().isValid())
@@ -2121,7 +2122,9 @@ bool MapWidget::loadKml(const QString& filename, bool center)
   if(QFile::exists(filename))
   {
     model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML);
-    showAircraft(false);
+
+    if(center)
+      showAircraft(false);
     return true;
   }
   return false;
