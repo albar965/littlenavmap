@@ -37,12 +37,12 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
-InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery) :
-  QObject(parent), mainWindow(parent), mapQuery(mapDbQuery), infoQuery(infoDbQuery)
+InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoQuery)
+  : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
 {
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
 
-  info = new HtmlInfoBuilder(mapQuery, infoQuery, true);
+  infoBuilder = new HtmlInfoBuilder(mapQuery, infoQuery, true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
@@ -75,7 +75,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
 
 InfoController::~InfoController()
 {
-  delete info;
+  delete infoBuilder;
 }
 
 /* User clicked on "Map" link in text browsers */
@@ -165,7 +165,7 @@ void InfoController::updateAirport()
     maptypes::MapAirport ap;
     mapQuery->getAirportById(ap, currentSearchResult.airports.first().id);
 
-    info->airportText(ap, html,
+    infoBuilder->airportText(ap, html,
                       &mainWindow->getRouteController()->getRouteMapObjects(),
                       mainWindow->getWeatherReporter(), iconBackColor);
     mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
@@ -226,15 +226,15 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     updateAirport();
 
     html.clear();
-    info->runwayText(airport, html, iconBackColor);
+    infoBuilder->runwayText(airport, html, iconBackColor);
     ui->textBrowserRunwayInfo->setText(html.getHtml());
 
     html.clear();
-    info->comText(airport, html, iconBackColor);
+    infoBuilder->comText(airport, html, iconBackColor);
     ui->textBrowserComInfo->setText(html.getHtml());
 
     html.clear();
-    info->approachText(airport, html, iconBackColor);
+    infoBuilder->approachText(airport, html, iconBackColor);
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     foundAirport = true;
@@ -257,7 +257,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   for(const maptypes::MapVor& vor : result.vors)
   {
     currentSearchResult.vors.append(vor);
-    info->vorText(vor, html, iconBackColor);
+    infoBuilder->vorText(vor, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
@@ -265,7 +265,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   for(const maptypes::MapNdb& ndb : result.ndbs)
   {
     currentSearchResult.ndbs.append(ndb);
-    info->ndbText(ndb, html, iconBackColor);
+    infoBuilder->ndbText(ndb, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
@@ -273,7 +273,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   for(const maptypes::MapWaypoint& waypoint : result.waypoints)
   {
     currentSearchResult.waypoints.append(waypoint);
-    info->waypointText(waypoint, html, iconBackColor);
+    infoBuilder->waypointText(waypoint, html, iconBackColor);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
@@ -281,7 +281,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   for(const maptypes::MapAirway& airway : result.airways)
   {
     currentSearchResult.airways.append(airway);
-    info->airwayText(airway, html);
+    infoBuilder->airwayText(airway, html);
     ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
@@ -372,8 +372,8 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
            canTextEditUpdate(ui->textBrowserAircraftInfo))
         {
           // ok - scrollbars not pressed
-          info->aircraftText(data.getUserAircraft(), html);
-          info->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
+          infoBuilder->aircraftText(data.getUserAircraft(), html);
+          infoBuilder->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
           updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
         }
 
@@ -382,7 +382,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         {
           // ok - scrollbars not pressed
           html.clear();
-          info->aircraftProgressText(data.getUserAircraft(), html,
+          infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
                                      mainWindow->getRouteController()->getRouteMapObjects());
           updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
         }
@@ -395,8 +395,8 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
 
           for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
           {
-            info->aircraftText(aircraft, html);
-            info->aircraftProgressText(aircraft, html,
+            infoBuilder->aircraftText(aircraft, html);
+            infoBuilder->aircraftProgressText(aircraft, html,
                                        mainWindow->getRouteController()->getRouteMapObjects());
           }
 
@@ -431,6 +431,8 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
   // Overwite old list
   currentSearchResult.aiAircraft = newAiAircraftShown.toList();
 }
+
+
 
 /* @return true if no scrollbar is pressed in the text edit */
 bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)

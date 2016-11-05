@@ -22,8 +22,8 @@
      <item row="1" column="1">
       <widget class="QSpinBox" name="spinBoxConnectUpdateRate">
        <property name="toolTip">
-        <string>Allowed range is 100 milliseconds up to 2 seconds. 
-Little Navconnect fetches data from Flight Simulator and sends it to all clients (i.e. Little Navmap) using this time interval.</string>
+        <string>Allowed range is 50 milliseconds up to 1 second. 
+Little Navmap fetches data from Flight Simulator using this time interval.</string>
        </property>
        <property name="suffix">
         <string> ms</string>

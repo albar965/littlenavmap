@@ -74,7 +74,7 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
   delete morse;
 }
 
-void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background) const
 {
   html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
@@ -102,7 +102,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
                                   const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
-                                  QColor background)
+                                  QColor background) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
@@ -356,7 +356,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     addScenery(rec, html);
 }
 
-void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -392,7 +392,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
   }
 }
 
-void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -479,7 +479,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
   }
 }
 
-void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim, int length)
+void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, float hdgPrim, int length) const
 {
   bool closed = rec->valueBool("has_closed_markings");
 
@@ -554,7 +554,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
   }
 }
 
-void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -618,7 +618,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
   }
 }
 
-void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
@@ -659,7 +659,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
     addScenery(rec, html);
 }
 
-void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor background) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
@@ -697,7 +697,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
     addScenery(rec, html);
 }
 
-void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background)
+void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html, QColor background) const
 {
   const SqlRecord *rec = nullptr;
   if(info && infoQuery != nullptr)
@@ -773,7 +773,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     addScenery(rec, html);
 }
 
-void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
+void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
 {
   title(html, tr("Airway: ") + airway.name);
   html.table();
@@ -805,12 +805,12 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html)
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html)
+void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html) const
 {
   head(html, tr("Marker: ") + marker.type);
 }
 
-void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
+void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) const
 {
   if(airport.towerFrequency > 0)
     head(html, tr("Tower: ") + locale.toString(airport.towerFrequency / 1000., 'f', 3));
@@ -818,7 +818,7 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html)
     head(html, tr("Tower"));
 }
 
-void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html)
+void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const
 {
   head(html, maptypes::parkingName(parking.name) + " " + locale.toString(parking.number));
   html.brText(maptypes::parkingTypeName(parking.type));
@@ -829,7 +829,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html)
     html.brText(tr("Airline Codes: ") + parking.airlineCodes);
 }
 
-void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html)
+void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
 {
   head(html, tr("Helipad:"));
   html.brText(tr("Surface: ") + maptypes::surfaceName(helipad.surface));
@@ -839,14 +839,14 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html)
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html)
+void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
 {
   head(html, tr("Flight Plan Point:"));
   html.brText(userpoint.name);
 }
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                   HtmlBuilder& html)
+                                   HtmlBuilder& html) const
 {
   aircraftTitle(aircraft, html);
 
@@ -878,7 +878,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 }
 
 void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
-                                                HtmlBuilder& html)
+                                                HtmlBuilder& html) const
 {
   if(info)
   {
@@ -897,7 +897,7 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   }
 }
 
-void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html)
+void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, HtmlBuilder& html) const
 {
   html.row2(tr("Time and Date:"), locale.toString(userAircaft->getLocalTime(), QLocale::ShortFormat) +
             tr(" ") + userAircaft->getLocalTime().timeZoneAbbreviation() + tr(", ") +
@@ -907,7 +907,7 @@ void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, Htm
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html,
-                                           const RouteMapObjectList& rmoList)
+                                           const RouteMapObjectList& rmoList) const
 {
   const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
 
@@ -1205,9 +1205,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 }
 
-void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html)
+void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
+                                    HtmlBuilder& html) const
 {
-  QString *icon;
+  const QString *icon;
 
   if(aircraft.isUser())
   {
@@ -1252,7 +1253,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   }
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
 {
   head(html, tr("Scenery"));
   html.table();
@@ -1261,7 +1262,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html)
+void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuilder& html) const
 {
   if(rec != nullptr)
   {
@@ -1273,7 +1274,7 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
   }
 }
 
-void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text)
+void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
 {
   if(info)
     html.h4(text);
@@ -1281,7 +1282,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text)
     html.b(text);
 }
 
-void HtmlInfoBuilder::title(HtmlBuilder& html, const QString& text)
+void HtmlInfoBuilder::title(HtmlBuilder& html, const QString& text) const
 {
   if(info)
     html.text(text, atools::util::html::BOLD | atools::util::html::BIG);
@@ -1290,7 +1291,7 @@ void HtmlInfoBuilder::title(HtmlBuilder& html, const QString& text)
 }
 
 void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                  const QString& msg, const QString& val, int precision)
+                                  const QString& msg, const QString& val, int precision) const
 {
   if(!rec->isNull(colName))
   {
@@ -1301,7 +1302,7 @@ void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const
 }
 
 void HtmlInfoBuilder::rowForInt(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                const QString& msg, const QString& val)
+                                const QString& msg, const QString& val) const
 {
   if(!rec->isNull(colName))
   {
@@ -1312,7 +1313,7 @@ void HtmlInfoBuilder::rowForInt(HtmlBuilder& html, const SqlRecord *rec, const Q
 }
 
 void HtmlInfoBuilder::rowForBool(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                 const QString& msg, bool expected)
+                                 const QString& msg, bool expected) const
 {
   if(!rec->isNull(colName))
   {
@@ -1323,7 +1324,7 @@ void HtmlInfoBuilder::rowForBool(HtmlBuilder& html, const SqlRecord *rec, const 
 }
 
 void HtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                const QString& msg, const QString& val)
+                                const QString& msg, const QString& val) const
 {
   if(!rec->isNull(colName))
   {
@@ -1334,7 +1335,7 @@ void HtmlInfoBuilder::rowForStr(HtmlBuilder& html, const SqlRecord *rec, const Q
 }
 
 void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,
-                                   const QString& msg, const QString& val)
+                                   const QString& msg, const QString& val) const
 {
   if(!rec->isNull(colName))
   {

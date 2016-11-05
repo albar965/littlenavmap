@@ -58,7 +58,7 @@ class InfoController :
   Q_OBJECT
 
 public:
-  InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoDbQuery);
+  InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoQuery);
   virtual ~InfoController();
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
@@ -83,6 +83,11 @@ public:
 
   /* Program options have changed */
   void optionsChanged();
+
+  const HtmlInfoBuilder *getHtmlInfoBuilder() const
+  {
+    return infoBuilder;
+  }
 
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
@@ -111,9 +116,8 @@ private:
 
   MainWindow *mainWindow;
   MapQuery *mapQuery;
-  InfoQuery *infoQuery;
   QColor iconBackColor;
-  HtmlInfoBuilder *info;
+  HtmlInfoBuilder *infoBuilder;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 };

@@ -96,7 +96,7 @@ public:
    */
   void airportText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
-                   WeatherReporter *weather, QColor background);
+                   WeatherReporter *weather, QColor background) const;
 
   /*
    * Creates a HTML description for all runways of an airport.
@@ -104,7 +104,8 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void runwayText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+  void runwayText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+                  QColor background) const;
 
   /*
    * Creates a HTML description for all COM frequencies of an airport.
@@ -112,7 +113,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void comText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+  void comText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for all approaches of an airport.
@@ -120,7 +121,8 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+  void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+                    QColor background) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -128,7 +130,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void vorText(const maptypes::MapVor& vor, atools::util::HtmlBuilder& html, QColor background);
+  void vorText(const maptypes::MapVor& vor, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a NDB station.
@@ -136,7 +138,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void ndbText(const maptypes::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background);
+  void ndbText(const maptypes::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a waypoint including all attached airways.
@@ -144,49 +146,50 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void waypointText(const maptypes::MapWaypoint& waypoint, atools::util::HtmlBuilder& html, QColor background);
+  void waypointText(const maptypes::MapWaypoint& waypoint, atools::util::HtmlBuilder& html,
+                    QColor background) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.
    * @param airway
    * @param html Result containing HTML snippet
    */
-  void airwayText(const maptypes::MapAirway& airway, atools::util::HtmlBuilder& html);
+  void airwayText(const maptypes::MapAirway& airway, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a marker.
    * @param marker
    * @param html Result containing HTML snippet
    */
-  void markerText(const maptypes::MapMarker& marker, atools::util::HtmlBuilder& html);
+  void markerText(const maptypes::MapMarker& marker, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for an airport's tower including frequency if available.
    * @param airport
    * @param html Result containing HTML snippet
    */
-  void towerText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html);
+  void towerText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a parking spot (ramp GA, gate, etc.).
    * @param parking
    * @param html Result containing HTML snippet
    */
-  void parkingText(const maptypes::MapParking& parking, atools::util::HtmlBuilder& html);
+  void parkingText(const maptypes::MapParking& parking, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a helipad.
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const maptypes::MapHelipad& helipad, atools::util::HtmlBuilder& html);
+  void helipadText(const maptypes::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
    * @param userpoint
    * @param html Result containing HTML snippet
    */
-  void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html);
+  void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates an overview HTML description for the user aircraft in the simulator.
@@ -194,9 +197,9 @@ public:
    * @param html Result containing HTML snippet
    */
   void aircraftText(const atools::fs::sc::SimConnectAircraft& userAircraft,
-                    atools::util::HtmlBuilder& html);
+                    atools::util::HtmlBuilder& html) const;
   void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
-                                 atools::util::HtmlBuilder& html);
+                                 atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for simulator user aircraft progress and ambient values.
@@ -205,38 +208,41 @@ public:
    */
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
-                            const RouteMapObjectList& rmoList);
+                            const RouteMapObjectList& rmoList) const;
 
 private:
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html);
-  void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html);
-  void head(atools::util::HtmlBuilder& html, const QString& text);
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
+  void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
+  void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void title(atools::util::HtmlBuilder& html, const QString& text);
+  void title(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background);
+  void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+                    QColor background) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
-                 const QString& msg, const QString& val);
+                 const QString& msg, const QString& val) const;
 
   void rowForBool(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
-                  const QString& msg, bool expected = false);
+                  const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim,
-                     int length);
+                     int length) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
-                 const QString& msg, const QString& val);
+                 const QString& msg, const QString& val) const;
 
   void rowForFloat(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
-                   const QString& msg, const QString& val, int precision = 0);
+                   const QString& msg, const QString& val, int precision = 0) const;
 
   void rowForStrCap(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec,
-                    const QString& colName,
-                    const QString& msg,
-                    const QString& val);
+                    const QString& colName, const QString& msg, const QString& val) const;
 
-  void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, atools::util::HtmlBuilder& html);
+  void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
+                     atools::util::HtmlBuilder& html) const;
+
+  void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
+                   atools::util::HtmlBuilder& html) const;
 
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
@@ -244,7 +250,6 @@ private:
   bool info;
   QLocale locale;
   QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;
-  void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft, atools::util::HtmlBuilder& html);
 
 };
 
