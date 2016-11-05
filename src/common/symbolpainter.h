@@ -101,7 +101,7 @@ public:
   QIcon createAirportIcon(const maptypes::MapAirport& airport, int size);
   QIcon createVorIcon(const maptypes::MapVor& vor, int size);
   QIcon createNdbIcon(int size);
-  QIcon createWaypointIcon(int size);
+  QIcon createWaypointIcon(int size, const QColor& color = QColor());
   QIcon createUserpointIcon(int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
@@ -145,7 +145,7 @@ public:
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
   void textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen, float x, float y,
-               textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
+                textatt::TextAttributes atts = textatt::NONE, int transparency = 255);
 
   /* Get dimensions of a custom text box */
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);

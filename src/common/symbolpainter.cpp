@@ -84,7 +84,7 @@ QIcon SymbolPainter::createNdbIcon(int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createWaypointIcon(int size)
+QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
@@ -93,7 +93,7 @@ QIcon SymbolPainter::createWaypointIcon(int size)
   painter.setRenderHint(QPainter::TextAntialiasing, true);
   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-  SymbolPainter().drawWaypointSymbol(&painter, QColor(), size / 2, size / 2, size / 2, false, false);
+  SymbolPainter().drawWaypointSymbol(&painter, color, size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }
 

@@ -182,6 +182,9 @@ public:
 
   void optionsChanged();
 
+  /* Get the route table as a HTML document only containing the table and header */
+  QString tableAsHtml();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect);
@@ -289,6 +292,8 @@ private:
 
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
+  QString buildFlightplanLabel(bool html);
+  QString buildFlightplanLabel2();
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

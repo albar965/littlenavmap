@@ -24,6 +24,8 @@ class MainWindow;
 class QPrinter;
 class QPixmap;
 class QPainter;
+class QPrintPreviewDialog;
+class QTextDocument;
 
 class PrintSupport
   : public QObject
@@ -41,8 +43,13 @@ public:
   static void drawWatermark(const QPoint& pos, QPixmap *pixmap);
 
 private:
-  void paintRequested(QPrinter *printer);
+  void paintRequestedMap(QPrinter *printer);
+  void paintRequestedFlightplan(QPrinter *printer);
   static void drawWatermarkInternal(const QPoint& pos, QPainter *painter);
+  QPrintPreviewDialog *buildPreviewDialog(const QString& printFileName);
+  void deletePreviewDialog(QPrintPreviewDialog *print);
+
+  QTextDocument *flightPlanDocument = nullptr;
 
   QPixmap *mapScreen = nullptr;
   MainWindow *mainWindow;

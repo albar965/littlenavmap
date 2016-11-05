@@ -20,14 +20,19 @@
 #include "gui/mainwindow.h"
 #include "mapgui/mapwidget.h"
 #include "settings/settings.h"
+#include "route/routecontroller.h"
+#include "util/htmlbuilder.h"
 
 #include <QPainter>
 #include <QtPrintSupport/QPrintPreviewDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QStandardPaths>
 #include <QDir>
+#include <QDesktopServices>
+#include <QTextDocument>
 
 using atools::settings::Settings;
+using atools::util::HtmlBuilder;
 
 PrintSupport::PrintSupport(MainWindow *parent)
   : mainWindow(parent)
@@ -38,31 +43,52 @@ PrintSupport::PrintSupport(MainWindow *parent)
 PrintSupport::~PrintSupport()
 {
   delete mapScreen;
+  delete flightPlanDocument;
 }
 
 void PrintSupport::printMap()
 {
-  QPrintPreviewDialog print(mainWindow);
-  print.resize(Settings::instance().valueVar(lnm::MAINWINDOW_PRINT_SIZE, QSize(640, 480)).toSize());
-  print.printer()->setOutputFileName(
-    QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
-    QDir::separator() + "littlenavmap.pdf");
-
   mainWindow->getMapWidget()->showOverlays(false);
   delete mapScreen;
   mapScreen = new QPixmap(mainWindow->getMapWidget()->mapScreenShot());
   mainWindow->getMapWidget()->showOverlays(true);
 
-  connect(&print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequested);
-
-  print.exec();
-
-  disconnect(&print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequested);
-
-  atools::settings::Settings::instance().setValueVar(lnm::MAINWINDOW_PRINT_SIZE, print.size());
+  QPrintPreviewDialog *print = buildPreviewDialog("Little Navmap Map.pdf");
+  connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
+  print->exec();
+  disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
+  deletePreviewDialog(print);
 }
 
-void PrintSupport::paintRequested(QPrinter *printer)
+QPrintPreviewDialog *PrintSupport::buildPreviewDialog(const QString& printFileName)
+{
+  QPrintPreviewDialog *print = new QPrintPreviewDialog(mainWindow);
+  print->resize(Settings::instance().valueVar(lnm::MAINWINDOW_PRINT_SIZE, QSize(640, 480)).toSize());
+  print->printer()->setOutputFileName(
+    QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+    QDir::separator() + printFileName);
+
+  return print;
+}
+
+void PrintSupport::deletePreviewDialog(QPrintPreviewDialog *print)
+{
+  if(print != nullptr)
+  {
+
+    atools::settings::Settings::instance().setValueVar(lnm::MAINWINDOW_PRINT_SIZE, print->size());
+
+    delete print;
+  }
+}
+
+void PrintSupport::paintRequestedFlightplan(QPrinter *printer)
+{
+  if(flightPlanDocument != nullptr)
+    flightPlanDocument->print(printer);
+}
+
+void PrintSupport::paintRequestedMap(QPrinter *printer)
 {
   QPixmap printScreen(mapScreen->scaled(printer->pageRect().size(),
                                         Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -87,7 +113,48 @@ void PrintSupport::paintRequested(QPrinter *printer)
 
 void PrintSupport::printFlightplan()
 {
-  // TODO
+  qDebug() << "printFlightplan";
+
+  QString cssContent;
+//  QString css = atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/css/print.css");
+//  QFile f(css);
+//  if(f.open(QIODevice::ReadOnly | QIODevice::Text))
+//  {
+//    QTextStream in(&f);
+//    cssContent = in.readAll();
+//  }
+
+  atools::util::HtmlBuilder html(false);
+  html.doc(QString(), cssContent);
+  html.append(mainWindow->getRouteController()->tableAsHtml());
+  html.p(tr("%1 Version %2 (revision %3) on %4 ").
+         arg(QApplication::applicationName()).
+         arg(QApplication::applicationVersion()).
+         arg(GIT_REVISION).
+         arg(QLocale().toString(QDateTime::currentDateTime())));
+  html.docEnd();
+
+  delete flightPlanDocument;
+  flightPlanDocument = new QTextDocument();
+  flightPlanDocument->setHtml(html.getHtml());
+
+  QPrintPreviewDialog *print = buildPreviewDialog("Little Navmap Map.pdf");
+  connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
+  print->exec();
+  disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
+  deletePreviewDialog(print);
+
+  // QFile f2("/home/alex/Temp/lnm_route_export.html");
+  // if(f2.open(QIODevice::Text | QIODevice::WriteOnly))
+  // {
+  // QTextStream ds(&f2);
+  // ds << html.getHtml();
+  // f2.close();
+  // QDesktopServices::openUrl(QUrl::fromLocalFile("/home/alex/Temp/lnm_route_export.html"));
+  // }
+
+  delete flightPlanDocument;
+  flightPlanDocument = nullptr;
 }
 
 void PrintSupport::drawWatermark(const QPoint& pos, QPixmap *pixmap)

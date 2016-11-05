@@ -38,6 +38,9 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "atools.h"
+#include "util/htmlbuilder.h"
+#include "common/symbolpainter.h"
+#include "common/mapcolors.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -52,6 +55,7 @@ const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Airway"),
                                     QObject::tr("Type"),
                                     QObject::tr("Freq.\nMHz/kHz"),
+                                    QObject::tr("Range\nnm"),
                                     QObject::tr("Course\n°M"),
                                     QObject::tr("Direct\n°M"),
                                     QObject::tr("Distance\nnm"),
@@ -70,6 +74,7 @@ enum RouteColumns
   AIRWAY,
   TYPE,
   FREQ,
+  RANGE,
   COURSE,
   DIRECT,
   DIST,
@@ -80,6 +85,8 @@ enum RouteColumns
 };
 
 }
+
+const int PRINT_ICON_SIZE = 15;
 
 using namespace atools::fs::pln;
 using namespace atools::geo;
@@ -213,6 +220,66 @@ void RouteController::tableCopyClipboard()
     QApplication::clipboard()->setText(csv);
 
   mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+}
+
+QString RouteController::tableAsHtml()
+{
+  using atools::util::HtmlBuilder;
+
+  HtmlBuilder html(false);
+
+  // Header lines
+  html.h1(buildFlightplanLabel(false));
+  html.h2(buildFlightplanLabel2());
+  html.table();
+
+  // Table header
+  QHeaderView *header = view->horizontalHeader();
+  html.tr(Qt::lightGray);
+  html.th(QString()); // Icon
+  for(int col = 0; col < model->columnCount(); col++)
+    html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
+            toString().replace("-\n", "-").replace("\n", " "), atools::util::html::NOBR);
+  html.trEnd();
+
+  // Table content
+  for(int row = 0; row < model->rowCount(); row++)
+  {
+    // First column is icon
+    html.tr();
+    const RouteMapObject& rmo = route.at(row);
+    QIcon icon;
+    if(rmo.getMapObjectType() == maptypes::AIRPORT)
+      icon = SymbolPainter(Qt::white).createAirportIcon(rmo.getAirport(), PRINT_ICON_SIZE);
+    else if(rmo.getMapObjectType() == maptypes::WAYPOINT)
+      icon = SymbolPainter(Qt::white).createWaypointIcon(PRINT_ICON_SIZE);
+    else if(rmo.getMapObjectType() == maptypes::VOR)
+      icon = SymbolPainter(Qt::white).createVorIcon(rmo.getVor(), PRINT_ICON_SIZE);
+    else if(rmo.getMapObjectType() == maptypes::NDB)
+      icon = SymbolPainter(Qt::white).createNdbIcon(PRINT_ICON_SIZE);
+    else if(rmo.getMapObjectType() == maptypes::USER)
+      icon = SymbolPainter(Qt::white).createUserpointIcon(PRINT_ICON_SIZE);
+    else if(rmo.getMapObjectType() == maptypes::INVALID)
+      icon = SymbolPainter(Qt::white).createWaypointIcon(PRINT_ICON_SIZE, mapcolors::routeInvalidPointColor);
+
+    html.td();
+    html.img(icon, QString(), QString(), QSize(PRINT_ICON_SIZE, PRINT_ICON_SIZE));
+    html.tdEnd();
+
+    // Rest of columns
+    for(int col = 0; col < model->columnCount(); col++)
+    {
+      QStandardItem *item = model->item(row, header->logicalIndex(col));
+
+      if(item != nullptr)
+        html.td(item->text().toHtmlEscaped());
+      else
+        html.td(QString());
+    }
+    html.trEnd();
+  }
+  html.tableEnd();
+  return html.getHtml();
 }
 
 /* Spin box altitude has changed value */
@@ -1857,6 +1924,18 @@ void RouteController::updateTableModel()
     else
       itemRow.append(nullptr);
 
+    if(mapobj.getRange() > 0)
+    {
+      if(mapobj.getMapObjectType() == maptypes::VOR || mapobj.getMapObjectType() == maptypes::NDB)
+        item = new QStandardItem(QLocale().toString(mapobj.getRange()));
+      else
+        item = new QStandardItem();
+      item->setTextAlignment(Qt::AlignRight);
+      itemRow.append(item);
+    }
+    else
+      itemRow.append(nullptr);
+
     if(row == 0)
     {
       // No course and distance for departure airport
@@ -1920,9 +1999,13 @@ void RouteController::updateTableModel()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
+  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + buildFlightplanLabel2());
+}
+
+QString RouteController::buildFlightplanLabel(bool html)
+{
   const Flightplan& flightplan = route.getFlightplan();
 
-  Ui::MainWindow *ui = mainWindow->getUi();
   QString departure(tr("Invalid")), destination(tr("Invalid"));
   if(!flightplan.isEmpty())
   {
@@ -1957,6 +2040,25 @@ void RouteController::updateWindowLabel()
                     arg(flightplan.getEntries().last().getIcaoIdent()).
                     arg(flightplan.getEntries().last().getWaypointTypeAsString());
 
+    if(html)
+      return tr("<b>%1</b> to <b>%2</b><br/>").
+             arg(departure).
+             arg(destination);
+    else
+      return tr("%1 to %2").
+             arg(departure).
+             arg(destination);
+  }
+  else
+    return tr("No Flightplan loaded");
+}
+
+QString RouteController::buildFlightplanLabel2()
+{
+  const Flightplan& flightplan = route.getFlightplan();
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(!flightplan.isEmpty())
+  {
     QString routeType;
     switch(flightplan.getRouteType())
     {
@@ -1977,15 +2079,14 @@ void RouteController::updateWindowLabel()
     float totalDistance = route.getTotalDistance();
 
     float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
-    ui->labelRouteInfo->setText(tr("<b>%1</b> to <b>%2</b><br/>%3 nm, %4, %5").
-                                arg(departure).
-                                arg(destination).
-                                arg(QLocale().toString(totalDistance, 'f', 0)).
-                                arg(formatter::formatMinutesHoursLong(travelTime)).
-                                arg(routeType));
+
+    return tr("%1 nm, %2, %3").
+           arg(QLocale().toString(totalDistance, 'f', 0)).
+           arg(formatter::formatMinutesHoursLong(travelTime)).
+           arg(routeType);
   }
   else
-    ui->labelRouteInfo->setText(tr("No Flightplan loaded"));
+    return QString();
 }
 
 /* Reset route and clear undo stack (new route) */
