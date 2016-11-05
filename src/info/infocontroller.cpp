@@ -166,8 +166,8 @@ void InfoController::updateAirport()
     mapQuery->getAirportById(ap, currentSearchResult.airports.first().id);
 
     infoBuilder->airportText(ap, html,
-                      &mainWindow->getRouteController()->getRouteMapObjects(),
-                      mainWindow->getWeatherReporter(), iconBackColor);
+                             &mainWindow->getRouteController()->getRouteMapObjects(),
+                             mainWindow->getWeatherReporter(), iconBackColor);
     mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
   }
 }
@@ -383,7 +383,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
           // ok - scrollbars not pressed
           html.clear();
           infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
-                                     mainWindow->getRouteController()->getRouteMapObjects());
+                                            mainWindow->getRouteController()->getRouteMapObjects());
           updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
         }
 
@@ -392,15 +392,21 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         {
           // ok - scrollbars not pressed
           html.clear();
-
-          for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+          if(!currentSearchResult.aiAircraft.isEmpty())
           {
-            infoBuilder->aircraftText(aircraft, html);
-            infoBuilder->aircraftProgressText(aircraft, html,
-                                       mainWindow->getRouteController()->getRouteMapObjects());
+            int num = 1;
+            for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+            {
+              infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
+              infoBuilder->aircraftProgressText(aircraft, html,
+                                                mainWindow->getRouteController()->getRouteMapObjects());
+              num++;
+            }
           }
 
-          if(!currentSearchResult.aiAircraft.isEmpty())
+          if(html.isEmpty())
+            ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI / multiplayer aircraft selected."));
+          else
             updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
         }
       }
@@ -431,8 +437,6 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
   // Overwite old list
   currentSearchResult.aiAircraft = newAiAircraftShown.toList();
 }
-
-
 
 /* @return true if no scrollbar is pressed in the text edit */
 bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)

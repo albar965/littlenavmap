@@ -197,7 +197,7 @@ public:
    * @param html Result containing HTML snippet
    */
   void aircraftText(const atools::fs::sc::SimConnectAircraft& userAircraft,
-                    atools::util::HtmlBuilder& html) const;
+                    atools::util::HtmlBuilder& html, int num = -1, int total = -1) const;
   void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
                                  atools::util::HtmlBuilder& html) const;
 

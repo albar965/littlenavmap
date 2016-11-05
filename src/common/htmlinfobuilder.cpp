@@ -846,12 +846,23 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
 }
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                   HtmlBuilder& html) const
+                                   HtmlBuilder& html, int num, int total) const
 {
   aircraftTitle(aircraft, html);
 
   html.nbsp().nbsp();
-  head(html, aircraft.isUser() ? tr("User Aircraft") : tr("AI / Multiplayer Aircraft"));
+  QString aircraftText;
+  if(aircraft.isUser())
+    aircraftText = tr("User Aircraft");
+  else
+  {
+    if(num != -1 && total != -1)
+      aircraftText = tr("AI / Multiplayer Aircraft %1 of %2").arg(num).arg(total);
+    else
+      aircraftText = tr("AI / Multiplayer Aircraft");
+  }
+
+  head(html, aircraftText);
 
   html.table();
   if(!aircraft.getAirplaneTitle().isEmpty())
