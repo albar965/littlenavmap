@@ -402,12 +402,15 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
                                                 mainWindow->getRouteController()->getRouteMapObjects());
               num++;
             }
-          }
-
-          if(html.isEmpty())
-            ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI / multiplayer aircraft selected."));
-          else
             updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+          }
+          else
+          {
+            ui->textBrowserAircraftAiInfo->clear();
+            ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI or multiplayer aircraft selected.\n"
+                                                           "Found %1 AI or multiplayer aircraft.").
+                                                        arg(lastSimData.getAiAircraft().size()));
+          }
         }
       }
       lastSimData = data;
@@ -482,10 +485,12 @@ void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
 void InfoController::connectedToSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
+  ui->textBrowserAircraftInfo->clear();
   ui->textBrowserAircraftInfo->setPlainText(tr("Connected. Waiting for update."));
+  ui->textBrowserAircraftProgressInfo->clear();
   ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
-  ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update.\n"
-                                                 "No AI / multiplayer aircraft selected."));
+  ui->textBrowserAircraftAiInfo->clear();
+  ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
   ui->dockWidgetAircraft->show();
 }
 
@@ -493,8 +498,11 @@ void InfoController::disconnectedFromSimulator()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  ui->textBrowserAircraftInfo->clear();
   ui->textBrowserAircraftInfo->setPlainText(tr("Disconnected."));
+  ui->textBrowserAircraftProgressInfo->clear();
   ui->textBrowserAircraftProgressInfo->setPlainText(tr("Disconnected."));
+  ui->textBrowserAircraftAiInfo->clear();
   ui->textBrowserAircraftAiInfo->setPlainText(tr("Disconnected."));
 }
 

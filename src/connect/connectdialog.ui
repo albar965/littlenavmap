@@ -224,6 +224,12 @@ Unchecking this will stop all automatic connection attempts immediately.</string
   </layout>
  </widget>
  <tabstops>
+  <tabstop>radioButtonConnectDirect</tabstop>
+  <tabstop>radioButtonConnectRemote</tabstop>
+  <tabstop>spinBoxConnectUpdateRate</tabstop>
+  <tabstop>comboBoxConnectHostname</tabstop>
+  <tabstop>pushButtonConnectDeleteHostname</tabstop>
+  <tabstop>spinBoxConnectPort</tabstop>
   <tabstop>checkBoxConnectOnStartup</tabstop>
  </tabstops>
  <resources>

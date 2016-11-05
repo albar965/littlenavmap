@@ -1912,7 +1912,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
     visibleTooltip.table();
     bool foundMapObjects = false;
 
-    qDebug() << "Visible objects" << shown;
+    // qDebug() << "Visible objects" << shown;
     if(layer->isAirport() && ((shown & maptypes::AIRPORT_HARD) || (shown & maptypes::AIRPORT_SOFT) ||
                               (shown & maptypes::AIRPORT_ADDON)))
     {
