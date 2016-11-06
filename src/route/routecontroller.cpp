@@ -226,7 +226,7 @@ QString RouteController::tableAsHtml()
 {
   using atools::util::HtmlBuilder;
 
-  HtmlBuilder html(false);
+  HtmlBuilder html(true);
 
   // Header lines
   html.h1(buildFlightplanLabel(false));

@@ -158,7 +158,8 @@ SOURCES += src/main.cpp\
     src/common/settingsmigrate.cpp \
     src/search/searchbase.cpp \
     src/search/sqlcontroller.cpp \
-    src/print/printsupport.cpp
+    src/print/printsupport.cpp \
+    src/print/printdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -222,13 +223,15 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/settingsmigrate.h \
     src/search/searchbase.h \
     src/search/sqlcontroller.h \
-    src/print/printsupport.h
+    src/print/printsupport.h \
+    src/print/printdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
     src/route/parkingdialog.ui \
     src/connect/connectdialog.ui \
-    src/options/options.ui
+    src/options/options.ui \
+    src/print/printdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

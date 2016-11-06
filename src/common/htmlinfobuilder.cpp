@@ -53,8 +53,9 @@ const int SYMBOL_SIZE = 20;
 Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
 Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 
-HtmlInfoBuilder::HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo)
-  : mapQuery(mapDbQuery), infoQuery(infoDbQuery), info(formatInfo)
+HtmlInfoBuilder::HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo,
+                                 bool formatPrint)
+  : mapQuery(mapDbQuery), infoQuery(infoDbQuery), info(formatInfo), print(formatPrint)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 
@@ -92,9 +93,10 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
     html.nbsp().nbsp();
 
-    // Add link to map
-    html.a(tr("Map"),
-           QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
+    if(!print)
+      // Add link to map
+      html.a(tr("Map"),
+             QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
   }
   else
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
@@ -352,7 +354,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     html.tableEnd();
   }
 
-  if(rec != nullptr)
+  if(rec != nullptr && !print)
     addScenery(rec, html);
 }
 
@@ -360,7 +362,8 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
 {
   if(info && infoQuery != nullptr)
   {
-    airportTitle(airport, html, background);
+    if(!print)
+      airportTitle(airport, html, background);
 
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
@@ -392,17 +395,22 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
   }
 }
 
-void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, QColor background,
+                                 bool details, bool soft) const
 {
   if(info && infoQuery != nullptr)
   {
-    airportTitle(airport, html, background);
+    if(!print)
+      airportTitle(airport, html, background);
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
       for(const SqlRecord& rec : *recVector)
       {
+        if(!soft && !maptypes::isHardSurface(rec.valueStr("surface")))
+          continue;
+
         const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
         const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
         float hdgPrim = normalizeCourse(rec.valueFloat("heading") - airport.magvar);
@@ -470,8 +478,11 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
 
         html.tableEnd();
 
-        runwayEndText(html, recPrim, hdgPrim, length);
-        runwayEndText(html, recSec, hdgSec, length);
+        if(details)
+        {
+          runwayEndText(html, recPrim, hdgPrim, length);
+          runwayEndText(html, recSec, hdgSec, length);
+        }
       }
     }
     else
@@ -558,7 +569,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 {
   if(info && infoQuery != nullptr)
   {
-    airportTitle(airport, html, background);
+    if(!print)
+      airportTitle(airport, html, background);
 
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
     if(recAppVector != nullptr)
@@ -1031,13 +1043,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     }
   }
 
+  head(html, tr("Aircraft"));
+  html.table();
+  html.row2(tr("Heading:"), locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M, ") +
+            locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
+
   if(userAircaft != nullptr && info)
   {
-    head(html, tr("Aircraft"));
-    html.table();
-    html.row2(tr("Heading:"), locale.toString(aircraft.getHeadingDegMag(), 'f', 0) + tr("°M, ") +
-              locale.toString(aircraft.getHeadingDegTrue(), 'f', 0) + tr("°T"));
-
     if(userAircaft != nullptr)
       html.row2(tr("Track:"), locale.toString(userAircaft->getTrackDegMag(), 'f', 0) + tr("°M, ") +
                 locale.toString(userAircaft->getTrackDegTrue(), 'f', 0) + tr("°T"));
@@ -1074,8 +1086,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       ice = tr("None");
 
     html.row2(tr("Ice:"), ice);
-    html.tableEnd();
   }
+  html.tableEnd();
 
   if(info)
     head(html, tr("Altitude"));

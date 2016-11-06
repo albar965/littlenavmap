@@ -82,7 +82,7 @@ public:
    * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo);
+  HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo, bool formatPrint = false);
 
   virtual ~HtmlInfoBuilder();
 
@@ -105,7 +105,7 @@ public:
    * @param background Background color for icons
    */
   void runwayText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
-                  QColor background) const;
+                  QColor background, bool details = true, bool soft = true) const;
 
   /*
    * Creates a HTML description for all COM frequencies of an airport.
@@ -247,7 +247,7 @@ private:
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   atools::util::MorseCode *morse;
-  bool info;
+  bool info, print;
   QLocale locale;
   QString aircraftGroundEncodedIcon, aircraftEncodedIcon, aircraftAiGroundEncodedIcon, aircraftAiEncodedIcon;
 

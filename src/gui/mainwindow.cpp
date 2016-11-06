@@ -163,7 +163,7 @@ MainWindow::MainWindow()
     infoController = new InfoController(this, mapQuery, infoQuery);
 
     qDebug() << "MainWindow Creating PrintSupport";
-    printSupport = new PrintSupport(this);
+    printSupport = new PrintSupport(this, mapQuery, infoQuery);
 
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();
@@ -1504,6 +1504,9 @@ void MainWindow::readSettings()
   qDebug() << "MainWindow restoring state of infoController";
   infoController->restoreState();
 
+  qDebug() << "MainWindow restoring state of printSupport";
+  printSupport->restoreState();
+
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
     widgetState.setBlockSignals(true);
@@ -1567,6 +1570,10 @@ void MainWindow::writeSettings()
   qDebug() << "kmlFileHistory";
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
+
+  qDebug() << "printSupport";
+  if(printSupport != nullptr)
+    printSupport->saveState();
 
   qDebug() << "optionsDialog";
   if(optionsDialog != nullptr)

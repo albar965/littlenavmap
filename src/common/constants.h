@@ -65,6 +65,7 @@ const QString ROUTE_FILENAME = "Route/Filename";
 const QString ROUTE_FILENAMESRECENT = "Route/FilenamesRecent";
 const QString ROUTE_FILENAMESKMLRECENT = "Route/FilenamesKmlRecent";
 const QString ROUTE_VIEW = "Route/View";
+const QString ROUTE_PRINT_DIALOG = "Route/PrintWidget";
 const QString SEARCHTAB_AIRPORT_WIDGET = "SearchPaneAirport/Widget";
 const QString SEARCHTAB_NAV_WIDGET = "SearchPaneNav/Widget";
 const QString SEARCHTAB_AIRPORT_VIEW_WIDGET = "SearchPaneAirport/WidgetView";

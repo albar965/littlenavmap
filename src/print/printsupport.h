@@ -26,19 +26,39 @@ class QPixmap;
 class QPainter;
 class QPrintPreviewDialog;
 class QTextDocument;
+class PrintDialog;
+class MapQuery;
+class InfoQuery;
+class QTextCursor;
 
+namespace atools {
+namespace util {
+class HtmlBuilder;
+}
+}
+
+/*
+ * Functionality for printing maps, flight plans and airport information
+ */
 class PrintSupport
   : public QObject
 {
   Q_DECLARE_TR_FUNCTIONS(PrintSupport)
 
 public:
-  PrintSupport(MainWindow *parent);
+  PrintSupport(MainWindow *parent, MapQuery *mapQueryParam, InfoQuery *infoQueryParam);
   virtual ~PrintSupport();
 
+  /* Print the current map view */
   void printMap();
+
+  /* Show dialog for options and print flight plan */
   void printFlightplan();
 
+  void saveState();
+  void restoreState();
+
+  /* Draw program name, version and date into an image */
   static void drawWatermark(const QPoint& pos, QPainter *painter);
   static void drawWatermark(const QPoint& pos, QPixmap *pixmap);
 
@@ -46,13 +66,21 @@ private:
   void paintRequestedMap(QPrinter *printer);
   void paintRequestedFlightplan(QPrinter *printer);
   static void drawWatermarkInternal(const QPoint& pos, QPainter *painter);
-  QPrintPreviewDialog *buildPreviewDialog(const QString& printFileName);
+  QPrintPreviewDialog *buildPreviewDialog(QWidget *parent, const QString& printFileName);
   void deletePreviewDialog(QPrintPreviewDialog *print);
+  void printPreviewFlightplanClicked();
+  void printFlightplanClicked();
+  void createFlightplanDocuments();
+  void deleteFlightplanDocuments();
+  void addHeader(QTextCursor& cursor);
 
-  QTextDocument *flightPlanDocument = nullptr;
-
-  QPixmap *mapScreen = nullptr;
   MainWindow *mainWindow;
+  PrintDialog *printFlightplanDialog = nullptr;
+  MapQuery *mapQuery = nullptr;
+  InfoQuery *infoQuery = nullptr;
+
+  QTextDocument *flightPlanPrintDocument = nullptr;
+  QPixmap *mapScreenPrintPixmap = nullptr;
 
 };
 
