@@ -492,7 +492,7 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
   {
     centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                               GeoDataCoordinates::Degree), false);
-    if(distance() < OptionData::instance().getMapZoomShow())
+    if(distance() < atools::geo::nmToKm(OptionData::instance().getMapZoomShow()))
       setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
   }
 }
