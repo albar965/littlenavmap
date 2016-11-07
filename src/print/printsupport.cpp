@@ -119,6 +119,8 @@ void PrintSupport::printFlightplanClicked()
   qDebug() << "printFlightplanClicked";
 
   QPrinter printer;
+  printer.setOutputFormat(QPrinter::NativeFormat);
+  // printer.setOutputFileName("LittleNavmapFlightplan");
   QPrintDialog dialog(&printer, printFlightplanDialog);
 
   dialog.setWindowTitle(tr("Print Flight Plan"));
