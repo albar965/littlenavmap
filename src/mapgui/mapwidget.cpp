@@ -56,14 +56,15 @@ const int DEFAULT_MAP_DISTANCE = 7000;
 // Update rates defined by delta values
 const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   {
+    // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta;
     {
-      opts::FAST, {1, 1.f, 1.f, 1.f}
+      opts::FAST, {0.5f, 1.f, 1.f, 1.f}
     },
     {
-      opts::MEDIUM, {2, 1.f, 10.f, 10.f}
+      opts::MEDIUM, {1, 1.f, 10.f, 10.f}
     },
     {
-      opts::LOW, {4, 4.f, 10.f, 100.f}
+      opts::LOW, {2, 4.f, 10.f, 100.f}
     }
   });
 
@@ -592,8 +593,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = screenIndex->getUserAircraft();
 
   CoordinateConverter conv(viewport());
-  QPoint curPos = conv.wToS(simulatorData.getUserAircraft().getPosition());
-  QPoint diff = curPos - conv.wToS(lastUserAircraft.getPosition());
+  QPointF curPos = conv.wToSF(simulatorData.getUserAircraft().getPosition());
+  QPointF diff = curPos - conv.wToS(lastUserAircraft.getPosition());
 
   bool wasEmpty = aircraftTrack.isEmpty();
   bool trackPruned = aircraftTrack.appendTrackPos(simulatorData.getUserAircraft().getPosition(),
@@ -628,8 +629,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                       userAircraft.getPosition().getAltitude(),
                       deltas.altitudeDelta) || // Altitude has changed
        (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
-       (!rect().contains(curPos) && centerAircraft) || // Not in screen rectangle but centering required
-       paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI // Paint always for AI
+       (!rect().contains(curPos.toPoint()) && centerAircraft) || // Not in screen rectangle but centering required
+       (paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI &&
+        !simulatorData.getAiAircraft().isEmpty()) // Paint always for AI
        )
     {
       screenIndex->updateLastSimData(simulatorData);
@@ -642,7 +644,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       QRect widgetRect = rect();
       widgetRect.adjust(dx, dy, -dx, -dy);
 
-      if(!widgetRect.contains(curPos) && centerAircraft && mouseState == mw::NONE)
+      if(!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE)
         centerOn(userAircraft.getPosition().getLonX(),
                  userAircraft.getPosition().getLatY(), false);
       else

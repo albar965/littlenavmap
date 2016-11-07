@@ -87,6 +87,8 @@ public:
 
   QPoint wToS(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
               bool *visible = nullptr, bool *isHidden = nullptr) const;
+  QPointF wToSF(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
+                bool *visible = nullptr, bool *isHidden = nullptr) const;
 
   bool wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;

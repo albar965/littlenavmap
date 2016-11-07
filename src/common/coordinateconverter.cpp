@@ -109,6 +109,26 @@ bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, int& x,
   return visible && !hidden;
 }
 
+QPointF CoordinateConverter::wToSF(const atools::geo::Pos& coords, const QSize& size, bool *visible,
+                                   bool *isHidden) const
+{
+  double xr, yr;
+  bool isVisible = wToS(coords, xr, yr, size, isHidden);
+
+  if(visible != nullptr)
+  {
+    *visible = isVisible;
+    return QPointF(xr, yr);
+  }
+  else
+  {
+    if(isVisible)
+      return QPointF(xr, yr);
+    else
+      return QPointF();
+  }
+}
+
 QPoint CoordinateConverter::wToS(const atools::geo::Pos& coords, const QSize& size, bool *visible,
                                  bool *isHidden) const
 {

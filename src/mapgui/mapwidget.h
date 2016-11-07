@@ -245,7 +245,7 @@ public:
    * delta values are exceeded. */
   struct SimUpdateDelta
   {
-    int manhattanLengthDelta;
+    float manhattanLengthDelta;
     float headingDelta;
     float speedDelta;
     float altitudeDelta;
