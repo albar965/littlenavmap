@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "routecontroller.h"
+#include "route/routestring.h"
 
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -222,7 +223,7 @@ void RouteController::tableCopyClipboard()
   mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
-QString RouteController::tableAsHtml()
+QString RouteController::tableAsHtml() const
 {
   using atools::util::HtmlBuilder;
 
@@ -280,6 +281,22 @@ QString RouteController::tableAsHtml()
   }
   html.tableEnd();
   return html.getHtml();
+}
+
+void RouteController::routeStringToClipboard() const
+{
+  qDebug() << "RouteController::routeStringToClipboard";
+
+  RouteString routeString;
+
+  QString str = routeString.createStringForRoute(route);
+
+  qDebug() << "route string" << str;
+  if(!str.isEmpty())
+    QApplication::clipboard()->setText(str);
+
+  mainWindow->setStatusMessage(QString(tr("Flight plan string to clipboard.")));
+
 }
 
 /* Spin box altitude has changed value */
@@ -2002,7 +2019,7 @@ void RouteController::updateWindowLabel()
   mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + buildFlightplanLabel2());
 }
 
-QString RouteController::buildFlightplanLabel(bool html)
+QString RouteController::buildFlightplanLabel(bool html) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
@@ -2053,7 +2070,7 @@ QString RouteController::buildFlightplanLabel(bool html)
     return tr("No Flightplan loaded");
 }
 
-QString RouteController::buildFlightplanLabel2()
+QString RouteController::buildFlightplanLabel2() const
 {
   const Flightplan& flightplan = route.getFlightplan();
   Ui::MainWindow *ui = mainWindow->getUi();

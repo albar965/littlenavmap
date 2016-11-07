@@ -125,5 +125,7 @@
         <file>resources/icons/printmap.svg</file>
         <file>resources/icons/mapsaveasimage.svg</file>
         <file>resources/css/print.css</file>
+        <file>resources/icons/routestring.svg</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

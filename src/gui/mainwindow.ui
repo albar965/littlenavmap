@@ -165,6 +165,8 @@
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteCopyString"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteCalcRadionav"/>
     <addaction name="actionRouteCalcHighAlt"/>
@@ -4469,26 +4471,6 @@
     <string>Ctrl+M</string>
    </property>
   </action>
-  <action name="actionText">
-   <property name="text">
-    <string>Text</string>
-   </property>
-  </action>
-  <action name="actionTest">
-   <property name="text">
-    <string>test</string>
-   </property>
-  </action>
-  <action name="actionMercator">
-   <property name="text">
-    <string>Mercator</string>
-   </property>
-  </action>
-  <action name="actionSpherical">
-   <property name="text">
-    <string>Spherical</string>
-   </property>
-  </action>
   <action name="actionMapProjectionMercator">
    <property name="checkable">
     <bool>true</bool>
@@ -4514,10 +4496,10 @@
     <string>&amp;Spherical</string>
    </property>
    <property name="toolTip">
-    <string>Spherical map projection</string>
+    <string>Spherical map projection (globe)</string>
    </property>
    <property name="statusTip">
-    <string>Spherical map projection</string>
+    <string>Spherical map projection (globe)</string>
    </property>
   </action>
   <action name="actionMapThemeOpenStreetMap">
@@ -4683,6 +4665,9 @@
    <property name="toolTip">
     <string>Print the current map view</string>
    </property>
+   <property name="statusTip">
+    <string>Print the current map view</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
    </property>
@@ -4696,7 +4681,10 @@
     <string>Print &amp;Flight Plan ...</string>
    </property>
    <property name="toolTip">
-    <string>Print the flight plan</string>
+    <string>Print the flight plan and airport information</string>
+   </property>
+   <property name="statusTip">
+    <string>Print the flight plan and airport information</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+P</string>
@@ -4712,6 +4700,27 @@
    </property>
    <property name="toolTip">
     <string>Save current map view as an image</string>
+   </property>
+   <property name="statusTip">
+    <string>Save current map view as an image</string>
+   </property>
+  </action>
+  <action name="actionRouteCopyString">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Copy Flight Plan String to Clipboard</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy the Flight Plan as a string to the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy the Flight Plan as a string to the clipboard</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
    </property>
   </action>
  </widget>

@@ -159,7 +159,8 @@ SOURCES += src/main.cpp\
     src/search/searchbase.cpp \
     src/search/sqlcontroller.cpp \
     src/print/printsupport.cpp \
-    src/print/printdialog.cpp
+    src/print/printdialog.cpp \
+    src/route/routestring.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -224,7 +225,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/searchbase.h \
     src/search/sqlcontroller.h \
     src/print/printsupport.h \
-    src/print/printdialog.h
+    src/print/printdialog.h \
+    src/route/routestring.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

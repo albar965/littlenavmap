@@ -597,6 +597,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteReverse, &QAction::triggered,
           routeController, &RouteController::reverse);
 
+  connect(ui->actionRouteCopyString, &QAction::triggered,
+          routeController, &RouteController::routeStringToClipboard);
+
   // Help menu
   connect(ui->actionHelpContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
