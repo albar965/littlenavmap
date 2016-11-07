@@ -66,7 +66,7 @@ private:
   void paintRequestedMap(QPrinter *printer);
   void paintRequestedFlightplan(QPrinter *printer);
   static void drawWatermarkInternal(const QPoint& pos, QPainter *painter);
-  QPrintPreviewDialog *buildPreviewDialog(QWidget *parent, const QString& printFileName);
+  QPrintPreviewDialog *buildPreviewDialog(QWidget *parent);
   void deletePreviewDialog(QPrintPreviewDialog *print);
   void printPreviewFlightplanClicked();
   void printFlightplanClicked();
