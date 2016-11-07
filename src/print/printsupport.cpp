@@ -65,7 +65,7 @@ void PrintSupport::printMap()
   mapScreenPrintPixmap = new QPixmap(mainWindow->getMapWidget()->mapScreenShot());
   mainWindow->getMapWidget()->showOverlays(true);
 
-  QPrintPreviewDialog *print = buildPreviewDialog(mainWindow, "Little Navmap Map.pdf");
+  QPrintPreviewDialog *print = buildPreviewDialog(mainWindow);
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
@@ -95,7 +95,7 @@ void PrintSupport::printPreviewFlightplanClicked()
 
   createFlightplanDocuments();
 
-  QPrintPreviewDialog *print = buildPreviewDialog(printFlightplanDialog, "Little Navmap Map.pdf");
+  QPrintPreviewDialog *print = buildPreviewDialog(printFlightplanDialog);
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedFlightplan);
@@ -119,11 +119,6 @@ void PrintSupport::printFlightplanClicked()
   qDebug() << "printFlightplanClicked";
 
   QPrinter printer;
-
-  printer.setOutputFileName(
-    QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
-    QDir::separator() + tr("Little Navmap Flight Plan.pdf"));
-
   QPrintDialog dialog(&printer, printFlightplanDialog);
 
   dialog.setWindowTitle(tr("Print Flight Plan"));
@@ -306,14 +301,10 @@ void PrintSupport::deleteFlightplanDocuments()
   flightPlanPrintDocument = nullptr;
 }
 
-QPrintPreviewDialog *PrintSupport::buildPreviewDialog(QWidget *parent, const QString& printFileName)
+QPrintPreviewDialog *PrintSupport::buildPreviewDialog(QWidget *parent)
 {
   QPrintPreviewDialog *print = new QPrintPreviewDialog(parent);
   print->resize(Settings::instance().valueVar(lnm::MAINWINDOW_PRINT_SIZE, QSize(640, 480)).toSize());
-  print->printer()->setOutputFileName(
-    QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
-    QDir::separator() + printFileName);
-
   return print;
 }
 
