@@ -340,7 +340,7 @@ private:
   mw::MouseStates mouseState = mw::NONE;
   /* Current position when dragging a flight plan point or leg */
   QPoint routeDragCur;
-  atools::geo::Pos routeDragFrom /* Fist fixed point of route drag */,
+  atools::geo::Pos routeDragFrom /* First fixed point of route drag */,
                    routeDragTo /* Second fixed point of route drag */;
   int routeDragPoint = -1 /* Index of changed point */,
       routeDragLeg = -1 /* index of changed leg */;

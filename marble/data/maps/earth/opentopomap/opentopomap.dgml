@@ -32,9 +32,15 @@
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="16" mode="OpenStreetMap"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="a.tile.opentopomap.org" path="/"/>
-          <downloadUrl protocol="http" host="b.tile.opentopomap.org" path="/"/>
-          <downloadUrl protocol="http" host="c.tile.opentopomap.org" path="/"/>
+
+          <!-- OTM Emergency mode: https://opentopomap.org/{z}/{x}/{y}.png -->
+          <downloadUrl protocol="http" host="opentopomap.org" path="/"/>
+
+          <!-- Normal URLs -->
+          <!-- <downloadUrl protocol="http" host="a.tile.opentopomap.org" path="/"/> -->
+          <!-- <downloadUrl protocol="http" host="b.tile.opentopomap.org" path="/"/> -->
+          <!-- <downloadUrl protocol="http" host="c.tile.opentopomap.org" path="/"/> -->
+
           <downloadPolicy usage="Browse" maximumConnections="20"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
