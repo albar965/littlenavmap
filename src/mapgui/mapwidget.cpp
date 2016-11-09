@@ -339,8 +339,9 @@ void MapWidget::historyBack()
 void MapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  writePluginSettings(*s.getQSettings());
 
+#ifndef Q_OS_MACOS
+  writePluginSettings(*s.getQSettings());
   // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
   s.remove("plugin_overviewmap/path_earth");
   s.remove("plugin_overviewmap/path_jupiter");
@@ -354,6 +355,7 @@ void MapWidget::saveState()
   s.remove("plugin_overviewmap/path_sun");
   s.remove("plugin_overviewmap/path_uranus");
   s.remove("plugin_overviewmap/path_venus");
+#endif
 
   s.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
   s.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
@@ -373,7 +375,10 @@ void MapWidget::saveState()
 void MapWidget::restoreState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
+
+#ifndef Q_OS_MACOS
   readPluginSettings(*s.getQSettings());
+#endif
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
     mapDetailLevel = s.valueInt(lnm::MAP_DETAILFACTOR, MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);

@@ -280,20 +280,20 @@ unix:!macx {
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
-  copydata.commands += cp -Rvf \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCachePlugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCompassFloatItem.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libGraticulePlugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libKmlPlugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLatLonPlugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLicense.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libMapScaleFloatItem.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libNavigationFloatItem.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOsmPlugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOverviewMap.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPn2Plugin.so \
-    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPntPlugin.so \
-    $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
+#  copydata.commands += cp -Rvf \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCachePlugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCompassFloatItem.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libGraticulePlugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libKmlPlugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLatLonPlugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLicense.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libMapScaleFloatItem.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libNavigationFloatItem.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOsmPlugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOverviewMap.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPn2Plugin.so \
+#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPntPlugin.so \
+#    $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
