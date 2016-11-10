@@ -92,6 +92,11 @@ prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
   return opts;
 }
 
+int PrintDialog::getPrintTextSize() const
+{
+  return ui->spinBoxPrintTextSize->value();
+}
+
 void PrintDialog::saveState()
 {
   atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(
@@ -107,7 +112,8 @@ void PrintDialog::saveState()
      ui->checkBoxPrintDestinationSoftRunways,
      ui->checkBoxPrintDestinationCom,
      ui->checkBoxPrintDestinationAppr,
-     ui->checkBoxPrintFlightplan});
+     ui->checkBoxPrintFlightplan,
+     ui->spinBoxPrintTextSize});
 
 }
 
@@ -126,7 +132,8 @@ void PrintDialog::restoreState()
      ui->checkBoxPrintDestinationSoftRunways,
      ui->checkBoxPrintDestinationCom,
      ui->checkBoxPrintDestinationAppr,
-     ui->checkBoxPrintFlightplan});
+     ui->checkBoxPrintFlightplan,
+     ui->spinBoxPrintTextSize});
   updateButtonStates();
 }
 

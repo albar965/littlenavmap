@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Little Navmap - Print Flight Plan</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -139,14 +139,46 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBoxPrintFlightplan">
-     <property name="text">
-      <string>Flight Plan</string>
+    <layout class="QHBoxLayout" name="horizontalLayoutPrint">
+     <property name="leftMargin">
+      <number>0</number>
      </property>
-     <property name="checked">
-      <bool>true</bool>
+     <property name="topMargin">
+      <number>0</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QCheckBox" name="checkBoxPrintFlightplan">
+       <property name="text">
+        <string>Print Flight Plan</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxPrintTextSize">
+       <property name="suffix">
+        <string> %</string>
+       </property>
+       <property name="prefix">
+        <string>Text size </string>
+       </property>
+       <property name="minimum">
+        <number>50</number>
+       </property>
+       <property name="maximum">
+        <number>150</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxPrint">
@@ -173,7 +205,6 @@
   <tabstop>checkBoxPrintDestinationCom</tabstop>
   <tabstop>checkBoxPrintDepartureAppr</tabstop>
   <tabstop>checkBoxPrintDestinationAppr</tabstop>
-  <tabstop>checkBoxPrintFlightplan</tabstop>
  </tabstops>
  <resources/>
  <connections>

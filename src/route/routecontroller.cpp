@@ -87,8 +87,6 @@ enum RouteColumns
 
 }
 
-const int PRINT_ICON_SIZE = 15;
-
 using namespace atools::fs::pln;
 using namespace atools::geo;
 using Marble::GeoDataLatLonBox;
@@ -223,7 +221,7 @@ void RouteController::tableCopyClipboard()
   mainWindow->setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
 }
 
-QString RouteController::tableAsHtml() const
+QString RouteController::tableAsHtml(int iconSizePixel) const
 {
   using atools::util::HtmlBuilder;
 
@@ -251,20 +249,20 @@ QString RouteController::tableAsHtml() const
     const RouteMapObject& rmo = route.at(row);
     QIcon icon;
     if(rmo.getMapObjectType() == maptypes::AIRPORT)
-      icon = SymbolPainter(Qt::white).createAirportIcon(rmo.getAirport(), PRINT_ICON_SIZE);
+      icon = SymbolPainter(Qt::white).createAirportIcon(rmo.getAirport(), iconSizePixel);
     else if(rmo.getMapObjectType() == maptypes::WAYPOINT)
-      icon = SymbolPainter(Qt::white).createWaypointIcon(PRINT_ICON_SIZE);
+      icon = SymbolPainter(Qt::white).createWaypointIcon(iconSizePixel);
     else if(rmo.getMapObjectType() == maptypes::VOR)
-      icon = SymbolPainter(Qt::white).createVorIcon(rmo.getVor(), PRINT_ICON_SIZE);
+      icon = SymbolPainter(Qt::white).createVorIcon(rmo.getVor(), iconSizePixel);
     else if(rmo.getMapObjectType() == maptypes::NDB)
-      icon = SymbolPainter(Qt::white).createNdbIcon(PRINT_ICON_SIZE);
+      icon = SymbolPainter(Qt::white).createNdbIcon(iconSizePixel);
     else if(rmo.getMapObjectType() == maptypes::USER)
-      icon = SymbolPainter(Qt::white).createUserpointIcon(PRINT_ICON_SIZE);
+      icon = SymbolPainter(Qt::white).createUserpointIcon(iconSizePixel);
     else if(rmo.getMapObjectType() == maptypes::INVALID)
-      icon = SymbolPainter(Qt::white).createWaypointIcon(PRINT_ICON_SIZE, mapcolors::routeInvalidPointColor);
+      icon = SymbolPainter(Qt::white).createWaypointIcon(iconSizePixel, mapcolors::routeInvalidPointColor);
 
     html.td();
-    html.img(icon, QString(), QString(), QSize(PRINT_ICON_SIZE, PRINT_ICON_SIZE));
+    html.img(icon, QString(), QString(), QSize(iconSizePixel, iconSizePixel));
     html.tdEnd();
 
     // Rest of columns

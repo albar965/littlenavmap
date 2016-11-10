@@ -63,6 +63,7 @@ public:
   ~PrintDialog();
 
   prt::PrintFlightPlanOpts getPrintOptions() const;
+  int getPrintTextSize() const;
 
   void saveState();
   void restoreState();

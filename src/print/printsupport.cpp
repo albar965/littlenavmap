@@ -119,7 +119,7 @@ void PrintSupport::printFlightplanClicked()
   qDebug() << "printFlightplanClicked";
 
   QPrinter printer;
-  printer.setOutputFormat(QPrinter::NativeFormat);
+  // printer.setOutputFormat(QPrinter::NativeFormat);
   // printer.setOutputFileName("LittleNavmapFlightplan");
   QPrintDialog dialog(&printer, printFlightplanDialog);
 
@@ -141,6 +141,14 @@ void PrintSupport::createFlightplanDocuments()
   deleteFlightplanDocuments();
   flightPlanPrintDocument = new QTextDocument();
 
+  QFont font = flightPlanPrintDocument->defaultFont();
+  qDebug() << "font pixel size" << font.pixelSize() << "font point size" << font.pointSizeF();
+
+  // Adjust font size according to dialog setting
+  font.setPointSizeF(font.pointSizeF() *
+                     (static_cast<float>(printFlightplanDialog->getPrintTextSize()) / 100.f));
+  flightPlanPrintDocument->setDefaultFont(font);
+
   // Create a cursor to append html and page breaks
   QTextCursor cursor(flightPlanPrintDocument);
 
@@ -159,8 +167,11 @@ void PrintSupport::createFlightplanDocuments()
 
   if(printFlightplan)
   {
+    // Get font size in pixels to adjust icon size
+    QFontMetricsF metrics(font);
+
     // Print the flight plan table
-    html.append(mainWindow->getRouteController()->tableAsHtml());
+    html.append(mainWindow->getRouteController()->tableAsHtml(metrics.height()));
 
     addHeader(cursor);
     cursor.movePosition(QTextCursor::End, QTextCursor::MoveAnchor);

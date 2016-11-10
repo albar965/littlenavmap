@@ -183,7 +183,7 @@ public:
   void optionsChanged();
 
   /* Get the route table as a HTML document only containing the table and header */
-  QString tableAsHtml() const;
+  QString tableAsHtml(int iconSizePixel) const;
 
   /* Copy the route as a string to the clipboard */
   void routeStringToClipboard() const;
