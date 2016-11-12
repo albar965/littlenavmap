@@ -44,6 +44,8 @@
 #include "options/optionsdialog.h"
 #include "print/printsupport.h"
 #include "exception.h"
+#include "route/routestringdialog.h"
+#include "route/routestring.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -568,6 +570,7 @@ void MainWindow::connectAllSlots()
   // Flight plan file actions
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
+  connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
@@ -1063,6 +1066,30 @@ bool MainWindow::routeCheckForChanges()
       return false;
   }
   return false;
+}
+
+/* Open a dialog that allows to create a new route from a string */
+void MainWindow::routeNewFromString()
+{
+  RouteStringDialog routeStringDialog(this, mapQuery,
+                                      RouteString().createStringForRoute(
+                                        routeController->getRouteMapObjects().getFlightplan()));
+
+  if(routeStringDialog.exec() == QDialog::Accepted)
+  {
+    if(!routeStringDialog.getFlightplan().isEmpty())
+    {
+      if(routeCheckForChanges())
+      {
+        routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(), true);
+        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+          routeCenter();
+        setStatusMessage(tr("Created new flight plan."));
+      }
+    }
+    else
+      qWarning() << "Flight plan is null";
+  }
 }
 
 /* Called from menu or toolbar by action */

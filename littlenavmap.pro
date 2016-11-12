@@ -160,7 +160,9 @@ SOURCES += src/main.cpp\
     src/search/sqlcontroller.cpp \
     src/print/printsupport.cpp \
     src/print/printdialog.cpp \
-    src/route/routestring.cpp
+    src/route/routestring.cpp \
+    src/route/routestringdialog.cpp \
+    src/route/flightplanentrybuilder.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -226,14 +228,17 @@ HEADERS  += src/gui/mainwindow.h \
     src/search/sqlcontroller.h \
     src/print/printsupport.h \
     src/print/printdialog.h \
-    src/route/routestring.h
+    src/route/routestring.h \
+    src/route/routestringdialog.h \
+    src/route/flightplanentrybuilder.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
     src/route/parkingdialog.ui \
     src/connect/connectdialog.ui \
     src/options/options.ui \
-    src/print/printdialog.ui
+    src/print/printdialog.ui \
+    src/route/routestringdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

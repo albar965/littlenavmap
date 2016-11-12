@@ -18,14 +18,29 @@
 #ifndef LITTLENAVMAP_ROUTESTRING_H
 #define LITTLENAVMAP_ROUTESTRING_H
 
-#include <QString>
+#include "common/maptypes.h"
 
-class RouteMapObjectList;
+#include <QStringList>
+#include <QApplication>
+
+namespace atools {
+namespace fs {
+namespace pln {
+class Flightplan;
+class FlightplanEntry;
+}
+}
+}
+
+class MapQuery;
+class FlightplanEntryBuilder;
 
 class RouteString
 {
+  Q_DECLARE_TR_FUNCTIONS(RouteString)
+
 public:
-  RouteString();
+  RouteString(MapQuery *mapQuery = nullptr);
   virtual ~RouteString();
 
   /*
@@ -33,11 +48,22 @@ public:
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const RouteMapObjectList& route);
+  QString createStringForRoute(const atools::fs::pln::Flightplan& flightplan);
 
-  void createRouteFromString(const QString& str, RouteMapObjectList& route);
+  void createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
+
+  const QStringList& getErrors() const
+  {
+    return errors;
+  }
+
+  static QString cleanRouteString(const QString& string);
 
 private:
+  MapQuery *query = nullptr;
+  FlightplanEntryBuilder *entryBuilder = nullptr;
+  QStringList errors;
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H

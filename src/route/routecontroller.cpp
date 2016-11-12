@@ -17,6 +17,7 @@
 
 #include "routecontroller.h"
 #include "route/routestring.h"
+#include "route/routestringdialog.h"
 
 #include "options/optiondata.h"
 #include "common/constants.h"
@@ -39,6 +40,8 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "atools.h"
+#include "route/flightplanentrybuilder.h"
+#include "route/routestringdialog.h"
 #include "util/htmlbuilder.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
@@ -98,6 +101,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 {
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::TableZoomHandler(view);
+
+  entryBuilder = new FlightplanEntryBuilder(query);
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -189,6 +194,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
 RouteController::~RouteController()
 {
+  delete entryBuilder;
   delete model;
   delete iconDelegate;
   delete undoStack;
@@ -285,16 +291,13 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << "RouteController::routeStringToClipboard";
 
-  RouteString routeString;
-
-  QString str = routeString.createStringForRoute(route);
+  QString str = RouteString().createStringForRoute(route.getFlightplan());
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
 
   mainWindow->setStatusMessage(QString(tr("Flight plan string to clipboard.")));
-
 }
 
 /* Spin box altitude has changed value */
@@ -438,6 +441,31 @@ void RouteController::newFlightplan()
   emit routeChanged(true);
 }
 
+void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
+                                     bool quiet)
+{
+  qDebug() << "loadFlightplan" << filename;
+
+  clearRoute();
+  routeFilename = filename;
+  route.setFlightplan(flightplan);
+  createRouteMapObjects();
+  if(updateStartPositionBestRunway(false /* force */, !quiet /* undo */))
+  {
+    if(!quiet)
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
+                                                     tr("The flight plan had no valid start position.\n"
+                                                        "The start position is now set to the longest "
+                                                        "primary runway of the departure airport."),
+                                                     tr("Do not &show this dialog again."));
+  }
+  updateTableModel();
+  mainWindow->updateWindowTitle();
+  updateWindowLabel();
+
+  emit routeChanged(true);
+}
+
 bool RouteController::loadFlightplan(const QString& filename)
 {
   Flightplan newFlightplan;
@@ -447,23 +475,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     // Will throw an exception if something goes wrong
     newFlightplan.load(filename);
 
-    clearRoute();
-    routeFilename = filename;
-    route.setFlightplan(newFlightplan);
-    createRouteMapObjects();
-    if(updateStartPositionBestRunway(false /* force */, true /* undo */))
-    {
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
-                                                     tr("The flight plan had no valid start position.\n"
-                                                        "The start position is now set to the longest "
-                                                        "primary runway of the departure airport."),
-                                                     tr("Do not &show this dialog again."));
-    }
-    updateTableModel();
-    mainWindow->updateWindowTitle();
-    updateWindowLabel();
-
-    emit routeChanged(true);
+    loadFlightplan(newFlightplan, filename);
   }
   catch(atools::Exception& e)
   {
@@ -697,18 +709,18 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       int minAltitude = 0;
       for(const rf::RouteEntry& routeEntry : calculatedRoute)
       {
-        FlightplanEntry flightplanEentry;
-        buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type, flightplanEentry,
-                             fetchAirways);
+        FlightplanEntry flightplanEntry;
+        entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.type,
+                                           flightplanEntry, fetchAirways, curUserpointNumber);
 
         if(fetchAirways && routeEntry.airwayId != -1)
         {
           int alt = 0;
-          updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEentry, alt);
+          updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEntry, alt);
           minAltitude = std::max(minAltitude, alt);
         }
 
-        entries.insert(entries.end() - 1, flightplanEentry);
+        entries.insert(entries.end() - 1, flightplanEntry);
       }
 
       if(minAltitude != 0 && !useSetAltitude)
@@ -1362,7 +1374,7 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
 void RouteController::routeSetDepartureInternal(const maptypes::MapAirport& airport)
 {
   FlightplanEntry entry;
-  buildFlightplanEntry(airport, entry);
+  entryBuilder->buildFlightplanEntry(airport, entry);
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -1413,7 +1425,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
 
   FlightplanEntry entry;
-  buildFlightplanEntry(airport, entry);
+  entryBuilder->buildFlightplanEntry(airport, entry);
   Flightplan& flightplan = route.getFlightplan();
 
   if(!flightplan.isEmpty())
@@ -1462,7 +1474,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
   FlightplanEntry entry;
-  buildFlightplanEntry(id, userPos, type, entry);
+  entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1, curUserpointNumber);
   Flightplan& flightplan = route.getFlightplan();
 
   int insertIndex = -1;
@@ -1527,7 +1539,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
 
   FlightplanEntry entry;
-  buildFlightplanEntry(id, userPos, type, entry);
+  entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1, curUserpointNumber);
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -1594,108 +1606,6 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
   query->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
   minAltitude = airway.minAltitude;
-}
-
-/* Copy airport attributes to flight plan entry */
-void RouteController::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)
-{
-  entry.setIcaoIdent(airport.ident);
-  entry.setPosition(airport.position);
-  entry.setWaypointType(entry::AIRPORT);
-  entry.setWaypointId(entry.getIcaoIdent());
-}
-
-/* create a flight plan entry from object id/type or user position */
-void RouteController::buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                                           FlightplanEntry& entry, bool resolveWaypoints)
-{
-  maptypes::MapSearchResult result;
-  query->getMapObjectById(result, type, id);
-
-  if(type == maptypes::AIRPORT)
-  {
-    const maptypes::MapAirport& airport = result.airports.first();
-    entry.setIcaoIdent(airport.ident);
-    entry.setPosition(airport.position);
-    entry.setWaypointType(entry::AIRPORT);
-    entry.setWaypointId(entry.getIcaoIdent());
-  }
-  else if(type == maptypes::WAYPOINT)
-  {
-    const maptypes::MapWaypoint& waypoint = result.waypoints.first();
-    bool useWaypoint = true;
-
-    if(resolveWaypoints && waypoint.type == "VOR")
-    {
-      // Convert waypoint to underlying VOR for airway routes
-      maptypes::MapVor vor;
-      query->getVorForWaypoint(vor, waypoint.id);
-
-      // Check for invalid references that are caused by the navdata update
-      if(!vor.ident.isEmpty())
-      {
-        useWaypoint = false;
-        entry.setIcaoIdent(vor.ident);
-        entry.setPosition(vor.position);
-        entry.setIcaoRegion(vor.region);
-        entry.setWaypointType(entry::VOR);
-        entry.setWaypointId(entry.getIcaoIdent());
-      }
-    }
-    else if(resolveWaypoints && waypoint.type == "NDB")
-    {
-      // Convert waypoint to underlying NDB for airway routes
-      maptypes::MapNdb ndb;
-      query->getNdbForWaypoint(ndb, waypoint.id);
-
-      // Check for invalid references that are caused by the navdata update
-      if(!ndb.ident.isEmpty())
-      {
-        useWaypoint = false;
-        entry.setIcaoIdent(ndb.ident);
-        entry.setPosition(ndb.position);
-        entry.setIcaoRegion(ndb.region);
-        entry.setWaypointType(entry::NDB);
-        entry.setWaypointId(entry.getIcaoIdent());
-      }
-    }
-
-    if(useWaypoint)
-    {
-      entry.setIcaoIdent(waypoint.ident);
-      entry.setPosition(waypoint.position);
-      entry.setIcaoRegion(waypoint.region);
-      entry.setWaypointType(entry::INTERSECTION);
-      entry.setWaypointId(entry.getIcaoIdent());
-    }
-  }
-  else if(type == maptypes::VOR)
-  {
-    const maptypes::MapVor& vor = result.vors.first();
-    entry.setIcaoIdent(vor.ident);
-    entry.setPosition(vor.position);
-    entry.setIcaoRegion(vor.region);
-    entry.setWaypointType(entry::VOR);
-    entry.setWaypointId(entry.getIcaoIdent());
-  }
-  else if(type == maptypes::NDB)
-  {
-    const maptypes::MapNdb& ndb = result.ndbs.first();
-    entry.setIcaoIdent(ndb.ident);
-    entry.setPosition(ndb.position);
-    entry.setIcaoRegion(ndb.region);
-    entry.setWaypointType(entry::NDB);
-    entry.setWaypointId(entry.getIcaoIdent());
-  }
-  else if(type == maptypes::USER)
-  {
-    entry.setPosition(userPos);
-    entry.setWaypointType(entry::USER);
-    entry.setIcaoIdent(QString());
-    entry.setWaypointId("WP" + QString::number(curUserpointNumber));
-  }
-  else
-    qWarning() << "Unknown Map object type" << type;
 }
 
 /* Copy all data from route map objects and widgets to the flight plan */

@@ -374,6 +374,12 @@ struct MapWaypoint
 
 };
 
+struct MapAirwayWaypoint
+{
+  int airwayId, airwayFragmentId, seqNum;
+  maptypes::MapWaypoint waypoint;
+};
+
 /* User defined waypoint of a flight plan */
 struct MapUserpoint
 {
@@ -584,6 +590,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapHelipad, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapVor, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapNdb, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);

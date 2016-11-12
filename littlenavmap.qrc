@@ -126,6 +126,7 @@
         <file>resources/icons/mapsaveasimage.svg</file>
         <file>resources/css/print.css</file>
         <file>resources/icons/routestring.svg</file>
+        <file>resources/icons/newroutefromstring.svg</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

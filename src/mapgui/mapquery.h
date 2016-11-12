@@ -64,6 +64,13 @@ public:
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId);
 
+  /* Get all airways that are attached to a waypoint */
+  void getWaypointsForAirway(QList<maptypes::MapWaypoint>& waypoints, const QString& airwayName,
+                             const QString& waypointIdent = QString());
+
+  /* Get all waypoints or an airway ordered by fragment an sequence number */
+  void getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& waypoints, const QString& airwayName);
+
   void getAirwayById(maptypes::MapAirway& airway, int airwayId);
 
   /* If waypoint is of type VOR get the related VOR object */
@@ -273,7 +280,9 @@ private:
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByIdQuery = nullptr;
-
+  atools::sql::SqlQuery *airwayWaypointByIdentQuery = nullptr;
+  atools::sql::SqlQuery *airwayWaypointsQuery = nullptr;
+  atools::sql::SqlQuery *airwayByNameQuery = nullptr;
 };
 
 // ---------------------------------------------------------------------------------

@@ -165,6 +165,7 @@
     <addaction name="actionRouteSelectParking"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteNewFromString"/>
     <addaction name="actionRouteCopyString"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
@@ -4715,6 +4716,21 @@
    </property>
    <property name="toolTip">
     <string>Copy the Flight Plan as a string to the clipboard</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy the Flight Plan as a string to the clipboard</string>
+   </property>
+  </action>
+  <action name="actionRouteNewFromString">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New Flight Plan from String</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new flight plan from string</string>
    </property>
    <property name="statusTip">
     <string>Copy the Flight Plan as a string to the clipboard</string>

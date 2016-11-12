@@ -44,6 +44,7 @@ class QItemSelection;
 class RouteIconDelegate;
 class RouteNetwork;
 class RouteFinder;
+class FlightplanEntryBuilder;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -67,6 +68,8 @@ public:
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
+  void loadFlightplan(const atools::fs::pln::Flightplan& flightplan,
+                      const QString& filename = QString(), bool quiet = false);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Emits routeChanged. */
@@ -252,10 +255,6 @@ private:
 
   void updateMoveAndDeleteActions();
 
-  void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
-  void buildFlightplanEntry(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,
-                            atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints = -1);
-
   void routeToFlightPlan();
 
   void routeSetDepartureInternal(const maptypes::MapAirport& airport);
@@ -325,6 +324,7 @@ private:
   QStandardItemModel *model;
   RouteIconDelegate *iconDelegate = nullptr;
   QUndoStack *undoStack = nullptr;
+  FlightplanEntryBuilder *entryBuilder = nullptr;
 
 };
 
