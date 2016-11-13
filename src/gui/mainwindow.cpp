@@ -1074,6 +1074,7 @@ void MainWindow::routeNewFromString()
   RouteStringDialog routeStringDialog(this, mapQuery,
                                       RouteString().createStringForRoute(
                                         routeController->getRouteMapObjects().getFlightplan()));
+  routeStringDialog.restoreState();
 
   if(routeStringDialog.exec() == QDialog::Accepted)
   {
@@ -1090,6 +1091,7 @@ void MainWindow::routeNewFromString()
     else
       qWarning() << "Flight plan is null";
   }
+  routeStringDialog.saveState();
 }
 
 /* Called from menu or toolbar by action */

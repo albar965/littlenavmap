@@ -15,10 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routestring.h"
 #include "route/routestringdialog.h"
+
+#include "route/routestring.h"
 #include "fs/pln/flightplan.h"
 #include "gui/helphandler.h"
+#include "gui/widgetstate.h"
+#include "common/constants.h"
 
 #include "ui_routestringdialog.h"
 
@@ -62,6 +65,19 @@ const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
   return *flightplan;
 }
 
+void RouteStringDialog::saveState()
+{
+  atools::gui::WidgetState widgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER);
+  widgetState.save({this, ui->splitterRouteString});
+}
+
+void RouteStringDialog::restoreState()
+{
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).
+  restore({this, ui->splitterRouteString});
+  updateButtonState();
+}
+
 void RouteStringDialog::readClicked()
 {
   qDebug() << "RouteStringDialog::readClicked()";
@@ -69,13 +85,16 @@ void RouteStringDialog::readClicked()
   RouteString routeString(query);
 
   flightplan->clear();
-  routeString.createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan);
+  bool success = routeString.createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan);
 
   ui->textEditRouteStringErrors->clear();
 
-  QString msg(tr("Read string and found %1 waypoints. Flight plan distance %2 nm.<br/>").
-              arg(flightplan->getEntries().size()).
-              arg(QLocale().toString(flightplan->getDistanceNm(), 'f', 0)));
+  QString msg;
+
+  if(success)
+    msg = tr("Read string and found %1 waypoints. Flight plan distance %2 nm.<br/>").
+          arg(flightplan->getEntries().size()).
+          arg(QLocale().toString(flightplan->getDistanceNm(), 'f', 0));
 
   if(routeString.getErrors().isEmpty())
     ui->textEditRouteStringErrors->setHtml(tr("%1No errors.").arg(msg));

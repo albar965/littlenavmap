@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
-    <widget class="QSplitter" name="splitter">
+    <widget class="QSplitter" name="splitterRouteString">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -32,7 +32,7 @@
       <number>10</number>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayoutRouteStringTop">
        <item>
         <widget class="QPlainTextEdit" name="plainTextEditRouteString">
          <property name="sizePolicy">
@@ -93,7 +93,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>&amp;Read</string>
+            <string>&amp;Read String</string>
            </property>
           </widget>
          </item>
@@ -102,7 +102,7 @@
       </layout>
      </widget>
      <widget class="QWidget" name="verticalLayoutWidget_2">
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayoutRouteStringBottom">
        <item>
         <widget class="QTextEdit" name="textEditRouteStringErrors">
          <property name="textInteractionFlags">

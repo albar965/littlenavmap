@@ -46,6 +46,10 @@ public:
 
   const atools::fs::pln::Flightplan& getFlightplan() const;
 
+  /* Saves and restores all values */
+  void saveState();
+  void restoreState();
+
 private:
   void readClicked();
   void fromClipboardClicked();
