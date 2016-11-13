@@ -1082,7 +1082,8 @@ void MainWindow::routeNewFromString()
     {
       if(routeCheckForChanges())
       {
-        routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(), true);
+        routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
+                                        true /*quiet*/, true /*changed*/);
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
         setStatusMessage(tr("Created new flight plan."));
@@ -1450,6 +1451,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
+  ui->actionRouteCopyString->setEnabled(hasFlightplan);
 
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)

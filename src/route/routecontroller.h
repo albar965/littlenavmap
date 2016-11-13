@@ -69,7 +69,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(const atools::fs::pln::Flightplan& flightplan,
-                      const QString& filename = QString(), bool quiet = false);
+                      const QString& filename, bool quiet, bool changed);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Emits routeChanged. */

@@ -442,11 +442,15 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
-                                     bool quiet)
+                                     bool quiet, bool changed)
 {
   qDebug() << "loadFlightplan" << filename;
 
   clearRoute();
+
+  if(changed)
+    undoIndexClean = -1;
+
   routeFilename = filename;
   route.setFlightplan(flightplan);
   createRouteMapObjects();
@@ -475,7 +479,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     // Will throw an exception if something goes wrong
     newFlightplan.load(filename);
 
-    loadFlightplan(newFlightplan, filename);
+    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/);
   }
   catch(atools::Exception& e)
   {
