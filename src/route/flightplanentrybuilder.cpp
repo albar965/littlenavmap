@@ -90,13 +90,46 @@ void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airpor
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& waypoint, FlightplanEntry& entry)
+void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& waypoint, FlightplanEntry& entry,
+                                               bool resolveWaypoints)
 {
-  entry.setIcaoIdent(waypoint.ident);
-  entry.setPosition(waypoint.position);
-  entry.setIcaoRegion(waypoint.region);
-  entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
-  entry.setWaypointId(entry.getIcaoIdent());
+  bool useWaypoint = true;
+
+  if(resolveWaypoints && waypoint.type == "VOR")
+  {
+    // Convert waypoint to underlying VOR for airway routes
+    maptypes::MapVor vor;
+    query->getVorForWaypoint(vor, waypoint.id);
+
+    // Check for invalid references that are caused by the navdata update
+    if(!vor.ident.isEmpty())
+    {
+      useWaypoint = false;
+      entryFromVor(vor, entry);
+    }
+  }
+  else if(resolveWaypoints && waypoint.type == "NDB")
+  {
+    // Convert waypoint to underlying NDB for airway routes
+    maptypes::MapNdb ndb;
+    query->getNdbForWaypoint(ndb, waypoint.id);
+
+    // Check for invalid references that are caused by the navdata update
+    if(!ndb.ident.isEmpty())
+    {
+      useWaypoint = false;
+      entryFromNdb(ndb, entry);
+    }
+  }
+
+  if(useWaypoint)
+  {
+    entry.setIcaoIdent(waypoint.ident);
+    entry.setPosition(waypoint.position);
+    entry.setIcaoRegion(waypoint.region);
+    entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
+    entry.setWaypointId(entry.getIcaoIdent());
+  }
 }
 
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
@@ -122,45 +155,9 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   }
 
   if(moType == maptypes::AIRPORT)
-  {
-    const maptypes::MapAirport& airport = result.airports.first();
-    entryFromAirport(airport, entry);
-  }
+    entryFromAirport(result.airports.first(), entry);
   else if(moType == maptypes::WAYPOINT)
-  {
-    const maptypes::MapWaypoint& waypoint = result.waypoints.first();
-    bool useWaypoint = true;
-
-    if(resolveWaypoints && waypoint.type == "VOR")
-    {
-      // Convert waypoint to underlying VOR for airway routes
-      maptypes::MapVor vor;
-      query->getVorForWaypoint(vor, waypoint.id);
-
-      // Check for invalid references that are caused by the navdata update
-      if(!vor.ident.isEmpty())
-      {
-        useWaypoint = false;
-        entryFromVor(vor, entry);
-      }
-    }
-    else if(resolveWaypoints && waypoint.type == "NDB")
-    {
-      // Convert waypoint to underlying NDB for airway routes
-      maptypes::MapNdb ndb;
-      query->getNdbForWaypoint(ndb, waypoint.id);
-
-      // Check for invalid references that are caused by the navdata update
-      if(!ndb.ident.isEmpty())
-      {
-        useWaypoint = false;
-        entryFromNdb(ndb, entry);
-      }
-    }
-
-    if(useWaypoint)
-      entryFromWaypoint(waypoint, entry);
-  }
+    entryFromWaypoint(result.waypoints.first(), entry, resolveWaypoints);
   else if(moType == maptypes::VOR)
     entryFromVor(result.vors.first(), entry);
   else if(moType == maptypes::NDB)

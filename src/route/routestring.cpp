@@ -27,6 +27,8 @@
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 
+const int MAX_WAYPOINT_DISTANCE_NM = 5000;
+
 RouteString::RouteString(MapQuery *mapQuery)
   : query(mapQuery)
 {
@@ -38,36 +40,6 @@ RouteString::~RouteString()
   delete entryBuilder;
 }
 
-// EDDF SID RID Y163 ODAVU Z114 RIDSU UL607 UTABA UM738 TIRUL Y740 NATAG UM738 ADOSA UP131 LUMAV UM726 GAVRA UY345 RITEB STAR LIRF
-// EDDF DCT RIDSU UL607 UTABA UM738 TIRUL Y740 NATAG UM738 AMTEL UM727 TAQ DCT LIRF
-// Ident;Region;Name;Airway;Type;Freq. MHz/kHz;Range nm;Course °M;Direct °M;Distance nm;Remaining nm;Leg Time hh:mm;ETA hh:mm UTC
-// LOWI;;Innsbruck;;;;;;;;558,9;;0:00
-// NORIN;LO;;;;;;12;12;7,8;551,0;0:04;0:04
-// ALGOI;LO;;UT23;;;;275;274;36,7;514,3;0:22;0:26
-// BAMUR;LS;;UN871;;;;278;278;38,8;475,5;0:23;0:49
-// DINAR;LS;;Z2;;;;267;266;20,5;455,0;0:12;1:02
-// KUDES;LS;;Z2;;;;266;266;7,3;447,7;0:04;1:06
-// DITON;LS;;UN871;;;;238;238;25,0;422,7;0:15;1:21
-// SUREP;LS;;UN871;;;;237;237;15,5;407,2;0:09;1:31
-// BERSU;LS;;UN871;;;;237;237;3,4;403,8;0:02;1:33
-// ROTOS;LS;;Z55;;;;290;290;9,4;394,4;0:05;1:38
-// BADEP;LS;;UZ669;;;;231;231;15,7;378,7;0:09;1:48
-// ULMES;LS;;UZ669;;;;231;231;6,9;371,8;0:04;1:52
-// VADAR;LS;;UZ669;;;;231;231;28,5;343,3;0:17;2:09
-// MILPA;LF;;UZ669;;;;239;239;41,9;301,4;0:25;2:34
-// MOKIP;LF;;UL612;;;;286;285;33,7;267,7;0:20;2:54
-// PODEP;LF;;UL612;;;;286;285;49,9;217,8;0:29;3:24
-// MOU;LF;Moulins;UL612;VORDME (H);116,70;195;285;285;12,4;205,4;0:07;3:32
-// KUKOR;LF;;UM129;;;;245;245;23,0;182,4;0:13;3:45
-// LARON;LF;;UM129;;;;245;245;42,9;139,5;0:25;4:11
-// GUERE;LF;;UM129;;;;245;245;5,1;134,4;0:03;4:14
-// BEBIX;LF;;UM129;;;;245;245;32,2;102,3;0:19;4:33
-// LMG;LF;Limoges;UM129;VORDME (H);114,50;195;245;245;17,6;84,7;0:10;4:44
-// DIBAG;LF;;UN460;;;;262;262;10,1;74,6;0:06;4:50
-// FOUCO;LF;;UN460;;;;262;262;13,0;61,6;0:07;4:58
-// CNA;LF;Cognac;UN460;VORDME (H);114,65;195;263;262;33,7;27,9;0:20;5:18
-// LFCY;;Medis;;;;;270;269;27,9;0,0;0:16;5:35
-// LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
 QString RouteString::createStringForRoute(const atools::fs::pln::Flightplan& flightplan)
 {
   QStringList retval;
@@ -121,7 +93,7 @@ void RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
   if(list.size() > 2 && (list.at(1) == "SID" || list.at(1) == "STAR" ||
                          list.at(list.size() - 2) == "SID" || list.at(list.size() - 2) == "STAR"))
-    errors.append(tr("Warning: SID and STAR are not supported. Ignoring."));
+    errors.append(tr("SID and STAR are not supported. Replacing with direct (DCT)."));
 
   bool direct = false;
   maptypes::MapAirway currentAirway;
@@ -130,54 +102,18 @@ void RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
   for(int i = 0; i < list.size(); i++)
   {
-    const QString& str = list.at(i);
+    const QString& strItem = list.at(i);
 
     if(i == 0)
-    {
       // Departure ==================
-      maptypes::MapAirport departure;
-      query->getAirportByIdent(departure, str);
-
-      if(departure.position.isValid())
-      {
-        qDebug() << "found" << departure.ident << "id" << departure.id;
-
-        flightplan.setDepartureAiportName(departure.name);
-        flightplan.setDepartureIdent(departure.ident);
-        flightplan.setDeparturePosition(departure.position);
-
-        FlightplanEntry entry;
-        entryBuilder->buildFlightplanEntry(departure, entry);
-        flightplan.getEntries().append(entry);
-        lastPos = entry.getPosition();
-      }
-      else
-        errors.append(tr("Departure airport %1 not found.").arg(str));
-    }
+      addDeparture(flightplan, lastPos, strItem);
     else if(i == list.size() - 1)
-    {
       // Destination ==================
-      maptypes::MapAirport destination;
-      query->getAirportByIdent(destination, str);
-      if(destination.position.isValid())
-      {
-        qDebug() << "found" << destination.ident << "id" << destination.id;
-
-        flightplan.setDestinationAiportName(destination.name);
-        flightplan.setDestinationIdent(destination.ident);
-        flightplan.setDestinationPosition(destination.position);
-
-        FlightplanEntry entry;
-        entryBuilder->buildFlightplanEntry(destination, entry);
-        flightplan.getEntries().append(entry);
-      }
-      else
-        errors.append(tr("Destination airport %1 not found.").arg(str));
-    }
+      addDestination(flightplan, strItem);
     else
     {
       bool waypoint = (i % 2) == 0;
-      qDebug() << "waypoint" << waypoint << "direct" << direct << str << currentAirway.name;
+      qDebug() << "waypoint" << waypoint << "direct" << direct << currentAirway.name << "->" << strItem;
 
       if(waypoint)
       {
@@ -190,97 +126,89 @@ void RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
         if(!direct)
         {
-          // Airway
-          query->getWaypointsForAirway(result.waypoints, currentAirway.name, str);
-          maptools::removeFarthest(lastPos, result.waypoints);
-
-          if(!result.waypoints.isEmpty())
+          if(!lastResult.waypoints.isEmpty())
           {
-            // List fragment and sequence
-            query->getWaypointListForAirwayName(allAirwayWaypoints, currentAirway.name);
+            // Airway
+            query->getWaypointsForAirway(result.waypoints, currentAirway.name, strItem);
+            maptools::removeFarthest(lastPos, result.waypoints);
 
-            if(!allAirwayWaypoints.isEmpty())
+            if(!result.waypoints.isEmpty())
             {
-              int lastId = lastResult.waypoints.first().id;
-              int curId = result.waypoints.first().id;
+              // List fragment and sequence
+              query->getWaypointListForAirwayName(allAirwayWaypoints, currentAirway.name);
 
-              int startIndex = -1, endIndex = -1;
-              for(int idx = 0; idx < allAirwayWaypoints.size(); idx++)
+              if(!allAirwayWaypoints.isEmpty())
               {
-                qDebug() << "found idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
-                         << "in" << currentAirway.name;
+                int lastId = lastResult.waypoints.first().id;
+                int curId = result.waypoints.first().id;
 
-                if(lastId == allAirwayWaypoints.at(idx).waypoint.id)
-                  startIndex = idx;
-                if(curId == allAirwayWaypoints.at(idx).waypoint.id)
-                  endIndex = idx;
-              }
+                int startIndex = -1, endIndex = -1;
+                findIndexesInAirway(allAirwayWaypoints, curId, lastId, startIndex, endIndex);
 
-              qDebug() << "startidx" << startIndex << "endidx" << endIndex;
-              if(startIndex != -1 && endIndex != -1)
-              {
-                if(startIndex < endIndex)
+                qDebug() << "startidx" << startIndex << "endidx" << endIndex;
+                if(startIndex != -1 && endIndex != -1)
+                  extractWaypoints(allAirwayWaypoints, startIndex, endIndex, airwayWaypoints);
+                else
                 {
-                  for(int idx = startIndex + 1; idx <= endIndex; idx++)
-                  {
-                    qDebug() << "adding forward idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
-                             << "to" << currentAirway.name;
-                    airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
-                  }
-                }
-                else if(startIndex > endIndex)
-                {
-                  // Reversed order
-                  for(int idx = startIndex - 1; idx >= endIndex; idx--)
-                  {
-                    qDebug() << "adding reverse idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
-                             << "to" << currentAirway.name;
-                    airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
-                  }
+                  if(startIndex == -1)
+                    errors.append(tr("Waypoint %1 not found in airway %2. Ignoring.").
+                                  arg(lastResult.waypoints.first().ident).
+                                  arg(currentAirway.name));
+
+                  if(endIndex == -1)
+                    errors.append(tr("Waypoint %1 not found in airway %2. Ignoring.").
+                                  arg(result.waypoints.first().ident).
+                                  arg(currentAirway.name));
+
+                  direct = true;
                 }
               }
               else
-                errors.append(tr("Waypoints not found in airway %1. Ignoring.").arg(str));
+              {
+                errors.append(tr("No waypoints found for airway %1. Ignoring.").
+                              arg(currentAirway.name));
+                direct = true;
+              }
             }
             else
-              errors.append(tr("No flight plan waypoints found at airway %1. Ignoring.").arg(str));
+            {
+              errors.append(tr("No waypoint %1 found at airway %2. Ignoring.").
+                            arg(strItem).arg(currentAirway.name));
+              direct = true;
+            }
           }
           else
-            errors.append(tr("No waypoints found at airway %1. Ignoring.").arg(str));
+            direct = true;
         }
-        else
+
+        if(direct)
         {
-          query->getMapObjectByIdent(result, maptypes::WAYPOINT, str);
-          maptools::removeFarthest(lastPos, result.waypoints);
-
-          query->getMapObjectByIdent(result, maptypes::VOR, str);
-          maptools::removeFarthest(lastPos, result.vors);
-
-          query->getMapObjectByIdent(result, maptypes::NDB, str);
-          maptools::removeFarthest(lastPos, result.ndbs);
-
-          // query->getMapObjectByIdent(result, maptypes::AIRPORT, str);
-          // maptools::removeFarthest(lastPos, result.airports);
+          // Direct connection as requested by DCT or by missing airway
+          airwayWaypoints.clear();
+          findBestNavaid(strItem, lastPos, result);
         }
 
-        // All all airway waypoints if any were found
+        // All  airway waypoints if any were found
         FlightplanEntry entry;
         for(const maptypes::MapWaypoint& wp : airwayWaypoints)
         {
+          // Reset but keep the last one
+          entry = FlightplanEntry();
+
           // Will fetch objects in order: airport, waypoint, vor, ndb
-          entryBuilder->entryFromWaypoint(wp, entry);
+          entryBuilder->entryFromWaypoint(wp, entry, true);
           if(entry.getPosition().isValid())
           {
             entry.setAirway(currentAirway.name);
             flightplan.getEntries().append(entry);
           }
           else
-            errors.append(tr("No navaid found for %1 on airway %2. Ignoring.").
-                          arg(str).arg(currentAirway.name));
+            qDebug() << "No navaid found for" << strItem << "on airway" << currentAirway.name;
         }
 
-        // Remember result before it is replaced by VOR and NDB
-        lastResult = result;
+        // Replace last result only if something was found
+        if(!result.waypoints.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty())
+          lastResult = result;
 
         if(airwayWaypoints.isEmpty())
         {
@@ -290,27 +218,29 @@ void RouteString::createRouteFromString(const QString& routeString, atools::fs::
           if(entry.getPosition().isValid())
             flightplan.getEntries().append(entry);
           else
-            errors.append(tr("No navaid found for %1. Ignoring.").arg(str));
+            errors.append(tr("No navaid found for %1. Ignoring.").arg(strItem));
         }
 
-        lastPos = entry.getPosition();
+        if(entry.getPosition().isValid())
+          // Remember position for distance calculation
+          lastPos = entry.getPosition();
         direct = false;
       }
       else
       {
         // Reading airway string now ==================
-        if(str == "SID" || str == "STAR" || str == "DCT" || str == "DIRECT")
+        if(strItem == "SID" || strItem == "STAR" || strItem == "DCT" || strItem == "DIRECT")
           // Direct connection ==================
           direct = true;
         else
         {
           // Airway connection ==================
           maptypes::MapSearchResult result;
-          query->getMapObjectByIdent(result, maptypes::AIRWAY, str);
+          query->getMapObjectByIdent(result, maptypes::AIRWAY, strItem);
 
           if(result.airways.isEmpty())
           {
-            errors.append(tr("Airway %1 not found. Using direct.").arg(str));
+            errors.append(tr("Airway %1 not found. Using direct.").arg(strItem));
             direct = true;
           }
           else
@@ -331,4 +261,118 @@ QString RouteString::cleanRouteString(const QString& string)
   retval.replace(QRegularExpression("[^A-Za-z0-9]"), " ");
 
   return retval.simplified().toUpper();
+}
+
+void RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, atools::geo::Pos& lastPos,
+                               const QString& airportIdent)
+{
+  maptypes::MapAirport departure;
+  query->getAirportByIdent(departure, airportIdent);
+
+  if(departure.position.isValid())
+  {
+    qDebug() << "found" << departure.ident << "id" << departure.id;
+
+    flightplan.setDepartureAiportName(departure.name);
+    flightplan.setDepartureIdent(departure.ident);
+    flightplan.setDeparturePosition(departure.position);
+
+    FlightplanEntry entry;
+    entryBuilder->buildFlightplanEntry(departure, entry);
+    flightplan.getEntries().append(entry);
+    lastPos = entry.getPosition();
+  }
+  else
+    errors.append(tr("Departure airport %1 not found. Ignoring.").arg(airportIdent));
+}
+
+void RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent)
+{
+  maptypes::MapAirport destination;
+  query->getAirportByIdent(destination, airportIdent);
+  if(destination.position.isValid())
+  {
+    qDebug() << "found" << destination.ident << "id" << destination.id;
+
+    flightplan.setDestinationAiportName(destination.name);
+    flightplan.setDestinationIdent(destination.ident);
+    flightplan.setDestinationPosition(destination.position);
+
+    FlightplanEntry entry;
+    entryBuilder->buildFlightplanEntry(destination, entry);
+    flightplan.getEntries().append(entry);
+  }
+  else
+    errors.append(tr("Destination airport %1 not found. Ignoring.").arg(airportIdent));
+}
+
+void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
+                                      int curId, int lastId, int& startIndex, int& endIndex)
+{
+  // TODO handle fragments properly
+  for(int idx = 0; idx < allAirwayWaypoints.size(); idx++)
+  {
+    // qDebug() << "found idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
+    // << "in" << currentAirway.name;
+
+    if(startIndex == -1 && lastId == allAirwayWaypoints.at(idx).waypoint.id)
+      startIndex = idx;
+    if(endIndex == -1 && curId == allAirwayWaypoints.at(idx).waypoint.id)
+      endIndex = idx;
+  }
+}
+
+void RouteString::extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
+                                   int startIndex, int endIndex,
+                                   QList<maptypes::MapWaypoint>& airwayWaypoints)
+{
+  if(startIndex < endIndex)
+  {
+    for(int idx = startIndex + 1; idx <= endIndex; idx++)
+    {
+      // qDebug() << "adding forward idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
+      // << "to" << currentAirway.name;
+      airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
+    }
+  }
+  else if(startIndex > endIndex)
+  {
+    // Reversed order
+    for(int idx = startIndex - 1; idx >= endIndex; idx--)
+    {
+      // qDebug() << "adding reverse idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
+      // << "to" << currentAirway.name;
+      airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
+    }
+  }
+}
+
+void RouteString::findBestNavaid(const QString& strItem, const atools::geo::Pos& lastPos,
+                                 maptypes::MapSearchResult& result)
+{
+  query->getMapObjectByIdent(result, maptypes::WAYPOINT, strItem);
+  float waypointDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.waypoints));
+
+  query->getMapObjectByIdent(result, maptypes::VOR, strItem);
+  float vorDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.vors));
+
+  query->getMapObjectByIdent(result, maptypes::NDB, strItem);
+  float ndbDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.ndbs));
+
+  if(waypointDistNm > MAX_WAYPOINT_DISTANCE_NM)
+  {
+    if(vorDistNm > MAX_WAYPOINT_DISTANCE_NM)
+    {
+      if(ndbDistNm < MAX_WAYPOINT_DISTANCE_NM)
+      {
+        result.waypoints.clear();
+        result.vors.clear();
+      }
+    }
+    result.waypoints.clear();
+    // errors.append(tr("Distance to waypoint %1 > %2 nm. Ignoring.").
+    // arg(strItem).arg(MAX_WAYPOINT_DISTANCE_NM));
+  }
+  // query->getMapObjectByIdent(result, maptypes::AIRPORT, str);
+  // maptools::removeFarthest(lastPos, result.airports);
 }

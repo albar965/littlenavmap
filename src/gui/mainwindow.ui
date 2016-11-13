@@ -273,7 +273,7 @@
               <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
+                 <horstretch>1</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
@@ -1337,7 +1337,7 @@
               <widget class="QLineEdit" name="lineEditNavIcaoSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
+                 <horstretch>2</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
@@ -1366,6 +1366,12 @@
              </item>
              <item>
               <widget class="QLineEdit" name="lineEditNavNameSearch">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="toolTip">
                 <string>Navaid name</string>
                </property>
@@ -1383,8 +1389,8 @@
              <item>
               <widget class="QLineEdit" name="lineEditNavRegionSearch">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
@@ -1408,8 +1414,8 @@
              <item>
               <widget class="QLineEdit" name="lineEditNavAirportIcaoSearch">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>

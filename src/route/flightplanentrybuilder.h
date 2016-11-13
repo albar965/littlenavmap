@@ -62,7 +62,8 @@ public:
 
   void entryFromAirport(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry);
 
-  void entryFromWaypoint(const maptypes::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry);
+  void entryFromWaypoint(const maptypes::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
+                         bool resolveWaypoints);
 
 private:
   MapQuery *query = nullptr;

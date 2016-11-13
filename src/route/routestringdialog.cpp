@@ -45,7 +45,8 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, MapQuery *mapQuery, const 
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged,
           this, &RouteStringDialog::updateButtonState);
 
-  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
+  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked,
+          this, &RouteStringDialog::buttonBoxClicked);
 
   updateButtonState();
 }
@@ -108,7 +109,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrl(
-      this, atools::gui::HelpHandler::getHelpUrl(this, "help", "indexroutestring.html"));
+      this, atools::gui::HelpHandler::getHelpUrl(this, "help", "index.html", "h2routestring"));
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }

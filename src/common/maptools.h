@@ -30,23 +30,28 @@ class CoordinateConverter;
 
 namespace maptools {
 
-/* Erase all elements in the list except the closest */
+/* Erase all elements in the list except the closest. Returns distance in meter to the closest */
 template<typename TYPE>
-void removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
+float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
 {
-  float curDist = std::numeric_limits<float>::max();
-  TYPE closest;
+  float closestDist = std::numeric_limits<float>::max();
+
+  if(list.isEmpty())
+    return closestDist;
+
+  TYPE closestType;
   for(const TYPE& entry : list)
   {
     float dist = entry.getPosition().distanceMeterTo(pos);
-    if(dist < curDist)
+    if(dist < closestDist)
     {
-      closest = entry;
-      curDist = dist;
+      closestType = entry;
+      closestDist = dist;
     }
   }
   list.clear();
-  list.append(closest);
+  list.append(closestType);
+  return closestDist;
 }
 
 /* Functions will stop adding of number of elements exceeds this value */
