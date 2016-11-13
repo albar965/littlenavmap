@@ -1421,7 +1421,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "indexnosim.html"));
+          HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "index.html", "h2nosim"));
       }
     }
     // else have databases do nothing

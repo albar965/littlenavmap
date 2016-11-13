@@ -110,7 +110,7 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     emit disconnectClicked();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "indexconnect.html"));
+    HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "index.html", "h2connect"));
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
     QDialog::reject();
 }
