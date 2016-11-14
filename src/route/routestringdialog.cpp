@@ -128,7 +128,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrl(
-      this, atools::gui::HelpHandler::getHelpUrl(this, "help", "index.html", "h2routestring"));
+      this, atools::gui::HelpHandler::getHelpUrl(this, "help", "indexroutestring.html"));
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
