@@ -386,6 +386,7 @@ win32 {
   deploy.commands += xcopy $${QT_HOME}\\bin\\icuuc54.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${OPENSSL}\\bin\\libeay32.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${OPENSSL}\\bin\\ssleay32.dll $${DEPLOY_DIR_WIN} &&
+  deploy.commands += xcopy $${OPENSSL}\\libssl32.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5DBus$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5Network$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
   deploy.commands += xcopy $${QT_TOOL_HOME}\\bin\\Qt5PrintSupport$${DLL_SUFFIX}.dll $${DEPLOY_DIR_WIN} &&
