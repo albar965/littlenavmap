@@ -61,8 +61,7 @@ void SearchController::optionsChanged()
 
 void SearchController::helpPressed()
 {
-  HelpHandler::openHelpUrl(mainWindow,
-                           HelpHandler::getHelpUrl(mainWindow, "help", "index.html", "h2search"));
+  HelpHandler::openHelpUrl(mainWindow, HelpHandler::getHelpUrl(mainWindow, "help", "indexsearch.html"));
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
