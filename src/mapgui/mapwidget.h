@@ -249,6 +249,7 @@ public:
     float headingDelta;
     float speedDelta;
     float altitudeDelta;
+    qint64 timeDeltaMs;
   };
 
   /* Index values of the map theme combo box */
@@ -379,6 +380,7 @@ private:
 
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
+  qint64 lastSimUpdateMs = 0;
 
 };
 

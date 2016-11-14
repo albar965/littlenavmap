@@ -56,15 +56,15 @@ const int DEFAULT_MAP_DISTANCE = 7000;
 // Update rates defined by delta values
 const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   {
-    // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta;
+    // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
     {
-      opts::FAST, {0.5f, 1.f, 1.f, 1.f}
+      opts::FAST, {0.5f, 1.f, 1.f, 1.f, 150}
     },
     {
-      opts::MEDIUM, {1, 1.f, 10.f, 10.f}
+      opts::MEDIUM, {1, 1.f, 10.f, 10.f, 250}
     },
     {
-      opts::LOW, {2, 4.f, 10.f, 100.f}
+      opts::LOW, {2, 4.f, 10.f, 100.f, 550}
     }
   });
 
@@ -622,38 +622,59 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // Get delta values for update rate
     const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
-    using atools::almostNotEqual;
-    if(!lastUserAircraft.getPosition().isValid() ||
-       diff.manhattanLength() >= deltas.manhattanLengthDelta || // Screen position has changed
-       almostNotEqual(lastUserAircraft.getHeadingDegMag(),
-                      userAircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
-       almostNotEqual(lastUserAircraft.getIndicatedSpeedKts(),
-                      userAircraft.getIndicatedSpeedKts(),
-                      deltas.speedDelta) || // Speed has changed
-       almostNotEqual(lastUserAircraft.getPosition().getAltitude(),
-                      userAircraft.getPosition().getAltitude(),
-                      deltas.altitudeDelta) || // Altitude has changed
-       (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
-       (!rect().contains(curPos.toPoint()) && centerAircraft) || // Not in screen rectangle but centering required
-       (paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI &&
-        !simulatorData.getAiAircraft().isEmpty()) // Paint always for AI
-       )
+    // Limit number of updates per second
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if(now - lastSimUpdateMs > deltas.timeDeltaMs)
     {
-      screenIndex->updateLastSimData(simulatorData);
+      lastSimUpdateMs = now;
 
-      // Calculate the amount that has to be substracted from each side of the rectangle
-      float boxFactor = (100.f - OptionData::instance().getSimUpdateBox()) / 100.f / 2.f;
-      int dx = static_cast<int>(width() * boxFactor);
-      int dy = static_cast<int>(height() * boxFactor);
+      // Check if any AI aircraft are visible
+      bool aiVisible = false;
+      if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI)
+      {
+        for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraft())
+        {
+          if(currentViewBoundingBox.contains(
+               Marble::GeoDataCoordinates(ai.getPosition().getLonX(), ai.getPosition().getLatY(), 0,
+                                          Marble::GeoDataCoordinates::Degree)))
+          {
+            aiVisible = true;
+            break;
+          }
+        }
+      }
 
-      QRect widgetRect = rect();
-      widgetRect.adjust(dx, dy, -dx, -dy);
+      using atools::almostNotEqual;
+      if(!lastUserAircraft.getPosition().isValid() ||
+         diff.manhattanLength() >= deltas.manhattanLengthDelta || // Screen position has changed
+         almostNotEqual(lastUserAircraft.getHeadingDegMag(),
+                        userAircraft.getHeadingDegMag(), deltas.headingDelta) || // Heading has changed
+         almostNotEqual(lastUserAircraft.getIndicatedSpeedKts(),
+                        userAircraft.getIndicatedSpeedKts(),
+                        deltas.speedDelta) || // Speed has changed
+         almostNotEqual(lastUserAircraft.getPosition().getAltitude(),
+                        userAircraft.getPosition().getAltitude(),
+                        deltas.altitudeDelta) || // Altitude has changed
+         (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
+         (!rect().contains(curPos.toPoint()) && centerAircraft) || // Not in screen rectangle but centering required
+         aiVisible) // Paint always for AI
+      {
+        screenIndex->updateLastSimData(simulatorData);
 
-      if(!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE)
-        centerOn(userAircraft.getPosition().getLonX(),
-                 userAircraft.getPosition().getLatY(), false);
-      else
-        update();
+        // Calculate the amount that has to be substracted from each side of the rectangle
+        float boxFactor = (100.f - OptionData::instance().getSimUpdateBox()) / 100.f / 2.f;
+        int dx = static_cast<int>(width() * boxFactor);
+        int dy = static_cast<int>(height() * boxFactor);
+
+        QRect widgetRect = rect();
+        widgetRect.adjust(dx, dy, -dx, -dy);
+
+        if(!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE)
+          centerOn(userAircraft.getPosition().getLonX(),
+                   userAircraft.getPosition().getLatY(), false);
+        else
+          update();
+      }
     }
   }
   else if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_TRACK)
