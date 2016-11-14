@@ -164,7 +164,8 @@ SOURCES += src/main.cpp\
     src/print/printdialog.cpp \
     src/route/routestring.cpp \
     src/route/routestringdialog.cpp \
-    src/route/flightplanentrybuilder.cpp
+    src/route/flightplanentrybuilder.cpp \
+    src/common/unit.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -232,7 +233,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/print/printdialog.h \
     src/route/routestring.h \
     src/route/routestringdialog.h \
-    src/route/flightplanentrybuilder.h
+    src/route/flightplanentrybuilder.h \
+    src/common/unit.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

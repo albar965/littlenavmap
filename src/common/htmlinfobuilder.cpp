@@ -32,6 +32,7 @@
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
 #include "util/morsecode.h"
+#include "common/unit.h"
 
 #include <QSize>
 
@@ -1223,7 +1224,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info)
   {
     head(html, tr("Position"));
-    html.row2(tr("Coordinates:"), aircraft.getPosition().toHumanReadableString());
+    html.row2(tr("Coordinates:"), Unit::coords(aircraft.getPosition()));
     html.tableEnd();
   }
 }
@@ -1293,7 +1294,7 @@ void HtmlInfoBuilder::addCoordinates(const atools::sql::SqlRecord *rec, HtmlBuil
     if(rec->contains("altitude"))
       alt = rec->valueFloat("altitude");
     atools::geo::Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), alt);
-    html.row2(tr("Coordinates:"), pos.toHumanReadableString());
+    html.row2(tr("Coordinates:"), Unit::coords(pos));
   }
 }
 

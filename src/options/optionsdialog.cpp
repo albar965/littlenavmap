@@ -152,6 +152,13 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
   widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
 
+  widgets.append(ui->comboBoxOptionsUnitDistance);
+  widgets.append(ui->comboBoxOptionsUnitAlt);
+  widgets.append(ui->comboBoxOptionsUnitSpeed);
+  widgets.append(ui->comboBoxOptionsUnitVertSpeed);
+  widgets.append(ui->comboBoxOptionsUnitShortDistance);
+  widgets.append(ui->comboBoxOptionsUnitCoords);
+
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
@@ -460,6 +467,14 @@ void OptionsDialog::widgetsToOptionData()
   data.mapTextSize = ui->spinBoxOptionsMapTextSize->value();
   data.mapZoomShow = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMap->value());
   data.routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
+
+  data.unitDist = static_cast<opts::UnitDist>(ui->comboBoxOptionsUnitDistance->currentIndex());
+  data.unitShortDist = static_cast<opts::UnitShortDist>(ui->comboBoxOptionsUnitShortDistance->currentIndex());
+  data.unitAlt = static_cast<opts::UnitAlt>(ui->comboBoxOptionsUnitAlt->currentIndex());
+  data.unitSpeed = static_cast<opts::UnitSpeed>(ui->comboBoxOptionsUnitSpeed->currentIndex());
+  data.unitVertSpeed = static_cast<opts::UnitVertSpeed>(ui->comboBoxOptionsUnitVertSpeed->currentIndex());
+  data.unitCoords = static_cast<opts::UnitCoords>(ui->comboBoxOptionsUnitCoords->currentIndex());
+
   data.valid = true;
 }
 
@@ -549,6 +564,13 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsMapTextSize->setValue(data.mapTextSize);
   ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShow);
   ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
+
+  ui->comboBoxOptionsUnitDistance->setCurrentIndex(data.unitDist);
+  ui->comboBoxOptionsUnitShortDistance->setCurrentIndex(data.unitShortDist);
+  ui->comboBoxOptionsUnitAlt->setCurrentIndex(data.unitAlt);
+  ui->comboBoxOptionsUnitSpeed->setCurrentIndex(data.unitSpeed);
+  ui->comboBoxOptionsUnitVertSpeed->setCurrentIndex(data.unitVertSpeed);
+  ui->comboBoxOptionsUnitCoords->setCurrentIndex(data.unitCoords);
 }
 
 /* Add flag from checkbox to OptionData flags */

@@ -112,6 +112,50 @@ enum SimUpdateRate
   LOW
 };
 
+/* comboBoxOptionsUnitDistance */
+enum UnitDist
+{
+  DIST_NM,
+  DIST_KM,
+  DIST_MILES
+};
+
+/* comboBoxOptionsUnitShortDistance */
+enum UnitShortDist
+{
+  DIST_SHORT_FT,
+  DIST_SHORT_METER
+};
+
+/* comboBoxOptionsUnitAlt */
+enum UnitAlt
+{
+  ALT_FT,
+  ALT_METER
+};
+
+/* comboBoxOptionsUnitSpeed */
+enum UnitSpeed
+{
+  SPEED_KTS,
+  SPEED_KMH,
+  SPEED_MPH
+};
+
+/* comboBoxOptionsUnitVertSpeed */
+enum UnitVertSpeed
+{
+  VERT_SPEED_FPM,
+  VERT_SPEED_MS
+};
+
+/* comboBoxOptionsUnitCoords */
+enum UnitCoords
+{
+  COORDS_DMS,
+  COORDS_DEC
+};
+
 }
 
 /*
@@ -133,6 +177,36 @@ public:
   opts::Flags getFlags() const
   {
     return flags;
+  }
+
+  opts::UnitDist getUnitDist() const
+  {
+    return unitDist;
+  }
+
+  opts::UnitShortDist getUnitShortDist() const
+  {
+    return unitShortDist;
+  }
+
+  opts::UnitAlt getUnitAlt() const
+  {
+    return unitAlt;
+  }
+
+  opts::UnitSpeed getUnitSpeed() const
+  {
+    return unitSpeed;
+  }
+
+  opts::UnitVertSpeed getUnitVertSpeed() const
+  {
+    return unitVertSpeed;
+  }
+
+  opts::UnitCoords getUnitCoords() const
+  {
+    return unitCoords;
   }
 
   /* Vector of (red) range ring distances in nautical miles */
@@ -349,8 +423,27 @@ private:
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
 
+  // comboBoxOptionsUnitDistance
+  opts::UnitDist unitDist = opts::DIST_NM;
+
+  // comboBoxOptionsUnitShortDistance
+  opts::UnitShortDist unitShortDist = opts::DIST_SHORT_FT;
+
+  // comboBoxOptionsUnitAlt
+  opts::UnitAlt unitAlt = opts::ALT_FT;
+
+  // comboBoxOptionsUnitSpeed
+  opts::UnitSpeed unitSpeed = opts::SPEED_KTS;
+
+  // comboBoxOptionsUnitVertSpeed
+  opts::UnitVertSpeed unitVertSpeed = opts::VERT_SPEED_FPM;
+
+  // comboBoxOptionsUnitCoords
+  opts::UnitCoords unitCoords = opts::COORDS_DMS;
+
   // Used in the singelton to check if data was already loaded
   bool valid = false;
+
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

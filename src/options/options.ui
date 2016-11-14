@@ -22,6 +22,9 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <property name="usesScrollButtons">
+      <bool>true</bool>
+     </property>
      <widget class="QWidget" name="tabOptionsStartup">
       <attribute name="title">
        <string>Startup</string>
@@ -93,28 +96,6 @@
        <string>User Interface</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="6" column="2" alignment="Qt::AlignTop">
-        <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-         <property name="suffix">
-          <string> %</string>
-         </property>
-         <property name="minimum">
-          <number>50</number>
-         </property>
-         <property name="maximum">
-          <number>150</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
          <property name="toolTip">
@@ -150,13 +131,45 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="labelOptionsGuiSearchText">
+       <item row="6" column="2" alignment="Qt::AlignTop">
+        <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="suffix">
+          <string> %</string>
+         </property>
+         <property name="minimum">
+          <number>50</number>
+         </property>
+         <property name="maximum">
+          <number>150</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelOptionsGuiInfoText">
          <property name="text">
-          <string>Text size for &amp;search result tables:</string>
+          <string>Text size for &amp;information dock window:</string>
          </property>
          <property name="buddy">
-          <cstring>spinBoxOptionsGuiSearchText</cstring>
+          <cstring>spinBoxOptionsGuiInfoText</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="labelOptionsGuiSimInfoText">
+         <property name="text">
+          <string>Text size for &amp;simulator aircraft information dock window:</string>
+         </property>
+         <property name="buddy">
+          <cstring>spinBoxOptionsGuiSimInfoText</cstring>
          </property>
         </widget>
        </item>
@@ -182,45 +195,13 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="labelOptionsGuiInfoText">
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelOptionsGuiSearchText">
          <property name="text">
-          <string>Text size for &amp;information dock window:</string>
+          <string>Text size for &amp;search result tables:</string>
          </property>
          <property name="buddy">
-          <cstring>spinBoxOptionsGuiInfoText</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
-        <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-         <property name="suffix">
-          <string> %</string>
-         </property>
-         <property name="minimum">
-          <number>50</number>
-         </property>
-         <property name="maximum">
-          <number>150</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="labelOptionsGuiSimInfoText">
-         <property name="text">
-          <string>Text size for &amp;simulator aircraft information dock window:</string>
-         </property>
-         <property name="buddy">
-          <cstring>spinBoxOptionsGuiSimInfoText</cstring>
+          <cstring>spinBoxOptionsGuiSearchText</cstring>
          </property>
         </widget>
        </item>
@@ -246,6 +227,41 @@
           <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="suffix">
+          <string> %</string>
+         </property>
+         <property name="minimum">
+          <number>50</number>
+         </property>
+         <property name="maximum">
+          <number>150</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="3">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -327,27 +343,6 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="labelOptionsMapTextSize">
-           <property name="text">
-            <string>&amp;Map text size (does not affect airport diagrams):</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapTextSize</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
-           <property name="toolTip">
-            <string>Space separated list of range ring radii.
-A range ring will be added for each radius value.</string>
-           </property>
-           <property name="text">
-            <string>50 100 200 500</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
            <property name="toolTip">
@@ -371,10 +366,75 @@ Smaller values will zoom in closer to an airport or navaid.</string>
            </property>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelOptionsMapTooltipRect">
+           <property name="text">
+            <string>Tool tip &amp;sensitivity on map:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapTooltipRect</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelOptionsMapRangeRings">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string>&amp;Range ring radii for red range rings (nautical miles):</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditOptionsMapRangeRings</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelOptionsMapClickRect">
+           <property name="text">
+            <string>&amp;Click sensitivity when selecting objects on map:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapClickRect</cstring>
+           </property>
+          </widget>
+         </item>
          <item row="5" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapSymbolSize">
            <property name="toolTip">
             <string>Size of airport and navaid symbols.</string>
+           </property>
+           <property name="suffix">
+            <string> %</string>
+           </property>
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>150</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>100</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="labelOptionsMapTextSize">
+           <property name="text">
+            <string>&amp;Map text size (does not affect airport diagrams):</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxOptionsMapTextSize</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinBoxOptionsMapTextSize">
+           <property name="toolTip">
+            <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
            </property>
            <property name="suffix">
             <string> %</string>
@@ -426,61 +486,6 @@ Smaller values allow a finer selection.</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelOptionsMapRangeRings">
-           <property name="toolTip">
-            <string/>
-           </property>
-           <property name="text">
-            <string>&amp;Range ring radii for red range rings (nautical miles):</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditOptionsMapRangeRings</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelOptionsMapClickRect">
-           <property name="text">
-            <string>&amp;Click sensitivity when selecting objects on map:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapClickRect</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QSpinBox" name="spinBoxOptionsMapTextSize">
-           <property name="toolTip">
-            <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
-           </property>
-           <property name="suffix">
-            <string> %</string>
-           </property>
-           <property name="minimum">
-            <number>50</number>
-           </property>
-           <property name="maximum">
-            <number>150</number>
-           </property>
-           <property name="singleStep">
-            <number>10</number>
-           </property>
-           <property name="value">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="labelOptionsMapTooltipRect">
-           <property name="text">
-            <string>Tool tip &amp;sensitivity on map:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxOptionsMapTooltipRect</cstring>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="1">
           <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
            <property name="toolTip">
@@ -503,7 +508,200 @@ Smaller values allow a finer selection.</string>
            </property>
           </widget>
          </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
+           <property name="toolTip">
+            <string>Space separated list of range ring radii.
+A range ring will be added for each radius value.</string>
+           </property>
+           <property name="text">
+            <string>50 100 200 500</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOptionsUnit">
+      <attribute name="title">
+       <string>Units</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_11">
+       <item row="6" column="0">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="labelOptionsUnitAlt">
+         <property name="text">
+          <string>Altitude:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
+         <item>
+          <property name="text">
+           <string>Feet (ft)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meter (m)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="labelOptionsUnitCoords">
+         <property name="text">
+          <string>Coordinates:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
+         <item>
+          <property name="text">
+           <string>Sexagesimal Format (Degree, Minutes, Seconds)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Decimal Format (Degree)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="labelOptionsUnitSpeed">
+         <property name="text">
+          <string>Speed:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitSpeed">
+         <item>
+          <property name="text">
+           <string>Knots (kts)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Kilometer per Hour (km/h)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Statue Miles per Hour (mph)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="labelOptionsUnitDistance">
+         <property name="text">
+          <string>Distance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+         <item>
+          <property name="text">
+           <string>Feet (ft)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meter (m)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
+         <item>
+          <property name="text">
+           <string>Nautical Miles (nm)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Kilometers (km)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Statue Miles (mi)</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="labelOptionsUnitShortDistance">
+         <property name="text">
+          <string>Short Distance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelOptionsUnitSpeed_2">
+         <property name="text">
+          <string>Vertical Speed:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
+         <item>
+          <property name="text">
+           <string>Feet per Minute (fpm)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Meter per Second (m/s)</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -522,28 +720,18 @@ Smaller values allow a finer selection.</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
-         <property name="toolTip">
-          <string>Smaller values keep the aircraft centered and will move the map often.
-Bigger values will update map only when aircraft reaches map boundary.</string>
+       <item row="2" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <property name="suffix">
-          <string> %</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
          </property>
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>90</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="value">
-          <number>50</number>
-         </property>
-        </widget>
+        </spacer>
        </item>
        <item row="0" column="0" colspan="2" alignment="Qt::AlignTop">
         <widget class="QGroupBox" name="groupBoxOptionsSimUpdates">
@@ -578,15 +766,38 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
          </layout>
         </widget>
        </item>
-       <item row="2" column="1">
-        <spacer name="verticalSpacer">
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
+         <property name="toolTip">
+          <string>Smaller values keep the aircraft centered and will move the map often.
+Bigger values will update map only when aircraft reaches map boundary.</string>
+         </property>
+         <property name="suffix">
+          <string> %</string>
+         </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>90</number>
+         </property>
+         <property name="singleStep">
+          <number>10</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <spacer name="horizontalSpacer_4">
          <property name="orientation">
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>

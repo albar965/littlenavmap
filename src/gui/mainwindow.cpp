@@ -46,6 +46,7 @@
 #include "exception.h"
 #include "route/routestringdialog.h"
 #include "route/routestring.h"
+#include "common/unit.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -233,6 +234,7 @@ MainWindow::~MainWindow()
   delete actionGroupMapProjection;
   delete actionGroupMapTheme;
 
+  Unit::delInstance();
   // Delete settings singleton
   Settings::shutdown();
   atools::gui::Translator::unload();
@@ -511,6 +513,9 @@ void MainWindow::connectAllSlots()
           &MainWindow::legendAnchorClicked);
 
   // Notify others of options change
+  // The units need to be called before all others
+  connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
+
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
@@ -1014,7 +1019,7 @@ bool RouteController::hasValidParking() const
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
-    mapPosLabel->setText(pos.toHumanReadableString());
+    mapPosLabel->setText(Unit::coords(pos));
   else
     mapPosLabel->setText(tr("No position"));
 }
