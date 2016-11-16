@@ -22,6 +22,7 @@
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
+#include "common/unit.h"
 
 #include "ui_routestringdialog.h"
 
@@ -92,9 +93,9 @@ void RouteStringDialog::readClicked()
   QString msg;
 
   if(success)
-    msg = tr("Read string and found %1 waypoints. Flight plan distance %2 nm.<br/>").
+    msg = tr("Read string and found %1 waypoints. Flight plan distance %2.<br/>").
           arg(flightplan->getEntries().size()).
-          arg(QLocale().toString(flightplan->getDistanceNm(), 'f', 0));
+          arg(Unit::distNm(flightplan->getDistanceNm()));
 
   if(routeString.getErrors().isEmpty())
     ui->textEditRouteStringErrors->setHtml(tr("%1No errors.").arg(msg));

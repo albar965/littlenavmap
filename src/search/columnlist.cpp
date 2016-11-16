@@ -17,6 +17,7 @@
 
 #include "search/columnlist.h"
 #include "search/column.h"
+#include "common/unit.h"
 
 #include <QDebug>
 #include <QLineEdit>
@@ -45,6 +46,35 @@ void ColumnList::clear()
   maxDistanceWidget = nullptr;
   distanceDirectionWidget = nullptr;
   distanceCheckBox = nullptr;
+}
+
+void ColumnList::updateUnits()
+{
+  // Replace widget suffices and table headers
+  for(Column *col : columns)
+  {
+    col->colDisplayName = Unit::replacePlaceholders(col->colOrigDisplayName);
+
+    QSpinBox *sb = col->getSpinBoxWidget();
+    if(sb != nullptr)
+      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colWidgetSuffix));
+
+    sb = col->getMinSpinBoxWidget();
+    if(sb != nullptr)
+      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colMinWidgetSuffix));
+
+    sb = col->getMaxSpinBoxWidget();
+    if(sb != nullptr)
+      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colMaxWidgetSuffix));
+  }
+
+  if(minDistanceWidget != nullptr)
+    minDistanceWidget->setSuffix(
+      Unit::replacePlaceholders(minDistanceWidget->suffix(), minDistanceWidgetSuffix));
+
+  if(maxDistanceWidget != nullptr)
+    maxDistanceWidget->setSuffix(
+      Unit::replacePlaceholders(maxDistanceWidget->suffix(), maxDistanceWidgetSuffix));
 }
 
 ColumnList& ColumnList::append(const Column& col)

@@ -169,6 +169,7 @@ private:
   void resetMessages();
   void showDatabaseFiles();
   void mapSaveImage();
+  void distanceChanged();
 
   void kmlOpenRecent(const QString& kmlFile);
   void kmlOpen();
@@ -240,7 +241,7 @@ private:
   InfoQuery *infoQuery = nullptr;
 
   bool firstStart = true /* emit window shown only once after startup */,
-       firstApplicationStart = false /* first starup on a system after installation */;
+  firstApplicationStart = false /* first starup on a system after installation */;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

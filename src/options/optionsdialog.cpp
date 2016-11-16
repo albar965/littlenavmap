@@ -18,6 +18,7 @@
 #include "options/optionsdialog.h"
 
 #include "common/constants.h"
+#include "common/unit.h"
 #include "gui/mainwindow.h"
 #include "ui_options.h"
 #include "common/weatherreporter.h"
@@ -158,6 +159,11 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->comboBoxOptionsUnitVertSpeed);
   widgets.append(ui->comboBoxOptionsUnitShortDistance);
   widgets.append(ui->comboBoxOptionsUnitCoords);
+  widgets.append(ui->comboBoxOptionsUnitFuelWeight);
+
+  doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
+  spinBoxOptionsRouteGroundBufferSuffix = ui->spinBoxOptionsRouteGroundBuffer->suffix();
+  labelOptionsMapRangeRingsText = ui->labelOptionsMapRangeRings->text();
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
@@ -218,9 +224,20 @@ int OptionsDialog::exec()
 {
   optionDataToWidgets();
   updateWeatherButtonState();
+  updateWidgetUnits();
   updateDatabaseButtonState();
 
   return QDialog::exec();
+}
+
+void OptionsDialog::updateWidgetUnits()
+{
+  ui->doubleSpinBoxOptionsMapZoomShowMap->setSuffix(
+    Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapSuffix));
+  ui->spinBoxOptionsRouteGroundBuffer->setSuffix(
+    Unit::replacePlaceholders(spinBoxOptionsRouteGroundBufferSuffix));
+  ui->labelOptionsMapRangeRings->setText(
+    Unit::replacePlaceholders(labelOptionsMapRangeRingsText));
 }
 
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -232,6 +249,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     widgetsToOptionData();
     saveState();
     emit optionsChanged();
+
+    updateWidgetUnits();
     updateActiveSkyPathStatus();
     updateWeatherButtonState();
     updateDatabaseButtonState();
@@ -240,6 +259,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     widgetsToOptionData();
     saveState();
+    updateWidgetUnits();
     emit optionsChanged();
     accept();
   }
@@ -261,6 +281,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       optionDataToWidgets();
       saveState();
       emit optionsChanged();
+
+      updateWidgetUnits();
       updateActiveSkyPathStatus();
       updateWeatherButtonState();
       updateDatabaseButtonState();
@@ -302,6 +324,7 @@ void OptionsDialog::restoreState()
     ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
   widgetsToOptionData();
+  updateWidgetUnits();
 }
 
 /* Test NOAA weather URL and show a dialog with the result */
@@ -474,6 +497,7 @@ void OptionsDialog::widgetsToOptionData()
   data.unitSpeed = static_cast<opts::UnitSpeed>(ui->comboBoxOptionsUnitSpeed->currentIndex());
   data.unitVertSpeed = static_cast<opts::UnitVertSpeed>(ui->comboBoxOptionsUnitVertSpeed->currentIndex());
   data.unitCoords = static_cast<opts::UnitCoords>(ui->comboBoxOptionsUnitCoords->currentIndex());
+  data.unitFuelWeight = static_cast<opts::UnitFuelAndWeight>(ui->comboBoxOptionsUnitFuelWeight->currentIndex());
 
   data.valid = true;
 }
@@ -571,6 +595,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->comboBoxOptionsUnitSpeed->setCurrentIndex(data.unitSpeed);
   ui->comboBoxOptionsUnitVertSpeed->setCurrentIndex(data.unitVertSpeed);
   ui->comboBoxOptionsUnitCoords->setCurrentIndex(data.unitCoords);
+  ui->comboBoxOptionsUnitFuelWeight->setCurrentIndex(data.unitFuelWeight);
 }
 
 /* Add flag from checkbox to OptionData flags */

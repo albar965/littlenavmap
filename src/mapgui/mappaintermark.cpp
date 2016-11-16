@@ -25,6 +25,7 @@
 #include "common/symbolpainter.h"
 #include "atools.h"
 #include "common/constants.h"
+#include "common/unit.h"
 #include "route/routemapobject.h"
 #include "route/routemapobjectlist.h"
 #include "route/routecontroller.h"
@@ -264,7 +265,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 
             QString txt;
             if(rings.text.isEmpty())
-              txt = QLocale().toString(radius) + tr(" nm");
+              txt = Unit::distNm(radius);
             else
               txt = rings.text;
 
@@ -331,10 +332,17 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
         texts.append(m.text);
       texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + tr("°T ► ") +
                    QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
-      texts.append(atools::numberToString(meterToNm(distanceMeter)) + tr(" nm"));
-      if(distanceMeter < 6000)
-        // Add feet to text for short distances
-        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + tr(" ft"));
+
+      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
+         distanceMeter < 6000)
+        texts.append(QString::number(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
+      else
+      {
+        texts.append(Unit::distMeter(distanceMeter));
+        if(distanceMeter < 6000)
+          // Add feet to text for short distances
+          texts.append(Unit::distShortMeter(distanceMeter));
+      }
 
       if(m.from != m.to)
       {
@@ -383,9 +391,16 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
         texts.append(m.text);
       texts.append(QLocale().toString(atools::geo::normalizeCourse(magBearing), 'f', 0) +
                    (m.hasMagvar ? tr("°M") : tr("°T")));
-      texts.append(atools::numberToString(meterToNm(distanceMeter)) + tr(" nm"));
-      if(distanceMeter < 6000)
-        texts.append(QLocale().toString(meterToFeet(distanceMeter), 'f', 0) + tr(" ft"));
+
+      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
+         distanceMeter < 6000)
+        texts.append(QString::number(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
+      else
+      {
+        texts.append(Unit::distMeter(distanceMeter));
+        if(distanceMeter < 6000)
+          texts.append(Unit::distShortMeter(distanceMeter));
+      }
 
       if(m.from != m.to)
       {

@@ -19,6 +19,7 @@
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
+#include "common/unit.h"
 #include "mapgui/mapwidget.h"
 
 #include <QElapsedTimer>
@@ -151,7 +152,7 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
         {
           text += QString(tr(" / ")) + maptypes::airwayTypeToShortString(airway.type);
           if(airway.minAltitude)
-            text += QString(tr(" / ")) + QLocale().toString(airway.minAltitude) + tr(" ft");
+            text += QString(tr(" / ")) + Unit::altFeet(airway.minAltitude, true /*addUnit*/, true /*narrow*/);
         }
 
         if(!text.isEmpty())

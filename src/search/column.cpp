@@ -23,13 +23,14 @@
 #include <QSpinBox>
 
 Column::Column(const QString& columnName, const QString& columnDisplayName)
-  : colName(columnName), colDisplayName(columnDisplayName)
+  : colName(columnName), colDisplayName(columnDisplayName), colOrigDisplayName(columnDisplayName)
 {
 
 }
 
 Column::Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName)
-  : colName(columnName), colDisplayName(columnDisplayName), colWidget(widget)
+  : colName(columnName), colDisplayName(columnDisplayName), colOrigDisplayName(columnDisplayName),
+    colWidget(widget)
 {
 
 }
@@ -102,6 +103,12 @@ Column& Column::condition(const QString& cond)
   return *this;
 }
 
+Column& Column::convertFunc(std::function<float(float)> unitConvertFunc)
+{
+  unitConvert = unitConvertFunc;
+  return *this;
+}
+
 Column& Column::defaultSortOrder(Qt::SortOrder order)
 {
   colDefaultSortOrd = order;
@@ -155,3 +162,5 @@ QSpinBox *Column::getMaxSpinBoxWidget() const
 {
   return dynamic_cast<QSpinBox *>(colMaxWidget);
 }
+
+

@@ -509,7 +509,7 @@ void InfoController::disconnectedFromSimulator()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  showInformation(currentSearchResult);
+  showInformationInternal(currentSearchResult, false);
 }
 
 /* Update font size in text browsers if options have changed */

@@ -128,6 +128,7 @@ private:
   void updateThreadFinished();
   void updateScreenCoords();
   void terminateThread();
+  float calcGroundBuffer(float maxElevation);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;

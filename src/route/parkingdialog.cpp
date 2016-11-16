@@ -21,8 +21,10 @@
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 #include "atools.h"
+#include "common/unit.h"
 
 #include <QPushButton>
+
 
 ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
                              const maptypes::MapAirport& departureAirport)
@@ -91,8 +93,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
     {
       if(startPos.parking.position.isValid())
       {
-        QString text = tr("%1, %2 ft%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
-                       arg(QLocale().toString(startPos.parking.radius * 2)).
+        QString text = tr("%1, %2%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
+                       arg(Unit::distShortFeet(startPos.parking.radius * 2)).
                        arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
 
         // Item will insert itself in list widget

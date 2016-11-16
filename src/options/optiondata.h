@@ -156,6 +156,13 @@ enum UnitCoords
   COORDS_DEC
 };
 
+/* comboBoxOptionsUnitVertFuel */
+enum UnitFuelAndWeight
+{
+  FUEL_WEIGHT_GAL_LBS,
+  FUEL_WEIGHT_LITER_KG
+};
+
 }
 
 /*
@@ -207,6 +214,11 @@ public:
   opts::UnitCoords getUnitCoords() const
   {
     return unitCoords;
+  }
+
+  opts::UnitFuelAndWeight getUnitFuelWeight() const
+  {
+    return unitFuelWeight;
   }
 
   /* Vector of (red) range ring distances in nautical miles */
@@ -440,6 +452,9 @@ private:
 
   // comboBoxOptionsUnitCoords
   opts::UnitCoords unitCoords = opts::COORDS_DMS;
+
+  // comboBoxOptionsUnitVertFuel
+  opts::UnitFuelAndWeight unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
 
   // Used in the singelton to check if data was already loaded
   bool valid = false;

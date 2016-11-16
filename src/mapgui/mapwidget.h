@@ -81,7 +81,7 @@ public:
   void restoreState();
 
   /* Jump to position on the map using the given zoom distance (if not equal -1) */
-  void showPos(const atools::geo::Pos& pos, int distanceNm = -1);
+  void showPos(const atools::geo::Pos& pos);
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect);

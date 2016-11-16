@@ -229,6 +229,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     html.pEnd();
     numEntries++;
   }
+
   return html.getHtml();
 }
 

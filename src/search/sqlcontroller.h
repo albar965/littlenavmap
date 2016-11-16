@@ -134,10 +134,10 @@ public:
 
   /* Start or end distance search depending if center is valid or not */
   void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                        int minDistance, int maxDistance);
+                        float minDistance, float maxDistance);
 
   /* Update distance search for changed values from spin box widgets */
-  void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance, int maxDistance);
+  void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance, float maxDistance);
 
   /* Load all rows if a distance search is active. */
   void loadAllRowsForDistanceSearch();
@@ -169,6 +169,8 @@ public:
 
   void preDatabaseLoad();
   void postDatabaseLoad();
+
+  void updateHeaderData();
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

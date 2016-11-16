@@ -176,7 +176,7 @@ void SqlController::filterByComboBox(const Column *col, int value, bool noFilter
 }
 
 void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                                     int minDistance, int maxDistance)
+                                     float minDistance, float maxDistance)
 {
   if(center.isValid())
   {
@@ -236,8 +236,8 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
   searchParamsChanged = true;
 }
 
-void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, int minDistance,
-                                           int maxDistance)
+void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance,
+                                           float maxDistance)
 {
   if(proxyModel != nullptr)
   {
@@ -440,6 +440,11 @@ void SqlController::processViewColumns()
       if(colDescrCurSort->isDistance())
         view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
   }
+}
+
+void SqlController::updateHeaderData()
+{
+  model->fillHeaderData();
 }
 
 void SqlController::prepareModel()

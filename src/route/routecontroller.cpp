@@ -22,6 +22,7 @@
 #include "options/optiondata.h"
 #include "common/constants.h"
 #include "common/formatter.h"
+#include "common/unit.h"
 #include "exception.h"
 #include "export/csvexporter.h"
 #include "gui/actiontextsaver.h"
@@ -45,6 +46,7 @@
 #include "util/htmlbuilder.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
+#include "common/unit.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -59,11 +61,11 @@ const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Airway"),
                                     QObject::tr("Type"),
                                     QObject::tr("Freq.\nMHz/kHz"),
-                                    QObject::tr("Range\nnm"),
+                                    QObject::tr("Range\n%dist%"),
                                     QObject::tr("Course\n°M"),
                                     QObject::tr("Direct\n°M"),
-                                    QObject::tr("Distance\nnm"),
-                                    QObject::tr("Remaining\nnm"),
+                                    QObject::tr("Distance\n%dist%"),
+                                    QObject::tr("Remaining\n%dist%"),
                                     QObject::tr("Leg Time\nhh:mm"),
                                     QObject::tr("ETA\nhh:mm UTC")});
 
@@ -187,6 +189,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
+
+  updateSpinboxSuffices();
 
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
@@ -381,10 +385,21 @@ void RouteController::saveState()
   atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 }
 
+void RouteController::updateTableHeaders()
+{
+  QList<QString> routeHeaders(ROUTE_COLUMNS);
+
+  for(QString& str : routeHeaders)
+    str = Unit::replacePlaceholders(str);
+
+  model->setHorizontalHeaderLabels(routeHeaders);
+}
+
 void RouteController::restoreState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  model->setHorizontalHeaderLabels(ROUTE_COLUMNS);
+  updateTableHeaders();
+
   atools::gui::WidgetState(lnm::ROUTE_VIEW).restore({view, ui->spinBoxRouteSpeed,
                                                      ui->comboBoxRouteType,
                                                      ui->spinBoxRouteAlt});
@@ -478,6 +493,9 @@ bool RouteController::loadFlightplan(const QString& filename)
     qDebug() << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     newFlightplan.load(filename);
+    // Convert altitude to local unit
+    newFlightplan.setCruisingAltitude(
+      atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
     loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/);
   }
@@ -503,6 +521,9 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     // Will throw an exception if something goes wrong
     flightplan.load(filename);
+    // Convert altitude to local unit
+    flightplan.setCruisingAltitude(
+      atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
 
     RouteCommand *undoCommand = preChange(tr("Append"));
 
@@ -548,7 +569,14 @@ bool RouteController::saveFlightplan()
   {
     qDebug() << "saveFlighplan" << routeFilename;
     // Will throw an exception if something goes wrong
+
+    // Remember altitude in local units and set to feet before saving
+    int oldCruise = route.getFlightplan().getCruisingAltitude();
+    route.getFlightplan().setCruisingAltitude(
+      atools::roundToInt(Unit::rev(static_cast<float>(route.getFlightplan().getCruisingAltitude()),
+                                         Unit::altFeetF)));
     route.getFlightplan().save(routeFilename);
+    route.getFlightplan().setCruisingAltitude(oldCruise);
 
     // Set clean undo state index since QUndoStack only returns weird values
     undoIndexClean = undoIndex;
@@ -649,7 +677,7 @@ void RouteController::calculateSetAlt()
 
   // Just decide by given altiude if this is a high or low plan
   atools::fs::pln::RouteType type;
-  if(route.getFlightplan().getCruisingAltitude() > 20000)
+  if(route.getFlightplan().getCruisingAltitude() > Unit::altFeetF(20000))
     type = atools::fs::pln::HIGH_ALTITUDE;
   else
     type = atools::fs::pln::LOW_ALTITUDE;
@@ -674,7 +702,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
   Flightplan& flightplan = route.getFlightplan();
 
-  int altitude = useSetAltitude ? flightplan.getCruisingAltitude() : 0;
+  int cruiseFt = atools::roundToInt(Unit::rev(flightplan.getCruisingAltitude(), Unit::altFeetF));
+
+  int altitude = useSetAltitude ? cruiseFt : 0;
 
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
@@ -726,6 +756,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
         entries.insert(entries.end() - 1, flightplanEntry);
       }
+
+      minAltitude = atools::roundToInt(Unit::altFeetF(minAltitude));
 
       if(minAltitude != 0 && !useSetAltitude)
       {
@@ -1122,8 +1154,18 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  updateTableHeaders();
   updateTableModel();
+  updateWindowLabel();
+
+  updateSpinboxSuffices();
   view->update();
+}
+
+void RouteController::updateSpinboxSuffices()
+{
+  mainWindow->getUi()->spinBoxRouteAlt->setSuffix(" " + Unit::getUnitAltStr());
+  mainWindow->getUi()->spinBoxRouteSpeed->setSuffix(" " + Unit::getUnitSpeedStr());
 }
 
 bool RouteController::hasChanged() const
@@ -1777,7 +1819,6 @@ void RouteController::updateBoundingRect()
 /* Update travel times in table view model after speed change */
 void RouteController::updateModelRouteTime()
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
   int row = 0;
   float cumulatedDistance = 0.f;
   for(const RouteMapObject& mapobj : route)
@@ -1787,11 +1828,11 @@ void RouteController::updateModelRouteTime()
       model->setItem(row, rc::LEG_TIME, nullptr);
     else
     {
-      float travelTime = mapobj.getDistanceTo() / static_cast<float>(ui->spinBoxRouteSpeed->value());
+      float travelTime = calcTravelTime(mapobj.getDistanceTo());
       model->setItem(row, rc::LEG_TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
     }
 
-    float eta = cumulatedDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
+    float eta = calcTravelTime(cumulatedDistance);
     model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
     row++;
   }
@@ -1856,7 +1897,7 @@ void RouteController::updateTableModel()
     if(mapobj.getRange() > 0)
     {
       if(mapobj.getMapObjectType() == maptypes::VOR || mapobj.getMapObjectType() == maptypes::NDB)
-        item = new QStandardItem(QLocale().toString(mapobj.getRange()));
+        item = new QStandardItem(Unit::distNm(mapobj.getRange(), false));
       else
         item = new QStandardItem();
       item->setTextAlignment(Qt::AlignRight);
@@ -1882,7 +1923,7 @@ void RouteController::updateTableModel()
       item->setTextAlignment(Qt::AlignRight);
       itemRow.append(item);
 
-      item = new QStandardItem(QLocale().toString(mapobj.getDistanceTo(), 'f', 1));
+      item = new QStandardItem(Unit::distNm(mapobj.getDistanceTo(), false));
       item->setTextAlignment(Qt::AlignRight);
       itemRow.append(item);
     }
@@ -1892,7 +1933,7 @@ void RouteController::updateTableModel()
     float remaining = totalDistance - cumulatedDistance;
     if(remaining < 0.f)
       remaining = 0.f;  // Catch the -0 case due to rounding errors
-    item = new QStandardItem(QLocale().toString(remaining, 'f', 1));
+    item = new QStandardItem(Unit::distNm(remaining, false));
     item->setTextAlignment(Qt::AlignRight);
     itemRow.append(item);
 
@@ -1985,7 +2026,6 @@ QString RouteController::buildFlightplanLabel(bool html) const
 QString RouteController::buildFlightplanLabel2() const
 {
   const Flightplan& flightplan = route.getFlightplan();
-  Ui::MainWindow *ui = mainWindow->getUi();
   if(!flightplan.isEmpty())
   {
     QString routeType;
@@ -2003,19 +2043,27 @@ QString RouteController::buildFlightplanLabel2() const
       case atools::fs::pln::DIRECT:
         routeType = tr("Direct");
         break;
-
     }
+
     float totalDistance = route.getTotalDistance();
 
-    float travelTime = totalDistance / static_cast<float>(ui->spinBoxRouteSpeed->value());
-
-    return tr("%1 nm, %2, %3").
-           arg(QLocale().toString(totalDistance, 'f', 0)).
-           arg(formatter::formatMinutesHoursLong(travelTime)).
+    return tr("%1, %2, %3").
+           arg(Unit::distNm(totalDistance)).
+           arg(formatter::formatMinutesHoursLong(calcTravelTime(route.getTotalDistance()))).
            arg(routeType);
   }
   else
     return QString();
+}
+
+float RouteController::calcTravelTime(float distance) const
+{
+  float travelTime = 0.f;
+  float speedKts = Unit::rev(
+    static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+  if(speedKts > 0.f)
+    travelTime = distance / speedKts;
+  return travelTime;
 }
 
 /* Reset route and clear undo stack (new route) */

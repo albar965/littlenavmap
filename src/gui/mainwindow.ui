@@ -780,7 +780,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> ft</string>
+                <string> %distshort%</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -827,7 +827,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> ft</string>
+                <string> %distshort%</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -944,7 +944,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> ft</string>
+                <string> %alt%</string>
                </property>
                <property name="minimum">
                 <number>-1500</number>
@@ -988,7 +988,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> ft</string>
+                <string> %alt%</string>
                </property>
                <property name="minimum">
                 <number>-500</number>
@@ -1083,7 +1083,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> nm</string>
+                <string> %dist%</string>
                </property>
                <property name="maximum">
                 <number>3000</number>
@@ -1127,7 +1127,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> nm</string>
+                <string> %dist%</string>
                </property>
                <property name="minimum">
                 <number>100</number>
@@ -1538,13 +1538,13 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> nm</string>
+                <string> %dist%</string>
                </property>
                <property name="minimum">
                 <number>0</number>
                </property>
                <property name="maximum">
-                <number>200</number>
+                <number>400</number>
                </property>
                <property name="singleStep">
                 <number>10</number>
@@ -1755,7 +1755,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> nm</string>
+                <string> %dist%</string>
                </property>
                <property name="maximum">
                 <number>3000</number>
@@ -1799,7 +1799,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> nm</string>
+                <string> %dist%</string>
                </property>
                <property name="minimum">
                 <number>100</number>

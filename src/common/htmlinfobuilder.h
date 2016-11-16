@@ -227,7 +227,7 @@ private:
                   const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, float hdgPrim,
-                     int length) const;
+                     float length) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;

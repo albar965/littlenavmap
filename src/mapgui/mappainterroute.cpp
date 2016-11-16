@@ -19,6 +19,7 @@
 
 #include "mapgui/mapwidget.h"
 #include "common/symbolpainter.h"
+#include "common/unit.h"
 #include "mapgui/maplayer.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
@@ -128,7 +129,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       if(lineLength > MIN_LENGTH_FOR_TEXT)
       {
         // Build text
-        QString text(QLocale().toString(obj.getDistanceTo(), 'f', 0) + tr(" nm  / ") +
+        QString text(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
                      QLocale().toString(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
 
         int textw = context->painter->fontMetrics().width(text);

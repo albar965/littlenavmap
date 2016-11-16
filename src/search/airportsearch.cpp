@@ -18,6 +18,7 @@
 #include "search/airportsearch.h"
 
 #include "common/constants.h"
+#include "common/unit.h"
 #include "search/sqlcontroller.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
@@ -139,7 +140,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("airport_id").hidden()).
-  append(Column("distance", tr("Distance\nnm")).distanceCol()).
+  append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort()).
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
@@ -150,7 +151,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
 
   append(Column("rating", ui->checkBoxAirportScenerySearch, tr("Rating")).conditions("> 0", "== 0")).
 
-  append(Column("altitude", tr("Altitude\nft"))).
+  append(Column("altitude", tr("Altitude\n%alt%")).
+         convertFunc(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag\nVar°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel")).hidden()).
@@ -193,7 +195,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo")).hidden()).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat")).hidden()).
 
-  append(Column("longest_runway_length", tr("Longest\nRunway Length ft"))).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).
+         convertFunc(Unit::distShortFeetF)).
   append(Column("longest_runway_width", tr("Longest\nRunway Width ft")).hidden()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).hidden()).
   append(Column("longest_runway_heading").hidden()).
@@ -410,6 +413,10 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
     else
       return QLocale().toString(displayRoleValue.toDouble() / 1000, 'f', 3);
   }
+  else if(col->getColumnName() == "altitude")
+    return Unit::altFeet(displayRoleValue.toFloat(), false);
+  else if(col->getColumnName() == "longest_runway_length")
+    return Unit::distShortFeet(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "mag_var")
     return maptypes::magvarText(displayRoleValue.toFloat());
   else if(NUMBER_COLUMNS.contains(col->getColumnName()))

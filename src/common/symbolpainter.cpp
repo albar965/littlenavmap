@@ -21,6 +21,7 @@
 #include "mapgui/mapquery.h"
 #include "common/mapcolors.h"
 #include "options/optiondata.h"
+#include "common/unit.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -545,10 +546,13 @@ QStringList SymbolPainter::airportTexts(textflags::TextFlags flags, const maptyp
     if(!tower.isEmpty() || !autoWeather.isEmpty())
       texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
 
+    // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-      texts.append(QLocale().toString(airport.getPosition().getAltitude()) + " " +
+      texts.append(Unit::altFeet(airport.getPosition().getAltitude(),
+                                 true /*addUnit*/, true /*narrow*/) + " " +
                    (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
-                   QLocale().toString(airport.longestRunwayLength / 100) + " " +
+                   Unit::distShortFeet(airport.longestRunwayLength,
+                                       true /*addUnit*/, true /*narrow*/) + " " +
                    (airport.unicomFrequency == 0 ? QString() :
                     QLocale().toString(airport.unicomFrequency / 1000., 'f', 3)));
   }

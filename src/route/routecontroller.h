@@ -296,6 +296,9 @@ private:
   void eraseAirway(int row);
   QString buildFlightplanLabel(bool html) const;
   QString buildFlightplanLabel2() const;
+  void updateTableHeaders();
+  void updateSpinboxSuffices();
+  float calcTravelTime(float distance) const;
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

@@ -112,6 +112,8 @@ MainWindow::MainWindow()
     // Has to load the state now to options are available for all controller and manager classes
     optionsDialog->restoreState();
 
+    Unit::init();
+
     // Remember original title
     mainWindowTitle = windowTitle();
 
@@ -234,7 +236,7 @@ MainWindow::~MainWindow()
   delete actionGroupMapProjection;
   delete actionGroupMapTheme;
 
-  Unit::delInstance();
+  Unit::deInit();
   // Delete settings singleton
   Settings::shutdown();
   atools::gui::Translator::unload();
@@ -520,6 +522,7 @@ void MainWindow::connectAllSlots()
           mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
@@ -616,7 +619,7 @@ void MainWindow::connectAllSlots()
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
-  connect(mapWidget, &MapWidget::distanceChanged, mapDistanceLabel, &QLabel::setText);
+  connect(mapWidget, &MapWidget::distanceChanged, this, &MainWindow::distanceChanged);
   connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
@@ -915,6 +918,11 @@ void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
     qDebug() << "resultTruncated" << type << "num" << truncatedTo;
     messageLabel->setText(tr("Too many objects."));
   }
+}
+
+void MainWindow::distanceChanged()
+{
+  mapDistanceLabel->setText(Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f)));
 }
 
 /* Render status from marble widget */

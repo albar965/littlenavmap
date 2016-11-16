@@ -28,6 +28,7 @@
 #include "export/csvexporter.h"
 #include "mapgui/mapquery.h"
 #include "options/optiondata.h"
+#include "common/unit.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -122,6 +123,23 @@ void SearchBase::optionsChanged()
   // Adapt table view text size
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
+  // Update the unit strings in the table header
+  updateUnits();
+
+  // Run searches again to reflect unit changes
+  updateDistanceSearch();
+
+  for(const Column *col : columns->getColumns())
+  {
+    if(col->getSpinBoxWidget() != nullptr)
+      updateFromSpinBox(col->getSpinBoxWidget()->value(), col);
+
+    if(col->getMaxSpinBoxWidget() != nullptr)
+      updateFromMaxSpinBox(col->getMaxSpinBoxWidget()->value(), col);
+
+    if(col->getMinSpinBoxWidget() != nullptr)
+      updateFromMinSpinBox(col->getMinSpinBoxWidget()->value(), col);
+  }
   view->update();
 }
 
@@ -134,15 +152,23 @@ void SearchBase::searchMarkChanged(const atools::geo::Pos& mark)
 {
   qDebug() << "new mark" << mark;
   if(columns->getDistanceCheckBox()->isChecked() && mark.isValid())
+    updateDistanceSearch();
+}
+
+void SearchBase::updateDistanceSearch()
+{
+  if(columns->getDistanceCheckBox()->isChecked() &&
+     mainWindow->getMapWidget()->getSearchMarkPos().isValid())
   {
     // Currently running distance search - update result
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
     QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
     QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
 
-    controller->filterByDistance(mark,
+    controller->filterByDistance(mainWindow->getMapWidget()->getSearchMarkPos(),
                                  static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                                 minDistanceWidget->value(), maxDistanceWidget->value());
+                                 Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                                 Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
     controller->loadAllRowsForDistanceSearch();
   }
@@ -187,7 +213,7 @@ void SearchBase::connectSearchWidgets()
     {
       connect(col->getSpinBoxWidget(), valueChangedPtr, [ = ](int value)
               {
-                controller->filterBySpinBox(col, value);
+                updateFromSpinBox(value, col);
                 updateButtonMenu();
                 editStartTimer();
               });
@@ -196,16 +222,14 @@ void SearchBase::connectSearchWidgets()
     {
       connect(col->getMinSpinBoxWidget(), valueChangedPtr, [ = ](int value)
               {
-                controller->filterByMinMaxSpinBox(col, value, col->getMaxSpinBoxWidget()->value());
-                col->getMaxSpinBoxWidget()->setMinimum(value);
+                updateFromMinSpinBox(value, col);
                 updateButtonMenu();
                 editStartTimer();
               });
 
       connect(col->getMaxSpinBoxWidget(), valueChangedPtr, [ = ](int value)
               {
-                controller->filterByMinMaxSpinBox(col, col->getMinSpinBoxWidget()->value(), value);
-                col->getMinSpinBoxWidget()->setMaximum(value);
+                updateFromMaxSpinBox(value, col);
                 updateButtonMenu();
                 editStartTimer();
               });
@@ -227,7 +251,9 @@ void SearchBase::connectSearchWidgets()
             {
               controller->filterByDistanceUpdate(
                 static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                value, maxDistanceWidget->value());
+                Unit::rev(value, Unit::distNmF),
+                Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
+
               maxDistanceWidget->setMinimum(value > 10 ? value : 10);
               updateButtonMenu();
               editStartTimer();
@@ -237,7 +263,8 @@ void SearchBase::connectSearchWidgets()
             {
               controller->filterByDistanceUpdate(
                 static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-                minDistanceWidget->value(), value);
+                Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                Unit::rev(value, Unit::distNmF));
               minDistanceWidget->setMaximum(value);
               updateButtonMenu();
               editStartTimer();
@@ -246,11 +273,56 @@ void SearchBase::connectSearchWidgets()
     connect(distanceDirWidget, curIndexChangedPtr, [ = ](int index)
             {
               controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
-                                                 minDistanceWidget->value(), maxDistanceWidget->value());
+                                                 Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                                                 Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
               updateButtonMenu();
               editStartTimer();
             });
   }
+}
+
+void SearchBase::updateFromSpinBox(int value, const Column *col)
+{
+  if(col->getUnitConvert() != nullptr)
+    // Convert widget units to internal units using the given function pointer
+    controller->filterBySpinBox(
+      col, atools::roundToInt(Unit::rev(value, col->getUnitConvert())));
+  else
+    controller->filterBySpinBox(col, value);
+}
+
+void SearchBase::updateFromMinSpinBox(int value, const Column *col)
+{
+  float valMin = value, valMax = col->getMaxSpinBoxWidget()->value();
+
+  if(col->getUnitConvert() != nullptr)
+  {
+    // Convert widget units to internal units using the given function pointer
+    valMin = atools::roundToInt(Unit::rev(valMin, col->getUnitConvert()));
+    valMax = atools::roundToInt(Unit::rev(valMax, col->getUnitConvert()));
+  }
+
+  controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin),
+                                    atools::roundToInt(valMax));
+  col->getMaxSpinBoxWidget()->setMinimum(value);
+
+}
+
+void SearchBase::updateFromMaxSpinBox(int value, const Column *col)
+{
+  float valMin = col->getMinSpinBoxWidget()->value(), valMax = value;
+
+  if(col->getUnitConvert() != nullptr)
+  {
+    // Convert widget units to internal units using the given function pointer
+    valMin = atools::roundToInt(Unit::rev(valMin, col->getUnitConvert()));
+    valMax = atools::roundToInt(Unit::rev(valMax, col->getUnitConvert()));
+  }
+
+  controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin),
+                                    atools::roundToInt(valMax));
+  col->getMinSpinBoxWidget()->setMaximum(value);
+
 }
 
 void SearchBase::distanceSearchStateChanged(int state)
@@ -270,7 +342,8 @@ void SearchBase::distanceSearchChanged(bool checked, bool changeViewState)
   controller->filterByDistance(
     checked ? mainWindow->getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
     static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-    minDistanceWidget->value(), maxDistanceWidget->value());
+    Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+    Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
   minDistanceWidget->setEnabled(checked);
   maxDistanceWidget->setEnabled(checked);
@@ -316,6 +389,12 @@ void SearchBase::connectSearchSlots()
   connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, selChangedPtr);
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchBase::dockVisibilityChanged);
+}
+
+void SearchBase::updateUnits()
+{
+  columns->updateUnits();
+  controller->updateHeaderData();
 }
 
 /* Connect selection model again after a SQL model reset */

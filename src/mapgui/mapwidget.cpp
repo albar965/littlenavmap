@@ -39,6 +39,7 @@
 #include "util/htmlbuilder.h"
 #include "mapgui/maplayersettings.h"
 #include "zip/zipreader.h"
+#include "common/unit.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -470,22 +471,20 @@ void MapWidget::showSavedPosOnStartup()
   }
 }
 
-void MapWidget::showPos(const atools::geo::Pos& pos, int distanceNm)
+void MapWidget::showPos(const atools::geo::Pos& pos)
 {
-  // qDebug() << "NavMapWidget::showPoint" << pos;
+  qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
   showAircraft(false);
 
-  if(distanceNm == -1)
-    setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
-  else
-    setDistance(atools::geo::nmToKm(distanceNm));
+  float dst = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+  setDistance(dst);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 
 void MapWidget::showRect(const atools::geo::Rect& rect)
 {
-  // qDebug() << "NavMapWidget::showRect" << rect;
+  qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
   showAircraft(false);
 
@@ -493,13 +492,14 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
            << "h" << QString::number(rect.getHeightDegree(), 'f');
 
   if(rect.isPoint(POS_IS_POINT_EPSILON))
-    showPos(rect.getTopLeft(), -1);
+    showPos(rect.getTopLeft());
   else
   {
     centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                               GeoDataCoordinates::Degree), false);
-    if(distance() < atools::geo::nmToKm(OptionData::instance().getMapZoomShow()))
-      setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
+    float dist = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+    if(distance() < dist)
+      setDistance(dist);
   }
 }
 
@@ -512,7 +512,7 @@ void MapWidget::showSearchMark()
 
   if(searchMarkPos.isValid())
   {
-    setDistance(atools::geo::nmToKm(OptionData::instance().getMapZoomShow()));
+    setDistance(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF)));
     centerOn(searchMarkPos.getLonX(), searchMarkPos.getLatY(), false);
     mainWindow->setStatusMessage(tr("Showing distance search center."));
   }
@@ -1443,7 +1443,11 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   maptypes::RangeMarker rings;
   rings.type = maptypes::NONE;
   rings.center = pos;
-  rings.ranges = OptionData::instance().getMapRangeRings();
+
+  const QVector<int> dists = OptionData::instance().getMapRangeRings();
+  for(int dist : dists)
+    rings.ranges.append(atools::roundToInt(Unit::rev(dist, Unit::distNmF)));
+
   screenIndex->getRangeMarks().append(rings);
 
   qDebug() << "range rings" << rings.center;
@@ -2024,13 +2028,13 @@ void MapWidget::updateVisibleObjectsStatusBar()
             append(runwayShort);
 
           if(showStock)
-            apTooltip = tr("Airports with runway length > %1 ft and%2").
-                        arg(QLocale().toString(layer->getMinRunwayLength())).
+            apTooltip = tr("Airports with runway length > %1 and%2").
+                        arg(Unit::distShortFeet(layer->getMinRunwayLength())).
                         arg(runway);
 
           if(showAddon)
-            apTooltipAddon = tr("Add-on airports with runway length > %1 ft").
-                             arg(QLocale().toString(layer->getMinRunwayLength()));
+            apTooltipAddon = tr("Add-on airports with runway length > %1").
+                             arg(Unit::distShortFeet(layer->getMinRunwayLength()));
         }
         else
         {
@@ -2046,31 +2050,32 @@ void MapWidget::updateVisibleObjectsStatusBar()
       else if(layer->getDataSource() == layer::MEDIUM)
       {
         if(showAny)
-          apShort.append(tr(">40%1").arg(runwayShort));
+          apShort.append(tr(">%1%2").arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT / 100, false)).
+                         arg(runwayShort));
 
         if(showStock)
-          apTooltip = tr("Airports with runway length > %1 ft and%2").
-                      arg(QLocale().toString(MapLayer::MAX_MEDIUM_RUNWAY_FT)).
+          apTooltip = tr("Airports with runway length > %1 and%2").
+                      arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT)).
                       arg(runway);
 
         if(showAddon)
-          apTooltipAddon.append(tr("Add-on airports with runway length > %1 ft").
-                                arg(QLocale().toString(MapLayer::MAX_MEDIUM_RUNWAY_FT)));
+          apTooltipAddon.append(tr("Add-on airports with runway length > %1").
+                                arg(Unit::distShortFeet(MapLayer::MAX_MEDIUM_RUNWAY_FT)));
       }
       else if(layer->getDataSource() == layer::LARGE)
       {
         if(showAddon || showHard)
-          apShort.append(tr(">80,H"));
+          apShort.append(tr(">%1,H").arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT / 100, false)));
         else
           apShort.clear();
 
         if(showStock && showHard)
-          apTooltip = tr("Airports with runway length > %1 ft and hard runways").
-                      arg(QLocale().toString(MapLayer::MAX_LARGE_RUNWAY_FT));
+          apTooltip = tr("Airports with runway length > %1 and hard runways").
+                      arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT));
 
         if(showAddon)
-          apTooltipAddon.append(tr("Add-on airports with runway length > %1 ft").
-                                arg(QLocale().toString(MapLayer::MAX_LARGE_RUNWAY_FT)));
+          apTooltipAddon.append(tr("Add-on airports with runway length > %1").
+                                arg(Unit::distShortFeet(MapLayer::MAX_LARGE_RUNWAY_FT)));
       }
 
       visible.append(apShort);
@@ -2136,7 +2141,6 @@ void MapWidget::updateVisibleObjectsStatusBar()
     // Update the statusbar label text and tooltip of the label
     mainWindow->setMapObjectsShownMessageText(visible.join(","), visibleTooltip.getHtml());
   }
-
 }
 
 void MapWidget::paintEvent(QPaintEvent *paintEvent)

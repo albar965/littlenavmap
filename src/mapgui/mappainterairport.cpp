@@ -24,6 +24,7 @@
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "common/mapcolors.h"
+#include "common/unit.h"
 #include "mapgui/mapwidget.h"
 #include "route/routecontroller.h"
 
@@ -655,11 +656,12 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       const MapRunway& runway = runways->at(i);
       const QRect& runwayRect = runwayRects.at(i);
 
-      QString text = QLocale().toString(runway.length);
+      QString text = QString::number(Unit::distShortFeetF(runway.length), 'f', 0);
 
       if(runway.width > 8)
         // Skip dummy lines where the runway is done by photo scenery or similar
-        text += tr(" x ") + QLocale().toString(runway.width);
+        text += tr(" x ") + QString::number(Unit::distShortFeetF(runway.width), 'f', 0);
+      text += " " + Unit::getUnitShortDistStr();
 
       // Add light indicator
       if(!runway.edgeLight.isEmpty())

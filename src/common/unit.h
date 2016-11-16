@@ -21,6 +21,7 @@
 #include "options/optiondata.h"
 
 #include <QApplication>
+#include <functional>
 
 namespace atools {
 namespace geo {
@@ -35,22 +36,31 @@ class Unit
   Q_DECLARE_TR_FUNCTIONS(Unit)
 
 public:
-  static const Unit& instance();
-  static void delInstance();
+  static void init();
+  static void deInit();
 
   ~Unit();
 
+  /* Reverse function. Convert local unit to known unit */
+  static inline float rev(float value, std::function<float(float value)> func)
+  {
+    return value / func(1.f);
+  }
+
+  static QString replacePlaceholders(const QString& text, QString& origtext);
+  static QString replacePlaceholders(const QString& text);
+
   /* Distances: Returns either nautical miles, kilometer or miles */
-  static QString distMeter(float value, bool addUnit = true);
-  static QString distNm(float value, bool addUnit = true);
+  static QString distMeter(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);
+  static QString distNm(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);
 
   static float distMeterF(float value);
   static float distNmF(float value);
 
   /* Short distances: Returns either feet or meter */
-  static QString distShortMeter(float value, bool addUnit = true);
-  static QString distShortNm(float value, bool addUnit = true);
-  static QString distShortFeet(float value, bool addUnit = true);
+  static QString distShortMeter(float value, bool addUnit = true, bool narrow = false);
+  static QString distShortNm(float value, bool addUnit = true, bool narrow = false);
+  static QString distShortFeet(float value, bool addUnit = true, bool narrow = false);
 
   static float distShortMeterF(float value);
   static float distShortNmF(float value);
@@ -66,22 +76,90 @@ public:
   static float speedVertFpmF(float value);
 
   /* Altitude: Returns either meter or feet */
-  static QString altMeter(float value, bool addUnit = true);
-  static QString altFeet(float value, bool addUnit = true);
+  static QString altMeter(float value, bool addUnit = true, bool narrow = false);
+  static QString altFeet(float value, bool addUnit = true, bool narrow = false);
 
   static float altMeterF(float value);
   static float altFeetF(float value);
+
+  /* Volume: Returns either gal or l */
+  static QString volGallon(float value, bool addUnit = true);
+  static float volGallonF(float value);
+
+  /* Weight: Returns either lbs or kg */
+  static QString weightLbs(float value, bool addUnit = true);
+  static float weightLbsF(float value);
+
+  static QString ffGallon(float value, bool addUnit = true);
+  static float ffGallonF(float value);
+  static QString ffLbs(float value, bool addUnit = true);
+  static float ffLbsF(float value);
 
   /* Coordinates: Returns either decimal or sexagesimal notation */
   static QString coords(const atools::geo::Pos& pos);
 
   static void optionsChanged();
 
+  static const QString& getUnitDistStr()
+  {
+    return unitDistStr;
+  }
+
+  static const QString& getUnitShortDistStr()
+  {
+    return unitShortDistStr;
+  }
+
+  static const QString& getUnitAltStr()
+  {
+    return unitAltStr;
+  }
+
+  static const QString& getUnitSpeedStr()
+  {
+    return unitSpeedStr;
+  }
+
+  static const QString& getUnitVertSpeedStr()
+  {
+    return unitVertSpeedStr;
+  }
+
+  static const QString& getUnitVolStr()
+  {
+    return unitVolStr;
+  }
+
+  static const QString& getUnitWeightStr()
+  {
+    return unitWeightStr;
+  }
+
+  static const QString& getUnitFfVolStr()
+  {
+    return unitFfVolStr;
+  }
+
+  static const QString& getUnitFfWeightStr()
+  {
+    return unitFfWeightStr;
+  }
+
+  static opts::UnitDist getUnitDist()
+  {
+    return unitDist;
+  }
+
+  static opts::UnitShortDist getUnitShortDist()
+  {
+    return unitShortDist;
+  }
+
 private:
   Unit();
-  static QString u(const QString& num, const QString& un, bool addUnit);
+  static QString u(const QString& num, const QString& un, bool addUnit, bool narrow);
+  static QString u(float num, const QString& un, bool addUnit, bool narrow = false);
 
-  static Unit *unit;
   static const OptionData *opts;
   static QLocale *locale;
 
@@ -91,12 +169,19 @@ private:
   static opts::UnitSpeed unitSpeed;
   static opts::UnitVertSpeed unitVertSpeed;
   static opts::UnitCoords unitCoords;
+  static opts::UnitFuelAndWeight unitFuelWeight;
 
   static QString unitDistStr;
   static QString unitShortDistStr;
   static QString unitAltStr;
   static QString unitSpeedStr;
   static QString unitVertSpeedStr;
+
+  static QString unitVolStr;
+  static QString unitWeightStr;
+
+  static QString unitFfVolStr;
+  static QString unitFfWeightStr;
 };
 
 #endif // LITTLENAVMAP_UNIT_H

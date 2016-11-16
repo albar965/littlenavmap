@@ -36,6 +36,7 @@ class QItemSelection;
 class MapQuery;
 class QTimer;
 class CsvExporter;
+class Column;
 
 /*
  * Base for all search classes which reside each in its own tab, contains a result table view and a list of
@@ -81,6 +82,8 @@ public:
 
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
   virtual void connectSearchSlots();
+
+  void updateUnits();
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
@@ -147,6 +150,10 @@ private:
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool visible);
   void distanceSearchStateChanged(int state);
+  void updateDistanceSearch();
+  void updateFromSpinBox(int value, const Column *col);
+  void updateFromMinSpinBox(int value, const Column *col);
+  void updateFromMaxSpinBox(int value, const Column *col);
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::TableZoomHandler *zoomHandler = nullptr;

@@ -98,6 +98,7 @@ void SearchController::createNavSearch(QTableView *tableView)
 void SearchController::postCreateSearch(SearchBase *search)
 {
   search->connectSearchSlots();
+  search->updateUnits();
 
   mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
                                       search, &SearchBase::searchMarkChanged);

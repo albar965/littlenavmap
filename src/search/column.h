@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <functional>
 
 class QWidget;
 class QComboBox;
@@ -88,6 +89,8 @@ public:
 
   /* Indicates a condition that should be use for a spin box value, i.e. ">", "<" etc. */
   Column& condition(const QString& cond);
+
+  Column& convertFunc(std::function<float(float value)> unitConvertFunc);
 
   bool isFilter() const
   {
@@ -205,12 +208,34 @@ public:
     return index;
   }
 
+  QString getColWidgetSuffix() const
+  {
+    return colWidgetSuffix;
+  }
+
+  QString getColMaxWidgetSuffix() const
+  {
+    return colMaxWidgetSuffix;
+  }
+
+  QString getColMinWidgetSuffix() const
+  {
+    return colMinWidgetSuffix;
+  }
+
+  std::function<float(float value)> getUnitConvert() const
+  {
+    return unitConvert;
+  }
+
 private:
   friend class ColumnList;
 
   QString colName;
   QString colDisplayName;
+  const QString colOrigDisplayName;
   QWidget *colWidget = nullptr, *colMaxWidget = nullptr, *colMinWidget = nullptr;
+  QString colWidgetSuffix, colMaxWidgetSuffix, colMinWidgetSuffix;
   QString colSortFuncAsc, colSortFuncDesc;
 
   /* Conditions used for checkboxes */
@@ -223,6 +248,9 @@ private:
   QStringList colIndexConditionMap;
 
   int index = -1;
+
+  /* Function to convert from default units to widget units */
+  std::function<float(float value)> unitConvert = nullptr;
 
   bool colCanBeFiltered = false;
   bool colCanNotBeSorted = false;

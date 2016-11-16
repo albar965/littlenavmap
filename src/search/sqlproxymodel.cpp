@@ -19,6 +19,7 @@
 
 #include "geo/calculations.h"
 #include "search/sqlmodel.h"
+#include "common/unit.h"
 
 #include <QApplication>
 
@@ -35,7 +36,7 @@ SqlProxyModel::~SqlProxyModel()
 }
 
 void SqlProxyModel::setDistanceFilter(const Pos& center, sqlproxymodel::SearchDirection dir,
-                                      int minDistance, int maxDistance)
+                                      float minDistance, float maxDistance)
 {
   minDistMeter = nmToMeter(minDistance);
   maxDistMeter = nmToMeter(maxDistance);
@@ -145,10 +146,7 @@ QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
   if(sourceSqlModel->getColumnName(index.column()) == "distance")
   {
     if(role == Qt::DisplayRole)
-    {
-      float dist = meterToNm(buildPos(mapToSource(index).row()).distanceMeterTo(centerPos));
-      return QLocale().toString(dist, 'f', 1);
-    }
+      return Unit::distMeter(buildPos(mapToSource(index).row()).distanceMeterTo(centerPos), false);
     else if(role == Qt::TextAlignmentRole)
       return Qt::AlignRight;
   }

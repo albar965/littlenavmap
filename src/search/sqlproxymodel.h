@@ -64,7 +64,7 @@ public:
    * @param maxDistance maximum distance to center point in nautical miles
    */
   void setDistanceFilter(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                         int minDistance, int maxDistance);
+                         float minDistance, float maxDistance);
 
   /* Clear distance search and stop all filtering */
   void clearDistanceFilter();
@@ -93,7 +93,7 @@ private:
   SqlModel *sourceSqlModel = nullptr;
   atools::geo::Pos centerPos;
   sqlproxymodel::SearchDirection direction;
-  int minDistMeter = 0, maxDistMeter = 0;
+  float minDistMeter = 0.f, maxDistMeter = 0.f;
 
 };
 

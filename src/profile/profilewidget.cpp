@@ -25,6 +25,7 @@
 #include "common/symbolpainter.h"
 #include "route/routecontroller.h"
 #include "common/aircrafttrack.h"
+#include "common/unit.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 
@@ -177,6 +178,14 @@ void ProfileWidget::disconnectedFromSimulator()
   update();
 }
 
+float ProfileWidget::calcGroundBuffer(float maxElevation)
+{
+  float groundBuffer = Unit::rev(OptionData::instance().getRouteGroundBuffer(), Unit::altFeetF);
+  float roundBuffer = Unit::rev(500.f, Unit::altFeetF);
+
+  return std::ceil((maxElevation + groundBuffer) / roundBuffer) * roundBuffer;
+}
+
 /* Update all screen coordinates and scale factors */
 void ProfileWidget::updateScreenCoords()
 {
@@ -187,10 +196,11 @@ void ProfileWidget::updateScreenCoords()
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
-  minSafeAltitudeFt = std::ceil((legList.maxElevationFt +
-                                 OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
+  minSafeAltitudeFt = calcGroundBuffer(legList.maxElevationFt);
   flightplanAltFt =
-    static_cast<float>(routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude());
+    static_cast<float>(Unit::rev(
+                         routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude(),
+                         Unit::altFeetF));
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
   if(simData.getUserAircraft().getPosition().isValid() &&
@@ -282,12 +292,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   for(int wpx : waypointX)
     painter.drawLine(wpx, flightplanY, wpx, Y0 + h);
 
+  // Create a temporary scale based on current units
+  float tempScale = Unit::rev(verticalScale, Unit::altFeetF);
+
   // Find best scale for elevation lines
   int step = 10000;
   for(int s : SCALE_STEPS)
   {
     // Loop through all scale steps and check which one fits best
-    if(s * verticalScale > MIN_SCALE_SCREEN_DISTANCE)
+    if(s * tempScale > MIN_SCALE_SCREEN_DISTANCE)
     {
       step = s;
       break;
@@ -296,14 +309,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw elevation scale line and texts
   painter.setPen(mapcolors::profleElevationScalePen);
-  for(int i = Y0 + h, alt = 0; i > Y0; i -= step * verticalScale, alt += step)
+  for(int i = Y0 + h, alt = 0; i > Y0; i -= step * tempScale, alt += step)
   {
     painter.drawLine(X0, i, X0 + static_cast<int>(w), i);
 
-    symPainter.textBox(&painter, {QLocale().toString(alt)},
+    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
                        mapcolors::profleElevationScalePen, X0 - 8, i, textatt::BOLD | textatt::RIGHT, 0);
 
-    symPainter.textBox(&painter, {QLocale().toString(alt)},
+    symPainter.textBox(&painter, {QString::number(alt, 'f', 0)},
                        mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
@@ -397,7 +410,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw text lables
   // Departure altitude label
   float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
-  QString startAltStr = QLocale().toString(startAlt, 'f', 0) + tr(" ft");
+  QString startAltStr = Unit::altFeet(startAlt);
   symPainter.textBox(&painter, {startAltStr},
                      QPen(Qt::black), X0 - 8,
                      Y0 + static_cast<int>(h - startAlt * verticalScale),
@@ -405,20 +418,20 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Destination altitude label
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
-  QString destAltStr = QLocale().toString(destAlt, 'f', 0) + tr(" ft");
+  QString destAltStr = Unit::altFeet(destAlt);
   symPainter.textBox(&painter, {destAltStr},
                      QPen(Qt::black), X0 + w + 4,
                      Y0 + static_cast<int>(h - destAlt * verticalScale),
                      textatt::BOLD | textatt::LEFT, 255);
 
   // Safe altitude label
-  symPainter.textBox(&painter, {QLocale().toString(minSafeAltitudeFt, 'f', 0) + tr(" ft")},
+  symPainter.textBox(&painter, {Unit::altFeet(minSafeAltitudeFt)},
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
   // Route cruise altitude
-  QString routeAlt = QLocale().toString(
-    routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude()) + tr(" ft");
-  symPainter.textBox(&painter, {routeAlt},
+  float routeAlt = routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude();
+
+  symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
   if(!routeController->isFlightplanEmpty())
@@ -448,17 +461,21 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       font.setPointSizeF(defaultFontSize);
       painter.setFont(font);
 
+      int vspeed = atools::roundToInt(simData.getUserAircraft().getVerticalSpeedFeetPerMin());
       QString upDown;
-      if(simData.getUserAircraft().getVerticalSpeedFeetPerMin() > 100.f)
+      if(vspeed > 100.f)
         upDown = tr(" ▲");
-      else if(simData.getUserAircraft().getVerticalSpeedFeetPerMin() < -100.f)
+      else if(vspeed < -100.f)
         upDown = tr(" ▼");
 
       QStringList texts;
-      texts.append(QLocale().toString(simData.getUserAircraft().getPosition().getAltitude(), 'f',
-                                      0) + tr(" ft") + upDown);
-      texts.append(QLocale().toString(aircraftDistanceFromStart, 'f', 0) + tr(" nm ► ") +
-                   QLocale().toString(aircraftDistanceToDest, 'f', 0) + tr(" nm"));
+      texts.append(Unit::altFeet(simData.getUserAircraft().getPosition().getAltitude()));
+
+      if(vspeed > 10.f || vspeed < -10.f)
+        texts.append(Unit::speedVertFpm(vspeed) + upDown);
+
+      // texts.append(Unit::distNm(aircraftDistanceFromStart) + tr(" ► ") +
+      // Unit::distNm(aircraftDistanceToDest));
 
       textatt::TextAttributes att = textatt::BOLD;
       int textx = acx, texty = acy + 20;
@@ -782,8 +799,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   const atools::geo::Pos& pos = leg.elevation.first().interpolate(leg.elevation.last(), legdistpart / legdist);
 
   // Calculate min altitude for this leg
-  float maxElev =
-    std::ceil((leg.maxElevation + OptionData::instance().getRouteGroundBuffer()) / 500.f) * 500.f;
+  float maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get from/to text
   QString from = legList.routeMapObjects.at(index).getIdent();
@@ -792,11 +808,11 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   // Add text to upper dock window label
   mainWindow->getUi()->labelElevationInfo->setText(
     tr("<b>") + from + tr(" ► ") + to + tr("</b>, ") +
-    QLocale().toString(distance, 'f', distance < 100.f ? 1 : 0) + tr(" ► ") +
-    QLocale().toString(distanceToGo, 'f', distanceToGo < 100.f ? 1 : 0) + tr(" nm, ") +
-    tr(" Ground Altitude ") + QLocale().toString(alt, 'f', 0) + tr(" ft, ") +
-    tr(" Above Ground Altitude ") + QLocale().toString(flightplanAltFt - alt, 'f', 0) + tr(" ft, ") +
-    tr(" Leg Safe Altitude ") + QLocale().toString(maxElev, 'f', 0) + tr(" ft"));
+    Unit::distNm(distance) + tr(" ► ") +
+    Unit::distNm(distanceToGo) + tr(", ") +
+    tr(" Ground Altitude ") + Unit::altFeet(alt) +
+    tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - alt) + tr(", ") +
+    tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev));
 
   mouseEvent->accept();
 

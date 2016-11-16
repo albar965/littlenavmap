@@ -23,6 +23,7 @@
 #include "common/symbolpainter.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
+#include "common/unit.h"
 
 #include <marble/GeoPainter.h>
 
@@ -233,11 +234,12 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
-    texts.append(tr("IAS %1, GS %2, HDG %3°M").
-                 arg(QLocale().toString(aircraft.getIndicatedSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(aircraft.getGroundSpeedKts(), 'f', 0)).
-                 arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+    texts.append(tr("IAS %1, GS %2").
+                 arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())).
+                 arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
   }
+
+  texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
 
   if(!aircraft.isOnGround())
   {
@@ -247,8 +249,7 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
     else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
       upDown = tr(" ▼");
 
-    texts.append(tr("ALT %1 ft%2").
-                 arg(QLocale().toString(aircraft.getPosition().getAltitude(), 'f', 0)).arg(upDown));
+    texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
   }
 
   const SimConnectUserAircraft *userAircraft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
@@ -258,7 +259,7 @@ void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, f
                  arg(QLocale().toString(atools::geo::normalizeCourse(
                                           userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg()),
                                         'f', 0)).
-                 arg(QLocale().toString(userAircraft->getWindSpeedKts(), 'f', 0)));
+                 arg(Unit::speedKts(userAircraft->getWindSpeedKts())));
   }
 
   textatt::TextAttributes atts(textatt::BOLD);

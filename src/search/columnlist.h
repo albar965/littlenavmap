@@ -105,8 +105,11 @@ public:
     return idColumn;
   }
 
+  void updateUnits();
+
 private:
   QSpinBox *minDistanceWidget = nullptr, *maxDistanceWidget = nullptr;
+  QString minDistanceWidgetSuffix, maxDistanceWidgetSuffix;
   QCheckBox *distanceCheckBox = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
   QString table, idColumn;

@@ -27,6 +27,7 @@
 #include "gui/widgettools.h"
 #include "gui/widgetstate.h"
 #include "common/mapcolors.h"
+#include "common/unit.h"
 #include "atools.h"
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
@@ -99,7 +100,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("nav_search_id").hidden()).
-  append(Column("distance", tr("Distance\nnm")).distanceCol()).
+  append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
 
@@ -111,9 +112,10 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
   append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).
   append(Column("frequency", tr("Frequency\nkHz/MHz"))).
-  append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\nnm")).filter().condition(">")).
+  append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
+         filter().condition(">").convertFunc(Unit::distNmF)).
   append(Column("mag_var", tr("Mag\nVar°"))).
-  append(Column("altitude", tr("Altitude\nft"))).
+  append(Column("altitude", tr("Altitude\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery Path")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("BGL File")).filter()).
   append(Column("waypoint_num_victor_airway").hidden()).
@@ -265,6 +267,10 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
     return maptypes::navName(displayRoleValue.toString());
   else if(col->getColumnName() == "name")
     return atools::capString(displayRoleValue.toString());
+  else if(col->getColumnName() == "range")
+    return Unit::distNm(displayRoleValue.toFloat(), false);
+  else if(col->getColumnName() == "altitude")
+    return Unit::altFeet(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "frequency" && !displayRoleValue.isNull())
   {
     double freq = displayRoleValue.toDouble();

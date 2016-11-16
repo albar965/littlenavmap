@@ -86,6 +86,7 @@ private:
   void testWeatherNoaaUrlClicked();
   void testWeatherVatsimUrlClicked();
   void testWeatherUrl(const QString& url);
+  void updateWidgetUnits();
 
   QVector<int> ringStrToVector(const QString& string) const;
 
@@ -95,6 +96,9 @@ private:
 
   // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
+
+  QString doubleSpinBoxOptionsMapZoomShowMapSuffix, spinBoxOptionsRouteGroundBufferSuffix,
+          labelOptionsMapRangeRingsText;
 
 };
 
