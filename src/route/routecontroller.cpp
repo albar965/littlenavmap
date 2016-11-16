@@ -908,7 +908,7 @@ void RouteController::doubleClick(const QModelIndex& index)
     if(mo.getMapObjectType() == maptypes::AIRPORT)
       emit showRect(mo.getAirport().bounding);
     else
-      emit showPos(mo.getPosition(), -1);
+      emit showPos(mo.getPosition(), 0.f);
 
     maptypes::MapSearchResult result;
     query->getMapObjectById(result, mo.getMapObjectType(), mo.getId());
@@ -966,7 +966,7 @@ void RouteController::showOnMapMenu()
     if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
       emit showRect(routeMapObject.getAirport().bounding);
     else
-      emit showPos(routeMapObject.getPosition(), -1);
+      emit showPos(routeMapObject.getPosition(), 0.f);
 
     if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
       mainWindow->setStatusMessage(tr("Showing airport on map."));

@@ -50,6 +50,7 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 const int SYMBOL_SIZE = 20;
+const float HELIPAD_ZOOM_METER = 200.f;
 
 Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
 Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
@@ -488,6 +489,43 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
     }
     else
       html.p(tr("Airport has no runways."));
+
+    const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
+
+    if(heliVector != nullptr)
+    {
+      for(const SqlRecord& heliRec : *heliVector)
+      {
+        bool closed = heliRec.valueBool("is_closed");
+        bool hasStart = !heliRec.isNull("start_number");
+        QString num = hasStart ? " " + QString::number(heliRec.valueInt("start_number")) : tr(
+          " (No Start Position)");
+
+        html.h3(tr("Helipad%1").arg(num), closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE);
+        html.nbsp().nbsp();
+
+        atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
+
+        html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
+               arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER))).br();
+
+        if(closed)
+          html.text(tr("Is Closed"));
+        html.table();
+
+        html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) +
+                  tr(" x ") +
+                  Unit::distShortFeet(heliRec.valueFloat("length")));
+        html.row2(tr("Surface:"), maptypes::surfaceName(heliRec.valueStr("surface")) +
+                  (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
+        html.row2(tr("Type:"), atools::capString(heliRec.valueStr("type")));
+        html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(heliRec.valueFloat("heading"), 'f', 0)));
+        html.row2(tr("Altitude:"), Unit::altFeet(heliRec.valueFloat("altitude")));
+
+        addCoordinates(&heliRec, html);
+        html.tableEnd();
+      }
+    }
   }
 }
 
@@ -570,6 +608,19 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
 
     html.tableEnd();
   }
+}
+
+void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
+{
+  QString num = helipad.start != -1 ? " " + QString::number(helipad.start) :
+                tr(" (No Start Position)");
+
+  head(html, tr("Helipad%1:").arg(num));
+  html.brText(tr("Surface: ") + maptypes::surfaceName(helipad.surface));
+  html.brText(tr("Type: ") + helipad.type);
+  html.brText(Unit::distShortFeet(std::max(helipad.width, helipad.length)));
+  if(helipad.closed)
+    html.brText(tr("Is Closed"));
 }
 
 void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
@@ -845,16 +896,6 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
     html.brText(tr("Has Jetway"));
   if(!parking.airlineCodes.isEmpty())
     html.brText(tr("Airline Codes: ") + parking.airlineCodes);
-}
-
-void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
-{
-  head(html, tr("Helipad:"));
-  html.brText(tr("Surface: ") + maptypes::surfaceName(helipad.surface));
-  html.brText(tr("Type: ") + helipad.type);
-  html.brText(Unit::distShortFeet(helipad.width));
-  if(helipad.closed)
-    html.brText(tr("Is Closed"));
 }
 
 void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const

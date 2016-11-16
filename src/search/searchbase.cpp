@@ -505,7 +505,7 @@ void SearchBase::doubleClick(const QModelIndex& index)
     {
       atools::geo::Pos p(controller->getRawData(row, "lonx").toFloat(),
                          controller->getRawData(row, "laty").toFloat());
-      emit showPos(p, -1);
+      emit showPos(p, 0.f);
     }
 
     // Show on information panel
@@ -726,11 +726,11 @@ void SearchBase::showOnMapTriggered()
       else
       {
         if(!result.vors.isEmpty())
-          emit showPos(result.vors.first().getPosition(), -1);
+          emit showPos(result.vors.first().getPosition(), 0.f);
         else if(!result.ndbs.isEmpty())
-          emit showPos(result.ndbs.first().getPosition(), -1);
+          emit showPos(result.ndbs.first().getPosition(), 0.f);
         else if(!result.waypoints.isEmpty())
-          emit showPos(result.waypoints.first().getPosition(), -1);
+          emit showPos(result.waypoints.first().getPosition(), 0.f);
         mainWindow->setStatusMessage(tr("Showing navaid on map."));
       }
     }

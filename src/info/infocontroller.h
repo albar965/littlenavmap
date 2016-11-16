@@ -91,7 +91,7 @@ public:
 
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
-  void showPos(const atools::geo::Pos& pos, int zoom);
+  void showPos(const atools::geo::Pos& pos, float zoom);
   void showRect(const atools::geo::Rect& rect);
 
 private:

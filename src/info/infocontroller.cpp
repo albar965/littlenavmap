@@ -89,8 +89,12 @@ void InfoController::anchorClicked(const QUrl& url)
 
     if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
     {
+      float zoom = 0.f;
+      if(query.hasQueryItem("zoom"))
+        zoom = query.queryItemValue("zoom").toFloat();
+
       emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
-                                    query.queryItemValue("laty").toFloat()), -1);
+                                    query.queryItemValue("laty").toFloat()), zoom);
     }
     else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
     {

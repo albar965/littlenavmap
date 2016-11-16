@@ -292,7 +292,7 @@ struct MapHelipad
 {
   QString surface, type;
   atools::geo::Pos position;
-  int length, width, heading;
+  int length, width, heading, start;
   bool closed, transparent;
 
   const atools::geo::Pos& getPosition() const

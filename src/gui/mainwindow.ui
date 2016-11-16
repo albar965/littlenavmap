@@ -2230,7 +2230,7 @@
        </widget>
        <widget class="QWidget" name="tabRunwayInfo">
         <attribute name="title">
-         <string>Runways</string>
+         <string>Runways/Helipads</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <property name="spacing">

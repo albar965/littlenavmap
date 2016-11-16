@@ -834,7 +834,13 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
       // TODO should be moved to MapTypesFactory
       maptypes::MapHelipad hp;
 
-      hp.position = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat()),
+      hp.position = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat());
+
+      if(helipadQuery->isNull("start_number"))
+        hp.start = -1;
+      else
+        hp.start = helipadQuery->value("start_number").toInt();
+
       hp.width = helipadQuery->value("width").toInt();
       hp.length = helipadQuery->value("length").toInt();
       hp.heading = static_cast<int>(std::roundf(helipadQuery->value("heading").toFloat()));
@@ -1111,8 +1117,11 @@ void MapQuery::initQueries()
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
-    "select surface, type, length, width, heading, is_transparent, is_closed, lonx, laty "
-    "from helipad where airport_id = :airportId");
+    "select h.surface, h.type, h.length, h.width, h.heading, h.is_transparent, h.is_closed, h.lonx, h.laty, "
+    " s.number as start_number "
+    " from helipad h "
+    " left outer join start s on s.start_id = h.start_id "
+    " where h.airport_id = :airportId");
 
   taxiparthQuery = new SqlQuery(db);
   taxiparthQuery->prepare(

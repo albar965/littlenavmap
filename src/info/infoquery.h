@@ -70,6 +70,9 @@ public:
   /* Get record for table runway_end */
   const atools::sql::SqlRecord *getRunwayEndInformation(int runwayEndId);
 
+  const atools::sql::SqlRecordVector *getHelipadInformation(int airportId);
+  const atools::sql::SqlRecordVector *getStartInformation(int airportId);
+
   /* Get record for table ils for an runway end */
   const atools::sql::SqlRecord *getIlsInformation(int runwayEndId);
 
@@ -95,15 +98,17 @@ private:
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache,
                                       runwayEndCache, ilsCache;
-  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, approachCache, transitionCache;
+  QCache<int,
+         atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
+                                       transitionCache;
 
   atools::sql::SqlDatabase *db;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
   *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
-  *runwayQuery = nullptr, *runwayEndQuery = nullptr, *ilsQuery = nullptr,
-  *airwayWaypointQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
+  *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr,
+  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
 
 };
 

@@ -60,6 +60,16 @@ const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
   return cachedRecordVector(runwayCache, runwayQuery, airportId);
 }
 
+const SqlRecordVector *InfoQuery::getHelipadInformation(int airportId)
+{
+  return cachedRecordVector(helipadCache, helipadQuery, airportId);
+}
+
+const SqlRecordVector *InfoQuery::getStartInformation(int airportId)
+{
+  return cachedRecordVector(startCache, startQuery, airportId);
+}
+
 const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)
 {
   return cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
@@ -210,6 +220,14 @@ void InfoQuery::initQueries()
   runwayEndQuery = new SqlQuery(db);
   runwayEndQuery->prepare("select * from runway_end where runway_end_id = :id");
 
+  helipadQuery = new SqlQuery(db);
+  helipadQuery->prepare("select h.*, s.number as start_number from helipad h "
+                        " left outer join start s on s.start_id= h.start_id "
+                        " where h.airport_id = :id");
+
+  startQuery = new SqlQuery(db);
+  startQuery->prepare("select * from start where airport_id = :id");
+
   ilsQuery = new SqlQuery(db);
   ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
 
@@ -265,6 +283,12 @@ void InfoQuery::deInitQueries()
 
   delete runwayQuery;
   runwayQuery = nullptr;
+
+  delete helipadQuery;
+  helipadQuery = nullptr;
+
+  delete startQuery;
+  startQuery = nullptr;
 
   delete runwayEndQuery;
   runwayEndQuery = nullptr;

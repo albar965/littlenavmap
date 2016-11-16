@@ -471,13 +471,17 @@ void MapWidget::showSavedPosOnStartup()
   }
 }
 
-void MapWidget::showPos(const atools::geo::Pos& pos)
+void MapWidget::showPos(const atools::geo::Pos& pos, float zoom)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
   showAircraft(false);
 
-  float dst = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+  float dst = zoom;
+
+  if(dst == 0.f)
+    dst = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+
   setDistance(dst);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
@@ -492,7 +496,7 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
            << "h" << QString::number(rect.getHeightDegree(), 'f');
 
   if(rect.isPoint(POS_IS_POINT_EPSILON))
-    showPos(rect.getTopLeft());
+    showPos(rect.getTopLeft(), 0.f);
   else
   {
     centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
@@ -1827,12 +1831,12 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
-    showPos(mapSearchResult.userAircraft.getPosition());
+    showPos(mapSearchResult.userAircraft.getPosition(), 0.f);
     mainWindow->setStatusMessage(QString(tr("Showing user aircraft on map.")));
   }
   else if(!mapSearchResult.aiAircraft.isEmpty())
   {
-    showPos(mapSearchResult.aiAircraft.first().getPosition());
+    showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f);
     mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
@@ -1843,13 +1847,13 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   else
   {
     if(!mapSearchResult.vors.isEmpty())
-      showPos(mapSearchResult.vors.first().position);
+      showPos(mapSearchResult.vors.first().position, 0.f);
     else if(!mapSearchResult.ndbs.isEmpty())
-      showPos(mapSearchResult.ndbs.first().position);
+      showPos(mapSearchResult.ndbs.first().position, 0.f);
     else if(!mapSearchResult.waypoints.isEmpty())
-      showPos(mapSearchResult.waypoints.first().position);
+      showPos(mapSearchResult.waypoints.first().position, 0.f);
     else if(!mapSearchResult.userPoints.isEmpty())
-      showPos(mapSearchResult.userPoints.first().position);
+      showPos(mapSearchResult.userPoints.first().position, 0.f);
     mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
 }

@@ -93,6 +93,10 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
   directionDeg = atools::geo::normalizeCourse(directionDeg);
 
   int octant = static_cast<int>(directionDeg / 45);
+
+  octant = std::max(octant, scales.size() - 2);
+  octant = std::min(octant, 0);
+
   int lowerDeg = octant * 45;
   int upperDeg = (octant + 1) * 45;
   float lowerScale = scales.at(octant);

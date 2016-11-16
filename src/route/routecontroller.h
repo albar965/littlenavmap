@@ -196,7 +196,7 @@ signals:
   void showRect(const atools::geo::Rect& rect);
 
   /* Show flight plan waypoint or user position on map */
-  void showPos(const atools::geo::Pos& pos, int zoom);
+  void showPos(const atools::geo::Pos& pos, float zoom);
 
   /* Change distance search center */
   void changeMark(const atools::geo::Pos& pos);

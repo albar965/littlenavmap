@@ -25,7 +25,6 @@
 
 #include <QPushButton>
 
-
 ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
                              const maptypes::MapAirport& departureAirport)
   : QDialog(parent), ui(new Ui::ParkingDialog)
@@ -109,7 +108,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 
         QString text = tr("%1 %2 %3").
                        arg(atools::capString(startPos.start.type)).
-                       arg(startPos.start.runwayName).
+                       arg(startPos.start.helipadNumber == 0 ? startPos.start.runwayName : QString()).
                        arg(number);
 
         new QListWidgetItem(mapcolors::iconForStartType(
