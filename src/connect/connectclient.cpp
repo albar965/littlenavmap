@@ -32,28 +32,33 @@
 #include <QApplication>
 #include <QThread>
 
+using atools::fs::sc::DataReaderThread;
+
 ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   dialog = new ConnectDialog(mainWindow);
-  dataReader = new atools::fs::sc::DataReaderThread(mainWindow, false);
 
-  dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
+  if(DataReaderThread::isSimconnectAvailable())
+  {
+    dataReader = new DataReaderThread(mainWindow, false);
+    dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
 
-  connect(dataReader, &atools::fs::sc::DataReaderThread::postSimConnectData, this,
-          &ConnectClient::postSimConnectData);
-  connect(dataReader, &atools::fs::sc::DataReaderThread::postLogMessage, this,
-          &ConnectClient::postLogMessage);
+    connect(dataReader, &DataReaderThread::postSimConnectData, this,
+            &ConnectClient::postSimConnectData);
+    connect(dataReader, &DataReaderThread::postLogMessage, this,
+            &ConnectClient::postLogMessage);
 
-  connect(dataReader, &atools::fs::sc::DataReaderThread::connectedToSimulator, this,
-          &ConnectClient::connectedToSimulatorDirect);
-  connect(dataReader, &atools::fs::sc::DataReaderThread::disconnectedFromSimulator, this,
-          &ConnectClient::disconnectedFromSimulatorDirect);
+    connect(dataReader, &DataReaderThread::connectedToSimulator, this,
+            &ConnectClient::connectedToSimulatorDirect);
+    connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
+            &ConnectClient::disconnectedFromSimulatorDirect);
+    connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader,
+            &DataReaderThread::setUpdateRate);
+  }
 
   connect(dialog, &ConnectDialog::disconnectClicked, this, &ConnectClient::disconnectClicked);
   connect(dialog, &ConnectDialog::autoConnectToggled, this, &ConnectClient::autoConnectToggled);
-  connect(dialog, &ConnectDialog::directUpdateRateChanged, dataReader,
-          &atools::fs::sc::DataReaderThread::setUpdateRate);
 
   reconnectNetworkTimer.setSingleShot(true);
   connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternal);
@@ -65,10 +70,13 @@ ConnectClient::~ConnectClient()
   reconnectNetworkTimer.stop();
   closeSocket(false);
 
-  dataReader->setTerminate();
-  dataReader->wait();
+  if(dataReader != nullptr)
+  {
+    dataReader->setTerminate();
+    dataReader->wait();
+    delete dataReader;
+  }
 
-  delete dataReader;
   delete dialog;
 }
 
@@ -85,9 +93,12 @@ void ConnectClient::connectToServerDialog()
     silent = false;
     closeSocket(false);
 
-    dataReader->setTerminate(true);
-    dataReader->wait();
-    dataReader->setTerminate(false);
+    if(dataReader != nullptr)
+    {
+      dataReader->setTerminate(true);
+      dataReader->wait();
+      dataReader->setTerminate(false);
+    }
 
     connectInternal();
   }
@@ -149,7 +160,8 @@ void ConnectClient::restoreState()
 {
   dialog->restoreState();
 
-  dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
+  if(dataReader != nullptr)
+    dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
 }
 
 void ConnectClient::autoConnectToggled(bool state)
@@ -158,13 +170,16 @@ void ConnectClient::autoConnectToggled(bool state)
   {
     reconnectNetworkTimer.stop();
 
-    if(dataReader->isReconnecting())
+    if(dataReader != nullptr)
     {
-      qDebug() << "Stopping reconnect";
-      dataReader->setTerminate(true);
-      dataReader->wait();
-      dataReader->setTerminate(false);
-      qDebug() << "Stopping reconnect done";
+      if(dataReader->isReconnecting())
+      {
+        qDebug() << "Stopping reconnect";
+        dataReader->setTerminate(true);
+        dataReader->wait();
+        dataReader->setTerminate(false);
+        qDebug() << "Stopping reconnect done";
+      }
     }
   }
 }
@@ -172,14 +187,18 @@ void ConnectClient::autoConnectToggled(bool state)
 /* Called by signal ConnectDialog::disconnectClicked */
 void ConnectClient::disconnectClicked()
 {
-  if(dataReader->isConnected())
-    // Tell disconnectedFromSimulatorDirect not to reconnect
-    manualDisconnect = true;
+  if(dataReader != nullptr)
+    if(dataReader->isConnected())
+      // Tell disconnectedFromSimulatorDirect not to reconnect
+      manualDisconnect = true;
   reconnectNetworkTimer.stop();
 
-  dataReader->setTerminate(true);
-  dataReader->wait();
-  dataReader->setTerminate(false);
+  if(dataReader != nullptr)
+  {
+    dataReader->setTerminate(true);
+    dataReader->wait();
+    dataReader->setTerminate(false);
+  }
 
   // Close but do not allow reconnect if auto is on
   closeSocket(false);
@@ -191,7 +210,8 @@ void ConnectClient::connectInternal()
   {
     qDebug() << "Starting direct connection";
     // Datareader has its own reconnect mechanism
-    dataReader->start();
+    if(dataReader != nullptr)
+      dataReader->start();
 
     mainWindow->setConnectionStatusMessageText(tr("Connecting..."),
                                                tr("Trying to connect to local flight simulator."));
@@ -220,7 +240,10 @@ void ConnectClient::connectInternal()
 
 bool ConnectClient::isConnected() const
 {
-  return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
+  if(dataReader != nullptr)
+    return (socket != nullptr && socket->isOpen()) || dataReader->isConnected();
+  else
+    return socket != nullptr && socket->isOpen();
 }
 
 /* Called by signal QAbstractSocket::error */

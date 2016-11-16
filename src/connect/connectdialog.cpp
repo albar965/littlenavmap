@@ -22,6 +22,7 @@
 #include "gui/helphandler.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
+#include "fs/sc/datareaderthread.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -123,6 +124,14 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
+  bool scAvailable = atools::fs::sc::DataReaderThread::isSimconnectAvailable();
+
+  if(!scAvailable)
+  {
+    ui->radioButtonConnectRemote->setChecked(true);
+    ui->radioButtonConnectDirect->setDisabled(true);
+  }
+
   ui->pushButtonConnectDeleteHostname->setEnabled(
     ui->comboBoxConnectHostname->count() > 0 && ui->radioButtonConnectRemote->isChecked());
 
