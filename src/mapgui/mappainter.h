@@ -55,15 +55,52 @@ struct PaintContext
   maptypes::MapObjectTypes objectTypes; /* Object types that should be drawn */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
-  QFont defaultFont /* Default widget font */,
-        defaultFontScaled /* Default widget font scaled by option settings */;
-  float symbolScale = 1.0f; /* Symbol size scale factor */
+  QFont defaultFont /* Default widget font */;
+
+  float textSizeAircraftAi = 1.f;
+  float symbolSizeNavaid = 1.f;
+  float thicknessFlightplan = 1.f;
+  float textSizeNavaid = 1.f;
+  float symbolSizeAirport = 1.f;
+  float symbolSizeAircraftAi = 1.f;
+  float textSizeFlightplan = 1.f;
+  float textSizeAircraftUser = 1.f;
+  float symbolSizeAircraftUser = 1.f;
+  float textSizeAirport = 1.f;
+  float thicknessTrail = 1.f;
 
   /* Calculate real symbol size */
-  int symSize(int size) const
+  int sz(float scale, int size) const
   {
-    return static_cast<int>(std::round(symbolScale * size));
+    return static_cast<int>(std::round(scale * size));
   }
+
+  int sz(float scale, float size) const
+  {
+    return static_cast<int>(std::round(scale * size));
+  }
+
+  int sz(float scale, double size) const
+  {
+    return static_cast<int>(std::round(scale * size));
+  }
+
+  float szF(float scale, int size) const
+  {
+    return scale * size;
+  }
+
+  float szF(float scale, float size) const
+  {
+    return scale * size;
+  }
+
+  float szF(float scale, double size) const
+  {
+    return scale * size;
+  }
+
+  void szFont(float scale) const;
 
 };
 

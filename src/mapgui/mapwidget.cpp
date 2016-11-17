@@ -450,14 +450,19 @@ void MapWidget::mainWindowShown()
 
 void MapWidget::showSavedPosOnStartup()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_HOME)
+  const MapPosHistoryEntry& currentPos = history.current();
+
+  if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
+  {
+    if(!mainWindow->getRouteController()->isFlightplanEmpty())
+      showRect(mainWindow->getRouteController()->getBoundingRect(), false);
+    else
+      showHome();
+  }
+  else if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_HOME)
     showHome();
   else if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_LAST)
   {
-    const MapPosHistoryEntry& currentPos = history.current();
-
-    hideTooltip();
-
     if(currentPos.isValid())
     {
       centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
@@ -471,7 +476,7 @@ void MapWidget::showSavedPosOnStartup()
   }
 }
 
-void MapWidget::showPos(const atools::geo::Pos& pos, float zoom)
+void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick)
 {
   qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
@@ -480,13 +485,15 @@ void MapWidget::showPos(const atools::geo::Pos& pos, float zoom)
   float dst = zoom;
 
   if(dst == 0.f)
-    dst = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+    dst = atools::geo::nmToKm(Unit::rev(doubleClick ?
+                                        OptionData::instance().getMapZoomShowClick() :
+                                        OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
   setDistance(dst);
   centerOn(pos.getLonX(), pos.getLatY(), false);
 }
 
-void MapWidget::showRect(const atools::geo::Rect& rect)
+void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 {
   qDebug() << "NavMapWidget::showRect" << rect;
   hideTooltip();
@@ -496,12 +503,14 @@ void MapWidget::showRect(const atools::geo::Rect& rect)
            << "h" << QString::number(rect.getHeightDegree(), 'f');
 
   if(rect.isPoint(POS_IS_POINT_EPSILON))
-    showPos(rect.getTopLeft(), 0.f);
+    showPos(rect.getTopLeft(), 0.f, doubleClick);
   else
   {
     centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
                               GeoDataCoordinates::Degree), false);
-    float dist = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF));
+    float dist = atools::geo::nmToKm(Unit::rev(doubleClick ?
+                                               OptionData::instance().getMapZoomShowClick() :
+                                               OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
     if(distance() < dist)
       setDistance(dist);
   }
@@ -516,7 +525,7 @@ void MapWidget::showSearchMark()
 
   if(searchMarkPos.isValid())
   {
-    setDistance(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShow(), Unit::distNmF)));
+    setDistance(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
     centerOn(searchMarkPos.getLonX(), searchMarkPos.getLatY(), false);
     mainWindow->setStatusMessage(tr("Showing distance search center."));
   }
@@ -673,7 +682,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
         QRect widgetRect = rect();
         widgetRect.adjust(dx, dy, -dx, -dy);
 
-        if(!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE)
+        if((!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE) ||
+           (OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY))
           centerOn(userAircraft.getPosition().getLonX(),
                    userAircraft.getPosition().getLatY(), false);
         else
@@ -1831,29 +1841,29 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
-    showPos(mapSearchResult.userAircraft.getPosition(), 0.f);
+    showPos(mapSearchResult.userAircraft.getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing user aircraft on map.")));
   }
   else if(!mapSearchResult.aiAircraft.isEmpty())
   {
-    showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f);
+    showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {
-    showRect(mapSearchResult.airports.first().bounding);
+    showRect(mapSearchResult.airports.first().bounding, true);
     mainWindow->setStatusMessage(QString(tr("Showing airport on map.")));
   }
   else
   {
     if(!mapSearchResult.vors.isEmpty())
-      showPos(mapSearchResult.vors.first().position, 0.f);
+      showPos(mapSearchResult.vors.first().position, 0.f, true);
     else if(!mapSearchResult.ndbs.isEmpty())
-      showPos(mapSearchResult.ndbs.first().position, 0.f);
+      showPos(mapSearchResult.ndbs.first().position, 0.f, true);
     else if(!mapSearchResult.waypoints.isEmpty())
-      showPos(mapSearchResult.waypoints.first().position, 0.f);
+      showPos(mapSearchResult.waypoints.first().position, 0.f, true);
     else if(!mapSearchResult.userPoints.isEmpty())
-      showPos(mapSearchResult.userPoints.first().position, 0.f);
+      showPos(mapSearchResult.userPoints.first().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing navaid on map.")));
   }
 }

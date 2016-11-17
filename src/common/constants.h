@@ -81,6 +81,8 @@ const QString OPTIONS_DIALOG_AS_FILE_DLG = "OptionsDialog/WeatherFileDialogAsn";
 const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
 const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
 const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
+const QString OPTIONS_DIALOG_FLIGHTPLAN_COLOR = "OptionsDialog/FlightplanColor";
+const QString OPTIONS_DIALOG_TRAIL_COLOR = "OptionsDialog/TrailColor";
 
 /* Other options that are only accessible in the configuration file */
 const QString OPTIONS_LANGUAGE = "Options/Language";

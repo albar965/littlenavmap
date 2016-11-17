@@ -264,12 +264,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       // Copy default font
       context.defaultFont = painter->font();
       context.defaultFont.setBold(true);
-
-      // Create a scaled font from options
-      context.defaultFontScaled = context.defaultFont;
-      context.defaultFontScaled.setPointSizeF(context.defaultFontScaled.pointSizeF() *
-                                              OptionData::instance().getMapTextSize() / 100.f);
-      painter->setFont(context.defaultFontScaled);
+      painter->setFont(context.defaultFont);
 
       const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
       context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
@@ -277,7 +272,17 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                                                box.east(GeoDataCoordinates::Degree),
                                                box.south(GeoDataCoordinates::Degree));
 
-      context.symbolScale = OptionData::instance().getMapSymbolSize() / 100.f;
+      context.symbolSizeAircraftAi = OptionData::instance().getDisplaySymbolSizeAircraftAi() / 100.f;
+      context.symbolSizeAircraftUser = OptionData::instance().getDisplaySymbolSizeAircraftUser() / 100.f;
+      context.symbolSizeAirport = OptionData::instance().getDisplaySymbolSizeAirport() / 100.f;
+      context.symbolSizeNavaid = OptionData::instance().getDisplaySymbolSizeNavaid() / 100.f;
+      context.textSizeAircraftAi = OptionData::instance().getDisplayTextSizeAircraftAi() / 100.f;
+      context.textSizeAircraftUser = OptionData::instance().getDisplayTextSizeAircraftUser() / 100.f;
+      context.textSizeAirport = OptionData::instance().getDisplayTextSizeAirport() / 100.f;
+      context.textSizeFlightplan = OptionData::instance().getDisplayTextSizeFlightplan() / 100.f;
+      context.textSizeNavaid = OptionData::instance().getDisplayTextSizeNavaid() / 100.f;
+      context.thicknessFlightplan = OptionData::instance().getDisplayThicknessFlightplan() / 100.f;
+      context.thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
 
       if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
       {

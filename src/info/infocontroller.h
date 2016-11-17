@@ -91,8 +91,8 @@ public:
 
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
-  void showPos(const atools::geo::Pos& pos, float zoom);
-  void showRect(const atools::geo::Rect& rect);
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
+  void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
 private:
   /* Do not update aircraft information more than every 0.5 seconds */

@@ -87,8 +87,13 @@ private:
   void testWeatherVatsimUrlClicked();
   void testWeatherUrl(const QString& url);
   void updateWidgetUnits();
+  void simUpdatesConstantClicked(bool state);
+  void flightplanColorClicked();
+  void trailColorClicked();
 
   QVector<int> ringStrToVector(const QString& string) const;
+
+  QColor flightplanColor, trailColor;
 
   Ui::Options *ui;
   MainWindow *mainWindow;
@@ -97,8 +102,8 @@ private:
   // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
 
-  QString doubleSpinBoxOptionsMapZoomShowMapSuffix, spinBoxOptionsRouteGroundBufferSuffix,
-          labelOptionsMapRangeRingsText;
+  QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
+          spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText;
 
 };
 

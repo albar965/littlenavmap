@@ -94,21 +94,21 @@ void InfoController::anchorClicked(const QUrl& url)
         zoom = query.queryItemValue("zoom").toFloat();
 
       emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
-                                    query.queryItemValue("laty").toFloat()), zoom);
+                                    query.queryItemValue("laty").toFloat()), zoom, false);
     }
     else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
     {
       // Only airport used for id variable
       maptypes::MapAirport airport;
       mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
-      emit showRect(airport.bounding);
+      emit showRect(airport.bounding, false);
     }
     else if(query.hasQueryItem("airport"))
     {
       // Airport ident
       maptypes::MapAirport airport;
       mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
-      emit showRect(airport.bounding);
+      emit showRect(airport.bounding, false);
     }
   }
 }
@@ -531,6 +531,7 @@ void InfoController::updateTextEditFontSizes()
   sizePercent = OptionData::instance().getGuiInfoSimSize();
   setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserAircraftProgressInfo, simInfoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserAircraftAiInfo, simInfoFontPtSize, sizePercent);
 }
 
 /* Set font size in text edit based on percent of original size */

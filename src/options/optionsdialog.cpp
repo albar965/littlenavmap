@@ -32,6 +32,7 @@
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QDesktopServices>
+#include <QColorDialog>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -131,15 +132,15 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->lineEditOptionsWeatherVatsimUrl);
   widgets.append(ui->listWidgetOptionsDatabaseAddon);
   widgets.append(ui->listWidgetOptionsDatabaseExclude);
-  widgets.append(ui->radioButtonOptionsMapScrollFull);
-  widgets.append(ui->radioButtonOptionsMapScrollNone);
-  widgets.append(ui->radioButtonOptionsMapScrollNormal);
+  widgets.append(ui->comboBoxMapScrollDetails);
   widgets.append(ui->radioButtonOptionsSimUpdateFast);
   widgets.append(ui->radioButtonOptionsSimUpdateLow);
   widgets.append(ui->radioButtonOptionsSimUpdateMedium);
+  widgets.append(ui->checkBoxOptionsSimUpdatesConstant);
   widgets.append(ui->spinBoxOptionsSimUpdateBox);
   widgets.append(ui->radioButtonOptionsStartupShowHome);
   widgets.append(ui->radioButtonOptionsStartupShowLast);
+  widgets.append(ui->radioButtonOptionsStartupShowFlightplan);
   widgets.append(ui->spinBoxOptionsCacheDiskSize);
   widgets.append(ui->spinBoxOptionsCacheMemorySize);
   widgets.append(ui->spinBoxOptionsGuiInfoText);
@@ -147,11 +148,23 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsGuiSearchText);
   widgets.append(ui->spinBoxOptionsGuiSimInfoText);
   widgets.append(ui->spinBoxOptionsMapClickRect);
-  widgets.append(ui->spinBoxOptionsMapSymbolSize);
-  widgets.append(ui->spinBoxOptionsMapTextSize);
   widgets.append(ui->spinBoxOptionsMapTooltipRect);
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
+  widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMapMenu);
   widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
+
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftAi);
+  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeNavaid);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeNavaid);
+  widgets.append(ui->spinBoxOptionsDisplayThicknessFlightplan);
+  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAirport);
+  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAircraftAi);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeFlightplan);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftUser);
+  widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAircraftUser);
+  widgets.append(ui->spinBoxOptionsDisplayTextSizeAirport);
+  widgets.append(ui->spinBoxOptionsDisplayThicknessTrail);
+  widgets.append(ui->comboBoxOptionsDisplayTrailType);
 
   widgets.append(ui->comboBoxOptionsUnitDistance);
   widgets.append(ui->comboBoxOptionsUnitAlt);
@@ -162,6 +175,8 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->comboBoxOptionsUnitFuelWeight);
 
   doubleSpinBoxOptionsMapZoomShowMapSuffix = ui->doubleSpinBoxOptionsMapZoomShowMap->suffix();
+  doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
+
   spinBoxOptionsRouteGroundBufferSuffix = ui->spinBoxOptionsRouteGroundBuffer->suffix();
   labelOptionsMapRangeRingsText = ui->labelOptionsMapRangeRings->text();
 
@@ -212,6 +227,14 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
           this, &OptionsDialog::testWeatherNoaaUrlClicked);
   connect(ui->pushButtonOptionsWeatherVatsimTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherVatsimUrlClicked);
+
+  connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled,
+          this, &OptionsDialog::simUpdatesConstantClicked);
+
+  connect(ui->pushButtonOptionsDisplayFlightplanColor, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanColorClicked);
+  connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked,
+          this, &OptionsDialog::trailColorClicked);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -234,6 +257,8 @@ void OptionsDialog::updateWidgetUnits()
 {
   ui->doubleSpinBoxOptionsMapZoomShowMap->setSuffix(
     Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapSuffix));
+  ui->doubleSpinBoxOptionsMapZoomShowMapMenu->setSuffix(
+    Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapMenuSuffix));
   ui->spinBoxOptionsRouteGroundBuffer->setSuffix(
     Unit::replacePlaceholders(spinBoxOptionsRouteGroundBufferSuffix));
   ui->labelOptionsMapRangeRings->setText(
@@ -310,6 +335,9 @@ void OptionsDialog::saveState()
   for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
     paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
   settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
+
+  settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 }
 
 void OptionsDialog::restoreState()
@@ -325,6 +353,37 @@ void OptionsDialog::restoreState()
 
   widgetsToOptionData();
   updateWidgetUnits();
+  simUpdatesConstantClicked(false);
+
+  OptionData& data = OptionData::instanceInternal();
+  flightplanColor =
+    data.flightplanColor =
+      settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+
+  trailColor =
+    data.trailColor =
+      settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+
+  settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, data.trailColor);
+  // Store colors temporary
+  flightplanColor = data.flightplanColor;
+  trailColor = data.trailColor;
+}
+
+void OptionsDialog::flightplanColorClicked()
+{
+  QColorDialog dlg(flightplanColor, mainWindow);
+  QColor col = dlg.getColor();
+  if(col.isValid())
+    flightplanColor = col;
+}
+
+void OptionsDialog::trailColorClicked()
+{
+  QColorDialog dlg(trailColor, mainWindow);
+  QColor col = dlg.getColor();
+  if(col.isValid())
+    trailColor = col;
 }
 
 /* Test NOAA weather URL and show a dialog with the result */
@@ -407,6 +466,12 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
+void OptionsDialog::simUpdatesConstantClicked(bool state)
+{
+  Q_UNUSED(state);
+  ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
+}
+
 /* Convert the range ring string to an int vector */
 QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
 {
@@ -431,11 +496,15 @@ void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
 
+  data.flightplanColor = flightplanColor;
+  data.trailColor = trailColor;
+
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
   toFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
   toFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
+  toFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
@@ -448,6 +517,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   toFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
+  toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
 
@@ -463,12 +533,7 @@ void OptionsDialog::widgetsToOptionData()
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
     data.databaseExclude.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
 
-  if(ui->radioButtonOptionsMapScrollFull->isChecked())
-    data.mapScrollDetail = opts::FULL;
-  else if(ui->radioButtonOptionsMapScrollNone->isChecked())
-    data.mapScrollDetail = opts::NONE;
-  else if(ui->radioButtonOptionsMapScrollNormal->isChecked())
-    data.mapScrollDetail = opts::NORMAL;
+  data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollDetails->currentIndex());
 
   if(ui->radioButtonOptionsSimUpdateFast->isChecked())
     data.simUpdateRate = opts::FAST;
@@ -486,10 +551,25 @@ void OptionsDialog::widgetsToOptionData()
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
   data.mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
   data.mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
-  data.mapSymbolSize = ui->spinBoxOptionsMapSymbolSize->value();
-  data.mapTextSize = ui->spinBoxOptionsMapTextSize->value();
-  data.mapZoomShow = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMap->value());
+
+  data.mapZoomShowClick = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMap->value());
+  data.mapZoomShowMenu = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMapMenu->value());
+
   data.routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
+
+  data.displayTextSizeAircraftAi = ui->spinBoxOptionsDisplayTextSizeAircraftAi->value();
+  data.displaySymbolSizeNavaid = ui->spinBoxOptionsDisplaySymbolSizeNavaid->value();
+  data.displayTextSizeNavaid = ui->spinBoxOptionsDisplayTextSizeNavaid->value();
+  data.displayThicknessFlightplan = ui->spinBoxOptionsDisplayThicknessFlightplan->value();
+  data.displaySymbolSizeAirport = ui->spinBoxOptionsDisplaySymbolSizeAirport->value();
+  data.displaySymbolSizeAircraftAi = ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->value();
+  data.displayTextSizeFlightplan = ui->spinBoxOptionsDisplayTextSizeFlightplan->value();
+  data.displayTextSizeAircraftUser = ui->spinBoxOptionsDisplayTextSizeAircraftUser->value();
+  data.displaySymbolSizeAircraftUser = ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->value();
+  data.displayTextSizeAirport = ui->spinBoxOptionsDisplayTextSizeAirport->value();
+  data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
+  data.displayTrailType =
+    static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
   data.unitDist = static_cast<opts::UnitDist>(ui->comboBoxOptionsUnitDistance->currentIndex());
   data.unitShortDist = static_cast<opts::UnitShortDist>(ui->comboBoxOptionsUnitShortDistance->currentIndex());
@@ -505,11 +585,17 @@ void OptionsDialog::widgetsToOptionData()
 /* Copy OptionData object to widget */
 void OptionsDialog::optionDataToWidgets()
 {
+  OptionData& data = OptionData::instanceInternal();
+
+  flightplanColor = data.flightplanColor;
+  trailColor = data.trailColor;
+
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   fromFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
   fromFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
   fromFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
+  fromFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
@@ -522,8 +608,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   fromFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   fromFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
-
-  OptionData& data = OptionData::instanceInternal();
+  fromFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
   QString txt;
   for(int val : data.mapRangeRings)
@@ -548,18 +633,7 @@ void OptionsDialog::optionDataToWidgets()
   for(const QString& str : data.databaseExclude)
     ui->listWidgetOptionsDatabaseExclude->addItem(str);
 
-  switch(data.mapScrollDetail)
-  {
-    case opts::FULL:
-      ui->radioButtonOptionsMapScrollFull->setChecked(true);
-      break;
-    case opts::NORMAL:
-      ui->radioButtonOptionsMapScrollNormal->setChecked(true);
-      break;
-    case opts::NONE:
-      ui->radioButtonOptionsMapScrollNone->setChecked(true);
-      break;
-  }
+  ui->comboBoxMapScrollDetails->setCurrentIndex(data.mapScrollDetail);
 
   switch(data.simUpdateRate)
   {
@@ -584,10 +658,22 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
   ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);
   ui->spinBoxOptionsMapTooltipRect->setValue(data.mapTooltipSensitivity);
-  ui->spinBoxOptionsMapSymbolSize->setValue(data.mapSymbolSize);
-  ui->spinBoxOptionsMapTextSize->setValue(data.mapTextSize);
-  ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShow);
+  ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShowClick);
+  ui->doubleSpinBoxOptionsMapZoomShowMapMenu->setValue(data.mapZoomShowMenu);
   ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
+
+  ui->spinBoxOptionsDisplayTextSizeAircraftAi->setValue(data.displayTextSizeAircraftAi);
+  ui->spinBoxOptionsDisplaySymbolSizeNavaid->setValue(data.displaySymbolSizeNavaid);
+  ui->spinBoxOptionsDisplayTextSizeNavaid->setValue(data.displayTextSizeNavaid);
+  ui->spinBoxOptionsDisplayThicknessFlightplan->setValue(data.displayThicknessFlightplan);
+  ui->spinBoxOptionsDisplaySymbolSizeAirport->setValue(data.displaySymbolSizeAirport);
+  ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->setValue(data.displaySymbolSizeAircraftAi);
+  ui->spinBoxOptionsDisplayTextSizeFlightplan->setValue(data.displayTextSizeFlightplan);
+  ui->spinBoxOptionsDisplayTextSizeAircraftUser->setValue(data.displayTextSizeAircraftUser);
+  ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->setValue(data.displaySymbolSizeAircraftUser);
+  ui->spinBoxOptionsDisplayTextSizeAirport->setValue(data.displayTextSizeAirport);
+  ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
+  ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
 
   ui->comboBoxOptionsUnitDistance->setCurrentIndex(data.unitDist);
   ui->comboBoxOptionsUnitShortDistance->setCurrentIndex(data.unitShortDist);

@@ -51,6 +51,9 @@ void MapPainterNav::render(const PaintContext *context)
   bool drawAirway = context->mapLayer->isAirway() &&
                     (context->objectTypes.testFlag(maptypes::AIRWAYJ) ||
                      context->objectTypes.testFlag(maptypes::AIRWAYV));
+
+  context->szFont(context->textSizeNavaid);
+
   if(drawAirway)
   {
     // Draw airway lines
@@ -233,7 +236,7 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
 
     if(visible)
     {
-      int size = context->symSize(context->mapLayerEffective->getWaypointSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false, drawFast);
 
       // If airways are drawn force display of the respecive waypoints
@@ -253,7 +256,7 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
 
     if(visible)
     {
-      int size = context->symSize(context->mapLayerEffective->getVorSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
       symbolPainter->drawVorSymbol(context->painter, vor, x, y,
                                    size, false, drawFast,
                                    context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
@@ -279,7 +282,7 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
 
     if(visible)
     {
-      int size = context->symSize(context->mapLayerEffective->getNdbSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
       symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
 
       textflags::TextFlags flags;
@@ -303,7 +306,7 @@ void MapPainterNav::paintMarkers(const PaintContext *context, const QList<MapMar
 
     if(visible)
     {
-      int size = context->symSize(context->mapLayerEffective->getMarkerSymbolSize());
+      int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
       symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 
       if(context->mapLayer->isMarkerInfo())

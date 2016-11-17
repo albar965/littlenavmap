@@ -574,7 +574,7 @@ bool RouteController::saveFlightplan()
     int oldCruise = route.getFlightplan().getCruisingAltitude();
     route.getFlightplan().setCruisingAltitude(
       atools::roundToInt(Unit::rev(static_cast<float>(route.getFlightplan().getCruisingAltitude()),
-                                         Unit::altFeetF)));
+                                   Unit::altFeetF)));
     route.getFlightplan().save(routeFilename);
     route.getFlightplan().setCruisingAltitude(oldCruise);
 
@@ -906,9 +906,9 @@ void RouteController::doubleClick(const QModelIndex& index)
     const RouteMapObject& mo = route.at(index.row());
 
     if(mo.getMapObjectType() == maptypes::AIRPORT)
-      emit showRect(mo.getAirport().bounding);
+      emit showRect(mo.getAirport().bounding, true);
     else
-      emit showPos(mo.getPosition(), 0.f);
+      emit showPos(mo.getPosition(), 0.f, true);
 
     maptypes::MapSearchResult result;
     query->getMapObjectById(result, mo.getMapObjectType(), mo.getId());
@@ -964,9 +964,9 @@ void RouteController::showOnMapMenu()
     const RouteMapObject& routeMapObject = route.at(index.row());
 
     if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
-      emit showRect(routeMapObject.getAirport().bounding);
+      emit showRect(routeMapObject.getAirport().bounding, false);
     else
-      emit showPos(routeMapObject.getPosition(), 0.f);
+      emit showPos(routeMapObject.getPosition(), 0.f, false);
 
     if(routeMapObject.getMapObjectType() == maptypes::AIRPORT)
       mainWindow->setStatusMessage(tr("Showing airport on map."));

@@ -68,8 +68,8 @@ void MapPainterMark::paintMark(const PaintContext *context)
   int x, y;
   if(wToS(mapWidget->getSearchMarkPos(), x, y))
   {
-    int size = context->symSize(10);
-    int size2 = context->symSize(8);
+    int size = context->sz(context->symbolSizeAirport, 10);
+    int size2 = context->sz(context->symbolSizeAirport, 8);
 
     context->painter->setPen(mapcolors::markBackPen);
 
@@ -89,7 +89,7 @@ void MapPainterMark::paintMagneticPoles(const PaintContext *context)
 
   painter->setPen(mapcolors::magneticPolePen);
 
-  int size = context->symSize(5);
+  int size = context->sz(context->symbolSizeNavaid, 5);
 
   int x, y;
   if(wToS(MAG_NORTH_POLE_2007, x, y))
@@ -118,7 +118,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
     painter->setPen(mapcolors::homeBackPen);
     painter->setBrush(mapcolors::homeFillColor);
 
-    int size = context->symSize(10);
+    int size = context->sz(context->symbolSizeNavaid, 10);
 
     painter->drawRect(x - (size / 2), y - (size / 2), size, size);
 
@@ -134,7 +134,7 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
 {
   // Draw hightlights from the search result view ------------------------------------------
   const MapSearchResult& highlightResults = mapWidget->getSearchHighlights();
-  int size = context->symSize(6);
+  int size = context->sz(context->symbolSizeAirport, 6);
 
   QList<Pos> positions;
 
@@ -149,7 +149,8 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
 
   GeoPainter *painter = context->painter;
   if(context->mapLayerEffective->isAirport())
-    size = context->symSize(std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
+    size = context->sz(context->symbolSizeAirport,
+                       std::max(size, context->mapLayerEffective->getAirportSymbolSize()));
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));

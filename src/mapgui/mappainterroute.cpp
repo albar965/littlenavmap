@@ -88,14 +88,14 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
         if(!pt.isNull())
         {
-          // At least 10 pixel size
+          // At least 10 pixel size - unaffected by scaling
           int w = std::max(10, scale->getPixelIntForFeet(size, 90));
           int h = std::max(10, scale->getPixelIntForFeet(size, 0));
 
           context->painter->setPen(QPen(mapcolors::routeOutlineColor, 9,
                                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
           context->painter->drawEllipse(pt, w, h);
-          context->painter->setPen(QPen(mapcolors::routeColor, 5,
+          context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), 5,
                                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
           context->painter->drawEllipse(pt, w, h);
         }
@@ -165,9 +165,13 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   GeoDataLineString ls;
   ls.setTessellate(true);
 
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+
   // Draw lines separately to avoid omission in mercator near anti meridian
   // Draw outer line
-  context->painter->setPen(QPen(mapcolors::routeOutlineColor, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
+                                Qt::RoundCap, Qt::RoundJoin));
   for(int i = 1; i < linestring.size(); i++)
   {
     ls.clear();
@@ -176,7 +180,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Draw innner line
-  context->painter->setPen(QPen(mapcolors::routeColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth, Qt::SolidLine,
+                                Qt::RoundCap, Qt::RoundJoin));
   for(int i = 1; i < linestring.size(); i++)
   {
     ls.clear();
@@ -186,6 +191,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   if(!context->drawFast)
   {
+    context->szFont(context->textSizeFlightplan);
+
     // Draw text with direction arrow along lines
     context->painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
     int i = 0;
@@ -219,7 +226,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
         context->painter->translate(textCoord.x(), textCoord.y());
         context->painter->rotate(rotate);
-        context->painter->drawText(-metrics.width(text) / 2, -metrics.descent() - 2, text);
+        context->painter->drawText(-metrics.width(text) / 2, -metrics.descent() - outerlinewidth / 2, text);
         context->painter->resetTransform();
       }
       i++;
@@ -275,21 +282,27 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       switch(type)
       {
         case maptypes::INVALID:
+          context->szFont(context->textSizeNavaid);
           paintText(context, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
           break;
         case maptypes::USER:
+          context->szFont(context->textSizeNavaid);
           paintText(context, mapcolors::routeUserPointColor, x, y, obj.getIdent());
           break;
         case maptypes::AIRPORT:
+          context->szFont(context->textSizeAirport);
           paintAirportText(context, x, y, obj.getAirport());
           break;
         case maptypes::VOR:
+          context->szFont(context->textSizeNavaid);
           paintVorText(context, x, y, obj.getVor());
           break;
         case maptypes::NDB:
+          context->szFont(context->textSizeNavaid);
           paintNdbText(context, x, y, obj.getNdb());
           break;
         case maptypes::WAYPOINT:
+          context->szFont(context->textSizeNavaid);
           paintWaypointText(context, x, y, obj.getWaypoint());
           break;
       }
@@ -301,7 +314,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)
 {
   symbolPainter->drawAirportSymbol(context->painter, obj, x, y,
-                                   context->symSize(context->mapLayer->getAirportSymbolSize()), false, false);
+                                   context->sz(context->symbolSizeAirport,
+                                               context->mapLayer->getAirportSymbolSize()), false, false);
 }
 
 void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y,
@@ -314,7 +328,8 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
     flags |= textflags::NAME | textflags::INFO;
 
   symbolPainter->drawAirportText(context->painter, obj, x, y, flags,
-                                 context->symSize(context->mapLayer->getAirportSymbolSize()),
+                                 context->sz(context->textSizeAirport,
+                                             context->mapLayer->getAirportSymbolSize()),
                                  context->mapLayer->isAirportDiagram());
 }
 
@@ -322,7 +337,8 @@ void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const 
 {
   bool large = context->mapLayer->isVorLarge();
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
-                               context->symSize(context->mapLayer->getVorSymbolSize()),
+                               context->sz(context->symbolSizeNavaid,
+                                           context->mapLayer->getVorSymbolSize()),
                                true, false, large);
 }
 
@@ -337,13 +353,15 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   symbolPainter->drawVorText(context->painter, obj, x, y, flags,
-                             context->symSize(context->mapLayer->getVorSymbolSize()), true);
+                             context->sz(context->textSizeNavaid,
+                                         context->mapLayer->getVorSymbolSize()), true);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
 {
   symbolPainter->drawNdbSymbol(context->painter, x, y,
-                               context->symSize(context->mapLayer->getNdbSymbolSize()), true, false);
+                               context->sz(context->symbolSizeNavaid,
+                                           context->mapLayer->getNdbSymbolSize()), true, false);
 }
 
 void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
@@ -357,13 +375,15 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   symbolPainter->drawNdbText(context->painter, obj, x, y, flags,
-                             context->symSize(context->mapLayer->getNdbSymbolSize()), true);
+                             context->sz(context->textSizeNavaid,
+                                         context->mapLayer->getNdbSymbolSize()), true);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
 {
   symbolPainter->drawWaypointSymbol(context->painter, col, x, y,
-                                    context->symSize(context->mapLayer->getWaypointSymbolSize()), true, false);
+                                    context->sz(context->symbolSizeNavaid,
+                                                context->mapLayer->getWaypointSymbolSize()), true, false);
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
@@ -374,15 +394,16 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
     flags |= textflags::IDENT;
 
   symbolPainter->drawWaypointText(context->painter, obj, x, y, flags,
-                                  context->symSize(context->mapLayer->getWaypointSymbolSize()), true);
+                                  context->sz(context->textSizeNavaid,
+                                              context->mapLayer->getWaypointSymbolSize()), true);
 }
 
 /* Paint user defined waypoint */
 void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 {
   symbolPainter->drawUserpointSymbol(context->painter, x, y,
-                                     context->symSize(
-                                       context->mapLayer->getWaypointSymbolSize()), true, false);
+                                     context->sz(context->symbolSizeNavaid,
+                                                 context->mapLayer->getWaypointSymbolSize()), true, false);
 }
 
 /* Draw text with light yellow background for flight plan */
@@ -393,6 +414,7 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
     return;
 
   symbolPainter->textBox(context->painter, {text}, color,
-                         x + context->symSize(context->mapLayer->getWaypointSymbolSize()) / 2 + 2,
+                         x + context->sz(context->textSizeNavaid,
+                                         context->mapLayer->getWaypointSymbolSize()) / 2 + 2,
                          y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }

@@ -193,10 +193,10 @@ public:
 
 signals:
   /* Show airport on map */
-  void showRect(const atools::geo::Rect& rect);
+  void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Show flight plan waypoint or user position on map */
-  void showPos(const atools::geo::Pos& pos, float zoom);
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
   /* Change distance search center */
   void changeMark(const atools::geo::Pos& pos);

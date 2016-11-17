@@ -87,10 +87,10 @@ public:
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
-  void showRect(const atools::geo::Rect& rect);
+  void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Show point object (airport) on double click or menu selection */
-  void showPos(const atools::geo::Pos& pos, int zoom);
+  void showPos(const atools::geo::Pos& pos, int zoom, bool doubleClick);
 
   /* Search center changed in context menu */
   void changeSearchMark(const atools::geo::Pos& pos);

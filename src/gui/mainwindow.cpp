@@ -950,7 +950,7 @@ void MainWindow::routeCenter()
 {
   if(!routeController->isFlightplanEmpty())
   {
-    mapWidget->showRect(routeController->getBoundingRect());
+    mapWidget->showRect(routeController->getBoundingRect(), false);
     setStatusMessage(tr("Flight plan shown on map."));
   }
 }

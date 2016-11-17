@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_OPTIONDATA_H
 #define LITTLENAVMAP_OPTIONDATA_H
 
+#include <QColor>
 #include <QFlags>
 #include <QVector>
 
@@ -44,53 +45,61 @@ enum Flag
    * ui->radioButtonOptionsStartupShowLast */
   STARTUP_SHOW_LAST = 1 << 4,
 
+  /* Show last position on startup.
+   * ui->radioButtonOptionsStartupShowFlightplan */
+  STARTUP_SHOW_ROUTE = 1 << 5,
+
   /* Center KML after loading.
    * ui->checkBoxOptionsGuiCenterKml */
-  GUI_CENTER_KML = 1 << 5,
+  GUI_CENTER_KML = 1 << 6,
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiCenterRoute */
-  GUI_CENTER_ROUTE = 1 << 6,
+  GUI_CENTER_ROUTE = 1 << 7,
 
   /* Treat empty airports special.
    * ui->checkBoxOptionsMapEmptyAirports */
-  MAP_EMPTY_AIRPORTS = 1 << 7,
+  MAP_EMPTY_AIRPORTS = 1 << 8,
 
   /* East/west rule for flight plan calculation.
    * ui->checkBoxOptionsRouteEastWestRule */
-  ROUTE_EAST_WEST_RULE = 1 << 8,
+  ROUTE_EAST_WEST_RULE = 1 << 9,
 
   /* Start airway route at NDB.
    * ui->checkBoxOptionsRoutePreferNdb */
-  ROUTE_PREFER_NDB = 1 << 9,
+  ROUTE_PREFER_NDB = 1 << 10,
 
   /* Start airway route at VOR.
    * ui->checkBoxOptionsRoutePreferVor */
-  ROUTE_PREFER_VOR = 1 << 10,
+  ROUTE_PREFER_VOR = 1 << 11,
 
   /* Show ASN weather in info panel.
    * ui->checkBoxOptionsWeatherInfoAsn */
-  WEATHER_INFO_ACTIVESKY = 1 << 11,
+  WEATHER_INFO_ACTIVESKY = 1 << 12,
 
   /* Show NOAA weather in info panel.
    * ui->checkBoxOptionsWeatherInfoNoaa */
-  WEATHER_INFO_NOAA = 1 << 12,
+  WEATHER_INFO_NOAA = 1 << 13,
 
   /* Show Vatsim weather in info panel.
    * ui->checkBoxOptionsWeatherInfoVatsim */
-  WEATHER_INFO_VATSIM = 1 << 13,
+  WEATHER_INFO_VATSIM = 1 << 14,
 
   /* Show ASN weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipAsn */
-  WEATHER_TOOLTIP_ACTIVESKY = 1 << 14,
+  WEATHER_TOOLTIP_ACTIVESKY = 1 << 15,
 
   /* Show NOAA weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipNoaa */
-  WEATHER_TOOLTIP_NOAA = 1 << 15,
+  WEATHER_TOOLTIP_NOAA = 1 << 16,
 
   /* Show Vatsim weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipVatsim */
-  WEATHER_TOOLTIP_VATSIM = 1 << 16
+  WEATHER_TOOLTIP_VATSIM = 1 << 17,
+
+  /* No box mode when moving map.
+   * ui->checkBoxOptionsSimUpdatesConstant */
+  SIM_UPDATE_MAP_CONSTANTLY = 1 << 18
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -161,6 +170,14 @@ enum UnitFuelAndWeight
 {
   FUEL_WEIGHT_GAL_LBS,
   FUEL_WEIGHT_LITER_KG
+};
+
+/* comboBoxOptionsDisplayTrailType */
+enum DisplayTrailType
+{
+  DASHED,
+  DOTTED,
+  SOLID
 };
 
 }
@@ -325,12 +342,6 @@ public:
     return mapTextSize;
   }
 
-  /* Default zoom distance for point objects */
-  float getMapZoomShow() const
-  {
-    return mapZoomShow;
-  }
-
   /* Ground buffer in feet for red line in profile view */
   int getRouteGroundBuffer() const
   {
@@ -341,6 +352,88 @@ public:
   int getSimUpdateBox() const
   {
     return simUpdateBox;
+  }
+
+  /* Default zoom distance for point objects */
+  float getMapZoomShowClick() const
+  {
+    return mapZoomShowClick;
+  }
+
+  /* Default zoom distance for point objects */
+  float getMapZoomShowMenu() const
+  {
+    return mapZoomShowMenu;
+  }
+
+  int getDisplayTextSizeAircraftAi() const
+  {
+    return displayTextSizeAircraftAi;
+  }
+
+  int getDisplayThicknessFlightplan() const
+  {
+    return displayThicknessFlightplan;
+  }
+
+  int getDisplaySymbolSizeAirport() const
+  {
+    return displaySymbolSizeAirport;
+  }
+
+  int getDisplaySymbolSizeAircraftAi() const
+  {
+    return displaySymbolSizeAircraftAi;
+  }
+
+  int getDisplayTextSizeFlightplan() const
+  {
+    return displayTextSizeFlightplan;
+  }
+
+  int getDisplayTextSizeAircraftUser() const
+  {
+    return displayTextSizeAircraftUser;
+  }
+
+  int getDisplaySymbolSizeAircraftUser() const
+  {
+    return displaySymbolSizeAircraftUser;
+  }
+
+  int getDisplayTextSizeAirport() const
+  {
+    return displayTextSizeAirport;
+  }
+
+  int getDisplayThicknessTrail() const
+  {
+    return displayThicknessTrail;
+  }
+
+  opts::DisplayTrailType getDisplayTrailType() const
+  {
+    return displayTrailType;
+  }
+
+  int getDisplayTextSizeNavaid() const
+  {
+    return displayTextSizeNavaid;
+  }
+
+  int getDisplaySymbolSizeNavaid() const
+  {
+    return displaySymbolSizeNavaid;
+  }
+
+  const QColor& getFlightplanColor() const
+  {
+    return flightplanColor;
+  }
+
+  const QColor& getTrailColor() const
+  {
+    return trailColor;
   }
 
 private:
@@ -430,7 +523,10 @@ private:
   int mapTextSize = 100;
 
   // ui->doubleSpinBoxOptionsMapZoomShowMap
-  float mapZoomShow = 1.5f;
+  float mapZoomShowClick = 1.5f;
+
+  // ui->doubleSpinBoxOptionsMapZoomShowMapMenu
+  float mapZoomShowMenu = 1.5f;
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
@@ -455,6 +551,44 @@ private:
 
   // comboBoxOptionsUnitVertFuel
   opts::UnitFuelAndWeight unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
+
+  // spinBoxOptionsDisplayTextSizeAircraftAi
+  int displayTextSizeAircraftAi = 100;
+
+  // spinBoxOptionsDisplayThicknessFlightplan
+  int displayThicknessFlightplan = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeAirport
+  int displaySymbolSizeAirport = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeAircraftAi
+  int displaySymbolSizeAircraftAi = 100;
+
+  // spinBoxOptionsDisplayTextSizeNavaid
+  int displayTextSizeNavaid = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeNavaid
+  int displaySymbolSizeNavaid = 100;
+
+  // spinBoxOptionsDisplayTextSizeFlightplan
+  int displayTextSizeFlightplan = 100;
+
+  // spinBoxOptionsDisplayTextSizeAircraftUser
+  int displayTextSizeAircraftUser = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeAircraftUser
+  int displaySymbolSizeAircraftUser = 100;
+
+  // spinBoxOptionsDisplayTextSizeAirport
+  int displayTextSizeAirport = 100;
+
+  // spinBoxOptionsDisplayThicknessTrail
+  int displayThicknessTrail = 100;
+
+  QColor flightplanColor, trailColor;
+
+  // comboBoxOptionsDisplayTrailType
+  opts::DisplayTrailType displayTrailType = opts::DASHED;
 
   // Used in the singelton to check if data was already loaded
   bool valid = false;

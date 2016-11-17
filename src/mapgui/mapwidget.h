@@ -81,10 +81,10 @@ public:
   void restoreState();
 
   /* Jump to position on the map using the given zoom distance (if not equal -1) */
-  void showPos(const atools::geo::Pos& pos, float zoom);
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
-  void showRect(const atools::geo::Rect& rect);
+  void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();

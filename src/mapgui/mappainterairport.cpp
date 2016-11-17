@@ -128,7 +128,7 @@ void MapPainterAirport::render(const PaintContext *context)
     else
       drawAirportSymbolOverview(context, *airport);
 
-    // More detailed symbol will be drawn by the route painter
+    // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIds.contains(airport->id))
     {
       // Symbol will be omitted for runway overview
@@ -145,8 +145,10 @@ void MapPainterAirport::render(const PaintContext *context)
       else if(layer->isAirportName())
         flags |= textflags::NAME;
 
+      context->szFont(context->textSizeAirport);
       symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), flags,
-                                     context->symSize(context->mapLayerEffective->getAirportSymbolSize()),
+                                     context->sz(context->symbolSizeAirport,
+                                                 context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram());
     }
   }
@@ -865,7 +867,7 @@ void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const map
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||
      context->mapLayerEffective->isAirportDiagram())
   {
-    int size = context->symSize(context->mapLayerEffective->getAirportSymbolSize());
+    int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
     bool isAirportDiagram = context->mapLayerEffective->isAirportDiagram();
 
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);

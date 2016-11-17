@@ -119,6 +119,7 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
 
     if(!text.isEmpty())
     {
+      context->szFont(context->textSizeNavaid);
       context->painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 

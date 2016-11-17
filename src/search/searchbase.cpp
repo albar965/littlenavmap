@@ -499,13 +499,13 @@ void SearchBase::doubleClick(const QModelIndex& index)
       float topLat = controller->getRawData(row, "top_laty").toFloat();
       float rightLon = controller->getRawData(row, "right_lonx").toFloat();
       float bottomLat = controller->getRawData(row, "bottom_laty").toFloat();
-      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat));
+      emit showRect(atools::geo::Rect(leftLon, topLat, rightLon, bottomLat), true);
     }
     else
     {
       atools::geo::Pos p(controller->getRawData(row, "lonx").toFloat(),
                          controller->getRawData(row, "laty").toFloat());
-      emit showPos(p, 0.f);
+      emit showPos(p, 0.f, true);
     }
 
     // Show on information panel
@@ -720,17 +720,17 @@ void SearchBase::showOnMapTriggered()
 
       if(!result.airports.isEmpty())
       {
-        emit showRect(result.airports.first().bounding);
+        emit showRect(result.airports.first().bounding, false);
         mainWindow->setStatusMessage(tr("Showing airport on map."));
       }
       else
       {
         if(!result.vors.isEmpty())
-          emit showPos(result.vors.first().getPosition(), 0.f);
+          emit showPos(result.vors.first().getPosition(), 0.f, false);
         else if(!result.ndbs.isEmpty())
-          emit showPos(result.ndbs.first().getPosition(), 0.f);
+          emit showPos(result.ndbs.first().getPosition(), 0.f, false);
         else if(!result.waypoints.isEmpty())
-          emit showPos(result.waypoints.first().getPosition(), 0.f);
+          emit showPos(result.waypoints.first().getPosition(), 0.f, false);
         mainWindow->setStatusMessage(tr("Showing navaid on map."));
       }
     }

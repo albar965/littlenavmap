@@ -71,7 +71,7 @@ void MapPainterAircraft::render(const PaintContext *context)
   context->painter->save();
 
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
-    paintAircraftTrack(context->painter);
+    paintAircraftTrack(context);
 
   if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
   {
@@ -105,7 +105,9 @@ void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
   float x, y;
   if(wToS(pos, x, y))
   {
-    int size = std::max(32, scale->getPixelIntForFeet(aiAircraft.getWingSpan()));
+    int size = std::max(context->sz(context->symbolSizeAircraftAi, 32),
+                        scale->getPixelIntForFeet(aiAircraft.getWingSpan()));
+    context->szFont(context->textSizeAircraftAi);
     int offset = -(size / 2);
 
     // Position is visible
@@ -133,7 +135,9 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
   float x, y;
   if(wToS(pos, x, y))
   {
-    int size = std::max(36, scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+    int size = std::max(context->sz(context->symbolSizeAircraftUser, 32),
+                        scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+    context->szFont(context->textSizeAircraftUser);
     int offset = -(size / 2);
 
     // Position is visible
@@ -149,7 +153,7 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
   }
 }
 
-void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
+void MapPainterAircraft::paintAircraftTrack(const PaintContext *context)
 {
   const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
 
@@ -157,7 +161,26 @@ void MapPainterAircraft::paintAircraftTrack(GeoPainter *painter)
   {
     QPolygon polyline;
 
-    painter->setPen(mapcolors::aircraftTrackPen);
+    GeoPainter *painter = context->painter;
+
+    float size = context->sz(context->thicknessTrail, 2);
+    opts::DisplayTrailType type = OptionData::instance().getDisplayTrailType();
+
+    switch(type)
+    {
+      case opts::DASHED:
+        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::DashLine, Qt::FlatCap,
+                             Qt::BevelJoin));
+        break;
+      case opts::DOTTED:
+        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::DotLine, Qt::FlatCap,
+                             Qt::BevelJoin));
+        break;
+      case opts::SOLID:
+        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::SolidLine, Qt::FlatCap,
+                             Qt::BevelJoin));
+        break;
+    }
     bool lastVisible = false;
 
     int x1, y1;

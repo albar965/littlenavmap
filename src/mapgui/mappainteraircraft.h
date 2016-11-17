@@ -71,7 +71,7 @@ public:
   };
 
 private:
-  void paintAircraftTrack(Marble::GeoPainter *painter);
+  void paintAircraftTrack(const PaintContext* context);
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft);
   void paintAiAircraft(const PaintContext *context,
