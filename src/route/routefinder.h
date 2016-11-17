@@ -102,6 +102,9 @@ private:
   /* Avoid too long airway segments */
   static Q_DECL_CONSTEXPR float COST_FACTOR_LONG_AIRWAY = 1.2f;
 
+  /* Avoid airway changes during routing */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.1f;
+
   /* Distance to define a long airway segment in meter */
   static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(200.f);
 
@@ -124,6 +127,7 @@ private:
   QHash<int, int> nodePredecessor;
   /* Maps node id to predecessor airway id */
   QHash<int, int> nodeAirwayId;
+  QHash<int, QString> nodeAirwayName;
 
   /* For RouteNetwork::getNeighbours to avoid instantiations */
   QVector<nw::Node> successorNodes;

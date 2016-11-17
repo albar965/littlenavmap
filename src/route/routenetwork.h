@@ -89,6 +89,7 @@ struct Edge
 
   int toNodeId /* database "node_id" */, lengthMeter, minAltFt, airwayId;
   nw::EdgeType type;
+  QString airwayName;
 
   bool operator==(const nw::Edge& other) const
   {
@@ -150,7 +151,7 @@ inline int qHash(const nw::Node& node)
 }
 
 Q_DECLARE_TYPEINFO(nw::Node, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(nw::Edge, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(nw::Edge, Q_MOVABLE_TYPE);
 
 /*
  * Routing network that loads and caches nodes and edges from the database.
@@ -265,7 +266,7 @@ private:
   bool nodeIndexesCreated = false;
   int nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
   bool edgeIndexesCreated = false;
-  int edgeTypeIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
+  int edgeTypeIndex = -1, edgeAirwayNameIndex = -1, edgeMinAltIndex = -1, edgeAirwayIdIndex = -1,
       edgeDistanceIndex = -1;
 
   bool airwayRouting;

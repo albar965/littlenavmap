@@ -479,6 +479,8 @@ nw::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeI
     edge.minAltFt = rec.valueInt(edgeMinAltIndex);
   if(edgeAirwayIdIndex != -1)
     edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
+  if(edgeAirwayNameIndex != -1)
+    edge.airwayName = rec.valueStr(edgeAirwayNameIndex);
   if(edgeDistanceIndex != -1)
     edge.lengthMeter = rec.valueInt(edgeDistanceIndex);
   return edge;
@@ -498,6 +500,11 @@ void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
       edgeMinAltIndex = rec.indexOf("minimum_altitude");
     else
       edgeMinAltIndex = -1;
+
+    if(rec.contains("airway_name"))
+      edgeAirwayNameIndex = rec.indexOf("airway_name");
+    else
+      edgeAirwayNameIndex = -1;
 
     if(rec.contains("airway_id"))
       edgeAirwayIdIndex = rec.indexOf("airway_id");

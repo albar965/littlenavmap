@@ -21,7 +21,7 @@
 
 RouteNetworkAirway::RouteNetworkAirway(atools::sql::SqlDatabase *sqlDb)
   : RouteNetwork(sqlDb, "route_node_airway", "route_edge_airway", {},
-                 {"type", "minimum_altitude", "airway_id"})
+                 {"type", "minimum_altitude", "airway_id", "airway_name"})
 {
 }
 

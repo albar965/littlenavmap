@@ -30,6 +30,7 @@ RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
   nodeCosts.reserve(10000);
   nodePredecessor.reserve(10000);
   nodeAirwayId.reserve(10000);
+  nodeAirwayName.reserve(10000);
 
   successorNodes.reserve(500);
   successorEdges.reserve(500);
@@ -123,6 +124,10 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
   successorEdges.clear();
   network->getNeighbours(currentNode, successorNodes, successorEdges);
 
+  QString currentNodeAirway;
+  if(network->isAirwayRouting())
+    currentNodeAirway = nodeAirwayName[currentNode.id];
+
   for(int i = 0; i < successorNodes.size(); i++)
   {
     const Node& successor = successorNodes.at(i);
@@ -144,6 +149,11 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
       lengthMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos));
 
     float successorEdgeCosts = calculateEdgeCost(currentNode, successor, lengthMeter);
+
+    // Avoid jumping between equal airways
+    if(!currentNodeAirway.isEmpty() && !edge.airwayName.isEmpty() && currentNodeAirway != edge.airwayName)
+      successorEdgeCosts *= COST_FACTOR_AIRWAY_CHANGE;
+
     float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
 
     if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
@@ -152,6 +162,8 @@ void RouteFinder::expandNode(const nw::Node& currentNode, const nw::Node& destNo
 
     // New path is cheaper - update node
     nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
+    if(network->isAirwayRouting())
+      nodeAirwayName[successor.id] = successorEdges.at(i).airwayName;
     nodePredecessor[successor.id] = currentNode.id;
     nodeCosts[successor.id] = successorNodeCosts;
 
