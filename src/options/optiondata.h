@@ -105,6 +105,47 @@ enum Flag
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
 
+enum DisplayOption
+{
+  ITEM_NONE = 0,
+  ITEM_FIRST = 1 << 0,
+  ITEM_AIRPORT = ITEM_FIRST,
+  ITEM_AIRPORT_NAME = 1 << 1,
+  ITEM_AIRPORT_TOWER = 1 << 2,
+  ITEM_AIRPORT_ATIS = 1 << 3,
+  ITEM_AIRPORT_RUNWAY = 1 << 4,
+  ITEM_AIRPORT_WIND_POINTER = 1 << 5,
+
+  ITEM_USER_AIRCRAFT = 1 << 7,
+  ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
+  ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
+  ITEM_USER_AIRCRAFT_AIRLINE = 1 << 10,
+  ITEM_USER_AIRCRAFT_FLIGHT_NUMBER = 1 << 11,
+  ITEM_USER_AIRCRAFT_IAS = 1 << 12,
+  ITEM_USER_AIRCRAFT_GS = 1 << 13,
+  ITEM_USER_AIRCRAFT_CLIMB_SINK = 1 << 14,
+  ITEM_USER_AIRCRAFT_HEADING = 1 << 15,
+  ITEM_USER_AIRCRAFT_ALTITUDE = 1 << 16,
+  ITEM_USER_AIRCRAFT_WIND = 1 << 17,
+  ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
+  ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
+
+  ITEM_AI_AIRCRAFT = 1 << 21,
+  ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
+  ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
+  ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
+  ITEM_AI_AIRCRAFT_FLIGHT_NUMBER = 1 << 25,
+  ITEM_AI_AIRCRAFT_IAS = 1 << 26,
+  ITEM_AI_AIRCRAFT_GS = 1 << 27,
+  ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
+  ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
+  ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
+  ITEM_LAST = ITEM_AI_AIRCRAFT_ALTITUDE
+};
+
+Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOptions);
+
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
@@ -436,6 +477,11 @@ public:
     return trailColor;
   }
 
+  const opts::DisplayOptions& getDisplayOptions() const
+  {
+    return displayOptions;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -589,6 +635,8 @@ private:
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
+
+  opts::DisplayOptions displayOptions = opts::ITEM_NONE;
 
   // Used in the singelton to check if data was already loaded
   bool valid = false;

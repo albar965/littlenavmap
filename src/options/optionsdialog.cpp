@@ -107,6 +107,39 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 {
   ui->setupUi(this);
 
+  QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
+  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), opts::ITEM_AIRPORT);
+  addItem(ap, tr("Name (Ident)"), opts::ITEM_AIRPORT_NAME, true);
+  addItem(ap, tr("Tower Frequency"), opts::ITEM_AIRPORT_TOWER, true);
+  addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), opts::ITEM_AIRPORT_ATIS, true);
+  addItem(ap, tr("Runway Information"), opts::ITEM_AIRPORT_RUNWAY, true);
+  addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
+
+  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"), opts::ITEM_USER_AIRCRAFT);
+  addItem(ua, tr("Registration"), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem(ua, tr("Type"), opts::ITEM_USER_AIRCRAFT_TYPE);
+  addItem(ua, tr("Airline"), opts::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem(ua, tr("Flight Number"), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(ua, tr("Indicated Airspeed"), opts::ITEM_USER_AIRCRAFT_IAS);
+  addItem(ua, tr("Ground Speed"), opts::ITEM_USER_AIRCRAFT_GS, true);
+  addItem(ua, tr("Climb- and Sinkrate"), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem(ua, tr("Heading"), opts::ITEM_USER_AIRCRAFT_HEADING);
+  addItem(ua, tr("Altitude"), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem(ua, tr("Wind Direction and Speed"), opts::ITEM_USER_AIRCRAFT_WIND);
+  addItem(ua, tr("Track Line"), opts::ITEM_USER_AIRCRAFT_TRACK_LINE);
+  addItem(ua, tr("Wind Pointer"), opts::ITEM_USER_AIRCRAFT_WIND_POINTER);
+
+  QTreeWidgetItem *ai = addTopItem(root, tr("AI / Multiplayer Aircraft"), opts::ITEM_AI_AIRCRAFT);
+  addItem(ai, tr("Registration"), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem(ai, tr("Type"), opts::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem(ai, tr("Airline"), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem(ai, tr("Flight Number"), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(ai, tr("Indicated Airspeed"), opts::ITEM_AI_AIRCRAFT_IAS);
+  addItem(ai, tr("Ground Speed"), opts::ITEM_AI_AIRCRAFT_GS, true);
+  addItem(ai, tr("Climb- and Sinkrate"), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem(ai, tr("Heading"), opts::ITEM_AI_AIRCRAFT_HEADING);
+  addItem(ai, tr("Altitude"), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+
   rangeRingValidator = new RangeRingValidator;
 
   // Create widget list for state saver
@@ -322,6 +355,7 @@ void OptionsDialog::saveState()
   // Save widgets to settings
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
                            false /* save visibility */, true /* block signals */).save(widgets);
+  saveDisplayOptItemStates();
 
   Settings& settings = Settings::instance();
 
@@ -344,6 +378,7 @@ void OptionsDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::OPTIONS_DIALOG_WIDGET,
                            false /*save visibility*/, true /*block signals*/).restore(widgets);
+  restoreDisplayOptItemStates();
 
   Settings& settings = Settings::instance();
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
@@ -351,23 +386,76 @@ void OptionsDialog::restoreState()
   if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
     ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
+  flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+  trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
+}
 
-  OptionData& data = OptionData::instanceInternal();
-  flightplanColor =
-    data.flightplanColor =
-      settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+void OptionsDialog::restoreDisplayOptItemStates()
+{
+  const Settings& settings = Settings::instance();
+  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  {
+    QString optName = lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS + "_" + QString::number(dispOpt);
+    if(settings.contains(optName))
+      displayOptItemIndex.value(dispOpt)->
+      setCheckState(0, settings.valueBool(optName, false) ? Qt::Checked : Qt::Unchecked);
+  }
+}
 
-  trailColor =
-    data.trailColor =
-      settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+void OptionsDialog::saveDisplayOptItemStates()
+{
+  Settings& settings = Settings::instance();
 
-  settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, data.trailColor);
-  // Store colors temporary
-  flightplanColor = data.flightplanColor;
-  trailColor = data.trailColor;
+  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  {
+    QTreeWidgetItem *item = displayOptItemIndex.value(dispOpt);
+
+    QString optName = lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS + "_" + QString::number(dispOpt);
+
+    settings.setValue(optName, item->checkState(0) == Qt::Checked);
+  }
+}
+
+void OptionsDialog::displayOptWidgetToOptionData()
+{
+  OptionData& od = OptionData::instanceInternal();
+  od.displayOptions = opts::ITEM_NONE;
+  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  {
+    if(displayOptItemIndex.value(dispOpt)->checkState(0) == Qt::Checked)
+      od.displayOptions |= dispOpt;
+  }
+}
+
+void OptionsDialog::displayOptDataToWidget()
+{
+  const OptionData& od = OptionData::instanceInternal();
+  for(const opts::DisplayOptions& dispOpt : displayOptItemIndex.keys())
+  {
+    displayOptItemIndex.value(dispOpt)->setCheckState(
+      0, od.displayOptions & dispOpt ? Qt::Checked : Qt::Unchecked);
+  }
+}
+
+QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type)
+{
+  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
+  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
+  return item;
+}
+
+QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type,
+                                        bool checked)
+{
+  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
+  item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+  displayOptItemIndex.insert(type, item);
+  return item;
 }
 
 void OptionsDialog::flightplanColorClicked()
@@ -476,7 +564,7 @@ void OptionsDialog::simUpdatesConstantClicked(bool state)
 QVector<int> OptionsDialog::ringStrToVector(const QString& string) const
 {
   QVector<int> rings;
-  for(const QString& str :  string.split(" "))
+  for(const QString& str : string.split(" "))
   {
     QString val = str.trimmed();
 
@@ -498,6 +586,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.flightplanColor = flightplanColor;
   data.trailColor = trailColor;
+  displayOptWidgetToOptionData();
 
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
@@ -589,6 +678,7 @@ void OptionsDialog::optionDataToWidgets()
 
   flightplanColor = data.flightplanColor;
   trailColor = data.trailColor;
+  displayOptDataToWidget();
 
   fromFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   fromFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);

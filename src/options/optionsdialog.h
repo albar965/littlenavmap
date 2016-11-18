@@ -32,6 +32,7 @@ class OptionData;
 class QCheckBox;
 class QRadioButton;
 class RangeRingValidator;
+class QTreeWidgetItem;
 
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
@@ -91,6 +92,17 @@ private:
   void flightplanColorClicked();
   void trailColorClicked();
 
+  // Add items to the tree widget and to the  displayOptItemIndex
+  QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type);
+  QTreeWidgetItem *addItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type,
+                           bool checked = false);
+
+  // Copy tree widget states forth and back
+  void saveDisplayOptItemStates();
+  void restoreDisplayOptItemStates();
+  void displayOptWidgetToOptionData();
+  void displayOptDataToWidget();
+
   QVector<int> ringStrToVector(const QString& string) const;
 
   QColor flightplanColor, trailColor;
@@ -101,6 +113,9 @@ private:
 
   // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
+
+  // Maps options flags to items in the tree widget
+  QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
 
   QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
           spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText;
