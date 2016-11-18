@@ -144,9 +144,20 @@ void PrintSupport::createFlightplanDocuments()
   QFont font = flightPlanPrintDocument->defaultFont();
   qDebug() << "font pixel size" << font.pixelSize() << "font point size" << font.pointSizeF();
 
+#ifdef Q_OS_MACOS
+  int printTextSize = printFlightplanDialog->getPrintTextSize() / 2;
+#else
+  int printTextSize = printFlightplanDialog->getPrintTextSize();
+#endif
+
   // Adjust font size according to dialog setting
-  font.setPointSizeF(font.pointSizeF() *
-                     (static_cast<float>(printFlightplanDialog->getPrintTextSize()) / 100.f));
+  if(font.pointSize() != -1)
+    font.setPointSizeF(font.pointSizeF() * printTextSize / 100.f);
+  else if(font.pixelSize() != -1)
+    font.setPixelSize(font.pixelSize() * static_cast<int>(printTextSize / 100.f));
+  else
+    qWarning() << "Unable to set font size";
+
   flightPlanPrintDocument->setDefaultFont(font);
 
   // Create a cursor to append html and page breaks

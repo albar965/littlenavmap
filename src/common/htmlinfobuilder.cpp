@@ -490,41 +490,47 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
     else
       html.p(tr("Airport has no runways."));
 
-    const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
-
-    if(heliVector != nullptr)
+    if(details)
     {
-      for(const SqlRecord& heliRec : *heliVector)
+      const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
+
+      if(heliVector != nullptr)
       {
-        bool closed = heliRec.valueBool("is_closed");
-        bool hasStart = !heliRec.isNull("start_number");
-        QString num = hasStart ? " " + QString::number(heliRec.valueInt("start_number")) : tr(
-          " (No Start Position)");
+        for(const SqlRecord& heliRec : *heliVector)
+        {
+          bool closed = heliRec.valueBool("is_closed");
+          bool hasStart = !heliRec.isNull("start_number");
+          QString num = hasStart ? " " + QString::number(heliRec.valueInt("start_number")) : tr(
+            " (No Start Position)");
 
-        html.h3(tr("Helipad%1").arg(num), closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE);
-        html.nbsp().nbsp();
+          html.h3(tr("Helipad%1").arg(num), closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE);
+          html.nbsp().nbsp();
 
-        atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
+          atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
-        html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-               arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER))).br();
+          html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
+                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER))).br();
 
-        if(closed)
-          html.text(tr("Is Closed"));
-        html.table();
+          if(closed)
+            html.text(tr("Is Closed"));
+          html.table();
 
-        html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) +
-                  tr(" x ") +
-                  Unit::distShortFeet(heliRec.valueFloat("length")));
-        html.row2(tr("Surface:"), maptypes::surfaceName(heliRec.valueStr("surface")) +
-                  (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
-        html.row2(tr("Type:"), atools::capString(heliRec.valueStr("type")));
-        html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(heliRec.valueFloat("heading"), 'f', 0)));
-        html.row2(tr("Altitude:"), Unit::altFeet(heliRec.valueFloat("altitude")));
+          html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) +
+                    tr(" x ") +
+                    Unit::distShortFeet(heliRec.valueFloat("length")));
+          html.row2(tr("Surface:"), maptypes::surfaceName(heliRec.valueStr("surface")) +
+                    (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
+          html.row2(tr("Type:"), atools::capString(heliRec.valueStr("type")));
+          html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(heliRec.valueFloat("heading"), 'f', 0)));
+          html.row2(tr("Altitude:"), Unit::altFeet(heliRec.valueFloat("altitude")));
 
-        addCoordinates(&heliRec, html);
-        html.tableEnd();
+          addCoordinates(&heliRec, html);
+          html.tableEnd();
+        }
       }
+      else
+        html.p(tr("Airport has no helipads."));
+
     }
   }
 }
