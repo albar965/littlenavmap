@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_SYMBOLPAINTER_H
 #define LITTLENAVMAP_SYMBOLPAINTER_H
 
+#include "options/optiondata.h"
+
 #include <QColor>
 #include <QIcon>
 #include <QApplication>
@@ -108,7 +110,7 @@ public:
   void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, int x, int y, int size,
                          bool isAirportDiagram, bool fast);
   void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
-                       textflags::TextFlags flags, int size, bool diagram);
+                       opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
@@ -151,7 +153,8 @@ public:
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
 private:
-  QStringList airportTexts(textflags::TextFlags flags, const maptypes::MapAirport& airport);
+  QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
+                           const maptypes::MapAirport& airport);
 
   QColor iconBackground;
 };

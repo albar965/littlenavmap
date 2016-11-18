@@ -71,13 +71,23 @@ public:
   };
 
 private:
-  void paintAircraftTrack(const PaintContext* context);
+  void paintAircraftTrack(const PaintContext *context);
   void paintUserAircraft(const PaintContext *context,
                          const atools::fs::sc::SimConnectUserAircraft& userAircraft);
   void paintAiAircraft(const PaintContext *context,
                        const atools::fs::sc::SimConnectAircraft& aiAircraft);
   const QPixmap *pixmapFromCache(const Key& key);
   const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
+  void paintTextLabelUser(int size, const PaintContext *context, float x, float y,
+                          const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void paintTextLabelAi(int size, const PaintContext *context, float x, float y,
+                        const atools::fs::sc::SimConnectAircraft& aircraft);
+  void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
+  void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
+                     bool registration, bool type, bool airline, bool flightnumber);
+  void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
+                       bool ias, bool gs);
+  void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
@@ -85,9 +95,6 @@ private:
   static Q_DECL_CONSTEXPR int DISTANCE_CUT_OFF_AI_LIMIT = 500;
 
   QCache<Key, QPixmap> pixmaps;
-
-  void paintTextLabel(int size, const PaintContext *context, float x, float y,
-                      const atools::fs::sc::SimConnectAircraft& aircraft);
 
 };
 

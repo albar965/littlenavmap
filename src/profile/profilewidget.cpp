@@ -403,7 +403,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(rmo.getMapObjectType() == maptypes::AIRPORT)
     {
       symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22, flags, 10, false);
+      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22,
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }
 

@@ -120,7 +120,7 @@ void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
     context->painter->resetTransform();
 
     // Build text label
-    paintTextLabel(size, context, x, y, aiAircraft);
+    paintTextLabelAi(size, context, x, y, aiAircraft);
   }
 }
 
@@ -149,7 +149,7 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
     context->painter->resetTransform();
 
     // Build text label
-    paintTextLabel(size, context, x, y, userAircraft);
+    paintTextLabelUser(size, context, x, y, userAircraft);
   }
 }
 
@@ -235,60 +235,92 @@ void MapPainterAircraft::paintAircraftTrack(const PaintContext *context)
   }
 }
 
-void MapPainterAircraft::paintTextLabel(int size, const PaintContext *context, float x, float y,
-                                        const SimConnectAircraft& aircraft)
+void MapPainterAircraft::paintTextLabelAi(int size, const PaintContext *context, float x, float y,
+                                          const SimConnectAircraft& aircraft)
 {
-  if(!aircraft.isUser() && mapWidget->distance() > 10)
+  if(mapWidget->distance() > 20)
     return;
 
   QStringList texts;
+  QStringList line;
 
-  if((aircraft.isOnGround() && context->mapLayerEffective->isAirportDiagramDetail2() &&
-      !aircraft.isUser()) || // All AI on ground
-     (!aircraft.isOnGround() && !aircraft.isUser()) || // All AI in the air
-     aircraft.isUser()) // User aircraft
+  if((aircraft.isOnGround() && context->mapLayerEffective->isAirportDiagramDetail2()) || // All AI on ground
+     !aircraft.isOnGround()) // All AI in the air
+    appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_REGISTRATION),
+                  context->dOpt(opts::ITEM_AI_AIRCRAFT_TYPE),
+                  context->dOpt(opts::ITEM_AI_AIRCRAFT_AIRLINE),
+                  context->dOpt(opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER));
+
+  if(aircraft.getGroundSpeedKts() > 30)
+    appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_IAS),
+                    context->dOpt(opts::ITEM_AI_AIRCRAFT_GS));
+
+  if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
+    texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+
+  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+    appendClimbSinkText(texts, aircraft);
+
+  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_AI_AIRCRAFT_ALTITUDE))
   {
-    if(!aircraft.getAirplaneRegistration().isEmpty())
-      texts.append(aircraft.getAirplaneRegistration() + " / " + aircraft.getAirplaneModel());
+    QString upDown;
+    if(!context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      climbSinkPointer(upDown, aircraft);
+    texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
 
-    if(!aircraft.getAirplaneAirline().isEmpty() && !aircraft.getAirplaneFlightnumber().isEmpty())
-      texts.append(aircraft.getAirplaneAirline() + " / " + aircraft.getAirplaneFlightnumber());
   }
+  textatt::TextAttributes atts(textatt::BOLD);
+
+  // Draw text label
+  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
+}
+
+void MapPainterAircraft::paintTextLabelUser(int size, const PaintContext *context, float x, float y,
+                                            const SimConnectUserAircraft& aircraft)
+{
+  QStringList texts;
+
+  appendAtcText(texts, aircraft, context->dOpt(opts::ITEM_USER_AIRCRAFT_REGISTRATION),
+                context->dOpt(opts::ITEM_USER_AIRCRAFT_TYPE),
+                context->dOpt(opts::ITEM_USER_AIRCRAFT_AIRLINE),
+                context->dOpt(opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER));
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
-    texts.append(tr("IAS %1, GS %2").
-                 arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())).
-                 arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
+    appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_USER_AIRCRAFT_IAS),
+                    context->dOpt(opts::ITEM_USER_AIRCRAFT_GS));
   }
 
-  texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_HEADING))
+    texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
 
-  if(!aircraft.isOnGround())
+  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+    appendClimbSinkText(texts, aircraft);
+
+  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_ALTITUDE))
   {
     QString upDown;
-    if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
-      upDown = tr(" ▲");
-    else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
-      upDown = tr(" ▼");
+    if(!context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
+      climbSinkPointer(upDown, aircraft);
 
     texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
   }
 
-  const SimConnectUserAircraft *userAircraft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
-  if(userAircraft != nullptr && !aircraft.isOnGround())
+  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
   {
     texts.append(tr("Wind %1 °M / %2").
                  arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg()),
+                                          aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
                                         'f', 0)).
-                 arg(Unit::speedKts(userAircraft->getWindSpeedKts())));
+                 arg(Unit::speedKts(aircraft.getWindSpeedKts())));
   }
+
+  // TODO ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
+  // TODO ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
 
   textatt::TextAttributes atts(textatt::BOLD);
 
-  if(aircraft.isUser())
-    atts |= textatt::ROUTE_BG_COLOR;
+  atts |= textatt::ROUTE_BG_COLOR;
 
   // Draw text label
   symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
@@ -340,4 +372,62 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const Key& key)
     pixmaps.insert(key, newPx);
     return newPx;
   }
+}
+
+void MapPainterAircraft::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)
+{
+  if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
+    upDown = tr(" ▲");
+  else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
+    upDown = tr(" ▼");
+}
+
+void MapPainterAircraft::appendClimbSinkText(QStringList& texts, const SimConnectAircraft& aircraft)
+{
+  int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
+  QString upDown;
+  climbSinkPointer(upDown, aircraft);
+
+  if(vspeed < 10.f && vspeed > -10.f)
+    vspeed = 0.f;
+
+  texts.append(Unit::speedVertFpm(vspeed) + upDown);
+}
+
+void MapPainterAircraft::appendAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
+                                       bool registration, bool type, bool airline, bool flightnumber)
+{
+  QStringList line;
+  if(!aircraft.getAirplaneRegistration().isEmpty() && registration)
+    line.append(aircraft.getAirplaneRegistration());
+
+  if(!aircraft.getAirplaneModel().isEmpty() && type)
+    line.append(aircraft.getAirplaneModel());
+
+  if(!line.isEmpty())
+    texts.append(line.join(tr(" / ")));
+  line.clear();
+
+  if(!aircraft.getAirplaneAirline().isEmpty() && airline)
+    line.append(aircraft.getAirplaneAirline());
+
+  if(!aircraft.getAirplaneFlightnumber().isEmpty() && flightnumber)
+    line.append(aircraft.getAirplaneFlightnumber());
+
+  if(!line.isEmpty())
+    texts.append(line.join(tr(" / ")));
+}
+
+void MapPainterAircraft::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,
+                                         bool ias, bool gs)
+{
+  QStringList line;
+  if(ias)
+    line.append(tr("IAS %1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
+
+  if(gs)
+    line.append(tr("GS %2").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
+
+  if(!line.isEmpty())
+    texts.append(line.join(tr(", ")));
 }

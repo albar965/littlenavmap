@@ -272,17 +272,21 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
                                                box.east(GeoDataCoordinates::Degree),
                                                box.south(GeoDataCoordinates::Degree));
 
-      context.symbolSizeAircraftAi = OptionData::instance().getDisplaySymbolSizeAircraftAi() / 100.f;
-      context.symbolSizeAircraftUser = OptionData::instance().getDisplaySymbolSizeAircraftUser() / 100.f;
-      context.symbolSizeAirport = OptionData::instance().getDisplaySymbolSizeAirport() / 100.f;
-      context.symbolSizeNavaid = OptionData::instance().getDisplaySymbolSizeNavaid() / 100.f;
-      context.textSizeAircraftAi = OptionData::instance().getDisplayTextSizeAircraftAi() / 100.f;
-      context.textSizeAircraftUser = OptionData::instance().getDisplayTextSizeAircraftUser() / 100.f;
-      context.textSizeAirport = OptionData::instance().getDisplayTextSizeAirport() / 100.f;
-      context.textSizeFlightplan = OptionData::instance().getDisplayTextSizeFlightplan() / 100.f;
-      context.textSizeNavaid = OptionData::instance().getDisplayTextSizeNavaid() / 100.f;
-      context.thicknessFlightplan = OptionData::instance().getDisplayThicknessFlightplan() / 100.f;
-      context.thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
+      const OptionData& od = OptionData::instance();
+
+      context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
+      context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
+      context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
+      context.symbolSizeNavaid = od.getDisplaySymbolSizeNavaid() / 100.f;
+      context.textSizeAircraftAi = od.getDisplayTextSizeAircraftAi() / 100.f;
+      context.textSizeAircraftUser = od.getDisplayTextSizeAircraftUser() / 100.f;
+      context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
+      context.textSizeFlightplan = od.getDisplayTextSizeFlightplan() / 100.f;
+      context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
+      context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
+      context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
+
+      context.dispOpts = od.getDisplayOptions();
 
       if(mapWidget->distance() < DISTANCE_CUT_OFF_LIMIT)
       {

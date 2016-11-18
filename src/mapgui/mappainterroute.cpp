@@ -327,7 +327,9 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
   if(context->mapLayer->isAirportRouteInfo())
     flags |= textflags::NAME | textflags::INFO;
 
-  symbolPainter->drawAirportText(context->painter, obj, x, y, flags,
+  symbolPainter->drawAirportText(context->painter, obj, x, y,
+                                 context->dispOpts,
+                                 flags,
                                  context->sz(context->textSizeAirport,
                                              context->mapLayer->getAirportSymbolSize()),
                                  context->mapLayer->isAirportDiagram());

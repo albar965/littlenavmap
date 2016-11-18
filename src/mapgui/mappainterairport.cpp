@@ -146,7 +146,8 @@ void MapPainterAirport::render(const PaintContext *context)
         flags |= textflags::NAME;
 
       context->szFont(context->textSizeAirport);
-      symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), flags,
+      symbolPainter->drawAirportText(context->painter, *airport, pt.x(), pt.y(), context->dispOpts,
+                                     flags,
                                      context->sz(context->symbolSizeAirport,
                                                  context->mapLayerEffective->getAirportSymbolSize()),
                                      context->mapLayerEffective->isAirportDiagram());

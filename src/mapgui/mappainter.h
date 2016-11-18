@@ -57,6 +57,8 @@ struct PaintContext
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
 
+  opts::DisplayOptions dispOpts;
+
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float thicknessFlightplan = 1.f;
@@ -68,6 +70,11 @@ struct PaintContext
   float symbolSizeAircraftUser = 1.f;
   float textSizeAirport = 1.f;
   float thicknessTrail = 1.f;
+
+  bool dOpt(const opts::DisplayOptions& opts) const
+  {
+    return dispOpts & opts;
+  }
 
   /* Calculate real symbol size */
   int sz(float scale, int size) const
@@ -100,6 +107,7 @@ struct PaintContext
     return scale * size;
   }
 
+  /* Calculate and set font based on scale */
   void szFont(float scale) const;
 
 };
