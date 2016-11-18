@@ -1191,7 +1191,8 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
 /* Called from menu or toolbar by action */
 bool MainWindow::routeSave()
 {
-  if(routeController->getCurrentRouteFilename().isEmpty())
+  if(routeController->getCurrentRouteFilename().isEmpty() ||
+     !routeController->doesFilenameMatchRoute())
     return routeSaveAs();
   else
   {

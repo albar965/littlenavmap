@@ -162,7 +162,7 @@
         </widget>
        </item>
        <item row="4" column="3">
-        <spacer name="horizontalSpacer_2">
+        <spacer name="horizSpaceUI">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -295,6 +295,20 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="0" colspan="3">
+        <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
+         <property name="toolTip">
+          <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these. 
+The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
+         </property>
+         <property name="text">
+          <string>Avoid overwriting Flight Plan with non matching departure and destination</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

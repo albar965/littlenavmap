@@ -99,7 +99,12 @@ enum Flag
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
-  SIM_UPDATE_MAP_CONSTANTLY = 1 << 18
+  SIM_UPDATE_MAP_CONSTANTLY = 1 << 18,
+
+  /* Center flight plan after loading.
+   * ui->checkBoxOptionsGuiAvoidOverwrite */
+  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 19
+
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);

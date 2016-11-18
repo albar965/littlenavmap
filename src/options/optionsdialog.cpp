@@ -146,6 +146,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->tabWidgetOptions);
   widgets.append(ui->checkBoxOptionsGuiCenterKml);
   widgets.append(ui->checkBoxOptionsGuiCenterRoute);
+  widgets.append(ui->checkBoxOptionsGuiAvoidOverwrite);
   widgets.append(ui->checkBoxOptionsMapEmptyAirports);
   widgets.append(ui->checkBoxOptionsRouteEastWestRule);
   widgets.append(ui->checkBoxOptionsRoutePreferNdb);
@@ -596,6 +597,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
   toFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);
@@ -688,6 +690,7 @@ void OptionsDialog::optionDataToWidgets()
   fromFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
   fromFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
   fromFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  fromFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   fromFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
   fromFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_EAST_WEST_RULE);
   fromFlags(ui->checkBoxOptionsRoutePreferNdb, opts::ROUTE_PREFER_NDB);

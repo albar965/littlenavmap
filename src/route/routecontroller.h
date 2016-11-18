@@ -108,6 +108,8 @@ public:
     return routeFilename;
   }
 
+  bool  doesFilenameMatchRoute();
+
   /* Create a default filename based on departure and destination names */
   QString buildDefaultFilename() const;
 
@@ -319,8 +321,11 @@ private:
   RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
   atools::geo::Rect boundingRect;
   RouteMapObjectList route;
-  /* Current filename of empty if no route */
-  QString routeFilename;
+
+  /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
+  QString routeFilename, fileDeparture, fileDestination;
+  atools::fs::pln::FlightplanType fileIfrVfr;
+
   MainWindow *mainWindow;
   QTableView *view;
   MapQuery *query;

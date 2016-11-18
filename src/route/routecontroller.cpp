@@ -416,12 +416,18 @@ void RouteController::restoreState()
         {
           // Cannot be loaded - clear current filename
           routeFilename.clear();
+          fileDeparture.clear();
+          fileDestination.clear();
+          fileIfrVfr = VFR;
           route.clear();
         }
       }
       else
       {
         routeFilename.clear();
+        fileDeparture.clear();
+        fileDestination.clear();
+        fileIfrVfr = VFR;
         route.clear();
       }
     }
@@ -467,6 +473,11 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
     undoIndexClean = -1;
 
   routeFilename = filename;
+
+  fileDeparture = flightplan.getDepartureIdent();
+  fileDestination = flightplan.getDestinationIdent();
+  fileIfrVfr = flightplan.getFlightplanType();
+
   route.setFlightplan(flightplan);
   createRouteMapObjects();
   if(updateStartPositionBestRunway(false /* force */, !quiet /* undo */))
@@ -567,6 +578,10 @@ bool RouteController::saveFlightplan()
 {
   try
   {
+    fileDeparture = route.getFlightplan().getDepartureIdent();
+    fileDestination = route.getFlightplan().getDestinationIdent();
+    fileIfrVfr = route.getFlightplan().getFlightplanType();
+
     qDebug() << "saveFlighplan" << routeFilename;
     // Will throw an exception if something goes wrong
 
@@ -1171,6 +1186,20 @@ void RouteController::updateSpinboxSuffices()
 bool RouteController::hasChanged() const
 {
   return undoIndexClean == -1 || undoIndexClean != undoIndex;
+}
+
+bool RouteController::doesFilenameMatchRoute()
+{
+  if(!routeFilename.isEmpty())
+  {
+    if(!(OptionData::instance().getFlags() & opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN))
+      return true;
+
+    return fileIfrVfr == route.getFlightplan().getFlightplanType() &&
+           fileDeparture == route.getFlightplan().getDepartureIdent() &&
+           fileDestination == route.getFlightplan().getDestinationIdent();
+  }
+  return false;
 }
 
 /* Called by action */
@@ -2073,6 +2102,10 @@ void RouteController::clearRoute()
   route.clear();
   route.setTotalDistance(0.f);
   routeFilename.clear();
+  routeFilename.clear();
+  fileDeparture.clear();
+  fileDestination.clear();
+  fileIfrVfr = VFR;
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;
