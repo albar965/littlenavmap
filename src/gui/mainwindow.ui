@@ -2195,6 +2195,9 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportInfo">
+        <property name="toolTip">
+         <string/>
+        </property>
         <attribute name="title">
          <string>Airport</string>
         </attribute>
@@ -4700,7 +4703,7 @@
   </action>
   <action name="actionSaveMapAsImage">
    <property name="icon">
-    <iconset>
+    <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
    </property>
    <property name="text">
@@ -4758,7 +4761,7 @@
     <string>Save flight plan as Garmin GFP format usable by GTN 650/750</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as</string>
+    <string>Save flight plan as Garmin GFP format usable by GTN 650/750</string>
    </property>
   </action>
  </widget>

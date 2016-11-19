@@ -41,6 +41,12 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowLast">
+            <property name="toolTip">
+             <string>Show last used map position on startup.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
+            </property>
             <property name="text">
              <string>&amp;Last position</string>
             </property>
@@ -51,6 +57,9 @@
           </item>
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowHome">
+            <property name="toolTip">
+             <string>Show the map home position after startup.</string>
+            </property>
             <property name="text">
              <string>&amp;Home position</string>
             </property>
@@ -58,6 +67,9 @@
           </item>
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowFlightplan">
+            <property name="statusTip">
+             <string>Center the last used flight plan on the map on startup.</string>
+            </property>
             <property name="text">
              <string>&amp;Flight plan</string>
             </property>
@@ -88,6 +100,9 @@
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsStartupLoadMapSettings">
+         <property name="toolTip">
+          <string>Restore all map display settings (airport, VOR, etc.) on startup. Otherwise goes back to default settings.</string>
+         </property>
          <property name="text">
           <string>Restore &amp;map display settings</string>
          </property>
@@ -303,7 +318,7 @@
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</string>
          </property>
          <property name="text">
-          <string>Avoid overwriting Flight Plan with non matching departure and destination</string>
+          <string>&amp;Avoid overwriting Flight Plan with non matching departure and destination</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -429,7 +444,7 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
            <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
             <property name="toolTip">
              <string>Viewpoint distance above earth surface.
-Smaller values will zoom in closer to an airport or navaid.</string>
+Smaller values will zoom in closer to an airport or navaid. This setting applies to double clicks in the map or table views only.</string>
             </property>
             <property name="suffix">
              <string> %dist%</string>
@@ -462,7 +477,7 @@ Smaller values will zoom in closer to an airport or navaid.</string>
            <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMapMenu">
             <property name="toolTip">
              <string>Viewpoint distance above earth surface.
-Smaller values will zoom in closer to an airport or navaid.</string>
+Smaller values will zoom in closer to an airport or navaid. This setting applies to the menu items &quot;Show on map&quot; and the map links in the information windows.</string>
             </property>
             <property name="suffix">
              <string> %dist%</string>
@@ -737,7 +752,7 @@ Smaller values allow a finer selection.</string>
           <item row="2" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
             <property name="text">
-             <string>User Aircraft:</string>
+             <string>&amp;User Aircraft:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
@@ -772,7 +787,7 @@ Smaller values allow a finer selection.</string>
           <item row="3" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
             <property name="text">
-             <string>AI / Multiplayer Aircraft:</string>
+             <string>AI / &amp;Multiplayer Aircraft:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
@@ -807,7 +822,7 @@ Smaller values allow a finer selection.</string>
           <item row="0" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeAirport">
             <property name="text">
-             <string>Airports:</string>
+             <string>&amp;Airports:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
@@ -867,7 +882,7 @@ Smaller values allow a finer selection.</string>
           <item row="5" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeTrail">
             <property name="text">
-             <string>User Aircraft Trail:</string>
+             <string>User Aircraft &amp;Trail:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
@@ -883,7 +898,7 @@ Smaller values allow a finer selection.</string>
              <string> %</string>
             </property>
             <property name="prefix">
-             <string>Thickness </string>
+             <string>Width </string>
             </property>
             <property name="minimum">
              <number>50</number>
@@ -921,7 +936,7 @@ Smaller values allow a finer selection.</string>
           <item row="4" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
             <property name="text">
-             <string>Flight Plan:</string>
+             <string>&amp;Flight Plan:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
@@ -956,7 +971,8 @@ Smaller values allow a finer selection.</string>
           <item row="1" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeNavaid">
             <property name="text">
-             <string>VOR, NDB and Waypoints:</string>
+             <string>&amp;VOR, NDB, waypoints and
+airways:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
@@ -972,7 +988,7 @@ Smaller values allow a finer selection.</string>
              <string> %</string>
             </property>
             <property name="prefix">
-             <string>Thickness </string>
+             <string>Width </string>
             </property>
             <property name="minimum">
              <number>50</number>
@@ -996,6 +1012,9 @@ Smaller values allow a finer selection.</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Set color for flight plan line.</string>
+            </property>
             <property name="text">
              <string>Color</string>
             </property>
@@ -1009,6 +1028,9 @@ Smaller values allow a finer selection.</string>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Set color for aircraft trail.</string>
+            </property>
             <property name="text">
              <string>Color</string>
             </property>
@@ -1017,7 +1039,7 @@ Smaller values allow a finer selection.</string>
           <item row="6" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
             <property name="text">
-             <string>Range rings and distance
+             <string>&amp;Range rings and distance
 measurement lines:</string>
             </property>
             <property name="buddy">
@@ -1034,7 +1056,7 @@ measurement lines:</string>
              <string> %</string>
             </property>
             <property name="prefix">
-             <string>Thickness </string>
+             <string>Width </string>
             </property>
             <property name="minimum">
              <number>50</number>
@@ -1105,7 +1127,7 @@ measurement lines:</string>
        <item row="3" column="0">
         <widget class="QLabel" name="labelOptionsUnitSpeed">
          <property name="text">
-          <string>Speed:</string>
+          <string>&amp;Speed:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitSpeed</cstring>
@@ -1115,7 +1137,7 @@ measurement lines:</string>
        <item row="1" column="0">
         <widget class="QLabel" name="labelOptionsUnitShortDistance">
          <property name="text">
-          <string>Short Distance:</string>
+          <string>&amp;Short Distance:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitShortDistance</cstring>
@@ -1125,7 +1147,7 @@ measurement lines:</string>
        <item row="4" column="0">
         <widget class="QLabel" name="labelOptionsUnitVertSpeed">
          <property name="text">
-          <string>Vertical Speed:</string>
+          <string>&amp;Vertical Speed:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitVertSpeed</cstring>
@@ -1182,7 +1204,7 @@ measurement lines:</string>
        <item row="6" column="0">
         <widget class="QLabel" name="labelOptionsUnitCoords">
          <property name="text">
-          <string>Coordinates:</string>
+          <string>&amp;Coordinates:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitCoords</cstring>
@@ -1211,7 +1233,7 @@ measurement lines:</string>
        <item row="0" column="0">
         <widget class="QLabel" name="labelOptionsUnitDistance">
          <property name="text">
-          <string>Distance:</string>
+          <string>&amp;Distance:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitDistance</cstring>
@@ -1221,7 +1243,7 @@ measurement lines:</string>
        <item row="2" column="0">
         <widget class="QLabel" name="labelOptionsUnitAlt">
          <property name="text">
-          <string>Altitude and Elevation:</string>
+          <string>&amp;Altitude and elevation:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitAlt</cstring>
@@ -1272,7 +1294,7 @@ measurement lines:</string>
        <item row="5" column="0">
         <widget class="QLabel" name="labelOptionsUnitFuel">
          <property name="text">
-          <string>Fuel and Weight:</string>
+          <string>&amp;Fuel and Weight:</string>
          </property>
          <property name="buddy">
           <cstring>comboBoxOptionsUnitFuelWeight</cstring>
@@ -1351,8 +1373,11 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
        </item>
        <item row="1" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
+         <property name="toolTip">
+          <string>Map will follow the aircraft constantly when checked.</string>
+         </property>
          <property name="text">
-          <string>Do not use box mode for following the aircraft. Move the map constantly.</string>
+          <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
          </property>
         </widget>
        </item>
