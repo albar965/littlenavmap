@@ -110,18 +110,17 @@ enum Flag
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
 
+/* Changing these option values will also change the saved values thus invalidatin user settings */
 enum DisplayOption
 {
   ITEM_NONE = 0,
-  ITEM_FIRST = 1 << 0,
-  ITEM_AIRPORT = ITEM_FIRST, /* top level tree item */
+
   ITEM_AIRPORT_NAME = 1 << 1,
   ITEM_AIRPORT_TOWER = 1 << 2,
   ITEM_AIRPORT_ATIS = 1 << 3,
   ITEM_AIRPORT_RUNWAY = 1 << 4,
   ITEM_AIRPORT_WIND_POINTER = 1 << 5, // TODO
 
-  ITEM_USER_AIRCRAFT = 1 << 7, /* top level tree item */
   ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 8,
   ITEM_USER_AIRCRAFT_TYPE = 1 << 9,
   ITEM_USER_AIRCRAFT_AIRLINE = 1 << 10,
@@ -135,7 +134,6 @@ enum DisplayOption
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18, // TODO
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19, // TODO
 
-  ITEM_AI_AIRCRAFT = 1 << 21, /* top level tree item */
   ITEM_AI_AIRCRAFT_REGISTRATION = 1 << 22,
   ITEM_AI_AIRCRAFT_TYPE = 1 << 23,
   ITEM_AI_AIRCRAFT_AIRLINE = 1 << 24,
@@ -144,8 +142,7 @@ enum DisplayOption
   ITEM_AI_AIRCRAFT_GS = 1 << 27,
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
-  ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
-  ITEM_LAST = ITEM_AI_AIRCRAFT_ALTITUDE
+  ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30
 };
 
 Q_DECLARE_FLAGS(DisplayOptions, DisplayOption);

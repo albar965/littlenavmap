@@ -108,14 +108,14 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   ui->setupUi(this);
 
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
-  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), opts::ITEM_AIRPORT);
+  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"));
   addItem(ap, tr("Name (Ident)"), opts::ITEM_AIRPORT_NAME, true);
   addItem(ap, tr("Tower Frequency"), opts::ITEM_AIRPORT_TOWER, true);
   addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), opts::ITEM_AIRPORT_ATIS, true);
   addItem(ap, tr("Runway Information"), opts::ITEM_AIRPORT_RUNWAY, true);
   addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
-  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"), opts::ITEM_USER_AIRCRAFT);
+  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"));
   addItem(ua, tr("Registration"), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
   addItem(ua, tr("Type"), opts::ITEM_USER_AIRCRAFT_TYPE);
   addItem(ua, tr("Airline"), opts::ITEM_USER_AIRCRAFT_AIRLINE);
@@ -129,7 +129,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   addItem(ua, tr("Track Line"), opts::ITEM_USER_AIRCRAFT_TRACK_LINE);
   addItem(ua, tr("Wind Pointer"), opts::ITEM_USER_AIRCRAFT_WIND_POINTER);
 
-  QTreeWidgetItem *ai = addTopItem(root, tr("AI / Multiplayer Aircraft"), opts::ITEM_AI_AIRCRAFT);
+  QTreeWidgetItem *ai = addTopItem(root, tr("AI / Multiplayer Aircraft"));
   addItem(ai, tr("Registration"), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem(ai, tr("Type"), opts::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem(ai, tr("Airline"), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
@@ -442,9 +442,9 @@ void OptionsDialog::displayOptDataToWidget()
   }
 }
 
-QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type)
+QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, QString text)
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
+  QTreeWidgetItem *item = new QTreeWidgetItem(root, {text});
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
   return item;
 }
