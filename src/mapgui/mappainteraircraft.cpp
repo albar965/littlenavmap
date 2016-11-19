@@ -34,12 +34,12 @@ using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectData;
 
-uint qHash(const MapPainterAircraft::Key& key)
+uint qHash(const MapPainterAircraft::PixmapKey& key)
 {
   return key.size | (key.type << 8) | (key.ground << 10) | (key.user << 11);
 }
 
-bool MapPainterAircraft::Key::operator==(const MapPainterAircraft::Key& other) const
+bool MapPainterAircraft::PixmapKey::operator==(const MapPainterAircraft::PixmapKey& other) const
 {
   return type == other.type && ground == other.ground && user == other.user && size == other.size;
 }
@@ -83,8 +83,20 @@ void MapPainterAircraft::render(const PaintContext *context)
   }
 
   if(context->objectTypes.testFlag(AIRCRAFT))
-    paintUserAircraft(context, mapWidget->getUserAircraft());
+  {
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
+    const Pos& pos = userAircraft.getPosition();
 
+    if(pos.isValid())
+    {
+      if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
+        paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+
+      float x, y;
+      if(wToS(pos, x, y))
+        paintUserAircraft(context, userAircraft, x, y);
+    }
+  }
   context->painter->restore();
 }
 
@@ -120,37 +132,28 @@ void MapPainterAircraft::paintAiAircraft(const PaintContext *context,
     context->painter->resetTransform();
 
     // Build text label
-    paintTextLabelAi(size, context, x, y, aiAircraft);
+    paintTextLabelAi(context, x, y, size, aiAircraft);
   }
 }
 
 void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
-                                           const SimConnectUserAircraft& userAircraft)
+                                           const SimConnectUserAircraft& userAircraft, float x, float y)
 {
-  const Pos& pos = userAircraft.getPosition();
+  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32),
+                      scale->getPixelIntForFeet(userAircraft.getWingSpan()));
+  context->szFont(context->textSizeAircraftUser);
+  int offset = -(size / 2);
 
-  if(!pos.isValid())
-    return;
+  // Position is visible
+  context->painter->translate(x, y);
+  context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
 
-  float x, y;
-  if(wToS(pos, x, y))
-  {
-    int size = std::max(context->sz(context->symbolSizeAircraftUser, 32),
-                        scale->getPixelIntForFeet(userAircraft.getWingSpan()));
-    context->szFont(context->textSizeAircraftUser);
-    int offset = -(size / 2);
+  // Draw symbol
+  context->painter->drawPixmap(offset, offset, *pixmapFromCache(userAircraft, size, true));
+  context->painter->resetTransform();
 
-    // Position is visible
-    context->painter->translate(x, y);
-    context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
-
-    // Draw symbol
-    context->painter->drawPixmap(offset, offset, *pixmapFromCache(userAircraft, size, true));
-    context->painter->resetTransform();
-
-    // Build text label
-    paintTextLabelUser(size, context, x, y, userAircraft);
-  }
+  // Build text label
+  paintTextLabelUser(context, x, y, size, userAircraft);
 }
 
 void MapPainterAircraft::paintAircraftTrack(const PaintContext *context)
@@ -235,7 +238,7 @@ void MapPainterAircraft::paintAircraftTrack(const PaintContext *context)
   }
 }
 
-void MapPainterAircraft::paintTextLabelAi(int size, const PaintContext *context, float x, float y,
+void MapPainterAircraft::paintTextLabelAi(const PaintContext *context, float x, float y, int size,
                                           const SimConnectAircraft& aircraft)
 {
   if(mapWidget->distance() > 20)
@@ -275,7 +278,7 @@ void MapPainterAircraft::paintTextLabelAi(int size, const PaintContext *context,
   symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
 }
 
-void MapPainterAircraft::paintTextLabelUser(int size, const PaintContext *context, float x, float y,
+void MapPainterAircraft::paintTextLabelUser(const PaintContext *context, float x, float y, int size,
                                             const SimConnectUserAircraft& aircraft)
 {
   QStringList texts;
@@ -306,17 +309,7 @@ void MapPainterAircraft::paintTextLabelUser(int size, const PaintContext *contex
     texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
   }
 
-  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
-  {
-    texts.append(tr("Wind %1 °M / %2").
-                 arg(QLocale().toString(atools::geo::normalizeCourse(
-                                          aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
-                                        'f', 0)).
-                 arg(Unit::speedKts(aircraft.getWindSpeedKts())));
-  }
-
   // TODO ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
-  // TODO ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
 
   textatt::TextAttributes atts(textatt::BOLD);
 
@@ -329,7 +322,7 @@ void MapPainterAircraft::paintTextLabelUser(int size, const PaintContext *contex
 const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac, int size,
                                                    bool user)
 {
-  Key key;
+  PixmapKey key;
 
   if(ac.getCategory() == atools::fs::sc::HELICOPTER)
     key.type = AC_HELICOPTER;
@@ -344,7 +337,7 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac,
   return pixmapFromCache(key);
 }
 
-const QPixmap *MapPainterAircraft::pixmapFromCache(const Key& key)
+const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
 {
   if(pixmaps.contains(key))
     return pixmaps.object(key);
@@ -430,4 +423,33 @@ void MapPainterAircraft::appendSpeedText(QStringList& texts, const SimConnectAir
 
   if(!line.isEmpty())
     texts.append(line.join(tr(", ")));
+}
+
+void MapPainterAircraft::paintWindPointer(const PaintContext *context,
+                                          const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                          int x, int y)
+{
+  symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
+  paintTextLabelWind(context, x, y, WIND_POINTER_SIZE, aircraft);
+}
+
+void MapPainterAircraft::paintTextLabelWind(const PaintContext *context, int x, int y, int size,
+                                            const SimConnectUserAircraft& aircraft)
+{
+  QStringList texts;
+
+  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
+  {
+    texts.append(tr("%1 °M").arg(QLocale().toString(atools::geo::normalizeCourse(
+                                                      aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                                    'f', 0)));
+
+    texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+  }
+
+  textatt::TextAttributes atts(textatt::BOLD);
+  atts |= textatt::ROUTE_BG_COLOR;
+
+  // Draw text label
+  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
 }

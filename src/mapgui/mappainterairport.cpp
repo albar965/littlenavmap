@@ -131,6 +131,9 @@ void MapPainterAirport::render(const PaintContext *context)
     // More detailed symbol will be drawn by the route painter - so skip here
     if(!routeAirportIds.contains(airport->id))
     {
+      // if(context->dOpt(opts::ITEM_AIRPORT_WIND_POINTER))
+      // drawWindPointer(context, *airport, pt.x(), pt.y());
+
       // Symbol will be omitted for runway overview
       drawAirportSymbol(context, *airport, pt.x(), pt.y());
 
@@ -874,6 +877,18 @@ void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const map
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y, size, isAirportDiagram, context->drawFast);
   }
 }
+
+// void MapPainterAirport::drawWindPointer(const PaintContext *context, const MapAirport& ap, int x, int y)
+// {
+// Q_UNUSED(ap);
+// const atools::fs::sc::SimConnectUserAircraft& aircraft = mapWidget->getUserAircraft();
+// if(aircraft.getPosition().isValid())
+// {
+// int size = context->sz(context->symbolSizeAirport,
+// context->mapLayerEffective->getAirportSymbolSize() * 2);
+// symbolPainter->drawWindPointer(context->painter, QColor(), x, y, size, true, context->drawFast);
+// }
+// }
 
 /*
  * Fill coordinate arrays for all runways of an airport.

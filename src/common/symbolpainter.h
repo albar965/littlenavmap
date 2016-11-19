@@ -23,6 +23,7 @@
 #include <QColor>
 #include <QIcon>
 #include <QApplication>
+#include <QCache>
 
 class QPainter;
 class QPen;
@@ -115,6 +116,9 @@ public:
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size, bool fill, bool fast);
 
+  /* Wind arrow */
+  void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
+
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
                         textflags::TextFlags flags, int size, bool fill);
@@ -140,7 +144,7 @@ public:
   /* User defined flight plan waypoint */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
-  /* Simulator aircraft symbol */
+  /* Simulator aircraft symbol. Only used for HTML display */
   void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
 
   /* Draw a custom text box */
@@ -155,8 +159,10 @@ public:
 private:
   QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
                            const maptypes::MapAirport& airport);
+  const QPixmap *windPointerFromCache(int size);
 
   QColor iconBackground;
+  QCache<int, QPixmap> windPointerPixmaps;
 };
 
 #endif // LITTLENAVMAP_SYMBOLPAINTER_H

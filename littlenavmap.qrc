@@ -127,6 +127,7 @@
         <file>resources/css/print.css</file>
         <file>resources/icons/routestring.svg</file>
         <file>resources/icons/newroutefromstring.svg</file>
+        <file>resources/icons/windpointer.svg</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

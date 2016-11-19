@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "options/optiondata.h"
 #include "common/unit.h"
+#include "geo/calculations.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -230,6 +231,19 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
   }
   else
     painter->drawPoint(x, y);
+
+  painter->restore();
+}
+
+void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)
+{
+  painter->save();
+  painter->setBackgroundMode(Qt::TransparentMode);
+
+  painter->translate(x, y + size / 2);
+  painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
+  painter->drawPixmap(-size / 2, -size / 2, *windPointerFromCache(size));
+  painter->resetTransform();
 
   painter->restore();
 }
@@ -534,11 +548,8 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
 
   if(flags & textflags::INFO)
   {
-    QString tower;
-
-    if(dispOpts & opts::ITEM_AIRPORT_TOWER)
-      tower = (airport.towerFrequency == 0 ? QString() :
-               tr("TWR ") + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
+    if(airport.towerFrequency != 0 && dispOpts & opts::ITEM_AIRPORT_TOWER)
+      texts.append(tr("CT ") + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
 
     QString autoWeather;
     if(dispOpts & opts::ITEM_AIRPORT_ATIS)
@@ -551,8 +562,8 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
         autoWeather = tr("ASOS ") + QLocale().toString(airport.asosFrequency / 1000., 'f', 3);
     }
 
-    if(!tower.isEmpty() || !autoWeather.isEmpty())
-      texts.append(tower + (tower.isEmpty() ? QString() : " ") + autoWeather);
+    if(!autoWeather.isEmpty())
+      texts.append(autoWeather);
 
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(dispOpts & opts::ITEM_AIRPORT_RUNWAY)
@@ -697,4 +708,17 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
   }
   painter->restore();
   return retval;
+}
+
+const QPixmap *SymbolPainter::windPointerFromCache(int size)
+{
+  if(windPointerPixmaps.contains(size))
+    return windPointerPixmaps.object(size);
+  else
+  {
+    QPixmap *newPx =
+      new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size)));
+    windPointerPixmaps.insert(size, newPx);
+    return newPx;
+  }
 }

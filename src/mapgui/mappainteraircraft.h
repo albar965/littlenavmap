@@ -60,9 +60,9 @@ public:
     AC_HELICOPTER
   };
 
-  struct Key
+  struct PixmapKey
   {
-    bool operator==(const MapPainterAircraft::Key& other) const;
+    bool operator==(const MapPainterAircraft::PixmapKey& other) const;
 
     AircraftType type;
     bool ground;
@@ -72,15 +72,15 @@ public:
 
 private:
   void paintAircraftTrack(const PaintContext *context);
+
   void paintUserAircraft(const PaintContext *context,
-                         const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+                         const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
   void paintAiAircraft(const PaintContext *context,
                        const atools::fs::sc::SimConnectAircraft& aiAircraft);
-  const QPixmap *pixmapFromCache(const Key& key);
-  const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
-  void paintTextLabelUser(int size, const PaintContext *context, float x, float y,
+
+  void paintTextLabelUser(const PaintContext *context, float x, float y, int size,
                           const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void paintTextLabelAi(int size, const PaintContext *context, float x, float y,
+  void paintTextLabelAi(const PaintContext *context, float x, float y, int size,
                         const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
@@ -89,12 +89,22 @@ private:
                        bool ias, bool gs);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
+  void paintWindPointer(const PaintContext *context, const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                        int x, int y);
+  void paintTextLabelWind(const PaintContext *context, int x, int y, int size,
+                          const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
+  const QPixmap *pixmapFromCache(const PixmapKey& key);
+  const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, bool user);
+
   /* Minimum length in pixel of a track segment to be drawn */
   static Q_DECL_CONSTEXPR int AIRCRAFT_TRACK_MIN_LINE_LENGTH = 5;
 
   static Q_DECL_CONSTEXPR int DISTANCE_CUT_OFF_AI_LIMIT = 500;
 
-  QCache<Key, QPixmap> pixmaps;
+  static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
+
+  QCache<PixmapKey, QPixmap> pixmaps;
 
 };
 
