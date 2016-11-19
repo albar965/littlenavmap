@@ -80,6 +80,7 @@ public:
 
   /* Saves flight plan using current name */
   bool saveFlightplan();
+  bool saveFlighplanAsGfp(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -112,6 +113,7 @@ public:
 
   /* Create a default filename based on departure and destination names */
   QString buildDefaultFilename() const;
+  QString buildDefaultFilenameGfp() const;
 
   /* @return true if no flight plan loaded (no departure, no destination and no waypoints) */
   bool isFlightplanEmpty() const;
@@ -301,6 +303,7 @@ private:
   void updateTableHeaders();
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
+  void cleanFilename(QString& filename) const;
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

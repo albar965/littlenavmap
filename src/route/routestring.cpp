@@ -40,7 +40,64 @@ RouteString::~RouteString()
   delete entryBuilder;
 }
 
+/*
+ *  Flight Plan File Guidelines
+ *
+ * Garmin uses a text based flight plan format that is derived from the IMI/IEI
+ * messages format specified in ARINC 702A-3. But that’s just a side note.
+ * Let’s take a look at the syntax of a usual Garmin flight plan:
+ * FPN/RI:F:AIRPORT:F:WAYPOINT:F:WAYPOINT.AIRWAY.WAYPOINT:F:AIRPORT
+ * Every flight plan always starts with the “FPN/RI” identifier. The “:F:” specifies
+ * the different flight plan segments. A flight plan segment can be the departure or arrival
+ * airport, a waypoint or a number of waypoints that are connected via airways.
+ *
+ * The entry and exit waypoint of an airway are connected to the airway via a dot “.”.
+ * The flight plan must be contained in the first line of the file. Anything after the first
+ * line will be discarded and may result in importing failures. Flight plans can only contain
+ * upper case letters, numbers, colons, parenthesis, commas and periods. Spaces or any other
+ * special characters are not allowed. When saved the flight plan name must have a “.gfp” extension.
+ *
+ *  Here's an example, it's basically a .txt file with the extension .gfp
+ *
+ *  FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
+ */
+QString RouteString::createGfpStringForRoute(const atools::fs::pln::Flightplan& flightplan)
+{
+  QString retval;
+
+  QStringList string = createStringForRouteInternal(flightplan);
+  if(!string.isEmpty())
+  {
+    retval += "FPN/RI:F:" + string.first();
+
+    for(int i = 1; i < string.size() - 1; ++i)
+    {
+      const QString& str = string.at(i);
+      if((i % 2) == 0)
+        // Is a waypoint
+        retval += str;
+      else
+      {
+        // Is a airway or direct
+        if(str == "DCT")
+          retval += ":F:";
+        else
+          retval += "." + str + ".";
+      }
+    }
+
+    retval += string.last();
+  }
+  qDebug() << "RouteString::createGfpStringForRoute" << retval;
+  return retval;
+}
+
 QString RouteString::createStringForRoute(const atools::fs::pln::Flightplan& flightplan)
+{
+  return createStringForRouteInternal(flightplan).join(" ");
+}
+
+QStringList RouteString::createStringForRouteInternal(const atools::fs::pln::Flightplan& flightplan)
 {
   QStringList retval;
   QString lastAw, lastId;
@@ -75,15 +132,16 @@ QString RouteString::createStringForRoute(const atools::fs::pln::Flightplan& fli
 
   // Add destination
   retval.append(lastId);
+  qDebug() << "RouteString::createStringForRouteInternal" << retval;
 
-  return retval.join(" ");
+  return retval;
 }
 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan)
 {
   errors.clear();
   QStringList list = cleanRouteString(routeString).split(" ");
-  qDebug() << "parsing" << list;
+  qDebug() << "RouteString::createRouteFromString parsing" << list;
 
   if(list.size() < 2)
   {

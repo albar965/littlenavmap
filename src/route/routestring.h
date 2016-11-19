@@ -50,6 +50,12 @@ public:
    */
   QString createStringForRoute(const atools::fs::pln::Flightplan& flightplan);
 
+  /*
+   * Create a route string in garming flight plan format (GFP):
+   * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
+   */
+  QString createGfpStringForRoute(const atools::fs::pln::Flightplan& flightplan);
+
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
 
   const QStringList& getErrors() const
@@ -71,6 +77,7 @@ private:
                         QList<maptypes::MapWaypoint>& airwayWaypoints);
   void findBestNavaid(const QString& strItem, const atools::geo::Pos& lastPos, float maxDistance,
                       maptypes::MapSearchResult& result);
+  QStringList createStringForRouteInternal(const atools::fs::pln::Flightplan& flightplan);
 
   MapQuery *query = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

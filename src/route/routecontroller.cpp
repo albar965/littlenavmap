@@ -574,6 +574,26 @@ bool RouteController::saveFlighplanAs(const QString& filename)
   return saveFlightplan();
 }
 
+bool RouteController::saveFlighplanAsGfp(const QString& filename)
+{
+  qDebug() << "saveFlighplanAs" << filename;
+  QString gfp = RouteString().createGfpStringForRoute(route.getFlightplan());
+
+  QFile file(filename);
+  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  {
+    QByteArray utf8 = gfp.toUtf8();
+    file.write(utf8.data(), utf8.size());
+    file.close();
+    return true;
+  }
+  else
+  {
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
+    return false;
+  }
+}
+
 bool RouteController::saveFlightplan()
 {
   try
@@ -865,8 +885,24 @@ QString RouteController::buildDefaultFilename() const
   filename += ".pln";
 
   // Remove characters that are note allowed in most filesystems
-  filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
-  replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
+  cleanFilename(filename);
+  return filename;
+}
+
+QString RouteController::buildDefaultFilenameGfp() const
+{
+  QString filename;
+
+  const Flightplan& flightplan = route.getFlightplan();
+
+  filename += flightplan.getEntries().first().getIcaoIdent();
+  filename += "-";
+
+  filename += flightplan.getEntries().last().getIcaoIdent();
+  filename += ".gfp";
+
+  // Remove characters that are note allowed in most filesystems
+  cleanFilename(filename);
   return filename;
 }
 
@@ -2167,4 +2203,10 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
     }
   }
   return false;
+}
+
+void RouteController::cleanFilename(QString& filename) const
+{
+  filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
+  replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
 }

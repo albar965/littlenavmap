@@ -158,11 +158,12 @@ private:
   void routeOpenRecent(const QString& routeFile);
   bool routeSave();
   bool routeSaveAs();
+  bool routeSaveAsGfp();
   void routeCenter();
   void renderStatusChanged(Marble::RenderStatus status);
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
-  bool routeValidate();
+  bool routeValidate(bool validateParking = true);
   void loadNavmapLegend();
   void showNavmapLegend();
   void showMapLegend();
@@ -241,7 +242,7 @@ private:
   InfoQuery *infoQuery = nullptr;
 
   bool firstStart = true /* emit window shown only once after startup */,
-  firstApplicationStart = false /* first starup on a system after installation */;
+       firstApplicationStart = false /* first starup on a system after installation */;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

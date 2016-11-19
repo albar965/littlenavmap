@@ -56,6 +56,7 @@
     <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
+    <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -4743,6 +4744,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsGfp">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasgfp.svg</normaloff>:/littlenavmap/resources/icons/saveasgfp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save Flight Plan &amp;as GFP ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as Garmin GFP format usable by GTN 650/750</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as</string>
    </property>
   </action>
  </widget>

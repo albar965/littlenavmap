@@ -94,10 +94,12 @@ const QString OPTIONS_VERSION = "Options/Version";
 #if defined(Q_OS_WIN32)
 const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg)";
 const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln)";
+const QString FILE_PATTERN_GFP = "(*.gfp)";
 const QString FILE_PATTERN_KML = "(*.kml *.kmz)";
 #else
-const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.CFG)";
-const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.PLN)";
+const QString FILE_PATTERN_SCENERYCONFIG = "(*.cfg *.Cfg *.CFG)";
+const QString FILE_PATTERN_FLIGHTPLAN = "(*.pln *.Pln *.PLN)";
+const QString FILE_PATTERN_GFP = "(*.gfp *.Gfp *.GFP)";
 const QString FILE_PATTERN_KML = "(*.kml *.KML *.kmz *.KMZ)";
 #endif
 const QString FILE_PATTERN_AS_SNAPSHOT = "(current_wx_snapshot.txt)";

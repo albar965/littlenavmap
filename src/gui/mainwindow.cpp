@@ -583,6 +583,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
+  connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeSaveAsGfp);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -957,7 +958,7 @@ void MainWindow::routeCenter()
 
 /* Check if route has valid departure  and destination and departure parking.
  *  @return true if route can be saved anyway */
-bool MainWindow::routeValidate()
+bool MainWindow::routeValidate(bool validateParking)
 {
   if(!routeController->hasValidDeparture() || !routeController->hasValidDestination())
   {
@@ -978,29 +979,32 @@ bool MainWindow::routeValidate()
   }
   else
   {
-    if(!routeController->hasValidParking())
+    if(validateParking)
     {
-      // Airport has parking but no one is selected
-      atools::gui::DialogButtonList buttons({
-                                              {QString(), QMessageBox::Cancel},
-                                              {tr("Select Start Position"), QMessageBox::Yes},
-                                              {QString(), QMessageBox::Save}
-                                            });
+      if(!routeController->hasValidParking())
+      {
+        // Airport has parking but no one is selected
+        atools::gui::DialogButtonList buttons({
+                                                {QString(), QMessageBox::Cancel},
+                                                {tr("Select Start Position"), QMessageBox::Yes},
+                                                {QString(), QMessageBox::Save}
+                                              });
 
-      int result = dialog->showQuestionMsgBox(
-        lnm::ACTIONS_SHOWROUTEPARKINGWARNING,
-        tr("The start airport has parking spots but no parking was selected for this Flight Plan"),
-        tr("Do not show this dialog again and save Flight Plan in the future."),
-        buttons, QMessageBox::Yes, QMessageBox::Save);
+        int result = dialog->showQuestionMsgBox(
+          lnm::ACTIONS_SHOWROUTEPARKINGWARNING,
+          tr("The start airport has parking spots but no parking was selected for this Flight Plan"),
+          tr("Do not show this dialog again and save Flight Plan in the future."),
+          buttons, QMessageBox::Yes, QMessageBox::Save);
 
-      if(result == QMessageBox::Yes)
-        // saving depends if user selects parking or  cancels out of the dialog
-        return routeController->selectDepartureParking();
-      else if(result == QMessageBox::Save)
-        // Save right away
-        return true;
-      else if(result == QMessageBox::Cancel)
-        return false;
+        if(result == QMessageBox::Yes)
+          // saving depends if user selects parking or  cancels out of the dialog
+          return routeController->selectDepartureParking();
+        else if(result == QMessageBox::Save)
+          // Save right away
+          return true;
+        else if(result == QMessageBox::Cancel)
+          return false;
+      }
     }
   }
   return true;
@@ -1236,6 +1240,30 @@ bool MainWindow::routeSaveAs()
   return false;
 }
 
+/* Called from menu or toolbar by action */
+bool MainWindow::routeSaveAsGfp()
+{
+  if(routeValidate(false /*valideParking*/))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as Garmin GFP Format"),
+      tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
+      "gfp", "Route/",
+      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
+      routeController->buildDefaultFilenameGfp());
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAsGfp(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as GFP."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 /* Called from menu or toolbar by action. Remove all KML from map */
 void MainWindow::kmlClear()
 {
@@ -1460,6 +1488,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
