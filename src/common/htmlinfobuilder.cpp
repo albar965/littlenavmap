@@ -1204,7 +1204,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     QString value;
     if(std::abs(headWind) >= 1.0f)
     {
-      value += locale.toString(std::abs(headWind), 'f', 0) + tr(" kts ");
+      value += Unit::speedKts(std::abs(headWind));
 
       if(headWind <= -1.f)
         value += tr("<b>▲</b>");  // Tailwind
