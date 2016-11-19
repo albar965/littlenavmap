@@ -185,7 +185,7 @@ public:
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
    * select a new start position (best runway) */
-  void reverse();
+  void reverseRoute();
 
   void optionsChanged();
 
@@ -194,6 +194,9 @@ public:
 
   /* Copy the route as a string to the clipboard */
   void routeStringToClipboard() const;
+
+  /* Adjust altitude according to simple east/west VFR/IFR rules */
+  void adjustFlightplanAltitude();
 
 signals:
   /* Show airport on map */
@@ -253,7 +256,7 @@ private:
   void moveSelectedLegsUp();
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
-  void selectedRows(QList<int>& rows, bool reverse);
+  void selectedRows(QList<int>& rows, bool reverseRoute);
 
   void select(QList<int>& rows, int offset);
 
@@ -273,6 +276,9 @@ private:
   void routeTypeChanged();
 
   void clearRoute();
+
+  int adjustAltitude(const atools::geo::Pos& departurePos, const atools::geo::Pos& destinationPos,
+                     const atools::fs::pln::Flightplan& flightplan, int minAltitude);
 
   bool calculateRouteInternal(RouteFinder *routeFinder, atools::fs::pln::RouteType type,
                               const QString& commandName,

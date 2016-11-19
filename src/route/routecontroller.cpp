@@ -797,24 +797,9 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       if(minAltitude != 0 && !useSetAltitude)
       {
         if(OptionData::instance().getFlags() & opts::ROUTE_EAST_WEST_RULE)
-        {
           // Apply simplified east/west rule
-          float fpDir = departurePos.angleDegToRhumb(destinationPos);
-
-          qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
-
-          if(fpDir >= 0.f && fpDir <= 180.f)
-            // General direction is east - round up to the next odd value
-            minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
-          else
-            // General direction is west - round up to the next even value
-            minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
-
-          if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-            minAltitude += 500;
-
-          qDebug() << "corrected minAltitude" << minAltitude;
-        }
+          minAltitude = adjustAltitude(departurePos, destinationPos, flightplan,
+                                       minAltitude);
 
         flightplan.setCruisingAltitude(minAltitude);
       }
@@ -842,7 +827,57 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   return found;
 }
 
-void RouteController::reverse()
+void RouteController::adjustFlightplanAltitude()
+{
+  qDebug() << "Adjust altitude";
+
+  if(route.isEmpty())
+    return;
+
+  Flightplan& fp = route.getFlightplan();
+  int alt = adjustAltitude(fp.getDeparturePosition(), fp.getDestinationPosition(), fp, fp.getCruisingAltitude());
+
+  if(alt != fp.getCruisingAltitude())
+  {
+    RouteCommand *undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
+    fp.setCruisingAltitude(alt);
+    updateTableModel();
+
+    if(!route.isEmpty())
+      postChange(undoCommand);
+
+    mainWindow->updateWindowTitle();
+
+    if(!route.isEmpty())
+      emit routeChanged(false);
+
+    mainWindow->setStatusMessage(tr("Adjusted flight plan altitude."));
+  }
+}
+
+/* Apply simplified east/west rule */
+int RouteController::adjustAltitude(const Pos& departurePos, const Pos& destinationPos,
+                                    const Flightplan& flightplan, int minAltitude)
+{
+  float fpDir = departurePos.angleDegToRhumb(destinationPos);
+
+  qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
+
+  if(fpDir >= 0.f && fpDir <= 180.f)
+    // General direction is east - round up to the next odd value
+    minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+  else
+    // General direction is west - round up to the next even value
+    minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
+
+  if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+    minAltitude += 500;
+
+  qDebug() << "corrected minAltitude" << minAltitude;
+  return minAltitude;
+}
+
+void RouteController::reverseRoute()
 {
   qDebug() << "reverse";
 

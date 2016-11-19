@@ -130,6 +130,7 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/trackline.svg</file>
         <file>resources/icons/saveasgfp.svg</file>
+        <file>resources/icons/routeadjustalt.svg</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

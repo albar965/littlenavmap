@@ -607,10 +607,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
           routeController, &RouteController::calculateSetAlt);
   connect(ui->actionRouteReverse, &QAction::triggered,
-          routeController, &RouteController::reverse);
+          routeController, &RouteController::reverseRoute);
 
   connect(ui->actionRouteCopyString, &QAction::triggered,
           routeController, &RouteController::routeStringToClipboard);
+
+  connect(ui->actionRouteAdjustAltitude, &QAction::triggered,
+          routeController, &RouteController::adjustFlightplanAltitude);
 
   // Help menu
   connect(ui->actionHelpContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
@@ -1495,6 +1498,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
+  ui->actionRouteAdjustAltitude->setEnabled(hasFlightplan);
 
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)

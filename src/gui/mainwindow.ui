@@ -175,6 +175,7 @@
     <addaction name="actionRouteCalcLowAlt"/>
     <addaction name="actionRouteCalcSetAlt"/>
     <addaction name="actionRouteReverse"/>
+    <addaction name="actionRouteAdjustAltitude"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
     <property name="title">
@@ -2512,6 +2513,7 @@
    <addaction name="actionRouteCalcLowAlt"/>
    <addaction name="actionRouteCalcSetAlt"/>
    <addaction name="actionRouteReverse"/>
+   <addaction name="actionRouteAdjustAltitude"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetElevation">
    <property name="sizePolicy">
@@ -4762,6 +4764,21 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as Garmin GFP format usable by GTN 650/750</string>
+   </property>
+  </action>
+  <action name="actionRouteAdjustAltitude">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadjustalt.svg</normaloff>:/littlenavmap/resources/icons/routeadjustalt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Adjust flight plan altitude</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
+   </property>
+   <property name="statusTip">
+    <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
    </property>
   </action>
  </widget>
