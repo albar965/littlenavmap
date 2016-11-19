@@ -70,6 +70,7 @@ struct PaintContext
   float symbolSizeAircraftUser = 1.f;
   float textSizeAirport = 1.f;
   float thicknessTrail = 1.f;
+  float thicknessRangeDistance = 1.f;
 
   bool dOpt(const opts::DisplayOptions& opts) const
   {

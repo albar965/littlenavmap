@@ -285,6 +285,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
       context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
       context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
+      context.thicknessRangeDistance = od.getDisplayThicknessRangeDistance() / 100.f;
 
       context.dispOpts = od.getDisplayOptions();
 

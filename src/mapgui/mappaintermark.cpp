@@ -208,6 +208,8 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 
   painter->setBrush(Qt::NoBrush);
 
+  float lineWidth = context->szF(context->thicknessRangeDistance, 3);
+
   for(const maptypes::RangeMarker& rings : rangeRings)
   {
     // Get the biggest ring to check visibility
@@ -242,14 +244,14 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
         // textColor = mapcolors::ilsTextColor;
         // }
 
-        painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+        painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
         bool centerVisible;
         QPoint center = wToS(rings.center, DEFAULT_WTOS_SIZE, &centerVisible);
         if(centerVisible)
         {
           // Draw small center point
-          painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+          painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           painter->drawEllipse(center, 4, 4);
         }
 
@@ -274,7 +276,7 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
             symbolPainter->textBox(painter, {txt}, painter->pen(), xt, yt);
-            painter->setPen(QPen(QBrush(color), 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+            painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
       }
@@ -289,11 +291,12 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   QFontMetrics metrics = painter->fontMetrics();
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
+  float lineWidth = context->szF(context->thicknessRangeDistance, 3);
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
     // Get color from marker
-    painter->setPen(QPen(m.color, 2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+    painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
     const int SYMBOL_SIZE = 5;
     int x, y;
@@ -308,7 +311,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
     }
 
-    painter->setPen(QPen(m.color, 3, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+    painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     if(!m.isRhumbLine)
     {
       // Draw great circle line

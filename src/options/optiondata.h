@@ -484,6 +484,11 @@ public:
     return displayOptions;
   }
 
+  int getDisplayThicknessRangeDistance() const
+  {
+    return displayThicknessRangeDistance;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -632,6 +637,9 @@ private:
 
   // spinBoxOptionsDisplayThicknessTrail
   int displayThicknessTrail = 100;
+
+  // spinBoxOptionsDisplayThicknessRangeDistance
+  int displayThicknessRangeDistance = 100;
 
   QColor flightplanColor, trailColor;
 

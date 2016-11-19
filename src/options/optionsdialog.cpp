@@ -198,6 +198,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsDisplaySymbolSizeAircraftUser);
   widgets.append(ui->spinBoxOptionsDisplayTextSizeAirport);
   widgets.append(ui->spinBoxOptionsDisplayThicknessTrail);
+  widgets.append(ui->spinBoxOptionsDisplayThicknessRangeDistance);
   widgets.append(ui->comboBoxOptionsDisplayTrailType);
 
   widgets.append(ui->comboBoxOptionsUnitDistance);
@@ -659,6 +660,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySymbolSizeAircraftUser = ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->value();
   data.displayTextSizeAirport = ui->spinBoxOptionsDisplayTextSizeAirport->value();
   data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
+  data.displayThicknessRangeDistance = ui->spinBoxOptionsDisplayThicknessRangeDistance->value();
   data.displayTrailType =
     static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
 
@@ -766,6 +768,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->setValue(data.displaySymbolSizeAircraftUser);
   ui->spinBoxOptionsDisplayTextSizeAirport->setValue(data.displayTextSizeAirport);
   ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
+  ui->spinBoxOptionsDisplayThicknessRangeDistance->setValue(data.displayThicknessRangeDistance);
   ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
 
   ui->comboBoxOptionsUnitDistance->setCurrentIndex(data.unitDist);
