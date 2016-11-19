@@ -926,7 +926,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Altitude: &amp;Min:</string>
+                <string>Elevation: &amp;Min:</string>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportAltitudeMinSearch</cstring>
@@ -936,10 +936,10 @@
              <item>
               <widget class="QSpinBox" name="spinBoxAirportAltitudeMinSearch">
                <property name="toolTip">
-                <string>Minimum altitude for airport</string>
+                <string>Minimum elevation for airport</string>
                </property>
                <property name="statusTip">
-                <string>Minimum altitude for airport</string>
+                <string>Minimum elevation for airport</string>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -980,10 +980,10 @@
              <item>
               <widget class="QSpinBox" name="spinBoxAirportAltitudeMaxSearch">
                <property name="toolTip">
-                <string>Maximum altitude for airport</string>
+                <string>Maximum elevation for airport</string>
                </property>
                <property name="statusTip">
-                <string>Maximum altitude for airport</string>
+                <string>Maximum elevation for airport</string>
                </property>
                <property name="showGroupSeparator" stdset="0">
                 <bool>true</bool>
@@ -3014,13 +3014,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Altitude</string>
+    <string>Elevation</string>
    </property>
    <property name="toolTip">
-    <string>Show airport altitude search options</string>
+    <string>Show airport elevation search options</string>
    </property>
    <property name="statusTip">
-    <string>Show airport altitude search options</string>
+    <string>Show airport elevation search options</string>
    </property>
   </action>
   <action name="actionAirportSearchShowDistOptions">
@@ -4700,7 +4700,7 @@
   </action>
   <action name="actionSaveMapAsImage">
    <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
+    <iconset>
      <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
    </property>
    <property name="text">

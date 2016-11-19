@@ -115,7 +115,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
          filter().condition(">").convertFunc(Unit::distNmF)).
   append(Column("mag_var", tr("Mag\nVar°"))).
-  append(Column("altitude", tr("Altitude\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch, tr("Scenery Path")).filter()).
   append(Column("bgl_filename", ui->lineEditNavFileSearch, tr("BGL File")).filter()).
   append(Column("waypoint_num_victor_airway").hidden()).

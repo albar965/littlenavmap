@@ -811,7 +811,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
     tr("<b>") + from + tr(" ► ") + to + tr("</b>, ") +
     Unit::distNm(distance) + tr(" ► ") +
     Unit::distNm(distanceToGo) + tr(", ") +
-    tr(" Ground Altitude ") + Unit::altFeet(alt) +
+    tr(" Ground Elevation ") + Unit::altFeet(alt) +
     tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - alt) + tr(", ") +
     tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev));
 

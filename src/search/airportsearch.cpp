@@ -151,7 +151,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
 
   append(Column("rating", ui->checkBoxAirportScenerySearch, tr("Rating")).conditions("> 0", "== 0")).
 
-  append(Column("altitude", tr("Altitude\n%alt%")).
+  append(Column("altitude", tr("Elevation\n%alt%")).
          convertFunc(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag\nVar°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).

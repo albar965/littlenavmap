@@ -135,7 +135,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
   if(!state.isEmpty())
     html.row2(tr("State or Province:"), state);
   html.row2(tr("Country:"), country);
-  html.row2(tr("Altitude:"), Unit::altFeet(airport.getPosition().getAltitude()));
+  html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magvar:"), maptypes::magvarText(airport.magvar));
   if(rec != nullptr)
   {
@@ -522,7 +522,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
                     (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
           html.row2(tr("Type:"), atools::capString(heliRec.valueStr("type")));
           html.row2(tr("Heading:"), tr("%1°M").arg(locale.toString(heliRec.valueFloat("heading"), 'f', 0)));
-          html.row2(tr("Altitude:"), Unit::altFeet(heliRec.valueFloat("altitude")));
+          html.row2(tr("Elevation:"), Unit::altFeet(heliRec.valueFloat("altitude")));
 
           addCoordinates(&heliRec, html);
           html.tableEnd();
@@ -726,7 +726,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
   if(!vor.dmeOnly)
     html.row2(tr("Magvar:"), maptypes::magvarText(vor.magvar));
-  html.row2(tr("Altitude:"), Unit::altFeet(vor.getPosition().getAltitude()));
+  html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
   html.row2(tr("Morse:"), tr("<b>") + morse->getCode(vor.ident) + tr("</b>"));
   addCoordinates(rec, html);
@@ -764,7 +764,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.row2(tr("Region:"), ndb.region);
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
-  html.row2(tr("Altitude:"), Unit::altFeet(ndb.getPosition().getAltitude()));
+  html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(ndb.range));
   html.row2(tr("Morse:"), "<b>" + morse->getCode(ndb.ident) + "</b>");
   addCoordinates(rec, html);

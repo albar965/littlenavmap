@@ -70,21 +70,26 @@ QString RouteString::createGfpStringForRoute(const atools::fs::pln::Flightplan& 
   {
     retval += "FPN/RI:F:" + string.first();
 
-    for(int i = 1; i < string.size() - 1; ++i)
+    if(string.size() > 2)
     {
-      const QString& str = string.at(i);
-      if((i % 2) == 0)
-        // Is a waypoint
-        retval += str;
-      else
+      for(int i = 1; i < string.size() - 1; ++i)
       {
-        // Is a airway or direct
-        if(str == "DCT")
-          retval += ":F:";
+        const QString& str = string.at(i);
+        if((i % 2) == 0)
+          // Is a waypoint
+          retval += str;
         else
-          retval += "." + str + ".";
+        {
+          // Is a airway or direct
+          if(str == "DCT")
+            retval += ":F:";
+          else
+            retval += "." + str + ".";
+        }
       }
     }
+    else
+      retval += ":F:";
 
     retval += string.last();
   }
