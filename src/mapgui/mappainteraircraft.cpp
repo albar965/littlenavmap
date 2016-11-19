@@ -144,6 +144,9 @@ void MapPainterAircraft::paintUserAircraft(const PaintContext *context,
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
+  if(context->dOpt(opts::ITEM_USER_AIRCRAFT_TRACK_LINE) && userAircraft.getGroundSpeedKts() > 30)
+    symbolPainter->drawTrackLine(context->painter, x, y, size * 2, userAircraft.getTrackDegTrue());
+
   // Position is visible
   context->painter->translate(x, y);
   context->painter->rotate(atools::geo::normalizeCourse(userAircraft.getHeadingDegTrue()));
@@ -309,10 +312,7 @@ void MapPainterAircraft::paintTextLabelUser(const PaintContext *context, float x
     texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
   }
 
-  // TODO ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
-
   textatt::TextAttributes atts(textatt::BOLD);
-
   atts |= textatt::ROUTE_BG_COLOR;
 
   // Draw text label
@@ -339,8 +339,8 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac,
 
 const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
 {
-  if(pixmaps.contains(key))
-    return pixmaps.object(key);
+  if(aircraftPixmaps.contains(key))
+    return aircraftPixmaps.object(key);
   else
   {
     QString name = ":/littlenavmap/resources/icons/aircraft";
@@ -362,7 +362,7 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
       name += "_user";
 
     QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(key.size, key.size)));
-    pixmaps.insert(key, newPx);
+    aircraftPixmaps.insert(key, newPx);
     return newPx;
   }
 }

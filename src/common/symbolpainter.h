@@ -119,6 +119,9 @@ public:
   /* Wind arrow */
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
 
+  /* Aircraft track */
+  void drawTrackLine(QPainter *painter, float x, float y, int size, float dir);
+
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
                         textflags::TextFlags flags, int size, bool fill);
@@ -160,9 +163,10 @@ private:
   QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
                            const maptypes::MapAirport& airport);
   const QPixmap *windPointerFromCache(int size);
+  const QPixmap *trackLineFromCache(int size);
 
   QColor iconBackground;
-  QCache<int, QPixmap> windPointerPixmaps;
+  QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
 };
 
 #endif // LITTLENAVMAP_SYMBOLPAINTER_H

@@ -104,7 +104,8 @@ private:
 
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
 
-  QCache<PixmapKey, QPixmap> pixmaps;
+  /* Caches pixmaps generated from SVG graphics */
+  QCache<PixmapKey, QPixmap> aircraftPixmaps;
 
 };
 

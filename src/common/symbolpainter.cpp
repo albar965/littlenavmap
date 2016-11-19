@@ -248,6 +248,19 @@ void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int siz
   painter->restore();
 }
 
+void SymbolPainter::drawTrackLine(QPainter *painter, float x, float y, int size, float dir)
+{
+  painter->save();
+  painter->setBackgroundMode(Qt::TransparentMode);
+
+  painter->translate(x, y);
+  painter->rotate(atools::geo::normalizeCourse(dir));
+  painter->drawPixmap(-size / 2, -size / 2, *trackLineFromCache(size));
+  painter->resetTransform();
+
+  painter->restore();
+}
+
 void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
   painter->save();
@@ -719,6 +732,19 @@ const QPixmap *SymbolPainter::windPointerFromCache(int size)
     QPixmap *newPx =
       new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size)));
     windPointerPixmaps.insert(size, newPx);
+    return newPx;
+  }
+}
+
+const QPixmap *SymbolPainter::trackLineFromCache(int size)
+{
+  if(trackLinePixmaps.contains(size))
+    return trackLinePixmaps.object(size);
+  else
+  {
+    QPixmap *newPx =
+      new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size)));
+    trackLinePixmaps.insert(size, newPx);
     return newPx;
   }
 }
