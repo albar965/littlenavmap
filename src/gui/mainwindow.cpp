@@ -1251,7 +1251,7 @@ bool MainWindow::routeSaveAsGfp()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
-      "gfp", "Route/",
+      "gfp", "Route/Gfp",
       atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
       routeController->buildDefaultFilenameGfp());
 
