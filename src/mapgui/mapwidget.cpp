@@ -603,7 +603,7 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus)
+  if(databaseLoadStatus || mouseState != mw::NONE)
     return;
 
   screenIndex->updateSimData(simulatorData);
@@ -670,7 +670,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                         deltas.altitudeDelta) || // Altitude has changed
          (curPos.isNull() && centerAircraft) || // Not visible on world map but centering required
          (!rect().contains(curPos.toPoint()) && centerAircraft) || // Not in screen rectangle but centering required
-         aiVisible) // Paint always for AI
+         aiVisible) // Paint always for visible AI
       {
         screenIndex->updateLastSimData(simulatorData);
 
@@ -682,8 +682,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
         QRect widgetRect = rect();
         widgetRect.adjust(dx, dy, -dx, -dy);
 
-        if((!widgetRect.contains(curPos.toPoint()) && centerAircraft && mouseState == mw::NONE) ||
-           (OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY))
+        if((!widgetRect.contains(curPos.toPoint()) || // Aircraft out of box or ...
+            OptionData::instance().getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY) && // ... update always
+           centerAircraft) // Centering wanted
           centerOn(userAircraft.getPosition().getLonX(),
                    userAircraft.getPosition().getLatY(), false);
         else
