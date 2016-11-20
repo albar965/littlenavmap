@@ -4772,7 +4772,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeadjustalt.svg</normaloff>:/littlenavmap/resources/icons/routeadjustalt.svg</iconset>
    </property>
    <property name="text">
-    <string>Adjust flight plan altitude</string>
+    <string>Adjust Flight Plan Altitude</string>
    </property>
    <property name="toolTip">
     <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
