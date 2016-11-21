@@ -1091,9 +1091,7 @@ bool MainWindow::routeCheckForChanges()
 /* Open a dialog that allows to create a new route from a string */
 void MainWindow::routeNewFromString()
 {
-  RouteStringDialog routeStringDialog(this, mapQuery,
-                                      RouteString().createStringForRoute(
-                                        routeController->getRouteMapObjects().getFlightplan()));
+  RouteStringDialog routeStringDialog(this, routeController);
   routeStringDialog.restoreState();
 
   if(routeStringDialog.exec() == QDialog::Accepted)

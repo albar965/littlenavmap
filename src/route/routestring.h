@@ -34,13 +34,14 @@ class FlightplanEntry;
 
 class MapQuery;
 class FlightplanEntryBuilder;
+class RouteMapObjectList;
 
 class RouteString
 {
   Q_DECLARE_TR_FUNCTIONS(RouteString)
 
 public:
-  RouteString(MapQuery *mapQuery = nullptr);
+  RouteString(FlightplanEntryBuilder *flightplanEntryBuilder = nullptr);
   virtual ~RouteString();
 
   /*
@@ -48,13 +49,13 @@ public:
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const atools::fs::pln::Flightplan& flightplan);
+  QString createStringForRoute(const RouteMapObjectList& route);
 
   /*
    * Create a route string in garming flight plan format (GFP):
    * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
    */
-  QString createGfpStringForRoute(const atools::fs::pln::Flightplan& flightplan);
+  QString createGfpStringForRoute(const RouteMapObjectList& route);
 
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan);
 
@@ -77,7 +78,7 @@ private:
                         QList<maptypes::MapWaypoint>& airwayWaypoints);
   void findBestNavaid(const QString& strItem, const atools::geo::Pos& lastPos, float maxDistance,
                       maptypes::MapSearchResult& result);
-  QStringList createStringForRouteInternal(const atools::fs::pln::Flightplan& flightplan);
+  QStringList createStringForRouteInternal(const RouteMapObjectList& route, bool gfpWaypoints);
 
   MapQuery *query = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

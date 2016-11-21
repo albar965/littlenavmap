@@ -67,7 +67,7 @@ const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Distance\n%dist%"),
                                     QObject::tr("Remaining\n%dist%"),
                                     QObject::tr("Leg Time\nhh:mm"),
-                                    QObject::tr("ETA\nhh:mm UTC")});
+                                    QObject::tr("ETA\nhh:mm")});
 
 namespace rc {
 // Route table column indexes
@@ -295,7 +295,7 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << "RouteController::routeStringToClipboard";
 
-  QString str = RouteString().createStringForRoute(route.getFlightplan());
+  QString str = RouteString().createStringForRoute(route);
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -577,7 +577,7 @@ bool RouteController::saveFlighplanAs(const QString& filename)
 bool RouteController::saveFlighplanAsGfp(const QString& filename)
 {
   qDebug() << "saveFlighplanAs" << filename;
-  QString gfp = RouteString().createGfpStringForRoute(route.getFlightplan());
+  QString gfp = RouteString().createGfpStringForRoute(route);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -2245,3 +2245,5 @@ void RouteController::cleanFilename(QString& filename) const
   filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
   replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
 }
+
+

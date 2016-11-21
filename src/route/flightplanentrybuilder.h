@@ -65,6 +65,11 @@ public:
   void entryFromWaypoint(const maptypes::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints);
 
+  MapQuery *getMapQuery() const
+  {
+    return query;
+  }
+
 private:
   MapQuery *query = nullptr;
 

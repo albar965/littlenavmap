@@ -17,6 +17,7 @@
 
 #include "route/routestring.h"
 
+#include "common/coordinates.h"
 #include "route/routemapobjectlist.h"
 #include "mapgui/mapquery.h"
 #include "route/flightplanentrybuilder.h"
@@ -29,15 +30,15 @@ using atools::fs::pln::FlightplanEntry;
 
 const float MAX_WAYPOINT_DISTANCE_NM = 1000.f;
 
-RouteString::RouteString(MapQuery *mapQuery)
-  : query(mapQuery)
+RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
+  : entryBuilder(flightplanEntryBuilder)
 {
-  entryBuilder = new FlightplanEntryBuilder(query);
+  if(flightplanEntryBuilder != nullptr)
+    query = flightplanEntryBuilder->getMapQuery();
 }
 
 RouteString::~RouteString()
 {
-  delete entryBuilder;
 }
 
 /*
@@ -57,15 +58,17 @@ RouteString::~RouteString()
  * upper case letters, numbers, colons, parenthesis, commas and periods. Spaces or any other
  * special characters are not allowed. When saved the flight plan name must have a “.gfp” extension.
  *
- *  Here's an example, it's basically a .txt file with the extension .gfp
+ * Here's an example, it's basically a .txt file with the extension .gfp
  *
- *  FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
+ * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
+ *
+ * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
  */
-QString RouteString::createGfpStringForRoute(const atools::fs::pln::Flightplan& flightplan)
+QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
 {
   QString retval;
 
-  QStringList string = createStringForRouteInternal(flightplan);
+  QStringList string = createStringForRouteInternal(route, true);
   if(!string.isEmpty())
   {
     retval += "FPN/RI:F:" + string.first();
@@ -97,20 +100,25 @@ QString RouteString::createGfpStringForRoute(const atools::fs::pln::Flightplan& 
   return retval;
 }
 
-QString RouteString::createStringForRoute(const atools::fs::pln::Flightplan& flightplan)
+QString RouteString::createStringForRoute(const RouteMapObjectList& route)
 {
-  return createStringForRouteInternal(flightplan).join(" ");
+  return createStringForRouteInternal(route, false).join(" ");
 }
 
-QStringList RouteString::createStringForRouteInternal(const atools::fs::pln::Flightplan& flightplan)
+QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& route, bool gfpWaypoints)
 {
   QStringList retval;
   QString lastAw, lastId;
-  for(int i = 0; i < flightplan.getEntries().size(); i++)
+  for(int i = 0; i < route.size(); i++)
   {
-    const FlightplanEntry& entry = flightplan.at(i);
+    const RouteMapObject& entry = route.at(i);
     const QString& airway = entry.getAirway();
-    const QString& ident = entry.getIcaoIdent();
+    QString ident = entry.getIdent();
+
+    if(entry.getMapObjectType() == maptypes::INVALID || entry.getMapObjectType() == maptypes::USER)
+      // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
+      ident = gfpWaypoints ?
+              coords::toGfpFormat(entry.getPosition()) : coords::toDegMinFormat(entry.getPosition());
 
     if(airway.isEmpty())
     {
@@ -275,14 +283,21 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       }
 
       // Replace last result only if something was found
-      if(!result.waypoints.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty())
+      if(!result.waypoints.isEmpty() || !result.vors.isEmpty() || !result.ndbs.isEmpty() ||
+         !result.userPoints.isEmpty())
         lastResult = result;
 
       if(airwayWaypoints.isEmpty())
       {
         // Add a single waypoint from direct
         entry = FlightplanEntry();
-        entryBuilder->buildFlightplanEntry(result, entry, true);
+
+        if(!result.userPoints.isEmpty())
+          // Convert a coordinate to a user defined waypoint
+          entryBuilder->buildFlightplanEntry(result.userPoints.first().position, result, entry, true, -1);
+        else
+          entryBuilder->buildFlightplanEntry(result, entry, true);
+
         if(entry.getPosition().isValid())
           flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
         else
@@ -428,27 +443,56 @@ void RouteString::extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& all
 void RouteString::findBestNavaid(const QString& strItem, const atools::geo::Pos& lastPos, float maxDistance,
                                  maptypes::MapSearchResult& result)
 {
-  query->getMapObjectByIdent(result, maptypes::WAYPOINT, strItem);
-  float waypointDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.waypoints));
-
-  if(waypointDistNm > maxDistance)
+  if(strItem.length() > 5)
   {
-    result.waypoints.clear();
-
-    // Too far to waypoint - try VOR
-    query->getMapObjectByIdent(result, maptypes::VOR, strItem);
-    float vorDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.vors));
-
-    if(vorDistNm > maxDistance)
+    // User defined waypoint
+    atools::geo::Pos pos = coords::fromAnyWaypointFormat(strItem);
+    if(pos.isValid())
     {
-      result.vors.clear();
+      maptypes::MapUserpoint user;
+      user.position = pos;
+      result.userPoints.append(user);
+    }
+  }
+  else
+  {
+    if(strItem.length() == 5)
+    {
+      // Try NAT waypoint (a few of these are also in the database)
+      atools::geo::Pos pos = coords::fromAnyWaypointFormat(strItem);
+      if(pos.isValid())
+      {
+        maptypes::MapUserpoint user;
+        user.position = pos;
+        result.userPoints.append(user);
+      }
+    }
 
-      // Too far to VOR either - try NDB
-      query->getMapObjectByIdent(result, maptypes::NDB, strItem);
-      float ndbDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.ndbs));
+    query->getMapObjectByIdent(result, maptypes::WAYPOINT, strItem);
+    float waypointDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.waypoints));
 
-      if(ndbDistNm > maxDistance)
-        result.ndbs.clear();
+    if(waypointDistNm > maxDistance)
+    {
+      result.waypoints.clear();
+
+      if(strItem.length() <= 3)
+      {
+        // Too far to waypoint - try VOR
+        query->getMapObjectByIdent(result, maptypes::VOR, strItem);
+        float vorDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.vors));
+
+        if(vorDistNm > maxDistance)
+        {
+          result.vors.clear();
+
+          // Too far to VOR either - try NDB
+          query->getMapObjectByIdent(result, maptypes::NDB, strItem);
+          float ndbDistNm = atools::geo::meterToNm(maptools::removeFarthest(lastPos, result.ndbs));
+
+          if(ndbDistNm > maxDistance)
+            result.ndbs.clear();
+        }
+      }
     }
   }
 }

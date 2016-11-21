@@ -34,6 +34,8 @@ class Flightplan;
 
 class MapQuery;
 class QAbstractButton;
+class RouteController;
+class RouteString;
 
 class RouteStringDialog :
   public QDialog
@@ -41,7 +43,7 @@ class RouteStringDialog :
   Q_OBJECT
 
 public:
-  RouteStringDialog(QWidget *parent, MapQuery *mapQuery, const QString& initialString = QString());
+  RouteStringDialog(QWidget *parent, RouteController *routeController);
   virtual ~RouteStringDialog();
 
   const atools::fs::pln::Flightplan& getFlightplan() const;
@@ -60,6 +62,8 @@ private:
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   MapQuery *query = nullptr;
+  RouteController *controller = nullptr;
+  RouteString *routeString;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

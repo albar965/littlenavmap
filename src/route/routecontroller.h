@@ -198,6 +198,11 @@ public:
   /* Adjust altitude according to simple east/west VFR/IFR rules */
   void adjustFlightplanAltitude();
 
+  FlightplanEntryBuilder *getFlightplanEntryBuilder() const
+  {
+    return entryBuilder;
+  }
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

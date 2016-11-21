@@ -18,6 +18,7 @@
 #include "route/routestringdialog.h"
 
 #include "route/routestring.h"
+#include "route/routecontroller.h"
 #include "fs/pln/flightplan.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
@@ -28,14 +29,17 @@
 
 #include <QClipboard>
 
-RouteStringDialog::RouteStringDialog(QWidget *parent, MapQuery *mapQuery, const QString& initialString)
-  : QDialog(parent), ui(new Ui::RouteStringDialog), query(mapQuery)
+RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeController)
+  : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
 {
   ui->setupUi(this);
 
   flightplan = new atools::fs::pln::Flightplan;
+  routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
-  ui->plainTextEditRouteString->setPlainText(initialString);
+  ui->plainTextEditRouteString->setPlainText(
+    routeString->createStringForRoute(routeController->getRouteMapObjects()));
+
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
           this, &RouteStringDialog::readClicked);
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked,
@@ -57,6 +61,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, MapQuery *mapQuery, const 
 
 RouteStringDialog::~RouteStringDialog()
 {
+  delete routeString;
   delete ui;
   delete flightplan;
 }
@@ -83,10 +88,8 @@ void RouteStringDialog::readClicked()
 {
   qDebug() << "RouteStringDialog::readClicked()";
 
-  RouteString routeString(query);
-
   flightplan->clear();
-  bool success = routeString.createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan);
+  bool success = routeString->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan);
 
   ui->textEditRouteStringErrors->clear();
 
@@ -97,12 +100,12 @@ void RouteStringDialog::readClicked()
           arg(flightplan->getEntries().size()).
           arg(Unit::distNm(flightplan->getDistanceNm()));
 
-  if(routeString.getErrors().isEmpty())
+  if(routeString->getErrors().isEmpty())
     ui->textEditRouteStringErrors->setHtml(tr("%1No errors.").arg(msg));
   else
   {
     ui->textEditRouteStringErrors->setHtml(msg);
-    for(const QString& err : routeString.getErrors())
+    for(const QString& err : routeString->getErrors())
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
 
