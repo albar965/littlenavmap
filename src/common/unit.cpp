@@ -316,9 +316,9 @@ QString Unit::coords(const atools::geo::Pos& pos)
 
     case opts::COORDS_DEC:
       return COORDS_DEC_FORMAT.
-             arg(std::abs(pos.getLatY())).
+             arg(std::abs(pos.getLatY()), 0, 'f', 4, QChar('0')).
              arg(pos.getLatY() > 0.f ? "N" : "S").
-             arg(std::abs(pos.getLonX())).
+             arg(std::abs(pos.getLonX()), 0, 'f', 4, QChar('0')).
              arg(pos.getLonX() > 0.f ? "E" : "W");
   }
   return QString();
