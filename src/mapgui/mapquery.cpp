@@ -1182,6 +1182,11 @@ void MapQuery::initQueries()
   airwayWaypointByIdentQuery->prepare("select " + waypointQueryBase +
                                       " from waypoint w "
                                       " join airway a on w.waypoint_id = a.from_waypoint_id "
+                                      "where w.ident = :waypoint and a.airway_name = :airway"
+                                      " union "
+                                      "select " + waypointQueryBase +
+                                      " from waypoint w "
+                                      " join airway a on w.waypoint_id = a.to_waypoint_id "
                                       "where w.ident = :waypoint and a.airway_name = :airway");
 
   airwayByNameQuery = new SqlQuery(db);
