@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QSplashScreen>
 #include <QSslSocket>
+#include <QStyleFactory>
 
 #if defined(Q_OS_WIN32)
 #include <QSharedMemory>
@@ -130,6 +131,7 @@ int main(int argc, char *argv[])
     atools::fs::FsPaths::logAllPaths();
 
     qInfo() << "SSL supported" << QSslSocket::supportsSsl();
+    qInfo() << "Available styles" << QStyleFactory::keys();
 
     migrate::checkAndMigrateSettings();
 
