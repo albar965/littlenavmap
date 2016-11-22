@@ -603,7 +603,7 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus || mouseState != mw::NONE)
+  if(databaseLoadStatus || mouseState != mw::NONE || viewContext() == Marble::Animation)
     return;
 
   screenIndex->updateSimData(simulatorData);
