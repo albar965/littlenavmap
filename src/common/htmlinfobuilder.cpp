@@ -33,6 +33,8 @@
 #include "util/htmlbuilder.h"
 #include "util/morsecode.h"
 #include "common/unit.h"
+#include "connect/connectclient.h"
+#include "gui/mainwindow.h"
 
 #include <QSize>
 
@@ -55,9 +57,10 @@ const float HELIPAD_ZOOM_METER = 200.f;
 Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
 Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 
-HtmlInfoBuilder::HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo,
+HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
                                  bool formatPrint)
-  : mapQuery(mapDbQuery), infoQuery(infoDbQuery), info(formatInfo), print(formatPrint)
+  : mainWindow(parentWindow), mapQuery(mainWindow->getMapQuery()), infoQuery(mainWindow->getInfoQuery()),
+    info(formatInfo), print(formatPrint)
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 
@@ -236,8 +239,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
                          opts::WEATHER_TOOLTIP_ACTIVESKY;
     bool showNoaa = info ? flags & opts::WEATHER_INFO_NOAA : flags & opts::WEATHER_TOOLTIP_NOAA;
     bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
+    bool showFs = info ? flags & opts::WEATHER_INFO_FS : flags & opts::WEATHER_TOOLTIP_FS;
 
-    QString activeSkyMetar, noaaMetar, vatsimMetar;
+    QString activeSkyMetar, noaaMetar, vatsimMetar, fsMetar;
     if(showActiveSky)
       activeSkyMetar = weather->getActiveSkyMetar(airport.ident);
 
@@ -247,11 +251,16 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     if(showVatsim)
       vatsimMetar = weather->getVatsimMetar(airport.ident);
 
-    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty())
+    if(showFs)
+      fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident);
+
+    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || !fsMetar.isEmpty())
     {
       if(info)
         head(html, tr("Weather"));
       html.table();
+      if(!fsMetar.isEmpty())
+        html.row2(QString(tr("FS")) + (info ? tr(":") : tr(" METAR:")), fsMetar);
       if(!activeSkyMetar.isEmpty())
       {
         QString asText(tr("Active Sky"));

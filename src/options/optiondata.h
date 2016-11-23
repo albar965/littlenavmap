@@ -85,25 +85,33 @@ enum Flag
    * ui->checkBoxOptionsWeatherInfoVatsim */
   WEATHER_INFO_VATSIM = 1 << 14,
 
+  /* Show Vatsim weather in info panel.
+  * ui->checkBoxOptionsWeatherInfoFs */
+  WEATHER_INFO_FS = 1 << 15,
+
   /* Show ASN weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipAsn */
-  WEATHER_TOOLTIP_ACTIVESKY = 1 << 15,
+  WEATHER_TOOLTIP_ACTIVESKY = 1 << 16,
 
   /* Show NOAA weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipNoaa */
-  WEATHER_TOOLTIP_NOAA = 1 << 16,
+  WEATHER_TOOLTIP_NOAA = 1 << 17,
 
   /* Show Vatsim weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipVatsim */
-  WEATHER_TOOLTIP_VATSIM = 1 << 17,
+  WEATHER_TOOLTIP_VATSIM = 1 << 18,
+
+  /* Show Vatsim weather in tooltip.
+   * ui->checkBoxOptionsWeatherTooltipFs */
+  WEATHER_TOOLTIP_FS = 1 << 19,
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
-  SIM_UPDATE_MAP_CONSTANTLY = 1 << 18,
+  SIM_UPDATE_MAP_CONSTANTLY = 1 << 20,
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiAvoidOverwrite */
-  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 19
+  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 21
 
 };
 

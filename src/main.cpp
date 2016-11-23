@@ -78,6 +78,8 @@ int main(int argc, char *argv[])
 
   // Needed to send SimConnectData through queued connections
   qRegisterMetaType<atools::fs::sc::SimConnectData>();
+  qRegisterMetaType<atools::fs::sc::SimConnectReply>();
+  qRegisterMetaType<atools::fs::sc::WeatherRequest>();
 
   // Set application information
   int retval = 0;

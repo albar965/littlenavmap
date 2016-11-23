@@ -20,6 +20,7 @@
 #include "common/maptypes.h"
 #include "util/htmlbuilder.h"
 #include "common/htmlinfobuilder.h"
+#include "gui/mainwindow.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -29,8 +30,9 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
-MapTooltip::MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter)
-  : QObject(parent), query(mapQuery), weather(weatherReporter)
+MapTooltip::MapTooltip(MainWindow *parentWindow)
+  : QObject(parentWindow), mainWindow(parentWindow), query(mainWindow->getMapQuery()),
+    weather(mainWindow->getWeatherReporter())
 {
 #if defined(Q_OS_WIN32)
   iconBackColor = QColor(Qt::transparent);
@@ -49,7 +51,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
                                  bool airportDiagram)
 {
   HtmlBuilder html(false);
-  HtmlInfoBuilder info(query, nullptr, false);
+  HtmlInfoBuilder info(mainWindow, false);
   int numEntries = 0;
 
   // Append HTML text for all objects found in order of importance (airports first, etc.)

@@ -189,7 +189,7 @@ void PrintSupport::createFlightplanDocuments()
     cursor.insertHtml(html.getHtml());
   }
 
-  HtmlInfoBuilder builder(mapQuery, infoQuery, true /*info*/, true /*print*/);
+  HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
 
   if(printAnyDeparture || printAnyDestination)
   {

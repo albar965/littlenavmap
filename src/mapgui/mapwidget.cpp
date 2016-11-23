@@ -93,7 +93,7 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   // Avoid stuttering movements
   inputHandler()->setInertialEarthRotationEnabled(false);
 
-  mapTooltip = new MapTooltip(this, mapQuery, mainWindow->getWeatherReporter());
+  mapTooltip = new MapTooltip(mainWindow);
 
   paintLayer = new MapPaintLayer(this, mapQuery);
   addLayer(paintLayer);
@@ -603,7 +603,8 @@ void MapWidget::routeChanged(bool geometryChanged)
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus || mouseState != mw::NONE || viewContext() == Marble::Animation)
+  if(databaseLoadStatus || mouseState != mw::NONE || viewContext() == Marble::Animation ||
+     !simulatorData.getUserAircraft().getPosition().isValid())
     return;
 
   screenIndex->updateSimData(simulatorData);
@@ -2196,6 +2197,7 @@ void MapWidget::handleInfoClick(QPoint pos)
 {
   maptypes::MapSearchResult result;
   screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
+
   emit showInformation(result);
 }
 

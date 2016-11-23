@@ -137,10 +137,25 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   manualDisconnect = false;
 }
 
-/* Posts data received directly from simconnect */
+/* Posts data received directly from simconnect or the socket */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
   emit dataPacketReceived(dataPacket);
+
+  if(!dataPacket.getMetars().isEmpty())
+  {
+    qDebug() << "Metars" << dataPacket.getMetars();
+
+    for(const QString& metar : dataPacket.getMetars())
+    {
+      QString ident = metar.section(' ', 0, 0).section('&', 0, 0);
+      qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident;
+      if(!metarCache.contains(ident))
+        metarCache.insert(ident, new QString(metar));
+    }
+
+    emit weatherUpdated();
+  }
 }
 
 void ConnectClient::postLogMessage(QString message, bool warning)
@@ -162,6 +177,39 @@ void ConnectClient::restoreState()
 
   if(dataReader != nullptr)
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
+}
+
+QString ConnectClient::requestWeather(const QString& station)
+{
+  qDebug() << "ConnectClient::requestWeather" << station;
+
+  if(metarCache.contains(station))
+  {
+    qDebug() << "ConnectClient::requestWeather cache hit";
+    return QString(*metarCache.object(station));
+  }
+
+  qDebug() << "ConnectClient::requestWeather cache miss";
+
+  atools::fs::sc::WeatherRequest weatherRequest;
+  weatherRequest.setWeatherRequestStation({station});
+  requestWeather(weatherRequest);
+
+  return station + " requested";
+}
+
+void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
+{
+  if(dataReader != nullptr && dataReader->isConnected())
+    dataReader->setWeatherRequest(weatherRequest);
+
+  if(socket != nullptr && socket->isOpen())
+  {
+    atools::fs::sc::SimConnectReply reply;
+    reply.setCommand(atools::fs::sc::CMD_WEATHER_REQUEST);
+    reply.setWeatherRequest(weatherRequest);
+    writeReplyToSocket(reply);
+  }
 }
 
 void ConnectClient::autoConnectToggled(bool state)
@@ -336,9 +384,8 @@ void ConnectClient::closeSocket(bool allowRestart)
     silent = false;
 }
 
-void ConnectClient::writeReplyToSocket()
+void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
 {
-  atools::fs::sc::SimConnectReply reply;
   reply.write(socket);
 
   if(reply.getStatus() != atools::fs::sc::OK)
@@ -394,10 +441,12 @@ void ConnectClient::readFromSocket()
   if(read)
   {
     // Data was read completely and successfully - reply to server
-    writeReplyToSocket();
+    atools::fs::sc::SimConnectReply reply;
+    reply.setPacketId(simConnectData->getPacketId());
+    writeReplyToSocket(reply);
 
-    if(simConnectData->getUserAircraft().getPosition().isValid())
-      emit dataPacketReceived(*simConnectData);
+    // Send around in the application
+    postSimConnectData(*simConnectData);
 
     delete simConnectData;
     simConnectData = nullptr;

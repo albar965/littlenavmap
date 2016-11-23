@@ -786,6 +786,11 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated,
           infoController, &InfoController::updateAirport);
 
+  connect(connectClient, &ConnectClient::weatherUpdated,
+          mapWidget, &MapWidget::updateTooltip);
+  connect(connectClient, &ConnectClient::weatherUpdated,
+          infoController, &InfoController::updateAirport);
+
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 }

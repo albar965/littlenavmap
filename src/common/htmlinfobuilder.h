@@ -28,6 +28,7 @@ class MapQuery;
 class InfoQuery;
 class WeatherReporter;
 class RouteMapObjectList;
+class MainWindow;
 
 namespace maptypes {
 struct MapAirport;
@@ -82,7 +83,7 @@ public:
    * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(MapQuery *mapDbQuery, InfoQuery *infoDbQuery, bool formatInfo, bool formatPrint = false);
+  HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo, bool formatPrint = false);
 
   virtual ~HtmlInfoBuilder();
 
@@ -244,6 +245,7 @@ private:
   void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
                    atools::util::HtmlBuilder& html) const;
 
+  MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
   InfoQuery *infoQuery;
   atools::util::MorseCode *morse;

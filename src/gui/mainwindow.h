@@ -127,6 +127,16 @@ public:
 
   atools::sql::SqlDatabase *getDatabase() const;
 
+  MapQuery *getMapQuery() const
+  {
+    return mapQuery;
+  }
+
+  InfoQuery *getInfoQuery() const
+  {
+    return infoQuery;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

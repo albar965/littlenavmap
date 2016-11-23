@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_CONNECTCLIENT_H
 
 #include <QAbstractSocket>
+#include <QCache>
 #include <QTimer>
 
 #include "fs/sc/simconnectdata.h"
@@ -31,6 +32,8 @@ namespace atools {
 namespace fs {
 namespace sc {
 class DataReaderThread;
+class WeatherRequest;
+class SimConnectReply;
 }
 }
 }
@@ -54,16 +57,21 @@ public:
   /* Connects directly if the connect on startup option is set */
   void tryConnectOnStartup();
 
-  /* true if connected to Little Navconnect */
+  /* true if connected to Little Navconnect or the simulator */
   bool isConnected() const;
 
   /* Just saves and restores the state of the dialog */
   void saveState();
   void restoreState();
 
+  QString requestWeather(const QString& station);
+
 signals:
   /* Emitted when a new SimConnect data was received from the server (Little Navconnect) */
   void dataPacketReceived(atools::fs::sc::SimConnectData simConnectData);
+
+  /* Emitted when a new SimConnect data was received that contains weather data */
+  void weatherUpdated();
 
   /* Emitted when a connection was established */
   void connectedToSimulator();
@@ -80,13 +88,14 @@ private:
   void connectedToServerSocket();
   void closeSocket(bool allowRestart);
   void connectInternal();
-  void writeReplyToSocket();
+  void writeReplyToSocket(atools::fs::sc::SimConnectReply& reply);
   void disconnectClicked();
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
   void postLogMessage(QString message, bool warning);
   void connectedToSimulatorDirect();
   void disconnectedFromSimulatorDirect();
   void autoConnectToggled(bool state);
+  void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
@@ -101,6 +110,9 @@ private:
   /* Used to trigger reconnects on socket base connections */
   QTimer reconnectNetworkTimer;
   MainWindow *mainWindow;
+
+  QCache<QString, QString> metarCache;
+
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H

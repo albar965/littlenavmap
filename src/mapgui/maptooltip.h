@@ -29,6 +29,7 @@ struct MapSearchResult;
 class MapQuery;
 class WeatherReporter;
 class RouteMapObjectList;
+class MainWindow;
 
 namespace atools {
 namespace util {
@@ -45,7 +46,7 @@ class MapTooltip :
   Q_OBJECT
 
 public:
-  MapTooltip(QObject *parent, MapQuery *mapQuery, WeatherReporter *weatherReporter);
+  MapTooltip(MainWindow *parentWindow);
   virtual ~MapTooltip();
 
   /*
@@ -67,6 +68,7 @@ private:
   static Q_DECL_CONSTEXPR int MAX_LINES = 20;
   static Q_DECL_CONSTEXPR int MAX_ENTRIES = 3;
 
+  MainWindow *mainWindow = nullptr;
   MapQuery *query;
   WeatherReporter *weather;
   QColor iconBackColor;

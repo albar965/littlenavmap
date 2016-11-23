@@ -42,7 +42,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQue
 {
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
 
-  infoBuilder = new HtmlInfoBuilder(mapQuery, infoQuery, true);
+  infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
@@ -358,68 +358,68 @@ void InfoController::postDatabaseLoad()
 
 void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
 {
-  Ui::MainWindow *ui = mainWindow->getUi();
+  if(databaseLoadStatus || !data.getUserAircraft().getPosition().isValid())
+    return;
 
-  if(!databaseLoadStatus)
+  if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+                            lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
-                              lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
+    // Last update was more than 500 ms ago
+
+    updateAiAirports(data);
+
+    HtmlBuilder html(true /* has background color */);
+    Ui::MainWindow *ui = mainWindow->getUi();
+
+    if(ui->dockWidgetAircraft->isVisible())
     {
-      updateAiAirports(data);
-
-      // Last update was more than 500 ms ago
-      HtmlBuilder html(true /* has background color */);
-
-      if(ui->dockWidgetAircraft->isVisible())
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER &&
+         canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
-        if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER &&
-           canTextEditUpdate(ui->textBrowserAircraftInfo))
-        {
-          // ok - scrollbars not pressed
-          infoBuilder->aircraftText(data.getUserAircraft(), html);
-          infoBuilder->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
-          updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
-        }
+        // ok - scrollbars not pressed
+        infoBuilder->aircraftText(data.getUserAircraft(), html);
+        infoBuilder->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
+        updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+      }
 
-        if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS &&
-           canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
-        {
-          // ok - scrollbars not pressed
-          html.clear();
-          infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
-                                            mainWindow->getRouteController()->getRouteMapObjects());
-          updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
-        }
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS &&
+         canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+      {
+        // ok - scrollbars not pressed
+        html.clear();
+        infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
+                                          mainWindow->getRouteController()->getRouteMapObjects());
+        updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+      }
 
-        if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI &&
-           canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI &&
+         canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+      {
+        // ok - scrollbars not pressed
+        html.clear();
+        if(!currentSearchResult.aiAircraft.isEmpty())
         {
-          // ok - scrollbars not pressed
-          html.clear();
-          if(!currentSearchResult.aiAircraft.isEmpty())
+          int num = 1;
+          for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
           {
-            int num = 1;
-            for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
-            {
-              infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
-              infoBuilder->aircraftProgressText(aircraft, html,
-                                                mainWindow->getRouteController()->getRouteMapObjects());
-              num++;
-            }
-            updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
+            infoBuilder->aircraftProgressText(aircraft, html,
+                                              mainWindow->getRouteController()->getRouteMapObjects());
+            num++;
           }
-          else
-          {
-            ui->textBrowserAircraftAiInfo->clear();
-            ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI or multiplayer aircraft selected.\n"
-                                                           "Found %1 AI or multiplayer aircraft.").
-                                                        arg(lastSimData.getAiAircraft().size()));
-          }
+          updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+        }
+        else
+        {
+          ui->textBrowserAircraftAiInfo->clear();
+          ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI or multiplayer aircraft selected.\n"
+                                                         "Found %1 AI or multiplayer aircraft.").
+                                                      arg(lastSimData.getAiAircraft().size()));
         }
       }
-      lastSimData = data;
-      lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
+    lastSimData = data;
+    lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
 }
 

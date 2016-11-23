@@ -157,9 +157,11 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->checkBoxOptionsWeatherInfoAsn);
   widgets.append(ui->checkBoxOptionsWeatherInfoNoaa);
   widgets.append(ui->checkBoxOptionsWeatherInfoVatsim);
+  widgets.append(ui->checkBoxOptionsWeatherInfoFs);
   widgets.append(ui->checkBoxOptionsWeatherTooltipAsn);
   widgets.append(ui->checkBoxOptionsWeatherTooltipNoaa);
   widgets.append(ui->checkBoxOptionsWeatherTooltipVatsim);
+  widgets.append(ui->checkBoxOptionsWeatherTooltipFs);
   widgets.append(ui->lineEditOptionsMapRangeRings);
   widgets.append(ui->lineEditOptionsWeatherAsnPath);
   widgets.append(ui->lineEditOptionsWeatherNoaaUrl);
@@ -606,9 +608,11 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsWeatherInfoAsn, opts::WEATHER_INFO_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherInfoNoaa, opts::WEATHER_INFO_NOAA);
   toFlags(ui->checkBoxOptionsWeatherInfoVatsim, opts::WEATHER_INFO_VATSIM);
+  toFlags(ui->checkBoxOptionsWeatherInfoFs, opts::WEATHER_INFO_FS);
   toFlags(ui->checkBoxOptionsWeatherTooltipAsn, opts::WEATHER_TOOLTIP_ACTIVESKY);
   toFlags(ui->checkBoxOptionsWeatherTooltipNoaa, opts::WEATHER_TOOLTIP_NOAA);
   toFlags(ui->checkBoxOptionsWeatherTooltipVatsim, opts::WEATHER_TOOLTIP_VATSIM);
+  toFlags(ui->checkBoxOptionsWeatherTooltipFs, opts::WEATHER_TOOLTIP_FS);
   toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
   data.mapRangeRings = ringStrToVector(ui->lineEditOptionsMapRangeRings->text());
