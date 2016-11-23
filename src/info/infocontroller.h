@@ -58,7 +58,7 @@ class InfoController :
   Q_OBJECT
 
 public:
-  InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoQuery);
+  InfoController(MainWindow *parent, MapQuery *mapDbQuery);
   virtual ~InfoController();
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown

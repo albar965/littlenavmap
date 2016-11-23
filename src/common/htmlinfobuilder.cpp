@@ -252,7 +252,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
       vatsimMetar = weather->getVatsimMetar(airport.ident);
 
     if(showFs)
-      fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident);
+      fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
 
     if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || !fsMetar.isEmpty())
     {

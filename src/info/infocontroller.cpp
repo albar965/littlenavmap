@@ -37,7 +37,7 @@ using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
-InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery, InfoQuery *infoQuery)
+InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
 {
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);

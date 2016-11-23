@@ -144,14 +144,14 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
   if(!dataPacket.getMetars().isEmpty())
   {
-    qDebug() << "Metars" << dataPacket.getMetars();
+    qDebug() << "Metars number" << dataPacket.getMetars().size();
 
-    for(const QString& metar : dataPacket.getMetars())
+    for(const atools::fs::sc::MetarResult& metar : dataPacket.getMetars())
     {
-      QString ident = metar.section(' ', 0, 0).section('&', 0, 0);
+      QString ident = metar.metarIdent;
       qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident;
       if(!metarCache.contains(ident))
-        metarCache.insert(ident, new QString(metar));
+        metarCache.insert(ident, new QString(metar.metar));
     }
 
     emit weatherUpdated();
@@ -179,7 +179,7 @@ void ConnectClient::restoreState()
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
 }
 
-QString ConnectClient::requestWeather(const QString& station)
+QString ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
 {
   qDebug() << "ConnectClient::requestWeather" << station;
 
@@ -193,6 +193,7 @@ QString ConnectClient::requestWeather(const QString& station)
 
   atools::fs::sc::WeatherRequest weatherRequest;
   weatherRequest.setWeatherRequestStation({station});
+  weatherRequest.setWeatherRequestNearest({pos});
   requestWeather(weatherRequest);
 
   return station + " requested";

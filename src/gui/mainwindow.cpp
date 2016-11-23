@@ -165,7 +165,7 @@ MainWindow::MainWindow()
     connectClient = new ConnectClient(this);
 
     qDebug() << "MainWindow Creating InfoController";
-    infoController = new InfoController(this, mapQuery, infoQuery);
+    infoController = new InfoController(this, mapQuery);
 
     qDebug() << "MainWindow Creating PrintSupport";
     printSupport = new PrintSupport(this, mapQuery, infoQuery);
