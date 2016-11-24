@@ -137,7 +137,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   manualDisconnect = false;
 }
 
-/* Posts data received directly from simconnect or the socket */
+/* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
   emit dataPacketReceived(dataPacket);
@@ -148,10 +148,17 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
     for(const atools::fs::sc::MetarResult& metar : dataPacket.getMetars())
     {
-      QString ident = metar.metarIdent;
+      QString ident = metar.requestIdent;
       qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident;
-      if(!metarCache.contains(ident))
-        metarCache.insert(ident, new QString(metar.metar));
+      if(!metarIdentCache.contains(ident))
+      {
+        if(!metar.metarForStation.isEmpty())
+          metarIdentCache.insert(ident, new QString(metar.metarForStation));
+        else if(!metar.metarForNearest.isEmpty())
+          metarIdentCache.insert(ident, new QString(metar.metarForNearest));
+        else if(!metar.metarForInterpolated.isEmpty())
+          metarIdentCache.insert(ident, new QString(metar.metarForInterpolated));
+      }
     }
 
     emit weatherUpdated();
@@ -183,17 +190,17 @@ QString ConnectClient::requestWeather(const QString& station, const atools::geo:
 {
   qDebug() << "ConnectClient::requestWeather" << station;
 
-  if(metarCache.contains(station))
+  if(metarIdentCache.contains(station))
   {
     qDebug() << "ConnectClient::requestWeather cache hit";
-    return QString(*metarCache.object(station));
+    return QString(*metarIdentCache.object(station));
   }
 
   qDebug() << "ConnectClient::requestWeather cache miss";
 
   atools::fs::sc::WeatherRequest weatherRequest;
-  weatherRequest.setWeatherRequestStation({station});
-  weatherRequest.setWeatherRequestNearest({pos});
+  weatherRequest.setStation(station);
+  weatherRequest.setPosition(pos);
   requestWeather(weatherRequest);
 
   return station + " requested";

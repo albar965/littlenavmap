@@ -111,7 +111,7 @@ private:
   QTimer reconnectNetworkTimer;
   MainWindow *mainWindow;
 
-  QCache<QString, QString> metarCache;
+  QCache<QString, QString> metarIdentCache;
 
 };
 
