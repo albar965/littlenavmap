@@ -149,16 +149,14 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     for(const atools::fs::sc::MetarResult& metar : dataPacket.getMetars())
     {
       QString ident = metar.requestIdent;
-      qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident;
+      qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
+               << ident << "pos" << metar.requestPos.toString();
+      qDebug() << "Station" << metar.metarForStation;
+      qDebug() << "Nearest" << metar.metarForNearest;
+      qDebug() << "Interpolated" << metar.metarForInterpolated;
+
       if(!metarIdentCache.contains(ident))
-      {
-        if(!metar.metarForStation.isEmpty())
-          metarIdentCache.insert(ident, new QString(metar.metarForStation));
-        else if(!metar.metarForNearest.isEmpty())
-          metarIdentCache.insert(ident, new QString(metar.metarForNearest));
-        else if(!metar.metarForInterpolated.isEmpty())
-          metarIdentCache.insert(ident, new QString(metar.metarForInterpolated));
-      }
+        metarIdentCache.insert(ident, new atools::fs::sc::MetarResult(metar));
     }
 
     emit weatherUpdated();
@@ -186,14 +184,15 @@ void ConnectClient::restoreState()
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
 }
 
-QString ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos)
+const atools::fs::sc::MetarResult *ConnectClient::requestWeather(const QString& station,
+                                                                 const atools::geo::Pos& pos)
 {
   qDebug() << "ConnectClient::requestWeather" << station;
 
   if(metarIdentCache.contains(station))
   {
     qDebug() << "ConnectClient::requestWeather cache hit";
-    return QString(*metarIdentCache.object(station));
+    return metarIdentCache.object(station);
   }
 
   qDebug() << "ConnectClient::requestWeather cache miss";
@@ -203,7 +202,7 @@ QString ConnectClient::requestWeather(const QString& station, const atools::geo:
   weatherRequest.setPosition(pos);
   requestWeather(weatherRequest);
 
-  return station + " requested";
+  return nullptr;
 }
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)

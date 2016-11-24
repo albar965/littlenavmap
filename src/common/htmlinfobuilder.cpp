@@ -241,7 +241,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
     bool showFs = info ? flags & opts::WEATHER_INFO_FS : flags & opts::WEATHER_TOOLTIP_FS;
 
-    QString activeSkyMetar, noaaMetar, vatsimMetar, fsMetar;
+    QString activeSkyMetar, noaaMetar, vatsimMetar;
+    const atools::fs::sc::MetarResult *fsMetar = nullptr;
+
     if(showActiveSky)
       activeSkyMetar = weather->getActiveSkyMetar(airport.ident);
 
@@ -254,13 +256,25 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     if(showFs)
       fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
 
-    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || !fsMetar.isEmpty())
+    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || fsMetar != nullptr)
     {
       if(info)
         head(html, tr("Weather"));
       html.table();
-      if(!fsMetar.isEmpty())
-        html.row2(QString(tr("FS")) + (info ? tr(":") : tr(" METAR:")), fsMetar);
+
+      if(fsMetar != nullptr)
+      {
+        if(!fsMetar->metarForStation.isEmpty())
+          html.row2(QString(tr("Station")) + (info ? tr(":") : tr(" METAR:")),
+                    fsMetar->metarForStation);
+        if(!fsMetar->metarForNearest.isEmpty())
+          html.row2(QString(tr("Nearest")) + (info ? tr(":") : tr(" METAR:")),
+                    fsMetar->metarForNearest);
+        if(!fsMetar->metarForInterpolated.isEmpty())
+          html.row2(QString(tr("Interpolated")) + (info ? tr(":") : tr(" METAR:")),
+                    fsMetar->metarForInterpolated);
+      }
+
       if(!activeSkyMetar.isEmpty())
       {
         QString asText(tr("Active Sky"));

@@ -33,6 +33,7 @@ namespace fs {
 namespace sc {
 class DataReaderThread;
 class WeatherRequest;
+class MetarResult;
 class SimConnectReply;
 }
 }
@@ -64,7 +65,7 @@ public:
   void saveState();
   void restoreState();
 
-  QString requestWeather(const QString& station, const atools::geo::Pos& pos);
+  const atools::fs::sc::MetarResult *requestWeather(const QString& station, const atools::geo::Pos& pos);
 
 signals:
   /* Emitted when a new SimConnect data was received from the server (Little Navconnect) */
@@ -111,7 +112,7 @@ private:
   QTimer reconnectNetworkTimer;
   MainWindow *mainWindow;
 
-  QCache<QString, QString> metarIdentCache;
+  QCache<QString, atools::fs::sc::MetarResult> metarIdentCache;
 
 };
 
