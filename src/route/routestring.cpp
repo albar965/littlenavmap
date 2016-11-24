@@ -97,12 +97,12 @@ QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
     retval += string.last();
   }
   qDebug() << "RouteString::createGfpStringForRoute" << retval;
-  return retval;
+  return retval.toUpper();
 }
 
 QString RouteString::createStringForRoute(const RouteMapObjectList& route)
 {
-  return createStringForRouteInternal(route, false).join(" ");
+  return createStringForRouteInternal(route, false).join(" ").simplified().toUpper();
 }
 
 QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& route, bool gfpWaypoints)
