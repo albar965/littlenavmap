@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
+#include "util/timedcache.h"
 
 #include <QHash>
 #include <QNetworkAccessManager>
@@ -111,14 +112,7 @@ signals:
 
 private:
   // Update online reports if older than 15 minutes
-  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 900;
-
-  // Report allowing timeouts
-  struct Report
-  {
-    QString metar;
-    QDateTime reportTime;
-  };
+  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 300;
 
   void activeSkyWeatherFileChanged(const QString& path);
 
@@ -129,7 +123,8 @@ private:
   void loadNoaaMetar(const QString& airportIcao);
   void loadVatsimMetar(const QString& airportIcao);
 
-  void httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars);
+  void httpFinished(QNetworkReply *reply, const QString& icao,
+                    atools::util::TimedCache<QString, QString>& metars);
   void httpFinishedNoaa();
   void httpFinishedVatsim();
 
@@ -137,7 +132,7 @@ private:
   void cancelVatsimReply();
 
   QHash<QString, QString> activeSkyMetars;
-  QHash<QString, Report> noaaMetars, vatsimMetars;
+  atools::util::TimedCache<QString, QString> noaaCache, vatsimCache;
 
   QString activeSkySnapshotPath;
   QFileSystemWatcher *fsWatcher = nullptr;

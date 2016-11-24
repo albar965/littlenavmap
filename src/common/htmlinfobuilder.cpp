@@ -35,6 +35,7 @@
 #include "common/unit.h"
 #include "connect/connectclient.h"
 #include "gui/mainwindow.h"
+#include "fs/weather/metar.h"
 
 #include <QSize>
 
@@ -50,6 +51,7 @@ using atools::util::HtmlBuilder;
 using atools::util::html::Flags;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
+using atools::fs::weather::Metar;
 
 const int SYMBOL_SIZE = 20;
 const float HELIPAD_ZOOM_METER = 200.f;
@@ -264,15 +266,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
       if(fsMetar != nullptr)
       {
-        if(!fsMetar->metarForStation.isEmpty())
-          html.row2(QString(tr("Station")) + (info ? tr(":") : tr(" METAR:")),
-                    fsMetar->metarForStation);
-        if(!fsMetar->metarForNearest.isEmpty())
-          html.row2(QString(tr("Nearest")) + (info ? tr(":") : tr(" METAR:")),
-                    fsMetar->metarForNearest);
-        if(!fsMetar->metarForInterpolated.isEmpty())
-          html.row2(QString(tr("Interpolated")) + (info ? tr(":") : tr(" METAR:")),
-                    fsMetar->metarForInterpolated);
+        addMetarLine(html, tr("FS Station"), fsMetar->metarForStation, true);
+        addMetarLine(html, tr("FS Nearest"), fsMetar->metarForNearest, true);
+        addMetarLine(html, tr("FS Interpolated"), fsMetar->metarForInterpolated, true);
       }
 
       if(!activeSkyMetar.isEmpty())
@@ -283,12 +279,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
         else if(weather->getCurrentActiveSkyType() == WeatherReporter::ASN)
           asText = tr("ASN");
 
-        html.row2(asText + (info ? tr(":") : tr(" METAR:")), activeSkyMetar);
+        addMetarLine(html, asText, activeSkyMetar);
       }
-      if(!noaaMetar.isEmpty())
-        html.row2(QString(tr("NOAA")) + (info ? tr(":") : tr(" METAR:")), noaaMetar);
-      if(!vatsimMetar.isEmpty())
-        html.row2(QString(tr("VATSIM")) + (info ? tr(":") : tr(" METAR:")), vatsimMetar);
+
+      addMetarLine(html, tr("NOAA"), noaaMetar);
+      addMetarLine(html, tr("VATSIM"), vatsimMetar);
       html.tableEnd();
     }
   }
@@ -1429,5 +1424,15 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
     QString i = rec->valueStr(colName);
     if(!i.isEmpty())
       html.row2(msg, val.arg(capString(i)));
+  }
+}
+
+void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& heading,
+                                   const QString& metar, bool fsMetar) const
+{
+  if(!metar.isEmpty())
+  {
+    Metar met(metar, fsMetar);
+    html.row2(heading + (info ? tr(":") : tr(" METAR:")), met.getCleanMetar());
   }
 }

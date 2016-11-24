@@ -39,7 +39,8 @@ const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$"
 using atools::fs::FsPaths;
 
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
+  : QObject(parentWindow), noaaCache(WEATHER_TIMEOUT_SECS), vatsimCache(WEATHER_TIMEOUT_SECS), simType(type),
+    mainWindow(parentWindow)
 {
   initActiveSkyNext();
 }
@@ -297,7 +298,7 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
 /* Called by network reply signal */
 void WeatherReporter::httpFinishedNoaa()
 {
-  httpFinished(noaaReply, noaaRequestIcao, noaaMetars);
+  httpFinished(noaaReply, noaaRequestIcao, noaaCache);
   if(noaaReply != nullptr)
     noaaReply->deleteLater();
   noaaReply = nullptr;
@@ -306,13 +307,14 @@ void WeatherReporter::httpFinishedNoaa()
 /* Called by network reply signal */
 void WeatherReporter::httpFinishedVatsim()
 {
-  httpFinished(vatsimReply, vatsimRequestIcao, vatsimMetars);
+  httpFinished(vatsimReply, vatsimRequestIcao, vatsimCache);
   if(vatsimReply != nullptr)
     vatsimReply->deleteLater();
   vatsimReply = nullptr;
 }
 
-void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QHash<QString, Report>& metars)
+void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao,
+                                   atools::util::TimedCache<QString, QString>& metars)
 {
   if(reply != nullptr)
   {
@@ -321,16 +323,16 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao, QH
       QString metar(reply->readAll());
       if(!metar.contains("no metar available", Qt::CaseInsensitive))
         // Add metar with current time
-        metars.insert(icao, {metar, QDateTime::currentDateTime()});
+        metars.insert(icao, metar);
       else
         // Add empty record so we know there is not weather station
-        metars.insert(icao, Report());
+        metars.insert(icao, QString());
       // mainWindow->setStatusMessage(tr("Weather information updated."));
       emit weatherUpdated();
     }
     else if(reply->error() != QNetworkReply::OperationCanceledError)
     {
-      metars.insert(icao, Report());
+      metars.insert(icao, QString());
       if(reply->error() == QNetworkReply::ContentNotFoundError)
         qInfo() << "Request for" << icao << "failed. Reason:" << reply->errorString();
       else
@@ -347,43 +349,23 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
-  if(!noaaMetars.contains(airportIcao))
-    // Not in cache
-    loadNoaaMetar(airportIcao);
+  QString *metar = noaaCache.value(airportIcao);
+  if(metar != nullptr)
+    return QString(*metar);
   else
-  {
-    const Report& report = noaaMetars.value(airportIcao);
-    if(!report.metar.isEmpty())
-    {
-      if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
-        // In cache but timed out
-        loadNoaaMetar(airportIcao);
-      else
-        // In cache and valid
-        return report.metar;
-    }
-  }
+    loadNoaaMetar(airportIcao);
+
   return QString();
 }
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
-  if(!vatsimMetars.contains(airportIcao))
-    // Not in cache
-    loadVatsimMetar(airportIcao);
+  QString *metar = vatsimCache.value(airportIcao);
+  if(metar != nullptr)
+    return QString(*metar);
   else
-  {
-    const Report& report = vatsimMetars.value(airportIcao);
-    if(!report.metar.isEmpty())
-    {
-      if(report.reportTime.addSecs(WEATHER_TIMEOUT_SECS) < QDateTime::currentDateTime())
-        // In cache but timed out
-        loadVatsimMetar(airportIcao);
-      else
-        // In cache and valid
-        return report.metar;
-    }
-  }
+    loadVatsimMetar(airportIcao);
+
   return QString();
 }
 

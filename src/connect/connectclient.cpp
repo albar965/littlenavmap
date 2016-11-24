@@ -35,7 +35,7 @@
 using atools::fs::sc::DataReaderThread;
 
 ConnectClient::ConnectClient(MainWindow *parent)
-  : QObject(parent), mainWindow(parent)
+  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS)
 {
   dialog = new ConnectDialog(mainWindow);
 
@@ -155,8 +155,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       qDebug() << "Nearest" << metar.metarForNearest;
       qDebug() << "Interpolated" << metar.metarForInterpolated;
 
-      if(!metarIdentCache.contains(ident))
-        metarIdentCache.insert(ident, new atools::fs::sc::MetarResult(metar));
+      metarIdentCache.insert(ident, atools::fs::sc::MetarResult(metar));
     }
 
     emit weatherUpdated();
@@ -189,18 +188,16 @@ const atools::fs::sc::MetarResult *ConnectClient::requestWeather(const QString& 
 {
   qDebug() << "ConnectClient::requestWeather" << station;
 
-  if(metarIdentCache.contains(station))
+  const atools::fs::sc::MetarResult *result = metarIdentCache.value(station);
+  if(result != nullptr)
+    return result;
+  else
   {
-    qDebug() << "ConnectClient::requestWeather cache hit";
-    return metarIdentCache.object(station);
+    atools::fs::sc::WeatherRequest weatherRequest;
+    weatherRequest.setStation(station);
+    weatherRequest.setPosition(pos);
+    requestWeather(weatherRequest);
   }
-
-  qDebug() << "ConnectClient::requestWeather cache miss";
-
-  atools::fs::sc::WeatherRequest weatherRequest;
-  weatherRequest.setStation(station);
-  weatherRequest.setPosition(pos);
-  requestWeather(weatherRequest);
 
   return nullptr;
 }

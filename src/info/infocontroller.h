@@ -99,13 +99,12 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
 
   void updateTextEditFontSizes();
-  bool canTextEditUpdate(const QTextEdit *textEdit);
-  void updateTextEdit(QTextEdit *textEdit, const QString& text);
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
   void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
+  void updateAirportInternal(bool newAirport);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -120,6 +119,7 @@ private:
   HtmlInfoBuilder *infoBuilder;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
+
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

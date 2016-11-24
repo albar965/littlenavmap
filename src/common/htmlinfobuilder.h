@@ -244,6 +244,8 @@ private:
 
   void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
                    atools::util::HtmlBuilder& html) const;
+  void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
+                    bool fsMetar = false) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;

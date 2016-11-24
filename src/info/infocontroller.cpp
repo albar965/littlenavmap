@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
+#include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
 #include "route/routecontroller.h"
@@ -158,6 +159,11 @@ void InfoController::restoreState()
 
 void InfoController::updateAirport()
 {
+  updateAirportInternal(false);
+}
+
+void InfoController::updateAirportInternal(bool newAirport)
+{
   if(databaseLoadStatus)
     return;
 
@@ -172,7 +178,13 @@ void InfoController::updateAirport()
     infoBuilder->airportText(ap, html,
                              &mainWindow->getRouteController()->getRouteMapObjects(),
                              mainWindow->getWeatherReporter(), iconBackColor);
-    mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
+
+    if(newAirport)
+      // scroll up for new airports
+      mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
+    else
+      // Leave position for weather updates
+      atools::gui::util::updateTextEdit(mainWindow->getUi()->textBrowserAirportInfo, html.getHtml());
   }
 }
 
@@ -227,7 +239,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     // Remember one airport
     currentSearchResult.airports.append(airport);
 
-    updateAirport();
+    updateAirportInternal(true);
 
     html.clear();
     infoBuilder->runwayText(airport, html, iconBackColor);
@@ -358,7 +370,7 @@ void InfoController::postDatabaseLoad()
 
 void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
 {
-  if(databaseLoadStatus || !data.getUserAircraft().getPosition().isValid())
+  if(databaseLoadStatus)
     return;
 
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
@@ -371,29 +383,29 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
     HtmlBuilder html(true /* has background color */);
     Ui::MainWindow *ui = mainWindow->getUi();
 
-    if(ui->dockWidgetAircraft->isVisible())
+    if(data.getUserAircraft().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
     {
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER &&
-         canTextEditUpdate(ui->textBrowserAircraftInfo))
+         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
         // ok - scrollbars not pressed
         infoBuilder->aircraftText(data.getUserAircraft(), html);
         infoBuilder->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
-        updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
       }
 
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS &&
-         canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
         // ok - scrollbars not pressed
         html.clear();
         infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
                                           mainWindow->getRouteController()->getRouteMapObjects());
-        updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
 
       if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI &&
-         canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
         // ok - scrollbars not pressed
         html.clear();
@@ -407,7 +419,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
                                               mainWindow->getRouteController()->getRouteMapObjects());
             num++;
           }
-          updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
         }
         else
         {
@@ -443,47 +455,6 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
 
   // Overwite old list
   currentSearchResult.aiAircraft = newAiAircraftShown.toList();
-}
-
-/* @return true if no scrollbar is pressed in the text edit */
-bool InfoController::canTextEditUpdate(const QTextEdit *textEdit)
-{
-  // Do not update if scrollbar is clicked
-  return !textEdit->verticalScrollBar()->isSliderDown() &&
-         !textEdit->horizontalScrollBar()->isSliderDown();
-}
-
-/* Update text edit and keep selection and scrollbar position */
-void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text)
-{
-  // Remember cursor position
-  QTextCursor cursor = textEdit->textCursor();
-  int pos = cursor.position();
-  int anchor = cursor.anchor();
-
-  // Remember scrollbar position
-  int vScrollPos = textEdit->verticalScrollBar()->value();
-  int hScrollPos = textEdit->horizontalScrollBar()->value();
-  textEdit->setText(text);
-
-  if(anchor != pos)
-  {
-    // There is a selection - Reset cursor
-    int maxPos = textEdit->document()->characterCount() - 1;
-
-    // Probably the document changed its size
-    anchor = std::min(maxPos, anchor);
-    pos = std::min(maxPos, pos);
-
-    // Create selection again
-    cursor.setPosition(anchor, QTextCursor::MoveAnchor);
-    cursor.setPosition(pos, QTextCursor::KeepAnchor);
-    textEdit->setTextCursor(cursor);
-  }
-
-  // Reset scroll bars
-  textEdit->verticalScrollBar()->setValue(vScrollPos);
-  textEdit->horizontalScrollBar()->setValue(hScrollPos);
 }
 
 void InfoController::connectedToSimulator()

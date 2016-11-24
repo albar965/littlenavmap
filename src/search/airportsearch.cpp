@@ -24,15 +24,13 @@
 #include "search/column.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
-#include "gui/widgettools.h"
+#include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "airporticondelegate.h"
 #include "common/maptypesfactory.h"
 #include "common/mapcolors.h"
 #include "atools.h"
 #include "sql/sqlrecord.h"
-
-using atools::gui::WidgetTools;
 
 // Align right and omit if value is 0
 const QSet<QString> AirportSearch::NUMBER_COLUMNS(
@@ -271,46 +269,45 @@ void AirportSearch::connectSearchSlots()
                                            ui->actionAirportSearchShowSceneryOptions});
 
   // Drop down menu actions
-  using atools::gui::WidgetTools;
   connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
-                                                {ui->lineAirportExtSearch});
+            atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
+                                                      {ui->lineAirportExtSearch});
             updateButtonMenu();
           });
 
   connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
-                                                {ui->lineAirportFuelParkSearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFuelParkSearch}, state,
+                                                      {ui->lineAirportFuelParkSearch});
             updateButtonMenu();
           });
 
   connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
-                                                {ui->lineAirportRunwaySearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportRunwaySearch}, state,
+                                                      {ui->lineAirportRunwaySearch});
             updateButtonMenu();
           });
 
   connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
-                                                {ui->lineAirportAltSearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
+                                                      {ui->lineAirportAltSearch});
             updateButtonMenu();
           });
 
   connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
-                                                {ui->lineAirportDistSearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
+                                                      {ui->lineAirportDistSearch});
             updateButtonMenu();
           });
 
   connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
-                                                {ui->lineAirportScenerySearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
+                                                      {ui->lineAirportScenerySearch});
             updateButtonMenu();
           });
 }
@@ -503,33 +500,37 @@ void AirportSearch::updateButtonMenu()
 
   // Change state of show all action
   ui->actionAirportSearchShowAllOptions->blockSignals(true);
-  if(WidgetTools::allChecked(menus))
+  if(atools::gui::util::allChecked(menus))
     ui->actionAirportSearchShowAllOptions->setChecked(true);
-  else if(WidgetTools::noneChecked(menus))
+  else if(atools::gui::util::noneChecked(menus))
     ui->actionAirportSearchShowAllOptions->setChecked(false);
   else
     ui->actionAirportSearchShowAllOptions->setChecked(false);
   ui->actionAirportSearchShowAllOptions->blockSignals(false);
 
   // Show star in action for all widgets that are not in default state
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowExtOptions,
-                                    WidgetTools::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowExtOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->gridLayoutAirportExtSearch}));
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->horizontalLayoutAirportFuelParkSearch}));
 
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportFuelParkSearch}));
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->horizontalLayoutAirportRunwaySearch}));
 
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportRunwaySearch}));
-
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowAltOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowAltOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->horizontalLayoutAirportAltitudeSearch}));
 
   bool distanceSearchChanged = false;
   if(ui->checkBoxAirportDistSearch->isChecked())
-    distanceSearchChanged = WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch});
+    distanceSearchChanged = atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch});
 
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowDistOptions, distanceSearchChanged);
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowDistOptions, distanceSearchChanged);
 
-  WidgetTools::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
+  atools::gui::util::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->horizontalLayoutAirportScenerySearch}));
 }

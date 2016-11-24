@@ -24,15 +24,13 @@
 #include "search/navicondelegate.h"
 #include "ui_mainwindow.h"
 #include "search/columnlist.h"
-#include "gui/widgettools.h"
+#include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
 #include "atools.h"
 #include "common/maptypesfactory.h"
 #include "sql/sqlrecord.h"
-
-using atools::gui::WidgetTools;
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
                      MapQuery *mapQuery, int tabWidgetIndex)
@@ -161,17 +159,16 @@ void NavSearch::connectSearchSlots()
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
-  using atools::gui::WidgetTools;
   connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
-                                                {ui->lineNavDistSearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
+                                                      {ui->lineNavDistSearch});
             updateButtonMenu();
           });
   connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, [ = ](bool state)
           {
-            WidgetTools::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
-                                                {ui->lineNavScenerySearch});
+            atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
+                                                      {ui->lineNavScenerySearch});
             updateButtonMenu();
           });
 }
@@ -362,9 +359,10 @@ void NavSearch::updateButtonMenu()
 
   // Change state of show all action
   ui->actionNavSearchShowAllOptions->blockSignals(true);
-  if(WidgetTools::allChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
+  if(atools::gui::util::allChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
     ui->actionNavSearchShowAllOptions->setChecked(true);
-  else if(WidgetTools::noneChecked({ui->actionNavSearchShowDistOptions, ui->actionNavSearchShowSceneryOptions}))
+  else if(atools::gui::util::noneChecked({ui->actionNavSearchShowDistOptions,
+                                          ui->actionNavSearchShowSceneryOptions}))
     ui->actionNavSearchShowAllOptions->setChecked(false);
   else
     ui->actionNavSearchShowAllOptions->setChecked(false);
@@ -373,10 +371,11 @@ void NavSearch::updateButtonMenu()
   // Show star in action for all widgets that are not in default state
   bool distanceSearchChanged = false;
   if(ui->checkBoxNavDistSearch->isChecked())
-    distanceSearchChanged = WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
+    distanceSearchChanged = atools::gui::util::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
 
-  WidgetTools::changeStarIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
+  atools::gui::util::changeStarIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
 
-  WidgetTools::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
-                                    WidgetTools::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
+  atools::gui::util::changeStarIndication(ui->actionNavSearchShowSceneryOptions,
+                                          atools::gui::util::anyWidgetChanged(
+                                            {ui->horizontalLayoutNavScenerySearch}));
 }

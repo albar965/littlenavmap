@@ -18,11 +18,12 @@
 #ifndef LITTLENAVMAP_CONNECTCLIENT_H
 #define LITTLENAVMAP_CONNECTCLIENT_H
 
+#include "fs/sc/simconnectdata.h"
+#include "util/timedcache.h"
+
 #include <QAbstractSocket>
 #include <QCache>
 #include <QTimer>
-
-#include "fs/sc/simconnectdata.h"
 
 class QTcpSocket;
 class ConnectDialog;
@@ -83,6 +84,7 @@ signals:
 private:
   const int SOCKET_RECONNECT_SEC = 5;
   const int DIRECT_RECONNECT_SEC = 5;
+  const int WEATHER_TIMEOUT_FS_SECS = 30;
 
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError error);
@@ -112,7 +114,7 @@ private:
   QTimer reconnectNetworkTimer;
   MainWindow *mainWindow;
 
-  QCache<QString, atools::fs::sc::MetarResult> metarIdentCache;
+  atools::util::TimedCache<QString, atools::fs::sc::MetarResult> metarIdentCache;
 
 };
 
