@@ -34,7 +34,8 @@ namespace fs {
 namespace sc {
 class DataReaderThread;
 class WeatherRequest;
-class MetarResult;
+struct MetarResult;
+
 class SimConnectReply;
 }
 }
@@ -113,8 +114,10 @@ private:
   /* Used to trigger reconnects on socket base connections */
   QTimer reconnectNetworkTimer;
   MainWindow *mainWindow;
-
+  bool verbose = false;
   atools::util::TimedCache<QString, atools::fs::sc::MetarResult> metarIdentCache;
+  QSet<QString> outstandingReplies;
+  QVector<atools::fs::sc::WeatherRequest> queuedRequests;
 
 };
 

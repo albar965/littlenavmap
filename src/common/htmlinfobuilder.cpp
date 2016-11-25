@@ -36,6 +36,7 @@
 #include "connect/connectclient.h"
 #include "gui/mainwindow.h"
 #include "fs/weather/metar.h"
+#include "fs/weather/metarparser.h"
 
 #include <QSize>
 
@@ -266,9 +267,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
 
       if(fsMetar != nullptr)
       {
-        addMetarLine(html, tr("FS Station"), fsMetar->metarForStation, true);
-        addMetarLine(html, tr("FS Nearest"), fsMetar->metarForNearest, true);
-        addMetarLine(html, tr("FS Interpolated"), fsMetar->metarForInterpolated, true);
+        addMetarLine(html, tr("Station"), fsMetar->metarForStation,
+                     fsMetar->requestIdent, fsMetar->timestamp, true);
+        addMetarLine(html, tr("Nearest"), fsMetar->metarForNearest,
+                     fsMetar->requestIdent, fsMetar->timestamp, true);
+        addMetarLine(html, tr("Interpolated"), fsMetar->metarForInterpolated,
+                     fsMetar->requestIdent, fsMetar->timestamp, true);
       }
 
       if(!activeSkyMetar.isEmpty())
@@ -1428,11 +1432,23 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
 }
 
 void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& heading,
-                                   const QString& metar, bool fsMetar) const
+                                   const QString& metar, const QString& station,
+                                   const QDateTime& timestamp, bool fsMetar) const
 {
   if(!metar.isEmpty())
   {
-    Metar met(metar, fsMetar);
-    html.row2(heading + (info ? tr(":") : tr(" METAR:")), met.getCleanMetar());
+    Metar m(metar, station, timestamp, fsMetar);
+    atools::fs::weather::MetarParser pm = m.getParsedMetar();
+
+    qDebug() << heading << "Metar:\n" << metar;
+    qDebug() << heading << "Clean metar:\n" << m.getCleanMetar();
+
+    if(!pm.isValid())
+      qWarning() << "Metar is not valid";
+
+    if(!pm.getUnusedData().isEmpty())
+      qWarning() << "Found unused data:\n" << pm.getUnusedData();
+
+    html.row2(heading + (info ? tr(":") : tr(" METAR:")), fsMetar ? m.getCleanMetar() : metar);
   }
 }

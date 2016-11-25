@@ -320,12 +320,12 @@ void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao,
   {
     if(reply->error() == QNetworkReply::NoError)
     {
-      QString metar(reply->readAll());
+      QString metar = reply->readAll().simplified();
       if(!metar.contains("no metar available", Qt::CaseInsensitive))
         // Add metar with current time
         metars.insert(icao, metar);
       else
-        // Add empty record so we know there is not weather station
+        // Add empty record so we know there is no weather station
         metars.insert(icao, QString());
       // mainWindow->setStatusMessage(tr("Weather information updated."));
       emit weatherUpdated();

@@ -144,16 +144,20 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
   if(!dataPacket.getMetars().isEmpty())
   {
-    qDebug() << "Metars number" << dataPacket.getMetars().size();
+    if(verbose)
+      qDebug() << "Metars number" << dataPacket.getMetars().size();
 
     for(const atools::fs::sc::MetarResult& metar : dataPacket.getMetars())
     {
       QString ident = metar.requestIdent;
-      qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-               << ident << "pos" << metar.requestPos.toString();
-      qDebug() << "Station" << metar.metarForStation;
-      qDebug() << "Nearest" << metar.metarForNearest;
-      qDebug() << "Interpolated" << metar.metarForInterpolated;
+      if(verbose)
+      {
+        qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
+                 << ident << "pos" << metar.requestPos.toString();
+        qDebug() << "Station" << metar.metarForStation;
+        qDebug() << "Nearest" << metar.metarForNearest;
+        qDebug() << "Interpolated" << metar.metarForInterpolated;
+      }
 
       metarIdentCache.insert(ident, atools::fs::sc::MetarResult(metar));
     }
@@ -186,19 +190,29 @@ void ConnectClient::restoreState()
 const atools::fs::sc::MetarResult *ConnectClient::requestWeather(const QString& station,
                                                                  const atools::geo::Pos& pos)
 {
-  qDebug() << "ConnectClient::requestWeather" << station;
-
   const atools::fs::sc::MetarResult *result = metarIdentCache.value(station);
   if(result != nullptr)
     return result;
   else
   {
-    atools::fs::sc::WeatherRequest weatherRequest;
-    weatherRequest.setStation(station);
-    weatherRequest.setPosition(pos);
-    requestWeather(weatherRequest);
-  }
+    if(verbose)
+      qDebug() << "ConnectClient::requestWeather" << station;
 
+    if(socket != nullptr && socket->isOpen())
+    {
+      atools::fs::sc::WeatherRequest weatherRequest;
+      weatherRequest.setStation(station);
+      weatherRequest.setPosition(pos);
+
+      if(outstandingReplies.isEmpty())
+        requestWeather(weatherRequest);
+      else if(!outstandingReplies.contains(weatherRequest.getStation()))
+        queuedRequests.append(weatherRequest);
+
+      if(verbose)
+        qDebug() << "=== queuedRequests" << queuedRequests.size();
+    }
+  }
   return nullptr;
 }
 
@@ -207,12 +221,15 @@ void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weather
   if(dataReader != nullptr && dataReader->isConnected())
     dataReader->setWeatherRequest(weatherRequest);
 
-  if(socket != nullptr && socket->isOpen())
+  if(socket != nullptr && socket->isOpen() && outstandingReplies.isEmpty())
   {
+    if(verbose)
+      qDebug() << "requestWeather" << weatherRequest.getStation();
     atools::fs::sc::SimConnectReply reply;
     reply.setCommand(atools::fs::sc::CMD_WEATHER_REQUEST);
     reply.setWeatherRequest(weatherRequest);
     writeReplyToSocket(reply);
+    outstandingReplies.insert(weatherRequest.getStation());
   }
 }
 
@@ -427,32 +444,56 @@ void ConnectClient::connectedToServerSocket()
 /* Called by signal QTcpSocket::readyRead - read data from socket */
 void ConnectClient::readFromSocket()
 {
-  if(simConnectData == nullptr)
-    // Need to keep the data in background since this method can be called multiple times until the data is filled
-    simConnectData = new atools::fs::sc::SimConnectData;
-
-  bool read = simConnectData->read(socket);
-  if(simConnectData->getStatus() != atools::fs::sc::OK)
+  while(socket->bytesAvailable())
   {
-    // Something went wrong - shutdown
-    QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          QString(tr("Error reading data from Little Navconnect: %1.")).
-                          arg(simConnectData->getStatusText()));
-    closeSocket(false);
-    return;
+    if(verbose)
+      qDebug() << "readFromSocket" << socket->bytesAvailable();
+    if(simConnectData == nullptr)
+      // Need to keep the data in background since this method can be called multiple times until the data is filled
+      simConnectData = new atools::fs::sc::SimConnectData;
+
+    bool read = simConnectData->read(socket);
+    if(simConnectData->getStatus() != atools::fs::sc::OK)
+    {
+      // Something went wrong - shutdown
+      QMessageBox::critical(mainWindow, QApplication::applicationName(),
+                            QString(tr("Error reading data from Little Navconnect: %1.")).
+                            arg(simConnectData->getStatusText()));
+      closeSocket(false);
+      return;
+    }
+
+    if(verbose)
+      qDebug() << "readFromSocket 2" << socket->bytesAvailable();
+    if(read)
+    {
+      if(verbose)
+        qDebug() << "readFromSocket id " << simConnectData->getPacketId();
+
+      if(simConnectData->getPacketId() > 0)
+      {
+        // Data was read completely and successfully - reply to server
+        atools::fs::sc::SimConnectReply reply;
+        reply.setPacketId(simConnectData->getPacketId());
+        writeReplyToSocket(reply);
+      }
+      else if(!simConnectData->getMetars().isEmpty())
+      {
+        for(const atools::fs::sc::MetarResult& metar : simConnectData->getMetars())
+          outstandingReplies.remove(metar.requestIdent);
+
+        if(outstandingReplies.isEmpty() && !queuedRequests.isEmpty())
+          requestWeather(queuedRequests.takeLast());
+      }
+
+      // Send around in the application
+      postSimConnectData(*simConnectData);
+      delete simConnectData;
+      simConnectData = nullptr;
+    }
+    else
+      return;
   }
-
-  if(read)
-  {
-    // Data was read completely and successfully - reply to server
-    atools::fs::sc::SimConnectReply reply;
-    reply.setPacketId(simConnectData->getPacketId());
-    writeReplyToSocket(reply);
-
-    // Send around in the application
-    postSimConnectData(*simConnectData);
-
-    delete simConnectData;
-    simConnectData = nullptr;
-  }
+  if(verbose)
+    qDebug() << "outstanding" << outstandingReplies;
 }

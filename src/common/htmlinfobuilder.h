@@ -21,6 +21,7 @@
 #include "util/htmlbuilder.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QLocale>
 
 class RouteMapObject;
@@ -245,7 +246,8 @@ private:
   void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
                    atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
-                    bool fsMetar = false) const;
+                    const QString& station = QString(),
+                    const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
