@@ -189,8 +189,6 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
-    // If enabled connect to simulator without showing dialog
-    connectClient->tryConnectOnStartup();
     loadNavmapLegend();
     updateLegend();
 
@@ -210,6 +208,8 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
   qDebug() << "MainWindow destructor";
+
+  weatherUpdateTimer.stop();
 
   // Close all queries
   preDatabaseLoad();
@@ -793,6 +793,15 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
+
+  connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
+}
+
+/* Update the info weather */
+void MainWindow::weatherUpdateTimeout()
+{
+  if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
+    infoController->updateAirport();
 }
 
 void MainWindow::themeMenuTriggered(bool checked)
@@ -1477,6 +1486,16 @@ void MainWindow::mainWindowShown()
     }
     // else have databases do nothing
   }
+
+  // If enabled connect to simulator without showing dialog
+  connectClient->tryConnectOnStartup();
+
+  weatherUpdateTimeout();
+
+  // Update the weather every 30 seconds if connected
+  weatherUpdateTimer.setInterval(30000);
+  weatherUpdateTimer.start();
+
   setStatusMessage(tr("Ready."));
 }
 

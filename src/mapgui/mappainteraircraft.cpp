@@ -248,7 +248,6 @@ void MapPainterAircraft::paintTextLabelAi(const PaintContext *context, float x, 
     return;
 
   QStringList texts;
-  QStringList line;
 
   if((aircraft.isOnGround() && context->mapLayerEffective->isAirportDiagramDetail2()) || // All AI on ground
      !aircraft.isOnGround()) // All AI in the air
@@ -260,20 +259,21 @@ void MapPainterAircraft::paintTextLabelAi(const PaintContext *context, float x, 
   if(aircraft.getGroundSpeedKts() > 30)
     appendSpeedText(texts, aircraft, context->dOpt(opts::ITEM_AI_AIRCRAFT_IAS),
                     context->dOpt(opts::ITEM_AI_AIRCRAFT_GS));
-
-  if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
-    texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
-
-  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-    appendClimbSinkText(texts, aircraft);
-
-  if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_AI_AIRCRAFT_ALTITUDE))
+  if(!aircraft.isOnGround())
   {
-    QString upDown;
-    if(!context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-      climbSinkPointer(upDown, aircraft);
-    texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
+      texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
 
+    if(context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      appendClimbSinkText(texts, aircraft);
+
+    if(context->dOpt(opts::ITEM_AI_AIRCRAFT_ALTITUDE))
+    {
+      QString upDown;
+      if(!context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+        climbSinkPointer(upDown, aircraft);
+      texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+    }
   }
   textatt::TextAttributes atts(textatt::BOLD);
 

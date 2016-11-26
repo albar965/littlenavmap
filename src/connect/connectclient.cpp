@@ -122,6 +122,7 @@ void ConnectClient::connectedToSimulatorDirect()
                                              tr("Connected to local flight simulator."));
   dialog->setConnected(isConnected());
   emit connectedToSimulator();
+  emit weatherUpdated();
 }
 
 void ConnectClient::disconnectedFromSimulatorDirect()
@@ -133,7 +134,14 @@ void ConnectClient::disconnectedFromSimulatorDirect()
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"),
                                                tr("Disconnected from local flight simulator."));
   dialog->setConnected(isConnected());
+
+  metarIdentCache.clear();
+  outstandingReplies.clear();
+  queuedRequests.clear();
+
   emit disconnectedFromSimulator();
+  emit weatherUpdated();
+
   manualDisconnect = false;
 }
 
@@ -395,7 +403,12 @@ void ConnectClient::closeSocket(bool allowRestart)
   mainWindow->setConnectionStatusMessageText(msg, msgTooltip);
   dialog->setConnected(isConnected());
 
+  metarIdentCache.clear();
+  outstandingReplies.clear();
+  queuedRequests.clear();
+
   emit disconnectedFromSimulator();
+  emit weatherUpdated();
 
   if(!dialog->isConnectDirect() && dialog->isAutoConnect() && allowRestart)
   {
@@ -441,6 +454,7 @@ void ConnectClient::connectedToServerSocket()
 
   // Let other program parts know about the new connection
   emit connectedToSimulator();
+  emit weatherUpdated();
 }
 
 /* Called by signal QTcpSocket::readyRead - read data from socket */

@@ -24,6 +24,7 @@
 #include <QMainWindow>
 #include <QUrl>
 #include <QFileInfoList>
+#include <QTimer>
 #include <marble/MarbleGlobal.h>
 
 class SearchController;
@@ -201,6 +202,7 @@ private:
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
+  void weatherUpdateTimeout();
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -250,6 +252,8 @@ private:
   /* Database query helpers and caches */
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
+
+  QTimer weatherUpdateTimer;
 
   bool firstStart = true /* emit window shown only once after startup */,
        firstApplicationStart = false /* first starup on a system after installation */;
