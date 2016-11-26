@@ -67,7 +67,7 @@ public:
   void saveState();
   void restoreState();
 
-  const atools::fs::sc::MetarResult *requestWeather(const QString& station, const atools::geo::Pos& pos);
+  atools::fs::sc::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos);
 
 signals:
   /* Emitted when a new SimConnect data was received from the server (Little Navconnect) */

@@ -187,18 +187,20 @@ void ConnectClient::restoreState()
     dataReader->setUpdateRate(dialog->getDirectUpdateRateMs());
 }
 
-const atools::fs::sc::MetarResult *ConnectClient::requestWeather(const QString& station,
-                                                                 const atools::geo::Pos& pos)
+atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station,
+                                                          const atools::geo::Pos& pos)
 {
+  static atools::fs::sc::MetarResult EMPTY;
+
   const atools::fs::sc::MetarResult *result = metarIdentCache.value(station);
   if(result != nullptr)
-    return result;
+    return atools::fs::sc::MetarResult(*result);
   else
   {
     if(verbose)
       qDebug() << "ConnectClient::requestWeather" << station;
 
-    if(socket != nullptr && socket->isOpen())
+    if((socket != nullptr && socket->isOpen()) || (dataReader != nullptr && dataReader->isConnected()))
     {
       atools::fs::sc::WeatherRequest weatherRequest;
       weatherRequest.setStation(station);
@@ -213,7 +215,7 @@ const atools::fs::sc::MetarResult *ConnectClient::requestWeather(const QString& 
         qDebug() << "=== queuedRequests" << queuedRequests.size();
     }
   }
-  return nullptr;
+  return EMPTY;
 }
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)

@@ -245,7 +245,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     bool showFs = info ? flags & opts::WEATHER_INFO_FS : flags & opts::WEATHER_TOOLTIP_FS;
 
     QString activeSkyMetar, noaaMetar, vatsimMetar;
-    const atools::fs::sc::MetarResult *fsMetar = nullptr;
+    atools::fs::sc::MetarResult fsMetar;
 
     if(showActiveSky)
       activeSkyMetar = weather->getActiveSkyMetar(airport.ident);
@@ -259,20 +259,20 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     if(showFs)
       fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
 
-    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || fsMetar != nullptr)
+    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || fsMetar.isValid())
     {
       if(info)
         head(html, tr("Weather"));
       html.table();
 
-      if(fsMetar != nullptr)
+      if(fsMetar.isValid())
       {
-        addMetarLine(html, tr("Station"), fsMetar->metarForStation,
-                     fsMetar->requestIdent, fsMetar->timestamp, true);
-        addMetarLine(html, tr("Nearest"), fsMetar->metarForNearest,
-                     fsMetar->requestIdent, fsMetar->timestamp, true);
-        addMetarLine(html, tr("Interpolated"), fsMetar->metarForInterpolated,
-                     fsMetar->requestIdent, fsMetar->timestamp, true);
+        addMetarLine(html, tr("Station"), fsMetar.metarForStation,
+                     fsMetar.requestIdent, fsMetar.timestamp, true);
+        addMetarLine(html, tr("Nearest"), fsMetar.metarForNearest,
+                     fsMetar.requestIdent, fsMetar.timestamp, true);
+        addMetarLine(html, tr("Interpolated"), fsMetar.metarForInterpolated,
+                     fsMetar.requestIdent, fsMetar.timestamp, true);
       }
 
       if(!activeSkyMetar.isEmpty())
@@ -730,27 +730,27 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
     if(flags & opts::WEATHER_INFO_FS)
     {
       // Flight simulator fetched weather
-      const atools::fs::sc::MetarResult *metar =
+      atools::fs::sc::MetarResult metar =
         mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
 
-      if(metar != nullptr)
+      if(metar.isValid())
       {
-        if(!metar->metarForStation.isEmpty())
+        if(!metar.metarForStation.isEmpty())
         {
-          Metar met(metar->metarForStation, metar->requestIdent, metar->timestamp, true);
+          Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
           html.h3(tr("FS Station Weather (%1)").arg(met.getStation()));
           decodedMetar(html, airport, met);
         }
-        if(!metar->metarForNearest.isEmpty())
+        if(!metar.metarForNearest.isEmpty())
         {
-          Metar met(metar->metarForNearest, metar->requestIdent, metar->timestamp, true);
-          html.h3(tr("FS Station Weather (%1)").arg(met.getParsedMetar().getId()));
+          Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
+          html.h3(tr("FS Nearest Weather (%1)").arg(met.getParsedMetar().getId()));
           decodedMetar(html, airport, met);
         }
-        if(!metar->metarForInterpolated.isEmpty())
+        if(!metar.metarForInterpolated.isEmpty())
         {
-          Metar met(metar->metarForInterpolated, metar->requestIdent, metar->timestamp, true);
+          Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
           html.h3(tr("FS Interpolated Weather (%1)").arg(met.getStation()));
           decodedMetar(html, airport, met);
         }
