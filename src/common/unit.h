@@ -68,11 +68,11 @@ public:
 
   /* Speed: Returns either kts, km/h or m/h */
   static QString speedKts(float value, bool addUnit = true);
-
   static float speedKtsF(float value);
+  static QString speedMeterPerSec(float value, bool addUnit = true);
+  static float speedMeterPerSecF(float value = true);
 
   static QString speedVertFpm(float value, bool addUnit = true);
-
   static float speedVertFpmF(float value);
 
   /* Altitude: Returns either meter or feet */

@@ -55,6 +55,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
   ui->textBrowserComInfo->setSearchPaths(paths);
   ui->textBrowserApproachInfo->setSearchPaths(paths);
+  ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
@@ -65,6 +66,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
@@ -179,12 +181,23 @@ void InfoController::updateAirportInternal(bool newAirport)
                              &mainWindow->getRouteController()->getRouteMapObjects(),
                              mainWindow->getWeatherReporter(), iconBackColor);
 
+    Ui::MainWindow *ui = mainWindow->getUi();
     if(newAirport)
       // scroll up for new airports
-      mainWindow->getUi()->textBrowserAirportInfo->setText(html.getHtml());
+      ui->textBrowserAirportInfo->setText(html.getHtml());
     else
       // Leave position for weather updates
-      atools::gui::util::updateTextEdit(mainWindow->getUi()->textBrowserAirportInfo, html.getHtml());
+      atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
+
+    html.clear();
+    infoBuilder->weatherText(ap, html, iconBackColor);
+
+    if(newAirport)
+      // scroll up for new airports
+      ui->textBrowserWeatherInfo->setText(html.getHtml());
+    else
+      // Leave position for weather updates
+      atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
   }
 }
 
@@ -196,6 +209,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
   ui->textBrowserApproachInfo->clear();
+  ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
 }
 
@@ -252,6 +266,10 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     html.clear();
     infoBuilder->approachText(airport, html, iconBackColor);
     ui->textBrowserApproachInfo->setText(html.getHtml());
+
+    html.clear();
+    infoBuilder->weatherText(airport, html, iconBackColor);
+    ui->textBrowserWeatherInfo->setText(html.getHtml());
 
     foundAirport = true;
   }
@@ -328,7 +346,8 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   if(foundAirport && !foundNavaid)
   {
     // If no airport related tab is shown bring airport tab to front
-    if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::APPROACHES)
+    if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM &&
+       idx != ic::APPROACHES && idx != ic::WEATHER)
       ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
   }
   else if(!foundAirport && foundNavaid)
@@ -497,6 +516,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
 
   sizePercent = OptionData::instance().getGuiInfoSimSize();

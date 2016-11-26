@@ -717,6 +717,209 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
   }
 }
 
+void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlBuilder& html,
+                                  QColor background) const
+{
+  if(info)
+  {
+    if(!print)
+      airportTitle(airport, html, background);
+
+    opts::Flags flags = OptionData::instance().getFlags();
+
+    if(flags & opts::WEATHER_INFO_FS)
+    {
+      // Flight simulator fetched weather
+      const atools::fs::sc::MetarResult *metar =
+        mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
+
+      if(metar != nullptr)
+      {
+        if(!metar->metarForStation.isEmpty())
+        {
+          Metar met(metar->metarForStation, metar->requestIdent, metar->timestamp, true);
+
+          html.h3(tr("FS Station Weather (%1)").arg(met.getStation()));
+          decodedMetar(html, airport, met);
+        }
+        if(!metar->metarForNearest.isEmpty())
+        {
+          Metar met(metar->metarForNearest, metar->requestIdent, metar->timestamp, true);
+          html.h3(tr("FS Station Weather (%1)").arg(met.getParsedMetar().getId()));
+          decodedMetar(html, airport, met);
+        }
+        if(!metar->metarForInterpolated.isEmpty())
+        {
+          Metar met(metar->metarForInterpolated, metar->requestIdent, metar->timestamp, true);
+          html.h3(tr("FS Interpolated Weather (%1)").arg(met.getStation()));
+          decodedMetar(html, airport, met);
+        }
+      }
+      else
+        html.p(tr("Simulator weather not available."), atools::util::html::BOLD);
+    }
+
+    WeatherReporter *weatherReporter = mainWindow->getWeatherReporter();
+    if(flags & opts::WEATHER_INFO_ACTIVESKY)
+    {
+      QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
+      if(!metarStr.isEmpty())
+      {
+        QString asText(tr("Active Sky"));
+        if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::AS16)
+          asText = tr("AS16");
+        else if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::ASN)
+          asText = tr("ASN");
+
+        Metar met(metarStr);
+        html.h3(asText);
+        decodedMetar(html, airport, met);
+      }
+    }
+    if(flags & opts::WEATHER_INFO_NOAA)
+    {
+      QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
+      if(!metarStr.isEmpty())
+      {
+        Metar met(metarStr);
+        html.h3(tr("NOAA"));
+        decodedMetar(html, airport, met);
+      }
+    }
+    if(flags & opts::WEATHER_INFO_VATSIM)
+    {
+      QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
+      if(!metarStr.isEmpty())
+      {
+        Metar met(metarStr);
+        html.h3(tr("VATSIM"));
+        decodedMetar(html, airport, met);
+      }
+    }
+  }
+}
+
+void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport& airport,
+                                   const atools::fs::weather::Metar& metar) const
+{
+  using atools::fs::weather::MetarNaN;
+
+  const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
+
+  QDateTime time;
+  time.setOffsetFromUtc(0);
+  time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
+  time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
+
+  bool hasClouds = !parsed.getClouds().isEmpty() &&
+                   parsed.getClouds().first().getCoverage() !=
+                   atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
+
+  html.table();
+
+  html.row2(tr("Time: "), locale.toString(time.time(), QLocale::ShortFormat) +
+            " " + time.timeZoneAbbreviation());
+
+  if(!parsed.getReportTypeString().isEmpty())
+    html.row2(tr("Report type: "), parsed.getReportTypeString());
+
+  // int getWindDir()
+  if(parsed.getWindDir() > 0.f)
+  {
+    html.row2(tr("Wind:"),
+              locale.toString(
+                normalizeCourse(parsed.getWindDir() - airport.magvar), 'f', 0) + tr("°M") + tr(", ") +
+              Unit::speedMeterPerSec(parsed.getWindSpeedMeterPerSec()));
+  }
+
+  if(parsed.getGustSpeedMeterPerSec() != MetarNaN)
+    html.row2(tr("Wind gusts:"), Unit::speedMeterPerSec(parsed.getGustSpeedMeterPerSec()));
+
+  if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
+    html.row2(tr("Wind variable:"),
+              locale.toString(normalizeCourse(parsed.getWindRangeFrom() - airport.magvar), 'f', 0) +
+              tr(" to ") +
+              locale.toString(normalizeCourse(parsed.getWindRangeTo() - airport.magvar), 'f', 0) + tr("°M"));
+
+  float temp = parsed.getTemperatureC();
+  if(temp != MetarNaN)
+    html.row2(tr("Temperature:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
+              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+
+  temp = parsed.getDewpointDegC();
+  if(temp != MetarNaN)
+    html.row2(tr("Dewpoint:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
+              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+
+  float slp = parsed.getPressureMbar();
+  if(slp != MetarNaN)
+    html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
+              locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
+
+  const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
+  const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
+  QString visiblity;
+  if(minVis.getVisibilityMeter() != MetarNaN)
+    visiblity.append(tr("%1 %2").
+                     arg(minVis.getModifierString()).
+                     arg(Unit::distMeter(minVis.getVisibilityMeter())));
+
+  if(maxVis.getVisibilityMeter() != MetarNaN)
+    visiblity.append(tr("%1 %2").
+                     arg(maxVis.getModifierString()).
+                     arg(Unit::distMeter(maxVis.getVisibilityMeter())));
+
+  if(!visiblity.isEmpty())
+    html.row2(tr("Visibility: "), visiblity);
+  else
+    html.row2(tr("No visibility report"));
+
+  if(!hasClouds)
+    html.row2(tr("No clouds"));
+
+  const QStringList& weather = parsed.getWeather();
+  if(!weather.isEmpty())
+    html.row2(tr("Conditions:"), atools::capString(weather.join(", ")));
+
+  html.tableEnd();
+
+  if(hasClouds)
+    html.p(tr("Clouds"), atools::util::html::BOLD);
+
+  html.table();
+  if(hasClouds)
+  {
+    for(const atools::fs::weather::MetarCloud& cloud : parsed.getClouds())
+      html.row2(cloud.getCoverageString(),
+                cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR ?
+                Unit::altMeter(cloud.getAltitudeMeter()) : QString());
+  }
+  html.tableEnd();
+
+  // QString getData()
+  // bool getProxy()
+  // QString getId()
+  // MetarVisibility& getVertVisibility()
+  // MetarVisibility *getDirVisibility()
+  // double getRelHumidity() ;
+  // QHash<QString, MetarRunway> getRunways() ;
+
+  if(parsed.getCavok())
+    html.p().text(tr("CAVOK:"), atools::util::html::BOLD).br().
+    text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 nm) or more")).pEnd();
+
+  if(!parsed.isValid())
+  {
+    html.p().text(tr("Report is not valid. METAR was:"), atools::util::html::BOLD, Qt::red).br().
+    text(metar.getMetar()).pEnd();
+  }
+
+  if(!parsed.getUnusedData().isEmpty())
+    html.p().text(tr("Additional information:"), atools::util::html::BOLD).br().
+    text(parsed.getUnusedData()).pEnd();
+
+}
+
 void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor background) const
 {
   const SqlRecord *rec = nullptr;
@@ -1438,7 +1641,7 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
   if(!metar.isEmpty())
   {
     Metar m(metar, station, timestamp, fsMetar);
-    atools::fs::weather::MetarParser pm = m.getParsedMetar();
+    const atools::fs::weather::MetarParser& pm = m.getParsedMetar();
 
     qDebug() << heading << "Metar:\n" << metar;
     qDebug() << heading << "Clean metar:\n" << m.getCleanMetar();

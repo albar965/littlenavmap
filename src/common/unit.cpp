@@ -188,6 +188,27 @@ float Unit::speedKtsF(float value)
   return 0.f;
 }
 
+QString Unit::speedMeterPerSec(float value, bool addUnit)
+{
+  return u(speedMeterPerSecF(value), unitSpeedStr, addUnit);
+}
+
+float Unit::speedMeterPerSecF(float value)
+{
+  switch(unitSpeed)
+  {
+    case opts::SPEED_KTS:
+      return atools::geo::meterToNm(value * 3600.f);
+
+    case opts::SPEED_KMH:
+      return value * 3.6f;
+
+    case opts::SPEED_MPH:
+      return atools::geo::meterToMi(value * 3600.f);
+  }
+  return 0.f;
+}
+
 QString Unit::speedVertFpm(float value, bool addUnit)
 {
   switch(unitVertSpeed)

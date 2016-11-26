@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
 #include "util/htmlbuilder.h"
+#include "fs/weather/metar.h"
 
 #include <QCoreApplication>
 #include <QDateTime>
@@ -125,6 +126,8 @@ public:
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                     QColor background) const;
+  void weatherText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+                   QColor background) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -248,6 +251,7 @@ private:
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),
                     const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
+  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport, const atools::fs::weather::Metar& metar) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
