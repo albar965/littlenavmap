@@ -745,7 +745,8 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
         if(!metar.metarForNearest.isEmpty())
         {
           Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-          html.h3(tr("FS Nearest Weather (%1)").arg(met.getParsedMetar().getId()));
+          html.h3(tr("FS Nearest Weather (%1)").
+                  arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
           decodedMetar(html, airport, met);
         }
         if(!metar.metarForInterpolated.isEmpty())
@@ -910,8 +911,10 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
 
   if(!parsed.isValid())
   {
-    html.p().text(tr("Report is not valid. METAR was:"), atools::util::html::BOLD, Qt::red).br().
-    text(metar.getMetar()).pEnd();
+    html.p(tr("Report is not valid. Raw and clean METAR were:"),
+                  atools::util::html::BOLD, Qt::red);
+    html.pre(metar.getMetar());
+    html.pre(metar.getCleanMetar());
   }
 
   if(!parsed.getUnusedData().isEmpty())
