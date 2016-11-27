@@ -673,7 +673,40 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
         html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
                   recApp.valueStr("fix_region"));
-        html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
+
+        QString fixType = recApp.valueStr("fix_type");
+
+        html.row2(tr("Fix Type:"), capNavString(fixType));
+
+        if(fixType == "VOR" || fixType == "TERMINAL_VOR")
+        {
+          const atools::sql::SqlRecord *vorInfo =
+            infoQuery->getVorInformation(recApp.valueInt("fix_nav_id"));
+
+          if(vorInfo != nullptr)
+          {
+            html.row2(tr("VOR Type:"), maptypes::navTypeName(vorInfo->valueStr("type")));
+            html.row2(tr("VOR Frequency:"),
+                      locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+            html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
+            html.row2(tr("VOR Morse:"), tr("<b>") + morse->getCode(vorInfo->valueStr("ident")) + tr("</b>"));
+          }
+        }
+
+        if(fixType == "NDB" || fixType == "TERMINAL_NDB")
+        {
+          const atools::sql::SqlRecord *ndbInfo =
+            infoQuery->getNdbInformation(recApp.valueInt("fix_nav_id"));
+
+          if(ndbInfo != nullptr)
+          {
+            html.row2(tr("NDB Type:"), maptypes::navTypeName(ndbInfo->valueStr("type")));
+            html.row2(tr("NDB Frequency:"),
+                      locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
+            html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
+            html.row2(tr("NDB Morse:"), tr("<b>") + morse->getCode(ndbInfo->valueStr("ident")) + tr("</b>"));
+          }
+        }
 
         float hdg = recApp.valueFloat("heading") - airport.magvar;
         hdg = normalizeCourse(hdg);
