@@ -32,6 +32,7 @@ class Flightplan;
 }
 
 class MapQuery;
+class RouteMapObjectList;
 
 /*
  * A flight plan waypoint, departure or destination. Data is loaded from the database. Provides
@@ -55,7 +56,7 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                 const RouteMapObject *predRouteMapObj);
+                                 const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
 
   /*
    * Creates a route map object from an airport database object.
@@ -64,13 +65,14 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                         const RouteMapObject *predRouteMapObj);
+                         const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
    */
-  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj);
+  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
+                               const RouteMapObjectList *routeList);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
   void setDepartureParking(const maptypes::MapParking& departureParking);
@@ -195,6 +197,11 @@ public:
   void setFlightplan(atools::fs::pln::Flightplan *fp)
   {
     flightplan = fp;
+  }
+
+  void setFlightplanEntryIndex(int value)
+  {
+    flightplanEntryIndex = value;
   }
 
 private:

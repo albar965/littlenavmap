@@ -1538,7 +1538,7 @@ void RouteController::routeSetDepartureInternal(const maptypes::MapAirport& airp
   flightplan.getEntries().prepend(entry);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(0, airport, nullptr);
+  rmo.createFromAirport(0, airport, nullptr, &route);
   route.prepend(rmo);
 
   updateStartPositionBestRunway(true /* force */, false /* undo */);
@@ -1595,7 +1595,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
     rmoPred = &route.at(route.size() - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(flightplan.getEntries().size() - 1, airport, rmoPred);
+  rmo.createFromAirport(flightplan.getEntries().size() - 1, airport, rmoPred, &route);
   route.append(rmo);
 
   updateRouteMapObjects();
@@ -1657,7 +1657,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   if(flightplan.isEmpty() && insertIndex > 0)
     rmoPred = &route.at(insertIndex - 1);
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(insertIndex, query, rmoPred);
+  rmo.createFromDatabaseByEntry(insertIndex, query, rmoPred, &route);
 
   route.insert(insertIndex, rmo);
 
@@ -1697,7 +1697,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
     rmoPred = &route.at(legIndex - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(legIndex, query, rmoPred);
+  rmo.createFromDatabaseByEntry(legIndex, query, rmoPred, &route);
 
   route.replace(legIndex, rmo);
   eraseAirway(legIndex);
@@ -1846,11 +1846,15 @@ void RouteController::updateRouteMapObjects()
   // Used to number user waypoints
   curUserpointNumber = 0;
 
+  // Update indices
+  for(int i = 0; i < route.size(); i++)
+    route[i].setFlightplanEntryIndex(i);
+
   RouteMapObject *last = nullptr;
   for(int i = 0; i < route.size(); i++)
   {
     RouteMapObject& mapobj = route[i];
-    mapobj.updateDistanceAndCourse(i, last);
+    mapobj.updateDistanceAndCourse(i, last, &route);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
     totalDistance += mapobj.getDistanceTo();
     last = &mapobj;
@@ -1870,7 +1874,7 @@ void RouteController::createRouteMapObjects()
 
   Flightplan& flightplan = route.getFlightplan();
 
-  RouteMapObject *last = nullptr;
+  const RouteMapObject *last = nullptr;
   float totalDistance = 0.f;
 
   // Used to number user waypoints
@@ -1880,7 +1884,7 @@ void RouteController::createRouteMapObjects()
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
     RouteMapObject mapobj(&flightplan);
-    mapobj.createFromDatabaseByEntry(i, query, last);
+    mapobj.createFromDatabaseByEntry(i, query, last, &route);
     curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
     if(mapobj.getMapObjectType() == maptypes::INVALID)
@@ -1892,6 +1896,13 @@ void RouteController::createRouteMapObjects()
 
     route.append(mapobj);
     last = &route.last();
+  }
+
+  // Run again to update magvar with averages across the route where missing
+  for(int i = 0; i < route.size(); i++)
+  {
+    last = i > 0 ? &route.at(i - 1) : nullptr;
+    route[i].updateDistanceAndCourse(i, last, &route);
   }
 
   route.setTotalDistance(totalDistance);
@@ -2245,5 +2256,3 @@ void RouteController::cleanFilename(QString& filename) const
   filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
   replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
 }
-
-

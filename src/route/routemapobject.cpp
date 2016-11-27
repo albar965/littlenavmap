@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "atools.h"
+#include "route/routemapobjectlist.h"
 
 #include <QRegularExpression>
 
@@ -74,19 +75,21 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
 
 void RouteMapObject::createFromAirport(int entryIndex,
                                        const maptypes::MapAirport& newAirport,
-                                       const RouteMapObject *predRouteMapObj)
+                                       const RouteMapObject *predRouteMapObj,
+                                       const RouteMapObjectList *routeList)
 {
   flightplanEntryIndex = entryIndex;
   predecessor = predRouteMapObj != nullptr;
   type = maptypes::AIRPORT;
   airport = newAirport;
 
-  updateDistanceAndCourse(entryIndex, predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
   valid = true;
 }
 
 void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                               const RouteMapObject *predRouteMapObj)
+                                               const RouteMapObject *predRouteMapObj,
+                                               const RouteMapObjectList *routeList)
 {
   flightplanEntryIndex = entryIndex;
 
@@ -253,7 +256,7 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
   if(!valid)
     type = maptypes::INVALID;
 
-  updateDistanceAndCourse(entryIndex, predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
 }
 
 void RouteMapObject::setDepartureParking(const maptypes::MapParking& departureParking)
@@ -268,7 +271,8 @@ void RouteMapObject::setDepartureStart(const maptypes::MapStart& departureStart)
   parking = maptypes::MapParking();
 }
 
-void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj)
+void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
+                                             const RouteMapObjectList *routeList)
 {
   flightplanEntryIndex = entryIndex;
   if(predRouteMapObj != nullptr)
@@ -280,7 +284,35 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
 
     float magvar = getMagvar();
     if(magvar == 0.f)
-      magvar = predRouteMapObj->getMagvar();
+    {
+      // Get magnetic variance from one of the next and previous waypoints if not set
+      float magvarnext = 0.f, magvarprev = 0.f;
+      for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
+      {
+        if(routeList->at(i).getMagvar() > 0.f)
+        {
+          magvarnext = routeList->at(i).getMagvar();
+          break;
+        }
+      }
+
+      for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
+      {
+        if(routeList->at(i).getMagvar() > 0.f)
+        {
+          magvarprev = routeList->at(i).getMagvar();
+          break;
+        }
+      }
+
+      // Use average of previous and next or one valid value
+      if(magvarnext > 0.f && magvarprev > 0.f)
+        magvar = (magvarnext + magvarprev) / 2.f;
+      else if(magvarnext > 0.f)
+        magvar = magvarnext;
+      else if(magvarprev > 0.f)
+        magvar = magvarprev;
+    }
 
     courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) - magvar);
     courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) - magvar);
@@ -547,5 +579,3 @@ const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
 {
   return flightplan->at(flightplanEntryIndex);
 }
-
-
