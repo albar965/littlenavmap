@@ -739,20 +739,20 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
         {
           Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
-          html.h3(tr("FS Station Weather (%1)").arg(met.getStation()));
+          html.h3(tr("Station Weather (%1)").arg(met.getStation()));
           decodedMetar(html, airport, met);
         }
         if(!metar.metarForNearest.isEmpty())
         {
           Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-          html.h3(tr("FS Nearest Weather (%1)").
+          html.h3(tr("Nearest Weather (%1)").
                   arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
           decodedMetar(html, airport, met);
         }
         if(!metar.metarForInterpolated.isEmpty())
         {
           Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
-          html.h3(tr("FS Interpolated Weather (%1)").arg(met.getStation()));
+          html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()));
           decodedMetar(html, airport, met);
         }
       }
@@ -768,9 +768,9 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
       {
         QString asText(tr("Active Sky"));
         if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::AS16)
-          asText = tr("AS16");
+          asText = tr("AS16 Weather");
         else if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::ASN)
-          asText = tr("ASN");
+          asText = tr("ASN Weather");
 
         Metar met(metarStr);
         html.h3(asText);
@@ -783,7 +783,7 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
       if(!metarStr.isEmpty())
       {
         Metar met(metarStr);
-        html.h3(tr("NOAA"));
+        html.h3(tr("NOAA Weather"));
         decodedMetar(html, airport, met);
       }
     }
@@ -793,7 +793,7 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
       if(!metarStr.isEmpty())
       {
         Metar met(metarStr);
-        html.h3(tr("VATSIM"));
+        html.h3(tr("VATSIM Weather"));
         decodedMetar(html, airport, met);
       }
     }
@@ -912,7 +912,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
   if(!parsed.isValid())
   {
     html.p(tr("Report is not valid. Raw and clean METAR were:"),
-                  atools::util::html::BOLD, Qt::red);
+           atools::util::html::BOLD, Qt::red);
     html.pre(metar.getMetar());
     html.pre(metar.getCleanMetar());
   }

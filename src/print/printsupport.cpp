@@ -24,6 +24,9 @@
 #include "util/htmlbuilder.h"
 #include "print/printdialog.h"
 #include "common/htmlinfobuilder.h"
+#include "options/optiondata.h"
+#include "common/weatherreporter.h"
+#include "connect/connectclient.h"
 
 #include <QPainter>
 #include <QtPrintSupport/QPrintPreviewDialog>
@@ -36,6 +39,7 @@
 #include <QTextBlockFormat>
 #include <QTextCursor>
 #include <QTextDocumentWriter>
+#include <QThread>
 
 using atools::settings::Settings;
 using atools::util::HtmlBuilder;
@@ -60,6 +64,8 @@ PrintSupport::~PrintSupport()
 
 void PrintSupport::printMap()
 {
+  qDebug() << Q_FUNC_INFO;
+
   mainWindow->getMapWidget()->showOverlays(false);
   delete mapScreenPrintPixmap;
   mapScreenPrintPixmap = new QPixmap(mainWindow->getMapWidget()->mapScreenShot());
@@ -74,15 +80,57 @@ void PrintSupport::printMap()
 
 void PrintSupport::printFlightplan()
 {
-  qDebug() << "printFlightplan";
+  qDebug() << Q_FUNC_INFO;
+
+  fillWeatherCache();
 
   printFlightplanDialog->exec();
+}
+
+void PrintSupport::fillWeatherCache()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  WeatherReporter *weatherReporter = mainWindow->getWeatherReporter();
+  opts::Flags flags = OptionData::instance().getFlags();
+
+  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+
+  if(rmos.hasValidDeparture())
+  {
+    const QString& ident = rmos.getFlightplan().getDepartureIdent();
+
+    // Fill the cache with weather data for printing
+    if(flags & opts::WEATHER_INFO_FS)
+      mainWindow->getConnectClient()->requestWeather(ident, rmos.getFlightplan().getDeparturePosition());
+    if(flags & opts::WEATHER_INFO_ACTIVESKY)
+      weatherReporter->getActiveSkyMetar(ident);
+    if(flags & opts::WEATHER_INFO_NOAA)
+      weatherReporter->getNoaaMetar(ident);
+    if(flags & opts::WEATHER_INFO_VATSIM)
+      weatherReporter->getVatsimMetar(ident);
+  }
+
+  if(rmos.hasValidDestination())
+  {
+    const QString& ident = rmos.getFlightplan().getDestinationIdent();
+
+    // Fill the cache with weather data for printing
+    if(flags & opts::WEATHER_INFO_FS)
+      mainWindow->getConnectClient()->requestWeather(ident, rmos.getFlightplan().getDestinationPosition());
+    if(flags & opts::WEATHER_INFO_ACTIVESKY)
+      weatherReporter->getActiveSkyMetar(ident);
+    if(flags & opts::WEATHER_INFO_NOAA)
+      weatherReporter->getNoaaMetar(ident);
+    if(flags & opts::WEATHER_INFO_VATSIM)
+      weatherReporter->getVatsimMetar(ident);
+  }
 }
 
 /* Open print preview dialog for flight plan. Called from PrintDialog */
 void PrintSupport::printPreviewFlightplanClicked()
 {
-  qDebug() << "printPreviewFlightplanClicked";
+  qDebug() << Q_FUNC_INFO;
 
   QString cssContent;
   // QString css = atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/css/print.css");
@@ -116,7 +164,7 @@ void PrintSupport::printPreviewFlightplanClicked()
 /* Open print dialog for printing (no preview). Called from PrintDialog  */
 void PrintSupport::printFlightplanClicked()
 {
-  qDebug() << "printFlightplanClicked";
+  qDebug() << Q_FUNC_INFO;
 
   QPrinter printer;
   // printer.setOutputFormat(QPrinter::NativeFormat);
@@ -211,13 +259,17 @@ void PrintSupport::createFlightplanDocuments()
       if(opts & prt::DEPARTURE_COM)
         builder.comText(rmos.first().getAirport(), departureCom, Qt::white);
 
+      HtmlBuilder departureWeather(true);
+      if(opts & prt::DEPARTURE_WEATHER)
+        builder.weatherText(rmos.first().getAirport(), departureCom, Qt::white);
+
       HtmlBuilder departureAppr(true);
       if(opts & prt::DEPARTURE_APPR)
         builder.approachText(rmos.first().getAirport(), departureAppr, Qt::white);
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;
-      if(!departureHtml.isEmpty() || !departureCom.isEmpty())
+      if(!departureHtml.isEmpty() || !departureCom.isEmpty() || !departureWeather.isEmpty())
         numCols++;
       if(!departureRunway.isEmpty())
         numCols++;
@@ -226,8 +278,8 @@ void PrintSupport::createFlightplanDocuments()
 
       // Merge all fragments into a table
       html.tr();
-      if(!departureHtml.isEmpty() || !departureCom.isEmpty())
-        html.td(100 / numCols).append(departureHtml).append(departureCom).tdEnd();
+      if(!departureHtml.isEmpty() || !departureCom.isEmpty() || !departureWeather.isEmpty())
+        html.td(100 / numCols).append(departureHtml).append(departureCom).append(departureWeather).tdEnd();
       if(!departureRunway.isEmpty())
         html.td(100 / numCols).append(departureRunway).tdEnd();
       if(!departureAppr.isEmpty())
@@ -260,13 +312,17 @@ void PrintSupport::createFlightplanDocuments()
       if(opts & prt::DESTINATION_COM)
         builder.comText(rmos.last().getAirport(), destinationCom, Qt::white);
 
+      HtmlBuilder destinationWeather(true);
+      if(opts & prt::DESTINATION_WEATHER)
+        builder.weatherText(rmos.last().getAirport(), destinationCom, Qt::white);
+
       HtmlBuilder destinationAppr(true);
       if(opts & prt::DESTINATION_APPR)
         builder.approachText(rmos.last().getAirport(), destinationAppr, Qt::white);
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;
-      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty())
+      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty() || !destinationWeather.isEmpty())
         numCols++;
       if(!destinationRunway.isEmpty())
         numCols++;
@@ -275,8 +331,9 @@ void PrintSupport::createFlightplanDocuments()
 
       // Merge all fragments into a table
       html.tr();
-      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty())
-        html.td(100 / numCols).append(destinationHtml).append(destinationCom).tdEnd();
+      if(!destinationHtml.isEmpty() || !destinationCom.isEmpty() || !destinationWeather.isEmpty())
+        html.td(100 / numCols).append(destinationHtml).append(destinationCom).
+        append(destinationWeather).tdEnd();
       if(!destinationRunway.isEmpty())
         html.td(100 / numCols).append(destinationRunway).tdEnd();
       if(!destinationAppr.isEmpty())

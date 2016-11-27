@@ -73,6 +73,7 @@ private:
   void createFlightplanDocuments();
   void deleteFlightplanDocuments();
   void addHeader(QTextCursor& cursor);
+  void fillWeatherCache();
 
   MainWindow *mainWindow;
   PrintDialog *printFlightplanDialog = nullptr;

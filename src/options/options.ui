@@ -1772,7 +1772,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <string>Weather Display in Tooltip</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipAsn">
             <property name="text">
              <string>&amp;Active Sky</string>
@@ -1782,7 +1782,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipNoaa">
             <property name="text">
              <string>&amp;NOAA</string>
@@ -1792,17 +1792,17 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipVatsim">
             <property name="text">
              <string>&amp;VATSIM</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipFs">
             <property name="toolTip">
-             <string>Display current weather in the flight simulator when connected. Only for airports nearby user aircraft.</string>
+             <string>Display current weather in the flight simulator when connected. </string>
             </property>
             <property name="text">
              <string>Flight Simulator</string>
@@ -1856,7 +1856,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
           <string>Weather Display in Information Panels</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
             <property name="text">
              <string>Active &amp;Sky</string>
@@ -1866,7 +1866,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="3" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoNoaa">
             <property name="text">
              <string>N&amp;OAA</string>
@@ -1876,7 +1876,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="4" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoVatsim">
             <property name="text">
              <string>VA&amp;TSIM</string>
@@ -1886,10 +1886,10 @@ If this field is empty, the default Active Sky weather file path will be used wh
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoFs">
             <property name="toolTip">
-             <string>Display current weather in the flight simulator when connected. Only for airports nearby user aircraft.</string>
+             <string>Display current weather in the flight simulator when connected. </string>
             </property>
             <property name="text">
              <string>Flight Simulator</string>

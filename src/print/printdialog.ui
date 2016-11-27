@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>531</width>
-    <height>265</height>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureOverview">
           <property name="text">
-           <string>Overview and METAR</string>
+           <string>&amp;Overview and METAR</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -35,7 +35,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureRunways">
           <property name="text">
-           <string>Runways</string>
+           <string>&amp;Runways</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -45,21 +45,21 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureSoftRunways">
           <property name="text">
-           <string>Include soft Surface Runways</string>
+           <string>&amp;Include soft Surface Runways</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureDetailRunways">
           <property name="text">
-           <string>Detailed Runway Information</string>
+           <string>&amp;Detailed Runway Information</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureCom">
           <property name="text">
-           <string>COM Frequencies</string>
+           <string>&amp;COM Frequencies</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -69,7 +69,17 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureAppr">
           <property name="text">
-           <string>Approaches</string>
+           <string>&amp;Approaches</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxPrintDepartureWeather">
+          <property name="text">
+           <string>&amp;Weather</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -85,7 +95,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationOverview">
           <property name="text">
-           <string>Overview and METAR</string>
+           <string>&amp;Overview and METAR</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -95,7 +105,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationRunways">
           <property name="text">
-           <string>Runways</string>
+           <string>&amp;Runways</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -105,21 +115,21 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationSoftRunways">
           <property name="text">
-           <string>Include soft Surface Runways</string>
+           <string>&amp;Include soft Surface Runways</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationDetailRunways">
           <property name="text">
-           <string>Detailed Runway Information</string>
+           <string>&amp;Detailed Runway Information</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationCom">
           <property name="text">
-           <string>COM Frequencies</string>
+           <string>&amp;COM Frequencies</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -129,7 +139,17 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationAppr">
           <property name="text">
-           <string>Approaches</string>
+           <string>&amp;Approaches</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBoxPrintDestinationWeather">
+          <property name="text">
+           <string>&amp;Weather</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -139,24 +159,24 @@
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayoutPrint">
+    <layout class="QGridLayout" name="gridLayout">
      <property name="leftMargin">
       <number>0</number>
      </property>
      <property name="topMargin">
       <number>0</number>
      </property>
-     <item>
+     <item row="0" column="0">
       <widget class="QCheckBox" name="checkBoxPrintFlightplan">
        <property name="text">
-        <string>Print Flight Plan</string>
+        <string>Print &amp;Flight Plan</string>
        </property>
        <property name="checked">
         <bool>true</bool>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="2" column="0">
       <widget class="QSpinBox" name="spinBoxPrintTextSize">
        <property name="suffix">
         <string> %</string>
@@ -177,6 +197,19 @@
         <number>100</number>
        </property>
       </widget>
+     </item>
+     <item row="0" column="1">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -205,6 +238,10 @@
   <tabstop>checkBoxPrintDestinationCom</tabstop>
   <tabstop>checkBoxPrintDepartureAppr</tabstop>
   <tabstop>checkBoxPrintDestinationAppr</tabstop>
+  <tabstop>checkBoxPrintDepartureWeather</tabstop>
+  <tabstop>checkBoxPrintDestinationWeather</tabstop>
+  <tabstop>checkBoxPrintFlightplan</tabstop>
+  <tabstop>spinBoxPrintTextSize</tabstop>
  </tabstops>
  <resources/>
  <connections>

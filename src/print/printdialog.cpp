@@ -19,11 +19,18 @@
 #include "ui_printdialog.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
+#include "common/weatherreporter.h"
+#include "connect/connectclient.h"
+#include "options/optiondata.h"
+#include "gui/mainwindow.h"
+#include "route/routecontroller.h"
 
 #include <QPushButton>
 
-PrintDialog::PrintDialog(QWidget *parent) :
-  QDialog(parent), ui(new Ui::PrintDialog)
+#include "route/routemapobjectlist.h"
+
+PrintDialog::PrintDialog(QWidget *parent)
+  : QDialog(parent), ui(new Ui::PrintDialog)
 {
   ui->setupUi(this);
 
@@ -39,6 +46,7 @@ PrintDialog::PrintDialog(QWidget *parent) :
   connect(ui->checkBoxPrintDepartureSoftRunways, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDepartureCom, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDepartureAppr, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
+  connect(ui->checkBoxPrintDepartureWeather, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationOverview, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationRunways, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationDetailRunways, &QCheckBox::toggled, this,
@@ -47,6 +55,7 @@ PrintDialog::PrintDialog(QWidget *parent) :
           &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationCom, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintDestinationAppr, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
+  connect(ui->checkBoxPrintDestinationWeather, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintFlightplan, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
 }
 
@@ -80,6 +89,7 @@ prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
   opts |= ui->checkBoxPrintDepartureSoftRunways->isChecked() ? prt::DEPARTURE_RUNWAYS_SOFT : prt::NONE;
   opts |= ui->checkBoxPrintDepartureCom->isChecked() ? prt::DEPARTURE_COM : prt::NONE;
   opts |= ui->checkBoxPrintDepartureAppr->isChecked() ? prt::DEPARTURE_APPR : prt::NONE;
+  opts |= ui->checkBoxPrintDepartureWeather->isChecked() ? prt::DEPARTURE_WEATHER : prt::NONE;
   opts |= ui->checkBoxPrintDestinationOverview->isChecked() ? prt::DESTINATION_OVERVIEW : prt::NONE;
   opts |= ui->checkBoxPrintDestinationRunways->isChecked() ? prt::DESTINATION_RUNWAYS : prt::NONE;
   opts |=
@@ -87,6 +97,7 @@ prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
   opts |= ui->checkBoxPrintDestinationSoftRunways->isChecked() ? prt::DESTINATION_RUNWAYS_SOFT : prt::NONE;
   opts |= ui->checkBoxPrintDestinationCom->isChecked() ? prt::DESTINATION_COM : prt::NONE;
   opts |= ui->checkBoxPrintDestinationAppr->isChecked() ? prt::DESTINATION_APPR : prt::NONE;
+  opts |= ui->checkBoxPrintDestinationWeather->isChecked() ? prt::DESTINATION_WEATHER : prt::NONE;
 
   opts |= ui->checkBoxPrintFlightplan->isChecked() ? prt::FLIGHTPLAN : prt::NONE;
   return opts;
@@ -106,12 +117,14 @@ void PrintDialog::saveState()
      ui->checkBoxPrintDepartureSoftRunways,
      ui->checkBoxPrintDepartureCom,
      ui->checkBoxPrintDepartureAppr,
+     ui->checkBoxPrintDepartureWeather,
      ui->checkBoxPrintDestinationOverview,
      ui->checkBoxPrintDestinationRunways,
      ui->checkBoxPrintDestinationDetailRunways,
      ui->checkBoxPrintDestinationSoftRunways,
      ui->checkBoxPrintDestinationCom,
      ui->checkBoxPrintDestinationAppr,
+     ui->checkBoxPrintDestinationWeather,
      ui->checkBoxPrintFlightplan,
      ui->spinBoxPrintTextSize});
 
@@ -126,12 +139,14 @@ void PrintDialog::restoreState()
      ui->checkBoxPrintDepartureSoftRunways,
      ui->checkBoxPrintDepartureCom,
      ui->checkBoxPrintDepartureAppr,
+     ui->checkBoxPrintDepartureWeather,
      ui->checkBoxPrintDestinationOverview,
      ui->checkBoxPrintDestinationRunways,
      ui->checkBoxPrintDestinationDetailRunways,
      ui->checkBoxPrintDestinationSoftRunways,
      ui->checkBoxPrintDestinationCom,
      ui->checkBoxPrintDestinationAppr,
+     ui->checkBoxPrintDestinationWeather,
      ui->checkBoxPrintFlightplan,
      ui->spinBoxPrintTextSize});
   updateButtonStates();
