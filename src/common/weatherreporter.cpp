@@ -43,15 +43,32 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
     mainWindow(parentWindow)
 {
   initActiveSkyNext();
+
+  connect(&flushQueueTimer, &QTimer::timeout, this, &WeatherReporter::flushRequestQueue);
+
+  flushQueueTimer.setInterval(1000);
+  flushQueueTimer.start();
+
 }
 
 WeatherReporter::~WeatherReporter()
 {
+  flushQueueTimer.stop();
+
   // Remove any outstanding requests
   cancelNoaaReply();
   cancelVatsimReply();
 
   delete fsWatcher;
+}
+
+void WeatherReporter::flushRequestQueue()
+{
+  if(!noaaRequests.isEmpty())
+    loadNoaaMetar(noaaRequests.takeLast());
+
+  if(!vatsimRequests.isEmpty())
+    loadVatsimMetar(vatsimRequests.takeLast());
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -227,17 +244,22 @@ void WeatherReporter::cancelVatsimReply()
 void WeatherReporter::loadVatsimMetar(const QString& airportIcao)
 {
   // http://metar.vatsim.net/metar.php?id=EDDF
-  cancelVatsimReply();
-
-  vatsimRequestIcao = airportIcao;
-  QNetworkRequest request(QUrl(OptionData::instance().getWeatherVatsimUrl().arg(airportIcao)));
-
-  vatsimReply = networkManager.get(request);
-
   if(vatsimReply != nullptr)
-    connect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
+    vatsimRequests.append(airportIcao);
   else
-    qWarning() << "Vatsim Reply is null";
+  {
+    cancelVatsimReply();
+
+    vatsimRequestIcao = airportIcao;
+    QNetworkRequest request(QUrl(OptionData::instance().getWeatherVatsimUrl().arg(airportIcao)));
+
+    vatsimReply = networkManager.get(request);
+
+    if(vatsimReply != nullptr)
+      connect(vatsimReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedVatsim);
+    else
+      qWarning() << "Vatsim Reply is null";
+  }
 }
 
 void WeatherReporter::cancelNoaaReply()
@@ -282,35 +304,48 @@ void WeatherReporter::loadNoaaMetar(const QString& airportIcao)
   // http://weather.noaa.gov/pub/data/observations/metar/
   // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
 
-  cancelNoaaReply();
-
-  noaaRequestIcao = airportIcao;
-  QNetworkRequest request(QUrl(OptionData::instance().getWeatherNoaaUrl().arg(airportIcao)));
-
-  noaaReply = networkManager.get(request);
-
   if(noaaReply != nullptr)
-    connect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
+    noaaRequests.append(airportIcao);
   else
-    qWarning() << "NOAA Reply is null";
+  {
+    cancelNoaaReply();
+
+    noaaRequestIcao = airportIcao;
+    QNetworkRequest request(QUrl(OptionData::instance().getWeatherNoaaUrl().arg(airportIcao)));
+
+    noaaReply = networkManager.get(request);
+
+    if(noaaReply != nullptr)
+      connect(noaaReply, &QNetworkReply::finished, this, &WeatherReporter::httpFinishedNoaa);
+    else
+      qWarning() << "NOAA Reply is null";
+  }
 }
 
 /* Called by network reply signal */
 void WeatherReporter::httpFinishedNoaa()
 {
+  // qDebug() << Q_FUNC_INFO << noaaRequestIcao;
   httpFinished(noaaReply, noaaRequestIcao, noaaCache);
   if(noaaReply != nullptr)
     noaaReply->deleteLater();
   noaaReply = nullptr;
+
+  if(!noaaRequests.isEmpty())
+    loadNoaaMetar(noaaRequests.takeLast());
 }
 
 /* Called by network reply signal */
 void WeatherReporter::httpFinishedVatsim()
 {
+  // qDebug() << Q_FUNC_INFO << vatsimRequestIcao;
   httpFinished(vatsimReply, vatsimRequestIcao, vatsimCache);
   if(vatsimReply != nullptr)
     vatsimReply->deleteLater();
   vatsimReply = nullptr;
+
+  if(!vatsimRequests.isEmpty())
+    loadVatsimMetar(vatsimRequests.takeLast());
 }
 
 void WeatherReporter::httpFinished(QNetworkReply *reply, const QString& icao,
@@ -349,6 +384,8 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 
 QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 {
+  // qDebug() << Q_FUNC_INFO << airportIcao;
+
   QString *metar = noaaCache.value(airportIcao);
   if(metar != nullptr)
     return QString(*metar);
@@ -360,6 +397,8 @@ QString WeatherReporter::getNoaaMetar(const QString& airportIcao)
 
 QString WeatherReporter::getVatsimMetar(const QString& airportIcao)
 {
+  // qDebug() << Q_FUNC_INFO << airportIcao;
+
   QString *metar = vatsimCache.value(airportIcao);
   if(metar != nullptr)
     return QString(*metar);
@@ -392,7 +431,7 @@ void WeatherReporter::optionsChanged()
 void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
 {
   Q_UNUSED(path);
-  qDebug() << "file" << path << "changed";
+  qDebug() << Q_FUNC_INFO << "file" << path << "changed";
   loadActiveSkySnapshot(path);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
   emit weatherUpdated();

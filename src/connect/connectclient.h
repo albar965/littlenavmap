@@ -100,6 +100,7 @@ private:
   void disconnectedFromSimulatorDirect();
   void autoConnectToggled(bool state);
   void requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest);
+  void flushQueuedRequests();
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *dialog = nullptr;
@@ -112,7 +113,7 @@ private:
 
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */
-  QTimer reconnectNetworkTimer;
+  QTimer reconnectNetworkTimer, flushQueuedRequestsTimer;
   MainWindow *mainWindow;
   bool verbose = false;
   atools::util::TimedCache<QString, atools::fs::sc::MetarResult> metarIdentCache;

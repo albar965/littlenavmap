@@ -24,6 +24,7 @@
 #include <QHash>
 #include <QNetworkAccessManager>
 #include <QObject>
+#include <QTimer>
 
 class QFileSystemWatcher;
 class MainWindow;
@@ -130,6 +131,7 @@ private:
 
   void cancelNoaaReply();
   void cancelVatsimReply();
+  void flushRequestQueue();
 
   QHash<QString, QString> activeSkyMetars;
   atools::util::TimedCache<QString, QString> noaaCache, vatsimCache;
@@ -144,7 +146,10 @@ private:
 
   // Keeps the reply
   QNetworkReply *noaaReply = nullptr, *vatsimReply = nullptr;
+  QStringList noaaRequests, vatsimRequests;
+
   MainWindow *mainWindow;
+  QTimer flushQueueTimer;
 
   ActiveSkyType activeSkyType = NONE;
 

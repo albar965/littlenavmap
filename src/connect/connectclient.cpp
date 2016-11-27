@@ -63,10 +63,16 @@ ConnectClient::ConnectClient(MainWindow *parent)
   reconnectNetworkTimer.setSingleShot(true);
   connect(&reconnectNetworkTimer, &QTimer::timeout, this, &ConnectClient::connectInternal);
 
+  flushQueuedRequestsTimer.setInterval(2000);
+  connect(&flushQueuedRequestsTimer, &QTimer::timeout, this, &ConnectClient::flushQueuedRequests);
+  flushQueuedRequestsTimer.start();
 }
 
 ConnectClient::~ConnectClient()
 {
+  qDebug() << Q_FUNC_INFO;
+
+  flushQueuedRequestsTimer.stop();
   reconnectNetworkTimer.stop();
   closeSocket(false);
 
@@ -78,6 +84,15 @@ ConnectClient::~ConnectClient()
   }
 
   delete dialog;
+}
+
+void ConnectClient::flushQueuedRequests()
+{
+  if(!queuedRequests.isEmpty())
+  {
+    atools::fs::sc::WeatherRequest req = queuedRequests.takeLast();
+    requestWeather(req.getStation(), req.getPosition());
+  }
 }
 
 void ConnectClient::connectToServerDialog()
