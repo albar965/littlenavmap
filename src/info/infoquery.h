@@ -33,13 +33,10 @@ class SqlRecordVector;
 /*
  * Database queries for the info controller. Does not return objects but sql records. Records are cached.
  */
-class InfoQuery :
-  public QObject
+class InfoQuery
 {
-  Q_OBJECT
-
 public:
-  InfoQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb);
+  InfoQuery(atools::sql::SqlDatabase *sqlDb);
   virtual ~InfoQuery();
 
   /* Get record for joined tables airport, bgl_file and scenery_area */

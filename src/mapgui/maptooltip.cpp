@@ -31,25 +31,27 @@ using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
 
 MapTooltip::MapTooltip(MainWindow *parentWindow)
-  : QObject(parentWindow), mainWindow(parentWindow), query(mainWindow->getMapQuery()),
-    weather(mainWindow->getWeatherReporter())
+  : mainWindow(parentWindow), query(mainWindow->getMapQuery()), weather(mainWindow->getWeatherReporter())
 {
-#if defined(Q_OS_WIN32)
-  iconBackColor = QColor(Qt::transparent);
-#else
-  // Avoid unreadable icons for some linux distributions that have a black tooltip background
-  iconBackColor = QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase);
-#endif
+  qDebug() << Q_FUNC_INFO;
 }
 
 MapTooltip::~MapTooltip()
 {
+  qDebug() << Q_FUNC_INFO;
 }
 
 QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
                                  const RouteMapObjectList& routeMapObjects,
                                  bool airportDiagram)
 {
+#if defined(Q_OS_WIN32)
+  QColor iconBackColor(Qt::transparent);
+#else
+  // Avoid unreadable icons for some linux distributions that have a black tooltip background
+  QColor iconBackColor(QToolTip::palette().color(QPalette::Inactive, QPalette::ToolTipBase));
+#endif
+
   HtmlBuilder html(false);
   HtmlInfoBuilder info(mainWindow, false);
   int numEntries = 0;

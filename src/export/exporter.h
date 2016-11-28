@@ -18,7 +18,7 @@
 #ifndef LITTLELOGBOOK_EXPORTER_H
 #define LITTLELOGBOOK_EXPORTER_H
 
-#include <QObject>
+#include <QApplication>
 
 namespace atools {
 namespace gui {
@@ -34,10 +34,9 @@ class QSqlRecord;
 /*
  * Base for all export classes.
  */
-class Exporter :
-  public QObject
+class Exporter
 {
-  Q_OBJECT
+  Q_DECLARE_TR_FUNCTIONS(Exporter)
 
 public:
   Exporter(QWidget *parentWidget, SqlController *controllerObj);

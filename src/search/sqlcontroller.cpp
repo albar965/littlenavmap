@@ -32,7 +32,7 @@ using atools::sql::SqlDatabase;
 
 SqlController::SqlController(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols,
                              QTableView *tableView)
-  : parentWidget(parent), db(sqlDb), view(tableView), columns(cols)
+  : db(sqlDb), view(tableView), columns(cols)
 {
 }
 
@@ -192,7 +192,7 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
       // No proxy - create a new one and assign it to the model
       proxyWasNull = true;
       // Controller takes ownership
-      proxyModel = new SqlProxyModel(this, model);
+      proxyModel = new SqlProxyModel(nullptr, model);
       proxyModel->setDynamicSortFilter(true);
       proxyModel->setSourceModel(model);
 

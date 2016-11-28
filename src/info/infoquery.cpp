@@ -24,8 +24,8 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 
-InfoQuery::InfoQuery(QObject *parent, SqlDatabase *sqlDb)
-  : QObject(parent), db(sqlDb)
+InfoQuery::InfoQuery(SqlDatabase *sqlDb)
+  : db(sqlDb)
 {
 
 }

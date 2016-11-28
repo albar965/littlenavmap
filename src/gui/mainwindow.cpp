@@ -125,7 +125,7 @@ MainWindow::MainWindow()
     mapQuery = new MapQuery(this, databaseManager->getDatabase());
     mapQuery->initQueries();
 
-    infoQuery = new InfoQuery(this, databaseManager->getDatabase());
+    infoQuery = new InfoQuery(databaseManager->getDatabase());
     infoQuery->initQueries();
 
     // Add actions for flight simulator database switch in main menu
@@ -227,11 +227,11 @@ MainWindow::~MainWindow()
   delete routeFileHistory;
   delete kmlFileHistory;
   delete optionsDialog;
+  delete mapWidget;
   delete ui;
 
   delete dialog;
   delete errorHandler;
-
   delete databaseManager;
   delete actionGroupMapProjection;
   delete actionGroupMapTheme;

@@ -35,8 +35,6 @@ class QFile;
 class HtmlExporter :
   public Exporter
 {
-  Q_OBJECT
-
 public:
   HtmlExporter(QWidget *parentWidget, SqlController *controller, int rowsPerPage);
   virtual ~HtmlExporter();

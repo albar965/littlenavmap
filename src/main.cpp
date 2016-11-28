@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
       retval = app.exec();
     }
 
-    qDebug() << "app.exec() done, retval is" << retval;
+    qDebug() << "app.exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
   }
   catch(atools::Exception& e)
   {

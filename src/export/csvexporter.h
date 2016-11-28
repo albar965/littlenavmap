@@ -38,8 +38,6 @@ class QTableView;
 class CsvExporter :
   public Exporter
 {
-  Q_OBJECT
-
 public:
   CsvExporter(QWidget *parentWidget, SqlController *controller);
   virtual ~CsvExporter();

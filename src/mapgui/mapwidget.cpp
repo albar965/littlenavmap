@@ -111,8 +111,13 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
 
 MapWidget::~MapWidget()
 {
+  qDebug() << Q_FUNC_INFO << "delete paintLayer";
   delete paintLayer;
+
+  qDebug() << Q_FUNC_INFO << "delete mapTooltip";
   delete mapTooltip;
+
+  qDebug() << Q_FUNC_INFO << "delete screenIndex";
   delete screenIndex;
 }
 

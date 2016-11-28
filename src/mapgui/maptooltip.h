@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_MAPTOOLTIP_H
 
 #include <QColor>
-#include <QObject>
+#include <QApplication>
 
 namespace maptypes {
 struct MapSearchResult;
@@ -40,10 +40,9 @@ class HtmlBuilder;
 /*
  * Builds a HTML tooltip for map display with a maximum length of 20 lines.
  */
-class MapTooltip :
-  public QObject
+class MapTooltip
 {
-  Q_OBJECT
+  Q_DECLARE_TR_FUNCTIONS(MapTooltip)
 
 public:
   MapTooltip(MainWindow *parentWindow);
@@ -71,7 +70,6 @@ private:
   MainWindow *mainWindow = nullptr;
   MapQuery *query;
   WeatherReporter *weather;
-  QColor iconBackColor;
 };
 
 #endif // LITTLENAVMAP_MAPTOOLTIP_H

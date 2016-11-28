@@ -34,11 +34,8 @@ class QPushButton;
  * A list of column descriptors that define behavior and display in the table
  * view for one database table.
  */
-class ColumnList :
-  public QObject
+class ColumnList
 {
-  Q_OBJECT
-
 public:
   ColumnList(const QString& tableName, const QString& idColumnName);
   virtual ~ColumnList();
