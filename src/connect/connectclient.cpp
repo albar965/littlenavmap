@@ -77,6 +77,10 @@ ConnectClient::~ConnectClient()
 
   disconnectClicked();
 
+  qDebug() << Q_FUNC_INFO << "delete dataReader";
+  delete dataReader;
+
+  qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
 }
 
@@ -275,11 +279,14 @@ void ConnectClient::autoConnectToggled(bool state)
 /* Called by signal ConnectDialog::disconnectClicked */
 void ConnectClient::disconnectClicked()
 {
+  qDebug() << Q_FUNC_INFO;
+
+  reconnectNetworkTimer.stop();
+
   if(dataReader != nullptr)
     if(dataReader->isConnected())
       // Tell disconnectedFromSimulatorDirect not to reconnect
       manualDisconnect = true;
-  reconnectNetworkTimer.stop();
 
   if(dataReader != nullptr)
   {
@@ -372,6 +379,8 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 
 void ConnectClient::closeSocket(bool allowRestart)
 {
+  qDebug() << Q_FUNC_INFO;
+
   QAbstractSocket::SocketError error = QAbstractSocket::SocketError::UnknownSocketError;
   QString peer("Unknown"), errorStr("No error");
   if(socket != nullptr)
