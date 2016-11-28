@@ -74,14 +74,8 @@ ConnectClient::~ConnectClient()
 
   flushQueuedRequestsTimer.stop();
   reconnectNetworkTimer.stop();
-  closeSocket(false);
 
-  if(dataReader != nullptr)
-  {
-    dataReader->setTerminate();
-    dataReader->wait();
-    delete dataReader;
-  }
+  disconnectClicked();
 
   delete dialog;
 }
