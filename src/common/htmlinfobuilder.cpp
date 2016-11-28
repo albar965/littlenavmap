@@ -773,20 +773,20 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
           Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
           html.h3(tr("Station Weather (%1)").arg(met.getStation()));
-          decodedMetar(html, airport, met);
+          decodedMetar(html, airport, met, false);
         }
         if(!metar.metarForNearest.isEmpty())
         {
           Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
           html.h3(tr("Nearest Weather (%1)").
                   arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
-          decodedMetar(html, airport, met);
+          decodedMetar(html, airport, met, false);
         }
         if(!metar.metarForInterpolated.isEmpty())
         {
           Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
           html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()));
-          decodedMetar(html, airport, met);
+          decodedMetar(html, airport, met, true);
         }
       }
       else
@@ -807,7 +807,7 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
 
         Metar met(metarStr);
         html.h3(asText);
-        decodedMetar(html, airport, met);
+        decodedMetar(html, airport, met, false);
       }
     }
     if(flags & opts::WEATHER_INFO_NOAA)
@@ -817,7 +817,7 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
       {
         Metar met(metarStr);
         html.h3(tr("NOAA Weather"));
-        decodedMetar(html, airport, met);
+        decodedMetar(html, airport, met, false);
       }
     }
     if(flags & opts::WEATHER_INFO_VATSIM)
@@ -827,23 +827,18 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
       {
         Metar met(metarStr);
         html.h3(tr("VATSIM Weather"));
-        decodedMetar(html, airport, met);
+        decodedMetar(html, airport, met, false);
       }
     }
   }
 }
 
 void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport& airport,
-                                   const atools::fs::weather::Metar& metar) const
+                                   const atools::fs::weather::Metar& metar, bool isInterpolated) const
 {
   using atools::fs::weather::MetarNaN;
 
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
-
-  QDateTime time;
-  time.setOffsetFromUtc(0);
-  time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
-  time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
 
   bool hasClouds = !parsed.getClouds().isEmpty() &&
                    parsed.getClouds().first().getCoverage() !=
@@ -851,8 +846,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
 
   html.table();
 
-  html.row2(tr("Time: "), locale.toString(time.time(), QLocale::ShortFormat) +
-            " " + time.timeZoneAbbreviation());
+  if(!isInterpolated)
+  {
+    QDateTime time;
+    time.setOffsetFromUtc(0);
+    time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
+    time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
+    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) +
+              " " + time.timeZoneAbbreviation());
+  }
 
   if(!parsed.getReportTypeString().isEmpty())
     html.row2(tr("Report type: "), parsed.getReportTypeString());
@@ -1241,7 +1243,7 @@ void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, Htm
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html,
-                                           const RouteMapObjectList& rmoList) const
+                                           const RouteMapObjectList& route) const
 {
   const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
 
@@ -1251,18 +1253,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
   int nearestLegIndex;
 
-  if(!rmoList.isEmpty() && userAircaft != nullptr && info)
+  if(!route.isEmpty() && userAircaft != nullptr && info)
   {
-    if(rmoList.getRouteDistances(aircraft.getPosition(),
-                                 &distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance,
-                                 &nearestLegIndex))
+    if(route.getRouteDistances(aircraft.getPosition(),
+                               &distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance,
+                               &nearestLegIndex))
     {
       head(html, tr("Flight Plan Progress"));
       html.table();
       // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
       html.row2(tr("To Destination:"), Unit::distNm(distToDestNm));
-
-      html.row2(tr("To Top of Descent:"), Unit::distNm(distToDestNm - rmoList.getTopOfDescentToDest()));
 
       timeAndDate(userAircaft, html);
 
@@ -1274,14 +1274,27 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                   arrival.timeZoneAbbreviation());
         html.row2(tr("En route Time:"), formatter::formatMinutesHoursLong(timeToDestination));
       }
+
+      float toTod = route.getTopOfDescentFromStart() - distFromStartNm;
+      if(toTod > 0)
+      {
+        QString timeStr;
+        if(aircraft.getGroundSpeedKts() > 20.f)
+          timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+
+        html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+      }
+      else
+        html.row2(tr("To Top of Descent:"), tr("Passed"));
+
       html.tableEnd();
 
       head(html, tr("Next Waypoint"));
       html.table();
 
-      if(nearestLegIndex >= 0 && nearestLegIndex < rmoList.size())
+      if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
       {
-        const RouteMapObject& rmo = rmoList.at(nearestLegIndex);
+        const RouteMapObject& rmo = route.at(nearestLegIndex);
         float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
         html.row2(tr("Name and Type:"), rmo.getIdent() +
                   (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
@@ -1312,6 +1325,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
       else
         html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
+
       html.tableEnd();
     }
     else

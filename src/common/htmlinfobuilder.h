@@ -213,7 +213,7 @@ public:
    */
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
-                            const RouteMapObjectList& rmoList) const;
+                            const RouteMapObjectList& route) const;
 
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
@@ -251,7 +251,7 @@ private:
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),
                     const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
-  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport, const atools::fs::weather::Metar& metar) const;
+  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport, const atools::fs::weather::Metar& metar, bool isInterpolated) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;

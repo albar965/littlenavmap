@@ -177,7 +177,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
   return false;
 }
 
-float RouteMapObjectList::getTopOfDescentToDest() const
+float RouteMapObjectList::getTopOfDescentFromStart() const
 {
   if(!isEmpty())
   {
@@ -191,7 +191,7 @@ float RouteMapObjectList::getTopOfDescentToDest() const
 atools::geo::Pos RouteMapObjectList::getTopOfDescent() const
 {
   if(!isEmpty())
-    return getPositionAtDistance(getTopOfDescentToDest());
+    return getPositionAtDistance(getTopOfDescentFromStart());
 
   return atools::geo::EMPTY_POS;
 }

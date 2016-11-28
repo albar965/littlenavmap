@@ -327,7 +327,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
-  int todX = X0 + atools::roundToInt(route.getTopOfDescentToDest() * horizontalScale);
+  int todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
   int todY = flightplanY;
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
 
