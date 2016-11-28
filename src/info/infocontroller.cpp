@@ -502,6 +502,8 @@ void InfoController::disconnectedFromSimulator()
 
 void InfoController::optionsChanged()
 {
+  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+  infoBuilder->updateIcons();
   updateTextEditFontSizes();
   showInformationInternal(currentSearchResult, false);
 }

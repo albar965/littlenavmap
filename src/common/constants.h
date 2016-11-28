@@ -84,6 +84,7 @@ const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExcl
 const QString OPTIONS_DIALOG_FLIGHTPLAN_COLOR = "OptionsDialog/FlightplanColor";
 const QString OPTIONS_DIALOG_TRAIL_COLOR = "OptionsDialog/TrailColor";
 const QString OPTIONS_DIALOG_DISPLAY_OPTIONS = "OptionsDialog/DisplayOptions";
+const QString OPTIONS_DIALOG_GUI_THEME_INDEX = "OptionsDialog/GuiThemeIndex";
 
 /* Other options that are only accessible in the configuration file */
 const QString OPTIONS_LANGUAGE = "Options/Language";

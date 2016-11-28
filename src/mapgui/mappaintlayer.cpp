@@ -311,7 +311,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
       mapPainterAircraft->render(&context);
     }
-  }
 
+    if(OptionData::instance().isGuiStyleDark())
+    {
+      int dim = OptionData::instance().getGuiThemeMapDimming();
+      QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
+      painter->fillRect(QRect(0, 0, painter->device()->width(), painter->device()->height()), col);
+    }
+  }
   return true;
 }

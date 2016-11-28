@@ -119,7 +119,9 @@ const QColor airwayTextColor = QColor::fromRgb(80, 80, 80);
 
 /* Elevation profile colors and pens */
 const QColor profileSkyColor(QColor::fromRgb(204, 204, 255));
+const QColor profileSkyDarkColor(QColor::fromRgb(50, 50, 100));
 const QColor profileBackgroundColor(Qt::white);
+const QColor profileBackgroundDarkColor(QColor::fromRgb(20, 20, 20));
 
 const QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
 const QColor profileLandColor(Qt::darkGreen);

@@ -67,6 +67,15 @@ HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
 {
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 
+}
+
+HtmlInfoBuilder::~HtmlInfoBuilder()
+{
+  delete morse;
+}
+
+void HtmlInfoBuilder::updateIcons()
+{
   aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
     QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
   aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
@@ -76,11 +85,6 @@ HtmlInfoBuilder::HtmlInfoBuilder(MainWindow *parentWindow, bool formatInfo,
     QIcon(":/littlenavmap/resources/icons/aircraftai.svg"), QSize(24, 24));
   aircraftAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
     QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
-}
-
-HtmlInfoBuilder::~HtmlInfoBuilder()
-{
-  delete morse;
 }
 
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background) const

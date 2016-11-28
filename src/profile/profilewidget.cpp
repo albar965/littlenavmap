@@ -267,10 +267,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 {
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
+  bool darkStyle = OptionData::instance().isGuiStyleDark();
+
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
-  painter.fillRect(rect(), mapcolors::profileBackgroundColor);
-  painter.fillRect(X0, 0, w, h + Y0, mapcolors::profileSkyColor);
+  painter.fillRect(
+    rect(), darkStyle ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
+
+  painter.fillRect(X0, 0, w, h + Y0, darkStyle ? mapcolors::profileSkyDarkColor : mapcolors::profileSkyColor);
 
   SymbolPainter symPainter;
 

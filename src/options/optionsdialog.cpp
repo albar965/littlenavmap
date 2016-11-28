@@ -33,6 +33,8 @@
 #include <QRegularExpressionValidator>
 #include <QDesktopServices>
 #include <QColorDialog>
+#include <QStyleFactory>
+#include <QGuiApplication>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -140,6 +142,38 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   addItem(ai, tr("Heading"), opts::ITEM_AI_AIRCRAFT_HEADING);
   addItem(ai, tr("Altitude"), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
 
+  // Collect names and palettes from all styles
+  for(const QString& styleName : QStyleFactory::keys())
+  {
+    ui->comboBoxOptionsGuiTheme->addItem(styleName, styleName);
+    QStyle *style = QStyleFactory::create(styleName);
+    stylePalettes.append(style->standardPalette());
+    stylesheets.append(QString());
+    delete style;
+  }
+
+  // Add additional night mode
+  ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
+  stylesheets.append("QToolTip { color: #c0c0c0; background-color: #1a72ca; border: 1px solid lightgray; }");
+
+  QPalette darkPalette(QGuiApplication::palette());
+  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::WindowText, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::ToolTipBase, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::ToolTipText, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::Text, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::ButtonText, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::BrightText, QColor(250, 250, 250));
+  darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+  darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+  darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+  darkPalette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
+  darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
+  stylePalettes.append(darkPalette);
+
   rangeRingValidator = new RangeRingValidator;
 
   // Create widget list for state saver
@@ -183,6 +217,8 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->spinBoxOptionsGuiRouteText);
   widgets.append(ui->spinBoxOptionsGuiSearchText);
   widgets.append(ui->spinBoxOptionsGuiSimInfoText);
+  // widgets.append(ui->comboBoxOptionsGuiTheme);
+  widgets.append(ui->spinBoxOptionsGuiThemeMapDimming);
   widgets.append(ui->spinBoxOptionsMapClickRect);
   widgets.append(ui->spinBoxOptionsMapTooltipRect);
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
@@ -222,6 +258,10 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
 
   connect(ui->buttonBoxOptions, &QDialogButtonBox::clicked, this, &OptionsDialog::buttonBoxClicked);
+
+  // GUI widgets
+  connect(ui->comboBoxOptionsGuiTheme, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+          this, &OptionsDialog::updateGuiThemeSpinboxState);
 
   // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
@@ -288,6 +328,7 @@ int OptionsDialog::exec()
   updateWeatherButtonState();
   updateWidgetUnits();
   updateDatabaseButtonState();
+  updateGuiThemeSpinboxState();
 
   return QDialog::exec();
 }
@@ -308,6 +349,16 @@ void OptionsDialog::updateWidgetUnits()
     Unit::replacePlaceholders(labelOptionsMapRangeRingsText));
 }
 
+void OptionsDialog::applyStyle()
+{
+  int idx = ui->comboBoxOptionsGuiTheme->currentIndex();
+  qDebug() << Q_FUNC_INFO << "index" << idx;
+
+  QApplication::setStyle(QStyleFactory::create(ui->comboBoxOptionsGuiTheme->currentData().toString()));
+  qApp->setPalette(stylePalettes.at(idx));
+  qApp->setStyleSheet(stylesheets.at(idx));
+}
+
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "Clicked" << button->text();
@@ -316,6 +367,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     widgetsToOptionData();
     saveState();
+    applyStyle();
     emit optionsChanged();
 
     updateWidgetUnits();
@@ -328,6 +380,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     widgetsToOptionData();
     saveState();
     updateWidgetUnits();
+    applyStyle();
     emit optionsChanged();
     accept();
   }
@@ -382,6 +435,8 @@ void OptionsDialog::saveState()
 
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
+
+  settings.setValue(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
 }
 
 void OptionsDialog::restoreState()
@@ -399,9 +454,28 @@ void OptionsDialog::restoreState()
   flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
+  if(settings.contains(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX))
+    ui->comboBoxOptionsGuiTheme->setCurrentIndex(settings.valueInt(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX));
+  else
+  {
+    int index = 0;
+    QStyle *currentStyle = QApplication::style();
+
+    for(const QString& styleName : QStyleFactory::keys())
+    {
+      if(styleName.compare(currentStyle->objectName(), Qt::CaseInsensitive) == 0)
+      {
+        ui->comboBoxOptionsGuiTheme->setCurrentIndex(index);
+        break;
+      }
+      index++;
+    }
+  }
+
   widgetsToOptionData();
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
+  applyStyle();
 }
 
 void OptionsDialog::restoreDisplayOptItemStates()
@@ -562,6 +636,12 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
+void OptionsDialog::updateGuiThemeSpinboxState()
+{
+  ui->spinBoxOptionsGuiThemeMapDimming->setEnabled(
+    ui->comboBoxOptionsGuiTheme->currentIndex() == ui->comboBoxOptionsGuiTheme->count() - 1);
+}
+
 void OptionsDialog::simUpdatesConstantClicked(bool state)
 {
   Q_UNUSED(state);
@@ -649,6 +729,11 @@ void OptionsDialog::widgetsToOptionData()
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
+
+  data.guiThemeIndex = ui->comboBoxOptionsGuiTheme->currentIndex();
+  data.guiThemeMapDimming = ui->spinBoxOptionsGuiThemeMapDimming->value();
+  data.guiStyleDark = data.guiThemeIndex == ui->comboBoxOptionsGuiTheme->count() - 1;
+
   data.mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
   data.mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
 
@@ -760,6 +845,10 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
+
+  ui->comboBoxOptionsGuiTheme->setCurrentIndex(data.guiThemeIndex);
+  ui->spinBoxOptionsGuiThemeMapDimming->setValue(data.guiThemeMapDimming);
+
   ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);
   ui->spinBoxOptionsMapTooltipRect->setValue(data.mapTooltipSensitivity);
   ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShowClick);

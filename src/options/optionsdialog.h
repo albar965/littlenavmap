@@ -102,6 +102,8 @@ private:
   void restoreDisplayOptItemStates();
   void displayOptWidgetToOptionData();
   void displayOptDataToWidget();
+  void updateGuiThemeSpinboxState();
+  void applyStyle();
 
   QVector<int> ringStrToVector(const QString& string) const;
 
@@ -121,6 +123,11 @@ private:
           spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText,
           doubleSpinBoxOptionsRouteTodRuleSuffix;
 
+  // Collect data for all available styles
+  QVector<QPalette> stylePalettes;
+  QStringList stylesheets;
+
+  int lastStyleIndex = 0;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

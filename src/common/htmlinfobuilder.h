@@ -215,6 +215,8 @@ public:
                             atools::util::HtmlBuilder& html,
                             const RouteMapObjectList& route) const;
 
+  void updateIcons();
+
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
@@ -251,7 +253,9 @@ private:
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),
                     const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
-  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport, const atools::fs::weather::Metar& metar, bool isInterpolated) const;
+  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport,
+                    const atools::fs::weather::Metar& metar,
+                    bool isInterpolated) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;
