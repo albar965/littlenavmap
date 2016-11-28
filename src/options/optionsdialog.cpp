@@ -107,6 +107,7 @@ bool RangeRingValidator::ringStrToVector(const QString& input) const
 OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
+  qDebug() << Q_FUNC_INFO;
   ui->setupUi(this);
 
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();

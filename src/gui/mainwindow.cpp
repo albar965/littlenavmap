@@ -207,37 +207,60 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-  qDebug() << "MainWindow destructor";
+  qDebug() << Q_FUNC_INFO;
 
   weatherUpdateTimer.stop();
 
   // Close all queries
   preDatabaseLoad();
 
+  qDebug() << Q_FUNC_INFO << "delete connectClient";
   delete connectClient;
+  qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
+  qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
+  qDebug() << Q_FUNC_INFO << "delete weatherReporter";
   delete weatherReporter;
+  qDebug() << Q_FUNC_INFO << "delete mapQuery";
   delete mapQuery;
+  qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
+  qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
+  qDebug() << Q_FUNC_INFO << "delete marbleAbout";
   delete marbleAbout;
+  qDebug() << Q_FUNC_INFO << "delete infoController";
   delete infoController;
+  qDebug() << Q_FUNC_INFO << "delete printSupport";
   delete printSupport;
+  qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
   delete routeFileHistory;
+  qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
   delete kmlFileHistory;
+  qDebug() << Q_FUNC_INFO << "delete optionsDialog";
   delete optionsDialog;
+  qDebug() << Q_FUNC_INFO << "delete mapWidget";
   delete mapWidget;
+  qDebug() << Q_FUNC_INFO << "delete ui";
   delete ui;
 
+  qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+  qDebug() << Q_FUNC_INFO << "delete errorHandler";
   delete errorHandler;
+  qDebug() << Q_FUNC_INFO << "delete databaseManager";
   delete databaseManager;
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
   delete actionGroupMapTheme;
 
+  qDebug() << Q_FUNC_INFO << "Unit::deInit()";
   Unit::deInit();
+
   // Delete settings singleton
+  qDebug() << Q_FUNC_INFO << "Settings::shutdown()";
   Settings::shutdown();
   atools::gui::Translator::unload();
 
