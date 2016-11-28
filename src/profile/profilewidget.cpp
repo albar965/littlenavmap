@@ -320,17 +320,28 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                        mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
+  const RouteMapObjectList& route = routeController->getRouteMapObjects();
+
   // Draw the red maximum elevation line
   painter.setPen(mapcolors::profileSafeAltLinePen);
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
-  // Draw the flightplan line
-  painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
-  painter.drawLine(X0, flightplanY, X0 + static_cast<int>(w), flightplanY);
+  int todX = X0 + atools::roundToInt(route.getTopOfDescentToDest() * horizontalScale);
+  int todY = flightplanY;
+  float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
 
-  painter.setPen(QPen(mapcolors::routeColor, 2, Qt::SolidLine));
-  painter.drawLine(X0, flightplanY, X0 + w, flightplanY);
+  // Draw the flightplan line
+  QPolygon line;
+  line << QPoint(X0, flightplanY)
+       << QPoint(todX, todY)
+       << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+
+  painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
+  painter.drawPolyline(line);
+
+  painter.setPen(QPen(OptionData::instance().getFlightplanColor(), 2, Qt::SolidLine));
+  painter.drawPolyline(line);
 
   // Draw flightplan symbols
   // Set default font to bold and reduce size
@@ -400,10 +411,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteMapObject& rmo = legList.routeMapObjects.at(i);
     int symx = waypointX.at(i);
 
+    int symy = flightplanY;
+    // if(i == legList.routeMapObjects.size() - 1)
+    // symy = Y0 + static_cast<int>(h - destAlt * verticalScale);
+
     if(rmo.getMapObjectType() == maptypes::AIRPORT)
     {
-      symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, flightplanY + 22,
+      symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, symy, 10, false, false);
+      symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, symy + 22,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }
@@ -418,7 +433,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      textatt::BOLD | textatt::RIGHT, 255);
 
   // Destination altitude label
-  float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
   QString destAltStr = Unit::altFeet(destAlt);
   symPainter.textBox(&painter, {destAltStr},
                      QPen(Qt::black), X0 + w + 4,
@@ -430,7 +444,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      QPen(Qt::red), X0 - 8, maxAltY + 5, textatt::BOLD | textatt::RIGHT, 255);
 
   // Route cruise altitude
-  float routeAlt = routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude();
+  float routeAlt = route.getFlightplan().getCruisingAltitude();
 
   symPainter.textBox(&painter, {QLocale().toString(routeAlt, 'f', 0)},
                      QPen(Qt::black), X0 - 8, flightplanY + 5, textatt::BOLD | textatt::RIGHT, 255);
@@ -440,22 +454,20 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Draw user aircraft track
     if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
     {
-      painter.setPen(mapcolors::aircraftTrackPen);
+      painter.setPen(mapcolors::aircraftTrailPen(2.f));
       painter.drawPolyline(aircraftTrackPoints);
     }
 
     // Draw user aircraft
     if(simData.getUserAircraft().getPosition().isValid() && showAircraft)
     {
-      int acx = X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale);
-      int acy = Y0 +
-                static_cast<int>(h - simData.getUserAircraft().getPosition().getAltitude() * verticalScale);
+      float acx = X0 + aircraftDistanceFromStart * horizontalScale;
+      float acy = Y0 + (h - simData.getUserAircraft().getPosition().getAltitude() * verticalScale);
 
       // Draw aircraft symbol
       painter.translate(acx, acy);
       painter.rotate(90);
-      symPainter.drawAircraftSymbol(&painter, 0, 0, 20,
-                                    simData.getUserAircraft().isOnGround());
+      symPainter.drawAircraftSymbol(&painter, 0, 0, 20, simData.getUserAircraft().isOnGround());
       painter.resetTransform();
 
       // Draw aircraft label
@@ -479,7 +491,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Unit::distNm(aircraftDistanceToDest));
 
       textatt::TextAttributes att = textatt::BOLD;
-      int textx = acx, texty = acy + 20;
+      float textx = acx, texty = acy + 20.f;
 
       QRect rect = symPainter.textBoxSize(&painter, texts, att);
       if(textx + rect.right() > X0 + w)
@@ -488,10 +500,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       if(texty + rect.bottom() > Y0 + h)
         // Move text down when approaching top boundary
-        texty -= rect.bottom() + 20;
+        texty -= rect.bottom() + 20.f;
 
-      symPainter.textBox(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
+      symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
+
+    painter.setBackgroundMode(Qt::TransparentMode);
+    painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(QPoint(todX, todY), 6, 6);
+
+    symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
+                       todX + 8, todY + 8,
+                       textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
   }
 }
 

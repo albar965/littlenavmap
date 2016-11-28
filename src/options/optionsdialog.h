@@ -118,7 +118,8 @@ private:
   QHash<opts::DisplayOptions, QTreeWidgetItem *> displayOptItemIndex;
 
   QString doubleSpinBoxOptionsMapZoomShowMapSuffix, doubleSpinBoxOptionsMapZoomShowMapMenuSuffix,
-          spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText;
+          spinBoxOptionsRouteGroundBufferSuffix, labelOptionsMapRangeRingsText,
+          doubleSpinBoxOptionsRouteTodRuleSuffix;
 
 };
 

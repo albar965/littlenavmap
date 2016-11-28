@@ -63,6 +63,13 @@ public:
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
                          int *nextLegIndex = nullptr) const;
 
+  /* Get a position along the route. Pos is invalid if not along */
+  atools::geo::Pos getPositionAtDistance(float distFromStart) const;
+  atools::geo::Pos getTopOfDescent() const;
+
+  /* Distance from TOD to destination in nm */
+  float getTopOfDescentToDest() const;
+
   /* Total route distance in nautical miles */
   float getTotalDistance() const
   {

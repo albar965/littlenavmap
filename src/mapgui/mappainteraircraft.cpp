@@ -170,23 +170,7 @@ void MapPainterAircraft::paintAircraftTrack(const PaintContext *context)
     GeoPainter *painter = context->painter;
 
     float size = context->sz(context->thicknessTrail, 2);
-    opts::DisplayTrailType type = OptionData::instance().getDisplayTrailType();
-
-    switch(type)
-    {
-      case opts::DASHED:
-        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::DashLine, Qt::FlatCap,
-                             Qt::BevelJoin));
-        break;
-      case opts::DOTTED:
-        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::DotLine, Qt::FlatCap,
-                             Qt::BevelJoin));
-        break;
-      case opts::SOLID:
-        painter->setPen(QPen(OptionData::instance().getTrailColor(), size, Qt::SolidLine, Qt::FlatCap,
-                             Qt::BevelJoin));
-        break;
-    }
+    painter->setPen(mapcolors::aircraftTrailPen(size));
     bool lastVisible = false;
 
     int x1, y1;

@@ -72,12 +72,10 @@ const QPen markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine
 const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QPen magneticPolePen = QPen(QBrush(QColor(Qt::darkGreen)), 2, Qt::SolidLine, Qt::FlatCap);
 
-const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 8, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 6, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::darkGray)), 8, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
-
-const QPen aircraftTrackPen = QPen(QColor(Qt::black), 2, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin);
+const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::yellow)), 6, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
 
 const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
@@ -89,7 +87,6 @@ const QColor highlightColorFast = QColor(Qt::darkYellow);
 
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
-const QColor routeColor = QColor(Qt::yellow);
 const QColor routeDragColor = QColor(Qt::darkYellow);
 
 const QColor routeHighlightBackColor = QColor(Qt::black);
@@ -148,6 +145,8 @@ const QColor& colorForAirport(const maptypes::MapAirport& ap);
 
 /* Alternating row background color for search tables */
 const QColor& alternatingRowColor(int row, bool isSort);
+
+const QPen aircraftTrailPen(float size);
 
 } // namespace mapcolors
 

@@ -309,6 +309,22 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
     i++;
   }
+
+  // Draw the top of descent circle and text
+  QPoint pt = wToS(routeMapObjects.getTopOfDescent());
+  if(!pt.isNull())
+  {
+    float width = context->sz(context->thicknessFlightplan, 3);
+    int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
+    context->szFont(context->textSizeFlightplan);
+
+    context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
+    context->painter->drawEllipse(pt, radius, radius);
+
+    symbolPainter->textBox(context->painter, {tr("TOD")}, QPen(Qt::black),
+                           pt.x() + radius, pt.y() + radius,
+                           textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+  }
 }
 
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)

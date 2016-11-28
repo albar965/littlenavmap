@@ -188,6 +188,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMap);
   widgets.append(ui->doubleSpinBoxOptionsMapZoomShowMapMenu);
   widgets.append(ui->spinBoxOptionsRouteGroundBuffer);
+  widgets.append(ui->doubleSpinBoxOptionsRouteTodRule);
 
   widgets.append(ui->spinBoxOptionsDisplayTextSizeAircraftAi);
   widgets.append(ui->spinBoxOptionsDisplaySymbolSizeNavaid);
@@ -215,6 +216,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   doubleSpinBoxOptionsMapZoomShowMapMenuSuffix = ui->doubleSpinBoxOptionsMapZoomShowMapMenu->suffix();
 
   spinBoxOptionsRouteGroundBufferSuffix = ui->spinBoxOptionsRouteGroundBuffer->suffix();
+  doubleSpinBoxOptionsRouteTodRuleSuffix = ui->doubleSpinBoxOptionsRouteTodRule->suffix();
   labelOptionsMapRangeRingsText = ui->labelOptionsMapRangeRings->text();
 
   ui->lineEditOptionsMapRangeRings->setValidator(rangeRingValidator);
@@ -298,6 +300,10 @@ void OptionsDialog::updateWidgetUnits()
     Unit::replacePlaceholders(doubleSpinBoxOptionsMapZoomShowMapMenuSuffix));
   ui->spinBoxOptionsRouteGroundBuffer->setSuffix(
     Unit::replacePlaceholders(spinBoxOptionsRouteGroundBufferSuffix));
+
+  ui->doubleSpinBoxOptionsRouteTodRule->setSuffix(
+    Unit::replacePlaceholders(doubleSpinBoxOptionsRouteTodRuleSuffix));
+
   ui->labelOptionsMapRangeRings->setText(
     Unit::replacePlaceholders(labelOptionsMapRangeRingsText));
 }
@@ -464,16 +470,14 @@ QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QString text, opt
 
 void OptionsDialog::flightplanColorClicked()
 {
-  QColorDialog dlg(flightplanColor, mainWindow);
-  QColor col = dlg.getColor();
+  QColor col = QColorDialog::getColor(flightplanColor, mainWindow);
   if(col.isValid())
     flightplanColor = col;
 }
 
 void OptionsDialog::trailColorClicked()
 {
-  QColorDialog dlg(trailColor, mainWindow);
-  QColor col = dlg.getColor();
+  QColor col = QColorDialog::getColor(trailColor, mainWindow);
   if(col.isValid())
     trailColor = col;
 }
@@ -652,6 +656,7 @@ void OptionsDialog::widgetsToOptionData()
   data.mapZoomShowMenu = static_cast<float>(ui->doubleSpinBoxOptionsMapZoomShowMapMenu->value());
 
   data.routeGroundBuffer = ui->spinBoxOptionsRouteGroundBuffer->value();
+  data.routeTodRule = ui->doubleSpinBoxOptionsRouteTodRule->value();
 
   data.displayTextSizeAircraftAi = ui->spinBoxOptionsDisplayTextSizeAircraftAi->value();
   data.displaySymbolSizeNavaid = ui->spinBoxOptionsDisplaySymbolSizeNavaid->value();
@@ -760,6 +765,7 @@ void OptionsDialog::optionDataToWidgets()
   ui->doubleSpinBoxOptionsMapZoomShowMap->setValue(data.mapZoomShowClick);
   ui->doubleSpinBoxOptionsMapZoomShowMapMenu->setValue(data.mapZoomShowMenu);
   ui->spinBoxOptionsRouteGroundBuffer->setValue(data.routeGroundBuffer);
+  ui->doubleSpinBoxOptionsRouteTodRule->setValue(data.routeTodRule);
 
   ui->spinBoxOptionsDisplayTextSizeAircraftAi->setValue(data.displayTextSizeAircraftAi);
   ui->spinBoxOptionsDisplaySymbolSizeNavaid->setValue(data.displaySymbolSizeNavaid);

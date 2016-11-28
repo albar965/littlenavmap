@@ -1559,6 +1559,9 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
          <property name="text">
           <string>Items in the disk cache expire after two weeks.</string>
          </property>
+         <property name="buddy">
+          <cstring>pushButtonOptionsCacheShow</cstring>
+         </property>
         </widget>
        </item>
       </layout>
@@ -1646,7 +1649,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -1658,6 +1661,45 @@ nearest even thousand feet for westerly flight plans if checked.</string>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="4" column="1">
+        <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
+         <property name="toolTip">
+          <string>The red line value is always rounded up to the next 500 ft.
+Note that this value does not affect flight plan calculation or saving.</string>
+         </property>
+         <property name="showGroupSeparator" stdset="0">
+          <bool>true</bool>
+         </property>
+         <property name="suffix">
+          <string> %dist% per 1000 %alt%</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>10.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>3.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="labelOptionsRouteTodRule">
+         <property name="text">
+          <string>&amp;Rule of thumb to calculate top of descent:</string>
+         </property>
+         <property name="buddy">
+          <cstring>doubleSpinBoxOptionsRouteTodRule</cstring>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

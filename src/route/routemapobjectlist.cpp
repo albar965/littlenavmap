@@ -19,6 +19,7 @@
 
 #include "geo/calculations.h"
 #include "common/maptools.h"
+#include "common/unit.h"
 
 const float RouteMapObjectList::INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 
@@ -174,6 +175,53 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     return true;
   }
   return false;
+}
+
+float RouteMapObjectList::getTopOfDescentToDest() const
+{
+  if(!isEmpty())
+  {
+    float cruisingAltitude = Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
+    float diff = (cruisingAltitude - last().getPosition().getAltitude());
+    return getTotalDistance() - (diff / 1000.f * OptionData::instance().getRouteTodRule());
+  }
+  return 0.f;
+}
+
+atools::geo::Pos RouteMapObjectList::getTopOfDescent() const
+{
+  if(!isEmpty())
+    return getPositionAtDistance(getTopOfDescentToDest());
+
+  return atools::geo::EMPTY_POS;
+}
+
+atools::geo::Pos RouteMapObjectList::getPositionAtDistance(float distFromStart) const
+{
+  if(distFromStart < 0.f || distFromStart > totalDistance)
+    return atools::geo::EMPTY_POS;
+
+  atools::geo::Pos retval;
+
+  float total = 0.f;
+  int foundIndex = -1; // Found leg is from this index to index + 1
+  for(int i = 1; i < size(); ++i)
+  {
+    if(total + at(i).getDistanceTo() > distFromStart)
+    {
+      // Distance already within leg
+      foundIndex = i - 1;
+      break;
+    }
+    total += at(i).getDistanceTo();
+  }
+
+  if(foundIndex != -1)
+  {
+    float fraction = (distFromStart - total) / at(foundIndex + 1).getDistanceTo();
+    retval = at(foundIndex).getPosition().interpolate(at(foundIndex + 1).getPosition(), fraction);
+  }
+  return retval;
 }
 
 void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,

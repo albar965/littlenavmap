@@ -497,6 +497,11 @@ public:
     return displayThicknessRangeDistance;
   }
 
+  float getRouteTodRule() const
+  {
+    return routeTodRule;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -591,6 +596,9 @@ private:
 
   // ui->spinBoxOptionsRouteGroundBuffer
   int routeGroundBuffer = 1000;
+
+  // ui->doubleSpinBoxOptionsRouteTodRuleSuffix
+  float routeTodRule = 3.f;
 
   // comboBoxOptionsUnitDistance
   opts::UnitDist unitDist = opts::DIST_NM;

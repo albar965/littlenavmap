@@ -597,8 +597,8 @@ void MapWidget::routeChanged(bool geometryChanged)
   {
     cancelDragAll();
     screenIndex->updateRouteScreenGeometry();
-    update();
   }
+  update();
 }
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)

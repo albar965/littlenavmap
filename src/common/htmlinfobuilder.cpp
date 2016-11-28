@@ -1262,6 +1262,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
       html.row2(tr("To Destination:"), Unit::distNm(distToDestNm));
 
+      html.row2(tr("To Top of Descent:"), Unit::distNm(distToDestNm - rmoList.getTopOfDescentToDest()));
+
       timeAndDate(userAircaft, html);
 
       if(aircraft.getGroundSpeedKts() > 20.f)

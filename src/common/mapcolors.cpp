@@ -189,4 +189,22 @@ const QColor& colorForSurface(const QString& surface)
   return unknown;
 }
 
+const QPen aircraftTrailPen(float size)
+{
+  opts::DisplayTrailType type = OptionData::instance().getDisplayTrailType();
+
+  switch(type)
+  {
+    case opts::DASHED:
+      return QPen(OptionData::instance().getTrailColor(), size, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin);
+
+    case opts::DOTTED:
+      return QPen(OptionData::instance().getTrailColor(), size, Qt::DotLine, Qt::FlatCap, Qt::BevelJoin);
+
+    case opts::SOLID:
+      return QPen(OptionData::instance().getTrailColor(), size, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin);
+  }
+  return QPen();
+}
+
 } // namespace mapcolors
