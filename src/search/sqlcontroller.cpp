@@ -30,8 +30,7 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 
-SqlController::SqlController(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols,
-                             QTableView *tableView)
+SqlController::SqlController(atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *tableView)
   : db(sqlDb), view(tableView), columns(cols)
 {
 }

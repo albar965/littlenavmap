@@ -107,6 +107,16 @@ public:
     return simType;
   }
 
+  const QString& getActiveSkyDepartureIdent() const
+  {
+    return activeSkyDepartureIdent;
+  }
+
+  const QString& getActiveSkyDestinationIdent() const
+  {
+    return activeSkyDestinationIdent;
+  }
+
 signals:
   /* Emitted when Active Sky file changes or a request to weather was fullfilled */
   void weatherUpdated();
@@ -118,8 +128,9 @@ private:
   void activeSkyWeatherFileChanged(const QString& path);
 
   void loadActiveSkySnapshot(const QString& path);
+  void loadActiveSkyFlightplanSnapshot(const QString& path);
   void initActiveSkyNext();
-  QString findActiveSkySnapshotPath(const QString& activeSkyPrefix);
+  void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix);
 
   void loadNoaaMetar(const QString& airportIcao);
   void loadVatsimMetar(const QString& airportIcao);
@@ -132,8 +143,12 @@ private:
   void cancelNoaaReply();
   void cancelVatsimReply();
   void flushRequestQueue();
+  bool validateActiveSkyFlightplanFile(const QString& path);
 
   QHash<QString, QString> activeSkyMetars;
+  QString activeSkyDepartureMetar, activeSkyDestinationMetar,
+          activeSkyDepartureIdent, activeSkyDestinationIdent;
+
   atools::util::TimedCache<QString, QString> noaaCache, vatsimCache;
 
   QString activeSkySnapshotPath;
@@ -152,6 +167,7 @@ private:
   QTimer flushQueueTimer;
 
   ActiveSkyType activeSkyType = NONE;
+  QString asPath, asFlightplanPath;
 
 };
 

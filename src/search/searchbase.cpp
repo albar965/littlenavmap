@@ -103,7 +103,7 @@ void SearchBase::initViewAndController()
   view->verticalHeader()->setSectionsMovable(false);
   view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
-  controller = new SqlController(mainWindow, mainWindow->getDatabase(), columns, view);
+  controller = new SqlController(mainWindow->getDatabase(), columns, view);
   controller->prepareModel();
 
   csvExporter = new CsvExporter(mainWindow, controller);

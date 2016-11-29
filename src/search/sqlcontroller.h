@@ -41,7 +41,7 @@ class ColumnList;
 class SqlController
 {
 public:
-  SqlController(QWidget *parent, atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
+  SqlController(atools::sql::SqlDatabase *sqlDb, ColumnList *cols, QTableView *view);
   virtual ~SqlController();
 
   /* Create a new SqlModel, build and execute a query */

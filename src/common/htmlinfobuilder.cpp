@@ -814,7 +814,13 @@ void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlB
           asText = tr("ASN Weather");
 
         Metar met(metarStr);
-        html.h3(asText);
+        if(weatherReporter->getActiveSkyDepartureIdent() == airport.ident)
+          html.h3(asText + tr(" - Departure"));
+        else if(weatherReporter->getActiveSkyDestinationIdent() == airport.ident)
+          html.h3(asText + tr(" - Destination"));
+        else
+          html.h3(asText);
+
         decodedMetar(html, airport, met, false);
       }
     }
@@ -951,6 +957,10 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
   if(parsed.getCavok())
     html.p().text(tr("CAVOK:"), atools::util::html::BOLD).br().
     text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 nm) or more")).pEnd();
+
+  if(!metar.getParsedMetar().getRemark().isEmpty())
+    html.p().text(tr("Remarks:"), atools::util::html::BOLD).br().
+    text(metar.getParsedMetar().getRemark()).pEnd();
 
   if(!parsed.isValid())
   {
