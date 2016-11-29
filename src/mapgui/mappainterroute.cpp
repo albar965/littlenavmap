@@ -179,14 +179,33 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     context->painter->drawPolyline(ls);
   }
 
+  const Pos& pos = mapWidget->getUserAircraft().getPosition();
+
+  int leg = -1;
+  if(pos.isValid())
+  {
+    float cross;
+    leg = routeMapObjects.getNearestLegIndex(pos, cross);
+  }
+
   // Draw innner line
-  context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth, Qt::SolidLine,
-                                Qt::RoundCap, Qt::RoundJoin));
+  context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
+                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   for(int i = 1; i < linestring.size(); i++)
   {
     ls.clear();
     ls << linestring.at(i - 1) << linestring.at(i);
-    context->painter->drawPolyline(ls);
+
+    if(leg != -1 && i == leg)
+    {
+      context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
+                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      context->painter->drawPolyline(ls);
+      context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
+                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    }
+    else
+      context->painter->drawPolyline(ls);
   }
 
   if(!context->drawFast)

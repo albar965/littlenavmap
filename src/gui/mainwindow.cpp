@@ -781,11 +781,15 @@ void MainWindow::connectAllSlots()
           profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived,
           infoController, &InfoController::simulatorDataReceived);
+  connect(connectClient, &ConnectClient::dataPacketReceived,
+          routeController, &RouteController::simDataChanged);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          routeController, &RouteController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           infoController, &InfoController::connectedToSimulator);

@@ -32,21 +32,21 @@ namespace mapcolors {
 
 /* General text pens */
 const QPen textBackgroundPen = QPen(QBrush(QColor(Qt::lightGray)), 1, Qt::SolidLine, Qt::FlatCap);
-const QPen textPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 1, Qt::SolidLine, Qt::FlatCap);
+const QPen textPen = QPen(QBrush(QColor(0, 0, 0)), 1, Qt::SolidLine, Qt::FlatCap);
 
 /* Airport diagram background */
 const QColor airportDetailBackColor = QColor(Qt::white);
 
 const QColor taxiwayNameColor = QColor(Qt::black);
-const QColor taxiwayNameBackgroundColor = QColor::fromRgb(255, 255, 120);
-const QBrush taxiwayClosedBrush = QBrush(QColor::fromRgb(255, 255, 0), Qt::BDiagPattern);
+const QColor taxiwayNameBackgroundColor = QColor(255, 255, 120);
+const QBrush taxiwayClosedBrush = QBrush(QColor(255, 255, 0), Qt::BDiagPattern);
 
 const QColor runwayOutlineColor = QColor(Qt::black);
 const QColor runwayOffsetColor = QColor(Qt::white);
 const QBrush runwayBlastpadBrush = QBrush(Qt::yellow, Qt::DiagCrossPattern);
-const QBrush runwayOverrunBrush = QBrush(QColor::fromRgb(180, 180, 0), Qt::DiagCrossPattern);
+const QBrush runwayOverrunBrush = QBrush(QColor(180, 180, 0), Qt::DiagCrossPattern);
 
-const QColor parkingOutlineColor = QColor::fromRgb(80, 80, 80);
+const QColor parkingOutlineColor = QColor(80, 80, 80);
 const QColor helipadOutlineColor = QColor(Qt::black);
 const QColor activeTowerColor = QColor(Qt::red);
 const QColor activeTowerOutlineColor = QColor(Qt::black);
@@ -58,26 +58,26 @@ const QColor brightParkingTextColor = QColor(Qt::white);
 
 const QColor towerTextColor = QColor(Qt::black);
 const QColor runwayDimsTextColor = QColor(Qt::black);
-const QColor runwayTextBackgroundColor = QColor::fromRgb(255, 255, 255, 170);
+const QColor runwayTextBackgroundColor = QColor(255, 255, 255, 170);
 
 /* Text background color */
 const QColor textBoxColor = QColor(Qt::white);
 
 /* Text background color for flight plan waypoints */
-const QColor routeTextBoxColor = QColor::fromRgb(255, 255, 150);
+const QColor routeTextBoxColor = QColor(255, 255, 150);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);
 
-const QPen markBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
-const QPen markFillPen = QPen(QBrush(QColor::fromRgb(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
+const QPen markBackPen = QPen(QBrush(QColor(0, 0, 0)), 6, Qt::SolidLine, Qt::FlatCap);
+const QPen markFillPen = QPen(QBrush(QColor(255, 255, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QPen magneticPolePen = QPen(QBrush(QColor(Qt::darkGreen)), 2, Qt::SolidLine, Qt::FlatCap);
 
-const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 6, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::yellow)), 6, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::yellow)), 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
 
-const QPen homeBackPen = QPen(QBrush(QColor::fromRgb(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
+const QPen homeBackPen = QPen(QBrush(QColor(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);
 const QColor homeFillColor = QColor(Qt::yellow);
 
 /* Objects highlighted because of selection in search */
@@ -101,27 +101,28 @@ const QColor rangeRingColor = QColor(Qt::red);
 const QColor rangeRingTextColor = QColor(Qt::black);
 
 const QColor distanceColor = QColor(Qt::black);
-const QColor distanceRhumbColor = QColor::fromRgb(80, 80, 80);
+const QColor distanceRhumbColor = QColor(80, 80, 80);
 
 /* Radio navaid colors */
 const QColor vorSymbolColor = QColor(Qt::darkBlue);
 const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);
 const QColor ilsSymbolColor = QColor(Qt::darkGreen);
-const QColor ilsTextColor = QColor::fromRgb(0, 30, 0);
+const QColor ilsTextColor = QColor(0, 30, 0);
 const QColor waypointSymbolColor = QColor(Qt::magenta);
 
 /* Airway colors */
-const QColor airwayVictorColor = QColor::fromRgb(150, 150, 150);
-const QColor airwayJetColor = QColor::fromRgb(100, 100, 100);
-const QColor airwayBothColor = QColor::fromRgb(100, 100, 100);
-const QColor airwayTextColor = QColor::fromRgb(80, 80, 80);
+const QColor airwayVictorColor = QColor(150, 150, 150);
+const QColor airwayJetColor = QColor(100, 100, 100);
+const QColor airwayBothColor = QColor(100, 100, 100);
+const QColor airwayTextColor = QColor(80, 80, 80);
 
 /* Elevation profile colors and pens */
-const QColor profileSkyColor(QColor::fromRgb(204, 204, 255));
-const QColor profileSkyDarkColor(QColor::fromRgb(50, 50, 100));
+const QColor profileSkyColor(QColor(204, 204, 255));
+const QColor profileSkyDarkColor(QColor(50, 50, 100));
 const QColor profileBackgroundColor(Qt::white);
-const QColor profileBackgroundDarkColor(QColor::fromRgb(20, 20, 20));
+
+const QColor profileBackgroundDarkColor(QColor(20, 20, 20));
 
 const QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine);
 const QColor profileLandColor(Qt::darkGreen);
@@ -129,6 +130,8 @@ const QColor profileLandOutlineColor(Qt::black);
 
 const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
 const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+
+const QColor nextWaypointColor(QColor(255, 120, 255));
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
 const QIcon& iconForStartType(const QString& type);

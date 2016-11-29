@@ -24,7 +24,7 @@
 OptionData *OptionData::optionData = nullptr;
 
 OptionData::OptionData()
-  : flightplanColor(Qt::yellow), trailColor(Qt::black)
+  : flightplanColor(Qt::yellow), flightplanActiveColor(Qt::magenta), trailColor(Qt::black)
 {
 
 }

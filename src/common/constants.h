@@ -82,6 +82,7 @@ const QString OPTIONS_DIALOG_DB_FILE_DLG = "OptionsDialog/DatabaseFileDialog";
 const QString OPTIONS_DIALOG_DB_EXCLUDE = "OptionsDialog/DatabaseExclude";
 const QString OPTIONS_DIALOG_DB_ADDON_EXCLUDE = "OptionsDialog/DatabaseAddonExclude";
 const QString OPTIONS_DIALOG_FLIGHTPLAN_COLOR = "OptionsDialog/FlightplanColor";
+const QString OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR = "OptionsDialog/FlightplanActiveColor";
 const QString OPTIONS_DIALOG_TRAIL_COLOR = "OptionsDialog/TrailColor";
 const QString OPTIONS_DIALOG_DISPLAY_OPTIONS = "OptionsDialog/DisplayOptions";
 const QString OPTIONS_DIALOG_GUI_THEME_INDEX = "OptionsDialog/GuiThemeIndex";
