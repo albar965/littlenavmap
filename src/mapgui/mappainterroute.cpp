@@ -130,7 +130,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       {
         // Build text
         QString text(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
-                     QLocale().toString(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
+                     QString::number(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
 
         int textw = context->painter->fontMetrics().width(text);
         if(textw > lineLength)

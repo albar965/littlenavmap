@@ -1448,9 +1448,9 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
   ring.center = pos;
 
   if(type == maptypes::VOR)
-    ring.text = ident + " " + QLocale().toString(frequency / 1000., 'f', 2);
+    ring.text = ident + " " + QString::number(frequency / 1000., 'f', 2);
   else if(type == maptypes::NDB)
-    ring.text = ident + " " + QLocale().toString(frequency / 100., 'f', 2);
+    ring.text = ident + " " + QString::number(frequency / 100., 'f', 2);
 
   ring.ranges.append(range);
   screenIndex->getRangeMarks().append(ring);

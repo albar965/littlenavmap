@@ -334,8 +334,8 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QLocale().toString(atools::geo::normalizeCourse(initBearing), 'f', 0) + tr("°T ► ") +
-                   QLocale().toString(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
+      texts.append(QString::number(atools::geo::normalizeCourse(initBearing), 'f', 0) + tr("°T ► ") +
+                   QString::number(atools::geo::normalizeCourse(finalBearing), 'f', 0) + tr("°T"));
 
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
          distanceMeter < 6000)
@@ -393,7 +393,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       QStringList texts;
       if(!m.text.isEmpty())
         texts.append(m.text);
-      texts.append(QLocale().toString(atools::geo::normalizeCourse(magBearing), 'f', 0) +
+      texts.append(QString::number(atools::geo::normalizeCourse(magBearing), 'f', 0) +
                    (m.hasMagvar ? tr("°M") : tr("°T")));
 
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&

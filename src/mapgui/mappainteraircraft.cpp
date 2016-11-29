@@ -246,7 +246,7 @@ void MapPainterAircraft::paintTextLabelAi(const PaintContext *context, float x, 
   if(!aircraft.isOnGround())
   {
     if(context->dOpt(opts::ITEM_AI_AIRCRAFT_HEADING))
-      texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+      texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
 
     if(context->dOpt(opts::ITEM_AI_AIRCRAFT_CLIMB_SINK))
       appendClimbSinkText(texts, aircraft);
@@ -282,7 +282,7 @@ void MapPainterAircraft::paintTextLabelUser(const PaintContext *context, float x
   }
 
   if(context->dOpt(opts::ITEM_USER_AIRCRAFT_HEADING))
-    texts.append(tr("HDG %3°M").arg(QLocale().toString(aircraft.getHeadingDegMag(), 'f', 0)));
+    texts.append(tr("HDG %3°M").arg(QString::number(aircraft.getHeadingDegMag(), 'f', 0)));
 
   if(!aircraft.isOnGround() && context->dOpt(opts::ITEM_USER_AIRCRAFT_CLIMB_SINK))
     appendClimbSinkText(texts, aircraft);
@@ -424,9 +424,9 @@ void MapPainterAircraft::paintTextLabelWind(const PaintContext *context, int x, 
 
   if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND))
   {
-    texts.append(tr("%1 °M").arg(QLocale().toString(atools::geo::normalizeCourse(
-                                                      aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
-                                                    'f', 0)));
+    texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
+                                                   aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
+                                                 'f', 0)));
 
     texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
   }

@@ -457,7 +457,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
     texts.append(ndb.ident);
 
   if(flags & textflags::FREQ)
-    texts.append(QLocale().toString(ndb.frequency / 100., 'f', 1));
+    texts.append(QString::number(ndb.frequency / 100., 'f', 1));
 
   textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
@@ -484,7 +484,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
     texts.append(vor.ident);
 
   if(flags & textflags::FREQ)
-    texts.append(QLocale().toString(vor.frequency / 1000., 'f', 2));
+    texts.append(QString::number(vor.frequency / 1000., 'f', 2));
 
   textatt::TextAttributes textAttrs = textatt::BOLD;
   if(flags & textflags::ROUTE_TEXT)
@@ -562,17 +562,17 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
   if(flags & textflags::INFO)
   {
     if(airport.towerFrequency != 0 && dispOpts & opts::ITEM_AIRPORT_TOWER)
-      texts.append(tr("CT ") + QLocale().toString(airport.towerFrequency / 1000., 'f', 3));
+      texts.append(tr("CT ") + QString::number(airport.towerFrequency / 1000., 'f', 3));
 
     QString autoWeather;
     if(dispOpts & opts::ITEM_AIRPORT_ATIS)
     {
       if(airport.atisFrequency > 0)
-        autoWeather = tr("ATIS ") + QLocale().toString(airport.atisFrequency / 1000., 'f', 3);
+        autoWeather = tr("ATIS ") + QString::number(airport.atisFrequency / 1000., 'f', 3);
       else if(airport.awosFrequency > 0)
-        autoWeather = tr("AWOS ") + QLocale().toString(airport.awosFrequency / 1000., 'f', 3);
+        autoWeather = tr("AWOS ") + QString::number(airport.awosFrequency / 1000., 'f', 3);
       else if(airport.asosFrequency > 0)
-        autoWeather = tr("ASOS ") + QLocale().toString(airport.asosFrequency / 1000., 'f', 3);
+        autoWeather = tr("ASOS ") + QString::number(airport.asosFrequency / 1000., 'f', 3);
     }
 
     if(!autoWeather.isEmpty())
@@ -585,9 +585,10 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
                                    true /*addUnit*/, true /*narrow*/) + " " +
                      (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
                      Unit::distShortFeet(airport.longestRunwayLength,
-                                         true /*addUnit*/, true /*narrow*/) + " " +
-                     (airport.unicomFrequency == 0 ? QString() :
-                      QLocale().toString(airport.unicomFrequency / 1000., 'f', 3)));
+                                         true /*addUnit*/, true /*narrow*/) + " "
+                     // + (airport.unicomFrequency == 0 ? QString() :
+                     // QString::number(airport.unicomFrequency / 1000., 'f', 3))
+                     );
   }
   return texts;
 }
