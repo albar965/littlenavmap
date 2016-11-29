@@ -24,6 +24,7 @@
 #include "common/weatherreporter.h"
 #include "gui/widgetstate.h"
 #include "gui/dialog.h"
+#include "gui/widgetutil.h"
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
 
@@ -155,24 +156,31 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   // Add additional night mode
   ui->comboBoxOptionsGuiTheme->addItem("Night", "Fusion");
-  stylesheets.append("QToolTip { color: #c0c0c0; background-color: #1a72ca; border: 1px solid lightgray; }");
+  stylesheets.append(QString() /*"QToolTip { color: #d0d0d0; background-color: #404040; border: 1px solid lightgray; }"*/);
 
   QPalette darkPalette(QGuiApplication::palette());
-  darkPalette.setColor(QPalette::Window, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::Window, QColor(35, 35, 35));
   darkPalette.setColor(QPalette::WindowText, QColor(220, 220, 220));
-  darkPalette.setColor(QPalette::Base, QColor(25, 25, 25));
-  darkPalette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
-  darkPalette.setColor(QPalette::ToolTipBase, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::Base, QColor(50, 50, 50));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(65, 65, 65));
+  darkPalette.setColor(QPalette::ToolTipBase, QColor(65, 65, 65));
   darkPalette.setColor(QPalette::ToolTipText, QColor(220, 220, 220));
   darkPalette.setColor(QPalette::Text, QColor(220, 220, 220));
-  darkPalette.setColor(QPalette::Button, QColor(53, 53, 53));
+  darkPalette.setColor(QPalette::Button, QColor(65, 65, 65));
   darkPalette.setColor(QPalette::ButtonText, QColor(220, 220, 220));
   darkPalette.setColor(QPalette::BrightText, QColor(250, 250, 250));
   darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+
   darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
   darkPalette.setColor(QPalette::HighlightedText, Qt::black);
-  darkPalette.setColor(QPalette::Disabled, QPalette::Text, Qt::darkGray);
-  darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::darkGray);
+
+  darkPalette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
+  darkPalette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
+  darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
+  // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
+  // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));
+  // darkPalette.setColor(QPalette::Inactive, QPalette::Text, QColor(100, 100, 100));
+  // darkPalette.setColor(QPalette::Inactive, QPalette::ButtonText, QColor(100, 100, 100));
   stylePalettes.append(darkPalette);
 
   rangeRingValidator = new RangeRingValidator;
@@ -313,6 +321,8 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsDisplayFlightplanColor, &QPushButton::clicked,
           this, &OptionsDialog::flightplanColorClicked);
+  connect(ui->pushButtonOptionsDisplayFlightplanActiveColor, &QPushButton::clicked,
+          this, &OptionsDialog::flightplanActiveColorClicked);
   connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked,
           this, &OptionsDialog::trailColorClicked);
 }
@@ -435,6 +445,7 @@ void OptionsDialog::saveState()
   settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
@@ -453,6 +464,8 @@ void OptionsDialog::restoreState()
     ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
   flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
+  flightplanActiveColor =
+    settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
   if(settings.contains(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX))
@@ -477,6 +490,17 @@ void OptionsDialog::restoreState()
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
   applyStyle();
+  updateButtonColors();
+}
+
+void OptionsDialog::updateButtonColors()
+{
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor,
+                                       flightplanColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor,
+                                       flightplanActiveColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor,
+                                       trailColor);
 }
 
 void OptionsDialog::restoreDisplayOptItemStates()
@@ -547,14 +571,30 @@ void OptionsDialog::flightplanColorClicked()
 {
   QColor col = QColorDialog::getColor(flightplanColor, mainWindow);
   if(col.isValid())
+  {
     flightplanColor = col;
+    updateButtonColors();
+  }
+}
+
+void OptionsDialog::flightplanActiveColorClicked()
+{
+  QColor col = QColorDialog::getColor(flightplanActiveColor, mainWindow);
+  if(col.isValid())
+  {
+    flightplanActiveColor = col;
+    updateButtonColors();
+  }
 }
 
 void OptionsDialog::trailColorClicked()
 {
   QColor col = QColorDialog::getColor(trailColor, mainWindow);
   if(col.isValid())
+  {
     trailColor = col;
+    updateButtonColors();
+  }
 }
 
 /* Test NOAA weather URL and show a dialog with the result */
@@ -674,6 +714,7 @@ void OptionsDialog::widgetsToOptionData()
   OptionData& data = OptionData::instanceInternal();
 
   data.flightplanColor = flightplanColor;
+  data.flightplanActiveColor = flightplanActiveColor;
   data.trailColor = trailColor;
   displayOptWidgetToOptionData();
 
@@ -776,6 +817,7 @@ void OptionsDialog::optionDataToWidgets()
   OptionData& data = OptionData::instanceInternal();
 
   flightplanColor = data.flightplanColor;
+  flightplanActiveColor = data.flightplanActiveColor;
   trailColor = data.trailColor;
   displayOptDataToWidget();
 

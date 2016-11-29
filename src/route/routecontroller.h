@@ -30,6 +30,10 @@ class TableZoomHandler;
 }
 
 namespace fs {
+
+namespace sc {
+class SimConnectData;
+}
 namespace pln {
 class Flightplan;
 class FlightplanEntry;
@@ -203,6 +207,10 @@ public:
     return entryBuilder;
   }
 
+  void disconnectedFromSimulator();
+
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -315,6 +323,7 @@ private:
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
   void cleanFilename(QString& filename) const;
+  void highlightNextWaypoint(int nearestLegIndex);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -347,6 +356,10 @@ private:
   RouteIconDelegate *iconDelegate = nullptr;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
+
+  /* Do not update aircraft information more than every 0.5 seconds */
+  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
+  qint64 lastSimUpdate = 0;
 
 };
 

@@ -1936,7 +1936,7 @@ void RouteController::updateModelRouteTime()
   {
     cumulatedDistance += mapobj.getDistanceTo();
     if(row == 0)
-      model->setItem(row, rc::LEG_TIME, nullptr);
+      model->setItem(row, rc::LEG_TIME, new QStandardItem());
     else
     {
       float travelTime = calcTravelTime(mapobj.getDistanceTo());
@@ -1987,7 +1987,7 @@ void RouteController::updateTableModel()
       itemRow.append(new QStandardItem(tr("NDB (%1)").arg(type)));
     }
     else
-      itemRow.append(nullptr);
+      itemRow.append(new QStandardItem());
 
     // VOR/NDB frequency
     QStandardItem *item;
@@ -2003,7 +2003,7 @@ void RouteController::updateTableModel()
       itemRow.append(item);
     }
     else
-      itemRow.append(nullptr);
+      itemRow.append(new QStandardItem());
 
     if(mapobj.getRange() > 0)
     {
@@ -2015,14 +2015,14 @@ void RouteController::updateTableModel()
       itemRow.append(item);
     }
     else
-      itemRow.append(nullptr);
+      itemRow.append(new QStandardItem());
 
     if(row == 0)
     {
       // No course and distance for departure airport
-      itemRow.append(nullptr);
-      itemRow.append(nullptr);
-      itemRow.append(nullptr);
+      itemRow.append(new QStandardItem());
+      itemRow.append(new QStandardItem());
+      itemRow.append(new QStandardItem());
     }
     else
     {
@@ -2049,8 +2049,8 @@ void RouteController::updateTableModel()
     itemRow.append(item);
 
     // Travel time and ETA are updated in updateModelRouteTime
-    itemRow.append(nullptr);
-    itemRow.append(nullptr);
+    itemRow.append(new QStandardItem());
+    itemRow.append(new QStandardItem());
 
     model->appendRow(itemRow);
     row++;
@@ -2074,6 +2074,69 @@ void RouteController::updateTableModel()
     else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
       ui->comboBoxRouteType->setCurrentIndex(1);
     ui->comboBoxRouteType->blockSignals(false);
+  }
+}
+
+void RouteController::disconnectedFromSimulator()
+{
+  highlightNextWaypoint(-1);
+}
+
+void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+                            lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
+  {
+    if(!route.isEmpty() && simulatorData.getUserAircraft().getPosition().isValid())
+    {
+      float cross;
+      int leg = route.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), cross);
+      highlightNextWaypoint(leg);
+    }
+    lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+  }
+}
+
+/* */
+void RouteController::highlightNextWaypoint(int nearestLegIndex)
+{
+  for(int row = 0; row < model->rowCount(); ++row)
+  {
+    for(int col = 0; col < model->columnCount(); ++col)
+    {
+      QStandardItem *item = model->item(row, col);
+      if(item != nullptr)
+      {
+        item->setBackground(Qt::NoBrush);
+        if(item->font().bold())
+        {
+          QFont font = item->font();
+          font.setBold(false);
+          item->setFont(font);
+        }
+      }
+    }
+  }
+
+  if(!route.isEmpty())
+  {
+    if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
+    {
+      for(int i = 0; i < model->columnCount(); ++i)
+      {
+        QStandardItem *item = model->item(nearestLegIndex, i);
+        if(item != nullptr)
+        {
+          item->setBackground(mapcolors::nextWaypointColor);
+          if(!item->font().bold())
+          {
+            QFont font = item->font();
+            font.setBold(true);
+            item->setFont(font);
+          }
+        }
+      }
+    }
   }
 }
 

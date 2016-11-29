@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>920</width>
-    <height>428</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -718,6 +718,179 @@ Smaller values allow a finer selection.</string>
           <property name="bottomMargin">
            <number>1</number>
           </property>
+          <item row="3" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftAi">
+            <property name="toolTip">
+             <string>Size of airport and navaid symbols.</string>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Symbol </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
+            <property name="text">
+             <string>&amp;User Aircraft:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
+            <property name="toolTip">
+             <string>Size of airport and navaid symbols.</string>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Symbol </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirport">
+            <property name="toolTip">
+             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Text </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>150</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelOptionsMapSizeAirport">
+            <property name="text">
+             <string>&amp;Airports:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
+            <property name="toolTip">
+             <string>Size of airport and navaid symbols.</string>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Width </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Set color for the active flight plan segment.</string>
+            </property>
+            <property name="text">
+             <string>Active Leg Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QPushButton" name="pushButtonOptionsDisplayTrailColor">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Set color for aircraft trail.</string>
+            </property>
+            <property name="text">
+             <string>Color</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
+            <property name="text">
+             <string>&amp;Range rings and distance
+measurement lines:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="labelOptionsMapSizeTrail">
+            <property name="text">
+             <string>User Aircraft &amp;Trail:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirport">
             <property name="toolTip">
@@ -743,8 +916,8 @@ Smaller values allow a finer selection.</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftAi">
+          <item row="6" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessTrail">
             <property name="toolTip">
              <string>Size of airport and navaid symbols.</string>
             </property>
@@ -752,7 +925,62 @@ Smaller values allow a finer selection.</string>
              <string> %</string>
             </property>
             <property name="prefix">
-             <string>Symbol </string>
+             <string>Width </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="2">
+           <widget class="QComboBox" name="comboBoxOptionsDisplayTrailType">
+            <item>
+             <property name="text">
+              <string>Dashed</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Dotted</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Solid</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelOptionsMapSizeNavaid">
+            <property name="text">
+             <string>&amp;VOR, NDB, waypoints and
+airways:</string>
+            </property>
+            <property name="buddy">
+             <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
+            <property name="toolTip">
+             <string>Size of airport and navaid symbols.</string>
+            </property>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Width </string>
             </property>
             <property name="minimum">
              <number>50</number>
@@ -818,13 +1046,28 @@ Smaller values allow a finer selection.</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
-            <property name="text">
-             <string>&amp;User Aircraft:</string>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
+            <property name="toolTip">
+             <string>Size of airport and navaid symbols.</string>
             </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
+            <property name="suffix">
+             <string> %</string>
+            </property>
+            <property name="prefix">
+             <string>Symbol </string>
+            </property>
+            <property name="minimum">
+             <number>50</number>
+            </property>
+            <property name="maximum">
+             <number>200</number>
+            </property>
+            <property name="singleStep">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>100</number>
             </property>
            </widget>
           </item>
@@ -863,145 +1106,6 @@ Smaller values allow a finer selection.</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
-            <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Symbol </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeAirport">
-            <property name="text">
-             <string>&amp;Airports:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
-            <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Symbol </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirport">
-            <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Text </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>150</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeTrail">
-            <property name="text">
-             <string>User Aircraft &amp;Trail:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessTrail">
-            <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Width </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QComboBox" name="comboBoxOptionsDisplayTrailType">
-            <item>
-             <property name="text">
-              <string>Dashed</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Dotted</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Solid</string>
-             </property>
-            </item>
-           </widget>
-          </item>
           <item row="4" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
             <property name="text">
@@ -1037,43 +1141,7 @@ Smaller values allow a finer selection.</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeNavaid">
-            <property name="text">
-             <string>&amp;VOR, NDB, waypoints and
-airways:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
-            <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Width </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3">
+          <item row="5" column="1">
            <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1086,58 +1154,6 @@ airways:</string>
             </property>
             <property name="text">
              <string>Color</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QPushButton" name="pushButtonOptionsDisplayTrailColor">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Set color for aircraft trail.</string>
-            </property>
-            <property name="text">
-             <string>Color</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="labelOptionsMapSizeRangeDistance">
-            <property name="text">
-             <string>&amp;Range rings and distance
-measurement lines:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
-            <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
-            </property>
-            <property name="suffix">
-             <string> %</string>
-            </property>
-            <property name="prefix">
-             <string>Width </string>
-            </property>
-            <property name="minimum">
-             <number>50</number>
-            </property>
-            <property name="maximum">
-             <number>200</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
             </property>
            </widget>
           </item>

@@ -90,6 +90,7 @@ private:
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();
+  void flightplanActiveColorClicked();
   void trailColorClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
@@ -104,10 +105,11 @@ private:
   void displayOptDataToWidget();
   void updateGuiThemeSpinboxState();
   void applyStyle();
+  void updateButtonColors();
 
   QVector<int> ringStrToVector(const QString& string) const;
 
-  QColor flightplanColor, trailColor;
+  QColor flightplanColor, flightplanActiveColor, trailColor;
 
   Ui::Options *ui;
   MainWindow *mainWindow;
