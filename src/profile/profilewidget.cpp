@@ -331,15 +331,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
 
-  int todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
-  int todY = flightplanY;
+  int todX;
+  if(route.getTopOfDescentFromStart() > 0.f)
+    todX = X0 + atools::roundToInt(route.getTopOfDescentFromStart() * horizontalScale);
+  else
+    todX = X0;
+
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
 
   // Draw the flightplan line
   QPolygon line;
-  line << QPoint(X0, flightplanY)
-       << QPoint(todX, todY)
-       << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+  line << QPoint(X0, flightplanY);
+  line << QPoint(todX, flightplanY);
+  line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
 
   painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
   painter.drawPolyline(line);
@@ -427,7 +431,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     }
   }
 
-  // Draw text lables
+  // Draw text labels
   // Departure altitude label
   float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
   QString startAltStr = Unit::altFeet(startAlt);
@@ -471,7 +475,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Draw aircraft symbol
       painter.translate(acx, acy);
       painter.rotate(90);
-      symPainter.drawAircraftSymbol(&painter, 0, 0, 20, simData.getUserAircraft().isOnGround());
+      symPainter.drawAircraftSymbol(&painter, 0, 0, 16, simData.getUserAircraft().isOnGround());
       painter.resetTransform();
 
       // Draw aircraft label
@@ -509,13 +513,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
 
+    // Draw the top of descent point and text
     painter.setBackgroundMode(Qt::TransparentMode);
     painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
     painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(QPoint(todX, todY), 6, 6);
+    painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
 
     symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
-                       todX + 8, todY + 8,
+                       todX + 8, flightplanY + 8,
                        textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
   }
 }
