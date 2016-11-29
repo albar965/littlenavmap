@@ -202,7 +202,7 @@ public:
    * @param html Result containing HTML snippet
    */
   void aircraftText(const atools::fs::sc::SimConnectAircraft& userAircraft,
-                    atools::util::HtmlBuilder& html, int num = -1, int total = -1) const;
+                    atools::util::HtmlBuilder& html, int num = -1, int total = -1);
   void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
                                  atools::util::HtmlBuilder& html) const;
 
@@ -213,9 +213,9 @@ public:
    */
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
-                            const RouteMapObjectList& route) const;
+                            const RouteMapObjectList& route);
 
-  void updateIcons();
+  void updateAircraftIcons(bool force);
 
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
@@ -246,7 +246,7 @@ private:
                     const QString& colName, const QString& msg, const QString& val) const;
 
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                     atools::util::HtmlBuilder& html) const;
+                     atools::util::HtmlBuilder& html);
 
   void timeAndDate(const atools::fs::sc::SimConnectUserAircraft *userAircaft,
                    atools::util::HtmlBuilder& html) const;

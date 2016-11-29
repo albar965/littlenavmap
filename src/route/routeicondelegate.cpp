@@ -19,10 +19,11 @@
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
+#include "route/routemapobjectlist.h"
 
 #include <QPainter>
 
-RouteIconDelegate::RouteIconDelegate(const QList<RouteMapObject>& routeMapObjects)
+RouteIconDelegate::RouteIconDelegate(const RouteMapObjectList& routeMapObjects)
   : routeObjects(routeMapObjects)
 {
   symbolPainter = new SymbolPainter();

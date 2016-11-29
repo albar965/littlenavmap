@@ -41,8 +41,6 @@ using atools::fs::sc::SimConnectUserAircraft;
 InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
 {
-  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -152,7 +150,9 @@ void InfoController::restoreState()
                                maptypes::MapObjectTypes(refsStrList.at(i + 1).toInt()),
                                refsStrList.at(i).toInt());
 
+  iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
   updateTextEditFontSizes();
+  infoBuilder->updateAircraftIcons(true);
   showInformationInternal(res, false);
 
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -503,8 +503,8 @@ void InfoController::disconnectedFromSimulator()
 void InfoController::optionsChanged()
 {
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
-  infoBuilder->updateIcons();
   updateTextEditFontSizes();
+  infoBuilder->updateAircraftIcons(true);
   showInformationInternal(currentSearchResult, false);
 }
 

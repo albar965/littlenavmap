@@ -33,7 +33,7 @@ class RouteIconDelegate :
   Q_OBJECT
 
 public:
-  RouteIconDelegate(const QList<RouteMapObject>& routeMapObjects);
+  RouteIconDelegate(const RouteMapObjectList& routeMapObjects);
   virtual ~RouteIconDelegate();
 
 private:
@@ -41,7 +41,7 @@ private:
                      const QModelIndex& index) const override;
 
   SymbolPainter *symbolPainter;
-  const QList<RouteMapObject>& routeObjects;
+  const RouteMapObjectList& routeObjects;
 
 };
 

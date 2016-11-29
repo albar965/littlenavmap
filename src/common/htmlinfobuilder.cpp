@@ -74,17 +74,21 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
   delete morse;
 }
 
-void HtmlInfoBuilder::updateIcons()
+void HtmlInfoBuilder::updateAircraftIcons(bool force)
 {
-  aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
-    QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
-  aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
-    QIcon(":/littlenavmap/resources/icons/aircraftground.svg"), QSize(24, 24));
+  if(aircraftEncodedIcon.isEmpty() || force)
+    aircraftEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/aircraft.svg"), QSize(24, 24));
+  if(aircraftGroundEncodedIcon.isEmpty() || force)
+    aircraftGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/aircraftground.svg"), QSize(24, 24));
 
-  aircraftAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
-    QIcon(":/littlenavmap/resources/icons/aircraftai.svg"), QSize(24, 24));
-  aircraftAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
-    QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
+  if(aircraftAiEncodedIcon.isEmpty() || force)
+    aircraftAiEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/aircraftai.svg"), QSize(24, 24));
+  if(aircraftAiGroundEncodedIcon.isEmpty() || force)
+    aircraftAiGroundEncodedIcon = HtmlBuilder::getEncodedImageHref(
+      QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
 }
 
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background) const
@@ -1178,7 +1182,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
 }
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                   HtmlBuilder& html, int num, int total) const
+                                   HtmlBuilder& html, int num, int total)
 {
   aircraftTitle(aircraft, html);
 
@@ -1247,7 +1251,7 @@ void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, Htm
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html,
-                                           const RouteMapObjectList& route) const
+                                           const RouteMapObjectList& route)
 {
   const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
 
@@ -1551,9 +1555,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 }
 
 void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                    HtmlBuilder& html) const
+                                    HtmlBuilder& html)
 {
   const QString *icon;
+
+  updateAircraftIcons(false);
 
   if(aircraft.isUser())
   {
