@@ -18,6 +18,7 @@
 #include "common/coordinates.h"
 
 #include "geo/pos.h"
+#include "atools.h"
 
 #include <cmath>
 #include <QRegularExpression>
@@ -60,10 +61,10 @@ QString toDegMinFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
     return COORDS_FLIGHTPLAN_FORMAT_DEG_MIN.
-           arg(std::abs(pos.getLatYDeg()), 2, 10, QChar('0')).
+           arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
            arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 2, 'f', 0, QChar('0')).
            arg(pos.getLatY() > 0.f ? "N" : "S").
-           arg(std::abs(pos.getLonXDeg()), 3, 10, QChar('0')).
+           arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
            arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
            arg(pos.getLonX() > 0.f ? "E" : "W");
   else
