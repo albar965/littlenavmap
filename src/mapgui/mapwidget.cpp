@@ -453,7 +453,7 @@ void MapWidget::showOverlays(bool show)
         qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(true);
         overlay->show();
-      }p
+      }
       else
       {
         qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();

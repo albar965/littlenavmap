@@ -117,7 +117,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   addItem(ap, tr("Tower Frequency"), opts::ITEM_AIRPORT_TOWER, true);
   addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), opts::ITEM_AIRPORT_ATIS, true);
   addItem(ap, tr("Runway Information"), opts::ITEM_AIRPORT_RUNWAY, true);
-  addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
+  // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
   QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"));
   addItem(ua, tr("Registration"), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
