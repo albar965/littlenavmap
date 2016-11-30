@@ -38,8 +38,8 @@
 #include "gui/actiontextsaver.h"
 #include "util/htmlbuilder.h"
 #include "mapgui/maplayersettings.h"
-#include "zip/zipreader.h"
 #include "common/unit.h"
+#include "gui/widgetstate.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -107,6 +107,16 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
 
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
+
+  // "Compass" id "compass"
+  // "License" id "license"
+  // "Scale Bar" id "scalebar"
+  // "Navigation" id "navigation"
+  // "Overview Map" id "overviewmap"
+  mapOverlays.insert("compass", mainWindow->getUi()->actionMapOverlayCompass);
+  mapOverlays.insert("scalebar", mainWindow->getUi()->actionMapOverlayScalebar);
+  mapOverlays.insert("navigation", mainWindow->getUi()->actionMapOverlayNavigation);
+  mapOverlays.insert("overviewmap", mainWindow->getUi()->actionMapOverlayOverview);
 }
 
 MapWidget::~MapWidget()
@@ -376,6 +386,11 @@ void MapWidget::saveState()
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   screenIndex->saveState();
   aircraftTrack.saveState();
+
+  overlayStateToMenu();
+  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
+  for(QAction *action : mapOverlays.values())
+    state.save(action);
 }
 
 void MapWidget::restoreState()
@@ -417,21 +432,89 @@ void MapWidget::restoreState()
   screenIndex->restoreState();
   aircraftTrack.restoreState();
 
-  showOverlays(true);
+  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
+  for(QAction *action : mapOverlays.values())
+    state.restore(action);
 }
 
 void MapWidget::showOverlays(bool show)
 {
-  // Show all map overlays again since the saving/restoring behavior is random
-  QList<AbstractFloatItem *> localFloatItems = floatItems();
-  for(AbstractFloatItem *fi : localFloatItems)
+  for(const QString& name : mapOverlays.keys())
   {
-    qDebug() << "showing float item" << fi->name() << "id" << fi->nameId();
-    fi->setVisible(show);
-    if(show)
-      fi->show();
-    else
-      fi->hide();
+    AbstractFloatItem *overlay = floatItem(name);
+    if(overlay != nullptr)
+    {
+      bool showConfig = mapOverlays.value(name)->isChecked();
+
+      overlay->blockSignals(true);
+
+      if(show && showConfig)
+      {
+        qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        overlay->setVisible(true);
+        overlay->show();
+      }
+      else
+      {
+        qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        overlay->setVisible(false);
+        overlay->hide();
+      }
+      overlay->blockSignals(false);
+    }
+  }
+}
+
+void MapWidget::overlayStateToMenu()
+{
+  for(const QString& name : mapOverlays.keys())
+  {
+    AbstractFloatItem *overlay = floatItem(name);
+    if(overlay != nullptr)
+    {
+      qDebug() << "Float item to menu" << overlay->name() << "id" << overlay->nameId()
+               << "visible" << overlay->visible();
+
+      mapOverlays.value(name)->blockSignals(true);
+      mapOverlays.value(name)->setChecked(overlay->visible());
+      mapOverlays.value(name)->blockSignals(false);
+    }
+  }
+}
+
+void MapWidget::overlayStateFromMenu()
+{
+  for(const QString& name : mapOverlays.keys())
+  {
+    AbstractFloatItem *overlay = floatItem(name);
+    if(overlay != nullptr)
+    {
+      bool show = mapOverlays.value(name)->isChecked();
+      overlay->setVisible(show);
+      if(show)
+      {
+        qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        overlay->show();
+      }
+      else
+      {
+        qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        overlay->hide();
+      }
+    }
+  }
+}
+
+void MapWidget::connectOverlayMenus()
+{
+  for(QAction *action : mapOverlays.values())
+    connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
+
+  for(const QString& name : mapOverlays.keys())
+  {
+    AbstractFloatItem *overlay = floatItem(name);
+    if(overlay != nullptr)
+      connect(overlay, &Marble::AbstractFloatItem::visibilityChanged, this, &MapWidget::overlayStateToMenu);
   }
 }
 
@@ -451,6 +534,10 @@ void MapWidget::mainWindowShown()
 
   // Set cache sizes from option data. This is done later in the startup process to avoid disk trashing.
   updateCacheSizes();
+
+  overlayStateFromMenu();
+  connectOverlayMenus();
+
 }
 
 void MapWidget::showSavedPosOnStartup()

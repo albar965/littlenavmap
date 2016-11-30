@@ -1595,7 +1595,7 @@ void MainWindow::updateActionStates()
 /* Read settings for all windows, docks, controller and manager classes */
 void MainWindow::readSettings()
 {
-  qDebug() << "MainWindow::readSettings";
+  qDebug() << Q_FUNC_INFO << "enter";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
   widgetState.restore({this, ui->statusBar, ui->tabWidgetSearch});
@@ -1662,7 +1662,7 @@ void MainWindow::readSettings()
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
 
-  qDebug() << "MainWindow::readSettings done";
+  qDebug() << Q_FUNC_INFO << "leave";
 }
 
 /* Write settings for all windows, docks, controller and manager classes */

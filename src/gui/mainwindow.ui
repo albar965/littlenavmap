@@ -74,6 +74,17 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
+    <widget class="QMenu" name="menuMap_Overlays_2">
+     <property name="title">
+      <string>Map Overlays</string>
+     </property>
+     <addaction name="actionMapOverlayOverview"/>
+     <addaction name="actionMapOverlayCompass"/>
+     <addaction name="actionMapOverlayScalebar"/>
+     <addaction name="actionMapOverlayNavigation"/>
+    </widget>
+    <addaction name="menuMap_Overlays_2"/>
+    <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -4811,6 +4822,50 @@
    </property>
    <property name="statusTip">
     <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
+   </property>
+  </action>
+  <action name="actionMapOverlayCompass">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Compass</string>
+   </property>
+  </action>
+  <action name="actionMapOverlayOverview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Overview</string>
+   </property>
+  </action>
+  <action name="actionMapOverlayScalebar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Scalebar</string>
+   </property>
+  </action>
+  <action name="actionMapOverlayNavigation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Navigation</string>
    </property>
   </action>
  </widget>

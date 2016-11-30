@@ -58,6 +58,7 @@ const QString MAP_KMLFILES = "Map/KmlFiles";
 const QString MAP_MARKLATY = "Map/MarkLatY";
 const QString MAP_MARKLONX = "Map/MarkLonX";
 const QString MAP_RANGEMARKERS = "Map/RangeMarkers";
+const QString MAP_OVERLAY_VISIBLE = "Map/OverlayVisible";
 const QString NAVCONNECT_REMOTEHOSTS = "NavConnect/RemoteHosts";
 const QString NAVCONNECT_REMOTE = "NavConnect/Remote";
 const QString OPTIONS_FOREIGNKEYS = "Options/ForeignKeys";

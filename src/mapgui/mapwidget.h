@@ -302,6 +302,10 @@ private:
   /* Hide and prevent re-show */
   void hideTooltip();
 
+  void overlayStateToMenu();
+  void overlayStateFromMenu();
+  void connectOverlayMenus();
+
   /* Overloaded methods */
   virtual void mousePressEvent(QMouseEvent *event) override;
   virtual void mouseReleaseEvent(QMouseEvent *event) override;
@@ -371,6 +375,8 @@ private:
   Marble::Projection currentProjection;
 
   AircraftTrack aircraftTrack;
+
+  QHash<QString, QAction *> mapOverlays;
 
   /* Need to check if the zoom and position was changed by the map history to avoid recursion */
   bool changedByHistory = false;
