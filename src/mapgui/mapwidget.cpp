@@ -59,7 +59,7 @@ const static QHash<opts::SimUpdateRate, MapWidget::SimUpdateDelta> SIM_UPDATE_DE
   {
     // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
     {
-      opts::FAST, {0.5f, 1.f, 1.f, 1.f, 150}
+      opts::FAST, {0.5f, 1.f, 1.f, 1.f, 75}
     },
     {
       opts::MEDIUM, {1, 1.f, 10.f, 10.f, 250}
@@ -453,7 +453,7 @@ void MapWidget::showOverlays(bool show)
         qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(true);
         overlay->show();
-      }
+      }p
       else
       {
         qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
