@@ -201,6 +201,7 @@ private:
   void findCustomMaps(QFileInfoList& customDgmlFiles);
   void themeMenuTriggered(bool checked);
   void updateLegend();
+  void clearWeatherContext();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */

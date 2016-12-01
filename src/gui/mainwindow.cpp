@@ -544,6 +544,9 @@ void MainWindow::connectAllSlots()
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
 
+  // Reset weather context first
+  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);
+
   connect(optionsDialog, &OptionsDialog::optionsChanged,
           mapWidget, static_cast<void (MapWidget::*)(void)>(&MapWidget::update));
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
@@ -789,6 +792,8 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          this, &MainWindow::clearWeatherContext);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
@@ -1849,7 +1854,7 @@ bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherCon
 
   if(flags & opts::WEATHER_INFO_ACTIVESKY)
   {
-    fillActiveSkyType(weatherContext, airport.ident);
+    fillActiveSkyType(currentWeatherContext, airport.ident);
 
     QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
     if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.asMetar))
@@ -1935,4 +1940,10 @@ void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
     weatherContext.isAsDeparture = false;
     weatherContext.isAsDestination = false;
   }
+}
+
+void MainWindow::clearWeatherContext()
+{
+  lastWeatherContext = maptypes::WeatherContext();
+  currentWeatherContext = maptypes::WeatherContext();
 }

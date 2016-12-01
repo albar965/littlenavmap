@@ -2056,17 +2056,22 @@ bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
-    // Load tooltip data into mapSearchResultTooltip
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-    mapSearchResultTooltip = maptypes::MapSearchResult();
-    screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                               mapSearchResultTooltip);
-    tooltipPos = helpEvent->globalPos();
 
-    // Build HTML
-    updateTooltip();
-    event->accept();
-    return true;
+    // Try to avoid spurious tooltip events
+    if(isVisible() && rect().contains(helpEvent->pos()))
+    {
+      // Load tooltip data into mapSearchResultTooltip
+      mapSearchResultTooltip = maptypes::MapSearchResult();
+      screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                 mapSearchResultTooltip);
+      tooltipPos = helpEvent->globalPos();
+
+      // Build HTML
+      updateTooltip();
+      event->accept();
+      return true;
+    }
   }
 
   return QWidget::event(event);
