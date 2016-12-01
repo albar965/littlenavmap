@@ -459,6 +459,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!routeController->isFlightplanEmpty())
   {
+    // Draw the top of descent point and text
+    painter.setBackgroundMode(Qt::TransparentMode);
+    painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
+    painter.setBrush(Qt::NoBrush);
+    painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
+
+    symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
+                       todX + 8, flightplanY + 8,
+                       textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+
     // Draw user aircraft track
     if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
     {
@@ -512,16 +522,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
-
-    // Draw the top of descent point and text
-    painter.setBackgroundMode(Qt::TransparentMode);
-    painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
-
-    symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
-                       todX + 8, flightplanY + 8,
-                       textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
   }
 }
 

@@ -228,15 +228,17 @@ atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station
       weatherRequest.setPosition(pos);
 
       if(outstandingReplies.isEmpty())
+        // Nothing wating for reply - request now
         requestWeather(weatherRequest);
       else if(!outstandingReplies.contains(weatherRequest.getStation()))
+        // Waiting reply - queue request
         queuedRequests.append(weatherRequest);
 
       if(verbose)
         qDebug() << "=== queuedRequests" << queuedRequests.size();
     }
+    return EMPTY;
   }
-  return EMPTY;
 }
 
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)

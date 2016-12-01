@@ -159,7 +159,7 @@ bool ConnectDialog::isConnectDirect() const
   return ui->radioButtonConnectDirect->isChecked();
 }
 
-int ConnectDialog::getDirectUpdateRateMs()
+unsigned int ConnectDialog::getDirectUpdateRateMs()
 {
   return ui->spinBoxConnectUpdateRate->value();
 }

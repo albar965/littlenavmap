@@ -73,8 +73,8 @@ const QPen markFillPen = QPen(QBrush(QColor(255, 255, 0)), 2, Qt::SolidLine, Qt:
 const QPen magneticPolePen = QPen(QBrush(QColor(Qt::darkGreen)), 2, Qt::SolidLine, Qt::FlatCap);
 
 const QPen aircraftBackPen = QPen(QBrush(QColor(Qt::black)), 7, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::white)), 4, Qt::SolidLine, Qt::RoundCap);
-const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::yellow)), 7, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
+const QPen aircraftGroundBackPen = QPen(QBrush(QColor(Qt::darkGray)), 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundFillPen = QPen(QBrush(QColor(Qt::yellow)), 4, Qt::SolidLine, Qt::RoundCap);
 
 const QPen homeBackPen = QPen(QBrush(QColor(0, 0, 0)), 2, Qt::SolidLine, Qt::FlatCap);

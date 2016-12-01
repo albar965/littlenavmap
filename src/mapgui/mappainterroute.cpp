@@ -208,10 +208,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       context->painter->drawPolyline(ls);
   }
 
+  context->szFont(context->textSizeFlightplan);
+
   if(!context->drawFast)
   {
-    context->szFont(context->textSizeFlightplan);
-
     // Draw text with direction arrow along lines
     context->painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
     int i = 0;
@@ -301,27 +301,21 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       switch(type)
       {
         case maptypes::INVALID:
-          context->szFont(context->textSizeNavaid);
           paintText(context, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
           break;
         case maptypes::USER:
-          context->szFont(context->textSizeNavaid);
           paintText(context, mapcolors::routeUserPointColor, x, y, obj.getIdent());
           break;
         case maptypes::AIRPORT:
-          context->szFont(context->textSizeAirport);
           paintAirportText(context, x, y, obj.getAirport());
           break;
         case maptypes::VOR:
-          context->szFont(context->textSizeNavaid);
           paintVorText(context, x, y, obj.getVor());
           break;
         case maptypes::NDB:
-          context->szFont(context->textSizeNavaid);
           paintNdbText(context, x, y, obj.getNdb());
           break;
         case maptypes::WAYPOINT:
-          context->szFont(context->textSizeNavaid);
           paintWaypointText(context, x, y, obj.getWaypoint());
           break;
       }
@@ -335,7 +329,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   {
     float width = context->sz(context->thicknessFlightplan, 3);
     int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
-    context->szFont(context->textSizeFlightplan);
 
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
     context->painter->drawEllipse(pt, radius, radius);

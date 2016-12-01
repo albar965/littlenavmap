@@ -55,7 +55,7 @@ public:
   bool isAutoConnect() const;
   bool isConnectDirect() const;
 
-  int getDirectUpdateRateMs();
+  unsigned int getDirectUpdateRateMs();
 
 signals:
   void disconnectClicked();
