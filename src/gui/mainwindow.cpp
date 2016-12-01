@@ -64,6 +64,8 @@
 
 #include "ui_mainwindow.h"
 
+static const int WEATHER_UPDATE_MS = 30000;
+
 static const QString ABOUT_MESSAGE =
   QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
                 "airport search and airport information system for Flight Simulator X and Prepar3D.</p>"
@@ -191,6 +193,7 @@ MainWindow::MainWindow()
 
     loadNavmapLegend();
     updateLegend();
+    updateWindowTitle();
 
     qDebug() << "MainWindow Constructor done";
   }
@@ -1520,7 +1523,7 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimeout();
 
   // Update the weather every 30 seconds if connected
-  weatherUpdateTimer.setInterval(30000);
+  weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
   weatherUpdateTimer.start();
 
   setStatusMessage(tr("Ready."));
@@ -1788,6 +1791,9 @@ void MainWindow::preDatabaseLoad()
     weatherReporter->preDatabaseLoad();
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
+
+    lastWeatherContext = maptypes::WeatherContext();
+    currentWeatherContext = maptypes::WeatherContext();
   }
   else
     qWarning() << "Already in database loading status";
@@ -1817,4 +1823,116 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   // Update toolbar buttons
   updateActionStates();
+}
+
+bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
+                                            const maptypes::MapAirport& airport)
+{
+  opts::Flags flags = OptionData::instance().getFlags();
+  bool changed = false;
+  bool newAirport = lastWeatherContext.ident != airport.ident;
+
+  currentWeatherContext.ident = airport.ident;
+
+  if(flags & opts::WEATHER_INFO_FS)
+  {
+    // Flight simulator fetched weather
+    atools::fs::sc::MetarResult metar =
+      connectClient->requestWeather(airport.ident, airport.position);
+
+    if(newAirport || (!metar.isEmpty() && metar != lastWeatherContext.fsMetar))
+    {
+      currentWeatherContext.fsMetar = metar;
+      changed = true;
+    }
+  }
+
+  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  {
+    fillActiveSkyType(weatherContext, airport.ident);
+
+    QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
+    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.asMetar))
+    {
+      currentWeatherContext.asMetar = metarStr;
+      changed = true;
+    }
+  }
+
+  if(flags & opts::WEATHER_INFO_NOAA)
+  {
+    QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
+    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.noaaMetar))
+    {
+      currentWeatherContext.noaaMetar = metarStr;
+      changed = true;
+    }
+  }
+
+  if(flags & opts::WEATHER_INFO_VATSIM)
+  {
+    QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
+    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.vatsimMetar))
+    {
+      currentWeatherContext.vatsimMetar = metarStr;
+      changed = true;
+    }
+  }
+
+  lastWeatherContext = currentWeatherContext;
+  weatherContext = currentWeatherContext;
+
+  qDebug() << Q_FUNC_INFO << "changed" << changed;
+
+  return changed;
+}
+
+void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
+                                     const maptypes::MapAirport& airport) const
+{
+  opts::Flags flags = OptionData::instance().getFlags();
+
+  weatherContext.ident = airport.ident;
+
+  if(flags & opts::WEATHER_INFO_FS)
+    weatherContext.fsMetar = connectClient->requestWeather(airport.ident, airport.position);
+
+  if(flags & opts::WEATHER_INFO_ACTIVESKY)
+  {
+    weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
+    fillActiveSkyType(weatherContext, airport.ident);
+  }
+
+  if(flags & opts::WEATHER_INFO_NOAA)
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+
+  if(flags & opts::WEATHER_INFO_VATSIM)
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+}
+
+void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
+                                   const QString& airportIdent) const
+{
+  if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::AS16)
+    weatherContext.asType = tr("AS16");
+  else if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::ASN)
+    weatherContext.asType = tr("ASN");
+  else
+    weatherContext.asType = tr("Active Sky");
+
+  if(weatherReporter->getActiveSkyDepartureIdent() == airportIdent)
+  {
+    weatherContext.isAsDeparture = true;
+    weatherContext.isAsDestination = false;
+  }
+  else if(weatherReporter->getActiveSkyDestinationIdent() == airportIdent)
+  {
+    weatherContext.isAsDeparture = false;
+    weatherContext.isAsDestination = true;
+  }
+  else
+  {
+    weatherContext.isAsDeparture = false;
+    weatherContext.isAsDestination = false;
+  }
 }

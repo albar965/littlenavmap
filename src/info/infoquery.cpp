@@ -80,22 +80,34 @@ const atools::sql::SqlRecord *InfoQuery::getIlsInformation(int runwayEndId)
   return cachedRecord(ilsCache, ilsQuery, runwayEndId);
 }
 
-const SqlRecord *InfoQuery::getVorInformation(int vorId)
+const atools::sql::SqlRecord *InfoQuery::getVorInformation(int vorId)
 {
   return cachedRecord(vorCache, vorQuery, vorId);
 }
 
-const SqlRecord *InfoQuery::getNdbInformation(int ndbId)
+const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& ident, const QString& region)
+{
+  vorIdentRegionQuery->bindValue(":ident", ident);
+  vorIdentRegionQuery->bindValue(":region", region);
+  vorIdentRegionQuery->exec();
+
+  if(vorIdentRegionQuery->next())
+    return vorIdentRegionQuery->record();
+  else
+    return atools::sql::SqlRecord();
+}
+
+const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
   return cachedRecord(ndbCache, ndbQuery, ndbId);
 }
 
-const SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
+const atools::sql::SqlRecord *InfoQuery::getWaypointInformation(int waypointId)
 {
   return cachedRecord(waypointCache, waypointQuery, waypointId);
 }
 
-const SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
+const atools::sql::SqlRecord *InfoQuery::getAirwayInformation(int airwayId)
 {
   return cachedRecord(airwayCache, airwayQuery, airwayId);
 }
@@ -240,6 +252,9 @@ void InfoQuery::initQueries()
                                "where airway_name = :name and airway_fragment_no = :fragment "
                                "order by a.sequence_no");
 
+  vorIdentRegionQuery = new SqlQuery(db);
+  vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
+
   approachQuery = new SqlQuery(db);
   approachQuery->prepare("select r.name as runway_name, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
@@ -298,6 +313,9 @@ void InfoQuery::deInitQueries()
 
   delete airwayWaypointQuery;
   airwayWaypointQuery = nullptr;
+
+  delete vorIdentRegionQuery;
+  vorIdentRegionQuery = nullptr;
 
   delete approachQuery;
   approachQuery = nullptr;

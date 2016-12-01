@@ -71,6 +71,11 @@ class MorseCode;
 }
 }
 
+namespace maptypes {
+struct WeatherContext;
+
+}
+
 /*
  * Builds HTML snippets (no <html> and no <body> tags) for QTextEdits or tooltips.
  */
@@ -97,9 +102,10 @@ public:
    * @param weather
    * @param background Background color for icons
    */
-  void airportText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+  void airportText(const maptypes::MapAirport& airport, const maptypes::WeatherContext& weatherContext,
+                   atools::util::HtmlBuilder& html,
                    const RouteMapObjectList *routeMapObjects,
-                   WeatherReporter *weather, QColor background) const;
+                   QColor background) const;
 
   /*
    * Creates a HTML description for all runways of an airport.
@@ -126,8 +132,9 @@ public:
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                     QColor background) const;
-  void weatherText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
-                   QColor background) const;
+
+  void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
+                   atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -256,6 +263,10 @@ private:
   void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport,
                     const atools::fs::weather::Metar& metar,
                     bool isInterpolated) const;
+  bool buildWeatherContext(maptypes::WeatherContext& lastContext, maptypes::WeatherContext& newContext,
+                           const maptypes::MapAirport& airport);
+  void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
+  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery;

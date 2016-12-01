@@ -93,7 +93,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     }
   }
 
-  for(const MapAirport& ap : mapSearchResult.airports)
+  for(const MapAirport& airport : mapSearchResult.airports)
   {
     if(checkText(html, numEntries))
       return html.getHtml();
@@ -102,7 +102,10 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       html.hr();
 
     html.p();
-    info.airportText(ap, html, &routeMapObjects, weather, iconBackColor);
+
+    maptypes::WeatherContext currentWeatherContext;
+    mainWindow->buildWeatherContext(currentWeatherContext, airport);
+    info.airportText(airport, currentWeatherContext, html, &routeMapObjects, iconBackColor);
     html.pEnd();
     numEntries++;
   }

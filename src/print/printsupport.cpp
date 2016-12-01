@@ -91,39 +91,13 @@ void PrintSupport::fillWeatherCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  WeatherReporter *weatherReporter = mainWindow->getWeatherReporter();
-  opts::Flags flags = OptionData::instance().getFlags();
-
   const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
 
-  if(rmos.hasValidDeparture())
+  if(!rmos.isEmpty())
   {
-    const QString& ident = rmos.getFlightplan().getDepartureIdent();
-
-    // Fill the cache with weather data for printing
-    if(flags & opts::WEATHER_INFO_FS)
-      mainWindow->getConnectClient()->requestWeather(ident, rmos.getFlightplan().getDeparturePosition());
-    if(flags & opts::WEATHER_INFO_ACTIVESKY)
-      weatherReporter->getActiveSkyMetar(ident);
-    if(flags & opts::WEATHER_INFO_NOAA)
-      weatherReporter->getNoaaMetar(ident);
-    if(flags & opts::WEATHER_INFO_VATSIM)
-      weatherReporter->getVatsimMetar(ident);
-  }
-
-  if(rmos.hasValidDestination())
-  {
-    const QString& ident = rmos.getFlightplan().getDestinationIdent();
-
-    // Fill the cache with weather data for printing
-    if(flags & opts::WEATHER_INFO_FS)
-      mainWindow->getConnectClient()->requestWeather(ident, rmos.getFlightplan().getDestinationPosition());
-    if(flags & opts::WEATHER_INFO_ACTIVESKY)
-      weatherReporter->getActiveSkyMetar(ident);
-    if(flags & opts::WEATHER_INFO_NOAA)
-      weatherReporter->getNoaaMetar(ident);
-    if(flags & opts::WEATHER_INFO_VATSIM)
-      weatherReporter->getVatsimMetar(ident);
+    maptypes::WeatherContext currentWeatherContext;
+    mainWindow->buildWeatherContext(currentWeatherContext, rmos.first().getAirport());
+    mainWindow->buildWeatherContext(currentWeatherContext, rmos.last().getAirport());
   }
 }
 
@@ -241,14 +215,21 @@ void PrintSupport::createFlightplanDocuments()
 
   if(printAnyDeparture || printAnyDestination)
   {
+    maptypes::WeatherContext weatherContext;
+
     // print start and destination information if these are airports
     if(printAnyDeparture)
     {
+
       // Create HTML fragments
       html.clear().table();
       HtmlBuilder departureHtml(true);
       if(opts & prt::DEPARTURE_OVERVIEW)
-        builder.airportText(rmos.first().getAirport(), departureHtml, nullptr, nullptr, Qt::white);
+      {
+        mainWindow->buildWeatherContext(weatherContext, rmos.first().getAirport());
+        builder.airportText(
+          rmos.first().getAirport(), weatherContext, departureHtml, nullptr, Qt::white);
+      }
 
       HtmlBuilder departureRunway(true);
       if(opts & prt::DEPARTURE_RUNWAYS)
@@ -261,7 +242,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder departureWeather(true);
       if(opts & prt::DEPARTURE_WEATHER)
-        builder.weatherText(rmos.first().getAirport(), departureCom, Qt::white);
+        builder.weatherText(weatherContext, rmos.first().getAirport(), departureCom, Qt::white);
 
       HtmlBuilder departureAppr(true);
       if(opts & prt::DEPARTURE_APPR)
@@ -301,7 +282,11 @@ void PrintSupport::createFlightplanDocuments()
       html.clear().table();
       HtmlBuilder destinationHtml(true);
       if(opts & prt::DESTINATION_OVERVIEW)
-        builder.airportText(rmos.last().getAirport(), destinationHtml, nullptr, nullptr, Qt::white);
+      {
+        mainWindow->buildWeatherContext(weatherContext, rmos.last().getAirport());
+        builder.airportText(
+          rmos.last().getAirport(), weatherContext, destinationHtml, nullptr, Qt::white);
+      }
 
       HtmlBuilder destinationRunway(true);
       if(opts & prt::DESTINATION_RUNWAYS)
@@ -314,7 +299,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder destinationWeather(true);
       if(opts & prt::DESTINATION_WEATHER)
-        builder.weatherText(rmos.last().getAirport(), destinationCom, Qt::white);
+        builder.weatherText(weatherContext, rmos.last().getAirport(), destinationCom, Qt::white);
 
       HtmlBuilder destinationAppr(true);
       if(opts & prt::DESTINATION_APPR)

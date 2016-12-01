@@ -169,35 +169,45 @@ void InfoController::updateAirportInternal(bool newAirport)
   if(databaseLoadStatus)
     return;
 
-  qDebug() << "InfoController::updateAirport";
-
   if(!currentSearchResult.airports.isEmpty())
   {
-    HtmlBuilder html(true);
-    maptypes::MapAirport ap;
-    mapQuery->getAirportById(ap, currentSearchResult.airports.first().id);
+    maptypes::WeatherContext currentWeatherContext;
+    bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
+                                                                 currentSearchResult.airports.first());
 
-    infoBuilder->airportText(ap, html,
-                             &mainWindow->getRouteController()->getRouteMapObjects(),
-                             mainWindow->getWeatherReporter(), iconBackColor);
+    qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
+             << "ident" << currentWeatherContext.ident;
 
-    Ui::MainWindow *ui = mainWindow->getUi();
-    if(newAirport)
-      // scroll up for new airports
-      ui->textBrowserAirportInfo->setText(html.getHtml());
-    else
-      // Leave position for weather updates
-      atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
+    if(newAirport || weatherChanged)
+    {
+      qDebug() << Q_FUNC_INFO << "UPDATING HTML ==================================";
 
-    html.clear();
-    infoBuilder->weatherText(ap, html, iconBackColor);
+      HtmlBuilder html(true);
+      maptypes::MapAirport airport;
+      mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
 
-    if(newAirport)
-      // scroll up for new airports
-      ui->textBrowserWeatherInfo->setText(html.getHtml());
-    else
-      // Leave position for weather updates
-      atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
+      infoBuilder->airportText(airport, currentWeatherContext, html,
+                               &mainWindow->getRouteController()->getRouteMapObjects(),
+                               iconBackColor);
+
+      Ui::MainWindow *ui = mainWindow->getUi();
+      if(newAirport)
+        // scroll up for new airports
+        ui->textBrowserAirportInfo->setText(html.getHtml());
+      else
+        // Leave position for weather updates
+        atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml());
+
+      html.clear();
+      infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
+
+      if(newAirport)
+        // scroll up for new airports
+        ui->textBrowserWeatherInfo->setText(html.getHtml());
+      else
+        // Leave position for weather updates
+        atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml());
+    }
   }
 }
 
@@ -268,7 +278,9 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
-    infoBuilder->weatherText(airport, html, iconBackColor);
+    maptypes::WeatherContext currentWeatherContext;
+    mainWindow->buildWeatherContextForInfo(currentWeatherContext, airport);
+    infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
     ui->textBrowserWeatherInfo->setText(html.getHtml());
 
     foundAirport = true;

@@ -47,6 +47,7 @@ public:
 
   /* Get record for joined tables vor, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getVorInformation(int vorId);
+  const atools::sql::SqlRecord getVorByIdentAndRegion(const QString& ident, const QString& region);
 
   /* Get record for joined tables ndb, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
@@ -105,7 +106,8 @@ private:
   atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
   *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
   *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr,
-  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
+  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *vorIdentRegionQuery= nullptr, *approachQuery =
+    nullptr, *transitionQuery = nullptr;
 
 };
 

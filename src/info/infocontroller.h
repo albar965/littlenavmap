@@ -120,7 +120,6 @@ private:
   HtmlInfoBuilder *infoBuilder;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
-
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

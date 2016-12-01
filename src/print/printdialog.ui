@@ -159,6 +159,13 @@
     </layout>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QGridLayout" name="gridLayout">
      <property name="leftMargin">
       <number>0</number>
@@ -169,7 +176,7 @@
      <item row="0" column="0">
       <widget class="QCheckBox" name="checkBoxPrintFlightplan">
        <property name="text">
-        <string>Print &amp;Flight Plan</string>
+        <string>Print &amp;Flight Plan Table</string>
        </property>
        <property name="checked">
         <bool>true</bool>

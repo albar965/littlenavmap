@@ -21,7 +21,6 @@
 #include "atools.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
-#include "common/weatherreporter.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
@@ -33,7 +32,6 @@
 #include "util/htmlbuilder.h"
 #include "util/morsecode.h"
 #include "common/unit.h"
-#include "connect/connectclient.h"
 #include "gui/mainwindow.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
@@ -118,8 +116,8 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
 }
 
-void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
-                                  const RouteMapObjectList *routeMapObjects, WeatherReporter *weather,
+void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::WeatherContext& weatherContext,
+                                  HtmlBuilder& html, const RouteMapObjectList *routeMapObjects,
                                   QColor background) const
 {
   const SqlRecord *rec = nullptr;
@@ -242,62 +240,26 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, HtmlBuilder& html,
     html.tableEnd();
   }
 
-  if(weather != nullptr)
+  if(!weatherContext.fsMetar.isEmpty() || !weatherContext.asMetar.isEmpty() ||
+     !weatherContext.noaaMetar.isEmpty() || !weatherContext.vatsimMetar.isEmpty())
   {
-    // Add weather information
-    opts::Flags flags = OptionData::instance().getFlags();
-    bool showActiveSky = info ? flags & opts::WEATHER_INFO_ACTIVESKY : flags &
-                         opts::WEATHER_TOOLTIP_ACTIVESKY;
-    bool showNoaa = info ? flags & opts::WEATHER_INFO_NOAA : flags & opts::WEATHER_TOOLTIP_NOAA;
-    bool showVatsim = info ? flags & opts::WEATHER_INFO_VATSIM : flags & opts::WEATHER_TOOLTIP_VATSIM;
-    bool showFs = info ? flags & opts::WEATHER_INFO_FS : flags & opts::WEATHER_TOOLTIP_FS;
+    if(info)
+      head(html, tr("Weather"));
+    html.table();
 
-    QString activeSkyMetar, noaaMetar, vatsimMetar;
-    atools::fs::sc::MetarResult fsMetar;
+    const atools::fs::sc::MetarResult& fsMetar = weatherContext.fsMetar;
+    addMetarLine(html, tr("Station"), fsMetar.metarForStation,
+                 fsMetar.requestIdent, fsMetar.timestamp, true);
+    addMetarLine(html, tr("Nearest"), fsMetar.metarForNearest,
+                 fsMetar.requestIdent, fsMetar.timestamp, true);
+    addMetarLine(html, tr("Interpolated"), fsMetar.metarForInterpolated,
+                 fsMetar.requestIdent, fsMetar.timestamp, true);
 
-    if(showActiveSky)
-      activeSkyMetar = weather->getActiveSkyMetar(airport.ident);
+    addMetarLine(html, weatherContext.asType, weatherContext.asMetar);
 
-    if(showNoaa)
-      noaaMetar = weather->getNoaaMetar(airport.ident);
-
-    if(showVatsim)
-      vatsimMetar = weather->getVatsimMetar(airport.ident);
-
-    if(showFs)
-      fsMetar = mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
-
-    if(!activeSkyMetar.isEmpty() || !noaaMetar.isEmpty() || !vatsimMetar.isEmpty() || fsMetar.isValid())
-    {
-      if(info)
-        head(html, tr("Weather"));
-      html.table();
-
-      if(fsMetar.isValid())
-      {
-        addMetarLine(html, tr("Station"), fsMetar.metarForStation,
-                     fsMetar.requestIdent, fsMetar.timestamp, true);
-        addMetarLine(html, tr("Nearest"), fsMetar.metarForNearest,
-                     fsMetar.requestIdent, fsMetar.timestamp, true);
-        addMetarLine(html, tr("Interpolated"), fsMetar.metarForInterpolated,
-                     fsMetar.requestIdent, fsMetar.timestamp, true);
-      }
-
-      if(!activeSkyMetar.isEmpty())
-      {
-        QString asText(tr("Active Sky"));
-        if(weather->getCurrentActiveSkyType() == WeatherReporter::AS16)
-          asText = tr("AS16");
-        else if(weather->getCurrentActiveSkyType() == WeatherReporter::ASN)
-          asText = tr("ASN");
-
-        addMetarLine(html, asText, activeSkyMetar);
-      }
-
-      addMetarLine(html, tr("NOAA"), noaaMetar);
-      addMetarLine(html, tr("VATSIM"), vatsimMetar);
-      html.tableEnd();
-    }
+    addMetarLine(html, tr("NOAA"), weatherContext.noaaMetar);
+    addMetarLine(html, tr("VATSIM"), weatherContext.vatsimMetar);
+    html.tableEnd();
   }
 
   if(info && !airport.noRunways())
@@ -619,31 +581,53 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
 
   const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rec->valueInt("runway_end_id"));
   if(ilsRec != nullptr)
+    ilsText(ilsRec, html, false);
+}
+
+void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder& html, bool approach) const
+{
+  // Add ILS information
+  bool dme = !ilsRec->isNull("dme_altitude");
+  bool gs = !ilsRec->isNull("gs_altitude");
+  float magvar = ilsRec->valueFloat("mag_var");
+
+  QString name = tr("%1 (%2) - ILS %3%4").arg(ilsRec->valueStr("name")).arg(ilsRec->valueStr("ident")).
+                 arg(gs ? tr(", GS") : "").arg(dme ? tr(", DME") : "");
+
+  QString prefix;
+  if(!approach)
   {
-    // Add ILS information
-    bool dme = !ilsRec->isNull("dme_altitude");
-    bool gs = !ilsRec->isNull("gs_altitude");
-
-    html.br().h4(tr("%1 (%2) - ILS %3%4").arg(ilsRec->valueStr("name")).arg(ilsRec->valueStr("ident")).
-                 arg(gs ? tr(", GS") : "").arg(dme ? tr(", DME") : ""));
-
+    html.br().h4(name);
     html.table();
-    html.row2(tr("Frequency:"), locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + tr(" MHz"));
+  }
+  else
+  {
+    prefix = tr("ILS ");
+    html.row2(tr("ILS:"), name);
+  }
+
+  html.row2(prefix + tr("Frequency:"),
+            locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + tr(" MHz"));
+
+  if(!approach)
+  {
     html.row2(tr("Range:"), Unit::distNm(ilsRec->valueFloat("range")));
-    float magvar = ilsRec->valueFloat("mag_var");
     html.row2(tr("Magvar:"), maptypes::magvarText(magvar));
     rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
-
-    float hdg = ilsRec->valueFloat("loc_heading") - magvar;
-    hdg = normalizeCourse(hdg);
-
-    html.row2(tr("Localizer Heading:"), locale.toString(hdg, 'f', 0) + tr("°M"));
-    html.row2(tr("Localizer Width:"), locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + tr("°"));
-    if(gs)
-      html.row2(tr("Glideslope Pitch:"), locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + tr("°"));
-
-    html.tableEnd();
   }
+
+  float hdg = ilsRec->valueFloat("loc_heading") - magvar;
+  hdg = normalizeCourse(hdg);
+
+  html.row2(prefix + tr("Localizer Heading and Width:"), locale.toString(hdg, 'f', 0) + tr("°M") +
+            tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + tr("°"));
+
+  if(gs)
+    html.row2(prefix + tr("Glideslope Pitch:"),
+              locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + tr("°"));
+
+  if(!approach)
+    html.tableEnd();
 }
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
@@ -682,40 +666,6 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
                   recApp.valueStr("fix_region"));
 
-        QString fixType = recApp.valueStr("fix_type");
-
-        html.row2(tr("Fix Type:"), capNavString(fixType));
-
-        if(fixType == "VOR" || fixType == "TERMINAL_VOR")
-        {
-          const atools::sql::SqlRecord *vorInfo =
-            infoQuery->getVorInformation(recApp.valueInt("fix_nav_id"));
-
-          if(vorInfo != nullptr)
-          {
-            html.row2(tr("VOR Type:"), maptypes::navTypeName(vorInfo->valueStr("type")));
-            html.row2(tr("VOR Frequency:"),
-                      locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
-            html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
-            html.row2(tr("VOR Morse:"), tr("<b>") + morse->getCode(vorInfo->valueStr("ident")) + tr("</b>"));
-          }
-        }
-
-        if(fixType == "NDB" || fixType == "TERMINAL_NDB")
-        {
-          const atools::sql::SqlRecord *ndbInfo =
-            infoQuery->getNdbInformation(recApp.valueInt("fix_nav_id"));
-
-          if(ndbInfo != nullptr)
-          {
-            html.row2(tr("NDB Type:"), maptypes::navTypeName(ndbInfo->valueStr("type")));
-            html.row2(tr("NDB Frequency:"),
-                      locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
-            html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
-            html.row2(tr("NDB Morse:"), tr("<b>") + morse->getCode(ndbInfo->valueStr("ident")) + tr("</b>"));
-          }
-        }
-
         float hdg = recApp.valueFloat("heading") - airport.magvar;
         hdg = normalizeCourse(hdg);
         html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
@@ -723,6 +673,12 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         html.row2(tr("Altitude:"), Unit::altFeet(recApp.valueFloat("altitude")));
         html.row2(tr("Missed Altitude:"), Unit::altFeet(recApp.valueFloat("missed_altitude")));
+
+        addRadionavFixType(html, recApp);
+
+        const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(recApp.valueInt("runway_end_id"));
+        if(ilsRec != nullptr)
+          ilsText(ilsRec, html, true);
         html.tableEnd();
 
         const SqlRecordVector *recTransVector =
@@ -737,17 +693,31 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
             html.row2(tr("Type:"), capNavString(recTrans.valueStr("type")));
             html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
                       recTrans.valueStr("fix_region"));
-            html.row2(tr("Fix Type:"), capNavString(recTrans.valueStr("fix_type")));
+
             html.row2(tr("Altitude:"), Unit::altFeet(recTrans.valueFloat("altitude")));
 
             if(!recTrans.isNull("dme_ident"))
+            {
               html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") + tr(", ") +
                         recTrans.valueStr("dme_region"));
 
-            rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
-            float dist = recTrans.valueFloat("dme_distance");
-            if(dist > 1.f)
-              html.row2(tr("DME Distance:"), Unit::altFeet(dist));
+              rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
+              float dist = recTrans.valueFloat("dme_distance");
+              if(dist > 1.f)
+                html.row2(tr("DME Distance:"), Unit::distNm(dist, true /*addunit*/, 5));
+
+              const atools::sql::SqlRecord vorReg =
+                infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"),
+                                                  recTrans.valueStr("dme_region"));
+
+              html.row2(tr("DME Type:"), maptypes::navTypeName(vorReg.valueStr("type")));
+              html.row2(tr("DME Frequency:"),
+                        locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+              html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
+              html.row2(tr("DME Morse:"), tr("<b>") + morse->getCode(vorReg.valueStr("ident")) + tr("</b>"));
+            }
+
+            addRadionavFixType(html, recTrans);
             html.tableEnd();
           }
         }
@@ -758,91 +728,109 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
   }
 }
 
-void HtmlInfoBuilder::weatherText(const MapAirport& airport, atools::util::HtmlBuilder& html,
-                                  QColor background) const
+void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const SqlRecord& recApp) const
+{
+  QString fixType = recApp.valueStr("fix_type");
+
+  if(fixType == "VOR" || fixType == "TERMINAL_VOR")
+  {
+    html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
+
+    const atools::sql::SqlRecord *vorInfo = infoQuery->getVorInformation(recApp.valueInt("fix_nav_id"));
+
+    if(vorInfo != nullptr)
+    {
+      html.row2(tr("VOR Type:"), maptypes::navTypeName(vorInfo->valueStr("type")));
+      html.row2(tr("VOR Frequency:"),
+                locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+      html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
+      html.row2(tr("VOR Morse:"), tr("<b>") + morse->getCode(vorInfo->valueStr("ident")) + tr("</b>"));
+    }
+  }
+  else if(fixType == "NDB" || fixType == "TERMINAL_NDB")
+  {
+    html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
+
+    const atools::sql::SqlRecord *ndbInfo = infoQuery->getNdbInformation(recApp.valueInt("fix_nav_id"));
+
+    if(ndbInfo != nullptr)
+    {
+      html.row2(tr("NDB Type:"), maptypes::navTypeName(ndbInfo->valueStr("type")));
+      html.row2(tr("NDB Frequency:"),
+                locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
+      html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
+      html.row2(tr("NDB Morse:"), tr("<b>") + morse->getCode(ndbInfo->valueStr("ident")) + tr("</b>"));
+    }
+  }
+}
+
+void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const MapAirport& airport,
+                                  atools::util::HtmlBuilder& html, QColor background) const
 {
   if(info)
   {
     if(!print)
       airportTitle(airport, html, background);
 
-    opts::Flags flags = OptionData::instance().getFlags();
-
-    if(flags & opts::WEATHER_INFO_FS)
+    // Simconnect metar ===========================
+    const atools::fs::sc::MetarResult& metar = context.fsMetar;
+    if(metar.isValid())
     {
-      // Flight simulator fetched weather
-      atools::fs::sc::MetarResult metar =
-        mainWindow->getConnectClient()->requestWeather(airport.ident, airport.position);
-
-      if(metar.isValid())
+      if(!metar.metarForStation.isEmpty())
       {
-        if(!metar.metarForStation.isEmpty())
-        {
-          Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
+        Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
-          html.h3(tr("Station Weather (%1)").arg(met.getStation()));
-          decodedMetar(html, airport, met, false);
-        }
-        if(!metar.metarForNearest.isEmpty())
-        {
-          Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-          html.h3(tr("Nearest Weather (%1)").
-                  arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
-          decodedMetar(html, airport, met, false);
-        }
-        if(!metar.metarForInterpolated.isEmpty())
-        {
-          Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
-          html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()));
-          decodedMetar(html, airport, met, true);
-        }
+        html.h3(tr("Station Weather (%1)").arg(met.getStation()));
+        decodedMetar(html, airport, met, false);
       }
+
+      if(!metar.metarForNearest.isEmpty())
+      {
+        Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
+        html.h3(tr("Nearest Weather (%1)").
+                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
+        decodedMetar(html, airport, met, false);
+      }
+
+      if(!metar.metarForInterpolated.isEmpty())
+      {
+        Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
+        html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()));
+        decodedMetar(html, airport, met, true);
+      }
+    }
+    else if(!print)
+      html.p(tr("Simulator weather not available."), atools::util::html::BOLD);
+
+    // Active Sky metar ===========================
+    if(!context.asMetar.isEmpty())
+    {
+      Metar met(context.asMetar);
+
+      if(context.isAsDeparture)
+        html.h3(context.asType + tr(" - Departure"));
+      if(context.isAsDestination)
+        html.h3(context.asType + tr(" - Destination"));
       else
-        html.p(tr("Simulator weather not available."), atools::util::html::BOLD);
+        html.h3(context.asType);
+
+      decodedMetar(html, airport, met, false);
     }
 
-    WeatherReporter *weatherReporter = mainWindow->getWeatherReporter();
-    if(flags & opts::WEATHER_INFO_ACTIVESKY)
+    // NOAA metar ===========================
+    if(!context.noaaMetar.isEmpty())
     {
-      QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
-      if(!metarStr.isEmpty())
-      {
-        QString asText(tr("Active Sky"));
-        if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::AS16)
-          asText = tr("AS16 Weather");
-        else if(mainWindow->getWeatherReporter()->getCurrentActiveSkyType() == WeatherReporter::ASN)
-          asText = tr("ASN Weather");
-
-        Metar met(metarStr);
-        if(weatherReporter->getActiveSkyDepartureIdent() == airport.ident)
-          html.h3(asText + tr(" - Departure"));
-        else if(weatherReporter->getActiveSkyDestinationIdent() == airport.ident)
-          html.h3(asText + tr(" - Destination"));
-        else
-          html.h3(asText);
-
-        decodedMetar(html, airport, met, false);
-      }
+      Metar met(context.noaaMetar);
+      html.h3(tr("NOAA Weather"));
+      decodedMetar(html, airport, met, false);
     }
-    if(flags & opts::WEATHER_INFO_NOAA)
+
+    // Vatsim metar ===========================
+    if(!context.vatsimMetar.isEmpty())
     {
-      QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
-      if(!metarStr.isEmpty())
-      {
-        Metar met(metarStr);
-        html.h3(tr("NOAA Weather"));
-        decodedMetar(html, airport, met, false);
-      }
-    }
-    if(flags & opts::WEATHER_INFO_VATSIM)
-    {
-      QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
-      if(!metarStr.isEmpty())
-      {
-        Metar met(metarStr);
-        html.h3(tr("VATSIM Weather"));
-        decodedMetar(html, airport, met, false);
-      }
+      Metar met(context.vatsimMetar);
+      html.h3(tr("VATSIM Weather"));
+      decodedMetar(html, airport, met, false);
     }
   }
 }
@@ -907,15 +895,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
               locale.toString(atools::geo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
-  const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
   QString visiblity;
   if(minVis.getVisibilityMeter() != MetarNaN)
     visiblity.append(tr("%1 %2").
                      arg(minVis.getModifierString()).
                      arg(Unit::distMeter(minVis.getVisibilityMeter())));
 
+  const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
   if(maxVis.getVisibilityMeter() != MetarNaN)
-    visiblity.append(tr("%1 %2").
+    visiblity.append(tr(" %1 %2").
                      arg(maxVis.getModifierString()).
                      arg(Unit::distMeter(maxVis.getVisibilityMeter())));
 
@@ -1546,12 +1534,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       precip.append(tr("None"));
     html.row2(tr("Conditions:"), precip.join(tr(", ")));
 
-    float visibility = Unit::distMeterF(userAircaft->getAmbientVisibilityMeter());
-
-    if(visibility > 20.f)
+    if(Unit::distMeterF(userAircaft->getAmbientVisibilityMeter()) > 20.f)
       html.row2(tr("Visibility:"), tr("> 20 ") + Unit::getUnitDistStr());
     else
-      html.row2(tr("Visibility:"), Unit::distMeter(visibility, true /*unit*/, 5));
+      html.row2(tr("Visibility:"), Unit::distMeter(userAircaft->getAmbientVisibilityMeter(), true /*unit*/, 5));
 
     html.tableEnd();
   }

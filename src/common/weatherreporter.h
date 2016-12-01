@@ -122,8 +122,8 @@ signals:
   void weatherUpdated();
 
 private:
-  // Update online reports if older than 15 minutes
-  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 300;
+  // Update online reports if older than 10 minutes
+  static Q_CONSTEXPR int WEATHER_TIMEOUT_SECS = 600;
 
   void activeSkyWeatherFileChanged(const QString& path);
 
@@ -144,6 +144,8 @@ private:
   void cancelVatsimReply();
   void flushRequestQueue();
   bool validateActiveSkyFlightplanFile(const QString& path);
+  void deleteFsWatcher();
+  void createFsWatcher();
 
   QHash<QString, QString> activeSkyMetars;
   QString activeSkyDepartureMetar, activeSkyDestinationMetar,

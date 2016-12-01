@@ -2522,13 +2522,16 @@
    <addaction name="actionMapShowAddonAirports"/>
    <addaction name="actionMapShowAirports"/>
    <addaction name="actionMapShowSoftAirports"/>
+   <addaction name="separator"/>
    <addaction name="actionMapShowEmptyAirports"/>
+   <addaction name="separator"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
    <addaction name="actionMapShowIls"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
+   <addaction name="separator"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
@@ -2550,12 +2553,14 @@
    </attribute>
    <addaction name="actionRouteSelectParking"/>
    <addaction name="actionRouteEditMode"/>
+   <addaction name="separator"/>
    <addaction name="actionRouteCalcDirect"/>
    <addaction name="actionRouteCalcRadionav"/>
    <addaction name="actionRouteCalcHighAlt"/>
    <addaction name="actionRouteCalcLowAlt"/>
    <addaction name="actionRouteCalcSetAlt"/>
    <addaction name="actionRouteReverse"/>
+   <addaction name="separator"/>
    <addaction name="actionRouteAdjustAltitude"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetElevation">

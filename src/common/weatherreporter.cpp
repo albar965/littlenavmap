@@ -72,17 +72,38 @@ void WeatherReporter::flushRequestQueue()
     loadVatsimMetar(vatsimRequests.takeLast());
 }
 
-void WeatherReporter::initActiveSkyNext()
+void WeatherReporter::deleteFsWatcher()
 {
   if(fsWatcher != nullptr)
   {
     // Remove watcher just in case the file changes
     fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
                           &WeatherReporter::activeSkyWeatherFileChanged);
-    delete fsWatcher;
+    fsWatcher->deleteLater();
     fsWatcher = nullptr;
   }
+}
 
+void WeatherReporter::createFsWatcher()
+{
+  if(fsWatcher == nullptr)
+  {
+    // Watch file for changes
+    fsWatcher = new QFileSystemWatcher(this);
+    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
+                       &WeatherReporter::activeSkyWeatherFileChanged);
+  }
+
+  if(!fsWatcher->addPath(asPath))
+    qWarning() << "cannot watch" << asPath;
+
+  if(!fsWatcher->addPath(asFlightplanPath))
+    qWarning() << "cannot watch" << asFlightplanPath;
+}
+
+void WeatherReporter::initActiveSkyNext()
+{
+  deleteFsWatcher();
   activeSkyType = NONE;
   QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
   if(manualActiveSkySnapshotPath.isEmpty())
@@ -123,19 +144,7 @@ void WeatherReporter::initActiveSkyNext()
     qDebug() << "Using Active Sky path" << asPath;
     loadActiveSkySnapshot(asPath);
     loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-    if(fsWatcher == nullptr)
-    {
-      // Watch file for changes
-      fsWatcher = new QFileSystemWatcher(this);
-      fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this,
-                         &WeatherReporter::activeSkyWeatherFileChanged);
-    }
-
-    if(!fsWatcher->addPath(asPath))
-      qWarning() << "cannot watch" << asPath;
-
-    if(!fsWatcher->addPath(asFlightplanPath))
-      qWarning() << "cannot watch" << asFlightplanPath;
+    createFsWatcher();
   }
   else
   {
@@ -546,5 +555,10 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
+
+  // Have to reset totally since it is unreliable
+  deleteFsWatcher();
+  createFsWatcher();
+
   emit weatherUpdated();
 }

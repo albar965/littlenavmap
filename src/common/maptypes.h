@@ -540,6 +540,15 @@ struct DistanceMarker
 
 };
 
+/* Stores last METARs to avoid unneeded updates in widget */
+struct WeatherContext
+{
+  atools::fs::sc::MetarResult fsMetar;
+  bool isAsDeparture = false, isAsDestination = false;
+  QString asMetar, asType, vatsimMetar, noaaMetar, ident;
+
+};
+
 QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj);
 

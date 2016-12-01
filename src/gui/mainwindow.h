@@ -138,6 +138,12 @@ public:
     return infoQuery;
   }
 
+  bool buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
+                                  const maptypes::MapAirport& airport);
+
+  void buildWeatherContext(maptypes::WeatherContext& weatherContext,
+                           const maptypes::MapAirport& airport) const;
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -203,6 +209,7 @@ private:
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
+  void fillActiveSkyType(maptypes::WeatherContext& weatherContext, const QString& airportIdent) const;
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -257,6 +264,9 @@ private:
 
   bool firstStart = true /* emit window shown only once after startup */,
        firstApplicationStart = false /* first starup on a system after installation */;
+
+  maptypes::WeatherContext lastWeatherContext, currentWeatherContext;
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
