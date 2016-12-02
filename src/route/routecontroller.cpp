@@ -863,15 +863,26 @@ int RouteController::adjustAltitude(const Pos& departurePos, const Pos& destinat
 
   qDebug() << "minAltitude" << minAltitude << "fp dir" << fpDir;
 
-  if(fpDir >= 0.f && fpDir <= 180.f)
-    // General direction is east - round up to the next odd value
-    minAltitude = static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+  if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+  {
+    if(fpDir >= 0.f && fpDir <= 180.f)
+      // General direction is east - round up to the next odd value
+      minAltitude =
+        static_cast<int>(std::ceil((minAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+    else
+      // General direction is west - round up to the next even value
+      minAltitude = static_cast<int>(std::ceil((minAltitude) / 2000.f) * 2000.f);
+  }
   else
-    // General direction is west - round up to the next even value
-    minAltitude = static_cast<int>(std::ceil(minAltitude / 2000.f) * 2000.f);
-
-  if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-    minAltitude += 500;
+  {
+    if(fpDir >= 0.f && fpDir <= 180.f)
+      // General direction is east - round up to the next odd value + 500
+      minAltitude =
+        static_cast<int>(std::ceil((minAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+    else
+      // General direction is west - round up to the next even value + 500
+      minAltitude = static_cast<int>(std::ceil((minAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+  }
 
   qDebug() << "corrected minAltitude" << minAltitude;
   return minAltitude;

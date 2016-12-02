@@ -502,7 +502,6 @@ void InfoController::connectedToSimulator()
   ui->textBrowserAircraftProgressInfo->setPlainText(tr("Connected. Waiting for update."));
   ui->textBrowserAircraftAiInfo->clear();
   ui->textBrowserAircraftAiInfo->setPlainText(tr("Connected. Waiting for update."));
-  ui->dockWidgetAircraft->show();
 }
 
 void InfoController::disconnectedFromSimulator()

@@ -560,13 +560,13 @@ bool MapObjectRef::operator!=(const MapObjectRef& other) const
 QString magvarText(float magvar)
 {
   int decimals = 0;
-  if(std::remainder(magvar, 1.f) > 0.f)
+  if(std::remainder(std::abs(magvar), 1.f) > 0.f)
     decimals = 1;
 
-  if(magvar < 0.f)
+  if(magvar < -0.04f)
     return QObject::tr("%1°%2").
            arg(QLocale().toString(std::abs(magvar), 'f', decimals)).arg(QObject::tr(" West"));
-  else if(magvar > 0.f)
+  else if(magvar > 0.04f)
     // positive" (or "easterly") variation
     return QObject::tr("%1°%2").
            arg(QLocale().toString(magvar, 'f', decimals)).arg(QObject::tr(" East"));
