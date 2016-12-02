@@ -144,6 +144,9 @@ public:
   void buildWeatherContext(maptypes::WeatherContext& weatherContext,
                            const maptypes::MapAirport& airport) const;
 
+  void buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
+                           const maptypes::MapAirport& airport) const;
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

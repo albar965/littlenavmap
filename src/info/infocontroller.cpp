@@ -450,6 +450,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
                                               mainWindow->getRouteController()->getRouteMapObjects());
             num++;
           }
+
           atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
         }
         else

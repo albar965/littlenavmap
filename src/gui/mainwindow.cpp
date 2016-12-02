@@ -1915,6 +1915,29 @@ void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
 }
 
+void MainWindow::buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
+                                               const maptypes::MapAirport& airport) const
+{
+  opts::Flags flags = OptionData::instance().getFlags();
+
+  weatherContext.ident = airport.ident;
+
+  if(flags & opts::WEATHER_TOOLTIP_FS)
+    weatherContext.fsMetar = connectClient->requestWeather(airport.ident, airport.position);
+
+  if(flags & opts::WEATHER_TOOLTIP_ACTIVESKY)
+  {
+    weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
+    fillActiveSkyType(weatherContext, airport.ident);
+  }
+
+  if(flags & opts::WEATHER_TOOLTIP_NOAA)
+    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident);
+
+  if(flags & opts::WEATHER_TOOLTIP_VATSIM)
+    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
+}
+
 void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
                                    const QString& airportIdent) const
 {

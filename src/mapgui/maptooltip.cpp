@@ -104,7 +104,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     html.p();
 
     maptypes::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContext(currentWeatherContext, airport);
+    mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
     info.airportText(airport, currentWeatherContext, html, &routeMapObjects, iconBackColor);
     html.pEnd();
     numEntries++;
