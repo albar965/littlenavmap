@@ -468,24 +468,28 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
 
 void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data)
 {
-  const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraft();
-  QVector<atools::fs::sc::SimConnectAircraft> newAiAircraftShown;
-
-  // Find all aircraft currently shown on the page in the newly arrived ai list
-  for(SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+  if(data.getPacketId() > 0)
   {
-    QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
-      std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
-                   [ = ](const SimConnectAircraft &ac)->bool
-                   {
-                     return ac.getObjectId() == aircraft.getObjectId();
-                   });
-    if(it != newAiAircraft.end())
-      newAiAircraftShown.append(*it);
-  }
+    // Ignore weather updates
+    const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraft();
+    QVector<atools::fs::sc::SimConnectAircraft> newAiAircraftShown;
 
-  // Overwite old list
-  currentSearchResult.aiAircraft = newAiAircraftShown.toList();
+    // Find all aircraft currently shown on the page in the newly arrived ai list
+    for(SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+    {
+      QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
+        std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
+                     [ = ](const SimConnectAircraft &ac)->bool
+                     {
+                       return ac.getObjectId() == aircraft.getObjectId();
+                     });
+      if(it != newAiAircraft.end())
+        newAiAircraftShown.append(*it);
+    }
+
+    // Overwite old list
+    currentSearchResult.aiAircraft = newAiAircraftShown.toList();
+  }
 }
 
 void InfoController::connectedToSimulator()
