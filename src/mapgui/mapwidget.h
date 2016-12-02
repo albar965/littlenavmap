@@ -215,6 +215,7 @@ public:
   void updateMapObjectsShown();
 
   /* Update tooltip in case of weather changes */
+  void showTooltip(bool update);
   void updateTooltip();
 
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;

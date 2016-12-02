@@ -2015,7 +2015,18 @@ void MapWidget::hideTooltip()
 
 void MapWidget::updateTooltip()
 {
+  showTooltip(true);
+}
+
+void MapWidget::showTooltip(bool update)
+{
+  qDebug() << Q_FUNC_INFO << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
+
   if(databaseLoadStatus)
+    return;
+
+  // Try to avoid spurious tooltip events
+  if(update && !QToolTip::isVisible())
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
@@ -2024,7 +2035,7 @@ void MapWidget::updateTooltip()
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
-    QToolTip::showText(tooltipPos, text, nullptr, QRect(), 3600 * 1000);
+    QToolTip::showText(tooltipPos, text/*, nullptr, QRect(), 3600 * 1000*/);
   else
     hideTooltip();
 }
@@ -2058,20 +2069,16 @@ bool MapWidget::event(QEvent *event)
   {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
-    // Try to avoid spurious tooltip events
-    if(isVisible() && rect().contains(helpEvent->pos()))
-    {
-      // Load tooltip data into mapSearchResultTooltip
-      mapSearchResultTooltip = maptypes::MapSearchResult();
-      screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                 mapSearchResultTooltip);
-      tooltipPos = helpEvent->globalPos();
+    // Load tooltip data into mapSearchResultTooltip
+    mapSearchResultTooltip = maptypes::MapSearchResult();
+    screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+                               mapSearchResultTooltip);
+    tooltipPos = helpEvent->globalPos();
 
-      // Build HTML
-      updateTooltip();
-      event->accept();
-      return true;
-    }
+    // Build HTML
+    showTooltip(false);
+    event->accept();
+    return true;
   }
 
   return QWidget::event(event);
