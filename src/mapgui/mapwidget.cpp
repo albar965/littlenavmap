@@ -2020,7 +2020,7 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  qDebug() << Q_FUNC_INFO << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
+  // qDebug() << Q_FUNC_INFO << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
 
   if(databaseLoadStatus)
     return;
@@ -2035,7 +2035,7 @@ void MapWidget::showTooltip(bool update)
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
-    QToolTip::showText(tooltipPos, text/*, nullptr, QRect(), 3600 * 1000*/);
+    QToolTip::showText(tooltipPos, text /*, nullptr, QRect(), 3600 * 1000*/);
   else
     hideTooltip();
 }

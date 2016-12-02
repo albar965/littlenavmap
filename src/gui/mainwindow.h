@@ -269,7 +269,7 @@ private:
   bool firstStart = true /* emit window shown only once after startup */,
        firstApplicationStart = false /* first starup on a system after installation */;
 
-  maptypes::WeatherContext lastWeatherContext, currentWeatherContext;
+  maptypes::WeatherContext currentWeatherContext;
 
 };
 

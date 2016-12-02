@@ -85,7 +85,7 @@ signals:
 private:
   const int SOCKET_RECONNECT_SEC = 5;
   const int DIRECT_RECONNECT_SEC = 5;
-  const int WEATHER_TIMEOUT_FS_SECS = 30;
+  const int WEATHER_TIMEOUT_FS_SECS = 15;
 
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError error);
@@ -120,6 +120,8 @@ private:
   QSet<QString> outstandingReplies;
   QVector<atools::fs::sc::WeatherRequest> queuedRequests;
 
+  // have to remember state separately to avoid sending signals when autoconnect fails
+  bool socketConnected = false;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H

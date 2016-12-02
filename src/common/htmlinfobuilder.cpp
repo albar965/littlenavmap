@@ -812,8 +812,8 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
         decodedMetar(html, airport, met, true);
       }
     }
-    else if(!print)
-      html.p(tr("Simulator weather not available."), atools::util::html::BOLD);
+    else if(!print && OptionData::instance().getFlags() & opts::WEATHER_INFO_FS)
+      html.p(tr("Not connected to simulator."), atools::util::html::BOLD);
 
     // Active Sky metar ===========================
     if(!context.asMetar.isEmpty())

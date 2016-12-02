@@ -60,7 +60,7 @@ WeatherReporter::~WeatherReporter()
   cancelNoaaReply();
   cancelVatsimReply();
 
-  delete fsWatcher;
+  deleteFsWatcher();
 }
 
 void WeatherReporter::flushRequestQueue()
@@ -555,10 +555,6 @@ void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."));
-
-  // Have to reset totally since it is unreliable
-  deleteFsWatcher();
-  createFsWatcher();
 
   emit weatherUpdated();
 }

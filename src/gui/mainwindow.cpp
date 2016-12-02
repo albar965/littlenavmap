@@ -64,7 +64,7 @@
 
 #include "ui_mainwindow.h"
 
-static const int WEATHER_UPDATE_MS = 30000;
+static const int WEATHER_UPDATE_MS = 15000;
 
 static const QString ABOUT_MESSAGE =
   QObject::tr("<p>is a free open source flight planner, navigation tool, moving map, "
@@ -793,8 +793,6 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          this, &MainWindow::clearWeatherContext);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           routeController, &RouteController::disconnectedFromSimulator);
@@ -835,8 +833,8 @@ void MainWindow::connectAllSlots()
 /* Update the info weather */
 void MainWindow::weatherUpdateTimeout()
 {
-  if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
-    infoController->updateAirport();
+  // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
+  infoController->updateAirport();
 }
 
 void MainWindow::themeMenuTriggered(bool checked)
@@ -1797,8 +1795,7 @@ void MainWindow::preDatabaseLoad()
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
 
-    lastWeatherContext = maptypes::WeatherContext();
-    currentWeatherContext = maptypes::WeatherContext();
+    clearWeatherContext();
   }
   else
     qWarning() << "Already in database loading status";
@@ -1830,25 +1827,45 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateActionStates();
 }
 
+/* Update the current weather context for the information window. Returns true if any
+ * weather has changed or an update is needed */
 bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
                                             const maptypes::MapAirport& airport)
 {
   opts::Flags flags = OptionData::instance().getFlags();
   bool changed = false;
-  bool newAirport = lastWeatherContext.ident != airport.ident;
+  bool newAirport = currentWeatherContext.ident != airport.ident;
 
   currentWeatherContext.ident = airport.ident;
 
   if(flags & opts::WEATHER_INFO_FS)
   {
-    // Flight simulator fetched weather
-    atools::fs::sc::MetarResult metar =
-      connectClient->requestWeather(airport.ident, airport.position);
+    // qDebug() << "connectClient->isConnected()" << connectClient->isConnected();
+    // qDebug() << "currentWeatherContext.fsMetar" << currentWeatherContext.fsMetar.metarForStation;
 
-    if(newAirport || (!metar.isEmpty() && metar != lastWeatherContext.fsMetar))
+    if(connectClient->isConnected())
     {
-      currentWeatherContext.fsMetar = metar;
-      changed = true;
+      // Flight simulator fetched weather
+      atools::fs::sc::MetarResult metar = connectClient->requestWeather(airport.ident, airport.position);
+
+      if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext.fsMetar))
+      {
+        currentWeatherContext.fsMetar = metar;
+        changed = true;
+        qDebug() << "FS changed";
+      }
+    }
+    else
+    {
+      // qDebug() << "currentWeatherContext.fsMetar.isEmpty()" << currentWeatherContext.fsMetar.isEmpty();
+
+      if(!currentWeatherContext.fsMetar.isEmpty())
+      {
+        // If there was a previous metar and the new one is empty we were being disconnected
+        currentWeatherContext.fsMetar = atools::fs::sc::MetarResult();
+        changed = true;
+        // qDebug() << "FS changed to null";
+      }
     }
   }
 
@@ -1857,34 +1874,42 @@ bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherCon
     fillActiveSkyType(currentWeatherContext, airport.ident);
 
     QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.asMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.asMetar))
     {
+      // qDebug() << "old Metar" << currentWeatherContext.asMetar;
+      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext.asMetar = metarStr;
       changed = true;
+      // qDebug() << "AS changed";
     }
   }
 
   if(flags & opts::WEATHER_INFO_NOAA)
   {
     QString metarStr = weatherReporter->getNoaaMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.noaaMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.noaaMetar))
     {
+      // qDebug() << "old Metar" << currentWeatherContext.noaaMetar;
+      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext.noaaMetar = metarStr;
       changed = true;
+      // qDebug() << "NOAA changed";
     }
   }
 
   if(flags & opts::WEATHER_INFO_VATSIM)
   {
     QString metarStr = weatherReporter->getVatsimMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != lastWeatherContext.vatsimMetar))
+    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext.vatsimMetar))
     {
+      // qDebug() << "old Metar" << currentWeatherContext.vatsimMetar;
+      // qDebug() << "new Metar" << metarStr;
       currentWeatherContext.vatsimMetar = metarStr;
       changed = true;
+      // qDebug() << "VATSIM changed";
     }
   }
 
-  lastWeatherContext = currentWeatherContext;
   weatherContext = currentWeatherContext;
 
   qDebug() << Q_FUNC_INFO << "changed" << changed;
@@ -1892,6 +1917,7 @@ bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherCon
   return changed;
 }
 
+/* Build a normal weather context - used by printing */
 void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
                                      const maptypes::MapAirport& airport) const
 {
@@ -1915,6 +1941,7 @@ void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
 }
 
+/* Build a temporary weather context for the map tooltip */
 void MainWindow::buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
                                                const maptypes::MapAirport& airport) const
 {
@@ -1938,6 +1965,7 @@ void MainWindow::buildWeatherContextForTooltip(maptypes::WeatherContext& weather
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident);
 }
 
+/* Fill active sky information into the weather context */
 void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
                                    const QString& airportIdent) const
 {
@@ -1967,6 +1995,8 @@ void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
 
 void MainWindow::clearWeatherContext()
 {
-  lastWeatherContext = maptypes::WeatherContext();
+  qDebug() << Q_FUNC_INFO;
+
+  // Clear all weather and fetch new
   currentWeatherContext = maptypes::WeatherContext();
 }

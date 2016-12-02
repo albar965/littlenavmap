@@ -213,6 +213,10 @@ atools::fs::sc::MetarResult ConnectClient::requestWeather(const QString& station
 {
   static atools::fs::sc::MetarResult EMPTY;
 
+  // Ignore cache if not connected
+  if(!isConnected())
+    return EMPTY;
+
   const atools::fs::sc::MetarResult *result = metarIdentCache.value(station);
   if(result != nullptr)
     return atools::fs::sc::MetarResult(*result);
@@ -315,7 +319,7 @@ void ConnectClient::connectInternal()
   }
   else if(socket == nullptr)
   {
-    qDebug() << "Starting network connection";
+    // qDebug() << "Starting network connection";
 
     // Create new socket and connect signals
     socket = new QTcpSocket(this);
@@ -347,11 +351,12 @@ bool ConnectClient::isConnected() const
 void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 {
   Q_UNUSED(error);
+  // qDebug() << Q_FUNC_INFO << error;
 
   reconnectNetworkTimer.stop();
 
   qWarning() << "Error reading from" << socket->peerName() << ":" << dialog->getPort()
-             << socket->errorString();
+             << socket->errorString() << "open" << socket->isOpen() << "state" << socket->state();
 
   if(!silent)
   {
@@ -381,7 +386,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 
 void ConnectClient::closeSocket(bool allowRestart)
 {
-  qDebug() << Q_FUNC_INFO;
+  // qDebug() << Q_FUNC_INFO;
 
   QAbstractSocket::SocketError error = QAbstractSocket::SocketError::UnknownSocketError;
   QString peer("Unknown"), errorStr("No error");
@@ -427,8 +432,13 @@ void ConnectClient::closeSocket(bool allowRestart)
   outstandingReplies.clear();
   queuedRequests.clear();
 
-  emit disconnectedFromSimulator();
-  emit weatherUpdated();
+  if(socketConnected)
+  {
+    // qDebug() << Q_FUNC_INFO << "***** sending messages";
+    emit disconnectedFromSimulator();
+    emit weatherUpdated();
+    socketConnected = false;
+  }
 
   if(!dialog->isConnectDirect() && dialog->isAutoConnect() && allowRestart)
   {
@@ -461,7 +471,8 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
 /* Called by signal QTcpSocket::connected */
 void ConnectClient::connectedToServerSocket()
 {
-  qInfo() << "Connected to" << socket->peerName() << ":" << socket->peerPort();
+  qInfo() << Q_FUNC_INFO << "Connected to" << socket->peerName() << ":" << socket->peerPort();
+  socketConnected = true;
   reconnectNetworkTimer.stop();
 
   mainWindow->setConnectionStatusMessageText(tr("Connected"),

@@ -124,12 +124,18 @@ void ConnectDialog::deleteClicked()
 
 void ConnectDialog::updateButtonStates()
 {
-  bool scAvailable = atools::fs::sc::DataReaderThread::isSimconnectAvailable();
+  bool hasSimConnect = atools::fs::sc::DataReaderThread::isSimconnectAvailable();
 
-  if(!scAvailable)
+  if(!hasSimConnect)
   {
     ui->radioButtonConnectRemote->setChecked(true);
-    ui->radioButtonConnectDirect->setDisabled(true);
+    ui->radioButtonConnectDirect->setChecked(false);
+
+    ui->radioButtonConnectRemote->hide();
+    ui->radioButtonConnectDirect->hide();
+    ui->spinBoxConnectUpdateRate->hide();
+    ui->labelConnectUpdateRate->hide();
+    ui->lineDirectRemote->hide();
   }
 
   ui->pushButtonConnectDeleteHostname->setEnabled(
