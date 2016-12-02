@@ -231,7 +231,7 @@ private:
 
   void title(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+  void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, int rating,
                     QColor background) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,

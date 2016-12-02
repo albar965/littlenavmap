@@ -89,7 +89,8 @@ void HtmlInfoBuilder::updateAircraftIcons(bool force)
       QIcon(":/littlenavmap/resources/icons/aircraftaiground.svg"), QSize(24, 24));
 }
 
-void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating,
+                                   QColor background) const
 {
   html.img(SymbolPainter(background).createAirportIcon(airport, SYMBOL_SIZE),
            QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
@@ -106,25 +107,36 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   {
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | atools::util::html::BIG);
     html.nbsp().nbsp();
+    if(rating != -1)
+      html.text(atools::ratingString(rating, 5)).nbsp().nbsp();
+  }
 
+  if(info)
+  {
     if(!print)
       // Add link to map
       html.a(tr("Map"),
              QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
   }
   else
+  {
     html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
+    if(rating != -1)
+      html.nbsp().nbsp().text(atools::ratingString(rating, 5));
+  }
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::WeatherContext& weatherContext,
                                   HtmlBuilder& html, const RouteMapObjectList *routeMapObjects,
                                   QColor background) const
 {
-  const SqlRecord *rec = nullptr;
-  if(info && infoQuery != nullptr)
-    rec = infoQuery->getAirportInformation(airport.id);
+  const SqlRecord *rec = infoQuery->getAirportInformation(airport.id);
+  int rating = -1;
 
-  airportTitle(airport, html, background);
+  if(rec != nullptr)
+    rating = rec->valueInt("rating");
+
+  airportTitle(airport, html, rating, background);
   html.br();
 
   QString city, state, country;
@@ -149,12 +161,14 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
   html.row2(tr("Country:"), country);
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magvar:"), maptypes::magvarText(airport.magvar));
-  if(rec != nullptr)
-  {
-    // Add rating and coordinates for info panel
-    html.row2(tr("Rating:"), atools::ratingString(rec->valueInt("rating"), 5));
+
+  // if(rec != nullptr)
+  // // Add rating and coordinates for info panel
+  // html.row2(tr("Rating:"), atools::ratingString(rec->valueInt("rating"), 5));
+
+  if(info)
     addCoordinates(rec, html);
-  }
+
   html.tableEnd();
 
   // Create a list of facilities
@@ -304,7 +318,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
     html.tableEnd();
   }
 
-  if(rec != nullptr)
+  if(info)
   {
     // Parking overview
     int numParkingGate = rec->valueInt("num_parking_gate");
@@ -315,8 +329,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
     int numParkingMilCombat = rec->valueInt("num_parking_mil_combat");
     int numHelipad = rec->valueInt("num_helipad");
 
-    if(info)
-      head(html, tr("Parking"));
+    head(html, tr("Parking"));
     html.table();
     if(numParkingGate > 0 || numJetway > 0 || numParkingGaRamp > 0 || numParkingCargo > 0 ||
        numParkingMilCargo > 0 || numParkingMilCombat > 0 ||
@@ -348,7 +361,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
     html.tableEnd();
   }
 
-  if(rec != nullptr && !print)
+  if(info && !print)
     addScenery(rec, html);
 }
 
@@ -357,7 +370,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, background);
+      airportTitle(airport, html, -1, background);
 
     const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
@@ -395,7 +408,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, background);
+      airportTitle(airport, html, -1, background);
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -648,7 +661,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, background);
+      airportTitle(airport, html, -1, background);
 
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
     if(recAppVector != nullptr)
@@ -770,7 +783,7 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
   if(info)
   {
     if(!print)
-      airportTitle(airport, html, background);
+      airportTitle(airport, html, -1, background);
 
     // Simconnect metar ===========================
     const atools::fs::sc::MetarResult& metar = context.fsMetar;
