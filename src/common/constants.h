@@ -86,7 +86,8 @@ const QString OPTIONS_DIALOG_FLIGHTPLAN_COLOR = "OptionsDialog/FlightplanColor";
 const QString OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR = "OptionsDialog/FlightplanActiveColor";
 const QString OPTIONS_DIALOG_TRAIL_COLOR = "OptionsDialog/TrailColor";
 const QString OPTIONS_DIALOG_DISPLAY_OPTIONS = "OptionsDialog/DisplayOptions";
-const QString OPTIONS_DIALOG_GUI_THEME_INDEX = "OptionsDialog/GuiThemeIndex";
+const QString OPTIONS_DIALOG_GUI_STYLE_INDEX = "OptionsDialog/GuiStyleIndex";
+const QString OPTIONS_DIALOG_WARN_STYLE = "OptionsDialog/StyleWarning";
 
 /* Other options that are only accessible in the configuration file */
 const QString OPTIONS_LANGUAGE = "Options/Language";

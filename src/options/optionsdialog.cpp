@@ -270,7 +270,7 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
 
   // GUI widgets
   connect(ui->comboBoxOptionsGuiTheme, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &OptionsDialog::updateGuiThemeSpinboxState);
+          this, &OptionsDialog::updateGuiStyleSpinboxState);
 
   // Weather widgets
   connect(ui->pushButtonOptionsWeatherAsnPathSelect, &QPushButton::clicked,
@@ -339,7 +339,7 @@ int OptionsDialog::exec()
   updateWeatherButtonState();
   updateWidgetUnits();
   updateDatabaseButtonState();
-  updateGuiThemeSpinboxState();
+  updateGuiStyleSpinboxState();
 
   return QDialog::exec();
 }
@@ -374,8 +374,23 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "Clicked" << button->text();
 
+  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply) || button ==
+     ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
+  {
+    int idx = ui->comboBoxOptionsGuiTheme->currentIndex();
+
+    OptionData& data = OptionData::instanceInternal();
+
+    if(data.guiStyleIndex != idx)
+      atools::gui::Dialog(this).showInfoMsgBox(
+        lnm::OPTIONS_DIALOG_WARN_STYLE,
+        tr("The application should be restarted after a style change."),
+        tr("Do not show this dialog again."));
+  }
+
   if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
   {
+
     widgetsToOptionData();
     saveState();
     applyStyle();
@@ -448,7 +463,7 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 
-  settings.setValue(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
+  settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
 }
 
 void OptionsDialog::restoreState()
@@ -468,8 +483,8 @@ void OptionsDialog::restoreState()
     settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
 
-  if(settings.contains(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX))
-    ui->comboBoxOptionsGuiTheme->setCurrentIndex(settings.valueInt(lnm::OPTIONS_DIALOG_GUI_THEME_INDEX));
+  if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
+    ui->comboBoxOptionsGuiTheme->setCurrentIndex(settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX));
   else
   {
     int index = 0;
@@ -677,7 +692,7 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
-void OptionsDialog::updateGuiThemeSpinboxState()
+void OptionsDialog::updateGuiStyleSpinboxState()
 {
   ui->spinBoxOptionsGuiThemeMapDimming->setEnabled(
     ui->comboBoxOptionsGuiTheme->currentIndex() == ui->comboBoxOptionsGuiTheme->count() - 1);
@@ -772,9 +787,9 @@ void OptionsDialog::widgetsToOptionData()
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
 
-  data.guiThemeIndex = ui->comboBoxOptionsGuiTheme->currentIndex();
-  data.guiThemeMapDimming = ui->spinBoxOptionsGuiThemeMapDimming->value();
-  data.guiStyleDark = data.guiThemeIndex == ui->comboBoxOptionsGuiTheme->count() - 1;
+  data.guiStyleIndex = ui->comboBoxOptionsGuiTheme->currentIndex();
+  data.guiStyleMapDimming = ui->spinBoxOptionsGuiThemeMapDimming->value();
+  data.guiStyleDark = data.guiStyleIndex == ui->comboBoxOptionsGuiTheme->count() - 1;
 
   data.mapClickSensitivity = ui->spinBoxOptionsMapClickRect->value();
   data.mapTooltipSensitivity = ui->spinBoxOptionsMapTooltipRect->value();
@@ -889,8 +904,8 @@ void OptionsDialog::optionDataToWidgets()
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
 
-  ui->comboBoxOptionsGuiTheme->setCurrentIndex(data.guiThemeIndex);
-  ui->spinBoxOptionsGuiThemeMapDimming->setValue(data.guiThemeMapDimming);
+  ui->comboBoxOptionsGuiTheme->setCurrentIndex(data.guiStyleIndex);
+  ui->spinBoxOptionsGuiThemeMapDimming->setValue(data.guiStyleMapDimming);
 
   ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);
   ui->spinBoxOptionsMapTooltipRect->setValue(data.mapTooltipSensitivity);

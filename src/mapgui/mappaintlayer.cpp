@@ -314,7 +314,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
 
     if(OptionData::instance().isGuiStyleDark())
     {
-      int dim = OptionData::instance().getGuiThemeMapDimming();
+      int dim = OptionData::instance().getGuiStyleMapDimming();
       QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
       painter->fillRect(QRect(0, 0, painter->device()->width(), painter->device()->height()), col);
     }

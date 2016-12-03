@@ -103,7 +103,7 @@ private:
   void restoreDisplayOptItemStates();
   void displayOptWidgetToOptionData();
   void displayOptDataToWidget();
-  void updateGuiThemeSpinboxState();
+  void updateGuiStyleSpinboxState();
   void applyStyle();
   void updateButtonColors();
 

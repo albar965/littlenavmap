@@ -507,14 +507,9 @@ public:
     return routeTodRule;
   }
 
-  int getGuiThemeIndex() const
+  int getGuiStyleMapDimming() const
   {
-    return guiThemeIndex;
-  }
-
-  int getGuiThemeMapDimming() const
-  {
-    return guiThemeMapDimming;
+    return guiStyleMapDimming;
   }
 
   bool isGuiStyleDark() const
@@ -597,11 +592,11 @@ private:
   int guiSearchTableTextSize = 100;
 
   // ui->comboBoxOptionsGuiTheme
-  int guiThemeIndex = 0;
+  int guiStyleIndex = 0;
   bool guiStyleDark = false;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
-  int guiThemeMapDimming = 70;
+  int guiStyleMapDimming = 70;
 
   // ui->spinBoxOptionsMapClickRect
   int mapClickSensitivity = 16;

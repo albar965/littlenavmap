@@ -1439,6 +1439,7 @@ void MainWindow::resetMessages()
   s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEERROR, true);
   s.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
+  s.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
   setStatusMessage(tr("All message dialogs reset."));
 }
 
