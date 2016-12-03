@@ -291,10 +291,11 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       {
         // Add a single waypoint from direct
         entry = FlightplanEntry();
-
+        int userWaypointDummy = -1;
         if(!result.userPoints.isEmpty())
           // Convert a coordinate to a user defined waypoint
-          entryBuilder->buildFlightplanEntry(result.userPoints.first().position, result, entry, true, -1);
+          entryBuilder->buildFlightplanEntry(
+            result.userPoints.first().position, result, entry, true, userWaypointDummy);
         else
           entryBuilder->buildFlightplanEntry(result, entry, true);
 

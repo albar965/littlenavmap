@@ -752,8 +752,6 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace,
           routeController, &RouteController::routeReplace);
-  connect(mapWidget, &MapWidget::routeDelete,
-          routeController, &RouteController::routeDelete);
 
   connect(searchController->getAirportSearch(), &SearchBase::routeSetDeparture,
           routeController, &RouteController::routeSetDeparture);

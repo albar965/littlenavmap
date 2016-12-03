@@ -44,17 +44,17 @@ public:
 
   void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, maptypes::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            int curUserpointNumber);
+                            int& curUserpointNumber);
 
   void buildFlightplanEntry(const atools::geo::Pos& userPos, const maptypes::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            int curUserpointNumber, maptypes::MapObjectTypes type = maptypes::NONE);
+                            int& curUserpointNumber, maptypes::MapObjectTypes type = maptypes::NONE);
 
   void buildFlightplanEntry(const maptypes::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
   void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry,
-                        int curUserpointNumber);
+                        int& curUserpointNumber);
 
   void entryFromNdb(const maptypes::MapNdb& ndb, atools::fs::pln::FlightplanEntry& entry);
 

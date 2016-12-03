@@ -74,6 +74,8 @@ public:
   void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
                                const RouteMapObjectList *routeList);
 
+  void updateUserName(const QString& name);
+
   /* Set parking and start position. Does not modify the flight plan entry. */
   void setDepartureParking(const maptypes::MapParking& departureParking);
   void setDepartureStart(const maptypes::MapStart& departureStart);
@@ -184,11 +186,6 @@ public:
     return valid;
   }
 
-  int getUserpointNumber() const
-  {
-    return userpointNum;
-  }
-
   float getGroundAltitude() const
   {
     return groundAltitude;
@@ -212,8 +209,6 @@ private:
   /* Associated flight plan entry */
   int flightplanEntryIndex = -1;
 
-  /* Used defined waypoint numbering */
-  int userpointNum = 0;
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
   maptypes::MapParking parking;

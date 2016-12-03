@@ -211,6 +211,8 @@ public:
 
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  void editUserWaypointName(int index);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

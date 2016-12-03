@@ -41,6 +41,7 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "atools.h"
+#include "route/userwaypointdialog.h"
 #include "route/flightplanentrybuilder.h"
 #include "route/routestringdialog.h"
 #include "util/htmlbuilder.h"
@@ -51,6 +52,7 @@
 #include <QClipboard>
 #include <QFile>
 #include <QStandardItemModel>
+#include <QInputDialog>
 
 #include <marble/GeoDataLineString.h>
 
@@ -480,6 +482,8 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   route.setFlightplan(flightplan);
   createRouteMapObjects();
+  curUserpointNumber = route.getNextUserWaypointNumber();
+
   if(updateStartPositionBestRunway(false /* force */, !quiet /* undo */))
   {
     if(!quiet)
@@ -1084,7 +1088,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   qDebug() << "tableContextMenu";
 
   // Save text which will be changed below
-  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange});
+  atools::gui::ActionTextSaver saver({ui->actionMapNavaidRange, ui->actionMapEditUserWaypoint});
   Q_UNUSED(saver);
 
   QModelIndex index = view->indexAt(pos);
@@ -1108,6 +1112,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapNavaidRange->setEnabled(false);
     ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
+    ui->actionMapEditUserWaypoint->setEnabled(routeMapObject.getMapObjectType() == maptypes::USER);
+    ui->actionMapEditUserWaypoint->setText(tr("Edit name of User Waypoint"));
+
     QList<int> selectedRouteMapObjectIndexes;
     getSelectedRouteMapObjects(selectedRouteMapObjectIndexes);
     // If there are any radio navaids in the selected list enable range menu item
@@ -1129,6 +1136,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addAction(ui->actionRouteLegUp);
     menu.addAction(ui->actionRouteLegDown);
     menu.addAction(ui->actionRouteDeleteLeg);
+    menu.addAction(ui->actionMapEditUserWaypoint);
     menu.addSeparator();
 
     menu.addAction(ui->actionMapRangeRings);
@@ -1178,9 +1186,24 @@ void RouteController::tableContextMenu(const QPoint& pos)
       }
       else if(action == ui->actionMapHideRangeRings)
         mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
+      else if(action == ui->actionMapEditUserWaypoint)
+        editUserWaypointName(index.row());
 
       // Other actions emit signals directly
     }
+  }
+}
+
+void RouteController::editUserWaypointName(int index)
+{
+  UserWaypointDialog dialog(mainWindow, route.at(index).getIdent());
+  if(dialog.exec() == QDialog::Accepted && !dialog.getName().isEmpty())
+  {
+    RouteCommand *undoCommand = preChange(tr("Waypoint Name Change"));
+    route[index].updateUserName(dialog.getName());
+    model->item(index, rc::IDENT)->setText(dialog.getName());
+    postChange(undoCommand);
+    emit routeChanged(true);
   }
 }
 
@@ -1695,8 +1718,14 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
 
+  const FlightplanEntry oldEntry = route.getFlightplan().getEntries().at(legIndex);
+
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1, curUserpointNumber);
+
+  if(oldEntry.getWaypointType() == atools::fs::pln::entry::USER &&
+     entry.getWaypointType() == atools::fs::pln::entry::USER)
+    entry.setWaypointId(oldEntry.getWaypointId());
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -1854,9 +1883,6 @@ void RouteController::updateRouteMapObjects()
 {
   float totalDistance = 0.f;
 
-  // Used to number user waypoints
-  curUserpointNumber = 0;
-
   // Update indices
   for(int i = 0; i < route.size(); i++)
     route[i].setFlightplanEntryIndex(i);
@@ -1866,14 +1892,10 @@ void RouteController::updateRouteMapObjects()
   {
     RouteMapObject& mapobj = route[i];
     mapobj.updateDistanceAndCourse(i, last, &route);
-    curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
     totalDistance += mapobj.getDistanceTo();
     last = &mapobj;
   }
   route.setTotalDistance(totalDistance);
-
-  // Next number for user point name
-  curUserpointNumber++;
 
   updateBoundingRect();
 }
@@ -1888,15 +1910,11 @@ void RouteController::createRouteMapObjects()
   const RouteMapObject *last = nullptr;
   float totalDistance = 0.f;
 
-  // Used to number user waypoints
-  curUserpointNumber = 0;
-
   // Create map objects first and calculate total distance
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
     RouteMapObject mapobj(&flightplan);
     mapobj.createFromDatabaseByEntry(i, query, last, &route);
-    curUserpointNumber = std::max(curUserpointNumber, mapobj.getUserpointNumber());
 
     if(mapobj.getMapObjectType() == maptypes::INVALID)
       // Not found in database
@@ -1917,9 +1935,6 @@ void RouteController::createRouteMapObjects()
   }
 
   route.setTotalDistance(totalDistance);
-
-  // Next number for user point name
-  curUserpointNumber++;
 
   updateBoundingRect();
 }
@@ -2265,6 +2280,7 @@ void RouteController::clearRoute()
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;
+  curUserpointNumber = 1;
 }
 
 /* Call this before doing any change to the flight plan that should be undoable */

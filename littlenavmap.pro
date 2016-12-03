@@ -166,7 +166,8 @@ SOURCES += src/main.cpp\
     src/route/routestringdialog.cpp \
     src/route/flightplanentrybuilder.cpp \
     src/common/unit.cpp \
-    src/common/coordinates.cpp
+    src/common/coordinates.cpp \
+    src/route/userwaypointdialog.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -236,7 +237,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/routestringdialog.h \
     src/route/flightplanentrybuilder.h \
     src/common/unit.h \
-    src/common/coordinates.h
+    src/common/coordinates.h \
+    src/route/userwaypointdialog.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \
@@ -244,7 +246,8 @@ FORMS    += src/gui/mainwindow.ui \
     src/connect/connectdialog.ui \
     src/options/options.ui \
     src/print/printdialog.ui \
-    src/route/routestringdialog.ui
+    src/route/routestringdialog.ui \
+    src/route/userwaypointdialog.ui
 
 DISTFILES += \
     uncrustify.cfg \

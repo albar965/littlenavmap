@@ -1047,7 +1047,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                           ui->actionShowInSearch, ui->actionRouteAdd,
                                           ui->actionMapShowInformation,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
-                                          ui->actionRouteAirportDest});
+                                          ui->actionRouteAirportDest,
+                                          ui->actionMapEditUserWaypoint});
   Q_UNUSED(textSaver);
 
   // Build menu - add actions
@@ -1072,6 +1073,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addAction(ui->actionRouteAdd);
   menu.addAction(ui->actionRouteDeleteWaypoint);
+  menu.addAction(ui->actionMapEditUserWaypoint);
   menu.addSeparator();
 
   menu.addAction(ui->actionShowInSearch);
@@ -1118,6 +1120,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
+
+  ui->actionMapEditUserWaypoint->setEnabled(false);
 
   // Get objects near position
   maptypes::MapSearchResult result;
@@ -1228,37 +1232,37 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Build "delete from flight plan" text
-  int deleteRouteIndex = -1;
+  int routeIndex = -1;
   maptypes::MapObjectTypes deleteType = maptypes::NONE;
-  QString deleteRouteText;
+  QString routeText;
   if(airport != nullptr && airport->routeIndex != -1)
   {
-    deleteRouteText = maptypes::airportText(*airport);
-    deleteRouteIndex = airport->routeIndex;
+    routeText = maptypes::airportText(*airport);
+    routeIndex = airport->routeIndex;
     deleteType = maptypes::AIRPORT;
   }
   else if(vor != nullptr && vor->routeIndex != -1)
   {
-    deleteRouteText = maptypes::vorText(*vor);
-    deleteRouteIndex = vor->routeIndex;
+    routeText = maptypes::vorText(*vor);
+    routeIndex = vor->routeIndex;
     deleteType = maptypes::VOR;
   }
   else if(ndb != nullptr && ndb->routeIndex != -1)
   {
-    deleteRouteText = maptypes::ndbText(*ndb);
-    deleteRouteIndex = ndb->routeIndex;
+    routeText = maptypes::ndbText(*ndb);
+    routeIndex = ndb->routeIndex;
     deleteType = maptypes::NDB;
   }
   else if(waypoint != nullptr && waypoint->routeIndex != -1)
   {
-    deleteRouteText = maptypes::waypointText(*waypoint);
-    deleteRouteIndex = waypoint->routeIndex;
+    routeText = maptypes::waypointText(*waypoint);
+    routeIndex = waypoint->routeIndex;
     deleteType = maptypes::WAYPOINT;
   }
   else if(userpoint != nullptr && userpoint->routeIndex != -1)
   {
-    deleteRouteText = maptypes::userpointText(*userpoint);
-    deleteRouteIndex = userpoint->routeIndex;
+    routeText = maptypes::userpointText(*userpoint);
+    routeIndex = userpoint->routeIndex;
     deleteType = maptypes::USER;
   }
 
@@ -1320,13 +1324,22 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   // Update "delete in route"
-  if(deleteRouteIndex != -1)
+  if(routeIndex != -1)
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
-    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(deleteRouteText));
+    ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
   }
   else
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(QString()));
+
+  // Update "name user waypoint"
+  if(routeIndex != -1 && userpoint != nullptr)
+  {
+    ui->actionMapEditUserWaypoint->setEnabled(true);
+    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(routeText));
+  }
+  else
+    ui->actionMapEditUserWaypoint->setText(ui->actionMapEditUserWaypoint->text().arg(tr("User Point")));
 
   // Update "show range rings for Navaid"
   if(vor != nullptr || ndb != nullptr)
@@ -1464,7 +1477,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       currentDistanceMarkerIndex = screenIndex->getDistanceMarks().size() - 1;
     }
     else if(action == ui->actionRouteDeleteWaypoint)
-      emit routeDelete(deleteRouteIndex);
+      mainWindow->getRouteController()->routeDelete(routeIndex);
+    else if(action == ui->actionMapEditUserWaypoint)
+      mainWindow->getRouteController()->editUserWaypointName(routeIndex);
     else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {

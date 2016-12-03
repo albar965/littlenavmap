@@ -21,6 +21,8 @@
 #include "common/maptools.h"
 #include "common/unit.h"
 
+#include <QRegularExpression>
+
 const float RouteMapObjectList::INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 
 RouteMapObjectList::RouteMapObjectList()
@@ -56,6 +58,21 @@ void RouteMapObjectList::copy(const RouteMapObjectList& other)
   // Update flightplan pointers to this instance
   for(RouteMapObject& rmo : *this)
     rmo.setFlightplan(&flightplan);
+}
+
+/* Get number from user waypoint from user defined waypoint in fs flight plan */
+const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
+
+int RouteMapObjectList::getNextUserWaypointNumber() const
+{
+  int nextNum = 1;
+
+  for(const atools::fs::pln::FlightplanEntry& entry : flightplan.getEntries())
+  {
+    if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+      nextNum = std::max(QString(USER_WP_ID.match(entry.getWaypointId()).captured(1)).toInt(), nextNum);
+  }
+  return nextNum + 1;
 }
 
 int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) const

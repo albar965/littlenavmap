@@ -47,7 +47,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& ai
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
                                                   maptypes::MapObjectTypes type, FlightplanEntry& entry,
-                                                  bool resolveWaypoints, int curUserpointNumber)
+                                                  bool resolveWaypoints, int& curUserpointNumber)
 {
   maptypes::MapSearchResult result;
   query->getMapObjectById(result, type, id);
@@ -56,12 +56,12 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
 
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, FlightplanEntry& entry,
-                                              int curUserpointNumber)
+                                              int& curUserpointNumber)
 {
   entry.setPosition(userPos);
   entry.setWaypointType(atools::fs::pln::entry::USER);
   entry.setIcaoIdent(QString());
-  entry.setWaypointId("WP" + QString::number(curUserpointNumber));
+  entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
 }
 
 void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, FlightplanEntry& entry)
@@ -135,7 +135,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
                                                   const maptypes::MapSearchResult& result,
                                                   FlightplanEntry& entry,
-                                                  bool resolveWaypoints, int curUserpointNumber,
+                                                  bool resolveWaypoints, int& curUserpointNumber,
                                                   maptypes::MapObjectTypes type)
 {
   maptypes::MapObjectTypes moType = type;
@@ -172,5 +172,6 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapSearchResul
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints, -1);
+  int userWaypointDummy = -1;
+  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints, userWaypointDummy);
 }

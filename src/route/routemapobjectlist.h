@@ -129,6 +129,8 @@ public:
 
   void copy(const RouteMapObjectList& other);
 
+  int getNextUserWaypointNumber() const;
+
 private:
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
