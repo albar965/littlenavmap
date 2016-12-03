@@ -21,8 +21,8 @@
 
 #include "geo/pos.h"
 
-const static QString COORDS_DEC_FORMAT("%1° %2 %3° %4");
-const static QString COORDS_DMS_FORMAT("%1° %2' %3\" %4 %5° %6' %7\" %8");
+const static QString COORDS_DEC_FORMAT("%L1° %L2 %L3° %L4");
+const static QString COORDS_DMS_FORMAT("%L1° %L2' %L3\" %L4 %L5° %L6' %L7\" %L8");
 
 QLocale *Unit::locale = nullptr;
 const OptionData *Unit::opts = nullptr;
