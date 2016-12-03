@@ -248,14 +248,28 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
       {
         // Create an empty schema for all incompatible databases
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+        QMessageBox box(QMessageBox::NoIcon, QApplication::applicationName(), tr("Deleting ..."));
+        box.setStandardButtons(QMessageBox::NoButton);
+        box.setModal(false);
+        box.setWindowModality(Qt::NonModal);
+        box.show();
+        atools::gui::Application::processEventsExtended();
+
+        int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
+          box.setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          atools::gui::Application::processEventsExtended();
           sqlDb.setDatabaseName(dbfile);
           sqlDb.open();
           createEmptySchema(&sqlDb);
           sqlDb.close();
+          i++;
         }
         QGuiApplication::restoreOverrideCursor();
+
+        box.close();
       }
     }
   }
