@@ -672,7 +672,10 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       // Add light indicator
       if(!runway.edgeLight.isEmpty())
         text += tr(" / L");
-      text += tr(" / ") + maptypes::surfaceName(runway.surface);
+
+      QString surface = maptypes::surfaceName(runway.surface);
+      if(!surface.isEmpty())
+        text += tr(" / ") + surface;
 
       int textWidth = rwMetrics.width(text);
       if(textWidth > runwayRect.height())
