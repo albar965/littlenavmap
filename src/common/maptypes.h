@@ -503,6 +503,9 @@ struct MapSearchResult
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
+
+  bool isEmpty(const maptypes::MapObjectTypes& types) const;
+
 };
 
 /* Range rings marker. Can be converted to QVariant */

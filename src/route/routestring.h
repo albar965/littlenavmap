@@ -67,18 +67,26 @@ public:
   static QString cleanRouteString(const QString& string);
 
 private:
-  void appendError(const QString& err);
+  struct ParseEntry
+  {
+    QString item, airway;
+    maptypes::MapSearchResult result;
+  };
+
+  void appendMessage(const QString& err);
   bool addDeparture(atools::fs::pln::Flightplan& flightplan,
                     const QString& airportIdent);
-  bool addDestination(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent);
-  void findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
-                           int curId, int lastId, int& startIndex, int& endIndex);
+  void findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
+                           int nextId, int& startIndex, int& endIndex);
   void extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
                         int startIndex, int endIndex,
                         QList<maptypes::MapWaypoint>& airwayWaypoints);
-  void findBestNavaid(const QString& strItem, const atools::geo::Pos& lastPos, float maxDistance,
-                      maptypes::MapSearchResult& result);
   QStringList createStringForRouteInternal(const RouteMapObjectList& route, bool gfpWaypoints);
+  void findWaypoints(maptypes::MapSearchResult& result, const QString& item);
+  void filterWaypoints(maptypes::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
+  void filterAirways(QList<ParseEntry>& resultList, int i);
+  QStringList cleanItemList(const QStringList& items);
+  void removeEmptyResults(QList<ParseEntry>& resultList);
 
   MapQuery *query = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

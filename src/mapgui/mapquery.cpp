@@ -1195,11 +1195,6 @@ void MapQuery::initQueries()
   airwayWaypointsQuery = new SqlQuery(db);
   airwayWaypointsQuery->prepare("select " + airwayQueryBase + " from airway where airway_name = :name "
                                                               " order by airway_fragment_no, sequence_no");
-
-  // airwayWaypointsQuery->prepare("select a.sequence_no, a.airway_fragment_no, a.airway_id, " + waypointQueryBase +
-  // " from airway a join waypoint w on w.waypoint_id = a.from_waypoint_id "
-  // " where a.airway_name = :name "
-  // " order by a.airway_fragment_no, a.sequence_no");
 }
 
 void MapQuery::deInitQueries()

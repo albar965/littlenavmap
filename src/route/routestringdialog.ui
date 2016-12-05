@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Create Flight Plan from String</string>
+   <string>Little Navmap - New Flight Plan from Route Description</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5">
    <item>
@@ -45,7 +45,7 @@
           <string/>
          </property>
          <property name="placeholderText">
-          <string>Enter flight plan string.</string>
+          <string>Enter flight plan route description.</string>
          </property>
         </widget>
        </item>
@@ -66,6 +66,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonRouteStringToClipboard">
+           <property name="toolTip">
+            <string>Copy flight plan route to clipboard.</string>
+           </property>
            <property name="text">
             <string>&amp;To Clipboard</string>
            </property>
@@ -78,6 +81,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Paste flight plan route from clipboard.</string>
            </property>
            <property name="text">
             <string>&amp;From Clipboard</string>
@@ -93,7 +99,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>&amp;Read String</string>
+            <string>&amp;Read Route Description</string>
            </property>
           </widget>
          </item>
@@ -109,7 +115,7 @@
           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
          <property name="placeholderText">
-          <string>Flight plan string not read.</string>
+          <string>Flight plan route description not read.</string>
          </property>
         </widget>
        </item>

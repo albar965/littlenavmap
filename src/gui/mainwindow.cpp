@@ -1529,6 +1529,9 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimer.start();
 
   setStatusMessage(tr("Ready."));
+
+  // TODO DEBUG
+  // routeNewFromString();
 }
 
 /* Enable or disable actions */

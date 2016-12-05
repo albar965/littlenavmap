@@ -20,6 +20,7 @@
 
 #include "common/coordinateconverter.h"
 #include "geo/calculations.h"
+#include "geo/pos.h"
 
 #include <QList>
 #include <QSet>
@@ -52,6 +53,49 @@ float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
   list.clear();
   list.append(closestType);
   return closestDist;
+}
+
+/* Sorts elements by distance to a point */
+template<typename TYPE>
+void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDistance)
+{
+  auto it = std::remove_if(list.begin(), list.end(),
+                           [ = ](const TYPE &type)->bool
+                           {
+                             return type.getPosition().distanceMeterTo(pos) > maxDistance;
+                           });
+
+  if(it != list.end())
+    list.erase(it, list.end());
+
+}
+
+/* Sorts elements by distance to a point */
+template<typename TYPE>
+void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastDirection)
+{
+  auto it = std::remove_if(list.begin(), list.end(),
+                           [ = ](const TYPE &type)->bool
+                           {
+                             int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
+                             int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
+                             return std::abs(crs - crs2) > 120;
+                           });
+
+  if(it != list.end())
+    list.erase(it, list.end());
+
+}
+
+/* Sorts elements by distance to a point */
+template<typename TYPE>
+void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
+{
+  std::sort(list.begin(), list.end(),
+            [ = ](const TYPE &t1, const TYPE &t2)->bool
+            {
+              return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+            });
 }
 
 /* Functions will stop adding of number of elements exceeds this value */

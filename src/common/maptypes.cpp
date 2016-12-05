@@ -50,7 +50,7 @@ const QHash<QString, QString> surfaceMap(
     {"SHALE", QObject::tr("Shale")},
     {"TARMAC", QObject::tr("Tarmac")},
     {"UNKNOWN", QObject::tr("Unknown")},
-    {"INVALID", QObject::tr("Invalid")}
+    {"INVALID", QString()}
   });
 
 /* The higher the better */
@@ -617,6 +617,18 @@ QString parkingShortName(const QString& name)
     return name.right(1);
   else
     return QString();
+}
+
+bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
+{
+  bool filled = false;
+  filled |= types & maptypes::AIRPORT && !airports.isEmpty();
+  filled |= types & maptypes::WAYPOINT && !waypoints.isEmpty();
+  filled |= types & maptypes::VOR && !vors.isEmpty();
+  filled |= types & maptypes::NDB && !ndbs.isEmpty();
+  filled |= types & maptypes::AIRWAY && !airways.isEmpty();
+  filled |= types & maptypes::USER && !userPoints.isEmpty();
+  return !filled;
 }
 
 } // namespace types

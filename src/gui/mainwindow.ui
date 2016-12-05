@@ -4772,10 +4772,10 @@
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Copy Flight Plan String to Clipboard</string>
+    <string>Copy Flight Plan Route to Clipboard</string>
    </property>
    <property name="toolTip">
-    <string>Copy the Flight Plan as a string to the clipboard</string>
+    <string>Copy the flight plan route text to the clipboard</string>
    </property>
    <property name="statusTip">
     <string>Copy the Flight Plan as a string to the clipboard</string>
@@ -4787,16 +4787,13 @@
      <normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Flight Plan from String</string>
+    <string>&amp;New Flight Plan from Route Description</string>
    </property>
    <property name="toolTip">
-    <string>Create a new flight plan from string</string>
+    <string>Create a new flight plan from route description</string>
    </property>
    <property name="statusTip">
     <string>Copy the Flight Plan as a string to the clipboard</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+C</string>
    </property>
   </action>
   <action name="actionRouteSaveAsGfp">

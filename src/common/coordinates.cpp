@@ -27,21 +27,28 @@ namespace coords {
 
 // N48194W123096
 const static QString COORDS_FLIGHTPLAN_FORMAT_GFP("%1%2%3%4");
-const static QRegularExpression LONG_FORMAT_REGEXP_GFP("([NS])([0-9]{5})"
-                                                       "([EW])([0-9]{6})");
+const static QRegularExpression LONG_FORMAT_REGEXP_GFP("^([NS])([0-9]{5})"
+                                                       "([EW])([0-9]{6})$");
 
 // 46N078W
-const static QRegularExpression LONG_FORMAT_REGEXP_DEG("([0-9]{2})([NS])"
-                                                       "([0-9]{3})([EW])");
+const static QRegularExpression LONG_FORMAT_REGEXP_DEG("^([0-9]{2})([NS])"
+                                                       "([0-9]{3})([EW])$");
 
-// 4620N07805W
+// 4510N06810W
 const static QString COORDS_FLIGHTPLAN_FORMAT_DEG_MIN("%1%2%3%4%5%6");
-const static QRegularExpression LONG_FORMAT_REGEXP_DEG_MIN("([0-9]{2})([0-9]{2})([NS])"
-                                                           "([0-9]{3})([0-9]{2})([EW])");
+const static QRegularExpression LONG_FORMAT_REGEXP_DEG_MIN("^([0-9]{2})([0-9]{2})([NS])"
+                                                           "([0-9]{3})([0-9]{2})([EW])$");
 
 // 5020N
-const static QRegularExpression LONG_FORMAT_REGEXP_NAT("([0-9]{2})"
-                                                       "([0-9]{2})N");
+const static QRegularExpression LONG_FORMAT_REGEXP_NAT("^([0-9]{2})"
+                                                       "([0-9]{2})N$");
+
+// N6400 W07000 or N6400/W07000
+const static QString COORDS_FLIGHTPLAN_FORMAT_PAIR("%1%2/%3%4");
+const static QRegularExpression LONG_FORMAT_REGEXP_PAIR("^([NS])([0-9]{2})([0-9]{2})[ /]"
+                                                        "([EW])([0-9]{3})([0-9]{2})$");
+const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LAT("^([NS])([0-9]{2})([0-9]{2})$");
+const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LON("^([EW])([0-9]{3})([0-9]{2})$");
 
 // N48194W123096
 QString toGfpFormat(const atools::geo::Pos& pos)
@@ -56,7 +63,7 @@ QString toGfpFormat(const atools::geo::Pos& pos)
     return QString();
 }
 
-// 4620N07805W
+// 4510N06810W
 QString toDegMinFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
@@ -127,7 +134,7 @@ atools::geo::Pos fromDegFormat(const QString& str)
   return atools::geo::EMPTY_POS;
 }
 
-// Degrees and minutes 4620N07805W
+// Degrees and minutes 4510N06810W
 atools::geo::Pos fromDegMinFormat(const QString& str)
 {
   QRegularExpressionMatch match = LONG_FORMAT_REGEXP_DEG_MIN.match(str.simplified().toUpper());
@@ -146,6 +153,36 @@ atools::geo::Pos fromDegMinFormat(const QString& str)
       int lonXDeg = captured.at(4).toInt(&lonOk);
       int lonXMin = captured.at(5).toInt(&lonOk);
       QString ew = captured.at(6);
+
+      if(latOk && lonOk &&
+         -90 <= latYDeg && latYDeg <= 90 &&
+         -180 <= lonXDeg && lonXDeg <= 180)
+        return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
+                                latYDeg, latYMin, 0.f, ns == "S");
+    }
+  }
+  return atools::geo::EMPTY_POS;
+}
+
+// Degrees and minutes in pair N6400 W07000 or N6400/W07000
+atools::geo::Pos fromDegMinPairFormat(const QString& str)
+{
+  QRegularExpressionMatch match = LONG_FORMAT_REGEXP_PAIR.match(str.simplified().toUpper());
+
+  if(match.hasMatch())
+  {
+    QStringList captured = match.capturedTexts();
+
+    if(captured.size() == 7)
+    {
+      bool latOk, lonOk;
+      QString ns = captured.at(1);
+      int latYDeg = captured.at(2).toInt(&latOk);
+      int latYMin = captured.at(3).toInt(&latOk);
+
+      QString ew = captured.at(4);
+      int lonXDeg = captured.at(5).toInt(&lonOk);
+      int lonXMin = captured.at(6).toInt(&lonOk);
 
       if(latOk && lonOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
@@ -187,20 +224,20 @@ atools::geo::Pos fromAnyWaypointFormat(const QString& str)
   if(str.size() == 13)
     // Garmin format N48194W123096
     return fromGfpFormat(str);
+  else if(str.size() == 12)
+    // "N6400 W07000" or "N6400/W07000"
+    return fromDegMinPairFormat(str);
   else if(str.size() == 7)
     // Degrees only 46N078W
     return fromDegFormat(str);
   else if(str.size() == 11)
-    // Degrees and minutes 4620N07805W
+    // Degrees and minutes 4510N06810W
     return fromDegMinFormat(str);
   else if(str.size() == 5)
     // NAT type 5020N
     return fromNatFormat(str);
 
   return atools::geo::EMPTY_POS;
-
-  // Coordinate waypoint pairs (5 and 6 characters) like 'N6500 W08000', or like 'N6500/W08000', where
-  // the latitude always must be the first item within a pair.
 }
 
 } // namespace coords
