@@ -29,7 +29,7 @@ using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using maptypes::MapSearchResult;
 
-const static int MAX_WAYPOINT_DISTANCE_NM = 5000;
+const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
 
 const static QRegularExpression SPDALT("^[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
@@ -172,18 +172,21 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   QStringList cleanItems = cleanItemList(items);
   qDebug() << "clean items" << cleanItems;
 
-  if(cleanItems.isEmpty())
+  if(cleanItems.size() < 2)
   {
-    appendMessage(tr("Nothing found after cleaning up route."));
+    appendMessage(tr("Need at least departure and destination."));
     return false;
   }
 
   if(!addDeparture(flightplan, cleanItems.first()))
     return false;
 
+  if(!addDestination(flightplan, cleanItems.last()))
+    return false;
+
   int maxDistance =
     atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM,
-                                    atools::roundToInt(flightplan.getDistanceNm() /* * 1.5f*/)));
+                                    atools::roundToInt(flightplan.getDistanceNm())));
 
   // Collect all navaids, airports and coordinates
   atools::geo::Pos lastPos(flightplan.getDeparturePosition());
@@ -212,7 +215,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   removeEmptyResults(resultList);
 
   // Now build the flight plan
-  for(int i = 0; i < resultList.size(); i++)
+  for(int i = 0; i < resultList.size() - 1; i++)
   {
     const QString& item = resultList.at(i).item;
     MapSearchResult& result = resultList[i].result;
@@ -231,7 +234,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         if(entry.getPosition().isValid())
         {
           entry.setAirway(item);
-          flightplan.getEntries().append(entry);
+          flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
           qDebug() << entry.getIcaoIdent() << entry.getAirway();
         }
         else
@@ -259,7 +262,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       {
         // Assign airway if  this is the end point of an airway
         entry.setAirway(resultList.at(i).airway);
-        flightplan.getEntries().append(entry);
+        flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
       }
       else
         appendMessage(tr("No navaid found for %1. Ignoring.").arg(item));
@@ -267,7 +270,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     }
 
     // Remember position for distance calculation
-    lastPos = flightplan.getEntries().last().getPosition();
+    lastPos = flightplan.getEntries().at(flightplan.getEntries().size() - 2).getPosition();
   }
 
   return true;
@@ -298,7 +301,6 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
 
   maptypes::MapAirport departure;
   query->getAirportByIdent(departure, ident);
-
   if(departure.position.isValid())
   {
     qDebug() << "found" << departure.ident << "id" << departure.id;
@@ -315,6 +317,38 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
   else
   {
     appendMessage(tr("Mandatory departure airport %1 not found. Reading stopped.").arg(airportIdent));
+    return false;
+  }
+}
+
+bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent)
+{
+  QString ident = airportIdent;
+  QRegularExpressionMatch match = AIRPORT_TIME.match(ident);
+  if(match.hasMatch())
+  {
+    ident = match.captured(1);
+    appendMessage(tr("Ignoring time specification for airport %1.").arg(ident));
+  }
+
+  maptypes::MapAirport destination;
+  query->getAirportByIdent(destination, airportIdent);
+  if(destination.position.isValid())
+  {
+    qDebug() << "found" << destination.ident << "id" << destination.id;
+
+    flightplan.setDestinationAiportName(destination.name);
+    flightplan.setDestinationIdent(destination.ident);
+    flightplan.setDestinationPosition(destination.position);
+
+    FlightplanEntry entry;
+    entryBuilder->buildFlightplanEntry(destination, entry);
+    flightplan.getEntries().append(entry);
+    return true;
+  }
+  else
+  {
+    appendMessage(tr("Mandatory destination airport %1 not found. Reading stopped.").arg(airportIdent));
     return false;
   }
 }

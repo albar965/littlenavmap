@@ -92,6 +92,8 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   QStringList errors;
 
+  bool addDestination(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent);
+
 };
 
 #endif // LITTLENAVMAP_ROUTESTRING_H
