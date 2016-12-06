@@ -159,15 +159,15 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   stylesheets.append(QString() /*"QToolTip { color: #d0d0d0; background-color: #404040; border: 1px solid lightgray; }"*/);
 
   QPalette darkPalette(QGuiApplication::palette());
-  darkPalette.setColor(QPalette::Window, QColor(35, 35, 35));
-  darkPalette.setColor(QPalette::WindowText, QColor(220, 220, 220));
-  darkPalette.setColor(QPalette::Base, QColor(50, 50, 50));
-  darkPalette.setColor(QPalette::AlternateBase, QColor(65, 65, 65));
+  darkPalette.setColor(QPalette::Window, QColor(15, 15, 15));
+  darkPalette.setColor(QPalette::WindowText, QColor(200, 200, 200));
+  darkPalette.setColor(QPalette::Base, QColor(20, 20, 20));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(30, 30, 30));
   darkPalette.setColor(QPalette::ToolTipBase, QColor(65, 65, 65));
   darkPalette.setColor(QPalette::ToolTipText, QColor(220, 220, 220));
-  darkPalette.setColor(QPalette::Text, QColor(220, 220, 220));
-  darkPalette.setColor(QPalette::Button, QColor(65, 65, 65));
-  darkPalette.setColor(QPalette::ButtonText, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::Text, QColor(200, 200, 200));
+  darkPalette.setColor(QPalette::Button, QColor(35, 35, 35));
+  darkPalette.setColor(QPalette::ButtonText, QColor(200, 200, 200));
   darkPalette.setColor(QPalette::BrightText, QColor(250, 250, 250));
   darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
 

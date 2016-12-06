@@ -523,6 +523,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
     }
   }
+
+  if(OptionData::instance().isGuiStyleDark())
+  {
+    int dim = OptionData::instance().getGuiStyleMapDimming();
+    QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
+    painter.fillRect(QRect(0, 0, width(), height()), col);
+  }
+
 }
 
 /* Update signal from Marble elevation model */

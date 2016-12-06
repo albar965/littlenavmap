@@ -2148,12 +2148,15 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
   {
     if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
     {
+      QColor color = OptionData::instance().isGuiStyleDark() ?
+                     mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
+
       for(int i = 0; i < model->columnCount(); ++i)
       {
         QStandardItem *item = model->item(nearestLegIndex, i);
         if(item != nullptr)
         {
-          item->setBackground(mapcolors::nextWaypointColor);
+          item->setBackground(color);
           if(!item->font().bold())
           {
             QFont font = item->font();

@@ -119,7 +119,7 @@ const QColor airwayTextColor = QColor(80, 80, 80);
 
 /* Elevation profile colors and pens */
 const QColor profileSkyColor(QColor(204, 204, 255));
-const QColor profileSkyDarkColor(QColor(50, 50, 100));
+const QColor profileSkyDarkColor(QColor(20, 20, 90));
 const QColor profileBackgroundColor(Qt::white);
 
 const QColor profileBackgroundDarkColor(QColor(20, 20, 20));
@@ -130,8 +130,10 @@ const QColor profileLandOutlineColor(Qt::black);
 
 const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
 const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
+const QPen profileSafeAltLegLinePen(Qt::red, 3, Qt::SolidLine);
 
-const QColor nextWaypointColor(QColor(255, 120, 255));
+const QColor nextWaypointColor(QColor(255, 100, 255));
+const QColor nextWaypointColorDark(QColor(150, 20, 150));
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
 const QIcon& iconForStartType(const QString& type);
