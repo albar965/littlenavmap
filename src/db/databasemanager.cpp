@@ -59,36 +59,36 @@ const int MAX_ERROR_BGL_MESSAGES = 2;
 const int MAX_ERROR_SCENERY_MESSAGES = 2;
 
 const QString DATABASE_META_TEXT(
-  QObject::tr("<p><b>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</b></p>"));
+  QObject::tr("<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.</big></p>"));
 
 const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                "<tbody>"
                                                  "<tr> "
                                                    "<td width=\"60\"><b>Files:</b>"
                                                    "</td>    "
-                                                   "<td width=\"60\">%L6"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
                                                    "</td> "
                                                    "<td width=\"60\"><b>VOR:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L8"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
                                                    "</td> "
                                                    "<td width=\"60\"><b>Marker:</b>"
                                                    "</td>     "
-                                                   "<td width=\"60\">%L11"
-                                                   "</td>"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
+                                             "</td>"
                                                  "</tr>"
                                                  "<tr> "
                                                    "<td width=\"60\"><b>Airports:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L7"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
                                                    "</td> "
                                                    "<td width=\"60\"><b>ILS:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L9"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
                                                    "</td> "
                                                    "<td width=\"60\"><b>Waypoints:</b>"
                                                    "</td>  "
-                                                   "<td width=\"60\">%L12"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
                                                    "</td>"
                                                  "</tr>"
                                                  "<tr> "
@@ -98,7 +98,7 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                    "</td>"
                                                    "<td width=\"60\"><b>NDB:</b>"
                                                    "</td> "
-                                                   "<td width=\"60\">%L10"
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
                                                    "</td> "
                                                  "</tr>"
                                                "</tbody>"
@@ -773,7 +773,7 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
 
     // Last report
     progressDialog->setLabelText(
-      DATABASE_TIME_TEXT.arg(tr("Done")).
+      DATABASE_TIME_TEXT.arg(tr("<big>Done.</big>")).
       arg(formatter::formatElapsed(timer)).
       arg(QString()).
       arg(QString()).

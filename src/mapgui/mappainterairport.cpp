@@ -88,14 +88,14 @@ void MapPainterAirport::render(const PaintContext *context)
 
   // Collect all airports that are visible
   QList<const MapAirport *> visibleAirports;
-  QList<QPoint> visiblePoints;
+  QList<QPointF> visiblePoints;
   for(const MapAirport *airport : airportMap.values())
   {
     // Either part of the route or enabled in the actions/menus/toolbar
     if(!airport->isVisible(context->objectTypes) && !routeAirportIds.contains(airport->id))
       continue;
 
-    int x, y;
+    float x, y;
     bool visible = wToS(airport->position, x, y, scale->getScreeenSizeForRect(airport->bounding));
 
     if(!visible)
@@ -105,7 +105,7 @@ void MapPainterAirport::render(const PaintContext *context)
     if(visible)
     {
       visibleAirports.append(airport);
-      visiblePoints.append(QPoint(x, y));
+      visiblePoints.append(QPointF(x, y));
     }
   }
 
@@ -119,7 +119,7 @@ void MapPainterAirport::render(const PaintContext *context)
   for(int i = 0; i < visibleAirports.size(); i++)
   {
     const MapAirport *airport = visibleAirports.at(i);
-    QPoint pt = visiblePoints.at(i);
+    const QPointF& pt = visiblePoints.at(i);
     const MapLayer *layer = context->mapLayer;
 
     // Airport diagram is not influenced by detail level
@@ -868,7 +868,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
 void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap,
-                                          int x, int y)
+                                          float x, float y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||

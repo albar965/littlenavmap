@@ -113,7 +113,7 @@ QIcon SymbolPainter::createUserpointIcon(int size)
 }
 
 void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport,
-                                      int x, int y, int size, bool isAirportDiagram, bool fast)
+                                      float x, float y, int size, bool isAirportDiagram, bool fast)
 {
   if(airport.longestRunwayLength == 0)
     size = size * 4 / 5;
@@ -141,26 +141,26 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
       if(fuelRadius < radius + 2)
         fuelRadius = radius + 2;
       painter->setPen(QPen(QBrush(apColor), size / 4, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(x, y - fuelRadius, x, y + fuelRadius);
-      painter->drawLine(x - fuelRadius, y, x + fuelRadius, y);
+      painter->drawLine(QPointF(x, y - fuelRadius), QPointF(x, y + fuelRadius));
+      painter->drawLine(QPointF(x - fuelRadius, y), QPointF(x + fuelRadius, y));
     }
   }
 
   painter->setPen(QPen(QBrush(apColor), size / 5, Qt::SolidLine, Qt::FlatCap));
-  painter->drawEllipse(QPoint(x, y), radius, radius);
+  painter->drawEllipse(QPointF(x, y), radius, radius);
 
   if((!fast || isAirportDiagram) && size > 5)
   {
     if(airport.flags.testFlag(AP_MIL))
       // Military airport
-      painter->drawEllipse(QPoint(x, y), radius / 2, radius / 2);
+      painter->drawEllipse(QPointF(x, y), radius / 2, radius / 2);
 
     if(airport.waterOnly() && size > 6)
     {
       // Water only runways - draw an anchor
       int lineWidth = size / 7;
       painter->setPen(QPen(QBrush(apColor), lineWidth, Qt::SolidLine, Qt::FlatCap));
-      painter->drawLine(x - lineWidth / 4, y - radius / 2, x - lineWidth / 4, y + radius / 2);
+      painter->drawLine(QPointF(x - lineWidth / 4, y - radius / 2), QPointF(x - lineWidth / 4, y + radius / 2));
       painter->drawArc(x - radius / 2, y - radius / 2, radius, radius, 0 * 16, -180 * 16);
     }
 
@@ -522,7 +522,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
   textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
+void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, float x, float y,
                                     opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram)
 {
@@ -541,9 +541,9 @@ void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirpor
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
-      x += size + 2;
+      x += size + 2.f;
 
-    textBox(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
+    textBoxF(painter, texts, mapcolors::colorForAirport(airport), x, y, atts, transparency);
   }
 }
 
@@ -639,9 +639,9 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   }
 
   QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
+  float h = metrics.height();
 
-  int yoffset = 0;
+  float yoffset = 0.f;
   if(transparency != 0)
   {
     // Draw filled rectangles in the background
@@ -649,13 +649,13 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     for(const QString& text : texts)
     {
       QRectF rect = metrics.boundingRect(text);
-      rect.setWidth(rect.width() + 2);
+      rect.setWidth(rect.width() + 2.f);
 
       float newx = x;
       if(atts.testFlag(textatt::RIGHT))
         newx -= rect.width();
       else if(atts.testFlag(textatt::CENTER))
-        newx -= rect.width() / 2;
+        newx -= rect.width() / 2.f;
 
       rect.moveTo(newx, y - metrics.ascent() + yoffset - 1.f);
       painter->drawRect(rect);
@@ -664,7 +664,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   }
 
   // Draw the text
-  yoffset = 0;
+  yoffset = 0.f;
   painter->setPen(textPen);
   for(const QString& t : texts)
   {
@@ -673,7 +673,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
-      newx -= w / 2;
+      newx -= w / 2.f;
 
     painter->drawText(QPointF(newx, y + yoffset), t);
     yoffset += h;

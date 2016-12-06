@@ -130,7 +130,7 @@ const QColor profileLandOutlineColor(Qt::black);
 
 const QPen profleElevationScalePen(Qt::gray, 1, Qt::SolidLine);
 const QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine);
-const QPen profileSafeAltLegLinePen(Qt::red, 3, Qt::SolidLine);
+const QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine);
 
 const QColor nextWaypointColor(QColor(255, 100, 255));
 const QColor nextWaypointColorDark(QColor(150, 20, 150));

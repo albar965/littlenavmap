@@ -47,7 +47,7 @@ public:
   virtual void render(const PaintContext *context) override;
 
 private:
-  void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
+  void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, float x, float y);
 
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 

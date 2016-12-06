@@ -108,9 +108,9 @@ public:
   QIcon createUserpointIcon(int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
-  void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, int x, int y, int size,
+  void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, float x, float y, int size,
                          bool isAirportDiagram, bool fast);
-  void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, int x, int y,
+  void drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, float x, float y,
                        opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size, bool diagram);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */

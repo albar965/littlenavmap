@@ -300,7 +300,7 @@ void MapPainterAircraft::paintTextLabelUser(const PaintContext *context, float x
   atts |= textatt::ROUTE_BG_COLOR;
 
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y + size / 2, atts, 255);
+  symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2.f, y + size / 2.f, atts, 255);
 }
 
 const QPixmap *MapPainterAircraft::pixmapFromCache(const SimConnectAircraft& ac, int size,
