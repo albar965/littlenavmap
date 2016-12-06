@@ -290,12 +290,12 @@ void MainWindow::showNavmapLegend()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES);
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages());
 }
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_URL, lnm::HELP_LANGUAGES);
+  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_URL, lnm::helpLanguages());
 }
 
 /* Show marble legend */
@@ -335,7 +335,7 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
   qDebug() << "MainWindow::legendAnchorClicked" << url;
 
   if(url.toString() == "lnm:///legend")
-    HelpHandler::openHelpUrl(this, lnm::HELP_LEGEND_ONLINE_URL, lnm::HELP_LANGUAGES);
+    HelpHandler::openHelpUrl(this, lnm::HELP_LEGEND_ONLINE_URL, lnm::helpLanguages());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1521,7 +1521,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages(),
                                    "running-without-flight-simulator-installation");
       }
     }

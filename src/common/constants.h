@@ -34,7 +34,9 @@ const QString HELP_LEGEND_ONLINE_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/${LANG}/LEGEND.html");
 
 const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
-const QStringList HELP_LANGUAGES({"en", "de"}); /* Supported languages for the help system */
+
+/* Supported languages for the help system */
+const QStringList helpLanguages();
 
 /* State of "do not show again" dialog buttons */
 const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";

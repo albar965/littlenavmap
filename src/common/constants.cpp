@@ -16,3 +16,19 @@
 *****************************************************************************/
 
 #include "common/constants.h"
+
+#include "gui/helphandler.h"
+
+namespace lnm {
+
+const QStringList helpLanguages()
+{
+  static QStringList supportedLanguages;
+  if(supportedLanguages.isEmpty())
+    supportedLanguages = atools::gui::HelpHandler::getInstalledLanguages(
+      "help", "little-navmap-user-manual-([a-z]{2})\\.pdf");
+
+  return supportedLanguages;
+}
+
+} // namespace lnm

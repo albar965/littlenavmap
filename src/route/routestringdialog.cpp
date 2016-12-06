@@ -133,7 +133,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
     QDialog::accept();
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrl(parentWidget(), lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+    HelpHandler::openHelpUrl(parentWidget(), lnm::HELP_ONLINE_URL, lnm::helpLanguages(),
                              "flight-plan-from-route-description");
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();

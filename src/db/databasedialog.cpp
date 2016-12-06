@@ -101,7 +101,7 @@ void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 /* Show help in browser */
 void DatabaseDialog::helpClicked()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages(),
                            "load-scenery-library-dialog");
 }
 
