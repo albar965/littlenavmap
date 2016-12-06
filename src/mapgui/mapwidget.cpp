@@ -40,6 +40,7 @@
 #include "mapgui/maplayersettings.h"
 #include "common/unit.h"
 #include "gui/widgetstate.h"
+#include "gui/application.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -178,6 +179,10 @@ void MapWidget::setTheme(const QString& theme, int index)
 
   setMapThemeId(theme);
   updateMapObjectsShown();
+
+  // atools::gui::Application::processEventsExtended();
+  // ignoreOverlayUpdates = false;
+  overlayStateFromMenu();
 }
 
 void MapWidget::optionsChanged()
@@ -467,6 +472,7 @@ void MapWidget::showOverlays(bool show)
 
 void MapWidget::overlayStateToMenu()
 {
+  qDebug() << Q_FUNC_INFO;
   for(const QString& name : mapOverlays.keys())
   {
     AbstractFloatItem *overlay = floatItem(name);
@@ -475,15 +481,21 @@ void MapWidget::overlayStateToMenu()
       qDebug() << "Float item to menu" << overlay->name() << "id" << overlay->nameId()
                << "visible" << overlay->visible();
 
-      mapOverlays.value(name)->blockSignals(true);
-      mapOverlays.value(name)->setChecked(overlay->visible());
-      mapOverlays.value(name)->blockSignals(false);
+      QAction *menuItem = mapOverlays.value(name);
+      menuItem->blockSignals(true);
+      menuItem->setChecked(overlay->visible());
+      menuItem->blockSignals(false);
+      // mapOverlays.value(name)->blockSignals(true);
+      // mapOverlays.value(name)->setChecked(property(overlay->nameId().toLatin1().data()).toBool());
+      // mapOverlays.value(name)->blockSignals(false);
     }
   }
 }
 
 void MapWidget::overlayStateFromMenu()
 {
+  qDebug() << Q_FUNC_INFO;
+
   for(const QString& name : mapOverlays.keys())
   {
     AbstractFloatItem *overlay = floatItem(name);
@@ -494,11 +506,13 @@ void MapWidget::overlayStateFromMenu()
       if(show)
       {
         qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        setPropertyValue(overlay->nameId(), true);
         overlay->show();
       }
       else
       {
         qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        setPropertyValue(overlay->nameId(), false);
         overlay->hide();
       }
     }

@@ -48,18 +48,6 @@
         <value>true</value>
         <available>true</available>
       </property>
-      <property name="overviewmap">
-        <value>true</value>
-        <available>true</available>
-      </property>
-      <property name="compass">
-        <value>true</value>
-        <available>true</available>
-      </property>
-      <property name="scalebar">
-        <value>true</value>
-        <available>true</available>
-      </property>
     </settings>
     <legend>
 

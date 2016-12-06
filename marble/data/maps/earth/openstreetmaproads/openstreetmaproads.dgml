@@ -50,19 +50,7 @@
     </map>
     <settings>
       <property name="coordinate-grid">
-        <value>true</value>
-        <available>true</available>
-      </property>
-      <property name="overviewmap">
-        <value>true</value>
-        <available>true</available>
-      </property>
-      <property name="compass">
-        <value>true</value>
-        <available>true</available>
-      </property>
-      <property name="scalebar">
-        <value>true</value>
+        <value>false</value>
         <available>true</available>
       </property>
       <group name="Texture Layers">
