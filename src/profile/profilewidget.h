@@ -129,6 +129,7 @@ private:
   void updateScreenCoords();
   void terminateThread();
   float calcGroundBuffer(float maxElevation);
+  void updateLabel();
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
@@ -166,6 +167,8 @@ private:
   bool databaseLoadStatus = false;
 
   QRubberBand *rubberBand = nullptr;
+
+  QString fixedLabelText, variableLabelText;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates */

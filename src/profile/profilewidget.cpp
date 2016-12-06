@@ -164,6 +164,8 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   }
   if(updateWidget)
     update();
+
+  updateLabel();
 }
 
 void ProfileWidget::connectedToSimulator()
@@ -176,6 +178,7 @@ void ProfileWidget::disconnectedFromSimulator()
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();
+  updateLabel();
 }
 
 float ProfileWidget::calcGroundBuffer(float maxElevation)
@@ -326,7 +329,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   const RouteMapObjectList& route = routeController->getRouteMapObjects();
 
-  // Draw the red maximum elevation line
+  // Draw orange minimum safe altitude lines for each segment
+  painter.setPen(mapcolors::profileSafeAltLegLinePen);
+  for(int i = 0; i < legList.elevationLegs.size(); i++)
+  {
+    const ElevationLeg& leg = legList.elevationLegs.at(i);
+    int lineY = Y0 + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
+    painter.drawLine(waypointX.at(i), lineY, waypointX.at(i+1), lineY);
+  }
+
+  // Draw the red minimum safe altitude line
   painter.setPen(mapcolors::profileSafeAltLinePen);
   int maxAltY = Y0 + static_cast<int>(h - minSafeAltitudeFt * verticalScale);
   painter.drawLine(X0, maxAltY, X0 + static_cast<int>(w), maxAltY);
@@ -337,9 +349,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   else
     todX = X0;
 
-  float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
-
   // Draw the flightplan line
+  float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
   QPolygon line;
   line << QPoint(X0, flightplanY);
   line << QPoint(todX, flightplanY);
@@ -565,6 +576,8 @@ void ProfileWidget::routeChanged(bool geometryChanged)
     updateScreenCoords();
     update();
   }
+
+  updateLabel();
 }
 
 /* Called by updateTimer after any route or elevation updates and starts the thread */
@@ -845,18 +858,42 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   QString to = legList.routeMapObjects.at(index + 1).getIdent();
 
   // Add text to upper dock window label
-  mainWindow->getUi()->labelElevationInfo->setText(
-    tr("<b>") + from + tr(" ► ") + to + tr("</b>, ") +
+  variableLabelText =
+    from + tr(" ► ") + to + tr(", ") +
     Unit::distNm(distance) + tr(" ► ") +
     Unit::distNm(distanceToGo) + tr(", ") +
     tr(" Ground Elevation ") + Unit::altFeet(alt) +
     tr(" Above Ground Altitude ") + Unit::altFeet(flightplanAltFt - alt) + tr(", ") +
-    tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev));
+    tr(" Leg Safe Altitude ") + Unit::altFeet(maxElev);
 
   mouseEvent->accept();
+  updateLabel();
 
   // Tell map widget to create a rubberband rectangle on the map
   emit highlightProfilePoint(pos);
+}
+
+void ProfileWidget::updateLabel()
+{
+  float distFromStartNm = 0.f, distToDestNm = 0.f;
+
+  if(simData.getUserAircraft().getPosition().isValid())
+  {
+    if(routeController->getRouteMapObjects().getRouteDistances(simData.getUserAircraft().getPosition(),
+                                                               &distFromStartNm, &distToDestNm, nullptr,
+                                                               nullptr, nullptr))
+    {
+      float toTod = routeController->getRouteMapObjects().getTopOfDescentFromStart() - distFromStartNm;
+
+      fixedLabelText = tr("<b>Destination: %1, Top of Descent: %2.</b>&nbsp;&nbsp;").
+                       arg(Unit::distNm(distToDestNm)).
+                       arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
+    }
+  }
+  else
+    fixedLabelText.clear();
+
+  mainWindow->getUi()->labelElevationInfo->setText(fixedLabelText + " " + variableLabelText);
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
@@ -870,7 +907,8 @@ void ProfileWidget::leaveEvent(QEvent *)
   delete rubberBand;
   rubberBand = nullptr;
 
-  mainWindow->getUi()->labelElevationInfo->setText(tr("No information."));
+  variableLabelText.clear();
+  updateLabel();
 
   // Tell map widget to erase rubberband
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
