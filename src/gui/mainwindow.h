@@ -145,7 +145,7 @@ public:
                            const maptypes::MapAirport& airport) const;
 
   void buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
-                           const maptypes::MapAirport& airport) const;
+                                     const maptypes::MapAirport& airport) const;
 
 signals:
   /* Emitted when window is shown the first time */
@@ -205,6 +205,8 @@ private:
   void themeMenuTriggered(bool checked);
   void updateLegend();
   void clearWeatherContext();
+  void showOnlineHelp();
+  void showOfflineHelp();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */

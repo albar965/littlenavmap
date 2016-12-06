@@ -111,7 +111,8 @@ void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
     emit disconnectClicked();
   }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "indexconnect.html"));
+    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+                             "connecting-to-a-flight-simulator");
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
     QDialog::reject();
 }

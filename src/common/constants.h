@@ -28,6 +28,14 @@ const float POS_IS_POINT_EPSILON = 0.0001f;
 
 namespace lnm {
 
+const QString HELP_ONLINE_URL(
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/${LANG}/");
+const QString HELP_LEGEND_ONLINE_URL(
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/${LANG}/LEGEND.html");
+
+const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
+const QStringList HELP_LANGUAGES({"en", "de"}); /* Supported languages for the help system */
+
 /* State of "do not show again" dialog buttons */
 const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";
 const QString ACTIONS_SHOWQUIT = "Actions/ShowQuit";

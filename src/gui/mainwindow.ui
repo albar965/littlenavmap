@@ -92,6 +92,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpContents"/>
+    <addaction name="actionHelpContentsOffline"/>
     <addaction name="actionHelpNavmapLegend"/>
     <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
@@ -3156,7 +3157,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents</string>
+    <string>&amp;Contents (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the help in a browser</string>
@@ -4888,6 +4889,21 @@
    </property>
    <property name="statusTip">
     <string>Measure great circle distance on map</string>
+   </property>
+  </action>
+  <action name="actionHelpContentsOffline">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Contents (Offline, PDF)</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the help in a PDF viewer</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the help in a browser</string>
    </property>
   </action>
  </widget>

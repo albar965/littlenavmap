@@ -283,9 +283,19 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrl(legendUrl);
+    helpHandler->openUrl(legendUrl);
     setStatusMessage(tr("Opened map legend in browser."));
   }
+}
+
+void MainWindow::showOnlineHelp()
+{
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES);
+}
+
+void MainWindow::showOfflineHelp()
+{
+  HelpHandler::openHelpUrl(this, lnm::HELP_OFFLINE_URL, lnm::HELP_LANGUAGES);
 }
 
 /* Show marble legend */
@@ -299,7 +309,7 @@ void MainWindow::showMapLegend()
 /* Load the navmap legend into the text browser */
 void MainWindow::loadNavmapLegend()
 {
-  legendUrl = helpHandler->getHelpUrl("help", "legend_inline.html");
+  legendUrl = helpHandler->getHelpUrlForFile("help", "legend_inline.html");
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {
     QString legend;
@@ -324,15 +334,12 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   qDebug() << "MainWindow::legendAnchorClicked" << url;
 
-  QUrl newUrl(url);
-  if(url.isLocalFile())
-    newUrl = helpHandler->getHelpUrl("help", url.fileName(QUrl::FullyDecoded));
-
-  if(!QDesktopServices::openUrl(newUrl))
-    QMessageBox::warning(this, QApplication::applicationName(), QString(
-                           tr("Error opening URL \"%1\"")).arg(url.toDisplayString()));
+  if(url.toString() == "lnm:///legend")
+    HelpHandler::openHelpUrl(this, lnm::HELP_LEGEND_ONLINE_URL, lnm::HELP_LANGUAGES);
   else
-    setStatusMessage(tr("Opened legend link in browser."));
+    HelpHandler::openUrl(this, url);
+
+  setStatusMessage(tr("Opened legend link in browser."));
 }
 
 void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
@@ -645,7 +652,8 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::adjustFlightplanAltitude);
 
   // Help menu
-  connect(ui->actionHelpContents, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::help);
+  connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
+  connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
 
@@ -1513,7 +1521,8 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, HelpHandler::getHelpUrl(this, "help", "indexnosim.html"));
+          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+                                   "running-without-flight-simulator-installation");
       }
     }
     // else have databases do nothing

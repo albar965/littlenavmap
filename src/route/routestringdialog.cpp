@@ -29,6 +29,8 @@
 
 #include <QClipboard>
 
+using atools::gui::HelpHandler;
+
 RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeController)
   : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
 {
@@ -131,8 +133,8 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
     QDialog::accept();
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrl(
-      this, atools::gui::HelpHandler::getHelpUrl(this, "help", "indexroutestring.html"));
+    HelpHandler::openHelpUrl(parentWidget(), lnm::HELP_ONLINE_URL, lnm::HELP_LANGUAGES,
+                             "flight-plan-from-route-description");
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
