@@ -159,66 +159,63 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line">
+    <widget class="Line" name="line_4">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
+    <widget class="QCheckBox" name="checkBoxPrintFlightplan">
+     <property name="text">
+      <string>Print &amp;Flight Plan Table</string>
      </property>
-     <property name="topMargin">
-      <number>0</number>
+     <property name="checked">
+      <bool>true</bool>
      </property>
-     <item row="0" column="0">
-      <widget class="QCheckBox" name="checkBoxPrintFlightplan">
-       <property name="text">
-        <string>Print &amp;Flight Plan Table</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QSpinBox" name="spinBoxPrintTextSize">
-       <property name="suffix">
-        <string> %</string>
-       </property>
-       <property name="prefix">
-        <string>Text size </string>
-       </property>
-       <property name="minimum">
-        <number>50</number>
-       </property>
-       <property name="maximum">
-        <number>150</number>
-       </property>
-       <property name="singleStep">
-        <number>10</number>
-       </property>
-       <property name="value">
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="spinBoxPrintTextSize">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="suffix">
+      <string> %</string>
+     </property>
+     <property name="prefix">
+      <string>Text size </string>
+     </property>
+     <property name="minimum">
+      <number>50</number>
+     </property>
+     <property name="maximum">
+      <number>150</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxPrint">
@@ -226,7 +223,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Ok|QDialogButtonBox::Yes</set>
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Yes</set>
      </property>
     </widget>
    </item>
@@ -247,8 +244,6 @@
   <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDepartureWeather</tabstop>
   <tabstop>checkBoxPrintDestinationWeather</tabstop>
-  <tabstop>checkBoxPrintFlightplan</tabstop>
-  <tabstop>spinBoxPrintTextSize</tabstop>
  </tabstops>
  <resources/>
  <connections>

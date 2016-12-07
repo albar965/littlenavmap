@@ -18,6 +18,7 @@
 #include "print/printdialog.h"
 #include "ui_printdialog.h"
 #include "gui/widgetstate.h"
+#include "gui/helphandler.h"
 #include "common/constants.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -158,6 +159,9 @@ void PrintDialog::buttonBoxClicked(QAbstractButton *button)
     emit printClicked();
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Yes))
     emit printPreviewClicked();
+  else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Help))
+    atools::gui::HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages(),
+                                          "printing-the-flight-plan");
   else if(button == ui->buttonBoxPrint->button(QDialogButtonBox::Close))
     QDialog::reject();
 }
