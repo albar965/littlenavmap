@@ -40,7 +40,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
   ui->plainTextEditRouteString->setPlainText(
-    routeString->createStringForRoute(routeController->getRouteMapObjects()));
+    routeString->createStringForRoute(routeController->getRouteMapObjects(), routeController->getSpeedKts()));
 
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
           this, &RouteStringDialog::readClicked);
@@ -91,35 +91,43 @@ void RouteStringDialog::readClicked()
   qDebug() << "RouteStringDialog::readClicked()";
 
   flightplan->clear();
-  bool success = routeString->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), *flightplan);
+  bool success = routeString->createRouteFromString(
+    ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts);
 
   ui->textEditRouteStringErrors->clear();
 
   QString msg;
 
   if(success)
-    msg = tr("Read string and found %1 waypoints. Flight plan distance %2.<br/>").
-          arg(flightplan->getEntries().size()).
-          arg(Unit::distNm(flightplan->getDistanceNm()));
+  {
+    msg =
+      tr("<b>Found %1 waypoints. Flight plan from %3 (%4) to %5 (%6). Distance is %2.</b>").
+      arg(flightplan->getEntries().size()).
+      arg(Unit::distNm(flightplan->getDistanceNm())).
+      arg(flightplan->getDepartureAiportName()).
+      arg(flightplan->getDepartureIdent()).
+      arg(flightplan->getDestinationAiportName()).
+      arg(flightplan->getDestinationIdent());
+  }
 
-  if(routeString->getErrors().isEmpty())
+  if(routeString->getMessages().isEmpty())
     ui->textEditRouteStringErrors->setHtml(tr("%1No errors.").arg(msg));
   else
   {
     ui->textEditRouteStringErrors->setHtml(msg);
-    for(const QString& err : routeString->getErrors())
+    for(const QString& err : routeString->getMessages())
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
 
   ui->plainTextEditRouteString->setPlainText(
-    RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText()));
+    RouteString::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).join(" "));
   updateButtonState();
 }
 
 void RouteStringDialog::fromClipboardClicked()
 {
   ui->plainTextEditRouteString->setPlainText(
-    RouteString::cleanRouteString(QGuiApplication::clipboard()->text()));
+    RouteString::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
 }
 
 void RouteStringDialog::toClipboardClicked()

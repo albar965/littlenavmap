@@ -297,7 +297,10 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << "RouteController::routeStringToClipboard";
 
-  QString str = RouteString().createStringForRoute(route);
+  int speedKts = Unit::rev(
+    static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+
+  QString str = RouteString().createStringForRoute(route, speedKts);
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -314,7 +317,8 @@ void RouteController::routeAltChanged()
   if(!route.isEmpty())
     undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
 
-  routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
 
   if(!route.isEmpty())
     postChange(undoCommand);
@@ -333,7 +337,8 @@ void RouteController::routeTypeChanged()
   if(!route.isEmpty())
     undoCommand = preChange(tr("Change Type"));
 
-  routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
 
   if(!route.isEmpty())
     postChange(undoCommand);
@@ -436,6 +441,12 @@ void RouteController::restoreState()
   }
 }
 
+float RouteController::getSpeedKts() const
+{
+  return Unit::rev(
+           static_cast<float>(mainWindow->getUi()->spinBoxRouteSpeed->value()), Unit::speedKtsF);
+}
+
 void RouteController::getSelectedRouteMapObjects(QList<int>& selRouteMapObjectIndexes) const
 {
   if(mainWindow->getUi()->dockWidgetRoute->isVisible())
@@ -465,7 +476,7 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
-                                     bool quiet, bool changed)
+                                     bool quiet, bool changed, float speedKts)
 {
   qDebug() << "loadFlightplan" << filename;
 
@@ -493,6 +504,10 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
                                                         "primary runway of the departure airport."),
                                                      tr("Do not &show this dialog again."));
   }
+
+  if(speedKts > 0.f)
+    mainWindow->getUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
+
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
@@ -512,7 +527,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     newFlightplan.setCruisingAltitude(
       atools::roundToInt(Unit::altFeetF(newFlightplan.getCruisingAltitude())));
 
-    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/);
+    loadFlightplan(newFlightplan, filename, false /*quiet*/, false /*changed*/, 0.f);
   }
   catch(atools::Exception& e)
   {
@@ -935,7 +950,7 @@ QString RouteController::buildDefaultFilename() const
   filename += ".pln";
 
   // Remove characters that are note allowed in most filesystems
-  cleanFilename(filename);
+  filename = atools::cleanFilename(filename);
   return filename;
 }
 
@@ -952,7 +967,7 @@ QString RouteController::buildDefaultFilenameGfp() const
   filename += ".gfp";
 
   // Remove characters that are note allowed in most filesystems
-  cleanFilename(filename);
+  filename = atools::cleanFilename(filename);
   return filename;
 }
 
@@ -1381,6 +1396,8 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
 
     routeToFlightPlan();
+    // Get type and cruise altitude from widgets
+    updateFlightplanFromWidgets();
     updateTableModel();
     updateWindowLabel();
 
@@ -1435,6 +1452,8 @@ void RouteController::deleteSelectedLegs()
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
 
     routeToFlightPlan();
+    // Get type and cruise altitude from widgets
+    updateFlightplanFromWidgets();
     updateTableModel();
     updateWindowLabel();
 
@@ -1504,6 +1523,8 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 
   updateRouteMapObjects();
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1538,6 +1559,8 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
 
   updateRouteMapObjects();
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1588,6 +1611,8 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
 
   updateRouteMapObjects();
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1635,6 +1660,8 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   updateRouteMapObjects();
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1699,6 +1726,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1749,6 +1778,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
 
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
   updateTableModel();
   updateWindowLabel();
 
@@ -1774,6 +1805,9 @@ void RouteController::routeDelete(int index)
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
   routeToFlightPlan();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
+
   updateTableModel();
   updateWindowLabel();
 
@@ -1862,9 +1896,6 @@ void RouteController::routeToFlightPlan()
     // <Title>LFHO to EDRJ</Title>
     flightplan.setTitle(departureIcao + " to " + destinationIcao);
   }
-
-  // Get type and cruise altitude from widgets
-  updateFlightplanFromWidgets();
 }
 
 /* Copy type and cruise altitude from widgets to flight plan */
@@ -2342,10 +2373,4 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
     }
   }
   return false;
-}
-
-void RouteController::cleanFilename(QString& filename) const
-{
-  filename.replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
-  replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace("  ", " ");
 }

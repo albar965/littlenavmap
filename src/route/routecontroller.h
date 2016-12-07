@@ -73,7 +73,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(const atools::fs::pln::Flightplan& flightplan,
-                      const QString& filename, bool quiet, bool changed);
+                      const QString& filename, bool quiet, bool changed, float speedKts);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Emits routeChanged. */
@@ -94,6 +94,8 @@ public:
   {
     return route;
   }
+
+  float getSpeedKts() const;
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
   void getSelectedRouteMapObjects(QList<int>& selRouteMapObjectIndexes) const;
@@ -324,7 +326,6 @@ private:
   void updateTableHeaders();
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
-  void cleanFilename(QString& filename) const;
   void highlightNextWaypoint(int nearestLegIndex);
 
   /* If route distance / direct distance if bigger than this value fail routing */

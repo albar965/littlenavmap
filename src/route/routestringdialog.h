@@ -52,6 +52,11 @@ public:
   void saveState();
   void restoreState();
 
+  float getSpeedKts() const
+  {
+    return speedKts;
+  }
+
 private:
   void readClicked();
   void fromClipboardClicked();
@@ -64,6 +69,7 @@ private:
   MapQuery *query = nullptr;
   RouteController *controller = nullptr;
   RouteString *routeString;
+  float speedKts = 0.f;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

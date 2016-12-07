@@ -22,6 +22,7 @@
 #include "mapgui/mapquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/maptools.h"
+#include "common/unit.h"
 
 #include <QRegularExpression>
 
@@ -31,7 +32,7 @@ using maptypes::MapSearchResult;
 
 const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
 
-const static QRegularExpression SPDALT("^[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
+const static QRegularExpression SPDALT("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
 const static QRegularExpression SIDSTAR_TRANS("^[A-Z_0-9]+(\\.[A-Z_0-9]+)+$");
@@ -39,6 +40,10 @@ const static QRegularExpression SIDSTAR_TRANS("^[A-Z_0-9]+(\\.[A-Z_0-9]+)+$");
 const static maptypes::MapObjectTypes ROUTE_TYPES(maptypes::AIRPORT | maptypes::WAYPOINT |
                                                   maptypes::VOR | maptypes::NDB | maptypes::USER |
                                                   maptypes::AIRWAY);
+
+const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
+const static QString SPANWARN("<span style=\"color: #ff5000\">");
+const static QString SPANEND("</span>");
 
 RouteString::RouteString(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
@@ -78,7 +83,7 @@ QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
 {
   QString retval;
 
-  QStringList string = createStringForRouteInternal(route, true);
+  QStringList string = createStringForRouteInternal(route, 0, true);
   if(!string.isEmpty())
   {
     retval += "FPN/RI:F:" + string.first();
@@ -110,12 +115,13 @@ QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
   return retval.toUpper();
 }
 
-QString RouteString::createStringForRoute(const RouteMapObjectList& route)
+QString RouteString::createStringForRoute(const RouteMapObjectList& route, float speed)
 {
-  return createStringForRouteInternal(route, false).join(" ").simplified().toUpper();
+  return createStringForRouteInternal(route, speed, false).join(" ").simplified().toUpper();
 }
 
-QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& route, bool gfpWaypoints)
+QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& route, float speed,
+                                                      bool gfpFormat)
 {
   QStringList retval;
   QString lastAw, lastId;
@@ -127,7 +133,7 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
 
     if(entry.getMapObjectType() == maptypes::INVALID || entry.getMapObjectType() == maptypes::USER)
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      ident = gfpWaypoints ?
+      ident = gfpFormat ?
               coords::toGfpFormat(entry.getPosition()) : coords::toDegMinFormat(entry.getPosition());
 
     if(airway.isEmpty())
@@ -157,24 +163,34 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
   retval.append(lastId);
   qDebug() << "RouteString::createStringForRouteInternal" << retval;
 
+  if(!retval.isEmpty() && !gfpFormat)
+    retval.insert(1, createSpeedAndAltitude(
+                    speed, Unit::rev(route.getFlightplan().getCruisingAltitude(), Unit::altFeetF)));
+
   return retval;
 }
 
-bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan)
+bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
+                                        float& speedKts)
 {
   qDebug() << Q_FUNC_INFO;
-  errors.clear();
-  QStringList items = cleanRouteString(routeString).split(" ");
+  messages.clear();
+  QStringList items = cleanRouteString(routeString);
 
   qDebug() << "items" << items;
 
   // Remove all unneded adornment like speed and times and also combine waypoint coordinate pairs
-  QStringList cleanItems = cleanItemList(items);
+  float altitude;
+  QStringList cleanItems = cleanItemList(items, speedKts, altitude);
+
+  if(altitude > 0.f)
+    flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitude)));
+
   qDebug() << "clean items" << cleanItems;
 
   if(cleanItems.size() < 2)
   {
-    appendMessage(tr("Need at least departure and destination."));
+    appendError(tr("Need at least departure and destination."));
     return false;
   }
 
@@ -183,6 +199,10 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
   if(!addDestination(flightplan, cleanItems.last()))
     return false;
+
+  if(speedKts > 0.f && altitude > 0.f)
+    appendMessage(tr("<b>Using %1 and cruise altitude %2.</b>").
+                  arg(Unit::speedKts(speedKts)).arg(Unit::altFeet(altitude)));
 
   int maxDistance =
     atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM,
@@ -203,7 +223,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     if(!result.isEmpty(ROUTE_TYPES))
       resultList.append({item, QString(), result});
     else
-      appendMessage(tr("Nothing found for %1. Ignoring.").arg(item));
+      appendWarning(tr("Nothing found for %1. Ignoring.").arg(item));
   }
 
   // Create airways - will fill the waypoint list in result with airway points
@@ -265,7 +285,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
       }
       else
-        appendMessage(tr("No navaid found for %1. Ignoring.").arg(item));
+        appendWarning(tr("No navaid found for %1. Ignoring.").arg(item));
       qDebug() << entry.getIcaoIdent() << entry.getAirway();
     }
 
@@ -276,17 +296,29 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   return true;
 }
 
-QString RouteString::cleanRouteString(const QString& string)
+QStringList RouteString::cleanRouteString(const QString& string)
 {
   QString retval = string.toUpper();
   retval.replace(QRegularExpression("[^A-Z0-9/\\.]"), " ");
-  return retval.simplified();
+  return retval.simplified().split(" ");
 }
 
-void RouteString::appendMessage(const QString& err)
+void RouteString::appendMessage(const QString& message)
 {
-  errors.append(err);
-  qInfo() << "Error:" << err;
+  messages.append(message);
+  qInfo() << "Message:" << message;
+}
+
+void RouteString::appendWarning(const QString& message)
+{
+  messages.append(SPANWARN + message + SPANEND);
+  qWarning() << "Warning:" << message;
+}
+
+void RouteString::appendError(const QString& message)
+{
+  messages.append(SPANERR + message + SPANEND);
+  qWarning() << "Error:" << message;
 }
 
 bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QString& airportIdent)
@@ -296,7 +328,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
   if(match.hasMatch())
   {
     ident = match.captured(1);
-    appendMessage(tr("Ignoring time specification for airport %1.").arg(ident));
+    appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
   }
 
   maptypes::MapAirport departure;
@@ -316,7 +348,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
   }
   else
   {
-    appendMessage(tr("Mandatory departure airport %1 not found. Reading stopped.").arg(airportIdent));
+    appendError(tr("Mandatory departure airport %1 not found. Reading stopped.").arg(airportIdent));
     return false;
   }
 }
@@ -328,7 +360,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
   if(match.hasMatch())
   {
     ident = match.captured(1);
-    appendMessage(tr("Ignoring time specification for airport %1.").arg(ident));
+    appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
   }
 
   maptypes::MapAirport destination;
@@ -348,13 +380,14 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
   }
   else
   {
-    appendMessage(tr("Mandatory destination airport %1 not found. Reading stopped.").arg(airportIdent));
+    appendError(tr("Mandatory destination airport %1 not found. Reading stopped.").arg(airportIdent));
     return false;
   }
 }
 
 void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
-                                      int lastId, int nextId, int& startIndex, int& endIndex)
+                                      int lastId, int nextId, int& startIndex, int& endIndex,
+                                      const QString& airway)
 {
   int startFragment = -1, endFragment = -1;
   // TODO handle fragments properly
@@ -378,7 +411,7 @@ void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& 
 
   if(startFragment != endFragment)
   {
-    qDebug() << "Fragmented airway";
+    appendWarning(tr("Found fragmented airway %1.").arg(airway));
     startIndex = -1;
     endIndex = -1;
   }
@@ -455,7 +488,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
     if(lastResult.waypoints.isEmpty())
     {
-      appendMessage(tr("No waypoint before airway %1. Ignoring flight plan segment.").
+      appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").
                     arg(airwayName));
       result.airways.clear();
       return;
@@ -463,7 +496,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
     if(nextResult.waypoints.isEmpty())
     {
-      appendMessage(tr("No waypoint after airway %1. Ignoring flight plan segment.").
+      appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").
                     arg(airwayName));
       result.airways.clear();
       return;
@@ -485,7 +518,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
         // Find the waypoint indexes by id in the list of all waypoints for this airway
         findIndexesInAirway(allAirwayWaypoints, lastResult.waypoints.first().id,
-                            nextResult.waypoints.first().id, startIndex, endIndex);
+                            nextResult.waypoints.first().id, startIndex, endIndex, airwayName);
 
         qDebug() << "startidx" << startIndex << "endidx" << endIndex;
         if(startIndex != -1 && endIndex != -1)
@@ -500,12 +533,12 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
         else
         {
           if(startIndex == -1)
-            appendMessage(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
+            appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
                           arg(lastResult.waypoints.first().ident).
                           arg(airwayName));
 
           if(endIndex == -1)
-            appendMessage(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
+            appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
                           arg(nextResult.waypoints.first().ident).
                           arg(airwayName));
           result.airways.clear();
@@ -513,14 +546,14 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
       }
       else
       {
-        appendMessage(tr("No waypoints found for airway %1. Ignoring flight plan segment.").
+        appendWarning(tr("No waypoints found for airway %1. Ignoring flight plan segment.").
                       arg(airwayName));
         result.airways.clear();
       }
     }
     else
     {
-      appendMessage(tr("No waypoint %1 found at airway %2. Ignoring flight plan segment.").
+      appendWarning(tr("No waypoint %1 found at airway %2. Ignoring flight plan segment.").
                     arg(waypointStart).arg(airwayName));
       result.airways.clear();
     }
@@ -558,8 +591,11 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
   }
 }
 
-QStringList RouteString::cleanItemList(const QStringList& items)
+QStringList RouteString::cleanItemList(const QStringList& items, float& speedKnots, float& altFeet)
 {
+  speedKnots = 0.f;
+  altFeet = 0.f;
+
   QStringList cleanItems;
   for(int i = 0; i < items.size(); i++)
   {
@@ -569,25 +605,26 @@ QStringList RouteString::cleanItemList(const QStringList& items)
 
     if(item == "SID")
     {
-      appendMessage(tr("Replacing SID with DCT (direct)."));
+      appendWarning(tr("Replacing SID with DCT (direct)."));
       continue;
     }
 
     if(item == "STAR")
     {
-      appendMessage(tr("Replacing STAR with DCT (direct)."));
+      appendWarning(tr("Replacing STAR with DCT (direct)."));
       continue;
     }
 
     if(SPDALT.match(item).hasMatch())
     {
-      appendMessage(tr("Ignoring speed and altitude %1.").arg(item));
+      if(!extractSpeedAndAltitude(item, speedKnots, altFeet))
+        appendWarning(tr("Ignoring invalid speed and altitude %1.").arg(item));
       continue;
     }
 
     if(SIDSTAR_TRANS.match(item).hasMatch())
     {
-      appendMessage(tr("Replacing SID/STAR/transition %1 with DCT (direct).").arg(item));
+      appendWarning(tr("Replacing SID/STAR/transition %1 with DCT (direct).").arg(item));
       continue;
     }
 
@@ -595,14 +632,14 @@ QStringList RouteString::cleanItemList(const QStringList& items)
     if(match.hasMatch())
     {
       item = match.captured(1);
-      appendMessage(tr("Ignoring speed and altitude at waypoint %1.").arg(item));
+      appendWarning(tr("Ignoring speed and altitude at waypoint %1.").arg(item));
     }
 
     match = AIRPORT_TIME.match(item);
     if(match.hasMatch())
     {
       item = match.captured(1);
-      appendMessage(tr("Ignoring time for airport %1.").arg(item));
+      appendWarning(tr("Ignoring time for airport %1.").arg(item));
     }
 
     if(i < items.size() - 1)
@@ -631,4 +668,67 @@ void RouteString::removeEmptyResults(QList<ParseEntry>& resultList)
 
   if(it != resultList.end())
     resultList.erase(it, resultList.end());
+}
+
+bool RouteString::extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet)
+{
+  // N0490F360
+  // M084F330
+  // Speed
+  // K0800 (800 Kilometers)
+  // N0490 (490 Knots)
+  // M082 (Mach 0.82)
+  // Level/altitude
+  // F340 (Flight level 340)
+  // S1260 (12600 Meters)
+  // A100 (10000 Feet)
+  // M0890 (8900 Meters)
+
+  speedKnots = 0.f;
+  altFeet = 0.f;
+
+  // const static QRegularExpression SPDALT("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
+  QRegularExpressionMatch match = SPDALT.match(item);
+  if(match.hasMatch())
+  {
+    bool ok = true;
+    QString speedUnit = match.captured(1);
+    float speed = match.captured(2).toFloat(&ok);
+    if(!ok)
+      return false;
+
+    QString altUnit = match.captured(3);
+    float alt = match.captured(4).toFloat(&ok);
+    if(!ok)
+      return false;
+
+    if(altUnit == "F") // Flight Level
+      altFeet = alt * 100.f;
+    else if(altUnit == "S") // Standard Metric Level in tens of meters
+      altFeet = atools::geo::meterToFeet(alt * 10.f);
+    else if(altUnit == "A") // Altitude in hundreds of feet
+      altFeet = alt * 100.f;
+    else if(altUnit == "M") // Altitude in tens of meters
+      altFeet = atools::geo::meterToFeet(alt * 10.f);
+    else
+      return false;
+
+    if(speedUnit == "K") // km/h
+      speedKnots = atools::geo::meterToNm(speed * 1000.f);
+    else if(speedUnit == "N") // knots
+      speedKnots = speed;
+    else if(speedUnit == "M") // mach
+      speedKnots = atools::geo::machToTas(altFeet, speed / 100.f);
+    else
+      return false;
+  }
+  return true;
+}
+
+QString RouteString::createSpeedAndAltitude(float speedKnots, float altFeet)
+{
+  if(altFeet < 18000.f)
+    return QString("N%1A%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
+  else
+    return QString("N%1F%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
 }

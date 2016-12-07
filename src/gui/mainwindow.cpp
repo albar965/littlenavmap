@@ -1154,7 +1154,8 @@ void MainWindow::routeNewFromString()
       if(routeCheckForChanges())
       {
         routeController->loadFlightplan(routeStringDialog.getFlightplan(), QString(),
-                                        true /*quiet*/, true /*changed*/);
+                                        true /*quiet*/, true /*changed*/,
+                                        routeStringDialog.getSpeedKts());
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
         setStatusMessage(tr("Created new flight plan."));
