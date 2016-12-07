@@ -335,7 +335,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     const ElevationLeg& leg = legList.elevationLegs.at(i);
     int lineY = Y0 + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
-    painter.drawLine(waypointX.at(i), lineY, waypointX.at(i+1), lineY);
+    painter.drawLine(waypointX.at(i), lineY, waypointX.at(i + 1), lineY);
   }
 
   // Draw the red minimum safe altitude line
@@ -353,8 +353,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
   QPolygon line;
   line << QPoint(X0, flightplanY);
-  line << QPoint(todX, flightplanY);
-  line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+  if(todX < X0 + w)
+  {
+    line << QPoint(todX, flightplanY);
+    line << QPoint(X0 + w, Y0 + static_cast<int>(h - destAlt * verticalScale));
+  }
+  else
+    line << QPoint(X0 + w, flightplanY);
 
   painter.setPen(QPen(mapcolors::routeOutlineColor, 4, Qt::SolidLine));
   painter.drawPolyline(line);
@@ -470,15 +475,18 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!routeController->isFlightplanEmpty())
   {
-    // Draw the top of descent point and text
-    painter.setBackgroundMode(Qt::TransparentMode);
-    painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
+    if(todX < X0 + w)
+    {
+      // Draw the top of descent point and text
+      painter.setBackgroundMode(Qt::TransparentMode);
+      painter.setPen(QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap));
+      painter.setBrush(Qt::NoBrush);
+      painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
 
-    symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
-                       todX + 8, flightplanY + 8,
-                       textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+      symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
+                         todX + 8, flightplanY + 8,
+                         textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+    }
 
     // Draw user aircraft track
     if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
