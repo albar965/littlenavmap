@@ -200,7 +200,12 @@ float RouteMapObjectList::getTopOfDescentFromStart() const
   {
     float cruisingAltitude = Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
     float diff = (cruisingAltitude - last().getPosition().getAltitude());
-    return getTotalDistance() - (diff / 1000.f * OptionData::instance().getRouteTodRule());
+
+    // Either nm per 1000 something alt or km per 1000 something alt
+    float distNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
+    float altFt = Unit::rev(1000.f, Unit::altFeetF);
+
+    return getTotalDistance() - (diff / altFt * distNm);
   }
   return 0.f;
 }
