@@ -79,7 +79,7 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
                            {
                              int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
                              int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
-                             return std::abs(crs - crs2) > 120;
+                             return atools::absInt(crs - crs2) > 120;
                            });
 
   if(it != list.end())
