@@ -311,7 +311,7 @@ void MainWindow::loadNavmapLegend()
 {
   qDebug() << Q_FUNC_INFO;
 
-  legendUrl = helpHandler->getHelpUrlForFile("help", "legend_inline.html");
+  legendUrl = HelpHandler::getHelpUrl(this, lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
   qDebug() << "legendUrl" << legendUrl;
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {

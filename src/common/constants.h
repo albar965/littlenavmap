@@ -37,6 +37,8 @@ const QString HELP_ONLINE_URL(
 const QString HELP_LEGEND_ONLINE_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
 
+const QString HELP_LEGEND_INLINE_URL("help/${LANG}/legend_inline.html");
+
 const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
 
 /* Supported languages for the online help system. Will be determined by the
