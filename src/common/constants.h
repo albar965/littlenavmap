@@ -28,14 +28,19 @@ const float POS_IS_POINT_EPSILON = 0.0001f;
 
 namespace lnm {
 
+const QString HELP_BRANCH = "master";
+
+/* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */
 const QString HELP_ONLINE_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/${LANG}/");
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/");
+
 const QString HELP_LEGEND_ONLINE_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/${LANG}/LEGEND.html");
+  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
 
 const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");
 
-/* Supported languages for the help system */
+/* Supported languages for the online help system. Will be determined by the
+ * installation of offline PDF manual. */
 const QStringList helpLanguages();
 
 /* State of "do not show again" dialog buttons */

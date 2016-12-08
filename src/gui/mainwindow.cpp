@@ -309,9 +309,13 @@ void MainWindow::showMapLegend()
 /* Load the navmap legend into the text browser */
 void MainWindow::loadNavmapLegend()
 {
+  qDebug() << Q_FUNC_INFO;
+
   legendUrl = helpHandler->getHelpUrlForFile("help", "legend_inline.html");
+  qDebug() << "legendUrl" << legendUrl;
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {
+    qDebug() << "legendUrl opened";
     QString legend;
     QFile legendFile(legendUrl.toLocalFile());
     if(legendFile.open(QIODevice::ReadOnly))
@@ -319,8 +323,7 @@ void MainWindow::loadNavmapLegend()
       QTextStream stream(&legendFile);
       legend.append(stream.readAll());
 
-      QString searchPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
-      searchPath += tr("/help/en");
+      QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
       ui->textBrowserNavmapLegendInfo->setSearchPaths({searchPath});
       ui->textBrowserNavmapLegendInfo->setText(legend);
     }
@@ -332,9 +335,7 @@ void MainWindow::loadNavmapLegend()
 /* User clicked "show in browser" in legend */
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
-  qDebug() << "MainWindow::legendAnchorClicked" << url;
-
-  if(url.toString() == "lnm:///legend")
+  if(url.scheme() == "lnm" && url.host() == "legend")
     HelpHandler::openHelpUrl(this, lnm::HELP_LEGEND_ONLINE_URL, lnm::helpLanguages());
   else
     HelpHandler::openUrl(this, url);
