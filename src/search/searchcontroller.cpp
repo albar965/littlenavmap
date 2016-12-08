@@ -62,7 +62,7 @@ void SearchController::optionsChanged()
 
 void SearchController::helpPressed()
 {
-  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL, lnm::helpLanguages(), "search-dock-window");
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguages());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

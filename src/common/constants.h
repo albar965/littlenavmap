@@ -34,9 +34,6 @@ const QString HELP_BRANCH = "master";
 const QString HELP_ONLINE_URL(
   "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/");
 
-const QString HELP_LEGEND_ONLINE_URL(
-  "https://albar965.gitbooks.io/little-navmap-user-manual/content/v/" + HELP_BRANCH + "/${LANG}/LEGEND.html");
-
 const QString HELP_LEGEND_INLINE_URL("help/${LANG}/legend_inline.html");
 
 const QString HELP_OFFLINE_URL("help/little-navmap-user-manual-${LANG}.pdf");

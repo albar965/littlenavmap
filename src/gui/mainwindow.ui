@@ -2442,6 +2442,9 @@
            <property name="acceptDrops">
             <bool>false</bool>
            </property>
+           <property name="lineWrapMode">
+            <enum>QTextEdit::WidgetWidth</enum>
+           </property>
            <property name="openExternalLinks">
             <bool>false</bool>
            </property>

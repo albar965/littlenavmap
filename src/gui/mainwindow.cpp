@@ -336,7 +336,7 @@ void MainWindow::loadNavmapLegend()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrl(this, lnm::HELP_LEGEND_ONLINE_URL, lnm::helpLanguages());
+    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1523,8 +1523,7 @@ void MainWindow::mainWindowShown()
 
         int result = msgBox.exec();
         if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL, lnm::helpLanguages(),
-                                   "running-without-flight-simulator-installation");
+          HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguages());
       }
     }
     // else have databases do nothing
