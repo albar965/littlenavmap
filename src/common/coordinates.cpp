@@ -26,9 +26,9 @@
 namespace coords {
 
 // N48194W123096
-const static QString COORDS_FLIGHTPLAN_FORMAT_GFP("%1%2%3%4");
-const static QRegularExpression LONG_FORMAT_REGEXP_GFP("^([NS])([0-9]{5})"
-                                                       "([EW])([0-9]{6})$");
+const static QString COORDS_FLIGHTPLAN_FORMAT_GFP("%1%2%3%4%5%6");
+const static QRegularExpression LONG_FORMAT_REGEXP_GFP("^([NS])([0-9]{2})([0-9]{3})"
+                                                       "([EW])([0-9]{3})([0-9]{3})$");
 
 // 46N078W
 const static QRegularExpression LONG_FORMAT_REGEXP_DEG("^([0-9]{2})([NS])"
@@ -51,14 +51,20 @@ const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LAT("^([NS])([0-9]{2})([
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LON("^([EW])([0-9]{3})([0-9]{2})$");
 
 // N48194W123096
+// Examples:
+// :F:N44124W122451 (User Waypoint: N44° 12.4' W122° 45.1'
+// :F:N14544W017479 (User Waypoint: N14° 54.4' W17° 47.9'
+// :F:S31240E136502 (User Waypoint: S31° 24.0' E136° 50.2'
 QString toGfpFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
     return COORDS_FLIGHTPLAN_FORMAT_GFP.
            arg(pos.getLatY() > 0.f ? "N" : "S").
-           arg(std::abs(pos.getLatY() * 1000.f), 5, 'f', 0, QChar('0')).
+           arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
+           arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f) * 10.f, 3, 'f', 0, QChar('0')).
            arg(pos.getLonX() > 0.f ? "E" : "W").
-           arg(std::abs(pos.getLonX() * 1000.f), 6, 'f', 0, QChar('0'));
+           arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
+           arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f) * 10.f, 3, 'f', 0, QChar('0'));
   else
     return QString();
 }
@@ -87,20 +93,24 @@ atools::geo::Pos fromGfpFormat(const QString& str)
   {
     QStringList captured = match.capturedTexts();
 
-    if(captured.size() == 5)
+    if(captured.size() == 7)
     {
       bool latOk, lonOk;
       QString ns = captured.at(1);
       int latYDeg = captured.at(2).toInt(&latOk);
+      float latYMin = captured.at(3).toFloat(&latOk) / 10.f;
+      float latYSec = (latYMin - std::floor(latYMin)) * 60.f;
 
-      QString ew = captured.at(3);
-      int lonXDeg = captured.at(4).toInt(&lonOk);
+      QString ew = captured.at(4);
+      int lonXDeg = captured.at(5).toInt(&lonOk);
+      float lonXMin = captured.at(6).toFloat(&lonOk) / 10.f;
+      float lonXSec = (lonXMin - std::floor(lonXMin)) * 60.f;
 
       if(latOk && lonOk &&
-         -90000 < latYDeg && latYDeg < 90000 &&
-         -180000 < lonXDeg && lonXDeg < 180000)
-        return atools::geo::Pos(lonXDeg / 1000.f * (ew == "W" ? -1.f : 1.f),
-                                latYDeg / 1000.f * (ns == "S" ? -1.f : 1.f));
+         -90 <= latYDeg && latYDeg <= 90 &&
+         -180 <= lonXDeg && lonXDeg <= 180)
+        return atools::geo::Pos(lonXDeg, static_cast<int>(lonXMin), lonXSec, ew == "W",
+                                latYDeg, static_cast<int>(latYMin), latYSec, ns == "S");
     }
   }
   return atools::geo::EMPTY_POS;
