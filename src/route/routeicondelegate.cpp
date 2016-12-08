@@ -41,6 +41,9 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   if(routeObjects.isEmpty())
     return;
 
+  if(index.row() > routeObjects.size() - 1)
+    return;
+
   int symbolSize = option.rect.height() - 4;
   int x = option.rect.x() + symbolSize;
   int y = option.rect.y() + symbolSize / 2 + 2;
