@@ -650,7 +650,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 
   head(html, tr("Helipad%1:").arg(num));
   html.brText(tr("Surface: ") + maptypes::surfaceName(helipad.surface));
-  html.brText(tr("Type: ") + helipad.type);
+  html.brText(tr("Type: ") + atools::capString(helipad.type));
   html.brText(Unit::distShortFeet(std::max(helipad.width, helipad.length)));
   if(helipad.closed)
     html.brText(tr("Is Closed"));
@@ -930,7 +930,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
 
   const QStringList& weather = parsed.getWeather();
   if(!weather.isEmpty())
-    html.row2(tr("Conditions:"), atools::capString(weather.join(", ")));
+  {
+    // Workaround for goofy texts
+    QString wtr = weather.join(", ").toLower().replace(" of in ", " in ");
+
+    if(!wtr.isEmpty())
+      wtr[0] = wtr.at(0).toUpper();
+
+    html.row2(tr("Conditions:"), wtr);
+  }
 
   html.tableEnd();
 

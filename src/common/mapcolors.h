@@ -48,6 +48,7 @@ const QBrush runwayOverrunBrush = QBrush(QColor(180, 180, 0), Qt::DiagCrossPatte
 
 const QColor parkingOutlineColor = QColor(80, 80, 80);
 const QColor helipadOutlineColor = QColor(Qt::black);
+const QColor helipadMedicalOutlineColor = QColor(200, 0, 0);
 const QColor activeTowerColor = QColor(Qt::red);
 const QColor activeTowerOutlineColor = QColor(Qt::black);
 const QColor inactiveTowerColor = QColor(Qt::lightGray);

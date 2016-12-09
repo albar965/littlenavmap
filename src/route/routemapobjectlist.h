@@ -68,6 +68,7 @@ public:
   atools::geo::Pos getTopOfDescent() const;
 
   /* Distance from TOD to destination in nm */
+  float getTopOfDescentFromDestination() const;
   float getTopOfDescentFromStart() const;
 
   /* Total route distance in nautical miles */

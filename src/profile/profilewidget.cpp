@@ -483,7 +483,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       painter.setBrush(Qt::NoBrush);
       painter.drawEllipse(QPoint(todX, flightplanY), 6, 6);
 
-      symPainter.textBox(&painter, {tr("TOD")}, QPen(Qt::black),
+      QStringList tod;
+      tod.append(tr("TOD"));
+      tod.append(Unit::distNm(route.getTopOfDescentFromDestination()));
+
+      symPainter.textBox(&painter, tod, QPen(Qt::black),
                          todX + 8, flightplanY + 8,
                          textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
     }
@@ -893,7 +897,7 @@ void ProfileWidget::updateLabel()
     {
       float toTod = routeController->getRouteMapObjects().getTopOfDescentFromStart() - distFromStartNm;
 
-      fixedLabelText = tr("<b>Destination: %1, Top of Descent: %2.</b>&nbsp;&nbsp;").
+      fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").
                        arg(Unit::distNm(distToDestNm)).
                        arg(toTod > 0 ? Unit::distNm(toTod) : tr("Passed"));
     }

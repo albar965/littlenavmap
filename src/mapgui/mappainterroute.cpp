@@ -333,7 +333,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
     context->painter->drawEllipse(pt, radius, radius);
 
-    symbolPainter->textBox(context->painter, {tr("TOD")}, QPen(Qt::black),
+    QStringList tod;
+    tod.append(tr("TOD"));
+    if(context->mapLayer->isAirportRouteInfo())
+      tod.append(Unit::distNm(routeMapObjects.getTopOfDescentFromDestination()));
+
+    symbolPainter->textBox(context->painter, tod, QPen(Qt::black),
                            pt.x() + radius, pt.y() + radius,
                            textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
   }

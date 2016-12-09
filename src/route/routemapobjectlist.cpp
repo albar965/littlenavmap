@@ -197,6 +197,14 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
 float RouteMapObjectList::getTopOfDescentFromStart() const
 {
   if(!isEmpty())
+    return getTotalDistance() - getTopOfDescentFromDestination();
+
+  return 0.f;
+}
+
+float RouteMapObjectList::getTopOfDescentFromDestination() const
+{
+  if(!isEmpty())
   {
     float cruisingAltitude = Unit::rev(getFlightplan().getCruisingAltitude(), Unit::altFeetF);
     float diff = (cruisingAltitude - last().getPosition().getAltitude());
@@ -205,7 +213,7 @@ float RouteMapObjectList::getTopOfDescentFromStart() const
     float distNm = Unit::rev(OptionData::instance().getRouteTodRule(), Unit::distNmF);
     float altFt = Unit::rev(1000.f, Unit::altFeetF);
 
-    return getTotalDistance() - (diff / altFt * distNm);
+    return diff / altFt * distNm;
   }
   return 0.f;
 }

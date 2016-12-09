@@ -538,37 +538,50 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
   // Draw helipads ------------------------------------------------
   const QList<MapHelipad> *helipads = query->getHelipads(airport.id);
   if(!helipads->isEmpty())
-    painter->setPen(QPen(mapcolors::helipadOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
-  for(const MapHelipad& helipad : *helipads)
   {
-    bool visible;
-    QPoint pt = wToS(helipad.position, DEFAULT_WTOS_SIZE, &visible);
-    if(visible)
+    for(const MapHelipad& helipad : *helipads)
     {
-      painter->setBrush(mapcolors::colorForSurface(helipad.surface));
-
-      int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
-      int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
-
-      painter->drawEllipse(pt, w, h);
-
-      if(!fast)
+      bool visible;
+      QPoint pt = wToS(helipad.position, DEFAULT_WTOS_SIZE, &visible);
+      if(visible)
       {
-        // Draw the H symbol
+        painter->setBrush(mapcolors::colorForSurface(helipad.surface));
+
+        int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
+        int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
+
         painter->translate(pt);
         painter->rotate(helipad.heading);
-        painter->drawLine(-w / 3, -h / 2, -w / 3, h / 2);
-        painter->drawLine(-w / 3, 0, w / 3, 0);
-        painter->drawLine(w / 3, -h / 2, w / 3, h / 2);
 
-        if(helipad.closed)
+        if(helipad.type == "SQUARE")
+          painter->drawRect(-w, -h, w * 2, h * 2);
+        else
+          painter->drawEllipse(-w, -h, w * 2, h * 2);
+
+        if(!fast)
         {
-          // Cross out runway number
-          painter->drawLine(-w, -w, w, w);
-          painter->drawLine(-w, w, w, -w);
+          if(helipad.type == "MEDICAL")
+            painter->setPen(QPen(mapcolors::helipadMedicalOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
+          else
+            painter->setPen(QPen(mapcolors::helipadOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
+
+          // if(helipad.type != "CIRCLE")
+          // {
+          // Draw the H symbol
+          painter->drawLine(-w / 3, -h / 2, -w / 3, h / 2);
+          painter->drawLine(-w / 3, 0, w / 3, 0);
+          painter->drawLine(w / 3, -h / 2, w / 3, h / 2);
+          // }
+
+          if(helipad.closed)
+          {
+            // Cross out
+            painter->drawLine(-w, -w, w, w);
+            painter->drawLine(-w, w, w, -w);
+          }
         }
+        painter->resetTransform();
       }
-      painter->resetTransform();
     }
   }
 
