@@ -242,6 +242,7 @@ void AirportSearch::connectSearchSlots()
   SearchBase::connectSearchSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
+  connect(ui->lineEditAirportIcaoSearch, &QLineEdit::returnPressed, this, &SearchBase::showFirstEntry);
 
   // Runways
   columns->assignMinMaxWidget("longest_runway_length",

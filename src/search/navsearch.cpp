@@ -146,6 +146,8 @@ void NavSearch::connectSearchSlots()
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
+  connect(ui->lineEditNavIcaoSearch, &QLineEdit::returnPressed, this, &SearchBase::showFirstEntry);
+
   // Distance
   columns->assignDistanceSearchWidgets(ui->checkBoxNavDistSearch,
                                        ui->comboBoxNavDistDirectionSearch,

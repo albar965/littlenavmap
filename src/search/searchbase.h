@@ -85,6 +85,8 @@ public:
 
   void updateUnits();
 
+  void showFirstEntry();
+
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -154,6 +156,7 @@ private:
   void updateFromSpinBox(int value, const Column *col);
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
+  void showRow(int row);
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::TableZoomHandler *zoomHandler = nullptr;

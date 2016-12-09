@@ -481,13 +481,28 @@ void SearchBase::loadAllRowsIntoView()
   }
 }
 
+void SearchBase::showFirstEntry()
+{
+  showRow(0);
+}
+
 /* Double click into table view */
 void SearchBase::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
-  {
-    int row = index.row();
+    showRow(index.row());
+}
 
+void SearchBase::showRow(int row)
+{
+  // Show on information panel
+  maptypes::MapObjectTypes navType = maptypes::NONE;
+  int id = -1;
+  // get airport, VOR, NDB or waypoint id from model row
+  getNavTypeAndId(row, navType, id);
+
+  if(id > 0)
+  {
     // Check if the used table has bounding rectangle columns
     bool hasBounding = columns->hasColumn("left_lonx") && columns->hasColumn("top_laty") &&
                        columns->hasColumn("right_lonx") && columns->hasColumn("bottom_laty");
@@ -505,14 +520,9 @@ void SearchBase::doubleClick(const QModelIndex& index)
     {
       atools::geo::Pos p(controller->getRawData(row, "lonx").toFloat(),
                          controller->getRawData(row, "laty").toFloat());
-      emit showPos(p, 0.f, true);
+      if(p.isValid())
+        emit showPos(p, 0.f, true);
     }
-
-    // Show on information panel
-    maptypes::MapObjectTypes navType = maptypes::NONE;
-    int id = -1;
-    // get airport, VOR, NDB or waypoint id from model row
-    getNavTypeAndId(row, navType, id);
 
     maptypes::MapSearchResult result;
     query->getMapObjectById(result, navType, id);
