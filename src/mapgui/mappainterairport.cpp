@@ -550,6 +550,8 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
         int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
 
+        painter->setPen(QPen(mapcolors::helipadOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
+
         painter->translate(pt);
         painter->rotate(helipad.heading);
 
@@ -562,8 +564,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         {
           if(helipad.type == "MEDICAL")
             painter->setPen(QPen(mapcolors::helipadMedicalOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
-          else
-            painter->setPen(QPen(mapcolors::helipadOutlineColor, 2, Qt::SolidLine, Qt::FlatCap));
 
           // if(helipad.type != "CIRCLE")
           // {
