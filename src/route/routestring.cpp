@@ -69,7 +69,8 @@ RouteString::~RouteString()
  *
  * The entry and exit waypoint of an airway are connected to the airway via a dot “.”.
  * The flight plan must be contained in the first line of the file. Anything after the first
- * line will be discarded and may result in importing failures. Flight plans can only contain
+ * line will be discarded and may result i
+ * n importing failures. Flight plans can only contain
  * upper case letters, numbers, colons, parenthesis, commas and periods. Spaces or any other
  * special characters are not allowed. When saved the flight plan name must have a “.gfp” extension.
  *
@@ -124,6 +125,10 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
                                                       bool gfpFormat)
 {
   QStringList retval;
+
+  if(route.isEmpty())
+    return retval;
+
   QString lastAw, lastId;
   for(int i = 0; i < route.size(); i++)
   {
