@@ -723,11 +723,17 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
                 infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"),
                                                   recTrans.valueStr("dme_region"));
 
-              html.row2(tr("DME Type:"), maptypes::navTypeName(vorReg.valueStr("type")));
-              html.row2(tr("DME Frequency:"),
-                        locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
-              html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
-              html.row2(tr("DME Morse:"), tr("<b>") + morse->getCode(vorReg.valueStr("ident")) + tr("</b>"));
+              if(!vorReg.isEmpty())
+              {
+                html.row2(tr("DME Type:"), maptypes::navTypeName(vorReg.valueStr("type")));
+                html.row2(tr("DME Frequency:"),
+                          locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+                html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
+                html.row2(tr("DME Morse:"), tr("<b>") + morse->getCode(vorReg.valueStr("ident")) + tr("</b>"));
+              }
+              else
+                html.row2(tr("DME data not found for %1/%2.").
+                          arg(recTrans.valueStr("dme_ident")).arg(recTrans.valueStr("dme_region")));
             }
 
             addRadionavFixType(html, recTrans);
@@ -759,6 +765,9 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
       html.row2(tr("VOR Morse:"), tr("<b>") + morse->getCode(vorInfo->valueStr("ident")) + tr("</b>"));
     }
+    else
+      html.row2(tr("VOR data not found"));
+
   }
   else if(fixType == "NDB" || fixType == "TERMINAL_NDB")
   {
@@ -774,6 +783,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
       html.row2(tr("NDB Morse:"), tr("<b>") + morse->getCode(ndbInfo->valueStr("ident")) + tr("</b>"));
     }
+    else
+      html.row2(tr("NDB data not found."));
   }
 }
 
@@ -1313,6 +1324,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
       else
         html.row2(tr("To Top of Descent:"), tr("Passed"));
+      html.row2(tr("TOD to Destination:"), route.getTopOfDescentFromDestination());
 
       html.tableEnd();
 
