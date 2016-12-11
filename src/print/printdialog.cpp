@@ -33,6 +33,8 @@
 PrintDialog::PrintDialog(QWidget *parent)
   : QDialog(parent), ui(new Ui::PrintDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   ui->buttonBoxPrint->button(QDialogButtonBox::Ok)->setText(tr("&Print"));

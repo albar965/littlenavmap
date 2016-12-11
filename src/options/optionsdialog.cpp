@@ -109,6 +109,8 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();

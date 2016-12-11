@@ -29,6 +29,8 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
                              const maptypes::MapAirport& departureAirport)
   : QDialog(parent), ui(new Ui::ParkingDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   // Update label with airport name/ident

@@ -35,6 +35,8 @@ using atools::gui::HelpHandler;
 ConnectDialog::ConnectDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::ConnectDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   ui->comboBoxConnectHostname->setAutoCompletion(true);

@@ -25,6 +25,8 @@ static const QRegularExpression USER_WAYPOINT_REGEXP("^[A-Za-z0-9_ ]{1,10}$");
 UserWaypointDialog::UserWaypointDialog(QWidget *parent, const QString& name)
   : QDialog(parent), ui(new Ui::UserWaypointDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   validator = new QRegularExpressionValidator();

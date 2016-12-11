@@ -35,6 +35,8 @@ using atools::gui::HelpHandler;
 DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), paths(pathMap)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));

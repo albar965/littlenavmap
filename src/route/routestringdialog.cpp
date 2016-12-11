@@ -34,6 +34,8 @@ using atools::gui::HelpHandler;
 RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeController)
   : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   ui->setupUi(this);
 
   flightplan = new atools::fs::pln::Flightplan;

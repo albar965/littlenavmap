@@ -370,6 +370,8 @@ void PrintSupport::deleteFlightplanDocuments()
 QPrintPreviewDialog *PrintSupport::buildPreviewDialog(QWidget *parent)
 {
   QPrintPreviewDialog *print = new QPrintPreviewDialog(parent);
+  print->setWindowFlags(print->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   print->resize(Settings::instance().valueVar(lnm::MAINWINDOW_PRINT_SIZE, QSize(640, 480)).toSize());
   return print;
 }
