@@ -1171,9 +1171,18 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     {
       QStringList waypointTexts;
       for(const SqlRecord& wprec : waypoints)
-        waypointTexts.append(wprec.valueStr("from_ident") + tr("/") + wprec.valueStr("from_region"));
-      waypointTexts.append(waypoints.last().valueStr("to_ident") + "/" +
-                           waypoints.last().valueStr("to_region"));
+      {
+        waypointTexts.append(tr("<a href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
+                             arg(wprec.valueFloat("from_lonx")).
+                             arg(wprec.valueFloat("from_laty")).
+                             arg(wprec.valueStr("from_ident")).
+                             arg(wprec.valueStr("from_region")));
+      }
+      waypointTexts.append(tr("<a href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
+                           arg(waypoints.last().valueFloat("to_lonx")).
+                           arg(waypoints.last().valueFloat("to_laty")).
+                           arg(waypoints.last().valueStr("to_ident")).
+                           arg(waypoints.last().valueStr("to_region")));
 
       html.row2(tr("Waypoints Ident/Region:"), waypointTexts.join(", "));
     }

@@ -244,13 +244,16 @@ void InfoQuery::initQueries()
   ilsQuery->prepare("select * from ils where loc_runway_end_id = :id");
 
   airwayWaypointQuery = new SqlQuery(db);
-  airwayWaypointQuery->prepare("select w1.ident as from_ident, w1.region as from_region, "
-                               "w2.ident as to_ident, w2.region as to_region "
-                               "from airway a "
-                               "join waypoint w1 on w1.waypoint_id = a.from_waypoint_id "
-                               "join waypoint w2 on w2.waypoint_id = a.to_waypoint_id "
-                               "where airway_name = :name and airway_fragment_no = :fragment "
-                               "order by a.sequence_no");
+  airwayWaypointQuery->prepare("select "
+                               " w1.ident as from_ident, w1.region as from_region, "
+                               " w1.lonx as from_lonx, w1.laty as from_laty, "
+                               " w2.ident as to_ident, w2.region as to_region, "
+                               " w2.lonx as to_lonx, w2.laty as to_laty "
+                               " from airway a "
+                               " join waypoint w1 on w1.waypoint_id = a.from_waypoint_id "
+                               " join waypoint w2 on w2.waypoint_id = a.to_waypoint_id "
+                               " where airway_name = :name and airway_fragment_no = :fragment "
+                               " order by a.sequence_no");
 
   vorIdentRegionQuery = new SqlQuery(db);
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
