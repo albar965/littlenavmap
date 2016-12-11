@@ -116,7 +116,8 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     if(!print)
       // Add link to map
       html.a(tr("Map"),
-             QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT));
+             QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(maptypes::AIRPORT),
+             atools::util::html::LINK_NO_UL);
   }
   else
   {
@@ -514,7 +515,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
           atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&zoom=%3").
-                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER))).br();
+                 arg(pos.getLonX()).arg(pos.getLatY()).arg(Unit::distMeterF(HELIPAD_ZOOM_METER)),
+                 atools::util::html::LINK_NO_UL).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -1014,7 +1016,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(vor.position.getLonX()).arg(vor.position.getLatY()));
+           arg(vor.position.getLonX()).arg(vor.position.getLatY()), atools::util::html::LINK_NO_UL);
     html.br();
   }
 
@@ -1054,7 +1056,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()));
+           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), atools::util::html::LINK_NO_UL);
     html.br();
   }
 
@@ -1092,7 +1094,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()));
+           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), atools::util::html::LINK_NO_UL);
     html.br();
   }
 
@@ -1172,13 +1174,15 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       QStringList waypointTexts;
       for(const SqlRecord& wprec : waypoints)
       {
-        waypointTexts.append(tr("<a href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
+        waypointTexts.append(tr("<a style=\"text-decoration:none;\" "
+                                  "href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
                              arg(wprec.valueFloat("from_lonx")).
                              arg(wprec.valueFloat("from_laty")).
                              arg(wprec.valueStr("from_ident")).
                              arg(wprec.valueStr("from_region")));
       }
-      waypointTexts.append(tr("<a href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
+      waypointTexts.append(tr("<a style=\"text-decoration:none;\" "
+                                "href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
                            arg(waypoints.last().valueFloat("to_lonx")).
                            arg(waypoints.last().valueFloat("to_laty")).
                            arg(waypoints.last().valueStr("to_ident")).
@@ -1398,7 +1402,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.p();
       html.b(tr("Departure: "));
       if(info)
-        html.a(aircraft.getFromIdent(), QString("lnm://show?airport=%1").arg(aircraft.getFromIdent()));
+        html.a(aircraft.getFromIdent(), QString("lnm://show?airport=%1").arg(aircraft.getFromIdent()),
+               atools::util::html::LINK_NO_UL);
       else
         html.text(aircraft.getFromIdent());
       html.text(tr(". "));
@@ -1408,7 +1413,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     {
       html.b(tr("Destination: "));
       if(info)
-        html.a(aircraft.getToIdent(), QString("lnm://show?airport=%1").arg(aircraft.getToIdent()));
+        html.a(aircraft.getToIdent(), QString("lnm://show?airport=%1").arg(aircraft.getToIdent()),
+               atools::util::html::LINK_NO_UL);
       else
         html.text(aircraft.getToIdent());
       html.text(tr("."));
@@ -1638,7 +1644,8 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   {
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()));
+           arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
+           atools::util::html::LINK_NO_UL);
   }
 }
 
