@@ -37,8 +37,7 @@ enum TabIndex
   APPROACHES = 3,
   WEATHER = 4,
   NAVAID = 5,
-  NAVMAP_LEGEND = 6,
-  MAP_LEGEND = 7
+  MAP_LEGEND = 6
 };
 
 enum TabIndexAircraft

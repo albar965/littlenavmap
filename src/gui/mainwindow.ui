@@ -92,8 +92,9 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpContents"/>
-    <addaction name="actionHelpContentsOffline"/>
     <addaction name="actionHelpNavmapLegend"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpContentsOffline"/>
     <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
@@ -2417,44 +2418,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabNavmapLegendInfo">
-        <attribute name="title">
-         <string>Navmap Legend</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_13">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserNavmapLegendInfo">
-           <property name="acceptDrops">
-            <bool>false</bool>
-           </property>
-           <property name="lineWrapMode">
-            <enum>QTextEdit::WidgetWidth</enum>
-           </property>
-           <property name="openExternalLinks">
-            <bool>false</bool>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
        <widget class="QWidget" name="tabMapLegendInfo">
         <attribute name="title">
          <string>Map Legend</string>
@@ -3163,10 +3126,10 @@
     <string>&amp;Contents (Online)</string>
    </property>
    <property name="toolTip">
-    <string>Show the help in a browser</string>
+    <string>Show the online help in a browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the help in a browser</string>
+    <string>Show the online help in a browser</string>
    </property>
   </action>
   <action name="actionHelpAbout">
@@ -4358,13 +4321,13 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Navmap Legend</string>
+    <string>&amp;Navmap Legend (Online)</string>
    </property>
    <property name="toolTip">
-    <string>Show the navigation map legend</string>
+    <string>Show the navigation map legend online in a browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the navigation map legend</string>
+    <string>Show the navigation map legend online in a browser</string>
    </property>
   </action>
   <action name="actionResetMessages">
@@ -4900,13 +4863,13 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents (Offline, PDF)</string>
+    <string>&amp;Contents and Navmap Legend (Offline, PDF)</string>
    </property>
    <property name="toolTip">
-    <string>Show the help in a PDF viewer</string>
+    <string>Show the offline help also including the legend in a PDF viewer</string>
    </property>
    <property name="statusTip">
-    <string>Show the help in a browser</string>
+    <string>Show the offline help also including the legend in a PDF viewer</string>
    </property>
   </action>
  </widget>
@@ -4969,7 +4932,6 @@
   <tabstop>textBrowserComInfo</tabstop>
   <tabstop>textBrowserApproachInfo</tabstop>
   <tabstop>textBrowserNavaidInfo</tabstop>
-  <tabstop>textBrowserNavmapLegendInfo</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>

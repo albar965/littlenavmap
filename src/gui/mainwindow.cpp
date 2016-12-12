@@ -191,7 +191,6 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
-    loadNavmapLegend();
     updateLegend();
     updateWindowTitle();
 
@@ -274,18 +273,7 @@ MainWindow::~MainWindow()
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
-  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
-  {
-    ui->dockWidgetInformation->show();
-    ui->tabWidgetInformation->setCurrentIndex(ic::NAVMAP_LEGEND);
-    setStatusMessage(tr("Opened navigation map legend."));
-  }
-  else
-  {
-    // URL is empty loading failed - show it in browser
-    helpHandler->openUrl(legendUrl);
-    setStatusMessage(tr("Opened map legend in browser."));
-  }
+  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
 }
 
 void MainWindow::showOnlineHelp()
@@ -304,32 +292,6 @@ void MainWindow::showMapLegend()
   ui->dockWidgetInformation->show();
   ui->tabWidgetInformation->setCurrentIndex(ic::MAP_LEGEND);
   setStatusMessage(tr("Opened map legend."));
-}
-
-/* Load the navmap legend into the text browser */
-void MainWindow::loadNavmapLegend()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  legendUrl = HelpHandler::getHelpUrl(this, lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
-  qDebug() << "legendUrl" << legendUrl;
-  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
-  {
-    qDebug() << "legendUrl opened";
-    QString legend;
-    QFile legendFile(legendUrl.toLocalFile());
-    if(legendFile.open(QIODevice::ReadOnly))
-    {
-      QTextStream stream(&legendFile);
-      legend.append(stream.readAll());
-
-      QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
-      ui->textBrowserNavmapLegendInfo->setSearchPaths({searchPath});
-      ui->textBrowserNavmapLegendInfo->setText(legend);
-    }
-    else
-      errorHandler->handleIOError(legendFile, tr("While opening Navmap Legend file:"));
-  }
 }
 
 /* User clicked "show in browser" in legend */
@@ -544,10 +506,6 @@ void MainWindow::setupUi()
 
 void MainWindow::connectAllSlots()
 {
-  // Get "show in browser"  click
-  connect(ui->textBrowserNavmapLegendInfo, &QTextBrowser::anchorClicked, this,
-          &MainWindow::legendAnchorClicked);
-
   // Notify others of options change
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);

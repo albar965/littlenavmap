@@ -184,8 +184,6 @@ private:
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
   bool routeValidate(bool validateParking = true);
-  void loadNavmapLegend();
-  void showNavmapLegend();
   void showMapLegend();
   void resetMessages();
   void showDatabaseFiles();
@@ -207,6 +205,7 @@ private:
   void clearWeatherContext();
   void showOnlineHelp();
   void showOfflineHelp();
+  void showNavmapLegend();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
@@ -222,8 +221,6 @@ private:
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
   atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
-  /* URL of the inline nav map legend */
-  QUrl legendUrl;
 
   /* Combo boxes that are added to the toolbar */
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;

@@ -370,7 +370,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   else if(foundAirport && foundNavaid)
   {
     // Show airport if all was found but none is active
-    if(idx == ic::NAVMAP_LEGEND || idx == ic::MAP_LEGEND)
+    if(idx == ic::MAP_LEGEND)
       ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
   }
 

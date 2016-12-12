@@ -327,6 +327,7 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
     return aircraftPixmaps.object(key);
   else
   {
+    int size = key.size;
     QString name = ":/littlenavmap/resources/icons/aircraft";
     switch(key.type)
     {
@@ -338,6 +339,8 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
         break;
       case AC_HELICOPTER:
         name += "_helicopter";
+        // Make helicopter a bit bigger due to image
+        size = atools::roundToInt(size * 1.2f);
         break;
     }
     if(key.ground)
@@ -345,7 +348,7 @@ const QPixmap *MapPainterAircraft::pixmapFromCache(const PixmapKey& key)
     if(key.user)
       name += "_user";
 
-    QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(key.size, key.size)));
+    QPixmap *newPx = new QPixmap(QIcon(name).pixmap(QSize(size, size)));
     aircraftPixmaps.insert(key, newPx);
     return newPx;
   }
