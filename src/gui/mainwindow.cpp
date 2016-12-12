@@ -100,6 +100,12 @@ MainWindow::MainWindow()
 
     ui->setupUi(this);
 
+    if(firstApplicationStart)
+    {
+      ui->dockWidgetLegend->hide();
+      ui->dockWidgetLegend->setFloating(true);
+    }
+
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, ABOUT_MESSAGE, GIT_REVISION);
@@ -191,6 +197,7 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
+    loadNavmapLegend();
     updateLegend();
     updateWindowTitle();
 
@@ -273,7 +280,46 @@ MainWindow::~MainWindow()
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
-  HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
+  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
+  {
+    ui->dockWidgetLegend->show();
+    ui->tabWidgetLegend->setCurrentIndex(0);
+    setStatusMessage(tr("Opened navigation map legend."));
+  }
+  else
+  {
+    // URL is empty loading failed - show it in browser
+    helpHandler->openUrl(legendUrl);
+    setStatusMessage(tr("Opened map legend in browser."));
+  }
+
+  // HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
+}
+
+/* Load the navmap legend into the text browser */
+void MainWindow::loadNavmapLegend()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  legendUrl = HelpHandler::getHelpUrl(this, lnm::HELP_LEGEND_INLINE_URL, lnm::helpLanguages());
+  qDebug() << "legendUrl" << legendUrl;
+  if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
+  {
+    qDebug() << "legendUrl opened";
+    QString legend;
+    QFile legendFile(legendUrl.toLocalFile());
+    if(legendFile.open(QIODevice::ReadOnly))
+    {
+      QTextStream stream(&legendFile);
+      legend.append(stream.readAll());
+
+      QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
+      ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
+      ui->textBrowserLegendNavInfo->setText(legend);
+    }
+    else
+      errorHandler->handleIOError(legendFile, tr("While opening Navmap Legend file:"));
+  }
 }
 
 void MainWindow::showOnlineHelp()
@@ -289,8 +335,8 @@ void MainWindow::showOfflineHelp()
 /* Show marble legend */
 void MainWindow::showMapLegend()
 {
-  ui->dockWidgetInformation->show();
-  ui->tabWidgetInformation->setCurrentIndex(ic::MAP_LEGEND);
+  ui->dockWidgetLegend->show();
+  ui->tabWidgetLegend->setCurrentIndex(1);
   setStatusMessage(tr("Opened map legend."));
 }
 
@@ -440,13 +486,21 @@ void MainWindow::setupUi()
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(
     ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
+  ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
+  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
+  ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                       arg(ui->dockWidgetLegend->windowTitle().toLower()));
+  ui->dockWidgetLegend->toggleViewAction()->setStatusTip(
+    ui->dockWidgetLegend->toggleViewAction()->toolTip());
+
   // Add dock actions to main menu
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetElevation->toggleViewAction(),
-                               ui->dockWidgetAircraft->toggleViewAction()});
+                               ui->dockWidgetAircraft->toggleViewAction(),
+                               ui->dockWidgetLegend->toggleViewAction()});
 
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
@@ -465,6 +519,7 @@ void MainWindow::setupUi()
   ui->viewToolBar->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->viewToolBar->addAction(ui->dockWidgetElevation->toggleViewAction());
   ui->viewToolBar->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->viewToolBar->addAction(ui->dockWidgetLegend->toggleViewAction());
 
   // Create labels for the statusbar
   connectStatusLabel = new QLabel();
@@ -506,6 +561,10 @@ void MainWindow::setupUi()
 
 void MainWindow::connectAllSlots()
 {
+  // Get "show in browser"  click
+  connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this,
+          &MainWindow::legendAnchorClicked);
+
   // Notify others of options change
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
@@ -1485,6 +1544,7 @@ void MainWindow::mainWindowShown()
           HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "RUNNOSIM.html", lnm::helpLanguages());
       }
     }
+
     // else have databases do nothing
   }
 

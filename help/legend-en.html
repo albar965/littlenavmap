@@ -1,0 +1,379 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>Legend</title></head><body>
+ <p>
+          <a href="lnm://legend">Open in Browser</a>
+       </p>
+
+  <p class="comments-section">All speeds are per default in knots,
+distances in nautical miles, altitude in feet. The units can be changed
+to imperial or metric in the dialog <code>Options</code> on the tab <code>Units</code>.</p>
+
+<p class="comments-section">Colors, size and text labels of some map elements can be changed in the dialog <code>Options</code> on the tab <code>Map Display</code>. This legend shows the default values.</p>
+
+<p class="comments-section">Heading and course are suffixed with <code>&deg;T</code> for true course or <code>&deg;M</code> for magnetic course.</p>
+
+<h3 id="map-marks">Map Marks </h3>
+
+<table cellpadding="2" cellspacing="0" border="1">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/legend/home.png" alt="Home"></td>
+<td>Center of the home position.</td>
+</tr>
+<tr>
+<td><img src="images/legend/mark.png" alt="Mark"></td>
+<td>Center point that will be used for distance searches.</td>
+</tr>
+<tr>
+<td><img src="images/legend/route_leg.png" alt="Flight Plan"></td>
+<td>Flight plan with distance, direction and magnetic course at each leg.</td>
+</tr>
+<tr>
+<td><img src="images/legend/activesegment.png" alt="Active Segment"></td>
+<td>Active flight plan segment</td>
+</tr>
+<tr>
+<td><img src="images/legend/route_start.png" alt="Flight Plan Departure Position"></td>
+<td>Flight plan departure position on airport. Either parking, fuel box, helipad, water or runway.</td>
+</tr>
+<tr>
+<td><img src="images/legend/routetod.png" alt="Top of Descent"></td>
+<td>Top of descent point with distance to destination.</td>
+</tr>
+<tr>
+<td><img src="images/legend/range_rings.png" alt="Range"></td>
+<td>Range rings labeled with distance.</td>
+</tr>
+<tr>
+<td><img src="images/legend/range_vor.png" alt="Range VOR"> <img src="images/legend/range_ndb.png" alt="Range NDB"></td>
+<td>VOR or NDB range rings labeled with ident and frequency. Color indicates Navaid type.</td>
+</tr>
+<tr>
+<td><img src="images/legend/distance_gc.png" alt="Distance GC"></td>
+<td><a href="https://en.wikipedia.org/wiki/Great-circle_distance" target="_blank">Great circle</a>
+ distance and course measurement line indicating length and true heading
+ at start and destination. The two heading values will be equal for
+small distances. For shorter distances length is also shown in feet or
+meters.</td>
+</tr>
+<tr>
+<td><img src="images/legend/distance_rhumb.png" alt="Distance Rhumb"></td>
+<td><a href="https://en.wikipedia.org/wiki/Rhumb_line" target="_blank">Rhumb line</a>
+ of equal bearing distance measurement indicating distance and true
+heading. Rhumb lines are used to approach a VOR or NDB or travel along
+airways. For shorter distances length is also shown in feet.</td>
+</tr>
+<tr>
+<td><img src="images/legend/distance_vor.png" alt="Distance VOR"></td>
+<td>Measurement lines starting from an airport or navaid have the same
+color and additional ident and frequency labels. Course for rhumb lines
+will be shown in magnetic if the navaid has a magnetic variation
+attribute.</td>
+</tr>
+<tr>
+<td><img src="images/legend/highlight_search.png" alt="Search Hightlight"></td>
+<td>A highlighted airport or navaid selected in the search result table.</td>
+</tr>
+<tr>
+<td><img src="images/legend/highlight_route.png" alt="Flight Plan Hightlight"></td>
+<td>A highlighted airport or navaid selected in the flight plan table.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="aircraft">Aircraft </h3>
+
+<table cellpadding="2" cellspacing="0" border="1">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/icons/aircraft_small_user.png" alt="Small GA"> <img src="images/icons/aircraft_jet_user.png" alt="Jet"> <img src="images/icons/aircraft_helicopter_user.png" alt="Helicopter"></td>
+<td>Current user aircraft if connected to the flight simulator. Labels vary and can be customized in <code>Options</code> on the tab <code>Map Display</code>.
+ The user aircraft depends on selected aircraft (jet, piston/turboprop
+or helicopter). Optionally a black needle protruding from the aircraft
+nose can show the current aircraft track.</td>
+</tr>
+<tr>
+<td><img src="images/icons/aircraft_small_ground_user.png" alt="Small GA on Ground"> <img src="images/icons/aircraft_jet_ground_user.png" alt="Jet on Ground"> <img src="images/icons/aircraft_helicopter_ground_user.png" alt="Helicopter on Ground"></td>
+<td>User aircraft on ground</td>
+</tr>
+<tr>
+<td><img src="images/legend/aircraft_track.png" alt="Trail"></td>
+<td>User aircraft trail if connected to the flight simulator.</td>
+</tr>
+<tr>
+<td><img src="images/legend/windpointer.png" alt="Wind"></td>
+<td>Wind around the user aircraft with direction in degrees magnetic and speed.</td>
+</tr>
+<tr>
+<td><img src="images/icons/aircraft_small.png" alt="Small GA"> <img src="images/icons/aircraft_jet.png" alt="Jet"> <img src="images/icons/aircraft_helicopter.png" alt="Helicopter"> <img src="images/icons/aircraft_small_ground.png" alt="Small GA"> <img src="images/icons/aircraft_jet_ground.png" alt="Jet"> <img src="images/icons/aircraft_helicopter_ground.png" alt="Helicopter"></td>
+<td>AI or multiplayer aircraft. Labels vary and can be customized in <code>Options</code> on the tab <code>Map Display</code>. The symbol depends on aircraft type (jet, piston/turboprop or helicopter).</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="airports">Airports </h3>
+
+<p class="comments-section">Airports having control towers are shown in
+dark blue others in magenta. Add-on airport names and idents are shown
+italic and underlined. Airports that are part of the flight plan have a
+light yellow text background.</p>
+
+<p class="comments-section">The symbol is shown smaller if an airport
+has no runways. This is the case for some add-on airports that use
+another technique like photoscenery to display runways.</p>
+
+<table cellpadding="2" cellspacing="0" border="1">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/legend/airport_tower_8000.png" alt="Large Airport"> <img src="images/legend/airport_8000.png" alt="Large Airport"></td>
+<td>Airports with hard surface runways longer than 8,000 ft or 2,400
+meters. All runways longer than 4,000 ft or about 1,200 meters are
+shown. Only for lower zoom distances.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower.png" alt="Airport with Tower"> <img src="images/legend/airport.png" alt="Airport"></td>
+<td>Airports with hard surface runways. White line shows heading of longest runway.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower_soft.png" alt="Airport with soft runways and Tower"> <img src="images/legend/airport_soft.png" alt="Airport with soft Runways"></td>
+<td>Airports with soft surface runways.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_empty.png" alt="Airport Empty"> <img src="images/legend/airport_empty_soft.png" alt="Airport Empty Soft"></td>
+<td>Empty airports shown in gray. No taxiways, no parking spots and no aprons.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower_water.png" alt="Seaplane Base with Tower"> <img src="images/legend/airport_water.png" alt="Seaplane Base"></td>
+<td>Seaplane base having only water runways.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower_mil.png" alt="Military Airport with Tower"> <img src="images/legend/airport_mil.png" alt="Military Airport"></td>
+<td>Military airport.</td>
+</tr>
+<tr>
+<td><img src="images/legend/heliport.png" alt="Heliport"></td>
+<td>Heliport having only helipads and no runways.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower_closed.png" alt="Closed Airport with Tower"> <img src="images/legend/airport_closed.png" alt="Closed Airport"></td>
+<td>Abandoned airport. All runways are closed.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airport_tower_fuel.png" alt="Airport with Fuel"> <img src="images/legend/airport_soft_fuel.png" alt="Airport with soft Runways and Fuel"></td>
+<td>Airports that have fuel available.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airportlabel.png" alt="Airport Text"></td>
+<td>Airport label showing name, ident, ATIS frequency, elevation, lighted runways (<code>L</code>) and length of longest runway. The text labels for an airport can be changed in the dialog <code>Options</code> on the tab <code>Map Display</code>.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="navaids">Navaids </h3>
+
+<p class="comments-section">Navaids that are part of the flight plan have a light yellow text background.</p>
+
+<table cellpadding="2" cellspacing="0" border="1">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/legend/vordme_small.png" alt="VORDME"> <img src="images/legend/vordme_large.png" alt="VORDME"></td>
+<td>VOR DME including ident, type (High, Low or Terminal) and frequency.
+ Compass rose shows magnetic variation on lower zoom distances.</td>
+</tr>
+<tr>
+<td><img src="images/legend/vor_small.png" alt="VOR"> <img src="images/legend/vor_large.png" alt="VOR"></td>
+<td>VOR including ident, type and frequency.</td>
+</tr>
+<tr>
+<td><img src="images/legend/dme.png" alt="DME"></td>
+<td>DME including ident, type and frequency.</td>
+</tr>
+<tr>
+<td><img src="images/legend/ndb_small.png" alt="NDB"> <img src="images/legend/ndb_large.png" alt="NDB"></td>
+<td>NDB including ident, type (HH, H, MH or CL - compass locator) and frequency.</td>
+</tr>
+<tr>
+<td><img src="images/legend/waypoint.png" alt="Waypoint"></td>
+<td>Waypoint with name.</td>
+</tr>
+<tr>
+<td><img src="images/legend/userwaypoint.png" alt="User defined Waypoint"></td>
+<td>User defined waypoint with name.</td>
+</tr>
+<tr>
+<td><img src="images/legend/waypoint_invalid.png" alt="Waypoint"></td>
+<td>Invalid airport, waypoint, VOR or NDB that is part of the flight plan but could not be found in the Scenery Database.</td>
+</tr>
+<tr>
+<td><img src="images/legend/marker_outer.png" alt="Marker"> <img src="images/legend/marker_middle.png" alt="Marker"> <img src="images/legend/marker_inner.png" alt="Marker"></td>
+<td>Marker with type and heading indicated by lens shape.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airway_jet.png" alt="Jet Airway"></td>
+<td>Jet airway with label showing name, type (Jet or Both) and minimum altitude. Text depends on zoom distance.</td>
+</tr>
+<tr>
+<td><img src="images/legend/airway_victor.png" alt="Victor Airway"></td>
+<td>Victor airway with label showing name, type (Victor or Both) and minimum altitude. Text depends on zoom distance.</td>
+</tr>
+<tr>
+<td><img src="images/legend/ils_gs_small.png" alt="ILS"> <img src="images/legend/ils_gs.png" alt="ILS"></td>
+<td>ILS with glideslope. Label shows ident, frequency, magnetic heading, glideslope pitch and DME indication if available.</td>
+</tr>
+<tr>
+<td><img src="images/legend/ils_small.png" alt="Localizer"> <img src="images/legend/ils_large.png" alt="Localizer"></td>
+<td>Localizer. Label shows ident, frequency, magnetic heading and DME indication if available.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="airport-diagram">Airport Diagram </h3>
+
+<p class="comments-section">Runway, taxiway, helipad and apron colors
+indicate surface type. White is used for an unknown or invalid surface
+type given by an add-on developer.</p>
+
+<table cellpadding="2" cellspacing="0" border="1">
+
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/legend/runway.png" alt="Runway"></td>
+<td>Runway with length, width, light indicator (<code>L</code>) and surface type.</td>
+</tr>
+<tr>
+<td><img src="images/legend/runway_end.png" alt="Runway End"></td>
+<td>Runway end with ident and magnetic heading.</td>
+</tr>
+<tr>
+<td><img src="images/legend/runway_threshold.png" alt="Runway Threshold"></td>
+<td>Displaced threshold. Do not use for landing.</td>
+</tr>
+<tr>
+<td><img src="images/legend/runway_overrun.png" alt="Runway Overrun"></td>
+<td>Overrun area. Do not use for taxi, takeoff or landing.</td>
+</tr>
+<tr>
+<td><img src="images/legend/runway_blastpad.png" alt="Runway Blastpad"></td>
+<td>Blast pad. Do not use for taxi, takeoff or landing.</td>
+</tr>
+<tr>
+<td><img src="images/legend/taxiway.png" alt="Taxiway"></td>
+<td>Taxiway with name.</td>
+</tr>
+<tr>
+<td><img src="images/legend/closedtaxi.png" alt="Closed Taxiway"></td>
+<td>Closed taxiway.</td>
+</tr>
+<tr>
+<td><img src="images/legend/apron_transparent.png" alt="Taxiway"></td>
+<td>Semi transparent dotted aprons and taxiways indicate that no surface
+ is drawn. It might use a photo texture or simply the default
+background.</td>
+</tr>
+<tr>
+<td><img src="images/legend/tower_active.png" alt="Tower"> <img src="images/legend/tower_inactive.png" alt="Tower"></td>
+<td>Tower. Red if a tower frequency is available. Otherwise just view position.</td>
+</tr>
+<tr>
+<td><img src="images/legend/parking_fuel.png" alt="Fuel"></td>
+<td>Fuel</td>
+</tr>
+<tr>
+<td><img src="images/legend/parking_ga_ramp.png" alt="Parking"></td>
+<td>GA ramp with parking number and heading tick mark.</td>
+</tr>
+<tr>
+<td><img src="images/legend/parking_gate_no_jetway.png" alt="Parking"> <img src="images/legend/parking_gate.png" alt="Parking"></td>
+<td>Gate with number and heading tick mark. Second ring indicates availability of jetway.</td>
+</tr>
+<tr>
+<td><img src="images/legend/parking_ramp_cargo.png" alt="Parking"></td>
+<td>Cargo ramp</td>
+</tr>
+<tr>
+<td><img src="images/legend/parking_mil.png" alt="Parking"></td>
+<td>Military combat parking or cargo ramp.</td>
+</tr>
+<tr>
+<td><img src="images/legend/helipad.png" alt="Helipad"> <img src="images/legend/helipadmedical.png" alt="Helipad"> <img src="images/legend/helipadsquare.png" alt="Helipad"></td>
+<td>Helipads. Red text indicates medical helipad.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="elevation-profile-legend">Elevation Profile Legend </h3>
+
+
+<table cellpadding="2" cellspacing="0" border="1">
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="images/legend/profile_start.png" alt="Profile Start"> <img src="images/legend/profile_end.png" alt="Profile End"></td>
+<td>Ground with start and destination airport elevation.</td>
+</tr>
+<tr>
+<td><img src="images/legend/profile_route.png" alt="Flight Plan Profile"></td>
+<td>Flight plan altitude.</td>
+</tr>
+<tr>
+<td><img src="images/legend/profiletod.png" alt="Top of Descent"></td>
+<td>Top of descent with distance to destination.</td>
+</tr>
+<tr>
+<td><img src="images/legend/profile_safe_alt.png" alt="Profile Safe Alt"></td>
+<td>Minimum safe altitude for flight plan. This is altitude plus 1000
+feet rounded up to the next 500 ft. The 1000 feet buffer can be changed
+in the dialog <code>Options</code> on the tab <code>Flight Plan</code></td>
+</tr>
+<tr>
+<td><img src="images/legend/profilesegminalt.png" alt="Profile Segment Safe Alt"></td>
+<td>Minimum safe altitude for a flight plan segment. The same rules apply as to the minimum safe altitude for flight plan.</td>
+</tr>
+<tr>
+<td><img src="images/legend/profile_aircraft.png" alt="Aircraft"></td>
+<td>User aircraft if connected to the simulator. Labels show altitude and climb/sink rate.</td>
+</tr>
+<tr>
+<td><img src="images/legend/profile_track.png" alt="Trail"></td>
+<td>User aircraft trail if connected to the flight simulator.</td></tr></tbody>
+</table>
+</body></html>

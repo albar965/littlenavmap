@@ -206,6 +206,7 @@ private:
   void showOnlineHelp();
   void showOfflineHelp();
   void showNavmapLegend();
+  void loadNavmapLegend();
 
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
@@ -221,6 +222,9 @@ private:
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
   atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr;
+
+  /* URL of the inline nav map legend */
+  QUrl legendUrl;
 
   /* Combo boxes that are added to the toolbar */
   QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;

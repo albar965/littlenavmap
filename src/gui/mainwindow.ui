@@ -92,9 +92,9 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpContents"/>
-    <addaction name="actionHelpNavmapLegend"/>
-    <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpNavmapLegend"/>
     <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
@@ -2418,35 +2418,6 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tabMapLegendInfo">
-        <attribute name="title">
-         <string>Map Legend</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserLegendInfo">
-           <property name="openExternalLinks">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
       </widget>
      </item>
     </layout>
@@ -2622,7 +2593,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetAircraft">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabAircraftInfo">
         <attribute name="title">
@@ -2741,6 +2712,99 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetLegend">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/legenddock.svg</normaloff>:/littlenavmap/resources/icons/legenddock.svg</iconset>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Legend</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_13">
+     <item>
+      <widget class="QTabWidget" name="tabWidgetLegend">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tabLegendNav">
+        <attribute name="title">
+         <string>Navmap</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_21">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserLegendNavInfo">
+           <property name="openExternalLinks">
+            <bool>false</bool>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabLegend">
+        <attribute name="title">
+         <string>Map</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_20">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QTextBrowser" name="textBrowserLegendInfo">
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -4321,7 +4385,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Navmap Legend (Online)</string>
+    <string>&amp;Navmap Legend</string>
    </property>
    <property name="toolTip">
     <string>Show the navigation map legend online in a browser</string>
@@ -4639,7 +4703,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Map Legend</string>
+    <string>&amp;Map Legend for current Map Theme</string>
    </property>
    <property name="toolTip">
     <string>Show the map legend for the current map theme</string>
@@ -4863,7 +4927,7 @@
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents and Navmap Legend (Offline, PDF)</string>
+    <string>&amp;Contents (Offline, PDF)</string>
    </property>
    <property name="toolTip">
     <string>Show the offline help also including the legend in a PDF viewer</string>
