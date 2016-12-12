@@ -62,6 +62,8 @@ public:
    */
   bool appendTrackPos(const atools::geo::Pos& pos, bool onGround);
 
+  float getMaxAltitude() const;
+
   /* Pull only needed methods into public space */
   using QList::isEmpty;
   using QList::first;

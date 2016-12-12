@@ -775,7 +775,7 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::connectedToSimulator,
           profileWidget, &ProfileWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          profileWidget, &ProfileWidget::disconnectedFromSimulator);
+          profileWidget, &ProfileWidget::simulatorStatusChanged);
 
   connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
@@ -1454,6 +1454,7 @@ void MainWindow::mainWindowShown()
 
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
+  profileWidget->mainWindowShown();
 
   // Focus map widget instead of a random widget
   mapWidget->setFocus();

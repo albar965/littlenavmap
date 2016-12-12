@@ -59,7 +59,7 @@ public:
   void aircraftTrackPruned();
 
   /* Stops showing the user aircraft */
-  void disconnectedFromSimulator();
+  void simulatorStatusChanged();
 
   /* Deletes track */
   void connectedToSimulator();
@@ -86,6 +86,8 @@ public:
   void optionsChanged();
 
   void preRouteCalc();
+
+  void mainWindowShown();
 
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
@@ -147,6 +149,7 @@ private:
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
   QPolygon aircraftTrackPoints;
+  float maxTrackAltitudeFt = 0.f;
 
   float aircraftDistanceFromStart, aircraftDistanceToDest;
   ElevationLegList legList;

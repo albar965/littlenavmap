@@ -116,3 +116,11 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
   }
   return pruned;
 }
+
+float AircraftTrack::getMaxAltitude() const
+{
+  float maxAlt = 0.f;
+  for(const at::AircraftTrackPos& trackPos : *this)
+    maxAlt = std::max(maxAlt, trackPos.pos.getAltitude());
+  return maxAlt;
+}

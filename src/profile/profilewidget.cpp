@@ -132,6 +132,9 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           if(simData.getUserAircraft().getPosition().isValid())
           {
             aircraftTrackPoints.append(currentPoint);
+            maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
+                                          simData.getUserAircraft().getPosition().getAltitude());
+
             updateWidget = true;
           }
         }
@@ -170,10 +173,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
 void ProfileWidget::connectedToSimulator()
 {
-  disconnectedFromSimulator();
+  simulatorStatusChanged();
 }
 
-void ProfileWidget::disconnectedFromSimulator()
+void ProfileWidget::simulatorStatusChanged()
 {
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
@@ -197,6 +200,11 @@ void ProfileWidget::updateScreenCoords()
   // Widget drawing region width and height
   int w = rect().width() - X0 * 2, h = rect().height() - Y0;
 
+  if(!routeController->isFlightplanEmpty() && showAircraftTrack)
+    maxTrackAltitudeFt = mapWidget->getAircraftTrack().getMaxAltitude();
+  else
+    maxTrackAltitudeFt = 0.f;
+
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = calcGroundBuffer(legList.maxElevationFt);
@@ -209,6 +217,9 @@ void ProfileWidget::updateScreenCoords()
   if(simData.getUserAircraft().getPosition().isValid() &&
      (showAircraft || showAircraftTrack) && !routeController->isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, simData.getUserAircraft().getPosition().getAltitude());
+
+  if(showAircraftTrack)
+    maxWindowAlt = std::max(maxWindowAlt, maxTrackAltitudeFt);
 
   verticalScale = h / maxWindowAlt;
   horizontalScale = w / legList.totalDistance;
@@ -538,6 +549,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(textx + rect.right() > X0 + w)
         // Move text to the left when approaching the right corner
         att |= textatt::RIGHT;
+
+      att |= textatt::ROUTE_BG_COLOR;
 
       if(texty + rect.bottom() > Y0 + h)
         // Move text down when approaching top boundary
@@ -935,6 +948,9 @@ void ProfileWidget::resizeEvent(QResizeEvent *)
 /* Deleting aircraft track needs an update of the screen coordinates */
 void ProfileWidget::deleteAircraftTrack()
 {
+  aircraftTrackPoints.clear();
+  maxTrackAltitudeFt = 0.f;
+
   updateScreenCoords();
   update();
 }
@@ -964,6 +980,12 @@ void ProfileWidget::preRouteCalc()
 {
   updateTimer->stop();
   terminateThread();
+}
+
+void ProfileWidget::mainWindowShown()
+{
+  updateScreenCoords();
+  update();
 }
 
 void ProfileWidget::updateProfileShowFeatures()
