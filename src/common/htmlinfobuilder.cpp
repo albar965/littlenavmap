@@ -378,11 +378,9 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QCol
     {
       html.h3(tr("COM Frequencies"));
       html.table();
-      html.tr(QColor(Qt::lightGray));
-      html.td(tr("Type"), atools::util::html::BOLD).
+      html.tr().td(tr("Type"), atools::util::html::BOLD).
       td(tr("Frequency"), atools::util::html::BOLD).
-      td(tr("Name"), atools::util::html::BOLD);
-      html.trEnd();
+      td(tr("Name"), atools::util::html::BOLD).trEnd();
 
       for(const SqlRecord& rec : *recVector)
       {
@@ -427,7 +425,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         bool closedSec = recSec->valueBool("has_closed_markings");
 
         html.h3(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
-                (closedPrim & closedSec ? atools::util::html::STRIKEOUT : atools::util::html::NONE));
+                (closedPrim & closedSec ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
+                | atools::util::html::UNDERLINE);
         html.table();
 
         html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) +
@@ -509,7 +508,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
           QString num = hasStart ? " " + QString::number(heliRec.valueInt("start_number")) : tr(
             " (No Start Position)");
 
-          html.h3(tr("Helipad%1").arg(num), closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE);
+          html.h3(tr("Helipad%1").arg(num),
+                  (closed ? atools::util::html::STRIKEOUT : atools::util::html::NONE)
+                  | atools::util::html::UNDERLINE);
           html.nbsp().nbsp();
 
           atools::geo::Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
@@ -675,7 +676,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         if(!recApp.isNull("runway_name"))
           runway = tr(" - Runway ") + recApp.valueStr("runway_name");
 
-        html.h4(tr("Approach ") + recApp.valueStr("type") + runway);
+        html.h3(tr("Approach ") + recApp.valueStr("type") + runway, atools::util::html::UNDERLINE);
         html.table();
         rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
         html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -703,7 +704,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           // Transitions for this approach
           for(const SqlRecord& recTrans : *recTransVector)
           {
-            html.h4(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
+            html.h3(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
             html.table();
             html.row2(tr("Type:"), capNavString(recTrans.valueStr("type")));
             html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
@@ -806,7 +807,7 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
       {
         Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
 
-        html.h3(tr("Station Weather (%1)").arg(met.getStation()));
+        html.h3(tr("Station Weather (%1)").arg(met.getStation()), atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, false);
       }
 
@@ -814,14 +815,15 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
       {
         Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
         html.h3(tr("Nearest Weather (%1)").
-                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()));
+                arg(met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation()),
+                atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, false);
       }
 
       if(!metar.metarForInterpolated.isEmpty())
       {
         Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, true);
-        html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()));
+        html.h3(tr("Interpolated Weather (%1)").arg(met.getStation()), atools::util::html::UNDERLINE);
         decodedMetar(html, airport, met, true);
       }
     }
@@ -834,11 +836,11 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
       Metar met(context.asMetar);
 
       if(context.isAsDeparture)
-        html.h3(context.asType + tr(" - Departure"));
+        html.h3(context.asType + tr(" - Departure"), atools::util::html::UNDERLINE);
       if(context.isAsDestination)
-        html.h3(context.asType + tr(" - Destination"));
+        html.h3(context.asType + tr(" - Destination"), atools::util::html::UNDERLINE);
       else
-        html.h3(context.asType);
+        html.h3(context.asType, atools::util::html::UNDERLINE);
 
       decodedMetar(html, airport, met, false);
     }
@@ -847,7 +849,7 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
     if(!context.noaaMetar.isEmpty())
     {
       Metar met(context.noaaMetar);
-      html.h3(tr("NOAA Weather"));
+      html.h3(tr("NOAA Weather"), atools::util::html::UNDERLINE);
       decodedMetar(html, airport, met, false);
     }
 
@@ -855,7 +857,7 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
     if(!context.vatsimMetar.isEmpty())
     {
       Metar met(context.vatsimMetar);
-      html.h3(tr("VATSIM Weather"));
+      html.h3(tr("VATSIM Weather"), atools::util::html::UNDERLINE);
       decodedMetar(html, airport, met, false);
     }
   }
@@ -1009,7 +1011,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   html.nbsp().nbsp();
 
   QString type = maptypes::vorType(vor);
-  title(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
+  navaidTitle(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
 
   if(info)
   {
@@ -1049,7 +1051,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
-  title(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
+  navaidTitle(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
 
   if(info)
   {
@@ -1087,7 +1089,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.img(icon, QString(), QString(), QSize(SYMBOL_SIZE, SYMBOL_SIZE));
   html.nbsp().nbsp();
 
-  title(html, tr("Waypoint: ") + waypoint.ident);
+  navaidTitle(html, tr("Waypoint: ") + waypoint.ident);
 
   if(info)
   {
@@ -1155,7 +1157,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
 void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) const
 {
-  title(html, tr("Airway: ") + airway.name);
+  navaidTitle(html, tr("Airway: ") + airway.name);
   html.table();
   html.row2(tr("Type:"), maptypes::airwayTypeToString(airway.type));
 
@@ -1678,10 +1680,10 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
     html.b(text);
 }
 
-void HtmlInfoBuilder::title(HtmlBuilder& html, const QString& text) const
+void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text) const
 {
   if(info)
-    html.text(text, atools::util::html::BOLD | atools::util::html::BIG);
+    html.text(text, atools::util::html::BOLD | atools::util::html::BIG| atools::util::html::UNDERLINE);
   else
     html.b(text);
 }

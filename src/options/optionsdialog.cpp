@@ -164,9 +164,9 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   darkPalette.setColor(QPalette::Window, QColor(15, 15, 15));
   darkPalette.setColor(QPalette::WindowText, QColor(200, 200, 200));
   darkPalette.setColor(QPalette::Base, QColor(20, 20, 20));
-  darkPalette.setColor(QPalette::AlternateBase, QColor(30, 30, 30));
-  darkPalette.setColor(QPalette::ToolTipBase, QColor(65, 65, 65));
-  darkPalette.setColor(QPalette::ToolTipText, QColor(220, 220, 220));
+  darkPalette.setColor(QPalette::AlternateBase, QColor(35, 35, 35));
+  darkPalette.setColor(QPalette::ToolTipBase, QColor(35, 35, 35));
+  darkPalette.setColor(QPalette::ToolTipText, QColor(200, 200, 200));
   darkPalette.setColor(QPalette::Text, QColor(200, 200, 200));
   darkPalette.setColor(QPalette::Button, QColor(35, 35, 35));
   darkPalette.setColor(QPalette::ButtonText, QColor(200, 200, 200));

@@ -229,7 +229,7 @@ private:
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void title(atools::util::HtmlBuilder& html, const QString& text) const;
+  void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
 
   void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, int rating,
                     QColor background) const;
