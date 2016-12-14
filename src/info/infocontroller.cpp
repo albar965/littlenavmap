@@ -180,11 +180,12 @@ void InfoController::updateAirportInternal(bool newAirport)
 
     if(newAirport || weatherChanged)
     {
-      qDebug() << Q_FUNC_INFO << "UPDATING HTML ==================================";
 
       HtmlBuilder html(true);
       maptypes::MapAirport airport;
       mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
+
+      qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
       infoBuilder->airportText(airport, currentWeatherContext, html,
                                &mainWindow->getRouteController()->getRouteMapObjects(),
@@ -304,7 +305,6 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.vors.append(vor);
     infoBuilder->vorText(vor, html, iconBackColor);
-    ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
 
@@ -312,7 +312,6 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.ndbs.append(ndb);
     infoBuilder->ndbText(ndb, html, iconBackColor);
-    ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
 
@@ -320,17 +319,26 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
-    ui->textBrowserNavaidInfo->setText(html.getHtml());
     foundNavaid = true;
   }
 
+  // Remove the worst airway duplicates as a workaround for buggy source data
+  QSet<QString> airwayHtmlText;
   for(const maptypes::MapAirway& airway : result.airways)
   {
     currentSearchResult.airways.append(airway);
-    infoBuilder->airwayText(airway, html);
-    ui->textBrowserNavaidInfo->setText(html.getHtml());
+
+    atools::util::HtmlBuilder airwayHtml(true);
+    infoBuilder->airwayText(airway, airwayHtml);
+    airwayHtmlText.insert(airwayHtml.getHtml());
     foundNavaid = true;
   }
+
+  for(const QString& airwayStr : airwayHtmlText)
+    html.append(airwayStr);
+
+  if(foundNavaid)
+    ui->textBrowserNavaidInfo->setText(html.getHtml());
 
   // Show dock windows if needed
   if(showWindows)

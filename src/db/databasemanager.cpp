@@ -75,7 +75,7 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                    "<td width=\"60\"><b>Markers:</b>"
                                                    "</td>     "
                                                    "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
-                                             "</td>"
+                                                   "</td>"
                                                  "</tr>"
                                                  "<tr> "
                                                    "<td width=\"60\"><b>Airports:</b>"
@@ -108,14 +108,16 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
 const QString DATABASE_TIME_TEXT(QObject::tr(
                                    "<b>%1</b><br/><br/><br/>"
                                    "<b>Time:</b> %2<br/>%3%4"
-                                     "<b>Errors:</b> %5<br/>"
+                                     "<b>Errors:</b> %5<br/><br/>"
+                                     "<big>Found:</big></br>"
                                    ) + DATABASE_INFO_TEXT);
 
 const QString DATABASE_LOADING_TEXT(QObject::tr(
                                       "<b>Scenery:</b> %1 (%2)<br/>"
                                       "<b>File:</b> %3<br/><br/>"
                                       "<b>Time:</b> %4<br/>"
-                                      "<b>Errors:</b> %5<br/>"
+                                      "<b>Errors:</b> %5<br/><br/>"
+                                      "<big>Found:</big></br>"
                                       ) + DATABASE_INFO_TEXT);
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
@@ -531,6 +533,9 @@ bool DatabaseManager::loadScenery()
 
   delete progressDialog;
   progressDialog = new QProgressDialog(databaseDialog);
+  progressDialog->setWindowTitle(tr("%1 - Loading %2").
+                                 arg(QApplication::applicationName()).
+                                 arg(atools::fs::FsPaths::typeToShortName(loadingFsType)));
 
   // Label will be owned by progress
   QLabel *label = new QLabel(progressDialog);
@@ -925,7 +930,7 @@ void DatabaseManager::updateDialogInfo()
   else
     tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
-  databaseDialog->setHeader(metaText + tr("<p><b>Currently Loaded:</b></p><p>%1</p>").arg(tableText));
+  databaseDialog->setHeader(metaText + tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
 }
 
 /* Create database name including simulator short name */

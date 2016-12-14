@@ -692,9 +692,12 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         addRadionavFixType(html, recApp);
 
-        const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(recApp.valueInt("runway_end_id"));
-        if(ilsRec != nullptr)
-          ilsText(ilsRec, html, true);
+        if(recApp.valueStr("type") == "ILS")
+        {
+          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(recApp.valueInt("runway_end_id"));
+          if(ilsRec != nullptr)
+            ilsText(ilsRec, html, true);
+        }
         html.tableEnd();
 
         const SqlRecordVector *recTransVector =
@@ -1683,7 +1686,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
 void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text) const
 {
   if(info)
-    html.text(text, atools::util::html::BOLD | atools::util::html::BIG| atools::util::html::UNDERLINE);
+    html.text(text, atools::util::html::BOLD | atools::util::html::BIG | atools::util::html::UNDERLINE);
   else
     html.b(text);
 }
