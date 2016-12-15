@@ -92,11 +92,15 @@ void RouteStringDialog::readClicked()
 {
   qDebug() << "RouteStringDialog::readClicked()";
 
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
   flightplan->clear();
   bool success = routeString->createRouteFromString(
     ui->plainTextEditRouteString->toPlainText(), *flightplan, speedKts);
 
   ui->textEditRouteStringErrors->clear();
+
+  QGuiApplication::restoreOverrideCursor();
 
   QString msg;
 

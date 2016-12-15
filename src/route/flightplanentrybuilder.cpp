@@ -102,7 +102,8 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
     query->getVorForWaypoint(vor, waypoint.id);
 
     // Check for invalid references that are caused by the navdata update
-    if(!vor.ident.isEmpty())
+    // Check pole to avoid FSAD bugs
+    if(!vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole())
     {
       useWaypoint = false;
       entryFromVor(vor, entry);
@@ -115,7 +116,8 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
     query->getNdbForWaypoint(ndb, waypoint.id);
 
     // Check for invalid references that are caused by the navdata update
-    if(!ndb.ident.isEmpty())
+    // Check pole to avoid FSAD bugs
+    if(!ndb.ident.isEmpty() && ndb.position.isValid() && !ndb.position.isPole())
     {
       useWaypoint = false;
       entryFromNdb(ndb, entry);

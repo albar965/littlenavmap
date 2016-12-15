@@ -211,12 +211,12 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
 
   int maxDistance =
     atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM,
-                                    atools::roundToInt(flightplan.getDistanceNm())));
+                                    atools::roundToInt(flightplan.getDistanceNm() * 1.5f)));
 
   // Collect all navaids, airports and coordinates
   atools::geo::Pos lastPos(flightplan.getDeparturePosition());
   QList<ParseEntry> resultList;
-  for(int i = 1; i < cleanItems.size(); i++)
+  for(int i = 1; i < cleanItems.size() - 1; i++)
   {
     QString item = cleanItems.at(i);
     MapSearchResult result;
