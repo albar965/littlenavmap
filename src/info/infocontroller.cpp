@@ -305,6 +305,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.vors.append(vor);
     infoBuilder->vorText(vor, html, iconBackColor);
+    html.br();
     foundNavaid = true;
   }
 
@@ -312,6 +313,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.ndbs.append(ndb);
     infoBuilder->ndbText(ndb, html, iconBackColor);
+    html.br();
     foundNavaid = true;
   }
 
@@ -319,23 +321,19 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   {
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
+    html.br();
     foundNavaid = true;
   }
 
   // Remove the worst airway duplicates as a workaround for buggy source data
-  QSet<QString> airwayHtmlText;
   for(const maptypes::MapAirway& airway : result.airways)
   {
     currentSearchResult.airways.append(airway);
 
-    atools::util::HtmlBuilder airwayHtml(true);
-    infoBuilder->airwayText(airway, airwayHtml);
-    airwayHtmlText.insert(airwayHtml.getHtml());
+    infoBuilder->airwayText(airway, html);
+    html.br();
     foundNavaid = true;
   }
-
-  for(const QString& airwayStr : airwayHtmlText)
-    html.append(airwayStr);
 
   if(foundNavaid)
     ui->textBrowserNavaidInfo->setText(html.getHtml());
