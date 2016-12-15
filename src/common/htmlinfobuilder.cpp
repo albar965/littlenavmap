@@ -1162,7 +1162,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 {
   navaidTitle(html, tr("Airway: ") + airway.name);
   html.table();
-  html.row2(tr("Type:"), maptypes::airwayTypeToString(airway.type));
+  html.row2(tr("Segment type:"), maptypes::airwayTypeToString(airway.type));
 
   if(airway.minAltitude > 0)
     html.row2(tr("Min altitude for this segment:"), Unit::altFeet(airway.minAltitude));

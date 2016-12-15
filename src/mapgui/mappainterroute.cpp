@@ -445,11 +445,9 @@ void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 void MapPainterRoute::paintText(const PaintContext *context, const QColor& color, int x, int y,
                                 const QString& text)
 {
-  if(text.isEmpty())
-    return;
-
-  symbolPainter->textBox(context->painter, {text}, color,
-                         x + context->sz(context->textSizeNavaid,
-                                         context->mapLayer->getWaypointSymbolSize()) / 2 + 2,
-                         y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+  if(!text.isEmpty() && context->mapLayer->isWaypointRouteName())
+    symbolPainter->textBox(context->painter, {text}, color,
+                           x + context->sz(context->textSizeNavaid,
+                                           context->mapLayer->getWaypointSymbolSize()) / 2 + 2,
+                           y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }

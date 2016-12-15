@@ -283,6 +283,7 @@ void MainWindow::showNavmapLegend()
   if(legendUrl.isLocalFile() && legendUrl.host().isEmpty())
   {
     ui->dockWidgetLegend->show();
+    ui->dockWidgetLegend->raise();
     ui->tabWidgetLegend->setCurrentIndex(0);
     setStatusMessage(tr("Opened navigation map legend."));
   }
@@ -292,8 +293,6 @@ void MainWindow::showNavmapLegend()
     helpHandler->openUrl(legendUrl);
     setStatusMessage(tr("Opened map legend in browser."));
   }
-
-  // HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "LEGEND.html", lnm::helpLanguages());
 }
 
 /* Load the navmap legend into the text browser */
@@ -336,6 +335,7 @@ void MainWindow::showOfflineHelp()
 void MainWindow::showMapLegend()
 {
   ui->dockWidgetLegend->show();
+  ui->dockWidgetLegend->raise();
   ui->tabWidgetLegend->setCurrentIndex(1);
   setStatusMessage(tr("Opened map legend."));
 }
