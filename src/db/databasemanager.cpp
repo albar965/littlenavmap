@@ -251,17 +251,18 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
         // Create an empty schema for all incompatible databases
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-        QMessageBox box(QMessageBox::NoIcon, QApplication::applicationName(), tr("Deleting ..."));
-        box.setStandardButtons(QMessageBox::NoButton);
-        box.setModal(false);
-        box.setWindowModality(Qt::NonModal);
-        box.show();
+        QMessageBox progressBox(QMessageBox::NoIcon, QApplication::applicationName(), tr("Deleting ..."));
+        progressBox.setWindowFlags(progressBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+        progressBox.setStandardButtons(QMessageBox::NoButton);
+        progressBox.setModal(false);
+        progressBox.setWindowModality(Qt::NonModal);
+        progressBox.show();
         atools::gui::Application::processEventsExtended();
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
-          box.setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          progressBox.setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
           atools::gui::Application::processEventsExtended();
           sqlDb.setDatabaseName(dbfile);
           sqlDb.open();
@@ -271,7 +272,7 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
         }
         QGuiApplication::restoreOverrideCursor();
 
-        box.close();
+        progressBox.close();
       }
     }
   }
@@ -533,6 +534,8 @@ bool DatabaseManager::loadScenery()
 
   delete progressDialog;
   progressDialog = new QProgressDialog(databaseDialog);
+  progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
   progressDialog->setWindowTitle(tr("%1 - Loading %2").
                                  arg(QApplication::applicationName()).
                                  arg(atools::fs::FsPaths::typeToShortName(loadingFsType)));

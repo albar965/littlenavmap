@@ -740,7 +740,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         double altFeet = meterToFeet(coord.altitude());
 
         // Limit ground altitude to 30000 feet
-        altFeet = std::min(altFeet, static_cast<double>(ALTITUDE_LIMIT));
+        altFeet = std::min(altFeet, static_cast<double>(ALTITUDE_LIMIT_FT));
 
         Pos pos(coord.longitude(GeoDataCoordinates::Degree), coord.latitude(GeoDataCoordinates::Degree),
                 altFeet);

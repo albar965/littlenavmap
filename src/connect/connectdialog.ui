@@ -23,7 +23,8 @@
       <widget class="QSpinBox" name="spinBoxConnectUpdateRate">
        <property name="toolTip">
         <string>Allowed range is 50 milliseconds up to 1 second. 
-Little Navmap fetches data from Flight Simulator using this time interval.</string>
+Little Navmap fetches data from the flight simulator using this time interval.
+Lower values will result in a more fluid aircraft movement but can potentially induce stutters.</string>
        </property>
        <property name="suffix">
         <string> ms</string>
@@ -45,7 +46,7 @@ Little Navmap fetches data from Flight Simulator using this time interval.</stri
      <item row="4" column="0">
       <widget class="QLabel" name="labelConnectHostname">
        <property name="text">
-        <string>&amp;Hostname or IP Address:</string>
+        <string>&amp;Hostname or IP address:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -145,7 +146,7 @@ Little Navmap fetches data from Flight Simulator using this time interval.</stri
         <string>Connect to a remote flight simulator on another computer which is runnng Little Navconnect.</string>
        </property>
        <property name="text">
-        <string>Connect to a remote Flight Simulator</string>
+        <string>Connect to a remote flight simulator</string>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">buttonGroupConnectType</string>
@@ -155,7 +156,7 @@ Little Navmap fetches data from Flight Simulator using this time interval.</stri
      <item row="1" column="0">
       <widget class="QLabel" name="labelConnectUpdateRate">
        <property name="text">
-        <string>&amp;Update Time Interval:</string>
+        <string>&amp;Update time interval:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -168,13 +169,13 @@ Little Navmap fetches data from Flight Simulator using this time interval.</stri
      <item row="0" column="0" colspan="3">
       <widget class="QRadioButton" name="radioButtonConnectDirect">
        <property name="toolTip">
-        <string>Connect directly to flight simulator on the same computer.</string>
+        <string>Connect directly to a flight simulator on the same computer.</string>
        </property>
        <property name="statusTip">
         <string>Connect directly to flight simulator on the same computer.</string>
        </property>
        <property name="text">
-        <string>Connect directly to local Flight Simulator</string>
+        <string>Connect directly to a local flight simulator</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -196,7 +197,7 @@ Little Navmap fetches data from Flight Simulator using this time interval.</stri
    <item>
     <widget class="QCheckBox" name="checkBoxConnectOnStartup">
      <property name="toolTip">
-      <string>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.
+      <string>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
 Unchecking this will stop all automatic connection attempts immediately.</string>
      </property>

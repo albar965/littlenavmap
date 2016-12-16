@@ -100,8 +100,11 @@
           </item>
           <item>
            <widget class="QRadioButton" name="radioButtonOptionsStartupShowFlightplan">
-            <property name="statusTip">
+            <property name="toolTip">
              <string>Center the last used flight plan on the map on startup.</string>
+            </property>
+            <property name="statusTip">
+             <string/>
             </property>
             <property name="text">
              <string>&amp;Flight plan</string>
@@ -277,7 +280,11 @@
         </widget>
        </item>
        <item row="9" column="2">
-        <widget class="QComboBox" name="comboBoxOptionsGuiTheme"/>
+        <widget class="QComboBox" name="comboBoxOptionsGuiTheme">
+         <property name="toolTip">
+          <string>A restart is recommended after changing the style.</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0">
         <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
@@ -362,7 +369,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
        <item row="10" column="2">
         <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
          <property name="toolTip">
-          <string>Darken the map for the style &quot;Night&quot;. Lower values result in a darker map display.</string>
+          <string>Darken the map and the flight plan elevation profile for the style &quot;Night&quot;. Lower values result in a darker display.</string>
          </property>
          <property name="readOnly">
           <bool>false</bool>
@@ -434,9 +441,9 @@ A range ring will be added for each radius value.</string>
           <item row="0" column="0">
            <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
             <property name="toolTip">
-             <string>Empty airports are not add-on, have no taxiways, no parking and no aprons.
-Display underneath all other airports, use gray color for symbol and
-provide a toolbar button for disabling if this checkbox is enabled.</string>
+             <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+These are displayed underneath all other airports, use a gray symbol and
+provide a toolbar button for disabling them if this checkbox is enabled.</string>
             </property>
             <property name="text">
              <string>&amp;Treat empty airports special</string>
@@ -512,8 +519,8 @@ provide a toolbar button for disabling if this checkbox is enabled.</string>
           <item row="0" column="2">
            <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
             <property name="toolTip">
-             <string>Viewpoint distance above earth surface.
-Smaller values will zoom in closer to an airport or navaid. This setting applies to double clicks in the map or table views only.</string>
+             <string>Viewpoint distance above earth surface when zooming after double clicking on an object in a table or in the map..
+Smaller values will zoom in closer to an airport or navaid. </string>
             </property>
             <property name="suffix">
              <string> %dist%</string>
@@ -545,8 +552,9 @@ Smaller values will zoom in closer to an airport or navaid. This setting applies
           <item row="1" column="2">
            <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMapMenu">
             <property name="toolTip">
-             <string>Viewpoint distance above earth surface.
-Smaller values will zoom in closer to an airport or navaid. This setting applies to the menu items &quot;Show on map&quot; and the map links in the information windows.</string>
+             <string>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
+Smaller values will zoom in closer to an airport or navaid. 
+</string>
             </property>
             <property name="suffix">
              <string> %dist%</string>
@@ -612,7 +620,7 @@ Smaller values will zoom in closer to an airport or navaid. This setting applies
           <item row="2" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsMapTooltipRect">
             <property name="toolTip">
-             <string>Bigger values will list more more objects in the tooltip.</string>
+             <string>Larger values will list more more objects in the tooltip.</string>
             </property>
             <property name="suffix">
              <string> pixels</string>
@@ -644,8 +652,8 @@ Smaller values will zoom in closer to an airport or navaid. This setting applies
           <item row="0" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsMapClickRect">
             <property name="toolTip">
-             <string>Bigger values will catch more objects.
-Smaller values allow a finer selection.</string>
+             <string>Larger values will catch more objects.
+Smaller values will allow a finer selection.</string>
             </property>
             <property name="suffix">
              <string> pixels</string>
@@ -721,7 +729,7 @@ Smaller values allow a finer selection.</string>
           <item row="3" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftAi">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -746,7 +754,7 @@ Smaller values allow a finer selection.</string>
           <item row="2" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
             <property name="text">
-             <string>&amp;User Aircraft:</string>
+             <string>&amp;User aircraft:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
@@ -756,7 +764,7 @@ Smaller values allow a finer selection.</string>
           <item row="1" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -781,7 +789,7 @@ Smaller values allow a finer selection.</string>
           <item row="0" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirport">
             <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -816,7 +824,7 @@ Smaller values allow a finer selection.</string>
           <item row="8" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessRangeDistance">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -884,7 +892,7 @@ measurement lines:</string>
           <item row="6" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeTrail">
             <property name="text">
-             <string>User Aircraft &amp;Trail:</string>
+             <string>User aircraft &amp;trail:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
@@ -894,7 +902,7 @@ measurement lines:</string>
           <item row="0" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAirport">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -919,7 +927,7 @@ measurement lines:</string>
           <item row="6" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessTrail">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -974,7 +982,7 @@ airways:</string>
           <item row="4" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -999,7 +1007,7 @@ airways:</string>
           <item row="1" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeNavaid">
             <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1024,7 +1032,7 @@ airways:</string>
           <item row="4" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
             <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1049,7 +1057,7 @@ airways:</string>
           <item row="2" column="1">
            <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
             <property name="toolTip">
-             <string>Size of airport and navaid symbols.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1074,7 +1082,7 @@ airways:</string>
           <item row="2" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftUser">
             <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1099,7 +1107,7 @@ airways:</string>
           <item row="3" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
             <property name="text">
-             <string>AI / &amp;Multiplayer Aircraft:</string>
+             <string>AI or &amp;multiplayer aircraft:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
@@ -1109,7 +1117,7 @@ airways:</string>
           <item row="4" column="0">
            <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
             <property name="text">
-             <string>&amp;Flight Plan:</string>
+             <string>&amp;Flight plan:</string>
             </property>
             <property name="buddy">
              <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
@@ -1119,7 +1127,7 @@ airways:</string>
           <item row="3" column="2">
            <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAircraftAi">
             <property name="toolTip">
-             <string>Size of airport and navaid ICAO idents, names, frequencies and other texts.</string>
+             <string/>
             </property>
             <property name="suffix">
              <string> %</string>
@@ -1684,7 +1692,7 @@ when transitioning from airport to airway.</string>
         <widget class="QSpinBox" name="spinBoxOptionsRouteGroundBuffer">
          <property name="toolTip">
           <string>The red line value is always rounded up to the next 500 ft.
-Note that this value does not affect flight plan calculation or saving.</string>
+Note that this value does not affect flight plan calculation or saving of flight plans.</string>
          </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
@@ -1750,8 +1758,7 @@ nearest even thousand feet for westerly flight plans if checked.</string>
        <item row="4" column="1">
         <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsRouteTodRule">
          <property name="toolTip">
-          <string>The red line value is always rounded up to the next 500 ft.
-Note that this value does not affect flight plan calculation or saving.</string>
+          <string/>
          </property>
          <property name="showGroupSeparator" stdset="0">
           <bool>true</bool>
@@ -2192,11 +2199,14 @@ You have to reload the scenery library so that the changes take effect.</string>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxOptions">
+     <property name="toolTip">
+      <string>Restore all settings that can be done with this dialog.</string>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
      </property>
     </widget>
    </item>

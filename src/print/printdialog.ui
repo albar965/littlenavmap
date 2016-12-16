@@ -25,7 +25,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureOverview">
           <property name="text">
-           <string>&amp;Overview and METAR</string>
+           <string>&amp;Overview</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -45,21 +45,21 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureSoftRunways">
           <property name="text">
-           <string>&amp;Include soft Surface Runways</string>
+           <string>&amp;Include runways with soft surface</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureDetailRunways">
           <property name="text">
-           <string>&amp;Detailed Runway Information</string>
+           <string>&amp;Detailed runway information</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureCom">
           <property name="text">
-           <string>&amp;COM Frequencies</string>
+           <string>&amp;COM frequencies</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -76,7 +76,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureWeather">
           <property name="text">
-           <string>&amp;Weather</string>
+           <string>Decoded &amp;weather</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -95,7 +95,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationOverview">
           <property name="text">
-           <string>&amp;Overview and METAR</string>
+           <string>&amp;Overview</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -115,21 +115,21 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationSoftRunways">
           <property name="text">
-           <string>&amp;Include soft Surface Runways</string>
+           <string>&amp;Include runways with soft surface</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationDetailRunways">
           <property name="text">
-           <string>&amp;Detailed Runway Information</string>
+           <string>&amp;Detailed runway information</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationCom">
           <property name="text">
-           <string>&amp;COM Frequencies</string>
+           <string>&amp;COM frequencies</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -146,7 +146,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationWeather">
           <property name="text">
-           <string>&amp;Weather</string>
+           <string>Decoded &amp;weather</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -168,7 +168,7 @@
    <item>
     <widget class="QCheckBox" name="checkBoxPrintFlightplan">
      <property name="text">
-      <string>Print &amp;Flight Plan Table</string>
+      <string>Print &amp;flight plan table</string>
      </property>
      <property name="checked">
       <bool>true</bool>

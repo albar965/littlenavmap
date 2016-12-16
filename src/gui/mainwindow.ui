@@ -2738,7 +2738,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetLegend">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tabLegendNav">
         <attribute name="title">
@@ -4805,10 +4805,10 @@
      <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
    </property>
    <property name="text">
-    <string>Copy Flight Plan Route to Clipboard</string>
+    <string>Copy Flight Plan Route Description to the Clipboard</string>
    </property>
    <property name="toolTip">
-    <string>Copy the flight plan route text to the clipboard</string>
+    <string>Copy flight plan route description to the clipboard</string>
    </property>
    <property name="statusTip">
     <string>Copy the Flight Plan as a string to the clipboard</string>
@@ -4856,7 +4856,7 @@
     <string>Adjust Flight Plan Altitude</string>
    </property>
    <property name="toolTip">
-    <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
+    <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
    </property>
    <property name="statusTip">
     <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
@@ -4872,6 +4872,9 @@
    <property name="text">
     <string>&amp;Compass</string>
    </property>
+   <property name="toolTip">
+    <string>Show or hide the compass map floating overlay</string>
+   </property>
   </action>
   <action name="actionMapOverlayOverview">
    <property name="checkable">
@@ -4882,6 +4885,9 @@
    </property>
    <property name="text">
     <string>&amp;Overview</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the overview map floating overlay</string>
    </property>
   </action>
   <action name="actionMapOverlayScalebar">
@@ -4894,6 +4900,9 @@
    <property name="text">
     <string>&amp;Scalebar</string>
    </property>
+   <property name="toolTip">
+    <string>Show or hide the scalebar map floating overlay</string>
+   </property>
   </action>
   <action name="actionMapOverlayNavigation">
    <property name="checkable">
@@ -4905,6 +4914,9 @@
    <property name="text">
     <string>&amp;Navigation</string>
    </property>
+   <property name="toolTip">
+    <string>Show or hide the navigation map floating overlay</string>
+   </property>
   </action>
   <action name="actionMapEditUserWaypoint">
    <property name="icon">
@@ -4915,7 +4927,7 @@
     <string>Edit Name for %1</string>
    </property>
    <property name="toolTip">
-    <string>Edit User Waypoint Name</string>
+    <string>Edit user waypoint name</string>
    </property>
    <property name="statusTip">
     <string>Measure great circle distance on map</string>

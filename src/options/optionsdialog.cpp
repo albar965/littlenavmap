@@ -27,6 +27,7 @@
 #include "gui/widgetutil.h"
 #include "settings/settings.h"
 #include "mapgui/mapwidget.h"
+#include "gui/helphandler.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -44,6 +45,7 @@ const int MAX_RANGE_RING_SIZE = 4000;
 const int MAX_RANGE_RINGS = 10;
 
 using atools::settings::Settings;
+using atools::gui::HelpHandler;
 
 /* Validates the space separated list of range ring sizes */
 class RangeRingValidator :
@@ -412,6 +414,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     emit optionsChanged();
     accept();
   }
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
+    HelpHandler::openHelpUrl(this, lnm::HELP_ONLINE_URL + "OPTIONS.html", lnm::helpLanguages());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
 

@@ -17,7 +17,7 @@
    <item>
     <widget class="QLabel" name="labelSelectParking">
      <property name="text">
-      <string>&amp;Select a Start Position for Departure&lt;br/&gt;%1:</string>
+      <string>&amp;Select a start position for departure&lt;br/&gt;%1:</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

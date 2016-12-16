@@ -41,6 +41,14 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="toolTip">
+          <string>Format is:
+FROM[ETD] [SPEEDALT] [SID] [ENROUTE] [STAR] TO[ETA] [ALTERNATES]
+FROM and TO airports are required, everything else is optional.
+ENROUTE is a space separated list of navaids, airway/navaid combinations or user defined waypoints.
+SID, STAR, ETD and ETA are ignored.
+</string>
+         </property>
          <property name="plainText">
           <string/>
          </property>
@@ -67,7 +75,7 @@
          <item>
           <widget class="QPushButton" name="pushButtonRouteStringToClipboard">
            <property name="toolTip">
-            <string>Copy flight plan route to clipboard.</string>
+            <string>Copy the flight plan route description to the clipboard.</string>
            </property>
            <property name="text">
             <string>&amp;To Clipboard</string>
@@ -83,7 +91,7 @@
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Paste flight plan route from clipboard.</string>
+            <string>Paste flight plan route description from clipboard.</string>
            </property>
            <property name="text">
             <string>&amp;From Clipboard</string>
@@ -98,6 +106,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Read the flight plan route description.</string>
+           </property>
            <property name="text">
             <string>&amp;Read Route Description</string>
            </property>
@@ -111,6 +122,9 @@
       <layout class="QVBoxLayout" name="verticalLayoutRouteStringBottom">
        <item>
         <widget class="QTextEdit" name="textEditRouteStringErrors">
+         <property name="toolTip">
+          <string>Display messages, warnings or errors when reading the route description.</string>
+         </property>
          <property name="textInteractionFlags">
           <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
          </property>
