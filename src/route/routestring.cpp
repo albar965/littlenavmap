@@ -199,10 +199,10 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     return false;
   }
 
-  if(!addDeparture(flightplan, cleanItems.first()))
+  if(!addDeparture(flightplan, cleanItems.takeFirst()))
     return false;
 
-  if(!addDestination(flightplan, cleanItems.last()))
+  if(!addDestination(flightplan, cleanItems.takeLast()))
     return false;
 
   if(speedKts > 0.f && altitude > 0.f)
@@ -216,9 +216,8 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   // Collect all navaids, airports and coordinates
   atools::geo::Pos lastPos(flightplan.getDeparturePosition());
   QList<ParseEntry> resultList;
-  for(int i = 1; i < cleanItems.size() - 1; i++)
+  for(const QString& item : cleanItems)
   {
-    QString item = cleanItems.at(i);
     MapSearchResult result;
     findWaypoints(result, item);
 
@@ -240,7 +239,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   removeEmptyResults(resultList);
 
   // Now build the flight plan
-  for(int i = 0; i < resultList.size() - 1; i++)
+  for(int i = 0; i < resultList.size(); i++)
   {
     const QString& item = resultList.at(i).item;
     MapSearchResult& result = resultList[i].result;
@@ -353,7 +352,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
   }
   else
   {
-    appendError(tr("Mandatory departure airport %1 not found. Reading stopped.").arg(airportIdent));
+    appendError(tr("Mandatory departure airport %1 not found.").arg(airportIdent));
     return false;
   }
 }
@@ -385,7 +384,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
   }
   else
   {
-    appendError(tr("Mandatory destination airport %1 not found. Reading stopped.").arg(airportIdent));
+    appendError(tr("Mandatory destination airport %1 not found.").arg(airportIdent));
     return false;
   }
 }

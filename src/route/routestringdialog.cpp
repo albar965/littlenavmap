@@ -38,6 +38,8 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   ui->setupUi(this);
 
+  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create Flight &Plan"));
+
   flightplan = new atools::fs::pln::Flightplan;
   routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
@@ -107,20 +109,18 @@ void RouteStringDialog::readClicked()
   if(success)
   {
     msg =
-      tr("<b>Found %1 waypoints. Flight plan from %3 (%4) to %5 (%6). Distance is %2.</b>").
+      tr("<b>Found %1 waypoints. Flight plan from %3 (%4) to %5 (%6). Distance is %2.</b><br/>").
       arg(flightplan->getEntries().size()).
       arg(Unit::distNm(flightplan->getDistanceNm())).
       arg(flightplan->getDepartureAiportName()).
       arg(flightplan->getDepartureIdent()).
       arg(flightplan->getDestinationAiportName()).
       arg(flightplan->getDestinationIdent());
+    ui->textEditRouteStringErrors->setHtml(msg);
   }
 
-  if(routeString->getMessages().isEmpty())
-    ui->textEditRouteStringErrors->setHtml(tr("%1No errors.").arg(msg));
-  else
+  if(!routeString->getMessages().isEmpty())
   {
-    ui->textEditRouteStringErrors->setHtml(msg);
     for(const QString& err : routeString->getMessages())
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
