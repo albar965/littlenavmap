@@ -146,6 +146,12 @@ private:
   /* Thread will start after this delay if an elevation update arrives */
   static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_UPDATE_TIMEOUT_MS = 5000;
 
+  /* Do not calculate a profile for legs longer than this value */
+  static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
+
+  /* Limt altitude to this value */
+  static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT = 30000.f;
+
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
   QPolygon aircraftTrackPoints;

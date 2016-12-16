@@ -643,7 +643,6 @@ void ProfileWidget::updateThreadFinished()
     legList = future.result();
     updateScreenCoords();
     update();
-    // mainWindow->statusMessage(tr("Elevation data updated."));
   }
 }
 
@@ -670,9 +669,6 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
       const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
       const Marble::GeoDataCoordinates& c2 = ls->at(j);
 
-      // qDebug() << c1.toString(GeoDataCoordinates::Decimal)
-      // << c2.toString(GeoDataCoordinates::Decimal);
-
       // Get altitude points for the line segment
       // The might not be complete and will be more complete on further iterations when we get a signal
       // from the elevation model
@@ -681,17 +677,6 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
         c1.latitude(GeoDataCoordinates::Degree),
         c2.longitude(GeoDataCoordinates::Degree),
         c2.latitude(GeoDataCoordinates::Degree));
-
-      // qDebug() << temp.first().toString(GeoDataCoordinates::Decimal)
-      // << temp.first().altitude();
-      // qDebug() << temp.at(temp.size() / 4).toString(GeoDataCoordinates::Decimal)
-      // << temp.at(temp.size() / 4).altitude();
-      // qDebug() << temp.at(temp.size() / 2).toString(GeoDataCoordinates::Decimal)
-      // << temp.at(temp.size() / 2).altitude();
-      // qDebug() << temp.at(temp.size() / 4 * 3).toString(GeoDataCoordinates::Decimal)
-      // << temp.at(temp.size() / 4 * 3).altitude();
-      // qDebug() << temp.last().toString(GeoDataCoordinates::Decimal)
-      // << temp.last().altitude();
 
       for(const GeoDataCoordinates& c : temp)
       {
@@ -735,55 +720,67 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
 
     const RouteMapObject& lastRmo = legs.routeMapObjects.at(i - 1);
     const RouteMapObject& rmo = legs.routeMapObjects.at(i);
-
-    GeoDataLineString elevations;
-    elevations.setTessellate(true);
-    if(!fetchRouteElevations(elevations, lastRmo.getPosition(), rmo.getPosition()))
-      return ElevationLegList();
-
-    // Loop over all elevation points for the current leg
     ElevationLeg leg;
-    Pos lastPos;
-    for(int j = 0; j < elevations.size(); j++)
+
+    if(rmo.getDistanceTo() < ELEVATION_MAX_LEG_NM)
     {
-      if(terminateThreadSignal)
+      GeoDataLineString elevations;
+      elevations.setTessellate(true);
+      if(!fetchRouteElevations(elevations, lastRmo.getPosition(), rmo.getPosition()))
         return ElevationLegList();
 
-      const GeoDataCoordinates& coord = elevations.at(j);
-      double altFeet = meterToFeet(coord.altitude());
-
-      // Limit ground altitude to 30000 feet
-      altFeet = std::min(altFeet, 30000.);
-
-      Pos pos(coord.longitude(GeoDataCoordinates::Degree), coord.latitude(GeoDataCoordinates::Degree),
-              altFeet);
-
-      // Drop points with similar altitude except the first and last one on a segment
-      if(lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
-         legs.elevationLegs.size() > 2 &&
-         atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
-        continue;
-
-      float alt = pos.getAltitude();
-
-      // Adjust maximum
-      if(alt > leg.maxElevation)
-        leg.maxElevation = alt;
-      if(alt > legs.maxElevationFt)
-        legs.maxElevationFt = alt;
-
-      leg.elevation.append(pos);
-      if(j > 0)
+      // Loop over all elevation points for the current leg
+      Pos lastPos;
+      for(int j = 0; j < elevations.size(); j++)
       {
-        // Update total distance
-        float dist = meterToNm(lastPos.distanceMeterTo(pos));
-        legs.totalDistance += dist;
-      }
-      // Distance to elevation point from departure
-      leg.distances.append(legs.totalDistance);
+        if(terminateThreadSignal)
+          return ElevationLegList();
 
-      legs.totalNumPoints++;
-      lastPos = pos;
+        const GeoDataCoordinates& coord = elevations.at(j);
+        double altFeet = meterToFeet(coord.altitude());
+
+        // Limit ground altitude to 30000 feet
+        altFeet = std::min(altFeet, static_cast<double>(ALTITUDE_LIMIT));
+
+        Pos pos(coord.longitude(GeoDataCoordinates::Degree), coord.latitude(GeoDataCoordinates::Degree),
+                altFeet);
+
+        // Drop points with similar altitude except the first and last one on a segment
+        if(lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
+           legs.elevationLegs.size() > 2 &&
+           atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
+          continue;
+
+        float alt = pos.getAltitude();
+
+        // Adjust maximum
+        if(alt > leg.maxElevation)
+          leg.maxElevation = alt;
+        if(alt > legs.maxElevationFt)
+          legs.maxElevationFt = alt;
+
+        leg.elevation.append(pos);
+        if(j > 0)
+        {
+          // Update total distance
+          float dist = meterToNm(lastPos.distanceMeterTo(pos));
+          legs.totalDistance += dist;
+        }
+        // Distance to elevation point from departure
+        leg.distances.append(legs.totalDistance);
+
+        legs.totalNumPoints++;
+        lastPos = pos;
+      }
+    }
+    else
+    {
+      float dist = meterToNm(lastRmo.getPosition().distanceMeterTo(rmo.getPosition()));
+      leg.distances.append(legs.totalDistance);
+      legs.totalDistance += dist;
+      leg.distances.append(legs.totalDistance);
+      leg.elevation.append(lastRmo.getPosition());
+      leg.elevation.append(rmo.getPosition());
     }
     legs.elevationLegs.append(leg);
   }
