@@ -455,13 +455,13 @@ void MapWidget::showOverlays(bool show)
 
       if(show && showConfig)
       {
-        qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(true);
         overlay->show();
       }
       else
       {
-        qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
         overlay->setVisible(false);
         overlay->hide();
       }
@@ -478,8 +478,8 @@ void MapWidget::overlayStateToMenu()
     AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
-      qDebug() << "Float item to menu" << overlay->name() << "id" << overlay->nameId()
-               << "visible" << overlay->visible();
+      // qDebug() << "Float item to menu" << overlay->name() << "id" << overlay->nameId()
+      // << "visible" << overlay->visible();
 
       QAction *menuItem = mapOverlays.value(name);
       menuItem->blockSignals(true);
@@ -505,13 +505,13 @@ void MapWidget::overlayStateFromMenu()
       overlay->setVisible(show);
       if(show)
       {
-        qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
+        // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
         setPropertyValue(overlay->nameId(), true);
         overlay->show();
       }
       else
       {
-        qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
+        // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
         setPropertyValue(overlay->nameId(), false);
         overlay->hide();
       }

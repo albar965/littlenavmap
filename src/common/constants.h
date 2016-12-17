@@ -28,6 +28,7 @@ const float POS_IS_POINT_EPSILON = 0.0001f;
 
 namespace lnm {
 
+// or "release/1.2"
 const QString HELP_BRANCH = "master";
 
 /* Important: keep slash at the end. Otherwise Gitbook will not display the page properly */

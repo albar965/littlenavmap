@@ -178,11 +178,11 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
 bool RouteString::createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
                                         float& speedKts)
 {
-  qDebug() << Q_FUNC_INFO;
+  // qDebug() << Q_FUNC_INFO;
   messages.clear();
   QStringList items = cleanRouteString(routeString);
 
-  qDebug() << "items" << items;
+  // qDebug() << "items" << items;
 
   // Remove all unneded adornment like speed and times and also combine waypoint coordinate pairs
   float altitude;
@@ -191,7 +191,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
   if(altitude > 0.f)
     flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitude)));
 
-  qDebug() << "clean items" << cleanItems;
+  // qDebug() << "clean items" << cleanItems;
 
   if(cleanItems.size() < 2)
   {
@@ -259,10 +259,10 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         {
           entry.setAirway(item);
           flightplan.getEntries().insert(flightplan.getEntries().size() - 1, entry);
-          qDebug() << entry.getIcaoIdent() << entry.getAirway();
+          // qDebug() << entry.getIcaoIdent() << entry.getAirway();
         }
         else
-          qDebug() << "No navaid found for" << wp.ident << "on airway" << item;
+          qWarning() << "No navaid found for" << wp.ident << "on airway" << item;
       }
     }
     else
@@ -290,7 +290,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
       }
       else
         appendWarning(tr("No navaid found for %1. Ignoring.").arg(item));
-      qDebug() << entry.getIcaoIdent() << entry.getAirway();
+      // qDebug() << entry.getIcaoIdent() << entry.getAirway();
     }
 
     // Remember position for distance calculation
@@ -339,7 +339,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
   query->getAirportByIdent(departure, ident);
   if(departure.position.isValid())
   {
-    qDebug() << "found" << departure.ident << "id" << departure.id;
+    // qDebug() << "found" << departure.ident << "id" << departure.id;
 
     flightplan.setDepartureAiportName(departure.name);
     flightplan.setDepartureIdent(departure.ident);
@@ -371,7 +371,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
   query->getAirportByIdent(destination, airportIdent);
   if(destination.position.isValid())
   {
-    qDebug() << "found" << destination.ident << "id" << destination.id;
+    // qDebug() << "found" << destination.ident << "id" << destination.id;
 
     flightplan.setDestinationAiportName(destination.name);
     flightplan.setDestinationIdent(destination.ident);
@@ -430,7 +430,7 @@ void RouteString::extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& all
   {
     for(int idx = startIndex + 1; idx < endIndex; idx++)
     {
-      qDebug() << "adding forward idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident;
+      // qDebug() << "adding forward idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident;
       airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
     }
   }
@@ -439,7 +439,7 @@ void RouteString::extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& all
     // Reversed order
     for(int idx = startIndex - 1; idx > endIndex; idx--)
     {
-      qDebug() << "adding reverse idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident;
+      // qDebug() << "adding reverse idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident;
       airwayWaypoints.append(allAirwayWaypoints.at(idx).waypoint);
     }
   }
@@ -524,7 +524,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
         findIndexesInAirway(allAirwayWaypoints, lastResult.waypoints.first().id,
                             nextResult.waypoints.first().id, startIndex, endIndex, airwayName);
 
-        qDebug() << "startidx" << startIndex << "endidx" << endIndex;
+        // qDebug() << "startidx" << startIndex << "endidx" << endIndex;
         if(startIndex != -1 && endIndex != -1)
         {
           // Get the list of waypoints from start to end index
