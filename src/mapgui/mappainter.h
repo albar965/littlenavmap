@@ -46,8 +46,10 @@ class MapWidget;
 /* Struct that is passed on each paint event to all painters */
 struct PaintContext
 {
-  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level */
-  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not  affected by detail level */
+  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
+                             *  should be used to visibility of map objects */
+  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
+                                      *  Should be used to determine text visibility and object sizes. */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;

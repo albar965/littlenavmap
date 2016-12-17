@@ -346,39 +346,35 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)
 {
-  symbolPainter->drawAirportSymbol(context->painter, obj, x, y,
-                                   context->sz(context->symbolSizeAirport,
-                                               context->mapLayer->getAirportSymbolSize()), false, false);
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
+  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false);
 }
 
 void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y,
                                        const maptypes::MapAirport& obj)
 {
+  int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT;
 
   // Use more more detailed text for flight plan
   if(context->mapLayer->isAirportRouteInfo())
     flags |= textflags::NAME | textflags::INFO;
 
-  symbolPainter->drawAirportText(context->painter, obj, x, y,
-                                 context->dispOpts,
-                                 flags,
-                                 context->sz(context->textSizeAirport,
-                                             context->mapLayer->getAirportSymbolSize()),
-                                 context->mapLayer->isAirportDiagram());
+  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOpts, flags, size,
+                                 context->mapLayerEffective->isAirportDiagram());
 }
 
 void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
 {
-  bool large = context->mapLayer->isVorLarge();
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
-                               context->sz(context->symbolSizeNavaid,
-                                           context->mapLayer->getVorSymbolSize()),
-                               true, false, large);
+                               size, false, false,
+                               context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
 }
 
 void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
 {
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
   // Use more more detailed VOR text for flight plan
   if(context->mapLayer->isVorRouteIdent())
@@ -387,20 +383,18 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags,
-                             context->sz(context->textSizeNavaid,
-                                         context->mapLayer->getVorSymbolSize()), true);
+  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
 {
-  symbolPainter->drawNdbSymbol(context->painter, x, y,
-                               context->sz(context->symbolSizeNavaid,
-                                           context->mapLayer->getNdbSymbolSize()), true, false);
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
+  symbolPainter->drawNdbSymbol(context->painter, x, y, size, true, false);
 }
 
 void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
 {
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
   // Use more more detailed NDB text for flight plan
   if(context->mapLayer->isNdbRouteIdent())
@@ -409,45 +403,41 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags,
-                             context->sz(context->textSizeNavaid,
-                                         context->mapLayer->getNdbSymbolSize()), true);
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
 {
-  symbolPainter->drawWaypointSymbol(context->painter, col, x, y,
-                                    context->sz(context->symbolSizeNavaid,
-                                                context->mapLayer->getWaypointSymbolSize()), true, false);
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, true, false);
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
                                         const maptypes::MapWaypoint& obj)
 {
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
   if(context->mapLayer->isWaypointRouteName())
     flags |= textflags::IDENT;
 
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags,
-                                  context->sz(context->textSizeNavaid,
-                                              context->mapLayer->getWaypointSymbolSize()), true);
+  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true);
 }
 
 /* Paint user defined waypoint */
 void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 {
-  symbolPainter->drawUserpointSymbol(context->painter, x, y,
-                                     context->sz(context->symbolSizeNavaid,
-                                                 context->mapLayer->getWaypointSymbolSize()), true, false);
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  symbolPainter->drawUserpointSymbol(context->painter, x, y, size, true, false);
 }
 
 /* Draw text with light yellow background for flight plan */
 void MapPainterRoute::paintText(const PaintContext *context, const QColor& color, int x, int y,
                                 const QString& text)
 {
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+
   if(!text.isEmpty() && context->mapLayer->isWaypointRouteName())
     symbolPainter->textBox(context->painter, {text}, color,
-                           x + context->sz(context->textSizeNavaid,
-                                           context->mapLayer->getWaypointSymbolSize()) / 2 + 2,
+                           x + size / 2 + 2,
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }
