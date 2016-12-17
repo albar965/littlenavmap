@@ -73,6 +73,9 @@ public:
 private:
   MapQuery *query = nullptr;
 
+  bool vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor);
+  bool ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb);
+
 };
 
 #endif // LITTLENAVMAP_FLIGHTPLANENTRYBUILDER_H

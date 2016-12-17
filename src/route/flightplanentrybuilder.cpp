@@ -90,20 +90,38 @@ void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airpor
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
+bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor)
+{
+  query->getVorForWaypoint(vor, waypoint.id);
+
+  // Check for invalid references that are caused by the navdata update
+  // Check pole to avoid FSAD bugs
+  return !vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole() &&
+         vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
+}
+
+bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb)
+{
+  query->getNdbForWaypoint(ndb, waypoint.id);
+
+  // Check for invalid references that are caused by the navdata update
+  // Check pole to avoid FSAD bugs
+  return !ndb.ident.isEmpty() && ndb.position.isValid() && !ndb.position.isPole() &&
+         ndb.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
+
+}
+
 void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& waypoint, FlightplanEntry& entry,
                                                bool resolveWaypoints)
 {
   bool useWaypoint = true;
+  maptypes::MapVor vor;
+  maptypes::MapNdb ndb;
 
   if(resolveWaypoints && waypoint.type == "VOR")
   {
     // Convert waypoint to underlying VOR for airway routes
-    maptypes::MapVor vor;
-    query->getVorForWaypoint(vor, waypoint.id);
-
-    // Check for invalid references that are caused by the navdata update
-    // Check pole to avoid FSAD bugs
-    if(!vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole())
+    if(vorForWaypoint(waypoint, vor))
     {
       useWaypoint = false;
       entryFromVor(vor, entry);
@@ -112,12 +130,17 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
   else if(resolveWaypoints && waypoint.type == "NDB")
   {
     // Convert waypoint to underlying NDB for airway routes
-    maptypes::MapNdb ndb;
-    query->getNdbForWaypoint(ndb, waypoint.id);
 
-    // Check for invalid references that are caused by the navdata update
-    // Check pole to avoid FSAD bugs
-    if(!ndb.ident.isEmpty() && ndb.position.isValid() && !ndb.position.isPole())
+    // Workaround for source data error - wrongly assigned VOR waypoints that are assigned to NDBs
+    query->getVorNearest(vor, waypoint.position);
+    if(!vor.dmeOnly && !vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole() &&
+       vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M))
+    {
+      // Get the vor if there is one at the waypoint position
+      useWaypoint = false;
+      entryFromVor(vor, entry);
+    }
+    else if(ndbForWaypoint(waypoint, ndb))
     {
       useWaypoint = false;
       entryFromNdb(ndb, entry);

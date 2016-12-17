@@ -75,9 +75,11 @@ public:
 
   /* If waypoint is of type VOR get the related VOR object */
   void getVorForWaypoint(maptypes::MapVor& vor, int waypointId);
+  void getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos);
 
   /* If waypoint is of type NDB get the related NDB object */
   void getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId);
+  void getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos);
 
   /*
    * Get a map object by type, ident and region
@@ -275,7 +277,8 @@ private:
   *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
-  *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr;
+  *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
+  *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;
   atools::sql::SqlQuery *airwayByWaypointIdQuery = nullptr;

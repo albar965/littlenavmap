@@ -89,6 +89,24 @@ void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
     mapTypesFactory->fillNdb(ndbByWaypointIdQuery->record(), ndb);
 }
 
+void MapQuery::getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos)
+{
+  vorNearestQuery->bindValue(":lonx", pos.getLonX());
+  vorNearestQuery->bindValue(":laty", pos.getLatY());
+  vorNearestQuery->exec();
+  if(vorNearestQuery->next())
+    mapTypesFactory->fillVor(vorNearestQuery->record(), vor);
+}
+
+void MapQuery::getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos)
+{
+  ndbNearestQuery->bindValue(":lonx", pos.getLonX());
+  ndbNearestQuery->bindValue(":laty", pos.getLatY());
+  ndbNearestQuery->exec();
+  if(ndbNearestQuery->next())
+    mapTypesFactory->fillNdb(ndbNearestQuery->record(), ndb);
+}
+
 void MapQuery::getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId)
 {
   airwayByWaypointIdQuery->bindValue(":id", waypointId);
@@ -1073,6 +1091,16 @@ void MapQuery::initQueries()
                                 " from ndb where ndb_id in "
                                 "(select nav_id from waypoint w where w.waypoint_id = :id)");
 
+  // Get nearest VOR
+  vorNearestQuery = new SqlQuery(db);
+  vorNearestQuery->prepare(
+    "select " + vorQueryBase + " from vor order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
+
+  // Get nearest NDB
+  ndbNearestQuery = new SqlQuery(db);
+  ndbNearestQuery->prepare(
+    "select " + ndbQueryBase + " from ndb order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
+
   waypointByIdQuery = new SqlQuery(db);
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
 
@@ -1280,6 +1308,11 @@ void MapQuery::deInitQueries()
   vorByWaypointIdQuery = nullptr;
   delete ndbByWaypointIdQuery;
   ndbByWaypointIdQuery = nullptr;
+
+  delete vorNearestQuery;
+  vorNearestQuery = nullptr;
+  delete ndbNearestQuery;
+  ndbNearestQuery = nullptr;
 
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
