@@ -2409,7 +2409,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>No VOR, NDB, Waypoint or Airway selected.</string>
+            <string>No VOR, NDB, waypoint or airway selected.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2621,7 +2621,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>Not connected to Simulator.</string>
+            <string>Not connected to simulator.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2656,7 +2656,7 @@
             <bool>true</bool>
            </property>
            <property name="placeholderText">
-            <string>Not connected to Simulator.</string>
+            <string>Not connected to simulator.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
@@ -2688,7 +2688,7 @@
          <item>
           <widget class="QTextBrowser" name="textBrowserAircraftAiInfo">
            <property name="placeholderText">
-            <string>Not connected to Simulator.</string>
+            <string>Not connected to simulator.</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>

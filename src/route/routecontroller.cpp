@@ -1128,7 +1128,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
     ui->actionMapEditUserWaypoint->setEnabled(routeMapObject.getMapObjectType() == maptypes::USER);
-    ui->actionMapEditUserWaypoint->setText(tr("Edit name of User Waypoint"));
+    ui->actionMapEditUserWaypoint->setText(tr("Edit Name of User Waypoint"));
 
     QList<int> selectedRouteMapObjectIndexes;
     getSelectedRouteMapObjects(selectedRouteMapObjectIndexes);
