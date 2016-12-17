@@ -133,9 +133,9 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   addItem(ua, tr("Climb- and Sinkrate"), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
   addItem(ua, tr("Heading"), opts::ITEM_USER_AIRCRAFT_HEADING);
   addItem(ua, tr("Altitude"), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem(ua, tr("Wind Direction and Speed"), opts::ITEM_USER_AIRCRAFT_WIND);
-  addItem(ua, tr("Track Line"), opts::ITEM_USER_AIRCRAFT_TRACK_LINE);
-  addItem(ua, tr("Wind Pointer"), opts::ITEM_USER_AIRCRAFT_WIND_POINTER);
+  addItem(ua, tr("Wind Direction and Speed"), opts::ITEM_USER_AIRCRAFT_WIND, true);
+  addItem(ua, tr("Track Line"), opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem(ua, tr("Wind Pointer"), opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   QTreeWidgetItem *ai = addTopItem(root, tr("AI / Multiplayer Aircraft"));
   addItem(ai, tr("Registration"), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);

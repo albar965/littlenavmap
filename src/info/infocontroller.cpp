@@ -187,7 +187,7 @@ void InfoController::updateAirportInternal(bool newAirport)
       maptypes::MapAirport airport;
       mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
 
-      qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
+      // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
       infoBuilder->airportText(airport, currentWeatherContext, html,
                                &mainWindow->getRouteController()->getRouteMapObjects(),

@@ -1983,6 +1983,9 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <property name="text">
              <string>&amp;VATSIM</string>
             </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="0">

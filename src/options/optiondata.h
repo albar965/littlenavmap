@@ -684,7 +684,15 @@ private:
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
 
-  opts::DisplayOptions displayOptions = opts::ITEM_NONE;
+  opts::DisplayOptions displayOptions =
+    opts::ITEM_AIRPORT_NAME | opts::ITEM_AIRPORT_TOWER | opts::ITEM_AIRPORT_ATIS |
+    opts::ITEM_AIRPORT_RUNWAY |
+    opts::ITEM_USER_AIRCRAFT_GS | opts::ITEM_USER_AIRCRAFT_ALTITUDE |
+    opts::ITEM_USER_AIRCRAFT_WIND | opts::ITEM_USER_AIRCRAFT_TRACK_LINE |
+    opts::ITEM_USER_AIRCRAFT_WIND_POINTER |
+    opts::ITEM_AI_AIRCRAFT_REGISTRATION | opts::ITEM_AI_AIRCRAFT_TYPE |
+    opts::ITEM_AI_AIRCRAFT_AIRLINE | opts::ITEM_AI_AIRCRAFT_GS |
+    opts::ITEM_AI_AIRCRAFT_ALTITUDE;
 
   // Used in the singelton to check if data was already loaded
   bool valid = false;
