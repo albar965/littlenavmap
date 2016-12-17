@@ -1755,8 +1755,8 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
     Metar m(metar, station, timestamp, fsMetar);
     const atools::fs::weather::MetarParser& pm = m.getParsedMetar();
 
-    qDebug() << heading << "Metar:\n" << metar;
-    qDebug() << heading << "Clean metar:\n" << m.getCleanMetar();
+    // qDebug() << heading << "Metar:\n" << metar;
+    // qDebug() << heading << "Clean metar:\n" << m.getCleanMetar();
 
     if(!pm.isValid())
       qWarning() << "Metar is not valid";

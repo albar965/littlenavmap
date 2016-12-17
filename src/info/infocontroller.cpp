@@ -175,8 +175,8 @@ void InfoController::updateAirportInternal(bool newAirport)
     bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
                                                                  currentSearchResult.airports.first());
 
-    qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
-             << "ident" << currentWeatherContext.ident;
+    // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
+    // << "ident" << currentWeatherContext.ident;
 
     if(newAirport || weatherChanged)
     {

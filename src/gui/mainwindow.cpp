@@ -1943,7 +1943,7 @@ bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherCon
 
   weatherContext = currentWeatherContext;
 
-  qDebug() << Q_FUNC_INFO << "changed" << changed;
+  // qDebug() << Q_FUNC_INFO << "changed" << changed;
 
   return changed;
 }
