@@ -173,11 +173,16 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
 void ProfileWidget::connectedToSimulator()
 {
-  simulatorStatusChanged();
+  qDebug() << Q_FUNC_INFO;
+  simData = atools::fs::sc::SimConnectData();
+  updateScreenCoords();
+  update();
+  updateLabel();
 }
 
-void ProfileWidget::simulatorStatusChanged()
+void ProfileWidget::disconnectedFromSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();

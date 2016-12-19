@@ -63,38 +63,38 @@ void MapPainterAircraft::render(const PaintContext *context)
     // If actions are unchecked return
     return;
 
-  if(!mapWidget->isConnected())
-    return;
+  context->painter->save();
 
   setRenderHints(context->painter);
-
-  context->painter->save();
 
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context);
 
-  if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
+  if(mapWidget->isConnected())
   {
-    if(context->objectTypes.testFlag(AIRCRAFT_AI))
+    if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
     {
-      for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
-        paintAiAircraft(context, ac);
+      if(context->objectTypes.testFlag(AIRCRAFT_AI))
+      {
+        for(const SimConnectAircraft& ac : mapWidget->getAiAircraft())
+          paintAiAircraft(context, ac);
+      }
     }
-  }
 
-  if(context->objectTypes.testFlag(AIRCRAFT))
-  {
-    const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
-    const Pos& pos = userAircraft.getPosition();
-
-    if(pos.isValid())
+    if(context->objectTypes.testFlag(AIRCRAFT))
     {
-      if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
-        paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+      const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapWidget->getUserAircraft();
+      const Pos& pos = userAircraft.getPosition();
 
-      float x, y;
-      if(wToS(pos, x, y))
-        paintUserAircraft(context, userAircraft, x, y);
+      if(pos.isValid())
+      {
+        if(context->dOpt(opts::ITEM_USER_AIRCRAFT_WIND_POINTER))
+          paintWindPointer(context, userAircraft, context->painter->device()->width() / 2, 0);
+
+        float x, y;
+        if(wToS(pos, x, y))
+          paintUserAircraft(context, userAircraft, x, y);
+      }
     }
   }
   context->painter->restore();

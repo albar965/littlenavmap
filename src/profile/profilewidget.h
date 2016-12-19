@@ -58,11 +58,12 @@ public:
   /* Track was shortened and needs a full update */
   void aircraftTrackPruned();
 
-  /* Stops showing the user aircraft */
   void simulatorStatusChanged();
 
   /* Deletes track */
+  /* Stops showing the user aircraft */
   void connectedToSimulator();
+  void disconnectedFromSimulator();
 
   /* Disables or enables aircraft and/or track display */
   void updateProfileShowFeatures();

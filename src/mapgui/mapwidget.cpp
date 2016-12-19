@@ -840,12 +840,14 @@ void MapWidget::highlightProfilePoint(const atools::geo::Pos& pos)
 
 void MapWidget::connectedToSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
   aircraftTrack.clearTrack();
   update();
 }
 
 void MapWidget::disconnectedFromSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
   // Clear all data on disconnect
   screenIndex->updateSimData(atools::fs::sc::SimConnectData());
   update();
