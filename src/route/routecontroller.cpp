@@ -915,6 +915,14 @@ void RouteController::reverseRoute()
 
   route.getFlightplan().reverse();
 
+  QList<FlightplanEntry>& entries = route.getFlightplan().getEntries();
+  if(entries.size() > 3)
+  {
+    // Move all airway names one entry down
+    for(int i = entries.size() - 2; i >= 1; i--)
+      entries[i].setAirway(entries.at(i - 1).getAirway());
+  }
+
   createRouteMapObjects();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
   updateTableModel();

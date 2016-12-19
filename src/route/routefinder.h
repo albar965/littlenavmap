@@ -103,7 +103,7 @@ private:
   static Q_DECL_CONSTEXPR float COST_FACTOR_LONG_AIRWAY = 1.2f;
 
   /* Avoid airway changes during routing */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.1f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.5f;
 
   /* Distance to define a long airway segment in meter */
   static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(200.f);
