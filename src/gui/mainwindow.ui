@@ -74,7 +74,7 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <widget class="QMenu" name="menuMap_Overlays_2">
+    <widget class="QMenu" name="menuViewOverlays">
      <property name="title">
       <string>Map Overlays</string>
      </property>
@@ -83,7 +83,7 @@
      <addaction name="actionMapOverlayScalebar"/>
      <addaction name="actionMapOverlayNavigation"/>
     </widget>
-    <addaction name="menuMap_Overlays_2"/>
+    <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
    </widget>

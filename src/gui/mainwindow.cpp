@@ -368,6 +368,12 @@ void MainWindow::setupUi()
   scaleToolbar(ui->mapToolBarOptions, 0.72f);
   scaleToolbar(ui->routeToolBar, 0.72f);
   scaleToolbar(ui->viewToolBar, 0.72f);
+
+  ui->menuViewOverlays->setDisabled(true);
+  ui->actionClearKml->setDisabled(true);
+  ui->actionClearKmlMenu->setDisabled(true);
+  ui->actionLoadKml->setDisabled(true);
+  ui->menuRecentKml->setDisabled(true);
 #endif
 
   ui->mapToolBarOptions->addSeparator();
@@ -647,8 +653,10 @@ void MainWindow::connectAllSlots()
   // KML actions
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
-  connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
+#if !defined(Q_OS_MAC)
+  connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
+#endif
   // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered,
           routeController, &RouteController::calculateDirect);
@@ -814,6 +822,12 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived,
           routeController, &RouteController::simDataChanged);
 
+  // Map widget needs to clear track first
+  connect(connectClient, &ConnectClient::connectedToSimulator,
+          mapWidget, &MapWidget::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
+          mapWidget, &MapWidget::disconnectedFromSimulator);
+
   connect(connectClient, &ConnectClient::connectedToSimulator,
           this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
@@ -827,14 +841,9 @@ void MainWindow::connectAllSlots()
           infoController, &InfoController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator,
-          mapWidget, &MapWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          mapWidget, &MapWidget::disconnectedFromSimulator);
-
-  connect(connectClient, &ConnectClient::connectedToSimulator,
           profileWidget, &ProfileWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          profileWidget, &ProfileWidget::simulatorStatusChanged);
+          profileWidget, &ProfileWidget::disconnectedFromSimulator);
 
   connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
@@ -1650,8 +1659,10 @@ void MainWindow::readSettings()
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 
+#if !defined(Q_OS_MAC)
   qDebug() << "MainWindow restoring state of kmlFileHistory";
   kmlFileHistory->restoreState();
+#endif
 
   qDebug() << "MainWindow restoring state of searchController";
   routeFileHistory->restoreState();
