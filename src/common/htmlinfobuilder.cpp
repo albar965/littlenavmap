@@ -1342,7 +1342,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
       else
         html.row2(tr("To Top of Descent:"), tr("Passed"));
-      html.row2(tr("TOD to Destination:"), route.getTopOfDescentFromDestination());
+      html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
       html.tableEnd();
 
