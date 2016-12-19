@@ -94,8 +94,8 @@ private:
   void trailColorClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
-  QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, QString text);
-  QTreeWidgetItem *addItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type,
+  QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
+  QTreeWidgetItem *addItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip, opts::DisplayOption type,
                            bool checked = false);
 
   // Copy tree widget states forth and back

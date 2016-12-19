@@ -116,37 +116,49 @@ OptionsDialog::OptionsDialog(MainWindow *parentWindow)
   ui->setupUi(this);
 
   QTreeWidgetItem *root = ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem();
-  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"));
-  addItem(ap, tr("Name (Ident)"), opts::ITEM_AIRPORT_NAME, true);
-  addItem(ap, tr("Tower Frequency"), opts::ITEM_AIRPORT_TOWER, true);
-  addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), opts::ITEM_AIRPORT_ATIS, true);
-  addItem(ap, tr("Runway Information"), opts::ITEM_AIRPORT_RUNWAY, true);
+  QTreeWidgetItem *ap = addTopItem(root, tr("Airport"), tr("Select airport labels to display on the map."));
+  addItem(ap, tr("Name (Ident)"), QString(), opts::ITEM_AIRPORT_NAME, true);
+  addItem(ap, tr("Tower Frequency"), QString(), opts::ITEM_AIRPORT_TOWER, true);
+  addItem(ap, tr("ATIS / ASOS / AWOS Frequency"), QString(), opts::ITEM_AIRPORT_ATIS, true);
+  addItem(ap, tr("Runway Information"),
+          tr("Show runway length, width and light inidcator text."), opts::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), opts::ITEM_AIRPORT_WIND_POINTER, false);
 
-  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"));
-  addItem(ua, tr("Registration"), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
-  addItem(ua, tr("Type"), opts::ITEM_USER_AIRCRAFT_TYPE);
-  addItem(ua, tr("Airline"), opts::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem(ua, tr("Flight Number"), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(ua, tr("Indicated Airspeed"), opts::ITEM_USER_AIRCRAFT_IAS);
-  addItem(ua, tr("Ground Speed"), opts::ITEM_USER_AIRCRAFT_GS, true);
-  addItem(ua, tr("Climb- and Sinkrate"), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem(ua, tr("Heading"), opts::ITEM_USER_AIRCRAFT_HEADING);
-  addItem(ua, tr("Altitude"), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem(ua, tr("Wind Direction and Speed"), opts::ITEM_USER_AIRCRAFT_WIND, true);
-  addItem(ua, tr("Track Line"), opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
-  addItem(ua, tr("Wind Pointer"), opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+  QTreeWidgetItem *ua = addTopItem(root, tr("User Aircraft"),
+                                   tr("Select text labels and other options for the user aircraft."));
+  addItem(ua, tr("Registration"), QString(), opts::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem(ua, tr("Type"),
+          tr("Show the aircraft type, like B738, B350 or M20T."),
+          opts::ITEM_USER_AIRCRAFT_TYPE);
+  addItem(ua, tr("Airline"), QString(), opts::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem(ua, tr("Flight Number"), QString(), opts::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(ua, tr("Indicated Airspeed"), QString(), opts::ITEM_USER_AIRCRAFT_IAS);
+  addItem(ua, tr("Ground Speed"), QString(), opts::ITEM_USER_AIRCRAFT_GS, true);
+  addItem(ua, tr("Climb- and Sinkrate"), QString(), opts::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem(ua, tr("Heading"), QString(), opts::ITEM_USER_AIRCRAFT_HEADING);
+  addItem(ua, tr("Altitude"), QString(), opts::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem(ua, tr("Track Line"),
+          tr("Show the aircraft track as a black needle protruding from the aircraft nose."),
+          opts::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem(ua, tr("Wind Direction and Speed"),
+          tr("Show wind direction and speed on the top center of the map."),
+          opts::ITEM_USER_AIRCRAFT_WIND, true);
+  addItem(ua, tr("Wind Pointer"),
+          tr("Show wind direction pointer on the top center of the map."),
+          opts::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
-  QTreeWidgetItem *ai = addTopItem(root, tr("AI / Multiplayer Aircraft"));
-  addItem(ai, tr("Registration"), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem(ai, tr("Type"), opts::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem(ai, tr("Airline"), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem(ai, tr("Flight Number"), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
-  addItem(ai, tr("Indicated Airspeed"), opts::ITEM_AI_AIRCRAFT_IAS);
-  addItem(ai, tr("Ground Speed"), opts::ITEM_AI_AIRCRAFT_GS, true);
-  addItem(ai, tr("Climb- and Sinkrate"), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem(ai, tr("Heading"), opts::ITEM_AI_AIRCRAFT_HEADING);
-  addItem(ai, tr("Altitude"), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  QTreeWidgetItem *ai =
+    addTopItem(root, tr("AI / Multiplayer Aircraft"),
+               tr("Select text labels for the AI and multiplayer aircraft."));
+  addItem(ai, tr("Registration"), QString(), opts::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem(ai, tr("Type"), QString(), opts::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem(ai, tr("Airline"), QString(), opts::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem(ai, tr("Flight Number"), QString(), opts::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem(ai, tr("Indicated Airspeed"), QString(), opts::ITEM_AI_AIRCRAFT_IAS);
+  addItem(ai, tr("Ground Speed"), QString(), opts::ITEM_AI_AIRCRAFT_GS, true);
+  addItem(ai, tr("Climb- and Sinkrate"), QString(), opts::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem(ai, tr("Heading"), QString(), opts::ITEM_AI_AIRCRAFT_HEADING);
+  addItem(ai, tr("Altitude"), QString(), opts::ITEM_AI_AIRCRAFT_ALTITUDE, true);
 
   // Collect names and palettes from all styles
   for(const QString& styleName : QStyleFactory::keys())
@@ -571,18 +583,20 @@ void OptionsDialog::displayOptDataToWidget()
   }
 }
 
-QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, QString text)
+QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip)
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(root, {text});
+  item->setToolTip(0, tooltip);
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
   return item;
 }
 
-QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QString text, opts::DisplayOption type,
-                                        bool checked)
+QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip,
+                                        opts::DisplayOption type, bool checked)
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(root, {text}, type);
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+  item->setToolTip(0, tooltip);
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   displayOptItemIndex.insert(type, item);
   return item;
