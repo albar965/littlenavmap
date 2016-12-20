@@ -152,6 +152,7 @@ void WeatherReporter::initActiveSkyNext()
     activeSkyMetars.clear();
     activeSkyDepartureMetar.clear();
     activeSkyDestinationMetar.clear();
+
     activeSkyDepartureIdent.clear();
     activeSkyDestinationIdent.clear();
   }
@@ -241,7 +242,7 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
         else if(type == "DestinationMETAR")
         {
           activeSkyDestinationIdent = match.captured(2);
-          activeSkyDestinationMetar = activeSkyDepartureIdent + match.captured(3);
+          activeSkyDestinationMetar = activeSkyDestinationIdent + match.captured(3);
         }
       }
     }

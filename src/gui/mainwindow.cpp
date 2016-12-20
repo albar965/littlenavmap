@@ -2019,21 +2019,13 @@ void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
   else
     weatherContext.asType = tr("Active Sky");
 
+  weatherContext.isAsDeparture = false;
+  weatherContext.isAsDestination = false;
+
   if(weatherReporter->getActiveSkyDepartureIdent() == airportIdent)
-  {
     weatherContext.isAsDeparture = true;
-    weatherContext.isAsDestination = false;
-  }
-  else if(weatherReporter->getActiveSkyDestinationIdent() == airportIdent)
-  {
-    weatherContext.isAsDeparture = false;
+  if(weatherReporter->getActiveSkyDestinationIdent() == airportIdent)
     weatherContext.isAsDestination = true;
-  }
-  else
-  {
-    weatherContext.isAsDeparture = false;
-    weatherContext.isAsDestination = false;
-  }
 }
 
 void MainWindow::clearWeatherContext()

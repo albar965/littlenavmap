@@ -838,9 +838,11 @@ void HtmlInfoBuilder::weatherText(const maptypes::WeatherContext& context, const
     {
       Metar met(context.asMetar);
 
-      if(context.isAsDeparture)
+      if(context.isAsDeparture && context.isAsDestination)
+        html.h3(context.asType + tr(" - Departure and Destination"), atools::util::html::UNDERLINE);
+      else if(context.isAsDeparture)
         html.h3(context.asType + tr(" - Departure"), atools::util::html::UNDERLINE);
-      if(context.isAsDestination)
+      else if(context.isAsDestination)
         html.h3(context.asType + tr(" - Destination"), atools::util::html::UNDERLINE);
       else
         html.h3(context.asType, atools::util::html::UNDERLINE);
