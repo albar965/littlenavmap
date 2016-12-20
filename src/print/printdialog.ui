@@ -35,7 +35,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureRunways">
           <property name="text">
-           <string>&amp;Runways</string>
+           <string>&amp;Runways / Helipads</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -76,7 +76,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDepartureWeather">
           <property name="text">
-           <string>Decoded &amp;weather</string>
+           <string>&amp;Weather</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -105,7 +105,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationRunways">
           <property name="text">
-           <string>&amp;Runways</string>
+           <string>&amp;Runways / Helipads</string>
           </property>
           <property name="checked">
            <bool>true</bool>
@@ -146,7 +146,7 @@
         <item>
          <widget class="QCheckBox" name="checkBoxPrintDestinationWeather">
           <property name="text">
-           <string>Decoded &amp;weather</string>
+           <string>&amp;Weather</string>
           </property>
           <property name="checked">
            <bool>true</bool>

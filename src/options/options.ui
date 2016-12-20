@@ -2167,7 +2167,7 @@ You have to reload the scenery library so that the changes take effect.</string>
        <item row="0" column="2" colspan="2">
         <widget class="QLabel" name="labelOptionsDatabaseExclude">
          <property name="text">
-          <string>&amp;Select Paths to exclude from loading:</string>
+          <string>&amp;Select paths to exclude from loading:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -2183,7 +2183,7 @@ You have to reload the scenery library so that the changes take effect.</string>
        <item row="2" column="2" colspan="2">
         <widget class="QLabel" name="labelOptionsDatabaseAddon">
          <property name="text">
-          <string>Select &amp;Paths to exclude from add-on recognition:</string>
+          <string>Select &amp;paths to exclude from add-on recognition:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
