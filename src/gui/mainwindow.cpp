@@ -1009,22 +1009,23 @@ void MainWindow::distanceChanged()
   mapDistanceLabel->setText(Unit::distMeter(static_cast<float>(mapWidget->distance() * 1000.f)));
 }
 
-/* Render status from marble widget */
 void MainWindow::renderStatusChanged(RenderStatus status)
 {
+  QString prefix = mapWidget->model()->workOffline() ? tr("<b style=\"color:red\">Offline. </b>") : QString();
+
   switch(status)
   {
     case Marble::Complete:
-      renderStatusLabel->setText(tr("Done."));
+      renderStatusLabel->setText(prefix + tr("Done."));
       break;
     case Marble::WaitingForUpdate:
-      renderStatusLabel->setText(tr("Waiting for Update ..."));
+      renderStatusLabel->setText(prefix + tr("Waiting for Update ..."));
       break;
     case Marble::WaitingForData:
-      renderStatusLabel->setText(tr("Waiting for Data ..."));
+      renderStatusLabel->setText(prefix + tr("Waiting for Data ..."));
       break;
     case Marble::Incomplete:
-      renderStatusLabel->setText(tr("Incomplete."));
+      renderStatusLabel->setText(prefix + tr("Incomplete."));
       break;
   }
 }

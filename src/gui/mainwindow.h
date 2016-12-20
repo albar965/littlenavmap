@@ -147,6 +147,9 @@ public:
   void buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
                                      const maptypes::MapAirport& airport) const;
 
+  /* Render status from marble widget */
+  void renderStatusChanged(Marble::RenderStatus status);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -180,7 +183,6 @@ private:
   bool routeSaveAs();
   bool routeSaveAsGfp();
   void routeCenter();
-  void renderStatusChanged(Marble::RenderStatus status);
   void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
   bool routeValidate(bool validateParking = true);
