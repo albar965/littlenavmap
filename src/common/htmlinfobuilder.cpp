@@ -1505,7 +1505,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     float mach = aircraft.getMachSpeed();
     if(mach > 0.4f)
-      html.row2(tr("Mach:"), locale.toString(mach, 'f', 2));
+      html.row2(tr("Mach:"), locale.toString(mach, 'f', 3));
     else
       html.row2(tr("Mach:"), tr("-"));
   }
