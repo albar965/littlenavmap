@@ -87,6 +87,11 @@ public:
     return mapScale;
   }
 
+  int getOverflow() const
+  {
+    return overflow;
+  }
+
 private:
   void initMapLayerSettings();
   void updateLayers();
@@ -127,6 +132,7 @@ private:
   MapLayerSettings *layers = nullptr;
   MapWidget *mapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerEffective = nullptr;
+  int overflow = 0;
 
 };
 

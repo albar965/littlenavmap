@@ -41,7 +41,7 @@ MapPainterNav::~MapPainterNav()
 {
 }
 
-void MapPainterNav::render(const PaintContext *context)
+void MapPainterNav::render(PaintContext *context)
 {
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
@@ -98,7 +98,7 @@ void MapPainterNav::render(const PaintContext *context)
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAirway> *airways, bool fast)
+void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *airways, bool fast)
 {
   QFontMetrics metrics = context->painter->fontMetrics();
 
@@ -137,6 +137,9 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
 
     if(visible1 || visible2)
     {
+      if(context->objCount())
+        return;
+
       // Draw line if both points are visible or line intersects screen coordinates
       GeoDataCoordinates from(airway.from.getLonX(), airway.from.getLatY(), 0, DEG);
       GeoDataCoordinates to(airway.to.getLonX(), airway.to.getLatY(), 0, DEG);
@@ -219,7 +222,7 @@ void MapPainterNav::paintAirways(const PaintContext *context, const QList<MapAir
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapWaypoint> *waypoints,
+void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints,
                                    bool drawWaypoint, bool drawFast)
 {
   bool drawAirwayV = context->mapLayer->isAirway() && context->objectTypes.testFlag(maptypes::AIRWAYV);
@@ -230,6 +233,9 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
     // If waypoints are off, airways are on and waypoint has no airways skip it
     if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
       continue;
+
+    if(context->objCount())
+      return;
 
     int x, y;
     bool visible = wToS(waypoint.position, x, y);
@@ -247,7 +253,7 @@ void MapPainterNav::paintWaypoints(const PaintContext *context, const QList<MapW
   }
 }
 
-void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *vors, bool drawFast)
+void MapPainterNav::paintVors(PaintContext *context, const QList<MapVor> *vors, bool drawFast)
 {
   for(const MapVor& vor : *vors)
   {
@@ -256,6 +262,9 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
 
     if(visible)
     {
+      if(context->objCount())
+        return;
+
       int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
       symbolPainter->drawVorSymbol(context->painter, vor, x, y,
                                    size, false, drawFast,
@@ -273,7 +282,7 @@ void MapPainterNav::paintVors(const PaintContext *context, const QList<MapVor> *
   }
 }
 
-void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
+void MapPainterNav::paintNdbs(PaintContext *context, const QList<MapNdb> *ndbs, bool drawFast)
 {
   for(const MapNdb& ndb : *ndbs)
   {
@@ -282,6 +291,9 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
 
     if(visible)
     {
+      if(context->objCount())
+        return;
+
       int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
       symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
 
@@ -297,7 +309,7 @@ void MapPainterNav::paintNdbs(const PaintContext *context, const QList<MapNdb> *
   }
 }
 
-void MapPainterNav::paintMarkers(const PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
+void MapPainterNav::paintMarkers(PaintContext *context, const QList<MapMarker> *markers, bool drawFast)
 {
   for(const MapMarker& marker : *markers)
   {
@@ -306,6 +318,9 @@ void MapPainterNav::paintMarkers(const PaintContext *context, const QList<MapMar
 
     if(visible)
     {
+      if(context->objCount())
+        return;
+
       int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getMarkerSymbolSize());
       symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 

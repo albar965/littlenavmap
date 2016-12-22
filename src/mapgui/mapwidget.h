@@ -268,6 +268,9 @@ public:
   };
 
 signals:
+  /* Emitted whenever the result exceeds the limit clause in the queries */
+  void resultTruncated(int truncatedTo);
+
   /* Search center has changed by context menu */
   void searchMarkChanged(const atools::geo::Pos& mark);
 

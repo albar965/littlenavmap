@@ -44,7 +44,7 @@ public:
   MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
   virtual ~MapPainterAirport();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
 private:
   void drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap, float x, float y);

@@ -2328,6 +2328,9 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
     screenIndex->updateRouteScreenGeometry();
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
   }
+
+  if(paintLayer->getOverflow() > 0)
+    emit resultTruncated(paintLayer->getOverflow());
 }
 
 void MapWidget::handleInfoClick(QPoint pos)

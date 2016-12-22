@@ -195,10 +195,6 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
-signals:
-  /* Emitted whenever the result exceeds the limit clause in the queries */
-  void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
-
 private:
   /* Simple spatial cache that deals with objects in a bounding rectangle but does not run any queries to load data */
   template<typename TYPE>
@@ -212,6 +208,7 @@ private:
      */
     bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
     void clear();
+    void validate();
 
     Marble::GeoDataLatLonBox curRect;
     const MapLayer *curMapLayer = nullptr;
@@ -230,9 +227,6 @@ private:
   static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
 
   bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
-
-  template<typename TYPE>
-  void checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
@@ -258,7 +252,7 @@ private:
   /* Inflate bounding rectangle before passing it to query */
   static Q_DECL_CONSTEXPR double RECT_INFLATION_FACTOR_DEG = 0.3;
   static Q_DECL_CONSTEXPR double RECT_INFLATION_ADD_DEG = 0.1;
-  static Q_DECL_CONSTEXPR int QUERY_ROW_LIMIT = 3000;
+  static Q_DECL_CONSTEXPR int QUERY_ROW_LIMIT = 5000;
 
   /* Database queries */
   atools::sql::SqlQuery *airportByRectQuery = nullptr, *airportMediumByRectQuery = nullptr,
@@ -295,7 +289,7 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
                                                   bool lazy)
 {
   if(lazy)
-    // Nothing changed
+    // Nothing changed11
     return false;
 
   // Store bounding rectangle and inflate it
@@ -315,6 +309,16 @@ bool MapQuery::SimpleRectCache<TYPE>::updateCache(const Marble::GeoDataLatLonBox
     return true;
   }
   return false;
+}
+
+template<typename TYPE>
+void MapQuery::SimpleRectCache<TYPE>::validate()
+{
+  if(list.size() >= QUERY_ROW_LIMIT)
+  {
+    curRect.clear();
+    curMapLayer = nullptr;
+  }
 }
 
 template<typename TYPE>

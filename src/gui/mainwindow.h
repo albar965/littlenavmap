@@ -152,6 +152,8 @@ public:
   /* Render status from marble widget */
   void renderStatusChanged(Marble::RenderStatus status);
 
+  void resultTruncated(int truncatedTo);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -185,7 +187,6 @@ private:
   bool routeSaveAs();
   bool routeSaveAsGfp();
   void routeCenter();
-  void resultTruncated(maptypes::MapObjectTypes type, int truncatedTo);
   bool routeCheckForChanges();
   bool routeValidate(bool validateParking = true);
   void showMapLegend();

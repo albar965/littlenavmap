@@ -929,8 +929,6 @@ void ProfileWidget::leaveEvent(QEvent *)
   if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
     return;
 
-  qDebug() << "leave";
-
   delete rubberBand;
   rubberBand = nullptr;
 

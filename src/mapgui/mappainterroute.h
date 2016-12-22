@@ -40,7 +40,7 @@ public:
   MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
   virtual ~MapPainterRoute();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
 private:
   RouteController *routeController;

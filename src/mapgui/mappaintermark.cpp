@@ -29,6 +29,7 @@
 #include "route/routemapobject.h"
 #include "route/routemapobjectlist.h"
 #include "route/routecontroller.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -47,11 +48,11 @@ MapPainterMark::~MapPainterMark()
 
 }
 
-void MapPainterMark::render(const PaintContext *context)
+void MapPainterMark::render(PaintContext *context)
 {
   setRenderHints(context->painter);
 
-  context->painter->save();
+  atools::util::PainterContextSaver saver(context->painter);
   paintHighlights(context);
   paintMark(context);
   paintHome(context);
@@ -59,7 +60,6 @@ void MapPainterMark::render(const PaintContext *context)
   paintDistanceMarkers(context);
   paintRouteDrag(context);
   paintMagneticPoles(context);
-  context->painter->restore();
 }
 
 /* Draw black yellow cross for search distance marker */
@@ -130,7 +130,7 @@ void MapPainterMark::paintHome(const PaintContext *context)
 }
 
 /* Draw rings around objects that are selected on the search or flight plan tables */
-void MapPainterMark::paintHighlights(const PaintContext *context)
+void MapPainterMark::paintHighlights(PaintContext *context)
 {
   // Draw hightlights from the search result view ------------------------------------------
   const MapSearchResult& highlightResults = mapWidget->getSearchHighlights();
@@ -161,6 +161,9 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
     {
       if(!context->drawFast)
       {
+        if(context->objCount())
+          return;
+
         painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);
         painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -190,6 +193,9 @@ void MapPainterMark::paintHighlights(const PaintContext *context)
     {
       if(!context->drawFast)
       {
+        if(context->objCount())
+          return;
+
         painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
                              Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);

@@ -51,7 +51,7 @@ public:
   MapPainterAircraft(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterAircraft();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
   enum AircraftType
   {

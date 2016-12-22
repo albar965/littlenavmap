@@ -472,8 +472,8 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
         waypointCache.list.append(wp);
       }
     }
-    checkOverflow(waypointCache.list, maptypes::WAYPOINT);
   }
+  waypointCache.validate();
   return &waypointCache.list;
 }
 
@@ -495,8 +495,8 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
         vorCache.list.append(vor);
       }
     }
-    checkOverflow(vorCache.list, maptypes::VOR);
   }
+  vorCache.validate();
   return &vorCache.list;
 }
 
@@ -518,8 +518,8 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
         ndbCache.list.append(ndb);
       }
     }
-    checkOverflow(ndbCache.list, maptypes::NDB);
   }
+  ndbCache.validate();
   return &ndbCache.list;
 }
 
@@ -542,6 +542,7 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
       }
     }
   }
+  markerCache.validate();
   return &markerCache.list;
 }
 
@@ -564,6 +565,7 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
       }
     }
   }
+  ilsCache.validate();
   return &ilsCache.list;
 }
 
@@ -585,8 +587,8 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
         airwayCache.list.append(airway);
       }
     }
-    checkOverflow(airwayCache.list, maptypes::AIRWAY);
   }
+  airwayCache.validate();
   return &airwayCache.list;
 }
 
@@ -622,8 +624,8 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
           airportCache.list.append(ap);
       }
     }
-    checkOverflow(airportCache.list, maptypes::AIRPORT);
   }
+  airportCache.validate();
   return &airportCache.list;
 }
 
@@ -994,17 +996,6 @@ void MapQuery::inflateRect(Marble::GeoDataLatLonBox& rect, double width, double 
   rect.setSouth(std::max(rect.south(GeoDataCoordinates::Degree) - height, -89.), GeoDataCoordinates::Degree);
   rect.setWest(std::max(rect.west(GeoDataCoordinates::Degree) - width, -179.), GeoDataCoordinates::Degree);
   rect.setEast(std::min(rect.east(GeoDataCoordinates::Degree) + width, 179.), GeoDataCoordinates::Degree);
-}
-
-/* Check for overflow if result is equal to QUERY_ROW_LIMIT. Emit resultTruncated if that is the case.
- * Otherwise emit resultTruncated with value 0. */
-template<typename TYPE>
-void MapQuery::checkOverflow(const QList<TYPE>& list, maptypes::MapObjectTypes type)
-{
-  if(list.size() >= QUERY_ROW_LIMIT)
-    emit resultTruncated(type, QUERY_ROW_LIMIT);
-  else
-    emit resultTruncated(type, 0);
 }
 
 void MapQuery::initQueries()

@@ -25,6 +25,7 @@
 #include "geo/calculations.h"
 #include "route/routecontroller.h"
 #include "mapgui/mapscale.h"
+#include "util/paintercontextsaver.h"
 
 #include <QBitArray>
 #include <marble/GeoDataLineString.h>
@@ -44,23 +45,24 @@ MapPainterRoute::~MapPainterRoute()
 
 }
 
-void MapPainterRoute::render(const PaintContext *context)
+void MapPainterRoute::render(PaintContext *context)
 {
   if(!context->objectTypes.testFlag(maptypes::ROUTE))
     return;
 
   setRenderHints(context->painter);
 
-  context->painter->save();
+  atools::util::PainterContextSaver saver(context->painter);
 
   paintRoute(context);
-
-  context->painter->restore();
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
 {
   const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
+
+  if(routeMapObjects.isEmpty())
+    return;
 
   context->painter->setBrush(Qt::NoBrush);
 
@@ -323,24 +325,27 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     i++;
   }
 
-  // Draw the top of descent circle and text
-  QPoint pt = wToS(routeMapObjects.getTopOfDescent());
-  if(!pt.isNull())
+  if(routeMapObjects.size() >= 2)
   {
-    float width = context->sz(context->thicknessFlightplan, 3);
-    int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
+    // Draw the top of descent circle and text
+    QPoint pt = wToS(routeMapObjects.getTopOfDescent());
+    if(!pt.isNull())
+    {
+      float width = context->sz(context->thicknessFlightplan, 3);
+      int radius = atools::roundToInt(context->sz(context->thicknessFlightplan, 6));
 
-    context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
-    context->painter->drawEllipse(pt, radius, radius);
+      context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
+      context->painter->drawEllipse(pt, radius, radius);
 
-    QStringList tod;
-    tod.append(tr("TOD"));
-    if(context->mapLayer->isAirportRouteInfo())
-      tod.append(Unit::distNm(routeMapObjects.getTopOfDescentFromDestination()));
+      QStringList tod;
+      tod.append(tr("TOD"));
+      if(context->mapLayer->isAirportRouteInfo())
+        tod.append(Unit::distNm(routeMapObjects.getTopOfDescentFromDestination()));
 
-    symbolPainter->textBox(context->painter, tod, QPen(Qt::black),
-                           pt.x() + radius, pt.y() + radius,
-                           textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+      symbolPainter->textBox(context->painter, tod, QPen(Qt::black),
+                             pt.x() + radius, pt.y() + radius,
+                             textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
+    }
   }
 }
 

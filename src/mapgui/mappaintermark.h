@@ -39,12 +39,12 @@ public:
   MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterMark();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
 private:
   void paintMark(const PaintContext *context);
   void paintHome(const PaintContext *context);
-  void paintHighlights(const PaintContext *context);
+  void paintHighlights(PaintContext* context);
 
   void paintRangeRings(const PaintContext *context);
 

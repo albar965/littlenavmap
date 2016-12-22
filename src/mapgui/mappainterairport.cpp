@@ -27,6 +27,7 @@
 #include "common/unit.h"
 #include "mapgui/mapwidget.h"
 #include "route/routecontroller.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 
@@ -47,7 +48,7 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
-void MapPainterAirport::render(const PaintContext *context)
+void MapPainterAirport::render(PaintContext *context)
 {
   // Get all airports from the route and add them to the map
   QHash<int, const MapAirport *> airportMap; // Collect all airports from route and bounding rectangle
@@ -118,6 +119,9 @@ void MapPainterAirport::render(const PaintContext *context)
 
   for(int i = 0; i < visibleAirports.size(); i++)
   {
+    if(context->objCount())
+      return;
+
     const MapAirport *airport = visibleAirports.at(i);
     const QPointF& pt = visiblePoints.at(i);
     const MapLayer *layer = context->mapLayer;
@@ -163,7 +167,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
                                                     const maptypes::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setFont(context->defaultFont);
 
@@ -217,8 +221,6 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
 
     painter->QPainter::drawPolyline(points.data(), points.size());
   }
-
-  painter->restore();
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
@@ -226,7 +228,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
                                            bool fast)
 {
   Marble::GeoPainter *painter = context->painter;
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setFont(context->defaultFont);
 
@@ -825,8 +827,6 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       }
     }
   }
-
-  painter->restore();
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
@@ -839,7 +839,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
      !ap.flags.testFlag(maptypes::AP_CLOSED) && !ap.waterOnly())
   {
     // Draw only for airports with a runway longer than 8000 feet otherwise use symbol
-    painter->save();
+    atools::util::PainterContextSaver saver(painter);
 
     QColor apColor = mapcolors::colorForAirport(ap);
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -875,7 +875,6 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
         painter->resetTransform();
       }
     }
-    painter->restore();
   }
 }
 

@@ -808,7 +808,7 @@ void MainWindow::connectAllSlots()
           routeController, &RouteController::routeAdd);
 
   // Messages about database query result status
-  connect(mapQuery, &MapQuery::resultTruncated, this, &MainWindow::resultTruncated);
+  connect(mapWidget, &MapWidget::resultTruncated, this, &MainWindow::resultTruncated);
 
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
@@ -1005,12 +1005,12 @@ const ElevationModel *MainWindow::getElevationModel()
 }
 
 /* Called after each query */
-void MainWindow::resultTruncated(maptypes::MapObjectTypes type, int truncatedTo)
+void MainWindow::resultTruncated(int truncatedTo)
 {
   if(truncatedTo > 0)
   {
-    qDebug() << "resultTruncated" << type << "num" << truncatedTo;
-    messageLabel->setText(tr("Too many objects."));
+    qDebug() << "num" << truncatedTo;
+    messageLabel->setText(tr("<b style=\"color: red;\">Too many objects.</b>"));
   }
 }
 

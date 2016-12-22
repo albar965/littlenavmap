@@ -295,21 +295,38 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         {
           // Put ILS below and navaids on top of airport diagram
           mapPainterIls->render(&context);
-          mapPainterAirport->render(&context);
-          mapPainterNav->render(&context);
+
+          if(!context.isOverflow())
+            mapPainterAirport->render(&context);
+
+          if(!context.isOverflow())
+            mapPainterNav->render(&context);
         }
         else
         {
           // Airports on top of all
-          mapPainterIls->render(&context);
-          mapPainterNav->render(&context);
-          mapPainterAirport->render(&context);
+          if(!context.isOverflow())
+            mapPainterIls->render(&context);
+
+          if(!context.isOverflow())
+            mapPainterNav->render(&context);
+
+          if(!context.isOverflow())
+            mapPainterAirport->render(&context);
         }
       }
-      mapPainterRoute->render(&context);
-      mapPainterMark->render(&context);
+      if(!context.isOverflow())
+        mapPainterRoute->render(&context);
+
+      if(!context.isOverflow())
+        mapPainterMark->render(&context);
 
       mapPainterAircraft->render(&context);
+
+      if(context.isOverflow())
+        overflow = PaintContext::MAX_OBJECT_COUNT;
+      else
+        overflow = 0;
     }
 
     if(OptionData::instance().isGuiStyleDark())
@@ -318,6 +335,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
       QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
       painter->fillRect(QRect(0, 0, painter->device()->width(), painter->device()->height()), col);
     }
+
   }
   return true;
 }

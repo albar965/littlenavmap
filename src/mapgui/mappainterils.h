@@ -34,7 +34,7 @@ public:
   MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterIls();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
 private:
   /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */

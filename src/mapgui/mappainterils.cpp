@@ -23,6 +23,7 @@
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "mapgui/mapwidget.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 
@@ -41,7 +42,7 @@ MapPainterIls::~MapPainterIls()
 {
 }
 
-void MapPainterIls::render(const PaintContext *context)
+void MapPainterIls::render(PaintContext *context)
 {
   if(!context->objectTypes.testFlag(maptypes::ILS))
     return;
@@ -66,7 +67,12 @@ void MapPainterIls::render(const PaintContext *context)
           visible = ils.bounding.overlaps(context->viewportRect);
 
         if(visible)
+        {
+          if(context->objCount())
+            return;
+
           drawIlsSymbol(context, ils);
+        }
       }
     }
   }
@@ -74,7 +80,7 @@ void MapPainterIls::render(const PaintContext *context)
 
 void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils)
 {
-  context->painter->save();
+  atools::util::PainterContextSaver saver(context->painter);
 
   context->painter->setBackgroundMode(Qt::TransparentMode);
 
@@ -155,5 +161,4 @@ void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::M
       }
     }
   }
-  context->painter->restore();
 }

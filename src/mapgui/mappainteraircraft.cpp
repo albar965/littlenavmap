@@ -24,6 +24,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "common/unit.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>
 
@@ -55,7 +56,7 @@ MapPainterAircraft::~MapPainterAircraft()
 
 }
 
-void MapPainterAircraft::render(const PaintContext *context)
+void MapPainterAircraft::render(PaintContext *context)
 {
   if(!context->objectTypes.testFlag(AIRCRAFT) &&
      !context->objectTypes.testFlag(AIRCRAFT_AI) &&
@@ -63,7 +64,7 @@ void MapPainterAircraft::render(const PaintContext *context)
     // If actions are unchecked return
     return;
 
-  context->painter->save();
+  atools::util::PainterContextSaver saver(context->painter);
 
   setRenderHints(context->painter);
 
@@ -97,7 +98,6 @@ void MapPainterAircraft::render(const PaintContext *context)
       }
     }
   }
-  context->painter->restore();
 }
 
 void MapPainterAircraft::paintAiAircraft(const PaintContext *context,

@@ -74,7 +74,20 @@ struct PaintContext
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
 
-  bool dOpt(const opts::DisplayOptions& opts) const
+  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 2000;
+  int objectCount = 0;
+  bool objCount()
+  {
+    objectCount++;
+    return objectCount > MAX_OBJECT_COUNT;
+  }
+
+  bool isOverflow()
+  {
+    return objectCount > MAX_OBJECT_COUNT;
+  }
+
+  bool  dOpt(const opts::DisplayOptions& opts) const
   {
     return dispOpts & opts;
   }
@@ -127,7 +140,7 @@ public:
   MapPainter(MapWidget *marbleWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainter();
 
-  virtual void render(const PaintContext *context) = 0;
+  virtual void render(PaintContext *context) = 0;
 
 protected:
   /* Set render hints for anti aliasing depending on the view context (still or animation) */

@@ -36,15 +36,15 @@ public:
   MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale);
   virtual ~MapPainterNav();
 
-  virtual void render(const PaintContext *context) override;
+  virtual void render(PaintContext *context) override;
 
 private:
-  void paintMarkers(const PaintContext *context, const QList<maptypes::MapMarker> *markers, bool drawFast);
-  void paintNdbs(const PaintContext *context, const QList<maptypes::MapNdb> *ndbs, bool drawFast);
-  void paintVors(const PaintContext *context, const QList<maptypes::MapVor> *vors, bool drawFast);
-  void paintWaypoints(const PaintContext *context, const QList<maptypes::MapWaypoint> *waypoints,
+  void paintMarkers(PaintContext *context, const QList<maptypes::MapMarker> *markers, bool drawFast);
+  void paintNdbs(PaintContext *context, const QList<maptypes::MapNdb> *ndbs, bool drawFast);
+  void paintVors(PaintContext *context, const QList<maptypes::MapVor> *vors, bool drawFast);
+  void paintWaypoints(PaintContext *context, const QList<maptypes::MapWaypoint> *waypoints,
                       bool drawWaypoint, bool drawFast);
-  void paintAirways(const PaintContext *context, const QList<maptypes::MapAirway> *airways, bool fast);
+  void paintAirways(PaintContext *context, const QList<maptypes::MapAirway> *airways, bool fast);
 
 };
 

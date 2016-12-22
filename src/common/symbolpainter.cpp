@@ -23,6 +23,7 @@
 #include "options/optiondata.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
+#include "util/paintercontextsaver.h"
 
 #include <QPainter>
 #include <QApplication>
@@ -118,7 +119,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   if(airport.longestRunwayLength == 0)
     size = size * 4 / 5;
 
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   QColor apColor = mapcolors::colorForAirport(airport);
 
   int radius = size / 2;
@@ -189,6 +190,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
   }
 
   if((!fast || isAirportDiagram) && size > 5)
+  {
     if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) &&
        !airport.flags.testFlag(AP_CLOSED) && size > 6)
     {
@@ -199,14 +201,13 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
       painter->drawLine(0, -radius + 2, 0, radius - 2);
       painter->resetTransform();
     }
-
-  painter->restore();
+  }
 }
 
 void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int x, int y, int size,
                                        bool fill, bool fast)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
   if(fill)
     painter->setBrush(mapcolors::routeTextBoxColor);
@@ -231,39 +232,33 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, int
   }
   else
     painter->drawPoint(x, y);
-
-  painter->restore();
 }
 
 void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
   painter->translate(x, y + size / 2);
   painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
   painter->drawPixmap(-size / 2, -size / 2, *windPointerFromCache(size));
   painter->resetTransform();
-
-  painter->restore();
 }
 
 void SymbolPainter::drawTrackLine(QPainter *painter, float x, float y, int size, float dir)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
   painter->translate(x, y);
   painter->rotate(atools::geo::normalizeCourse(dir));
   painter->drawPixmap(-size / 2, -size / 2, *trackLineFromCache(size));
   painter->resetTransform();
-
-  painter->restore();
 }
 
 void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
     painter->setBrush(mapcolors::routeTextBoxColor);
@@ -281,8 +276,6 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
   }
   else
     painter->drawPoint(x, y);
-
-  painter->restore();
 }
 
 void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
@@ -312,7 +305,7 @@ void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size
 void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size,
                                   bool routeFill, bool fast, int largeSize)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
     painter->setBrush(mapcolors::routeTextBoxColor);
@@ -381,13 +374,11 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
       painter->setPen(QPen(mapcolors::vorSymbolColor, size / 3, Qt::SolidLine, Qt::RoundCap));
   }
   painter->drawPoint(x, y);
-
-  painter->restore();
 }
 
 void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -416,14 +407,12 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, boo
   int pointSize = size > 12 ? size / 4 : size / 3;
   painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
   painter->drawPoint(x, y);
-
-  painter->restore();
 }
 
 void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y,
                                      int size, bool fast)
 {
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
   int radius = size / 2;
 
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -442,8 +431,6 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
   painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(x, y);
-
-  painter->restore();
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y,
@@ -605,7 +592,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
   if(texts.isEmpty())
     return;
 
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
 
   QColor backColor;
   if(atts.testFlag(textatt::ROUTE_BG_COLOR))
@@ -678,7 +665,6 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     painter->drawText(QPointF(newx, y + yoffset), t);
     yoffset += h;
   }
-  painter->restore();
 }
 
 QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts)
@@ -687,7 +673,7 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
   if(texts.isEmpty())
     return retval;
 
-  painter->save();
+  atools::util::PainterContextSaver saver(painter);
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
   {
@@ -720,7 +706,6 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
     // painter->drawText(newx, y + yoffset, t);
     yoffset += h;
   }
-  painter->restore();
   return retval;
 }
 
