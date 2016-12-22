@@ -277,6 +277,11 @@ MainWindow::~MainWindow()
   atools::logging::LoggingHandler::shutdown();
 }
 
+maptypes::MapObjectTypes MainWindow::getShownMapFeatures() const
+{
+  return mapWidget->getShownMapFeatures();
+}
+
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
@@ -614,6 +619,11 @@ void MainWindow::connectAllSlots()
     &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
+
+  connect(ui->actionMapShowAircraft, &QAction::toggled,
+          infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftAi, &QAction::toggled,
+          infoController, &InfoController::updateAllInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(

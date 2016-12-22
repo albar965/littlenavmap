@@ -231,6 +231,11 @@ void InfoController::showInformation(maptypes::MapSearchResult result)
   showInformationInternal(result, true);
 }
 
+void InfoController::updateAllInformation()
+{
+  showInformationInternal(currentSearchResult, false);
+}
+
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
 void InfoController::showInformationInternal(maptypes::MapSearchResult result, bool showWindows)
@@ -356,42 +361,45 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     }
   }
 
-  idx = ui->tabWidgetInformation->currentIndex();
-  if(foundNavaid)
-    mainWindow->setStatusMessage(tr("Showing information for navaid."));
-  else if(foundAirport)
-    mainWindow->setStatusMessage(tr("Showing information for airport."));
+  if(showWindows)
+  {
+    idx = ui->tabWidgetInformation->currentIndex();
+    if(foundNavaid)
+      mainWindow->setStatusMessage(tr("Showing information for navaid."));
+    else if(foundAirport)
+      mainWindow->setStatusMessage(tr("Showing information for airport."));
 
-  // Switch intelligently to a new tab depending on what was found
-  if(foundAirport && !foundNavaid)
-  {
-    // If no airport related tab is shown bring airport tab to front
-    if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM &&
-       idx != ic::APPROACHES && idx != ic::WEATHER)
-      ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
-  }
-  else if(!foundAirport && foundNavaid)
-  {
-    // Show navaid if only navaids where found
-    ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
-  }
-  else if(foundAirport && foundNavaid)
-  {
-    // Show airport if all was found but none is active
-    if(idx == ic::MAP_LEGEND)
-      ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
-  }
+    // Switch intelligently to a new tab depending on what was found
+    if(foundAirport && !foundNavaid)
+    {
+      // If no airport related tab is shown bring airport tab to front
+      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM &&
+         idx != ic::APPROACHES && idx != ic::WEATHER)
+        ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
+    }
+    else if(!foundAirport && foundNavaid)
+    {
+      // Show navaid if only navaids where found
+      ui->tabWidgetInformation->setCurrentIndex(ic::NAVAID);
+    }
+    else if(foundAirport && foundNavaid)
+    {
+      // Show airport if all was found but none is active
+      if(idx == ic::MAP_LEGEND)
+        ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
+    }
 
-  // Switch to a tab in aircraft window
-  idx = ui->tabWidgetAircraft->currentIndex();
-  if(foundUserAircraft && !foundAiAircraft)
-  {
-    // If no user aircraft related tabs is shown bring user tab to front
-    if(idx != ic::AIRCRAFT_USER && idx != ic::AIRCRAFT_USER_PROGRESS)
-      ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER);
+    // Switch to a tab in aircraft window
+    idx = ui->tabWidgetAircraft->currentIndex();
+    if(foundUserAircraft && !foundAiAircraft)
+    {
+      // If no user aircraft related tabs is shown bring user tab to front
+      if(idx != ic::AIRCRAFT_USER && idx != ic::AIRCRAFT_USER_PROGRESS)
+        ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_USER);
+    }
+    if(!foundUserAircraft && foundAiAircraft)
+      ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_AI);
   }
-  if(!foundUserAircraft && foundAiAircraft)
-    ui->tabWidgetAircraft->setCurrentIndex(ic::AIRCRAFT_AI);
 }
 
 void InfoController::preDatabaseLoad()
@@ -463,10 +471,16 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         }
         else
         {
-          ui->textBrowserAircraftAiInfo->clear();
-          ui->textBrowserAircraftAiInfo->setPlainText(tr("No AI or multiplayer aircraft selected.\n"
-                                                         "Found %1 AI or multiplayer aircraft.").
-                                                      arg(lastSimData.getAiAircraft().size()));
+          int numAi = lastSimData.getAiAircraft().size();
+          QString text;
+
+          if(!(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT_AI))
+            text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
+
+          text += tr("No AI or multiplayer aircraft selected.<br/>"
+                     "Found %1 AI or multiplayer aircraft.").
+                  arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
+          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
         }
       }
     }

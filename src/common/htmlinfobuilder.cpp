@@ -1239,13 +1239,20 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   html.nbsp().nbsp();
   QString aircraftText;
   if(aircraft.isUser())
+  {
     aircraftText = tr("User Aircraft");
+    if(info && !(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT))
+      html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
+  }
   else
   {
     if(num != -1 && total != -1)
-      aircraftText = tr("AI / Multiplayer Aircraft %1 of %2").arg(num).arg(total);
+      aircraftText = tr("AI / multiplayer aircraft %1 of %2").arg(num).arg(total);
     else
-      aircraftText = tr("AI / Multiplayer Aircraft");
+      aircraftText = tr("AI / multiplayer aircraft");
+
+    if(info && num == 1 && !(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT_AI))
+      html.p(tr("AI and multiplayer aircraft are not shown on map."), atools::util::html::BOLD);
   }
 
   head(html, aircraftText);
@@ -1306,7 +1313,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
 
   if(info && userAircaft != nullptr)
+  {
     aircraftTitle(aircraft, html);
+    if(!(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT))
+      html.p(tr("User aircraft is not shown on map."), atools::util::html::BOLD);
+  }
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
   int nearestLegIndex;

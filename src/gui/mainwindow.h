@@ -92,6 +92,8 @@ public:
     return mapWidget;
   }
 
+  maptypes::MapObjectTypes getShownMapFeatures() const;
+
   RouteController *getRouteController() const
   {
     return routeController;
