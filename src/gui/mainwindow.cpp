@@ -1008,10 +1008,7 @@ const ElevationModel *MainWindow::getElevationModel()
 void MainWindow::resultTruncated(int truncatedTo)
 {
   if(truncatedTo > 0)
-  {
-    qDebug() << "num" << truncatedTo;
     messageLabel->setText(tr("<b style=\"color: red;\">Too many objects.</b>"));
-  }
 }
 
 void MainWindow::distanceChanged()

@@ -159,11 +159,11 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     int x, y;
     if(wToS(pos, x, y))
     {
+      // if(context->objCount())
+      // return;
+
       if(!context->drawFast)
       {
-        if(context->objCount())
-          return;
-
         painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);
         painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
@@ -193,8 +193,8 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     {
       if(!context->drawFast)
       {
-        if(context->objCount())
-          return;
+        // if(context->objCount())
+        // return;
 
         painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
                              Qt::FlatCap));

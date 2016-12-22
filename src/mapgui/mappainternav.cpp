@@ -234,14 +234,14 @@ void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoin
     if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways)))
       continue;
 
-    if(context->objCount())
-      return;
-
     int x, y;
     bool visible = wToS(waypoint.position, x, y);
 
     if(visible)
     {
+      if(context->objCount())
+        return;
+
       int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false, drawFast);
 

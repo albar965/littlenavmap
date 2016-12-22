@@ -274,7 +274,6 @@ void MapWidget::updateMapObjectsShown()
 
 void MapWidget::setShowMapPois(bool show)
 {
-  qDebug() << "setShowMapPois" << show;
   // Enable all POI stuff
   setShowPlaces(show);
   setShowCities(show);
