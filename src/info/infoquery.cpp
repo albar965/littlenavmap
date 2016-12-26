@@ -40,6 +40,11 @@ const SqlRecord *InfoQuery::getAirportInformation(int airportId)
   return cachedRecord(airportCache, airportQuery, airportId);
 }
 
+const atools::sql::SqlRecordVector *InfoQuery::getAirportSceneryInformation(const QString& ident)
+{
+  return cachedRecordVector(airportSceneryCache, airportSceneryQuery, ident);
+}
+
 const SqlRecordVector *InfoQuery::getComInformation(int airportId)
 {
   return cachedRecordVector(comCache, comQuery, airportId);
@@ -125,7 +130,8 @@ atools::sql::SqlRecordVector InfoQuery::getAirwayWaypointInformation(const QStri
 }
 
 /* Get a record from the cache of get it from a database query */
-const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery *query, int id)
+template<typename ID>
+const SqlRecord *InfoQuery::cachedRecord(QCache<ID, SqlRecord>& cache, SqlQuery *query, ID id)
 {
   SqlRecord *rec = cache.object(id);
   if(rec != nullptr)
@@ -156,8 +162,9 @@ const SqlRecord *InfoQuery::cachedRecord(QCache<int, SqlRecord>& cache, SqlQuery
 }
 
 /* Get a record vector from the cache of get it from a database query */
-const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<int, SqlRecordVector>& cache,
-                                                     SqlQuery *query, int id)
+template<typename ID>
+const SqlRecordVector *InfoQuery::cachedRecordVector(QCache<ID, SqlRecordVector>& cache,
+                                                     SqlQuery *query, ID id)
 {
   SqlRecordVector *rec = cache.object(id);
   if(rec != nullptr)
@@ -201,6 +208,12 @@ void InfoQuery::initQueries()
                         "join bgl_file on airport.file_id = bgl_file.bgl_file_id "
                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                         "where airport_id = :id");
+
+  airportSceneryQuery = new SqlQuery(db);
+  airportSceneryQuery->prepare("select * from airport_file f "
+                               "join bgl_file b on f.file_id = b.bgl_file_id  "
+                               "join scenery_area s on b.scenery_area_id = s.scenery_area_id "
+                               "where f.ident = :id");
 
   comQuery = new SqlQuery(db);
   comQuery->prepare("select * from com where airport_id = :id order by type, frequency");
@@ -283,6 +296,9 @@ void InfoQuery::deInitQueries()
 
   delete airportQuery;
   airportQuery = nullptr;
+
+  delete airportSceneryQuery;
+  airportSceneryQuery = nullptr;
 
   delete comQuery;
   comQuery = nullptr;

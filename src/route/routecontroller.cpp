@@ -1183,7 +1183,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       {
         // Reorder columns to match model order
         QHeaderView *header = view->horizontalHeader();
-        for(int i = 0; i < header->count(); ++i)
+        for(int i = 0; i < header->count(); i++)
           header->moveSection(header->visualIndex(i), i);
 
         view->resizeColumnsToContents();
@@ -2190,7 +2190,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
       QColor color = OptionData::instance().isGuiStyleDark() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
-      for(int i = 0; i < model->columnCount(); ++i)
+      for(int i = 0; i < model->columnCount(); i++)
       {
         QStandardItem *item = model->item(nearestLegIndex, i);
         if(item != nullptr)

@@ -37,6 +37,7 @@ class MapQuery;
 class QTimer;
 class CsvExporter;
 class Column;
+class ViewEventFilter;
 
 /*
  * Base for all search classes which reside each in its own tab, contains a result table view and a list of
@@ -86,6 +87,8 @@ public:
   void updateUnits();
 
   void showFirstEntry();
+
+  void showSelectedEntry();
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
@@ -170,6 +173,8 @@ private:
 
   /* Tab index of this search tab on the search dock window */
   int tabIndex;
+
+  ViewEventFilter *viewEventFilter = nullptr;
 
 };
 

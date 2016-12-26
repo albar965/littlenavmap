@@ -306,7 +306,7 @@ void SqlModel::fillHeaderData()
 {
   SqlRecord sqlRecord = getSqlRecord();
   int cnt = sqlRecord.count();
-  for(int i = 0; i < cnt; ++i)
+  for(int i = 0; i < cnt; i++)
   {
     const Column *cd = columns->getColumn(sqlRecord.fieldName(i));
     if(!cd->isHidden() && !(!boundingRect.isValid() && cd->isDistance()))

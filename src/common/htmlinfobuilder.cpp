@@ -363,7 +363,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
   }
 
   if(info && !print)
-    addScenery(rec, html);
+    addAirportScenery(airport, html);
 }
 
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
@@ -735,7 +735,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
                 html.row2(tr("DME Frequency:"),
                           locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
-                html.row2(tr("DME Morse:"), tr("<b>") + morse->getCode(vorReg.valueStr("ident")) + tr("</b>"));
+                html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
+                          atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
               }
               else
                 html.row2(tr("DME data not found for %1/%2.").
@@ -769,7 +770,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("VOR Frequency:"),
                 locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
       html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
-      html.row2(tr("VOR Morse:"), tr("<b>") + morse->getCode(vorInfo->valueStr("ident")) + tr("</b>"));
+      html.row2(tr("VOR Morse:"), morse->getCode(vorInfo->valueStr("ident")),
+                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
       html.row2(tr("VOR data not found"));
@@ -787,7 +789,8 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("NDB Frequency:"),
                 locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
       html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
-      html.row2(tr("NDB Morse:"), tr("<b>") + morse->getCode(ndbInfo->valueStr("ident")) + tr("</b>"));
+      html.row2(tr("NDB Morse:"), morse->getCode(ndbInfo->valueStr("ident")),
+                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
       html.row2(tr("NDB data not found."));
@@ -1038,7 +1041,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
     html.row2(tr("Magvar:"), maptypes::magvarText(vor.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
-  html.row2(tr("Morse:"), tr("<b>") + morse->getCode(vor.ident) + tr("</b>"));
+  html.row2(tr("Morse:"), morse->getCode(vor.ident),
+            atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1076,7 +1080,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(ndb.range));
-  html.row2(tr("Morse:"), "<b>" + morse->getCode(ndb.ident) + "</b>");
+  html.row2(tr("Morse:"), morse->getCode(ndb.ident),
+            atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 
@@ -1178,24 +1183,27 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
     if(!waypoints.isEmpty())
     {
-      QStringList waypointTexts;
+      HtmlBuilder wpHtml(true);
       for(const SqlRecord& wprec : waypoints)
       {
-        waypointTexts.append(tr("<a style=\"text-decoration:none;\" "
-                                  "href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
-                             arg(wprec.valueFloat("from_lonx")).
-                             arg(wprec.valueFloat("from_laty")).
-                             arg(wprec.valueStr("from_ident")).
-                             arg(wprec.valueStr("from_region")));
+        if(!wpHtml.isEmpty())
+          wpHtml.text(", ");
+        wpHtml.a(tr("%1/%2").
+                 arg(wprec.valueStr("from_ident")).
+                 arg(wprec.valueStr("from_region")),
+                 QString("lnm://show?lonx=%1&laty=%2").
+                 arg(wprec.valueFloat("from_lonx")).
+                 arg(wprec.valueFloat("from_laty")), atools::util::html::LINK_NO_UL);
       }
-      waypointTexts.append(tr("<a style=\"text-decoration:none;\" "
-                                "href=\"lnm://show?lonx=%1&laty=%2\">%3/%4</a>").
-                           arg(waypoints.last().valueFloat("to_lonx")).
-                           arg(waypoints.last().valueFloat("to_laty")).
-                           arg(waypoints.last().valueStr("to_ident")).
-                           arg(waypoints.last().valueStr("to_region")));
+      wpHtml.text(", ");
+      wpHtml.a(tr("%1/%2").
+               arg(waypoints.last().valueStr("to_ident")).
+               arg(waypoints.last().valueStr("to_region")),
+               QString("lnm://show?lonx=%1&laty=%2").
+               arg(waypoints.last().valueFloat("to_lonx")).
+               arg(waypoints.last().valueFloat("to_laty")), atools::util::html::LINK_NO_UL);
 
-      html.row2(tr("Waypoints Ident/Region:"), waypointTexts.join(", "));
+      html.row2(tr("Waypoints Ident/Region:"), wpHtml.getHtml(), atools::util::html::NO_ENTITIES);
     }
   }
   html.tableEnd();
@@ -1671,8 +1679,37 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
 {
   head(html, tr("Scenery"));
   html.table();
-  html.row2(tr("Title:"), rec->valueStr(tr("title")));
-  html.row2(tr("BGL Filepath:"), rec->valueStr(tr("filepath")));
+  HtmlBuilder link(true);
+  link.a(rec->valueStr("filepath"),
+         QString("lnm://show?filepath=%1").arg(rec->valueStr("filepath")),
+         atools::util::html::LINK_NO_UL);
+
+  html.row2(rec->valueStr("title"), link.getHtml(),
+            atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+  html.tableEnd();
+}
+
+void HtmlInfoBuilder::addAirportScenery(const MapAirport& airport, HtmlBuilder& html) const
+{
+  head(html, tr("Scenery"));
+  html.table();
+  const atools::sql::SqlRecordVector *sceneryInfo =
+    infoQuery->getAirportSceneryInformation(airport.ident);
+
+  if(sceneryInfo != nullptr)
+  {
+    for(const SqlRecord& rec : *sceneryInfo)
+    {
+      HtmlBuilder link(true);
+      link.a(rec.valueStr("filepath"),
+             QString("lnm://show?filepath=%1").arg(rec.valueStr("filepath")),
+             atools::util::html::LINK_NO_UL);
+
+      html.row2(rec.valueStr("title"), link.getHtml(),
+                atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
+    }
+  }
+
   html.tableEnd();
 }
 

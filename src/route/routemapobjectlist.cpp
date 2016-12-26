@@ -235,7 +235,7 @@ atools::geo::Pos RouteMapObjectList::getPositionAtDistance(float distFromStart) 
 
   float total = 0.f;
   int foundIndex = -1; // Found leg is from this index to index + 1
-  for(int i = 1; i < size(); ++i)
+  for(int i = 1; i < size(); i++)
   {
     if(total + at(i).getDistanceTo() > distFromStart)
     {

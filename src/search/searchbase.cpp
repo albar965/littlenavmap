@@ -32,9 +32,45 @@
 
 #include <QTimer>
 #include <QClipboard>
+#include <QKeyEvent>
 
 /* When using distance search delay the update the table after 500 milliseconds */
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
+
+class ViewEventFilter :
+  public QObject
+{
+
+public:
+  ViewEventFilter(SearchBase *parent)
+    : QObject(parent), searchBase(parent)
+  {
+  }
+
+  virtual ~ViewEventFilter()
+  {
+
+  }
+
+private:
+  bool eventFilter(QObject *object, QEvent *event)
+  {
+    if(event->type() == QEvent::KeyPress)
+    {
+      QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
+      switch(pKeyEvent->key())
+      {
+        case Qt::Key_Return:
+          searchBase->showSelectedEntry();
+          return true;
+      }
+    }
+
+    return QObject::eventFilter(object, event);
+  }
+
+  SearchBase *searchBase;
+};
 
 SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                        MapQuery *mapQuery, int tabWidgetIndex)
@@ -72,6 +108,9 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
+  viewEventFilter = new ViewEventFilter(this);
+  view->installEventFilter(viewEventFilter);
+
 }
 
 SearchBase::~SearchBase()
@@ -80,6 +119,7 @@ SearchBase::~SearchBase()
   delete updateTimer;
   delete zoomHandler;
   delete columns;
+  delete viewEventFilter;
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -484,6 +524,14 @@ void SearchBase::loadAllRowsIntoView()
 void SearchBase::showFirstEntry()
 {
   showRow(0);
+}
+
+void SearchBase::showSelectedEntry()
+{
+  QModelIndex idx = view->currentIndex();
+
+  if(idx.isValid())
+    showRow(idx.row());
 }
 
 /* Double click into table view */

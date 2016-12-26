@@ -49,7 +49,7 @@ void Exporter::createVisualColumnIndex(int cnt, QVector<int>& visualToIndex)
   visualToIndex.clear();
   visualToIndex.fill(-1, cnt);
 
-  for(int i = 0; i < cnt; ++i)
+  for(int i = 0; i < cnt; i++)
   {
     int vindex = controller->getColumnVisualIndex(i);
 
@@ -64,7 +64,7 @@ QStringList Exporter::headerNames(int cnt, const QVector<int>& visualToIndex)
 {
   QStringList columnNames;
 
-  for(int i = 0; i < cnt; ++i)
+  for(int i = 0; i < cnt; i++)
     if(visualToIndex[i] != -1)
     {
       QString cname = controller->getColumnDescriptor(visualToIndex[i])->getDisplayName();
@@ -77,7 +77,7 @@ QStringList Exporter::headerNames(int cnt)
 {
   QStringList columnNames;
 
-  for(int i = 0; i < cnt; ++i)
+  for(int i = 0; i < cnt; i++)
   {
     QString cname = controller->getColumnDescriptor(i)->getDisplayName();
     columnNames.append(cname.replace("-\n", "").replace("\n", " "));

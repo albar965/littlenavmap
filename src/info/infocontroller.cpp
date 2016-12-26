@@ -33,6 +33,10 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QUrlQuery>
+#include <QDesktopServices>
+#include <QProcess>
+#include <QMessageBox>
+#include <QDir>
 
 using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
@@ -110,6 +114,29 @@ void InfoController::anchorClicked(const QUrl& url)
       maptypes::MapAirport airport;
       mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
       emit showRect(airport.bounding, false);
+    }
+    else if(query.hasQueryItem("filepath"))
+    {
+#ifdef Q_OS_WIN
+      QFileInfo fp(query.queryItemValue("filepath"));
+      fp.makeAbsolute();
+
+      if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
+                                  QDir::homePath()))
+        QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+                               tr("Error starting explorer.exe with path \"%1\"")).
+                             arg(query.queryItemValue("filepath")));
+
+#else
+      // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
+      // {
+      QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
+
+      if(!QDesktopServices::openUrl(fileUrl))
+        QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+                               tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
+      // }
+#endif
     }
   }
 }

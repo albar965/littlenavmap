@@ -321,7 +321,7 @@ void SqlController::resetView()
 {
   // Reorder columns to match model order
   QHeaderView *header = view->horizontalHeader();
-  for(int i = 0; i < header->count(); ++i)
+  for(int i = 0; i < header->count(); i++)
     header->moveSection(header->visualIndex(i), i);
 
   if(proxyModel != nullptr)
@@ -394,7 +394,7 @@ void SqlController::processViewColumns()
   const Column *colDescrCurSort = nullptr;
   atools::sql::SqlRecord rec = model->getSqlRecord();
   int cnt = rec.count();
-  for(int i = 0; i < cnt; ++i)
+  for(int i = 0; i < cnt; i++)
   {
     QString field = rec.fieldName(i);
     const Column *colDescr = columns->getColumn(field);
@@ -506,7 +506,7 @@ QVector<const Column *> SqlController::getCurrentColumns() const
 {
   QVector<const Column *> cols;
   atools::sql::SqlRecord rec = model->getSqlRecord();
-  for(int i = 0; i < rec.count(); ++i)
+  for(int i = 0; i < rec.count(); i++)
     cols.append(columns->getColumn(rec.fieldName(i)));
   return cols;
 }

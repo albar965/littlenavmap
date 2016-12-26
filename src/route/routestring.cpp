@@ -91,7 +91,7 @@ QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
 
     if(string.size() > 2)
     {
-      for(int i = 1; i < string.size() - 1; ++i)
+      for(int i = 1; i < string.size() - 1; i++)
       {
         const QString& str = string.at(i);
         if((i % 2) == 0)

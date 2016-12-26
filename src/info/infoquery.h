@@ -41,6 +41,7 @@ public:
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
+  const atools::sql::SqlRecordVector *getAirportSceneryInformation(const QString& ident);
 
   /* Get record for table com */
   const atools::sql::SqlRecordVector *getComInformation(int airportId);
@@ -87,26 +88,36 @@ public:
   void deInitQueries();
 
 private:
-  const atools::sql::SqlRecord *cachedRecord(QCache<int, atools::sql::SqlRecord>& cache,
-                                             atools::sql::SqlQuery *query, int id);
+  template<typename ID>
+  static const atools::sql::SqlRecord *cachedRecord(QCache<ID,
+                                                           atools::sql::SqlRecord>& cache,
+                                                    atools::sql::SqlQuery *query,
+                                                    ID id);
 
-  const atools::sql::SqlRecordVector *cachedRecordVector(QCache<int, atools::sql::SqlRecordVector>& cache,
-                                                         atools::sql::SqlQuery *query, int id);
+  template<typename ID>
+  static const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID,
+                                                                       atools::sql::SqlRecordVector>& cache,
+                                                                atools::sql::SqlQuery *query,
+                                                                ID id);
 
   /* Caches */
-  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, waypointCache, airwayCache,
-                                      runwayEndCache, ilsCache;
-  QCache<int,
-         atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
-                                       transitionCache;
+  QCache<int, atools::sql::SqlRecord> airportCache,
+                                      vorCache, ndbCache, waypointCache, airwayCache, runwayEndCache,
+                                      ilsCache;
+
+  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
+                                            transitionCache;
+
+  QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
   atools::sql::SqlDatabase *db;
 
   /* Prepared database queries */
-  atools::sql::SqlQuery *airportQuery = nullptr, *vorQuery = nullptr, *ndbQuery = nullptr,
+  atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr,
+  *vorQuery = nullptr, *ndbQuery = nullptr,
   *waypointQuery = nullptr, *airwayQuery = nullptr, *comQuery = nullptr,
   *runwayQuery = nullptr, *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr,
-  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *vorIdentRegionQuery= nullptr, *approachQuery =
+  *ilsQuery = nullptr, *airwayWaypointQuery = nullptr, *vorIdentRegionQuery = nullptr, *approachQuery =
     nullptr, *transitionQuery = nullptr;
 
 };

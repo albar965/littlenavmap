@@ -226,6 +226,7 @@ public:
 
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
+  void addAirportScenery(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
