@@ -1393,13 +1393,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)
       {
         QString crossDirection;
-        if(crossTrackDistance >= 10.f)
+        if(crossTrackDistance >= 0.1f)
           crossDirection = tr("<b>►</b>");
-        else if(crossTrackDistance <= -10.f)
+        else if(crossTrackDistance <= -0.1f)
           crossDirection = tr("<b>◄</b>");
 
         html.row2(tr("Cross Track Distance:"),
-                  Unit::distNm(std::abs(crossTrackDistance)) + " " + crossDirection);
+                  Unit::distNm(std::abs(crossTrackDistance)) + " " + crossDirection,
+                  atools::util::html::NO_ENTITIES);
       }
       else
         html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
@@ -1539,7 +1540,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(vspeed < 10.f && vspeed > -10.f)
     vspeed = 0.f;
 
-  html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown);
+  html.row2(info ? tr("Vertical:") : tr("Vertical Speed:"), Unit::speedVertFpm(vspeed) + upDown,
+            atools::util::html::NO_ENTITIES);
   html.tableEnd();
 
   if(userAircaft != nullptr && info)
@@ -1564,9 +1566,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       value += Unit::speedKts(std::abs(headWind));
 
       if(headWind <= -1.f)
-        value += tr("<b>▲</b>");  // Tailwind
+        value += tr("▲");  // Tailwind
       else
-        value += tr("<b>▼</b>");  // Headwind
+        value += tr("▼");  // Headwind
     }
 
     if(std::abs(crossWind) >= 1.0f)
@@ -1577,13 +1579,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       value += Unit::speedKts(std::abs(crossWind));
 
       if(crossWind >= 1.f)
-        value += tr("<b>◄</b>");
+        value += tr("◄");
       else if(crossWind <= -1.f)
-        value += tr("<b>►</b>");
+        value += tr("►");
 
     }
 
-    html.row2(QString(), value);
+    html.row2(QString(), value, atools::util::html::NO_ENTITIES);
 
     float temp = userAircaft->getTotalAirTemperatureCelsius();
     html.row2(tr("Total Air Temperature:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
