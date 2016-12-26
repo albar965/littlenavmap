@@ -283,6 +283,7 @@ void InfoQuery::initQueries()
 void InfoQuery::deInitQueries()
 {
   airportCache.clear();
+  airportSceneryCache.clear();
   vorCache.clear();
   ndbCache.clear();
   waypointCache.clear();

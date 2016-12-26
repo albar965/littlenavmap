@@ -38,6 +38,10 @@
 #include <QMessageBox>
 #include <QDir>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
@@ -121,12 +125,53 @@ void InfoController::anchorClicked(const QUrl& url)
       QFileInfo fp(query.queryItemValue("filepath"));
       fp.makeAbsolute();
 
-      if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
-                                  QDir::homePath()))
-        QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-                               tr("Error starting explorer.exe with path \"%1\"")).
-                             arg(query.queryItemValue("filepath")));
+      // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
+      // QDir::homePath()))
+      // QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+      // tr("Error starting explorer.exe with path \"%1\"")).
+      // arg(query.queryItemValue("filepath")));
 
+      if(fp.exists())
+      {
+        // Syntax is: explorer /select, "C:\Folder1\Folder2\file_to_select"
+        // Dir separators MUST be win-style slashes
+
+        // QProcess::startDetached() has an obscure bug. If the path has
+        // no spaces and a comma(and maybe other special characters) it doesn't
+        // get wrapped in quotes. So explorer.exe can't find the correct path and
+        // displays the default one. If we wrap the path in quotes and pass it to
+        // QProcess::startDetached() explorer.exe still shows the default path. In
+        // this case QProcess::startDetached() probably puts its own quotes around ours.
+
+        STARTUPINFO startupInfo;
+        ::ZeroMemory(&startupInfo, sizeof(startupInfo));
+        startupInfo.cb = sizeof(startupInfo);
+
+        PROCESS_INFORMATION processInfo;
+        ::ZeroMemory(&processInfo, sizeof(processInfo));
+
+        QString cmd = QString("explorer.exe /select,\"%1\"").arg(QDir::toNativeSeparators(fp.filePath()));
+        LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
+        cmd.toWCharArray(lpCmd);
+        lpCmd[cmd.size()] = 0;
+
+        bool ret = ::CreateProcessW(NULL, lpCmd, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
+        delete[] lpCmd;
+
+        if(ret)
+        {
+          ::CloseHandle(processInfo.hProcess);
+          ::CloseHandle(processInfo.hThread);
+        }
+      }
+      else
+      {
+        // If the item to select doesn't exist, try to open its parent
+        QUrl fileUrl = QUrl::fromLocalFile(fp.path());
+        if(!QDesktopServices::openUrl(fileUrl))
+          QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+                                 tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
+      }
 #else
       // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
       // {
