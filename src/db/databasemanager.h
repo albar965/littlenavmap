@@ -147,6 +147,7 @@ private:
 
   DatabaseDialog *databaseDialog = nullptr;
   QString databaseFile, databaseDirectory;
+  qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase *db = nullptr;

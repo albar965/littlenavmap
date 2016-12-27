@@ -264,10 +264,17 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
         {
           progressBox.setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
           atools::gui::Application::processEventsExtended();
-          sqlDb.setDatabaseName(dbfile);
-          sqlDb.open();
-          createEmptySchema(&sqlDb);
-          sqlDb.close();
+
+          if(QFile::remove(dbfile))
+            qInfo() << "Removed" << dbfile;
+          else
+          {
+            qWarning() << "Removing database failed" << dbfile;
+            QMessageBox::warning(nullptr, QApplication::applicationName(),
+                                 tr("Deleting of database<br/><br/><i>%1</i><br/><br/>failed.<br/><br/>"
+                                    "Remove the database file manually and restart the program.").arg(dbfile));
+            ok = false;
+          }
           i++;
         }
         QGuiApplication::restoreOverrideCursor();
@@ -352,8 +359,11 @@ void DatabaseManager::switchSimFromMainMenu()
 
 void DatabaseManager::openDatabase()
 {
-  // size * 1024 bytes if value is negative
-  static const QString cacheSizePragma("PRAGMA cache_size = -20000");
+  // cache_size * 1024 bytes if value is negative
+  QStringList pragmas({"PRAGMA cache_size=-50000", "PRAGMA synchronous=OFF", "PRAGMA journal_mode=TRUNCATE",
+                       "PRAGMA page_size=8196"});
+  QStringList pragmaQueries({"PRAGMA foreign_keys", "PRAGMA cache_size", "PRAGMA synchronous",
+                             "PRAGMA journal_mode", "PRAGMA page_size"});
 
   try
   {
@@ -362,18 +372,20 @@ void DatabaseManager::openDatabase()
 
     // Set foreign keys only on demand because they can decrease loading performance
     if(Settings::instance().getAndStoreValue(lnm::OPTIONS_FOREIGNKEYS, false).toBool())
-      db->open({"PRAGMA foreign_keys = ON", cacheSizePragma});
+      pragmas.append("PRAGMA foreign_keys = ON");
     else
-      db->open({"PRAGMA foreign_keys = OFF", cacheSizePragma});
+      pragmas.append("PRAGMA foreign_keys = OFF");
+
+    db->open(pragmas);
 
     atools::sql::SqlQuery query(db);
-    query.exec("PRAGMA foreign_keys");
-    if(query.next())
-      qDebug() << "Foreign keys are" << query.value(0).toBool();
-
-    query.exec("PRAGMA cache_size");
-    if(query.next())
-      qDebug() << "Cache size is" << query.value(0).toInt();
+    for(const QString& pragmaQuery : pragmaQueries)
+    {
+      query.exec(pragmaQuery);
+      if(query.next())
+        qDebug() << pragmaQuery << "value is now: " << query.value(0).toString();
+      query.finish();
+    }
 
     if(!hasSchema())
       createEmptySchema(db);
@@ -558,6 +570,7 @@ bool DatabaseManager::loadScenery()
   bglReaderOpts.setBasepath(simulators.value(loadingFsType).basePath);
 
   QElapsedTimer timer;
+  progressTimerElapsed = 0L;
   bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
                                               std::placeholders::_1, timer));
 
@@ -737,65 +750,71 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
   }
   progressDialog->setValue(progress.getCurrent());
 
-  if(progress.isNewOther())
+  // Update only four times a second
+  if((timer.elapsed() - progressTimerElapsed) > 250 || progress.isLastCall())
   {
-    currentBglFilePath.clear();
+    if(progress.isNewOther())
+    {
+      currentBglFilePath.clear();
 
-    // Run script etc.
-    progressDialog->setLabelText(
-      DATABASE_TIME_TEXT.arg(progress.getOtherAction()).
-      arg(formatter::formatElapsed(timer)).
-      arg(QString()).
-      arg(QString()).
-      arg(progress.getNumErrors()).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumWaypoints()));
+      // Run script etc.
+      progressDialog->setLabelText(
+        DATABASE_TIME_TEXT.arg(progress.getOtherAction()).
+        arg(formatter::formatElapsed(timer)).
+        arg(QString()).
+        arg(QString()).
+        arg(progress.getNumErrors()).
+        arg(progress.getNumFiles()).
+        arg(progress.getNumAirports()).
+        arg(progress.getNumVors()).
+        arg(progress.getNumIls()).
+        arg(progress.getNumNdbs()).
+        arg(progress.getNumMarker()).
+        arg(progress.getNumWaypoints()));
+    }
+    else if(progress.isNewSceneryArea() || progress.isNewFile())
+    {
+      currentBglFilePath = progress.getBglFilePath();
+
+      // Switched to a new scenery area
+      progressDialog->setLabelText(
+        DATABASE_LOADING_TEXT.arg(progress.getSceneryTitle()).
+        arg(progress.getSceneryPath()).
+        arg(progress.getBglFileName()).
+        arg(formatter::formatElapsed(timer)).
+        arg(progress.getNumErrors()).
+        arg(progress.getNumFiles()).
+        arg(progress.getNumAirports()).
+        arg(progress.getNumVors()).
+        arg(progress.getNumIls()).
+        arg(progress.getNumNdbs()).
+        arg(progress.getNumMarker()).
+        arg(progress.getNumWaypoints()));
+    }
+    else if(progress.isLastCall())
+    {
+      currentBglFilePath.clear();
+      progressDialog->setValue(progress.getTotal());
+
+      // Last report
+      progressDialog->setLabelText(
+        DATABASE_TIME_TEXT.arg(tr("<big>Done.</big>")).
+        arg(formatter::formatElapsed(timer)).
+        arg(QString()).
+        arg(QString()).
+        arg(progress.getNumErrors()).
+        arg(progress.getNumFiles()).
+        arg(progress.getNumAirports()).
+        arg(progress.getNumVors()).
+        arg(progress.getNumIls()).
+        arg(progress.getNumNdbs()).
+        arg(progress.getNumMarker()).
+        arg(progress.getNumWaypoints()));
+    }
+
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    progressTimerElapsed = timer.elapsed();
   }
-  else if(progress.isNewSceneryArea() || progress.isNewFile())
-  {
-    currentBglFilePath = progress.getBglFilePath();
-
-    // Switched to a new scenery area
-    progressDialog->setLabelText(
-      DATABASE_LOADING_TEXT.arg(progress.getSceneryTitle()).
-      arg(progress.getSceneryPath()).
-      arg(progress.getBglFileName()).
-      arg(formatter::formatElapsed(timer)).
-      arg(progress.getNumErrors()).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumWaypoints()));
-  }
-  else if(progress.isLastCall())
-  {
-    currentBglFilePath.clear();
-
-    // Last report
-    progressDialog->setLabelText(
-      DATABASE_TIME_TEXT.arg(tr("<big>Done.</big>")).
-      arg(formatter::formatElapsed(timer)).
-      arg(QString()).
-      arg(QString()).
-      arg(progress.getNumErrors()).
-      arg(progress.getNumFiles()).
-      arg(progress.getNumAirports()).
-      arg(progress.getNumVors()).
-      arg(progress.getNumIls()).
-      arg(progress.getNumNdbs()).
-      arg(progress.getNumMarker()).
-      arg(progress.getNumWaypoints()));
-  }
-
-  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
   return progressDialog->wasCanceled();
 }
