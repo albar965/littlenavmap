@@ -21,6 +21,8 @@
 #include "sql/sqlquery.h"
 #include "common/maptools.h"
 
+#include <QDataStream>
+
 using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
@@ -661,7 +663,7 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
     apronQuery->bindValue(":airportId", airportId);
     apronQuery->exec();
 
-    QList<maptypes::MapApron> *aps = new QList<maptypes::MapApron>;
+    QList<maptypes::MapApron> *aprons = new QList<maptypes::MapApron>;
     while(apronQuery->next())
     {
       maptypes::MapApron ap;
@@ -670,20 +672,23 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
       // Decode vertices into a position list
-      QString vertices = apronQuery->value("vertices").toString();
-      QStringList vertexList = vertices.split(",");
-      for(QString vertex : vertexList)
-      {
-        QStringList ordinates = vertex.split(" ", QString::SkipEmptyParts);
 
-        if(ordinates.size() == 2)
-          // Skip any invalid parts (should not happen since data is checked in the converter)
-          ap.vertices.append(ordinates.at(0).toFloat(), ordinates.at(1).toFloat());
+      QByteArray vertices = apronQuery->value("vertices").toByteArray();
+      QDataStream in(&vertices, QIODevice::ReadOnly);
+      in.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+      quint32 size;
+      float lonx, laty;
+      in >> size;
+      for(unsigned int i = 0; i < size; i++)
+      {
+        in >> lonx >> laty;
+        ap.vertices.append(lonx, laty);
       }
-      aps->append(ap);
+      aprons->append(ap);
     }
-    apronCache.insert(airportId, aps);
-    return aps;
+    apronCache.insert(airportId, aprons);
+    return aprons;
   }
 }
 
