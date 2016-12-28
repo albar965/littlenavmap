@@ -564,13 +564,20 @@ bool DatabaseManager::loadScenery()
   progressDialog->setAutoClose(false);
   progressDialog->setAutoReset(false);
   progressDialog->setMinimumDuration(0);
-  progressDialog->show();
 
   bglReaderOpts.setSceneryFile(simulators.value(loadingFsType).sceneryCfg);
   bglReaderOpts.setBasepath(simulators.value(loadingFsType).basePath);
 
   QElapsedTimer timer;
   progressTimerElapsed = 0L;
+
+  progressDialog->setLabelText(
+    DATABASE_TIME_TEXT.arg(QString()).
+    arg(formatter::formatElapsed(timer)).
+    arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
+
+  progressDialog->show();
+
   bglReaderOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
                                               std::placeholders::_1, timer));
 
