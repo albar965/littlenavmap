@@ -266,7 +266,15 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
           atools::gui::Application::processEventsExtended();
 
           if(QFile::remove(dbfile))
+          {
             qInfo() << "Removed" << dbfile;
+
+            // Create new database
+            sqlDb.setDatabaseName(dbfile);
+            sqlDb.open();
+            createEmptySchema(&sqlDb);
+            sqlDb.close();
+          }
           else
           {
             qWarning() << "Removing database failed" << dbfile;
