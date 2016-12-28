@@ -117,6 +117,17 @@ void MapPainterAirport::render(PaintContext *context)
       drawAirportDiagramBackround(context, *airport);
   }
 
+  // Draw the diagrams first
+  for(int i = 0; i < visibleAirports.size(); i++)
+  {
+    const MapAirport *airport = visibleAirports.at(i);
+
+    // Airport diagram is not influenced by detail level
+    if(context->mapLayerEffective->isAirportDiagram())
+      drawAirportDiagram(context, *airport, context->drawFast);
+  }
+
+  // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
     if(context->objCount())
@@ -127,9 +138,7 @@ void MapPainterAirport::render(PaintContext *context)
     const MapLayer *layer = context->mapLayer;
 
     // Airport diagram is not influenced by detail level
-    if(context->mapLayerEffective->isAirportDiagram())
-      drawAirportDiagram(context, *airport, context->drawFast);
-    else
+    if(!context->mapLayerEffective->isAirportDiagram())
       drawAirportSymbolOverview(context, *airport);
 
     // More detailed symbol will be drawn by the route painter - so skip here
