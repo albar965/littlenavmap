@@ -745,7 +745,7 @@ void MapQuery::getBestStartPositionForAirport(maptypes::MapStart& start, int air
     "r.surface from start s left outer join runway_end e on s.runway_end_id = e.runway_end_id "
     "left outer join runway r on r.primary_end_id = e.runway_end_id "
     "where s.airport_id = :airportId "
-    "order by length desc");
+    "order by r.length desc");
   query.bindValue(":airportId", airportId);
   query.exec();
 
@@ -782,12 +782,12 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
     "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty from ("
     // Get start positions
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, null as runway_name, s.altitude, s.lonx, s.laty "
-    "from start s where airport_id = :airportId and s.number = :number "
+    "from start s where s.airport_id = :airportId and s.number = :number "
     "union "
     // Get runway start positions
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
     "from start s "
-    "where airport_id = :airportId and s.runway_name = :runwayName)");
+    "where s.airport_id = :airportId and s.runway_name = :runwayName)");
 
   query.bindValue(":number", number);
   query.bindValue(":runwayName", endName);
@@ -1132,7 +1132,7 @@ void MapQuery::initQueries()
   startQuery = new SqlQuery(db);
   startQuery->prepare(
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
-    "from start s where airport_id = :airportId");
+    "from start s where s.airport_id = :airportId");
 
   parkingTypeAndNumberQuery = new SqlQuery(db);
   parkingTypeAndNumberQuery->prepare(
