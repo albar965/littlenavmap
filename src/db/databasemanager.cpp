@@ -212,6 +212,18 @@ bool DatabaseManager::checkIncompatibleDatabases(QSplashScreen *splash)
       }
     }
 
+    // Delete the dummy database without dialog if needed
+    QString dummyName = buildDatabaseFileName(atools::fs::FsPaths::UNKNOWN);
+    sqlDb.setDatabaseName(dummyName);
+    sqlDb.open();
+    DatabaseMeta meta(&sqlDb);
+    if(!meta.hasSchema() || !meta.isDatabaseCompatible())
+    {
+      qDebug() << "Updating dummy database" << dummyName;
+      createEmptySchema(&sqlDb);
+    }
+    sqlDb.close();
+
     if(!databaseNames.isEmpty())
     {
       QString msg, trailingMsg;
