@@ -1,3 +1,24 @@
+Version 1.2.2.beta
+
+* Fixed missing unit in TOD in info.
+* Updated manual.
+* Added display for all BGL files that were used to build an airport.
+* Added link to BGL files in information window.
+* Optimizations for database loading resultin in double loading speed.
+
+from atools:
+* Added airport deduplication and optimizations to airport delete processor.
+* Increased distance for VOR and NDB deduplication.
+* Printing duplicated airports into log before deleting.
+* Now appending scenery path and bgl filenames in airport table.
+* Added result set printing to sql script.
+* Added number of starts to airport for proper delete handling.
+* Added table airport_file to collect all sceneries containing an airport.
+* Added compiler option for deduplication.
+* ILS of add-on airports are not deleted anymore. Optmized copying of add-on airport values.
+* Added deletion of duplicate ILS.
+* Optimizations for database: removed unused indexes.
+
 Version 1.2.1.beta
 
 * Fixed map display overflow logic. Now displaying a red warning message if too many objects are shown.
