@@ -101,25 +101,6 @@ MainWindow::MainWindow()
     ui->setupUi(this);
     centralWidget()->hide();
 
-    // setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
-    // setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
-
-    // LeftDockWidgetArea = 0x1,
-    // RightDockWidgetArea = 0x2,
-    // TopDockWidgetArea = 0x4,
-    // BottomDockWidgetArea = 0x8,
-
-    // TopLeftCorner = 0x00000,
-    // TopRightCorner = 0x00001,
-    // BottomLeftCorner = 0x00002,
-    // BottomRightCorner = 0x00003
-
-    if(firstApplicationStart)
-    {
-      ui->dockWidgetLegend->hide();
-      ui->dockWidgetLegend->setFloating(true);
-    }
-
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, ABOUT_MESSAGE, GIT_REVISION);
@@ -1666,7 +1647,20 @@ void MainWindow::readSettings()
   qDebug() << Q_FUNC_INFO << "enter";
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.restore({this, ui->statusBar, ui->tabWidgetSearch});
+  widgetState.restore({ui->statusBar, ui->tabWidgetSearch});
+
+  Settings& settings = Settings::instance();
+
+  if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
+    restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(),
+                 lnm::MAINWINDOW_STATE_VERSION);
+  else
+  {
+    // Used default state saved in application
+    const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
+    restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)),
+                 lnm::MAINWINDOW_STATE_VERSION);
+  }
 
   const QRect geo = QApplication::desktop()->availableGeometry(this);
 
@@ -1727,7 +1721,7 @@ void MainWindow::readSettings()
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline});
 
-  firstApplicationStart = Settings::instance().valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
+  firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
@@ -1740,8 +1734,19 @@ void MainWindow::writeSettings()
 {
   qDebug() << "writeSettings";
 
+  // QStringList hexStr;
+  // QByteArray state = saveState();
+  // for(char i : state)
+  // hexStr.append("0x" + QString::number(static_cast<unsigned char>(i), 16));
+  // qDebug().noquote().nospace() << "\n\nconst unsigned char DEFAULT_MAINWINDOW_STATE["
+  // << state.size() << "] ="
+  // << hexStr.join(",") << "};\n";
+
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({this, ui->statusBar, ui->tabWidgetSearch});
+  widgetState.save({ui->statusBar, ui->tabWidgetSearch});
+
+  Settings& settings = Settings::instance();
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
 
   qDebug() << "searchController";
   if(searchController != nullptr)
@@ -1792,7 +1797,7 @@ void MainWindow::writeSettings()
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline});
 
-  Settings::instance().setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
+  settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
   qDebug() << "databaseManager";
   if(databaseManager != nullptr)
