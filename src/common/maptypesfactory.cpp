@@ -72,6 +72,8 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, maptypes:
     runway.surface = record.valueStr("surface");
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
+    runway.primaryEndId = record.valueInt("primary_end_id");
+    runway.secondaryEndId = record.valueInt("secondary_end_id");
     runway.edgeLight = record.valueStr("edge_light");
     runway.width = record.valueInt("width");
     runway.primaryOffset = record.valueInt("primary_offset_threshold");

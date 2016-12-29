@@ -1157,6 +1157,8 @@ void MapQuery::initQueries()
   runwaysQuery = new SqlQuery(db);
   runwaysQuery->prepare(
     "select length, heading, width, surface, lonx, laty, p.name as primary_name, s.name as secondary_name, "
+    "p.name as primary_name, s.name as secondary_name, "
+    "primary_end_id, secondary_end_id, "
     "edge_light, "
     "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
     "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"

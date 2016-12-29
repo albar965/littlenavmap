@@ -182,7 +182,7 @@ struct MapAirport
 struct MapRunway
 {
   QString surface, primaryName, secondaryName, edgeLight;
-  int length;
+  int length, primaryEndId, secondaryEndId;
   float heading;
   int width,
       primaryOffset, secondaryOffset, /* part of the runway length */

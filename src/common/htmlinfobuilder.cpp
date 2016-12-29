@@ -672,11 +672,16 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
       for(const SqlRecord& recApp : *recAppVector)
       {
         // Approach information
-        QString runway;
-        if(!recApp.isNull("runway_name"))
-          runway = tr(" - Runway ") + recApp.valueStr("runway_name");
+        QString runway, runwayName(recApp.valueStr("runway_name"));
+        int runwayEndId = recApp.valueInt("runway_end_id");
 
-        html.h3(tr("Approach ") + recApp.valueStr("type") + runway, atools::util::html::UNDERLINE);
+        if(!runwayName.isEmpty())
+          runway = tr(" - Runway ") + runwayName;
+        QString approachType = recApp.valueStr("type");
+
+        html.h3(tr("Approach ") + formatter::capNavString(approachType) + runway,
+                atools::util::html::UNDERLINE);
+
         html.table();
         rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
         html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -692,11 +697,41 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         addRadionavFixType(html, recApp);
 
-        if(recApp.valueStr("type") == "ILS")
+        if(approachType == "ILS" || approachType == "LOCALIZER")
         {
-          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(recApp.valueInt("runway_end_id"));
+          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(runwayEndId);
           if(ilsRec != nullptr)
             ilsText(ilsRec, html, true);
+        }
+        else if(approachType == "LOCALIZER_BACKCOURSE")
+        {
+          const QList<MapRunway> *runways = mapQuery->getRunways(airport.id);
+
+          if(runways != nullptr)
+          {
+            // Find the opposite end
+            int backcourseEndId = 0;
+            for(const MapRunway& rw : *runways)
+            {
+              if(rw.primaryEndId == runwayEndId)
+              {
+                backcourseEndId = rw.secondaryEndId;
+                break;
+              }
+              else if(rw.secondaryEndId == runwayEndId)
+              {
+                backcourseEndId = rw.primaryEndId;
+                break;
+              }
+            }
+
+            if(backcourseEndId != 0)
+            {
+              const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(backcourseEndId);
+              if(ilsRec != nullptr)
+                ilsText(ilsRec, html, true);
+            }
+          }
         }
         html.tableEnd();
 
