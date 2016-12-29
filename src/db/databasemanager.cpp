@@ -775,11 +775,12 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
     progressDialog->setMinimum(0);
     progressDialog->setMaximum(progress.getTotal());
   }
-  progressDialog->setValue(progress.getCurrent());
 
   // Update only four times a second
   if((timer.elapsed() - progressTimerElapsed) > 250 || progress.isLastCall())
   {
+    progressDialog->setValue(progress.getCurrent());
+
     if(progress.isNewOther())
     {
       currentBglFilePath.clear();

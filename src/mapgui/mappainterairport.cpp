@@ -130,9 +130,6 @@ void MapPainterAirport::render(PaintContext *context)
   // Add airport symbols on top of diagrams
   for(int i = 0; i < visibleAirports.size(); i++)
   {
-    if(context->objCount())
-      return;
-
     const MapAirport *airport = visibleAirports.at(i);
     const QPointF& pt = visiblePoints.at(i);
     const MapLayer *layer = context->mapLayer;
@@ -888,13 +885,16 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportSymbol(const PaintContext *context, const maptypes::MapAirport& ap,
+void MapPainterAirport::drawAirportSymbol(PaintContext *context, const maptypes::MapAirport& ap,
                                           float x, float y)
 {
   if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||
      context->mapLayerEffective->isAirportDiagram())
   {
+    if(context->objCount())
+      return;
+
     int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
     bool isAirportDiagram = context->mapLayerEffective->isAirportDiagram();
 

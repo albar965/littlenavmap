@@ -74,7 +74,8 @@ struct PaintContext
   float thicknessTrail = 1.f;
   float thicknessRangeDistance = 1.f;
 
-  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 2000;
+  // Needs to be larger than number of highest level airports
+  static Q_DECL_CONSTEXPR int MAX_OBJECT_COUNT = 2500;
   int objectCount = 0;
   bool objCount()
   {
