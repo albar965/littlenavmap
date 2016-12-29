@@ -593,7 +593,7 @@ bool DatabaseManager::loadScenery()
 
   progressDialog->setLabelText(
     DATABASE_TIME_TEXT.arg(QString()).
-    arg(formatter::formatElapsed(timer)).
+    arg(QString()).
     arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
 
   progressDialog->show();

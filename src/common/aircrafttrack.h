@@ -77,8 +77,11 @@ private:
   /* Number of entries to remove at once */
   static Q_DECL_CONSTEXPR int PRUNE_TRACK_ENTRIES = 200;
 
-  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER= 0x5B6C1A2B;
-  static Q_DECL_CONSTEXPR quint16 FILE_VERSION= 1;
+  /* Clear track if aircraft jumps too far */
+  static Q_DECL_CONSTEXPR int MAX_POINT_DISTANCE_METER = 100000;
+
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

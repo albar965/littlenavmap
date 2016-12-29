@@ -102,16 +102,24 @@ bool AircraftTrack::appendTrackPos(const atools::geo::Pos& pos, bool onGround)
   bool pruned = false;
   // Use a larger distance on ground before storing position
   float epsilon = onGround ? atools::geo::Pos::POS_EPSILON_1M : atools::geo::Pos::POS_EPSILON_100M;
-
-  if(isEmpty() || !pos.almostEqual(last().pos, epsilon))
+  if(isEmpty())
+    append({pos, onGround});
+  else if(!pos.almostEqual(last().pos, epsilon))
   {
-    if(size() > MAX_TRACK_ENTRIES)
+    if(pos.distanceMeterTo(last().pos) > MAX_POINT_DISTANCE_METER)
     {
-      for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-        removeFirst();
+      clear();
       pruned = true;
     }
-
+    else
+    {
+      if(size() > MAX_TRACK_ENTRIES)
+      {
+        for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
+          removeFirst();
+        pruned = true;
+      }
+    }
     append({pos, onGround});
   }
   return pruned;
