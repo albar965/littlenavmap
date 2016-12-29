@@ -2173,7 +2173,8 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
       if(item != nullptr)
       {
         item->setBackground(Qt::NoBrush);
-        if(item->font().bold())
+        // Keep first column bold
+        if(item->font().bold() && col != 0)
         {
           QFont font = item->font();
           font.setBold(false);
