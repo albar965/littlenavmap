@@ -81,6 +81,9 @@ using atools::fs::sc::SimConnectUserAircraft;
 MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
   : Marble::MarbleWidget(parent), mainWindow(parent), mapQuery(query)
 {
+  setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+  setMinimumSize(QSize(50, 50));
+
   // Event filter needed to disable some unwanted Marble default functionality
   installEventFilter(this);
 

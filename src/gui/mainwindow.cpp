@@ -99,6 +99,20 @@ MainWindow::MainWindow()
     // atools::Application method can catch it
 
     ui->setupUi(this);
+    centralWidget()->hide();
+
+    // setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    // setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
+
+    // LeftDockWidgetArea = 0x1,
+    // RightDockWidgetArea = 0x2,
+    // TopDockWidgetArea = 0x4,
+    // BottomDockWidgetArea = 0x8,
+
+    // TopLeftCorner = 0x00000,
+    // TopRightCorner = 0x00001,
+    // BottomLeftCorner = 0x00002,
+    // BottomRightCorner = 0x00003
 
     if(firstApplicationStart)
     {
@@ -156,12 +170,12 @@ MainWindow::MainWindow()
     // Create map widget and replace dummy widget in window
     qDebug() << "MainWindow Creating MapWidget";
     mapWidget = new MapWidget(this, mapQuery);
-    ui->verticalLayout_10->replaceWidget(ui->mapWidgetDummy, mapWidget);
+    ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << "MainWindow Creating ProfileWidget";
     profileWidget = new ProfileWidget(this);
-    ui->verticalLayout_12->replaceWidget(ui->elevationWidgetDummy, profileWidget);
+    ui->verticalLayoutProfile->replaceWidget(ui->elevationWidgetDummy, profileWidget);
 
     // Have to create searches in the same order as the tabs
     qDebug() << "MainWindow Creating SearchController";

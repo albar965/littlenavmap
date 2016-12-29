@@ -61,6 +61,8 @@ ProfileWidget::ProfileWidget(MainWindow *parent)
   : QWidget(parent), mainWindow(parent)
 {
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
+  setMinimumSize(QSize(50, 40));
+
   elevationModel = mainWindow->getElevationModel();
   routeController = mainWindow->getRouteController();
 
