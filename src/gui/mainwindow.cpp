@@ -1652,11 +1652,17 @@ void MainWindow::readSettings()
   Settings& settings = Settings::instance();
 
   if(settings.contains(lnm::MAINWINDOW_WIDGET_STATE))
+  {
     restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE).toByteArray(),
                  lnm::MAINWINDOW_STATE_VERSION);
+    move(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos()).toPoint());
+    resize(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", sizeHint()).toSize());
+    if(settings.valueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", false).toBool())
+      setWindowState(windowState() | Qt::WindowMaximized);
+  }
   else
   {
-    // Used default state saved in application
+    // Use default state saved in application
     const char *cptr = reinterpret_cast<const char *>(lnm::DEFAULT_MAINWINDOW_STATE);
     restoreState(QByteArray::fromRawData(cptr, sizeof(lnm::DEFAULT_MAINWINDOW_STATE)),
                  lnm::MAINWINDOW_STATE_VERSION);
@@ -1747,6 +1753,9 @@ void MainWindow::writeSettings()
 
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", size());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", isMaximized());
 
   qDebug() << "searchController";
   if(searchController != nullptr)
