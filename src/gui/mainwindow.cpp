@@ -171,7 +171,7 @@ MainWindow::MainWindow()
     infoController = new InfoController(this, mapQuery);
 
     qDebug() << "MainWindow Creating PrintSupport";
-    printSupport = new PrintSupport(this, mapQuery, infoQuery);
+    printSupport = new PrintSupport(this, mapQuery);
 
     qDebug() << "MainWindow Connecting slots";
     connectAllSlots();

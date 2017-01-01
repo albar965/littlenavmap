@@ -46,7 +46,7 @@ class PrintSupport
   Q_DECLARE_TR_FUNCTIONS(PrintSupport)
 
 public:
-  PrintSupport(MainWindow *parent, MapQuery *mapQueryParam, InfoQuery *infoQueryParam);
+  PrintSupport(MainWindow *parent, MapQuery *mapQueryParam);
   virtual ~PrintSupport();
 
   /* Print the current map view */
@@ -78,7 +78,6 @@ private:
   MainWindow *mainWindow;
   PrintDialog *printFlightplanDialog = nullptr;
   MapQuery *mapQuery = nullptr;
-  InfoQuery *infoQuery = nullptr;
 
   QTextDocument *flightPlanPrintDocument = nullptr;
   QPixmap *mapScreenPrintPixmap = nullptr;

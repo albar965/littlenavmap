@@ -44,8 +44,8 @@
 using atools::settings::Settings;
 using atools::util::HtmlBuilder;
 
-PrintSupport::PrintSupport(MainWindow *parent, MapQuery *mapQueryParam, InfoQuery *infoQueryParam)
-  : mainWindow(parent), mapQuery(mapQueryParam), infoQuery(infoQueryParam)
+PrintSupport::PrintSupport(MainWindow *parent, MapQuery *mapQueryParam)
+  : mainWindow(parent), mapQuery(mapQueryParam)
 {
   printFlightplanDialog = new PrintDialog(mainWindow);
 
