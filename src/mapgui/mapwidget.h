@@ -267,6 +267,7 @@ public:
     INVALID = -1
   };
 
+  void restoreHistoryState();
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);
