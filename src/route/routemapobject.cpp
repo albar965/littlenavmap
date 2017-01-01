@@ -113,7 +113,7 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
         airport = mapobjectResult.airports.first();
         valid = true;
 
-        QString name = flightplan->getDepartureParkingName();
+        QString name = flightplan->getDepartureParkingName().trimmed();
         if(!name.isEmpty() && predRouteMapObj == nullptr)
         {
           if(!name.isEmpty())

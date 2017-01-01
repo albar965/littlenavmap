@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 
 #include <QDataStream>
+#include <QRegularExpression>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -34,6 +35,9 @@ using maptypes::MapMarker;
 using maptypes::MapIls;
 using maptypes::MapParking;
 using maptypes::MapHelipad;
+
+// Extract runway number and designator
+static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
 
 MapQuery::MapQuery(QObject *parent, atools::sql::SqlDatabase *sqlDb)
   : QObject(parent), db(sqlDb)
@@ -769,22 +773,27 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
                                     const QString& runwayEndName, const atools::geo::Pos& position)
 {
   // Get runway number for the first part of the query fetching start positions (before union)
-  bool ok;
-  int number = runwayEndName.toInt(&ok);
-  QString endName = runwayEndName;
-  if(ok)
-    // If it is a number make sure to add a 0 prefix since runways numbers are stored as string
-    endName = QString("%1").arg(number, 2, 10, QChar('0'));
+  int number = runwayEndName.toInt();
+
+  QString endName(runwayEndName);
+  QRegularExpressionMatch match = NUM_DESIGNATOR.match(runwayEndName);
+  if(match.hasMatch())
+  {
+    // If it is a number with designator make sure to add a 0 prefix
+    endName = QString("%1%2").
+              arg(match.captured(1).toInt(), 2, 10, QChar('0')).
+              arg(match.captured(2));
+  }
 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
   query.prepare(
     "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty from ("
-    // Get start positions
+    // Get start positions by number
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, null as runway_name, s.altitude, s.lonx, s.laty "
     "from start s where s.airport_id = :airportId and s.number = :number "
     "union "
-    // Get runway start positions
+    // Get runway start positions by runway name
     "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
     "from start s "
     "where s.airport_id = :airportId and s.runway_name = :runwayName)");
