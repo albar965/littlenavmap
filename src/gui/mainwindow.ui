@@ -4998,6 +4998,7 @@
   <tabstop>tabWidgetSearch</tabstop>
   <tabstop>lineEditAirportIcaoSearch</tabstop>
   <tabstop>lineEditAirportNameSearch</tabstop>
+  <tabstop>pushButtonAirportHelpSearch</tabstop>
   <tabstop>toolButtonAirportSearch</tabstop>
   <tabstop>lineEditAirportCitySearch</tabstop>
   <tabstop>lineEditAirportStateSearch</tabstop>
@@ -5031,6 +5032,7 @@
   <tabstop>lineEditNavNameSearch</tabstop>
   <tabstop>lineEditNavRegionSearch</tabstop>
   <tabstop>lineEditNavAirportIcaoSearch</tabstop>
+  <tabstop>pushButtonNavHelpSearch</tabstop>
   <tabstop>toolButtonNavSearch</tabstop>
   <tabstop>spinBoxNavMaxRangeSearch</tabstop>
   <tabstop>comboBoxNavTypeSearch</tabstop>
@@ -5042,19 +5044,24 @@
   <tabstop>lineEditNavScenerySearch</tabstop>
   <tabstop>lineEditNavFileSearch</tabstop>
   <tabstop>tableViewNavSearch</tabstop>
+  <tabstop>tabWidgetLegend</tabstop>
+  <tabstop>textBrowserLegendNavInfo</tabstop>
+  <tabstop>textBrowserLegendInfo</tabstop>
+  <tabstop>tabWidgetAircraft</tabstop>
+  <tabstop>textBrowserAircraftInfo</tabstop>
+  <tabstop>textBrowserAircraftProgressInfo</tabstop>
+  <tabstop>textBrowserAircraftAiInfo</tabstop>
+  <tabstop>textBrowserNavaidInfo</tabstop>
+  <tabstop>textBrowserRunwayInfo</tabstop>
+  <tabstop>textBrowserComInfo</tabstop>
+  <tabstop>textBrowserApproachInfo</tabstop>
+  <tabstop>textBrowserWeatherInfo</tabstop>
+  <tabstop>tabWidgetInformation</tabstop>
+  <tabstop>textBrowserAirportInfo</tabstop>
   <tabstop>spinBoxRouteSpeed</tabstop>
   <tabstop>spinBoxRouteAlt</tabstop>
   <tabstop>comboBoxRouteType</tabstop>
   <tabstop>tableViewRoute</tabstop>
-  <tabstop>tabWidgetInformation</tabstop>
-  <tabstop>textBrowserAirportInfo</tabstop>
-  <tabstop>textBrowserRunwayInfo</tabstop>
-  <tabstop>textBrowserComInfo</tabstop>
-  <tabstop>textBrowserApproachInfo</tabstop>
-  <tabstop>textBrowserNavaidInfo</tabstop>
-  <tabstop>tabWidgetAircraft</tabstop>
-  <tabstop>textBrowserAircraftInfo</tabstop>
-  <tabstop>textBrowserAircraftProgressInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

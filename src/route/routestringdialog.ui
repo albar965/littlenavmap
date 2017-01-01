@@ -150,6 +150,7 @@ SID, STAR, ETD and ETA are ignored.
   </layout>
  </widget>
  <tabstops>
+  <tabstop>plainTextEditRouteString</tabstop>
   <tabstop>pushButtonRouteStringToClipboard</tabstop>
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
   <tabstop>pushButtonRouteStringRead</tabstop>

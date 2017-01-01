@@ -1543,7 +1543,7 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           <bool>true</bool>
          </property>
          <property name="suffix">
-          <string> Mb</string>
+          <string> MB</string>
          </property>
          <property name="minimum">
           <number>500</number>
@@ -1565,7 +1565,7 @@ Bigger values will update map only when aircraft reaches map boundary.</string>
           <bool>true</bool>
          </property>
          <property name="suffix">
-          <string> Mb</string>
+          <string> MB</string>
          </property>
          <property name="minimum">
           <number>100</number>
@@ -2222,32 +2222,70 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsStartupLoadMapSettings</tabstop>
   <tabstop>radioButtonOptionsStartupShowLast</tabstop>
   <tabstop>radioButtonOptionsStartupShowHome</tabstop>
+  <tabstop>radioButtonOptionsStartupShowFlightplan</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
+  <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
   <tabstop>spinBoxOptionsGuiInfoText</tabstop>
   <tabstop>spinBoxOptionsGuiSimInfoText</tabstop>
+  <tabstop>comboBoxOptionsGuiTheme</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
+  <tabstop>comboBoxMapScrollDetails</tabstop>
   <tabstop>lineEditOptionsMapRangeRings</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
+  <tabstop>spinBoxOptionsMapClickRect</tabstop>
+  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeNavaid</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftUser</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAircraftUser</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftAi</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
+  <tabstop>pushButtonOptionsDisplayFlightplanActiveColor</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
+  <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
+  <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessRangeDistance</tabstop>
+  <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
+  <tabstop>comboBoxOptionsUnitDistance</tabstop>
+  <tabstop>comboBoxOptionsUnitShortDistance</tabstop>
+  <tabstop>comboBoxOptionsUnitAlt</tabstop>
+  <tabstop>comboBoxOptionsUnitSpeed</tabstop>
+  <tabstop>comboBoxOptionsUnitVertSpeed</tabstop>
+  <tabstop>comboBoxOptionsUnitFuelWeight</tabstop>
+  <tabstop>comboBoxOptionsUnitCoords</tabstop>
   <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
   <tabstop>radioButtonOptionsSimUpdateFast</tabstop>
+  <tabstop>checkBoxOptionsSimUpdatesConstant</tabstop>
   <tabstop>spinBoxOptionsSimUpdateBox</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
-  <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
+  <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
   <tabstop>pushButtonOptionsCacheClearDisk</tabstop>
   <tabstop>pushButtonOptionsCacheShow</tabstop>
   <tabstop>checkBoxOptionsRoutePreferVor</tabstop>
   <tabstop>checkBoxOptionsRoutePreferNdb</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
-  <tabstop>checkBoxOptionsWeatherTooltipAsn</tabstop>
-  <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
-  <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
+  <tabstop>doubleSpinBoxOptionsRouteTodRule</tabstop>
+  <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoVatsim</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipFs</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipAsn</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
   <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
   <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
   <tabstop>lineEditOptionsWeatherNoaaUrl</tabstop>
