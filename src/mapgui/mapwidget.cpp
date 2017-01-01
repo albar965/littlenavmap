@@ -363,7 +363,6 @@ void MapWidget::saveState()
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
 
-#ifndef Q_OS_MACOS
   writePluginSettings(*s.getQSettings());
   // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
   s.remove("plugin_overviewmap/path_earth");
@@ -378,7 +377,6 @@ void MapWidget::saveState()
   s.remove("plugin_overviewmap/path_sun");
   s.remove("plugin_overviewmap/path_uranus");
   s.remove("plugin_overviewmap/path_venus");
-#endif
 
   s.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
   s.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
@@ -402,11 +400,10 @@ void MapWidget::saveState()
 
 void MapWidget::restoreState()
 {
+  qDebug() << Q_FUNC_INFO;
   atools::settings::Settings& s = atools::settings::Settings::instance();
 
-#ifndef Q_OS_MACOS
   readPluginSettings(*s.getQSettings());
-#endif
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
     mapDetailLevel = s.valueInt(lnm::MAP_DETAILFACTOR, MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
@@ -418,7 +415,7 @@ void MapWidget::restoreState()
     searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
   else
     searchMarkPos = Pos(0.f, 0.f);
-  emit searchMarkChanged(searchMarkPos);
+//  emit searchMarkChanged(searchMarkPos);
 
   if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
@@ -432,8 +429,6 @@ void MapWidget::restoreState()
     homeDistance = DEFAULT_MAP_DISTANCE;
   }
 
-  history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
-
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
     kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
   screenIndex->restoreState();
@@ -442,6 +437,14 @@ void MapWidget::restoreState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays.values())
     state.restore(action);
+
+  restoreHistoryState();
+  showSavedPosOnStartup();
+}
+
+void MapWidget::restoreHistoryState()
+{
+  history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
 }
 
 void MapWidget::showOverlays(bool show)
@@ -536,6 +539,8 @@ void MapWidget::connectOverlayMenus()
 
 void MapWidget::mainWindowShown()
 {
+  qDebug() << Q_FUNC_INFO;
+
   // Create a copy of KML files where all missing files will be removed from the recent list
   QStringList copyKml(kmlFilePaths);
   for(const QString& kml : kmlFilePaths)
@@ -545,8 +550,6 @@ void MapWidget::mainWindowShown()
   }
 
   kmlFilePaths = copyKml;
-
-  showSavedPosOnStartup();
 
   // Set cache sizes from option data. This is done later in the startup process to avoid disk trashing.
   updateCacheSizes();
@@ -558,10 +561,13 @@ void MapWidget::mainWindowShown()
 
 void MapWidget::showSavedPosOnStartup()
 {
+  qDebug() << Q_FUNC_INFO;
+
   const MapPosHistoryEntry& currentPos = history.current();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
   {
+    qDebug() << "Show Route" << mainWindow->getRouteController()->getBoundingRect();
     if(!mainWindow->getRouteController()->isFlightplanEmpty())
       showRect(mainWindow->getRouteController()->getBoundingRect(), false);
     else
@@ -573,11 +579,13 @@ void MapWidget::showSavedPosOnStartup()
   {
     if(currentPos.isValid())
     {
+      qDebug() << "Show Last" << currentPos;
       centerOn(currentPos.getPos().getLonX(), currentPos.getPos().getLatY(), false);
       setDistance(currentPos.getDistance());
     }
     else
     {
+      qDebug() << "Show 0,0" << currentPos;
       centerOn(0.f, 0.f, false);
       setDistance(DEFAULT_MAP_DISTANCE);
     }
@@ -586,7 +594,6 @@ void MapWidget::showSavedPosOnStartup()
 
 void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick)
 {
-  qDebug() << "NavMapWidget::showPoint" << pos;
   hideTooltip();
   showAircraft(false);
 

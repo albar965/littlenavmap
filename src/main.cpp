@@ -166,7 +166,16 @@ int main(int argc, char *argv[])
     qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
     MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+
+#if defined(Q_OS_MACOS)
+    QDir pluginsDir(QApplication::applicationDirPath());
+    pluginsDir.cdUp();
+    pluginsDir.cd("PlugIns");
+    MarbleDirs::setMarblePluginPath(pluginsDir.absolutePath());
+#else
     MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+#endif
+
     MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLEDEBUG, false).toBool());
 
     qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();

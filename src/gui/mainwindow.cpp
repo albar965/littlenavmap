@@ -362,18 +362,12 @@ void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
 void MainWindow::setupUi()
 {
   // Reduce large icons on mac
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MACOS)
   scaleToolbar(ui->mainToolBar, 0.72f);
   scaleToolbar(ui->mapToolBar, 0.72f);
   scaleToolbar(ui->mapToolBarOptions, 0.72f);
   scaleToolbar(ui->routeToolBar, 0.72f);
   scaleToolbar(ui->viewToolBar, 0.72f);
-
-  ui->menuViewOverlays->setDisabled(true);
-  ui->actionClearKml->setDisabled(true);
-  ui->actionClearKmlMenu->setDisabled(true);
-  ui->actionLoadKml->setDisabled(true);
-  ui->menuRecentKml->setDisabled(true);
 #endif
 
   ui->mapToolBarOptions->addSeparator();
@@ -659,9 +653,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLoadKml, &QAction::triggered, this, &MainWindow::kmlOpen);
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
 
-#if !defined(Q_OS_MAC)
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
-#endif
+
   // Flight plan calculation
   connect(ui->actionRouteCalcDirect, &QAction::triggered,
           routeController, &RouteController::calculateDirect);
@@ -1521,7 +1514,7 @@ void MainWindow::options()
 /* Called by window shown event when the main window is visible the first time */
 void MainWindow::mainWindowShown()
 {
-  qDebug() << "MainWindow::mainWindowShown()";
+  qDebug() << Q_FUNC_INFO;
 
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
@@ -1681,10 +1674,8 @@ void MainWindow::readSettings()
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 
-#if !defined(Q_OS_MAC)
   qDebug() << "MainWindow restoring state of kmlFileHistory";
   kmlFileHistory->restoreState();
-#endif
 
   qDebug() << "MainWindow restoring state of searchController";
   routeFileHistory->restoreState();

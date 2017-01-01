@@ -293,21 +293,6 @@ unix:!macx {
 
 # Mac OS X - Copy help and Marble plugins and data
 macx {
-  copydata.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
-#  copydata.commands += cp -Rvf \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCachePlugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libCompassFloatItem.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libGraticulePlugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libKmlPlugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLatLonPlugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libLicense.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libMapScaleFloatItem.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libNavigationFloatItem.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOsmPlugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libOverviewMap.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPn2Plugin.so \
-#    $${MARBLE_BASE}/Marble.app/Contents/MacOS/resources/plugins/libPntPlugin.so \
-#    $$OUT_PWD/littlenavmap.app/Contents/MacOS/plugins &&
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS
 
@@ -339,10 +324,40 @@ unix:!macx {
 
 # Mac specific deploy target
 macx {
-  deploy.commands = mkdir -p $$OUT_PWD/littlenavmap.app/Contents/MacOS/lib &&
-  deploy.commands += cp -Rvf $${MARBLE_BASE}/lib/*.dylib littlenavmap.app/Contents/MacOS/lib/ &&
-  deploy.commands += macdeployqt littlenavmap.app -always-overwrite -dmg -executable=littlenavmap.app/Contents/MacOS/lib/libmarblewidget-qt5.dylib -executable=littlenavmap.app/Contents/MacOS/lib/libastro.dylib
-#-verbose=3
+  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+         -change /Users/alex/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib \
+          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+
+  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite -dmg &&
+  deploy.commands += cp -Rvf \
+    $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libGraticulePlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libKmlPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libLatLonPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libLicense.so \
+    $${MARBLE_BASE}/lib/plugins/libMapScaleFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libNavigationFloatItem.so \
+    $${MARBLE_BASE}/lib/plugins/libOsmPlugin.so \
+    $${MARBLE_BASE}/lib/plugins/libOverviewMap.so \
+    $${MARBLE_BASE}/lib/plugins/libPn2Plugin.so \
+    $${MARBLE_BASE}/lib/plugins/libPntPlugin.so \
+    $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCompassFloatItem.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libGraticulePlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libKmlPlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLatLonPlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLicense.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so
+
+# -verbose=3
 }
 
 # Windows specific deploy target
