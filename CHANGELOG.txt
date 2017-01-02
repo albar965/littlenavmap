@@ -1,3 +1,22 @@
+Version 1.2.3
+
+* Added missing localizer and backcourse ILS frequencies to approach information.
+* Removed central widget and moved map to dock window. Nested dock windows are now allowed.
+* Fixed problem with disappearing route due to airport overflow.
+* Added proper default window state save and restore.
+* Default window state added to code.
+* Track is now cleared if aircraft jumps too far.
+* Solved display issue in route table.
+* Remaining problems in macOS fixed: Map is now centered on last position.
+* Overlays are available again. KML loading and centering is working.
+* Updated manual.
+* Problem with runway assignment with designation and missing leading 0 fixed.
+* Cleanup in dialogs
+
+from atools:
+* Terminal waypoints are not deleted anymore for add-on airports.
+* Removing disabled invalid waypoints from north pole.
+
 Version 1.2.2.beta
 
 * Fixed missing unit in TOD in info.
