@@ -1,7 +1,7 @@
 Build Instructions
 ------------------------------------------------------
 
-Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.5.
+Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.6.
 GIT command line tools are required.
 The marble widget is needed (see https://techbase.kde.org/Marble#Compiling_Marble).
 Additionally my atools static library is needed.
@@ -10,28 +10,35 @@ Additionally my atools static library is needed.
 - Clone littlenavmap GIT repository (git clone https://github.com/albar965/littlenavmap.git) into the same
   directory as atools
 
+Get Marble from my repository which contains a few needed improvements:
+https://github.com/albar965/marble.git
+Build an install it according to the included instructions. Use branch lnm/1.1 for the builds.
 
 Windows
 ------------------------------------------------------
 
+- Get "Win32 OpenSSL v1.0.1u" from https://slproweb.com/products/Win32OpenSSL.html
+  and install it.
+- Make sure SimConnect is installed.
 - Get and install Qt Creator from http://www.qt.io.
+- Use "../build-%{CurrentProject:Name}-%{CurrentBuild:Name}" for "Default build directory"
+     in the Qt Creator options dialog.
 - Import atools and littlenavmap into the workspace.
 - Configure the projects and enable shadow build for release or debug versions.
--- Use "../build-%{CurrentProject:Name}-%{CurrentBuild:Name}" for "Default build directory"
-     in the Qt Creator options dialog.
 -- Clone atools from GIT to e.g.: "C:\Projects\atools"
 -- For atools use the build directory of e.g.: "C:\Projects\build-atools-release"
 -- Clone littlenavmap from GIT to e.g.: "C:\Projects\littlenavmap"
 -- For littlenavmap use the build directory of e.g.: "C:\Projects\build-littlenavmap-release"
-- Adapt the QT_BIN, GIT_BIN and MARBLE_BASE variables in "littlenavmap.pro".
-- Run qmake from Qt Creator
-- Build and run.
+- Adapt the QT_BIN, GIT_BIN, SIMCONNECT and other variables in "littlenavmap.pro".
+- Set the build kit for atools and littlenavmap to MinGW 32bit.
+- Run qmake from Qt Creator for all projects
+- Build all projects from Qt Creator
 
 Do not use the default shadow build directory names, this will break project dependencies.
 
 Linux / macOS
 ------------------------------------------------------
-Install Qt development packages. Version at least 5.5.
+Install Qt development packages. Version at least 5.6.
 
 Build atools according to instructions in BUILD.txt.
 
@@ -60,4 +67,4 @@ The branch master is the unstable development branch but all software should com
 For releases check the release/MAJOR.MINOR branches to get the correct dependencies.
 The atools branch is usually one MAJOR number ahead.
 
-So Little Navmap branch release/1.0 should work well with atools release/2.0 for example.
+So Little Navmap branch release/1.2 should work well with atools release/2.2 for example.
