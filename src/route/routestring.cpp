@@ -276,8 +276,8 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
         entryBuilder->buildFlightplanEntry(
           result.userPoints.first().position, result, entry, true, userWaypointDummy);
 
-        // Use the original string as name
-        entry.setWaypointId(item);
+        // Use the original string as name but limit it for fs
+        entry.setWaypointId(item.left(10));
       }
       else
         entryBuilder->buildFlightplanEntry(result, entry, true);

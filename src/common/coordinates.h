@@ -42,6 +42,9 @@ atools::geo::Pos fromDegFormat(const QString& str);
 /* Degrees and minutes 4620N07805W */
 atools::geo::Pos fromDegMinFormat(const QString& str);
 
+/* Degrees, minutes and seconds 481200N0112842E (Skyvector) */
+atools::geo::Pos fromDegMinSecFormat(const QString& str);
+
 /* Degrees and minutes in pair "N6500 W08000" or "N6500/W08000" */
 atools::geo::Pos fromDegMinPairFormat(const QString& str);
 

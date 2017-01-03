@@ -61,11 +61,11 @@ void RouteMapObjectList::copy(const RouteMapObjectList& other)
 }
 
 /* Get number from user waypoint from user defined waypoint in fs flight plan */
-const QRegularExpression USER_WP_ID("[A-Za-z_]+([0-9]+)");
+const QRegularExpression USER_WP_ID("^WP([0-9]+)$");
 
 int RouteMapObjectList::getNextUserWaypointNumber() const
 {
-  int nextNum = 1;
+  int nextNum = 0;
 
   for(const atools::fs::pln::FlightplanEntry& entry : flightplan.getEntries())
   {

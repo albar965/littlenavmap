@@ -39,6 +39,11 @@ const static QString COORDS_FLIGHTPLAN_FORMAT_DEG_MIN("%1%2%3%4%5%6");
 const static QRegularExpression LONG_FORMAT_REGEXP_DEG_MIN("^([0-9]{2})([0-9]{2})([NS])"
                                                            "([0-9]{3})([0-9]{2})([EW])$");
 
+// 481200N0112842E
+const static QString COORDS_FLIGHTPLAN_FORMAT_DEG_MIN_SEC("%1%2%3%4%5%6%7%8");
+const static QRegularExpression LONG_FORMAT_REGEXP_DEG_MIN_SEC("^([0-9]{2})([0-9]{2})([0-9]{2})([NS])"
+                                                               "([0-9]{3})([0-9]{2})([0-9]{2})([EW])$");
+
 // 5020N
 const static QRegularExpression LONG_FORMAT_REGEXP_NAT("^([0-9]{2})"
                                                        "([0-9]{2})N$");
@@ -95,18 +100,18 @@ atools::geo::Pos fromGfpFormat(const QString& str)
 
     if(captured.size() == 7)
     {
-      bool latOk, lonOk;
+      bool latOk, lonOk, latMinOk, lonMinOk;
       QString ns = captured.at(1);
       int latYDeg = captured.at(2).toInt(&latOk);
-      float latYMin = captured.at(3).toFloat(&latOk) / 10.f;
+      float latYMin = captured.at(3).toFloat(&latMinOk) / 10.f;
       float latYSec = (latYMin - std::floor(latYMin)) * 60.f;
 
       QString ew = captured.at(4);
       int lonXDeg = captured.at(5).toInt(&lonOk);
-      float lonXMin = captured.at(6).toFloat(&lonOk) / 10.f;
+      float lonXMin = captured.at(6).toFloat(&lonMinOk) / 10.f;
       float lonXSec = (lonXMin - std::floor(lonXMin)) * 60.f;
 
-      if(latOk && lonOk &&
+      if(latOk && lonOk && latMinOk && lonMinOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
          -180 <= lonXDeg && lonXDeg <= 180)
         return atools::geo::Pos(lonXDeg, static_cast<int>(lonXMin), lonXSec, ew == "W",
@@ -155,20 +160,52 @@ atools::geo::Pos fromDegMinFormat(const QString& str)
 
     if(captured.size() == 7)
     {
-      bool latOk, lonOk;
+      bool latOk, lonOk, latMinOk, lonMinOk;
       int latYDeg = captured.at(1).toInt(&latOk);
-      int latYMin = captured.at(2).toInt(&latOk);
+      int latYMin = captured.at(2).toInt(&latMinOk);
       QString ns = captured.at(3);
 
       int lonXDeg = captured.at(4).toInt(&lonOk);
-      int lonXMin = captured.at(5).toInt(&lonOk);
+      int lonXMin = captured.at(5).toInt(&lonMinOk);
       QString ew = captured.at(6);
 
-      if(latOk && lonOk &&
+      if(latOk && lonOk && latMinOk && lonMinOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
          -180 <= lonXDeg && lonXDeg <= 180)
         return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
                                 latYDeg, latYMin, 0.f, ns == "S");
+    }
+  }
+  return atools::geo::EMPTY_POS;
+}
+
+// Degrees, minutes and seconds 481200N0112842E
+atools::geo::Pos fromDegMinSecFormat(const QString& str)
+{
+  QRegularExpressionMatch match = LONG_FORMAT_REGEXP_DEG_MIN_SEC.match(str.simplified().toUpper());
+
+  if(match.hasMatch())
+  {
+    QStringList captured = match.capturedTexts();
+
+    if(captured.size() == 9)
+    {
+      bool latOk, lonOk, latMinOk, lonMinOk, latSecOk, lonSecOk;
+      int latYDeg = captured.at(1).toInt(&latOk);
+      int latYMin = captured.at(2).toInt(&latMinOk);
+      int latYSec = captured.at(3).toInt(&latSecOk);
+      QString ns = captured.at(4);
+
+      int lonXDeg = captured.at(5).toInt(&lonOk);
+      int lonXMin = captured.at(6).toInt(&lonMinOk);
+      int lonXSec = captured.at(7).toInt(&lonSecOk);
+      QString ew = captured.at(8);
+
+      if(latOk && lonOk && latMinOk && lonMinOk && latSecOk && lonSecOk &&
+         -90 <= latYDeg && latYDeg <= 90 &&
+         -180 <= lonXDeg && lonXDeg <= 180)
+        return atools::geo::Pos(lonXDeg, lonXMin, lonXSec, ew == "W",
+                                latYDeg, latYMin, latYSec, ns == "S");
     }
   }
   return atools::geo::EMPTY_POS;
@@ -185,16 +222,16 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str)
 
     if(captured.size() == 7)
     {
-      bool latOk, lonOk;
+      bool latOk, lonOk, latMinOk, lonMinOk;
       QString ns = captured.at(1);
       int latYDeg = captured.at(2).toInt(&latOk);
-      int latYMin = captured.at(3).toInt(&latOk);
+      int latYMin = captured.at(3).toInt(&latMinOk);
 
       QString ew = captured.at(4);
       int lonXDeg = captured.at(5).toInt(&lonOk);
-      int lonXMin = captured.at(6).toInt(&lonOk);
+      int lonXMin = captured.at(6).toInt(&lonMinOk);
 
-      if(latOk && lonOk &&
+      if(latOk && lonOk && latMinOk && lonMinOk &&
          -90 <= latYDeg && latYDeg <= 90 &&
          -180 <= lonXDeg && lonXDeg <= 180)
         return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
@@ -231,7 +268,10 @@ atools::geo::Pos fromNatFormat(const QString& str)
 
 atools::geo::Pos fromAnyWaypointFormat(const QString& str)
 {
-  if(str.size() == 13)
+  if(str.size() == 15)
+    // Skyvector 481050N0113157E (N48°10.83' E11°31.96')
+    return fromDegMinSecFormat(str);
+  else if(str.size() == 13)
     // Garmin format N48194W123096
     return fromGfpFormat(str);
   else if(str.size() == 12)
