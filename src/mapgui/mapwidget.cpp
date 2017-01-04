@@ -563,6 +563,8 @@ void MapWidget::showSavedPosOnStartup()
 {
   qDebug() << Q_FUNC_INFO;
 
+  active = true;
+
   const MapPosHistoryEntry& currentPos = history.current();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
@@ -591,7 +593,6 @@ void MapWidget::showSavedPosOnStartup()
     }
   }
   history.activate();
-  active = true;
 }
 
 void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick)
