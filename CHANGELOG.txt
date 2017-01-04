@@ -12,10 +12,17 @@ Version 1.2.3
 * Updated manual.
 * Problem with runway assignment with designation and missing leading 0 fixed.
 * Cleanup in dialogs
+* User defined waypoints are now length limited when parsing flight plan descriptions to avoid FS crash.
+* Fixed numbering of user defined waypoints for flightplan containing user defined coordinates.
+* Added deg/min/sec coordinate format as used by Skyvector to route parser.
 
 from atools:
 * Terminal waypoints are not deleted anymore for add-on airports.
 * Removing disabled invalid waypoints from north pole.
+* Jetway indication for gates is correct now.
+* Updated database minor version to 1.
+* Waypoint id length is now limited to 10 for flightplans.
+* Html entities are replaced with quotes now in flightplan to ensure better third party compatibility.
 
 Version 1.2.2.beta
 
