@@ -328,7 +328,7 @@ macx {
          -change /Users/alex/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
-  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite -dmg &&
+  deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
   deploy.commands += cp -Rvf \
     $${MARBLE_BASE}/lib/plugins/libCachePlugin.so \
     $${MARBLE_BASE}/lib/plugins/libCompassFloatItem.so \
@@ -355,7 +355,8 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOsmPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
-  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPntPlugin.so &&
+  deploy.commands += macdeployqt littlenavmap.app -appstore-compliant -always-overwrite -dmg
 
 # -verbose=3
 }
