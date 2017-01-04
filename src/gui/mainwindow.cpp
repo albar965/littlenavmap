@@ -1596,23 +1596,29 @@ void MainWindow::updateActionStates()
   // Remove or add empty airport action from menu and toolbar depending on option
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
   {
-    // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setEnabled(true);
 
     if(!ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+    {
       ui->mapToolBarOptions->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
+      emptyAirportSeparator = ui->mapToolBarOptions->insertSeparator(ui->actionMapShowVor);
+    }
 
     if(!ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
       ui->menuMap->insertAction(ui->actionMapShowVor, ui->actionMapShowEmptyAirports);
   }
   else
   {
-    // Force display - even if action is not visible
-    // ui->actionMapShowEmptyAirports->setChecked(true);
     ui->actionMapShowEmptyAirports->setDisabled(true);
 
     if(ui->mapToolBarOptions->actions().contains(ui->actionMapShowEmptyAirports))
+    {
       ui->mapToolBarOptions->removeAction(ui->actionMapShowEmptyAirports);
+
+      if(emptyAirportSeparator != nullptr)
+        ui->mapToolBarOptions->removeAction(emptyAirportSeparator);
+      emptyAirportSeparator = nullptr;
+    }
 
     if(ui->menuMap->actions().contains(ui->actionMapShowEmptyAirports))
       ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);

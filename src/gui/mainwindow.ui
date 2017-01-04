@@ -2460,8 +2460,6 @@
    <addaction name="actionMapShowAirports"/>
    <addaction name="actionMapShowSoftAirports"/>
    <addaction name="separator"/>
-   <addaction name="actionMapShowEmptyAirports"/>
-   <addaction name="separator"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
@@ -3807,6 +3805,9 @@
    </property>
    <property name="statusTip">
     <string>Show empty airports on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+E</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">

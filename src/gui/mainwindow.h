@@ -279,6 +279,7 @@ private:
 
   maptypes::WeatherContext currentWeatherContext;
 
+  QAction *emptyAirportSeparator = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
