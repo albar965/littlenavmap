@@ -391,6 +391,7 @@ private:
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
   qint64 lastSimUpdateMs = 0;
+  bool active = false;
 
 };
 

@@ -46,6 +46,7 @@
 #include <QToolTip>
 #include <QRubberBand>
 #include <QMessageBox>
+#include <QPainter>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleWidgetInputHandler.h>
@@ -590,6 +591,7 @@ void MapWidget::showSavedPosOnStartup()
     }
   }
   history.activate();
+  active = true;
 }
 
 void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick)
@@ -2307,6 +2309,13 @@ void MapWidget::updateVisibleObjectsStatusBar()
 
 void MapWidget::paintEvent(QPaintEvent *paintEvent)
 {
+  if(!active)
+  {
+     QPainter painter(this);
+     painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
+     return;
+  }
+
   bool changed = false;
   const GeoDataLatLonAltBox visibleLatLonAltBox = viewport()->viewLatLonAltBox();
 
