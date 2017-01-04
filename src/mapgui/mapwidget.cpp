@@ -439,7 +439,6 @@ void MapWidget::restoreState()
     state.restore(action);
 
   restoreHistoryState();
-  showSavedPosOnStartup();
 }
 
 void MapWidget::restoreHistoryState()

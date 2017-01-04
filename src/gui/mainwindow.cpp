@@ -1520,6 +1520,8 @@ void MainWindow::mainWindowShown()
   mapWidget->mainWindowShown();
   profileWidget->mainWindowShown();
 
+  mapWidget->showSavedPosOnStartup();
+
   // Focus map widget instead of a random widget
   mapWidget->setFocus();
 
