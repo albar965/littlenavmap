@@ -285,7 +285,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
       float magvarnext = 0.f, magvarprev = 0.f;
       for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
       {
-        if(routeList->at(i).getMagvar() > 0.f)
+        if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
         {
           magvarnext = routeList->at(i).getMagvar();
           break;
@@ -294,7 +294,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
 
       for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
       {
-        if(routeList->at(i).getMagvar() > 0.f)
+        if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
         {
           magvarprev = routeList->at(i).getMagvar();
           break;

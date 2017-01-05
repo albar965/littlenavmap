@@ -117,6 +117,16 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
+  // Check if there is any magnetic variance on the route
+  bool foundMagvarObject = false;
+  for(const RouteMapObject& obj : routeMapObjects)
+  {
+    // Route contains correct magvar if any of these objects were found
+    if(obj.getMapObjectType() == maptypes::AIRPORT || obj.getMapObjectType() == maptypes::VOR ||
+       obj.getMapObjectType() == maptypes::NDB || obj.getMapObjectType() == maptypes::WAYPOINT)
+      foundMagvarObject = true;
+  }
+
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
@@ -132,7 +142,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       {
         // Build text
         QString text(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
-                     QString::number(obj.getCourseToRhumb(), 'f', 0) + tr("°M"));
+                     QString::number(obj.getCourseToRhumb(), 'f', 0) +
+                     (foundMagvarObject ? tr("°M") : tr("°T")));
 
         int textw = context->painter->fontMetrics().width(text);
         if(textw > lineLength)
