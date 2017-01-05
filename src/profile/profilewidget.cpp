@@ -659,11 +659,14 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
                                          const atools::geo::Pos& lastPos,
                                          const atools::geo::Pos& curPos) const
 {
+
+  GeoDataCoordinates start(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree);
+  GeoDataCoordinates end(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
+
   // Create a line string from the two points and split it at the date line if crossing
   GeoDataLineString coords;
   coords.setTessellate(true);
-  coords << GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree)
-         << GeoDataCoordinates(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
+  coords << start << end;
 
   QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
   for(const Marble::GeoDataLineString *ls : coordsCorrected)
@@ -701,6 +704,23 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
       }
     }
   }
+
+  if(!elevations.isEmpty())
+  {
+    // Add start or end point if heightProfile omitted these - check only lat lon not alt
+    if(elevations.first().latitude(GeoDataCoordinates::Degree) !=
+       start.latitude(GeoDataCoordinates::Degree) &&
+       elevations.first().longitude(GeoDataCoordinates::Degree) !=
+       start.longitude(GeoDataCoordinates::Degree))
+      elevations.insert(0, start);
+
+    if(elevations.last().latitude(GeoDataCoordinates::Degree) !=
+       end.latitude(GeoDataCoordinates::Degree) &&
+       elevations.last().longitude(GeoDataCoordinates::Degree) !=
+       end.longitude(GeoDataCoordinates::Degree))
+      elevations.append(end);
+  }
+
   return true;
 }
 
