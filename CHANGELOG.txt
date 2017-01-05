@@ -15,6 +15,9 @@ Version 1.2.3
 * User defined waypoints are now length limited when parsing flight plan descriptions to avoid FS crash.
 * Fixed numbering of user defined waypoints for flightplan containing user defined coordinates.
 * Added deg/min/sec coordinate format as used by Skyvector to route parser.
+* Fixed problem with wrong distance in elevation profile for some flight plans.
+* Fixed missing magvar correction on flight plan course in certain cases.
+* Fixed problem when zooming in to small flight plans.
 
 from atools:
 * Terminal waypoints are not deleted anymore for add-on airports.
