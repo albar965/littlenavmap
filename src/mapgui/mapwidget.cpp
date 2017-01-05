@@ -613,22 +613,46 @@ void MapWidget::showPos(const atools::geo::Pos& pos, float zoom, bool doubleClic
 
 void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 {
-  qDebug() << "NavMapWidget::showRect" << rect;
+  qDebug() << Q_FUNC_INFO << rect;
+
   hideTooltip();
   showAircraft(false);
 
-  qDebug() << "rect w" << QString::number(rect.getWidthDegree(), 'f')
-           << "h" << QString::number(rect.getHeightDegree(), 'f');
+  float w = rect.getWidthDegree();
+  float h = rect.getHeightDegree();
+
+  qDebug() << "rect w" << QString::number(w, 'f')
+           << "h" << QString::number(h, 'f');
 
   if(rect.isPoint(POS_IS_POINT_EPSILON))
     showPos(rect.getTopLeft(), 0.f, doubleClick);
   else
   {
-    centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                              GeoDataCoordinates::Degree), false);
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+    {
+      // Workaround for marble not being able to center certain lines
+      // Turn rect into a square
+      centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(),
+                                rect.getEast() + h / 2,
+                                rect.getWest() - h / 2,
+                                GeoDataCoordinates::Degree), false);
+    }
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+    {
+      centerOn(GeoDataLatLonBox(rect.getNorth() + w / 2,
+                                rect.getSouth() - w / 2,
+                                rect.getEast(),
+                                rect.getWest(),
+                                GeoDataCoordinates::Degree), false);
+    }
+    else
+      centerOn(GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
+                                GeoDataCoordinates::Degree), false);
+
     float dist = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                OptionData::instance().getMapZoomShowClick() :
                                                OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+
     if(distance() < dist)
       setDistance(dist);
   }
@@ -2312,9 +2336,9 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 {
   if(!active)
   {
-     QPainter painter(this);
-     painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
-     return;
+    QPainter painter(this);
+    painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
+    return;
   }
 
   bool changed = false;
