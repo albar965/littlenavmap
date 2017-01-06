@@ -26,6 +26,7 @@ from atools:
 * Updated database minor version to 1.
 * Waypoint id length is now limited to 10 for flightplans.
 * Html entities are replaced with quotes now in flightplan to ensure better third party compatibility.
+* Fixed wrong (negated) UTC offset in SimConnect user aircraft.
 
 Version 1.2.2.beta
 
