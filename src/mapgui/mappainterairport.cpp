@@ -563,7 +563,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
         painter->translate(pt);
         painter->rotate(helipad.heading);
 
-        if(helipad.type == "SQUARE")
+        if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
           painter->drawRect(-w, -h, w * 2, h * 2);
         else
           painter->drawEllipse(-w, -h, w * 2, h * 2);
