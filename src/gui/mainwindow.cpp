@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2016 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ static const QString ABOUT_MESSAGE =
                       "<a href=\"https://github.com/albar965\">Github</a>.</p>"
                         "<p>More about my projects at "
                           "<a href=\"https://albar965.github.io\">albar965.github.io</a>.</p>"
-                            "<p><b>Copyright 2015-2016 Alexander Barthel</b></p>");
+                            "<p><b>Copyright 2015-2017 Alexander Barthel</b></p>");
 
 // All known map themes
 static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "openstreetmaproads",
