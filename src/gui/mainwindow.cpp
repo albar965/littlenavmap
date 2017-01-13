@@ -643,6 +643,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSave, &QAction::triggered, this, &MainWindow::routeSave);
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeSaveAsGfp);
+  connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeSaveAsRte);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -1327,14 +1328,39 @@ bool MainWindow::routeSaveAsGfp()
       tr("Save Flightplan as Garmin GFP Format"),
       tr("Garmin GFP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GFP),
       "gfp", "Route/Gfp",
-      atools::fs::FsPaths::getFilesPath(atools::fs::FsPaths::FSX),
-      routeController->buildDefaultFilenameGfp());
+      atools::fs::FsPaths::getBasePath(databaseManager->getCurrentSimulator()) +
+      QDir::separator() + "F1GTN" + QDir::separator() + "FPL",
+      routeController->buildDefaultFilenameShort("-", "gfp"));
 
     if(!routeFile.isEmpty())
     {
       if(routeController->saveFlighplanAsGfp(routeFile))
       {
         setStatusMessage(tr("Flight plan saved as GFP."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeSaveAsRte()
+{
+  if(routeValidate(false /*valideParking*/))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as PMDG RTE Format"),
+      tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
+      "gfp", "Route/Rte",
+      atools::fs::FsPaths::getBasePath(databaseManager->getCurrentSimulator()) +
+      QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
+      routeController->buildDefaultFilenameShort(QString(), "rte"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAsRte(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as RTE."));
         return true;
       }
     }
@@ -1585,6 +1611,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSave->setEnabled(hasFlightplan && routeController->hasChanged());
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);

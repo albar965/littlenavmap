@@ -186,6 +186,7 @@ private:
   bool routeSave();
   bool routeSaveAs();
   bool routeSaveAsGfp();
+  bool routeSaveAsRte();
   void routeCenter();
   bool routeCheckForChanges();
   bool routeValidate(bool validateParking = true);

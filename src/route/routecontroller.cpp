@@ -588,14 +588,14 @@ bool RouteController::appendFlightplan(const QString& filename)
 
 bool RouteController::saveFlighplanAs(const QString& filename)
 {
-  qDebug() << "saveFlighplanAs" << filename;
+  qDebug() << Q_FUNC_INFO << filename;
   routeFilename = filename;
   return saveFlightplan();
 }
 
 bool RouteController::saveFlighplanAsGfp(const QString& filename)
 {
-  qDebug() << "saveFlighplanAs" << filename;
+  qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteString().createGfpStringForRoute(route);
 
   QFile file(filename);
@@ -611,6 +611,27 @@ bool RouteController::saveFlighplanAsGfp(const QString& filename)
     atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
     return false;
   }
+}
+
+bool RouteController::saveFlighplanAsRte(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  try
+  {
+    route.getFlightplan().saveRte(filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
 }
 
 bool RouteController::saveFlightplan()
@@ -962,17 +983,17 @@ QString RouteController::buildDefaultFilename() const
   return filename;
 }
 
-QString RouteController::buildDefaultFilenameGfp() const
+QString RouteController::buildDefaultFilenameShort(const QString& sep, const QString& suffix) const
 {
   QString filename;
 
   const Flightplan& flightplan = route.getFlightplan();
 
   filename += flightplan.getEntries().first().getIcaoIdent();
-  filename += "-";
+  filename += sep;
 
   filename += flightplan.getEntries().last().getIcaoIdent();
-  filename += ".gfp";
+  filename += "." + suffix;
 
   // Remove characters that are note allowed in most filesystems
   filename = atools::cleanFilename(filename);

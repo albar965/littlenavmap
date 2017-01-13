@@ -55,6 +55,8 @@
     <addaction name="separator"/>
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsRte"/>
     <addaction name="actionRouteSaveAsGfp"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
@@ -4991,6 +4993,21 @@
    </property>
    <property name="statusTip">
     <string>Show the offline help also including the legend in a PDF viewer</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsRte">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasrte.svg</normaloff>:/littlenavmap/resources/icons/saveasrte.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan as &amp;RTE ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as RTE file usable by PMDG aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as RTE file usable by PMDG aircraft</string>
    </property>
   </action>
  </widget>

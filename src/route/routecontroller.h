@@ -85,6 +85,7 @@ public:
   /* Saves flight plan using current name */
   bool saveFlightplan();
   bool saveFlighplanAsGfp(const QString& filename);
+  bool saveFlighplanAsRte(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
@@ -119,7 +120,7 @@ public:
 
   /* Create a default filename based on departure and destination names */
   QString buildDefaultFilename() const;
-  QString buildDefaultFilenameGfp() const;
+  QString buildDefaultFilenameShort(const QString& sep, const QString& suffix) const;
 
   /* @return true if no flight plan loaded (no departure, no destination and no waypoints) */
   bool isFlightplanEmpty() const;
