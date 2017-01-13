@@ -52,6 +52,8 @@ const static QRegularExpression LONG_FORMAT_REGEXP_NAT("^([0-9]{2})"
 const static QString COORDS_FLIGHTPLAN_FORMAT_PAIR("%1%2/%3%4");
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR("^([NS])([0-9]{2})([0-9]{2})[ /]"
                                                         "([EW])([0-9]{3})([0-9]{2})$");
+const static QRegularExpression LONG_FORMAT_REGEXP_PAIR2("^([0-9]{2})([0-9]{2})([NS])[ /]"
+                                                         "([0-9]{3})([0-9]{2})([EW])$");
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LAT("^([NS])([0-9]{2})([0-9]{2})$");
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LON("^([EW])([0-9]{3})([0-9]{2})$");
 
@@ -216,29 +218,49 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str)
 {
   QRegularExpressionMatch match = LONG_FORMAT_REGEXP_PAIR.match(str.simplified().toUpper());
 
+  bool latOk = false, lonOk = false, latMinOk = false, lonMinOk = false;
+  QString ns, ew;
+  int latYDeg = 0, latYMin = 0, lonXDeg = 0, lonXMin = 0;
+
   if(match.hasMatch())
   {
     QStringList captured = match.capturedTexts();
-
     if(captured.size() == 7)
     {
-      bool latOk, lonOk, latMinOk, lonMinOk;
-      QString ns = captured.at(1);
-      int latYDeg = captured.at(2).toInt(&latOk);
-      int latYMin = captured.at(3).toInt(&latMinOk);
-
-      QString ew = captured.at(4);
-      int lonXDeg = captured.at(5).toInt(&lonOk);
-      int lonXMin = captured.at(6).toInt(&lonMinOk);
-
-      if(latOk && lonOk && latMinOk && lonMinOk &&
-         -90 <= latYDeg && latYDeg <= 90 &&
-         -180 <= lonXDeg && lonXDeg <= 180)
-        return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
-                                latYDeg, latYMin, 0.f, ns == "S");
+      ns = captured.at(1);
+      latYDeg = captured.at(2).toInt(&latOk);
+      latYMin = captured.at(3).toInt(&latMinOk);
+      ew = captured.at(4);
+      lonXDeg = captured.at(5).toInt(&lonOk);
+      lonXMin = captured.at(6).toInt(&lonMinOk);
     }
   }
-  return atools::geo::EMPTY_POS;
+  else
+  {
+    QRegularExpressionMatch match2 = LONG_FORMAT_REGEXP_PAIR2.match(str.simplified().toUpper());
+
+    if(match2.hasMatch())
+    {
+      QStringList captured = match2.capturedTexts();
+      if(captured.size() == 7)
+      {
+        latYDeg = captured.at(1).toInt(&latOk);
+        latYMin = captured.at(2).toInt(&latMinOk);
+        ns = captured.at(3);
+        lonXDeg = captured.at(4).toInt(&lonOk);
+        lonXMin = captured.at(5).toInt(&lonMinOk);
+        ew = captured.at(6);
+      }
+    }
+  }
+
+  if(latOk && lonOk && latMinOk && lonMinOk &&
+     -90 <= latYDeg && latYDeg <= 90 &&
+     -180 <= lonXDeg && lonXDeg <= 180)
+    return atools::geo::Pos(lonXDeg, lonXMin, 0.f, ew == "W",
+                            latYDeg, latYMin, 0.f, ns == "S");
+  else
+    return atools::geo::EMPTY_POS;
 }
 
 // NAT type 5020N
