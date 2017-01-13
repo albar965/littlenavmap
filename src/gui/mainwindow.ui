@@ -4837,7 +4837,7 @@
      <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Map as Image ...</string>
+    <string>Save Map as &amp;Image ...</string>
    </property>
    <property name="toolTip">
     <string>Save current map view as an image</string>
@@ -4858,7 +4858,7 @@
     <string>Copy flight plan route description to the clipboard</string>
    </property>
    <property name="statusTip">
-    <string>Copy the Flight Plan as a string to the clipboard</string>
+    <string>Copy flight plan route description to the clipboard</string>
    </property>
   </action>
   <action name="actionRouteNewFromString">
@@ -4873,7 +4873,7 @@
     <string>Create a new flight plan from route description</string>
    </property>
    <property name="statusTip">
-    <string>Copy the Flight Plan as a string to the clipboard</string>
+    <string>Create a new flight plan from route description</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+N</string>
@@ -4885,7 +4885,7 @@
      <normaloff>:/littlenavmap/resources/icons/saveasgfp.svg</normaloff>:/littlenavmap/resources/icons/saveasgfp.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Flight Plan &amp;as GFP ...</string>
+    <string>Export Flight Plan as &amp;GFP ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan as Garmin GFP format usable by GTN 650/750</string>
@@ -4906,7 +4906,7 @@
     <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
    </property>
    <property name="statusTip">
-    <string>Adjust flight plan altitude using the simplified east/west and IFR/VFR rules</string>
+    <string>Adjust flight plan altitude using simplified east/west and IFR/VFR rules</string>
    </property>
   </action>
   <action name="actionMapOverlayCompass">
@@ -4920,6 +4920,9 @@
     <string>&amp;Compass</string>
    </property>
    <property name="toolTip">
+    <string>Show or hide the compass map floating overlay</string>
+   </property>
+   <property name="statusTip">
     <string>Show or hide the compass map floating overlay</string>
    </property>
   </action>
@@ -4936,6 +4939,9 @@
    <property name="toolTip">
     <string>Show or hide the overview map floating overlay</string>
    </property>
+   <property name="statusTip">
+    <string>Show or hide the overview map floating overlay</string>
+   </property>
   </action>
   <action name="actionMapOverlayScalebar">
    <property name="checkable">
@@ -4948,6 +4954,9 @@
     <string>&amp;Scalebar</string>
    </property>
    <property name="toolTip">
+    <string>Show or hide the scalebar map floating overlay</string>
+   </property>
+   <property name="statusTip">
     <string>Show or hide the scalebar map floating overlay</string>
    </property>
   </action>
@@ -4964,6 +4973,9 @@
    <property name="toolTip">
     <string>Show or hide the navigation map floating overlay</string>
    </property>
+   <property name="statusTip">
+    <string>Show or hide the navigation map floating overlay</string>
+   </property>
   </action>
   <action name="actionMapEditUserWaypoint">
    <property name="icon">
@@ -4977,7 +4989,7 @@
     <string>Edit user waypoint name</string>
    </property>
    <property name="statusTip">
-    <string>Measure great circle distance on map</string>
+    <string>Edit user waypoint name</string>
    </property>
   </action>
   <action name="actionHelpContentsOffline">

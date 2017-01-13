@@ -200,8 +200,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   append(Column("longest_runway_heading").hidden()).
   append(Column("num_runway_end_closed").hidden()).
 
-  append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery Path")).filter()).
-  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("BGL File")).filter()).
+  append(Column("scenery_local_path", ui->lineEditAirportScenerySearch, tr("Scenery Paths")).filter()).
+  append(Column("bgl_filename", ui->lineEditAirportFileSearch, tr("BGL Files")).filter()).
 
   append(Column("num_apron").hidden()).
   append(Column("num_taxi_path").hidden()).
