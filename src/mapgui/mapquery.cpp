@@ -61,6 +61,7 @@ void MapQuery::getAirportAdminNamesById(int airportId, QString& city, QString& s
     state = airportAdminByIdQuery->value("state").toString();
     country = airportAdminByIdQuery->value("country").toString();
   }
+  airportAdminByIdQuery->finish();
 }
 
 void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
@@ -69,6 +70,7 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
   airportByIdQuery->exec();
   if(airportByIdQuery->next())
     mapTypesFactory->fillAirport(airportByIdQuery->record(), airport, true);
+  airportByIdQuery->finish();
 }
 
 void MapQuery::getAirportByIdent(maptypes::MapAirport& airport, const QString& ident)
@@ -77,6 +79,7 @@ void MapQuery::getAirportByIdent(maptypes::MapAirport& airport, const QString& i
   airportByIdentQuery->exec();
   if(airportByIdentQuery->next())
     mapTypesFactory->fillAirport(airportByIdentQuery->record(), airport, true);
+  airportByIdentQuery->finish();
 }
 
 void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
@@ -85,6 +88,7 @@ void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
   vorByWaypointIdQuery->exec();
   if(vorByWaypointIdQuery->next())
     mapTypesFactory->fillVor(vorByWaypointIdQuery->record(), vor);
+  vorByWaypointIdQuery->finish();
 }
 
 void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
@@ -93,6 +97,7 @@ void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
   ndbByWaypointIdQuery->exec();
   if(ndbByWaypointIdQuery->next())
     mapTypesFactory->fillNdb(ndbByWaypointIdQuery->record(), ndb);
+  ndbByWaypointIdQuery->finish();
 }
 
 void MapQuery::getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos)
@@ -102,6 +107,7 @@ void MapQuery::getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos)
   vorNearestQuery->exec();
   if(vorNearestQuery->next())
     mapTypesFactory->fillVor(vorNearestQuery->record(), vor);
+  vorNearestQuery->finish();
 }
 
 void MapQuery::getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos)
@@ -111,6 +117,7 @@ void MapQuery::getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->exec();
   if(ndbNearestQuery->next())
     mapTypesFactory->fillNdb(ndbNearestQuery->record(), ndb);
+  ndbNearestQuery->finish();
 }
 
 void MapQuery::getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId)
@@ -195,6 +202,8 @@ void MapQuery::getAirwayById(maptypes::MapAirway& airway, int airwayId)
   airwayByIdQuery->exec();
   if(airwayByIdQuery->next())
     mapTypesFactory->fillAirway(airwayByIdQuery->record(), airway);
+  airwayByIdQuery->finish();
+
 }
 
 void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
@@ -276,6 +285,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
       mapTypesFactory->fillAirport(airportByIdQuery->record(), ap, true);
       result.airports.append(ap);
     }
+    airportByIdQuery->finish();
   }
   else if(type == maptypes::VOR)
   {
@@ -287,6 +297,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
       mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
       result.vors.append(vor);
     }
+    vorByIdQuery->finish();
   }
   else if(type == maptypes::NDB)
   {
@@ -298,6 +309,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
       mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
       result.ndbs.append(ndb);
     }
+    ndbByIdQuery->finish();
   }
   else if(type == maptypes::WAYPOINT)
   {
@@ -309,6 +321,7 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
       mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
       result.waypoints.append(wp);
     }
+    waypointByIdQuery->finish();
   }
 }
 

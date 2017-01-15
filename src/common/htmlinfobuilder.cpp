@@ -636,7 +636,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   hdg = normalizeCourse(hdg);
 
   html.row2(prefix + tr("Localizer Heading and Width:"), locale.toString(hdg, 'f', 0) + tr("°M") +
-            tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 0) + tr("°"));
+            tr(", ") + locale.toString(ilsRec->valueFloat("loc_width"), 'f', 1) + tr("°"));
 
   if(gs)
     html.row2(prefix + tr("Glideslope Pitch:"),

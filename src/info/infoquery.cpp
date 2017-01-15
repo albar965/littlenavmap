@@ -152,13 +152,13 @@ const SqlRecord *InfoQuery::cachedRecord(QCache<ID, SqlRecord>& cache, SqlQuery 
       // Insert it into the cache
       rec = new SqlRecord(query->record());
       cache.insert(id, rec);
-      return rec;
     }
     else
       // Add empty record to indicate nothing found for this id
       cache.insert(id, new SqlRecord());
   }
-  return nullptr;
+  query->finish();
+  return rec;
 }
 
 /* Get a record vector from the cache of get it from a database query */

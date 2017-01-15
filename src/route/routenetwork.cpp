@@ -213,9 +213,11 @@ nw::Node RouteNetwork::fetchNodeByNavId(int id, nw::NodeType type)
   nodeByNavIdQuery->bindValue(":type", type);
   nodeByNavIdQuery->exec();
 
+  nw::Node node;
+
   if(nodeByNavIdQuery->next())
-    // Found fetch node into the cache
-    return fetchNode(nodeByNavIdQuery->value("node_id").toInt());
+    // Fetch node into the cache
+    node = fetchNode(nodeByNavIdQuery->value("node_id").toInt());
   else
   {
     if(type == nw::WAYPOINT_JET || type == nw::WAYPOINT_VICTOR)
@@ -224,11 +226,13 @@ nw::Node RouteNetwork::fetchNodeByNavId(int id, nw::NodeType type)
       nodeByNavIdQuery->bindValue(":type", nw::WAYPOINT_BOTH);
       nodeByNavIdQuery->exec();
       if(nodeByNavIdQuery->next())
-        return fetchNode(nodeByNavIdQuery->value("node_id").toInt());
+        node = fetchNode(nodeByNavIdQuery->value("node_id").toInt());
     }
   }
 
-  return Node();
+  nodeByNavIdQuery->finish();
+
+  return node;
 }
 
 void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& type)
@@ -265,6 +269,7 @@ void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, nw::NodeType& 
       navId = -1;
       type = nw::NONE;
     }
+    nodeNavIdAndTypeQuery->finish();
   }
 }
 
@@ -329,10 +334,11 @@ nw::Node RouteNetwork::fetchNode(int id)
 
   nodeByIdQuery->bindValue(":id", id);
   nodeByIdQuery->exec();
+  nw::Node node;
 
   if(nodeByIdQuery->next())
   {
-    nw::Node node = createNode(nodeByIdQuery->record());
+    node = createNode(nodeByIdQuery->record());
     node.id = id;
 
     QSet<Edge> tempEdges;
@@ -364,9 +370,9 @@ nw::Node RouteNetwork::fetchNode(int id)
     addDestNodeEdges(node);
 
     nodeCache.insert(node.id, node);
-    return node;
   }
-  return Node();
+  nodeByIdQuery->finish();
+  return node;
 }
 
 void RouteNetwork::initQueries()
