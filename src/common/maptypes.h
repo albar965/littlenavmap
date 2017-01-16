@@ -557,6 +557,10 @@ QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker&
 
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
+QString navTypeNameVor(const QString& type);
+QString navTypeNameNdb(const QString& type);
+QString navTypeNameWaypoint(const QString& type);
+
 QString navName(const QString& type);
 QString surfaceName(const QString& surface);
 QString parkingGateName(const QString& gate);

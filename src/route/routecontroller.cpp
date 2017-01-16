@@ -2069,7 +2069,7 @@ void RouteController::updateTableModel()
     }
     else if(mapobj.getMapObjectType() == maptypes::NDB)
     {
-      QString type = mapobj.getNdb().type == "COMPASS_POINT" ? tr("CP") : mapobj.getNdb().type;
+      QString type = mapobj.getNdb().type == "CP" ? tr("CP") : mapobj.getNdb().type;
       itemRow.append(new QStandardItem(tr("NDB (%1)").arg(type)));
     }
     else

@@ -530,12 +530,7 @@ void SqlController::fillRecord(int row, atools::sql::SqlRecord& rec)
 
 QVariant SqlController::getRawData(int row, const QString& colname) const
 {
-  int srow = row;
-  if(proxyModel != nullptr)
-    srow = toSource(proxyModel->index(row, 0)).row();
-
-  int colIdx = model->getSqlRecord().indexOf(colname);
-  return model->getRawData(srow, colIdx);
+  return getRawData(row, model->getSqlRecord().indexOf(colname));
 }
 
 QVariant SqlController::getRawData(int row, int col) const
@@ -544,6 +539,16 @@ QVariant SqlController::getRawData(int row, int col) const
   if(proxyModel != nullptr)
     srow = toSource(proxyModel->index(row, 0)).row();
   return model->getRawData(srow, col);
+}
+
+QVariant SqlController::getRawDataLocal(int row, const QString& colname) const
+{
+  return getRawDataLocal(row, model->getSqlRecord().indexOf(colname));
+}
+
+QVariant SqlController::getRawDataLocal(int row, int col) const
+{
+  return model->getRawData(row, col);
 }
 
 QString SqlController::getSortColumn() const

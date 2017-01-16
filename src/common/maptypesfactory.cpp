@@ -196,17 +196,17 @@ void MapTypesFactory::fillVorFromNav(const SqlRecord& record, maptypes::MapVor& 
   fillVorBase(record, vor);
 
   QString navType = record.valueStr("nav_type");
-  if(navType == "VORDME")
+  if(navType == "VD")
   {
     vor.dmeOnly = false;
     vor.hasDme = true;
   }
-  else if(navType == "DME")
+  else if(navType == "D")
   {
     vor.dmeOnly = true;
     vor.hasDme = true;
   }
-  else if(navType == "VOR")
+  else if(navType == "V")
   {
     vor.dmeOnly = false;
     vor.hasDme = false;

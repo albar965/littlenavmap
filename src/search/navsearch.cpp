@@ -69,28 +69,28 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
-              << "= 'HIGH'"
-              << "= 'LOW'"
-              << "= 'TERMINAL'"
-              << "= 'HH'"
-              << "= 'H'"
-              << "= 'MH'"
-              << "= 'COMPASS_POINT'"
-              << "= 'NAMED'"
-              << "= 'UNNAMED'"
-              << "= 'VOR'"
-              << "= 'NDB'";
+              << "type = 'VH'"
+              << "type = 'VL'"
+              << "type = 'VT'"
+              << "type = 'NHH'"
+              << "type = 'NH'"
+              << "type = 'NMH'"
+              << "type = 'NCP'"
+              << "type = 'WN'"
+              << "type = 'WU'"
+              << "type = 'V'"
+              << "type = 'N'";
 
   QStringList navTypeCondMap;
   navTypeCondMap << QString()
-                 << "nav_type in ('VOR', 'VORDME', 'DME')"
-                 << "nav_type in ('VOR', 'VORDME', 'DME', 'NDB')"
-                 << "nav_type = 'VORDME'"
-                 << "nav_type = 'VOR'"
-                 << "nav_type = 'DME'"
-                 << "nav_type = 'NDB'"
-                 << "nav_type = 'WAYPOINT'"
-                 << "nav_type = 'WAYPOINT' and "
+                 << "nav_type in ('V', 'VD', 'D')"
+                 << "nav_type in ('V', 'VD', 'D', 'N')"
+                 << "nav_type = 'VD'"
+                 << "nav_type = 'V'"
+                 << "nav_type = 'D'"
+                 << "nav_type = 'N'"
+                 << "nav_type = 'W'"
+                 << "nav_type = 'W' and "
      "(waypoint_num_victor_airway > 0 or waypoint_num_jet_airway > 0)";
 
   // Default view column descriptors
@@ -105,7 +105,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Nav Aid\nType")).
          indexCondMap(navTypeCondMap).includesName()).
 
-  append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap)).
+  append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap).includesName()).
   append(Column("name", ui->lineEditNavNameSearch, tr("Name")).filter()).
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
   append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).

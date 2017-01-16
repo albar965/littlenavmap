@@ -427,10 +427,10 @@ QString RouteMapObject::getMapObjectTypeName() const
       return QString();
 
     case atools::fs::pln::entry::VOR:
-      return maptypes::vorType(vor) + " (" + maptypes::navTypeName(vor.type) + ")";
+      return maptypes::vorType(vor) + " (" + maptypes::navTypeNameVor(vor.type) + ")";
 
     case atools::fs::pln::entry::NDB:
-      return tr("NDB (%1)").arg(maptypes::navTypeName(ndb.type));
+      return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(ndb.type));
   }
   return QString();
 }

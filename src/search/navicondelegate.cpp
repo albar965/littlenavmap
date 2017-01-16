@@ -78,8 +78,8 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   else if(type == maptypes::VOR)
   {
     maptypes::MapVor vor;
-    vor.dmeOnly = navtype == "DME";
-    vor.hasDme = navtype == "VORDME" || navtype == "DME";
+    vor.dmeOnly = navtype == "D";
+    vor.hasDme = navtype == "VD" || navtype == "D";
     symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize, false, false, 0);
   }
 }

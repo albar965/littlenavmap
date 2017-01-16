@@ -101,6 +101,10 @@ public:
   QVariant getRawData(int row, const QString& colname) const;
   QVariant getRawData(int row, int col) const;
 
+  /* Same without row translation */
+  QVariant getRawDataLocal(int row, const QString& colname) const;
+  QVariant getRawDataLocal(int row, int col) const;
+
   /* Column name for sorted column */
   QString getSortColumn() const;
   int getSortColumnIndex() const;

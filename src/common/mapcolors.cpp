@@ -59,20 +59,23 @@ const QColor& alternatingRowColor(int row, bool isSort)
 
 const QColor& colorForParkingType(const QString& type)
 {
-  static const QColor rampMil(Qt::red);
+  static const QColor rampMilCargo(180, 0, 0);
+  static const QColor rampMilCombat(Qt::red);
   static const QColor gate(100, 100, 255);
-  static const QColor rampGa(Qt::green);
+  static const QColor rampGa(0, 200, 0);
   static const QColor rampCargo(Qt::darkGreen);
   static const QColor fuel(Qt::yellow);
   static const QColor unknown;
 
-  if(type.startsWith("RAMP_MIL"))
-    return rampMil;
-  else if(type.startsWith("GATE"))
+  if(type == "RMCB")
+    return rampMilCombat;
+  else if(type == "RMC")
+    return rampMilCargo;
+  else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith("RAMP_GA") || type.startsWith("DOCK_GA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA"))
     return rampGa;
-  else if(type.startsWith("RAMP_CARGO"))
+  else if(type.startsWith("RC"))
     return rampCargo;
   else if(type.startsWith("FUEL"))
     return fuel;
@@ -87,11 +90,11 @@ const QIcon& iconForStartType(const QString& type)
   static const QIcon water(":/littlenavmap/resources/icons/startwater.svg");
 
   static const QIcon empty;
-  if(type == "RUNWAY")
+  if(type == "R")
     return runway;
-  else if(type == "HELIPAD")
+  else if(type == "R")
     return helipad;
-  else if(type == "WATER")
+  else if(type == "R")
     return water;
   else
     return empty;
@@ -106,13 +109,13 @@ const QIcon& iconForParkingType(const QString& type)
   static const QIcon fuel(":/littlenavmap/resources/icons/parkingfuel.svg");
   static const QIcon empty;
 
-  if(type.startsWith("RAMP_MIL"))
+  if(type.startsWith("RM"))
     return mil;
-  else if(type.startsWith("GATE"))
+  else if(type.startsWith("G"))
     return gate;
-  else if(type.startsWith("RAMP_GA") || type.startsWith("DOCK_GA"))
+  else if(type.startsWith("RGA") || type.startsWith("DGA"))
     return ga;
-  else if(type.startsWith("RAMP_CARGO"))
+  else if(type.startsWith("RC"))
     return cargo;
   else if(type.startsWith("FUEL"))
     return fuel;

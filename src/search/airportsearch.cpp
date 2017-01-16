@@ -104,15 +104,15 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   // Build SQL query conditions
   QStringList gateCondMap;
   gateCondMap << QString()
-              << "like 'GATE_%'"
-              << "in ('GATE_MEDIUM', 'GATE_HEAVY')"
-              << "= 'GATE_HEAVY'";
+              << "like 'G%'"
+              << "in ('GM', 'GH')"
+              << "= 'GH'";
 
   QStringList rampCondMap;
   rampCondMap << QString()
-              << "largest_parking_ramp like 'RAMP_GA_%'"
-              << "largest_parking_ramp in ('RAMP_GA_MEDIUM', 'RAMP_GA_LARGE')"
-              << "largest_parking_ramp = 'RAMP_GA_LARGE'"
+              << "largest_parking_ramp like 'RGA%'"
+              << "largest_parking_ramp in ('RGAM', 'RGAL')"
+              << "largest_parking_ramp = 'RGAL'"
               << "num_parking_cargo > 0"
               << "num_parking_mil_cargo > 0"
               << "num_parking_mil_combat > 0";

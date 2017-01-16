@@ -118,7 +118,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
 
-  if(resolveWaypoints && waypoint.type == "VOR")
+  if(resolveWaypoints && waypoint.type == "V")
   {
     // Convert waypoint to underlying VOR for airway routes
     if(vorForWaypoint(waypoint, vor))
@@ -127,7 +127,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
       entryFromVor(vor, entry);
     }
   }
-  else if(resolveWaypoints && waypoint.type == "NDB")
+  else if(resolveWaypoints && waypoint.type == "N")
   {
     // Convert waypoint to underlying NDB for airway routes
 

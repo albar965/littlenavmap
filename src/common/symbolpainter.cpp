@@ -439,7 +439,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::TYPE)
-    texts.append(ndb.ident + " (" + (ndb.type == tr("COMPASS_POINT") ? tr("CP") : ndb.type) + ")");
+    texts.append(ndb.ident + " (" + (ndb.type == "CP" ? tr("CP") : ndb.type) + ")");
   else if(flags & textflags::IDENT)
     texts.append(ndb.ident);
 

@@ -697,13 +697,13 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         addRadionavFixType(html, recApp);
 
-        if(approachType == "ILS" || approachType == "LOCALIZER")
+        if(approachType == "ILS" || approachType == "LOC")
         {
           const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(runwayEndId);
           if(ilsRec != nullptr)
             ilsText(ilsRec, html, true);
         }
-        else if(approachType == "LOCALIZER_BACKCOURSE")
+        else if(approachType == "LOCB")
         {
           const QList<MapRunway> *runways = mapQuery->getRunways(airport.id);
 
@@ -744,7 +744,12 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           {
             html.h3(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
             html.table();
-            html.row2(tr("Type:"), capNavString(recTrans.valueStr("type")));
+
+            if(recTrans.valueStr("type") == "F")
+              html.row2(tr("Type:"), tr("Full"));
+            else if(recTrans.valueStr("type") == "D")
+              html.row2(tr("Type:"), tr("DME"));
+
             html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
                       recTrans.valueStr("fix_region"));
 
@@ -766,7 +771,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
               if(!vorReg.isEmpty())
               {
-                html.row2(tr("DME Type:"), maptypes::navTypeName(vorReg.valueStr("type")));
+                html.row2(tr("DME Type:"), maptypes::navTypeNameVor(vorReg.valueStr("type")));
                 html.row2(tr("DME Frequency:"),
                           locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
@@ -793,15 +798,18 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
 {
   QString fixType = recApp.valueStr("fix_type");
 
-  if(fixType == "VOR" || fixType == "TERMINAL_VOR")
+  if(fixType == "V" || fixType == "TV")
   {
-    html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
+    if(fixType == "V")
+      html.row2(tr("Fix Type:"), tr("VOR"));
+    else if(fixType == "TV")
+      html.row2(tr("Fix Type:"), tr("Terminal VOR"));
 
     const atools::sql::SqlRecord *vorInfo = infoQuery->getVorInformation(recApp.valueInt("fix_nav_id"));
 
     if(vorInfo != nullptr)
     {
-      html.row2(tr("VOR Type:"), maptypes::navTypeName(vorInfo->valueStr("type")));
+      html.row2(tr("VOR Type:"), maptypes::navTypeNameVor(vorInfo->valueStr("type")));
       html.row2(tr("VOR Frequency:"),
                 locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
       html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
@@ -812,15 +820,18 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
       html.row2(tr("VOR data not found"));
 
   }
-  else if(fixType == "NDB" || fixType == "TERMINAL_NDB")
+  else if(fixType == "N" || fixType == "TN")
   {
-    html.row2(tr("Fix Type:"), capNavString(recApp.valueStr("fix_type")));
+    if(fixType == "N")
+      html.row2(tr("Fix Type:"), tr("NDB"));
+    else if(fixType == "TN")
+      html.row2(tr("Fix Type:"), tr("Terminal NDB"));
 
     const atools::sql::SqlRecord *ndbInfo = infoQuery->getNdbInformation(recApp.valueInt("fix_nav_id"));
 
     if(ndbInfo != nullptr)
     {
-      html.row2(tr("NDB Type:"), maptypes::navTypeName(ndbInfo->valueStr("type")));
+      html.row2(tr("NDB Type:"), maptypes::navTypeNameNdb(ndbInfo->valueStr("type")));
       html.row2(tr("NDB Frequency:"),
                 locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
       html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
@@ -1069,7 +1080,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
 
-  html.row2(tr("Type:"), maptypes::navTypeName(vor.type));
+  html.row2(tr("Type:"), maptypes::navTypeNameVor(vor.type));
   html.row2(tr("Region:"), vor.region);
   html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
   if(!vor.dmeOnly)
@@ -1109,7 +1120,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.table();
   if(ndb.routeIndex >= 0)
     html.row2(tr("Flight Plan position "), locale.toString(ndb.routeIndex + 1));
-  html.row2(tr("Type:"), maptypes::navTypeName(ndb.type));
+  html.row2(tr("Type:"), maptypes::navTypeNameNdb(ndb.type));
   html.row2(tr("Region:"), ndb.region);
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
@@ -1148,7 +1159,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.table();
   if(waypoint.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
-  html.row2(tr("Type:"), maptypes::navTypeName(waypoint.type));
+  html.row2(tr("Type:"), maptypes::navTypeNameWaypoint(waypoint.type));
   html.row2(tr("Region:"), waypoint.region);
   html.row2(tr("Magvar:"), maptypes::magvarText(waypoint.magvar));
   addCoordinates(rec, html);
