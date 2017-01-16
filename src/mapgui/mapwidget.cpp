@@ -416,7 +416,6 @@ void MapWidget::restoreState()
     searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
   else
     searchMarkPos = Pos(0.f, 0.f);
-  // emit searchMarkChanged(searchMarkPos);
 
   if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
   {
@@ -556,7 +555,7 @@ void MapWidget::mainWindowShown()
 
   overlayStateFromMenu();
   connectOverlayMenus();
-
+  emit searchMarkChanged(searchMarkPos);
 }
 
 void MapWidget::showSavedPosOnStartup()
