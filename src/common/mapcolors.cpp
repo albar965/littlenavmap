@@ -147,45 +147,45 @@ const QColor& colorForSurface(const QString& surface)
   static const QColor tarmac("#909090");
   static const QColor unknown("#ffffff");
 
-  if(surface == "CONCRETE")
+  if(surface == "C")
     return concrete;
-  else if(surface == "GRASS")
+  else if(surface == "G")
     return grass;
-  else if(surface == "WATER")
+  else if(surface == "W")
     return water;
-  else if(surface == "ASPHALT")
+  else if(surface == "A")
     return asphalt;
-  else if(surface == "CEMENT")
+  else if(surface == "CE")
     return cement;
-  else if(surface == "CLAY")
+  else if(surface == "CL")
     return clay;
-  else if(surface == "SNOW")
+  else if(surface == "SN")
     return snow;
-  else if(surface == "ICE")
+  else if(surface == "I")
     return ice;
-  else if(surface == "DIRT")
+  else if(surface == "D")
     return dirt;
-  else if(surface == "CORAL")
+  else if(surface == "CR")
     return coral;
-  else if(surface == "GRAVEL")
+  else if(surface == "GR")
     return gravel;
-  else if(surface == "OIL_TREATED")
+  else if(surface == "OT")
     return oilTreated;
-  else if(surface == "STEEL_MATS")
+  else if(surface == "SM")
     return steelMats;
-  else if(surface == "BITUMINOUS")
+  else if(surface == "B")
     return bituminous;
-  else if(surface == "BRICK")
+  else if(surface == "BR")
     return brick;
-  else if(surface == "MACADAM")
+  else if(surface == "M")
     return macadam;
-  else if(surface == "PLANKS")
+  else if(surface == "PL")
     return planks;
-  else if(surface == "SAND")
+  else if(surface == "S")
     return sand;
-  else if(surface == "SHALE")
+  else if(surface == "SH")
     return shale;
-  else if(surface == "TARMAC")
+  else if(surface == "T")
     return tarmac;
 
   // else if(surface == "NONE" || surface == "UNKNOWN" || surface == "INVALID")

@@ -29,26 +29,26 @@ namespace maptypes {
 
 const QHash<QString, QString> surfaceMap(
   {
-    {"CONCRETE", QObject::tr("Concrete")},
-    {"GRASS", QObject::tr("Grass")},
-    {"WATER", QObject::tr("Water")},
-    {"ASPHALT", QObject::tr("Asphalt")},
-    {"CEMENT", QObject::tr("Cement")},
-    {"CLAY", QObject::tr("Clay")},
-    {"SNOW", QObject::tr("Snow")},
-    {"ICE", QObject::tr("Ice")},
-    {"DIRT", QObject::tr("Dirt")},
-    {"CORAL", QObject::tr("Coral")},
-    {"GRAVEL", QObject::tr("Gravel")},
-    {"OIL_TREATED", QObject::tr("Oil treated")},
-    {"STEEL_MATS", QObject::tr("Steel Mats")},
-    {"BITUMINOUS", QObject::tr("Bituminous")},
-    {"BRICK", QObject::tr("Brick")},
-    {"MACADAM", QObject::tr("Macadam")},
-    {"PLANKS", QObject::tr("Planks")},
-    {"SAND", QObject::tr("Sand")},
-    {"SHALE", QObject::tr("Shale")},
-    {"TARMAC", QObject::tr("Tarmac")},
+    {"C", QObject::tr("Concrete")},
+    {"G", QObject::tr("Grass")},
+    {"W", QObject::tr("Water")},
+    {"A", QObject::tr("Asphalt")},
+    {"CE", QObject::tr("Cement")},
+    {"CL", QObject::tr("Clay")},
+    {"SN", QObject::tr("Snow")},
+    {"I", QObject::tr("Ice")},
+    {"D", QObject::tr("Dirt")},
+    {"CR", QObject::tr("Coral")},
+    {"GR", QObject::tr("Gravel")},
+    {"OT", QObject::tr("Oil treated")},
+    {"SM", QObject::tr("Steel Mats")},
+    {"B", QObject::tr("Bituminous")},
+    {"BR", QObject::tr("Brick")},
+    {"M", QObject::tr("Macadam")},
+    {"PL", QObject::tr("Planks")},
+    {"S", QObject::tr("Sand")},
+    {"SH", QObject::tr("Shale")},
+    {"T", QObject::tr("Tarmac")},
     {"UNKNOWN", QObject::tr("Unknown")},
     {"INVALID", QString()}
   });
@@ -56,26 +56,26 @@ const QHash<QString, QString> surfaceMap(
 /* The higher the better */
 const QHash<QString, int> surfaceQualityMap(
   {
-    {"CONCRETE", 20},
-    {"ASPHALT", 20},
-    {"BITUMINOUS", 20},
-    {"TARMAC", 20},
-    {"MACADAM", 15},
-    {"CEMENT", 15},
-    {"OIL_TREATED", 15},
-    {"BRICK", 10},
-    {"STEEL_MATS", 10},
-    {"PLANKS", 10},
-    {"GRAVEL", 5},
-    {"CORAL", 5},
-    {"DIRT", 5},
-    {"SHALE", 5},
-    {"CLAY", 5},
-    {"SAND", 5},
-    {"GRASS", 5},
-    {"SNOW", 5},
-    {"ICE", 5},
-    {"WATER", 1},
+    {"C", 20},
+    {"A", 20},
+    {"B", 20},
+    {"T", 20},
+    {"M", 15},
+    {"CE", 15},
+    {"OT", 15},
+    {"BR", 10},
+    {"SM", 10},
+    {"PL", 10},
+    {"GR", 5},
+    {"CR", 5},
+    {"D", 5},
+    {"SH", 5},
+    {"CL", 5},
+    {"S", 5},
+    {"G", 5},
+    {"SN", 5},
+    {"I", 5},
+    {"W", 1},
     {"UNKNOWN", 0},
     {"INVALID", 0}
   });
@@ -615,12 +615,12 @@ QString magvarText(float magvar)
 
 bool isHardSurface(const QString& surface)
 {
-  return surface == "CONCRETE" || surface == "ASPHALT" || surface == "BITUMINOUS" || surface == "TARMAC";
+  return surface == "C" || surface == "A" || surface == "B" || surface == "T";
 }
 
 bool isWaterSurface(const QString& surface)
 {
-  return surface == "WATER";
+  return surface == "W";
 }
 
 bool isSoftSurface(const QString& surface)

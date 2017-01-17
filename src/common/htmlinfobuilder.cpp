@@ -702,6 +702,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(runwayEndId);
           if(ilsRec != nullptr)
             ilsText(ilsRec, html, true);
+          else
+            html.row2(tr("ILS data not found"));
         }
         else if(approachType == "LOCB")
         {
@@ -730,7 +732,11 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
               const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(backcourseEndId);
               if(ilsRec != nullptr)
                 ilsText(ilsRec, html, true);
+              else
+                html.row2(tr("ILS data not found"));
             }
+            else
+              html.row2(tr("ILS data runway not found"));
           }
         }
         html.tableEnd();

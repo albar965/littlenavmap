@@ -194,7 +194,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
   // Draw white background ---------------------------------
   // For runways
   for(int i = 0; i < runwayCenters.size(); i++)
-    if(runways->at(i).surface != "WATER")
+    if(runways->at(i).surface != "W")
     {
       painter->translate(runwayCenters.at(i));
       painter->rotate(runways->at(i).heading);
@@ -437,7 +437,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
     painter->setBrush(mapcolors::runwayOutlineColor);
     for(int i = 0; i < runwayCenters.size(); i++)
     {
-      if(runways->at(i).surface != "WATER")
+      if(runways->at(i).surface != "W")
       {
         painter->translate(runwayCenters.at(i));
         painter->rotate(runways->at(i).heading);
