@@ -679,7 +679,18 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           runway = tr(" - Runway ") + runwayName;
         QString approachType = recApp.valueStr("type");
 
-        html.h3(tr("Approach ") + formatter::capNavString(approachType) + runway,
+        // STARS use the suffix="A" while SIDS use the suffix="D".
+        QString suffix = recApp.valueStr("suffix");
+        QString type;
+
+        if(suffix == "A")
+          type = tr("Approach (STAR)");
+        else if(suffix == "D")
+          type = tr("Approach (SID)");
+        else
+          type = tr("Approach");
+
+        html.h3(type + " " + formatter::capNavString(approachType) + " " + suffix + runway,
                 atools::util::html::UNDERLINE);
 
         html.table();
