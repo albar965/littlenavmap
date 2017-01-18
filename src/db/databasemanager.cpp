@@ -396,6 +396,8 @@ void DatabaseManager::openDatabase()
     else
       pragmas.append("PRAGMA foreign_keys = OFF");
 
+    bool autocommit = db->isAutocommit();
+    db->setAutocommit(false);
     db->open(pragmas);
 
     atools::sql::SqlQuery query(db);
@@ -406,6 +408,8 @@ void DatabaseManager::openDatabase()
         qDebug() << pragmaQuery << "value is now: " << query.value(0).toString();
       query.finish();
     }
+
+    db->setAutocommit(autocommit);
 
     if(!hasSchema())
       createEmptySchema(db);
