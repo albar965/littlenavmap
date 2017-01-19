@@ -315,11 +315,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
             mapPainterAirport->render(&context);
         }
       }
-      if(!context.isOverflow())
-        mapPainterRoute->render(&context);
+      // if(!context.isOverflow()) always paint route even if number of objets is too large
+      mapPainterRoute->render(&context);
 
-      if(!context.isOverflow())
-        mapPainterMark->render(&context);
+      // if(!context.isOverflow())
+      mapPainterMark->render(&context);
 
       mapPainterAircraft->render(&context);
 
@@ -329,6 +329,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport,
         overflow = 0;
     }
 
+    // Dim the map by drawing a semi-transparent black rectangle
     if(OptionData::instance().isGuiStyleDark())
     {
       int dim = OptionData::instance().getGuiStyleMapDimming();
