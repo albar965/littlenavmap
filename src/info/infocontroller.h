@@ -28,6 +28,8 @@ class MapQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
+class ApproachTreeController;
+
 namespace ic {
 enum TabIndex
 {
@@ -107,6 +109,7 @@ private:
   void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
+  void approachSelected(maptypes::MapApproachRef mapApproach);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -115,10 +118,11 @@ private:
   /* Airport and navaids that are currently shown in the tabs */
   maptypes::MapSearchResult currentSearchResult;
 
-  MainWindow *mainWindow;
-  MapQuery *mapQuery;
-  QColor iconBackColor;
-  HtmlInfoBuilder *infoBuilder;
+  MainWindow *mainWindow = nullptr;
+  MapQuery *mapQuery = nullptr;
+  QColor iconBackColor = nullptr;
+  HtmlInfoBuilder *infoBuilder = nullptr;
+  ApproachTreeController *approachTree = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 };

@@ -191,6 +191,17 @@ const QHash<QString, QString> navTypeNamesVor(
     {"VT", QObject::tr("T")},
   });
 
+const QHash<QString, QString> navTypeNamesVorLong(
+  {
+    {"INVALID", QObject::tr("Invalid")},
+    {"H", QObject::tr("High")},
+    {"L", QObject::tr("Low")},
+    {"T", QObject::tr("Terminal")},
+    {"VH", QObject::tr("High")},
+    {"VL", QObject::tr("Low")},
+    {"VT", QObject::tr("Terminal")},
+  });
+
 const QHash<QString, QString> navTypeNamesNdb(
   {
     {"INVALID", QObject::tr("Invalid")},
@@ -244,6 +255,33 @@ const QHash<QString, QString> comTypeNames(
     {"RCD", QObject::tr("Remote Clearance Delivery")}
   });
 
+const QHash<QString, QString> approachFixTypeToStr(
+  {
+    {"NONE", QObject::tr("NONE")},
+    {"L", QObject::tr("Localizer")},
+    {"V", QObject::tr("VOR")},
+    {"N", QObject::tr("NDB")},
+    {"TN", QObject::tr("Terminal NDB")},
+    {"W", QObject::tr("Waypoint")},
+    {"TW", QObject::tr("Terminal Waypoint")},
+    {"R", QObject::tr("Runway")}
+  });
+
+const QHash<QString, QString> approachTypeToStr(
+  {
+    {"GPS", QObject::tr("GPS")},
+    {"VOR", QObject::tr("VOR")},
+    {"NDB", QObject::tr("NDB")},
+    {"ILS", QObject::tr("ILS")},
+    {"LOC", QObject::tr("Localizer")},
+    {"SDF", QObject::tr("SDF")},
+    {"LDA", QObject::tr("LDA")},
+    {"VORDME", QObject::tr("VORDME")},
+    {"NDBDME", QObject::tr("NDBDME")},
+    {"RNAV", QObject::tr("RNAV")},
+    {"LOCB", QObject::tr("Localizer Backcourse")}
+  });
+
 int qHash(const maptypes::MapObjectRef& type)
 {
   return type.id ^ type.type;
@@ -264,6 +302,11 @@ QString navTypeName(const QString& type)
 QString navTypeNameVor(const QString& type)
 {
   return navTypeNamesVor.value(type);
+}
+
+QString navTypeNameVorLong(const QString& type)
+{
+  return navTypeNamesVorLong.value(type);
 }
 
 QString navTypeNameNdb(const QString& type)
@@ -668,6 +711,38 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & maptypes::AIRWAY && !airways.isEmpty();
   filled |= types & maptypes::USER && !userPoints.isEmpty();
   return !filled;
+}
+
+QString approachFixType(const QString& type)
+{
+  return approachFixTypeToStr.value(type);
+}
+
+QString approachType(const QString& type)
+{
+  return approachTypeToStr.value(type);
+}
+
+QString edgeLights(const QString& type)
+{
+  if(type == "L")
+    return QObject::tr("Low");
+  else if(type == "M")
+    return QObject::tr("Medium");
+  else if(type == "H")
+    return QObject::tr("High");
+  else
+    return QString();
+}
+
+QString patternDirection(const QString& type)
+{
+  if(type == "L")
+    return QObject::tr("Left");
+  else if(type == "R")
+    return QObject::tr("Right");
+  else
+    return QString();
 }
 
 } // namespace types

@@ -249,6 +249,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, maptypes::MapWaypoin
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  // waypoint.airportIdent = record.valueStr("region");
   waypoint.type = record.valueStr("type");
   waypoint.magvar = record.valueFloat("mag_var");
   waypoint.hasVictorAirways = record.valueInt("num_victor_airway") > 0;

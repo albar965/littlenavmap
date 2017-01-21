@@ -437,8 +437,11 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, Q
         html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
 
         // Lights information
-        rowForStrCap(html, &rec, "edge_light", tr("Edge Lights:"), tr("%1"));
-        rowForStrCap(html, &rec, "center_light", tr("Center Lights:"), tr("%1"));
+        if(!rec.isNull("edge_light"))
+          html.row2(tr("Edge Lights:"), maptypes::edgeLights(rec.valueStr("edge_light")));
+        if(!rec.isNull("center_light"))
+          html.row2(tr("Center Lights:"), maptypes::edgeLights(rec.valueStr("center_light")));
+
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
         // Add a list of runway markings
@@ -570,10 +573,13 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const SqlRecord *rec, flo
     html.row2(tr("Overrun:"), Unit::distShortFeet(overrrun));
 
   rowForBool(html, rec, "has_stol_markings", tr("Has STOL Markings"), false);
+
   // Two flags below only are probably only for AI
-  // rowForBool(html, recPrim, "is_takeoff", tr("Closed for Takeoff"), true);
-  // rowForBool(html, recPrim, "is_landing", tr("Closed for Landing"), true);
-  rowForStrCap(html, rec, "is_pattern", tr("Pattern:"), tr("%1"));
+  // rowForBool(html, rec, "is_takeoff", tr("Closed for Takeoff"), true);
+  // rowForBool(html, rec, "is_landing", tr("Closed for Landing"), true);
+
+  if(!rec->isNull("is_pattern"))
+    html.row2(tr("Pattern:"), maptypes::patternDirection(rec->valueStr("is_pattern")));
 
   // Approach indicators
   rowForStr(html, rec, "left_vasi_type", tr("Left VASI Type:"), tr("%1"));
@@ -659,7 +665,8 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background) const
+void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background,
+                                   int runwayEndId, int approachId, int transitionId) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -672,12 +679,17 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
       for(const SqlRecord& recApp : *recAppVector)
       {
         // Approach information
+        int rwEndId = recApp.valueInt("runway_end_id");
+        if(runwayEndId != -1 && rwEndId != runwayEndId)
+          continue;
+
+        if(approachId != -1 && recApp.valueInt("approach_id") != approachId)
+          continue;
+
         QString runway, runwayName(recApp.valueStr("runway_name"));
-        int runwayEndId = recApp.valueInt("runway_end_id");
 
         if(!runwayName.isEmpty())
           runway = tr(" - Runway ") + runwayName;
-        QString approachType = recApp.valueStr("type");
 
         // STARS use the suffix="A" while SIDS use the suffix="D".
         QString suffix = recApp.valueStr("suffix");
@@ -690,7 +702,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         else
           type = tr("Approach");
 
-        html.h3(type + " " + formatter::capNavString(approachType) + " " + suffix + runway,
+        QString approachType = recApp.valueStr("type");
+        html.h3(type + " " + maptypes::approachType(approachType) + " " + suffix + runway,
                 atools::util::html::UNDERLINE);
 
         html.table();
@@ -710,7 +723,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         if(approachType == "ILS" || approachType == "LOC")
         {
-          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(runwayEndId);
+          const atools::sql::SqlRecord *ilsRec = infoQuery->getIlsInformation(rwEndId);
           if(ilsRec != nullptr)
             ilsText(ilsRec, html, true);
           else
@@ -726,12 +739,12 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
             int backcourseEndId = 0;
             for(const MapRunway& rw : *runways)
             {
-              if(rw.primaryEndId == runwayEndId)
+              if(rw.primaryEndId == rwEndId)
               {
                 backcourseEndId = rw.secondaryEndId;
                 break;
               }
-              else if(rw.secondaryEndId == runwayEndId)
+              else if(rw.secondaryEndId == rwEndId)
               {
                 backcourseEndId = rw.primaryEndId;
                 break;
@@ -759,7 +772,13 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           // Transitions for this approach
           for(const SqlRecord& recTrans : *recTransVector)
           {
+            if(runwayEndId != -1 && transitionId == -1 && approachId == -1)
+              continue;
+            if(transitionId != -1 && recTrans.valueInt("transition_id") != transitionId)
+              continue;
+
             html.h3(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
+
             html.table();
 
             if(recTrans.valueStr("type") == "F")
@@ -788,7 +807,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
               if(!vorReg.isEmpty())
               {
-                html.row2(tr("DME Type:"), maptypes::navTypeNameVor(vorReg.valueStr("type")));
+                html.row2(tr("DME Type:"), maptypes::navTypeNameVorLong(vorReg.valueStr("type")));
                 html.row2(tr("DME Frequency:"),
                           locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
                 html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
@@ -807,7 +826,7 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
       }
     }
     else
-      html.p(tr("Airport has no Approaches."));
+      html.p(tr("Airport has no approaches."));
   }
 }
 
@@ -826,7 +845,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
 
     if(vorInfo != nullptr)
     {
-      html.row2(tr("VOR Type:"), maptypes::navTypeNameVor(vorInfo->valueStr("type")));
+      html.row2(tr("VOR Type:"), maptypes::navTypeNameVorLong(vorInfo->valueStr("type")));
       html.row2(tr("VOR Frequency:"),
                 locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
       html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
@@ -1097,7 +1116,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, QColor backg
   if(vor.routeIndex >= 0)
     html.row2(tr("Flight Plan position:"), locale.toString(vor.routeIndex + 1));
 
-  html.row2(tr("Type:"), maptypes::navTypeNameVor(vor.type));
+  html.row2(tr("Type:"), maptypes::navTypeNameVorLong(vor.type));
   html.row2(tr("Region:"), vor.region);
   html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
   if(!vor.dmeOnly)
@@ -1178,6 +1197,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     html.row2(tr("Flight Plan position:"), locale.toString(waypoint.routeIndex + 1));
   html.row2(tr("Type:"), maptypes::navTypeNameWaypoint(waypoint.type));
   html.row2(tr("Region:"), waypoint.region);
+  // html.row2(tr("Airport:"), waypoint.airportIdent);
   html.row2(tr("Magvar:"), maptypes::magvarText(waypoint.magvar));
   addCoordinates(rec, html);
 
@@ -1650,13 +1670,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     html.row2(QString(), value, atools::util::html::NO_ENTITIES);
 
-    float temp = userAircaft->getTotalAirTemperatureCelsius();
-    html.row2(tr("Total Air Temperature:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+    // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
+    float tat = userAircaft->getTotalAirTemperatureCelsius();
+    html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr("°C, ") +
+              locale.toString(atools::geo::degCToDegF(tat), 'f', 0) + tr("°F"));
 
-    temp = userAircaft->getAmbientTemperatureCelsius();
-    html.row2(tr("Static Air Temperature:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+    // Static air temperature (SAT) is also called: outside air temperature (OAT) or true air temperature
+    float sat = userAircaft->getAmbientTemperatureCelsius();
+    html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr("°C, ") +
+              locale.toString(atools::geo::degCToDegF(sat), 'f', 0) + tr("°F"));
+
+    float isaDeviation = sat - atools::geo::isaTemperature(userAircaft->getPosition().getAltitude());
+    html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr("°C, "));
 
     float slp = userAircaft->getSeaLevelPressureMbar();
     html.row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +

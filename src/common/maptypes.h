@@ -310,7 +310,7 @@ struct MapHelipad
 /* VOR station */
 struct MapVor
 {
-  QString ident, region, type /* HIGH, LOW, TERMINAL */, name, airportIdent;
+  QString ident, region, type /* HIGH, LOW, TERMINAL */, name /*, airportIdent*/;
   int id; /* database id vor.vor_id*/
   float magvar;
   int frequency /* MHz * 1000 */, range /* nm */;
@@ -333,7 +333,7 @@ struct MapVor
 /* NDB station */
 struct MapNdb
 {
-  QString ident, region, type /* HH, H, COMPASS_POINT, etc. */, name, airportIdent;
+  QString ident, region, type /* HH, H, COMPASS_POINT, etc. */, name /*, airportIdent*/;
   int id; /* database id ndb.ndb_id*/
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
@@ -356,7 +356,7 @@ struct MapWaypoint
 {
   int id; /* database waypoint.waypoint_id */
   float magvar;
-  QString ident, region, type /* NAMED, UNAMED, etc. */, airportIdent;
+  QString ident, region, type /* NAMED, UNAMED, etc. *//*, airportIdent*/;
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
@@ -475,6 +475,16 @@ struct MapIls
 
 };
 
+struct MapApproachRef
+{
+  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1)
+    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition)
+  {
+  }
+
+  int airportId, runwayEndId, approachId, transitionId;
+};
+
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -558,8 +568,16 @@ QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker&
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
 QString navTypeNameVor(const QString& type);
+QString navTypeNameVorLong(const QString& type);
 QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
+
+QString approachFixType(const QString& type);
+QString approachType(const QString& type);
+
+QString edgeLights(const QString& type);
+QString patternDirection(const QString& type);
+
 
 QString navName(const QString& type);
 QString surfaceName(const QString& surface);
@@ -610,6 +628,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 

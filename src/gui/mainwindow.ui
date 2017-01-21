@@ -2321,7 +2321,7 @@
         <attribute name="title">
          <string>Approaches</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <property name="spacing">
           <number>2</number>
          </property>
@@ -2338,16 +2338,68 @@
           <number>2</number>
          </property>
          <item>
-          <widget class="QTextBrowser" name="textBrowserApproachInfo">
-           <property name="readOnly">
-            <bool>true</bool>
+          <widget class="QSplitter" name="splitterApproachInfo">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
-           <property name="placeholderText">
-            <string>No airport selected.</string>
+           <property name="handleWidth">
+            <number>10</number>
            </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
+           <widget class="QTreeWidget" name="treeWidgetApproachInfo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="showDropIndicator" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+            <column>
+             <property name="text">
+              <string notr="true">Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Ident</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Altitude</string>
+             </property>
+            </column>
+           </widget>
+           <widget class="QTextBrowser" name="textBrowserApproachInfo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>3</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>No approach selected.</string>
+            </property>
+            <property name="openLinks">
+             <bool>false</bool>
+            </property>
+           </widget>
           </widget>
          </item>
         </layout>
@@ -5020,6 +5072,43 @@
    </property>
    <property name="statusTip">
     <string>Save flight plan as RTE file usable by PMDG aircraft</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachExpandAll">
+   <property name="text">
+    <string>&amp;Expand All</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachCollapseAll">
+   <property name="text">
+    <string>&amp;Collapse All</string>
+   </property>
+   <property name="toolTip">
+    <string>Collapse All</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachShow">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Show %1 on Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Show on map</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachAddToFlightPlan">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add  %1 to Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Add to flight plan</string>
    </property>
   </action>
  </widget>

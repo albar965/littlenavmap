@@ -167,7 +167,8 @@ SOURCES += src/main.cpp\
     src/route/flightplanentrybuilder.cpp \
     src/common/unit.cpp \
     src/common/coordinates.cpp \
-    src/route/userwaypointdialog.cpp
+    src/route/userwaypointdialog.cpp \
+    src/info/approachtreecontroller.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -238,7 +239,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/flightplanentrybuilder.h \
     src/common/unit.h \
     src/common/coordinates.h \
-    src/route/userwaypointdialog.h
+    src/route/userwaypointdialog.h \
+    src/info/approachtreecontroller.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

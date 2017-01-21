@@ -1437,17 +1437,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else if(vor != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::VOR, vor->ident, vor->region, vor->airportIdent);
+        emit showInSearch(maptypes::VOR, vor->ident, vor->region, QString() /*, vor->airportIdent*/);
       }
       else if(ndb != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::NDB, ndb->ident, ndb->region, ndb->airportIdent);
+        emit showInSearch(maptypes::NDB, ndb->ident, ndb->region, QString() /*, ndb->airportIdent*/);
       }
       else if(waypoint != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::WAYPOINT, waypoint->ident, waypoint->region, waypoint->airportIdent);
+        emit showInSearch(maptypes::WAYPOINT, waypoint->ident, waypoint->region, QString() /*, waypoint->airportIdent*/);
       }
     }
     else if(action == ui->actionMapNavaidRange)

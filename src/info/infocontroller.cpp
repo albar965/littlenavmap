@@ -18,6 +18,7 @@
 #include "infocontroller.h"
 
 #include "atools.h"
+#include "info/approachtreecontroller.h"
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
@@ -50,6 +51,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
 {
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
+  approachTree = new ApproachTreeController(mainWindow);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
@@ -80,11 +82,14 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
           &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+
+  connect(approachTree, &ApproachTreeController::approachSelected, this, &InfoController::approachSelected);
 }
 
 InfoController::~InfoController()
 {
   delete infoBuilder;
+  delete approachTree;
 }
 
 /* User clicked on "Map" link in text browsers */
@@ -92,96 +97,100 @@ void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << "InfoController::anchorClicked" << url;
 
-  if(url.scheme() == "lnm" && url.host() == "show")
+  if(url.scheme() == "lnm")
   {
     QUrlQuery query(url);
 
-    if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+    if(url.host() == "show")
     {
-      float zoom = 0.f;
-      if(query.hasQueryItem("zoom"))
-        zoom = query.queryItemValue("zoom").toFloat();
-
-      emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
-                                    query.queryItemValue("laty").toFloat()), zoom, false);
-    }
-    else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
-    {
-      // Only airport used for id variable
-      maptypes::MapAirport airport;
-      mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
-      emit showRect(airport.bounding, false);
-    }
-    else if(query.hasQueryItem("airport"))
-    {
-      // Airport ident
-      maptypes::MapAirport airport;
-      mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
-      emit showRect(airport.bounding, false);
-    }
-    else if(query.hasQueryItem("filepath"))
-    {
-#ifdef Q_OS_WIN
-      QFileInfo fp(query.queryItemValue("filepath"));
-      fp.makeAbsolute();
-
-      // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
-      // QDir::homePath()))
-      // QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-      // tr("Error starting explorer.exe with path \"%1\"")).
-      // arg(query.queryItemValue("filepath")));
-
-      if(fp.exists())
+      if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
-        // Syntax is: explorer /select, "C:\Folder1\Folder2\file_to_select"
-        // Dir separators MUST be win-style slashes
+        float zoom = 0.f;
+        if(query.hasQueryItem("zoom"))
+          zoom = query.queryItemValue("zoom").toFloat();
 
-        // QProcess::startDetached() has an obscure bug. If the path has
-        // no spaces and a comma(and maybe other special characters) it doesn't
-        // get wrapped in quotes. So explorer.exe can't find the correct path and
-        // displays the default one. If we wrap the path in quotes and pass it to
-        // QProcess::startDetached() explorer.exe still shows the default path. In
-        // this case QProcess::startDetached() probably puts its own quotes around ours.
-
-        STARTUPINFO startupInfo;
-        ::ZeroMemory(&startupInfo, sizeof(startupInfo));
-        startupInfo.cb = sizeof(startupInfo);
-
-        PROCESS_INFORMATION processInfo;
-        ::ZeroMemory(&processInfo, sizeof(processInfo));
-
-        QString cmd = QString("explorer.exe /select,\"%1\"").arg(QDir::toNativeSeparators(fp.filePath()));
-        LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
-        cmd.toWCharArray(lpCmd);
-        lpCmd[cmd.size()] = 0;
-
-        bool ret = ::CreateProcessW(NULL, lpCmd, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo);
-        delete[] lpCmd;
-
-        if(ret)
-        {
-          ::CloseHandle(processInfo.hProcess);
-          ::CloseHandle(processInfo.hThread);
-        }
+        emit showPos(atools::geo::Pos(query.queryItemValue("lonx").toFloat(),
+                                      query.queryItemValue("laty").toFloat()), zoom, false);
       }
-      else
+      else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
-        // If the item to select doesn't exist, try to open its parent
-        QUrl fileUrl = QUrl::fromLocalFile(fp.path());
+        // Only airport used for id variable
+        maptypes::MapAirport airport;
+        mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
+        emit showRect(airport.bounding, false);
+      }
+      else if(query.hasQueryItem("airport"))
+      {
+        // Airport ident
+        maptypes::MapAirport airport;
+        mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
+        emit showRect(airport.bounding, false);
+      }
+      else if(query.hasQueryItem("filepath"))
+      {
+#ifdef Q_OS_WIN
+        QFileInfo fp(query.queryItemValue("filepath"));
+        fp.makeAbsolute();
+
+        // if(!QProcess::startDetached("explorer.exe", {"/select", QDir::toNativeSeparators(fp.filePath())},
+        // QDir::homePath()))
+        // QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+        // tr("Error starting explorer.exe with path \"%1\"")).
+        // arg(query.queryItemValue("filepath")));
+
+        if(fp.exists())
+        {
+          // Syntax is: explorer /select, "C:\Folder1\Folder2\file_to_select"
+          // Dir separators MUST be win-style slashes
+
+          // QProcess::startDetached() has an obscure bug. If the path has
+          // no spaces and a comma(and maybe other special characters) it doesn't
+          // get wrapped in quotes. So explorer.exe can't find the correct path and
+          // displays the default one. If we wrap the path in quotes and pass it to
+          // QProcess::startDetached() explorer.exe still shows the default path. In
+          // this case QProcess::startDetached() probably puts its own quotes around ours.
+
+          STARTUPINFO startupInfo;
+          ::ZeroMemory(&startupInfo, sizeof(startupInfo));
+          startupInfo.cb = sizeof(startupInfo);
+
+          PROCESS_INFORMATION processInfo;
+          ::ZeroMemory(&processInfo, sizeof(processInfo));
+
+          QString cmd = QString("explorer.exe /select,\"%1\"").arg(QDir::toNativeSeparators(fp.filePath()));
+          LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
+          cmd.toWCharArray(lpCmd);
+          lpCmd[cmd.size()] = 0;
+
+          bool ret = ::CreateProcessW(NULL, lpCmd, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo,
+                                      &processInfo);
+          delete[] lpCmd;
+
+          if(ret)
+          {
+            ::CloseHandle(processInfo.hProcess);
+            ::CloseHandle(processInfo.hThread);
+          }
+        }
+        else
+        {
+          // If the item to select doesn't exist, try to open its parent
+          QUrl fileUrl = QUrl::fromLocalFile(fp.path());
+          if(!QDesktopServices::openUrl(fileUrl))
+            QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
+                                   tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
+        }
+#else
+        // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
+        // {
+        QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
+
         if(!QDesktopServices::openUrl(fileUrl))
           QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
                                  tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
-      }
-#else
-      // if(!QProcess::startDetached("nautilus", {query.queryItemValue("filepath")}, QDir::homePath()))
-      // {
-      QUrl fileUrl = QUrl::fromLocalFile(QFileInfo(query.queryItemValue("filepath")).path());
-
-      if(!QDesktopServices::openUrl(fileUrl))
-        QMessageBox::warning(mainWindow, QApplication::applicationName(), QString(
-                               tr("Error opening path \"%1\"")).arg(url.toDisplayString()));
-      // }
+        // }
 #endif
+      }
     }
   }
 }
@@ -190,7 +199,8 @@ void InfoController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                         ui->tabWidgetLegend});
+                                                         ui->tabWidgetLegend, ui->splitterApproachInfo,
+                                                         ui->treeWidgetApproachInfo});
 
   // Store currently shown map objects in a string list containing id and type
   maptypes::MapObjectRefList refs;
@@ -230,7 +240,8 @@ void InfoController::restoreState()
 
   Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                            ui->tabWidgetLegend});
+                                                            ui->tabWidgetLegend, ui->splitterApproachInfo,
+                                                            ui->treeWidgetApproachInfo});
 }
 
 void InfoController::updateAirport()
@@ -254,7 +265,6 @@ void InfoController::updateAirportInternal(bool newAirport)
 
     if(newAirport || weatherChanged)
     {
-
       HtmlBuilder html(true);
       maptypes::MapAirport airport;
       mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
@@ -286,6 +296,19 @@ void InfoController::updateAirportInternal(bool newAirport)
   }
 }
 
+void InfoController::approachSelected(maptypes::MapApproachRef mapApproach)
+{
+  if(!currentSearchResult.airports.isEmpty())
+  {
+    Ui::MainWindow *ui = mainWindow->getUi();
+    HtmlBuilder html(true);
+
+    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor,
+                              mapApproach.runwayEndId, mapApproach.approachId, mapApproach.transitionId);
+    ui->textBrowserApproachInfo->setText(html.getHtml());
+  }
+}
+
 void InfoController::clearInfoTextBrowsers()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -294,6 +317,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
   ui->textBrowserApproachInfo->clear();
+  approachTree->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
 }
@@ -353,9 +377,8 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     infoBuilder->comText(airport, html, iconBackColor);
     ui->textBrowserComInfo->setText(html.getHtml());
 
-    html.clear();
-    infoBuilder->approachText(airport, html, iconBackColor);
-    ui->textBrowserApproachInfo->setText(html.getHtml());
+    approachTree->fillApproachTreeWidget(airport.id);
+    ui->textBrowserApproachInfo->clear();
 
     html.clear();
     maptypes::WeatherContext currentWeatherContext;

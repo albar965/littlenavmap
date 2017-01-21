@@ -722,7 +722,7 @@ bool RouteString::extractSpeedAndAltitude(const QString& item, float& speedKnots
     else if(speedUnit == "N") // knots
       speedKnots = speed;
     else if(speedUnit == "M") // mach
-      speedKnots = atools::geo::machToTas(altFeet, speed / 100.f);
+      speedKnots = atools::geo::machToTasFromAlt(altFeet, speed / 100.f);
     else
       return false;
   }

@@ -131,7 +131,8 @@ public:
    * @param background Background color for icons
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
-                    QColor background) const;
+                    QColor background,
+                    int runwayEndId = -1, int approachId = -1, int transitionId = -1) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;
