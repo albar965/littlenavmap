@@ -30,7 +30,7 @@ win32 {
   QT_TOOL_HOME=C:\\Projekte\\Qt
   OPENSSL=C:\\OpenSSL-Win32
   GIT_BIN='C:\\Git\\bin\\git'
-  MARBLE_BASE="c:\\Program Files (x86)\\marble-$${CONF_TYPE}"
+  MARBLE_BASE="c:\\Projekte\\marble-$${CONF_TYPE}"
 }
 
 # Linux ==================
