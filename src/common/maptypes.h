@@ -477,12 +477,27 @@ struct MapIls
 
 struct MapApproachRef
 {
-  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1)
-    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition)
+  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1, int leg = -1)
+    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg)
   {
   }
 
-  int airportId, runwayEndId, approachId, transitionId;
+  int airportId, runwayEndId, approachId, transitionId, legId;
+};
+
+struct MapApproachLeg
+{
+  int approachId, transitionId, legId, navId, recNavId;
+  float course, dist, time, theta, rho, alt1, alt2;
+  QString type, fixType, fixIdent, recFixType, recFixIdent, altDescriptor, turnDirection;
+  atools::geo::Pos fixPos, recommendedFixPos;
+  bool missed, flyover, trueCourse;
+};
+
+struct MapApproachLegList
+{
+  atools::geo::Rect bounding;
+  QVector<MapApproachLeg> legs;
 };
 
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
@@ -574,10 +589,11 @@ QString navTypeNameWaypoint(const QString& type);
 
 QString approachFixType(const QString& type);
 QString approachType(const QString& type);
+QString legType(const QString& type);
+QString altText(const QString& descriptor, float alt1, float alt2);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
-
 
 QString navName(const QString& type);
 QString surfaceName(const QString& surface);
@@ -629,6 +645,8 @@ Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachLegList, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 

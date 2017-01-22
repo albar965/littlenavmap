@@ -68,6 +68,7 @@ class MainWindow;
 class MapWidget;
 class MapQuery;
 class InfoQuery;
+class ApproachQuery;
 
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
@@ -138,6 +139,11 @@ public:
   InfoQuery *getInfoQuery() const
   {
     return infoQuery;
+  }
+
+  ApproachQuery *getApproachQuery() const
+  {
+    return approachQuery;
   }
 
   bool buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
@@ -272,6 +278,7 @@ private:
   /* Database query helpers and caches */
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
+  ApproachQuery *approachQuery = nullptr;
 
   QTimer weatherUpdateTimer;
 

@@ -19,7 +19,8 @@
 
 #include "common/unit.h"
 #include "gui/mainwindow.h"
-#include "info/infoquery.h"
+#include "common/infoquery.h"
+#include "common/approachquery.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
@@ -29,15 +30,37 @@
 
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
+using maptypes::MapApproachLeg;
+using maptypes::MapApproachLegList;
 using maptypes::MapApproachRef;
 
 ApproachTreeController::ApproachTreeController(MainWindow *main)
-  : infoQuery(main->getInfoQuery()), treeWidget(main->getUi()->treeWidgetApproachInfo), mainWindow(main)
+  : infoQuery(main->getInfoQuery()), approachQuery(main->getApproachQuery()),
+    treeWidget(main->getUi()->treeWidgetApproachInfo), mainWindow(main)
 {
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ApproachTreeController::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ApproachTreeController::itemDoubleClicked);
   connect(treeWidget, &QTreeWidget::itemActivated, this, &ApproachTreeController::itemActivated);
+  connect(treeWidget, &QTreeWidget::itemExpanded, this, &ApproachTreeController::itemExpanded);
   connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &ApproachTreeController::contextMenu);
+
+  QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+  runwayFont = root->font(0);
+  runwayFont.setWeight(QFont::Bold);
+
+  approachFont = root->font(0);
+  approachFont.setWeight(QFont::Bold);
+
+  transitionFont = root->font(0);
+  transitionFont.setWeight(QFont::Bold);
+
+  legFont = root->font(0);
+  legFont.setPointSizeF(legFont.pointSizeF() * 0.85f);
+
+  missedLegFont = legFont;
+
+  invalidLegFont = legFont;
+  invalidLegFont.setBold(true);
 }
 
 ApproachTreeController::~ApproachTreeController()
@@ -52,11 +75,13 @@ void ApproachTreeController::fillApproachTreeWidget(int airportId)
 
   treeWidget->clear();
   itemIndex.clear();
+  itemLoadedIndex.clear();
 
   const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airportId);
   if(recAppVector != nullptr)
   {
     QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+
     for(const SqlRecord& recApp : *recAppVector)
     {
       QString runwayName;
@@ -72,6 +97,8 @@ void ApproachTreeController::fillApproachTreeWidget(int airportId)
       {
         itemIndex.append(MapApproachRef(airportId, recApp.valueInt("runway_end_id")));
         runwayItem = new QTreeWidgetItem(root, {runwayName}, itemIndex.size() - 1);
+        runwayItem->setFont(0, runwayFont);
+        runwayItem->setFirstColumnSpanned(true);
       }
       else
         runwayItem = foundItems.first();
@@ -79,15 +106,9 @@ void ApproachTreeController::fillApproachTreeWidget(int airportId)
       int runwayEndId = itemIndex.at(runwayItem->type()).runwayEndId;
 
       int apprId = recApp.valueInt("approach_id");
-      QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix");
       itemIndex.append(MapApproachRef(airportId, runwayEndId, apprId));
-      QTreeWidgetItem *apprItem =
-        new QTreeWidgetItem(runwayItem,
-                            {
-                              tr("Approach ") + approachType,
-                              recApp.valueStr("fix_ident"),
-                              Unit::altFeet(recApp.valueFloat("altitude"))
-                            }, itemIndex.size() - 1);
+
+      QTreeWidgetItem *apprItem = buildApprItem(runwayItem, recApp);
 
       const SqlRecordVector *recTransVector =
         infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
@@ -97,25 +118,18 @@ void ApproachTreeController::fillApproachTreeWidget(int airportId)
         for(const SqlRecord& recTrans : *recTransVector)
         {
           itemIndex.append(MapApproachRef(airportId, runwayEndId, apprId, recTrans.valueInt("transition_id")));
-          new QTreeWidgetItem(apprItem,
-                              {
-                                tr("Transition") /* + recTrans.valueStr("fix_ident")*/,
-                                recTrans.valueStr("fix_ident"),
-                                Unit::altFeet(recTrans.valueFloat("altitude"))
-                              },
-                              itemIndex.size() - 1);
+          buildTransItem(apprItem, recTrans);
         }
       }
     }
-    // treeWidget->expandAll();
   }
   else
   {
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(),
                                                 {tr("Airport has no approaches.")});
     item->setDisabled(true);
-    return;
   }
+  itemLoadedIndex.resize(itemIndex.size());
 
   lastAirportId = airportId;
 }
@@ -124,6 +138,7 @@ void ApproachTreeController::clear()
 {
   treeWidget->clear();
   itemIndex.clear();
+  itemLoadedIndex.clear();
   lastAirportId = -1;
 
   QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(),
@@ -137,7 +152,7 @@ void ApproachTreeController::itemSelectionChanged()
   {
     const MapApproachRef& entry = itemIndex.at(item->type());
 
-    qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId;
+    qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
 
     emit approachSelected(entry);
   }
@@ -146,6 +161,55 @@ void ApproachTreeController::itemSelectionChanged()
 void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   qDebug() << Q_FUNC_INFO;
+
+}
+
+void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
+{
+  qDebug() << Q_FUNC_INFO;
+  if(item != nullptr)
+  {
+    if(itemLoadedIndex.at(item->type()))
+      return;
+
+    // Get a copy since vector is rebuilt underneath
+    const MapApproachRef entry = itemIndex.at(item->type());
+
+    if(entry.legId == -1)
+    {
+      if(entry.approachId != -1 && entry.transitionId == -1)
+      {
+        itemLoadedIndex.setBit(item->type());
+        const MapApproachLegList *legs = approachQuery->getApproachLegs(entry.approachId);
+
+        if(legs != nullptr)
+        {
+          for(const MapApproachLeg& e : legs->legs)
+          {
+            itemIndex.append(MapApproachRef(entry.airportId, entry.runwayEndId, entry.approachId,
+                                            entry.transitionId, e.legId));
+            buildApprLegItem(item, e);
+          }
+        }
+      }
+      else if(entry.approachId != -1 && entry.transitionId != -1)
+      {
+        itemLoadedIndex.setBit(item->type());
+        const MapApproachLegList *legs = approachQuery->getTransitionLegs(entry.transitionId);
+
+        if(legs != nullptr)
+        {
+          for(const MapApproachLeg& e : legs->legs)
+          {
+            itemIndex.append(MapApproachRef(entry.airportId, entry.runwayEndId, entry.approachId,
+                                            entry.transitionId, e.legId));
+            buildTransLegItem(item, e);
+          }
+        }
+      }
+      itemLoadedIndex.resize(itemIndex.size());
+    }
+  }
 }
 
 void ApproachTreeController::itemActivated(QTreeWidgetItem *item, int column)
@@ -218,4 +282,118 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     emit approachShowOnMap(itemIndex.at(item->type()));
   else if(action == ui->actionInfoApproachAddToFlightPlan)
     emit approachAddToFlightPlan(itemIndex.at(item->type()));
+}
+
+QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
+{
+  QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix");
+
+  QString altStr;
+  if(recApp.valueFloat("altitude") > 0.f)
+    altStr = Unit::altFeet(recApp.valueFloat("altitude"));
+
+  QTreeWidgetItem *item =
+    new QTreeWidgetItem({
+                          tr("Approach ") + approachType,
+                          recApp.valueStr("fix_ident"),
+                          altStr
+                        }, itemIndex.size() - 1);
+  item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+
+  for(int i = 0; i < item->columnCount(); i++)
+    item->setFont(i, approachFont);
+
+  runwayItem->addChild(item);
+
+  return item;
+}
+
+QTreeWidgetItem *ApproachTreeController::buildTransItem(QTreeWidgetItem *apprItem, const SqlRecord& recTrans)
+{
+  QString altStr;
+  if(recTrans.valueFloat("altitude") > 0.f)
+    altStr = Unit::altFeet(recTrans.valueFloat("altitude"));
+
+  QTreeWidgetItem *item = new QTreeWidgetItem({
+                                                tr("Transition"),
+                                                recTrans.valueStr("fix_ident"),
+                                                altStr
+                                              },
+                                              itemIndex.size() - 1);
+  item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+
+  for(int i = 0; i < item->columnCount(); i++)
+    item->setFont(i, transitionFont);
+
+  apprItem->addChild(item);
+
+  return item;
+}
+
+void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
+{
+  QString courseStr;
+  if(leg.type != "IF" && leg.type != "DF" && !(leg.type == "TF" && leg.course == 0.f))
+    courseStr = QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+
+  QTreeWidgetItem *item = new QTreeWidgetItem(
+    {
+      (leg.missed ? tr("Missed: ") : QString()) + maptypes::legType(leg.type),
+      leg.fixIdent,
+      maptypes::altText(leg.altDescriptor, leg.alt1, leg.alt2),
+      courseStr
+    },
+    itemIndex.size() - 1);
+
+  bool invalid = !leg.fixIdent.isEmpty() && !leg.fixPos.isValid();
+
+  for(int i = 0; i < item->columnCount(); i++)
+  {
+    if(!invalid)
+      item->setFont(i, leg.missed ? missedLegFont : legFont);
+    else
+    {
+      item->setFont(i, invalidLegFont);
+      item->setForeground(i, Qt::red);
+    }
+  }
+
+  parentItem->addChild(item);
+
+  qDebug() << leg.legId << leg.missed << maptypes::legType(leg.type)
+           << leg.fixType << leg.fixIdent << leg.fixPos;
+}
+
+void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
+{
+  QString courseStr;
+  if(leg.type != "IF" && leg.type != "DF" && !(leg.type == "TF" && leg.course == 0.f))
+    courseStr = QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+
+  QTreeWidgetItem *item = new QTreeWidgetItem(
+    {
+      maptypes::legType(leg.type),
+      leg.fixIdent,
+      maptypes::altText(leg.altDescriptor, leg.alt1, leg.alt2),
+      courseStr
+    },
+    itemIndex.size() - 1);
+
+  bool invalid = !leg.fixIdent.isEmpty() && !leg.fixPos.isValid();
+
+  for(int i = 0; i < item->columnCount(); i++)
+  {
+    if(!invalid)
+      item->setFont(i, legFont);
+    else
+    {
+      item->setFont(i, invalidLegFont);
+      item->setForeground(i, Qt::red);
+    }
+  }
+
+  parentItem->addChild(item);
+
+  qDebug() << leg.legId << leg.missed << maptypes::legType(leg.type)
+           << leg.fixType << leg.fixIdent << leg.fixPos;
 }

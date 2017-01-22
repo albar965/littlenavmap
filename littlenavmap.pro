@@ -146,7 +146,6 @@ SOURCES += src/main.cpp\
     src/common/aircrafttrack.cpp \
     src/info/infocontroller.cpp \
     src/common/symbolpainter.cpp \
-    src/info/infoquery.cpp \
     src/db/databasemanager.cpp \
     src/db/dbtypes.cpp \
     src/common/constants.cpp \
@@ -168,7 +167,9 @@ SOURCES += src/main.cpp\
     src/common/unit.cpp \
     src/common/coordinates.cpp \
     src/route/userwaypointdialog.cpp \
-    src/info/approachtreecontroller.cpp
+    src/info/approachtreecontroller.cpp \
+    src/common/infoquery.cpp \
+    src/common/approachquery.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -218,7 +219,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/aircrafttrack.h \
     src/info/infocontroller.h \
     src/common/symbolpainter.h \
-    src/info/infoquery.h \
     src/db/databasemanager.h \
     src/db/dbtypes.h \
     src/common/constants.h \
@@ -240,7 +240,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/unit.h \
     src/common/coordinates.h \
     src/route/userwaypointdialog.h \
-    src/info/approachtreecontroller.h
+    src/info/approachtreecontroller.h \
+    src/common/infoquery.h \
+    src/common/approachquery.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

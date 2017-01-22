@@ -24,7 +24,7 @@
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
-#include "info/infoquery.h"
+#include "common/infoquery.h"
 #include "mapgui/mapquery.h"
 #include "route/routemapobjectlist.h"
 #include "sql/sqlrecord.h"

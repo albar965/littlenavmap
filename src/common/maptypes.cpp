@@ -18,7 +18,7 @@
 #include "common/maptypes.h"
 
 #include "atools.h"
-#include "common/formatter.h"
+#include "common/unit.h"
 #include "options/optiondata.h"
 
 #include <QDataStream>
@@ -280,6 +280,33 @@ const QHash<QString, QString> approachTypeToStr(
     {"NDBDME", QObject::tr("NDBDME")},
     {"RNAV", QObject::tr("RNAV")},
     {"LOCB", QObject::tr("Localizer Backcourse")}
+  });
+
+const QHash<QString, QString> approachLegTypeToStr(
+  {
+    {"AF", QObject::tr("Arc to a fix")},
+    {"CA", QObject::tr("Course to an altitude")},
+    {"CD", QObject::tr("Course to a DME distance")},
+    {"CF", QObject::tr("Course to a fix")},
+    {"CI", QObject::tr("Course to an intercept")},
+    {"CR", QObject::tr("Course to a radial termination")},
+    {"DF", QObject::tr("Direct to a fix")},
+    {"FA", QObject::tr("Fix to an altitude")},
+    {"FC", QObject::tr("Track from a fix from a distance")},
+    {"FD", QObject::tr("Track from a fix to a DME distance")},
+    {"FM", QObject::tr("From a fix to a manual termination")},
+    {"HA", QObject::tr("Hold to an altitude")},
+    {"HF", QObject::tr("Hold to a fix")},
+    {"HM", QObject::tr("Hold to manual termination")},
+    {"IF", QObject::tr("Initial fix")},
+    {"PI", QObject::tr("Procedure turn")},
+    {"RF", QObject::tr("Constant radius arc")},
+    {"TF", QObject::tr("Track to a fix")},
+    {"VA", QObject::tr("Heading to an altitude termination")},
+    {"VD", QObject::tr("Heading to a DME distance termination")},
+    {"VI", QObject::tr("Heading to an intercept")},
+    {"VM", QObject::tr("Heading to a manual termination")},
+    {"VR", QObject::tr("Heading to a radial termination")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)
@@ -743,6 +770,28 @@ QString patternDirection(const QString& type)
     return QObject::tr("Right");
   else
     return QString();
+}
+
+QString legType(const QString& type)
+{
+  return approachLegTypeToStr.value(type);
+}
+
+QString altText(const QString& descriptor, float alt1, float alt2)
+{
+  if(alt1 == 0.f)
+    return QString();
+
+  if(descriptor == "+")
+    return QObject::tr("At or above %1").arg(Unit::altFeet(alt1));
+  else if(descriptor == "-")
+    return QObject::tr("At or below %1").arg(Unit::altFeet(alt1));
+  else if(descriptor == "A")
+    return QObject::tr("At %1").arg(Unit::altFeet(alt1));
+  else if(descriptor == "B")
+    return QObject::tr("At or above %1 and at or below %2").arg(Unit::altFeet(alt1)).arg(Unit::altFeet(alt2));
+  else
+    return QObject::tr("At %1").arg(Unit::altFeet(alt1));
 }
 
 } // namespace types

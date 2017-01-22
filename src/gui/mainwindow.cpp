@@ -29,7 +29,7 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
-#include "info/infoquery.h"
+#include "common/infoquery.h"
 #include "logging/logginghandler.h"
 #include "mapgui/mapquery.h"
 #include "mapgui/mapwidget.h"
@@ -47,6 +47,7 @@
 #include "route/routestringdialog.h"
 #include "route/routestring.h"
 #include "common/unit.h"
+#include "common/approachquery.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -130,6 +131,9 @@ MainWindow::MainWindow()
 
     infoQuery = new InfoQuery(databaseManager->getDatabase());
     infoQuery->initQueries();
+
+    approachQuery = new ApproachQuery(databaseManager->getDatabase());
+    approachQuery->initQueries();
 
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
@@ -230,6 +234,8 @@ MainWindow::~MainWindow()
   delete mapQuery;
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
+  qDebug() << Q_FUNC_INFO << "delete approachQuery";
+  delete approachQuery;
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
@@ -1898,6 +1904,7 @@ void MainWindow::preDatabaseLoad()
     weatherReporter->preDatabaseLoad();
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
+    approachQuery->deInitQueries();
 
     clearWeatherContext();
   }
@@ -1913,6 +1920,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   {
     mapQuery->initQueries();
     infoQuery->initQueries();
+    approachQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
     mapWidget->postDatabaseLoad();

@@ -20,10 +20,15 @@
 
 #include "common/maptypes.h"
 
+#include <QBitArray>
+#include <QFont>
 #include <QObject>
 #include <QVector>
 
 namespace atools {
+namespace sql {
+class SqlRecord;
+}
 namespace geo {
 class Pos;
 class Rect;
@@ -34,6 +39,7 @@ class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
 class MainWindow;
+class ApproachQuery;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
 class ApproachTreeController :
@@ -60,15 +66,28 @@ private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
   void itemActivated(QTreeWidgetItem *item, int column);
+  void itemExpanded(QTreeWidgetItem *item);
   void contextMenu(const QPoint& pos);
 
-  // item's types are the indexes into this array
+  QTreeWidgetItem *buildApprItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
+  QTreeWidgetItem *buildTransItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
+  void buildTransLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
+  void buildApprLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
+
+  // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
 
+  // Item type is the index into this array
+  // Approach or transition legs are already loaded in tree if bit is set
+  QBitArray itemLoadedIndex;
+
   InfoQuery *infoQuery = nullptr;
+  ApproachQuery *approachQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
   int lastAirportId = -1;
+  QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont;
+
 };
 
 #endif // LITTLENAVMAP_APPROACHTREECONTROLLER_H
