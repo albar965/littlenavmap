@@ -284,29 +284,29 @@ const QHash<QString, QString> approachTypeToStr(
 
 const QHash<QString, QString> approachLegTypeToStr(
   {
-    {"AF", QObject::tr("Arc to a fix")},
-    {"CA", QObject::tr("Course to an altitude")},
-    {"CD", QObject::tr("Course to a DME distance")},
-    {"CF", QObject::tr("Course to a fix")},
-    {"CI", QObject::tr("Course to an intercept")},
-    {"CR", QObject::tr("Course to a radial termination")},
-    {"DF", QObject::tr("Direct to a fix")},
-    {"FA", QObject::tr("Fix to an altitude")},
-    {"FC", QObject::tr("Track from a fix from a distance")},
-    {"FD", QObject::tr("Track from a fix to a DME distance")},
-    {"FM", QObject::tr("From a fix to a manual termination")},
-    {"HA", QObject::tr("Hold to an altitude")},
-    {"HF", QObject::tr("Hold to a fix")},
+    {"AF", QObject::tr("Arc to fix")},
+    {"CA", QObject::tr("Course to altitude")},
+    {"CD", QObject::tr("Course to DME distance")},
+    {"CF", QObject::tr("Course to fix")},
+    {"CI", QObject::tr("Course to intercept")},
+    {"CR", QObject::tr("Course to radial termination")},
+    {"DF", QObject::tr("Direct to fix")},
+    {"FA", QObject::tr("Fix to altitude")},
+    {"FC", QObject::tr("Track from fix from distance")},
+    {"FD", QObject::tr("Track from fix to DME distance")},
+    {"FM", QObject::tr("From fix to manual termination")},
+    {"HA", QObject::tr("Hold to altitude")},
+    {"HF", QObject::tr("Hold to fix")},
     {"HM", QObject::tr("Hold to manual termination")},
     {"IF", QObject::tr("Initial fix")},
     {"PI", QObject::tr("Procedure turn")},
     {"RF", QObject::tr("Constant radius arc")},
-    {"TF", QObject::tr("Track to a fix")},
-    {"VA", QObject::tr("Heading to an altitude termination")},
-    {"VD", QObject::tr("Heading to a DME distance termination")},
-    {"VI", QObject::tr("Heading to an intercept")},
-    {"VM", QObject::tr("Heading to a manual termination")},
-    {"VR", QObject::tr("Heading to a radial termination")}
+    {"TF", QObject::tr("Track to fix")},
+    {"VA", QObject::tr("Heading to altitude termination")},
+    {"VD", QObject::tr("Heading to DME distance termination")},
+    {"VI", QObject::tr("Heading to intercept")},
+    {"VM", QObject::tr("Heading to manual termination")},
+    {"VR", QObject::tr("Heading to radial termination")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)

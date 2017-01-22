@@ -154,13 +154,19 @@ void ApproachTreeController::itemSelectionChanged()
 
     qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
 
-    emit approachSelected(entry);
+    if(entry.approachId != -1)
+      emit approachSelected(entry);
+
+    if(entry.legId != -1)
+      emit approachLegSelected(entry);
   }
 }
 
 void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   qDebug() << Q_FUNC_INFO;
+  Q_UNUSED(column);
+  Q_UNUSED(item);
 
 }
 
@@ -215,6 +221,8 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 void ApproachTreeController::itemActivated(QTreeWidgetItem *item, int column)
 {
   qDebug() << Q_FUNC_INFO;
+  Q_UNUSED(column);
+  Q_UNUSED(item);
 }
 
 void ApproachTreeController::contextMenu(const QPoint& pos)
@@ -292,12 +300,11 @@ QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayIt
   if(recApp.valueFloat("altitude") > 0.f)
     altStr = Unit::altFeet(recApp.valueFloat("altitude"));
 
-  QTreeWidgetItem *item =
-    new QTreeWidgetItem({
-                          tr("Approach ") + approachType,
-                          recApp.valueStr("fix_ident"),
-                          altStr
-                        }, itemIndex.size() - 1);
+  QTreeWidgetItem *item = new QTreeWidgetItem({
+                                                tr("Approach ") + approachType,
+                                                recApp.valueStr("fix_ident"),
+                                                altStr
+                                              }, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
 
   for(int i = 0; i < item->columnCount(); i++)

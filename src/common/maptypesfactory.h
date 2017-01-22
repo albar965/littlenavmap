@@ -51,6 +51,7 @@ public:
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
    */
   void fillRunway(const atools::sql::SqlRecord& record, maptypes::MapRunway& runway, bool overview);
+  void fillRunwayEnd(const atools::sql::SqlRecord& record, maptypes::MapRunwayEnd& end);
 
   void fillVor(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
   void fillVorFromNav(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);

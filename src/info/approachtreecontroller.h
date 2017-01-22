@@ -59,6 +59,7 @@ public:
 
 signals:
   void approachSelected(maptypes::MapApproachRef);
+  void approachLegSelected(maptypes::MapApproachRef);
   void approachAddToFlightPlan(maptypes::MapApproachRef);
   void approachShowOnMap(maptypes::MapApproachRef);
 

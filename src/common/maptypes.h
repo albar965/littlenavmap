@@ -58,9 +58,10 @@ enum MapObjectType
   AIRCRAFT_TRACK = 0x00010000, /* Simulator aircraft track */
   USER = 0x00020000, /* Flight plan user waypoint */
   PARKING = 0x00040000,
-  INVALID = 0x00080000, /* Flight plan waypoint not found in database */
+  RUNWAYEND = 0x00080000,
+  INVALID = 0x00100000, /* Flight plan waypoint not found in database */
   ALL_NAV = VOR | NDB | WAYPOINT,
-  ALL = 0xffff
+  ALL = 0xffffffff
 };
 
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
@@ -218,10 +219,20 @@ struct MapRunway
 
 };
 
+/* Airport runway end. All dimensions are feet */
+struct MapRunwayEnd
+{
+  QString name;
+  float heading;
+  atools::geo::Pos position;
+  bool secondary;
+};
+
 /* Apron including full geometry */
 struct MapApron
 {
   atools::geo::LineString vertices;
+
   QString surface;
   bool drawSurface;
 
@@ -506,6 +517,7 @@ struct MapSearchResult
   QList<MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate */
 
+  QList<MapRunwayEnd> runwayEnds;
   QList<MapAirport> towers;
   QList<MapParking> parkings;
   QList<MapHelipad> helipads;
@@ -632,6 +644,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapObjectRef, Q_PRIMITIVE_TYPE);
 
 Q_DECLARE_TYPEINFO(maptypes::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapRunway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapRunwayEnd, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApron, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapTaxiPath, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapParking, Q_MOVABLE_TYPE);

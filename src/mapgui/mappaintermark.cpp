@@ -159,14 +159,44 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     int x, y;
     if(wToS(pos, x, y))
     {
-      // if(context->objCount())
-      // return;
-
       if(!context->drawFast)
       {
         painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);
         painter->setPen(QPen(QBrush(mapcolors::highlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+      }
+      painter->drawEllipse(QPoint(x, y), size, size);
+    }
+  }
+
+  // Draw hightlights from the approach selection ------------------------------------------
+  const MapSearchResult& approachHighlightResults = mapWidget->getApproachHighlights();
+
+  positions.clear();
+
+  for(const MapWaypoint& wp : approachHighlightResults.waypoints)
+    positions.append(wp.position);
+  for(const MapVor& vor : approachHighlightResults.vors)
+    positions.append(vor.position);
+  for(const MapNdb& ndb : approachHighlightResults.ndbs)
+    positions.append(ndb.position);
+  for(const MapIls& ils : approachHighlightResults.ils)
+    positions.append(ils.position);
+  for(const MapRunwayEnd& end : approachHighlightResults.runwayEnds)
+    positions.append(end.position);
+
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(QPen(QBrush(mapcolors::highlightApproachColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  for(const Pos& pos : positions)
+  {
+    int x, y;
+    if(wToS(pos, x, y))
+    {
+      if(!context->drawFast)
+      {
+        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->setPen(QPen(QBrush(mapcolors::highlightApproachColor), size / 3, Qt::SolidLine, Qt::FlatCap));
       }
       painter->drawEllipse(QPoint(x, y), size, size);
     }
@@ -193,9 +223,6 @@ void MapPainterMark::paintHighlights(PaintContext *context)
     {
       if(!context->drawFast)
       {
-        // if(context->objCount())
-        // return;
-
         painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
                              Qt::FlatCap));
         painter->drawEllipse(QPoint(x, y), size, size);

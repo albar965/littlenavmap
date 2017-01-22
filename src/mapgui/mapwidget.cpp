@@ -914,9 +914,20 @@ const maptypes::MapSearchResult& MapWidget::getSearchHighlights() const
   return screenIndex->getSearchHighlights();
 }
 
+const maptypes::MapSearchResult& MapWidget::getApproachHighlights() const
+{
+  return screenIndex->getApproachHighlights();
+}
+
 void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)
 {
   screenIndex->getSearchHighlights() = positions;
+  update();
+}
+
+void MapWidget::changeApproachHighlights(const maptypes::MapSearchResult& positions)
+{
+  screenIndex->getApproachHighlights() = positions;
   update();
 }
 

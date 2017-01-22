@@ -323,6 +323,30 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
     }
     waypointByIdQuery->finish();
   }
+  else if(type == maptypes::ILS)
+  {
+    ilsByIdQuery->bindValue(":id", id);
+    ilsByIdQuery->exec();
+    if(ilsByIdQuery->next())
+    {
+      maptypes::MapIls ils;
+      mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
+      result.ils.append(ils);
+    }
+    ilsByIdQuery->finish();
+  }
+  else if(type == maptypes::RUNWAYEND)
+  {
+    runwayEndByIdQuery->bindValue(":id", id);
+    runwayEndByIdQuery->exec();
+    if(runwayEndByIdQuery->next())
+    {
+      maptypes::MapRunwayEnd end;
+      mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end);
+      result.runwayEnds.append(end);
+    }
+    runwayEndByIdQuery->finish();
+  }
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
@@ -1071,6 +1095,10 @@ void MapQuery::initQueries()
   static const QString parkingQueryBase(
     "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
 
+  static const QString ilsQueryBase(
+    "ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
+    "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
+
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
@@ -1121,6 +1149,19 @@ void MapQuery::initQueries()
 
   waypointByIdQuery = new SqlQuery(db);
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from waypoint where waypoint_id = :id");
+
+  ilsByIdQuery = new SqlQuery(db);
+  ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
+
+  runwayEndByIdQuery = new SqlQuery(db);
+  runwayEndByIdQuery->prepare(
+    "select 'P' as end_type, e.name as name, r.heading as heading, r.secondary_lonx as lonx, r.secondary_laty as laty "
+    "from runway r join runway_end e on r.primary_end_id = e.runway_end_id "
+    "where r.primary_end_id = :id "
+    "union "
+    "select 'S' as end_type, e.name as name, r.heading as heading, r.primary_lonx as lonx, r.primary_laty as laty "
+    "from runway r join runway_end e on r.secondary_end_id = e.runway_end_id "
+    "where r.secondary_end_id = :id");
 
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
@@ -1209,10 +1250,7 @@ void MapQuery::initQueries()
     "where " + whereRect + " " + whereLimit);
 
   ilsByRectQuery = new SqlQuery(db);
-  ilsByRectQuery->prepare(
-    "select ils_id, ident, name, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
-    "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty "
-    "from ils where " + whereRect + " " + whereLimit);
+  ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
 
   airwayByRectQuery = new SqlQuery(db);
   airwayByRectQuery->prepare(
@@ -1336,6 +1374,12 @@ void MapQuery::deInitQueries()
 
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
+
+  delete ilsByIdQuery;
+  ilsByIdQuery = nullptr;
+
+  delete runwayEndByIdQuery;
+  runwayEndByIdQuery = nullptr;
 
   delete airwayWaypointByIdentQuery;
   airwayWaypointByIdentQuery = nullptr;

@@ -84,6 +84,8 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
   connect(approachTree, &ApproachTreeController::approachSelected, this, &InfoController::approachSelected);
+  connect(approachTree, &ApproachTreeController::approachLegSelected, this,
+          &InfoController::approachLegSelected);
 }
 
 InfoController::~InfoController()
@@ -379,6 +381,10 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
 
     approachTree->fillApproachTreeWidget(airport.id);
     ui->textBrowserApproachInfo->clear();
+
+    html.clear();
+    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, 0, 0, 0);
+    ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
     maptypes::WeatherContext currentWeatherContext;

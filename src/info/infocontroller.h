@@ -98,6 +98,8 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
+  void approachLegSelected(maptypes::MapApproachRef);
+
 private:
   /* Do not update aircraft information more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;

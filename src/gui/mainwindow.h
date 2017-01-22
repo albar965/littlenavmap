@@ -182,6 +182,7 @@ private:
   void updateMapObjectsShown();
 
   void searchSelectionChanged(const SearchBase *source, int selected, int visible, int total);
+  void approachSelectionChanged(maptypes::MapApproachRef approachRef);
   void routeSelectionChanged(int selected, int total);
 
   void routeNewFromString();

@@ -19,6 +19,7 @@
 
 #include <cmath>
 #include "sql/sqlrecord.h"
+#include "geo/calculations.h"
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
@@ -103,6 +104,16 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, maptypes:
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
   runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
   runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
+}
+
+void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRunwayEnd& end)
+{
+  end.name = record.valueStr("name");
+  end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
+  end.secondary = record.valueStr("end_type") == "S";
+  end.heading = record.valueFloat("heading");
+  if(end.secondary)
+    end.heading = atools::geo::opposedCourseDeg(end.heading);
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirport& ap, bool complete)

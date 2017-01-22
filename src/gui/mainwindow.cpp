@@ -866,6 +866,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
+
+  connect(infoController, &InfoController::approachLegSelected, this, &MainWindow::approachSelectionChanged);
 }
 
 /* Update the info weather */
@@ -1470,6 +1472,41 @@ void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, 
   maptypes::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
   mapWidget->changeSearchHighlights(result);
+}
+
+/* Selection in approach view has changed */
+void MainWindow::approachSelectionChanged(maptypes::MapApproachRef approachRef)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(approachRef.legId != -1)
+  {
+    const maptypes::MapApproachLeg *leg;
+
+    if(approachRef.transitionId != -1)
+      leg = approachQuery->getTransitionLeg(approachRef.legId);
+    else
+      leg = approachQuery->getApproachLeg(approachRef.legId);
+
+    maptypes::MapSearchResult result;
+
+    maptypes::MapObjectTypes type;
+
+    if(leg->fixType == "L")
+      type |= maptypes::ILS;
+    else if(leg->fixType == "V")
+      type |= maptypes::VOR;
+    else if(leg->fixType == "N" || leg->fixType == "TN")
+      type |= maptypes::NDB;
+    else if(leg->fixType == "W" || leg->fixType == "TW")
+      type |= maptypes::WAYPOINT;
+    else if(leg->fixType == "R")
+      type |= maptypes::RUNWAYEND;
+
+    mapQuery->getMapObjectById(result, type, leg->navId);
+
+    mapWidget->changeApproachHighlights(result);
+  }
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */

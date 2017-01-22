@@ -49,6 +49,28 @@ const maptypes::MapApproachLegList *buildEntries(QCache<int, maptypes::MapApproa
   }
 }
 
+const maptypes::MapApproachLeg *buildEntry(QCache<int, maptypes::MapApproachLeg>& cache,
+                                           SqlQuery *query, int legId,
+                                           std::function<maptypes::MapApproachLeg(
+                                                           SqlQuery *query)> factoryFunction)
+{
+  if(cache.contains(legId))
+    return cache.object(legId);
+  else
+  {
+    query->bindValue(":id", legId);
+    query->exec();
+
+    maptypes::MapApproachLeg *leg = new maptypes::MapApproachLeg;
+    if(query->next())
+      *leg = factoryFunction(query);
+
+    cache.insert(legId, leg);
+
+    return leg;
+  }
+}
+
 ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -74,6 +96,22 @@ const maptypes::MapApproachLegList *ApproachQuery::getTransitionLegs(int transit
     std::bind(&ApproachQuery::buildTransitionLegEntry, this, std::placeholders::_1);
 
   return buildEntries(transitionCache, transitionQuery, transitionId, func);
+}
+
+const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(int legId)
+{
+  std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
+    std::bind(&ApproachQuery::buildApproachLegEntry, this, std::placeholders::_1);
+
+  return buildEntry(approachLegCache, approachLegQuery, legId, func);
+}
+
+const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(int legId)
+{
+  std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
+    std::bind(&ApproachQuery::buildTransitionLegEntry, this, std::placeholders::_1);
+
+  return buildEntry(transitionLegCache, transitionLegQuery, legId, func);
 }
 
 maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry(atools::sql::SqlQuery *query)
@@ -161,6 +199,12 @@ void ApproachQuery::initQueries()
   transitionQuery = new SqlQuery(db);
   transitionQuery->prepare("select * from transition_leg where transition_id = :id");
 
+  approachLegQuery = new SqlQuery(db);
+  approachLegQuery->prepare("select * from approach_leg where approach_leg_id = :id");
+
+  transitionLegQuery = new SqlQuery(db);
+  transitionLegQuery->prepare("select * from transition_leg where transition_leg_id = :id");
+
   vorQuery = new SqlQuery(db);
   vorQuery->prepare("select lonx, laty from vor where vor_id = :id");
 
@@ -189,6 +233,14 @@ void ApproachQuery::deInitQueries()
   transitionCache.clear();
   delete transitionQuery;
   transitionQuery = nullptr;
+
+  approachLegCache.clear();
+  delete approachLegQuery;
+  approachLegQuery = nullptr;
+
+  transitionLegCache.clear();
+  delete transitionLegQuery;
+  transitionLegQuery = nullptr;
 
   delete vorQuery;
   vorQuery = nullptr;

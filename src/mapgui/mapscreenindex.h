@@ -99,6 +99,16 @@ public:
     return highlights;
   }
 
+  maptypes::MapSearchResult& getApproachHighlights()
+  {
+    return approachHighlights;
+  }
+
+  const maptypes::MapSearchResult& getApproachHighlights() const
+  {
+    return approachHighlights;
+  }
+
   /* Get range rings */
   QList<maptypes::RangeMarker>& getRangeMarks()
   {
@@ -155,7 +165,8 @@ private:
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;
 
-  maptypes::MapSearchResult highlights;
+  maptypes::MapSearchResult highlights, approachHighlights;
+
   QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;
   QList<maptypes::DistanceMarker> distanceMarks;

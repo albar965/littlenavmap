@@ -272,6 +272,7 @@ private:
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
   *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
+  *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr,
   *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;

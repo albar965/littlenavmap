@@ -104,6 +104,7 @@ public:
   /* Update hightlighted objects */
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
+  void changeApproachHighlights(const maptypes::MapSearchResult& positions);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -138,6 +139,7 @@ public:
 
   /* Getters used by the painters */
   const maptypes::MapSearchResult& getSearchHighlights() const;
+  const maptypes::MapSearchResult& getApproachHighlights() const;
 
   const QList<int>& getRouteHighlights() const;
 

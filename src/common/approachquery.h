@@ -42,6 +42,8 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
+  const maptypes::MapApproachLeg *getApproachLeg(int legId);
+  const maptypes::MapApproachLeg *getTransitionLeg(int legId);
   const maptypes::MapApproachLegList *getApproachLegs(int approachId);
   const maptypes::MapApproachLegList *getTransitionLegs(int transitionId);
 
@@ -53,9 +55,13 @@ private:
   maptypes::MapApproachLeg buildApproachLegEntry(atools::sql::SqlQuery *query);
 
   atools::sql::SqlDatabase *db;
-  atools::sql::SqlQuery *approachQuery = nullptr, *transitionQuery = nullptr, *vorQuery = nullptr,
-  *ndbQuery = nullptr, *waypointQuery = nullptr, *ilsQuery = nullptr, *runwayQuery = nullptr;
+  atools::sql::SqlQuery *approachQuery = nullptr, *transitionQuery = nullptr,
+  *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
+  *vorQuery = nullptr, *ndbQuery = nullptr, *waypointQuery = nullptr, *ilsQuery = nullptr,
+  *runwayQuery = nullptr;
+
   QCache<int, maptypes::MapApproachLegList> approachCache, transitionCache;
+  QCache<int, maptypes::MapApproachLeg> approachLegCache, transitionLegCache;
 
 };
 

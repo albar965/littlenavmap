@@ -1318,8 +1318,9 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& html) const
 {
-  head(html, tr("Flight Plan Point:"));
-  html.brText(userpoint.name);
+  head(html, tr("User point: ") + userpoint.name);
+  if(userpoint.routeIndex >= 0)
+    html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,

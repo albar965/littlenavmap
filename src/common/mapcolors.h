@@ -86,6 +86,9 @@ const QColor highlightBackColor = QColor(Qt::black);
 const QColor highlightColor = QColor(Qt::yellow);
 const QColor highlightColorFast = QColor(Qt::darkYellow);
 
+const QColor highlightApproachColor = QColor(150, 150, 255);
+const QColor highlightApproachColorFast = QColor(0, 0, 150);
+
 /* Flight plan line colors */
 const QColor routeOutlineColor = QColor(Qt::black);
 const QColor routeDragColor = QColor(Qt::darkYellow);
