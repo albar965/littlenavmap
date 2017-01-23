@@ -73,10 +73,11 @@ enum TextAttribute
   BOLD = 0x01,
   ITALIC = 0x02,
   UNDERLINE = 0x04,
-  RIGHT = 0x08,
-  LEFT = 0x10,
-  CENTER = 0x20,
-  ROUTE_BG_COLOR = 0x40 /* Use light yellow background for route objects */
+  OVERLINE = 0x08,
+  RIGHT = 0x10,
+  LEFT = 0x20,
+  CENTER = 0x40,
+  ROUTE_BG_COLOR = 0x80 /* Use light yellow background for route objects */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);

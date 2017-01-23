@@ -99,14 +99,14 @@ public:
     return highlights;
   }
 
-  maptypes::MapSearchResult& getApproachHighlights()
+  maptypes::MapSearchResult& getApproachLegHighlights()
   {
-    return approachHighlights;
+    return approachLegHighlights;
   }
 
-  const maptypes::MapSearchResult& getApproachHighlights() const
+  const maptypes::MapSearchResult& getApproachLegHighlights() const
   {
-    return approachHighlights;
+    return approachLegHighlights;
   }
 
   /* Get range rings */
@@ -156,16 +156,38 @@ public:
     lastSimData = data;
   }
 
+  const maptypes::MapApproachLegList& getApproachHighlight() const
+  {
+    return approachHighlight;
+  }
+
+  maptypes::MapApproachLegList& getApproachHighlight()
+  {
+    return approachHighlight;
+  }
+
+  const maptypes::MapApproachLegList& getTransitionHighlight() const
+  {
+    return transitionHighlight;
+  }
+
+  maptypes::MapApproachLegList& getTransitionHighlight()
+  {
+    return transitionHighlight;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
-  void getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+  void getNearestHighlights(const maptypes::MapSearchResult& from, int xs, int ys, int maxDistance,
+                            maptypes::MapSearchResult& result);
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;
 
-  maptypes::MapSearchResult highlights, approachHighlights;
+  maptypes::MapSearchResult highlights, approachLegHighlights;
+  maptypes::MapApproachLegList approachHighlight, transitionHighlight;
 
   QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;

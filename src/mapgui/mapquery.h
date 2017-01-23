@@ -58,6 +58,7 @@ public:
   void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);
 
   void getAirportById(maptypes::MapAirport& airport, int airportId);
+  maptypes::MapAirport getAirportById(int airportId);
 
   void getAirportByIdent(maptypes::MapAirport& airport, const QString& ident);
 
@@ -80,6 +81,13 @@ public:
   /* If waypoint is of type NDB get the related NDB object */
   void getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId);
   void getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos);
+
+  /* Get map objects by unique database id  */
+  maptypes::MapVor getVorById(int id);
+  maptypes::MapNdb getNdbById(int id);
+  maptypes::MapIls getIlsById(int id);
+  maptypes::MapWaypoint getWaypointById(int id);
+  maptypes::MapRunwayEnd getRunwayEndById(int id);
 
   /*
    * Get a map object by type, ident and region

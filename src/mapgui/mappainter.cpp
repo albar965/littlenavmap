@@ -28,6 +28,30 @@
 using namespace Marble;
 using namespace atools::geo;
 
+void PaintContext::szFont(float scale) const
+{
+  QFont font = painter->font();
+  if(font.pixelSize() == -1)
+  {
+    double size = szF(scale, defaultFont.pointSizeF());
+    if(atools::almostNotEqual(size, font.pointSizeF()))
+    {
+      font.setPointSizeF(size);
+      painter->setFont(font);
+    }
+  }
+  else
+  {
+    int size = static_cast<int>(std::round(sz(scale, defaultFont.pixelSize())));
+    if(size != defaultFont.pixelSize())
+    {
+      font.setPixelSize(size);
+      painter->setFont(font);
+    }
+  }
+}
+
+// =================================================
 MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery),
     scale(mapScale)
@@ -258,25 +282,14 @@ bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2, GeoPainter *
   return false;
 }
 
-void PaintContext::szFont(float scale) const
+void MapPainter::drawLineString(const Marble::GeoDataLineString& linestring, const PaintContext *context)
 {
-  QFont font = painter->font();
-  if(font.pixelSize() == -1)
+  GeoDataLineString ls;
+  ls.setTessellate(true);
+  for(int i = 1; i < linestring.size(); i++)
   {
-    double size = szF(scale, defaultFont.pointSizeF());
-    if(atools::almostNotEqual(size, font.pointSizeF()))
-    {
-      font.setPointSizeF(size);
-      painter->setFont(font);
-    }
-  }
-  else
-  {
-    int size = static_cast<int>(std::round(sz(scale, defaultFont.pixelSize())));
-    if(size != defaultFont.pixelSize())
-    {
-      font.setPixelSize(size);
-      painter->setFont(font);
-    }
+    ls.clear();
+    ls << linestring.at(i - 1) << linestring.at(i);
+    context->painter->drawPolyline(ls);
   }
 }

@@ -914,9 +914,27 @@ const maptypes::MapSearchResult& MapWidget::getSearchHighlights() const
   return screenIndex->getSearchHighlights();
 }
 
-const maptypes::MapSearchResult& MapWidget::getApproachHighlights() const
+const maptypes::MapSearchResult& MapWidget::getApproachLegHighlights() const
 {
-  return screenIndex->getApproachHighlights();
+  return screenIndex->getApproachLegHighlights();
+}
+
+const maptypes::MapApproachLegList& MapWidget::getApproachHighlight() const
+{
+  return screenIndex->getApproachHighlight();
+}
+
+const maptypes::MapApproachLegList& MapWidget::getTransitionHighlight() const
+{
+  return screenIndex->getTransitionHighlight();
+}
+
+void MapWidget::changeApproachTransitionHighlight(const maptypes::MapApproachLegList& transition,
+                                                  const maptypes::MapApproachLegList& approach)
+{
+  screenIndex->getTransitionHighlight() = transition;
+  screenIndex->getApproachHighlight() = approach;
+  update();
 }
 
 void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)
@@ -925,9 +943,9 @@ void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& position
   update();
 }
 
-void MapWidget::changeApproachHighlights(const maptypes::MapSearchResult& positions)
+void MapWidget::changeApproachLegHighlights(const maptypes::MapSearchResult& positions)
 {
-  screenIndex->getApproachHighlights() = positions;
+  screenIndex->getApproachLegHighlights() = positions;
   update();
 }
 

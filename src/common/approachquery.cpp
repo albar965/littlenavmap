@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "common/approachquery.h"
+#include "mapgui/mapquery.h"
 
 #include "sql/sqlquery.h"
 
@@ -71,10 +72,9 @@ const maptypes::MapApproachLeg *buildEntry(QCache<int, maptypes::MapApproachLeg>
   }
 }
 
-ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
+  : db(sqlDb), mapQuery(mapQueryParam)
 {
-
 }
 
 ApproachQuery::~ApproachQuery()
@@ -161,32 +161,30 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   entry.alt2 = query->value("altitude2").toFloat();
 
   if(entry.fixType == "W" || entry.fixType == "TW")
-    entry.fixPos = buildPos(waypointQuery, entry.navId);
-  else if(entry.fixType == "N" || entry.fixType == "TN")
-    entry.fixPos = buildPos(ndbQuery, entry.navId);
-  else if(entry.fixType == "V")
-    entry.fixPos = buildPos(vorQuery, entry.navId);
-  else if(entry.fixType == "L")
-    entry.fixPos = buildPos(ilsQuery, entry.navId);
-  else if(entry.fixType == "R")
-    entry.fixPos = buildPos(runwayQuery, entry.navId);
-}
-
-atools::geo::Pos ApproachQuery::buildPos(atools::sql::SqlQuery *query, int id)
-{
-  Pos pos;
-
-  query->bindValue(":id", id);
-  query->exec();
-
-  if(query->next())
   {
-    pos.setLonX(query->value("lonx").toFloat());
-    pos.setLatY(query->value("laty").toFloat());
+    entry.waypoint = mapQuery->getWaypointById(entry.navId);
+    entry.fixPos = entry.waypoint.position;
   }
-  query->finish();
-
-  return pos;
+  else if(entry.fixType == "N" || entry.fixType == "TN")
+  {
+    entry.ndb = mapQuery->getNdbById(entry.navId);
+    entry.fixPos = entry.ndb.position;
+  }
+  else if(entry.fixType == "V")
+  {
+    entry.vor = mapQuery->getVorById(entry.navId);
+    entry.fixPos = entry.vor.position;
+  }
+  else if(entry.fixType == "L")
+  {
+    entry.ils = mapQuery->getIlsById(entry.navId);
+    entry.fixPos = entry.ils.position;
+  }
+  else if(entry.fixType == "R")
+  {
+    entry.runwayEnd = mapQuery->getRunwayEndById(entry.navId);
+    entry.fixPos = entry.runwayEnd.position;
+  }
 }
 
 void ApproachQuery::initQueries()
@@ -204,24 +202,6 @@ void ApproachQuery::initQueries()
 
   transitionLegQuery = new SqlQuery(db);
   transitionLegQuery->prepare("select * from transition_leg where transition_leg_id = :id");
-
-  vorQuery = new SqlQuery(db);
-  vorQuery->prepare("select lonx, laty from vor where vor_id = :id");
-
-  ndbQuery = new SqlQuery(db);
-  ndbQuery->prepare("select lonx, laty from ndb where ndb_id = :id");
-
-  waypointQuery = new SqlQuery(db);
-  waypointQuery->prepare("select lonx, laty from waypoint where waypoint_id = :id");
-
-  ilsQuery = new SqlQuery(db);
-  ilsQuery->prepare("select lonx, laty from ils where ils_id = :id");
-
-  runwayQuery = new SqlQuery(db);
-  runwayQuery->prepare(
-    "select secondary_lonx as lonx, secondary_laty as laty from runway where secondary_end_id = :id "
-    "union "
-    "select primary_lonx as lonx, primary_laty as laty from runway where primary_end_id = :id ");
 }
 
 void ApproachQuery::deInitQueries()
@@ -241,19 +221,4 @@ void ApproachQuery::deInitQueries()
   transitionLegCache.clear();
   delete transitionLegQuery;
   transitionLegQuery = nullptr;
-
-  delete vorQuery;
-  vorQuery = nullptr;
-
-  delete ndbQuery;
-  ndbQuery = nullptr;
-
-  delete waypointQuery;
-  waypointQuery = nullptr;
-
-  delete ilsQuery;
-  ilsQuery = nullptr;
-
-  delete runwayQuery;
-  runwayQuery = nullptr;
 }

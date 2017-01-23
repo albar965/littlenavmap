@@ -178,6 +178,8 @@ protected:
                         Marble::GeoPainter *painter, float distanceMeter, int textWidth, int textHeight,
                         int& x, int& y);
 
+  void drawLineString(const Marble::GeoDataLineString& linestring, const PaintContext *context);
+
   /* Evaluate 50 text placement positions along line */
   const float FIND_TEXT_POS_STEP = 0.02f;
 

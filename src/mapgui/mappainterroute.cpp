@@ -33,6 +33,8 @@
 
 using namespace Marble;
 using namespace atools::geo;
+using maptypes::MapApproachLeg;
+using maptypes::MapApproachLegList;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                  RouteController *controller)
@@ -55,6 +57,7 @@ void MapPainterRoute::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
 
   paintRoute(context);
+  paintApproach(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -105,6 +108,16 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
+  // Check if there is any magnetic variance on the route
+  bool foundMagvarObject = false;
+  for(const RouteMapObject& obj : routeMapObjects)
+  {
+    // Route contains correct magvar if any of these objects were found
+    if(obj.getMapObjectType() == maptypes::AIRPORT || obj.getMapObjectType() == maptypes::VOR ||
+       obj.getMapObjectType() == maptypes::NDB || obj.getMapObjectType() == maptypes::WAYPOINT)
+      foundMagvarObject = true;
+  }
+
   // Collect coordinates for text placement and lines first
   QList<QPoint> textCoords;
   QList<float> textBearing;
@@ -116,16 +129,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   QBitArray visibleStartPoints(routeMapObjects.size(), false);
   GeoDataLineString linestring;
   linestring.setTessellate(true);
-
-  // Check if there is any magnetic variance on the route
-  bool foundMagvarObject = false;
-  for(const RouteMapObject& obj : routeMapObjects)
-  {
-    // Route contains correct magvar if any of these objects were found
-    if(obj.getMapObjectType() == maptypes::AIRPORT || obj.getMapObjectType() == maptypes::VOR ||
-       obj.getMapObjectType() == maptypes::NDB || obj.getMapObjectType() == maptypes::WAYPOINT)
-      foundMagvarObject = true;
-  }
 
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
@@ -175,22 +178,14 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     startPoints.append(QPoint(x, y));
   }
 
-  GeoDataLineString ls;
-  ls.setTessellate(true);
-
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 6);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
   // Draw lines separately to avoid omission in mercator near anti meridian
   // Draw outer line
   context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
                                 Qt::RoundCap, Qt::RoundJoin));
-  for(int i = 1; i < linestring.size(); i++)
-  {
-    ls.clear();
-    ls << linestring.at(i - 1) << linestring.at(i);
-    context->painter->drawPolyline(ls);
-  }
+  drawLineString(linestring, context);
 
   const Pos& pos = mapWidget->getUserAircraft().getPosition();
 
@@ -204,6 +199,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw innner line
   context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  GeoDataLineString ls;
+  ls.setTessellate(true);
   for(int i = 1; i < linestring.size(); i++)
   {
     ls.clear();
@@ -266,75 +263,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Draw airport and navaid symbols
-  int i = 0;
-  for(const QPoint& pt : startPoints)
-  {
-    if(visibleStartPoints.testBit(i))
-    {
-      int x = pt.x();
-      int y = pt.y();
-      const RouteMapObject& obj = routeMapObjects.at(i);
-      maptypes::MapObjectTypes type = obj.getMapObjectType();
-      switch(type)
-      {
-        case maptypes::INVALID:
-          // name and region not found in database
-          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y);
-          break;
-        case maptypes::USER:
-          paintUserpoint(context, x, y);
-          break;
-        case maptypes::AIRPORT:
-          paintAirport(context, x, y, obj.getAirport());
-          break;
-        case maptypes::VOR:
-          paintVor(context, x, y, obj.getVor());
-          break;
-        case maptypes::NDB:
-          paintNdb(context, x, y);
-          break;
-        case maptypes::WAYPOINT:
-          paintWaypoint(context, QColor(), x, y);
-          break;
-      }
-    }
-    i++;
-  }
+  drawSymbols(context, routeMapObjects, visibleStartPoints, startPoints);
 
   // Draw symbol text
-  i = 0;
-  for(const QPoint& pt : startPoints)
-  {
-    if(visibleStartPoints.testBit(i))
-    {
-      int x = pt.x();
-      int y = pt.y();
-      const RouteMapObject& obj = routeMapObjects.at(i);
-      maptypes::MapObjectTypes type = obj.getMapObjectType();
-      switch(type)
-      {
-        case maptypes::INVALID:
-          paintText(context, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
-          break;
-        case maptypes::USER:
-          paintText(context, mapcolors::routeUserPointColor, x, y, obj.getIdent());
-          break;
-        case maptypes::AIRPORT:
-          paintAirportText(context, x, y, obj.getAirport());
-          break;
-        case maptypes::VOR:
-          paintVorText(context, x, y, obj.getVor());
-          break;
-        case maptypes::NDB:
-          paintNdbText(context, x, y, obj.getNdb());
-          break;
-        case maptypes::WAYPOINT:
-          paintWaypointText(context, x, y, obj.getWaypoint());
-          break;
-      }
-    }
-    i++;
-  }
+  drawSymbolText(context, routeMapObjects, visibleStartPoints, startPoints);
 
   if(routeMapObjects.size() >= 2)
   {
@@ -357,6 +289,90 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
                              pt.x() + radius, pt.y() + radius,
                              textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
     }
+  }
+}
+
+void MapPainterRoute::paintApproach(const PaintContext *context,
+                                    const maptypes::MapApproachLegList& transition,
+                                    const maptypes::MapApproachLegList& approach)
+{
+  GeoDataLineString linestring, missedLineString;
+  linestring.setTessellate(true);
+  missedLineString.setTessellate(true);
+
+  for(const MapApproachLeg& leg : transition.legs)
+  {
+    if(leg.fixPos.isValid())
+      linestring.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
+  }
+
+  for(const MapApproachLeg& leg : approach.legs)
+  {
+    if(leg.missed)
+    {
+      if(leg.fixPos.isValid())
+        missedLineString.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
+      break;
+    }
+    if(leg.fixPos.isValid())
+      linestring.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
+  }
+
+  for(const MapApproachLeg& leg : approach.legs)
+  {
+    if(leg.missed)
+      if(leg.fixPos.isValid())
+        missedLineString.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
+  }
+
+  GeoDataLineString ls;
+  ls.setTessellate(true);
+
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 5);
+
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth, Qt::SolidLine,
+                                Qt::RoundCap, Qt::RoundJoin));
+  drawLineString(linestring, context);
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
+                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  drawLineString(linestring, context);
+
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth, Qt::DotLine,
+                                Qt::RoundCap, Qt::RoundJoin));
+  drawLineString(missedLineString, context);
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
+                                Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
+  drawLineString(missedLineString, context);
+
+  for(const MapApproachLeg& leg : approach.legs)
+    paintApproachPoint(context, leg);
+
+  for(const MapApproachLeg& leg : transition.legs)
+    paintApproachPoint(context, leg);
+}
+
+void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapApproachLeg& leg)
+{
+  int x, y;
+  if(leg.waypoint.position.isValid() && wToS(leg.waypoint.position, x, y))
+  {
+    paintWaypoint(context, QColor(), x, y);
+    paintWaypointText(context, x, y, leg.waypoint);
+  }
+  else if(leg.ndb.position.isValid() && wToS(leg.ndb.position, x, y))
+  {
+    paintNdb(context, x, y);
+    paintNdbText(context, x, y, leg.ndb);
+  }
+  else if(leg.vor.position.isValid() && wToS(leg.vor.position, x, y))
+  {
+    paintVor(context, x, y, leg.vor);
+    paintVorText(context, x, y, leg.vor);
+  }
+  else if(wToS(leg.fixPos, x, y))
+  {
+    paintUserpoint(context, x, y);
   }
 }
 
@@ -456,4 +472,81 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
     symbolPainter->textBox(context->painter, {text}, color,
                            x + size / 2 + 2,
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+}
+
+void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+                                  const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints)
+{
+  int i = 0;
+  for(const QPoint& pt : startPoints)
+  {
+    if(visibleStartPoints.testBit(i))
+    {
+      int x = pt.x();
+      int y = pt.y();
+      const RouteMapObject& obj = routeMapObjects.at(i);
+      maptypes::MapObjectTypes type = obj.getMapObjectType();
+      switch(type)
+      {
+        case maptypes::INVALID:
+          // name and region not found in database
+          paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y);
+          break;
+        case maptypes::USER:
+          paintUserpoint(context, x, y);
+          break;
+        case maptypes::AIRPORT:
+          paintAirport(context, x, y, obj.getAirport());
+          break;
+        case maptypes::VOR:
+          paintVor(context, x, y, obj.getVor());
+          break;
+        case maptypes::NDB:
+          paintNdb(context, x, y);
+          break;
+        case maptypes::WAYPOINT:
+          paintWaypoint(context, QColor(), x, y);
+          break;
+      }
+    }
+    i++;
+  }
+}
+
+void MapPainterRoute::drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+                                     const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints)
+{
+  int i = 0;
+  for(const QPoint& pt : startPoints)
+  {
+    if(visibleStartPoints.testBit(i))
+    {
+      int x = pt.x();
+      int y = pt.y();
+      const RouteMapObject& obj = routeMapObjects.at(i);
+      maptypes::MapObjectTypes type = obj.getMapObjectType();
+      switch(type)
+      {
+        case maptypes::INVALID:
+          paintText(context, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
+          break;
+        case maptypes::USER:
+          paintText(context, mapcolors::routeUserPointColor, x, y, obj.getIdent());
+          break;
+        case maptypes::AIRPORT:
+          paintAirportText(context, x, y, obj.getAirport());
+          break;
+        case maptypes::VOR:
+          paintVorText(context, x, y, obj.getVor());
+          break;
+        case maptypes::NDB:
+          paintNdbText(context, x, y, obj.getNdb());
+          break;
+        case maptypes::WAYPOINT:
+          paintWaypointText(context, x, y, obj.getWaypoint());
+          break;
+      }
+    }
+    i++;
+  }
 }

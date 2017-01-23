@@ -26,6 +26,7 @@ class GeoDataLineString;
 
 class MapWidget;
 class RouteController;
+class RouteMapObjectList;
 
 /*
  * Draws the flight plan line and all enroute navaid and departure and destination airports (airport symbols only).
@@ -51,18 +52,23 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
-
+  void paintApproach(const PaintContext *context, const maptypes::MapApproachLegList& transition,
+                     const maptypes::MapApproachLegList& approach);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);
   void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
-
   void paintAirportText(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
-
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QString& text);
-
   void paintUserpoint(const PaintContext *context, int x, int y);
 
   static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
+  void drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+                   const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
+
+  void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+                      const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
+
+  void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachLeg& leg);
 
 };
 

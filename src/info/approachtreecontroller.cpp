@@ -40,7 +40,6 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
 {
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ApproachTreeController::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ApproachTreeController::itemDoubleClicked);
-  connect(treeWidget, &QTreeWidget::itemActivated, this, &ApproachTreeController::itemActivated);
   connect(treeWidget, &QTreeWidget::itemExpanded, this, &ApproachTreeController::itemExpanded);
   connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &ApproachTreeController::contextMenu);
 
@@ -55,7 +54,7 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
   transitionFont.setWeight(QFont::Bold);
 
   legFont = root->font(0);
-  legFont.setPointSizeF(legFont.pointSizeF() * 0.85f);
+  // legFont.setPointSizeF(legFont.pointSizeF() * 0.85f);
 
   missedLegFont = legFont;
 
@@ -136,6 +135,7 @@ void ApproachTreeController::fillApproachTreeWidget(int airportId)
 
 void ApproachTreeController::clear()
 {
+  treeWidget->clearSelection();
   treeWidget->clear();
   itemIndex.clear();
   itemLoadedIndex.clear();
@@ -148,17 +148,26 @@ void ApproachTreeController::clear()
 
 void ApproachTreeController::itemSelectionChanged()
 {
-  for(const QTreeWidgetItem *item : treeWidget->selectedItems())
+  QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
+  if(items.isEmpty())
   {
-    const MapApproachRef& entry = itemIndex.at(item->type());
+    emit approachSelected(maptypes::MapApproachRef());
+    emit approachLegSelected(maptypes::MapApproachRef());
+  }
+  else
+  {
+    for(const QTreeWidgetItem *item : items)
+    {
+      const MapApproachRef& entry = itemIndex.at(item->type());
 
-    qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
+      qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
 
-    if(entry.approachId != -1)
-      emit approachSelected(entry);
+      if(entry.approachId != -1)
+        emit approachSelected(entry);
 
-    if(entry.legId != -1)
-      emit approachLegSelected(entry);
+      if(entry.legId != -1)
+        emit approachLegSelected(entry);
+    }
   }
 }
 
@@ -167,7 +176,6 @@ void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column
   qDebug() << Q_FUNC_INFO;
   Q_UNUSED(column);
   Q_UNUSED(item);
-
 }
 
 void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
@@ -218,13 +226,6 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
   }
 }
 
-void ApproachTreeController::itemActivated(QTreeWidgetItem *item, int column)
-{
-  qDebug() << Q_FUNC_INFO;
-  Q_UNUSED(column);
-  Q_UNUSED(item);
-}
-
 void ApproachTreeController::contextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO;
@@ -243,9 +244,12 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachExpandAll);
   menu.addAction(ui->actionInfoApproachCollapseAll);
   menu.addSeparator();
+  menu.addAction(ui->actionInfoApproachClear);
+  menu.addSeparator();
   menu.addAction(ui->actionInfoApproachShow);
   menu.addAction(ui->actionInfoApproachAddToFlightPlan);
 
+  ui->actionInfoApproachClear->setDisabled(treeWidget->selectedItems().isEmpty());
   ui->actionInfoApproachShow->setDisabled(true);
   ui->actionInfoApproachAddToFlightPlan->setDisabled(true);
 
@@ -286,6 +290,8 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     treeWidget->expandAll();
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
+  else if(action == ui->actionInfoApproachClear)
+    treeWidget->clearSelection();
   else if(action == ui->actionInfoApproachShow)
     emit approachShowOnMap(itemIndex.at(item->type()));
   else if(action == ui->actionInfoApproachAddToFlightPlan)
@@ -366,9 +372,6 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
   }
 
   parentItem->addChild(item);
-
-  qDebug() << leg.legId << leg.missed << maptypes::legType(leg.type)
-           << leg.fixType << leg.fixIdent << leg.fixPos;
 }
 
 void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
@@ -400,7 +403,4 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
   }
 
   parentItem->addChild(item);
-
-  qDebug() << leg.legId << leg.missed << maptypes::legType(leg.type)
-           << leg.fixType << leg.fixIdent << leg.fixPos;
 }

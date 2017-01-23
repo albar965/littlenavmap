@@ -64,6 +64,13 @@ void MapQuery::getAirportAdminNamesById(int airportId, QString& city, QString& s
   airportAdminByIdQuery->finish();
 }
 
+maptypes::MapAirport MapQuery::getAirportById(int airportId)
+{
+  maptypes::MapAirport airport;
+  getAirportById(airport, airportId);
+  return airport;
+}
+
 void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
 {
   airportByIdQuery->bindValue(":id", airportId);
@@ -277,76 +284,105 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
 {
   if(type == maptypes::AIRPORT)
   {
-    airportByIdQuery->bindValue(":id", id);
-    airportByIdQuery->exec();
-    if(airportByIdQuery->next())
-    {
-      maptypes::MapAirport ap;
-      mapTypesFactory->fillAirport(airportByIdQuery->record(), ap, true);
-      result.airports.append(ap);
-    }
-    airportByIdQuery->finish();
+    maptypes::MapAirport airport = getAirportById(id);
+    if(airport.position.isValid())
+      result.airports.append(airport);
   }
   else if(type == maptypes::VOR)
   {
-    vorByIdQuery->bindValue(":id", id);
-    vorByIdQuery->exec();
-    if(vorByIdQuery->next())
-    {
-      maptypes::MapVor vor;
-      mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
+    maptypes::MapVor vor = getVorById(id);
+    if(vor.position.isValid())
       result.vors.append(vor);
-    }
-    vorByIdQuery->finish();
   }
   else if(type == maptypes::NDB)
   {
-    ndbByIdQuery->bindValue(":id", id);
-    ndbByIdQuery->exec();
-    if(ndbByIdQuery->next())
-    {
-      maptypes::MapNdb ndb;
-      mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
+    maptypes::MapNdb ndb = getNdbById(id);
+    if(ndb.position.isValid())
       result.ndbs.append(ndb);
-    }
-    ndbByIdQuery->finish();
   }
   else if(type == maptypes::WAYPOINT)
   {
-    waypointByIdQuery->bindValue(":id", id);
-    waypointByIdQuery->exec();
-    if(waypointByIdQuery->next())
-    {
-      maptypes::MapWaypoint wp;
-      mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
-      result.waypoints.append(wp);
-    }
-    waypointByIdQuery->finish();
+    maptypes::MapWaypoint waypoint = getWaypointById(id);
+    if(waypoint.position.isValid())
+      result.waypoints.append(waypoint);
   }
   else if(type == maptypes::ILS)
   {
-    ilsByIdQuery->bindValue(":id", id);
-    ilsByIdQuery->exec();
-    if(ilsByIdQuery->next())
-    {
-      maptypes::MapIls ils;
-      mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
+    maptypes::MapIls ils = getIlsById(id);
+    if(ils.position.isValid())
       result.ils.append(ils);
-    }
-    ilsByIdQuery->finish();
   }
   else if(type == maptypes::RUNWAYEND)
   {
-    runwayEndByIdQuery->bindValue(":id", id);
-    runwayEndByIdQuery->exec();
-    if(runwayEndByIdQuery->next())
-    {
-      maptypes::MapRunwayEnd end;
-      mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end);
+    maptypes::MapRunwayEnd end = getRunwayEndById(id);
+    if(end.position.isValid())
       result.runwayEnds.append(end);
-    }
-    runwayEndByIdQuery->finish();
   }
+}
+
+maptypes::MapVor MapQuery::getVorById(int id)
+{
+  maptypes::MapVor vor;
+  vorByIdQuery->bindValue(":id", id);
+  vorByIdQuery->exec();
+  if(vorByIdQuery->next())
+  {
+    mapTypesFactory->fillVor(vorByIdQuery->record(), vor);
+  }
+  vorByIdQuery->finish();
+  return vor;
+}
+
+maptypes::MapNdb MapQuery::getNdbById(int id)
+{
+  maptypes::MapNdb ndb;
+  ndbByIdQuery->bindValue(":id", id);
+  ndbByIdQuery->exec();
+  if(ndbByIdQuery->next())
+  {
+    mapTypesFactory->fillNdb(ndbByIdQuery->record(), ndb);
+  }
+  ndbByIdQuery->finish();
+  return ndb;
+}
+
+maptypes::MapIls MapQuery::getIlsById(int id)
+{
+  maptypes::MapIls ils;
+  ilsByIdQuery->bindValue(":id", id);
+  ilsByIdQuery->exec();
+  if(ilsByIdQuery->next())
+  {
+    mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
+  }
+  ilsByIdQuery->finish();
+  return ils;
+}
+
+maptypes::MapWaypoint MapQuery::getWaypointById(int id)
+{
+  maptypes::MapWaypoint wp;
+  waypointByIdQuery->bindValue(":id", id);
+  waypointByIdQuery->exec();
+  if(waypointByIdQuery->next())
+  {
+    mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp);
+  }
+  waypointByIdQuery->finish();
+  return wp;
+}
+
+maptypes::MapRunwayEnd MapQuery::getRunwayEndById(int id)
+{
+  maptypes::MapRunwayEnd end;
+  runwayEndByIdQuery->bindValue(":id", id);
+  runwayEndByIdQuery->exec();
+  if(runwayEndByIdQuery->next())
+  {
+    mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end);
+  }
+  runwayEndByIdQuery->finish();
+  return end;
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,

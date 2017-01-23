@@ -44,13 +44,10 @@ public:
 private:
   void paintMark(const PaintContext *context);
   void paintHome(const PaintContext *context);
-  void paintHighlights(PaintContext* context);
-
+  void paintHighlights(PaintContext *context);
   void paintRangeRings(const PaintContext *context);
-
   void paintDistanceMarkers(const PaintContext *context);
   void paintRouteDrag(const PaintContext *context);
-
   void paintMagneticPoles(const PaintContext *context);
 
 };

@@ -66,7 +66,6 @@ signals:
 private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
-  void itemActivated(QTreeWidgetItem *item, int column);
   void itemExpanded(QTreeWidgetItem *item);
   void contextMenu(const QPoint& pos);
 

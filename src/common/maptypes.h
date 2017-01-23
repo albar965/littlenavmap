@@ -226,6 +226,17 @@ struct MapRunwayEnd
   float heading;
   atools::geo::Pos position;
   bool secondary;
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return -1;
+  }
+
 };
 
 /* Apron including full geometry */
@@ -502,13 +513,20 @@ struct MapApproachLeg
   float course, dist, time, theta, rho, alt1, alt2;
   QString type, fixType, fixIdent, recFixType, recFixIdent, altDescriptor, turnDirection;
   atools::geo::Pos fixPos, recommendedFixPos;
+
+  MapWaypoint waypoint;
+  MapVor vor;
+  MapNdb ndb;
+  MapIls ils;
+  MapRunwayEnd runwayEnd;
+
   bool missed, flyover, trueCourse;
 };
 
 struct MapApproachLegList
 {
-  atools::geo::Rect bounding;
   QVector<MapApproachLeg> legs;
+  atools::geo::Rect bounding;
 };
 
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */

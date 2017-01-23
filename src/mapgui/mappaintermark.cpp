@@ -59,7 +59,7 @@ void MapPainterMark::render(PaintContext *context)
   paintRangeRings(context);
   paintDistanceMarkers(context);
   paintRouteDrag(context);
-  paintMagneticPoles(context);
+  // paintMagneticPoles(context);
 }
 
 /* Draw black yellow cross for search distance marker */
@@ -170,7 +170,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const MapSearchResult& approachHighlightResults = mapWidget->getApproachHighlights();
+  const MapSearchResult& approachHighlightResults = mapWidget->getApproachLegHighlights();
 
   positions.clear();
 

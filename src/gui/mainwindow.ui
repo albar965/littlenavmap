@@ -5116,6 +5116,21 @@
     <string>Add to flight plan</string>
    </property>
   </action>
+  <action name="actionInfoApproachClear">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Clear &amp;Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear selection and preview on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Clear all search filters</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

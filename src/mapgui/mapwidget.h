@@ -104,7 +104,9 @@ public:
   /* Update hightlighted objects */
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeApproachHighlights(const maptypes::MapSearchResult& positions);
+  void changeApproachLegHighlights(const maptypes::MapSearchResult& positions);
+  void changeApproachTransitionHighlight(const maptypes::MapApproachLegList& transition,
+                                         const maptypes::MapApproachLegList& approach);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -139,7 +141,10 @@ public:
 
   /* Getters used by the painters */
   const maptypes::MapSearchResult& getSearchHighlights() const;
-  const maptypes::MapSearchResult& getApproachHighlights() const;
+  const maptypes::MapSearchResult& getApproachLegHighlights() const;
+
+  const maptypes::MapApproachLegList& getApproachHighlight() const;
+  const maptypes::MapApproachLegList& getTransitionHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 
@@ -270,6 +275,7 @@ public:
   };
 
   void restoreHistoryState();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated(int truncatedTo);

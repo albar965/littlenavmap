@@ -30,10 +30,12 @@ class SqlQuery;
 }
 }
 
+class MapQuery;
+
 class ApproachQuery
 {
 public:
-  ApproachQuery(atools::sql::SqlDatabase *sqlDb);
+  ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
   virtual ~ApproachQuery();
 
   /* Create all queries */
@@ -48,21 +50,18 @@ public:
   const maptypes::MapApproachLegList *getTransitionLegs(int transitionId);
 
 private:
-  atools::geo::Pos buildPos(atools::sql::SqlQuery *query, int id);
-
   void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry);
   maptypes::MapApproachLeg buildTransitionLegEntry(atools::sql::SqlQuery *query);
   maptypes::MapApproachLeg buildApproachLegEntry(atools::sql::SqlQuery *query);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachQuery = nullptr, *transitionQuery = nullptr,
-  *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
-  *vorQuery = nullptr, *ndbQuery = nullptr, *waypointQuery = nullptr, *ilsQuery = nullptr,
-  *runwayQuery = nullptr;
+  *approachLegQuery = nullptr, *transitionLegQuery = nullptr;
 
   QCache<int, maptypes::MapApproachLegList> approachCache, transitionCache;
   QCache<int, maptypes::MapApproachLeg> approachLegCache, transitionLegCache;
 
+  MapQuery *mapQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_APPROACHQUERY_H

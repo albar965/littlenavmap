@@ -83,7 +83,8 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
 
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
-  connect(approachTree, &ApproachTreeController::approachSelected, this, &InfoController::approachSelected);
+  connect(approachTree, &ApproachTreeController::approachSelected, this,
+          &InfoController::approachSelectedInTree);
   connect(approachTree, &ApproachTreeController::approachLegSelected, this,
           &InfoController::approachLegSelected);
 }
@@ -298,7 +299,7 @@ void InfoController::updateAirportInternal(bool newAirport)
   }
 }
 
-void InfoController::approachSelected(maptypes::MapApproachRef mapApproach)
+void InfoController::approachSelectedInTree(maptypes::MapApproachRef mapApproach)
 {
   if(!currentSearchResult.airports.isEmpty())
   {
@@ -309,6 +310,7 @@ void InfoController::approachSelected(maptypes::MapApproachRef mapApproach)
                               mapApproach.runwayEndId, mapApproach.approachId, mapApproach.transitionId);
     ui->textBrowserApproachInfo->setText(html.getHtml());
   }
+  emit approachSelected(mapApproach);
 }
 
 void InfoController::clearInfoTextBrowsers()
@@ -403,6 +405,8 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     currentSearchResult.vorIds.clear();
     currentSearchResult.ndbs.clear();
     currentSearchResult.ndbIds.clear();
+    currentSearchResult.ils.clear();
+    currentSearchResult.runwayEnds.clear();
     currentSearchResult.waypoints.clear();
     currentSearchResult.waypointIds.clear();
     currentSearchResult.airways.clear();

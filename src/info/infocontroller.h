@@ -99,6 +99,7 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   void approachLegSelected(maptypes::MapApproachRef);
+  void approachSelected(maptypes::MapApproachRef);
 
 private:
   /* Do not update aircraft information more than every 0.5 seconds */
@@ -111,7 +112,7 @@ private:
   void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
-  void approachSelected(maptypes::MapApproachRef mapApproach);
+  void approachSelectedInTree(maptypes::MapApproachRef mapApproach);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;

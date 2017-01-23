@@ -132,7 +132,7 @@ MainWindow::MainWindow()
     infoQuery = new InfoQuery(databaseManager->getDatabase());
     infoQuery->initQueries();
 
-    approachQuery = new ApproachQuery(databaseManager->getDatabase());
+    approachQuery = new ApproachQuery(databaseManager->getDatabase(), mapQuery);
     approachQuery->initQueries();
 
     // Add actions for flight simulator database switch in main menu
@@ -867,7 +867,8 @@ void MainWindow::connectAllSlots()
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
-  connect(infoController, &InfoController::approachLegSelected, this, &MainWindow::approachSelectionChanged);
+  connect(infoController, &InfoController::approachLegSelected, this, &MainWindow::approachLegSelected);
+  connect(infoController, &InfoController::approachSelected, this, &MainWindow::approachSelected);
 }
 
 /* Update the info weather */
@@ -1475,9 +1476,28 @@ void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, 
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachSelectionChanged(maptypes::MapApproachRef approachRef)
+void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 {
   qDebug() << Q_FUNC_INFO;
+
+  maptypes::MapApproachLegList transition;
+  maptypes::MapApproachLegList approach;
+
+  if(approachRef.approachId != -1)
+    approach = *approachQuery->getApproachLegs(approachRef.approachId);
+
+  if(approachRef.transitionId != -1)
+    transition = *approachQuery->getTransitionLegs(approachRef.transitionId);
+
+  mapWidget->changeApproachTransitionHighlight(transition, approach);
+}
+
+/* Selection in approach view has changed */
+void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  maptypes::MapSearchResult result;
 
   if(approachRef.legId != -1)
   {
@@ -1487,8 +1507,6 @@ void MainWindow::approachSelectionChanged(maptypes::MapApproachRef approachRef)
       leg = approachQuery->getTransitionLeg(approachRef.legId);
     else
       leg = approachQuery->getApproachLeg(approachRef.legId);
-
-    maptypes::MapSearchResult result;
 
     maptypes::MapObjectTypes type;
 
@@ -1503,10 +1521,44 @@ void MainWindow::approachSelectionChanged(maptypes::MapApproachRef approachRef)
     else if(leg->fixType == "R")
       type |= maptypes::RUNWAYEND;
 
-    mapQuery->getMapObjectById(result, type, leg->navId);
+    qDebug()
+    << "approachId" << leg->approachId
+    << "transitionId" << leg->transitionId
+    << "legId" << leg->legId
+    << "type" << leg->type
+    << "missed" << leg->missed;
 
-    mapWidget->changeApproachHighlights(result);
+    qDebug()
+    << "navId" << leg->navId
+    << "fixType" << leg->fixType
+    << "fixIdent" << leg->fixIdent
+    << "fixPos" << leg->fixPos;
+
+    qDebug()
+    << "recNavId" << leg->recNavId
+    << "recFixType" << leg->recFixType
+    << "recFixIdent" << leg->recFixIdent
+    << "recommendedFixPos" << leg->recommendedFixPos;
+
+    qDebug()
+    << "turnDirection" << leg->turnDirection
+    << "flyover" << leg->flyover
+    << "trueCourse" << leg->trueCourse
+    << "course" << leg->course
+    << "theta" << leg->theta
+    << "rho" << leg->rho
+    << "dist" << leg->dist
+    << "time" << leg->time;
+
+    qDebug()
+    << "altDescriptor" << leg->altDescriptor
+    << "alt1" << leg->alt1
+    << "alt2" << leg->alt2;
+
+    mapQuery->getMapObjectById(result, type, leg->navId);
   }
+
+  mapWidget->changeApproachLegHighlights(result);
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
