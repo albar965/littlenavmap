@@ -615,6 +615,9 @@ QString parkingTypeName(const QString& type);
 QString parkingName(const QString& name);
 QString parkingNameNumberType(const maptypes::MapParking& parking);
 
+/* Parking name from PLN to database name */
+QString parkingDatabaseName(const QString& name);
+
 /* Get short name for a parking spot */
 QString parkingShortName(const QString& name);
 

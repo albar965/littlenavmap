@@ -27,7 +27,7 @@
 
 namespace maptypes {
 
-const QHash<QString, QString> surfaceMap(
+const static QHash<QString, QString> surfaceMap(
   {
     {"C", QObject::tr("Concrete")},
     {"G", QObject::tr("Grass")},
@@ -54,7 +54,7 @@ const QHash<QString, QString> surfaceMap(
   });
 
 /* The higher the better */
-const QHash<QString, int> surfaceQualityMap(
+const static QHash<QString, int> surfaceQualityMap(
   {
     {"C", 20},
     {"A", 20},
@@ -80,7 +80,8 @@ const QHash<QString, int> surfaceQualityMap(
     {"INVALID", 0}
   });
 
-const QHash<QString, QString> parkingMapGate(
+/* Short size name for gate and full name for others */
+const static QHash<QString, QString> parkingMapGate(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -99,7 +100,8 @@ const QHash<QString, QString> parkingMapGate(
     {"V", QObject::tr("Vehicles")}
   });
 
-const QHash<QString, QString> parkingMapRamp(
+/* Short size name for parking and full name for others */
+const static QHash<QString, QString> parkingMapRamp(
   {
     {"UNKNOWN", QObject::tr("Unknown")},
     {"RGA", QObject::tr("Ramp GA")},
@@ -117,7 +119,8 @@ const QHash<QString, QString> parkingMapRamp(
     {"V", QObject::tr("Vehicles")}
   });
 
-const QHash<QString, QString> parkingTypeMap(
+/* Full name for all parking including type */
+const static QHash<QString, QString> parkingTypeMap(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -136,7 +139,7 @@ const QHash<QString, QString> parkingTypeMap(
     {"V", QObject::tr("Vehicles")}
   });
 
-const QHash<QString, QString> parkingNameMap(
+const static QHash<QString, QString> parkingNameMap(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"UNKNOWN", QObject::tr("Unknown")},
@@ -180,7 +183,49 @@ const QHash<QString, QString> parkingNameMap(
     {"GZ", QObject::tr("Gate Z")}
   });
 
-const QHash<QString, QString> navTypeNamesVor(
+const static QHash<QString, QString> parkingDatabaseNameMap(
+  {
+    {"NO_PARKING", QObject::tr("NONE")},
+    {"PARKING", QObject::tr("P")},
+    {"N_PARKING", QObject::tr("NP")},
+    {"NE_PARKING", QObject::tr("NEP")},
+    {"E_PARKING", QObject::tr("EP")},
+    {"SE_PARKING", QObject::tr("SEP")},
+    {"S_PARKING", QObject::tr("SP")},
+    {"SW_PARKING", QObject::tr("SWP")},
+    {"W_PARKING", QObject::tr("WP")},
+    {"NW_PARKING", QObject::tr("NWP")},
+    {"GATE", QObject::tr("G")},
+    {"DOCK", QObject::tr("D")},
+    {"GATE_A", QObject::tr("GA")},
+    {"GATE_B", QObject::tr("GB")},
+    {"GATE_C", QObject::tr("GC")},
+    {"GATE_D", QObject::tr("GD")},
+    {"GATE_E", QObject::tr("GE")},
+    {"GATE_F", QObject::tr("GF")},
+    {"GATE_G", QObject::tr("GG")},
+    {"GATE_H", QObject::tr("GH")},
+    {"GATE_I", QObject::tr("GI")},
+    {"GATE_J", QObject::tr("GJ")},
+    {"GATE_K", QObject::tr("GK")},
+    {"GATE_L", QObject::tr("GL")},
+    {"GATE_M", QObject::tr("GM")},
+    {"GATE_N", QObject::tr("GN")},
+    {"GATE_O", QObject::tr("GO")},
+    {"GATE_P", QObject::tr("GP")},
+    {"GATE_Q", QObject::tr("GQ")},
+    {"GATE_R", QObject::tr("GR")},
+    {"GATE_S", QObject::tr("GS")},
+    {"GATE_T", QObject::tr("GT")},
+    {"GATE_U", QObject::tr("GU")},
+    {"GATE_V", QObject::tr("GV")},
+    {"GATE_W", QObject::tr("GW")},
+    {"GATE_X", QObject::tr("GX")},
+    {"GATE_Y", QObject::tr("GY")},
+    {"GATE_Z", QObject::tr("GZ")},
+  });
+
+const static QHash<QString, QString> navTypeNamesVor(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"H", QObject::tr("H")},
@@ -191,7 +236,7 @@ const QHash<QString, QString> navTypeNamesVor(
     {"VT", QObject::tr("T")},
   });
 
-const QHash<QString, QString> navTypeNamesVorLong(
+const static QHash<QString, QString> navTypeNamesVorLong(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"H", QObject::tr("High")},
@@ -202,7 +247,7 @@ const QHash<QString, QString> navTypeNamesVorLong(
     {"VT", QObject::tr("Terminal")},
   });
 
-const QHash<QString, QString> navTypeNamesNdb(
+const static QHash<QString, QString> navTypeNamesNdb(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"HH", QObject::tr("HH")},
@@ -215,7 +260,7 @@ const QHash<QString, QString> navTypeNamesNdb(
     {"NCP", QObject::tr("CL")},
   });
 
-const QHash<QString, QString> navTypeNamesWaypoint(
+const static QHash<QString, QString> navTypeNamesWaypoint(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"WN", QObject::tr("Named")},
@@ -224,7 +269,7 @@ const QHash<QString, QString> navTypeNamesWaypoint(
     {"N", QObject::tr("NDB")}
   });
 
-const QHash<QString, QString> navNames(
+const static QHash<QString, QString> navNames(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"VD", QObject::tr("VORDME")},
@@ -234,7 +279,7 @@ const QHash<QString, QString> navNames(
     {"W", QObject::tr("Waypoint")}
   });
 
-const QHash<QString, QString> comTypeNames(
+const static QHash<QString, QString> comTypeNames(
   {
     {"INVALID", QObject::tr("Invalid")},
     {"NONE", QObject::tr("None")},
@@ -255,7 +300,7 @@ const QHash<QString, QString> comTypeNames(
     {"RCD", QObject::tr("Remote Clearance Delivery")}
   });
 
-const QHash<QString, QString> approachFixTypeToStr(
+const static QHash<QString, QString> approachFixTypeToStr(
   {
     {"NONE", QObject::tr("NONE")},
     {"L", QObject::tr("Localizer")},
@@ -267,7 +312,7 @@ const QHash<QString, QString> approachFixTypeToStr(
     {"R", QObject::tr("Runway")}
   });
 
-const QHash<QString, QString> approachTypeToStr(
+const static QHash<QString, QString> approachTypeToStr(
   {
     {"GPS", QObject::tr("GPS")},
     {"VOR", QObject::tr("VOR")},
@@ -282,7 +327,7 @@ const QHash<QString, QString> approachTypeToStr(
     {"LOCB", QObject::tr("Localizer Backcourse")}
   });
 
-const QHash<QString, QString> approachLegTypeToStr(
+const static QHash<QString, QString> approachLegTypeToStr(
   {
     {"AF", QObject::tr("Arc to fix")},
     {"CA", QObject::tr("Course to altitude")},
@@ -311,7 +356,7 @@ const QHash<QString, QString> approachLegTypeToStr(
 
 int qHash(const maptypes::MapObjectRef& type)
 {
-  return type.id ^ type.type;
+  return type.id ^ static_cast<int>(type.type);
 }
 
 QString navTypeName(const QString& type)
@@ -379,6 +424,11 @@ QString parkingTypeName(const QString& type)
 QString parkingName(const QString& name)
 {
   return parkingNameMap.value(name);
+}
+
+QString parkingDatabaseName(const QString& name)
+{
+  return parkingDatabaseNameMap.value(name);
 }
 
 QString parkingNameNumberType(const maptypes::MapParking& parking)

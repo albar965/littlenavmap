@@ -1036,6 +1036,14 @@ void RouteController::postDatabaseLoad()
   routeNetworkRadio->initQueries();
   routeNetworkAirway->initQueries();
   createRouteMapObjects();
+
+  // Update runway or parking if one of these has changed due to the database switch
+  Flightplan& flightplan = route.getFlightplan();
+  if(!flightplan.getEntries().isEmpty() &&
+     flightplan.getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
+     flightplan.getDepartureParkingName().isEmpty())
+    updateStartPositionBestRunway(false, true);
+
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();

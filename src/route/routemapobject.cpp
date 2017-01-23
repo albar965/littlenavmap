@@ -129,7 +129,8 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
               // Seems to be a parking position
               int number = QString(match.captured(2)).toInt();
               QList<maptypes::MapParking> parkings;
-              query->getParkingByNameAndNumber(parkings, airport.id, parkingName, number);
+              query->getParkingByNameAndNumber(parkings, airport.id,
+                                               maptypes::parkingDatabaseName(parkingName), number);
 
               if(parkings.isEmpty())
               {
