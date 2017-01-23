@@ -1155,11 +1155,11 @@ void MapQuery::initQueries()
 
   runwayEndByIdQuery = new SqlQuery(db);
   runwayEndByIdQuery->prepare(
-    "select 'P' as end_type, e.name as name, r.heading as heading, r.secondary_lonx as lonx, r.secondary_laty as laty "
+    "select 'P' as end_type, e.name as name, r.heading as heading, r.primary_lonx as lonx, r.primary_laty as laty "
     "from runway r join runway_end e on r.primary_end_id = e.runway_end_id "
     "where r.primary_end_id = :id "
     "union "
-    "select 'S' as end_type, e.name as name, r.heading as heading, r.primary_lonx as lonx, r.primary_laty as laty "
+    "select 'S' as end_type, e.name as name, r.heading as heading, r.secondary_lonx as lonx, r.secondary_laty as laty "
     "from runway r join runway_end e on r.secondary_end_id = e.runway_end_id "
     "where r.secondary_end_id = :id");
 

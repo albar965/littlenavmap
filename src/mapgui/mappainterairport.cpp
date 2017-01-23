@@ -791,19 +791,18 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       QPoint prim = wToS(runway.primaryPosition, DEFAULT_WTOS_SIZE, &primaryVisible);
       QPoint sec = wToS(runway.secondaryPosition, DEFAULT_WTOS_SIZE, &secondaryVisible);
 
-      // TODO why is primary and secondary reversed - check database
       if(primaryVisible)
       {
         painter->translate(prim);
-        painter->rotate(runway.heading + 180.f);
+        painter->rotate(runway.heading);
 
-        QRect rectSec = rwTextMetrics.boundingRect(runway.secondaryName);
+        QRect rectSec = rwTextMetrics.boundingRect(runway.primaryName);
         rectSec.moveTo(-rectSec.width() / 2, 4);
 
         painter->fillRect(rectSec, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(-rectSec.width() / 2, rwTextMetrics.ascent() + 4, runway.secondaryName);
+        painter->drawText(-rectSec.width() / 2, rwTextMetrics.ascent() + 4, runway.primaryName);
 
-        if(runway.secondaryClosed)
+        if(runway.primaryClosed)
         {
           // Cross out runway number
           painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
@@ -815,15 +814,15 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(secondaryVisible)
       {
         painter->translate(sec);
-        painter->rotate(runway.heading);
+        painter->rotate(runway.heading + 180.f);
 
-        QRect rectPrim = rwTextMetrics.boundingRect(runway.primaryName);
+        QRect rectPrim = rwTextMetrics.boundingRect(runway.secondaryName);
         rectPrim.moveTo(-rectPrim.width() / 2, 4);
 
         painter->fillRect(rectPrim, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(-rectPrim.width() / 2, rwTextMetrics.ascent() + 4, runway.primaryName);
+        painter->drawText(-rectPrim.width() / 2, rwTextMetrics.ascent() + 4, runway.secondaryName);
 
-        if(runway.primaryClosed)
+        if(runway.secondaryClosed)
         {
           // Cross out runway number
           painter->drawLine(-CROSS_SIZE + 4, -CROSS_SIZE + 10 + 4, CROSS_SIZE + 4, CROSS_SIZE + 10 + 4);
