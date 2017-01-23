@@ -22,6 +22,7 @@
 #include "geo/pos.h"
 
 const static QString COORDS_DEC_FORMAT("%L1° %L2 %L3° %L4");
+const static QString COORDS_DM_FORMAT("%L1° %L2' %L3 %L4° %L5' %L6");
 const static QString COORDS_DMS_FORMAT("%L1° %L2' %L3\" %L4 %L5° %L6' %L7\" %L8");
 
 QLocale *Unit::locale = nullptr;
@@ -340,6 +341,15 @@ QString Unit::coords(const atools::geo::Pos& pos)
              arg(std::abs(pos.getLatY()), 0, 'f', 4, QChar('0')).
              arg(pos.getLatY() > 0.f ? "N" : "S").
              arg(std::abs(pos.getLonX()), 0, 'f', 4, QChar('0')).
+             arg(pos.getLonX() > 0.f ? "E" : "W");
+
+    case opts::COORDS_DM:
+      return COORDS_DM_FORMAT.
+             arg(atools::absInt(pos.getLatYDeg())).
+             arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2).
+             arg(pos.getLatY() > 0.f ? "N" : "S").
+             arg(atools::absInt(pos.getLonXDeg())).
+             arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2).
              arg(pos.getLonX() > 0.f ? "E" : "W");
   }
   return QString();

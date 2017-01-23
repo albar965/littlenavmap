@@ -213,7 +213,8 @@ enum UnitVertSpeed
 enum UnitCoords
 {
   COORDS_DMS,
-  COORDS_DEC
+  COORDS_DEC,
+  COORDS_DM
 };
 
 /* comboBoxOptionsUnitVertFuel */
