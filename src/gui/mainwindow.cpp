@@ -1521,6 +1521,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     else if(leg->fixType == "R")
       type |= maptypes::RUNWAYEND;
 
+    qDebug() << "=============";
     qDebug()
     << "approachId" << leg->approachId
     << "transitionId" << leg->transitionId
@@ -1538,7 +1539,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "recNavId" << leg->recNavId
     << "recFixType" << leg->recFixType
     << "recFixIdent" << leg->recFixIdent
-    << "recommendedFixPos" << leg->recommendedFixPos;
+    << "recommendedFixPos" << leg->recFixPos;
 
     qDebug()
     << "turnDirection" << leg->turnDirection
@@ -1551,9 +1552,9 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "time" << leg->time;
 
     qDebug()
-    << "altDescriptor" << leg->altDescriptor
-    << "alt1" << leg->alt1
-    << "alt2" << leg->alt2;
+    << "altDescriptor" << leg->altRestriction.descriptor
+    << "alt1" << leg->altRestriction.alt1
+    << "alt2" << leg->altRestriction.alt2;
 
     mapQuery->getMapObjectById(result, type, leg->navId);
   }

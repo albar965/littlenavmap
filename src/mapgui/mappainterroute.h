@@ -52,13 +52,17 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
-  void paintApproach(const PaintContext *context, const maptypes::MapApproachLegList& transition,
-                     const maptypes::MapApproachLegList& approach);
-  void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj);
-  void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj);
-  void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
+  void paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegList& transition,
+                            const maptypes::MapApproachLegList& approach);
+  void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
+                         const maptypes::MapAltRestriction *altRestriction = nullptr);
+  void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
+                    const maptypes::MapAltRestriction *altRestriction = nullptr);
+  void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
+                    const maptypes::MapAltRestriction *altRestriction = nullptr);
   void paintAirportText(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
-  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QString& text);
+  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QString& text,
+                 const maptypes::MapAltRestriction *altRestriction = nullptr);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
   static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;

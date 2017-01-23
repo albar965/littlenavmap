@@ -827,21 +827,28 @@ QString legType(const QString& type)
   return approachLegTypeToStr.value(type);
 }
 
-QString altText(const QString& descriptor, float alt1, float alt2)
+QString altRestrictionText(const MapAltRestriction& restriction)
 {
-  if(alt1 == 0.f)
-    return QString();
+  switch(restriction.descriptor)
+  {
+    case maptypes::MapAltRestriction::NONE:
+      return QString();
 
-  if(descriptor == "+")
-    return QObject::tr("At or above %1").arg(Unit::altFeet(alt1));
-  else if(descriptor == "-")
-    return QObject::tr("At or below %1").arg(Unit::altFeet(alt1));
-  else if(descriptor == "A")
-    return QObject::tr("At %1").arg(Unit::altFeet(alt1));
-  else if(descriptor == "B")
-    return QObject::tr("At or above %1 and at or below %2").arg(Unit::altFeet(alt1)).arg(Unit::altFeet(alt2));
-  else
-    return QObject::tr("At %1").arg(Unit::altFeet(alt1));
+    case maptypes::MapAltRestriction::AT:
+      return QObject::tr("At %1").arg(Unit::altFeet(restriction.alt1));
+
+    case maptypes::MapAltRestriction::AT_OR_ABOVE:
+      return QObject::tr("At or above %1").arg(Unit::altFeet(restriction.alt1));
+
+    case maptypes::MapAltRestriction::AT_OR_BELOW:
+      return QObject::tr("At or below %1").arg(Unit::altFeet(restriction.alt1));
+
+    case maptypes::MapAltRestriction::BETWEEN:
+      return QObject::tr("At or above %1 and at or below %2").
+             arg(Unit::altFeet(restriction.alt1)).
+             arg(Unit::altFeet(restriction.alt2));
+  }
+  return QString();
 }
 
 } // namespace types

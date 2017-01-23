@@ -37,29 +37,30 @@ namespace maptypes {
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
 {
-  NONE = 0x00000000,
-  AIRPORT = 0x00000001,
-  AIRPORT_HARD = 0x00000002,
-  AIRPORT_SOFT = 0x00000004,
-  AIRPORT_EMPTY = 0x00000008,
-  AIRPORT_ADDON = 0x00000010,
+  NONE = 0,
+  AIRPORT = 1 << 0,
+  AIRPORT_HARD = 1 << 1,
+  AIRPORT_SOFT = 1 << 2,
+  AIRPORT_EMPTY = 1 << 3,
+  AIRPORT_ADDON = 1 << 4,
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
-  VOR = 0x00000020,
-  NDB = 0x00000040,
-  ILS = 0x00000080,
-  MARKER = 0x00000100,
-  WAYPOINT = 0x00000200,
-  AIRWAY = 0x00000400,
-  AIRWAYV = 0x00000800,
-  AIRWAYJ = 0x00001000,
-  ROUTE = 0x00002000, /* Flight plan */
-  AIRCRAFT = 0x00004000, /* Simulator aircraft */
-  AIRCRAFT_AI = 0x00008000, /* AI or multiplayer Simulator aircraft */
-  AIRCRAFT_TRACK = 0x00010000, /* Simulator aircraft track */
-  USER = 0x00020000, /* Flight plan user waypoint */
-  PARKING = 0x00040000,
-  RUNWAYEND = 0x00080000,
-  INVALID = 0x00100000, /* Flight plan waypoint not found in database */
+  VOR = 1 << 5,
+  NDB = 1 << 6,
+  ILS = 1 << 7,
+  MARKER = 1 << 8,
+  WAYPOINT = 1 << 9,
+  AIRWAY = 1 << 10,
+  AIRWAYV = 1 << 11,
+  AIRWAYJ = 1 << 12,
+  ROUTE = 1 << 13, /* Flight plan */
+  AIRCRAFT = 1 << 14, /* Simulator aircraft */
+  AIRCRAFT_AI = 1 << 15, /* AI or multiplayer Simulator aircraft */
+  AIRCRAFT_TRACK = 1 << 16, /* Simulator aircraft track */
+  USER = 1 << 17, /* Flight plan user waypoint */
+  PARKING = 1 << 18,
+  RUNWAYEND = 1 << 19,
+  POSITION = 1 << 20,
+  INVALID = 1 << 21, /* Flight plan waypoint not found in database */
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffffffff
 };
@@ -88,30 +89,30 @@ maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
 {
-  AP_NONE = 0x000000,
-  AP_ADDON = 0x000001,
-  AP_LIGHT = 0x000002, /* Has at least one lighted runway */
-  AP_TOWER = 0x000004, /* Has a tower frequency */
-  AP_ILS = 0x000008, /* At least one runway end has ILS */
-  AP_APPR = 0x000010, /* At least one runway end has an approach */
-  AP_MIL = 0x000020,
-  AP_CLOSED = 0x000040, /* All runways are closed */
-  AP_AVGAS = 0x000080,
-  AP_JETFUEL = 0x000100,
-  AP_HARD = 0x000200, /* Has at least one hard runway */
-  AP_SOFT = 0x000400, /* Has at least one soft runway */
-  AP_WATER = 0x000800, /* Has at least one water runway */
-  AP_HELIPAD = 0x001000,
-  AP_APRON = 0x002000,
-  AP_TAXIWAY = 0x004000,
-  AP_TOWER_OBJ = 0x008000,
-  AP_PARKING = 0x010000,
-  AP_ALS = 0x020000, /* Has at least one runway with an approach lighting system */
-  AP_VASI = 0x040000, /* Has at least one runway with a VASI */
-  AP_FENCE = 0x080000,
-  AP_RW_CLOSED = 0x100000, /* Has at least one closed runway */
-  AP_COMPLETE = 0x200000, /* Struct completely loaded? */
-  AP_ALL = 0xfffff
+  AP_NONE = 0,
+  AP_ADDON = 1 << 0,
+  AP_LIGHT = 1 << 1, /* Has at least one lighted runway */
+  AP_TOWER = 1 << 2, /* Has a tower frequency */
+  AP_ILS = 1 << 3, /* At least one runway end has ILS */
+  AP_APPR = 1 << 4, /* At least one runway end has an approach */
+  AP_MIL = 1 << 5,
+  AP_CLOSED = 1 << 6, /* All runways are closed */
+  AP_AVGAS = 1 << 7,
+  AP_JETFUEL = 1 << 8,
+  AP_HARD = 1 << 9, /* Has at least one hard runway */
+  AP_SOFT = 1 << 10, /* Has at least one soft runway */
+  AP_WATER = 1 << 11, /* Has at least one water runway */
+  AP_HELIPAD = 1 << 12,
+  AP_APRON = 1 << 13,
+  AP_TAXIWAY = 1 << 14,
+  AP_TOWER_OBJ = 1 << 15,
+  AP_PARKING = 1 << 16,
+  AP_ALS = 1 << 17, /* Has at least one runway with an approach lighting system */
+  AP_VASI = 1 << 18, /* Has at least one runway with a VASI */
+  AP_FENCE = 1 << 19,
+  AP_RW_CLOSED = 1 << 20, /* Has at least one closed runway */
+  AP_COMPLETE = 1 << 21, /* Struct completely loaded? */
+  AP_ALL = 0xffffffff
 };
 
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
@@ -507,18 +508,35 @@ struct MapApproachRef
   int airportId, runwayEndId, approachId, transitionId, legId;
 };
 
+struct MapAltRestriction
+{
+  enum Descriptor
+  {
+    NONE,
+    AT,
+    AT_OR_ABOVE,
+    AT_OR_BELOW,
+    BETWEEN
+  };
+
+  Descriptor descriptor;
+  float alt1, alt2;
+};
+
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
-  float course, dist, time, theta, rho, alt1, alt2;
-  QString type, fixType, fixIdent, recFixType, recFixIdent, altDescriptor, turnDirection;
-  atools::geo::Pos fixPos, recommendedFixPos;
+  float course, dist, time, theta, rho;
+  QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+  atools::geo::Pos fixPos, recFixPos;
+  MapAltRestriction altRestriction;
 
-  MapWaypoint waypoint;
-  MapVor vor;
-  MapNdb ndb;
-  MapIls ils;
-  MapRunwayEnd runwayEnd;
+  MapUserpoint userpoint, recUserpoint;
+  MapWaypoint waypoint, recWaypoint;
+  MapVor vor, recVor;
+  MapNdb ndb, recNdb;
+  MapIls ils, recIls;
+  MapRunwayEnd runwayEnd, recRunwayEnd;
 
   bool missed, flyover, trueCourse;
 };
@@ -620,7 +638,7 @@ QString navTypeNameWaypoint(const QString& type);
 QString approachFixType(const QString& type);
 QString approachType(const QString& type);
 QString legType(const QString& type);
-QString altText(const QString& descriptor, float alt1, float alt2);
+QString altRestrictionText(const MapAltRestriction& restriction);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -680,6 +698,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLegList, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);

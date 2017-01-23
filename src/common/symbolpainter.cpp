@@ -434,7 +434,8 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill)
+                                textflags::TextFlags flags, int size, bool fill,
+                                const maptypes::MapAltRestriction *altRestriction)
 {
   QStringList texts;
 
@@ -456,12 +457,15 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
     textAttrs |= textatt::CENTER;
   }
 
+  restrictionText(altRestriction, texts);
+
   int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y,
-                                textflags::TextFlags flags, int size, bool fill)
+                                textflags::TextFlags flags, int size, bool fill,
+                                const maptypes::MapAltRestriction *altRestriction)
 {
   QStringList texts;
 
@@ -483,12 +487,15 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
     textAttrs |= textatt::RIGHT;
   }
 
+  restrictionText(altRestriction, texts);
+
   int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
 }
 
 void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
-                                     textflags::TextFlags flags, int size, bool fill)
+                                     textflags::TextFlags flags, int size, bool fill,
+                                     const maptypes::MapAltRestriction *altRestriction)
 {
   QStringList texts;
 
@@ -504,8 +511,10 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
     x += size / 2 + 2;
     textAttrs |= textatt::LEFT;
   }
-  int transparency = fill ? 255 : 0;
 
+  restrictionText(altRestriction, texts);
+
+  int transparency = fill ? 255 : 0;
   textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
 
@@ -616,12 +625,14 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     // Fill background
     painter->setBrush(backColor);
 
-  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
+  if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
+     atts.testFlag(textatt::OVERLINE))
   {
     QFont f = painter->font();
     f.setBold(atts.testFlag(textatt::BOLD));
     f.setItalic(atts.testFlag(textatt::ITALIC));
     f.setUnderline(atts.testFlag(textatt::UNDERLINE));
+    f.setOverline(atts.testFlag(textatt::OVERLINE));
     painter->setFont(f);
   }
 
@@ -732,5 +743,30 @@ const QPixmap *SymbolPainter::trackLineFromCache(int size)
       new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size)));
     trackLinePixmaps.insert(size, newPx);
     return newPx;
+  }
+}
+
+void SymbolPainter::restrictionText(const maptypes::MapAltRestriction *altRestriction, QStringList& texts)
+{
+  if(altRestriction != nullptr)
+  {
+    switch(altRestriction->descriptor)
+    {
+      case maptypes::MapAltRestriction::NONE:
+        break;
+      case maptypes::MapAltRestriction::AT:
+        texts.append(Unit::altFeet(altRestriction->alt1, true, true));
+        break;
+      case maptypes::MapAltRestriction::AT_OR_ABOVE:
+        texts.append(tr("A") + Unit::altFeet(altRestriction->alt1, true, true));
+        break;
+      case maptypes::MapAltRestriction::AT_OR_BELOW:
+        texts.append(tr("B") + Unit::altFeet(altRestriction->alt1, true, true));
+        break;
+      case maptypes::MapAltRestriction::BETWEEN:
+        texts.append(Unit::altFeet(altRestriction->alt1, false, true) + "-" +
+                     Unit::altFeet(altRestriction->alt2, true, true));
+        break;
+    }
   }
 }

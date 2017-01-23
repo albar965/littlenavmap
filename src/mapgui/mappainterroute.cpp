@@ -57,7 +57,7 @@ void MapPainterRoute::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
 
   paintRoute(context);
-  paintApproach(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
+  paintApproachPreview(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -292,9 +292,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 }
 
-void MapPainterRoute::paintApproach(const PaintContext *context,
-                                    const maptypes::MapApproachLegList& transition,
-                                    const maptypes::MapApproachLegList& approach)
+/* Draw approaches and transitions selected in the tree view */
+void MapPainterRoute::paintApproachPreview(const PaintContext *context,
+                                           const maptypes::MapApproachLegList& transition,
+                                           const maptypes::MapApproachLegList& approach)
 {
   GeoDataLineString linestring, missedLineString;
   linestring.setTessellate(true);
@@ -345,10 +346,11 @@ void MapPainterRoute::paintApproach(const PaintContext *context,
                                 Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
   drawLineString(missedLineString, context);
 
-  for(const MapApproachLeg& leg : approach.legs)
-    paintApproachPoint(context, leg);
+  // Do not paint the last point in the transition since it overlaps with the approach
+  for(int i = 0; i < transition.legs.size() - 1; ++i)
+    paintApproachPoint(context, transition.legs.at(i));
 
-  for(const MapApproachLeg& leg : transition.legs)
+  for(const MapApproachLeg& leg : approach.legs)
     paintApproachPoint(context, leg);
 }
 
@@ -358,21 +360,27 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapA
   if(leg.waypoint.position.isValid() && wToS(leg.waypoint.position, x, y))
   {
     paintWaypoint(context, QColor(), x, y);
-    paintWaypointText(context, x, y, leg.waypoint);
+    paintWaypointText(context, x, y, leg.waypoint, &leg.altRestriction);
   }
   else if(leg.ndb.position.isValid() && wToS(leg.ndb.position, x, y))
   {
     paintNdb(context, x, y);
-    paintNdbText(context, x, y, leg.ndb);
+    paintNdbText(context, x, y, leg.ndb, &leg.altRestriction);
   }
   else if(leg.vor.position.isValid() && wToS(leg.vor.position, x, y))
   {
     paintVor(context, x, y, leg.vor);
-    paintVorText(context, x, y, leg.vor);
+    paintVorText(context, x, y, leg.vor, &leg.altRestriction);
+  }
+  else if(leg.ils.position.isValid() && wToS(leg.ils.position, x, y))
+  {
+    paintUserpoint(context, x, y);
+    paintText(context, mapcolors::routeUserPointColor, x, y, leg.ils.ident, &leg.altRestriction);
   }
   else if(wToS(leg.fixPos, x, y))
   {
     paintUserpoint(context, x, y);
+    paintText(context, mapcolors::routeUserPointColor, x, y, leg.userpoint.name, &leg.altRestriction);
   }
 }
 
@@ -404,7 +412,8 @@ void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const 
                                context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
 }
 
-void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
+void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
+                                   const maptypes::MapAltRestriction *altRestriction)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
@@ -415,7 +424,7 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true);
+  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true, altRestriction);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
@@ -424,7 +433,8 @@ void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, true, false);
 }
 
-void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj)
+void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
+                                   const maptypes::MapAltRestriction *altRestriction)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
@@ -435,7 +445,7 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true);
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true, altRestriction);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
@@ -445,14 +455,15 @@ void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& c
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
-                                        const maptypes::MapWaypoint& obj)
+                                        const maptypes::MapWaypoint& obj,
+                                        const maptypes::MapAltRestriction *altRestriction)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
   if(context->mapLayer->isWaypointRouteName())
     flags |= textflags::IDENT;
 
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true);
+  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true, altRestriction);
 }
 
 /* Paint user defined waypoint */
@@ -464,12 +475,17 @@ void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 
 /* Draw text with light yellow background for flight plan */
 void MapPainterRoute::paintText(const PaintContext *context, const QColor& color, int x, int y,
-                                const QString& text)
+                                const QString& text,
+                                const maptypes::MapAltRestriction *altRestriction)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
 
+  QStringList texts;
+  texts.append(text);
+  symbolPainter->restrictionText(altRestriction, texts);
+
   if(!text.isEmpty() && context->mapLayer->isWaypointRouteName())
-    symbolPainter->textBox(context->painter, {text}, color,
+    symbolPainter->textBox(context->painter, texts, color,
                            x + size / 2 + 2,
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }

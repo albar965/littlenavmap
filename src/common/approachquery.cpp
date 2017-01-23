@@ -139,7 +139,7 @@ maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry(atools::sql::Sql
 void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry)
 {
   entry.type = query->value("type").toString();
-  entry.altDescriptor = query->value("alt_descriptor").toString();
+
   entry.turnDirection = query->value("turn_direction").toString();
   entry.navId = query->value("fix_nav_id").toInt();
   entry.fixType = query->value("fix_type").toString();
@@ -157,8 +157,31 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   entry.time = query->value("time").toFloat();
   entry.theta = query->value("theta").toFloat();
   entry.rho = query->value("rho").toFloat();
-  entry.alt1 = query->value("altitude1").toFloat();
-  entry.alt2 = query->value("altitude2").toFloat();
+
+  if(!query->isNull("alt_descriptor"))
+  {
+    QString descriptor = query->value("alt_descriptor").toString();
+
+    if(descriptor == "A")
+      entry.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+    else if(descriptor == "+")
+      entry.altRestriction.descriptor = maptypes::MapAltRestriction::AT_OR_ABOVE;
+    else if(descriptor == "-")
+      entry.altRestriction.descriptor = maptypes::MapAltRestriction::AT_OR_BELOW;
+    else if(descriptor == "B")
+      entry.altRestriction.descriptor = maptypes::MapAltRestriction::BETWEEN;
+    else
+      entry.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+
+    entry.altRestriction.alt1 = query->value("altitude1").toFloat();
+    entry.altRestriction.alt2 = query->value("altitude2").toFloat();
+  }
+  else
+  {
+    entry.altRestriction.descriptor = maptypes::MapAltRestriction::NONE;
+    entry.altRestriction.alt1 = 0.f;
+    entry.altRestriction.alt2 = 0.f;
+  }
 
   if(entry.fixType == "W" || entry.fixType == "TW")
   {
@@ -184,6 +207,32 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   {
     entry.runwayEnd = mapQuery->getRunwayEndById(entry.navId);
     entry.fixPos = entry.runwayEnd.position;
+  }
+
+  if(entry.recFixType == "W" || entry.recFixType == "TW")
+  {
+    entry.recWaypoint = mapQuery->getWaypointById(entry.recNavId);
+    entry.recFixPos = entry.recWaypoint.position;
+  }
+  else if(entry.recFixType == "N" || entry.recFixType == "TN")
+  {
+    entry.recNdb = mapQuery->getNdbById(entry.recNavId);
+    entry.recFixPos = entry.recNdb.position;
+  }
+  else if(entry.recFixType == "V")
+  {
+    entry.recVor = mapQuery->getVorById(entry.recNavId);
+    entry.recFixPos = entry.recVor.position;
+  }
+  else if(entry.recFixType == "L")
+  {
+    entry.recIls = mapQuery->getIlsById(entry.recNavId);
+    entry.recFixPos = entry.recIls.position;
+  }
+  else if(entry.recFixType == "R")
+  {
+    entry.recRunwayEnd = mapQuery->getRunwayEndById(entry.recNavId);
+    entry.recFixPos = entry.recRunwayEnd.position;
   }
 }
 

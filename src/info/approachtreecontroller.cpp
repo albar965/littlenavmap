@@ -353,7 +353,7 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
     {
       (leg.missed ? tr("Missed: ") : QString()) + maptypes::legType(leg.type),
       leg.fixIdent,
-      maptypes::altText(leg.altDescriptor, leg.alt1, leg.alt2),
+      maptypes::altRestrictionText(leg.altRestriction),
       courseStr
     },
     itemIndex.size() - 1);
@@ -384,7 +384,7 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
     {
       maptypes::legType(leg.type),
       leg.fixIdent,
-      maptypes::altText(leg.altDescriptor, leg.alt1, leg.alt2),
+      maptypes::altRestrictionText(leg.altRestriction),
       courseStr
     },
     itemIndex.size() - 1);
