@@ -116,7 +116,7 @@ const QColor ndbSymbolColor = QColor(Qt::darkRed);
 const QColor markerSymbolColor = QColor(Qt::darkMagenta);
 const QColor ilsSymbolColor = QColor(Qt::darkGreen);
 const QColor ilsTextColor = QColor(0, 30, 0);
-const QColor waypointSymbolColor = QColor(Qt::magenta);
+const QColor waypointSymbolColor = QColor(200, 0, 200);
 
 /* Airway colors */
 const QColor airwayVictorColor = QColor(150, 150, 150);

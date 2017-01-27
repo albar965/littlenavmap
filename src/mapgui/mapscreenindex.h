@@ -99,12 +99,15 @@ public:
     return highlights;
   }
 
-  maptypes::MapSearchResult& getApproachLegHighlights()
+  void setApproachLegHighlights(const maptypes::MapApproachLeg *leg)
   {
-    return approachLegHighlights;
+    if(leg != nullptr)
+      approachLegHighlights = *leg;
+    else
+      approachLegHighlights = maptypes::MapApproachLeg();
   }
 
-  const maptypes::MapSearchResult& getApproachLegHighlights() const
+  const maptypes::MapApproachLeg& getApproachLegHighlights() const
   {
     return approachLegHighlights;
   }
@@ -186,7 +189,9 @@ private:
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;
 
-  maptypes::MapSearchResult highlights, approachLegHighlights;
+  maptypes::MapSearchResult highlights;
+  maptypes::MapApproachLeg approachLegHighlights;
+
   maptypes::MapApproachLegList approachHighlight, transitionHighlight;
 
   QList<int> routeHighlights;

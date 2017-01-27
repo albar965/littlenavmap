@@ -278,6 +278,11 @@ MainWindow::~MainWindow()
   atools::logging::LoggingHandler::shutdown();
 }
 
+void MainWindow::updateMap() const
+{
+  mapWidget->update();
+}
+
 maptypes::MapObjectTypes MainWindow::getShownMapFeatures() const
 {
   return mapWidget->getShownMapFeatures();
@@ -869,6 +874,10 @@ void MainWindow::connectAllSlots()
 
   connect(infoController, &InfoController::approachLegSelected, this, &MainWindow::approachLegSelected);
   connect(infoController, &InfoController::approachSelected, this, &MainWindow::approachSelected);
+
+  connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionInfoApproachShowTrans, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 }
 
 /* Update the info weather */
@@ -1483,11 +1492,12 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
   maptypes::MapApproachLegList transition;
   maptypes::MapApproachLegList approach;
 
+  maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
   if(approachRef.approachId != -1)
-    approach = *approachQuery->getApproachLegs(approachRef.approachId);
+    approach = *approachQuery->getApproachLegs(airport, approachRef.approachId);
 
   if(approachRef.transitionId != -1)
-    transition = *approachQuery->getTransitionLegs(approachRef.transitionId);
+    transition = *approachQuery->getTransitionLegs(airport, approachRef.transitionId);
 
   mapWidget->changeApproachTransitionHighlight(transition, approach);
 }
@@ -1497,29 +1507,15 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
 {
   qDebug() << Q_FUNC_INFO;
 
-  maptypes::MapSearchResult result;
-
   if(approachRef.legId != -1)
   {
     const maptypes::MapApproachLeg *leg;
 
+    maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
     if(approachRef.transitionId != -1)
-      leg = approachQuery->getTransitionLeg(approachRef.legId);
+      leg = approachQuery->getTransitionLeg(airport, approachRef.legId);
     else
-      leg = approachQuery->getApproachLeg(approachRef.legId);
-
-    maptypes::MapObjectTypes type;
-
-    if(leg->fixType == "L")
-      type |= maptypes::ILS;
-    else if(leg->fixType == "V")
-      type |= maptypes::VOR;
-    else if(leg->fixType == "N" || leg->fixType == "TN")
-      type |= maptypes::NDB;
-    else if(leg->fixType == "W" || leg->fixType == "TW")
-      type |= maptypes::WAYPOINT;
-    else if(leg->fixType == "R")
-      type |= maptypes::RUNWAYEND;
+      leg = approachQuery->getApproachLeg(airport, approachRef.legId);
 
     qDebug() << "=============";
     qDebug()
@@ -1527,7 +1523,8 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "transitionId" << leg->transitionId
     << "legId" << leg->legId
     << "type" << leg->type
-    << "missed" << leg->missed;
+    << "missed" << leg->missed
+    << "displayPos" << leg->displayPos;
 
     qDebug()
     << "navId" << leg->navId
@@ -1546,6 +1543,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "flyover" << leg->flyover
     << "trueCourse" << leg->trueCourse
     << "course" << leg->course
+    << "magvar" << leg->magvar
     << "theta" << leg->theta
     << "rho" << leg->rho
     << "dist" << leg->dist
@@ -1556,10 +1554,11 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "alt1" << leg->altRestriction.alt1
     << "alt2" << leg->altRestriction.alt2;
 
-    mapQuery->getMapObjectById(result, type, leg->navId);
+    mapWidget->changeApproachLegHighlights(leg);
   }
+  else
+    mapWidget->changeApproachLegHighlights(nullptr);
 
-  mapWidget->changeApproachLegHighlights(result);
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */

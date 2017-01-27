@@ -52,10 +52,14 @@ public:
   virtual ~ApproachTreeController();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void fillApproachTreeWidget(int airportId);
+  void fillApproachTreeWidget(const maptypes::MapAirport& airport);
 
   /* Clear all if no airport is selected */
   void clear();
+
+  /* Save tree view state */
+  void saveState();
+  void restoreState();
 
 signals:
   void approachSelected(maptypes::MapApproachRef);
@@ -66,6 +70,7 @@ signals:
 private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
+  void treeClicked(QTreeWidgetItem *item, int column);
   void itemExpanded(QTreeWidgetItem *item);
   void contextMenu(const QPoint& pos);
 
@@ -73,6 +78,15 @@ private:
   QTreeWidgetItem *buildTransItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
   void buildTransLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
   void buildApprLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
+  void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
+
+  // Save and restore expande item state
+  QBitArray saveTreeViewState();
+  void restoreTreeViewState(const QBitArray& state);
+
+  QString buildRemarkStr(const maptypes::MapApproachLeg& leg);
+  QString buildCourseStr(const maptypes::MapApproachLeg& leg);
+  QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
@@ -87,6 +101,10 @@ private:
   MainWindow *mainWindow = nullptr;
   int lastAirportId = -1;
   QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont;
+  maptypes::MapAirport currentAirport;
+
+  // Maps airport ID to expanded state of the tree widget items
+  QHash<int, QBitArray> recentTreeState;
 
 };
 

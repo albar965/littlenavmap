@@ -128,7 +128,7 @@ public:
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
                         textflags::TextFlags flags, int size, bool fill,
-                        const maptypes::MapAltRestriction *altRestriction = nullptr);
+                        const QStringList *addtionalText = nullptr);
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
   void drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size, bool routeFill,
@@ -136,14 +136,14 @@ public:
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y, textflags::TextFlags flags,
-                   int size, bool fill, const maptypes::MapAltRestriction *altRestriction = nullptr);
+                   int size, bool fill, const QStringList *addtionalText = nullptr);
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
   void drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y, textflags::TextFlags flags,
-                   int size, bool fill, const maptypes::MapAltRestriction *altRestriction = nullptr);
+                   int size, bool fill, const QStringList *addtionalText = nullptr);
 
   void drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y, int size,
                         bool fast);
@@ -162,9 +162,6 @@ public:
 
   /* Get dimensions of a custom text box */
   QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
-
-  /* Put altitude restriction texts into list */
-  void restrictionText(const maptypes::MapAltRestriction *altRestriction, QStringList& texts);
 
 private:
   QStringList airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,

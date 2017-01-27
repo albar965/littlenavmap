@@ -104,7 +104,7 @@ public:
   /* Update hightlighted objects */
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeApproachLegHighlights(const maptypes::MapSearchResult& positions);
+  void changeApproachLegHighlights(const maptypes::MapApproachLeg *leg);
   void changeApproachTransitionHighlight(const maptypes::MapApproachLegList& transition,
                                          const maptypes::MapApproachLegList& approach);
 
@@ -141,7 +141,7 @@ public:
 
   /* Getters used by the painters */
   const maptypes::MapSearchResult& getSearchHighlights() const;
-  const maptypes::MapSearchResult& getApproachLegHighlights() const;
+  const maptypes::MapApproachLeg& getApproachLegHighlights() const;
 
   const maptypes::MapApproachLegList& getApproachHighlight() const;
   const maptypes::MapApproachLegList& getTransitionHighlight() const;

@@ -17,60 +17,14 @@
 
 #include "common/approachquery.h"
 #include "mapgui/mapquery.h"
+#include "geo/calculations.h"
+#include "common/unit.h"
 
 #include "sql/sqlquery.h"
 
-#include <functional>
-
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
-
-const maptypes::MapApproachLegList *buildEntries(QCache<int, maptypes::MapApproachLegList>& cache,
-                                                 SqlQuery *query, int approachId,
-                                                 std::function<maptypes::MapApproachLeg(
-                                                                 SqlQuery *query)> factoryFunction)
-{
-  if(cache.contains(approachId))
-    return cache.object(approachId);
-  else
-  {
-    query->bindValue(":id", approachId);
-    query->exec();
-
-    maptypes::MapApproachLegList *entries = new maptypes::MapApproachLegList;
-    while(query->next())
-      entries->legs.append(factoryFunction(query));
-
-    if(!entries->legs.isEmpty())
-      cache.insert(approachId, entries);
-    else
-      cache.insert(approachId, nullptr);
-
-    return entries;
-  }
-}
-
-const maptypes::MapApproachLeg *buildEntry(QCache<int, maptypes::MapApproachLeg>& cache,
-                                           SqlQuery *query, int legId,
-                                           std::function<maptypes::MapApproachLeg(
-                                                           SqlQuery *query)> factoryFunction)
-{
-  if(cache.contains(legId))
-    return cache.object(legId);
-  else
-  {
-    query->bindValue(":id", legId);
-    query->exec();
-
-    maptypes::MapApproachLeg *leg = new maptypes::MapApproachLeg;
-    if(query->next())
-      *leg = factoryFunction(query);
-
-    cache.insert(legId, leg);
-
-    return leg;
-  }
-}
+using atools::geo::Rect;
 
 ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -82,36 +36,206 @@ ApproachQuery::~ApproachQuery()
   deInitQueries();
 }
 
-const maptypes::MapApproachLegList *ApproachQuery::getApproachLegs(int approachId)
+const maptypes::MapApproachLegList *ApproachQuery::getApproachLegs(const maptypes::MapAirport& airport,
+                                                                   int approachId)
 {
   std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
     std::bind(&ApproachQuery::buildApproachLegEntry, this, std::placeholders::_1);
 
-  return buildEntries(approachCache, approachQuery, approachId, func);
+  maptypes::MapApproachLegList *entries =
+    buildEntries(airport, approachCache, approachLegIndex, approachQuery, approachId, func);
+  return entries;
 }
 
-const maptypes::MapApproachLegList *ApproachQuery::getTransitionLegs(int transitionId)
+const maptypes::MapApproachLegList *ApproachQuery::getTransitionLegs(const maptypes::MapAirport& airport,
+                                                                     int transitionId)
 {
   std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
     std::bind(&ApproachQuery::buildTransitionLegEntry, this, std::placeholders::_1);
 
-  return buildEntries(transitionCache, transitionQuery, transitionId, func);
+  maptypes::MapApproachLegList *entries =
+    buildEntries(airport, transitionCache, transitionLegIndex, transitionQuery, transitionId, func);
+  return entries;
 }
 
-const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(int legId)
+const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::MapAirport& airport,
+                                                              int legId)
 {
-  std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
-    std::bind(&ApproachQuery::buildApproachLegEntry, this, std::placeholders::_1);
+  if(approachLegIndex.contains(legId))
+  {
+    // Already in index
+    std::pair<int, int> val = approachLegIndex.value(legId);
 
-  return buildEntry(approachLegCache, approachLegQuery, legId, func);
+    // Ensure it is in the cache - reload if needed
+    const maptypes::MapApproachLegList *legs = getApproachLegs(airport, val.first);
+    if(legs != nullptr)
+      return &legs->legs.at(approachLegIndex.value(legId).second);
+  }
+  else
+  {
+    // Get approach ID for leg
+    approachLegQuery->bindValue(":id", legId);
+    approachLegQuery->exec();
+    if(approachLegQuery->next())
+    {
+      const maptypes::MapApproachLegList *legs =
+        getApproachLegs(airport, approachLegQuery->value("id").toInt());
+      if(legs != nullptr && approachLegIndex.contains(legId))
+        return &legs->legs.at(approachLegIndex.value(legId).second);
+    }
+    approachLegQuery->finish();
+  }
+  return nullptr;
 }
 
-const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(int legId)
+const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::MapAirport& airport,
+                                                                int legId)
 {
-  std::function<maptypes::MapApproachLeg(SqlQuery *query)> func =
-    std::bind(&ApproachQuery::buildTransitionLegEntry, this, std::placeholders::_1);
+  if(transitionLegIndex.contains(legId))
+  {
+    // Already in index
+    std::pair<int, int> val = transitionLegIndex.value(legId);
 
-  return buildEntry(transitionLegCache, transitionLegQuery, legId, func);
+    // Ensure it is in the cache - reload if needed
+    const maptypes::MapApproachLegList *legs = getTransitionLegs(airport, val.first);
+
+    if(legs != nullptr)
+      return &legs->legs.at(transitionLegIndex.value(legId).second);
+  }
+  else
+  {
+    // Get transition ID for leg
+    transitionLegQuery->bindValue(":id", legId);
+    transitionLegQuery->exec();
+    if(transitionLegQuery->next())
+    {
+      const maptypes::MapApproachLegList *legs =
+        getTransitionLegs(airport, transitionLegQuery->value("id").toInt());
+      if(legs != nullptr && transitionLegIndex.contains(legId))
+        return &legs->legs.at(transitionLegIndex.value(legId).second);
+    }
+    transitionLegQuery->finish();
+  }
+  return nullptr;
+}
+
+void ApproachQuery::postProcessLegList(maptypes::MapApproachLegList *legs)
+{
+  if(legs == nullptr)
+    return;
+
+  // Assumptions: 3.5 nm per min
+  // Climb 500 ft/min
+  // Intercept 30 for localizers and 30-45 for others
+  for(int i = 0; i < legs->legs.size(); ++i)
+  {
+    maptypes::MapApproachLeg& leg = legs->legs[i];
+    maptypes::MapApproachLeg *prevLeg = nullptr;
+    if(i > 0)
+      prevLeg = &legs->legs[i - 1];
+
+    if(leg.type == "AF" || // Arc to fix
+       leg.type == "CF" || // Course to fix
+       leg.type == "DF" || // Direct to fix
+       leg.type == "IF" || // Initial fix
+       leg.type == "TF" || // Track to fix
+       leg.type == "RF" || // Constant radius arc
+       leg.type == "PI") // Procedure turn
+    {
+      leg.displayPos = leg.fixPos;
+    }
+    else if(leg.type == "CA" || // Course to altitude
+            leg.type == "FA" || // Fix to altitude
+            leg.type == "VA") // Heading to altitude termination
+    {
+      if(prevLeg != nullptr)
+      {
+        Pos pos = prevLeg->fixPos.isValid() ? prevLeg->fixPos : prevLeg->displayPos;
+        leg.displayPos = pos.endpoint(atools::geo::nmToMeter(3.f),
+                                      leg.course + leg.magvar).normalize();
+        leg.displayText << tr("Altitude");
+      }
+    }
+    else if(leg.type == "CD" || // Course to DME distance
+            leg.type == "VD") // Heading to DME distance termination
+    {
+      if(leg.recFixPos.isValid())
+      {
+        // TODO not really correct
+        leg.displayPos = leg.recFixPos.endpoint(atools::geo::nmToMeter(leg.dist),
+                                                leg.course + leg.magvar).normalize();
+        leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.dist, true, true) + "/" +
+        QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      }
+    }
+    else if(leg.type == "CI" || // Course to intercept
+            leg.type == "VI") // Heading to intercept
+    {
+      // TODO line intersection
+      // TODO check if next is arc or not
+
+    }
+    else if(leg.type == "CR" || // Course to radial termination
+            leg.type == "VR") // Heading to radial termination
+    {
+      // TODO line intersection
+    }
+    else if(leg.type == "FC") // Track from fix from distance
+    {
+      leg.displayPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist),
+                                           leg.course + leg.magvar).normalize();
+      leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.dist, true, true) + "/" +
+      QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
+    }
+    else if(leg.type == "FD") // Track from fix to DME distance
+    {
+      // TODO line-circle intersection
+      leg.displayPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist),
+                                           leg.course + leg.magvar).normalize();
+      leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.dist, true, true) + "/" +
+      QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
+    }
+    else if(leg.type == "FM" || // From fix to manual termination
+            leg.type == "VM") // Heading to manual termination
+    {
+      if(prevLeg != nullptr)
+      {
+        Pos pos = prevLeg->fixPos.isValid() ? prevLeg->fixPos : prevLeg->displayPos;
+        leg.displayPos = pos.endpoint(atools::geo::nmToMeter(3.f), leg.course + leg.magvar).normalize();
+        leg.displayText << tr("Manual");
+      }
+    }
+    else if(leg.type == "HA") // Hold to altitude
+    {
+      leg.displayPos = leg.fixPos;
+      leg.displayText << tr("Altitude");
+    }
+    else if(leg.type == "HF") // Hold to fix
+    {
+      leg.displayPos = leg.fixPos;
+      leg.displayText << tr("Single");
+    }
+    else if(leg.type == "HM") // Hold to manual termination
+    {
+      leg.displayPos = leg.fixPos;
+      leg.displayText << tr("Manual");
+    }
+
+    if(leg.fixPos.isValid())
+    {
+      if(!legs->bounding.isValid())
+        legs->bounding = Rect(leg.fixPos);
+      else
+        legs->bounding.extend(leg.fixPos);
+    }
+    if(leg.displayPos.isValid())
+    {
+      if(!legs->bounding.isValid())
+        legs->bounding = Rect(leg.displayPos);
+      else
+        legs->bounding.extend(leg.displayPos);
+    }
+  }
 }
 
 maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry(atools::sql::SqlQuery *query)
@@ -158,7 +282,10 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   entry.theta = query->value("theta").toFloat();
   entry.rho = query->value("rho").toFloat();
 
-  if(!query->isNull("alt_descriptor"))
+  float alt1 = query->value("altitude1").toFloat();
+  float alt2 = query->value("altitude2").toFloat();
+
+  if(!query->isNull("alt_descriptor") && (alt1 > 0.f || alt2 > 0.f))
   {
     QString descriptor = query->value("alt_descriptor").toString();
 
@@ -173,8 +300,8 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     else
       entry.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
 
-    entry.altRestriction.alt1 = query->value("altitude1").toFloat();
-    entry.altRestriction.alt2 = query->value("altitude2").toFloat();
+    entry.altRestriction.alt1 = alt1;
+    entry.altRestriction.alt2 = alt2;
   }
   else
   {
@@ -236,21 +363,62 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   }
 }
 
+void ApproachQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegList *legs)
+{
+  for(maptypes::MapApproachLeg& leg : legs->legs)
+    leg.magvar = airport.magvar;
+}
+
+maptypes::MapApproachLegList *ApproachQuery::buildEntries(const maptypes::MapAirport& airport,
+                                                          QCache<int, maptypes::MapApproachLegList>& cache,
+                                                          QHash<int, std::pair<int, int> >& index,
+                                                          SqlQuery *query, int approachId,
+                                                          std::function<maptypes::MapApproachLeg(
+                                                                          SqlQuery *query)> factoryFunction)
+{
+  if(cache.contains(approachId))
+    return cache.object(approachId);
+  else
+  {
+    query->bindValue(":id", approachId);
+    query->exec();
+
+    maptypes::MapApproachLegList *entries = new maptypes::MapApproachLegList;
+    while(query->next())
+    {
+      entries->legs.append(factoryFunction(query));
+      index.insert(entries->legs.last().legId, std::make_pair(approachId, entries->legs.size() - 1));
+    }
+
+    if(!entries->legs.isEmpty())
+      cache.insert(approachId, entries);
+    else
+      cache.insert(approachId, nullptr);
+
+    updateMagvar(airport, entries);
+    postProcessLegList(entries);
+
+    return entries;
+  }
+}
+
 void ApproachQuery::initQueries()
 {
   deInitQueries();
 
   approachQuery = new SqlQuery(db);
-  approachQuery->prepare("select * from approach_leg where approach_id = :id");
+  approachQuery->prepare("select * from approach_leg where approach_id = :id "
+                         "order by approach_leg_id");
 
   transitionQuery = new SqlQuery(db);
-  transitionQuery->prepare("select * from transition_leg where transition_id = :id");
+  transitionQuery->prepare("select * from transition_leg where transition_id = :id "
+                           "order by transition_leg_id");
 
   approachLegQuery = new SqlQuery(db);
-  approachLegQuery->prepare("select * from approach_leg where approach_leg_id = :id");
+  approachLegQuery->prepare("select approach_id as id from approach_leg where approach_leg_id = :id");
 
   transitionLegQuery = new SqlQuery(db);
-  transitionLegQuery->prepare("select * from transition_leg where transition_leg_id = :id");
+  transitionLegQuery->prepare("select transition_id as id from transition_leg where transition_leg_id = :id");
 }
 
 void ApproachQuery::deInitQueries()
@@ -263,11 +431,11 @@ void ApproachQuery::deInitQueries()
   delete transitionQuery;
   transitionQuery = nullptr;
 
-  approachLegCache.clear();
+  approachLegIndex.clear();
   delete approachLegQuery;
   approachLegQuery = nullptr;
 
-  transitionLegCache.clear();
+  transitionLegIndex.clear();
   delete transitionLegQuery;
   transitionLegQuery = nullptr;
 }

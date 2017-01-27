@@ -185,7 +185,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw outer line
   context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
                                 Qt::RoundCap, Qt::RoundJoin));
-  drawLineString(linestring, context);
+  drawLineString(context, linestring);
 
   const Pos& pos = mapWidget->getUserAircraft().getPosition();
 
@@ -297,91 +297,401 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
                                            const maptypes::MapApproachLegList& transition,
                                            const maptypes::MapApproachLegList& approach)
 {
-  GeoDataLineString linestring, missedLineString;
-  linestring.setTessellate(true);
-  missedLineString.setTessellate(true);
+  if(((transition.legs.isEmpty() || !transition.bounding.overlaps(context->viewportRect))) &&
+     (approach.legs.isEmpty() || !approach.bounding.overlaps(context->viewportRect)))
+    return;
 
-  for(const MapApproachLeg& leg : transition.legs)
-  {
-    if(leg.fixPos.isValid())
-      linestring.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
-  }
+  // Draw white background ========================================
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 9);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 3);
 
-  for(const MapApproachLeg& leg : approach.legs)
-  {
-    if(leg.missed)
-    {
-      if(leg.fixPos.isValid())
-        missedLineString.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
-      break;
-    }
-    if(leg.fixPos.isValid())
-      linestring.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
-  }
-
-  for(const MapApproachLeg& leg : approach.legs)
-  {
-    if(leg.missed)
-      if(leg.fixPos.isValid())
-        missedLineString.append(GeoDataCoordinates(leg.fixPos.getLonX(), leg.fixPos.getLatY(), 0, DEG));
-  }
-
-  GeoDataLineString ls;
-  ls.setTessellate(true);
-
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 5);
-
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth, Qt::SolidLine,
-                                Qt::RoundCap, Qt::RoundJoin));
-  drawLineString(linestring, context);
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  drawLineString(linestring, context);
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
+  {
+    for(int i = 0; i < transition.legs.size(); ++i)
+      paintApproachSegment(context, transition, &approach, i);
+  }
 
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth, Qt::DotLine,
-                                Qt::RoundCap, Qt::RoundJoin));
-  drawLineString(missedLineString, context);
+  for(int i = 0; i < approach.legs.size(); ++i)
+  {
+    if((approach.legs.at(i).missed && context->objectTypes & maptypes::APPROACH_MISSED) ||
+       (!approach.legs.at(i).missed && context->objectTypes & maptypes::APPROACH))
+      paintApproachSegment(context, approach, &transition, i);
+  }
+
   context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
                                 Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
-  drawLineString(missedLineString, context);
+  // Missed Approach below others ===========================================================
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_MISSED)
+  {
+    for(int i = 0; i < approach.legs.size(); ++i)
+    {
+      if(approach.legs.at(i).missed)
+        paintApproachSegment(context, approach, &transition, i);
+    }
+  }
 
+  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
+                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+  // Transition  ===========================================================
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
+  {
+    for(int i = 0; i < transition.legs.size(); ++i)
+      paintApproachSegment(context, transition, &approach, i);
+  }
+
+  // Approach ===========================================================
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH)
+  {
+    for(int i = 0; i < approach.legs.size(); ++i)
+    {
+      if(!approach.legs.at(i).missed)
+        paintApproachSegment(context, approach, &transition, i);
+      else
+        break;
+    }
+  }
+
+  // Texts ====================================================
   // Do not paint the last point in the transition since it overlaps with the approach
-  for(int i = 0; i < transition.legs.size() - 1; ++i)
-    paintApproachPoint(context, transition.legs.at(i));
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_MISSED)
+  {
+    for(const MapApproachLeg& leg : approach.legs)
+    {
+      if(leg.missed)
+        paintApproachPoint(context, leg);
+    }
+  }
 
-  for(const MapApproachLeg& leg : approach.legs)
-    paintApproachPoint(context, leg);
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
+  {
+    for(int i = 0; i < transition.legs.size() - 1; ++i)
+      paintApproachPoint(context, transition.legs.at(i));
+  }
+
+  if(context->objectTypes & context->objectTypes & maptypes::APPROACH)
+  {
+    for(const MapApproachLeg& leg : approach.legs)
+    {
+      if(!leg.missed)
+        paintApproachPoint(context, leg);
+      else
+        break;
+    }
+  }
+}
+
+void setAngle(QLineF& line, float angle)
+{
+  line.setAngle(-(angle - 90.));
+}
+
+float getAngle(const QLineF& line)
+{
+  return atools::geo::normalizeCourse(line.angle() + 90.);
+}
+
+void MapPainterRoute::paintApproachSegment(const PaintContext *context,
+                                           const maptypes::MapApproachLegList& legs,
+                                           const maptypes::MapApproachLegList *nextLegs, int index)
+{
+  const maptypes::MapApproachLeg& leg = legs.legs.at(index);
+  const maptypes::MapApproachLeg *prevLeg = nullptr;
+  if(index > 0)
+    prevLeg = &legs.legs.at(index - 1);
+
+  // const maptypes::MapApproachLeg *nextLeg = nullptr;
+  // float nextCourse = 999.f;
+  // if(index < legs.legs.size() - 1)
+  // {
+  // nextLeg = &legs.legs.at(index + 1);
+  // nextCourse = nextLeg->course;
+  // }
+  // else
+  // {
+  // if(nextLegs != nullptr && !nextLegs->legs.isEmpty())
+  // {
+  // if(nextLegs->legs.first().type == "IF")
+  // {
+  // nextLeg = &nextLegs->legs.first();
+  // if(nextLegs->legs.size() > 1)
+  // nextCourse = nextLegs->legs.at(1).course;
+  // }
+  // else
+  // {
+  // nextLeg = &nextLegs->legs.first();
+  // nextCourse = nextLegs->legs.first().course;
+  // }
+  // }
+  // }
+
+  int fixX = 0, fixY = 0, prevX = 0, prevY = 0, recX = 0, recY = 0;
+  bool valid = leg.displayPos.isValid(),
+       prevValid = prevLeg != nullptr ? prevLeg->displayPos.isValid() : false,
+       recValid = leg.recFixPos.isValid();
+
+  QSize size = scale->getScreeenSizeForRect(legs.bounding);
+  // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
+  bool hiddenDummy;
+  if(valid)
+    wToS(leg.displayPos, fixX, fixY, size, &hiddenDummy);
+  if(prevValid)
+    wToS(prevLeg->displayPos, prevX, prevY, size, &hiddenDummy);
+  if(recValid)
+    wToS(leg.recFixPos, recX, recY, size, &hiddenDummy);
+
+  QPainter *painter = context->painter;
+
+  // if(leg.type == "IF")   // Initial fix - Nothing to do here
+  if(leg.type == "AF" || // Arc to fix
+     leg.type == "RF") // Constant radius arc
+  {
+    if(valid && prevValid)
+      paintArc(context->painter, prevX, prevY, fixX, fixY, recX, recY, leg.turnDirection == "L");
+  }
+  else if(leg.type == "CA" ||  // Course to altitude - point prepared by ApproachQuery
+          leg.type == "CF" || // Course to fix
+          leg.type == "DF" || // Direct to fix
+          leg.type == "FA" || // Fix to altitude - point prepared by ApproachQuery
+          leg.type == "TF" || // Track to fix
+          leg.type == "FC" || // Track from fix from distance
+          leg.type == "FM" || // From fix to manual termination
+          leg.type == "VA" || // Heading to altitude termination
+          leg.type == "VM") // Heading to manual termination
+  {
+    if(valid && prevValid)
+      painter->drawLine(fixX, fixY, prevX, prevY);
+  }
+  else if(leg.type == "CD" ||  // Course to DME distance
+          leg.type == "VD") // Heading to DME distance termination
+  {
+    // TODO
+    if(valid && prevValid)
+      painter->drawLine(fixX, fixY, prevX, prevY);
+  }
+  else if(leg.type == "CI" ||  // Course to intercept
+          leg.type == "VI") // Heading to intercept
+  {
+  }
+  else if(leg.type == "CR" ||  // Course to radial termination
+          leg.type == "VR") // Heading to radial termination
+  {
+  }
+  else if(leg.type == "FD")   // Track from fix to DME distance
+  {
+    // TODO - not correct
+    if(valid && prevValid)
+      painter->drawLine(fixX, fixY, prevX, prevY);
+  }
+  else if(leg.type == "HA" ||  // Hold to altitude
+          leg.type == "HF" || // Hold to fix
+          leg.type == "HM") // Hold to manual termination
+  {
+    // Length of the straight segments - scale to about total length given in the leg
+    float pixel = scale->getPixelForFeet(
+      atools::roundToInt(atools::geo::nmToFeet(std::max(leg.dist, 3.5f) / 3.3f)));
+
+    QPainterPath path;
+    if(leg.turnDirection == "R")
+    {
+      path.arcTo(QRectF(0, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 180, -180);
+      path.arcTo(QRectF(0, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 0, -180);
+    }
+    else
+    {
+      path.arcTo(QRectF(-pixel * 0.5f, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 0, 180);
+      path.arcTo(QRectF(-pixel * 0.5f, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 180, 180);
+    }
+    path.closeSubpath();
+
+    painter->translate(fixX, fixY);
+    painter->rotate(leg.course + leg.magvar);
+
+    painter->drawPath(path);
+    painter->resetTransform();
+  }
+  else if(leg.type == "PI")   // Procedure turn
+  {
+    float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.5f)));
+
+    float course;
+    // if(nextCourse != 999.f)
+    // course = atools::geo::opposedCourseDeg(nextCourse + leg.magvar);
+    // else
+
+    if(leg.turnDirection == "L")
+      course = leg.course + leg.magvar - 45;
+    else
+      course = leg.course + leg.magvar + 45;
+
+    QLineF ext = QLineF(fixX, fixY, fixX + 400, fixY);
+    setAngle(ext, course);
+    ext.setLength(scale->getPixelForNm(static_cast<int>(leg.dist), getAngle(ext)));
+
+    QLineF turn = QLineF(ext.x2(), ext.y2(), ext.x2() + pixel, ext.y2());
+    float turnCourse;
+    if(leg.turnDirection == "L")
+      turnCourse = course + 45.f;
+    else
+      turnCourse = course - 45.f;
+    setAngle(turn, turnCourse);
+
+    QLineF arrow(turn.p2(), turn.p1());
+    arrow.setLength(scale->getPixelForMeter(1000, getAngle(arrow)));
+
+    QPolygonF poly;
+    poly << arrow.p2() << arrow.p1();
+
+    if(leg.turnDirection == "L")
+      setAngle(arrow, opposedCourseDeg(turnCourse) - 15);
+    else
+      setAngle(arrow, opposedCourseDeg(turnCourse) + 15);
+
+    context->painter->save();
+    context->painter->setBrush(mapcolors::routeApproachPreviewColor);
+    painter->setBrush(mapcolors::routeApproachPreviewColor);
+    QPen pen = painter->pen();
+    pen.setCapStyle(Qt::SquareCap);
+    pen.setJoinStyle(Qt::MiterJoin);
+    painter->setPen(pen);
+    poly << arrow.p2();
+    painter->drawPolygon(poly);
+    context->painter->restore();
+
+    // QLineF arc = QLineF(turn.x2(), turn.y2(), turn.x2() + pixel / 2., turn.y2());
+    // if(leg.turnDirection == "L")
+    // setAngle(arc, course - 45.f);
+    // else if(leg.turnDirection == "R")
+    // setAngle(arc, course + 45.f);
+
+    // QLineF ret(turn);
+    // ret.setP1(arc.p2());
+    // ret.setP2(QPointF(turn.x1() - (arc.x1() - arc.x2()), turn.y1() - (arc.y1() - arc.y2())));
+
+    // QPointF intersect;
+    // bool intersects = ext.intersect(ret, &intersect) != QLineF::NoIntersection;
+    // if(intersects)
+    // ret.setP2(intersect);
+
+    painter->drawLine(ext);
+    painter->drawLine(turn);
+    // painter->drawLine(arrow);
+
+    // paintArc(context->painter, arc.p1(), arc.p2(), arc.pointAt(0.5), leg.turnDirection == "L");
+    // painter->drawLine(ret.p1(), ret.p2());
+    // if(intersects)
+    // painter->drawLine(ret.p2(), turn.p1());
+    // else
+    // painter->drawLine(ret.p1(), turn.p1());
+  }
+
+  // if(valid && prevValid)
+  // {
+  // painter->drawText((fixX + prevX) / 2, (fixY + prevY) / 2, QString::number(index));
+  // }
+}
+
+void MapPainterRoute::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0,
+                               bool left)
+{
+  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
+}
+
+void MapPainterRoute::paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0,
+                               bool left)
+{
+  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
+}
+
+void MapPainterRoute::paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0,
+                               bool left)
+{
+  // center of the circle is (x0, y0) and that the arc contains your two points (x1, y1) and (x2, y2).
+  // Then the radius is: r=sqrt((x1-x0)(x1-x0) + (y1-y0)(y1-y0)).
+  float r = std::sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
+  float x = x0 - r;
+  float y = y0 - r;
+  float width = 2.f * r;
+  float height = 2.f * r;
+  float startAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y1 - y0, x1 - x0)));
+  float endAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y2 - y0, x2 - x0)));
+
+  float span = 0.f;
+  if(left)
+  {
+    if(startAngle > endAngle)
+      span = startAngle - endAngle;
+    else
+      span = 360.f - endAngle + startAngle;
+
+    painter->drawArc(x, y, width, height, -startAngle * 16.f, span * 16.f);
+  }
+  else
+  {
+    // negative values mean clockwise
+    if(endAngle > startAngle)
+      span = endAngle - startAngle;
+    else
+      span = 360.f - startAngle + endAngle;
+
+    painter->drawArc(x, y, width, height, -startAngle * 16.f, -span * 16.f);
+  }
 }
 
 void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapApproachLeg& leg)
 {
-  int x, y;
+  int x = 0, y = 0;
+
+  QStringList texts;
+  // Manual and altitude terminated legs
+  if((leg.type == "CA" ||
+      leg.type == "FA" ||
+      leg.type == "FD" ||
+      leg.type == "VA" ||
+      leg.type == "FC" ||
+      leg.type == "FM" ||
+      leg.type == "VM") && wToS(leg.displayPos, x, y))
+  {
+    texts.append(leg.displayText);
+    texts.append(maptypes::restrictionText(leg.altRestriction));
+    paintUserpoint(context, x, y);
+    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
+    texts.clear();
+  }
+  else
+  {
+    texts.append(maptypes::restrictionText(leg.altRestriction));
+  }
+
   if(leg.waypoint.position.isValid() && wToS(leg.waypoint.position, x, y))
   {
     paintWaypoint(context, QColor(), x, y);
-    paintWaypointText(context, x, y, leg.waypoint, &leg.altRestriction);
+    paintWaypointText(context, x, y, leg.waypoint, &texts);
   }
   else if(leg.ndb.position.isValid() && wToS(leg.ndb.position, x, y))
   {
     paintNdb(context, x, y);
-    paintNdbText(context, x, y, leg.ndb, &leg.altRestriction);
+    paintNdbText(context, x, y, leg.ndb, &texts);
   }
   else if(leg.vor.position.isValid() && wToS(leg.vor.position, x, y))
   {
     paintVor(context, x, y, leg.vor);
-    paintVorText(context, x, y, leg.vor, &leg.altRestriction);
+    paintVorText(context, x, y, leg.vor, &texts);
   }
   else if(leg.ils.position.isValid() && wToS(leg.ils.position, x, y))
   {
+    texts.append(leg.fixIdent);
     paintUserpoint(context, x, y);
-    paintText(context, mapcolors::routeUserPointColor, x, y, leg.ils.ident, &leg.altRestriction);
+    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
   }
-  else if(wToS(leg.fixPos, x, y))
+  else if(leg.runwayEnd.position.isValid() && wToS(leg.runwayEnd.position, x, y))
   {
+    texts.append(leg.fixIdent);
     paintUserpoint(context, x, y);
-    paintText(context, mapcolors::routeUserPointColor, x, y, leg.userpoint.name, &leg.altRestriction);
+    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
   }
+
 }
 
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)
@@ -413,7 +723,7 @@ void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const 
 }
 
 void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
-                                   const maptypes::MapAltRestriction *altRestriction)
+                                   const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
@@ -424,7 +734,7 @@ void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true, altRestriction);
+  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, true, addtionalText);
 }
 
 void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
@@ -434,7 +744,7 @@ void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
 }
 
 void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
-                                   const maptypes::MapAltRestriction *altRestriction)
+                                   const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
@@ -445,7 +755,7 @@ void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, co
   if(context->mapLayer->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true, altRestriction);
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, true, addtionalText);
 }
 
 void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& col, int x, int y)
@@ -456,14 +766,14 @@ void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& c
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
                                         const maptypes::MapWaypoint& obj,
-                                        const maptypes::MapAltRestriction *altRestriction)
+                                        const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
   if(context->mapLayer->isWaypointRouteName())
     flags |= textflags::IDENT;
 
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true, altRestriction);
+  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true, addtionalText);
 }
 
 /* Paint user defined waypoint */
@@ -475,16 +785,11 @@ void MapPainterRoute::paintUserpoint(const PaintContext *context, int x, int y)
 
 /* Draw text with light yellow background for flight plan */
 void MapPainterRoute::paintText(const PaintContext *context, const QColor& color, int x, int y,
-                                const QString& text,
-                                const maptypes::MapAltRestriction *altRestriction)
+                                const QStringList& texts)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
 
-  QStringList texts;
-  texts.append(text);
-  symbolPainter->restrictionText(altRestriction, texts);
-
-  if(!text.isEmpty() && context->mapLayer->isWaypointRouteName())
+  if(!texts.isEmpty() && context->mapLayer->isWaypointRouteName())
     symbolPainter->textBox(context->painter, texts, color,
                            x + size / 2 + 2,
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
@@ -544,10 +849,10 @@ void MapPainterRoute::drawSymbolText(const PaintContext *context, const RouteMap
       switch(type)
       {
         case maptypes::INVALID:
-          paintText(context, mapcolors::routeInvalidPointColor, x, y, obj.getIdent());
+          paintText(context, mapcolors::routeInvalidPointColor, x, y, {obj.getIdent()});
           break;
         case maptypes::USER:
-          paintText(context, mapcolors::routeUserPointColor, x, y, obj.getIdent());
+          paintText(context, mapcolors::routeUserPointColor, x, y, {obj.getIdent()});
           break;
         case maptypes::AIRPORT:
           paintAirportText(context, x, y, obj.getAirport());

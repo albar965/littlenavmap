@@ -61,6 +61,9 @@ enum MapObjectType
   RUNWAYEND = 1 << 19,
   POSITION = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
+  APPROACH = 1 << 22,
+  APPROACH_MISSED = 1 << 23,
+  APPROACH_TRANSITION = 1 << 24,
   ALL_NAV = VOR | NDB | WAYPOINT,
   ALL = 0xffffffff
 };
@@ -526,9 +529,10 @@ struct MapAltRestriction
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
-  float course, dist, time, theta, rho;
+  float course, dist, time, theta, rho, magvar;
   QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
-  atools::geo::Pos fixPos, recFixPos;
+  QStringList displayText;
+  atools::geo::Pos fixPos, recFixPos, displayPos;
   MapAltRestriction altRestriction;
 
   MapUserpoint userpoint, recUserpoint;
@@ -676,6 +680,9 @@ QString magvarText(float magvar);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
+
+/* Put altitude restriction texts into list */
+QString restrictionText(const MapAltRestriction& altRestriction);
 
 } // namespace types
 

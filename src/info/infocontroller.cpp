@@ -218,10 +218,13 @@ void InfoController::saveState()
   for(const maptypes::MapAirway& airway : currentSearchResult.airways)
     refs.append({airway.id, maptypes::AIRWAY});
 
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
   for(const maptypes::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
-  atools::settings::Settings::instance().setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
+  settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
+
+  approachTree->saveState();
 }
 
 void InfoController::restoreState()
@@ -245,6 +248,8 @@ void InfoController::restoreState()
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
                                                             ui->tabWidgetLegend, ui->splitterApproachInfo,
                                                             ui->treeWidgetApproachInfo});
+
+  approachTree->restoreState();
 }
 
 void InfoController::updateAirport()
@@ -381,7 +386,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     infoBuilder->comText(airport, html, iconBackColor);
     ui->textBrowserComInfo->setText(html.getHtml());
 
-    approachTree->fillApproachTreeWidget(airport.id);
+    approachTree->fillApproachTreeWidget(airport);
     ui->textBrowserApproachInfo->clear();
 
     html.clear();

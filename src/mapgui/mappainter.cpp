@@ -282,7 +282,7 @@ bool MapPainter::findTextPosRhumb(const Pos& pos1, const Pos& pos2, GeoPainter *
   return false;
 }
 
-void MapPainter::drawLineString(const Marble::GeoDataLineString& linestring, const PaintContext *context)
+void MapPainter::drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring)
 {
   GeoDataLineString ls;
   ls.setTessellate(true);
@@ -290,6 +290,19 @@ void MapPainter::drawLineString(const Marble::GeoDataLineString& linestring, con
   {
     ls.clear();
     ls << linestring.at(i - 1) << linestring.at(i);
+    context->painter->drawPolyline(ls);
+  }
+}
+
+void MapPainter::drawLineString(const PaintContext *context, const atools::geo::LineString& linestring)
+{
+  GeoDataLineString ls;
+  ls.setTessellate(true);
+  for(int i = 1; i < linestring.size(); i++)
+  {
+    ls.clear();
+    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY(), 0, DEG)
+       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY(), 0, DEG);
     context->painter->drawPolyline(ls);
   }
 }

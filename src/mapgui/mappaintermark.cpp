@@ -170,20 +170,24 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const MapSearchResult& approachHighlightResults = mapWidget->getApproachLegHighlights();
+  const maptypes::MapApproachLeg& leg = mapWidget->getApproachLegHighlights();
 
   positions.clear();
 
-  for(const MapWaypoint& wp : approachHighlightResults.waypoints)
-    positions.append(wp.position);
-  for(const MapVor& vor : approachHighlightResults.vors)
-    positions.append(vor.position);
-  for(const MapNdb& ndb : approachHighlightResults.ndbs)
-    positions.append(ndb.position);
-  for(const MapIls& ils : approachHighlightResults.ils)
-    positions.append(ils.position);
-  for(const MapRunwayEnd& end : approachHighlightResults.runwayEnds)
-    positions.append(end.position);
+  if(leg.waypoint.position.isValid())
+    positions.append(leg.waypoint.position);
+  if(leg.vor.position.isValid())
+    positions.append(leg.vor.position);
+  if(leg.ndb.position.isValid())
+    positions.append(leg.ndb.position);
+  if(leg.ils.position.isValid())
+    positions.append(leg.ils.position);
+  if(leg.runwayEnd.position.isValid())
+    positions.append(leg.runwayEnd.position);
+  if(leg.userpoint.position.isValid())
+    positions.append(leg.userpoint.position);
+  if(leg.displayPos.isValid())
+    positions.append(leg.displayPos);
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightApproachColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));

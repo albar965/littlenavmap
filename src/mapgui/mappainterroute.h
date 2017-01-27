@@ -55,14 +55,13 @@ private:
   void paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegList& transition,
                             const maptypes::MapApproachLegList& approach);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
-                         const maptypes::MapAltRestriction *altRestriction = nullptr);
+                         const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
-                    const maptypes::MapAltRestriction *altRestriction = nullptr);
+                    const QStringList *addtionalText = nullptr);
   void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
-                    const maptypes::MapAltRestriction *altRestriction = nullptr);
+                    const QStringList *addtionalText = nullptr);
   void paintAirportText(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
-  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QString& text,
-                 const maptypes::MapAltRestriction *altRestriction = nullptr);
+  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
   static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
@@ -73,6 +72,14 @@ private:
                       const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
 
   void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachLeg& leg);
+
+  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegList& legs,
+                            const maptypes::MapApproachLegList *nextLegs,
+                            int index);
+
+  void paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0, bool left);
+  void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
+  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
 };
 

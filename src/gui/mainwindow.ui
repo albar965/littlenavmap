@@ -2364,9 +2364,12 @@
             <property name="alternatingRowColors">
              <bool>true</bool>
             </property>
-            <property name="uniformRowHeights">
-             <bool>false</bool>
+            <property name="allColumnsShowFocus">
+             <bool>true</bool>
             </property>
+            <attribute name="headerMinimumSectionSize">
+             <number>5</number>
+            </attribute>
             <column>
              <property name="text">
               <string notr="true">Description</string>
@@ -2385,6 +2388,16 @@
             <column>
              <property name="text">
               <string>Course</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Distance</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Remarks</string>
              </property>
             </column>
            </widget>
@@ -5129,6 +5142,48 @@
    </property>
    <property name="statusTip">
     <string>Clear all search filters</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachShowAppr">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Show approach legs on the map</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachShowMissedAppr">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Missed Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Show missed approach legs on the map</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachShowTrans">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Transitions</string>
+   </property>
+   <property name="toolTip">
+    <string>Show transition legs on the map</string>
    </property>
   </action>
  </widget>

@@ -216,7 +216,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
     mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
-  getNearestHighlights(approachLegHighlights, xs, ys, maxDistance, result);
+  // TODO getNearestHighlights(approachLegHighlights, xs, ys, maxDistance, result);
   getNearestHighlights(highlights, xs, ys, maxDistance, result);
 
   // Get objects from cache - already present objects will be skipped

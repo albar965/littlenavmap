@@ -227,6 +227,10 @@ void MapWidget::updateMapObjectsShown()
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
+  setShowMapFeatures(maptypes::APPROACH, ui->actionInfoApproachShowAppr->isChecked());
+  setShowMapFeatures(maptypes::APPROACH_MISSED, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapFeatures(maptypes::APPROACH_TRANSITION, ui->actionInfoApproachShowTrans->isChecked());
+
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
@@ -914,7 +918,7 @@ const maptypes::MapSearchResult& MapWidget::getSearchHighlights() const
   return screenIndex->getSearchHighlights();
 }
 
-const maptypes::MapSearchResult& MapWidget::getApproachLegHighlights() const
+const maptypes::MapApproachLeg& MapWidget::getApproachLegHighlights() const
 {
   return screenIndex->getApproachLegHighlights();
 }
@@ -943,9 +947,9 @@ void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& position
   update();
 }
 
-void MapWidget::changeApproachLegHighlights(const maptypes::MapSearchResult& positions)
+void MapWidget::changeApproachLegHighlights(const maptypes::MapApproachLeg *leg)
 {
-  screenIndex->getApproachLegHighlights() = positions;
+  screenIndex->setApproachLegHighlights(leg);
   update();
 }
 
