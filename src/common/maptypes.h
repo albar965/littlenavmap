@@ -545,10 +545,83 @@ struct MapApproachLeg
   bool missed, flyover, trueCourse;
 };
 
-struct MapApproachLegList
+struct MapApproachLegs
 {
   QVector<MapApproachLeg> legs;
   atools::geo::Rect bounding;
+};
+
+/* Includes transition legs */
+struct MapApproachFullLegs
+{
+  MapApproachFullLegs(const MapApproachLegs *translegs = nullptr, const MapApproachLegs *apprlegs = nullptr)
+  {
+    tlegs = translegs != nullptr && !translegs->legs.isEmpty() ? &translegs->legs : nullptr;
+    alegs = apprlegs != nullptr && !apprlegs->legs.isEmpty() ? &apprlegs->legs : nullptr;
+
+    if(translegs != nullptr)
+      bounding = translegs->bounding;
+
+    if(apprlegs != nullptr)
+    {
+      if(bounding.isValid())
+        bounding.extend(apprlegs->bounding);
+      else
+        bounding = apprlegs->bounding;
+    }
+  }
+
+  const QVector<MapApproachLeg> *tlegs = nullptr;
+  const QVector<MapApproachLeg> *alegs = nullptr;
+  atools::geo::Rect bounding;
+
+  bool isEmpty() const
+  {
+    return size() == 0;
+  }
+
+  int size() const
+  {
+    return (tlegs != nullptr ? tlegs->size() : 0) + (alegs != nullptr ? alegs->size() : 0);
+  }
+
+  bool isTransition(int i) const
+  {
+    return tlegs != nullptr && i < tlegs->size();
+  }
+
+  bool isApproach(int i) const
+  {
+    return !isTransition(i) && !isMissed(i);
+  }
+
+  bool isMissed(int i) const
+  {
+    return at(i).missed;
+  }
+
+  const MapApproachLeg& at(int i) const
+  {
+    return isTransition(i) ? tlegs->at(i) : alegs->at(apprIdx(i));
+  }
+
+  const MapApproachLeg& operator[](int i) const
+  {
+    return isTransition(i) ? tlegs->at(i) : alegs->at(apprIdx(i));
+  }
+
+  MapApproachLeg& operator[](int i)
+  {
+    // Allow modificatons by approach query
+    return const_cast<MapApproachLeg&>(isTransition(i) ? (*tlegs)[i] : (*alegs)[apprIdx(i)]);
+  }
+
+private:
+  int apprIdx(int i) const
+  {
+    return tlegs != nullptr ? i - tlegs->size() : i;
+  }
+
 };
 
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
@@ -706,7 +779,8 @@ Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachLegList, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachFullLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 

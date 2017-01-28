@@ -105,8 +105,8 @@ public:
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeApproachLegHighlights(const maptypes::MapApproachLeg *leg);
-  void changeApproachTransitionHighlight(const maptypes::MapApproachLegList& transition,
-                                         const maptypes::MapApproachLegList& approach);
+  void changeApproachTransitionHighlight(const maptypes::MapApproachLegs& transition,
+                                         const maptypes::MapApproachLegs& approach);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -143,8 +143,8 @@ public:
   const maptypes::MapSearchResult& getSearchHighlights() const;
   const maptypes::MapApproachLeg& getApproachLegHighlights() const;
 
-  const maptypes::MapApproachLegList& getApproachHighlight() const;
-  const maptypes::MapApproachLegList& getTransitionHighlight() const;
+  const maptypes::MapApproachLegs& getApproachHighlight() const;
+  const maptypes::MapApproachLegs& getTransitionHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 

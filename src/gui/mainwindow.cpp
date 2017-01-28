@@ -1489,8 +1489,8 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 {
   qDebug() << Q_FUNC_INFO;
 
-  maptypes::MapApproachLegList transition;
-  maptypes::MapApproachLegList approach;
+  maptypes::MapApproachLegs transition;
+  maptypes::MapApproachLegs approach;
 
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
   if(approachRef.approachId != -1)

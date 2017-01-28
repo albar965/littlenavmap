@@ -53,8 +53,7 @@ void PaintContext::szFont(float scale) const
 
 // =================================================
 MapPainter::MapPainter(MapWidget *parentMapWidget, MapQuery *mapQuery, MapScale *mapScale)
-  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery),
-    scale(mapScale)
+  : CoordinateConverter(parentMapWidget->viewport()), mapWidget(parentMapWidget), query(mapQuery), scale(mapScale)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -305,4 +304,158 @@ void MapPainter::drawLineString(const PaintContext *context, const atools::geo::
        << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY(), 0, DEG);
     context->painter->drawPolyline(ls);
   }
+}
+
+void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0,
+                          bool left)
+{
+  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
+}
+
+void MapPainter::paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0,
+                          bool left)
+{
+  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
+}
+
+void MapPainter::paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0,
+                          bool left)
+{
+  // center of the circle is (x0, y0) and that the arc contains your two points (x1, y1) and (x2, y2).
+  // Then the radius is: r=sqrt((x1-x0)(x1-x0) + (y1-y0)(y1-y0)).
+  float r = std::sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
+  float x = x0 - r;
+  float y = y0 - r;
+  float width = 2.f * r;
+  float height = 2.f * r;
+  float startAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y1 - y0, x1 - x0)));
+  float endAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y2 - y0, x2 - x0)));
+
+  float span = 0.f;
+  if(left)
+  {
+    if(startAngle > endAngle)
+      span = startAngle - endAngle;
+    else
+      span = 360.f - endAngle + startAngle;
+
+    painter->drawArc(QRectF(x, y, width, height),
+                     atools::roundToInt(-startAngle * 16.),
+                     atools::roundToInt(span * 16.));
+  }
+  else
+  {
+    // negative values mean clockwise
+    if(endAngle > startAngle)
+      span = endAngle - startAngle;
+    else
+      span = 360.f - startAngle + endAngle;
+
+    painter->drawArc(QRectF(x, y, width, height),
+                     atools::roundToInt(-startAngle * 16.),
+                     atools::roundToInt(-span * 16.));
+  }
+}
+
+void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, float lengthNm, bool left)
+{
+  // Scale to total length given in the leg
+  // length = 2 * p + 2 * PI * p / 2
+  // p = length / (2 + PI)
+  // Straight segments are pixel long and circle diameter is pixel/2
+  float pixel = scale->getPixelForNm(std::max(lengthNm, 3.f)) / (2.f + M_PI);
+
+  QPainterPath path;
+  if(!left)
+  {
+    // Turn right in the hold
+    path.arcTo(QRectF(0, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 180.f, -180.f);
+    path.arcTo(QRectF(0, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 0.f, -180.f);
+  }
+  else
+  {
+    // Turn left in the hold
+    path.arcTo(QRectF(-pixel * 0.5f, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 0.f, 180.f);
+    path.arcTo(QRectF(-pixel * 0.5f, 0.f + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 180.f, 180.f);
+  }
+  path.closeSubpath();
+
+  painter->translate(x, y);
+  painter->rotate(direction);
+
+  painter->drawPath(path);
+  painter->resetTransform();
+}
+
+void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left)
+{
+  // One minute = 3.5 nm
+  float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
+
+  float course;
+  if(left)
+    // Turn right and then turn 180 deg left
+    course = turnHeading - 45.f;
+  else
+    // Turn left and then turn 180 deg right
+    course = turnHeading + 45.f;
+
+  // Course line to turn
+  QLineF extension = QLineF(x, y, x + 400.f, y);
+  extension.setAngle(angleToQt(course));
+  extension.setLength(scale->getPixelForNm(distanceNm, angleFromQt(extension.angle())));
+
+  // Turn segment
+  QLineF turnSegment = QLineF(extension.x2(), extension.y2(), extension.x2() + pixel, extension.y2());
+  float turnCourse;
+  if(left)
+    turnCourse = course + 45.f;
+  else
+    turnCourse = course - 45.f;
+  turnSegment.setAngle(angleToQt(turnCourse));
+
+  // 180 deg turn arc
+  QLineF arc = QLineF(turnSegment.x2(), turnSegment.y2(), turnSegment.x2() + pixel / 2., turnSegment.y2());
+  if(left)
+    arc.setAngle(angleToQt(course - 45.f));
+  else
+    arc.setAngle(angleToQt(course + 45.f));
+
+  // Return from turn arc
+  QLineF returnSegment(turnSegment);
+  returnSegment.setP1(arc.p2());
+  returnSegment.setP2(QPointF(turnSegment.x1() - (arc.x1() - arc.x2()), turnSegment.y1() - (arc.y1() - arc.y2())));
+
+  // Calculate intersection with extension to get the end point
+  QPointF intersect;
+  bool intersects = extension.intersect(returnSegment, &intersect) != QLineF::NoIntersection;
+  if(intersects)
+    returnSegment.setP2(intersect);
+  // Make return segment a bit shorter than turn segment
+  returnSegment.setLength(returnSegment.length() * 0.8);
+
+  painter->drawLine(extension);
+  painter->drawLine(turnSegment);
+  paintArc(painter, arc.p1(), arc.p2(), arc.pointAt(0.5), left);
+  painter->drawLine(returnSegment.p1(), returnSegment.p2());
+
+  // Calculate arrow for return segment
+  QLineF arrow(returnSegment.p2(), returnSegment.p1());
+  arrow.setLength(scale->getPixelForNm(0.2f, angleFromQt(returnSegment.angle())));
+
+  QPolygonF poly;
+  poly << arrow.p2() << arrow.p1();
+  if(left)
+    arrow.setAngle(angleToQt(turnCourse - 20.f));
+  else
+    arrow.setAngle(angleToQt(turnCourse + 20.f));
+  poly << arrow.p2();
+
+  painter->save();
+  QPen pen = painter->pen();
+  pen.setCapStyle(Qt::SquareCap);
+  pen.setJoinStyle(Qt::MiterJoin);
+  painter->setPen(pen);
+  painter->drawPolygon(poly);
+  painter->restore();
 }

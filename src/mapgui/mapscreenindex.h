@@ -159,22 +159,22 @@ public:
     lastSimData = data;
   }
 
-  const maptypes::MapApproachLegList& getApproachHighlight() const
+  const maptypes::MapApproachLegs& getApproachHighlight() const
   {
     return approachHighlight;
   }
 
-  maptypes::MapApproachLegList& getApproachHighlight()
+  maptypes::MapApproachLegs& getApproachHighlight()
   {
     return approachHighlight;
   }
 
-  const maptypes::MapApproachLegList& getTransitionHighlight() const
+  const maptypes::MapApproachLegs& getTransitionHighlight() const
   {
     return transitionHighlight;
   }
 
-  maptypes::MapApproachLegList& getTransitionHighlight()
+  maptypes::MapApproachLegs& getTransitionHighlight()
   {
     return transitionHighlight;
   }
@@ -192,7 +192,7 @@ private:
   maptypes::MapSearchResult highlights;
   maptypes::MapApproachLeg approachLegHighlights;
 
-  maptypes::MapApproachLegList approachHighlight, transitionHighlight;
+  maptypes::MapApproachLegs approachHighlight, transitionHighlight;
 
   QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;

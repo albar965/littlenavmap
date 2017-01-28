@@ -50,11 +50,11 @@ public:
    *  higher zoom distances. */
   float getPixelForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
   float getPixelForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
-  float getPixelForNm(int nm, float directionDeg = DEFAULT_ANGLE) const;
+  float getPixelForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
 
   int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
   int getPixelIntForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
-  int getPixelIntForNm(int nm, float directionDeg = DEFAULT_ANGLE) const;
+  int getPixelIntForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
 
   /*Get an approximation in screen pixes for the given coordinate rectangle */
   QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;

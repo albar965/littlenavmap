@@ -34,7 +34,7 @@
 using namespace Marble;
 using namespace atools::geo;
 using maptypes::MapApproachLeg;
-using maptypes::MapApproachLegList;
+using maptypes::MapApproachLegs;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                  RouteController *controller)
@@ -57,6 +57,7 @@ void MapPainterRoute::render(PaintContext *context)
   atools::util::PainterContextSaver saver(context->painter);
 
   paintRoute(context);
+
   paintApproachPreview(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
 }
 
@@ -178,7 +179,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     startPoints.append(QPoint(x, y));
   }
 
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 6);
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
   // Draw lines separately to avoid omission in mercator near anti meridian
@@ -294,137 +295,57 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
 /* Draw approaches and transitions selected in the tree view */
 void MapPainterRoute::paintApproachPreview(const PaintContext *context,
-                                           const maptypes::MapApproachLegList& transition,
-                                           const maptypes::MapApproachLegList& approach)
+                                           const maptypes::MapApproachLegs& transition,
+                                           const maptypes::MapApproachLegs& approach)
 {
-  if(((transition.legs.isEmpty() || !transition.bounding.overlaps(context->viewportRect))) &&
-     (approach.legs.isEmpty() || !approach.bounding.overlaps(context->viewportRect)))
+  maptypes::MapApproachFullLegs allLegs(&transition, &approach);
+
+  if(allLegs.isEmpty() || !allLegs.bounding.overlaps(context->viewportRect))
     return;
 
   // Draw white background ========================================
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 9);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 3);
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
   context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
-  {
-    for(int i = 0; i < transition.legs.size(); ++i)
-      paintApproachSegment(context, transition, &approach, i);
-  }
+  for(int i = 0; i < allLegs.size(); i++)
+    paintApproachSegment(context, allLegs, i);
 
-  for(int i = 0; i < approach.legs.size(); ++i)
+  context->painter->setBackground(Qt::white);
+  context->painter->setBackgroundMode(Qt::OpaqueMode);
+  QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+  QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  for(int i = 0; i < allLegs.size(); i++)
   {
-    if((approach.legs.at(i).missed && context->objectTypes & maptypes::APPROACH_MISSED) ||
-       (!approach.legs.at(i).missed && context->objectTypes & maptypes::APPROACH))
-      paintApproachSegment(context, approach, &transition, i);
-  }
-
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
-                                Qt::DotLine, Qt::RoundCap, Qt::RoundJoin));
-  // Missed Approach below others ===========================================================
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_MISSED)
-  {
-    for(int i = 0; i < approach.legs.size(); ++i)
-    {
-      if(approach.legs.at(i).missed)
-        paintApproachSegment(context, approach, &transition, i);
-    }
-  }
-
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewColor, innerlinewidth,
-                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  // Transition  ===========================================================
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
-  {
-    for(int i = 0; i < transition.legs.size(); ++i)
-      paintApproachSegment(context, transition, &approach, i);
-  }
-
-  // Approach ===========================================================
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH)
-  {
-    for(int i = 0; i < approach.legs.size(); ++i)
-    {
-      if(!approach.legs.at(i).missed)
-        paintApproachSegment(context, approach, &transition, i);
-      else
-        break;
-    }
+    if(allLegs.isMissed(i))
+      context->painter->setPen(missedPen);
+    else
+      context->painter->setPen(apprPen);
+    paintApproachSegment(context, allLegs, i);
   }
 
   // Texts ====================================================
-  // Do not paint the last point in the transition since it overlaps with the approach
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_MISSED)
-  {
-    for(const MapApproachLeg& leg : approach.legs)
-    {
-      if(leg.missed)
-        paintApproachPoint(context, leg);
-    }
-  }
-
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH_TRANSITION)
-  {
-    for(int i = 0; i < transition.legs.size() - 1; ++i)
-      paintApproachPoint(context, transition.legs.at(i));
-  }
-
-  if(context->objectTypes & context->objectTypes & maptypes::APPROACH)
-  {
-    for(const MapApproachLeg& leg : approach.legs)
-    {
-      if(!leg.missed)
-        paintApproachPoint(context, leg);
-      else
-        break;
-    }
-  }
+  for(int i = 0; i < allLegs.size(); i++)
+    paintApproachPoint(context, allLegs, i);
 }
 
-void setAngle(QLineF& line, float angle)
+void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
+                                           int index)
 {
-  line.setAngle(-(angle - 90.));
-}
+  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
+     (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
+     (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
+    return;
 
-float getAngle(const QLineF& line)
-{
-  return atools::geo::normalizeCourse(line.angle() + 90.);
-}
-
-void MapPainterRoute::paintApproachSegment(const PaintContext *context,
-                                           const maptypes::MapApproachLegList& legs,
-                                           const maptypes::MapApproachLegList *nextLegs, int index)
-{
-  const maptypes::MapApproachLeg& leg = legs.legs.at(index);
+  const maptypes::MapApproachLeg& leg = legs.at(index);
   const maptypes::MapApproachLeg *prevLeg = nullptr;
   if(index > 0)
-    prevLeg = &legs.legs.at(index - 1);
+    prevLeg = &legs.at(index - 1);
 
-  // const maptypes::MapApproachLeg *nextLeg = nullptr;
-  // float nextCourse = 999.f;
-  // if(index < legs.legs.size() - 1)
-  // {
-  // nextLeg = &legs.legs.at(index + 1);
-  // nextCourse = nextLeg->course;
-  // }
-  // else
-  // {
-  // if(nextLegs != nullptr && !nextLegs->legs.isEmpty())
-  // {
-  // if(nextLegs->legs.first().type == "IF")
-  // {
-  // nextLeg = &nextLegs->legs.first();
-  // if(nextLegs->legs.size() > 1)
-  // nextCourse = nextLegs->legs.at(1).course;
-  // }
-  // else
-  // {
-  // nextLeg = &nextLegs->legs.first();
-  // nextCourse = nextLegs->legs.first().course;
-  // }
-  // }
-  // }
+  const maptypes::MapApproachLeg *nextLeg = nullptr;
+  if(index < legs.size() - 1)
+    nextLeg = &legs.at(index + 1);
 
   int fixX = 0, fixY = 0, prevX = 0, prevY = 0, recX = 0, recY = 0;
   bool valid = leg.displayPos.isValid(),
@@ -461,7 +382,26 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context,
           leg.type == "VM") // Heading to manual termination
   {
     if(valid && prevValid)
-      painter->drawLine(fixX, fixY, prevX, prevY);
+    {
+      QLineF line(fixX, fixY, prevX, prevY);
+      if(!leg.turnDirection.isEmpty())
+      {
+        // Draw a small arc if a turn direction is given
+        QLineF arc(prevX, prevY, fixX, fixY + 100);
+        arc.setLength(scale->getPixelForNm(0.5f));
+        if(leg.turnDirection == "R")
+          arc.setAngle(angleToQt(angleFromQt(line.angle()) + 90));
+        else
+          arc.setAngle(angleToQt(angleFromQt(line.angle()) - 90));
+
+        paintArc(painter, arc.p1(), arc.p2(), arc.pointAt(0.5), leg.turnDirection == "L");
+
+        // Line from end of arc to next fix
+        painter->drawLine(arc.p2(), QPointF(fixX, fixY));
+      }
+      else
+        painter->drawLine(line);
+    }
   }
   else if(leg.type == "CD" ||  // Course to DME distance
           leg.type == "VD") // Heading to DME distance termination
@@ -478,177 +418,55 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context,
           leg.type == "VR") // Heading to radial termination
   {
   }
-  else if(leg.type == "FD")   // Track from fix to DME distance
+  else if(leg.type == "FD")   // Track from fix to DME distance ===============================
   {
-    // TODO - not correct
-    if(valid && prevValid)
-      painter->drawLine(fixX, fixY, prevX, prevY);
+
   }
-  else if(leg.type == "HA" ||  // Hold to altitude
+  else if(leg.type == "HA" ||  // Hold to altitude ===============================
           leg.type == "HF" || // Hold to fix
           leg.type == "HM") // Hold to manual termination
+    paintHold(painter, fixX, fixY, leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
+  else if(leg.type == "PI") // Procedure turn ===============================
   {
-    // Length of the straight segments - scale to about total length given in the leg
-    float pixel = scale->getPixelForFeet(
-      atools::roundToInt(atools::geo::nmToFeet(std::max(leg.dist, 3.5f) / 3.3f)));
-
-    QPainterPath path;
-    if(leg.turnDirection == "R")
-    {
-      path.arcTo(QRectF(0, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 180, -180);
-      path.arcTo(QRectF(0, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 0, -180);
-    }
-    else
-    {
-      path.arcTo(QRectF(-pixel * 0.5f, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 0, 180);
-      path.arcTo(QRectF(-pixel * 0.5f, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 180, 180);
-    }
-    path.closeSubpath();
-
-    painter->translate(fixX, fixY);
-    painter->rotate(leg.course + leg.magvar);
-
-    painter->drawPath(path);
-    painter->resetTransform();
-  }
-  else if(leg.type == "PI")   // Procedure turn
-  {
-    float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.5f)));
-
-    float course;
-    // if(nextCourse != 999.f)
-    // course = atools::geo::opposedCourseDeg(nextCourse + leg.magvar);
-    // else
-
-    if(leg.turnDirection == "L")
-      course = leg.course + leg.magvar - 45;
-    else
-      course = leg.course + leg.magvar + 45;
-
-    QLineF ext = QLineF(fixX, fixY, fixX + 400, fixY);
-    setAngle(ext, course);
-    ext.setLength(scale->getPixelForNm(static_cast<int>(leg.dist), getAngle(ext)));
-
-    QLineF turn = QLineF(ext.x2(), ext.y2(), ext.x2() + pixel, ext.y2());
-    float turnCourse;
-    if(leg.turnDirection == "L")
-      turnCourse = course + 45.f;
-    else
-      turnCourse = course - 45.f;
-    setAngle(turn, turnCourse);
-
-    QLineF arrow(turn.p2(), turn.p1());
-    arrow.setLength(scale->getPixelForMeter(1000, getAngle(arrow)));
-
-    QPolygonF poly;
-    poly << arrow.p2() << arrow.p1();
-
-    if(leg.turnDirection == "L")
-      setAngle(arrow, opposedCourseDeg(turnCourse) - 15);
-    else
-      setAngle(arrow, opposedCourseDeg(turnCourse) + 15);
-
-    context->painter->save();
-    context->painter->setBrush(mapcolors::routeApproachPreviewColor);
     painter->setBrush(mapcolors::routeApproachPreviewColor);
-    QPen pen = painter->pen();
-    pen.setCapStyle(Qt::SquareCap);
-    pen.setJoinStyle(Qt::MiterJoin);
-    painter->setPen(pen);
-    poly << arrow.p2();
-    painter->drawPolygon(poly);
-    context->painter->restore();
-
-    // QLineF arc = QLineF(turn.x2(), turn.y2(), turn.x2() + pixel / 2., turn.y2());
-    // if(leg.turnDirection == "L")
-    // setAngle(arc, course - 45.f);
-    // else if(leg.turnDirection == "R")
-    // setAngle(arc, course + 45.f);
-
-    // QLineF ret(turn);
-    // ret.setP1(arc.p2());
-    // ret.setP2(QPointF(turn.x1() - (arc.x1() - arc.x2()), turn.y1() - (arc.y1() - arc.y2())));
-
-    // QPointF intersect;
-    // bool intersects = ext.intersect(ret, &intersect) != QLineF::NoIntersection;
-    // if(intersects)
-    // ret.setP2(intersect);
-
-    painter->drawLine(ext);
-    painter->drawLine(turn);
-    // painter->drawLine(arrow);
-
-    // paintArc(context->painter, arc.p1(), arc.p2(), arc.pointAt(0.5), leg.turnDirection == "L");
-    // painter->drawLine(ret.p1(), ret.p2());
-    // if(intersects)
-    // painter->drawLine(ret.p2(), turn.p1());
-    // else
-    // painter->drawLine(ret.p1(), turn.p1());
+    paintProcedureTurn(painter, fixX, fixY, leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
+    painter->setBrush(Qt::NoBrush);
   }
-
-  // if(valid && prevValid)
-  // {
-  // painter->drawText((fixX + prevX) / 2, (fixY + prevY) / 2, QString::number(index));
-  // }
 }
 
-void MapPainterRoute::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0,
-                               bool left)
+void MapPainterRoute::paintApproachPoint(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
+                                         int index)
 {
-  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
-}
+  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
+     (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
+     (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
+    return;
 
-void MapPainterRoute::paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0,
-                               bool left)
-{
-  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
-}
-
-void MapPainterRoute::paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0,
-                               bool left)
-{
-  // center of the circle is (x0, y0) and that the arc contains your two points (x1, y1) and (x2, y2).
-  // Then the radius is: r=sqrt((x1-x0)(x1-x0) + (y1-y0)(y1-y0)).
-  float r = std::sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-  float x = x0 - r;
-  float y = y0 - r;
-  float width = 2.f * r;
-  float height = 2.f * r;
-  float startAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y1 - y0, x1 - x0)));
-  float endAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y2 - y0, x2 - x0)));
-
-  float span = 0.f;
-  if(left)
+  const maptypes::MapApproachLeg& leg = legs.at(index);
+  if(index < legs.size() - 1)
   {
-    if(startAngle > endAngle)
-      span = startAngle - endAngle;
-    else
-      span = 360.f - endAngle + startAngle;
-
-    painter->drawArc(x, y, width, height, -startAngle * 16.f, span * 16.f);
+    // Do not paint the last point in the transition since it overlaps with the approach
+    if(legs.isTransition(index) && legs.isApproach(index + 1))
+      return;
   }
-  else
-  {
-    // negative values mean clockwise
-    if(endAngle > startAngle)
-      span = endAngle - startAngle;
-    else
-      span = 360.f - startAngle + endAngle;
 
-    painter->drawArc(x, y, width, height, -startAngle * 16.f, -span * 16.f);
-  }
-}
-
-void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapApproachLeg& leg)
-{
   int x = 0, y = 0;
 
   QStringList texts;
-  // Manual and altitude terminated legs
+  // Manual and altitude terminated legs that have a calculated position needing extra text
   if((leg.type == "CA" ||
+      leg.type == "CD" ||
+      leg.type == "CI" ||
+      leg.type == "CR" ||
+      leg.type == "HF" ||
+      leg.type == "HM" ||
+      leg.type == "HA" ||
       leg.type == "FA" ||
       leg.type == "FD" ||
       leg.type == "VA" ||
+      leg.type == "VD" ||
+      leg.type == "VI" ||
+      leg.type == "VR" ||
       leg.type == "FC" ||
       leg.type == "FM" ||
       leg.type == "VM") && wToS(leg.displayPos, x, y))
@@ -660,9 +478,7 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapA
     texts.clear();
   }
   else
-  {
     texts.append(maptypes::restrictionText(leg.altRestriction));
-  }
 
   if(leg.waypoint.position.isValid() && wToS(leg.waypoint.position, x, y))
   {
@@ -691,7 +507,6 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const MapA
     paintUserpoint(context, x, y);
     paintText(context, mapcolors::routeUserPointColor, x, y, texts);
   }
-
 }
 
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)

@@ -34,7 +34,7 @@
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 using maptypes::MapApproachLeg;
-using maptypes::MapApproachLegList;
+using maptypes::MapApproachLegs;
 using maptypes::MapApproachRef;
 
 ApproachTreeController::ApproachTreeController(MainWindow *main)
@@ -228,7 +228,7 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
       if(entry.approachId != -1 && entry.transitionId == -1)
       {
         itemLoadedIndex.setBit(item->type());
-        const MapApproachLegList *legs = approachQuery->getApproachLegs(currentAirport, entry.approachId);
+        const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, entry.approachId);
 
         if(legs != nullptr)
         {
@@ -243,7 +243,7 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
       else if(entry.approachId != -1 && entry.transitionId != -1)
       {
         itemLoadedIndex.setBit(item->type());
-        const MapApproachLegList *legs = approachQuery->getTransitionLegs(currentAirport, entry.transitionId);
+        const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, entry.transitionId);
 
         if(legs != nullptr)
         {

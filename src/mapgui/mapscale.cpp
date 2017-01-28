@@ -88,9 +88,9 @@ int MapScale::getPixelIntForFeet(int feet, float directionDeg) const
   return getPixelIntForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
 }
 
-int MapScale::getPixelIntForNm(int nm, float directionDeg) const
+int MapScale::getPixelIntForNm(float nm, float directionDeg) const
 {
-  return getPixelIntForMeter(atools::geo::nmToMeter(static_cast<float>(nm)), directionDeg);
+  return getPixelIntForMeter(atools::geo::nmToMeter(nm), directionDeg);
 }
 
 float MapScale::getPixelForMeter(float meter, float directionDeg) const
@@ -119,9 +119,9 @@ float MapScale::getPixelForFeet(int feet, float directionDeg) const
   return getPixelForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
 }
 
-float MapScale::getPixelForNm(int nm, float directionDeg) const
+float MapScale::getPixelForNm(float nm, float directionDeg) const
 {
-  return getPixelForMeter(atools::geo::nmToMeter(static_cast<float>(nm)), directionDeg);
+  return getPixelForMeter(atools::geo::nmToMeter(nm), directionDeg);
 }
 
 QDebug operator<<(QDebug out, const MapScale& scale)

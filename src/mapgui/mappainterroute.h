@@ -52,8 +52,8 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
-  void paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegList& transition,
-                            const maptypes::MapApproachLegList& approach);
+  void paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegs& transition,
+                            const maptypes::MapApproachLegs& approach);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
@@ -71,15 +71,10 @@ private:
   void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
                       const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
 
-  void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachLeg& leg);
+  void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
 
-  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegList& legs,
-                            const maptypes::MapApproachLegList *nextLegs,
+  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
                             int index);
-
-  void paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0, bool left);
-  void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
-  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
 };
 

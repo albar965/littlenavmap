@@ -923,18 +923,18 @@ const maptypes::MapApproachLeg& MapWidget::getApproachLegHighlights() const
   return screenIndex->getApproachLegHighlights();
 }
 
-const maptypes::MapApproachLegList& MapWidget::getApproachHighlight() const
+const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
 {
   return screenIndex->getApproachHighlight();
 }
 
-const maptypes::MapApproachLegList& MapWidget::getTransitionHighlight() const
+const maptypes::MapApproachLegs& MapWidget::getTransitionHighlight() const
 {
   return screenIndex->getTransitionHighlight();
 }
 
-void MapWidget::changeApproachTransitionHighlight(const maptypes::MapApproachLegList& transition,
-                                                  const maptypes::MapApproachLegList& approach)
+void MapWidget::changeApproachTransitionHighlight(const maptypes::MapApproachLegs& transition,
+                                                  const maptypes::MapApproachLegs& approach)
 {
   screenIndex->getTransitionHighlight() = transition;
   screenIndex->getApproachHighlight() = approach;

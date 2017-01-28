@@ -101,7 +101,10 @@ void Unit::deInit()
 QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)
 {
   float val = distMeterF(value);
-  return u(locale->toString(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+  if(narrow)
+    return u(QString::number(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+  else
+    return u(locale->toString(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
 }
 
 QString Unit::distNm(float value, bool addUnit, int minValPrec, bool narrow)

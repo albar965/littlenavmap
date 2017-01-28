@@ -50,35 +50,38 @@ public:
 
   const maptypes::MapApproachLeg *getApproachLeg(const maptypes::MapAirport& airport, int legId);
   const maptypes::MapApproachLeg *getTransitionLeg(const maptypes::MapAirport& airport, int legId);
-  const maptypes::MapApproachLegList *getApproachLegs(const maptypes::MapAirport& airport, int approachId);
-  const maptypes::MapApproachLegList *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
+  const maptypes::MapApproachLegs *getApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  const maptypes::MapApproachLegs *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
 
 private:
   void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry);
   maptypes::MapApproachLeg buildTransitionLegEntry(atools::sql::SqlQuery *query);
   maptypes::MapApproachLeg buildApproachLegEntry(atools::sql::SqlQuery *query);
-  void postProcessLegList(maptypes::MapApproachLegList *legs);
+  void postProcessLegList(maptypes::MapApproachFullLegs& legs);
   void updateMagvar(const maptypes::MapAirport& airport,
-                    maptypes::MapApproachLegList *legs);
+                    maptypes::MapApproachLegs *legs);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachQuery = nullptr, *transitionQuery = nullptr,
   *approachLegQuery = nullptr, *transitionLegQuery = nullptr;
 
   // approach ID and transition ID to lists
-  QCache<int, maptypes::MapApproachLegList> approachCache, transitionCache;
+  QCache<int, maptypes::MapApproachLegs> approachCache, transitionCache;
 
   // maps leg ID to approach/transition ID and index in list
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
 
-  maptypes::MapApproachLegList *buildEntries(const maptypes::MapAirport& airport,
-                                             QCache<int, maptypes::MapApproachLegList>& cache,
-                                             QHash<int, std::pair<int, int> >& index,
-                                             atools::sql::SqlQuery *query, int approachId,
-                                             std::function<maptypes::MapApproachLeg(
-                                                             atools::sql::SqlQuery *)> factoryFunction);
+  typedef std::function<maptypes::MapApproachLeg(atools::sql::SqlQuery *)> FactoryFunctionType;
+
+  maptypes::MapApproachLegs *buildEntries(const maptypes::MapAirport& airport,
+                                          QCache<int, maptypes::MapApproachLegs>& cache,
+                                          QHash<int, std::pair<int, int> >& index,
+                                          atools::sql::SqlQuery *query, int id,
+                                          FactoryFunctionType factoryFunction, bool isTransition);
+
+  void updateBounding(maptypes::MapApproachLegs* legs);
 
 };
 
