@@ -154,19 +154,9 @@ void ApproachQuery::postProcessLegList(maptypes::MapApproachFullLegs& legs)
         leg.displayText << tr("Altitude");
       }
     }
-    else if(leg.type == "CD" || // Course to DME distance
-            leg.type == "VD") // Heading to DME distance termination
-    {
-      if(leg.recFixPos.isValid())
-      {
-        // TODO not really correct
-      }
-    }
     else if(leg.type == "CI" || // Course to intercept
             leg.type == "VI") // Heading to intercept
     {
-      Line(prevLeg->fixPos, leg.fixPos);
-
       // TODO line intersection
       // TODO check if next is arc or not
 
@@ -182,10 +172,20 @@ void ApproachQuery::postProcessLegList(maptypes::MapApproachFullLegs& legs)
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.dist, true, 20, true) + "/" +
       QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
-    else if(leg.type == "FD") // Track from fix to DME distance
+    else if(leg.type == "FD" || // Track from fix to DME distance
+            leg.type == "CD" || // Course to DME distance
+            leg.type == "VD") // Heading to DME distance termination
     {
+      Pos start = leg.fixPos;
+      if(prevLeg != nullptr)
+        start = prevLeg->displayPos;
 
-      // TODO line-circle intersection
+      Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+      Line line(start, start.endpointRhumb(atools::geo::nmToMeter(leg.dist * 2), leg.course + leg.magvar));
+      leg.displayPos = line.intersectionWithCircle(center, atools::geo::nmToMeter(leg.dist), 10.f);
+
+      leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.dist, true, 20, true) + "/" +
+      QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     else if(leg.type == "FM" || // From fix to manual termination
             leg.type == "VM") // Heading to manual termination
@@ -212,7 +212,6 @@ void ApproachQuery::postProcessLegList(maptypes::MapApproachFullLegs& legs)
       leg.displayPos = leg.fixPos;
       leg.displayText << tr("Manual");
     }
-
   }
 }
 

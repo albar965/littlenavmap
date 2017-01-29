@@ -388,7 +388,7 @@ void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, flo
 }
 
 void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left,
-                                    QLineF *extensionLine)
+                                    QLine *extensionLine)
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -408,7 +408,7 @@ void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnH
 
   if(extensionLine != nullptr)
     // Return course
-    *extensionLine = QLineF(extension.p2(), extension.p1());
+    *extensionLine = QLineF(extension.p2(), extension.p1()).toLine();
 
   // Turn segment
   QLineF turnSegment = QLineF(extension.x2(), extension.y2(), extension.x2() + pixel, extension.y2());

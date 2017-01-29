@@ -306,7 +306,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   // Draw white background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
-  QLineF lastLine;
+  QLine lastLine;
 
   context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -332,7 +332,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                                           int index, QLineF& lastLine)
+                                           int index, QLine& lastLine)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -372,7 +372,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     if(valid && prevValid)
     {
       paintArc(context->painter, prevX, prevY, fixX, fixY, recX, recY, leg.turnDirection == "L");
-      lastLine = QLineF(prevX, prevY, fixX, fixY);
+      lastLine = QLine(prevX, prevY, fixX, fixY);
     }
   }
   else if(leg.type == "CA" ||  // Course to altitude - point prepared by ApproachQuery
@@ -387,9 +387,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   {
     if(valid && prevValid)
     {
-      QLineF line(prevX, prevY, fixX, fixY);
       if(!leg.turnDirection.isEmpty())
       {
+        QLineF line(prevX, prevY, fixX, fixY);
         // Draw a small arc if a turn direction is given
 
         // The returned value represents the number of degrees you need to add to this
@@ -439,18 +439,15 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         // Draw the next line
         QLineF nextLine(arc.p2(), QPointF(fixX, fixY));
         painter->drawLine(nextLine);
-        lastLine = nextLine;
+        lastLine = nextLine.toLine();
       }
       else
       {
+        QLine line(prevX, prevY, fixX, fixY);
         painter->drawLine(line);
         lastLine = line;
       }
     }
-  }
-  else if(leg.type == "CD" ||  // Course to DME distance
-          leg.type == "VD") // Heading to DME distance termination
-  {
   }
   else if(leg.type == "CI" ||  // Course to intercept
           leg.type == "VI") // Heading to intercept
@@ -460,9 +457,22 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
           leg.type == "VR") // Heading to radial termination
   {
   }
-  else if(leg.type == "FD")   // Track from fix to DME distance ===============================
+  else if(leg.type == "CD" ||  // Course to DME distance
+          leg.type == "VD" || // Heading to DME distance termination
+          leg.type == "FD") // Track from fix to DME distance ===============================
   {
-
+    if(prevValid)
+    {
+      QLine line(prevX, prevY, fixX, fixY);
+      painter->drawLine(line);
+      lastLine = line;
+    }
+    else
+    {
+      QLine line(recX, recY, fixX, fixY);
+      painter->drawLine(line);
+      lastLine = line;
+    }
   }
   else if(leg.type == "HA" ||  // Hold to altitude ===============================
           leg.type == "HF" || // Hold to fix

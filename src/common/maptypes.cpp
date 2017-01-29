@@ -354,6 +354,33 @@ const static QHash<QString, QString> approachLegTypeToStr(
     {"VR", QObject::tr("Heading to radial termination")}
   });
 
+const static QHash<QString, QString> approachLegRemarkStr(
+  {
+    {"AF", QObject::tr("")},
+    {"CA", QObject::tr("")},
+    {"CD", QObject::tr("")},
+    {"CF", QObject::tr("")},
+    {"CI", QObject::tr("")},
+    {"CR", QObject::tr("")},
+    {"DF", QObject::tr("")},
+    {"FA", QObject::tr("")},
+    {"FC", QObject::tr("")},
+    {"FD", QObject::tr("")},
+    {"FM", QObject::tr("")},
+    {"HA", QObject::tr("Mandatory hold")},
+    {"HF", QObject::tr("Single circuit")},
+    {"HM", QObject::tr("Mandatory hold")},
+    {"IF", QObject::tr("")},
+    {"PI", QObject::tr("")},
+    {"RF", QObject::tr("")},
+    {"TF", QObject::tr("")},
+    {"VA", QObject::tr("")},
+    {"VD", QObject::tr("")},
+    {"VI", QObject::tr("")},
+    {"VM", QObject::tr("")},
+    {"VR", QObject::tr("")}
+  });
+
 int qHash(const maptypes::MapObjectRef& type)
 {
   return type.id ^ static_cast<int>(type.type);
@@ -825,6 +852,11 @@ QString patternDirection(const QString& type)
 QString legType(const QString& type)
 {
   return approachLegTypeToStr.value(type);
+}
+
+QString legRemarks(const QString& type)
+{
+  return approachLegRemarkStr.value(type);
 }
 
 QString altRestrictionText(const MapAltRestriction& restriction)

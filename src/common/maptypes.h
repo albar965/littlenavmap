@@ -715,6 +715,7 @@ QString navTypeNameWaypoint(const QString& type);
 QString approachFixType(const QString& type);
 QString approachType(const QString& type);
 QString legType(const QString& type);
+QString legRemarks(const QString& type);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
 QString edgeLights(const QString& type);
