@@ -466,8 +466,8 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
   else if(leg.turnDirection == "L")
     remarks.append(tr("Turn left"));
 
-  if(!leg.recFixIdent.isEmpty())
-    remarks.append(tr("Rec. ") + leg.recFixIdent);
+  // if(!leg.recFixIdent.isEmpty())
+  // remarks.append(tr("Rec. ") + leg.recFixIdent);
 
   return remarks.join(", ");
 }

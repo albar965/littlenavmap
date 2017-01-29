@@ -387,7 +387,8 @@ void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, flo
   painter->resetTransform();
 }
 
-void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left)
+void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left,
+                                    QLineF *extensionLine)
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -404,6 +405,10 @@ void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnH
   QLineF extension = QLineF(x, y, x + 400.f, y);
   extension.setAngle(angleToQt(course));
   extension.setLength(scale->getPixelForNm(distanceNm, angleFromQt(extension.angle())));
+
+  if(extensionLine != nullptr)
+    // Return course
+    *extensionLine = QLineF(extension.p2(), extension.p1());
 
   // Turn segment
   QLineF turnSegment = QLineF(extension.x2(), extension.y2(), extension.x2() + pixel, extension.y2());

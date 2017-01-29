@@ -74,7 +74,7 @@ private:
   void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                            int index);
+                            int index, QLineF& lastLine);
 
 };
 
