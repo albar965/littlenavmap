@@ -164,7 +164,15 @@ void ApproachQuery::postProcessLegList(maptypes::MapApproachFullLegs& legs)
     else if(leg.type == "CR" || // Course to radial termination
             leg.type == "VR") // Heading to radial termination
     {
-      // TODO line intersection
+      Pos start = leg.fixPos;
+      if(prevLeg != nullptr)
+        start = prevLeg->displayPos;
+
+      Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
+
+      leg.displayPos = Pos::intersectingRadials(start, leg.course + leg.magvar, center, leg.theta + leg.magvar);
+
+      leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta);
     }
     else if(leg.type == "FC") // Track from fix from distance
     {

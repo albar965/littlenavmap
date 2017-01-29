@@ -456,6 +456,18 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   else if(leg.type == "CR" ||  // Course to radial termination
           leg.type == "VR") // Heading to radial termination
   {
+    if(prevValid)
+    {
+      QLine line(prevX, prevY, fixX, fixY);
+      painter->drawLine(line);
+      lastLine = line;
+    }
+    else
+    {
+      QLine line(recX, recY, fixX, fixY);
+      painter->drawLine(line);
+      lastLine = line;
+    }
   }
   else if(leg.type == "CD" ||  // Course to DME distance
           leg.type == "VD" || // Heading to DME distance termination

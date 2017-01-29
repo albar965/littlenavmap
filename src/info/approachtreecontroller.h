@@ -80,7 +80,7 @@ private:
   void buildApprLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
 
-  // Save and restore expande item state
+  // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
   void restoreTreeViewState(const QBitArray& state);
 

@@ -483,25 +483,19 @@ QBitArray ApproachTreeController::saveTreeViewState()
 
   QBitArray state;
   for(int i = 0; i < root->childCount(); ++i)
-    if(root->child(i)->type() != -1)
-      itemStack.append(root->child(i));
+    itemStack.append(root->child(i));
 
   int itemIdx = 0;
   while(!itemStack.isEmpty())
   {
     const QTreeWidgetItem *item = itemStack.takeLast();
-    if(itemIndex.at(item->type()).legId == -1)
-    {
-      state.resize(itemIdx + 2);
-      state.setBit(itemIdx, item->isExpanded());
-      state.setBit(itemIdx + 1, item->isSelected());
-      for(int i = 0; i < item->childCount(); ++i)
-      {
-        if(item->child(i)->type() != -1)
-          itemStack.append(item->child(i));
-      }
-      itemIdx += 2;
-    }
+
+    state.resize(itemIdx + 2);
+    state.setBit(itemIdx, item->isExpanded());
+    state.setBit(itemIdx + 1, item->isSelected());
+    for(int i = 0; i < item->childCount(); ++i)
+      itemStack.append(item->child(i));
+    itemIdx += 2;
   }
   return state;
 }
@@ -514,26 +508,47 @@ void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
     if(root->child(i)->type() != -1)
       itemStack.append(root->child(i));
 
+  // First expand items to allow loading of child nodes
   int itemIdx = 0;
   while(!itemStack.isEmpty())
   {
     QTreeWidgetItem *item = itemStack.takeLast();
-    if(itemIndex.at(item->type()).legId == -1)
+    if(itemIdx < state.size())
     {
-      if(itemIdx < state.size())
-      {
-        item->setExpanded(state.at(itemIdx));
-        item->setSelected(state.at(itemIdx + 1));
-        for(int i = 0; i < item->childCount(); ++i)
-        {
-          if(item->child(i)->type() != -1)
-            itemStack.append(item->child(i));
-        }
-        itemIdx += 2;
-      }
-      else
-        // Stop reading if index is invalid
-        break;
+      item->setExpanded(state.at(itemIdx));
+      for(int i = 0; i < item->childCount(); ++i)
+        itemStack.append(item->child(i));
+      itemIdx += 2;
     }
   }
+
+  // Now select items
+  itemStack.clear();
+  for(int i = 0; i < root->childCount(); ++i)
+    itemStack.append(root->child(i));
+
+  QTreeWidgetItem *selectedItem = nullptr;
+  itemIdx = 0;
+  while(!itemStack.isEmpty())
+  {
+    QTreeWidgetItem *item = itemStack.takeLast();
+    if(itemIdx < state.size())
+    {
+      if(state.at(itemIdx + 1))
+      {
+        item->setSelected(true);
+        selectedItem = item;
+      }
+      else
+        item->setSelected(false);
+
+      for(int i = 0; i < item->childCount(); ++i)
+        itemStack.append(item->child(i));
+      itemIdx += 2;
+    }
+  }
+
+  // Center the selected item
+  if(selectedItem != nullptr)
+    treeWidget->scrollToItem(selectedItem, QAbstractItemView::PositionAtCenter);
 }
