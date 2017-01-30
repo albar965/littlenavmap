@@ -31,6 +31,16 @@
 #include <QMenu>
 #include <QTreeWidget>
 
+enum TreeColumn
+{
+  DESCRIPTION,
+  IDENT,
+  ALTITUDE,
+  COURSE,
+  DISTANCE,
+  REMARKS
+};
+
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
 using maptypes::MapApproachLeg;
@@ -420,6 +430,7 @@ QTreeWidgetItem *ApproachTreeController::buildTransItem(QTreeWidgetItem *apprIte
 
 void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
 {
+  QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
       (leg.missed ? tr("Missed: ") : QString()) + maptypes::legType(leg.type),
@@ -427,9 +438,11 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
       buildDistanceStr(leg),
-      buildRemarkStr(leg)
+      remarkStr
     },
     itemIndex.size() - 1);
+
+  item->setToolTip(REMARKS, remarkStr);
 
   setItemStyle(item, leg);
 
@@ -438,6 +451,7 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
 
 void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
 {
+  QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
       maptypes::legType(leg.type),
@@ -445,9 +459,11 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
       buildDistanceStr(leg),
-      buildRemarkStr(leg)
+      remarkStr
     },
     itemIndex.size() - 1);
+
+  item->setToolTip(REMARKS, remarkStr);
 
   setItemStyle(item, leg);
 
@@ -474,7 +490,8 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
   QString courseStr;
-  if(leg.type != "IF" && leg.type != "DF" && !(leg.type == "TF" && leg.course == 0.f))
+  // if(leg.type != "IF" && leg.type != "DF" && !(leg.type == "TF" && leg.course == 0.f))
+  if(leg.course != 0.f)
     courseStr = QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
   return courseStr;
 }
@@ -502,8 +519,13 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
 
-  // if(!leg.recFixIdent.isEmpty())
-  // remarks.append(tr("Rec. ") + leg.recFixIdent);
+  if(!leg.recFixIdent.isEmpty())
+    remarks.append(tr("Use navaid %1").arg(leg.recFixIdent));
+
+  if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
+    remarks.append(tr("(Source data error: %1 not found)").arg(leg.fixIdent));
+  if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
+    remarks.append(tr("(Source data error: rec. %1 not found)").arg(leg.recFixIdent));
 
   return remarks.join(", ");
 }

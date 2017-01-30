@@ -151,6 +151,8 @@ public:
   /* User defined flight plan waypoint */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
+  void drawApproachSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
+
   /* Simulator aircraft symbol. Only used for HTML display */
   void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
 

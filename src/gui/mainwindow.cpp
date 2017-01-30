@@ -1518,41 +1518,37 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
       leg = approachQuery->getApproachLeg(airport, approachRef.legId);
 
     qDebug() << "=============";
-    qDebug()
-    << "approachId" << leg->approachId
-    << "transitionId" << leg->transitionId
-    << "legId" << leg->legId
-    << "type" << leg->type
-    << "missed" << leg->missed
-    << "displayPos" << leg->line;
+    qDebug() << "approachId" << leg->approachId
+             << "transitionId" << leg->transitionId
+             << "legId" << leg->legId
+             << "type" << leg->type
+             << "missed" << leg->missed
+             << "line" << leg->line
+             << "original" << leg->original;
 
-    qDebug()
-    << "navId" << leg->navId
-    << "fixType" << leg->fixType
-    << "fixIdent" << leg->fixIdent
-    << "fixPos" << leg->fixPos;
+    qDebug() << "navId" << leg->navId
+             << "fixType" << leg->fixType
+             << "fixIdent" << leg->fixIdent
+             << "fixPos" << leg->fixPos;
 
-    qDebug()
-    << "recNavId" << leg->recNavId
-    << "recFixType" << leg->recFixType
-    << "recFixIdent" << leg->recFixIdent
-    << "recommendedFixPos" << leg->recFixPos;
+    qDebug() << "recNavId" << leg->recNavId
+             << "recFixType" << leg->recFixType
+             << "recFixIdent" << leg->recFixIdent
+             << "recommendedFixPos" << leg->recFixPos;
 
-    qDebug()
-    << "turnDirection" << leg->turnDirection
-    << "flyover" << leg->flyover
-    << "trueCourse" << leg->trueCourse
-    << "course" << leg->course
-    << "magvar" << leg->magvar
-    << "theta" << leg->theta
-    << "rho" << leg->rho
-    << "dist" << leg->dist
-    << "time" << leg->time;
+    qDebug() << "turnDirection" << leg->turnDirection
+             << "flyover" << leg->flyover
+             << "trueCourse" << leg->trueCourse
+             << "course" << leg->course
+             << "magvar" << leg->magvar
+             << "theta" << leg->theta
+             << "rho" << leg->rho
+             << "dist" << leg->dist
+             << "time" << leg->time;
 
-    qDebug()
-    << "altDescriptor" << leg->altRestriction.descriptor
-    << "alt1" << leg->altRestriction.alt1
-    << "alt2" << leg->altRestriction.alt2;
+    qDebug() << "altDescriptor" << leg->altRestriction.descriptor
+             << "alt1" << leg->altRestriction.alt1
+             << "alt2" << leg->altRestriction.alt2;
 
     mapWidget->changeApproachLegHighlights(leg);
   }

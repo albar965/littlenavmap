@@ -424,6 +424,7 @@ void ApproachQuery::postProcessLegs(maptypes::MapApproachFullLegs& legs, bool tr
     }
 
     leg.line = Line(lastPos.isValid() ? lastPos : curPos, curPos);
+    leg.original = leg.line;
     lastPos = curPos;
   }
 }
@@ -438,11 +439,14 @@ void ApproachQuery::postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = nullptr;
     maptypes::MapApproachLeg *nextLeg = nullptr;
+    maptypes::MapApproachLeg *secondNextLeg = nullptr;
 
     if(i > 0)
       prevLeg = &legs[i - 1];
     if(i < legs.size() - 1)
       nextLeg = &legs[i + 1];
+    if(i < legs.size() - 2)
+      secondNextLeg = &legs[i + 2];
 
     if(leg.type == "CI" || // Course to intercept
        leg.type == "VI") // Heading to intercept
@@ -451,7 +455,7 @@ void ApproachQuery::postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs
       {
         bool nextIsArc = nextLeg->type == "AF" || // Arc to fix
                          nextLeg->type == "RF"; // Constant radius arc
-        Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
+        Pos start = prevLeg != nullptr ? prevLeg->original.getPos2() : leg.fixPos;
         Pos intersect;
         if(nextIsArc)
         {
@@ -459,8 +463,15 @@ void ApproachQuery::postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs
           intersect = line.intersectionWithCircle(nextLeg->recFixPos, atools::geo::nmToMeter(nextLeg->rho), 20);
         }
         else
-          intersect = Pos::intersectingRadials(start, leg.course + leg.magvar,
-                                               nextLeg->line.getPos1(), nextLeg->course + nextLeg->magvar);
+        {
+          float nextCourse;
+          if((nextLeg->course == 0.f || nextLeg->type == "IF") && secondNextLeg != nullptr)
+            nextCourse = secondNextLeg->course + secondNextLeg->magvar;
+          else
+            nextCourse = nextLeg->course + nextLeg->magvar;
+
+          intersect = Pos::intersectingRadials(start, leg.course + leg.magvar, nextLeg->original.getPos1(), nextCourse);
+        }
 
         leg.line.setPos1(start);
 
@@ -468,6 +479,7 @@ void ApproachQuery::postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs
         {
           leg.line.setPos2(intersect);
           nextLeg->line.setPos1(intersect);
+
           leg.displayText << tr("Intercept");
 
           if(nextIsArc)
@@ -477,7 +489,7 @@ void ApproachQuery::postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs
         }
         else
         {
-          qWarning() << "leg line" << leg.type << "not intercept found";
+          qWarning() << "leg line" << leg.type << "no intercept found";
           leg.line.setPos2(nextLeg->line.getPos1());
         }
       }
@@ -491,20 +503,11 @@ void ApproachQuery::updateBounding(maptypes::MapApproachLegs *legs)
   {
     for(maptypes::MapApproachLeg& leg : legs->legs)
     {
-      if(leg.fixPos.isValid())
-      {
-        if(!legs->bounding.isValid())
-          legs->bounding = Rect(leg.fixPos);
-        else
-          legs->bounding.extend(leg.fixPos);
-      }
-      if(leg.line.isValid())
-      {
-        if(!legs->bounding.isValid())
-          legs->bounding = Rect(leg.line.getPos1());
-        else
-          legs->bounding.extend(leg.line.getPos1());
-      }
+      legs->bounding.extend(leg.fixPos);
+      legs->bounding.extend(leg.line.getPos1());
+      legs->bounding.extend(leg.line.getPos2());
+      legs->bounding.extend(leg.original.getPos1());
+      legs->bounding.extend(leg.original.getPos2());
     }
   }
 }

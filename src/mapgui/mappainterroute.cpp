@@ -58,7 +58,8 @@ void MapPainterRoute::render(PaintContext *context)
 
   paintRoute(context);
 
-  paintApproachPreview(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
+  if(context->mapLayer->isAirport())
+    paintApproachPreview(context, mapWidget->getTransitionHighlight(), mapWidget->getApproachHighlight());
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -128,13 +129,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Collect start and end points of legs and visibility
   QList<QPoint> startPoints;
   QBitArray visibleStartPoints(routeMapObjects.size(), false);
-  GeoDataLineString linestring;
-  linestring.setTessellate(true);
 
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
-    linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
 
     int x, y;
     visibleStartPoints.setBit(i, wToS(obj.getPosition(), x, y));
@@ -181,6 +179,14 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+
+  GeoDataLineString linestring;
+  linestring.setTessellate(true);
+  for(int i = 0; i < routeMapObjects.size(); i++)
+  {
+    const RouteMapObject& obj = routeMapObjects.at(i);
+    linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
+  }
 
   // Draw lines separately to avoid omission in mercator near anti meridian
   // Draw outer line
@@ -329,7 +335,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 
   // Texts ====================================================
   for(int i = 0; i < allLegs.size(); i++)
-    paintApproachPoint(context, allLegs, i);
+    paintApproachPoints(context, allLegs, i);
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
@@ -348,10 +354,6 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   const maptypes::MapApproachLeg *prevLeg = nullptr;
   if(index > 0)
     prevLeg = &legs.at(index - 1);
-
-  const maptypes::MapApproachLeg *nextLeg = nullptr;
-  if(index < legs.size() - 1)
-    nextLeg = &legs.at(index + 1);
 
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
@@ -463,6 +465,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
           leg.type == "CI" || // Course to intercept
           leg.type == "VI") // Heading to intercept
   {
+    // painter->drawEllipse(line.p1(), 5, 10);
+    // painter->drawEllipse(line.p2(), 10, 5);
+
     painter->drawLine(line);
     lastLine = line;
   }
@@ -479,8 +484,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   }
 }
 
-void MapPainterRoute::paintApproachPoint(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                                         int index)
+void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
+                                          int index)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -488,7 +493,7 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const mapt
     return;
 
   const maptypes::MapApproachLeg& leg = legs.at(index);
-  if(index < legs.size() - 1)
+  if(index < legs.size() - 1 && leg.type != "VI" && leg.type != "CI")
   {
     // Do not paint the last point in the transition since it overlaps with the approach
     if(legs.isTransition(index) && legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH)
@@ -518,8 +523,8 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const mapt
   {
     texts.append(leg.displayText);
     texts.append(maptypes::restrictionText(leg.altRestriction));
-    paintUserpoint(context, x, y);
-    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
+    paintApproachpoint(context, x, y);
+    paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
     texts.clear();
   }
   else
@@ -543,14 +548,14 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const mapt
   else if(leg.ils.position.isValid() && wToS(leg.ils.position, x, y))
   {
     texts.append(leg.fixIdent);
-    paintUserpoint(context, x, y);
-    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
+    paintApproachpoint(context, x, y);
+    paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
   }
   else if(leg.runwayEnd.position.isValid() && wToS(leg.runwayEnd.position, x, y))
   {
     texts.append(leg.fixIdent);
-    paintUserpoint(context, x, y);
-    paintText(context, mapcolors::routeUserPointColor, x, y, texts);
+    paintApproachpoint(context, x, y);
+    paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
   }
 }
 
@@ -634,6 +639,13 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
     flags |= textflags::IDENT;
 
   symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, true, addtionalText);
+}
+
+/* paint intermediate approach point */
+void MapPainterRoute::paintApproachpoint(const PaintContext *context, int x, int y)
+{
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  symbolPainter->drawApproachSymbol(context->painter, x, y, size, true, false);
 }
 
 /* Paint user defined waypoint */

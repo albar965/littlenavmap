@@ -278,6 +278,29 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
     painter->drawPoint(x, y);
 }
 
+void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
+{
+  atools::util::PainterContextSaver saver(painter);
+  painter->setBackgroundMode(Qt::TransparentMode);
+  if(routeFill)
+    painter->setBrush(mapcolors::routeTextBoxColor);
+  else
+    painter->setBrush(Qt::NoBrush);
+
+  float penSize = fast ? 6.f : 3.f;
+
+  painter->setPen(QPen(mapcolors::routeApproachPointColor, penSize, Qt::SolidLine, Qt::SquareCap));
+
+  if(!fast)
+  {
+    size = size + 3;
+    int radius = size / 2;
+    painter->drawEllipse(x - radius, y - radius, size, size);
+  }
+  else
+    painter->drawPoint(x, y);
+}
+
 void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)
 {
   // Create a copy of the line vector

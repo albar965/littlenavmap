@@ -535,7 +535,7 @@ struct MapApproachLeg
   QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
   QStringList displayText;
   atools::geo::Pos fixPos, recFixPos;
-  atools::geo::Line line;
+  atools::geo::Line line, original;
   MapAltRestriction altRestriction;
 
   MapUserpoint userpoint, recUserpoint;

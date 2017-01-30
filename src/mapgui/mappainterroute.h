@@ -71,10 +71,12 @@ private:
   void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
                       const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
 
-  void paintApproachPoint(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
+  void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
                             int index, QLineF& lastLine);
+
+  void paintApproachpoint(const PaintContext *context, int x, int y);
 
 };
 
