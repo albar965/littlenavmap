@@ -174,20 +174,23 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   positions.clear();
 
-  if(leg.waypoint.position.isValid())
-    positions.append(leg.waypoint.position);
-  if(leg.vor.position.isValid())
-    positions.append(leg.vor.position);
-  if(leg.ndb.position.isValid())
-    positions.append(leg.ndb.position);
-  if(leg.ils.position.isValid())
-    positions.append(leg.ils.position);
-  if(leg.runwayEnd.position.isValid())
-    positions.append(leg.runwayEnd.position);
-  if(leg.userpoint.position.isValid())
-    positions.append(leg.userpoint.position);
-  if(leg.displayPos.isValid())
-    positions.append(leg.displayPos);
+  // if(leg.waypoint.position.isValid())
+  // positions.append(leg.waypoint.position);
+  // if(leg.vor.position.isValid())
+  // positions.append(leg.vor.position);
+  // if(leg.ndb.position.isValid())
+  // positions.append(leg.ndb.position);
+  // if(leg.ils.position.isValid())
+  // positions.append(leg.ils.position);
+  // if(leg.runwayEnd.position.isValid())
+  // positions.append(leg.runwayEnd.position);
+  // if(leg.userpoint.position.isValid())
+  // positions.append(leg.userpoint.position);
+  if(leg.line.isValid())
+    // {
+    // positions.append(leg.line.getPos1());
+    positions.append(leg.line.getPos2());
+  // }
 
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(QBrush(mapcolors::highlightApproachColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));

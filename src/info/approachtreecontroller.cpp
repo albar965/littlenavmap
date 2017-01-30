@@ -132,7 +132,8 @@ void ApproachTreeController::fillApproachTreeWidget(const maptypes::MapAirport& 
   else
   {
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(),
-                                                {tr("Airport has no approaches.")}, -1);
+                                                {tr("%1 has no approaches.").
+                                                 arg(maptypes::airportText(airport))}, -1);
     item->setDisabled(true);
   }
   itemLoadedIndex.resize(itemIndex.size());
@@ -214,7 +215,6 @@ void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column
 
 void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 {
-  qDebug() << Q_FUNC_INFO;
   if(item != nullptr)
   {
     if(itemLoadedIndex.at(item->type()))
@@ -344,6 +344,8 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
 QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
   QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix");
+  if(recApp.valueBool("has_gps_overlay"))
+    approachType += tr(" (GPS Overlay)");
 
   QString altStr;
   if(recApp.valueFloat("altitude") > 0.f)

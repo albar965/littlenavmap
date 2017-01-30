@@ -306,7 +306,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   // Draw white background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
-  QLine lastLine;
+  QLineF lastLine;
 
   context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -317,6 +317,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  lastLine = QLineF();
   for(int i = 0; i < allLegs.size(); i++)
   {
     if(allLegs.isMissed(i))
@@ -332,7 +333,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                                           int index, QLine& lastLine)
+                                           int index, QLineF& lastLine)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -340,6 +341,10 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     return;
 
   const maptypes::MapApproachLeg& leg = legs.at(index);
+
+  if(leg.type == "IF") // Initial fix - Nothing to do here
+    return;
+
   const maptypes::MapApproachLeg *prevLeg = nullptr;
   if(index > 0)
     prevLeg = &legs.at(index - 1);
@@ -348,32 +353,38 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   if(index < legs.size() - 1)
     nextLeg = &legs.at(index + 1);
 
-  int fixX = 0, fixY = 0, prevX = 0, prevY = 0, recX = 0, recY = 0;
-  bool valid = leg.displayPos.isValid(),
-       prevValid = prevLeg != nullptr ? prevLeg->displayPos.isValid() : false,
-       recValid = leg.recFixPos.isValid();
-
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
+
+  if(!leg.line.isValid())
+  {
+    qWarning() << "leg line" << index << leg.line << "is invalid";
+    return;
+  }
+
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
+  QLineF line;
   bool hiddenDummy;
-  if(valid)
-    wToS(leg.displayPos, fixX, fixY, size, &hiddenDummy);
-  if(prevValid)
-    wToS(prevLeg->displayPos, prevX, prevY, size, &hiddenDummy);
-  if(recValid)
-    wToS(leg.recFixPos, recX, recY, size, &hiddenDummy);
+  wToS(leg.line, line, size, &hiddenDummy);
+
+  QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
 
   QPainter *painter = context->painter;
 
-  // if(leg.type == "IF")   // Initial fix - Nothing to do here
+  // if(valid && index == 9)
+  // painter->drawEllipse(QPoint(fixX, fixY), 10, 5);
+  // if(prevValid && index == 9)
+  // painter->drawEllipse(QPoint(prevX, prevY), 5, 10);
+  // if(recValid && index == 9)
+  // painter->drawEllipse(QPoint(recX, recY), 20, 20);
+
+  // painter->drawText(line.x1() - 40, line.y1() + 20, "1 " + leg.type);
+  // painter->drawText(line.x2() - 40, line.y2() + 40, "2 " + leg.type);
+
   if(leg.type == "AF" || // Arc to fix
      leg.type == "RF") // Constant radius arc
   {
-    if(valid && prevValid)
-    {
-      paintArc(context->painter, prevX, prevY, fixX, fixY, recX, recY, leg.turnDirection == "L");
-      lastLine = QLine(prevX, prevY, fixX, fixY);
-    }
+    paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
+    lastLine = line;
   }
   else if(leg.type == "CA" ||  // Course to altitude - point prepared by ApproachQuery
           leg.type == "CF" || // Course to fix
@@ -385,115 +396,85 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
           leg.type == "VA" || // Heading to altitude termination
           leg.type == "VM") // Heading to manual termination
   {
-    if(valid && prevValid)
+    if(!leg.turnDirection.isEmpty() && prevLeg != nullptr && prevLeg->type != "IF")
     {
-      if(!leg.turnDirection.isEmpty())
-      {
-        QLineF line(prevX, prevY, fixX, fixY);
-        // Draw a small arc if a turn direction is given
+      // Draw a small arc if a turn direction is given
 
-        // The returned value represents the number of degrees you need to add to this
-        // line to make it have the same angle as the given line, going counter-clockwise.
-        float angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
+      // The returned value represents the number of degrees you need to add to this
+      // line to make it have the same angle as the given line, going counter-clockwise.
+      double angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
 
-        // qDebug() << "angle to last" << angleToLast
-        // << "angle to last rev" << angleToLastRev
-        // << "angle last line" << angleFromQt(lastLine.angle())
-        // << "angle line" << angleFromQt(line.angle());
+      // qDebug() << "angle to last" << angleToLast
+      // << "angle to last rev" << angleToLastRev
+      // << "angle last line" << angleFromQt(lastLine.angle())
+      // << "angle line" << angleFromQt(line.angle());
 
-        // painter->drawText(lastLine.x1() - 40, lastLine.y1() - 20, "l1");
-        // painter->drawText(lastLine.x2() - 40, lastLine.y2() - 20, "l2");
-        // painter->drawText(line.x1() - 40, line.y1(), "1");
-        // painter->drawText(line.x2() - 40, line.y2(), "2");
+      // painter->drawText(lastLine.x1() - 40, lastLine.y1() - 20, "l1");
+      // painter->drawText(lastLine.x2() - 40, lastLine.y2() - 20, "l2");
+      // painter->drawText(line.x1() - 40, line.y1(), "1");
+      // painter->drawText(line.x2() - 40, line.y2(), "2");
 
-        // Calculate the start position of the next line and leave space for the arc
-        QLineF arc(prevX, prevY, fixX, fixY + 100);
-        arc.setLength(scale->getPixelForNm(0.5f));
-        if(leg.turnDirection == "R")
-          arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
-                                                    lastLine.p1()).angle()) + angleToLastRev / 2) + 180.f);
-        else
-          arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2));
-
-        // qDebug() << leg.displayText << angleFromQt(line.angle()) << angleFromQt(arc.angle());
-        // qDebug() << prevLeg->course << leg.course;
-
-        // painter->drawEllipse(arc.p1(), 10, 10);
-        // painter->drawEllipse(arc.p2(), 20, 20);
-        // painter->drawLine(arc.p1(), arc.p2());
-
-        // Calculate bezier control points by extending the last and next line
-        QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(QPointF(fixX, fixY), arc.p2());
-        ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(0.3f));
-        ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(0.3f));
-
-        // painter->drawEllipse(ctrl1.p2(), 5, 10);
-        // painter->drawEllipse(ctrl2.p2(), 10, 5);
-
-        // Draw the arc
-        QPainterPath path;
-        path.moveTo(arc.p1());
-        path.cubicTo(ctrl1.p2(), ctrl2.p2(), arc.p2());
-        painter->drawPath(path);
-
-        // Draw the next line
-        QLineF nextLine(arc.p2(), QPointF(fixX, fixY));
-        painter->drawLine(nextLine);
-        lastLine = nextLine.toLine();
-      }
+      // Calculate the start position of the next line and leave space for the arc
+      QLineF arc(line.p1(), QPointF(line.x2(), line.y2() + 100.));
+      arc.setLength(scale->getPixelForNm(0.5f));
+      if(leg.turnDirection == "R")
+        arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
+                                                  lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
       else
-      {
-        QLine line(prevX, prevY, fixX, fixY);
-        painter->drawLine(line);
-        lastLine = line;
-      }
+        arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.));
+
+      // qDebug() << leg.displayText << angleFromQt(line.angle()) << angleFromQt(arc.angle());
+      // qDebug() << prevLeg->course << leg.course;
+
+      // painter->drawEllipse(arc.p1(), 10, 10);
+      // painter->drawEllipse(arc.p2(), 20, 20);
+      // painter->drawLine(arc.p1(), arc.p2());
+
+      // Calculate bezier control points by extending the last and next line
+      QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(line.p2(), arc.p2());
+      ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(0.3f));
+      ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(0.3f));
+
+      // painter->drawEllipse(ctrl1.p2(), 5, 10);
+      // painter->drawEllipse(ctrl2.p2(), 10, 5);
+
+      // Draw the arc
+      QPainterPath path;
+      path.moveTo(arc.p1());
+      path.cubicTo(ctrl1.p2(), ctrl2.p2(), arc.p2());
+      painter->drawPath(path);
+
+      // Draw the next line
+      QLineF nextLine(arc.p2(), line.p2());
+      painter->drawLine(nextLine);
+      lastLine = nextLine.toLine();
     }
-  }
-  else if(leg.type == "CI" ||  // Course to intercept
-          leg.type == "VI") // Heading to intercept
-  {
+    else
+    {
+      painter->drawLine(line);
+      lastLine = line;
+    }
   }
   else if(leg.type == "CR" ||  // Course to radial termination
-          leg.type == "VR") // Heading to radial termination
-  {
-    if(prevValid)
-    {
-      QLine line(prevX, prevY, fixX, fixY);
-      painter->drawLine(line);
-      lastLine = line;
-    }
-    else
-    {
-      QLine line(recX, recY, fixX, fixY);
-      painter->drawLine(line);
-      lastLine = line;
-    }
-  }
-  else if(leg.type == "CD" ||  // Course to DME distance
+          leg.type == "VR" || // Heading to radial termination
+          leg.type == "CD" || // Course to DME distance
           leg.type == "VD" || // Heading to DME distance termination
-          leg.type == "FD") // Track from fix to DME distance ===============================
+          leg.type == "FD" || // Track from fix to DME distance ===============================
+          leg.type == "CI" || // Course to intercept
+          leg.type == "VI") // Heading to intercept
   {
-    if(prevValid)
-    {
-      QLine line(prevX, prevY, fixX, fixY);
-      painter->drawLine(line);
-      lastLine = line;
-    }
-    else
-    {
-      QLine line(recX, recY, fixX, fixY);
-      painter->drawLine(line);
-      lastLine = line;
-    }
+    painter->drawLine(line);
+    lastLine = line;
   }
   else if(leg.type == "HA" ||  // Hold to altitude ===============================
           leg.type == "HF" || // Hold to fix
           leg.type == "HM") // Hold to manual termination
-    paintHold(painter, fixX, fixY, leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
+    paintHold(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
   else if(leg.type == "PI") // Procedure turn ===============================
   {
     painter->setBrush(mapcolors::routeApproachPreviewColor);
-    paintProcedureTurn(painter, fixX, fixY, leg.course + leg.magvar, leg.dist, leg.turnDirection == "L", &lastLine);
+    paintProcedureTurn(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist,
+                       leg.turnDirection == "L", &lastLine);
     painter->setBrush(Qt::NoBrush);
   }
 }
@@ -510,7 +491,7 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const mapt
   if(index < legs.size() - 1)
   {
     // Do not paint the last point in the transition since it overlaps with the approach
-    if(legs.isTransition(index) && legs.isApproach(index + 1))
+    if(legs.isTransition(index) && legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH)
       return;
   }
 
@@ -533,7 +514,7 @@ void MapPainterRoute::paintApproachPoint(const PaintContext *context, const mapt
       leg.type == "VR" ||
       leg.type == "FC" ||
       leg.type == "FM" ||
-      leg.type == "VM") && wToS(leg.displayPos, x, y))
+      leg.type == "VM") && wToS(leg.line.getPos2(), x, y))
   {
     texts.append(leg.displayText);
     texts.append(maptypes::restrictionText(leg.altRestriction));

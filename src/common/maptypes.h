@@ -20,12 +20,14 @@
 
 #include "geo/pos.h"
 #include "geo/rect.h"
+#include "geo/line.h"
 #include "geo/linestring.h"
 #include "fs/sc/simconnectaircraft.h"
 #include "fs/sc/simconnectuseraircraft.h"
 
 #include <QColor>
 #include <QString>
+
 
 /*
  * Maptypes are mostly filled from database tables and are used to pass airport, navaid and more information
@@ -532,7 +534,8 @@ struct MapApproachLeg
   float course, dist, time, theta, rho, magvar;
   QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
   QStringList displayText;
-  atools::geo::Pos fixPos, recFixPos, displayPos;
+  atools::geo::Pos fixPos, recFixPos;
+  atools::geo::Line line;
   MapAltRestriction altRestriction;
 
   MapUserpoint userpoint, recUserpoint;

@@ -18,8 +18,11 @@
 #include "common/coordinateconverter.h"
 
 #include "geo/pos.h"
+#include "geo/line.h"
 
 #include <marble/ViewportParams.h>
+
+#include <QLineF>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -77,6 +80,23 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, float& x, float& 
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
+}
+
+bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size,
+                               bool *isHidden) const
+{
+  double x, y;
+  bool hidden1, hidden2, visible1, visible2;
+  visible1 = wToS(coords.getPos1(), x, y, size, &hidden1);
+  line.setP1(QPointF(x, y));
+
+  visible2 = wToS(coords.getPos2(), x, y, size, &hidden2);
+  line.setP2(QPointF(x, y));
+
+  if(isHidden != nullptr)
+    *isHidden = hidden1 && hidden2;
+
+  return (visible1 || visible2) && (!hidden1 || !hidden2);
 }
 
 bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size,

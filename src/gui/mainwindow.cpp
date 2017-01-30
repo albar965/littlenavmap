@@ -1524,7 +1524,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     << "legId" << leg->legId
     << "type" << leg->type
     << "missed" << leg->missed
-    << "displayPos" << leg->displayPos;
+    << "displayPos" << leg->line;
 
     qDebug()
     << "navId" << leg->navId

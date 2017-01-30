@@ -362,8 +362,10 @@ void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, flo
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
   // p = length / (2 + PI)
-  // Straight segments are pixel long and circle diameter is pixel/2
-  float pixel = scale->getPixelForNm(std::max(lengthNm, 3.f)) / (2.f + M_PI);
+  // Straight segments are segmentLength long and circle diameter is pixel/2
+  // Minimum 3.5
+  float segmentLength = std::max(lengthNm / (2. + M_PI), 3.5);
+  float pixel = scale->getPixelForNm(segmentLength);
 
   QPainterPath path;
   if(!left)
@@ -388,7 +390,7 @@ void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, flo
 }
 
 void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left,
-                                    QLine *extensionLine)
+                                    QLineF *extensionLine)
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -408,7 +410,7 @@ void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnH
 
   if(extensionLine != nullptr)
     // Return course
-    *extensionLine = QLineF(extension.p2(), extension.p1()).toLine();
+    *extensionLine = QLineF(extension.p2(), extension.p1());
 
   // Turn segment
   QLineF turnSegment = QLineF(extension.x2(), extension.y2(), extension.x2() + pixel, extension.y2());
