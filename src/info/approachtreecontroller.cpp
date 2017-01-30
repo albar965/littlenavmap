@@ -208,9 +208,8 @@ void ApproachTreeController::itemSelectionChanged()
 
 void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-  qDebug() << Q_FUNC_INFO;
   Q_UNUSED(column);
-  Q_UNUSED(item);
+  showEntry(item, true);
 }
 
 void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
@@ -331,7 +330,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachClear)
     treeWidget->clearSelection();
   else if(action == ui->actionInfoApproachShow)
-    emit approachShowOnMap(itemIndex.at(item->type()));
+    showEntry(item, false);
   // else if(action == ui->actionInfoApproachAddToFlightPlan)
   // emit approachAddToFlightPlan(itemIndex.at(item->type()));
 
@@ -339,6 +338,37 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   // else if(action == ui->actionInfoApproachShowAppr ||
   // action == ui->actionInfoApproachShowMissedAppr ||
   // action == ui->actionInfoApproachShowTrans)
+}
+
+void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
+{
+  const MapApproachRef& entry = itemIndex.at(item->type());
+
+  if(entry.legId != -1)
+  {
+    const maptypes::MapApproachLeg *leg = nullptr;
+
+    if(entry.approachId != -1)
+      leg = approachQuery->getApproachLeg(currentAirport, entry.legId);
+    else if(entry.transitionId != -1)
+      leg = approachQuery->getTransitionLeg(currentAirport, entry.legId);
+
+    if(leg != nullptr)
+      emit showPos(leg->line.getPos2(), 0.f, doubleClick);
+  }
+  else if(entry.transitionId != -1 && !doubleClick)
+  {
+    const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, entry.transitionId);
+    if(legs != nullptr)
+      emit showRect(legs->bounding, doubleClick);
+  }
+  else if(entry.approachId != -1 && !doubleClick)
+  {
+    const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, entry.approachId);
+    if(legs != nullptr)
+      emit showRect(legs->bounding, doubleClick);
+  }
+
 }
 
 QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)

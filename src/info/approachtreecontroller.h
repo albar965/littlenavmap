@@ -65,7 +65,9 @@ signals:
   void approachSelected(maptypes::MapApproachRef);
   void approachLegSelected(maptypes::MapApproachRef);
   void approachAddToFlightPlan(maptypes::MapApproachRef);
-  void approachShowOnMap(maptypes::MapApproachRef);
+
+  void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
+  void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
 private:
   void itemSelectionChanged();
@@ -87,6 +89,7 @@ private:
   QString buildRemarkStr(const maptypes::MapApproachLeg& leg);
   QString buildCourseStr(const maptypes::MapApproachLeg& leg);
   QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
+  void showEntry(QTreeWidgetItem *item, bool doubleClick);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;

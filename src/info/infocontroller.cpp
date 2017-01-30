@@ -87,6 +87,9 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
           &InfoController::approachSelectedInTree);
   connect(approachTree, &ApproachTreeController::approachLegSelected, this,
           &InfoController::approachLegSelected);
+
+  connect(approachTree, &ApproachTreeController::showPos, this, &InfoController::showPos);
+  connect(approachTree, &ApproachTreeController::showRect, this, &InfoController::showRect);
 }
 
 InfoController::~InfoController()
