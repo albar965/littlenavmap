@@ -63,7 +63,6 @@ private:
 
   void processLegs(maptypes::MapApproachFullLegs& legs, bool transition);
   void processCourseInterceptLegs(maptypes::MapApproachFullLegs& legs, bool transition);
-  void postProcessCourseToFixLegs(maptypes::MapApproachFullLegs& legs, bool transition);
 
   maptypes::MapApproachLegs *buildApproachEntries(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *buildTransitionEntries(const maptypes::MapAirport& airport, int approachId,

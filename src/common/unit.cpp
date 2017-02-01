@@ -105,15 +105,8 @@ void Unit::deInit()
 QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)
 {
   float val = distMeterF(value);
-
   if(narrow)
-  {
-    int prec = 0;
-    // Avoid trailing zeros
-    if(val < minValPrec && std::abs(std::fmod(val, 1)) > 0.1f)
-      prec = 1;
-    return u(clocale->toString(val, 'f', prec), unitDistStr, addUnit, narrow);
-  }
+    return u(clocale->toString(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
   else
     return u(locale->toString(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
 }
@@ -372,7 +365,14 @@ QString Unit::coords(const atools::geo::Pos& pos)
 QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow)
 {
   if(narrow)
-    return num + (addUnit ? un : QString());
+  {
+    // Get rid of the trailing zero
+    QString nm(num);
+    if(nm.endsWith(".0"))
+      nm.chop(2);
+
+    return nm + (addUnit ? un : QString());
+  }
   else
     return num + (addUnit ? " " + un : QString());
 }

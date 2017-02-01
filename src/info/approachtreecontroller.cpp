@@ -308,20 +308,28 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   }
   else
   {
-    ui->actionInfoApproachShow->setText(
-      ui->actionInfoApproachShow->text().arg(QString()));
-
-    ui->actionInfoApproachAddToFlightPlan->setText(
-      ui->actionInfoApproachAddToFlightPlan->text().arg(QString()));
+    ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(QString()));
+    ui->actionInfoApproachAddToFlightPlan->setText(ui->actionInfoApproachAddToFlightPlan->text().arg(QString()));
   }
 
   QAction *action = menu.exec(menuPos);
   if(action == ui->actionInfoApproachExpandAll)
-    treeWidget->expandAll();
+  {
+    // treeWidget->expandAll();
+    const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+
+    // First load child nodes to get the same tree
+    for(int i = 0; i < root->childCount(); ++i)
+      root->child(i)->setExpanded(true);
+  }
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
   else if(action == ui->actionInfoApproachClear)
+  {
     treeWidget->clearSelection();
+    emit approachLegSelected(maptypes::MapApproachRef());
+    emit approachSelected(maptypes::MapApproachRef());
+  }
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false);
   // else if(action == ui->actionInfoApproachAddToFlightPlan)

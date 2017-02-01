@@ -544,7 +544,7 @@ struct MapApproachLeg
   MapIls ils, recIls;
   MapRunwayEnd runwayEnd, recRunwayEnd;
 
-  bool missed, flyover, trueCourse;
+  bool missed, flyover, trueCourse, calculatedP1, calculatedP2;
 };
 
 struct MapApproachDme

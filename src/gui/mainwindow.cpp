@@ -1493,11 +1493,19 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
-  if(approachRef.approachId != -1)
-    mapWidget->changeApproachHighlight(*approachQuery->getApproachLegs(airport, approachRef.approachId));
+  if(approachRef.approachId == -1 && approachRef.transitionId == -1)
+  {
+    mapWidget->changeTransitionHighlight(maptypes::MapApproachLegs());
+    mapWidget->changeApproachHighlight(maptypes::MapApproachLegs());
+  }
+  else
+  {
+    if(approachRef.approachId != -1)
+      mapWidget->changeApproachHighlight(*approachQuery->getApproachLegs(airport, approachRef.approachId));
 
-  if(approachRef.transitionId != -1)
-    mapWidget->changeTransitionHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
+    if(approachRef.transitionId != -1)
+      mapWidget->changeTransitionHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
+  }
 }
 
 /* Selection in approach view has changed */
