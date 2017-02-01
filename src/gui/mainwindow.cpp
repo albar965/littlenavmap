@@ -1487,25 +1487,25 @@ void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, 
 /* Selection in approach view has changed */
 void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 {
-  qDebug() << Q_FUNC_INFO;
-
-  maptypes::MapApproachLegs transition;
-  maptypes::MapApproachLegs approach;
+  qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
+           << "transitionId" << approachRef.transitionId
+           << "legId" << approachRef.legId;
 
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
+
   if(approachRef.approachId != -1)
-    approach = *approachQuery->getApproachLegs(airport, approachRef.approachId);
+    mapWidget->changeApproachHighlight(*approachQuery->getApproachLegs(airport, approachRef.approachId));
 
   if(approachRef.transitionId != -1)
-    transition = *approachQuery->getTransitionLegs(airport, approachRef.transitionId);
-
-  mapWidget->changeApproachTransitionHighlight(transition, approach);
+    mapWidget->changeTransitionHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
 }
 
 /* Selection in approach view has changed */
 void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
+           << "transitionId" << approachRef.transitionId
+           << "legId" << approachRef.legId;
 
   if(approachRef.legId != -1)
   {

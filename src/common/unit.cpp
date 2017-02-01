@@ -26,6 +26,7 @@ const static QString COORDS_DM_FORMAT("%L1° %L2' %L3 %L4° %L5' %L6");
 const static QString COORDS_DMS_FORMAT("%L1° %L2' %L3\" %L4 %L5° %L6' %L7\" %L8");
 
 QLocale *Unit::locale = nullptr;
+QLocale *Unit::clocale = nullptr;
 const OptionData *Unit::opts = nullptr;
 
 opts::UnitDist Unit::unitDist = opts::DIST_NM;
@@ -87,6 +88,7 @@ void Unit::init()
   if(locale == nullptr)
   {
     locale = new QLocale();
+    clocale = new QLocale(QLocale::C);
     opts = &OptionData::instance();
     optionsChanged();
   }
@@ -96,13 +98,22 @@ void Unit::deInit()
 {
   delete locale;
   locale = nullptr;
+  delete clocale;
+  clocale = nullptr;
 }
 
 QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)
 {
   float val = distMeterF(value);
+
   if(narrow)
-    return u(QString::number(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+  {
+    int prec = 0;
+    // Avoid trailing zeros
+    if(val < minValPrec && std::abs(std::fmod(val, 1)) > 0.1f)
+      prec = 1;
+    return u(clocale->toString(val, 'f', prec), unitDistStr, addUnit, narrow);
+  }
   else
     return u(locale->toString(val, 'f', val < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
 }
@@ -369,7 +380,7 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
 QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
 {
   if(narrow)
-    return QString::number(num, 'f', 0) + (addUnit ? QString() + un : QString());
+    return clocale->toString(num, 'f', 0) + (addUnit ? QString() + un : QString());
   else
     return locale->toString(num, 'f', 0) + (addUnit ? " " + un : QString());
 }

@@ -186,26 +186,33 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   // positions.append(leg.runwayEnd.position);
   // if(leg.userpoint.position.isValid())
   // positions.append(leg.userpoint.position);
-  if(leg.line.isValid())
-    // {
-    // positions.append(leg.line.getPos1());
-    positions.append(leg.line.getPos2());
-  // }
 
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::highlightApproachColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
-  for(const Pos& pos : positions)
+  if(leg.line.isValid())
   {
     int x, y;
-    if(wToS(pos, x, y))
+    if(wToS(leg.line.getPos1(), x, y))
     {
       if(!context->drawFast)
       {
         painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
-        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->drawEllipse(QPoint(x, y), size / 2, size / 2);
         painter->setPen(QPen(QBrush(mapcolors::highlightApproachColor), size / 3, Qt::SolidLine, Qt::FlatCap));
       }
-      painter->drawEllipse(QPoint(x, y), size, size);
+      painter->drawEllipse(QPoint(x, y), size / 2, size / 2);
+    }
+
+    if(!leg.line.isPoint())
+    {
+      if(wToS(leg.line.getPos2(), x, y))
+      {
+        if(!context->drawFast)
+        {
+          painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
+          painter->drawEllipse(QPoint(x, y), size, size);
+          painter->setPen(QPen(QBrush(mapcolors::highlightApproachColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+        }
+        painter->drawEllipse(QPoint(x, y), size, size);
+      }
     }
   }
 

@@ -161,7 +161,7 @@ private:
   static QString u(float num, const QString& un, bool addUnit, bool narrow = false);
 
   static const OptionData *opts;
-  static QLocale *locale;
+  static QLocale *locale, *clocale;
 
   static opts::UnitDist unitDist;
   static opts::UnitShortDist unitShortDist;

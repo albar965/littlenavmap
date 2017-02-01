@@ -100,34 +100,14 @@ void ApproachTreeController::fillApproachTreeWidget(const maptypes::MapAirport& 
 
     for(const SqlRecord& recApp : *recAppVector)
     {
-      QString runwayName;
-      if(recApp.valueStr("runway_name").isNull())
-        runwayName = tr("No runway assignement");
-      else
-        runwayName = tr("Runway ") + recApp.valueStr("runway_name");
-
-      QList<QTreeWidgetItem *> foundItems = treeWidget->findItems(runwayName, Qt::MatchExactly, 0);
-
-      QTreeWidgetItem *runwayItem = nullptr;
-      if(foundItems.isEmpty())
-      {
-        itemIndex.append(MapApproachRef(airport.id, recApp.valueInt("runway_end_id")));
-        runwayItem = new QTreeWidgetItem(root, {runwayName}, itemIndex.size() - 1);
-        runwayItem->setFont(0, runwayFont);
-        runwayItem->setFirstColumnSpanned(true);
-      }
-      else
-        runwayItem = foundItems.first();
-
-      int runwayEndId = itemIndex.at(runwayItem->type()).runwayEndId;
-
+      int runwayEndId = recApp.valueInt("runway_end_id");
       int apprId = recApp.valueInt("approach_id");
+
       itemIndex.append(MapApproachRef(airport.id, runwayEndId, apprId));
 
-      QTreeWidgetItem *apprItem = buildApprItem(runwayItem, recApp);
+      QTreeWidgetItem *apprItem = buildApprItem(root, recApp);
 
-      const SqlRecordVector *recTransVector =
-        infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+      const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
       if(recTransVector != nullptr)
       {
         // Transitions for this approach
@@ -207,8 +187,11 @@ void ApproachTreeController::itemSelectionChanged()
 
       qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
 
-      if(entry.approachId != -1)
+      if(entry.approachId != -1 || entry.transitionId != -1)
+      {
+        emit approachLegSelected(maptypes::MapApproachRef());
         emit approachSelected(entry);
+      }
 
       if(entry.legId != -1)
         emit approachLegSelected(entry);
@@ -383,7 +366,8 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
-  QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix");
+  QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix") + " " +
+                         recApp.valueStr("runway_name");
   if(recApp.valueBool("has_gps_overlay"))
     approachType += tr(" (GPS Overlay)");
 
@@ -522,6 +506,9 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
   if(!leg.recFixIdent.isEmpty())
     remarks.append(tr("Use navaid %1").arg(leg.recFixIdent));
 
+  if(!leg.remarks.isEmpty())
+    remarks.append(leg.remarks);
+
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
     remarks.append(tr("(Source data error: %1 not found)").arg(leg.fixIdent));
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
@@ -544,12 +531,13 @@ QBitArray ApproachTreeController::saveTreeViewState()
   {
     const QTreeWidgetItem *item = itemStack.takeLast();
 
-    state.resize(itemIdx + 2);
-    state.setBit(itemIdx, item->isExpanded());
-    state.setBit(itemIdx + 1, item->isSelected());
+    state.resize(itemIdx + 3);
+    state.setBit(itemIdx, item->isExpanded()); // Fist bit in triple: expanded or not
+    state.setBit(itemIdx + 1, item->isSelected()); // Second bit: selection state
+    state.setBit(itemIdx + 2, item->childCount() > 0); // Third bit: has children (expanded once before)
     for(int i = 0; i < item->childCount(); ++i)
       itemStack.append(item->child(i));
-    itemIdx += 2;
+    itemIdx += 3;
   }
   return state;
 }
@@ -558,30 +546,29 @@ void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
 {
   QList<QTreeWidgetItem *> itemStack;
   const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-  for(int i = 0; i < root->childCount(); ++i)
-    if(root->child(i)->type() != -1)
-      itemStack.append(root->child(i));
 
-  // First expand items to allow loading of child nodes
+  // First load child nodes to get the same tree
+  for(int i = 0; i < root->childCount(); ++i)
+    itemStack.append(root->child(i));
   int itemIdx = 0;
   while(!itemStack.isEmpty())
   {
     QTreeWidgetItem *item = itemStack.takeLast();
     if(itemIdx < state.size())
     {
-      item->setExpanded(state.at(itemIdx));
+      if(state.at(itemIdx + 2))
+        itemExpanded(item);
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));
-      itemIdx += 2;
+      itemIdx += 3;
     }
   }
 
-  // Now select items
+  // Expand items and find selected
+  QTreeWidgetItem *selectedItem = nullptr;
   itemStack.clear();
   for(int i = 0; i < root->childCount(); ++i)
     itemStack.append(root->child(i));
-
-  QTreeWidgetItem *selectedItem = nullptr;
   itemIdx = 0;
   while(!itemStack.isEmpty())
   {
@@ -589,20 +576,19 @@ void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
     if(itemIdx < state.size())
     {
       if(state.at(itemIdx + 1))
-      {
-        item->setSelected(true);
         selectedItem = item;
-      }
-      else
-        item->setSelected(false);
 
+      item->setExpanded(state.at(itemIdx));
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));
-      itemIdx += 2;
+      itemIdx += 3;
     }
   }
 
   // Center the selected item
   if(selectedItem != nullptr)
+  {
+    selectedItem->setSelected(true);
     treeWidget->scrollToItem(selectedItem, QAbstractItemView::PositionAtCenter);
+  }
 }

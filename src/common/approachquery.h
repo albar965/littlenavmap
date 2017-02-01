@@ -57,11 +57,14 @@ private:
   void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry);
   maptypes::MapApproachLeg buildTransitionLegEntry();
   maptypes::MapApproachLeg buildApproachLegEntry();
-  void updateMagvar(const maptypes::MapAirport& airport,
-                    maptypes::MapApproachLegs *legs);
+
+  void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs *legs);
   void updateBounding(maptypes::MapApproachLegs *legs);
-  void postProcessLegs(maptypes::MapApproachFullLegs& legs, bool transition);
-  void postProcessCourseInterceptLegs(maptypes::MapApproachFullLegs& legs, bool transition);
+
+  void processLegs(maptypes::MapApproachFullLegs& legs, bool transition);
+  void processCourseInterceptLegs(maptypes::MapApproachFullLegs& legs, bool transition);
+  void postProcessCourseToFixLegs(maptypes::MapApproachFullLegs& legs, bool transition);
+
   maptypes::MapApproachLegs *buildApproachEntries(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *buildTransitionEntries(const maptypes::MapAirport& airport, int approachId,
                                                     int transitionId);

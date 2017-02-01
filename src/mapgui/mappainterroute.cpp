@@ -528,7 +528,10 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     texts.clear();
   }
   else
+  {
+    texts.append(leg.displayText);
     texts.append(maptypes::restrictionText(leg.altRestriction));
+  }
 
   if(leg.waypoint.position.isValid() && wToS(leg.waypoint.position, x, y))
   {

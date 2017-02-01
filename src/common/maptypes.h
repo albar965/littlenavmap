@@ -28,7 +28,6 @@
 #include <QColor>
 #include <QString>
 
-
 /*
  * Maptypes are mostly filled from database tables and are used to pass airport, navaid and more information
  * around in the program. The types are kept primitive (no inheritance no vtable) for performance reasons.
@@ -533,7 +532,7 @@ struct MapApproachLeg
   int approachId, transitionId, legId, navId, recNavId;
   float course, dist, time, theta, rho, magvar;
   QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
-  QStringList displayText;
+  QStringList displayText, remarks;
   atools::geo::Pos fixPos, recFixPos;
   atools::geo::Line line, original;
   MapAltRestriction altRestriction;
@@ -548,10 +547,20 @@ struct MapApproachLeg
   bool missed, flyover, trueCourse;
 };
 
+struct MapApproachDme
+{
+  QString dmeIdent, turnDirection;
+  int dmeNavId;
+  float dmeRadial, dmeDistance;
+  atools::geo::Pos dmePos;
+  MapVor dme;
+};
+
 struct MapApproachLegs
 {
   QVector<MapApproachLeg> legs;
   atools::geo::Rect bounding;
+  MapApproachRef ref;
 };
 
 /* Includes transition legs */
@@ -782,6 +791,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapApproachDme, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachFullLegs, Q_MOVABLE_TYPE);
