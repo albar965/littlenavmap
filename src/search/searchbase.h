@@ -38,6 +38,8 @@ class QTimer;
 class CsvExporter;
 class Column;
 class ViewEventFilter;
+class LineEditEventFilter;
+class QLineEdit;
 
 /*
  * Base for all search classes which reside each in its own tab, contains a result table view and a list of
@@ -89,6 +91,7 @@ public:
   void showFirstEntry();
 
   void showSelectedEntry();
+  void activateView();
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
@@ -126,6 +129,8 @@ protected:
   void connectSearchWidgets();
 
   void distanceSearchChanged(bool checked, bool changeViewState);
+
+  void connectLineEdit(QLineEdit *lineEdit);
 
   /* Table/view controller */
   SqlController *controller;
@@ -175,6 +180,7 @@ private:
   int tabIndex;
 
   ViewEventFilter *viewEventFilter = nullptr;
+  LineEditEventFilter *lineEditEventFilter = nullptr;
 
 };
 

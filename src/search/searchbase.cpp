@@ -72,10 +72,44 @@ private:
   SearchBase *searchBase;
 };
 
+class LineEditEventFilter :
+  public QObject
+{
+
+public:
+  LineEditEventFilter(SearchBase *parent)
+    : QObject(parent), searchBase(parent)
+  {
+  }
+
+  virtual ~LineEditEventFilter()
+  {
+
+  }
+
+private:
+  bool eventFilter(QObject *object, QEvent *event)
+  {
+    if(event->type() == QEvent::KeyPress)
+    {
+      QKeyEvent *pKeyEvent = static_cast<QKeyEvent *>(event);
+      switch(pKeyEvent->key())
+      {
+        case Qt::Key_Down:
+          searchBase->activateView();
+          return true;
+      }
+    }
+
+    return QObject::eventFilter(object, event);
+  }
+
+  SearchBase *searchBase;
+};
+
 SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                        MapQuery *mapQuery, int tabWidgetIndex)
-  : QObject(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery),
-    tabIndex(tabWidgetIndex)
+  : QObject(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery), tabIndex(tabWidgetIndex)
 {
   zoomHandler = new atools::gui::TableZoomHandler(view);
 
@@ -109,6 +143,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
   viewEventFilter = new ViewEventFilter(this);
+  lineEditEventFilter = new LineEditEventFilter(this);
   view->installEventFilter(viewEventFilter);
 
 }
@@ -120,6 +155,7 @@ SearchBase::~SearchBase()
   delete zoomHandler;
   delete columns;
   delete viewEventFilter;
+  delete lineEditEventFilter;
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
@@ -394,6 +430,12 @@ void SearchBase::distanceSearchChanged(bool checked, bool changeViewState)
   updateButtonMenu();
 }
 
+void SearchBase::connectLineEdit(QLineEdit *lineEdit)
+{
+  connect(lineEdit, &QLineEdit::returnPressed, this, &SearchBase::showFirstEntry);
+  lineEdit->installEventFilter(lineEditEventFilter);
+}
+
 /* Search criteria editing has started. Start or restart the timer for a
  * delayed update if distance search is used */
 void SearchBase::editStartTimer()
@@ -532,6 +574,13 @@ void SearchBase::showSelectedEntry()
 
   if(idx.isValid())
     showRow(idx.row());
+}
+
+void SearchBase::activateView()
+{
+  // view->raise();
+  // view->activateWindow();
+  view->setFocus();
 }
 
 /* Double click into table view */
