@@ -35,6 +35,7 @@ using namespace Marble;
 using namespace atools::geo;
 using maptypes::MapApproachLeg;
 using maptypes::MapApproachLegs;
+using atools::contains;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                  RouteController *controller)
@@ -348,16 +349,13 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
   const maptypes::MapApproachLeg& leg = legs.at(index);
 
-  if(leg.type == "IF") // Initial fix - Nothing to do here
-    return;
-
   const maptypes::MapApproachLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
   if(!leg.line.isValid())
   {
-    qWarning() << "leg line" << index << leg.line << "is invalid";
+    // qWarning() << "leg line" << index << leg.line << "is invalid";
     return;
   }
 
@@ -366,36 +364,33 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   bool hiddenDummy;
   wToS(leg.line, line, size, &hiddenDummy);
 
+  if(leg.type == "IF") // Initial fix - Nothing to do here
+  {
+    lastLine = line;
+    return;
+  }
+
   QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
+  QPointF intersectPoint = wToS(leg.intersectPos, size, &hiddenDummy);
 
   QPainter *painter = context->painter;
 
-  // if(valid && index == 9)
-  // painter->drawEllipse(QPoint(fixX, fixY), 10, 5);
-  // if(prevValid && index == 9)
-  // painter->drawEllipse(QPoint(prevX, prevY), 5, 10);
-  // if(recValid && index == 9)
-  // painter->drawEllipse(QPoint(recX, recY), 20, 20);
-
-  // painter->drawText(line.x1() - 40, line.y1() + 20, "1 " + leg.type);
-  // painter->drawText(line.x2() - 40, line.y2() + 40, "2 " + leg.type);
-
-  if(leg.type == "AF" || // Arc to fix
-     leg.type == "RF") // Constant radius arc
+  if(contains(leg.type, {"AF", // Arc to fix
+                         "RF"})) // Constant radius arc
   {
     if(line.length() > 2)
       paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
     lastLine = line;
   }
-  else if(leg.type == "CA" ||  // Course to altitude - point prepared by ApproachQuery
-          leg.type == "CF" || // Course to fix
-          leg.type == "DF" || // Direct to fix
-          leg.type == "FA" || // Fix to altitude - point prepared by ApproachQuery
-          leg.type == "TF" || // Track to fix
-          leg.type == "FC" || // Track from fix from distance
-          leg.type == "FM" || // From fix to manual termination
-          leg.type == "VA" || // Heading to altitude termination
-          leg.type == "VM") // Heading to manual termination
+  else if(contains(leg.type, {"CA", // Course to altitude - point prepared by ApproachQuery
+                              "CF", // Course to fix
+                              "DF", // Direct to fix
+                              "FA", // Fix to altitude - point prepared by ApproachQuery
+                              "TF", // Track to fix
+                              "FC", // Track from fix from distance
+                              "FM", // From fix to manual termination
+                              "VA", // Heading to altitude termination
+                              "VM"})) // Heading to manual termination
   {
     if(!leg.turnDirection.isEmpty() && prevLeg != nullptr && prevLeg->type != "IF")
     {
@@ -459,30 +454,38 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     }
     else
     {
-      if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
-        painter->drawLine(lastLine.p2(), line.p1());
+      // No turn direction
 
-      painter->drawLine(line);
-      lastLine = line;
+      if(leg.intersectPos.isValid())
+      {
+        painter->drawLine(line.p1(), intersectPoint);
+        painter->drawLine(intersectPoint, line.p2());
+        lastLine = QLineF(intersectPoint, line.p2());
+      }
+      else
+      {
+        if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
+          painter->drawLine(lastLine.p2(), line.p1());
+
+        painter->drawLine(line);
+        lastLine = line;
+      } // Connect any gaps
     }
   }
-  else if(leg.type == "CR" ||  // Course to radial termination ===============================
-          leg.type == "VR" || // Heading to radial termination
-          leg.type == "CD" || // Course to DME distance
-          leg.type == "VD" || // Heading to DME distance termination
-          leg.type == "FD" || // Track from fix to DME distance
-          leg.type == "CI" || // Course to intercept
-          leg.type == "VI") // Heading to intercept
+  else if(contains(leg.type, {"CR",  // Course to radial termination ===============================
+                              "VR", // Heading to radial termination
+                              "CD", // Course to DME distance
+                              "VD", // Heading to DME distance termination
+                              "FD", // Track from fix to DME distance
+                              "CI", // Course to intercept
+                              "VI"})) // Heading to intercept
   {
-    // painter->drawEllipse(line.p1(), 5, 10);
-    // painter->drawEllipse(line.p2(), 10, 5);
-
     painter->drawLine(line);
     lastLine = line;
   }
-  else if(leg.type == "HA" ||  // Hold to altitude ===============================
-          leg.type == "HF" || // Hold to fix
-          leg.type == "HM") // Hold to manual termination
+  else if(contains(leg.type, {"HA",  // Hold to altitude ===============================
+                              "HF", // Hold to fix
+                              "HM"})) // Hold to manual termination
     paintHold(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
   else if(leg.type == "PI") // Procedure turn ===============================
   {
@@ -491,6 +494,16 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                        leg.turnDirection == "L", &lastLine);
     painter->setBrush(Qt::NoBrush);
   }
+
+  // painter->save();
+  // painter->setPen(Qt::black);
+  // painter->drawEllipse(line.p1(), 20, 10);
+  // painter->drawEllipse(line.p2(), 10, 20);
+  // painter->drawEllipse(intersectPoint, 30, 30);
+  // painter->drawText(line.x1() - 40, line.y1() + 40, "Start " + leg.type + " " + QString::number(index));
+  // painter->drawText(line.x2() - 40, line.y2() + 60, "End" + leg.type + " " + QString::number(index));
+  // painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
+  // painter->restore();
 }
 
 void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
@@ -513,22 +526,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
   QStringList texts;
   // Manual and altitude terminated legs that have a calculated position needing extra text
-  if((leg.type == "CA" ||
-      leg.type == "CD" ||
-      leg.type == "CI" ||
-      leg.type == "CR" ||
-      leg.type == "HF" ||
-      leg.type == "HM" ||
-      leg.type == "HA" ||
-      leg.type == "FA" ||
-      leg.type == "FD" ||
-      leg.type == "VA" ||
-      leg.type == "VD" ||
-      leg.type == "VI" ||
-      leg.type == "VR" ||
-      leg.type == "FC" ||
-      leg.type == "FM" ||
-      leg.type == "VM"))
+  if(contains(leg.type, {"CA", "CD", "CI", "CR", "HF", "HM", "HA", "FA", "FD", "VA", "VD", "VI", "VR",
+                         "FC", "FM", "VM"}))
   {
     if(wToS(leg.line.getPos2(), x, y))
     {

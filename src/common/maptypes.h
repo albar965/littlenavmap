@@ -533,7 +533,7 @@ struct MapApproachLeg
   float course, dist, time, theta, rho, magvar;
   QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
   QStringList displayText, remarks;
-  atools::geo::Pos fixPos, recFixPos;
+  atools::geo::Pos fixPos, recFixPos, intersectPos;
   atools::geo::Line line, original;
   MapAltRestriction altRestriction;
 
@@ -544,7 +544,7 @@ struct MapApproachLeg
   MapIls ils, recIls;
   MapRunwayEnd runwayEnd, recRunwayEnd;
 
-  bool missed, flyover, trueCourse, calculatedP1, calculatedP2;
+  bool missed, flyover, trueCourse;
 };
 
 struct MapApproachDme

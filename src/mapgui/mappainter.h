@@ -185,8 +185,8 @@ protected:
   void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
-  void paintHold(QPainter *painter, int x, int y, float direction, float lengthNm, bool left);
-  void paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left, QLineF* extensionLine);
+  void paintHold(QPainter *painter, float x, float y, float direction, float lengthNm, bool left);
+  void paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left, QLineF* extensionLine);
 
   /* Evaluate 50 text placement positions along line */
   const float FIND_TEXT_POS_STEP = 0.02f;

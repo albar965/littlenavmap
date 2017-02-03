@@ -27,6 +27,7 @@ using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Rect;
 using atools::geo::Line;
+using atools::contains;
 
 ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -259,6 +260,8 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachEntries(const maptypes::M
     return approachCache.object(approachId);
   else
   {
+    qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId;
+
     approachLegQuery->bindValue(":id", approachId);
     approachLegQuery->exec();
 
@@ -299,6 +302,9 @@ maptypes::MapApproachLegs *ApproachQuery::buildTransitionEntries(const maptypes:
     return transitionCache.object(transitionId);
   else
   {
+    qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId
+             << "transitionId" << transitionId;
+
     transitionLegQuery->bindValue(":id", transitionId);
     transitionLegQuery->exec();
 
@@ -348,44 +354,93 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
     Pos curPos;
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    QString prevType = prevLeg != nullptr ? prevLeg->type : QString();
+    QString prevIdent = prevLeg != nullptr ? prevLeg->fixIdent : QString();
+    QString type = leg.type;
 
-    leg.calculatedP1 = false;
-    leg.calculatedP2 = false;
-
-    if(leg.type == "AF") // Arc to fix
+    if(type == "AF") // Arc to fix
     {
       curPos = leg.fixPos;
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.rho, true, 20, true) + "/" +
       QLocale().toString(leg.theta) + (leg.trueCourse ? tr("°T") : tr("°M"));
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
-    else if(leg.type == "CF")  // Course to fix
+    else if(type == "CF")  // Course to fix
     {
-      if(prevLeg != nullptr &&
-         (prevLeg->type == "FC" || prevLeg->type == "FD"))
+      Pos extended = leg.fixPos.endpointRhumb(atools::geo::nmToMeter(leg.dist),
+                                              atools::geo::opposedCourseDeg(leg.course + leg.magvar));
+      if(contains(prevType, {"FC", "FD", "VI", "CI"}))
       {
-        Pos extended = leg.fixPos.endpointRhumb(atools::geo::nmToMeter(leg.dist),
-                                                atools::geo::opposedCourseDeg(leg.course + leg.magvar));
-
-        if(extended.distanceMeterTo(lastPos) > 500.f)
-        {
-          leg.calculatedP1 = true;
+        if(extended.distanceMeterTo(lastPos) > atools::geo::nmToMeter(1.f))
+          // Draw large bow to extended postition or allow intercept of leg
           lastPos = extended;
+      }
+      else // if(contains(prevType, {"IF", "AF", "CF"}))
+      {
+        if(extended.distanceMeterTo(lastPos) > atools::geo::nmToMeter(1.f))
+        {
+          float crs = leg.course + leg.magvar;
+          Pos intr = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
+          Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
+          Pos intersect;
+          if(intr.distanceMeterTo(lastPos) < intr2.distanceMeterTo(lastPos))
+            intersect = intr;
+          else
+            intersect = intr2;
+
+          if(intersect.isValid())
+          {
+            atools::geo::CrossTrackStatus status;
+            intersect.distanceMeterToLine(leg.fixPos, extended, status);
+
+            float crs1 = lastPos.angleDegTo(extended);
+            float crs2 = lastPos.angleDegTo(leg.fixPos);
+            // "FD26" "D102H" from 0.563407 via 217.698 to 298.377 index 5
+
+            float isectCrs = lastPos.angleDegTo(intersect);
+            qDebug() << "======== fix" << leg.fixIdent << "prev" << prevIdent << "from"
+                     << crs1 << "via" << isectCrs << "to" << crs2 << "index" << i;
+            qDebug() << "======== intersect" << intersect;
+            qDebug() << "======== extended" << extended;
+
+            if(status == atools::geo::ALONG_TRACK)
+            {
+              qDebug() << "ALONG_TRACK";
+              leg.intersectPos = intersect;
+            }
+            else if(status == atools::geo::BEFORE_START)
+            {
+              qDebug() << "BEFORE_START";
+              // Fly to fix
+            }
+            else if(status == atools::geo::AFTER_END)
+            {
+              qDebug() << "AFTER_END";
+              // Fly to start of leg
+              lastPos = extended;
+            }
+            else
+              qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
+                         << "invalid cross track"
+                         << "approachId" << leg.approachId
+                         << "transitionId" << leg.transitionId << "legId" << leg.legId;
+          }
         }
       }
+
       curPos = leg.fixPos;
     }
-    else if(leg.type == "DF" || // Direct to fix
-            leg.type == "IF" || // Initial fix
-            leg.type == "TF" || // Track to fix
-            leg.type == "RF" || // Constant radius arc
-            leg.type == "PI") // Procedure turn
+    else if(contains(type, {"DF",  // Direct to fix
+                            "IF", // Initial fix
+                            "TF", // Track to fix
+                            "RF", // Constant radius arc
+                            "PI"})) // Procedure turn
     {
       curPos = leg.fixPos;
     }
-    else if(leg.type == "CA" || // Course to altitude
-            leg.type == "FA" || // Fix to altitude
-            leg.type == "VA") // Heading to altitude termination
+    else if(contains(type, {"CA", // Course to altitude
+                            "FA", // Fix to altitude
+                            "VA"})) // Heading to altitude termination
     {
       if(prevLeg != nullptr)
       {
@@ -396,11 +451,10 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
           lastPos = start;
         curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.course + leg.magvar).normalize();
         leg.displayText << tr("Altitude");
-        leg.calculatedP2 = true;
       }
     }
-    else if(leg.type == "CR" || // Course to radial termination
-            leg.type == "VR") // Heading to radial termination
+    else if(contains(type, {"CR",  // Course to radial termination
+                            "VR"})) // Heading to radial termination
     {
       Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
       if(!lastPos.isValid())
@@ -409,33 +463,31 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
 
       Pos intersect = Pos::intersectingRadials(start, leg.course + leg.magvar, center, leg.theta + leg.magvar);
-      leg.calculatedP2 = true;
 
       if(intersect.isValid())
         curPos = intersect;
       else
       {
         curPos = center;
-        qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent << "no intersectingRadials found"
+        qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no intersectingRadials found"
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
 
       leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta);
     }
-    else if(leg.type == "FC") // Track from fix from distance
+    else if(type == "FC") // Track from fix from distance
     {
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
 
       curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), leg.course + leg.magvar).normalize();
-      leg.calculatedP2 = true;
 
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.dist, true, 20, true) + "/" +
       QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
-    else if(leg.type == "FD" || // Track from fix to DME distance
-            leg.type == "CD" || // Course to DME distance
-            leg.type == "VD") // Heading to DME distance termination
+    else if(contains(type, {"FD", // Track from fix to DME distance
+                            "CD", // Course to DME distance
+                            "VD"})) // Heading to DME distance termination
     {
       Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
 
@@ -445,22 +497,21 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       if(!lastPos.isValid())
         lastPos = start;
       Pos intersect = line.intersectionWithCircle(center, atools::geo::nmToMeter(leg.dist), 10.f);
-      leg.calculatedP2 = true;
 
       if(intersect.isValid())
         curPos = intersect;
       else
       {
         curPos = center;
-        qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent << "no intersectionWithCircle found"
+        qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no intersectionWithCircle found"
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
 
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.dist, true, 20, true) + "/" +
       QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
-    else if(leg.type == "FM" || // From fix to manual termination
-            leg.type == "VM") // Heading to manual termination
+    else if(contains(type, {"FM", // From fix to manual termination
+                            "VM"})) // Heading to manual termination
     {
       if(prevLeg != nullptr)
       {
@@ -468,21 +519,20 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
         if(!lastPos.isValid())
           lastPos = start;
         curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.course + leg.magvar).normalize();
-        leg.calculatedP2 = true;
         leg.displayText << tr("Manual");
       }
     }
-    else if(leg.type == "HA") // Hold to altitude
+    else if(type == "HA") // Hold to altitude
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Altitude");
     }
-    else if(leg.type == "HF") // Hold to fix
+    else if(type == "HF") // Hold to fix
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Single");
     }
-    else if(leg.type == "HM") // Hold to manual termination
+    else if(type == "HM") // Hold to manual termination
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Manual");
@@ -506,14 +556,14 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachFullLegs& le
     maptypes::MapApproachLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
     maptypes::MapApproachLeg *secondNextLeg = i < legs.size() - 2 ? &legs[i + 2] : nullptr;
 
-    if(leg.type == "CI" || // Course to intercept
-       leg.type == "VI") // Heading to intercept
+    if(contains(leg.type, {"CI", // Course to intercept
+                           "VI"})) // Heading to intercept
     {
       if(nextLeg != nullptr)
       {
         // TODO catch case of non intersecting legs properly
-        bool nextIsArc = nextLeg->type == "AF" || // Arc to fix
-                         nextLeg->type == "RF"; // Constant radius arc
+        bool nextIsArc = contains(nextLeg->type, {"AF", // Arc to fix
+                                                  "RF"}); // Constant radius arc
         Pos start = prevLeg != nullptr ? prevLeg->original.getPos2() : leg.fixPos;
         Pos intersect;
         if(nextIsArc)

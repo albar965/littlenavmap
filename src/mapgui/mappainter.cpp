@@ -357,7 +357,7 @@ void MapPainter::paintArc(QPainter *painter, float x1, float y1, float x2, float
   }
 }
 
-void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, float lengthNm, bool left)
+void MapPainter::paintHold(QPainter *painter, float x, float y, float direction, float lengthNm, bool left)
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -389,7 +389,7 @@ void MapPainter::paintHold(QPainter *painter, int x, int y, float direction, flo
   painter->resetTransform();
 }
 
-void MapPainter::paintProcedureTurn(QPainter *painter, int x, int y, float turnHeading, float distanceNm, bool left,
+void MapPainter::paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                     QLineF *extensionLine)
 {
   // One minute = 3.5 nm
