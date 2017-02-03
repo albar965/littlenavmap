@@ -327,58 +327,85 @@ const static QHash<QString, QString> approachTypeToStr(
     {"LOCB", QObject::tr("Localizer Backcourse")}
   });
 
-const static QHash<QString, QString> approachLegTypeToStr(
+const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
   {
-    {"AF", QObject::tr("Arc to fix")},
-    {"CA", QObject::tr("Course to altitude")},
-    {"CD", QObject::tr("Course to DME distance")},
-    {"CF", QObject::tr("Course to fix")},
-    {"CI", QObject::tr("Course to intercept")},
-    {"CR", QObject::tr("Course to radial termination")},
-    {"DF", QObject::tr("Direct to fix")},
-    {"FA", QObject::tr("Fix to altitude")},
-    {"FC", QObject::tr("Track from fix from distance")},
-    {"FD", QObject::tr("Track from fix to DME distance")},
-    {"FM", QObject::tr("From fix to manual termination")},
-    {"HA", QObject::tr("Hold to altitude")},
-    {"HF", QObject::tr("Hold to fix")},
-    {"HM", QObject::tr("Hold to manual termination")},
-    {"IF", QObject::tr("Initial fix")},
-    {"PI", QObject::tr("Procedure turn")},
-    {"RF", QObject::tr("Constant radius arc")},
-    {"TF", QObject::tr("Track to fix")},
-    {"VA", QObject::tr("Heading to altitude termination")},
-    {"VD", QObject::tr("Heading to DME distance termination")},
-    {"VI", QObject::tr("Heading to intercept")},
-    {"VM", QObject::tr("Heading to manual termination")},
-    {"VR", QObject::tr("Heading to radial termination")}
+    {"AF", ARC_TO_FIX},
+    {"CA", COURSE_TO_ALTITUDE},
+    {"CD", COURSE_TO_DME_DISTANCE},
+    {"CF", COURSE_TO_FIX},
+    {"CI", COURSE_TO_INTERCEPT},
+    {"CR", COURSE_TO_RADIAL_TERMINATION},
+    {"DF", DIRECT_TO_FIX},
+    {"FA", FIX_TO_ALTITUDE},
+    {"FC", TRACK_FROM_FIX_FROM_DISTANCE},
+    {"FD", TRACK_FROM_FIX_TO_DME_DISTANCE},
+    {"FM", FROM_FIX_TO_MANUAL_TERMINATION},
+    {"HA", HOLD_TO_ALTITUDE},
+    {"HF", HOLD_TO_FIX},
+    {"HM", HOLD_TO_MANUAL_TERMINATION},
+    {"IF", INITIAL_FIX},
+    {"PI", PROCEDURE_TURN},
+    {"RF", CONSTANT_RADIUS_ARC},
+    {"TF", TRACK_TO_FIX},
+    {"VA", HEADING_TO_ALTITUDE_TERMINATION},
+    {"VD", HEADING_TO_DME_DISTANCE_TERMINATION},
+    {"VI", HEADING_TO_INTERCEPT},
+    {"VM", HEADING_TO_MANUAL_TERMINATION},
+    {"VR", HEADING_TO_RADIAL_TERMINATION}
   });
 
-const static QHash<QString, QString> approachLegRemarkStr(
+const static QHash<ApproachLegType, QString> approachLegTypeToStr(
   {
-    {"AF", QObject::tr("")},
-    {"CA", QObject::tr("")},
-    {"CD", QObject::tr("")},
-    {"CF", QObject::tr("")},
-    {"CI", QObject::tr("")},
-    {"CR", QObject::tr("")},
-    {"DF", QObject::tr("")},
-    {"FA", QObject::tr("")},
-    {"FC", QObject::tr("")},
-    {"FD", QObject::tr("")},
-    {"FM", QObject::tr("")},
-    {"HA", QObject::tr("Mandatory hold")},
-    {"HF", QObject::tr("Single circuit")},
-    {"HM", QObject::tr("Mandatory hold")},
-    {"IF", QObject::tr("")},
-    {"PI", QObject::tr("")},
-    {"RF", QObject::tr("")},
-    {"TF", QObject::tr("")},
-    {"VA", QObject::tr("")},
-    {"VD", QObject::tr("")},
-    {"VI", QObject::tr("")},
-    {"VM", QObject::tr("")},
-    {"VR", QObject::tr("")}
+    {ARC_TO_FIX, QObject::tr("Arc to fix")},
+    {COURSE_TO_ALTITUDE, QObject::tr("Course to altitude")},
+    {COURSE_TO_DME_DISTANCE, QObject::tr("Course to DME distance")},
+    {COURSE_TO_FIX, QObject::tr("Course to fix")},
+    {COURSE_TO_INTERCEPT, QObject::tr("Course to intercept")},
+    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("Course to radial termination")},
+    {DIRECT_TO_FIX, QObject::tr("Direct to fix")},
+    {FIX_TO_ALTITUDE, QObject::tr("Fix to altitude")},
+    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("Track from fix from distance")},
+    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("Track from fix to DME distance")},
+    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("From fix to manual termination")},
+    {HOLD_TO_ALTITUDE, QObject::tr("Hold to altitude")},
+    {HOLD_TO_FIX, QObject::tr("Hold to fix")},
+    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Hold to manual termination")},
+    {INITIAL_FIX, QObject::tr("Initial fix")},
+    {PROCEDURE_TURN, QObject::tr("Procedure turn")},
+    {CONSTANT_RADIUS_ARC, QObject::tr("Constant radius arc")},
+    {TRACK_TO_FIX, QObject::tr("Track to fix")},
+    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("Heading to altitude termination")},
+    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("Heading to DME distance termination")},
+    {HEADING_TO_INTERCEPT, QObject::tr("Heading to intercept")},
+    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
+    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")}
+  });
+
+const static QHash<ApproachLegType, QString> approachLegRemarkStr(
+  {
+    {ARC_TO_FIX, QObject::tr("")},
+    {COURSE_TO_ALTITUDE, QObject::tr("")},
+    {COURSE_TO_DME_DISTANCE, QObject::tr("")},
+    {COURSE_TO_FIX, QObject::tr("")},
+    {COURSE_TO_INTERCEPT, QObject::tr("")},
+    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("")},
+    {DIRECT_TO_FIX, QObject::tr("")},
+    {FIX_TO_ALTITUDE, QObject::tr("")},
+    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("")},
+    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("")},
+    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("")},
+    {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
+    {HOLD_TO_FIX, QObject::tr("Single circuit")},
+    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
+    {INITIAL_FIX, QObject::tr("")},
+    {PROCEDURE_TURN, QObject::tr("")},
+    {CONSTANT_RADIUS_ARC, QObject::tr("")},
+    {TRACK_TO_FIX, QObject::tr("")},
+    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("")},
+    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
+    {HEADING_TO_INTERCEPT, QObject::tr("")},
+    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
+    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)
@@ -849,12 +876,17 @@ QString patternDirection(const QString& type)
     return QString();
 }
 
-QString legType(const QString& type)
+maptypes::ApproachLegType legEnum(const QString& type)
+{
+  return approachLegTypeToEnum.value(type);
+}
+
+QString approachLegType(maptypes::ApproachLegType type)
 {
   return approachLegTypeToStr.value(type);
 }
 
-QString legRemarks(const QString& type)
+QString approachLegRemarks(maptypes::ApproachLegType type)
 {
   return approachLegRemarkStr.value(type);
 }
@@ -905,6 +937,12 @@ QString restrictionText(const maptypes::MapAltRestriction& altRestriction)
       break;
   }
   return retval;
+}
+
+QDebug operator<<(QDebug out, const ApproachLegType& type)
+{
+  out << maptypes::approachLegType(type);
+  return out;
 }
 
 } // namespace types

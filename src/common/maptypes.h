@@ -527,11 +527,41 @@ struct MapAltRestriction
   float alt1, alt2;
 };
 
+enum ApproachLegType
+{
+  INVALID_LEG_TYPE,
+  ARC_TO_FIX,
+  COURSE_TO_ALTITUDE,
+  COURSE_TO_DME_DISTANCE,
+  COURSE_TO_FIX,
+  COURSE_TO_INTERCEPT,
+  COURSE_TO_RADIAL_TERMINATION,
+  DIRECT_TO_FIX,
+  FIX_TO_ALTITUDE,
+  TRACK_FROM_FIX_FROM_DISTANCE,
+  TRACK_FROM_FIX_TO_DME_DISTANCE,
+  FROM_FIX_TO_MANUAL_TERMINATION,
+  HOLD_TO_ALTITUDE,
+  HOLD_TO_FIX,
+  HOLD_TO_MANUAL_TERMINATION,
+  INITIAL_FIX,
+  PROCEDURE_TURN,
+  CONSTANT_RADIUS_ARC,
+  TRACK_TO_FIX,
+  HEADING_TO_ALTITUDE_TERMINATION,
+  HEADING_TO_DME_DISTANCE_TERMINATION,
+  HEADING_TO_INTERCEPT,
+  HEADING_TO_MANUAL_TERMINATION,
+  HEADING_TO_RADIAL_TERMINATION
+};
+
+QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
+
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
   float course, dist, time, theta, rho, magvar;
-  QString type, fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+  QString fixType, fixIdent, fixRegion, recFixType, recFixIdent, recFixRegion, turnDirection;
   QStringList displayText, remarks;
   atools::geo::Pos fixPos, recFixPos, intersectPos;
   atools::geo::Line line, original;
@@ -544,6 +574,7 @@ struct MapApproachLeg
   MapIls ils, recIls;
   MapRunwayEnd runwayEnd, recRunwayEnd;
 
+  maptypes::ApproachLegType type;
   bool missed, flyover, trueCourse;
 };
 
@@ -726,8 +757,9 @@ QString navTypeNameWaypoint(const QString& type);
 
 QString approachFixType(const QString& type);
 QString approachType(const QString& type);
-QString legType(const QString& type);
-QString legRemarks(const QString& type);
+maptypes::ApproachLegType legEnum(const QString& type);
+QString approachLegType(ApproachLegType type);
+QString approachLegRemarks(maptypes::ApproachLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
 QString edgeLights(const QString& type);

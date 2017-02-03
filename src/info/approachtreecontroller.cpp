@@ -425,7 +425,7 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
   QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
-      (leg.missed ? tr("Missed: ") : QString()) + maptypes::legType(leg.type),
+      (leg.missed ? tr("Missed: ") : QString()) + maptypes::approachLegType(leg.type),
       leg.fixIdent,
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
@@ -446,7 +446,7 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
   QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
-      maptypes::legType(leg.type),
+      maptypes::approachLegType(leg.type),
       leg.fixIdent,
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
@@ -507,20 +507,27 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
   else if(leg.turnDirection == "L")
     remarks.append(tr("Turn left"));
 
-  QString legremarks = maptypes::legRemarks(leg.type);
+  QString legremarks = maptypes::approachLegRemarks(leg.type);
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
 
   if(!leg.recFixIdent.isEmpty())
-    remarks.append(tr("Use navaid %1").arg(leg.recFixIdent));
+    if(leg.rho > 0.f)
+      remarks.append(tr("%1 / %2 / %3").arg(leg.recFixIdent).
+                     arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
+                     arg(QLocale().toString(leg.theta) + (leg.trueCourse ? tr("°T") : tr("°M"))));
+    else
+      remarks.append(tr("%1").arg(leg.recFixIdent));
 
   if(!leg.remarks.isEmpty())
     remarks.append(leg.remarks);
 
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-    remarks.append(tr("(Source data error: %1 not found)").arg(leg.fixIdent));
+    remarks.append(tr("Data error: Fix %1/%2 not found").
+                   arg(leg.fixIdent).arg(leg.fixRegion));
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
-    remarks.append(tr("(Source data error: rec. %1 not found)").arg(leg.recFixIdent));
+    remarks.append(tr("Data error: Recommended fix %1/%2 not found").
+                   arg(leg.recFixIdent).arg(leg.recFixRegion));
 
   return remarks.join(", ");
 }

@@ -364,7 +364,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   bool hiddenDummy;
   wToS(leg.line, line, size, &hiddenDummy);
 
-  if(leg.type == "IF") // Initial fix - Nothing to do here
+  if(leg.type == maptypes::INITIAL_FIX) // Nothing to do here
   {
     lastLine = line;
     return;
@@ -375,24 +375,23 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
   QPainter *painter = context->painter;
 
-  if(contains(leg.type, {"AF", // Arc to fix
-                         "RF"})) // Constant radius arc
+  if(contains(leg.type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
   {
     if(line.length() > 2)
       paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
     lastLine = line;
   }
-  else if(contains(leg.type, {"CA", // Course to altitude - point prepared by ApproachQuery
-                              "CF", // Course to fix
-                              "DF", // Direct to fix
-                              "FA", // Fix to altitude - point prepared by ApproachQuery
-                              "TF", // Track to fix
-                              "FC", // Track from fix from distance
-                              "FM", // From fix to manual termination
-                              "VA", // Heading to altitude termination
-                              "VM"})) // Heading to manual termination
+  else if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
+                              maptypes::COURSE_TO_FIX,
+                              maptypes::DIRECT_TO_FIX,
+                              maptypes::FIX_TO_ALTITUDE,
+                              maptypes::TRACK_TO_FIX,
+                              maptypes::TRACK_FROM_FIX_FROM_DISTANCE,
+                              maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
+                              maptypes::HEADING_TO_ALTITUDE_TERMINATION,
+                              maptypes::HEADING_TO_MANUAL_TERMINATION}))
   {
-    if(!leg.turnDirection.isEmpty() && prevLeg != nullptr && prevLeg->type != "IF")
+    if(!leg.turnDirection.isEmpty() && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
     {
       if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
       {
@@ -472,22 +471,22 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
       } // Connect any gaps
     }
   }
-  else if(contains(leg.type, {"CR",  // Course to radial termination ===============================
-                              "VR", // Heading to radial termination
-                              "CD", // Course to DME distance
-                              "VD", // Heading to DME distance termination
-                              "FD", // Track from fix to DME distance
-                              "CI", // Course to intercept
-                              "VI"})) // Heading to intercept
+  else if(contains(leg.type, {maptypes::COURSE_TO_RADIAL_TERMINATION,
+                              maptypes::HEADING_TO_RADIAL_TERMINATION,
+                              maptypes::COURSE_TO_DME_DISTANCE,
+                              maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
+                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                              maptypes::COURSE_TO_INTERCEPT,
+                              maptypes::HEADING_TO_INTERCEPT}))
   {
     painter->drawLine(line);
     lastLine = line;
   }
-  else if(contains(leg.type, {"HA",  // Hold to altitude ===============================
-                              "HF", // Hold to fix
-                              "HM"})) // Hold to manual termination
+  else if(contains(leg.type, {maptypes::HOLD_TO_ALTITUDE,
+                              maptypes::HOLD_TO_FIX,
+                              maptypes::HOLD_TO_MANUAL_TERMINATION}))
     paintHold(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
-  else if(leg.type == "PI") // Procedure turn ===============================
+  else if(leg.type == maptypes::PROCEDURE_TURN)
   {
     painter->setBrush(mapcolors::routeApproachPreviewColor);
     paintProcedureTurn(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist,
@@ -515,7 +514,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     return;
 
   const maptypes::MapApproachLeg& leg = legs.at(index);
-  if(index < legs.size() - 1 && leg.type != "VI" && leg.type != "CI")
+  if(index < legs.size() - 1 &&
+     leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT)
   {
     // Do not paint the last point in the transition since it overlaps with the approach
     if(legs.isTransition(index) && legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH)
@@ -526,8 +526,22 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
   QStringList texts;
   // Manual and altitude terminated legs that have a calculated position needing extra text
-  if(contains(leg.type, {"CA", "CD", "CI", "CR", "HF", "HM", "HA", "FA", "FD", "VA", "VD", "VI", "VR",
-                         "FC", "FM", "VM"}))
+  if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
+                         maptypes::COURSE_TO_DME_DISTANCE,
+                         maptypes::COURSE_TO_INTERCEPT,
+                         maptypes::COURSE_TO_RADIAL_TERMINATION,
+                         maptypes::HOLD_TO_FIX,
+                         maptypes::HOLD_TO_MANUAL_TERMINATION,
+                         maptypes::HOLD_TO_ALTITUDE,
+                         maptypes::FIX_TO_ALTITUDE,
+                         maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                         maptypes::HEADING_TO_ALTITUDE_TERMINATION,
+                         maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
+                         maptypes::HEADING_TO_INTERCEPT,
+                         maptypes::HEADING_TO_RADIAL_TERMINATION,
+                         maptypes::TRACK_FROM_FIX_FROM_DISTANCE,
+                         maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
+                         maptypes::HEADING_TO_MANUAL_TERMINATION}))
   {
     if(wToS(leg.line.getPos2(), x, y))
     {
