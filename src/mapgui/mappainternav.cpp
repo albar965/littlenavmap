@@ -21,6 +21,7 @@
 #include "common/mapcolors.h"
 #include "common/unit.h"
 #include "mapgui/mapwidget.h"
+#include "common/textplacement.h"
 
 #include <QElapsedTimer>
 
@@ -194,6 +195,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     }
   }
 
+  TextPlacement textPlacement(context->painter, this);
+
   // Draw texts ----------------------------------------
   int i = 0;
   context->painter->setPen(mapcolors::airwayTextColor);
@@ -202,8 +205,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
     const MapAirway& airway = airways->at(airwayIndex.at(i));
     int xt = -1, yt = -1;
     float textBearing;
-    if(findTextPos(airway.from, airway.to, context->painter, metrics.width(text), metrics.height() * 2,
-                   xt, yt, &textBearing))
+    if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
+                                 xt, yt, &textBearing))
     {
       float rotate;
       if(textBearing > 180.f)

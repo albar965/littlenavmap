@@ -30,6 +30,7 @@
 #include "route/routemapobjectlist.h"
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
+#include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -339,6 +340,7 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
 
   const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
+  TextPlacement textPlacement(context->painter, this);
 
   for(const maptypes::DistanceMarker& m : distanceMarkers)
   {
@@ -398,8 +400,8 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       if(m.from != m.to)
       {
         int xt = -1, yt = -1;
-        if(findTextPos(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
-                       metrics.height() * 2, xt, yt, nullptr))
+        if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
+                                     metrics.height() * 2, xt, yt, nullptr))
           symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::BOLD | textatt::CENTER);
       }
     }
@@ -456,8 +458,8 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
       if(m.from != m.to)
       {
         int xt = -1, yt = -1;
-        if(findTextPosRhumb(m.from, m.to, painter, distanceMeter, metrics.width(texts.at(0)),
-                            metrics.height() * 2, xt, yt))
+        if(textPlacement.findTextPosRhumb(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
+                                          metrics.height() * 2, xt, yt))
           symbolPainter->textBox(painter, texts,
                                  painter->pen(), xt, yt, textatt::ITALIC | textatt::BOLD | textatt::CENTER);
       }

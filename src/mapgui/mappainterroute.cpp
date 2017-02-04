@@ -26,6 +26,7 @@
 #include "route/routecontroller.h"
 #include "mapgui/mapscale.h"
 #include "util/paintercontextsaver.h"
+#include "common/textplacement.h"
 
 #include <QBitArray>
 #include <marble/GeoDataLineString.h>
@@ -121,73 +122,27 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       foundMagvarObject = true;
   }
 
-  // Collect coordinates for text placement and lines first
-  QList<QPoint> textCoords;
-  QList<float> textBearing;
-  QStringList texts;
-  QList<int> textLineLengths;
-
-  // Collect start and end points of legs and visibility
-  QList<QPoint> startPoints;
-  QBitArray visibleStartPoints(routeMapObjects.size(), false);
-
-  for(int i = 0; i < routeMapObjects.size(); i++)
-  {
-    const RouteMapObject& obj = routeMapObjects.at(i);
-
-    int x, y;
-    visibleStartPoints.setBit(i, wToS(obj.getPosition(), x, y));
-
-    if(i > 0 && !context->drawFast)
-    {
-      int lineLength = simpleDistance(x, y, startPoints.at(i - 1).x(), startPoints.at(i - 1).y());
-      if(lineLength > MIN_LENGTH_FOR_TEXT)
-      {
-        // Build text
-        QString text(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
-                     QString::number(obj.getCourseToRhumb(), 'f', 0) +
-                     (foundMagvarObject ? tr("°M") : tr("°T")));
-
-        int textw = context->painter->fontMetrics().width(text);
-        if(textw > lineLength)
-          // Limit text length to line for elide
-          textw = lineLength;
-
-        int xt, yt;
-        float brg;
-        Pos p1(obj.getPosition()), p2(routeMapObjects.at(i - 1).getPosition());
-
-        if(findTextPos(p1, p2, context->painter,
-                       textw, context->painter->fontMetrics().height(), xt, yt, &brg))
-        {
-          textCoords.append(QPoint(xt, yt));
-          textBearing.append(brg);
-          texts.append(text);
-          textLineLengths.append(lineLength);
-        }
-      }
-      else
-      {
-        // No text - append all dummy values
-        textCoords.append(QPoint());
-        textBearing.append(0.f);
-        texts.append(QString());
-        textLineLengths.append(0);
-      }
-    }
-    startPoints.append(QPoint(x, y));
-  }
-
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
-
+  QStringList routeTexts;
+  QVector<Line> lines;
   GeoDataLineString linestring;
   linestring.setTessellate(true);
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
+    if(i > 0)
+    {
+      // Build text
+      routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
+                        QString::number(obj.getCourseToRhumb(), 'f', 0) +
+                        (foundMagvarObject ? tr("°M") : tr("°T")));
+
+      lines.append(Line(routeMapObjects.at(i - 1).getPosition(), obj.getPosition()));
+    }
     linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
   }
+
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
   // Draw lines separately to avoid omission in mercator near anti meridian
   // Draw outer line
@@ -228,53 +183,18 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   context->szFont(context->textSizeFlightplan);
 
-  if(!context->drawFast)
-  {
-    // Draw text with direction arrow along lines
-    context->painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
-    int i = 0;
-    for(const QPoint& textCoord : textCoords)
-    {
-      QString text = texts.at(i);
-      if(!text.isEmpty())
-      {
-        // Cut text right or left depending on direction
-        Qt::TextElideMode elide = Qt::ElideRight;
-        float rotate, brg = textBearing.at(i);
-        if(brg < 180.)
-        {
-          text += tr(" ►");
-          elide = Qt::ElideLeft;
-          rotate = brg - 90.f;
-        }
-        else
-        {
-          text = tr("◄ ") + text;
-          elide = Qt::ElideRight;
-          rotate = brg + 90.f;
-        }
+  // Collect coordinates for text placement and lines first
+  TextPlacement textPlacement(context->painter, this);
+  textPlacement.calculateTextAlongLines(lines, routeTexts, context->drawFast);
+  textPlacement.drawTextAlongLines(outerlinewidth, context->drawFast, tr(" ►"), tr("◄ "));
 
-        // Draw text
-        QFontMetrics metrics = context->painter->fontMetrics();
-
-        // Both points are visible - cut text for full line length
-        if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
-          text = metrics.elidedText(text, elide, textLineLengths.at(i));
-
-        context->painter->translate(textCoord.x(), textCoord.y());
-        context->painter->rotate(rotate);
-        context->painter->drawText(-metrics.width(text) / 2, -metrics.descent() - outerlinewidth / 2, text);
-        context->painter->resetTransform();
-      }
-      i++;
-    }
-  }
+  // ================================================================================
 
   // Draw airport and navaid symbols
-  drawSymbols(context, routeMapObjects, visibleStartPoints, startPoints);
+  drawSymbols(context, routeMapObjects, textPlacement.getVisibleStartPoints(), textPlacement.getStartPoints());
 
   // Draw symbol text
-  drawSymbolText(context, routeMapObjects, visibleStartPoints, startPoints);
+  drawSymbolText(context, routeMapObjects, textPlacement.getVisibleStartPoints(), textPlacement.getStartPoints());
 
   if(routeMapObjects.size() >= 2)
   {
@@ -318,21 +238,43 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   for(int i = 0; i < allLegs.size(); i++)
-    paintApproachSegment(context, allLegs, i, lastLine);
+    paintApproachSegment(context, allLegs, i, lastLine, nullptr);
 
   context->painter->setBackground(Qt::white);
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   lastLine = QLineF();
+  QVector<Line> drawTextLines;
+  drawTextLines.fill(Line(), allLegs.size());
+
   for(int i = 0; i < allLegs.size(); i++)
   {
     if(allLegs.isMissed(i))
       context->painter->setPen(missedPen);
     else
       context->painter->setPen(apprPen);
-    paintApproachSegment(context, allLegs, i, lastLine);
+    paintApproachSegment(context, allLegs, i, lastLine, &drawTextLines);
   }
+
+  QStringList approachTexts;
+  QVector<Line> lines;
+  for(int i = 0; i < allLegs.size(); i++)
+  {
+    const maptypes::MapApproachLeg& leg = allLegs.at(i);
+    lines.append(leg.line);
+
+    approachTexts.append(Unit::distMeter(leg.line.distanceMeter(), true /*addUnit*/, 10, true /*narrow*/) + tr("/") +
+                         QString::number(leg.line.angleDegRhumb(), 'f', 0) +
+                         (leg.trueCourse ? tr("°T") : tr("°M")));
+  }
+
+  context->szFont(context->textSizeFlightplan);
+  context->painter->setBackgroundMode(Qt::TransparentMode);
+  context->painter->setPen(Qt::black);
+  TextPlacement textPlacement(context->painter, this);
+  textPlacement.calculateTextAlongLines(lines, approachTexts, context->drawFast);
+  textPlacement.drawTextAlongLines(outerlinewidth, context->drawFast, tr(" ►"), tr("◄ "));
 
   // Texts ====================================================
   for(int i = 0; i < allLegs.size(); i++)
@@ -340,7 +282,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                                           int index, QLineF& lastLine)
+                                           int index, QLineF& lastLine, QVector<Line> *drawTextLines)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -710,10 +652,10 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
 }
 
 void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
-                                  const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints)
+                                  const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
-  for(const QPoint& pt : startPoints)
+  for(const QPointF& pt : startPoints)
   {
     if(visibleStartPoints.testBit(i))
     {
@@ -749,10 +691,10 @@ void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObj
 }
 
 void MapPainterRoute::drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
-                                     const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints)
+                                     const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
-  for(const QPoint& pt : startPoints)
+  for(const QPointF& pt : startPoints)
   {
     if(visibleStartPoints.testBit(i))
     {

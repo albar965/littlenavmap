@@ -152,32 +152,6 @@ protected:
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
                    int radiusNm, bool fast, int& xtext, int& ytext);
 
-  /* Find text position along a great circle route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param bearing text bearing at the returned position
-   */
-  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   int textWidth, int textHeight, int& x, int& y, float *bearing);
-
-  /* Find text position along a great circle route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param bearing text bearing at the returned position
-   *  @param distanceMeter distance between points
-   */
-  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, Marble::GeoPainter *painter,
-                   float distanceMeter, int textWidth, int textHeight, int& x, int& y, float *bearing);
-
-  /* Find text position along a rhumb line route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param distanceMeter distance between points
-   */
-  bool findTextPosRhumb(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                        Marble::GeoPainter *painter, float distanceMeter, int textWidth, int textHeight,
-                        int& x, int& y);
-
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
 
@@ -186,10 +160,8 @@ protected:
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
   void paintHold(QPainter *painter, float x, float y, float direction, float lengthNm, bool left);
-  void paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left, QLineF* extensionLine);
-
-  /* Evaluate 50 text placement positions along line */
-  const float FIND_TEXT_POS_STEP = 0.02f;
+  void paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
+                          QLineF *extensionLine);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

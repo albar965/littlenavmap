@@ -108,6 +108,7 @@ public:
   atools::geo::Pos sToW(int x, int y) const;
 
   atools::geo::Pos sToW(const QPoint& point) const;
+  atools::geo::Pos sToW(const QPointF& point) const;
 
   /* Shortcuts for more readable code */
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;

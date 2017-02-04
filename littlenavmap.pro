@@ -169,7 +169,8 @@ SOURCES += src/main.cpp\
     src/route/userwaypointdialog.cpp \
     src/info/approachtreecontroller.cpp \
     src/common/infoquery.cpp \
-    src/common/approachquery.cpp
+    src/common/approachquery.cpp \
+    src/common/textplacement.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -242,7 +243,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/userwaypointdialog.h \
     src/info/approachtreecontroller.h \
     src/common/infoquery.h \
-    src/common/approachquery.h
+    src/common/approachquery.h \
+    src/common/textplacement.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

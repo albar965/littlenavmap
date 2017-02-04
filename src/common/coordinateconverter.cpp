@@ -216,6 +216,11 @@ Pos CoordinateConverter::sToW(const QPoint& point) const
   return sToW(point.x(), point.y());
 }
 
+Pos CoordinateConverter::sToW(const QPointF& point) const
+{
+  return sToW(point.x(), point.y());
+}
+
 bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y,
                                        const QSize& size, bool *isHidden) const
 {

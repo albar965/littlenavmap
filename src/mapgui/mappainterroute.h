@@ -64,17 +64,16 @@ private:
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
-  static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
   void drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
-                   const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
+                   const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
-                      const QBitArray& visibleStartPoints, const QList<QPoint>& startPoints);
+                      const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
-                            int index, QLineF& lastLine);
+                            int index, QLineF& lastLine, QVector<atools::geo::Line>* drawTextLines);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);
 
