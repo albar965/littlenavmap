@@ -576,6 +576,12 @@ struct MapApproachLeg
 
   maptypes::ApproachLegType type;
   bool missed, flyover, trueCourse;
+
+  float legTrueCourse() const
+  {
+    return trueCourse ? course : course + magvar;
+  }
+
 };
 
 struct MapApproachDme

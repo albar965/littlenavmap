@@ -391,11 +391,19 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::HEADING_TO_ALTITUDE_TERMINATION,
                               maptypes::HEADING_TO_MANUAL_TERMINATION}))
   {
-    if(!leg.turnDirection.isEmpty() && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
+    if((leg.turnDirection == "R" || leg.turnDirection == "L") &&
+       prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
     {
-      if(!lastLine.p2().isNull() && QLineF(lastLine.p2(), line.p1()).length() > 2)
+      float lineDist = QLineF(lastLine.p2(), line.p1()).length();
+      if(!lastLine.p2().isNull() && lineDist > 2)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
+        QLineF lineDraw(line.p2(), line.p1());
+        // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
+        float oneNmPixel = scale->getPixelForNm(0.95f);
+        if(lineDraw.length() > oneNmPixel * 2.f)
+          lineDraw.setLength(lineDraw.length() - oneNmPixel);
+        lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
 
         // Calculate distance to control points
         float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1()) * 3 / 4;
@@ -403,17 +411,17 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         // Calculate bezier control points by extending the last and next line
         QLineF ctrl1(lastLine.p1(), lastLine.p2());
         ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
-        QLineF ctrl2(line.p2(), line.p1());
+        QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
         ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
 
         // Draw a bow connecting the two lines
         QPainterPath path;
         path.moveTo(lastLine.p2());
-        path.cubicTo(ctrl1.p2(), ctrl2.p2(), line.p1());
+        path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
         painter->drawPath(path);
 
-        painter->drawLine(line);
-        lastLine = line;
+        painter->drawLine(lineDraw);
+        lastLine = lineDraw;
       }
       else
       {
@@ -453,7 +461,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     }
     else
     {
-      // No turn direction
+      // No turn direction or both
 
       if(leg.intersectPos.isValid())
       {
@@ -485,11 +493,11 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   else if(contains(leg.type, {maptypes::HOLD_TO_ALTITUDE,
                               maptypes::HOLD_TO_FIX,
                               maptypes::HOLD_TO_MANUAL_TERMINATION}))
-    paintHold(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist, leg.turnDirection == "L");
+    paintHold(painter, line.x2(), line.y2(), leg.legTrueCourse(), leg.dist, leg.turnDirection == "L");
   else if(leg.type == maptypes::PROCEDURE_TURN)
   {
     painter->setBrush(mapcolors::routeApproachPreviewColor);
-    paintProcedureTurn(painter, line.x2(), line.y2(), leg.course + leg.magvar, leg.dist,
+    paintProcedureTurn(painter, line.x2(), line.y2(), leg.legTrueCourse(), leg.dist,
                        leg.turnDirection == "L", &lastLine);
     painter->setBrush(Qt::NoBrush);
   }

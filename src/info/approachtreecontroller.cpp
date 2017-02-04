@@ -464,8 +464,8 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
 
 void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproachLeg& leg)
 {
-  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid()) ||
-                 (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid());
+  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())/* ||
+                 (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())*/;
 
   for(int i = 0; i < item->columnCount(); i++)
   {
@@ -506,6 +506,8 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
     remarks.append(tr("Turn right"));
   else if(leg.turnDirection == "L")
     remarks.append(tr("Turn left"));
+  else if(leg.turnDirection == "B")
+    remarks.append(tr("Turn both"));
 
   QString legremarks = maptypes::approachLegRemarks(leg.type);
   if(!legremarks.isEmpty())

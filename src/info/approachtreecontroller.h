@@ -96,6 +96,7 @@ private:
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set
+  // Fist bit in triple: expanded or not, Second bit: selection state, Third bit: has children (was expanded once before)
   QBitArray itemLoadedIndex;
 
   InfoQuery *infoQuery = nullptr;
@@ -106,7 +107,7 @@ private:
   QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont;
   maptypes::MapAirport currentAirport;
 
-  // Maps airport ID to expanded state of the tree widget items
+  // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;
 
 };

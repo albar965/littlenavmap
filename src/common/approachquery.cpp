@@ -23,7 +23,7 @@
 
 #include "sql/sqlquery.h"
 
-#define NO_CACHE
+// #define NO_CACHE
 
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
@@ -49,6 +49,7 @@ const maptypes::MapApproachLegs *ApproachQuery::getApproachLegs(const maptypes::
 const maptypes::MapApproachLegs *ApproachQuery::getTransitionLegs(const maptypes::MapAirport& airport,
                                                                   int transitionId)
 {
+  // Get approach id for this transition
   int approachId = -1;
   approachIdForTransQuery->bindValue(":id", transitionId);
   approachIdForTransQuery->exec();
@@ -77,9 +78,9 @@ const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::Ma
     approachIdForLegQuery->exec();
     if(approachIdForLegQuery->next())
     {
-      const maptypes::MapApproachLegs *legs =
-        getApproachLegs(airport, approachIdForLegQuery->value("id").toInt());
+      const maptypes::MapApproachLegs *legs = getApproachLegs(airport, approachIdForLegQuery->value("id").toInt());
       if(legs != nullptr && approachLegIndex.contains(legId))
+        // Use index to get leg
         return &legs->legs.at(approachLegIndex.value(legId).second);
     }
     approachIdForLegQuery->finish();
@@ -374,7 +375,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
     else if(type == maptypes::COURSE_TO_FIX)
     {
       Pos extended = leg.fixPos.endpointRhumb(atools::geo::nmToMeter(leg.dist),
-                                              atools::geo::opposedCourseDeg(leg.course + leg.magvar));
+                                              atools::geo::opposedCourseDeg(leg.legTrueCourse()));
       if(contains(prevType, {maptypes::TRACK_FROM_FIX_FROM_DISTANCE, maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
                              maptypes::HEADING_TO_INTERCEPT, maptypes::COURSE_TO_INTERCEPT}))
       {
@@ -386,7 +387,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       {
         if(extended.distanceMeterTo(lastPos) > atools::geo::nmToMeter(1.f))
         {
-          float crs = leg.course + leg.magvar;
+          float crs = leg.legTrueCourse();
           Pos intr = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
           Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
           Pos intersect;
@@ -453,7 +454,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
 
         if(!lastPos.isValid())
           lastPos = start;
-        curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.course + leg.magvar).normalize();
+        curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.legTrueCourse()).normalize();
         leg.displayText << tr("Altitude");
       }
     }
@@ -465,7 +466,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
 
       Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
 
-      Pos intersect = Pos::intersectingRadials(start, leg.course + leg.magvar, center, leg.theta + leg.magvar);
+      Pos intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), center, leg.theta + leg.magvar);
 
       if(intersect.isValid())
         curPos = intersect;
@@ -483,7 +484,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
 
-      curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), leg.course + leg.magvar).normalize();
+      curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), leg.legTrueCourse()).normalize();
 
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.dist, true, 20, true) + "/" +
       QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
@@ -494,7 +495,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
 
       Pos center = leg.recFixPos.isValid() ? leg.recFixPos : leg.fixPos;
-      Line line(start, start.endpointRhumb(atools::geo::nmToMeter(leg.dist * 2), leg.course + leg.magvar));
+      Line line(start, start.endpointRhumb(atools::geo::nmToMeter(leg.dist * 2), leg.legTrueCourse()));
 
       if(!lastPos.isValid())
         lastPos = start;
@@ -519,7 +520,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
         Pos start = prevLeg->fixPos.isValid() ? prevLeg->fixPos : prevLeg->line.getPos2();
         if(!lastPos.isValid())
           lastPos = start;
-        curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.course + leg.magvar).normalize();
+        curPos = start.endpoint(atools::geo::nmToMeter(3.f), leg.legTrueCourse()).normalize();
         leg.displayText << tr("Manual");
       }
     }
@@ -567,18 +568,18 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachFullLegs& le
         Pos intersect;
         if(nextIsArc)
         {
-          Line line(start, start.endpointRhumb(atools::geo::nmToMeter(200), leg.course + leg.magvar));
+          Line line(start, start.endpointRhumb(atools::geo::nmToMeter(200), leg.legTrueCourse()));
           intersect = line.intersectionWithCircle(nextLeg->recFixPos, atools::geo::nmToMeter(nextLeg->rho), 20);
         }
         else
         {
           float nextCourse;
           if((nextLeg->course == 0.f || nextLeg->type == maptypes::INITIAL_FIX) && secondNextLeg != nullptr)
-            nextCourse = secondNextLeg->course + secondNextLeg->magvar;
+            nextCourse = secondNextLeg->legTrueCourse();
           else
-            nextCourse = nextLeg->course + nextLeg->magvar;
+            nextCourse = nextLeg->legTrueCourse();
 
-          intersect = Pos::intersectingRadials(start, leg.course + leg.magvar, nextLeg->original.getPos1(), nextCourse);
+          intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), nextLeg->original.getPos1(), nextCourse);
         }
 
         leg.line.setPos1(start);

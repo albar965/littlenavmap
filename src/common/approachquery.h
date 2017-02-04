@@ -75,7 +75,7 @@ private:
   // approach ID and transition ID to lists
   QCache<int, maptypes::MapApproachLegs> approachCache, transitionCache;
 
-  // maps leg ID to approach/transition ID and index in list
+  // maps leg ID to approach or transition ID and index in list
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
