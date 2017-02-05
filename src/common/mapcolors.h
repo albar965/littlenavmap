@@ -101,6 +101,9 @@ const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);
 const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
 
+/* Text along route and approach segments */
+const QColor routeTextBackgroundColor = QColor(255, 255, 255, 180);
+
 const QColor routeApproachPointColor = QColor(90, 90, 90);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */

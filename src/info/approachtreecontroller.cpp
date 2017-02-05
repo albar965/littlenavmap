@@ -425,7 +425,7 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
   QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
-      (leg.missed ? tr("Missed: ") : QString()) + maptypes::approachLegType(leg.type),
+      (leg.missed ? tr("Missed: ") : QString()) + maptypes::approachLegTypeStr(leg.type),
       leg.fixIdent,
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
@@ -446,7 +446,7 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
   QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
-      maptypes::approachLegType(leg.type),
+      maptypes::approachLegTypeStr(leg.type),
       leg.fixIdent,
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),

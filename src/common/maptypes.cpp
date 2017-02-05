@@ -354,6 +354,33 @@ const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
     {"VR", HEADING_TO_RADIAL_TERMINATION}
   });
 
+const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
+  {
+    {ARC_TO_FIX, "AF"},
+    {COURSE_TO_ALTITUDE, "CA"},
+    {COURSE_TO_DME_DISTANCE, "CD"},
+    {COURSE_TO_FIX, "CF"},
+    {COURSE_TO_INTERCEPT, "CI"},
+    {COURSE_TO_RADIAL_TERMINATION, "CR"},
+    {DIRECT_TO_FIX, "DF"},
+    {FIX_TO_ALTITUDE, "FA"},
+    {TRACK_FROM_FIX_FROM_DISTANCE, "FC"},
+    {TRACK_FROM_FIX_TO_DME_DISTANCE, "FD"},
+    {FROM_FIX_TO_MANUAL_TERMINATION, "FM"},
+    {HOLD_TO_ALTITUDE, "HA"},
+    {HOLD_TO_FIX, "HF"},
+    {HOLD_TO_MANUAL_TERMINATION, "HM"},
+    {INITIAL_FIX, "IF"},
+    {PROCEDURE_TURN, "PI"},
+    {CONSTANT_RADIUS_ARC, "RF"},
+    {TRACK_TO_FIX, "TF"},
+    {HEADING_TO_ALTITUDE_TERMINATION, "VA"},
+    {HEADING_TO_DME_DISTANCE_TERMINATION, "VD"},
+    {HEADING_TO_INTERCEPT, "VI"},
+    {HEADING_TO_MANUAL_TERMINATION, "VM"},
+    {HEADING_TO_RADIAL_TERMINATION, "VR"}
+  });
+
 const static QHash<ApproachLegType, QString> approachLegTypeToStr(
   {
     {ARC_TO_FIX, QObject::tr("Arc to fix")},
@@ -876,14 +903,24 @@ QString patternDirection(const QString& type)
     return QString();
 }
 
-maptypes::ApproachLegType legEnum(const QString& type)
+maptypes::ApproachLegType approachLegEnum(const QString& type)
 {
   return approachLegTypeToEnum.value(type);
 }
 
-QString approachLegType(maptypes::ApproachLegType type)
+QString approachLegTypeStr(maptypes::ApproachLegType type)
 {
   return approachLegTypeToStr.value(type);
+}
+
+QString approachLegTypeShortStr(ApproachLegType type)
+{
+  return approachLegTypeToShortStr.value(type);
+}
+
+QString approachLegTypeFullStr(ApproachLegType type)
+{
+  return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
 }
 
 QString approachLegRemarks(maptypes::ApproachLegType type)
@@ -941,7 +978,7 @@ QString restrictionText(const maptypes::MapAltRestriction& altRestriction)
 
 QDebug operator<<(QDebug out, const ApproachLegType& type)
 {
-  out << maptypes::approachLegType(type);
+  out << maptypes::approachLegTypeFullStr(type);
   return out;
 }
 

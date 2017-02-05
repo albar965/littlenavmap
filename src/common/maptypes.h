@@ -502,6 +502,40 @@ struct MapIls
 
 };
 
+/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
+struct MapSearchResult
+{
+  QList<MapAirport> airports;
+  QSet<int> airportIds; /* Ids used to deduplicate */
+
+  QList<MapRunwayEnd> runwayEnds;
+  QList<MapAirport> towers;
+  QList<MapParking> parkings;
+  QList<MapHelipad> helipads;
+
+  QList<MapWaypoint> waypoints;
+  QSet<int> waypointIds; /* Ids used to deduplicate */
+
+  QList<MapVor> vors;
+  QSet<int> vorIds; /* Ids used to deduplicate */
+
+  QList<MapNdb> ndbs;
+  QSet<int> ndbIds; /* Ids used to deduplicate */
+
+  QList<MapMarker> markers;
+  QList<MapIls> ils;
+
+  QList<MapAirway> airways;
+
+  QList<MapUserpoint> userPoints;
+
+  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
+  atools::fs::sc::SimConnectUserAircraft userAircraft;
+
+  bool isEmpty(const maptypes::MapObjectTypes& types) const;
+
+};
+
 struct MapApproachRef
 {
   MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1, int leg = -1)
@@ -560,19 +594,23 @@ QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
-  float course, dist, time, theta, rho, magvar;
-  QString fixType, fixIdent, fixRegion, recFixType, recFixIdent, recFixRegion, turnDirection;
-  QStringList displayText, remarks;
-  atools::geo::Pos fixPos, recFixPos, intersectPos;
-  atools::geo::Line line, original;
+  float course, dist,
+        time /* Only for holds */,
+        theta /* magnetic course to recommended navaid */,
+        rho /* distance to recommended navaid */,
+        magvar /* from airport */;
+
+  QString fixType, fixIdent, fixRegion,
+          recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
+          turnDirection /* Turn to this fix*/;
+
+  QStringList displayText /* Fix label for map */, remarks /* Additional remarks for tree */;
+  atools::geo::Pos fixPos, recFixPos, interceptPos /* Position of an intercept leg */;
+  atools::geo::Line line, original /* Original line before applying any intercept points */;
   MapAltRestriction altRestriction;
 
-  MapUserpoint userpoint, recUserpoint;
-  MapWaypoint waypoint, recWaypoint;
-  MapVor vor, recVor;
-  MapNdb ndb, recNdb;
-  MapIls ils, recIls;
-  MapRunwayEnd runwayEnd, recRunwayEnd;
+  /* Navaids resolved by approach query class */
+  MapSearchResult navaids;
 
   maptypes::ApproachLegType type;
   bool missed, flyover, trueCourse;
@@ -673,40 +711,6 @@ private:
 
 };
 
-/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
-struct MapSearchResult
-{
-  QList<MapAirport> airports;
-  QSet<int> airportIds; /* Ids used to deduplicate */
-
-  QList<MapRunwayEnd> runwayEnds;
-  QList<MapAirport> towers;
-  QList<MapParking> parkings;
-  QList<MapHelipad> helipads;
-
-  QList<MapWaypoint> waypoints;
-  QSet<int> waypointIds; /* Ids used to deduplicate */
-
-  QList<MapVor> vors;
-  QSet<int> vorIds; /* Ids used to deduplicate */
-
-  QList<MapNdb> ndbs;
-  QSet<int> ndbIds; /* Ids used to deduplicate */
-
-  QList<MapMarker> markers;
-  QList<MapIls> ils;
-
-  QList<MapAirway> airways;
-
-  QList<MapUserpoint> userPoints;
-
-  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
-  atools::fs::sc::SimConnectUserAircraft userAircraft;
-
-  bool isEmpty(const maptypes::MapObjectTypes& types) const;
-
-};
-
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
 {
@@ -763,8 +767,10 @@ QString navTypeNameWaypoint(const QString& type);
 
 QString approachFixType(const QString& type);
 QString approachType(const QString& type);
-maptypes::ApproachLegType legEnum(const QString& type);
-QString approachLegType(ApproachLegType type);
+maptypes::ApproachLegType approachLegEnum(const QString& type);
+QString approachLegTypeStr(ApproachLegType type);
+QString approachLegTypeShortStr(ApproachLegType type);
+QString approachLegTypeFullStr(ApproachLegType type);
 QString approachLegRemarks(maptypes::ApproachLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 

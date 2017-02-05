@@ -482,6 +482,8 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
 
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, ui->comboBoxOptionsGuiTheme->currentIndex());
+
+  settings.syncSettings();
 }
 
 void OptionsDialog::restoreState()

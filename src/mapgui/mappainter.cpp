@@ -180,7 +180,6 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, int radi
   }
 }
 
-
 void MapPainter::drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring)
 {
   GeoDataLineString ls;
@@ -257,7 +256,9 @@ void MapPainter::paintArc(QPainter *painter, float x1, float y1, float x2, float
   }
 }
 
-void MapPainter::paintHold(QPainter *painter, float x, float y, float direction, float lengthNm, bool left)
+void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, bool left,
+                                   const QString& text, const QString& text2,
+                                   const QColor& textColor, const QColor& textColorBackground)
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -267,30 +268,82 @@ void MapPainter::paintHold(QPainter *painter, float x, float y, float direction,
   float segmentLength = std::max(lengthNm / (2. + M_PI), 3.5);
   float pixel = scale->getPixelForNm(segmentLength);
 
+  QRectF arc1, arc2;
+  float angle1, span1, angle2, span2;
   QPainterPath path;
   if(!left)
   {
     // Turn right in the hold
-    path.arcTo(QRectF(0, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 180.f, -180.f);
-    path.arcTo(QRectF(0, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 0.f, -180.f);
+    arc1 = QRectF(0, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f);
+    angle1 = 180.f;
+    span1 = -180.f;
+    arc2 = QRectF(0, 0 + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f);
+    angle2 = 0.f;
+    span2 = -180.f;
   }
   else
   {
     // Turn left in the hold
-    path.arcTo(QRectF(-pixel * 0.5f, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f), 0.f, 180.f);
-    path.arcTo(QRectF(-pixel * 0.5f, 0.f + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f), 180.f, 180.f);
+    arc1 = QRectF(-pixel * 0.5f, -pixel * 0.25f, pixel * 0.5f, pixel * 0.5f);
+    angle1 = 0.f;
+    span1 = 180.f;
+    arc2 = QRectF(-pixel * 0.5f, 0.f + pixel * 0.75f, pixel * 0.5f, pixel * 0.5f);
+    angle2 = 180.f;
+    span2 = 180.f;
   }
+
+  path.arcTo(arc1, angle1, span1);
+  path.arcTo(arc2, angle2, span2);
   path.closeSubpath();
 
+  // translate to orgin of hold (navaid or waypoint) and rotate
   painter->translate(x, y);
   painter->rotate(direction);
 
+  // Draw hold
   painter->drawPath(path);
+
+  if(!text.isEmpty() || !text2.isEmpty())
+  {
+    float lineWidth = painter->pen().widthF();
+    // Move to first text position
+    painter->translate(0, pixel / 2);
+    painter->rotate(direction < 180.f ? 270 : 90);
+
+    painter->save();
+    painter->setPen(textColor);
+    painter->setBackground(textColorBackground);
+
+    QFontMetrics metrics = painter->fontMetrics();
+    if(!text.isEmpty())
+    {
+      // text pointing to origin
+      QString str = metrics.elidedText(text, Qt::ElideRight, pixel);
+      int w1 = metrics.width(str);
+      painter->drawText(-w1 / 2, -lineWidth - 3, str);
+    }
+
+    if(!text2.isEmpty())
+    {
+      // text on other side to origin
+      QString str = metrics.elidedText(text2, Qt::ElideRight, pixel);
+      int w2 = metrics.width(str);
+
+      if(direction < 180.f)
+        painter->translate(0, left ? -pixel / 2 : pixel / 2);
+      else
+        painter->translate(0, left ? pixel / 2 : -pixel / 2);
+      painter->drawText(-w2 / 2, -lineWidth - 3, str);
+    }
+    painter->restore();
+  }
+
   painter->resetTransform();
 }
 
-void MapPainter::paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
-                                    QLineF *extensionLine)
+void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm,
+                                            bool left, QLineF *extensionLine, const QString& text,
+                                            const QColor& textColor, const QColor& textColorBackground)
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -321,6 +374,25 @@ void MapPainter::paintProcedureTurn(QPainter *painter, float x, float y, float t
     turnCourse = course - 45.f;
   turnSegment.setAngle(angleToQt(turnCourse));
 
+  if(!text.isEmpty())
+  {
+    float lineWidth = painter->pen().widthF();
+
+    painter->save();
+    painter->setPen(textColor);
+    painter->setBackground(textColorBackground);
+    QFontMetrics metrics = painter->fontMetrics();
+    QString str = metrics.elidedText(text, Qt::ElideRight, turnSegment.length());
+    int w1 = metrics.width(str);
+
+    painter->translate((turnSegment.x1() + turnSegment.x2()) / 2, (turnSegment.y1() + turnSegment.y2()) / 2);
+    painter->rotate(turnCourse < 180.f ? turnCourse - 90.f : turnCourse + 90.f);
+    painter->drawText(-w1 / 2, -lineWidth - 3, str);
+    painter->resetTransform();
+    painter->restore();
+
+  }
+
   // 180 deg turn arc
   QLineF arc = QLineF(turnSegment.x2(), turnSegment.y2(), turnSegment.x2() + pixel / 2., turnSegment.y2());
   if(left)
@@ -348,14 +420,14 @@ void MapPainter::paintProcedureTurn(QPainter *painter, float x, float y, float t
 
   // Calculate arrow for return segment
   QLineF arrow(returnSegment.p2(), returnSegment.p1());
-  arrow.setLength(scale->getPixelForNm(0.2f, angleFromQt(returnSegment.angle())));
+  arrow.setLength(scale->getPixelForNm(0.15f, angleFromQt(returnSegment.angle())));
 
   QPolygonF poly;
   poly << arrow.p2() << arrow.p1();
   if(left)
-    arrow.setAngle(angleToQt(turnCourse - 20.f));
+    arrow.setAngle(angleToQt(turnCourse - 15.f));
   else
-    arrow.setAngle(angleToQt(turnCourse + 20.f));
+    arrow.setAngle(angleToQt(turnCourse + 15.f));
   poly << arrow.p2();
 
   painter->save();

@@ -159,9 +159,13 @@ protected:
   void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
-  void paintHold(QPainter *painter, float x, float y, float direction, float lengthNm, bool left);
-  void paintProcedureTurn(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
-                          QLineF *extensionLine);
+  void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, bool left,
+                         const QString& text, const QString& text2,
+                         const QColor& textColor, const QColor& textColorBackground);
+
+  void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
+                                  QLineF *extensionLine, const QString& text, const QColor& textColor,
+                                  const QColor& textColorBackground);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

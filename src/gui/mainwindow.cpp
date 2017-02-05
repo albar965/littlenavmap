@@ -1937,8 +1937,8 @@ void MainWindow::writeSettings()
   if(databaseManager != nullptr)
     databaseManager->saveState();
 
-  // qDebug() << "syncSettings";
-  // widgetState.syncSettings();
+  qDebug() << "syncSettings";
+  settings.syncSettings();
   qDebug() << "save state done";
 }
 

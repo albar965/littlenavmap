@@ -23,7 +23,7 @@
 
 #include "sql/sqlquery.h"
 
-// #define NO_CACHE
+// #define DEBUG_NO_CACHE
 
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
@@ -150,7 +150,7 @@ maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry()
 
 void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry)
 {
-  entry.type = maptypes::legEnum(query->value("type").toString());
+  entry.type = maptypes::approachLegEnum(query->value("type").toString());
 
   entry.turnDirection = query->value("turn_direction").toString();
   entry.navId = query->value("fix_nav_id").toInt();
@@ -198,56 +198,59 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     entry.altRestriction.alt2 = 0.f;
   }
 
+  // Load full navaid information for fix an set fix position
   if(entry.fixType == "W" || entry.fixType == "TW")
   {
-    entry.waypoint = mapQuery->getWaypointById(entry.navId);
-    entry.fixPos = entry.waypoint.position;
-  }
-  else if(entry.fixType == "N" || entry.fixType == "TN")
-  {
-    entry.ndb = mapQuery->getNdbById(entry.navId);
-    entry.fixPos = entry.ndb.position;
+    mapQuery->getMapObjectById(entry.navaids, maptypes::WAYPOINT, entry.navId);
+    entry.fixPos = entry.navaids.waypoints.isEmpty() ? Pos() : entry.navaids.waypoints.first().position;
   }
   else if(entry.fixType == "V")
   {
-    entry.vor = mapQuery->getVorById(entry.navId);
-    entry.fixPos = entry.vor.position;
+    mapQuery->getMapObjectById(entry.navaids, maptypes::VOR, entry.navId);
+    entry.fixPos = entry.navaids.vors.isEmpty() ? Pos() : entry.navaids.vors.first().position;
+  }
+  else if(entry.fixType == "N" || entry.fixType == "TN")
+  {
+    mapQuery->getMapObjectById(entry.navaids, maptypes::NDB, entry.navId);
+    entry.fixPos = entry.navaids.ndbs.isEmpty() ? Pos() : entry.navaids.ndbs.first().position;
   }
   else if(entry.fixType == "L")
   {
-    entry.ils = mapQuery->getIlsById(entry.navId);
-    entry.fixPos = entry.ils.position;
+    mapQuery->getMapObjectById(entry.navaids, maptypes::ILS, entry.navId);
+    entry.fixPos = entry.navaids.ils.isEmpty() ? Pos() : entry.navaids.ils.first().position;
   }
   else if(entry.fixType == "R")
   {
-    entry.runwayEnd = mapQuery->getRunwayEndById(entry.navId);
-    entry.fixPos = entry.runwayEnd.position;
+    mapQuery->getMapObjectById(entry.navaids, maptypes::RUNWAYEND, entry.navId);
+    entry.fixPos = entry.navaids.runwayEnds.isEmpty() ? Pos() : entry.navaids.runwayEnds.first().position;
   }
 
+  // Load navaid information for recommended fix an set fix position
+  maptypes::MapSearchResult rn;
   if(entry.recFixType == "W" || entry.recFixType == "TW")
   {
-    entry.recWaypoint = mapQuery->getWaypointById(entry.recNavId);
-    entry.recFixPos = entry.recWaypoint.position;
-  }
-  else if(entry.recFixType == "N" || entry.recFixType == "TN")
-  {
-    entry.recNdb = mapQuery->getNdbById(entry.recNavId);
-    entry.recFixPos = entry.recNdb.position;
+    mapQuery->getMapObjectById(rn, maptypes::WAYPOINT, entry.recNavId);
+    entry.recFixPos = rn.waypoints.isEmpty() ? Pos() : rn.waypoints.first().position;
   }
   else if(entry.recFixType == "V")
   {
-    entry.recVor = mapQuery->getVorById(entry.recNavId);
-    entry.recFixPos = entry.recVor.position;
+    mapQuery->getMapObjectById(rn, maptypes::VOR, entry.recNavId);
+    entry.recFixPos = rn.vors.isEmpty() ? Pos() : rn.vors.first().position;
+  }
+  else if(entry.recFixType == "N" || entry.recFixType == "TN")
+  {
+    mapQuery->getMapObjectById(rn, maptypes::NDB, entry.recNavId);
+    entry.recFixPos = rn.ndbs.isEmpty() ? Pos() : rn.ndbs.first().position;
   }
   else if(entry.recFixType == "L")
   {
-    entry.recIls = mapQuery->getIlsById(entry.recNavId);
-    entry.recFixPos = entry.recIls.position;
+    mapQuery->getMapObjectById(rn, maptypes::ILS, entry.recNavId);
+    entry.recFixPos = rn.ils.isEmpty() ? Pos() : rn.ils.first().position;
   }
   else if(entry.recFixType == "R")
   {
-    entry.recRunwayEnd = mapQuery->getRunwayEndById(entry.recNavId);
-    entry.recFixPos = entry.recRunwayEnd.position;
+    mapQuery->getMapObjectById(rn, maptypes::RUNWAYEND, entry.recNavId);
+    entry.recFixPos = rn.runwayEnds.isEmpty() ? Pos() : rn.runwayEnds.first().position;
   }
 }
 
@@ -259,7 +262,7 @@ void ApproachQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes::
 
 maptypes::MapApproachLegs *ApproachQuery::buildApproachEntries(const maptypes::MapAirport& airport, int approachId)
 {
-#ifndef NO_CACHE
+#ifndef DEBUG_NO_CACHE
   if(approachCache.contains(approachId))
     return approachCache.object(approachId);
   else
@@ -303,7 +306,7 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachEntries(const maptypes::M
 maptypes::MapApproachLegs *ApproachQuery::buildTransitionEntries(const maptypes::MapAirport& airport, int approachId,
                                                                  int transitionId)
 {
-#ifndef NO_CACHE
+#ifndef DEBUG_NO_CACHE
   if(transitionCache.contains(transitionId))
     return transitionCache.object(transitionId);
   else
@@ -374,6 +377,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
     }
     else if(type == maptypes::COURSE_TO_FIX)
     {
+      // Calculate the leading extended position to the fix
       Pos extended = leg.fixPos.endpointRhumb(atools::geo::nmToMeter(leg.dist),
                                               atools::geo::opposedCourseDeg(leg.legTrueCourse()));
       if(contains(prevType, {maptypes::TRACK_FROM_FIX_FROM_DISTANCE, maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
@@ -385,7 +389,8 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       }
       else
       {
-        if(extended.distanceMeterTo(lastPos) > atools::geo::nmToMeter(1.f))
+        float dist = extended.distanceMeterTo(lastPos);
+        if(dist > atools::geo::nmToMeter(1.f))
         {
           float crs = leg.legTrueCourse();
           Pos intr = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
@@ -414,7 +419,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
             if(status == atools::geo::ALONG_TRACK)
             {
               qDebug() << "ALONG_TRACK";
-              leg.intersectPos = intersect;
+              leg.interceptPos = intersect;
             }
             else if(status == atools::geo::BEFORE_START)
             {
@@ -439,9 +444,22 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
       curPos = leg.fixPos;
     }
     else if(contains(type, {maptypes::DIRECT_TO_FIX, maptypes::INITIAL_FIX, maptypes::TRACK_TO_FIX,
-                            maptypes::CONSTANT_RADIUS_ARC, maptypes::PROCEDURE_TURN}))
+                            maptypes::CONSTANT_RADIUS_ARC}))
     {
       curPos = leg.fixPos;
+    }
+    else if(type == maptypes::PROCEDURE_TURN)
+    {
+      float course;
+      if(leg.turnDirection == "L")
+        // Turn right and then turn 180 deg left
+        course = leg.legTrueCourse() - 45.f;
+      else
+        // Turn left and then turn 180 deg right
+        course = leg.legTrueCourse() + 45.f;
+
+      curPos = leg.fixPos;
+      // curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), course);
     }
     else if(contains(type,
                      {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
@@ -541,6 +559,9 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
     }
 
     leg.line = Line(lastPos.isValid() ? lastPos : curPos, curPos);
+    if(!leg.line.isValid())
+      qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "invalid line"
+                 << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
     leg.original = leg.line;
     lastPos = curPos;
   }

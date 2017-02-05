@@ -27,81 +27,18 @@ using atools::geo::Line;
 using atools::geo::Pos;
 
 TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter)
-  : painter(painterParam), converter(coordinateConverter)
+  : painter(painterParam), converter(coordinateConverter), arrowRight(tr(" ►")), arrowLeft(tr("◄ "))
 {
 
 }
 
-void TextPlacement::calculateTextAlongScreenLines(const QVector<QLineF>& lines, const QStringList& routeTexts,
-                                                  bool fast)
+void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts)
 {
   clearLineTextData();
 
   visibleStartPoints.resize(lines.size() + 1);
 
-  for(int i = 0; i < lines.size(); i++)
-  {
-    const QLineF& line = lines.at(i);
-    bool visibleStart = !line.isNull();
-    visibleStartPoints.setBit(i, visibleStart);
-
-    startPoints.append(line.p1());
-
-    if(!fast)
-    {
-      int lineLength = line.length();
-      if(lineLength > MIN_LENGTH_FOR_TEXT)
-      {
-        // Build text
-        QString text = routeTexts.at(i);
-
-        int textw = painter->fontMetrics().width(text);
-        if(textw > lineLength)
-          // Limit text length to line for elide
-          textw = lineLength;
-
-        int xt, yt;
-        float brg;
-
-        Pos p1 = converter->sToW(lines.at(i).p1());
-        Pos p2 = converter->sToW(lines.at(i).p2());
-
-        if(findTextPos(p1, p2, textw, painter->fontMetrics().height(), xt, yt, &brg))
-        {
-          textCoords.append(QPointF(xt, yt));
-          textBearing.append(brg);
-          texts.append(text);
-          textLineLengths.append(lineLength);
-        }
-      }
-      else
-      {
-        // No text - append all dummy values
-        textCoords.append(QPointF());
-        textBearing.append(0.f);
-        texts.append(QString());
-        textLineLengths.append(0);
-      }
-    }
-  }
-
-  if(!lines.isEmpty())
-  {
-    // Add last point
-    const QLineF& line = lines.last();
-    bool visibleStart = !line.isNull();
-    visibleStartPoints.setBit(lines.size(), visibleStart);
-    startPoints.append(line.p2());
-  }
-}
-
-void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts,
-                                            bool fast)
-{
-  clearLineTextData();
-
-  visibleStartPoints.resize(lines.size() + 1);
-
+  QFontMetrics metrics = painter->fontMetrics();
   int x1, y1, x2, y2;
   for(int i = 0; i < lines.size(); i++)
   {
@@ -127,8 +64,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
 
         int xt, yt;
         float brg;
-        if(findTextPos(lines.at(i).getPos2(), lines.at(i).getPos1(), textw, painter->fontMetrics().height(), xt, yt,
-                       &brg))
+        if(findTextPos(lines.at(i).getPos2(), lines.at(i).getPos1(), textw, metrics.height(), xt, yt, &brg))
         {
           textCoords.append(QPoint(xt, yt));
           textBearing.append(brg);
@@ -157,7 +93,56 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   }
 }
 
-void TextPlacement::drawTextAlongLines(float lineWidth, bool fast, const QString& arrowRight, const QString& arrowLeft)
+void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
+                                         const QPointF& textCoord,
+                                         bool bothVisible, int textLineLength)
+{
+  if(!text.isEmpty())
+  {
+    QString newText(text);
+    // Cut text right or left depending on direction
+    Qt::TextElideMode elide = Qt::ElideRight;
+    float rotate;
+    if(bearing < 180.)
+    {
+      if(!arrowRight.isEmpty())
+        newText += arrowRight;
+      elide = Qt::ElideLeft;
+      rotate = bearing - 90.f;
+    }
+    else
+    {
+      if(!arrowLeft.isEmpty())
+        newText = arrowLeft + newText;
+      elide = Qt::ElideRight;
+      rotate = bearing + 90.f;
+    }
+
+    // Draw text
+    QFontMetricsF metrics = painter->fontMetrics();
+
+    // Both points are visible - cut text for full line length
+    if(bothVisible)
+      newText = metrics.elidedText(newText, elide, textLineLength);
+
+    float yoffset;
+    if(textOnTopOfLine || bearing < 180.)
+      // Keep all texts north
+      yoffset = -metrics.descent() - lineWidth / 2.f - 2.f;
+    else
+      yoffset = metrics.ascent() + lineWidth / 2.f + 2.f;
+
+    painter->translate(textCoord.x(), textCoord.y());
+    painter->rotate(rotate);
+
+    QPointF textPos(-metrics.width(newText) / 2.f, yoffset);
+    painter->drawText(textPos, newText);
+    painter->resetTransform();
+  }
+
+}
+
+void TextPlacement::drawTextAlongLines()
 {
   if(!fast)
   {
@@ -166,39 +151,9 @@ void TextPlacement::drawTextAlongLines(float lineWidth, bool fast, const QString
     int i = 0;
     for(const QPointF& textCoord : textCoords)
     {
-      QString text = texts.at(i);
-      if(!text.isEmpty())
-      {
-        // Cut text right or left depending on direction
-        Qt::TextElideMode elide = Qt::ElideRight;
-        float rotate, brg = textBearing.at(i);
-        if(brg < 180.)
-        {
-          if(!arrowRight.isEmpty())
-            text += arrowRight;
-          elide = Qt::ElideLeft;
-          rotate = brg - 90.f;
-        }
-        else
-        {
-          if(!arrowLeft.isEmpty())
-            text = arrowLeft + text;
-          elide = Qt::ElideRight;
-          rotate = brg + 90.f;
-        }
-
-        // Draw text
-        QFontMetricsF metrics = painter->fontMetrics();
-
-        // Both points are visible - cut text for full line length
-        if(visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1))
-          text = metrics.elidedText(text, elide, textLineLengths.at(i));
-
-        painter->translate(textCoord.x(), textCoord.y());
-        painter->rotate(rotate);
-        painter->drawText(QPointF(-metrics.width(text) / 2.f, -metrics.descent() - lineWidth / 2.f), text);
-        painter->resetTransform();
-      }
+      drawTextAlongOneLine(texts.at(i), textBearing.at(i), textCoord,
+                           visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1),
+                           textLineLengths.at(i));
       i++;
     }
   }

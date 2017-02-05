@@ -22,6 +22,7 @@
 #include <QLineF>
 #include <QList>
 #include <QPoint>
+#include <QApplication>
 
 namespace atools {
 namespace geo {
@@ -35,17 +36,22 @@ class CoordinateConverter;
 
 class TextPlacement
 {
+  Q_DECLARE_TR_FUNCTIONS(TextPlacement)
+
 public:
   TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints */
-  void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts, bool fast);
+  void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts);
 
   /* Draw text after calling calculateTextAlongLines. Text is aligned with lines and kept in an
-   * upwards readable position. Arrows are optionally added to end or start. */
-  void drawTextAlongLines(float lineWidth, bool fast, const QString& arrowRight, const QString& arrowLeft);
-  void calculateTextAlongScreenLines(const QVector<QLineF>& lines, const QStringList& routeTexts, bool fast);
+   * upwards readable position. Arrows are optionally added to end or start.
+   *  the tree methods drawTextAlongLines, calculateTextAlongScreenLines and clearLineTextData work with a class state */
+  void drawTextAlongLines();
   void clearLineTextData();
+
+  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord,
+                            bool bothVisible, int textLineLength);
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position
@@ -83,6 +89,31 @@ public:
     return startPoints;
   }
 
+  void setArrowRight(const QString& value)
+  {
+    arrowRight = value;
+  }
+
+  void setArrowLeft(const QString& value)
+  {
+    arrowLeft = value;
+  }
+
+  void setDrawFast(bool value)
+  {
+    fast = value;
+  }
+
+  void setTextOnTopOfLine(bool value)
+  {
+    textOnTopOfLine = value;
+  }
+
+  void setLineWidth(float value)
+  {
+    lineWidth = value;
+  }
+
 private:
   QList<QPointF> textCoords;
   QList<float> textBearing;
@@ -99,8 +130,11 @@ private:
   /* Minimum pixel length for a line to get a text label */
   static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
 
+  bool fast = false, textOnTopOfLine = true;
   QPainter *painter = nullptr;
   CoordinateConverter *converter = nullptr;
+  QString arrowRight, arrowLeft;
+  float lineWidth = 10.f;
 };
 
 #endif // LITTLENAVMAP_TEXTPLACEMENT_H
