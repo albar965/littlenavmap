@@ -23,6 +23,8 @@
 #include <QList>
 #include <QPoint>
 #include <QApplication>
+#include <QColor>
+#include <QVector>
 
 namespace atools {
 namespace geo {
@@ -114,6 +116,11 @@ public:
     lineWidth = value;
   }
 
+  void setColors(const QVector<QColor>& value)
+  {
+    colors = value;
+  }
+
 private:
   QList<QPointF> textCoords;
   QList<float> textBearing;
@@ -135,6 +142,8 @@ private:
   CoordinateConverter *converter = nullptr;
   QString arrowRight, arrowLeft;
   float lineWidth = 10.f;
+  QVector<QColor> colors;
+  QVector<QColor> colors2;
 };
 
 #endif // LITTLENAVMAP_TEXTPLACEMENT_H

@@ -70,6 +70,8 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
           textBearing.append(brg);
           texts.append(text);
           textLineLengths.append(lineLength);
+          if(!colors.isEmpty())
+            colors2.append(colors.at(i));
         }
       }
       else
@@ -79,6 +81,8 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
         textBearing.append(0.f);
         texts.append(QString());
         textLineLengths.append(0);
+        if(!colors.isEmpty())
+          colors2.append(QColor());
       }
     }
   }
@@ -90,6 +94,9 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
     bool visibleStart = converter->wToS(line.getPos2(), x2, y2);
     visibleStartPoints.setBit(lines.size(), visibleStart);
     startPoints.append(QPointF(x2, y2));
+
+    if(!colors.isEmpty())
+      colors2.append(colors.at(lines.size() - 1));
   }
 }
 
@@ -126,7 +133,7 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
       newText = metrics.elidedText(newText, elide, textLineLength);
 
     float yoffset;
-    if(textOnTopOfLine || bearing < 180.)
+    if(textOnTopOfLine || bearing >= 180.)
       // Keep all texts north
       yoffset = -metrics.descent() - lineWidth / 2.f - 2.f;
     else
@@ -139,7 +146,6 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing,
     painter->drawText(textPos, newText);
     painter->resetTransform();
   }
-
 }
 
 void TextPlacement::drawTextAlongLines()
@@ -147,10 +153,12 @@ void TextPlacement::drawTextAlongLines()
   if(!fast)
   {
     // Draw text with direction arrow along lines
-    painter->setPen(QPen(Qt::black, 2, Qt::SolidLine, Qt::FlatCap));
     int i = 0;
     for(const QPointF& textCoord : textCoords)
     {
+      if(!colors2.isEmpty() && colors2.at(i).isValid())
+        painter->setPen(colors2.at(i));
+
       drawTextAlongOneLine(texts.at(i), textBearing.at(i), textCoord,
                            visibleStartPoints.testBit(i) && visibleStartPoints.testBit(i + 1),
                            textLineLengths.at(i));
@@ -268,4 +276,5 @@ void TextPlacement::clearLineTextData()
   textLineLengths.clear();
   startPoints.clear();
   visibleStartPoints.clear();
+  colors2.clear();
 }

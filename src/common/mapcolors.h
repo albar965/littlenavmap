@@ -102,7 +102,11 @@ const QColor routeHighlightColor = QColor(Qt::green);
 const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
 
 /* Text along route and approach segments */
+const QColor routeTextColor = QColor(0, 0, 0);
 const QColor routeTextBackgroundColor = QColor(255, 255, 255, 180);
+
+const QColor routeApproachMissedTextColor = QColor(90, 90, 90);
+const QColor routeApproachTextColor = QColor(0, 0, 0);
 
 const QColor routeApproachPointColor = QColor(90, 90, 90);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);

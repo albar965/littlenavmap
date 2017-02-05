@@ -159,7 +159,7 @@ protected:
   void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
 
-  void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, bool left,
+  void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
                          const QString& text, const QString& text2,
                          const QColor& textColor, const QColor& textColorBackground);
 

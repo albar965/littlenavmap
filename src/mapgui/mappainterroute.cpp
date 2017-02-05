@@ -195,7 +195,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   context->painter->save();
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   context->painter->setBackground(mapcolors::routeTextBackgroundColor);
-  context->painter->setPen(Qt::black);
+  context->painter->setPen(mapcolors::routeTextColor);
   textPlacement.drawTextAlongLines();
   context->painter->restore();
 
@@ -224,7 +224,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       if(context->mapLayer->isAirportRouteInfo())
         tod.append(Unit::distNm(routeMapObjects.getTopOfDescentFromDestination()));
 
-      symbolPainter->textBox(context->painter, tod, QPen(Qt::black),
+      symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
                              textatt::ROUTE_BG_COLOR | textatt::BOLD, 255);
     }
@@ -253,7 +253,6 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   context->painter->setBackground(Qt::white);
-  context->painter->setPen(Qt::black);
 
   QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -274,6 +273,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
 
   QStringList approachTexts;
   QVector<Line> lines;
+  QVector<QColor> textColors;
   for(int i = 0; i < allLegs.size(); i++)
   {
     const maptypes::MapApproachLeg& leg = allLegs.at(i);
@@ -282,6 +282,8 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
     approachTexts.append(Unit::distMeter(leg.line.distanceMeter(), true /*addUnit*/, 10, true /*narrow*/) + tr("/") +
                          QString::number(atools::geo::normalizeCourse(
                                            leg.line.angleDegRhumb() - leg.magvar), 'f', 0) + tr("°M"));
+
+    textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
   }
 
   // Draw text along lines
@@ -291,6 +293,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setTextOnTopOfLine(false);
   textPlacement.setLineWidth(outerlinewidth);
+  textPlacement.setColors(textColors);
   textPlacement.calculateTextAlongLines(drawTextLines, approachTexts);
   textPlacement.drawTextAlongLines();
 
@@ -485,6 +488,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         holdText2 = QString::number(leg.time, 'f', 1) + tr(" min");
       else if(leg.dist > 0.f)
         holdText2 = Unit::distNm(leg.dist, true /*addUnit*/, 10, true /*narrow*/);
+      else
+        holdText2 = tr("1 min");
 
       if(trueCourse < 180.f)
         holdText2 = tr("◄ ") + holdText2;
@@ -492,8 +497,10 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         holdText2 = holdText2 + tr(" ►");
     }
 
-    paintHoldWithText(painter, line.x2(), line.y2(), trueCourse, leg.dist, leg.turnDirection == "L",
-                      holdText, holdText2, Qt::black, mapcolors::routeTextBackgroundColor);
+    paintHoldWithText(painter, line.x2(), line.y2(), trueCourse, leg.dist, leg.time, leg.turnDirection == "L",
+                      holdText, holdText2,
+                      leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor,
+                      mapcolors::routeTextBackgroundColor);
   }
   else if(leg.type == maptypes::PROCEDURE_TURN)
   {
@@ -510,9 +517,11 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
     }
     paintProcedureTurnWithText(painter, line.x2(), line.y2(), trueCourse, leg.dist,
-                               leg.turnDirection == "L", &lastLine, text, Qt::black,
+                               leg.turnDirection == "L", &lastLine, text,
+                               leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor,
                                mapcolors::routeTextBackgroundColor);
-    painter->setBrush(Qt::NoBrush);
+
+    painter->drawLine(line);
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line

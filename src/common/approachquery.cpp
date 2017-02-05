@@ -458,8 +458,8 @@ void ApproachQuery::processLegs(maptypes::MapApproachFullLegs& legs, bool transi
         // Turn left and then turn 180 deg right
         course = leg.legTrueCourse() + 45.f;
 
-      curPos = leg.fixPos;
-      // curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), course);
+      // curPos = leg.fixPos;
+      curPos = leg.fixPos.endpoint(atools::geo::nmToMeter(leg.dist), course);
     }
     else if(contains(type,
                      {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,

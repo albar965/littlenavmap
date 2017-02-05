@@ -256,7 +256,8 @@ void MapPainter::paintArc(QPainter *painter, float x1, float y1, float x2, float
   }
 }
 
-void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, bool left,
+void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
+                                   float lengthNm, float minutes, bool left,
                                    const QString& text, const QString& text2,
                                    const QColor& textColor, const QColor& textColorBackground)
 {
@@ -265,7 +266,16 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
   // p = length / (2 + PI)
   // Straight segments are segmentLength long and circle diameter is pixel/2
   // Minimum 3.5
-  float segmentLength = std::max(lengthNm / (2. + M_PI), 3.5);
+
+  float segmentLength;
+  if(minutes > 0.f)
+    // 3.5 nm per minute
+    segmentLength = minutes * 3.5f;
+  else if(lengthNm > 0.f)
+    segmentLength = lengthNm;
+  else
+    segmentLength = 3.f;
+
   float pixel = scale->getPixelForNm(segmentLength);
 
   QRectF arc1, arc2;
@@ -356,7 +366,6 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
     // Turn left and then turn 180 deg right
     course = turnHeading + 45.f;
 
-  // Course line to turn
   QLineF extension = QLineF(x, y, x + 400.f, y);
   extension.setAngle(angleToQt(course));
   extension.setLength(scale->getPixelForNm(distanceNm, angleFromQt(extension.angle())));
@@ -366,7 +375,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
     *extensionLine = QLineF(extension.p2(), extension.p1());
 
   // Turn segment
-  QLineF turnSegment = QLineF(extension.x2(), extension.y2(), extension.x2() + pixel, extension.y2());
+  QLineF turnSegment = QLineF(x, y, x + pixel, y);
   float turnCourse;
   if(left)
     turnCourse = course + 45.f;
@@ -413,7 +422,6 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   // Make return segment a bit shorter than turn segment
   returnSegment.setLength(returnSegment.length() * 0.8);
 
-  painter->drawLine(extension);
   painter->drawLine(turnSegment);
   paintArc(painter, arc.p1(), arc.p2(), arc.pointAt(0.5), left);
   painter->drawLine(returnSegment.p1(), returnSegment.p2());
