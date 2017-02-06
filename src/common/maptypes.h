@@ -594,7 +594,9 @@ QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
-  float course, dist,
+  float course,
+        dist /* Distance from source */,
+        calculatedDistance /* Calculated distance closer to the real one */,
         time /* Only for holds */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,

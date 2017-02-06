@@ -464,8 +464,8 @@ void ApproachTreeController::buildTransLegItem(QTreeWidgetItem *parentItem, cons
 
 void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproachLeg& leg)
 {
-  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())/* ||
-                 (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())*/;
+  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
+                 /* ||   (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())*/;
 
   for(int i = 0; i < item->columnCount(); i++)
   {
@@ -490,8 +490,8 @@ QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 
 QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
 {
-  if(leg.dist > 0.f)
-    return Unit::distNm(leg.dist);
+  if(leg.calculatedDistance > 0.f)
+    return Unit::distNm(leg.calculatedDistance);
   else
     return QString();
 }
@@ -514,12 +514,14 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
     remarks.append(legremarks);
 
   if(!leg.recFixIdent.isEmpty())
+  {
     if(leg.rho > 0.f)
       remarks.append(tr("%1 / %2 / %3").arg(leg.recFixIdent).
                      arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
                      arg(QLocale().toString(leg.theta) + (leg.trueCourse ? tr("°T") : tr("°M"))));
     else
       remarks.append(tr("%1").arg(leg.recFixIdent));
+  }
 
   if(!leg.remarks.isEmpty())
     remarks.append(leg.remarks);
@@ -540,21 +542,45 @@ QBitArray ApproachTreeController::saveTreeViewState()
   const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
 
   QBitArray state;
-  for(int i = 0; i < root->childCount(); ++i)
-    itemStack.append(root->child(i));
 
-  int itemIdx = 0;
-  while(!itemStack.isEmpty())
+  if(!itemIndex.isEmpty())
   {
-    const QTreeWidgetItem *item = itemStack.takeLast();
+    for(int i = 0; i < root->childCount(); ++i)
+      itemStack.append(root->child(i));
 
-    state.resize(itemIdx + 3);
-    state.setBit(itemIdx, item->isExpanded()); // Fist bit in triple: expanded or not
-    state.setBit(itemIdx + 1, item->isSelected()); // Second bit: selection state
-    state.setBit(itemIdx + 2, item->childCount() > 0); // Third bit: has children (expanded once before)
-    for(int i = 0; i < item->childCount(); ++i)
-      itemStack.append(item->child(i));
-    itemIdx += 3;
+    int itemIdx = 0;
+    while(!itemStack.isEmpty())
+    {
+      const QTreeWidgetItem *item = itemStack.takeFirst();
+
+      if(item->type() < itemIndex.size() && itemIndex.at(item->type()).legId != -1)
+        // Do not save legs
+        continue;
+
+      bool selected = item->isSelected();
+
+      // Check if a leg is selected and push selection status down to the approach or transition
+      // This avoids the need of expanding during loading which messes up the order
+      for(int i = 0; i < item->childCount(); i++)
+      {
+        if(itemIndex.at(item->child(i)->type()).legId != -1 && item->child(i)->isSelected())
+        {
+          selected = true;
+          break;
+        }
+      }
+
+      state.resize(itemIdx + 2);
+      state.setBit(itemIdx, item->isExpanded()); // Fist bit in triple: expanded or not
+      state.setBit(itemIdx + 1, selected); // Second bit: selection state
+
+      qDebug() << item->text(0) << item->text(1) << "expanded" << item->isExpanded() << "selected" <<
+      item->isSelected() << "child" << item->childCount();
+
+      for(int i = 0; i < item->childCount(); ++i)
+        itemStack.append(item->child(i));
+      itemIdx += 2;
+    }
   }
   return state;
 }
@@ -564,43 +590,31 @@ void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
   QList<QTreeWidgetItem *> itemStack;
   const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
 
-  // First load child nodes to get the same tree
+  // Find selected and expanded items first without tree modification to keep order
   for(int i = 0; i < root->childCount(); ++i)
     itemStack.append(root->child(i));
   int itemIdx = 0;
-  while(!itemStack.isEmpty())
-  {
-    QTreeWidgetItem *item = itemStack.takeLast();
-    if(itemIdx < state.size())
-    {
-      if(state.at(itemIdx + 2))
-        itemExpanded(item);
-      for(int i = 0; i < item->childCount(); ++i)
-        itemStack.append(item->child(i));
-      itemIdx += 3;
-    }
-  }
-
-  // Expand items and find selected
+  QVector<QTreeWidgetItem *> itemsToExpand;
   QTreeWidgetItem *selectedItem = nullptr;
-  itemStack.clear();
-  for(int i = 0; i < root->childCount(); ++i)
-    itemStack.append(root->child(i));
-  itemIdx = 0;
   while(!itemStack.isEmpty())
   {
-    QTreeWidgetItem *item = itemStack.takeLast();
-    if(itemIdx < state.size())
+    QTreeWidgetItem *item = itemStack.takeFirst();
+    if(item != nullptr && itemIdx < state.size() - 1)
     {
+      if(state.at(itemIdx))
+        itemsToExpand.append(item);
       if(state.at(itemIdx + 1))
         selectedItem = item;
 
-      item->setExpanded(state.at(itemIdx));
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));
-      itemIdx += 3;
+      itemIdx += 2;
     }
   }
+
+  // Expand and possibly reload
+  for(QTreeWidgetItem *item : itemsToExpand)
+    item->setExpanded(true);
 
   // Center the selected item
   if(selectedItem != nullptr)

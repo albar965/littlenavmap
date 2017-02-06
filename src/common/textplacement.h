@@ -36,6 +36,7 @@ class Pos;
 class QPainter;
 class CoordinateConverter;
 
+/* Contains methods for text placement along line strings. */
 class TextPlacement
 {
   Q_DECLARE_TR_FUNCTIONS(TextPlacement)
@@ -81,16 +82,19 @@ public:
                         float distanceMeter, int textWidth, int textHeight,
                         int& x, int& y);
 
+  /* Bit array indicating which start point is visible or not.  Filled by calculateTextAlongLines */
   const QBitArray& getVisibleStartPoints() const
   {
     return visibleStartPoints;
   }
 
+  /* Get all screen start points including the last one. Filled by calculateTextAlongLines */
   const QList<QPointF>& getStartPoints() const
   {
     return startPoints;
   }
 
+  /* Arrows are prepended or appendend to the given text depending on direction */
   void setArrowRight(const QString& value)
   {
     arrowRight = value;
@@ -106,16 +110,19 @@ public:
     fast = value;
   }
 
+  /* Default is true which puts text always above the line. */
   void setTextOnTopOfLine(bool value)
   {
     textOnTopOfLine = value;
   }
 
+  /* Line width in pixel used for text placement */
   void setLineWidth(float value)
   {
     lineWidth = value;
   }
 
+  /* Set an array of colors with the same size as lines in calculateTextAlongLines */
   void setColors(const QVector<QColor>& value)
   {
     colors = value;

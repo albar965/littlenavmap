@@ -274,10 +274,10 @@ void InfoQuery::initQueries()
   approachQuery = new SqlQuery(db);
   approachQuery->prepare("select r.name as runway_name, r.runway_end_id, a.* from approach a "
                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
-                         "where a.airport_id = :id");
+                         "where a.airport_id = :id order by runway_name, a.type");
 
   transitionQuery = new SqlQuery(db);
-  transitionQuery->prepare("select * from transition where approach_id = :id");
+  transitionQuery->prepare("select * from transition where approach_id = :id order by fix_ident");
 }
 
 void InfoQuery::deInitQueries()

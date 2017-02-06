@@ -274,7 +274,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
   else if(lengthNm > 0.f)
     segmentLength = lengthNm;
   else
-    segmentLength = 3.f;
+    segmentLength = 3.5f;
 
   float pixel = scale->getPixelForNm(segmentLength);
 

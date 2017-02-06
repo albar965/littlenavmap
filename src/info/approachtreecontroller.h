@@ -96,7 +96,7 @@ private:
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set
-  // Fist bit in triple: expanded or not, Second bit: selection state, Third bit: has children (was expanded once before)
+  // Fist bit in pair: expanded or not, Second bit: selection state
   QBitArray itemLoadedIndex;
 
   InfoQuery *infoQuery = nullptr;

@@ -135,7 +135,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     if(i > 0)
     {
       // Build text
-      routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 10, true /*narrow*/) + tr(" / ") +
+      routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                         QString::number(obj.getCourseToRhumb(), 'f', 0) +
                         (foundMagvarObject ? tr("°M") : tr("°T")));
 
@@ -185,7 +185,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       context->painter->drawPolyline(ls);
   }
 
-  context->szFont(context->textSizeFlightplan);
+  context->szFont(context->textSizeFlightplan * 1.1f);
 
   // Collect coordinates for text placement and lines first
   TextPlacement textPlacement(context->painter, this);
@@ -199,6 +199,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   textPlacement.drawTextAlongLines();
   context->painter->restore();
 
+  context->szFont(context->textSizeFlightplan);
   // ================================================================================
 
   // Draw airport and navaid symbols
@@ -261,7 +262,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   drawTextLines.fill(Line(), allLegs.size());
 
   // Need to set font since it is used by drawHold
-  context->szFont(context->textSizeFlightplan);
+  context->szFont(context->textSizeFlightplan * 1.1);
   for(int i = 0; i < allLegs.size(); i++)
   {
     if(allLegs.isMissed(i))
@@ -279,7 +280,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
     const maptypes::MapApproachLeg& leg = allLegs.at(i);
     lines.append(leg.line);
 
-    approachTexts.append(Unit::distMeter(leg.line.distanceMeter(), true /*addUnit*/, 10, true /*narrow*/) + tr("/") +
+    approachTexts.append(Unit::distMeter(leg.line.distanceMeter(), true /*addUnit*/, 20, true /*narrow*/) + tr("/") +
                          QString::number(atools::geo::normalizeCourse(
                                            leg.line.angleDegRhumb() - leg.magvar), 'f', 0) + tr("°M"));
 
@@ -289,6 +290,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   // Draw text along lines
   context->painter->setBackground(mapcolors::routeTextBackgroundColor);
 
+
   TextPlacement textPlacement(context->painter, this);
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setTextOnTopOfLine(false);
@@ -297,6 +299,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context,
   textPlacement.calculateTextAlongLines(drawTextLines, approachTexts);
   textPlacement.drawTextAlongLines();
 
+  context->szFont(context->textSizeFlightplan);
   // Texts ====================================================
   for(int i = 0; i < allLegs.size(); i++)
     paintApproachPoints(context, allLegs, i);
@@ -362,6 +365,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
         QLineF lineDraw(line.p2(), line.p1());
+
         // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
         float oneNmPixel = scale->getPixelForNm(0.95f);
         if(lineDraw.length() > oneNmPixel * 2.f)
@@ -485,9 +489,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         holdText = tr("◄ ") + holdText;
 
       if(leg.time > 0.f)
-        holdText2 = QString::number(leg.time, 'f', 1) + tr(" min");
+        holdText2 += QString::number(leg.time, 'g', 2) + tr(" min");
       else if(leg.dist > 0.f)
-        holdText2 = Unit::distNm(leg.dist, true /*addUnit*/, 10, true /*narrow*/);
+        holdText2 = Unit::distNm(leg.dist, true /*addUnit*/, 20, true /*narrow*/);
       else
         holdText2 = tr("1 min");
 
