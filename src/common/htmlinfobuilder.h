@@ -53,6 +53,8 @@ struct MapHelipad;
 
 struct MapUserpoint;
 
+struct MapApproachRef;
+
 }
 
 namespace atools {
@@ -132,7 +134,7 @@ public:
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                     QColor background,
-                    int runwayEndId = -1, int approachId = -1, int transitionId = -1) const;
+                    const maptypes::MapApproachRef& approach) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;

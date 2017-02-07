@@ -169,16 +169,6 @@ public:
     return approachHighlight;
   }
 
-  const maptypes::MapApproachLegs& getTransitionHighlight() const
-  {
-    return transitionHighlight;
-  }
-
-  maptypes::MapApproachLegs& getTransitionHighlight()
-  {
-    return transitionHighlight;
-  }
-
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
   void getNearestHighlights(const maptypes::MapSearchResult& from, int xs, int ys, int maxDistance,
@@ -192,7 +182,7 @@ private:
   maptypes::MapSearchResult highlights;
   maptypes::MapApproachLeg approachLegHighlights;
 
-  maptypes::MapApproachLegs approachHighlight, transitionHighlight;
+  maptypes::MapApproachLegs approachHighlight;
 
   QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;

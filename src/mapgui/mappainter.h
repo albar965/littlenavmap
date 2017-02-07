@@ -155,9 +155,7 @@ protected:
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
 
-  void paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0, bool left);
-  void paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0, bool left);
-  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0, bool left);
+  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
                          const QString& text, const QString& text2,

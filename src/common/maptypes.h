@@ -35,6 +35,8 @@
  */
 namespace maptypes {
 
+Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
+
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
 {
@@ -544,6 +546,32 @@ struct MapApproachRef
   }
 
   int airportId, runwayEndId, approachId, transitionId, legId;
+
+  bool isLeg() const
+  {
+    return legId != -1;
+  }
+
+  bool isApproachOnly() const
+  {
+    return approachId != -1 && transitionId == -1;
+  }
+
+  bool isApproachAndTransition() const
+  {
+    return approachId != -1 && transitionId != -1;
+  }
+
+  bool isApproachOrTransition() const
+  {
+    return approachId != -1 || transitionId != -1;
+  }
+
+  bool isEmpty() const
+  {
+    return approachId == -1 && transitionId == -1;
+  }
+
 };
 
 struct MapAltRestriction
@@ -595,9 +623,10 @@ struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
   float course,
-        dist /* Distance from source */,
-        calculatedDistance /* Calculated distance closer to the real one */,
-        time /* Only for holds */,
+        distance /* Distance from source in nm */,
+        calculatedDistance /* Calculated distance closer to the real one in nm */,
+        calculatedCourse /* Calculated distance closer to the real one */,
+        time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,
         magvar /* from airport */;
@@ -606,16 +635,18 @@ struct MapApproachLeg
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
           turnDirection /* Turn to this fix*/;
 
-  QStringList displayText /* Fix label for map */, remarks /* Additional remarks for tree */;
+  QStringList displayText /* Fix label for map - filled in approach query */,
+              remarks /* Additional remarks for tree - filled in approach query */;
   atools::geo::Pos fixPos, recFixPos, interceptPos /* Position of an intercept leg */;
-  atools::geo::Line line, original /* Original line before applying any intercept points */;
+  atools::geo::Line line /* Line with flying direction from pos1 to pos2 */;
   MapAltRestriction altRestriction;
 
   /* Navaids resolved by approach query class */
   MapSearchResult navaids;
 
   maptypes::ApproachLegType type;
-  bool missed, flyover, trueCourse;
+  bool missed, flyover, trueCourse,
+       disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
 
   float legTrueCourse() const
   {
@@ -633,35 +664,12 @@ struct MapApproachDme
   MapVor dme;
 };
 
+/* Includes transition legs */
 struct MapApproachLegs
 {
-  QVector<MapApproachLeg> legs;
-  atools::geo::Rect bounding;
+  QVector<MapApproachLeg> tlegs;
+  QVector<MapApproachLeg> alegs;
   MapApproachRef ref;
-};
-
-/* Includes transition legs */
-struct MapApproachFullLegs
-{
-  MapApproachFullLegs(const MapApproachLegs *translegs = nullptr, const MapApproachLegs *apprlegs = nullptr)
-  {
-    tlegs = translegs != nullptr && !translegs->legs.isEmpty() ? &translegs->legs : nullptr;
-    alegs = apprlegs != nullptr && !apprlegs->legs.isEmpty() ? &apprlegs->legs : nullptr;
-
-    if(translegs != nullptr)
-      bounding = translegs->bounding;
-
-    if(apprlegs != nullptr)
-    {
-      if(bounding.isValid())
-        bounding.extend(apprlegs->bounding);
-      else
-        bounding = apprlegs->bounding;
-    }
-  }
-
-  const QVector<MapApproachLeg> *tlegs = nullptr;
-  const QVector<MapApproachLeg> *alegs = nullptr;
   atools::geo::Rect bounding;
 
   bool isEmpty() const
@@ -671,12 +679,12 @@ struct MapApproachFullLegs
 
   int size() const
   {
-    return (tlegs != nullptr ? tlegs->size() : 0) + (alegs != nullptr ? alegs->size() : 0);
+    return tlegs.size() + alegs.size();
   }
 
   bool isTransition(int i) const
   {
-    return tlegs != nullptr && i < tlegs->size();
+    return i < tlegs.size();
   }
 
   bool isApproach(int i) const
@@ -691,24 +699,18 @@ struct MapApproachFullLegs
 
   const MapApproachLeg& at(int i) const
   {
-    return isTransition(i) ? tlegs->at(i) : alegs->at(apprIdx(i));
-  }
-
-  const MapApproachLeg& operator[](int i) const
-  {
-    return isTransition(i) ? tlegs->at(i) : alegs->at(apprIdx(i));
+    return isTransition(i) ? tlegs.at(i) : alegs.at(apprIdx(i));
   }
 
   MapApproachLeg& operator[](int i)
   {
-    // Allow modificatons by approach query
-    return const_cast<MapApproachLeg&>(isTransition(i) ? (*tlegs)[i] : (*alegs)[apprIdx(i)]);
+    return isTransition(i) ? tlegs[i] : alegs[apprIdx(i)];
   }
 
 private:
   int apprIdx(int i) const
   {
-    return tlegs != nullptr ? i - tlegs->size() : i;
+    return tlegs.isEmpty() ? i : i - tlegs.size();
   }
 
 };
@@ -840,7 +842,6 @@ Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachDme, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachFullLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 

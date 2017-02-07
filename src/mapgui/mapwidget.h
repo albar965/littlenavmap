@@ -107,7 +107,6 @@ public:
   void changeApproachLegHighlights(const maptypes::MapApproachLeg *leg);
 
   void changeApproachHighlight(const maptypes::MapApproachLegs& approach);
-  void changeTransitionHighlight(const maptypes::MapApproachLegs& transition);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -145,7 +144,6 @@ public:
   const maptypes::MapApproachLeg& getApproachLegHighlights() const;
 
   const maptypes::MapApproachLegs& getApproachHighlight() const;
-  const maptypes::MapApproachLegs& getTransitionHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 

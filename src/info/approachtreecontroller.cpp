@@ -125,6 +125,7 @@ void ApproachTreeController::fillApproachTreeWidget(const maptypes::MapAirport& 
                                                 {tr("%1 has no approaches.").
                                                  arg(maptypes::airportText(airport))}, -1);
     item->setDisabled(true);
+    item->setFirstColumnSpanned(true);
   }
   itemLoadedIndex.resize(itemIndex.size());
 
@@ -187,14 +188,13 @@ void ApproachTreeController::itemSelectionChanged()
 
       qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
 
-      if(entry.approachId != -1 || entry.transitionId != -1)
-      {
-        emit approachLegSelected(maptypes::MapApproachRef());
+      if(entry.isApproachOrTransition())
         emit approachSelected(entry);
-      }
 
-      if(entry.legId != -1)
+      if(entry.isLeg())
         emit approachLegSelected(entry);
+      else
+        emit approachLegSelected(maptypes::MapApproachRef());
     }
   }
 }
@@ -224,7 +224,7 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 
         if(legs != nullptr)
         {
-          for(const MapApproachLeg& e : legs->legs)
+          for(const MapApproachLeg& e : legs->alegs)
           {
             itemIndex.append(MapApproachRef(entry.airportId, entry.runwayEndId, entry.approachId,
                                             entry.transitionId, e.legId));
@@ -239,7 +239,7 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 
         if(legs != nullptr)
         {
-          for(const MapApproachLeg& e : legs->legs)
+          for(const MapApproachLeg& e : legs->tlegs)
           {
             itemIndex.append(MapApproachRef(entry.airportId, entry.runwayEndId, entry.approachId,
                                             entry.transitionId, e.legId));
@@ -404,8 +404,14 @@ QTreeWidgetItem *ApproachTreeController::buildTransItem(QTreeWidgetItem *apprIte
   if(recTrans.valueFloat("altitude") > 0.f)
     altStr = Unit::altFeet(recTrans.valueFloat("altitude"));
 
+  QString name(tr("Transition"));
+  if(recTrans.valueStr("type") == "F")
+    name.append(tr(" (Full)"));
+  else if(recTrans.valueStr("type") == "D")
+    name.append(tr(" (DME)"));
+
   QTreeWidgetItem *item = new QTreeWidgetItem({
-                                                tr("Transition"),
+                                                name,
                                                 recTrans.valueStr("fix_ident"),
                                                 altStr
                                               },

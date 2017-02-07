@@ -1493,18 +1493,14 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
-  if(approachRef.approachId == -1 && approachRef.transitionId == -1)
-  {
-    mapWidget->changeTransitionHighlight(maptypes::MapApproachLegs());
+  if(approachRef.isEmpty())
     mapWidget->changeApproachHighlight(maptypes::MapApproachLegs());
-  }
   else
   {
-    if(approachRef.approachId != -1)
+    if(approachRef.isApproachAndTransition())
+      mapWidget->changeApproachHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
+    else if(approachRef.isApproachOnly())
       mapWidget->changeApproachHighlight(*approachQuery->getApproachLegs(airport, approachRef.approachId));
-
-    if(approachRef.transitionId != -1)
-      mapWidget->changeTransitionHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
   }
 }
 
@@ -1531,8 +1527,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
              << "legId" << leg->legId
              << "type" << leg->type
              << "missed" << leg->missed
-             << "line" << leg->line
-             << "original" << leg->original;
+             << "line" << leg->line;
 
     qDebug() << "navId" << leg->navId
              << "fixType" << leg->fixType
@@ -1551,7 +1546,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
              << "magvar" << leg->magvar
              << "theta" << leg->theta
              << "rho" << leg->rho
-             << "dist" << leg->dist
+             << "dist" << leg->distance
              << "time" << leg->time;
 
     qDebug() << "altDescriptor" << leg->altRestriction.descriptor

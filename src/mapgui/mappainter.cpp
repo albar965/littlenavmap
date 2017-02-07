@@ -205,55 +205,13 @@ void MapPainter::drawLineString(const PaintContext *context, const atools::geo::
   }
 }
 
-void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& p0,
-                          bool left)
+void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left)
 {
-  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
-}
+  QRectF arcRect;
+  float startAngle, spanAngle;
+  atools::geo::arcFromPoints(QLineF(p1, p2), center, left, &arcRect, &startAngle, &spanAngle);
 
-void MapPainter::paintArc(QPainter *painter, const QPoint& p1, const QPoint& p2, const QPoint& p0,
-                          bool left)
-{
-  paintArc(painter, p1.x(), p1.y(), p2.x(), p2.y(), p0.x(), p0.y(), left);
-}
-
-void MapPainter::paintArc(QPainter *painter, float x1, float y1, float x2, float y2, float x0, float y0,
-                          bool left)
-{
-  // center of the circle is (x0, y0) and that the arc contains your two points (x1, y1) and (x2, y2).
-  // Then the radius is: r=sqrt((x1-x0)(x1-x0) + (y1-y0)(y1-y0)).
-  float r = std::sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-  float x = x0 - r;
-  float y = y0 - r;
-  float width = 2.f * r;
-  float height = 2.f * r;
-  float startAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y1 - y0, x1 - x0)));
-  float endAngle = atools::geo::normalizeCourse(atools::geo::toDegree(std::atan2(y2 - y0, x2 - x0)));
-
-  float span = 0.f;
-  if(left)
-  {
-    if(startAngle > endAngle)
-      span = startAngle - endAngle;
-    else
-      span = 360.f - endAngle + startAngle;
-
-    painter->drawArc(QRectF(x, y, width, height),
-                     atools::roundToInt(-startAngle * 16.),
-                     atools::roundToInt(span * 16.));
-  }
-  else
-  {
-    // negative values mean clockwise
-    if(endAngle > startAngle)
-      span = endAngle - startAngle;
-    else
-      span = 360.f - startAngle + endAngle;
-
-    painter->drawArc(QRectF(x, y, width, height),
-                     atools::roundToInt(-startAngle * 16.),
-                     atools::roundToInt(-span * 16.));
-  }
+  painter->drawArc(arcRect, atools::roundToInt(-startAngle * 16.), atools::roundToInt(spanAngle * 16.));
 }
 
 void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
@@ -399,7 +357,6 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
     painter->drawText(-w1 / 2, -lineWidth - 3, str);
     painter->resetTransform();
     painter->restore();
-
   }
 
   // 180 deg turn arc

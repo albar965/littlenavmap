@@ -52,8 +52,8 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
-  void paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegs& transition,
-                            const maptypes::MapApproachLegs& approach);
+  void paintApproachPreview(const PaintContext *context,
+                            const maptypes::MapApproachLegs& legs);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
@@ -70,9 +70,9 @@ private:
   void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachFullLegs& legs, int index);
+  void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs, int index);
 
-  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachFullLegs& legs,
+  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
                             int index, QLineF& lastLine, QVector<atools::geo::Line>* drawTextLines, bool background);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);

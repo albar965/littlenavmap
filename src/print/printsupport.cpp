@@ -246,7 +246,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder departureAppr(true);
       if(opts & prt::DEPARTURE_APPR)
-        builder.approachText(rmos.first().getAirport(), departureAppr, Qt::white);
+        builder.approachText(rmos.first().getAirport(), departureAppr, Qt::white, maptypes::MapApproachRef());
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;
@@ -303,7 +303,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder destinationAppr(true);
       if(opts & prt::DESTINATION_APPR)
-        builder.approachText(rmos.last().getAirport(), destinationAppr, Qt::white);
+        builder.approachText(rmos.last().getAirport(), destinationAppr, Qt::white, maptypes::MapApproachRef());
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;

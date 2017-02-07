@@ -314,8 +314,7 @@ void InfoController::approachSelectedInTree(maptypes::MapApproachRef mapApproach
     Ui::MainWindow *ui = mainWindow->getUi();
     HtmlBuilder html(true);
 
-    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor,
-                              mapApproach.runwayEndId, mapApproach.approachId, mapApproach.transitionId);
+    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, mapApproach);
     ui->textBrowserApproachInfo->setText(html.getHtml());
   }
   emit approachSelected(mapApproach);
@@ -393,7 +392,8 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     ui->textBrowserApproachInfo->clear();
 
     html.clear();
-    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, 0, 0, 0);
+    maptypes::MapApproachRef ref(0, 0, 0, 0, 0);
+    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, ref);
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();

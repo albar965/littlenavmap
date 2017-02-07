@@ -666,7 +666,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background,
-                                   int runwayEndId, int approachId, int transitionId) const
+                                   const maptypes::MapApproachRef& approach) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -680,10 +680,10 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
       {
         // Approach information
         int rwEndId = recApp.valueInt("runway_end_id");
-        if(runwayEndId != -1 && rwEndId != runwayEndId)
+        if(approach.runwayEndId != -1 && rwEndId != approach.runwayEndId)
           continue;
 
-        if(approachId != -1 && recApp.valueInt("approach_id") != approachId)
+        if(approach.approachId != -1 && recApp.valueInt("approach_id") != approach.approachId)
           continue;
 
         QString runway, runwayName(recApp.valueStr("runway_name"));
@@ -772,9 +772,9 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           // Transitions for this approach
           for(const SqlRecord& recTrans : *recTransVector)
           {
-            if(runwayEndId != -1 && transitionId == -1 && approachId == -1)
+            if(approach.runwayEndId != -1 && approach.transitionId == -1 && approach.approachId == -1)
               continue;
-            if(transitionId != -1 && recTrans.valueInt("transition_id") != transitionId)
+            if(approach.transitionId != -1 && recTrans.valueInt("transition_id") != approach.transitionId)
               continue;
 
             html.h3(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);

@@ -50,29 +50,34 @@ public:
 
   const maptypes::MapApproachLeg *getApproachLeg(const maptypes::MapAirport& airport, int legId);
   const maptypes::MapApproachLeg *getTransitionLeg(const maptypes::MapAirport& airport, int legId);
+
+  /* Get approach only */
   const maptypes::MapApproachLegs *getApproachLegs(const maptypes::MapAirport& airport, int approachId);
+
+  /* Get transition and its approach */
   const maptypes::MapApproachLegs *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
 
 private:
-  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& entry);
+  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg);
   maptypes::MapApproachLeg buildTransitionLegEntry();
   maptypes::MapApproachLeg buildApproachLegEntry();
 
   void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs *legs);
-  void updateBounding(maptypes::MapApproachLegs *legs);
+  void updateBounding(maptypes::MapApproachLegs& legs);
 
-  void processLegs(maptypes::MapApproachFullLegs& legs, bool transition);
-  void processCourseInterceptLegs(maptypes::MapApproachFullLegs& legs, bool transition);
+  void processLegs(maptypes::MapApproachLegs& legs, bool transition);
+  void processCourseInterceptLegs(maptypes::MapApproachLegs& legs, bool transition);
 
   maptypes::MapApproachLegs *buildApproachEntries(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *buildTransitionEntries(const maptypes::MapAirport& airport, int approachId,
-                                                    int transitionId);
+                                                        int transitionId);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
   *approachIdForLegQuery = nullptr, *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr;
 
-  // approach ID and transition ID to lists
+  // approach ID and transition ID to full lists
+  // The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.)
   QCache<int, maptypes::MapApproachLegs> approachCache, transitionCache;
 
   // maps leg ID to approach or transition ID and index in list

@@ -928,22 +928,12 @@ const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
   return screenIndex->getApproachHighlight();
 }
 
-const maptypes::MapApproachLegs& MapWidget::getTransitionHighlight() const
-{
-  return screenIndex->getTransitionHighlight();
-}
-
 void MapWidget::changeApproachHighlight(const maptypes::MapApproachLegs& approach)
 {
-  if(screenIndex->getApproachHighlight().ref.approachId != approach.ref.approachId)
-    screenIndex->getTransitionHighlight() = maptypes::MapApproachLegs();
+  if(screenIndex->getApproachHighlight().ref.approachId != approach.ref.approachId ||
+  !approach.tlegs.isEmpty())
 
-  screenIndex->getApproachHighlight() = approach;
-}
-
-void MapWidget::changeTransitionHighlight(const maptypes::MapApproachLegs& transition)
-{
-  screenIndex->getTransitionHighlight() = transition;
+    screenIndex->getApproachHighlight() = approach;
 }
 
 void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)
