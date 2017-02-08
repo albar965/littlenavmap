@@ -1543,6 +1543,8 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
              << "flyover" << leg->flyover
              << "trueCourse" << leg->trueCourse
              << "course" << leg->course
+             << "calculatedDistance" << leg->calculatedDistance
+             << "calculatedTrueCourse" << leg->calculatedTrueCourse
              << "magvar" << leg->magvar
              << "theta" << leg->theta
              << "rho" << leg->rho

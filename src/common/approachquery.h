@@ -58,19 +58,20 @@ public:
   const maptypes::MapApproachLegs *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
 
 private:
-  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg);
   maptypes::MapApproachLeg buildTransitionLegEntry();
   maptypes::MapApproachLeg buildApproachLegEntry();
+  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg);
 
-  void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs *legs);
+  void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+  void processLegs(maptypes::MapApproachLegs& legs);
+  void processCourseInterceptLegs(maptypes::MapApproachLegs& legs);
+  void processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs);
+  void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
   void updateBounding(maptypes::MapApproachLegs& legs);
 
-  void processLegs(maptypes::MapApproachLegs& legs, bool transition);
-  void processCourseInterceptLegs(maptypes::MapApproachLegs& legs, bool transition);
-
-  maptypes::MapApproachLegs *buildApproachEntries(const maptypes::MapAirport& airport, int approachId);
-  maptypes::MapApproachLegs *buildTransitionEntries(const maptypes::MapAirport& airport, int approachId,
-                                                        int transitionId);
+  maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  maptypes::MapApproachLegs *fetchTransitionLegs(const maptypes::MapAirport& airport, int approachId, int transitionId);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

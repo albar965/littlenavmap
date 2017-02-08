@@ -69,7 +69,8 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
   legFont = root->font(0);
   // legFont.setPointSizeF(legFont.pointSizeF() * 0.85f);
 
-  missedLegFont = legFont;
+  missedLegFont = root->font(0);
+  // missedLegFont.setItalic(true);
 
   invalidLegFont = legFont;
   invalidLegFont.setBold(true);
@@ -184,17 +185,52 @@ void ApproachTreeController::itemSelectionChanged()
   {
     for(const QTreeWidgetItem *item : items)
     {
-      const MapApproachRef& entry = itemIndex.at(item->type());
+      const MapApproachRef& ref = itemIndex.at(item->type());
 
-      qDebug() << Q_FUNC_INFO << entry.runwayEndId << entry.approachId << entry.transitionId << entry.legId;
+      qDebug() << Q_FUNC_INFO << ref.runwayEndId << ref.approachId << ref.transitionId << ref.legId;
 
-      if(entry.isApproachOrTransition())
-        emit approachSelected(entry);
+      if(ref.isApproachOrTransition())
+        emit approachSelected(ref);
 
-      if(entry.isLeg())
-        emit approachLegSelected(entry);
+      if(ref.isLeg())
+        emit approachLegSelected(ref);
       else
         emit approachLegSelected(maptypes::MapApproachRef());
+
+      if(ref.isApproachAndTransition())
+      {
+        QTreeWidgetItem *apprItem;
+        if(ref.isLeg())
+          apprItem = item->parent()->parent();
+        else
+          apprItem = item->parent();
+
+        updateApproachItem(apprItem, ref.transitionId);
+      }
+    }
+  }
+}
+
+/* Update course and distance for the parent approach of this leg item */
+void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int transitionId)
+{
+  if(apprItem != nullptr)
+  {
+    for(int i = 0; i < apprItem->childCount(); i++)
+    {
+      QTreeWidgetItem *child = apprItem->child(i);
+      const MapApproachRef& childref = itemIndex.at(child->type());
+      if(childref.isLeg())
+      {
+        const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, transitionId);
+        const maptypes::MapApproachLeg *aleg = legs->approachLegById(childref.legId);
+
+        if(aleg != nullptr)
+        {
+          child->setText(COURSE, buildCourseStr(*aleg));
+          child->setText(DISTANCE, buildDistanceStr(*aleg));
+        }
+      }
     }
   }
 }
@@ -431,7 +467,7 @@ void ApproachTreeController::buildApprLegItem(QTreeWidgetItem *parentItem, const
   QString remarkStr = buildRemarkStr(leg);
   QTreeWidgetItem *item = new QTreeWidgetItem(
     {
-      (leg.missed ? tr("Missed: ") : QString()) + maptypes::approachLegTypeStr(leg.type),
+      /*(leg.missed ? tr("Missed: ") : QString()) + */ maptypes::approachLegTypeStr(leg.type),
       leg.fixIdent,
       maptypes::altRestrictionText(leg.altRestriction),
       buildCourseStr(leg),
@@ -476,7 +512,11 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
   for(int i = 0; i < item->columnCount(); i++)
   {
     if(!invalid)
+    {
       item->setFont(i, leg.missed ? missedLegFont : legFont);
+      if(leg.missed)
+        item->setForeground(i, QColor(140, 140, 140));
+    }
     else
     {
       item->setFont(i, invalidLegFont);
@@ -489,14 +529,15 @@ QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
   QString courseStr;
   // if(leg.type != "IF" && leg.type != "DF" && !(leg.type == "TF" && leg.course == 0.f))
-  if(leg.course != 0.f)
+  if(leg.course != 0.f && leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::CONSTANT_RADIUS_ARC &&
+     leg.type != maptypes::ARC_TO_FIX)
     courseStr = QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
   return courseStr;
 }
 
 QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
 {
-  if(leg.calculatedDistance > 0.f)
+  if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX)
     return Unit::distNm(leg.calculatedDistance);
   else
     return QString();

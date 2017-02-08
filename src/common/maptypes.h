@@ -625,7 +625,7 @@ struct MapApproachLeg
   float course,
         distance /* Distance from source in nm */,
         calculatedDistance /* Calculated distance closer to the real one in nm */,
-        calculatedCourse /* Calculated distance closer to the real one */,
+        calculatedTrueCourse /* Calculated distance closer to the real one */,
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,
@@ -637,7 +637,9 @@ struct MapApproachLeg
 
   QStringList displayText /* Fix label for map - filled in approach query */,
               remarks /* Additional remarks for tree - filled in approach query */;
-  atools::geo::Pos fixPos, recFixPos, interceptPos /* Position of an intercept leg */;
+  atools::geo::Pos fixPos, recFixPos,
+                   interceptPos, /* Position of an intercept leg */
+                   procedureTurnPos /* Extended position of a procedure turn */;
   atools::geo::Line line /* Line with flying direction from pos1 to pos2 */;
   MapAltRestriction altRestriction;
 
@@ -646,6 +648,7 @@ struct MapApproachLeg
 
   maptypes::ApproachLegType type;
   bool missed, flyover, trueCourse,
+       intercept, /* Leg was modfied by a previous intercept */
        disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
 
   float legTrueCourse() const
@@ -700,6 +703,26 @@ struct MapApproachLegs
   const MapApproachLeg& at(int i) const
   {
     return isTransition(i) ? tlegs.at(i) : alegs.at(apprIdx(i));
+  }
+
+  const MapApproachLeg *approachLegById(int legId) const
+  {
+    for(const MapApproachLeg& leg : alegs)
+    {
+      if(leg.legId == legId)
+        return &leg;
+    }
+    return nullptr;
+  }
+
+  const MapApproachLeg *transitionLegById(int legId) const
+  {
+    for(const MapApproachLeg& leg : tlegs)
+    {
+      if(leg.legId == legId)
+        return &leg;
+    }
+    return nullptr;
   }
 
   MapApproachLeg& operator[](int i)

@@ -90,6 +90,7 @@ private:
   QString buildCourseStr(const maptypes::MapApproachLeg& leg);
   QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
   void showEntry(QTreeWidgetItem *item, bool doubleClick);
+  void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;

@@ -46,6 +46,12 @@ public:
 private:
   RouteController *routeController;
 
+  struct DrawText
+  {
+    atools::geo::Line line;
+    bool distance, course;
+  };
+
   void paintRoute(const PaintContext *context);
 
   void paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
@@ -73,7 +79,7 @@ private:
   void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs, int index);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
-                            int index, QLineF& lastLine, QVector<atools::geo::Line>* drawTextLines, bool background);
+                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool background);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);
 

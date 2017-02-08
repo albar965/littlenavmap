@@ -53,14 +53,14 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::render(PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(maptypes::ROUTE))
-    return;
+  if(context->objectTypes.testFlag(maptypes::ROUTE))
+  {
+    setRenderHints(context->painter);
 
-  setRenderHints(context->painter);
-
-  atools::util::PainterContextSaver saver(context->painter);
-
-  paintRoute(context);
+    atools::util::PainterContextSaver saver(context->painter);
+    Q_UNUSED(saver);
+    paintRoute(context);
+  }
 
   if(context->mapLayer->isAirport())
     paintApproachPreview(context, mapWidget->getApproachHighlight());
@@ -254,9 +254,10 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
   QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   lastLine = QLineF();
-  QVector<Line> drawTextLines;
-  drawTextLines.fill(Line(), legs.size());
+  QVector<DrawText> drawTextLines;
+  drawTextLines.fill({Line(), false, false}, legs.size());
 
+  // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
   context->szFont(context->textSizeFlightplan * 1.1);
   for(int i = 0; i < legs.size(); i++)
@@ -268,6 +269,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
     paintApproachSegment(context, legs, i, lastLine, &drawTextLines, false);
   }
 
+  // Build text strings for along the line ===========================
   QStringList approachTexts;
   QVector<Line> lines;
   QVector<QColor> textColors;
@@ -276,32 +278,55 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
     const maptypes::MapApproachLeg& leg = legs.at(i);
     lines.append(leg.line);
 
-    approachTexts.append(Unit::distMeter(leg.line.distanceMeter(), true /*addUnit*/, 20, true /*narrow*/) + tr("/") +
-                         QString::number(atools::geo::normalizeCourse(
-                                           leg.line.angleDegRhumb() - leg.magvar), 'f', 0) + tr("°M"));
+    QString approachText;
+
+    if(drawTextLines.at(i).distance)
+    {
+      float dist = leg.calculatedDistance;
+      if(leg.type == maptypes::PROCEDURE_TURN)
+        dist /= 2.f;
+
+      approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+    }
+
+    if(drawTextLines.at(i).course)
+    {
+      if(!approachText.isEmpty())
+        approachText.append(tr("/"));
+      approachText += (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+                       tr("°M"));
+    }
+
+    approachTexts.append(approachText);
 
     textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
   }
 
-  // Draw text along lines
+  // Draw text along lines ====================================================
   context->painter->setBackground(mapcolors::routeTextBackgroundColor);
+
+  QVector<Line> textLines;
+  for(const DrawText& dt : drawTextLines)
+    textLines.append(dt.line);
 
   TextPlacement textPlacement(context->painter, this);
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setTextOnTopOfLine(false);
   textPlacement.setLineWidth(outerlinewidth);
   textPlacement.setColors(textColors);
-  textPlacement.calculateTextAlongLines(drawTextLines, approachTexts);
+  textPlacement.calculateTextAlongLines(textLines, approachTexts);
   textPlacement.drawTextAlongLines();
 
   context->szFont(context->textSizeFlightplan);
-  // Texts ====================================================
+
+  // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
     paintApproachPoints(context, legs, i);
 }
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
-                                           int index, QLineF& lastLine, QVector<Line> *drawTextLines, bool background)
+                                           int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
+                                           bool background)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -339,12 +364,20 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
   QPainter *painter = context->painter;
 
+  bool showDistance = !contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
+                                           maptypes::FIX_TO_ALTITUDE,
+                                           maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
+                                           maptypes::HEADING_TO_ALTITUDE_TERMINATION,
+                                           maptypes::HEADING_TO_MANUAL_TERMINATION});
+
+  // ===========================================================
   if(contains(leg.type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
   {
     if(line.length() > 2)
       paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
     lastLine = line;
   }
+  // ===========================================================
   else if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
                               maptypes::COURSE_TO_FIX,
                               maptypes::DIRECT_TO_FIX,
@@ -387,6 +420,10 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
         painter->drawLine(lineDraw);
         lastLine = lineDraw;
+
+        if(drawTextLines != nullptr)
+          // Can draw a label along the line with course but not distance
+          (*drawTextLines)[index] = {leg.line, false, true};
       }
       else
       {
@@ -422,6 +459,13 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         painter->drawLine(nextLine);
 
         lastLine = nextLine.toLine();
+
+        Pos p1 = sToW(nextLine.p1());
+        Pos p2 = sToW(nextLine.p2());
+
+        if(drawTextLines != nullptr)
+          // Can draw a label along the line with course but not distance
+          (*drawTextLines)[index] = {Line(p1, p2), showDistance, true};
       }
     }
     else
@@ -437,7 +481,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
-          (*drawTextLines)[index] = Line(leg.interceptPos, leg.line.getPos2());
+          (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), showDistance, true};
       }
       else
       {
@@ -450,10 +494,11 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
-          (*drawTextLines)[index] = leg.line;
-      } // Connect any gaps
+          (*drawTextLines)[index] = {leg.line, showDistance, true};
+      }
     }
   }
+  // ===========================================================
   else if(contains(leg.type, {maptypes::COURSE_TO_RADIAL_TERMINATION,
                               maptypes::HEADING_TO_RADIAL_TERMINATION,
                               maptypes::COURSE_TO_DME_DISTANCE,
@@ -467,8 +512,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line
-      (*drawTextLines)[index] = leg.line;
+      (*drawTextLines)[index] = {leg.line, showDistance, true};
   }
+  // ===========================================================
   else if(contains(leg.type, {maptypes::HOLD_TO_ALTITUDE,
                               maptypes::HOLD_TO_FIX,
                               maptypes::HOLD_TO_MANUAL_TERMINATION}))
@@ -487,11 +533,11 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         holdText = tr("◄ ") + holdText;
 
       if(leg.time > 0.f)
-        holdText2 += QString::number(leg.time, 'g', 2) + tr(" min");
+        holdText2 += QString::number(leg.time, 'g', 2) + tr("min");
       else if(leg.distance > 0.f)
         holdText2 = Unit::distNm(leg.distance, true /*addUnit*/, 20, true /*narrow*/);
       else
-        holdText2 = tr("1 min");
+        holdText2 = tr("1min");
 
       if(trueCourse < 180.f)
         holdText2 = tr("◄ ") + holdText2;
@@ -504,6 +550,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                       leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor,
                       mapcolors::routeTextBackgroundColor);
   }
+  // ===========================================================
   else if(leg.type == maptypes::PROCEDURE_TURN)
   {
     QString text;
@@ -511,23 +558,25 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     float trueCourse = leg.legTrueCourse();
     if(!background)
     {
-      text = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      text = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M")) + tr("/1min");
       if(trueCourse < 180.f)
         text = text + tr(" ►");
       else
         text = tr("◄ ") + text;
-
     }
-    paintProcedureTurnWithText(painter, line.x2(), line.y2(), trueCourse, leg.distance,
+
+    QPointF pc = wToS(leg.procedureTurnPos, size, &hiddenDummy);
+
+    paintProcedureTurnWithText(painter, pc.x(), pc.y(), trueCourse, leg.distance,
                                leg.turnDirection == "L", &lastLine, text,
                                leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor,
                                mapcolors::routeTextBackgroundColor);
 
-    painter->drawLine(line);
+    painter->drawLine(line.p1(), pc);
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line
-      (*drawTextLines)[index] = leg.line;
+      (*drawTextLines)[index] = {Line(leg.line.getPos1(), leg.procedureTurnPos), showDistance, true};
   }
 
 #ifdef DEBUG_APPROACH_PAINT
@@ -558,13 +607,12 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   if(leg.disabled)
     return;
 
+  bool lastInTransition = false;
   if(index < legs.size() - 1 &&
      leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT)
-  {
     // Do not paint the last point in the transition since it overlaps with the approach
-    if(legs.isTransition(index) && legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH)
-      return;
-  }
+    lastInTransition = legs.isTransition(index) &&
+                       legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH;
 
   int x = 0, y = 0;
 
@@ -587,6 +635,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
                          maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
                          maptypes::HEADING_TO_MANUAL_TERMINATION}))
   {
+    if(lastInTransition)
+      return;
+
     // All legs with a calculated end point
     if(wToS(leg.line.getPos2(), x, y))
     {
@@ -610,6 +661,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   }
   else
   {
+    if(lastInTransition)
+      return;
+
     texts.append(leg.displayText);
     texts.append(maptypes::restrictionText(leg.altRestriction));
   }
