@@ -653,13 +653,24 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   }
   else if(leg.type == maptypes::COURSE_TO_FIX)
   {
-    if(wToS(leg.interceptPos, x, y))
+    if(leg.interceptPos.isValid())
     {
-      // Draw intercept comment - no altitude restriction there
+      if(wToS(leg.interceptPos, x, y))
+      {
+        // Draw intercept comment - no altitude restriction there
+        texts.append(leg.displayText);
+        paintApproachpoint(context, x, y);
+        paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+        texts.clear();
+      }
+    }
+    else
+    {
+      if(lastInTransition)
+        return;
+
       texts.append(leg.displayText);
-      paintApproachpoint(context, x, y);
-      paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
-      texts.clear();
+      texts.append(maptypes::restrictionText(leg.altRestriction));
     }
   }
   else

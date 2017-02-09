@@ -1327,30 +1327,63 @@ void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder&
 {
   head(html, maptypes::approachLegTypeStr(ap.type) + " " + ap.fixIdent);
 
-  // float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
-  // QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+  // float time, theta, rho, magvar;
+  // QString fixType, fixIdent,
   // QStringList displayText, remarks;
 
-  html.table();
-  if(ap.altRestriction.descriptor != MapAltRestriction::NONE)
-    html.row2(maptypes::altRestrictionText(ap.altRestriction));
+  QStringList atts;
+  if(ap.transition)
+    atts += tr("Transition");
+  else
+    atts += tr("Approach");
+
   if(ap.flyover)
-    html.row2(tr("Fly over"));
+    atts += tr("Fly over");
+
   if(ap.missed)
-    html.row2(tr("Missed"));
+    atts += tr("Missed");
+
+  html.table();
+
+  if(!atts.isEmpty())
+    html.row2(atts.join(", "));
+
+  if(!ap.remarks.isEmpty())
+    html.row2(ap.remarks.join(", "));
+
+  if(ap.altRestriction.descriptor != MapAltRestriction::NONE)
+    html.row2(tr("Pass:"), maptypes::altRestrictionText(ap.altRestriction));
+
+  if(ap.calculatedDistance > 0.f)
+    html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
+  if(ap.time > 0.f)
+    html.row2(tr("Time:"), QLocale().toString(ap.time, 'f', 0) + tr(" min"));
+  if(ap.calculatedTrueCourse > 0.f)
+    html.row2(tr("Course:"), QLocale().toString(normalizeCourse(ap.calculatedTrueCourse - ap.magvar), 'f', 0) +
+              tr("°M"));
 
   if(!ap.turnDirection.isEmpty())
   {
     if(ap.turnDirection == "L")
-      html.row2(tr("Turn left"));
+      html.row2(tr("Turn:"), tr("Left"));
     else if(ap.turnDirection == "R")
-      html.row2(tr("Turn right"));
+      html.row2(tr("Turn:"), tr("Light"));
     else if(ap.turnDirection == "B")
-      html.row2(tr("Turn left or right"));
+      html.row2(tr("Turn:"), tr("Left or right"));
+  }
+
+  if(!ap.recFixIdent.isEmpty())
+  {
+    if(ap.rho > 0.f)
+      html.row2(tr("Related Navaid:"),
+                tr("%1 / %2 / %3").arg(ap.recFixIdent).
+                arg(Unit::distNm(ap.rho /*, true, 20, true*/)).
+                arg(QLocale().toString(ap.theta) + tr("°M")));
+    else
+      html.row2(tr("Related Navaid:"), tr("%1").arg(ap.recFixIdent));
   }
 
   html.tableEnd();
-  html.br();
 
 }
 

@@ -2392,7 +2392,7 @@
             </column>
             <column>
              <property name="text">
-              <string>Distance</string>
+              <string>Distance/Time</string>
              </property>
             </column>
             <column>

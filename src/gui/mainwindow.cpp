@@ -1498,9 +1498,21 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
   else
   {
     if(approachRef.isApproachAndTransition())
-      mapWidget->changeApproachHighlight(*approachQuery->getTransitionLegs(airport, approachRef.transitionId));
+    {
+      const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
+      if(legs != nullptr)
+        mapWidget->changeApproachHighlight(*legs);
+      else
+        qWarning() << "Transition not found" << approachRef.transitionId;
+    }
     else if(approachRef.isApproachOnly())
-      mapWidget->changeApproachHighlight(*approachQuery->getApproachLegs(airport, approachRef.approachId));
+    {
+      const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
+      if(legs != nullptr)
+        mapWidget->changeApproachHighlight(*legs);
+      else
+        qWarning() << "Approach not found" << approachRef.transitionId;
+    }
   }
 }
 

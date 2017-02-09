@@ -560,7 +560,7 @@ struct MapApproachpoint
 
   maptypes::ApproachLegType type;
 
-  bool missed, flyover;
+  bool missed, flyover, transition;
 
   atools::geo::Pos position;
 
@@ -679,6 +679,7 @@ struct MapApproachLeg
 
   maptypes::ApproachLegType type;
   bool missed, flyover, trueCourse,
+       transition, /* Leg is part of a transition */
        intercept, /* Leg was modfied by a previous intercept */
        disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
 

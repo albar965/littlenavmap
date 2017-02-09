@@ -223,13 +223,20 @@ void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int t
       if(childref.isLeg())
       {
         const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, transitionId);
-        const maptypes::MapApproachLeg *aleg = legs->approachLegById(childref.legId);
-
-        if(aleg != nullptr)
+        if(legs != nullptr)
         {
-          child->setText(COURSE, buildCourseStr(*aleg));
-          child->setText(DISTANCE, buildDistanceStr(*aleg));
+          const maptypes::MapApproachLeg *aleg = legs->approachLegById(childref.legId);
+
+          if(aleg != nullptr)
+          {
+            child->setText(COURSE, buildCourseStr(*aleg));
+            child->setText(DISTANCE, buildDistanceStr(*aleg));
+          }
+          else
+            qWarning() << "Approach legs not found" << childref.legId;
         }
+        else
+          qWarning() << "Transition not found" << transitionId;
       }
     }
   }
@@ -410,17 +417,39 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
-  QString approachType = maptypes::approachType(recApp.valueStr("type")) + " " + recApp.valueStr("suffix") + " " +
-                         recApp.valueStr("runway_name");
-  if(recApp.valueBool("has_gps_overlay"))
-    approachType += tr(" (GPS Overlay)");
+  QString suffix(recApp.valueStr("suffix"));
+  QString type(recApp.valueStr("type"));
+  int gpsOverlay = recApp.valueBool("has_gps_overlay");
+
+  QString approachType;
+
+  if(mainWindow->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
+     (suffix == "A" || suffix == "D") && gpsOverlay)
+  {
+    if(suffix == "A")
+      approachType += tr("STAR");
+    else if(suffix == "D")
+      approachType += tr("SID");
+  }
+  else
+  {
+    approachType = tr("Approach ") + maptypes::approachType(type);
+
+    if(!suffix.isEmpty())
+      approachType += " " + suffix;
+
+    if(gpsOverlay)
+      approachType += tr(" (GPS Overlay)");
+  }
+
+  approachType += " " + recApp.valueStr("runway_name");
 
   QString altStr;
   if(recApp.valueFloat("altitude") > 0.f)
     altStr = Unit::altFeet(recApp.valueFloat("altitude"));
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
-                                                tr("Approach ") + approachType,
+                                                approachType,
                                                 recApp.valueStr("fix_ident"),
                                                 altStr
                                               }, itemIndex.size() - 1);
@@ -537,10 +566,21 @@ QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 
 QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
 {
+  QString retval;
+
   if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX)
-    return Unit::distNm(leg.calculatedDistance);
-  else
-    return QString();
+    retval += Unit::distNm(leg.calculatedDistance);
+  else if(leg.distance > 0.f)
+    retval += Unit::distNm(leg.distance);
+
+  if(leg.time > 0.f)
+  {
+    if(!retval.isEmpty())
+      retval += ", ";
+    retval += QLocale().toString(leg.time, 'f', 0) + tr(" min");
+  }
+
+  return retval;
 }
 
 QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
@@ -565,7 +605,7 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
     if(leg.rho > 0.f)
       remarks.append(tr("%1 / %2 / %3").arg(leg.recFixIdent).
                      arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                     arg(QLocale().toString(leg.theta) + (leg.trueCourse ? tr("°T") : tr("°M"))));
+                     arg(QLocale().toString(leg.theta) + tr("°M")));
     else
       remarks.append(tr("%1").arg(leg.recFixIdent));
   }

@@ -281,6 +281,11 @@ void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistanc
   {
     const maptypes::MapApproachLeg& leg = approachHighlight.at(i);
 
+    if((!(mapWidget->getShownMapFeatures() & maptypes::APPROACH) && approachHighlight.isApproach(i)) ||
+       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_MISSED) && approachHighlight.isMissed(i)) ||
+       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_TRANSITION) && approachHighlight.isTransition(i)))
+      continue;
+
     for(const maptypes::MapAirport& obj : leg.navaids.airports)
       if(conv.wToS(obj.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
@@ -333,6 +338,7 @@ void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistanc
         apoint.type = leg.type;
         apoint.missed = leg.missed;
         apoint.flyover = leg.flyover;
+        apoint.transition = leg.transition;
 
         apoint.position = leg.line.getPos1();
         result.approachPoints.append(apoint);

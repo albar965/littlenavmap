@@ -132,6 +132,7 @@ maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry()
   maptypes::MapApproachLeg leg;
   leg.legId = approachLegQuery->value("approach_leg_id").toInt();
   leg.missed = approachLegQuery->value("is_missed").toBool();
+  leg.transition = false;
   buildLegEntry(approachLegQuery, leg);
   return leg;
 }
@@ -153,6 +154,7 @@ maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry()
   // }
 
   leg.missed = false;
+  leg.transition = true;
   buildLegEntry(transitionLegQuery, leg);
   return leg;
 }
@@ -497,6 +499,8 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
 
     if(leg.calculatedDistance >= std::numeric_limits<float>::max() / 2)
       leg.calculatedDistance = 0.f;
+    if(leg.calculatedTrueCourse >= std::numeric_limits<float>::max() / 2)
+      leg.calculatedTrueCourse = 0.f;
   }
 }
 
@@ -520,7 +524,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       curPos = leg.fixPos;
 
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.rho, true, 20, true) + "/" +
-      QLocale().toString(leg.theta) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      QLocale().toString(leg.theta, 'f', 0) + tr("°M");
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
     // ===========================================================
@@ -641,7 +645,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
         qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no intersectingRadials found"
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
-      leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta);
+      leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta, 'f', 0);
     }
     // ===========================================================
     else if(type == maptypes::TRACK_FROM_FIX_FROM_DISTANCE)
@@ -652,7 +656,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse()).normalize();
 
       leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-      QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
     else if(contains(type, {maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE, maptypes::COURSE_TO_DME_DISTANCE,
@@ -677,7 +681,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       }
 
       leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-      QLocale().toString(leg.course) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
     else if(contains(type, {maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_MANUAL_TERMINATION}))
@@ -815,18 +819,19 @@ void ApproachQuery::initQueries()
 void ApproachQuery::deInitQueries()
 {
   approachCache.clear();
+  transitionCache.clear();
+  approachLegIndex.clear();
+  transitionLegIndex.clear();
+
   delete approachLegQuery;
   approachLegQuery = nullptr;
 
-  transitionCache.clear();
   delete transitionLegQuery;
   transitionLegQuery = nullptr;
 
-  approachLegIndex.clear();
   delete approachIdForLegQuery;
   approachIdForLegQuery = nullptr;
 
-  transitionLegIndex.clear();
   delete transitionIdForLegQuery;
   transitionIdForLegQuery = nullptr;
 
