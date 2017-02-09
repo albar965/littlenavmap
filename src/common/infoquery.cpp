@@ -283,7 +283,6 @@ void InfoQuery::initQueries()
 void InfoQuery::deInitQueries()
 {
   airportCache.clear();
-  airportSceneryCache.clear();
   vorCache.clear();
   ndbCache.clear();
   waypointCache.clear();
@@ -292,8 +291,11 @@ void InfoQuery::deInitQueries()
   ilsCache.clear();
   comCache.clear();
   runwayCache.clear();
+  helipadCache.clear();
+  startCache.clear();
   approachCache.clear();
   transitionCache.clear();
+  airportSceneryCache.clear();
 
   delete airportQuery;
   airportQuery = nullptr;

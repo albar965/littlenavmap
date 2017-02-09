@@ -1328,12 +1328,12 @@ void MapQuery::deInitQueries()
   markerCache.clear();
   ilsCache.clear();
   airwayCache.clear();
-
   runwayCache.clear();
   runwayOverwiewCache.clear();
   apronCache.clear();
   taxipathCache.clear();
   parkingCache.clear();
+  startCache.clear();
   helipadCache.clear();
 
   delete airportByRectQuery;
