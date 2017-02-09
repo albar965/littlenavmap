@@ -982,4 +982,40 @@ QDebug operator<<(QDebug out, const ApproachLegType& type)
   return out;
 }
 
+QDebug operator<<(QDebug out, const MapApproachLeg& leg)
+{
+  out << "=============" << endl;
+  out << "approachId" << leg.approachId
+  << "transitionId" << leg.transitionId
+  << "legId" << leg.legId
+  << "type" << leg.type
+  << "missed" << leg.missed
+  << "line" << leg.line << endl;
+
+  out << "navId" << leg.navId << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
+
+  out << "recNavId" << leg.recNavId << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
+  out << "intercept" << leg.interceptPos << leg.intercept << endl;
+  out << "pc pos" << leg.procedureTurnPos << endl;
+
+  out << "turnDirection" << leg.turnDirection
+  << "flyover" << leg.flyover
+  << "trueCourse" << leg.trueCourse
+  << "course" << leg.course << endl;
+
+  out << "calculatedDistance" << leg.calculatedDistance
+  << "calculatedTrueCourse" << leg.calculatedTrueCourse << endl;
+
+  out << "magvar" << leg.magvar
+  << "theta" << leg.theta
+  << "rho" << leg.rho
+  << "dist" << leg.distance
+  << "time" << leg.time << endl;
+
+  out << "altDescriptor" << leg.altRestriction.descriptor
+  << "alt1" << leg.altRestriction.alt1
+  << "alt2" << leg.altRestriction.alt2 << endl;
+  return out;
+}
+
 } // namespace types

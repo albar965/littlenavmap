@@ -53,6 +53,8 @@ struct MapHelipad;
 
 struct MapUserpoint;
 
+struct MapApproachpoint;
+
 struct MapApproachRef;
 
 }
@@ -205,6 +207,8 @@ public:
    * @param html Result containing HTML snippet
    */
   void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+
+  void approachPointText(const maptypes::MapApproachpoint& ap, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates an overview HTML description for the user aircraft in the simulator.

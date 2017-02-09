@@ -554,7 +554,7 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
   else if(leg.turnDirection == "L")
     remarks.append(tr("Turn left"));
   else if(leg.turnDirection == "B")
-    remarks.append(tr("Turn both"));
+    remarks.append(tr("Turn left or right"));
 
   QString legremarks = maptypes::approachLegRemarks(leg.type);
   if(!legremarks.isEmpty())

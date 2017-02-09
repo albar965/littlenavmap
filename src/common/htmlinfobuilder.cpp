@@ -1323,6 +1323,37 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
+void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder& html) const
+{
+  head(html, maptypes::approachLegTypeStr(ap.type) + " " + ap.fixIdent);
+
+  // float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
+  // QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+  // QStringList displayText, remarks;
+
+  html.table();
+  if(ap.altRestriction.descriptor != MapAltRestriction::NONE)
+    html.row2(maptypes::altRestrictionText(ap.altRestriction));
+  if(ap.flyover)
+    html.row2(tr("Fly over"));
+  if(ap.missed)
+    html.row2(tr("Missed"));
+
+  if(!ap.turnDirection.isEmpty())
+  {
+    if(ap.turnDirection == "L")
+      html.row2(tr("Turn left"));
+    else if(ap.turnDirection == "R")
+      html.row2(tr("Turn right"));
+    else if(ap.turnDirection == "B")
+      html.row2(tr("Turn left or right"));
+  }
+
+  html.tableEnd();
+  html.br();
+
+}
+
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                    HtmlBuilder& html, int num, int total)
 {

@@ -216,8 +216,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
     mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
-  // TODO getNearestHighlights(approachLegHighlights, xs, ys, maxDistance, result);
-  getNearestHighlights(highlights, xs, ys, maxDistance, result);
+  getNearestApproachHighlights(xs, ys, maxDistance, result);
+  getNearestHighlights(xs, ys, maxDistance, result);
 
   // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestObjects(conv, mapLayer, mapLayerEffective->isAirportDiagram(),
@@ -232,43 +232,113 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
       mapQuery->getAirportById(obj, obj.getId());
 }
 
-void MapScreenIndex::getNearestHighlights(const maptypes::MapSearchResult& from, int xs, int ys,
-                                          int maxDistance, maptypes::MapSearchResult& result)
+void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result)
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
 
   using maptools::insertSortedByDistance;
 
-  for(const maptypes::MapAirport& obj : from.airports)
+  for(const maptypes::MapAirport& obj : highlights.airports)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
 
-  for(const maptypes::MapVor& obj : from.vors)
+  for(const maptypes::MapVor& obj : highlights.vors)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
 
-  for(const maptypes::MapNdb& obj : from.ndbs)
+  for(const maptypes::MapNdb& obj : highlights.ndbs)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
 
-  for(const maptypes::MapWaypoint& obj : from.waypoints)
+  for(const maptypes::MapWaypoint& obj : highlights.waypoints)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
 
-  for(const maptypes::MapIls& obj : from.ils)
+  for(const maptypes::MapIls& obj : highlights.ils)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
 
-  for(const maptypes::MapRunwayEnd& obj : from.runwayEnds)
+  for(const maptypes::MapRunwayEnd& obj : highlights.runwayEnds)
     if(conv.wToS(obj.position, x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+}
+
+void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result)
+{
+  CoordinateConverter conv(mapWidget->viewport());
+  int x, y;
+
+  using maptools::insertSortedByDistance;
+
+  for(int i = 0; i < approachHighlight.size(); i++)
+  {
+    const maptypes::MapApproachLeg& leg = approachHighlight.at(i);
+
+    for(const maptypes::MapAirport& obj : leg.navaids.airports)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, obj);
+
+    for(const maptypes::MapVor& obj : leg.navaids.vors)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, obj);
+
+    for(const maptypes::MapNdb& obj : leg.navaids.ndbs)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, obj);
+
+    for(const maptypes::MapWaypoint& obj : leg.navaids.waypoints)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, obj);
+
+    for(const maptypes::MapIls& obj : leg.navaids.ils)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, obj);
+
+    for(const maptypes::MapRunwayEnd& obj : leg.navaids.runwayEnds)
+      if(conv.wToS(obj.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+          insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
+
+    if(conv.wToS(leg.line.getPos2(), x, y))
+    {
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+      {
+        maptypes::MapApproachpoint apoint;
+        apoint.calculatedDistance = leg.calculatedDistance;
+        apoint.calculatedTrueCourse = leg.calculatedTrueCourse;
+        apoint.time = leg.time;
+        apoint.theta = leg.theta;
+        apoint.rho = leg.rho;
+        apoint.magvar = leg.magvar;
+        apoint.fixType = leg.fixType;
+        apoint.fixIdent = leg.fixIdent;
+        apoint.recFixType = leg.recFixType;
+        apoint.recFixIdent = leg.recFixIdent;
+        apoint.turnDirection = leg.turnDirection;
+        apoint.displayText = leg.displayText;
+        apoint.remarks = leg.remarks;
+        apoint.altRestriction = leg.altRestriction;
+        apoint.type = leg.type;
+        apoint.missed = leg.missed;
+        apoint.flyover = leg.flyover;
+
+        apoint.position = leg.line.getPos1();
+        result.approachPoints.append(apoint);
+      }
+    }
+  }
 }
 
 int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance)

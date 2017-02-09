@@ -75,22 +75,33 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     numEntries++;
   }
 
-  if(!mapSearchResult.aiAircraft.isEmpty())
+  for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
   {
-    for(const SimConnectAircraft& aircraft : mapSearchResult.aiAircraft)
-    {
-      if(checkText(html, numEntries))
-        return html.getHtml();
+    if(checkText(html, numEntries))
+      return html.getHtml();
 
-      if(!html.isEmpty())
-        html.hr();
+    if(!html.isEmpty())
+      html.hr();
 
-      html.p();
-      info.aircraftText(aircraft, html);
-      info.aircraftProgressText(aircraft, html, routeMapObjects);
-      html.pEnd();
-      numEntries++;
-    }
+    html.p();
+    info.aircraftText(aircraft, html);
+    info.aircraftProgressText(aircraft, html, routeMapObjects);
+    html.pEnd();
+    numEntries++;
+  }
+
+  for(const MapApproachpoint& ap : mapSearchResult.approachPoints)
+  {
+    if(checkText(html, numEntries))
+      return html.getHtml();
+
+    if(!html.isEmpty())
+      html.hr();
+
+    html.p();
+    info.approachPointText(ap, html);
+    html.pEnd();
+    numEntries++;
   }
 
   for(const MapAirport& airport : mapSearchResult.airports)

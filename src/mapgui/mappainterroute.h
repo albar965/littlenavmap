@@ -79,7 +79,7 @@ private:
   void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs, int index);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
-                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool background);
+                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);
 

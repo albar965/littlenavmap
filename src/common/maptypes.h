@@ -504,76 +504,6 @@ struct MapIls
 
 };
 
-/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
-struct MapSearchResult
-{
-  QList<MapAirport> airports;
-  QSet<int> airportIds; /* Ids used to deduplicate */
-
-  QList<MapRunwayEnd> runwayEnds;
-  QList<MapAirport> towers;
-  QList<MapParking> parkings;
-  QList<MapHelipad> helipads;
-
-  QList<MapWaypoint> waypoints;
-  QSet<int> waypointIds; /* Ids used to deduplicate */
-
-  QList<MapVor> vors;
-  QSet<int> vorIds; /* Ids used to deduplicate */
-
-  QList<MapNdb> ndbs;
-  QSet<int> ndbIds; /* Ids used to deduplicate */
-
-  QList<MapMarker> markers;
-  QList<MapIls> ils;
-
-  QList<MapAirway> airways;
-
-  QList<MapUserpoint> userPoints;
-
-  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
-  atools::fs::sc::SimConnectUserAircraft userAircraft;
-
-  bool isEmpty(const maptypes::MapObjectTypes& types) const;
-
-};
-
-struct MapApproachRef
-{
-  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1, int leg = -1)
-    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg)
-  {
-  }
-
-  int airportId, runwayEndId, approachId, transitionId, legId;
-
-  bool isLeg() const
-  {
-    return legId != -1;
-  }
-
-  bool isApproachOnly() const
-  {
-    return approachId != -1 && transitionId == -1;
-  }
-
-  bool isApproachAndTransition() const
-  {
-    return approachId != -1 && transitionId != -1;
-  }
-
-  bool isApproachOrTransition() const
-  {
-    return approachId != -1 || transitionId != -1;
-  }
-
-  bool isEmpty() const
-  {
-    return approachId == -1 && transitionId == -1;
-  }
-
-};
-
 struct MapAltRestriction
 {
   enum Descriptor
@@ -619,6 +549,107 @@ enum ApproachLegType
 
 QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
 
+struct MapApproachpoint
+{
+  float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
+
+  QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
+
+  QStringList displayText, remarks;
+  MapAltRestriction altRestriction;
+
+  maptypes::ApproachLegType type;
+
+  bool missed, flyover;
+
+  atools::geo::Pos position;
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  int getId() const
+  {
+    return -1;
+  }
+
+};
+
+/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
+struct MapSearchResult
+{
+  QList<MapAirport> airports;
+  QSet<int> airportIds; /* Ids used to deduplicate */
+
+  QList<MapRunwayEnd> runwayEnds;
+  QList<MapAirport> towers;
+  QList<MapParking> parkings;
+  QList<MapHelipad> helipads;
+
+  QList<MapWaypoint> waypoints;
+  QSet<int> waypointIds; /* Ids used to deduplicate */
+
+  QList<MapVor> vors;
+  QSet<int> vorIds; /* Ids used to deduplicate */
+
+  QList<MapNdb> ndbs;
+  QSet<int> ndbIds; /* Ids used to deduplicate */
+
+  QList<MapMarker> markers;
+  QList<MapIls> ils;
+
+  QList<MapAirway> airways;
+
+  /* User defined route points */
+  QList<MapUserpoint> userPoints;
+
+  /* General approach information */
+  QList<MapApproachpoint> approachPoints;
+
+  QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
+  atools::fs::sc::SimConnectUserAircraft userAircraft;
+
+  bool isEmpty(const maptypes::MapObjectTypes& types) const;
+
+};
+
+struct MapApproachRef
+{
+  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1, int leg = -1)
+    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg)
+  {
+  }
+
+  int airportId, runwayEndId, approachId, transitionId, legId;
+
+  bool isLeg() const
+  {
+    return legId != -1;
+  }
+
+  bool isApproachOnly() const
+  {
+    return approachId != -1 && transitionId == -1;
+  }
+
+  bool isApproachAndTransition() const
+  {
+    return approachId != -1 && transitionId != -1;
+  }
+
+  bool isApproachOrTransition() const
+  {
+    return approachId != -1 || transitionId != -1;
+  }
+
+  bool isEmpty() const
+  {
+    return approachId == -1 && transitionId == -1;
+  }
+
+};
+
 struct MapApproachLeg
 {
   int approachId, transitionId, legId, navId, recNavId;
@@ -629,7 +660,7 @@ struct MapApproachLeg
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid */,
-        magvar /* from airport */;
+        magvar /* from navaid or airport */;
 
   QString fixType, fixIdent, fixRegion,
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
@@ -657,6 +688,8 @@ struct MapApproachLeg
   }
 
 };
+
+QDebug operator<<(QDebug out, const maptypes::MapApproachLeg& leg);
 
 struct MapApproachDme
 {

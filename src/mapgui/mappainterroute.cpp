@@ -266,56 +266,59 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
       context->painter->setPen(missedPen);
     else
       context->painter->setPen(apprPen);
-    paintApproachSegment(context, legs, i, lastLine, &drawTextLines, false);
+    paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
   }
 
-  // Build text strings for along the line ===========================
-  QStringList approachTexts;
-  QVector<Line> lines;
-  QVector<QColor> textColors;
-  for(int i = 0; i < legs.size(); i++)
+  if(!context->drawFast)
   {
-    const maptypes::MapApproachLeg& leg = legs.at(i);
-    lines.append(leg.line);
-
-    QString approachText;
-
-    if(drawTextLines.at(i).distance)
+    // Build text strings for along the line ===========================
+    QStringList approachTexts;
+    QVector<Line> lines;
+    QVector<QColor> textColors;
+    for(int i = 0; i < legs.size(); i++)
     {
-      float dist = leg.calculatedDistance;
-      if(leg.type == maptypes::PROCEDURE_TURN)
-        dist /= 2.f;
+      const maptypes::MapApproachLeg& leg = legs.at(i);
+      lines.append(leg.line);
 
-      approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+      QString approachText;
+
+      if(drawTextLines.at(i).distance)
+      {
+        float dist = leg.calculatedDistance;
+        if(leg.type == maptypes::PROCEDURE_TURN)
+          dist /= 2.f;
+
+        approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+      }
+
+      if(drawTextLines.at(i).course)
+      {
+        if(!approachText.isEmpty())
+          approachText.append(tr("/"));
+        approachText += (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+                         tr("°M"));
+      }
+
+      approachTexts.append(approachText);
+
+      textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
     }
 
-    if(drawTextLines.at(i).course)
-    {
-      if(!approachText.isEmpty())
-        approachText.append(tr("/"));
-      approachText += (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-                       tr("°M"));
-    }
+    // Draw text along lines ====================================================
+    context->painter->setBackground(mapcolors::routeTextBackgroundColor);
 
-    approachTexts.append(approachText);
+    QVector<Line> textLines;
+    for(const DrawText& dt : drawTextLines)
+      textLines.append(dt.line);
 
-    textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
+    TextPlacement textPlacement(context->painter, this);
+    textPlacement.setDrawFast(context->drawFast);
+    textPlacement.setTextOnTopOfLine(false);
+    textPlacement.setLineWidth(outerlinewidth);
+    textPlacement.setColors(textColors);
+    textPlacement.calculateTextAlongLines(textLines, approachTexts);
+    textPlacement.drawTextAlongLines();
   }
-
-  // Draw text along lines ====================================================
-  context->painter->setBackground(mapcolors::routeTextBackgroundColor);
-
-  QVector<Line> textLines;
-  for(const DrawText& dt : drawTextLines)
-    textLines.append(dt.line);
-
-  TextPlacement textPlacement(context->painter, this);
-  textPlacement.setDrawFast(context->drawFast);
-  textPlacement.setTextOnTopOfLine(false);
-  textPlacement.setLineWidth(outerlinewidth);
-  textPlacement.setColors(textColors);
-  textPlacement.calculateTextAlongLines(textLines, approachTexts);
-  textPlacement.drawTextAlongLines();
 
   context->szFont(context->textSizeFlightplan);
 
@@ -326,7 +329,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
 
 void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
-                                           bool background)
+                                           bool noText)
 {
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
@@ -386,7 +389,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::TRACK_FROM_FIX_FROM_DISTANCE,
                               maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
                               maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                              maptypes::HEADING_TO_MANUAL_TERMINATION}))
+                              maptypes::HEADING_TO_MANUAL_TERMINATION,
+                              maptypes::COURSE_TO_INTERCEPT,
+                              maptypes::HEADING_TO_INTERCEPT}))
   {
     if((leg.turnDirection == "R" || leg.turnDirection == "L") &&
        prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
@@ -503,9 +508,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::HEADING_TO_RADIAL_TERMINATION,
                               maptypes::COURSE_TO_DME_DISTANCE,
                               maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
-                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
-                              maptypes::COURSE_TO_INTERCEPT,
-                              maptypes::HEADING_TO_INTERCEPT}))
+                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE}))
   {
     painter->drawLine(line);
     lastLine = line;
@@ -523,7 +526,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
     float trueCourse = leg.legTrueCourse();
 
-    if(!background)
+    if(!noText)
     {
       holdText = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
 
@@ -556,7 +559,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     QString text;
 
     float trueCourse = leg.legTrueCourse();
-    if(!background)
+    if(!noText)
     {
       text = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M")) + tr("/1min");
       if(trueCourse < 180.f)

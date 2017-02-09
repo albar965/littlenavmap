@@ -422,6 +422,10 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
 
   updateBounding(legs);
 
+  qDebug() << "---------------------------------";
+  for(int i = 0; i < legs.size(); ++i)
+    qDebug() << legs.at(i);
+  qDebug() << "---------------------------------";
 }
 
 void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs)
@@ -490,6 +494,9 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     if(prevLeg != nullptr && !leg.intercept)
       // Add distance from any existing gaps, bows or turns except for intercept legs
       leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
+
+    if(leg.calculatedDistance >= std::numeric_limits<float>::max() / 2)
+      leg.calculatedDistance = 0.f;
   }
 }
 
@@ -675,17 +682,11 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
     // ===========================================================
     else if(contains(type, {maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_MANUAL_TERMINATION}))
     {
-      if(prevLeg != nullptr)
-      {
-        Pos start = prevLeg->fixPos.isValid() ? prevLeg->fixPos : prevLeg->line.getPos2();
-        if(!lastPos.isValid())
-          lastPos = start;
-        curPos = start.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
-        leg.displayText << tr("Manual");
-      }
-      else
-        qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no previous leg found"
-                   << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+      if(!lastPos.isValid())
+        lastPos = leg.fixPos;
+
+      curPos = leg.fixPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+      leg.displayText << tr("Manual");
     }
     // ===========================================================
     else if(type == maptypes::HOLD_TO_ALTITUDE)
@@ -745,16 +746,7 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
           }
           else
-          {
-
-            float nextCourse;
-            if(next->course == 0.f)
-              nextCourse = next->legTrueCourse();
-            else
-              nextCourse = next->legTrueCourse();
-
-            intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(), nextCourse);
-          }
+            intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(), next->legTrueCourse());
 
           leg.line.setPos1(start);
 

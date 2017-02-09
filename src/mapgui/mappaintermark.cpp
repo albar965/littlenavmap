@@ -190,29 +190,52 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   if(leg.line.isValid())
   {
+    int ellipseSize = size;
+
     int x, y;
     if(wToS(leg.line.getPos1(), x, y))
     {
+      if(!leg.line.isPoint() || leg.procedureTurnPos.isValid())
+        ellipseSize /= 2;
+
+      // Draw start point of the leg using a smaller circle
       if(!context->drawFast)
       {
-        painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
-        painter->drawEllipse(QPoint(x, y), size / 2, size / 2);
-        painter->setPen(QPen(QBrush(mapcolors::highlightApproachColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+        painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+        painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+        painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
       }
-      painter->drawEllipse(QPoint(x, y), size / 2, size / 2);
+      painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
     }
 
+    ellipseSize = size;
     if(!leg.line.isPoint())
     {
       if(wToS(leg.line.getPos2(), x, y))
       {
+        // Draw end point of the leg using a larger circle
         if(!context->drawFast)
         {
-          painter->setPen(QPen(QBrush(mapcolors::highlightBackColor), size / 3 + 2, Qt::SolidLine, Qt::FlatCap));
-          painter->drawEllipse(QPoint(x, y), size, size);
-          painter->setPen(QPen(QBrush(mapcolors::highlightApproachColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+          painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+          painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+          painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
         }
-        painter->drawEllipse(QPoint(x, y), size, size);
+        painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+      }
+    }
+
+    if(leg.procedureTurnPos.isValid())
+    {
+      if(wToS(leg.procedureTurnPos, x, y))
+      {
+        // Draw turn position of the procedur turn
+        if(!context->drawFast)
+        {
+          painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+          painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+          painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
+        }
+        painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
       }
     }
   }
