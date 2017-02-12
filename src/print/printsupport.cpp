@@ -256,6 +256,7 @@ void PrintSupport::createFlightplanDocuments()
         numCols++;
       if(!departureAppr.isEmpty())
         numCols++;
+      numCols = std::max(1, numCols);
 
       // Merge all fragments into a table
       html.tr();
@@ -313,6 +314,8 @@ void PrintSupport::createFlightplanDocuments()
         numCols++;
       if(!destinationAppr.isEmpty())
         numCols++;
+
+      numCols = std::max(1, numCols);
 
       // Merge all fragments into a table
       html.tr();
