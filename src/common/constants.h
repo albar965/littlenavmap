@@ -60,8 +60,6 @@ const QString DATABASE_SCENERYCONFIG = "Database/SceneryConfig";
 const QString DATABASE_SIMULATOR = "Database/Simulator";
 const QString EXPORT_FILEDIALOG = "Export/FileDialog";
 const QString INFOWINDOW_CURRENTMAPOBJECTS = "InfoWindow/CurrentMapObjects";
-const QString INFOWINDOW_APPROACHTREESTATE = "InfoWindow/ApproachTreeState";
-const QString INFOWINDOW_APPROACH = "InfoWindow/Approach";
 const QString INFOWINDOW_WIDGET = "InfoWindow/Widget";
 const QString MAINWINDOW_FIRSTAPPLICATIONSTART = "MainWindow/FirstApplicationStart";
 const QString MAINWINDOW_WIDGET = "MainWindow/Widget";
@@ -93,6 +91,11 @@ const QString SEARCHTAB_AIRPORT_VIEW_WIDGET = "SearchPaneAirport/WidgetView";
 const QString SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET = "SearchPaneAirport/WidgetDistView";
 const QString SEARCHTAB_NAV_VIEW_WIDGET = "SearchPaneNav/WidgetView";
 const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
+
+const QString APPROACHTREE_WIDGET = "ApproachTree/Widget";
+const QString APPROACHTREE_STATE = "ApproachTree/TreeState";
+const QString APPROACHTREE_AIRPORT = "ApproachTree/Airport";
+const QString APPROACHTREE_SELECTED_APPR = "ApproachTree/SeletedApproach";
 
 /* Options dialog */
 const QString OPTIONS_DIALOG_WIDGET = "OptionsDialog/Widget";

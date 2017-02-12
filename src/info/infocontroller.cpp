@@ -18,7 +18,6 @@
 #include "infocontroller.h"
 
 #include "atools.h"
-#include "info/approachtreecontroller.h"
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
@@ -51,7 +50,6 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   : QObject(parent), mainWindow(parent), mapQuery(mapDbQuery)
 {
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
-  approachTree = new ApproachTreeController(mainWindow);
 
   Ui::MainWindow *ui = mainWindow->getUi();
   infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
@@ -62,7 +60,6 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   ui->textBrowserAirportInfo->setSearchPaths(paths);
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
   ui->textBrowserComInfo->setSearchPaths(paths);
-  ui->textBrowserApproachInfo->setSearchPaths(paths);
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
@@ -73,7 +70,6 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
-  connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
@@ -82,20 +78,11 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
           &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
-
-  connect(approachTree, &ApproachTreeController::approachSelected, this,
-          &InfoController::approachSelectedInTree);
-  connect(approachTree, &ApproachTreeController::approachLegSelected, this,
-          &InfoController::approachLegSelected);
-
-  connect(approachTree, &ApproachTreeController::showPos, this, &InfoController::showPos);
-  connect(approachTree, &ApproachTreeController::showRect, this, &InfoController::showRect);
 }
 
 InfoController::~InfoController()
 {
   delete infoBuilder;
-  delete approachTree;
 }
 
 /* User clicked on "Map" link in text browsers */
@@ -205,8 +192,7 @@ void InfoController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                         ui->tabWidgetLegend, ui->splitterApproachInfo,
-                                                         ui->treeWidgetApproachInfo});
+                                                         ui->tabWidgetLegend});
 
   // Store currently shown map objects in a string list containing id and type
   maptypes::MapObjectRefList refs;
@@ -226,8 +212,6 @@ void InfoController::saveState()
   for(const maptypes::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
-
-  approachTree->saveState();
 }
 
 void InfoController::restoreState()
@@ -249,10 +233,7 @@ void InfoController::restoreState()
 
   Ui::MainWindow *ui = mainWindow->getUi();
   atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore({ui->tabWidgetInformation, ui->tabWidgetAircraft,
-                                                            ui->tabWidgetLegend, ui->splitterApproachInfo,
-                                                            ui->treeWidgetApproachInfo});
-
-  approachTree->restoreState();
+                                                            ui->tabWidgetLegend});
 }
 
 void InfoController::updateAirport()
@@ -307,19 +288,6 @@ void InfoController::updateAirportInternal(bool newAirport)
   }
 }
 
-void InfoController::approachSelectedInTree(maptypes::MapApproachRef mapApproach)
-{
-  if(!currentSearchResult.airports.isEmpty())
-  {
-    Ui::MainWindow *ui = mainWindow->getUi();
-    HtmlBuilder html(true);
-
-    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, mapApproach);
-    ui->textBrowserApproachInfo->setText(html.getHtml());
-  }
-  emit approachSelected(mapApproach);
-}
-
 void InfoController::clearInfoTextBrowsers()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
@@ -327,8 +295,6 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserAirportInfo->clear();
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
-  ui->textBrowserApproachInfo->clear();
-  approachTree->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
 }
@@ -353,7 +319,6 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = mainWindow->getUi();
-  int idx = ui->tabWidgetInformation->currentIndex();
 
   currentSearchResult.userAircraft = result.userAircraft;
   foundUserAircraft = currentSearchResult.userAircraft.getPosition().isValid();
@@ -387,14 +352,6 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     html.clear();
     infoBuilder->comText(airport, html, iconBackColor);
     ui->textBrowserComInfo->setText(html.getHtml());
-
-    approachTree->fillApproachTreeWidget(airport);
-    ui->textBrowserApproachInfo->clear();
-
-    html.clear();
-    maptypes::MapApproachRef ref(0, 0, 0, 0, 0);
-    infoBuilder->approachText(currentSearchResult.airports.first(), html, iconBackColor, ref);
-    ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
     maptypes::WeatherContext currentWeatherContext;
@@ -476,7 +433,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
 
   if(showWindows)
   {
-    idx = ui->tabWidgetInformation->currentIndex();
+    int idx = ui->tabWidgetInformation->currentIndex();
     if(foundNavaid)
       mainWindow->setStatusMessage(tr("Showing information for navaid."));
     else if(foundAirport)
@@ -486,8 +443,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     if(foundAirport && !foundNavaid)
     {
       // If no airport related tab is shown bring airport tab to front
-      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM &&
-         idx != ic::APPROACHES && idx != ic::WEATHER)
+      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::WEATHER)
         ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
     }
     else if(!foundAirport && foundNavaid)
@@ -668,7 +624,6 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserAirportInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
 

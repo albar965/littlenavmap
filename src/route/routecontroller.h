@@ -235,6 +235,9 @@ signals:
   /* Show information about the airports or navaids in the search result */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Show approach information about the airport */
+  void showApproaches(maptypes::MapAirport airport);
+
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
 
@@ -314,6 +317,7 @@ private:
   void tableCopyClipboard();
 
   void showInformationMenu();
+  void showApproachesMenu();
   void showOnMapMenu();
 
   void undoTriggered();

@@ -109,6 +109,9 @@ signals:
   /* Show information in context menu selected */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Show approaches in context menu selected */
+  void showApproaches(maptypes::MapAirport airport);
+
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(maptypes::MapAirport airport);
 
@@ -156,6 +159,7 @@ private:
   void loadAllRowsIntoView();
   void tableCopyClipboard();
   void showInformationTriggered();
+  void showApproachesTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool visible);

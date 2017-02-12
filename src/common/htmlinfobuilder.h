@@ -136,7 +136,7 @@ public:
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                     QColor background,
-                    const maptypes::MapApproachRef& approach) const;
+                    const maptypes::MapApproachRef& ref) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;

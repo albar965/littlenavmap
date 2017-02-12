@@ -120,6 +120,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   ui->actionSearchResetSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Need extra action connected to catch the default Ctrl-C in the table view
@@ -128,15 +129,15 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   // Actions that cover the whole dock window
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
 
-  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation,
+  tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchShowInformation, ui->actionSearchShowApproaches,
                          ui->actionSearchShowOnMap});
 
   // Update single shot timer
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
   connect(updateTimer, &QTimer::timeout, this, &SearchBase::editTimeout);
-
   connect(ui->actionSearchShowInformation, &QAction::triggered, this, &SearchBase::showInformationTriggered);
+  connect(ui->actionSearchShowApproaches, &QAction::triggered, this, &SearchBase::showApproachesTriggered);
   connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &SearchBase::showOnMapTriggered);
 
   // Load text size from options
@@ -145,7 +146,6 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   viewEventFilter = new ViewEventFilter(this);
   lineEditEventFilter = new LineEditEventFilter(this);
   view->installEventFilter(viewEventFilter);
-
 }
 
 SearchBase::~SearchBase()
@@ -650,6 +650,7 @@ void SearchBase::contextMenu(const QPoint& pos)
   atools::geo::Pos position;
   QModelIndex index = controller->getModelIndexAt(pos);
   maptypes::MapObjectTypes navType = maptypes::NONE;
+  maptypes::MapAirport airport;
   int id = -1;
   if(index.isValid())
   {
@@ -667,17 +668,17 @@ void SearchBase::contextMenu(const QPoint& pos)
 
     // get airport, VOR, NDB or waypoint id from model row
     getNavTypeAndId(index.row(), navType, id);
+    if(navType == maptypes::AIRPORT)
+      query->getAirportById(airport, id);
   }
   else
     qDebug() << "Invalid index at" << pos;
 
   // Add data to menu item text
-  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().
-                                           arg("\"" + fieldData + "\""));
+  ui->actionSearchFilterIncluding->setText(ui->actionSearchFilterIncluding->text().arg("\"" + fieldData + "\""));
   ui->actionSearchFilterIncluding->setEnabled(index.isValid() && columnCanFilter);
 
-  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().
-                                           arg("\"" + fieldData + "\""));
+  ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg("\"" + fieldData + "\""));
   ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
 
   ui->actionMapNavaidRange->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB);
@@ -687,6 +688,8 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   ui->actionRouteAirportDest->setEnabled(navType == maptypes::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
+  ui->actionSearchShowApproaches->setEnabled(navType == maptypes::AIRPORT && airport.position.isValid() &&
+                                             (airport.flags & maptypes::AP_APPROACH));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
@@ -705,6 +708,8 @@ void SearchBase::contextMenu(const QPoint& pos)
   // Build the menu
   QMenu menu;
   menu.addAction(ui->actionSearchShowInformation);
+  if(navType == maptypes::AIRPORT)
+    menu.addAction(ui->actionSearchShowApproaches);
   menu.addAction(ui->actionSearchShowOnMap);
   menu.addSeparator();
 
@@ -805,6 +810,24 @@ void SearchBase::showInformationTriggered()
       maptypes::MapSearchResult result;
       query->getMapObjectById(result, navType, id);
       emit showInformation(result);
+    }
+  }
+}
+
+/* Triggered by show approaches action in context menu. Populates map search result and emits show information */
+void SearchBase::showApproachesTriggered()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  {
+    // Index covers a cell
+    QModelIndex index = view->currentIndex();
+    if(index.isValid())
+    {
+      maptypes::MapObjectTypes navType = maptypes::NONE;
+      int id = -1;
+      getNavTypeAndId(index.row(), navType, id);
+      emit showApproaches(query->getAirportById(id));
     }
   }
 }

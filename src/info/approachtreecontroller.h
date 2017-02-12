@@ -40,6 +40,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class MainWindow;
 class ApproachQuery;
+class HtmlInfoBuilder;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
 class ApproachTreeController :
@@ -52,20 +53,19 @@ public:
   virtual ~ApproachTreeController();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void fillApproachTreeWidget(const maptypes::MapAirport& airport);
-
-  /* Clear all if no airport is selected */
-  void clear();
+  void showApproaches(maptypes::MapAirport airport);
 
   /* Save tree view state */
   void saveState();
   void restoreState();
 
 signals:
+  /* Show approaches and highlight circles on the map */
   void approachSelected(maptypes::MapApproachRef);
   void approachLegSelected(maptypes::MapApproachRef);
   void approachAddToFlightPlan(maptypes::MapApproachRef);
 
+  /* Zoom to approaches/transitions or waypoints */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
@@ -91,6 +91,13 @@ private:
   QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
   void showEntry(QTreeWidgetItem *item, bool doubleClick);
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
+  void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item);
+  void addTransitionLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item);
+  void fillApproachTreeWidget();
+  void anchorClicked(const QUrl& url);
+  void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapApproachRef& ref);
+  void enableViewMode(const maptypes::MapApproachRef& ref);
+  void disableViewMode();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
@@ -102,14 +109,18 @@ private:
 
   InfoQuery *infoQuery = nullptr;
   ApproachQuery *approachQuery = nullptr;
+  HtmlInfoBuilder *infoBuilder = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
-  int lastAirportId = -1;
   QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont;
   maptypes::MapAirport currentAirport;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;
+
+  /* View mode: True if only one selected approach is shown */
+  bool approachViewMode = false;
+  maptypes::MapApproachRef approachViewModeRef;
 
 };
 

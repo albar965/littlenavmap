@@ -100,7 +100,7 @@ enum MapAirportFlag
   AP_LIGHT = 1 << 1, /* Has at least one lighted runway */
   AP_TOWER = 1 << 2, /* Has a tower frequency */
   AP_ILS = 1 << 3, /* At least one runway end has ILS */
-  AP_APPR = 1 << 4, /* At least one runway end has an approach */
+  AP_APPROACH = 1 << 4, /* At least one runway end has an approach */
   AP_MIL = 1 << 5,
   AP_CLOSED = 1 << 6, /* All runways are closed */
   AP_AVGAS = 1 << 7,
@@ -549,8 +549,12 @@ enum ApproachLegType
 
 QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
 
+struct MapApproachLeg;
+
 struct MapApproachpoint
 {
+  MapApproachpoint(const MapApproachLeg& leg);
+
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
 
   QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
@@ -704,8 +708,8 @@ struct MapApproachDme
 /* Includes transition legs */
 struct MapApproachLegs
 {
-  QVector<MapApproachLeg> tlegs;
-  QVector<MapApproachLeg> alegs;
+  QVector<MapApproachLeg> transitionLegs;
+  QVector<MapApproachLeg> approachLegs;
   MapApproachRef ref;
   atools::geo::Rect bounding;
 
@@ -716,12 +720,12 @@ struct MapApproachLegs
 
   int size() const
   {
-    return tlegs.size() + alegs.size();
+    return transitionLegs.size() + approachLegs.size();
   }
 
   bool isTransition(int i) const
   {
-    return i < tlegs.size();
+    return i < transitionLegs.size();
   }
 
   bool isApproach(int i) const
@@ -736,12 +740,12 @@ struct MapApproachLegs
 
   const MapApproachLeg& at(int i) const
   {
-    return isTransition(i) ? tlegs.at(i) : alegs.at(apprIdx(i));
+    return isTransition(i) ? transitionLegs.at(i) : approachLegs.at(apprIdx(i));
   }
 
   const MapApproachLeg *approachLegById(int legId) const
   {
-    for(const MapApproachLeg& leg : alegs)
+    for(const MapApproachLeg& leg : approachLegs)
     {
       if(leg.legId == legId)
         return &leg;
@@ -751,7 +755,7 @@ struct MapApproachLegs
 
   const MapApproachLeg *transitionLegById(int legId) const
   {
-    for(const MapApproachLeg& leg : tlegs)
+    for(const MapApproachLeg& leg : transitionLegs)
     {
       if(leg.legId == legId)
         return &leg;
@@ -761,13 +765,13 @@ struct MapApproachLegs
 
   MapApproachLeg& operator[](int i)
   {
-    return isTransition(i) ? tlegs[i] : alegs[apprIdx(i)];
+    return isTransition(i) ? transitionLegs[i] : approachLegs[apprIdx(i)];
   }
 
 private:
   int apprIdx(int i) const
   {
-    return tlegs.isEmpty() ? i : i - tlegs.size();
+    return transitionLegs.isEmpty() ? i : i - transitionLegs.size();
   }
 
 };

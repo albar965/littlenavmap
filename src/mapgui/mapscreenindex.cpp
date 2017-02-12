@@ -319,30 +319,7 @@ void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistanc
     if(conv.wToS(leg.line.getPos2(), x, y))
     {
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-      {
-        maptypes::MapApproachpoint apoint;
-        apoint.calculatedDistance = leg.calculatedDistance;
-        apoint.calculatedTrueCourse = leg.calculatedTrueCourse;
-        apoint.time = leg.time;
-        apoint.theta = leg.theta;
-        apoint.rho = leg.rho;
-        apoint.magvar = leg.magvar;
-        apoint.fixType = leg.fixType;
-        apoint.fixIdent = leg.fixIdent;
-        apoint.recFixType = leg.recFixType;
-        apoint.recFixIdent = leg.recFixIdent;
-        apoint.turnDirection = leg.turnDirection;
-        apoint.displayText = leg.displayText;
-        apoint.remarks = leg.remarks;
-        apoint.altRestriction = leg.altRestriction;
-        apoint.type = leg.type;
-        apoint.missed = leg.missed;
-        apoint.flyover = leg.flyover;
-        apoint.transition = leg.transition;
-
-        apoint.position = leg.line.getPos1();
-        result.approachPoints.append(apoint);
-      }
+        result.approachPoints.append(maptypes::MapApproachpoint(leg));
     }
   }
 }

@@ -202,7 +202,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
   if(airport.flags.testFlag(AP_JETFUEL))
     facilities.append(tr("Jetfuel"));
 
-  if(airport.flags.testFlag(AP_APPR))
+  if(airport.flags.testFlag(AP_APPROACH))
     facilities.append(tr("Approaches"));
 
   if(airport.flags.testFlag(AP_ILS))
@@ -666,7 +666,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background,
-                                   const maptypes::MapApproachRef& approach) const
+                                   const maptypes::MapApproachRef& ref) const
 {
   if(info && infoQuery != nullptr)
   {
@@ -680,10 +680,9 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
       {
         // Approach information
         int rwEndId = recApp.valueInt("runway_end_id");
-        if(approach.runwayEndId != -1 && rwEndId != approach.runwayEndId)
-          continue;
 
-        if(approach.approachId != -1 && recApp.valueInt("approach_id") != approach.approachId)
+        // Skip if approach id is given and does not match the current one
+        if(ref.approachId != -1 && recApp.valueInt("approach_id") != ref.approachId)
           continue;
 
         QString runway, runwayName(recApp.valueStr("runway_name"));
@@ -716,8 +715,8 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
                   arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
 
-        html.row2(tr("Altitude:"), Unit::altFeet(recApp.valueFloat("altitude")));
-        html.row2(tr("Missed Altitude:"), Unit::altFeet(recApp.valueFloat("missed_altitude")));
+        // html.row2(tr("Altitude:"), Unit::altFeet(recApp.valueFloat("altitude")));
+        // html.row2(tr("Missed Altitude:"), Unit::altFeet(recApp.valueFloat("missed_altitude")));
 
         addRadionavFixType(html, recApp);
 
@@ -765,62 +764,64 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
         }
         html.tableEnd();
 
-        const SqlRecordVector *recTransVector =
-          infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
-        if(recTransVector != nullptr)
+        if(ref.transitionId != -1)
         {
-          // Transitions for this approach
-          for(const SqlRecord& recTrans : *recTransVector)
+          const SqlRecordVector *recTransVector =
+            infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+          if(recTransVector != nullptr)
           {
-            if(approach.runwayEndId != -1 && approach.transitionId == -1 && approach.approachId == -1)
-              continue;
-            if(approach.transitionId != -1 && recTrans.valueInt("transition_id") != approach.transitionId)
-              continue;
-
-            html.h3(tr("Transition ") + recTrans.valueStr("fix_ident") + runway);
-
-            html.table();
-
-            if(recTrans.valueStr("type") == "F")
-              html.row2(tr("Type:"), tr("Full"));
-            else if(recTrans.valueStr("type") == "D")
-              html.row2(tr("Type:"), tr("DME"));
-
-            html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
-                      recTrans.valueStr("fix_region"));
-
-            html.row2(tr("Altitude:"), Unit::altFeet(recTrans.valueFloat("altitude")));
-
-            if(!recTrans.isNull("dme_ident"))
+            // Transitions for this approach
+            for(const SqlRecord& recTrans : *recTransVector)
             {
-              html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") + tr(", ") +
-                        recTrans.valueStr("dme_region"));
+              // Skip if transition id is given and does not match
+              if(ref.transitionId != -1 && recTrans.valueInt("transition_id") != ref.transitionId)
+                continue;
 
-              rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
-              float dist = recTrans.valueFloat("dme_distance");
-              if(dist > 1.f)
-                html.row2(tr("DME Distance:"), Unit::distNm(dist, true /*addunit*/, 5));
+              html.h3(tr("Transition ") + recTrans.valueStr("fix_ident"));
 
-              const atools::sql::SqlRecord vorReg =
-                infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"),
-                                                  recTrans.valueStr("dme_region"));
+              html.table();
 
-              if(!vorReg.isEmpty())
+              if(recTrans.valueStr("type") == "F")
+                html.row2(tr("Type:"), tr("Full"));
+              else if(recTrans.valueStr("type") == "D")
+                html.row2(tr("Type:"), tr("DME"));
+
+              html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
+                        recTrans.valueStr("fix_region"));
+
+              // html.row2(tr("Altitude:"), Unit::altFeet(recTrans.valueFloat("altitude")));
+
+              if(!recTrans.isNull("dme_ident"))
               {
-                html.row2(tr("DME Type:"), maptypes::navTypeNameVorLong(vorReg.valueStr("type")));
-                html.row2(tr("DME Frequency:"),
-                          locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
-                html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
-                html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
-                          atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
-              }
-              else
-                html.row2(tr("DME data not found for %1/%2.").
-                          arg(recTrans.valueStr("dme_ident")).arg(recTrans.valueStr("dme_region")));
-            }
+                html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") + tr(", ") +
+                          recTrans.valueStr("dme_region"));
 
-            addRadionavFixType(html, recTrans);
-            html.tableEnd();
+                rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
+                float dist = recTrans.valueFloat("dme_distance");
+                if(dist > 1.f)
+                  html.row2(tr("DME Distance:"), Unit::distNm(dist, true /*addunit*/, 5));
+
+                const atools::sql::SqlRecord vorReg =
+                  infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"),
+                                                    recTrans.valueStr("dme_region"));
+
+                if(!vorReg.isEmpty())
+                {
+                  html.row2(tr("DME Type:"), maptypes::navTypeNameVorLong(vorReg.valueStr("type")));
+                  html.row2(tr("DME Frequency:"),
+                            locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+                  html.row2(tr("DME Range:"), Unit::distNm(vorReg.valueInt("range")));
+                  html.row2(tr("DME Morse:"), morse->getCode(vorReg.valueStr("ident")),
+                            atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+                }
+                else
+                  html.row2(tr("DME data not found for %1/%2.").
+                            arg(recTrans.valueStr("dme_ident")).arg(recTrans.valueStr("dme_region")));
+              }
+
+              addRadionavFixType(html, recTrans);
+              html.tableEnd();
+            }
           }
         }
       }
@@ -1325,25 +1326,29 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
 
 void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder& html) const
 {
-  head(html, maptypes::approachLegTypeStr(ap.type) + " " + ap.fixIdent);
+  QString heading;
+  if(ap.missed)
+    heading = tr("Missed Approach ");
+  else if(ap.transition)
+    heading = tr("Transition ");
+  else
+    heading = tr("Approach ");
+
+  head(html, heading);
 
   // float time, theta, rho, magvar;
   // QString fixType, fixIdent,
   // QStringList displayText, remarks;
 
   QStringList atts;
-  if(ap.transition)
-    atts += tr("Transition");
-  else
-    atts += tr("Approach");
 
   if(ap.flyover)
     atts += tr("Fly over");
 
-  if(ap.missed)
-    atts += tr("Missed");
-
   html.table();
+
+  html.row2(tr("Leg Type:"), maptypes::approachLegTypeStr(ap.type));
+  html.row2(tr("Fix:"), ap.fixIdent);
 
   if(!atts.isEmpty())
     html.row2(atts.join(", "));
@@ -1352,7 +1357,7 @@ void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder&
     html.row2(ap.remarks.join(", "));
 
   if(ap.altRestriction.descriptor != MapAltRestriction::NONE)
-    html.row2(tr("Pass:"), maptypes::altRestrictionText(ap.altRestriction));
+    html.row2(tr("Altitude Restriction:"), maptypes::altRestrictionText(ap.altRestriction));
 
   if(ap.calculatedDistance > 0.f)
     html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
@@ -1367,7 +1372,7 @@ void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder&
     if(ap.turnDirection == "L")
       html.row2(tr("Turn:"), tr("Left"));
     else if(ap.turnDirection == "R")
-      html.row2(tr("Turn:"), tr("Light"));
+      html.row2(tr("Turn:"), tr("Right"));
     else if(ap.turnDirection == "B")
       html.row2(tr("Turn:"), tr("Left or right"));
   }

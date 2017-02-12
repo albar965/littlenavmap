@@ -303,6 +303,9 @@ signals:
   /* Show information about objects from single click or context menu */
   void showInformation(maptypes::MapSearchResult result);
 
+  /* Show approaches from context menu */
+  void showApproaches(maptypes::MapAirport airport);
+
   /* Aircraft track was pruned and needs to be updated */
   void aircraftTrackPruned();
 

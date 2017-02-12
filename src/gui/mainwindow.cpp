@@ -48,6 +48,7 @@
 #include "route/routestring.h"
 #include "common/unit.h"
 #include "common/approachquery.h"
+#include "info/approachtreecontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -134,6 +135,9 @@ MainWindow::MainWindow()
 
     approachQuery = new ApproachQuery(databaseManager->getDatabase(), mapQuery);
     approachQuery->initQueries();
+
+    qDebug() << "MainWindow Creating Approach controller";
+    approachController = new ApproachTreeController(this);
 
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
@@ -226,6 +230,8 @@ MainWindow::~MainWindow()
   delete connectClient;
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
+  qDebug() << Q_FUNC_INFO << "delete approachController";
+  delete approachController;
   qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
@@ -602,8 +608,10 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
   connect(routeController, &RouteController::routeChanged, mapWidget, &MapWidget::routeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
-  connect(routeController, &RouteController::showInformation, infoController,
-          &InfoController::showInformation);
+  connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
+
+  connect(routeController, &RouteController::showApproaches, approachController,
+          &ApproachTreeController::showApproaches);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint,
@@ -619,6 +627,8 @@ void MainWindow::connectAllSlots()
     &MapWidget::changeSearchMark);
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
+  connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
+          approachController, &ApproachTreeController::showApproaches);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled,
           infoController, &InfoController::updateAllInformation);
@@ -700,6 +710,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
+  connect(mapWidget, &MapWidget::showApproaches, approachController, &ApproachTreeController::showApproaches);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -872,8 +883,10 @@ void MainWindow::connectAllSlots()
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
-  connect(infoController, &InfoController::approachLegSelected, this, &MainWindow::approachLegSelected);
-  connect(infoController, &InfoController::approachSelected, this, &MainWindow::approachSelected);
+  connect(approachController, &ApproachTreeController::approachLegSelected, this, &MainWindow::approachLegSelected);
+  connect(approachController, &ApproachTreeController::approachSelected, this, &MainWindow::approachSelected);
+  connect(approachController, &ApproachTreeController::showRect, mapWidget, &MapWidget::showRect);
+  connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1533,13 +1546,15 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     else
       leg = approachQuery->getApproachLeg(airport, approachRef.legId);
 
-    qDebug() << *leg;
+    if(leg != nullptr)
+    {
+      qDebug() << *leg;
 
-    mapWidget->changeApproachLegHighlights(leg);
+      mapWidget->changeApproachLegHighlights(leg);
+    }
   }
   else
     mapWidget->changeApproachLegHighlights(nullptr);
-
 }
 
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
@@ -1803,6 +1818,9 @@ void MainWindow::readSettings()
   qDebug() << "MainWindow restoring state of connectClient";
   connectClient->restoreState();
 
+  qDebug() << "MainWindow restoring state of approachController";
+  approachController->restoreState();
+
   qDebug() << "MainWindow restoring state of infoController";
   infoController->restoreState();
 
@@ -1878,6 +1896,10 @@ void MainWindow::writeSettings()
   qDebug() << "infoController";
   if(infoController != nullptr)
     infoController->saveState();
+
+  qDebug() << "approachController";
+  if(approachController != nullptr)
+    approachController->saveState();
 
   qDebug() << "routeFileHistory";
   if(routeFileHistory != nullptr)

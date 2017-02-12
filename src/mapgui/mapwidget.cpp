@@ -678,7 +678,7 @@ void MapWidget::showSearchMark()
 
 void MapWidget::showAircraft(bool centerAircraftChecked)
 {
-  qDebug() << "NavMapWidget::showAircraft" << searchMarkPos;
+  qDebug() << "NavMapWidget::showAircraft" << screenIndex->getUserAircraft().getPosition();
 
   // Adapt the menu item status if this method was not called by the action
   QAction *acAction = mainWindow->getUi()->actionMapAircraftCenter;
@@ -697,7 +697,7 @@ void MapWidget::showAircraft(bool centerAircraftChecked)
 
 void MapWidget::showHome()
 {
-  qDebug() << "NavMapWidget::showHome" << searchMarkPos;
+  qDebug() << "NavMapWidget::showHome" << homePos;
 
   hideTooltip();
   showAircraft(false);
@@ -931,8 +931,7 @@ const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
 void MapWidget::changeApproachHighlight(const maptypes::MapApproachLegs& approach)
 {
   if(screenIndex->getApproachHighlight().ref.approachId != approach.ref.approachId ||
-  !approach.tlegs.isEmpty())
-
+     !approach.transitionLegs.isEmpty())
     screenIndex->getApproachHighlight() = approach;
 }
 
@@ -1124,7 +1123,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
                                           ui->actionShowInSearch, ui->actionRouteAdd,
-                                          ui->actionMapShowInformation,
+                                          ui->actionMapShowInformation, ui->actionMapShowApproaches,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest,
                                           ui->actionMapEditUserWaypoint});
@@ -1133,6 +1132,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Build menu - add actions
   QMenu menu;
   menu.addAction(ui->actionMapShowInformation);
+  menu.addAction(ui->actionMapShowApproaches);
   menu.addSeparator();
 
   menu.addAction(ui->actionMapMeasureDistance);
@@ -1193,6 +1193,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
 
   ui->actionMapShowInformation->setEnabled(false);
+  ui->actionMapShowApproaches->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
   ui->actionRouteAdd->setEnabled(visibleOnMap);
@@ -1253,38 +1254,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     informationText.clear();
 
   if(waypoint != nullptr)
-  {
-    informationText =
-      measureText =
-        addRouteText =
-          searchText = maptypes::waypointText(*waypoint);
-  }
+    informationText = measureText = addRouteText = searchText = maptypes::waypointText(*waypoint);
 
   if(ndb != nullptr)
-  {
-    informationText =
-      measureText =
-        rangeRingText =
-          addRouteText = searchText = maptypes::ndbText(*ndb);
-  }
+    informationText = measureText = rangeRingText = addRouteText = searchText = maptypes::ndbText(*ndb);
 
   if(vor != nullptr)
-  {
-    informationText =
-      measureText =
-        rangeRingText =
-          addRouteText = searchText = maptypes::vorText(*vor);
-  }
+    informationText = measureText = rangeRingText = addRouteText = searchText = maptypes::vorText(*vor);
 
   if(airport != nullptr)
-  {
-    informationText =
-      measureText =
-        departureText =
-          destinationText =
-            addRouteText =
-              searchText = maptypes::airportText(*airport);
-  }
+    informationText = measureText = departureText
+                                      = destinationText = addRouteText = searchText = maptypes::airportText(*airport);
 
   if(parking != nullptr)
   {
@@ -1401,6 +1381,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else
       ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
+
+  if(airport != nullptr && (airport->flags & maptypes::AP_APPROACH))
+  {
+    ui->actionMapShowApproaches->setEnabled(true);
+    ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
+  }
+  else
+    ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
 
   // Update "delete in route"
   if(routeIndex != -1)
@@ -1618,6 +1606,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       else if(action == ui->actionMapShowInformation)
         emit showInformation(result);
     }
+    else if(action == ui->actionMapShowApproaches)
+      emit showApproaches(*airport);
   }
 }
 

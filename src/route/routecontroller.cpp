@@ -167,6 +167,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Avoid stealing of Ctrl - C from other default menus
@@ -177,7 +178,8 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
-                    ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionRouteShowOnMap});
+                    ui->actionRouteTableCopy, ui->actionRouteShowInformation, ui->actionMapShowApproaches,
+                    ui->actionRouteShowOnMap});
 
   void (RouteController::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
     &RouteController::tableSelectionChanged;
@@ -188,6 +190,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegs);
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
+  connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showApproachesMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
@@ -1109,6 +1112,17 @@ void RouteController::showInformationMenu()
 }
 
 /* From context menu */
+void RouteController::showApproachesMenu()
+{
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+  {
+    const RouteMapObject& routeMapObject = route.at(index.row());
+    emit showApproaches(routeMapObject.getAirport());
+  }
+}
+
+/* From context menu */
 void RouteController::showOnMapMenu()
 {
   QModelIndex index = view->currentIndex();
@@ -1158,6 +1172,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                             !mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
     ui->actionRouteShowInformation->setEnabled(routeMapObject.isValid());
+    ui->actionRouteShowApproaches->setEnabled(routeMapObject.isValid() &&
+                                              routeMapObject.getMapObjectType() == maptypes::AIRPORT &&
+                                              (routeMapObject.getAirport().flags & maptypes::AP_APPROACH));
 
     ui->actionRouteShowOnMap->setEnabled(true);
 
@@ -1182,6 +1199,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     QMenu menu;
     menu.addAction(ui->actionRouteShowInformation);
+    menu.addAction(ui->actionRouteShowApproaches);
     menu.addAction(ui->actionRouteShowOnMap);
     menu.addSeparator();
 
@@ -2364,6 +2382,9 @@ RouteCommand *RouteController::preChange(const QString& text, rctype::RouteCmdTy
 /* Call this after doing a change to the flight plan that should be undoable */
 void RouteController::postChange(RouteCommand *undoCommand)
 {
+  if(undoCommand == nullptr)
+    return;
+
   undoCommand->setFlightplanAfter(route.getFlightplan());
 
   if(undoIndex < undoIndexClean)

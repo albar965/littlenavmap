@@ -116,8 +116,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::
     transitionIdForLegQuery->exec();
     if(transitionIdForLegQuery->next())
     {
-      const maptypes::MapApproachLegs *legs = getTransitionLegs(airport,
-                                                                transitionIdForLegQuery->value("id").toInt());
+      const maptypes::MapApproachLegs *legs = getTransitionLegs(airport, transitionIdForLegQuery->value("id").toInt());
       if(legs != nullptr && transitionLegIndex.contains(legId))
         return &legs->at(transitionLegIndex.value(legId).second);
     }
@@ -310,13 +309,13 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
 
 void ApproachQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
 {
-  for(maptypes::MapApproachLeg& leg : legs.alegs)
+  for(maptypes::MapApproachLeg& leg : legs.approachLegs)
   {
     if(leg.magvar == maptypes::INVALID_MAGVAR)
       leg.magvar = airport.magvar;
   }
 
-  for(maptypes::MapApproachLeg& leg : legs.tlegs)
+  for(maptypes::MapApproachLeg& leg : legs.transitionLegs)
   {
     if(leg.magvar == maptypes::INVALID_MAGVAR)
       leg.magvar = airport.magvar;
@@ -370,15 +369,15 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
 
     while(transitionLegQuery->next())
     {
-      legs->tlegs.append(buildTransitionLegEntry());
-      transitionLegIndex.insert(legs->tlegs.last().legId, std::make_pair(transitionId, legs->size() - 1));
-      legs->tlegs.last().approachId = approachId;
-      legs->tlegs.last().transitionId = transitionId;
+      legs->transitionLegs.append(buildTransitionLegEntry());
+      transitionLegIndex.insert(legs->transitionLegs.last().legId, std::make_pair(transitionId, legs->size() - 1));
+      legs->transitionLegs.last().approachId = approachId;
+      legs->transitionLegs.last().transitionId = transitionId;
     }
 
     // Add a full copy of the approach because approach legs will be modified
     maptypes::MapApproachLegs *approach = buildApproachLegs(airport, approachId);
-    legs->alegs = approach->alegs;
+    legs->approachLegs = approach->approachLegs;
     delete approach;
 
     postProcessLegs(airport, *legs);
@@ -403,9 +402,9 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
   legs->ref.transitionId = -1;
   while(approachLegQuery->next())
   {
-    legs->alegs.append(buildApproachLegEntry());
-    approachLegIndex.insert(legs->alegs.last().legId, std::make_pair(approachId, legs->size() - 1));
-    legs->alegs.last().approachId = approachId;
+    legs->approachLegs.append(buildApproachLegEntry());
+    approachLegIndex.insert(legs->approachLegs.last().legId, std::make_pair(approachId, legs->size() - 1));
+    legs->approachLegs.last().approachId = approachId;
   }
   return legs;
 }
@@ -442,7 +441,7 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
     {
       leg.calculatedDistance = meterToNm(atools::geo::calcArcDistance(leg.line, leg.recFixPos, leg.turnDirection == "L"));
-      leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+      leg.calculatedTrueCourse = 0.f;
     }
     // ===========================================================
     else if(type == maptypes::COURSE_TO_FIX)
@@ -472,7 +471,7 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
                             maptypes::HEADING_TO_ALTITUDE_TERMINATION,
                             maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_MANUAL_TERMINATION}))
     {
-      leg.calculatedDistance = 3.f;
+      leg.calculatedDistance = 2.f;
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
     }
     // ===========================================================
@@ -619,7 +618,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
 
         if(!lastPos.isValid())
           lastPos = start;
-        curPos = start.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+        curPos = start.endpoint(nmToMeter(2.f), leg.legTrueCourse()).normalize();
         leg.displayText << tr("Altitude");
       }
       else

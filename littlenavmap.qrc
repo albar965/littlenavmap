@@ -133,5 +133,8 @@
         <file>resources/icons/routeadjustalt.svg</file>
         <file>resources/icons/legenddock.svg</file>
         <file>resources/icons/saveasrte.svg</file>
+        <file>resources/icons/approach.svg</file>
+        <file>resources/icons/approachselect.svg</file>
+        <file>resources/icons/approachunselect.svg</file>
     </qresource>
 </RCC>

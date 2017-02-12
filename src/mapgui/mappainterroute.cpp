@@ -605,7 +605,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
      (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
     return;
 
-  const maptypes::MapApproachLeg& leg = legs.at(index);
+  maptypes::MapApproachLeg leg = legs.at(index);
 
   if(leg.disabled)
     return;
@@ -614,8 +614,15 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   if(index < legs.size() - 1 &&
      leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT)
     // Do not paint the last point in the transition since it overlaps with the approach
+    // But draw the intercept text
     lastInTransition = legs.isTransition(index) &&
                        legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH;
+
+  if(index > 0 && legs.isApproach(index) &&
+     legs.isTransition(index - 1) && context->objectTypes & maptypes::APPROACH &&
+     context->objectTypes & maptypes::APPROACH_TRANSITION)
+    // Merge display text to get any text from a preceding transition point
+    leg.displayText.append(legs.at(index - 1).displayText);
 
   int x = 0, y = 0;
 

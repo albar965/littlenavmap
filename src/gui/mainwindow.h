@@ -40,6 +40,7 @@ class InfoController;
 class OptionsDialog;
 class QActionGroup;
 class PrintSupport;
+class ApproachTreeController;
 
 namespace Marble {
 class LegendWidget;
@@ -284,6 +285,7 @@ private:
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
   ApproachQuery *approachQuery = nullptr;
+  ApproachTreeController *approachController = nullptr;
 
   QTimer weatherUpdateTimer;
 

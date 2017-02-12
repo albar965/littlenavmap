@@ -2009,165 +2009,272 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="labelRouteInfo">
-       <property name="text">
-        <string/>
+      <widget class="QTabWidget" name="tabWidgetRoute">
+       <property name="currentIndex">
+        <number>1</number>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-       <property name="textInteractionFlags">
-        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QSpinBox" name="spinBoxRouteSpeed">
-         <property name="toolTip">
-          <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+       <widget class="QWidget" name="tabRoutePlan">
+        <attribute name="title">
+         <string>Plan</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <property name="spacing">
+          <number>2</number>
          </property>
-         <property name="statusTip">
-          <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+         <property name="leftMargin">
+          <number>2</number>
          </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>true</bool>
+         <property name="topMargin">
+          <number>2</number>
          </property>
-         <property name="suffix">
-          <string> kts</string>
+         <property name="rightMargin">
+          <number>2</number>
          </property>
-         <property name="minimum">
-          <number>30</number>
-         </property>
-         <property name="maximum">
-          <number>1000</number>
-         </property>
-         <property name="singleStep">
-          <number>10</number>
-         </property>
-         <property name="value">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBoxRouteAlt">
-         <property name="toolTip">
-          <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
-         </property>
-         <property name="statusTip">
-          <string>Flight plan altitude which is also used to calculate flight plan based on given altitude</string>
-         </property>
-         <property name="showGroupSeparator" stdset="0">
-          <bool>true</bool>
-         </property>
-         <property name="suffix">
-          <string> ft</string>
-         </property>
-         <property name="minimum">
-          <number>0</number>
-         </property>
-         <property name="maximum">
-          <number>80000</number>
-         </property>
-         <property name="singleStep">
-          <number>500</number>
-         </property>
-         <property name="value">
-          <number>10000</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="comboBoxRouteType">
-         <property name="toolTip">
-          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
-         </property>
-         <property name="statusTip">
-          <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
+         <property name="bottomMargin">
+          <number>2</number>
          </property>
          <item>
-          <property name="text">
-           <string>IFR</string>
-          </property>
+          <widget class="QLabel" name="labelRouteInfo">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>VFR</string>
-          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>2</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QSpinBox" name="spinBoxRouteSpeed">
+             <property name="toolTip">
+              <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+             </property>
+             <property name="statusTip">
+              <string>Estimated ground speed for the flight plan that will be used to calculate travelling times</string>
+             </property>
+             <property name="showGroupSeparator" stdset="0">
+              <bool>true</bool>
+             </property>
+             <property name="suffix">
+              <string> kts</string>
+             </property>
+             <property name="minimum">
+              <number>30</number>
+             </property>
+             <property name="maximum">
+              <number>1000</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+             <property name="value">
+              <number>100</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="spinBoxRouteAlt">
+             <property name="toolTip">
+              <string>Flight plan altitude which is also used to calculate a flight plan based on given altitude</string>
+             </property>
+             <property name="statusTip">
+              <string>Flight plan altitude which is also used to calculate flight plan based on given altitude</string>
+             </property>
+             <property name="showGroupSeparator" stdset="0">
+              <bool>true</bool>
+             </property>
+             <property name="suffix">
+              <string> ft</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>80000</number>
+             </property>
+             <property name="singleStep">
+              <number>500</number>
+             </property>
+             <property name="value">
+              <number>10000</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxRouteType">
+             <property name="toolTip">
+              <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
+             </property>
+             <property name="statusTip">
+              <string>VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) for flight plan</string>
+             </property>
+             <item>
+              <property name="text">
+               <string>IFR</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>VFR</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
          </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QTableView" name="tableViewRoute">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="tabKeyNavigation">
-        <bool>false</bool>
-       </property>
-       <property name="showDropIndicator" stdset="0">
-        <bool>false</bool>
-       </property>
-       <property name="dragEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="dragDropOverwriteMode">
-        <bool>false</bool>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::NoDragDrop</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::IgnoreAction</enum>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-       <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
-       </property>
-       <property name="horizontalScrollMode">
-        <enum>QAbstractItemView::ScrollPerPixel</enum>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-       <property name="cornerButtonEnabled">
-        <bool>true</bool>
-       </property>
-       <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>5</number>
-       </attribute>
-       <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderCascadingSectionResizes">
-        <bool>true</bool>
-       </attribute>
-       <attribute name="verticalHeaderMinimumSectionSize">
-        <number>23</number>
-       </attribute>
+         <item>
+          <widget class="QTableView" name="tableViewRoute">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
+           <property name="showDropIndicator" stdset="0">
+            <bool>false</bool>
+           </property>
+           <property name="dragEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropOverwriteMode">
+            <bool>false</bool>
+           </property>
+           <property name="dragDropMode">
+            <enum>QAbstractItemView::NoDragDrop</enum>
+           </property>
+           <property name="defaultDropAction">
+            <enum>Qt::IgnoreAction</enum>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
+           </property>
+           <property name="horizontalScrollMode">
+            <enum>QAbstractItemView::ScrollPerPixel</enum>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <property name="cornerButtonEnabled">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>5</number>
+           </attribute>
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="verticalHeaderMinimumSectionSize">
+            <number>23</number>
+           </attribute>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tabRouteApproaches">
+        <attribute name="title">
+         <string>Approaches</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_12">
+         <property name="spacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QSplitter" name="splitterApproachInfo">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="handleWidth">
+            <number>10</number>
+           </property>
+           <widget class="QTreeWidget" name="treeWidgetApproachInfo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>1</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="contextMenuPolicy">
+             <enum>Qt::CustomContextMenu</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="showDropIndicator" stdset="0">
+             <bool>false</bool>
+            </property>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="allColumnsShowFocus">
+             <bool>true</bool>
+            </property>
+            <property name="columnCount">
+             <number>0</number>
+            </property>
+            <attribute name="headerMinimumSectionSize">
+             <number>5</number>
+            </attribute>
+           </widget>
+           <widget class="QTextBrowser" name="textBrowserApproachInfo">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>3</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="placeholderText">
+             <string>No approach selected.</string>
+            </property>
+            <property name="openLinks">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -2313,111 +2420,6 @@
            <property name="openLinks">
             <bool>false</bool>
            </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabApproachInfo">
-        <attribute name="title">
-         <string>Approaches</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QSplitter" name="splitterApproachInfo">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="handleWidth">
-            <number>10</number>
-           </property>
-           <widget class="QTreeWidget" name="treeWidgetApproachInfo">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>1</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="contextMenuPolicy">
-             <enum>Qt::CustomContextMenu</enum>
-            </property>
-            <property name="editTriggers">
-             <set>QAbstractItemView::NoEditTriggers</set>
-            </property>
-            <property name="showDropIndicator" stdset="0">
-             <bool>false</bool>
-            </property>
-            <property name="alternatingRowColors">
-             <bool>true</bool>
-            </property>
-            <property name="allColumnsShowFocus">
-             <bool>true</bool>
-            </property>
-            <attribute name="headerMinimumSectionSize">
-             <number>5</number>
-            </attribute>
-            <column>
-             <property name="text">
-              <string notr="true">Description</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Ident</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Altitude</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Course</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Distance/Time</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Remarks</string>
-             </property>
-            </column>
-           </widget>
-           <widget class="QTextBrowser" name="textBrowserApproachInfo">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>3</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="placeholderText">
-             <string>No approach selected.</string>
-            </property>
-            <property name="openLinks">
-             <bool>false</bool>
-            </property>
-           </widget>
           </widget>
          </item>
         </layout>
@@ -5117,18 +5119,6 @@
     <string>Show on map</string>
    </property>
   </action>
-  <action name="actionInfoApproachAddToFlightPlan">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Add  %1 to Flight Plan</string>
-   </property>
-   <property name="toolTip">
-    <string>Add to flight plan</string>
-   </property>
-  </action>
   <action name="actionInfoApproachClear">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -5141,7 +5131,7 @@
     <string>Clear selection and preview on map</string>
    </property>
    <property name="statusTip">
-    <string>Clear all search filters</string>
+    <string>Clear selection and preview on map</string>
    </property>
   </action>
   <action name="actionInfoApproachShowAppr">
@@ -5155,6 +5145,9 @@
     <string>Show Approaches</string>
    </property>
    <property name="toolTip">
+    <string>Show approach legs on the map</string>
+   </property>
+   <property name="statusTip">
     <string>Show approach legs on the map</string>
    </property>
   </action>
@@ -5171,6 +5164,9 @@
    <property name="toolTip">
     <string>Show missed approach legs on the map</string>
    </property>
+   <property name="statusTip">
+    <string>Show missed approach legs on the map</string>
+   </property>
   </action>
   <action name="actionInfoApproachShowTrans">
    <property name="checkable">
@@ -5184,6 +5180,99 @@
    </property>
    <property name="toolTip">
     <string>Show transition legs on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show transition legs on the map</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachesForAirport">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Approaches for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show approaches and transitions for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show approaches and transitions for airport</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachSelect">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show only this approach and/or transition.</string>
+   </property>
+   <property name="statusTip">
+    <string>Show only this approach and/or transition.</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachUnselect">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Return to Approach Overview</string>
+   </property>
+   <property name="toolTip">
+    <string>Return to the overview showing all approaches for an airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Return to the overview showing all approaches for an airport</string>
+   </property>
+  </action>
+  <action name="actionMapShowApproaches">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Approaches for %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+  </action>
+  <action name="actionRouteShowApproaches">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+  </action>
+  <action name="actionSearchShowApproaches">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Approaches</string>
+   </property>
+   <property name="toolTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
    </property>
   </action>
  </widget>
@@ -5255,7 +5344,6 @@
   <tabstop>spinBoxRouteSpeed</tabstop>
   <tabstop>spinBoxRouteAlt</tabstop>
   <tabstop>comboBoxRouteType</tabstop>
-  <tabstop>tableViewRoute</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

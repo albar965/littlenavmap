@@ -28,7 +28,6 @@ class MapQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
-class ApproachTreeController;
 
 namespace ic {
 enum TabIndex
@@ -36,10 +35,9 @@ enum TabIndex
   AIRPORT = 0,
   RUNWAYS = 1,
   COM = 2,
-  APPROACHES = 3,
-  WEATHER = 4,
-  NAVAID = 5,
-  MAP_LEGEND = 6
+  WEATHER = 3,
+  NAVAID = 4,
+  MAP_LEGEND = 5
 };
 
 enum TabIndexAircraft
@@ -98,9 +96,6 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
-  void approachLegSelected(maptypes::MapApproachRef);
-  void approachSelected(maptypes::MapApproachRef);
-
 private:
   /* Do not update aircraft information more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
@@ -112,7 +107,6 @@ private:
   void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
-  void approachSelectedInTree(maptypes::MapApproachRef mapApproach);
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -125,7 +119,6 @@ private:
   MapQuery *mapQuery = nullptr;
   QColor iconBackColor = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
-  ApproachTreeController *approachTree = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
 };

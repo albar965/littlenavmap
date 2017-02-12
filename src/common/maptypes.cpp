@@ -992,6 +992,9 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   << "missed" << leg.missed
   << "line" << leg.line << endl;
 
+  out << "displayText" << leg.displayText
+  << "remarks" << leg.remarks;
+
   out << "navId" << leg.navId << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
 
   out << "recNavId" << leg.recNavId << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
@@ -1016,6 +1019,29 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   << "alt1" << leg.altRestriction.alt1
   << "alt2" << leg.altRestriction.alt2 << endl;
   return out;
+}
+
+MapApproachpoint::MapApproachpoint(const MapApproachLeg& leg)
+{
+  calculatedDistance = leg.calculatedDistance;
+  calculatedTrueCourse = leg.calculatedTrueCourse;
+  time = leg.time;
+  theta = leg.theta;
+  rho = leg.rho;
+  magvar = leg.magvar;
+  fixType = leg.fixType;
+  fixIdent = leg.fixIdent;
+  recFixType = leg.recFixType;
+  recFixIdent = leg.recFixIdent;
+  turnDirection = leg.turnDirection;
+  displayText = leg.displayText;
+  remarks = leg.remarks;
+  altRestriction = leg.altRestriction;
+  type = leg.type;
+  missed = leg.missed;
+  flyover = leg.flyover;
+  transition = leg.transition;
+  position = leg.line.getPos1();
 }
 
 } // namespace types
