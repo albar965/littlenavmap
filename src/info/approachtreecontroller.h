@@ -26,6 +26,10 @@
 #include <QVector>
 
 namespace atools {
+namespace gui {
+class ItemViewZoomHandler;
+}
+
 namespace sql {
 class SqlRecord;
 }
@@ -59,6 +63,8 @@ public:
   void saveState();
   void restoreState();
 
+  void optionsChanged();
+
 signals:
   /* Show approaches and highlight circles on the map */
   void approachSelected(maptypes::MapApproachRef);
@@ -69,6 +75,9 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
+  /* Add, replace or delete object from flight plan from context menu or drag and drop */
+  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+
 private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -77,9 +86,8 @@ private:
   void contextMenu(const QPoint& pos);
 
   QTreeWidgetItem *buildApprItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
-  QTreeWidgetItem *buildTransItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
-  void buildTransLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
-  void buildApprLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
+  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
+  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
 
   // Save and restore expanded and selected item state
@@ -96,8 +104,9 @@ private:
   void fillApproachTreeWidget();
   void anchorClicked(const QUrl& url);
   void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapApproachRef& ref);
-  void enableViewMode(const maptypes::MapApproachRef& ref);
-  void disableViewMode();
+  void enableSelectedMode(const maptypes::MapApproachRef& ref);
+  void disableSelectedMode();
+  void updateTreeHeader();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
@@ -119,8 +128,12 @@ private:
   QHash<int, QBitArray> recentTreeState;
 
   /* View mode: True if only one selected approach is shown */
-  bool approachViewMode = false;
-  maptypes::MapApproachRef approachViewModeRef;
+  bool approachSelectedMode = false;
+  maptypes::MapApproachRef approachSelectedModeRef;
+
+  /* Used to make the table rows smaller and also used to adjust font size */
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  void createFonts();
 
 };
 

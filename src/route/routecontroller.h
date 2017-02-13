@@ -26,7 +26,7 @@
 
 namespace atools {
 namespace gui {
-class TableZoomHandler;
+class ItemViewZoomHandler;
 }
 
 namespace fs {
@@ -338,7 +338,7 @@ private:
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
 
-  atools::gui::TableZoomHandler *zoomHandler = nullptr;
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
 
   /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
   int undoIndex = 0;

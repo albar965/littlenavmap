@@ -403,6 +403,7 @@ struct MapWaypoint
 
 };
 
+/* Waypoint or intersection */
 struct MapAirwayWaypoint
 {
   int airwayId, airwayFragmentId, seqNum;
@@ -504,6 +505,7 @@ struct MapIls
 
 };
 
+/* Altitude restriction for approaches or transitions */
 struct MapAltRestriction
 {
   enum Descriptor
@@ -616,6 +618,21 @@ struct MapSearchResult
 
   bool isEmpty(const maptypes::MapObjectTypes& types) const;
 
+  bool hasVor() const
+  {
+    return !vors.isEmpty();
+  }
+
+  bool hasNdb() const
+  {
+    return !ndbs.isEmpty();
+  }
+
+  bool hasWaypoints() const
+  {
+    return !waypoints.isEmpty();
+  }
+
 };
 
 struct MapApproachRef
@@ -712,6 +729,7 @@ struct MapApproachLegs
   QVector<MapApproachLeg> approachLegs;
   MapApproachRef ref;
   atools::geo::Rect bounding;
+  float approachDistance, transitionDistance, missedDistance;
 
   bool isEmpty() const
   {
@@ -865,8 +883,10 @@ MapAirwayType  airwayTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
 QString airportText(const maptypes::MapAirport& airport);
+QString vorFullShortText(const maptypes::MapVor& vor);
 QString vorText(const maptypes::MapVor& vor);
 QString vorType(const maptypes::MapVor& vor);
+QString ndbFullShortText(const maptypes::MapNdb& ndb);
 QString ndbText(const maptypes::MapNdb& ndb);
 QString waypointText(const maptypes::MapWaypoint& waypoint);
 QString userpointText(const maptypes::MapUserpoint& userpoint);

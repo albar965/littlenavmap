@@ -53,9 +53,7 @@ QIcon SymbolPainter::createAirportIcon(const maptypes::MapAirport& airport, int 
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  prepareForIcon(painter);
 
   SymbolPainter().drawAirportSymbol(&painter, airport, size / 2, size / 2, size * 7 / 10, false, false);
   return QIcon(pixmap);
@@ -66,9 +64,7 @@ QIcon SymbolPainter::createVorIcon(const maptypes::MapVor& vor, int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  prepareForIcon(painter);
 
   SymbolPainter().drawVorSymbol(&painter, vor, size / 2, size / 2, size * 7 / 10, false, false, false);
   return QIcon(pixmap);
@@ -79,9 +75,7 @@ QIcon SymbolPainter::createNdbIcon(int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  prepareForIcon(painter);
 
   SymbolPainter().drawNdbSymbol(&painter, size / 2, size / 2, size * 8 / 10, false, false);
   return QIcon(pixmap);
@@ -92,9 +86,7 @@ QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  prepareForIcon(painter);
 
   SymbolPainter().drawWaypointSymbol(&painter, color, size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
@@ -105,11 +97,20 @@ QIcon SymbolPainter::createUserpointIcon(int size)
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing, true);
-  painter.setRenderHint(QPainter::TextAntialiasing, true);
-  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+  prepareForIcon(painter);
 
   SymbolPainter().drawUserpointSymbol(&painter, size / 2, size / 2, size / 2, false, false);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createApproachpointIcon(int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(iconBackground);
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  SymbolPainter().drawApproachSymbol(&painter, size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }
 
@@ -120,6 +121,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirp
     size = size * 4 / 5;
 
   atools::util::PainterContextSaver saver(painter);
+  Q_UNUSED(saver);
   QColor apColor = mapcolors::colorForAirport(airport);
 
   int radius = size / 2;
@@ -776,4 +778,11 @@ const QPixmap *SymbolPainter::trackLineFromCache(int size)
     trackLinePixmaps.insert(size, newPx);
     return newPx;
   }
+}
+
+void SymbolPainter::prepareForIcon(QPainter& painter)
+{
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  painter.setRenderHint(QPainter::TextAntialiasing, true);
+  painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 }

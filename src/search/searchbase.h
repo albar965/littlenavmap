@@ -24,7 +24,7 @@
 
 namespace atools {
 namespace gui {
-class TableZoomHandler;
+class ItemViewZoomHandler;
 }
 }
 
@@ -171,7 +171,7 @@ private:
   void showRow(int row);
 
   /* Used to make the table rows smaller and also used to adjust font size */
-  atools::gui::TableZoomHandler *zoomHandler = nullptr;
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
 
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;

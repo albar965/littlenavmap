@@ -431,6 +431,10 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
 
 void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs)
 {
+  legs.transitionDistance += 0.f;
+  legs.approachDistance += 0.f;
+  legs.missedDistance += 0.f;
+
   for(int i = 0; i < legs.size(); ++i)
   {
     maptypes::MapApproachLeg& leg = legs[i];
@@ -500,6 +504,13 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       leg.calculatedDistance = 0.f;
     if(leg.calculatedTrueCourse >= std::numeric_limits<float>::max() / 2)
       leg.calculatedTrueCourse = 0.f;
+
+    if(legs.isTransition(i))
+      legs.transitionDistance += leg.distance;
+    if(legs.isApproach(i))
+      legs.approachDistance += leg.distance;
+    if(legs.isMissed(i))
+      legs.missedDistance += leg.distance;
   }
 }
 

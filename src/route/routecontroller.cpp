@@ -28,7 +28,7 @@
 #include "gui/actiontextsaver.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "gui/tablezoomhandler.h"
+#include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
 #include "mapgui/mapwidget.h"
@@ -104,7 +104,7 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView), query(mapQuery)
 {
   // Set default table cell and font size to avoid Qt overly large cell sizes
-  zoomHandler = new atools::gui::TableZoomHandler(view);
+  zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
   entryBuilder = new FlightplanEntryBuilder(query);
 
@@ -2083,21 +2083,9 @@ void RouteController::updateTableModel()
 
     // VOR/NDB type
     if(mapobj.getMapObjectType() == maptypes::VOR)
-    {
-      QString type = mapobj.getVor().type.at(0);
-
-      if(mapobj.getVor().dmeOnly)
-        itemRow.append(new QStandardItem(tr("DME (%1)").arg(type)));
-      else if(mapobj.getVor().hasDme)
-        itemRow.append(new QStandardItem(tr("VORDME (%1)").arg(type)));
-      else
-        itemRow.append(new QStandardItem(tr("VOR (%1)").arg(type)));
-    }
+      itemRow.append(new QStandardItem(maptypes::vorFullShortText(mapobj.getVor())));
     else if(mapobj.getMapObjectType() == maptypes::NDB)
-    {
-      QString type = mapobj.getNdb().type == "CP" ? tr("CP") : mapobj.getNdb().type;
-      itemRow.append(new QStandardItem(tr("NDB (%1)").arg(type)));
-    }
+      itemRow.append(new QStandardItem(maptypes::ndbFullShortText(mapobj.getNdb())));
     else
       itemRow.append(new QStandardItem());
 

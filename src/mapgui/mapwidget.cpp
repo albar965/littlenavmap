@@ -930,9 +930,7 @@ const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
 
 void MapWidget::changeApproachHighlight(const maptypes::MapApproachLegs& approach)
 {
-  if(screenIndex->getApproachHighlight().ref.approachId != approach.ref.approachId ||
-     !approach.transitionLegs.isEmpty())
-    screenIndex->getApproachHighlight() = approach;
+  screenIndex->getApproachHighlight() = approach;
 }
 
 void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)

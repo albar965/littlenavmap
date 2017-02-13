@@ -25,7 +25,7 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
-#include "gui/tablezoomhandler.h"
+#include "gui/itemviewzoomhandler.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
@@ -582,6 +582,7 @@ void MainWindow::connectAllSlots()
   connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this,
           &MainWindow::legendAnchorClicked);
 
+  // Options dialog ===================================================================
   // Notify others of options change
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
@@ -596,6 +597,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, approachController, &ApproachTreeController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
@@ -614,8 +616,7 @@ void MainWindow::connectAllSlots()
           &ApproachTreeController::showApproaches);
 
   // Update rubber band in map window if user hovers over profile
-  connect(profileWidget, &ProfileWidget::highlightProfilePoint,
-          mapWidget, &MapWidget::highlightProfilePoint);
+  connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
@@ -630,10 +631,8 @@ void MainWindow::connectAllSlots()
   connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
           approachController, &ApproachTreeController::showApproaches);
 
-  connect(ui->actionMapShowAircraft, &QAction::toggled,
-          infoController, &InfoController::updateAllInformation);
-  connect(ui->actionMapShowAircraftAi, &QAction::toggled,
-          infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   connect(searchController->getNavSearch(), &NavSearch::showPos, mapWidget, &MapWidget::showPos);
   connect(
@@ -678,24 +677,17 @@ void MainWindow::connectAllSlots()
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
   // Flight plan calculation
-  connect(ui->actionRouteCalcDirect, &QAction::triggered,
-          routeController, &RouteController::calculateDirect);
-  connect(ui->actionRouteCalcRadionav, &QAction::triggered,
-          routeController, &RouteController::calculateRadionav);
-  connect(ui->actionRouteCalcHighAlt, &QAction::triggered,
-          routeController, &RouteController::calculateHighAlt);
-  connect(ui->actionRouteCalcLowAlt, &QAction::triggered,
-          routeController, &RouteController::calculateLowAlt);
-  connect(ui->actionRouteCalcSetAlt, &QAction::triggered,
-          routeController, &RouteController::calculateSetAlt);
-  connect(ui->actionRouteReverse, &QAction::triggered,
-          routeController, &RouteController::reverseRoute);
+  connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
+  connect(ui->actionRouteCalcRadionav, &QAction::triggered, routeController, &RouteController::calculateRadionav);
+  connect(ui->actionRouteCalcHighAlt, &QAction::triggered, routeController, &RouteController::calculateHighAlt);
+  connect(ui->actionRouteCalcLowAlt, &QAction::triggered, routeController, &RouteController::calculateLowAlt);
+  connect(ui->actionRouteCalcSetAlt, &QAction::triggered, routeController, &RouteController::calculateSetAlt);
+  connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
 
-  connect(ui->actionRouteCopyString, &QAction::triggered,
-          routeController, &RouteController::routeStringToClipboard);
+  connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
 
-  connect(ui->actionRouteAdjustAltitude, &QAction::triggered,
-          routeController, &RouteController::adjustFlightplanAltitude);
+  connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController,
+          &RouteController::adjustFlightplanAltitude);
 
   // Help menu
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
@@ -828,65 +820,51 @@ void MainWindow::connectAllSlots()
   // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
   // mapWidget, &MapWidget::setPropertyValue);
 
-  connect(ui->actionAboutMarble, &QAction::triggered,
-          marbleAbout, &Marble::MarbleAboutDialog::exec);
+  connect(ui->actionAboutMarble, &QAction::triggered, marbleAbout, &Marble::MarbleAboutDialog::exec);
 
-  connect(ui->actionConnectSimulator, &QAction::triggered,
-          connectClient, &ConnectClient::connectToServerDialog);
+  connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
 
-  connect(connectClient, &ConnectClient::dataPacketReceived,
-          mapWidget, &MapWidget::simDataChanged);
-  connect(connectClient, &ConnectClient::dataPacketReceived,
-          profileWidget, &ProfileWidget::simDataChanged);
-  connect(connectClient, &ConnectClient::dataPacketReceived,
-          infoController, &InfoController::simulatorDataReceived);
-  connect(connectClient, &ConnectClient::dataPacketReceived,
-          routeController, &RouteController::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simulatorDataReceived);
+  connect(connectClient, &ConnectClient::dataPacketReceived, routeController, &RouteController::simDataChanged);
 
   // Map widget needs to clear track first
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          mapWidget, &MapWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          mapWidget, &MapWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          this, &MainWindow::updateActionStates);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          this, &MainWindow::updateActionStates);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          routeController, &RouteController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
+          &RouteController::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          infoController, &InfoController::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          infoController, &InfoController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, infoController, &InfoController::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController,
+          &InfoController::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator,
-          profileWidget, &ProfileWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator,
-          profileWidget, &ProfileWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::connectedToSimulator, profileWidget, &ProfileWidget::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
+          &ProfileWidget::disconnectedFromSimulator);
 
   connect(mapWidget, &MapWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
 
-  connect(weatherReporter, &WeatherReporter::weatherUpdated,
-          mapWidget, &MapWidget::updateTooltip);
-  connect(weatherReporter, &WeatherReporter::weatherUpdated,
-          infoController, &InfoController::updateAirport);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirport);
 
-  connect(connectClient, &ConnectClient::weatherUpdated,
-          mapWidget, &MapWidget::updateTooltip);
-  connect(connectClient, &ConnectClient::weatherUpdated,
-          infoController, &InfoController::updateAirport);
+  connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
+  connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirport);
 
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
   connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
+  // Approach controller ===================================================================
   connect(approachController, &ApproachTreeController::approachLegSelected, this, &MainWindow::approachLegSelected);
   connect(approachController, &ApproachTreeController::approachSelected, this, &MainWindow::approachSelected);
   connect(approachController, &ApproachTreeController::showRect, mapWidget, &MapWidget::showRect);
   connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
+  connect(approachController, &ApproachTreeController::routeAdd, routeController, &RouteController::routeAdd);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1518,7 +1496,7 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
       else
         qWarning() << "Transition not found" << approachRef.transitionId;
     }
-    else if(approachRef.isApproachOnly())
+    else if(approachRef.isApproachOnly() && !approachRef.isLeg())
     {
       const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)

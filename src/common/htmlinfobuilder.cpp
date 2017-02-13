@@ -1163,8 +1163,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, QColor backg
   html.row2(tr("Magvar:"), maptypes::magvarText(ndb.magvar));
   html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(ndb.range));
-  html.row2(tr("Morse:"), morse->getCode(ndb.ident),
-            atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+  html.row2(tr("Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
   addCoordinates(rec, html);
   html.tableEnd();
 

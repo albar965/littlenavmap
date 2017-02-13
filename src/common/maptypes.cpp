@@ -1044,4 +1044,22 @@ MapApproachpoint::MapApproachpoint(const MapApproachLeg& leg)
   position = leg.line.getPos1();
 }
 
+QString vorFullShortText(const MapVor& vor)
+{
+  QString type = vor.type.at(0);
+
+  if(vor.dmeOnly)
+    return QObject::tr("DME (%1)").arg(type);
+  else if(vor.hasDme)
+    return QObject::tr("VORDME (%1)").arg(type);
+  else
+    return QObject::tr("VOR (%1)").arg(type);
+}
+
+QString ndbFullShortText(const MapNdb& ndb)
+{
+  QString type = ndb.type == "CP" ? QObject::tr("CP") : ndb.type;
+  return QObject::tr("NDB (%1)").arg(type);
+}
+
 } // namespace types

@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "search/searchbase.h"
-#include "gui/tablezoomhandler.h"
+#include "gui/itemviewzoomhandler.h"
 #include "search/sqlcontroller.h"
 #include "gui/mainwindow.h"
 #include "search/column.h"
@@ -111,7 +111,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
                        MapQuery *mapQuery, int tabWidgetIndex)
   : QObject(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery), tabIndex(tabWidgetIndex)
 {
-  zoomHandler = new atools::gui::TableZoomHandler(view);
+  zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
   Ui::MainWindow *ui = mainWindow->getUi();
 

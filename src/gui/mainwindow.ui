@@ -2011,7 +2011,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetRoute">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabRoutePlan">
         <attribute name="title">
@@ -2242,6 +2242,9 @@
              <bool>false</bool>
             </property>
             <property name="alternatingRowColors">
+             <bool>true</bool>
+            </property>
+            <property name="uniformRowHeights">
              <bool>true</bool>
             </property>
             <property name="allColumnsShowFocus">
@@ -4225,6 +4228,9 @@
    <property name="text">
     <string>Set %1 as Flight Plan Departure</string>
    </property>
+   <property name="iconText">
+    <string>Set as Flight Plan Departure</string>
+   </property>
    <property name="toolTip">
     <string>Set parking position as flight plan departure</string>
    </property>
@@ -5218,7 +5224,7 @@
   <action name="actionInfoApproachUnselect">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/approachunselect.svg</normaloff>:/littlenavmap/resources/icons/approachunselect.svg</iconset>
    </property>
    <property name="text">
     <string>Return to Approach Overview</string>
@@ -5273,6 +5279,24 @@
    </property>
    <property name="statusTip">
     <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachAttach">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Attach %1 to Flight Plan</string>
+   </property>
+   <property name="iconText">
+    <string>Attach to Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Attaches the approach and/or transition to the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Attaches the approach and/or transition to the flight plan</string>
    </property>
   </action>
  </widget>

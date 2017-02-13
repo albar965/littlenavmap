@@ -93,6 +93,7 @@ const QString SEARCHTAB_NAV_VIEW_WIDGET = "SearchPaneNav/WidgetView";
 const QString SEARCHTAB_NAV_VIEW_DIST_WIDGET = "SearchPaneNav/WidgetDistView";
 
 const QString APPROACHTREE_WIDGET = "ApproachTree/Widget";
+const QString APPROACHTREE_SELECTED_WIDGET = "ApproachTree/WidgetSelected";
 const QString APPROACHTREE_STATE = "ApproachTree/TreeState";
 const QString APPROACHTREE_AIRPORT = "ApproachTree/Airport";
 const QString APPROACHTREE_SELECTED_APPR = "ApproachTree/SeletedApproach";
