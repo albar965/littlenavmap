@@ -160,6 +160,10 @@ public:
    */
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
+  /* Add an approach and/or a transition */
+  void routeAttachApproach(const maptypes::MapApproachLegs& legs);
+  void routeClearApproach();
+
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
@@ -332,6 +336,9 @@ private:
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
+
+  void routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex,
+                        bool approachPoint);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

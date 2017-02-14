@@ -1728,7 +1728,73 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
+void RouteController::routeClearApproach()
+{
+  // RouteCommand *undoCommand = preChange(tr("Detach approach or transition"));
+  // for(FlightplanEntry& entry : route.getFlightplan().getEntries())
+  // entry.setApproachPoint(false);
+  // postChange(undoCommand);
+  // mainWindow->updateWindowTitle();
+  // emit routeChanged(true);
+  // mainWindow->setStatusMessage(tr("Detached approach or transition from flight plan."));
+}
+
+void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
+{
+  // Calculate insertion point
+  const maptypes::MapSearchResult& navaids = legs.at(0).navaids;
+  int insertIndex;
+  if(route.hasValidDestination() && route.size() >= 2)
+    insertIndex = route.size() - 2;
+  else
+    insertIndex = route.size() - 1;
+
+  bool markApproachPoint = false;
+
+  const RouteMapObject& insertRmo = route.at(insertIndex);
+  // Add as navaid or custom point
+  if(navaids.hasWaypoints())
+  {
+    if(!(insertRmo.getId() == navaids.waypoints.first().id && insertRmo.getMapObjectType() == maptypes::WAYPOINT))
+      routeAddInternal(navaids.waypoints.first().id, atools::geo::EMPTY_POS, maptypes::WAYPOINT, insertIndex, false);
+    else
+      markApproachPoint = true;
+  }
+  else if(navaids.hasVor())
+  {
+    if(!(insertRmo.getId() == navaids.vors.first().id && insertRmo.getMapObjectType() == maptypes::VOR))
+      routeAddInternal(navaids.vors.first().id, atools::geo::EMPTY_POS, maptypes::VOR, insertIndex, false);
+    else
+      markApproachPoint = true;
+  }
+  else if(navaids.hasNdb())
+  {
+    if(!(insertRmo.getId() == navaids.ndbs.first().id && insertRmo.getMapObjectType() == maptypes::NDB))
+      routeAddInternal(navaids.ndbs.first().id, atools::geo::EMPTY_POS, maptypes::NDB, insertIndex, false);
+    else
+      markApproachPoint = true;
+  }
+  else
+    routeAddInternal(-1, legs.at(0).line.getPos1(), maptypes::NDB, insertIndex, false);
+
+  // if(markApproachPoint)
+  // {
+  // // RouteCommand *undoCommand = preChange(tr("Attach approach or transition"));
+  // route.getFlightplan().getEntries()[insertIndex].setApproachPoint(true);
+  // // postChange(undoCommand);
+  // mainWindow->updateWindowTitle();
+  // emit routeChanged(true);
+  // mainWindow->setStatusMessage(tr("Attached approach or transition to flight plan."));
+  // }
+}
+
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
+{
+  routeAddInternal(id, userPos, type, legIndex, false);
+}
+
+void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex,
+                                       bool approachPoint)
 {
   qDebug() << "route add" << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
@@ -1737,6 +1803,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapOb
 
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1, curUserpointNumber);
+  // entry.setApproachPoint(approachPoint);
   Flightplan& flightplan = route.getFlightplan();
 
   int insertIndex = -1;

@@ -349,22 +349,23 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
       // If compass ticks are drawn rotate center symbol too
       painter->rotate(vor.magvar);
 
-    int radius = size / 2;
+    float sizeF = static_cast<float>(size);
+    float radius = sizeF / 2.f;
     if(vor.hasDme)
       // DME rectangle
-      painter->drawRect(-size / 2, -size / 2, size, size);
+      painter->drawRect(QRectF(-sizeF / 2.f, -sizeF / 2.f, sizeF, sizeF));
 
     if(!vor.dmeOnly)
     {
       // Draw VOR symbol
-      int corner = 2;
-      QPolygon polygon;
-      polygon << QPoint(-radius / corner, -radius)
-              << QPoint(radius / corner, -radius)
-              << QPoint(radius, 0)
-              << QPoint(radius / corner, radius)
-              << QPoint(-radius / corner, radius)
-              << QPoint(-radius, 0);
+      float corner = 2.f;
+      QPolygonF polygon;
+      polygon << QPointF(-radius / corner, -radius)
+              << QPointF(radius / corner, -radius)
+              << QPointF(radius, 0.f)
+              << QPointF(radius / corner, radius)
+              << QPointF(-radius / corner, radius)
+              << QPointF(-radius, 0.f);
 
       painter->drawConvexPolygon(polygon);
     }
@@ -373,18 +374,18 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
-      painter->setPen(QPen(mapcolors::vorSymbolColor, 1, Qt::SolidLine, Qt::SquareCap));
-      painter->drawEllipse(QPoint(0, 0), radius * 5, radius * 5);
+      painter->setPen(QPen(mapcolors::vorSymbolColor, 1.f, Qt::SolidLine, Qt::SquareCap));
+      painter->drawEllipse(QPointF(0.f, 0.f), radius * 5.f, radius * 5.f);
 
       for(int i = 0; i < 360; i += 10)
       {
         if(i == 0)
-          painter->drawLine(0, 0, 0, -radius * 5);
+          painter->drawLine(QLineF(0.f, 0.f, 0.f, -radius * 5.f));
         else if((i % 90) == 0)
-          painter->drawLine(0, static_cast<int>(-radius * 4), 0, -radius * 5);
+          painter->drawLine(QLineF(0.f, static_cast<int>(-radius * 4.f), 0.f, -radius * 5.f));
         else
-          painter->drawLine(0, static_cast<int>(-radius * 4.5), 0, -radius * 5);
-        painter->rotate(10);
+          painter->drawLine(QLineF(0.f, static_cast<int>(-radius * 4.5f), 0.f, -radius * 5.f));
+        painter->rotate(10.f);
       }
     }
     painter->resetTransform();
@@ -404,6 +405,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor
 void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
+  float sizeF = static_cast<float>(size);
 
   painter->setBackgroundMode(Qt::TransparentMode);
   if(routeFill)
@@ -415,21 +417,21 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, boo
 
   // Use dotted or solid line depending on size
   painter->setPen(QPen(mapcolors::ndbSymbolColor, penSize,
-                       size > 12 ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
+                       sizeF > 12.f ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
-  int radius = size / 2;
+  float radius = sizeF / 2.f;
 
   if(!fast)
   {
     // Draw outer dotted/solid circle
-    painter->drawEllipse(QPoint(x, y), radius, radius);
+    painter->drawEllipse(QPointF(x, y), radius, radius);
 
-    if(size > 12)
+    if(sizeF > 12.f)
       // If big enought draw inner dotted circle
-      painter->drawEllipse(QPoint(x, y), radius * 2 / 3, radius * 2 / 3);
+      painter->drawEllipse(QPointF(x, y), radius * 2.f / 3.f, radius * 2.f / 3.f);
   }
 
-  int pointSize = size > 12 ? size / 4 : size / 3;
+  float pointSize = sizeF > 12 ? sizeF / 4.f : sizeF / 3.f;
   painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
   painter->drawPoint(x, y);
 }

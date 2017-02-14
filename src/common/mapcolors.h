@@ -93,9 +93,9 @@ const QColor highlightApproachColorFast = QColor(0, 0, 150);
 const QColor routeOutlineColor = QColor(Qt::black);
 const QColor routeDragColor = QColor(Qt::darkYellow);
 
-const QColor routeApproachPreviewOutlineColor = QColor(Qt::black);
-const QColor routeApproachPreviewColor = QColor(255, 200, 0);
-const QColor routeApproachPreviewMissedColor = QColor(255, 200, 0);
+const QColor routeApproachOutlineColor = QColor(Qt::black);
+const QColor routeApproachColor = QColor(255, 150, 0);
+const QColor routeApproachMissedColor = QColor(255, 150, 0);
 
 const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);

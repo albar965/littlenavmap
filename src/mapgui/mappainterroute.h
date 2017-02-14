@@ -58,7 +58,7 @@ private:
   void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
-  void paintApproachPreview(const PaintContext *context,
+  void paintApproach(const PaintContext *context,
                             const maptypes::MapApproachLegs& legs);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);

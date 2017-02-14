@@ -65,6 +65,11 @@ public:
 
   void optionsChanged();
 
+  const maptypes::MapApproachLegs& getApproachSelectedLegs() const
+  {
+    return approachSelectedLegs;
+  }
+
 signals:
   /* Show approaches and highlight circles on the map */
   void approachSelected(maptypes::MapApproachRef);
@@ -76,7 +81,8 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop */
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+  void routeAttachApproach(const maptypes::MapApproachLegs& legs);
+  void routeClearApproach();
 
 private:
   void itemSelectionChanged();
@@ -107,6 +113,7 @@ private:
   void enableSelectedMode(const maptypes::MapApproachRef& ref);
   void disableSelectedMode();
   void updateTreeHeader();
+  void createFonts();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
@@ -121,7 +128,7 @@ private:
   HtmlInfoBuilder *infoBuilder = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
-  QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont;
+  QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont, identFont;
   maptypes::MapAirport currentAirport;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
@@ -129,12 +136,10 @@ private:
 
   /* View mode: True if only one selected approach is shown */
   bool approachSelectedMode = false;
-  maptypes::MapApproachRef approachSelectedModeRef;
+  maptypes::MapApproachLegs approachSelectedLegs;
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
-  void createFonts();
-
 };
 
 #endif // LITTLENAVMAP_APPROACHTREECONTROLLER_H

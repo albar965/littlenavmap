@@ -63,7 +63,7 @@ void MapPainterRoute::render(PaintContext *context)
   }
 
   if(context->mapLayer->isAirport())
-    paintApproachPreview(context, mapWidget->getApproachHighlight());
+    paintApproach(context, mapWidget->getApproachHighlight());
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -74,6 +74,29 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     return;
 
   context->painter->setBrush(Qt::NoBrush);
+
+  // Get type and id of initial fix if there is an approach shown
+  maptypes::MapObjectRef initialFixRef({-1, maptypes::NONE});
+
+  if(!mapWidget->getApproachHighlight().isEmpty())
+  {
+    const maptypes::MapApproachLeg& initialFix = mapWidget->getApproachHighlight().at(0);
+    if(initialFix.navaids.hasWaypoints())
+    {
+      initialFixRef.id = initialFix.navaids.waypoints.first().id;
+      initialFixRef.type = maptypes::WAYPOINT;
+    }
+    else if(initialFix.navaids.hasVor())
+    {
+      initialFixRef.id = initialFix.navaids.vors.first().id;
+      initialFixRef.type = maptypes::VOR;
+    }
+    else if(initialFix.navaids.hasNdb())
+    {
+      initialFixRef.id = initialFix.navaids.ndbs.first().id;
+      initialFixRef.type = maptypes::NDB;
+    }
+  }
 
   // Use a layer that is independent of the declutter factor
   if(!routeMapObjects.isEmpty() && context->mapLayerEffective->isAirportDiagram())
@@ -115,6 +138,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Check if there is any magnetic variance on the route
+  // If not (all user waypoints) use true heading
   bool foundMagvarObject = false;
   for(const RouteMapObject& obj : routeMapObjects)
   {
@@ -129,19 +153,32 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   QVector<Line> lines;
   GeoDataLineString linestring;
   linestring.setTessellate(true);
+
+  // Find the index when the currently shown approach or transition starts to stop painting there
+  int approachIndex = -1;
+
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
     if(i > 0)
     {
-      // Build text
-      routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
-                        QString::number(obj.getCourseToRhumb(), 'f', 0) +
-                        (foundMagvarObject ? tr("°M") : tr("°T")));
+      if(approachIndex == -1)
+        // Build text
+        routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
+                          QString::number(obj.getCourseToRhumb(), 'f', 0) +
+                          (foundMagvarObject ? tr("°M") : tr("°T")));
+      else
+        routeTexts.append(QString());
 
       lines.append(Line(routeMapObjects.at(i - 1).getPosition(), obj.getPosition()));
     }
-    linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
+
+    if(approachIndex == -1)
+      linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
+
+    if(routeMapObjects.at(i).getId() == initialFixRef.id &&
+       routeMapObjects.at(i).getMapObjectType() == initialFixRef.type)
+      approachIndex = i;
   }
 
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -202,11 +239,19 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   context->szFont(context->textSizeFlightplan);
   // ================================================================================
 
+  QBitArray visibleStartPoints = textPlacement.getVisibleStartPoints();
+  if(approachIndex != -1)
+  {
+    // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
+    for(int i = approachIndex; i < visibleStartPoints.size() - 1; i++)
+      visibleStartPoints.clearBit(i);
+  }
+
   // Draw airport and navaid symbols
-  drawSymbols(context, routeMapObjects, textPlacement.getVisibleStartPoints(), textPlacement.getStartPoints());
+  drawSymbols(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw symbol text
-  drawSymbolText(context, routeMapObjects, textPlacement.getVisibleStartPoints(), textPlacement.getStartPoints());
+  drawSymbolText(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
 
   if(routeMapObjects.size() >= 2)
   {
@@ -233,7 +278,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintApproachPreview(const PaintContext *context, const maptypes::MapApproachLegs& legs)
+void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes::MapApproachLegs& legs)
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
@@ -243,7 +288,7 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
   QLineF lastLine;
 
-  context->painter->setPen(QPen(mapcolors::routeApproachPreviewOutlineColor, outerlinewidth,
+  context->painter->setPen(QPen(mapcolors::routeApproachOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   for(int i = 0; i < legs.size(); i++)
     paintApproachSegment(context, legs, i, lastLine, nullptr, true);
@@ -251,8 +296,8 @@ void MapPainterRoute::paintApproachPreview(const PaintContext *context, const ma
   context->painter->setBackgroundMode(Qt::OpaqueMode);
   context->painter->setBackground(Qt::white);
 
-  QPen missedPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
-  QPen apprPen(mapcolors::routeApproachPreviewColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  QPen missedPen(mapcolors::routeApproachColor, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+  QPen apprPen(mapcolors::routeApproachColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   lastLine = QLineF();
   QVector<DrawText> drawTextLines;
   drawTextLines.fill({Line(), false, false}, legs.size());
@@ -605,28 +650,30 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
      (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
     return;
 
-  maptypes::MapApproachLeg leg = legs.at(index);
+  const maptypes::MapApproachLeg& leg = legs.at(index);
 
   if(leg.disabled)
     return;
 
   bool lastInTransition = false;
   if(index < legs.size() - 1 &&
-     leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT)
+     leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT &&
+     leg.type != maptypes::HOLD_TO_ALTITUDE && leg.type != maptypes::HOLD_TO_FIX &&
+     leg.type != maptypes::HOLD_TO_MANUAL_TERMINATION)
     // Do not paint the last point in the transition since it overlaps with the approach
-    // But draw the intercept text
+    // But draw the intercept and hold text
     lastInTransition = legs.isTransition(index) &&
                        legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH;
 
-  if(index > 0 && legs.isApproach(index) &&
-     legs.isTransition(index - 1) && context->objectTypes & maptypes::APPROACH &&
-     context->objectTypes & maptypes::APPROACH_TRANSITION)
-    // Merge display text to get any text from a preceding transition point
-    leg.displayText.append(legs.at(index - 1).displayText);
+  QStringList texts;
+  // if(index > 0 && legs.isApproach(index) &&
+  // legs.isTransition(index - 1) && context->objectTypes & maptypes::APPROACH &&
+  // context->objectTypes & maptypes::APPROACH_TRANSITION)
+  // // Merge display text to get any text from a preceding transition point
+  // texts.append(legs.at(index - 1).displayText);
 
   int x = 0, y = 0;
 
-  QStringList texts;
   // Manual and altitude terminated legs that have a calculated position needing extra text
   if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
                          maptypes::COURSE_TO_DME_DISTANCE,

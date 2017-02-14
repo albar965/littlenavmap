@@ -135,7 +135,6 @@ public:
 private:
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
-
 };
 
 #endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H

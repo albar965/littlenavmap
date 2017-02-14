@@ -864,7 +864,10 @@ void MainWindow::connectAllSlots()
   connect(approachController, &ApproachTreeController::approachSelected, this, &MainWindow::approachSelected);
   connect(approachController, &ApproachTreeController::showRect, mapWidget, &MapWidget::showRect);
   connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
-  connect(approachController, &ApproachTreeController::routeAdd, routeController, &RouteController::routeAdd);
+  connect(approachController, &ApproachTreeController::routeAttachApproach, routeController,
+          &RouteController::routeAttachApproach);
+  connect(approachController, &ApproachTreeController::routeClearApproach, routeController,
+          &RouteController::routeClearApproach);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
