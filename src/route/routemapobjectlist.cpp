@@ -120,11 +120,11 @@ int RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& c
 
   for(int i = 1; i < size(); i++)
   {
-    bool valid;
-    float crossTrack = pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), valid);
+    atools::geo::CrossTrackStatus status;
+    float crossTrack = pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), status);
     float distance = std::abs(crossTrack);
 
-    if(valid && distance < minDistance)
+    if(status != atools::geo::INVALID && distance < minDistance)
     {
       minDistance = distance;
       crossTrackDistanceNm = crossTrack;
