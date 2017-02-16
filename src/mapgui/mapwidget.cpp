@@ -53,6 +53,8 @@
 #include <marble/MarbleModel.h>
 #include <marble/AbstractFloatItem.h>
 
+#define DEBUG_MOVING_AIRPLANE
+
 // Default zoom distance if start position was not set (usually first start after installation */
 const int DEFAULT_MAP_DISTANCE = 7000;
 
@@ -275,6 +277,8 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
 
   updateVisibleObjectsStatusBar();
+
+  emit shownMapFeaturesChanged(paintLayer->getShownMapObjects());
 
   // Update widget
   update();
@@ -930,7 +934,10 @@ const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
 
 void MapWidget::changeApproachHighlight(const maptypes::MapApproachLegs& approach)
 {
+  cancelDragAll();
   screenIndex->getApproachHighlight() = approach;
+  screenIndex->updateRouteScreenGeometry();
+  update();
 }
 
 void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)
@@ -1775,6 +1782,28 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   if(!isActiveWindow())
     return;
 
+#ifdef DEBUG_MOVING_AIRPLANE
+  static int packetId = 0;
+  static Pos lastPos;
+  static QPoint lastPoint;
+
+  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+  {
+    if(QPoint(lastPoint - event->pos()).manhattanLength() > 4)
+    {
+      qreal lon, lat;
+      geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+      Pos pos(lon, lat);
+
+      atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
+      data.setPacketId(packetId++);
+
+      emit mainWindow->getConnectClient()->dataPacketReceived(data);
+      lastPos = pos;
+      lastPoint = event->pos();
+    }
+  }
+#endif
   if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
   {
     // Currently dragging a measurement line

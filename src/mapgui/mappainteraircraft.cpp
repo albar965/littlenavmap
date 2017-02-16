@@ -65,13 +65,14 @@ void MapPainterAircraft::render(PaintContext *context)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
 
   setRenderHints(context->painter);
 
   if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
     paintAircraftTrack(context);
 
-  if(mapWidget->isConnected())
+  if(mapWidget->isConnected() || mapWidget->getUserAircraft().isDebug())
   {
     if(mapWidget->distance() < DISTANCE_CUT_OFF_AI_LIMIT)
     {

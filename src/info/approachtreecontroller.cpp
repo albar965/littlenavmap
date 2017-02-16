@@ -18,6 +18,7 @@
 #include "info/approachtreecontroller.h"
 
 #include "common/unit.h"
+#include "common/mapcolors.h"
 #include "gui/mainwindow.h"
 #include "common/infoquery.h"
 #include "common/approachquery.h"
@@ -33,9 +34,11 @@
 #include "common/symbolpainter.h"
 #include "gui/itemviewzoomhandler.h"
 #include "route/routecontroller.h"
+#include "gui/griddelegate.h"
 
 #include <QMenu>
 #include <QPainter>
+#include <QStyledItemDelegate>
 #include <QTreeWidget>
 #include <QUrlQuery>
 
@@ -73,8 +76,11 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
     treeWidget(main->getUi()->treeWidgetApproachInfo), mainWindow(main)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
+  gridDelegate = new atools::gui::GridDelegate(treeWidget);
 
   infoBuilder = new HtmlInfoBuilder(mainWindow, true);
+
+  treeWidget->setItemDelegate(gridDelegate);
 
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ApproachTreeController::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ApproachTreeController::itemDoubleClicked);
@@ -107,6 +113,8 @@ ApproachTreeController::~ApproachTreeController()
 {
   delete infoBuilder;
   delete zoomHandler;
+  treeWidget->setItemDelegate(nullptr);
+  delete gridDelegate;
 }
 
 void ApproachTreeController::optionsChanged()
@@ -114,6 +122,65 @@ void ApproachTreeController::optionsChanged()
   // Adapt table view text size
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   createFonts();
+}
+
+void ApproachTreeController::preDatabaseLoad()
+{
+  emit approachSelected(maptypes::MapApproachRef());
+  emit approachLegSelected(maptypes::MapApproachRef());
+
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  ui->textBrowserApproachInfo->clear();
+  treeWidget->clear();
+
+  itemIndex.clear();
+  itemLoadedIndex.clear();
+  currentAirport.id = -1;
+  currentAirport.position = atools::geo::Pos();
+  recentTreeState.clear();
+  approachSelectedMode = false;
+  approachSelectedLegs = maptypes::MapApproachLegs();
+}
+
+void ApproachTreeController::postDatabaseLoad()
+{
+
+}
+
+void ApproachTreeController::highlightNextWaypoint(int leg)
+{
+  if(approachSelectedMode)
+  {
+    static const QColor rowBgColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+    static const QColor rowAltBgColor = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase);
+
+    QColor color = OptionData::instance().isGuiStyleDark() ?
+                   mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
+
+    for(int i = 0; i < treeWidget->invisibleRootItem()->childCount(); i++)
+    {
+      QTreeWidgetItem *item = treeWidget->invisibleRootItem()->child(i);
+
+      for(int col = SELECTED_IDENT; col <= SELECTED_REMARKS; col++)
+      {
+        if(i == leg)
+        {
+          item->setBackground(col, color);
+          item->setFont(col, activeLegFont);
+        }
+        else
+        {
+          item->setBackground(col, (i % 2) == 0 ? rowBgColor : rowAltBgColor);
+
+          if(col == SELECTED_IDENT)
+            item->setFont(col, identFont);
+          else
+            item->setFont(col, legFont);
+        }
+      }
+    }
+  }
 }
 
 void ApproachTreeController::showApproaches(maptypes::MapAirport airport)
@@ -182,11 +249,6 @@ void ApproachTreeController::fillApproachTreeWidget()
     {
       // Show information for the selected approach and/or transition
       fillApproachInformation(currentAirport, approachSelectedLegs.ref);
-
-      // Change the tree widget to look more like a table view
-      treeWidget->setStyleSheet(
-        QString("QTreeView::item::!selected { border: 0.5px; border-style: solid; border-color: %1;}").
-        arg(QApplication::palette().color(QPalette::Active, QPalette::Window).name()));
       treeWidget->setIndentation(0);
 
       // Add only legs in view mode
@@ -549,7 +611,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
 
   ui->actionInfoApproachExpandAll->setDisabled(approachSelectedMode);
   ui->actionInfoApproachCollapseAll->setDisabled(approachSelectedMode);
-  ui->actionInfoApproachClear->setDisabled(treeWidget->selectedItems().isEmpty());
+  ui->actionInfoApproachClear->setDisabled(treeWidget->selectedItems().isEmpty() || approachSelectedMode);
   ui->actionInfoApproachUnselect->setDisabled(!approachSelectedMode);
   ui->actionInfoApproachSelect->setDisabled(item == nullptr || approachSelectedMode);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
@@ -1079,9 +1141,6 @@ void ApproachTreeController::disableSelectedMode()
 void ApproachTreeController::createFonts()
 {
   const QFont& font = treeWidget->font();
-  runwayFont = font;
-  runwayFont.setWeight(QFont::Bold);
-
   identFont = font;
   identFont.setWeight(QFont::Bold);
 
@@ -1099,4 +1158,7 @@ void ApproachTreeController::createFonts()
 
   invalidLegFont = legFont;
   invalidLegFont.setBold(true);
+
+  activeLegFont = legFont;
+  activeLegFont.setBold(true);
 }

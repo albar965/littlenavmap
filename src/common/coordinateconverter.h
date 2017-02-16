@@ -100,7 +100,8 @@ public:
   bool wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
 
-  bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size, bool *isHidden) const;
+  bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE,
+            bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
 

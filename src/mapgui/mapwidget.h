@@ -309,6 +309,8 @@ signals:
   /* Aircraft track was pruned and needs to be updated */
   void aircraftTrackPruned();
 
+  void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
+
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
   void setDetailLevel(int factor);

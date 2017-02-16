@@ -220,6 +220,10 @@ public:
 
   void editUserWaypointName(int index);
 
+  void approachSelected(const maptypes::MapApproachLegs& approach);
+
+  void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -337,8 +341,7 @@ private:
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
 
-  void routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex,
-                        bool approachPoint);
+  void routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

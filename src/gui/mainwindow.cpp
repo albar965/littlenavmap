@@ -703,6 +703,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showApproaches, approachController, &ApproachTreeController::showApproaches);
+  connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
 
   // Connect toolbar combo boxes
   void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
@@ -1488,14 +1489,20 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
   if(approachRef.isEmpty())
+  {
+    routeController->approachSelected(maptypes::MapApproachLegs());
     mapWidget->changeApproachHighlight(maptypes::MapApproachLegs());
+  }
   else
   {
     if(approachRef.isApproachAndTransition())
     {
       const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
+      {
+        routeController->approachSelected(*legs);
         mapWidget->changeApproachHighlight(*legs);
+      }
       else
         qWarning() << "Transition not found" << approachRef.transitionId;
     }
@@ -1503,7 +1510,10 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
     {
       const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
+      {
+        routeController->approachSelected(*legs);
         mapWidget->changeApproachHighlight(*legs);
+      }
       else
         qWarning() << "Approach not found" << approachRef.transitionId;
     }
@@ -1971,6 +1981,7 @@ void MainWindow::preDatabaseLoad()
 
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
+    approachController->preDatabaseLoad();
     mapWidget->preDatabaseLoad();
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
@@ -1996,6 +2007,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     approachQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
+    approachController->postDatabaseLoad();
     mapWidget->postDatabaseLoad();
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();

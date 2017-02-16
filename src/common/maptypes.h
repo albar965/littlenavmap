@@ -35,6 +35,10 @@
  */
 namespace maptypes {
 
+/* Value for invalid/not found distances */
+Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
+
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
 
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
@@ -693,6 +697,7 @@ struct MapApproachLeg
                    interceptPos, /* Position of an intercept leg */
                    procedureTurnPos /* Extended position of a procedure turn */;
   atools::geo::Line line /* Line with flying direction from pos1 to pos2 */;
+  atools::geo::LineString geometry; /* Same as line or geometry approximation for distance to leg calculation */
   MapAltRestriction altRestriction;
 
   /* Navaids resolved by approach query class */
@@ -729,7 +734,7 @@ struct MapApproachLegs
   QVector<MapApproachLeg> approachLegs;
   MapApproachRef ref;
   atools::geo::Rect bounding;
-  float approachDistance, transitionDistance, missedDistance;
+  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
 
   bool isEmpty() const
   {
@@ -785,6 +790,9 @@ struct MapApproachLegs
   {
     return isTransition(i) ? transitionLegs[i] : approachLegs[apprIdx(i)];
   }
+
+  int getNearestLegIndex(const atools::geo::Pos& pos, maptypes::MapObjectTypes types,
+                         float& crossTrackDistanceNm) const;
 
 private:
   int apprIdx(int i) const

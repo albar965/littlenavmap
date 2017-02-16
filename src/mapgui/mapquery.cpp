@@ -889,7 +889,7 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
   {
     // Now find the nearest since number is not unique for helipads and runways
     maptypes::MapStart minStart;
-    float minDistance = std::numeric_limits<float>::max();
+    float minDistance = maptypes::INVALID_DISTANCE_VALUE;
     for(const maptypes::MapStart& s : starts)
     {
       float dist = position.distanceMeterTo(s.position);

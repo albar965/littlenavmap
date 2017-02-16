@@ -22,6 +22,7 @@
 #include "options/optiondata.h"
 #include "common/constants.h"
 #include "common/formatter.h"
+#include "info/approachtreecontroller.h"
 #include "common/unit.h"
 #include "exception.h"
 #include "export/csvexporter.h"
@@ -1277,6 +1278,17 @@ void RouteController::editUserWaypointName(int index)
   }
 }
 
+void RouteController::approachSelected(const maptypes::MapApproachLegs& approach)
+{
+  route.setApproachLegs(approach);
+}
+
+void RouteController::shownMapFeaturesChanged(maptypes::MapObjectTypes types)
+{
+  qDebug() << Q_FUNC_INFO;
+  route.setShownMapFeatures(types);
+}
+
 /* Hide or show map hightlights if dock visibility changes */
 void RouteController::dockVisibilityChanged(bool visible)
 {
@@ -1749,33 +1761,33 @@ void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
   else
     insertIndex = route.size() - 1;
 
-  bool markApproachPoint = false;
+  // bool markApproachPoint = false;
 
   const RouteMapObject& insertRmo = route.at(insertIndex);
   // Add as navaid or custom point
   if(navaids.hasWaypoints())
   {
     if(!(insertRmo.getId() == navaids.waypoints.first().id && insertRmo.getMapObjectType() == maptypes::WAYPOINT))
-      routeAddInternal(navaids.waypoints.first().id, atools::geo::EMPTY_POS, maptypes::WAYPOINT, insertIndex, false);
-    else
-      markApproachPoint = true;
+      routeAddInternal(navaids.waypoints.first().id, atools::geo::EMPTY_POS, maptypes::WAYPOINT, insertIndex);
+    // else
+    // markApproachPoint = true;
   }
   else if(navaids.hasVor())
   {
     if(!(insertRmo.getId() == navaids.vors.first().id && insertRmo.getMapObjectType() == maptypes::VOR))
-      routeAddInternal(navaids.vors.first().id, atools::geo::EMPTY_POS, maptypes::VOR, insertIndex, false);
-    else
-      markApproachPoint = true;
+      routeAddInternal(navaids.vors.first().id, atools::geo::EMPTY_POS, maptypes::VOR, insertIndex);
+    // else
+    // markApproachPoint = true;
   }
   else if(navaids.hasNdb())
   {
     if(!(insertRmo.getId() == navaids.ndbs.first().id && insertRmo.getMapObjectType() == maptypes::NDB))
-      routeAddInternal(navaids.ndbs.first().id, atools::geo::EMPTY_POS, maptypes::NDB, insertIndex, false);
-    else
-      markApproachPoint = true;
+      routeAddInternal(navaids.ndbs.first().id, atools::geo::EMPTY_POS, maptypes::NDB, insertIndex);
+    // else
+    // markApproachPoint = true;
   }
   else
-    routeAddInternal(-1, legs.at(0).line.getPos1(), maptypes::NDB, insertIndex, false);
+    routeAddInternal(-1, legs.at(0).line.getPos1(), maptypes::NDB, insertIndex);
 
   // if(markApproachPoint)
   // {
@@ -1790,11 +1802,10 @@ void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
-  routeAddInternal(id, userPos, type, legIndex, false);
+  routeAddInternal(id, userPos, type, legIndex);
 }
 
-void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex,
-                                       bool approachPoint)
+void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
   qDebug() << "route add" << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
@@ -2254,12 +2265,11 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    if(!route.isEmpty() && simulatorData.getUserAircraft().getPosition().isValid())
-    {
-      float cross;
-      int leg = route.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), cross);
-      highlightNextWaypoint(leg);
-    }
+    int routeLeg = 0, apprLeg = 0;
+    route.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), routeLeg, apprLeg);
+    highlightNextWaypoint(routeLeg);
+    mainWindow->getApproachController()->highlightNextWaypoint(apprLeg);
+
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
 }

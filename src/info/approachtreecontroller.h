@@ -28,6 +28,7 @@
 namespace atools {
 namespace gui {
 class ItemViewZoomHandler;
+class GridDelegate;
 }
 
 namespace sql {
@@ -64,6 +65,10 @@ public:
   void restoreState();
 
   void optionsChanged();
+  void preDatabaseLoad();
+  void postDatabaseLoad();
+
+  void highlightNextWaypoint(int leg);
 
   const maptypes::MapApproachLegs& getApproachSelectedLegs() const
   {
@@ -128,7 +133,7 @@ private:
   HtmlInfoBuilder *infoBuilder = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
-  QFont transitionFont, approachFont, runwayFont, legFont, missedLegFont, invalidLegFont, identFont;
+  QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, activeLegFont, identFont;
   maptypes::MapAirport currentAirport;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
@@ -140,6 +145,7 @@ private:
 
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::GridDelegate *gridDelegate = nullptr;
 };
 
 #endif // LITTLENAVMAP_APPROACHTREECONTROLLER_H

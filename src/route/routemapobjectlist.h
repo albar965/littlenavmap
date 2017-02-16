@@ -42,10 +42,10 @@ public:
   int getNearestLegOrPointIndex(const atools::geo::Pos& pos) const;
 
   /* Get nearest leg index along the position and cross track distance in nautical miles to the leg. */
-  int getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm) const;
-
-  /* Get nearest waypoint index and distance in nautical miles to this point.  */
-  int getNearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const;
+  /* Includes approach legs. */
+  void getNearestLegIndex(const atools::geo::Pos& pos, int& routeIndex, int& approachIndex) const;
+  void getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm,
+                          int& routeIndex, int& approachIndex) const;
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -61,10 +61,8 @@ public:
    */
   bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStart, float *distToDest,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
-                         int *nextLegIndex = nullptr) const;
+                         int *nextRouteLegIndex = nullptr) const;
 
-  /* Get a position along the route. Pos is invalid if not along */
-  atools::geo::Pos getPositionAtDistance(float distFromStart) const;
   atools::geo::Pos getTopOfDescent() const;
 
   /* Distance from TOD to destination in nm */
@@ -125,16 +123,36 @@ public:
   /* @return true if it has at least two waypoints */
   bool canCalcRoute() const;
 
-  /* Value for invalid/not found distances */
-  const static float INVALID_DISTANCE_VALUE;
-
   void copy(const RouteMapObjectList& other);
 
   int getNextUserWaypointNumber() const;
 
+  /* Calculate the index in the route where an approach or transition starts - size of route if not found */
+  int calculateApproachIndex() const;
+
+  void setApproachLegs(const maptypes::MapApproachLegs& legs);
+
+  int getNearestRouteLegIndex(const atools::geo::Pos& pos) const;
+  int getNearestApproachLegIndex(const atools::geo::Pos& pos) const;
+
+  void setShownMapFeatures(maptypes::MapObjectTypes types)
+  {
+    shownTypes = types;
+  }
+
 private:
+  /* Get a position along the route. Pos is invalid if not along */
+  atools::geo::Pos positionAtDistance(float distFromStart) const;
+
+  /* Get nearest waypoint index and distance in nautical miles to this point.  */
+  int nearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const;
+  void nearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm, int& routeIndex,
+                       int& approachIndex) const;
+
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
+  maptypes::MapApproachLegs approachLegs;
+  maptypes::MapObjectTypes shownTypes;
 };
 
 #endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H

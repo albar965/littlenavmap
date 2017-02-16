@@ -336,14 +336,16 @@ maptypes::MapApproachLegs *ApproachQuery::fetchApproachLegs(const maptypes::MapA
     postProcessLegs(airport, *legs);
 
     if(!legs->isEmpty())
+    {
       approachCache.insert(approachId, legs);
+      return legs;
+    }
     else
     {
       approachCache.insert(approachId, nullptr);
       delete legs;
     }
-
-    return legs;
+    return nullptr;
   }
 }
 
@@ -383,11 +385,16 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
     postProcessLegs(airport, *legs);
 
     if(!legs->isEmpty())
+    {
       transitionCache.insert(transitionId, legs);
+      return legs;
+    }
     else
+    {
       transitionCache.insert(transitionId, nullptr);
-
-    return legs;
+      delete legs;
+    }
+    return nullptr;
   }
 }
 
@@ -444,7 +451,9 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     // ===========================================================
     if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
     {
-      leg.calculatedDistance = meterToNm(atools::geo::calcArcDistance(leg.line, leg.recFixPos, leg.turnDirection == "L"));
+      atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
+                                 &leg.geometry);
+      leg.calculatedDistance = meterToNm(leg.calculatedDistance);
       leg.calculatedTrueCourse = 0.f;
     }
     // ===========================================================
@@ -455,11 +464,13 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
         leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.interceptPos) +
                                            leg.interceptPos.distanceMeterTo(leg.line.getPos2()));
         leg.calculatedTrueCourse = normalizeCourse(leg.interceptPos.angleDegTo(leg.line.getPos2()));
+        leg.geometry << leg.line.getPos1() << leg.interceptPos << leg.line.getPos2();
       }
       else
       {
-        leg.calculatedDistance = meterToNm(leg.line.distanceMeter());
+        leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
         leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+        leg.geometry << leg.line.getPos1() << leg.line.getPos2();
       }
     }
     // ===========================================================
@@ -469,6 +480,8 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.procedureTurnPos) * 2.f);
       // Course from fix to turn point
       leg.calculatedTrueCourse = normalizeCourse(leg.course + (leg.turnDirection == "L" ? -45.f : 45.f) + leg.magvar);
+
+      leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << leg.line.getPos2();
     }
     // ===========================================================
     else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
@@ -477,12 +490,14 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     {
       leg.calculatedDistance = 2.f;
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     // ===========================================================
     else if(type == maptypes::TRACK_FROM_FIX_FROM_DISTANCE)
     {
       leg.calculatedDistance = leg.distance;
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     // ===========================================================
     else if(contains(type, {maptypes::HOLD_TO_MANUAL_TERMINATION, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_ALTITUDE,
@@ -492,17 +507,18 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
                             maptypes::DIRECT_TO_FIX, maptypes::TRACK_TO_FIX,
                             maptypes::COURSE_TO_INTERCEPT, maptypes::HEADING_TO_INTERCEPT}))
     {
-      leg.calculatedDistance = meterToNm(leg.line.distanceMeter());
+      leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
 
     if(prevLeg != nullptr && !leg.intercept)
       // Add distance from any existing gaps, bows or turns except for intercept legs
       leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
 
-    if(leg.calculatedDistance >= std::numeric_limits<float>::max() / 2)
+    if(leg.calculatedDistance >= maptypes::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedDistance = 0.f;
-    if(leg.calculatedTrueCourse >= std::numeric_limits<float>::max() / 2)
+    if(leg.calculatedTrueCourse >= maptypes::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedTrueCourse = 0.f;
 
     if(legs.isTransition(i))

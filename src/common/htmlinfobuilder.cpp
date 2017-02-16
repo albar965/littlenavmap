@@ -1490,31 +1490,38 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     {
       head(html, tr("Flight Plan Progress"));
       html.table();
-      // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
-      html.row2(tr("To Destination:"), Unit::distNm(distToDestNm));
 
-      timeAndDate(userAircaft, html);
-
-      if(aircraft.getGroundSpeedKts() > 20.f)
+      if(distToDestNm < maptypes::INVALID_DISTANCE_VALUE)
       {
-        float timeToDestination = distToDestNm / aircraft.getGroundSpeedKts();
-        QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
-        html.row2(tr("Arrival Time:"), locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
-                  arrival.timeZoneAbbreviation());
-        html.row2(tr("En route Time:"), formatter::formatMinutesHoursLong(timeToDestination));
-      }
+        // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
+        html.row2(tr("To Destination:"), Unit::distNm(distToDestNm));
 
-      float toTod = route.getTopOfDescentFromStart() - distFromStartNm;
-      if(toTod > 0)
-      {
-        QString timeStr;
+        timeAndDate(userAircaft, html);
+
         if(aircraft.getGroundSpeedKts() > 20.f)
-          timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
-
-        html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+        {
+          float timeToDestination = distToDestNm / aircraft.getGroundSpeedKts();
+          QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
+          html.row2(tr("Arrival Time:"), locale.toString(arrival.time(), QLocale::ShortFormat) + " " +
+                    arrival.timeZoneAbbreviation());
+          html.row2(tr("En route Time:"), formatter::formatMinutesHoursLong(timeToDestination));
+        }
       }
-      else
-        html.row2(tr("To Top of Descent:"), tr("Passed"));
+
+      if(distFromStartNm < maptypes::INVALID_DISTANCE_VALUE)
+      {
+        float toTod = route.getTopOfDescentFromStart() - distFromStartNm;
+        if(toTod > 0)
+        {
+          QString timeStr;
+          if(aircraft.getGroundSpeedKts() > 20.f)
+            timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
+
+          html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
+        }
+        else
+          html.row2(tr("To Top of Descent:"), tr("Passed"));
+      }
       html.row2(tr("TOD to Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
       html.tableEnd();
@@ -1529,20 +1536,24 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.row2(tr("Name and Type:"), rmo.getIdent() +
                   (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
 
-        QString timeStr;
-        if(aircraft.getGroundSpeedKts() > 20.f)
-          timeStr = tr(", ") + formatter::formatMinutesHoursLong(
-            nearestLegDistance / aircraft.getGroundSpeedKts());
+        if(nearestLegDistance < maptypes::INVALID_DISTANCE_VALUE)
+        {
 
-        html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                  locale.toString(crs, 'f', 0) +
-                  tr("°M, ") + timeStr);
+          QString timeStr;
+          if(aircraft.getGroundSpeedKts() > 20.f)
+            timeStr = tr(", ") + formatter::formatMinutesHoursLong(
+              nearestLegDistance / aircraft.getGroundSpeedKts());
+
+          html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
+                    locale.toString(crs, 'f', 0) +
+                    tr("°M, ") + timeStr);
+        }
         html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumb(), 'f', 0) + tr("°M"));
       }
       else
         qWarning() << "Invalid route leg index" << nearestLegIndex;
 
-      if(crossTrackDistance != RouteMapObjectList::INVALID_DISTANCE_VALUE)
+      if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
       {
         QString crossDirection;
         if(crossTrackDistance >= 0.1f)

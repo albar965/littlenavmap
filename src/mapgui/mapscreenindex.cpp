@@ -131,7 +131,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
     Pos p1;
     const QRect& mapGeo = mapWidget->rect();
 
-    for(int i = 0; i < routeMapObjects.size(); i++)
+    for(int i = 0; i < routeMapObjects.calculateApproachIndex(); i++)
     {
       const Pos& p2 = routeMapObjects.at(i).getPosition();
       maptypes::MapObjectTypes type = routeMapObjects.at(i).getMapObjectType();
@@ -345,12 +345,12 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
     return -1;
 
   int minIndex = -1;
-  int minDist = std::numeric_limits<int>::max();
+  float minDist = maptypes::INVALID_DISTANCE_VALUE;
 
   for(const std::pair<int, QPoint>& rsp : routePoints)
   {
     const QPoint& point = rsp.second;
-    int dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);
+    float dist = atools::geo::manhattanDistance(point.x(), point.y(), xs, ys);
     if(dist < minDist && dist < maxDistance)
     {
       minDist = dist;

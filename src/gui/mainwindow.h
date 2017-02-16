@@ -163,6 +163,11 @@ public:
 
   void resultTruncated(int truncatedTo);
 
+  ApproachTreeController *getApproachController() const
+  {
+    return approachController;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

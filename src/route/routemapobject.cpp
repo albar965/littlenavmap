@@ -52,7 +52,7 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
     TYPE nearest = waypoints.first();
     if(waypoints.size() > 1)
     {
-      float distance = std::numeric_limits<float>::max();
+      float distance = maptypes::INVALID_DISTANCE_VALUE;
       for(const TYPE& obj : waypoints)
       {
         float d = pos.distanceSimpleTo(obj.position);
