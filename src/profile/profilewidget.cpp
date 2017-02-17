@@ -99,7 +99,7 @@ void ProfileWidget::aircraftTrackPruned()
 
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(databaseLoadStatus || !simulatorData.getUserAircraft().getPosition().isValid())
+  if(!widgetVisible || databaseLoadStatus || !simulatorData.getUserAircraft().getPosition().isValid())
     return;
 
   bool updateWidget = false;

@@ -50,7 +50,6 @@ enum MapObjectType
   AIRPORT_SOFT = 1 << 2,
   AIRPORT_EMPTY = 1 << 3,
   AIRPORT_ADDON = 1 << 4,
-  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   VOR = 1 << 5,
   NDB = 1 << 6,
   ILS = 1 << 7,
@@ -71,7 +70,10 @@ enum MapObjectType
   APPROACH = 1 << 22,
   APPROACH_MISSED = 1 << 23,
   APPROACH_TRANSITION = 1 << 24,
-  ALL_NAV = VOR | NDB | WAYPOINT,
+
+  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
+  NAV_ALL = VOR | NDB | WAYPOINT,
+  APPROACH_ALL = APPROACH | APPROACH_MISSED | APPROACH_TRANSITION,
   ALL = 0xffffffff
 };
 
@@ -790,9 +792,6 @@ struct MapApproachLegs
   {
     return isTransition(i) ? transitionLegs[i] : approachLegs[apprIdx(i)];
   }
-
-  int getNearestLegIndex(const atools::geo::Pos& pos, maptypes::MapObjectTypes types,
-                         float& crossTrackDistanceNm) const;
 
 private:
   int apprIdx(int i) const

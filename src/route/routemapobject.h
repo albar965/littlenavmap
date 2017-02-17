@@ -67,6 +67,9 @@ public:
   void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
                          const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
 
+  void createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
+                             const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
+
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
@@ -74,6 +77,7 @@ public:
   void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
                                const RouteMapObjectList *routeList);
 
+  /* Change user defined waypoint name */
   void updateUserName(const QString& name);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
@@ -112,8 +116,6 @@ public:
   }
 
   QString getMapObjectTypeName() const;
-
-  bool isUser();
 
   /* Get airport or empty airport object if not an airport. Use position.isValid to check for empty */
   const maptypes::MapAirport& getAirport() const
@@ -186,6 +188,9 @@ public:
     return valid;
   }
 
+  bool isRoute() const;
+  bool isAnyApproach() const;
+
   float getGroundAltitude() const
   {
     return groundAltitude;
@@ -198,16 +203,25 @@ public:
 
   void setFlightplanEntryIndex(int value)
   {
-    flightplanEntryIndex = value;
+    index = value;
   }
+
+  const maptypes::MapApproachLeg& getApproachLeg() const
+  {
+    return approachLeg;
+  }
+
+  bool isApproach() const;
+  bool isMissed() const;
+  bool isTransition() const;
 
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;
-  /* Associated flight plan entry */
-  int flightplanEntryIndex = -1;
+  /* Associated flight plan entry or approach leg entry */
+  int index = -1;
 
   maptypes::MapObjectTypes type = maptypes::NONE;
   maptypes::MapAirport airport;
@@ -216,6 +230,7 @@ private:
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
   maptypes::MapWaypoint waypoint;
+  maptypes::MapApproachLeg approachLeg;
 
   bool predecessor = false;
   bool valid = false;

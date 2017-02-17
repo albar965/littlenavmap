@@ -126,7 +126,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Calculate the index where an approach or transition starts
-  int approachIndex = routeMapObjects.calculateApproachIndex();
+  int approachIndex = routeController->getRouteApprMapObjects().calculateApproachIndex();
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -168,7 +168,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   const Pos& pos = mapWidget->getUserAircraft().getPosition();
 
   // Get active route leg
-  int activeRouteLeg = routeMapObjects.getNearestRouteLegIndex(pos);
+  int activeRouteLeg = routeController->getRouteApprMapObjects().getNearestRouteLegIndex(pos);
 
   // Draw innner line
   context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
@@ -254,7 +254,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     return;
 
   const Pos& pos = mapWidget->getUserAircraft().getPosition();
-  const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = routeController->getRouteApprMapObjects();
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);

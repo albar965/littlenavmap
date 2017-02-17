@@ -21,6 +21,7 @@
 #include "util/htmlbuilder.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
+#include "route/routemapobjectlist.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -85,7 +86,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     html.p();
     info.aircraftText(aircraft, html);
-    info.aircraftProgressText(aircraft, html, routeMapObjects);
+    info.aircraftProgressText(aircraft, html, RouteMapObjectList());
     html.pEnd();
     numEntries++;
   }

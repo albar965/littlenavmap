@@ -330,7 +330,10 @@ void RouteController::routeAltChanged()
   mainWindow->updateWindowTitle();
 
   if(!route.isEmpty())
+  {
+    updateRouteAppr();
     emit routeChanged(false);
+  }
 }
 
 /* Combo box route type has value changed */
@@ -351,6 +354,7 @@ void RouteController::routeTypeChanged()
 
   if(!route.isEmpty())
   {
+    updateRouteAppr();
     emit routeChanged(false);
     Ui::MainWindow *ui = mainWindow->getUi();
     mainWindow->setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
@@ -476,6 +480,7 @@ void RouteController::newFlightplan()
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
+  updateRouteAppr();
   emit routeChanged(true);
 }
 
@@ -515,6 +520,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
+  updateRouteAppr();
 
   emit routeChanged(true);
 }
@@ -574,7 +580,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
     updateWindowLabel();
-
+    updateRouteAppr();
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -698,6 +704,7 @@ void RouteController::calculateDirect()
   updateWindowLabel();
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
+  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Calculated direct flight plan."));
 }
@@ -854,6 +861,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       updateWindowLabel();
       postChange(undoCommand);
       mainWindow->updateWindowTitle();
+      updateRouteAppr();
       emit routeChanged(true);
     }
     else
@@ -893,7 +901,10 @@ void RouteController::adjustFlightplanAltitude()
     mainWindow->updateWindowTitle();
 
     if(!route.isEmpty())
+    {
+      updateRouteAppr();
       emit routeChanged(false);
+    }
 
     mainWindow->setStatusMessage(tr("Adjusted flight plan altitude."));
   }
@@ -954,6 +965,7 @@ void RouteController::reverseRoute()
   updateWindowLabel();
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
+  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Reversed flight plan."));
 }
@@ -1274,19 +1286,34 @@ void RouteController::editUserWaypointName(int index)
     route[index].updateUserName(dialog.getName());
     model->item(index, rc::IDENT)->setText(dialog.getName());
     postChange(undoCommand);
+    updateRouteAppr();
     emit routeChanged(true);
   }
 }
 
+/* Truncate route if it overlaps with and add approach or transition */
 void RouteController::approachSelected(const maptypes::MapApproachLegs& approach)
 {
-  route.setApproachLegs(approach);
+  routeAppr = route;
+  routeAppr.setApproachLegs(approach);
+  routeAppr.updateFromApproachLegs();
+
+  updateTableModel();
+  updateWindowLabel();
+}
+
+/* Update the approach route from route changes */
+void RouteController::updateRouteAppr()
+{
+  routeAppr.copyNoLegs(route);
+  routeAppr.updateFromApproachLegs();
 }
 
 void RouteController::shownMapFeaturesChanged(maptypes::MapObjectTypes types)
 {
   qDebug() << Q_FUNC_INFO;
   route.setShownMapFeatures(types);
+  routeAppr.setShownMapFeatures(types);
 }
 
 /* Hide or show map hightlights if dock visibility changes */
@@ -1350,6 +1377,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   mainWindow->updateWindowTitle();
   updateWindowLabel();
   updateMoveAndDeleteActions();
+  updateRouteAppr();
   emit routeChanged(true);
 }
 
@@ -1477,7 +1505,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
-
+    updateRouteAppr();
     emit routeChanged(true);
     mainWindow->setStatusMessage(tr("Moved flight plan legs."));
   }
@@ -1530,7 +1558,7 @@ void RouteController::deleteSelectedLegs()
 
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
-
+    updateRouteAppr();
     emit routeChanged(true);
     mainWindow->setStatusMessage(tr("Removed flight plan legs."));
   }
@@ -1597,6 +1625,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
+  updateRouteAppr();
 
   emit routeChanged(true);
 
@@ -1633,7 +1662,7 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-
+  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.first().getIdent()).
@@ -1685,7 +1714,7 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-
+  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
 }
@@ -1734,7 +1763,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-
+  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
@@ -1832,7 +1861,7 @@ void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptype
     else
     {
       // No leg index given - search for nearest
-      int legOrPt = route.getNearestLegOrPointIndex(entry.getPosition());
+      int legOrPt = route.getNearestRouteLegOrPointIndex(entry.getPosition());
       qDebug() << "nearestLeg" << legOrPt;
 
       // Positive values are legs - negative are points
@@ -1866,6 +1895,7 @@ void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptype
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
+  updateRouteAppr();
 
   emit routeChanged(true);
 
@@ -1918,7 +1948,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-
+  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
@@ -1946,7 +1976,7 @@ void RouteController::routeDelete(int index)
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-
+  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
@@ -2045,23 +2075,18 @@ void RouteController::updateFlightplanFromWidgets()
  *  Also calculates maximum number of user points. */
 void RouteController::updateRouteMapObjects()
 {
-  float totalDistance = 0.f;
-
-  // Update indices
-  for(int i = 0; i < route.size(); i++)
-    route[i].setFlightplanEntryIndex(i);
+  route.updateIndices();
 
   RouteMapObject *last = nullptr;
   for(int i = 0; i < route.size(); i++)
   {
     RouteMapObject& mapobj = route[i];
     mapobj.updateDistanceAndCourse(i, last, &route);
-    totalDistance += mapobj.getDistanceTo();
     last = &mapobj;
   }
-  route.setTotalDistance(totalDistance);
-
-  updateBoundingRect();
+  route.updateTotalDistance();
+  route.updateMagvar();
+  route.updateBoundingRect();
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
@@ -2072,7 +2097,6 @@ void RouteController::createRouteMapObjects()
   Flightplan& flightplan = route.getFlightplan();
 
   const RouteMapObject *last = nullptr;
-  float totalDistance = 0.f;
 
   // Create map objects first and calculate total distance
   for(int i = 0; i < flightplan.getEntries().size(); i++)
@@ -2085,36 +2109,13 @@ void RouteController::createRouteMapObjects()
       qWarning() << "Entry for ident" << flightplan.at(i).getIcaoIdent()
                  << "region" << flightplan.at(i).getIcaoRegion() << "is not valid";
 
-    totalDistance += mapobj.getDistanceTo();
-
     route.append(mapobj);
     last = &route.last();
   }
 
-  // Run again to update magvar with averages across the route where missing
-  for(int i = 0; i < route.size(); i++)
-  {
-    last = i > 0 ? &route.at(i - 1) : nullptr;
-    route[i].updateDistanceAndCourse(i, last, &route);
-  }
-
-  route.setTotalDistance(totalDistance);
-
-  updateBoundingRect();
-}
-
-/* Update the bounding rect using marble functions to catch anti meridian overlap */
-void RouteController::updateBoundingRect()
-{
-  GeoDataLineString line;
-
-  for(const RouteMapObject& rmo : route)
-    line.append(GeoDataCoordinates(rmo.getPosition().getLonX(),
-                                   rmo.getPosition().getLatY(), 0., GeoDataCoordinates::Degree));
-
-  GeoDataLatLonBox box = GeoDataLatLonBox::fromLineString(line);
-  boundingRect = Rect(box.west(), box.north(), box.east(), box.south());
-  boundingRect.toDeg();
+  route.updateTotalDistance();
+  route.updateMagvar();
+  route.updateBoundingRect();
 }
 
 /* Update travel times in table view model after speed change */
@@ -2145,7 +2146,7 @@ void RouteController::updateTableModel()
   Ui::MainWindow *ui = mainWindow->getUi();
 
   model->removeRows(0, model->rowCount());
-  float totalDistance = route.getTotalDistance();
+  float totalDistance = routeAppr.getTotalDistance();
 
   int row = 0;
   float cumulatedDistance = 0.f;
@@ -2266,7 +2267,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
     int routeLeg = 0, apprLeg = 0;
-    route.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), routeLeg, apprLeg);
+    routeAppr.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), routeLeg, apprLeg);
     highlightNextWaypoint(routeLeg);
     mainWindow->getApproachController()->highlightNextWaypoint(apprLeg);
 
@@ -2296,9 +2297,9 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
     }
   }
 
-  if(!route.isEmpty())
+  if(!routeAppr.isEmpty())
   {
-    if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
+    if(nearestLegIndex >= 0 && nearestLegIndex < routeAppr.calculateApproachIndex())
     {
       QColor color = OptionData::instance().isGuiStyleDark() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
@@ -2400,11 +2401,11 @@ QString RouteController::buildFlightplanLabel2() const
         break;
     }
 
-    float totalDistance = route.getTotalDistance();
+    float totalDistance = routeAppr.getTotalDistance();
 
     return tr("%1, %2, %3").
            arg(Unit::distNm(totalDistance)).
-           arg(formatter::formatMinutesHoursLong(calcTravelTime(route.getTotalDistance()))).
+           arg(formatter::formatMinutesHoursLong(calcTravelTime(routeAppr.getTotalDistance()))).
            arg(routeType);
   }
   else

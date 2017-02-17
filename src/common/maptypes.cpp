@@ -1063,46 +1063,4 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
-int MapApproachLegs::getNearestLegIndex(const atools::geo::Pos& pos, maptypes::MapObjectTypes types,
-                                        float& crossTrackDistanceNm) const
-{
-  int nearestLeg = maptypes::INVALID_INDEX_VALUE;
-  float minDistance = maptypes::INVALID_DISTANCE_VALUE;
-
-  crossTrackDistanceNm = maptypes::INVALID_DISTANCE_VALUE;
-
-  for(int i = 1; i < size(); i++)
-  {
-    // Use only visible leg types
-    if((types & maptypes::APPROACH_TRANSITION && isTransition(i)) ||
-       (types & maptypes::APPROACH && isApproach(i)) ||
-       (types & maptypes::APPROACH_MISSED && isMissed(i)))
-    {
-      atools::geo::CrossTrackStatus status;
-      float crossTrack = at(i).line.distanceMeterToLine(pos, status);
-      float distance = std::abs(crossTrack);
-
-      if(status != atools::geo::INVALID && distance < minDistance)
-      {
-        minDistance = distance;
-        crossTrackDistanceNm = crossTrack;
-        nearestLeg = i;
-      }
-    }
-  }
-
-  if(crossTrackDistanceNm < maptypes::INVALID_DISTANCE_VALUE)
-  {
-    if(crossTrackDistanceNm < atools::geo::nmToMeter(50.f) && crossTrackDistanceNm > atools::geo::nmToMeter(-50.f))
-      crossTrackDistanceNm = atools::geo::meterToNm(crossTrackDistanceNm);
-    else
-    {
-      crossTrackDistanceNm = maptypes::INVALID_DISTANCE_VALUE;
-      nearestLeg = maptypes::INVALID_INDEX_VALUE;
-    }
-  }
-
-  return nearestLeg;
-}
-
 } // namespace types

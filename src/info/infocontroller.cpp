@@ -516,7 +516,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         // ok - scrollbars not pressed
         html.clear();
         infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
-                                          mainWindow->getRouteController()->getRouteMapObjects());
+                                          mainWindow->getRouteController()->getRouteApprMapObjects());
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
 
@@ -531,8 +531,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
           for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
           {
             infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
-            infoBuilder->aircraftProgressText(aircraft, html,
-                                              mainWindow->getRouteController()->getRouteMapObjects());
+            infoBuilder->aircraftProgressText(aircraft, html, RouteMapObjectList());
             num++;
           }
 

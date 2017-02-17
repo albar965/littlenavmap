@@ -32,6 +32,9 @@ const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 /* If region is not set search within this distance (not the read GC distance) for navaids with the same name */
 const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
 
+const static QString EMPTY_STRING;
+const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
+
 RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
 {
@@ -75,10 +78,29 @@ void RouteMapObject::createFromAirport(int entryIndex,
                                        const RouteMapObject *predRouteMapObj,
                                        const RouteMapObjectList *routeList)
 {
-  flightplanEntryIndex = entryIndex;
+  index = entryIndex;
   predecessor = predRouteMapObj != nullptr;
   type = maptypes::AIRPORT;
   airport = newAirport;
+
+  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
+  valid = true;
+}
+
+void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
+                                           const RouteMapObject *predRouteMapObj,
+                                           const RouteMapObjectList *routeList)
+{
+  index = entryIndex;
+  predecessor = predRouteMapObj != nullptr;
+  approachLeg = legs.at(entryIndex);
+
+  if(approachLeg.transition)
+    type = maptypes::APPROACH_TRANSITION;
+  else if(approachLeg.missed)
+    type = maptypes::APPROACH_MISSED;
+  else
+    type = maptypes::APPROACH;
 
   updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
   valid = true;
@@ -88,11 +110,11 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
                                                const RouteMapObject *predRouteMapObj,
                                                const RouteMapObjectList *routeList)
 {
-  flightplanEntryIndex = entryIndex;
+  index = entryIndex;
 
   predecessor = predRouteMapObj != nullptr;
 
-  atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[flightplanEntryIndex];
+  atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
 
   QString region = flightplanEntry->getIcaoRegion();
 
@@ -271,48 +293,59 @@ void RouteMapObject::setDepartureStart(const maptypes::MapStart& departureStart)
 void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
                                              const RouteMapObjectList *routeList)
 {
-  flightplanEntryIndex = entryIndex;
+  index = entryIndex;
+
   if(predRouteMapObj != nullptr)
   {
-    const Pos& prevPos = predRouteMapObj->getPosition();
-
-    distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
-    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
-
-    float magvar = getMagvar();
-    if(magvar == 0.f)
+    if(isAnyApproach())
     {
-      // Get magnetic variance from one of the next and previous waypoints if not set
-      float magvarnext = 0.f, magvarprev = 0.f;
-      for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
-      {
-        if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-        {
-          magvarnext = routeList->at(i).getMagvar();
-          break;
-        }
-      }
-
-      for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
-      {
-        if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-        {
-          magvarprev = routeList->at(i).getMagvar();
-          break;
-        }
-      }
-
-      // Use average of previous and next or one valid value
-      if(std::abs(magvarnext) > 0.f && std::abs(magvarprev) > 0.f)
-        magvar = (magvarnext + magvarprev) / 2.f;
-      else if(std::abs(magvarnext) > 0.f)
-        magvar = magvarnext;
-      else if(std::abs(magvarprev) > 0.f)
-        magvar = magvarprev;
+      distanceTo = approachLeg.distance;
+      distanceToRhumb = approachLeg.distance;
+      courseTo = approachLeg.calculatedTrueCourse;
+      courseRhumbTo = approachLeg.calculatedTrueCourse;
     }
+    else
+    {
+      const Pos& prevPos = predRouteMapObj->getPosition();
 
-    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) - magvar);
-    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) - magvar);
+      distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
+      distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
+
+      float magvar = getMagvar();
+      if(magvar == 0.f)
+      {
+        // Get magnetic variance from one of the next and previous waypoints if not set
+        float magvarnext = 0.f, magvarprev = 0.f;
+        for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
+        {
+          if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
+          {
+            magvarnext = routeList->at(i).getMagvar();
+            break;
+          }
+        }
+
+        for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
+        {
+          if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
+          {
+            magvarprev = routeList->at(i).getMagvar();
+            break;
+          }
+        }
+
+        // Use average of previous and next or one valid value
+        if(std::abs(magvarnext) > 0.f && std::abs(magvarprev) > 0.f)
+          magvar = (magvarnext + magvarprev) / 2.f;
+        else if(std::abs(magvarnext) > 0.f)
+          magvar = magvarnext;
+        else if(std::abs(magvarprev) > 0.f)
+          magvar = magvarprev;
+      }
+
+      courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) - magvar);
+      courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) - magvar);
+    }
   }
   else
   {
@@ -327,7 +360,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
 
 void RouteMapObject::updateUserName(const QString& name)
 {
-  flightplan->getEntries()[flightplanEntryIndex].setWaypointId(name);
+  flightplan->getEntries()[index].setWaypointId(name);
 }
 
 int RouteMapObject::getId() const
@@ -335,25 +368,39 @@ int RouteMapObject::getId() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-      return -1;
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().id;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().id;
+    else if(!approachLeg.navaids.waypoints.isEmpty())
+      return approachLeg.navaids.waypoints.first().id;
+    else if(!approachLeg.navaids.ils.isEmpty())
+      return approachLeg.navaids.ils.first().id;
+  }
+  else
+  {
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+        return -1;
 
-    case atools::fs::pln::entry::AIRPORT:
-      return airport.id;
+      case atools::fs::pln::entry::AIRPORT:
+        return airport.id;
 
-    case atools::fs::pln::entry::INTERSECTION:
-      return waypoint.id;
+      case atools::fs::pln::entry::INTERSECTION:
+        return waypoint.id;
 
-    case atools::fs::pln::entry::VOR:
-      return vor.id;
+      case atools::fs::pln::entry::VOR:
+        return vor.id;
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.id;
+      case atools::fs::pln::entry::NDB:
+        return ndb.id;
 
-    case atools::fs::pln::entry::USER:
-      return -1;
+      case atools::fs::pln::entry::USER:
+        return -1;
+    }
   }
   return -1;
 }
@@ -363,25 +410,30 @@ float RouteMapObject::getMagvar() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
+    return approachLeg.magvar;
+  else
   {
-    case atools::fs::pln::entry::UNKNOWN:
-      return 0.f;
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+        return 0.f;
 
-    case atools::fs::pln::entry::AIRPORT:
-      return airport.magvar;
+      case atools::fs::pln::entry::AIRPORT:
+        return airport.magvar;
 
-    case atools::fs::pln::entry::INTERSECTION:
-      return waypoint.magvar;
+      case atools::fs::pln::entry::INTERSECTION:
+        return waypoint.magvar;
 
-    case atools::fs::pln::entry::VOR:
-      return vor.magvar;
+      case atools::fs::pln::entry::VOR:
+        return vor.magvar;
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.magvar;
+      case atools::fs::pln::entry::NDB:
+        return ndb.magvar;
 
-    case atools::fs::pln::entry::USER:
-      return 0.f;
+      case atools::fs::pln::entry::USER:
+        return 0.f;
+    }
   }
   return 0.f;
 }
@@ -391,19 +443,31 @@ int RouteMapObject::getRange() const
   if(type == maptypes::INVALID)
     return -1;
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-    case atools::fs::pln::entry::AIRPORT:
-    case atools::fs::pln::entry::INTERSECTION:
-    case atools::fs::pln::entry::USER:
-      return -1;
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().range;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().range;
+    else if(!approachLeg.navaids.ils.isEmpty())
+      return approachLeg.navaids.ils.first().range;
+  }
+  else
+  {
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+      case atools::fs::pln::entry::AIRPORT:
+      case atools::fs::pln::entry::INTERSECTION:
+      case atools::fs::pln::entry::USER:
+        return -1;
 
-    case atools::fs::pln::entry::VOR:
-      return vor.range;
+      case atools::fs::pln::entry::VOR:
+        return vor.range;
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.range;
+      case atools::fs::pln::entry::NDB:
+        return ndb.range;
+    }
   }
   return -1;
 }
@@ -413,148 +477,203 @@ QString RouteMapObject::getMapObjectTypeName() const
   if(type == maptypes::INVALID)
     return tr("Invalid");
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-      return tr("Unknown");
-
-    case atools::fs::pln::entry::AIRPORT:
-      return tr("Airport");
-
-    case atools::fs::pln::entry::INTERSECTION:
+    if(!approachLeg.navaids.vors.isEmpty())
+      return maptypes::vorType(approachLeg.navaids.vors.first()) +
+             " (" + maptypes::navTypeNameVor(approachLeg.navaids.vors.first().type) + ")";
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(approachLeg.navaids.ndbs.first().type));
+    else if(!approachLeg.navaids.waypoints.isEmpty())
       return tr("Waypoint");
-
-    case atools::fs::pln::entry::USER:
-      return QString();
-
-    case atools::fs::pln::entry::VOR:
-      return maptypes::vorType(vor) + " (" + maptypes::navTypeNameVor(vor.type) + ")";
-
-    case atools::fs::pln::entry::NDB:
-      return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(ndb.type));
   }
-  return QString();
-}
+  else
+  {
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+        return tr("Unknown");
 
-bool RouteMapObject::isUser()
-{
-  return curEntry().getWaypointType() == atools::fs::pln::entry::USER;
+      case atools::fs::pln::entry::AIRPORT:
+        return tr("Airport");
+
+      case atools::fs::pln::entry::INTERSECTION:
+        return tr("Waypoint");
+
+      case atools::fs::pln::entry::USER:
+        return EMPTY_STRING;
+
+      case atools::fs::pln::entry::VOR:
+        return maptypes::vorType(vor) + " (" + maptypes::navTypeNameVor(vor.type) + ")";
+
+      case atools::fs::pln::entry::NDB:
+        return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(ndb.type));
+    }
+  }
+  return EMPTY_STRING;
 }
 
 const atools::geo::Pos& RouteMapObject::getPosition() const
 {
-  if(type == maptypes::INVALID)
+  if(isAnyApproach())
+    return approachLeg.line.getPos2();
+  else
   {
-    if(curEntry().getPosition().isValid())
-      return curEntry().getPosition();
-    else
-      return atools::geo::EMPTY_POS;
-  }
+    if(type == maptypes::INVALID)
+    {
+      if(curEntry().getPosition().isValid())
+        return curEntry().getPosition();
+      else
+        return atools::geo::EMPTY_POS;
+    }
 
-  switch(curEntry().getWaypointType())
-  {
-    case atools::fs::pln::entry::UNKNOWN:
-      return atools::geo::EMPTY_POS;
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+        return atools::geo::EMPTY_POS;
 
-    case atools::fs::pln::entry::AIRPORT:
-      return airport.position;
+      case atools::fs::pln::entry::AIRPORT:
+        return airport.position;
 
-    case atools::fs::pln::entry::INTERSECTION:
-      return waypoint.position;
+      case atools::fs::pln::entry::INTERSECTION:
+        return waypoint.position;
 
-    case atools::fs::pln::entry::VOR:
-      return vor.position;
+      case atools::fs::pln::entry::VOR:
+        return vor.position;
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.position;
+      case atools::fs::pln::entry::NDB:
+        return ndb.position;
 
-    case atools::fs::pln::entry::USER:
-      return curEntry().getPosition();
+      case atools::fs::pln::entry::USER:
+        return curEntry().getPosition();
+    }
   }
   return atools::geo::EMPTY_POS;
 }
 
 QString RouteMapObject::getIdent() const
 {
-  if(type == maptypes::INVALID)
-    return curEntry().getIcaoIdent();
-
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-      return tr("Unknown Waypoint Type");
-
-    case atools::fs::pln::entry::USER:
-      return curEntry().getWaypointId();
-
-    case atools::fs::pln::entry::AIRPORT:
-      return airport.ident;
-
-    case atools::fs::pln::entry::INTERSECTION:
-      return waypoint.ident;
-
-    case atools::fs::pln::entry::VOR:
-      return vor.ident;
-
-    case atools::fs::pln::entry::NDB:
-      return ndb.ident;
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().ident;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().ident;
+    else if(!approachLeg.navaids.waypoints.isEmpty())
+      return approachLeg.navaids.waypoints.first().ident;
+    else if(!approachLeg.navaids.runwayEnds.isEmpty())
+      return approachLeg.navaids.runwayEnds.first().name;
+    else if(!approachLeg.navaids.ils.isEmpty())
+      return approachLeg.navaids.ils.first().ident;
   }
-  return QString();
+  else
+  {
+    if(type == maptypes::INVALID)
+      return curEntry().getIcaoIdent();
+
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+        return tr("Unknown Waypoint Type");
+
+      case atools::fs::pln::entry::USER:
+        return curEntry().getWaypointId();
+
+      case atools::fs::pln::entry::AIRPORT:
+        return airport.ident;
+
+      case atools::fs::pln::entry::INTERSECTION:
+        return waypoint.ident;
+
+      case atools::fs::pln::entry::VOR:
+        return vor.ident;
+
+      case atools::fs::pln::entry::NDB:
+        return ndb.ident;
+    }
+  }  return EMPTY_STRING;
 }
 
 QString RouteMapObject::getRegion() const
 {
-  if(type == maptypes::INVALID)
-    return curEntry().getIcaoRegion();
-
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-    case atools::fs::pln::entry::USER:
-      return QString();
-
-    case atools::fs::pln::entry::AIRPORT:
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().region;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().region;
+    else if(!approachLeg.navaids.waypoints.isEmpty())
+      return approachLeg.navaids.waypoints.first().region;
+  }
+  else
+  {
+    if(type == maptypes::INVALID)
       return curEntry().getIcaoRegion();
 
-    case atools::fs::pln::entry::INTERSECTION:
-      return waypoint.region;
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+      case atools::fs::pln::entry::USER:
+        return QString();
 
-    case atools::fs::pln::entry::VOR:
-      return vor.region;
+      case atools::fs::pln::entry::AIRPORT:
+        return curEntry().getIcaoRegion();
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.region;
+      case atools::fs::pln::entry::INTERSECTION:
+        return waypoint.region;
+
+      case atools::fs::pln::entry::VOR:
+        return vor.region;
+
+      case atools::fs::pln::entry::NDB:
+        return ndb.region;
+    }
   }
-  return QString();
+  return EMPTY_STRING;
 }
 
 QString RouteMapObject::getName() const
 {
   if(type == maptypes::INVALID)
-    return QString();
+    return EMPTY_STRING;
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-    case atools::fs::pln::entry::USER:
-    case atools::fs::pln::entry::INTERSECTION:
-      return QString();
-
-    case atools::fs::pln::entry::AIRPORT:
-      return airport.name;
-
-    case atools::fs::pln::entry::VOR:
-      return atools::capString(vor.name);
-
-    case atools::fs::pln::entry::NDB:
-      return atools::capString(ndb.name);
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().name;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().name;
+    else if(!approachLeg.navaids.ils.isEmpty())
+      return approachLeg.navaids.ils.first().name;
   }
-  return QString();
+  else
+  {
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+      case atools::fs::pln::entry::USER:
+      case atools::fs::pln::entry::INTERSECTION:
+        return EMPTY_STRING;
+
+      case atools::fs::pln::entry::AIRPORT:
+        return airport.name;
+
+      case atools::fs::pln::entry::VOR:
+        return atools::capString(vor.name);
+
+      case atools::fs::pln::entry::NDB:
+        return atools::capString(ndb.name);
+    }
+  }
+  return EMPTY_STRING;
 }
 
 const QString& RouteMapObject::getAirway() const
 {
-  return curEntry().getAirway();
+  if(isRoute())
+    return curEntry().getAirway();
+  else
+    return EMPTY_STRING;
 }
 
 int RouteMapObject::getFrequency() const
@@ -562,24 +681,64 @@ int RouteMapObject::getFrequency() const
   if(type == maptypes::INVALID)
     return 0;
 
-  switch(curEntry().getWaypointType())
+  if(isAnyApproach())
   {
-    case atools::fs::pln::entry::UNKNOWN:
-    case atools::fs::pln::entry::USER:
-    case atools::fs::pln::entry::INTERSECTION:
-    case atools::fs::pln::entry::AIRPORT:
-      return 0;
+    if(!approachLeg.navaids.vors.isEmpty())
+      return approachLeg.navaids.vors.first().frequency;
+    else if(!approachLeg.navaids.ndbs.isEmpty())
+      return approachLeg.navaids.ndbs.first().frequency;
+    else if(!approachLeg.navaids.ils.isEmpty())
+      return approachLeg.navaids.ils.first().frequency;
+  }
+  else
+  {
+    switch(curEntry().getWaypointType())
+    {
+      case atools::fs::pln::entry::UNKNOWN:
+      case atools::fs::pln::entry::USER:
+      case atools::fs::pln::entry::INTERSECTION:
+      case atools::fs::pln::entry::AIRPORT:
+        return 0;
 
-    case atools::fs::pln::entry::VOR:
-      return vor.frequency;
+      case atools::fs::pln::entry::VOR:
+        return vor.frequency;
 
-    case atools::fs::pln::entry::NDB:
-      return ndb.frequency;
+      case atools::fs::pln::entry::NDB:
+        return ndb.frequency;
+    }
   }
   return 0;
 }
 
 const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
 {
-  return flightplan->at(flightplanEntryIndex);
+  if(isRoute())
+    return flightplan->at(index);
+  else
+    return EMPTY_FLIGHTPLAN_ENTRY;
+}
+
+bool RouteMapObject::isRoute() const
+{
+  return !isAnyApproach();
+}
+
+bool RouteMapObject::isAnyApproach() const
+{
+  return type & maptypes::APPROACH_ALL;
+}
+
+bool RouteMapObject::isApproach() const
+{
+  return type & maptypes::APPROACH;
+}
+
+bool RouteMapObject::isMissed() const
+{
+  return type & maptypes::APPROACH_MISSED;
+}
+
+bool RouteMapObject::isTransition() const
+{
+  return type & maptypes::APPROACH_TRANSITION;
 }

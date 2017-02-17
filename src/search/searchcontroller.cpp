@@ -140,7 +140,7 @@ void SearchController::showInSearch(maptypes::MapObjectTypes type, const QString
     case maptypes::ILS:
     case maptypes::MARKER:
     case maptypes::NONE:
-    case maptypes::ALL_NAV:
+    case maptypes::NAV_ALL:
     case maptypes::ALL:
       qWarning() << "showInSearch invalid type" << type;
       break;

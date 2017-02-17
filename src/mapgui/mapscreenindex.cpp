@@ -116,7 +116,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
 {
   using atools::geo::Pos;
 
-  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteMapObjects();
+  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteApprMapObjects();
 
   routeLines.clear();
   routePoints.clear();
@@ -213,7 +213,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
 
   if(paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
     // Get copies from flight plan if visible
-    mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance, result);
+    mapWidget->getRouteController()->getRouteApprMapObjects().getNearest(conv, xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
   getNearestApproachHighlights(xs, ys, maxDistance, result);

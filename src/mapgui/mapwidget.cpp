@@ -1843,7 +1843,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+      const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteApprMapObjects();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -1968,7 +1968,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+        const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteApprMapObjects();
 
         if(rmos.size() > 1)
         {
@@ -2144,7 +2144,7 @@ void MapWidget::showTooltip(bool update)
 
   // Build a new tooltip HTML for weather changes or aircraft updates
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
-                                          mainWindow->getRouteController()->getRouteMapObjects(),
+                                          mainWindow->getRouteController()->getRouteApprMapObjects(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())

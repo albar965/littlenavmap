@@ -23,6 +23,8 @@
 
 #include <QRegularExpression>
 
+#include <marble/GeoDataLineString.h>
+
 RouteMapObjectList::RouteMapObjectList()
 {
 
@@ -41,8 +43,6 @@ RouteMapObjectList::~RouteMapObjectList()
 
 RouteMapObjectList& RouteMapObjectList::operator=(const RouteMapObjectList& other)
 {
-  clear();
-  append(other);
   copy(other);
 
   return *this;
@@ -50,9 +50,19 @@ RouteMapObjectList& RouteMapObjectList::operator=(const RouteMapObjectList& othe
 
 void RouteMapObjectList::copy(const RouteMapObjectList& other)
 {
+  approachLegs = other.approachLegs;
+  copyNoLegs(other);
+}
+
+void RouteMapObjectList::copyNoLegs(const RouteMapObjectList& other)
+{
+  clear();
+  append(other);
+
   totalDistance = other.totalDistance;
   flightplan = other.flightplan;
-  approachLegs = other.approachLegs;
+  shownTypes = other.shownTypes;
+  boundingRect = other.boundingRect;
 
   // Update flightplan pointers to this instance
   for(RouteMapObject& rmo : *this)
@@ -74,7 +84,7 @@ int RouteMapObjectList::getNextUserWaypointNumber() const
   return nextNum + 1;
 }
 
-int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) const
+int RouteMapObjectList::getNearestRouteLegOrPointIndex(const atools::geo::Pos& pos) const
 {
   float crossDist;
   int legIndex, apprLegIndex;
@@ -88,32 +98,10 @@ int RouteMapObjectList::getNearestLegOrPointIndex(const atools::geo::Pos& pos) c
     return legIndex;
 }
 
-int RouteMapObjectList::nearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceNm) const
-{
-  int nearest = maptypes::INVALID_INDEX_VALUE;
-  float minDistance = maptypes::INVALID_DISTANCE_VALUE;
-
-  pointDistanceNm = maptypes::INVALID_DISTANCE_VALUE;
-
-  for(int i = 0; i < size(); i++)
-  {
-    float distance = at(i).getPosition().distanceMeterTo(pos);
-    if(distance < minDistance)
-    {
-      minDistance = distance;
-      nearest = i + 1;
-    }
-  }
-
-  if(minDistance < maptypes::INVALID_DISTANCE_VALUE)
-    pointDistanceNm = atools::geo::meterToNm(minDistance);
-  return nearest;
-}
-
-void RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm,
+void RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance,
                                             int& routeIndex, int& approachIndex) const
 {
-  nearestLegIndex(pos, crossTrackDistanceNm, routeIndex, approachIndex);
+  nearestLegIndex(pos, crossTrackDistance, routeIndex, approachIndex);
 }
 
 int RouteMapObjectList::getNearestRouteLegIndex(const atools::geo::Pos& pos) const
@@ -137,90 +125,37 @@ void RouteMapObjectList::getNearestLegIndex(const atools::geo::Pos& pos, int& ro
   nearestLegIndex(pos, dummy, routeIndex, approachIndex);
 }
 
-void RouteMapObjectList::nearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistanceNm, int& routeIndex,
-                                         int& approachIndex) const
-{
-  crossTrackDistanceNm = maptypes::INVALID_DISTANCE_VALUE;
-  routeIndex = maptypes::INVALID_INDEX_VALUE;
-  approachIndex = maptypes::INVALID_INDEX_VALUE;
-
-  if(!pos.isValid())
-    return;
-
-  float minDistance = maptypes::INVALID_DISTANCE_VALUE;
-
-  // Check only until the approach starts if required
-  atools::geo::CrossTrackStatus status;
-
-  for(int i = 1; i < calculateApproachIndex(); i++)
-  {
-    float crossTrack = pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), status);
-    float distance = std::abs(crossTrack);
-
-    if(status != atools::geo::INVALID && distance < minDistance)
-    {
-      minDistance = distance;
-      crossTrackDistanceNm = crossTrack;
-      routeIndex = i;
-    }
-  }
-
-  if(crossTrackDistanceNm < maptypes::INVALID_DISTANCE_VALUE)
-  {
-    if(crossTrackDistanceNm < atools::geo::nmToMeter(100.f) && crossTrackDistanceNm > atools::geo::nmToMeter(-100.f))
-      crossTrackDistanceNm = atools::geo::meterToNm(crossTrackDistanceNm);
-    else
-    {
-      // Too far away from any segment or point
-      crossTrackDistanceNm = maptypes::INVALID_DISTANCE_VALUE;
-      routeIndex = maptypes::INVALID_INDEX_VALUE;
-    }
-  }
-
-  if(!approachLegs.isEmpty())
-  {
-    // Check if an approach leg is closer
-    float crossTrackApprDistanceNm;
-
-    int nearestApprLegIndex = approachLegs.getNearestLegIndex(pos, shownTypes, crossTrackApprDistanceNm);
-    if(std::abs(crossTrackApprDistanceNm) < std::abs(crossTrackDistanceNm))
-    {
-      routeIndex = maptypes::INVALID_INDEX_VALUE;
-      approachIndex = nearestApprLegIndex;
-      crossTrackDistanceNm = crossTrackApprDistanceNm;
-    }
-  }
-}
-
 bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
                                            float *distFromStart, float *distToDest,
                                            float *nextLegDistance, float *crossTrackDistance,
                                            int *nextRouteLegIndex) const
 {
   float crossDist;
-  int legIndex, apprIndex;
-  getNearestLegIndex(pos, crossDist, legIndex, apprIndex);
+  int routeIndex;
+
+  // Get index for whole array
+  nearestAllLegIndex(pos, crossDist, routeIndex);
 
   float pointDistance;
   int pointIndex = nearestPointIndex(pos, pointDistance);
   if(pointDistance < std::abs(crossDist))
   {
-    legIndex = pointIndex;
+    routeIndex = pointIndex;
     if(crossTrackDistance != nullptr)
       *crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
   }
   else if(crossTrackDistance != nullptr)
     *crossTrackDistance = crossDist;
 
-  if(legIndex != maptypes::INVALID_INDEX_VALUE)
+  if(routeIndex != maptypes::INVALID_INDEX_VALUE)
   {
-    if(legIndex >= size())
-      legIndex = size() - 1;
+    if(routeIndex >= size())
+      routeIndex = size() - 1;
 
     if(nextRouteLegIndex != nullptr)
-      *nextRouteLegIndex = legIndex;
+      *nextRouteLegIndex = routeIndex;
 
-    const atools::geo::Pos& position = at(legIndex).getPosition();
+    const atools::geo::Pos& position = at(routeIndex).getPosition();
     float distToCur = atools::geo::meterToNm(position.distanceMeterTo(pos));
 
     if(nextLegDistance != nullptr)
@@ -229,7 +164,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(distFromStart != nullptr)
     {
       *distFromStart = 0.f;
-      for(int i = 0; i <= legIndex; i++)
+      for(int i = 0; i <= routeIndex; i++)
         *distFromStart += at(i).getDistanceTo();
       *distFromStart -= distToCur;
       *distFromStart = std::abs(*distFromStart);
@@ -238,7 +173,7 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(distToDest != nullptr)
     {
       *distToDest = 0.f;
-      for(int i = legIndex + 1; i < size(); i++)
+      for(int i = routeIndex + 1; i < size(); i++)
         *distToDest += at(i).getDistanceTo();
       *distToDest += distToCur;
       *distToDest = std::abs(*distToDest);
@@ -255,6 +190,11 @@ float RouteMapObjectList::getTopOfDescentFromStart() const
     return getTotalDistance() - getTopOfDescentFromDestination();
 
   return 0.f;
+}
+
+float RouteMapObjectList::getTotalDistance() const
+{
+  return totalDistance + approachLegs.approachDistance + approachLegs.transitionDistance;
 }
 
 float RouteMapObjectList::getTopOfDescentFromDestination() const
@@ -315,64 +255,63 @@ void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int
   using maptools::insertSortedByDistance;
 
   int x, y;
-  int i = 0;
-  for(const RouteMapObject& obj : *this)
+
+  for(int i = 0; i < calculateApproachIndex(); i++)
   {
-    if(conv.wToS(obj.getPosition(), x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+    const RouteMapObject& obj = at(i);
+    if(conv.wToS(obj.getPosition(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+    {
+      switch(obj.getMapObjectType())
       {
-        switch(obj.getMapObjectType())
-        {
-          case maptypes::VOR :
-            {
-              maptypes::MapVor vor = obj.getVor();
-              vor.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
-            }
-            break;
-          case maptypes::WAYPOINT:
-            {
-              maptypes::MapWaypoint wp = obj.getWaypoint();
-              wp.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
-            }
-            break;
-          case maptypes::NDB:
-            {
-              maptypes::MapNdb ndb = obj.getNdb();
-              ndb.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
-            }
-            break;
-          case maptypes::AIRPORT:
-            {
-              maptypes::MapAirport ap = obj.getAirport();
-              ap.routeIndex = i;
-              insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
-            }
-            break;
-          case maptypes::INVALID:
-            {
-              maptypes::MapUserpoint up;
-              up.routeIndex = i;
-              up.name = obj.getIdent() + " (not found)";
-              up.position = obj.getPosition();
-              mapobjects.userPoints.append(up);
-            }
-            break;
-          case maptypes::USER:
-            {
-              maptypes::MapUserpoint up;
-              up.id = i;
-              up.routeIndex = i;
-              up.name = obj.getIdent();
-              up.position = obj.getPosition();
-              mapobjects.userPoints.append(up);
-            }
-            break;
-        }
+        case maptypes::VOR:
+          {
+            maptypes::MapVor vor = obj.getVor();
+            vor.routeIndex = i;
+            insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+          }
+          break;
+        case maptypes::WAYPOINT:
+          {
+            maptypes::MapWaypoint wp = obj.getWaypoint();
+            wp.routeIndex = i;
+            insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+          }
+          break;
+        case maptypes::NDB:
+          {
+            maptypes::MapNdb ndb = obj.getNdb();
+            ndb.routeIndex = i;
+            insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+          }
+          break;
+        case maptypes::AIRPORT:
+          {
+            maptypes::MapAirport ap = obj.getAirport();
+            ap.routeIndex = i;
+            insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
+          }
+          break;
+        case maptypes::INVALID:
+          {
+            maptypes::MapUserpoint up;
+            up.routeIndex = i;
+            up.name = obj.getIdent() + " (not found)";
+            up.position = obj.getPosition();
+            mapobjects.userPoints.append(up);
+          }
+          break;
+        case maptypes::USER:
+          {
+            maptypes::MapUserpoint up;
+            up.id = i;
+            up.routeIndex = i;
+            up.name = obj.getIdent();
+            up.position = obj.getPosition();
+            mapobjects.userPoints.append(up);
+          }
+          break;
       }
-    i++;
+    }
   }
 }
 
@@ -456,6 +395,7 @@ int RouteMapObjectList::calculateApproachIndex() const
 
   int approachIndex = size();
 
+  // Check if the route contains the initial fix and return the index to it
   for(int i = 0; i < size(); i++)
   {
     const RouteMapObject& obj = at(i);
@@ -471,7 +411,176 @@ int RouteMapObjectList::calculateApproachIndex() const
 
 void RouteMapObjectList::setApproachLegs(const maptypes::MapApproachLegs& legs)
 {
-  qDebug() << Q_FUNC_INFO;
-
   approachLegs = legs;
+  updateFromApproachLegs();
+}
+
+void RouteMapObjectList::updateFromApproachLegs()
+{
+  int approachIndex = calculateApproachIndex();
+
+  if(approachIndex >= size())
+  {
+    QList<RouteMapObject>::iterator it = std::remove_if(begin(), end(),
+                                                        [ = ](const RouteMapObject &p)->bool
+                                                        {
+                                                          return p.isAnyApproach();
+                                                        });
+
+    if(it != end())
+      erase(it, end());
+  }
+  else
+  {
+    // Remove all segments overlapping with route
+    erase(begin() + approachIndex, end());
+
+    // Add the approach legs
+    for(int i = 0; i < approachLegs.size(); ++i)
+    {
+      RouteMapObject obj(&flightplan);
+      obj.createFromApproachLeg(i, approachLegs, i > 0 ? &at(i - 1) : nullptr, this);
+      append(obj);
+    }
+  }
+
+  updateTotalDistance();
+  updateMagvar();
+  updateBoundingRect();
+}
+
+void RouteMapObjectList::updateIndices()
+{
+  // Update indices
+  for(int i = 0; i < size(); i++)
+    (*this)[i].setFlightplanEntryIndex(i);
+}
+
+void RouteMapObjectList::updateTotalDistance()
+{
+  totalDistance = 0.f;
+  RouteMapObject *last = nullptr;
+  for(int i = 0; i < size(); i++)
+  {
+    RouteMapObject& mapobj = (*this)[i];
+    mapobj.updateDistanceAndCourse(i, last, this);
+    totalDistance += mapobj.getDistanceTo();
+    last = &mapobj;
+  }
+}
+
+void RouteMapObjectList::updateMagvar()
+{
+  const RouteMapObject *last = nullptr;
+  // Run again to update magvar with averages across the route where missing
+  for(int i = 0; i < size(); i++)
+  {
+    last = i > 0 ? &this->at(i - 1) : nullptr;
+    (*this)[i].updateDistanceAndCourse(i, last, this);
+  }
+}
+
+/* Update the bounding rect using marble functions to catch anti meridian overlap */
+void RouteMapObjectList::updateBoundingRect()
+{
+  Marble::GeoDataLineString line;
+
+  for(const RouteMapObject& rmo : *this)
+    line.append(Marble::GeoDataCoordinates(rmo.getPosition().getLonX(),
+                                           rmo.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
+
+  Marble::GeoDataLatLonBox box = Marble::GeoDataLatLonBox::fromLineString(line);
+  boundingRect = atools::geo::Rect(box.west(), box.north(), box.east(), box.south());
+  boundingRect.toDeg();
+}
+
+void RouteMapObjectList::nearestAllLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance, int& index) const
+{
+  crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
+  index = maptypes::INVALID_INDEX_VALUE;
+
+  if(!pos.isValid())
+    return;
+
+  float minDistance = maptypes::INVALID_DISTANCE_VALUE;
+
+  // Check only until the approach starts if required
+  atools::geo::CrossTrackStatus status;
+
+  for(int i = 1; i < size(); i++)
+  {
+    // Use only visible leg types
+    // if(at(i).isRoute() ||
+    // (shownTypes & maptypes::APPROACH_TRANSITION && at(i).isTransition()) ||
+    // (shownTypes & maptypes::APPROACH && at(i).isApproach()) ||
+    // (shownTypes & maptypes::APPROACH_MISSED && at(i).isMissed()))
+    // {
+
+    float crossTrack = pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), status);
+    float distance = std::abs(crossTrack);
+
+    if(status != atools::geo::INVALID && distance < minDistance)
+    {
+      minDistance = distance;
+      crossTrackDistance = crossTrack;
+      index = i;
+    }
+    // }
+  }
+
+  if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
+  {
+    if(crossTrackDistance < atools::geo::nmToMeter(100.f) && crossTrackDistance > atools::geo::nmToMeter(-100.f))
+      crossTrackDistance = atools::geo::meterToNm(crossTrackDistance);
+    else
+    {
+      // Too far away from any segment or point
+      crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
+      index = maptypes::INVALID_INDEX_VALUE;
+    }
+  }
+}
+
+void RouteMapObjectList::nearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance, int& routeIndex,
+                                         int& approachIndex) const
+{
+  approachIndex = maptypes::INVALID_INDEX_VALUE;
+  routeIndex = maptypes::INVALID_INDEX_VALUE;
+  crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
+
+  if(!pos.isValid())
+    return;
+
+  int index;
+  nearestAllLegIndex(pos, crossTrackDistance, index);
+
+  if(index != maptypes::INVALID_INDEX_VALUE)
+  {
+    if(at(index).isAnyApproach())
+      approachIndex = index - (size() - approachLegs.size());
+    else
+      routeIndex = index;
+  }
+}
+
+int RouteMapObjectList::nearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const
+{
+  int nearest = maptypes::INVALID_INDEX_VALUE;
+  float minDistance = maptypes::INVALID_DISTANCE_VALUE;
+
+  pointDistance = maptypes::INVALID_DISTANCE_VALUE;
+
+  for(int i = 0; i < calculateApproachIndex(); i++)
+  {
+    float distance = at(i).getPosition().distanceMeterTo(pos);
+    if(distance < minDistance)
+    {
+      minDistance = distance;
+      nearest = i + 1;
+    }
+  }
+
+  if(minDistance < maptypes::INVALID_DISTANCE_VALUE)
+    pointDistance = atools::geo::meterToNm(minDistance);
+  return nearest;
 }

@@ -91,9 +91,16 @@ public:
   void saveState();
   void restoreState();
 
+  /* Get the route only */
   const RouteMapObjectList& getRouteMapObjects() const
   {
     return route;
+  }
+
+  /* Get the route including all approach segments */
+  const RouteMapObjectList& getRouteApprMapObjects() const
+  {
+    return routeAppr;
   }
 
   float getSpeedKts() const;
@@ -104,7 +111,7 @@ public:
   /* Get bounding rectangle for flight plan */
   const atools::geo::Rect& getBoundingRect() const
   {
-    return boundingRect;
+    return route.getBoundingRect();
   }
 
   /* Has flight plan changed */
@@ -299,7 +306,6 @@ private:
 
   void createRouteMapObjects();
   void updateRouteMapObjects();
-  void updateBoundingRect();
 
   void routeAltChanged();
   void routeTypeChanged();
@@ -341,6 +347,7 @@ private:
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
 
+  void updateRouteAppr();
   void routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* If route distance / direct distance if bigger than this value fail routing */
@@ -360,8 +367,11 @@ private:
 
   /* Network cache for flight plan calculation */
   RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
-  atools::geo::Rect boundingRect;
-  RouteMapObjectList route;
+
+  /* Flightplan and route objects */
+  RouteMapObjectList route, /* real route containing all segments */
+                     routeAppr; /* Route truncated at overlap with appoach and all
+                                 *  approach, transition and missed segments added */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
   QString routeFilename, fileDeparture, fileDestination;
