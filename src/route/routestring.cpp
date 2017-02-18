@@ -337,7 +337,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
 
   maptypes::MapAirport departure;
   query->getAirportByIdent(departure, ident);
-  if(departure.position.isValid())
+  if(departure.isValid())
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
 
@@ -369,7 +369,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
 
   maptypes::MapAirport destination;
   query->getAirportByIdent(destination, airportIdent);
-  if(destination.position.isValid())
+  if(destination.isValid())
   {
     // qDebug() << "found" << destination.ident << "id" << destination.id;
 

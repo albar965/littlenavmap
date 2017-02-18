@@ -174,7 +174,7 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
               // Runway or helipad
               query->getStartByNameAndPos(start, airport.id, name, flightplan->getDeparturePosition());
 
-              if(!start.position.isValid())
+              if(!start.isValid())
               {
                 qWarning() << "Found no start positions";
                 // Clear departure position in flight plan
@@ -299,10 +299,10 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
   {
     if(isAnyApproach())
     {
-      distanceTo = approachLeg.distance;
-      distanceToRhumb = approachLeg.distance;
-      courseTo = approachLeg.calculatedTrueCourse;
-      courseRhumbTo = approachLeg.calculatedTrueCourse;
+      distanceTo = approachLeg.calculatedDistance;
+      distanceToRhumb = approachLeg.calculatedDistance;
+      courseTo = normalizeCourse(approachLeg.calculatedTrueCourse - approachLeg.magvar);
+      courseRhumbTo = normalizeCourse(approachLeg.calculatedTrueCourse - approachLeg.magvar);
     }
     else
     {

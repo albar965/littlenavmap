@@ -688,7 +688,7 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   ui->actionRouteAirportDest->setEnabled(navType == maptypes::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
-  ui->actionSearchShowApproaches->setEnabled(navType == maptypes::AIRPORT && airport.position.isValid() &&
+  ui->actionSearchShowApproaches->setEnabled(navType == maptypes::AIRPORT && airport.isValid() &&
                                              (airport.flags & maptypes::AP_APPROACH));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());

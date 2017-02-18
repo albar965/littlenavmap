@@ -172,6 +172,11 @@ struct MapAirport
   bool fence() const;
   bool closedRunways() const;
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   /*
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
@@ -204,6 +209,11 @@ struct MapRunway
   atools::geo::Pos position, primaryPosition, secondaryPosition;
 
   bool primaryClosed, secondaryClosed; /* true if ends have closed markings */
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   bool isHard() const
   {
@@ -240,6 +250,11 @@ struct MapRunwayEnd
   atools::geo::Pos position;
   bool secondary;
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -260,6 +275,11 @@ struct MapApron
   QString surface;
   bool drawSurface;
 
+  bool isValid() const
+  {
+    return !vertices.isEmpty();
+  }
+
   int getId() const
   {
     return -1;
@@ -274,6 +294,11 @@ struct MapTaxiPath
   QString surface, name;
   int width; /* feet */
   bool drawSurface, closed;
+
+  bool isValid() const
+  {
+    return start.isValid();
+  }
 
   int getId() const
   {
@@ -290,6 +315,12 @@ struct MapParking
   atools::geo::Pos position;
   int number, radius, heading;
   bool jetway;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -310,6 +341,11 @@ struct MapStart
   atools::geo::Pos position;
   int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -329,6 +365,11 @@ struct MapHelipad
   atools::geo::Pos position;
   int length, width, heading, start;
   bool closed, transparent;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -353,6 +394,11 @@ struct MapVor
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
   bool dmeOnly, hasDme;
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -375,6 +421,11 @@ struct MapNdb
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return position;
@@ -396,6 +447,11 @@ struct MapWaypoint
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
   bool hasVictorAirways = false, hasJetAirways = false;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -423,6 +479,11 @@ struct MapUserpoint
   int id; /* Sequence number as it was added to the flight plan */
   atools::geo::Pos position;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -456,6 +517,11 @@ struct MapAirway
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
 
+  bool isValid() const
+  {
+    return from.isValid();
+  }
+
   atools::geo::Pos getPosition() const
   {
     return bounding.getCenter();
@@ -475,6 +541,11 @@ struct MapMarker
   int id; /* database id marker.marker_id */
   int heading;
   atools::geo::Pos position;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -498,6 +569,11 @@ struct MapIls
   atools::geo::Pos position, pos1, pos2, posmid; /* drawing positions for the feather */
   atools::geo::Rect bounding;
   bool hasDme;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -552,7 +628,9 @@ enum ApproachLegType
   HEADING_TO_DME_DISTANCE_TERMINATION,
   HEADING_TO_INTERCEPT,
   HEADING_TO_MANUAL_TERMINATION,
-  HEADING_TO_RADIAL_TERMINATION
+  HEADING_TO_RADIAL_TERMINATION,
+
+  DIRECT_TO_RUNWAY /* Artifical last segment inserted if approach does not contain runway end */
 };
 
 QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
@@ -575,6 +653,11 @@ struct MapApproachpoint
   bool missed, flyover, transition;
 
   atools::geo::Pos position;
+
+  bool isValid() const
+  {
+    return position.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {
@@ -738,6 +821,9 @@ struct MapApproachLegs
   atools::geo::Rect bounding;
   float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
 
+  /* Only for approaches */
+  maptypes::MapRunwayEnd runwayEnd;
+
   bool isEmpty() const
   {
     return size() == 0;
@@ -809,6 +895,11 @@ struct RangeMarker
   atools::geo::Pos center;
   MapObjectTypes type; /* VOR, NDB, AIRPORT, etc. - used to determine color */
 
+  bool isValid() const
+  {
+    return center.isValid();
+  }
+
   const atools::geo::Pos& getPosition() const
   {
     return center;
@@ -828,6 +919,11 @@ struct DistanceMarker
   float magvar;
 
   bool isRhumbLine, hasMagvar /* If true use  degrees magnetic for display */;
+
+  bool isValid() const
+  {
+    return from.isValid();
+  }
 
   const atools::geo::Pos& getPosition() const
   {

@@ -241,6 +241,21 @@ void InfoController::updateAirport()
   updateAirportInternal(false);
 }
 
+void InfoController::updateProgress()
+{
+  HtmlBuilder html(true /* has background color */);
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+  {
+    // ok - scrollbars not pressed
+    html.clear();
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html,
+                                      mainWindow->getRouteController()->getRouteApprMapObjects());
+    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+  }
+}
+
 void InfoController::updateAirportInternal(bool newAirport)
 {
   if(databaseLoadStatus)

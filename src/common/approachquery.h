@@ -48,7 +48,7 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
-  const maptypes::MapApproachLeg *getApproachLeg(const maptypes::MapAirport& airport, int legId);
+  const maptypes::MapApproachLeg *getApproachLeg(const maptypes::MapAirport& airport, int approachId, int legId);
   const maptypes::MapApproachLeg *getTransitionLeg(const maptypes::MapAirport& airport, int legId);
 
   /* Get approach only */
@@ -64,10 +64,19 @@ private:
 
   void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
   void processLegs(maptypes::MapApproachLegs& legs);
+
+  /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(maptypes::MapApproachLegs& legs);
+
+  /* Fill calculatedDistance and calculated course fields */
   void processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs);
+
+  /* Add an artificial runway leg if no connection to the end is given */
+  void processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+
+  /* Assign magnetic variation from the navaids */
   void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
-  void updateBounding(maptypes::MapApproachLegs& legs);
+  void updateBoundingRectangle(maptypes::MapApproachLegs& legs);
 
   maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
@@ -75,7 +84,8 @@ private:
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
-  *approachIdForLegQuery = nullptr, *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr;
+  *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
+  *approachQuery = nullptr, *transitionQuery = nullptr;
 
   // approach ID and transition ID to full lists
   // The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.)
@@ -85,6 +95,10 @@ private:
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
+
+  /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
+   * leg again */
+  Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
 
 };
 

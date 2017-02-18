@@ -1518,6 +1518,7 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
         qWarning() << "Approach not found" << approachRef.transitionId;
     }
   }
+  infoController->updateProgress();
 }
 
 /* Selection in approach view has changed */
@@ -1535,7 +1536,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
     if(approachRef.transitionId != -1)
       leg = approachQuery->getTransitionLeg(airport, approachRef.legId);
     else
-      leg = approachQuery->getApproachLeg(airport, approachRef.legId);
+      leg = approachQuery->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
 
     if(leg != nullptr)
     {

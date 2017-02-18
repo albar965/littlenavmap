@@ -71,6 +71,7 @@ public:
 
   /* Update the currently shown airport information if weather data has changed */
   void updateAirport();
+  void updateProgress();
 
   /* Clear all panels and result set */
   void preDatabaseLoad();

@@ -285,37 +285,37 @@ void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::Map
   if(type == maptypes::AIRPORT)
   {
     maptypes::MapAirport airport = getAirportById(id);
-    if(airport.position.isValid())
+    if(airport.isValid())
       result.airports.append(airport);
   }
   else if(type == maptypes::VOR)
   {
     maptypes::MapVor vor = getVorById(id);
-    if(vor.position.isValid())
+    if(vor.isValid())
       result.vors.append(vor);
   }
   else if(type == maptypes::NDB)
   {
     maptypes::MapNdb ndb = getNdbById(id);
-    if(ndb.position.isValid())
+    if(ndb.isValid())
       result.ndbs.append(ndb);
   }
   else if(type == maptypes::WAYPOINT)
   {
     maptypes::MapWaypoint waypoint = getWaypointById(id);
-    if(waypoint.position.isValid())
+    if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
   else if(type == maptypes::ILS)
   {
     maptypes::MapIls ils = getIlsById(id);
-    if(ils.position.isValid())
+    if(ils.isValid())
       result.ils.append(ils);
   }
   else if(type == maptypes::RUNWAYEND)
   {
     maptypes::MapRunwayEnd end = getRunwayEndById(id);
-    if(end.position.isValid())
+    if(end.isValid())
       result.runwayEnds.append(end);
   }
 }

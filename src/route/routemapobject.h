@@ -170,13 +170,13 @@ public:
     return distanceToRhumb;
   }
 
-  /* Great circle start course to this route map object from the predecessor in degrees or 0 if first in route */
+  /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseTo() const
   {
     return courseTo;
   }
 
-  /* Rhumb line course to this route map object from the predecessor in degrees or 0 if first in route */
+  /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToRhumb() const
   {
     return courseRhumbTo;

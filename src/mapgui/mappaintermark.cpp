@@ -175,17 +175,17 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   positions.clear();
 
-  // if(leg.waypoint.position.isValid())
+  // if(leg.waypoint.isValid())
   // positions.append(leg.waypoint.position);
-  // if(leg.vor.position.isValid())
+  // if(leg.vor.isValid())
   // positions.append(leg.vor.position);
-  // if(leg.ndb.position.isValid())
+  // if(leg.ndb.isValid())
   // positions.append(leg.ndb.position);
-  // if(leg.ils.position.isValid())
+  // if(leg.ils.isValid())
   // positions.append(leg.ils.position);
-  // if(leg.runwayEnd.position.isValid())
+  // if(leg.runwayEnd.isValid())
   // positions.append(leg.runwayEnd.position);
-  // if(leg.userpoint.position.isValid())
+  // if(leg.userpoint.isValid())
   // positions.append(leg.userpoint.position);
 
   if(leg.line.isValid())

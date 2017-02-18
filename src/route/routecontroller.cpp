@@ -2340,9 +2340,9 @@ QString RouteController::buildFlightplanLabel(bool html) const
       departure = flightplan.getDepartureAiportName() +
                   " (" + flightplan.getDepartureIdent() + ")";
 
-      if(route.first().getDepartureParking().position.isValid())
+      if(route.first().getDepartureParking().isValid())
         departure += " " + maptypes::parkingNameNumberType(route.first().getDepartureParking());
-      else if(route.first().getDepartureStart().position.isValid())
+      else if(route.first().getDepartureStart().isValid())
       {
         const maptypes::MapStart& start = route.first().getDepartureStart();
         if(route.hasDepartureHelipad())
@@ -2481,7 +2481,7 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
       query->getBestStartPositionForAirport(start, rmo.getAirport().id);
 
       // Check if the airport has a start position - sone add-on airports don't
-      if(start.position.isValid())
+      if(start.isValid())
       {
         RouteCommand *undoCommand = nullptr;
 

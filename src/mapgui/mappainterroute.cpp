@@ -69,6 +69,7 @@ void MapPainterRoute::render(PaintContext *context)
 void MapPainterRoute::paintRoute(const PaintContext *context)
 {
   const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
+  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteApprMapObjects();
 
   if(routeMapObjects.isEmpty())
     return;
@@ -126,7 +127,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Calculate the index where an approach or transition starts
-  int approachIndex = routeController->getRouteApprMapObjects().calculateApproachIndex();
+  int approachIndex = routeApprMapObjects.calculateApproachIndex();
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -168,7 +169,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   const Pos& pos = mapWidget->getUserAircraft().getPosition();
 
   // Get active route leg
-  int activeRouteLeg = routeController->getRouteApprMapObjects().getNearestRouteLegIndex(pos);
+  int activeRouteLeg = routeApprMapObjects.getNearestRouteLegIndex(pos);
 
   // Draw innner line
   context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
@@ -223,10 +224,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Draw symbol text
   drawSymbolText(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
 
-  if(routeMapObjects.size() >= 2)
+  if(routeApprMapObjects.size() >= 2)
   {
     // Draw the top of descent circle and text
-    QPoint pt = wToS(routeMapObjects.getTopOfDescent());
+    QPoint pt = wToS(routeApprMapObjects.getTopOfDescent());
     if(!pt.isNull())
     {
       float width = context->sz(context->thicknessFlightplan, 3);
@@ -238,7 +239,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
       QStringList tod;
       tod.append(tr("TOD"));
       if(context->mapLayer->isAirportRouteInfo())
-        tod.append(Unit::distNm(routeMapObjects.getTopOfDescentFromDestination()));
+        tod.append(Unit::distNm(routeApprMapObjects.getTopOfDescentFromDestination()));
 
       symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
@@ -294,6 +295,16 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     else
       context->painter->setPen(i == activeLeg ? apprActivePen : apprPen);
 
+    // if(legs.at(i).type == maptypes::DIRECT_TO_RUNWAY)
+    // {
+    // QPen pen = context->painter->pen();
+    // pen.setWidthF(pen.widthF() / 2.f);
+    // context->painter->setPen(pen);
+    // paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
+    // pen.setWidthF(pen.widthF() * 2.f);
+    // context->painter->setPen(pen);
+    // }
+    // else
     paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
   }
 
@@ -536,7 +547,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::HEADING_TO_RADIAL_TERMINATION,
                               maptypes::COURSE_TO_DME_DISTANCE,
                               maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
-                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE}))
+                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                              maptypes::DIRECT_TO_RUNWAY}))
   {
     painter->drawLine(line);
     lastLine = line;

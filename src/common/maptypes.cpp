@@ -352,7 +352,9 @@ const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
     {"VD", HEADING_TO_DME_DISTANCE_TERMINATION},
     {"VI", HEADING_TO_INTERCEPT},
     {"VM", HEADING_TO_MANUAL_TERMINATION},
-    {"VR", HEADING_TO_RADIAL_TERMINATION}
+    {"VR", HEADING_TO_RADIAL_TERMINATION},
+
+    {"RX", DIRECT_TO_RUNWAY}
   });
 
 const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
@@ -379,7 +381,9 @@ const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
     {HEADING_TO_DME_DISTANCE_TERMINATION, "VD"},
     {HEADING_TO_INTERCEPT, "VI"},
     {HEADING_TO_MANUAL_TERMINATION, "VM"},
-    {HEADING_TO_RADIAL_TERMINATION, "VR"}
+    {HEADING_TO_RADIAL_TERMINATION, "VR"},
+
+    {DIRECT_TO_RUNWAY, "RX"}
   });
 
 const static QHash<ApproachLegType, QString> approachLegTypeToStr(
@@ -406,7 +410,9 @@ const static QHash<ApproachLegType, QString> approachLegTypeToStr(
     {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("Heading to DME distance termination")},
     {HEADING_TO_INTERCEPT, QObject::tr("Heading to intercept")},
     {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")}
+    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
+
+    {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")}
   });
 
 const static QHash<ApproachLegType, QString> approachLegRemarkStr(
@@ -433,7 +439,9 @@ const static QHash<ApproachLegType, QString> approachLegRemarkStr(
     {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
     {HEADING_TO_INTERCEPT, QObject::tr("")},
     {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")}
+    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
+
+    {DIRECT_TO_RUNWAY, QObject::tr("")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)

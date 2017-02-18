@@ -756,7 +756,7 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
     if(ref.transitionId != -1)
       leg = approachQuery->getTransitionLeg(currentAirport, ref.legId);
     else if(ref.approachId != -1)
-      leg = approachQuery->getApproachLeg(currentAirport, ref.legId);
+      leg = approachQuery->getApproachLeg(currentAirport, ref.approachId, ref.legId);
 
     if(leg != nullptr)
       emit showPos(leg->line.getPos2(), 0.f, doubleClick);

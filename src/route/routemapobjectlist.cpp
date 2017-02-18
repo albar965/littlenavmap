@@ -155,8 +155,10 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     if(nextRouteLegIndex != nullptr)
       *nextRouteLegIndex = routeIndex;
 
-    const atools::geo::Pos& position = at(routeIndex).getPosition();
-    float distToCur = atools::geo::meterToNm(position.distanceMeterTo(pos));
+    float distToCur = 0.f;
+
+    if(!at(routeIndex).isMissed())
+      distToCur = atools::geo::meterToNm(at(routeIndex).getPosition().distanceMeterTo(pos));
 
     if(nextLegDistance != nullptr)
       *nextLegDistance = distToCur;
@@ -165,7 +167,12 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     {
       *distFromStart = 0.f;
       for(int i = 0; i <= routeIndex; i++)
-        *distFromStart += at(i).getDistanceTo();
+      {
+        if(!at(i).isMissed())
+          *distFromStart += at(i).getDistanceTo();
+        else
+          break;
+      }
       *distFromStart -= distToCur;
       *distFromStart = std::abs(*distFromStart);
     }
@@ -174,7 +181,10 @@ bool RouteMapObjectList::getRouteDistances(const atools::geo::Pos& pos,
     {
       *distToDest = 0.f;
       for(int i = routeIndex + 1; i < size(); i++)
-        *distToDest += at(i).getDistanceTo();
+      {
+        if(!at(i).isMissed())
+          *distToDest += at(i).getDistanceTo();
+      }
       *distToDest += distToCur;
       *distToDest = std::abs(*distToDest);
     }
@@ -194,7 +204,7 @@ float RouteMapObjectList::getTopOfDescentFromStart() const
 
 float RouteMapObjectList::getTotalDistance() const
 {
-  return totalDistance + approachLegs.approachDistance + approachLegs.transitionDistance;
+  return totalDistance;
 }
 
 float RouteMapObjectList::getTopOfDescentFromDestination() const
@@ -318,7 +328,7 @@ void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int
 bool RouteMapObjectList::hasDepartureParking() const
 {
   if(hasValidDeparture())
-    return first().getDepartureParking().position.isValid();
+    return first().getDepartureParking().isValid();
 
   return false;
 }
@@ -334,7 +344,7 @@ bool RouteMapObjectList::hasDepartureHelipad() const
 bool RouteMapObjectList::hasDepartureStart() const
 {
   if(hasValidDeparture())
-    return first().getDepartureStart().position.isValid();
+    return first().getDepartureStart().isValid();
 
   return false;
 }
@@ -464,7 +474,9 @@ void RouteMapObjectList::updateTotalDistance()
   {
     RouteMapObject& mapobj = (*this)[i];
     mapobj.updateDistanceAndCourse(i, last, this);
-    totalDistance += mapobj.getDistanceTo();
+
+    if(!mapobj.isMissed())
+      totalDistance += mapobj.getDistanceTo();
     last = &mapobj;
   }
 }

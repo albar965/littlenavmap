@@ -96,7 +96,7 @@ bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoin
 
   // Check for invalid references that are caused by the navdata update
   // Check pole to avoid FSAD bugs
-  return !vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole() &&
+  return !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
          vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
 }
 
@@ -106,7 +106,7 @@ bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoin
 
   // Check for invalid references that are caused by the navdata update
   // Check pole to avoid FSAD bugs
-  return !ndb.ident.isEmpty() && ndb.position.isValid() && !ndb.position.isPole() &&
+  return !ndb.ident.isEmpty() && ndb.isValid() && !ndb.position.isPole() &&
          ndb.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
 
 }
@@ -133,7 +133,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
 
     // Workaround for source data error - wrongly assigned VOR waypoints that are assigned to NDBs
     query->getVorNearest(vor, waypoint.position);
-    if(!vor.dmeOnly && !vor.ident.isEmpty() && vor.position.isValid() && !vor.position.isPole() &&
+    if(!vor.dmeOnly && !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
        vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M))
     {
       // Get the vor if there is one at the waypoint position
