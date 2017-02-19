@@ -92,7 +92,7 @@ const QIcon& iconForStartType(const QString& type)
   static const QIcon empty;
   if(type == "R")
     return runway;
-  else if(type == "R")
+  else if(type == "H")
     return helipad;
   else if(type == "R")
     return water;

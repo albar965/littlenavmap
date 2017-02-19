@@ -599,8 +599,14 @@ struct MapAltRestriction
     BETWEEN
   };
 
-  Descriptor descriptor;
+  Descriptor descriptor = NONE;
   float alt1, alt2;
+
+  bool isValid() const
+  {
+    return descriptor != NONE;
+  }
+
 };
 
 enum ApproachLegType
@@ -788,11 +794,16 @@ struct MapApproachLeg
   /* Navaids resolved by approach query class */
   MapSearchResult navaids;
 
-  maptypes::ApproachLegType type;
+  maptypes::ApproachLegType type = INVALID_LEG_TYPE;
   bool missed, flyover, trueCourse,
        transition, /* Leg is part of a transition */
        intercept, /* Leg was modfied by a previous intercept */
        disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
+
+  bool isValid() const
+  {
+    return type != INVALID_LEG_TYPE;
+  }
 
   float legTrueCourse() const
   {
@@ -970,6 +981,7 @@ QString parkingRampName(const QString& ramp);
 QString parkingTypeName(const QString& type);
 QString parkingName(const QString& name);
 QString parkingNameNumberType(const maptypes::MapParking& parking);
+QString startType(const maptypes::MapStart& start);
 
 /* Parking name from PLN to database name */
 QString parkingDatabaseName(const QString& name);

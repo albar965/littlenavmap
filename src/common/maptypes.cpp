@@ -254,11 +254,11 @@ const static QHash<QString, QString> navTypeNamesNdb(
     {"HH", QObject::tr("HH")},
     {"H", QObject::tr("H")},
     {"MH", QObject::tr("MH")},
-    {"CP", QObject::tr("CL")},
+    {"CP", QObject::tr("Compass Locator")},
     {"NHH", QObject::tr("HH")},
     {"NH", QObject::tr("H")},
     {"NMH", QObject::tr("MH")},
-    {"NCP", QObject::tr("CL")},
+    {"NCP", QObject::tr("Compass Locator")},
   });
 
 const static QHash<QString, QString> navTypeNamesWaypoint(
@@ -525,6 +525,18 @@ QString parkingNameNumberType(const maptypes::MapParking& parking)
 {
   return maptypes::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
          ", " + maptypes::parkingTypeName(parking.type);
+}
+
+QString startType(const maptypes::MapStart& start)
+{
+  if(start.type == "R")
+    return "Runway";
+  else if(start.type == "W")
+    return "Water";
+  else if(start.type == "H")
+    return "Helipad";
+  else
+    return QString();
 }
 
 QString parkingNameForFlightplan(const maptypes::MapParking& parking)

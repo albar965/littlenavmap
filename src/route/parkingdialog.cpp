@@ -109,7 +109,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
           number = QString::number(startPos.start.helipadNumber);
 
         QString text = tr("%1 %2 %3").
-                       arg(atools::capString(startPos.start.type)).
+                       arg(maptypes::startType(startPos.start)).
                        arg(startPos.start.helipadNumber == 0 ? startPos.start.runwayName : QString()).
                        arg(number);
 
