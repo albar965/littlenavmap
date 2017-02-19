@@ -832,19 +832,40 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
 
           if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
           {
+            atools::geo::CrossTrackStatus status;
 
-            leg.line.setPos2(intersect);
+            next->line.distanceMeterToLine(intersect, status);
 
-            // Leg was modified
-            next->intercept = true;
-            next->line.setPos1(intersect);
+            if(status == atools::geo::ALONG_TRACK)
+            {
+              next->intercept = true;
+              next->line.setPos1(intersect);
 
-            leg.displayText << tr("Intercept");
+              leg.line.setPos2(intersect);
+              leg.displayText << tr("Intercept");
 
-            if(nextIsArc)
-              leg.displayText << next->recFixIdent + "/" + Unit::distNm(next->rho, true, 20, true);
+              if(nextIsArc)
+                leg.displayText << next->recFixIdent + "/" + Unit::distNm(next->rho, true, 20, true);
+              else
+                leg.displayText << tr("Leg");
+            }
+            else if(status == atools::geo::BEFORE_START)
+            {
+              leg.line.setPos2(next->line.getPos2());
+            }
+            else if(status == atools::geo::AFTER_END)
+            {
+              next->intercept = true;
+              leg.line.setPos2(next->line.getPos2());
+              next->line.setPos1(next->line.getPos2());
+              next->line.setPos2(next->line.getPos2());
+            }
             else
-              leg.displayText << tr("Leg");
+              qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
+                         << "invalid cross track"
+                         << "approachId" << leg.approachId
+                         << "transitionId" << leg.transitionId << "legId" << leg.legId;
+
           }
           else
           {

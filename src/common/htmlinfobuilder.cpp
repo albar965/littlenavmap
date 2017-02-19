@@ -1526,15 +1526,66 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       html.tableEnd();
 
-      head(html, tr("Next Waypoint"));
-      html.table();
+      bool nearestLegValid = nearestLegIndex >= 0 && nearestLegIndex < route.size();
 
-      if(nearestLegIndex >= 0 && nearestLegIndex < route.size())
+      QString apprText;
+      if(nearestLegValid)
       {
         const RouteMapObject& rmo = route.at(nearestLegIndex);
-        float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
-        html.row2(tr("Name and Type:"), rmo.getIdent() +
-                  (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
+
+        if(rmo.isApproach())
+          apprText = tr(" - Approach");
+        else if(rmo.isTransition())
+          apprText = tr(" - Transition");
+        else if(rmo.isMissed())
+          apprText = tr(" - Missed Approach");
+      }
+
+      head(html, tr("Next Waypoint") + apprText);
+      html.table();
+
+      if(nearestLegValid)
+      {
+        const RouteMapObject& rmo = route.at(nearestLegIndex);
+        const MapApproachLeg& leg = rmo.getApproachLeg();
+
+        if(rmo.isAnyApproach())
+        {
+          html.row2(tr("Leg Type:"), maptypes::approachLegTypeStr(leg.type));
+
+          QStringList instructions;
+          if(leg.flyover)
+            instructions += tr("Fly over");
+
+          if(!leg.turnDirection.isEmpty())
+          {
+            if(leg.turnDirection == "L")
+              instructions += tr("Turn Left");
+            else if(leg.turnDirection == "R")
+              instructions += tr("Turn Right");
+            else if(leg.turnDirection == "B")
+              instructions += tr("Turn Left or right");
+          }
+          if(!instructions.isEmpty())
+            html.row2(tr("Instructions:"), instructions.join(", "));
+        }
+
+        if(!rmo.getIdent().isEmpty())
+          html.row2(tr("Name and Type:"), rmo.getIdent() +
+                    (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
+
+        if(!leg.recFixIdent.isEmpty())
+        {
+          if(leg.rho > 0.f)
+            html.row2(tr("Related Navaid:"), tr("%1, %2, %3").arg(leg.recFixIdent).
+                      arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
+                      arg(QLocale().toString(leg.theta, 'f', 0) + tr("°M")));
+          else
+            html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
+        }
+
+        if(rmo.isAnyApproach() && leg.altRestriction.isValid())
+          html.row2(tr("Restriction:"), maptypes::altRestrictionText(leg.altRestriction));
 
         if(nearestLegDistance < maptypes::INVALID_DISTANCE_VALUE)
         {
@@ -1544,11 +1595,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             timeStr = tr(", ") + formatter::formatMinutesHoursLong(
               nearestLegDistance / aircraft.getGroundSpeedKts());
 
-          html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
-                    locale.toString(crs, 'f', 0) +
-                    tr("°M, ") + timeStr);
+          if(rmo.isRoute() || (leg.type != maptypes::ARC_TO_FIX &&
+                               leg.type != maptypes::CONSTANT_RADIUS_ARC))
+          {
+            float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
+            html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
+                      locale.toString(crs, 'f', 0) +
+                      tr("°M, ") + timeStr);
+          }
+          else
+            html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + ", " + timeStr);
         }
-        html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumb(), 'f', 0) + tr("°M"));
+
+        if(rmo.isRoute() || (leg.type != maptypes::ARC_TO_FIX &&
+                             leg.type != maptypes::CONSTANT_RADIUS_ARC))
+          html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumb(), 'f', 0) + tr("°M"));
       }
       else
         qWarning() << "Invalid route leg index" << nearestLegIndex;

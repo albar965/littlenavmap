@@ -486,6 +486,8 @@ QString RouteMapObject::getMapObjectTypeName() const
       return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(approachLeg.navaids.ndbs.first().type));
     else if(!approachLeg.navaids.waypoints.isEmpty())
       return tr("Waypoint");
+    else if(!approachLeg.navaids.runwayEnds.isEmpty())
+      return tr("Runway");
   }
   else
   {

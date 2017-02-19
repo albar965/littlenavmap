@@ -35,6 +35,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "route/routecontroller.h"
 #include "gui/griddelegate.h"
+#include "geo/calculations.h"
 
 #include <QMenu>
 #include <QPainter>
@@ -934,11 +935,7 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 
 QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
-  QString courseStr;
-  if(leg.course != 0.f && leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::CONSTANT_RADIUS_ARC &&
-     leg.type != maptypes::ARC_TO_FIX)
-    courseStr = QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
-  return courseStr;
+  return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) + tr("°M");
 }
 
 QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
@@ -982,7 +979,7 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
     if(leg.rho > 0.f)
       remarks.append(tr("%1 / %2 / %3").arg(leg.recFixIdent).
                      arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                     arg(QLocale().toString(leg.theta) + tr("°M")));
+                     arg(QLocale().toString(leg.theta, 'f', 0) + tr("°M")));
     else
       remarks.append(tr("%1").arg(leg.recFixIdent));
   }

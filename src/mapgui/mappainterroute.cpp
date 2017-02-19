@@ -432,8 +432,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::COURSE_TO_INTERCEPT,
                               maptypes::HEADING_TO_INTERCEPT}))
   {
-    if((leg.turnDirection == "R" || leg.turnDirection == "L") &&
-       prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
+    if(contains(leg.turnDirection, {"R", "L", "B"}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
     {
       float lineDist = QLineF(lastLine.p2(), line.p1()).length();
       if(!lastLine.p2().isNull() && lineDist > 2)
@@ -759,18 +758,22 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     return;
 
   QPainter *painter = context->painter;
-  QPointF intersectPoint = wToS(leg.interceptPos);
+  QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
 
   painter->save();
   painter->setPen(Qt::black);
   painter->drawEllipse(line.p1(), 20, 10);
   painter->drawEllipse(line.p2(), 10, 20);
-  painter->drawEllipse(intersectPoint, 30, 30);
   painter->drawText(line.x1() - 40, line.y1() + 40,
                     "Start " + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
+
   painter->drawText(line.x2() - 40, line.y2() + 60,
                     "End" + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
-  painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
+  if(!intersectPoint.isNull())
+  {
+    painter->drawEllipse(intersectPoint, 30, 30);
+    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
+  }
 
   painter->setPen(QPen(Qt::darkBlue, 1));
   for(int i = 0; i < leg.geometry.size() - 1; i++)
