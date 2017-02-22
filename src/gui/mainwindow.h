@@ -115,6 +115,8 @@ public:
     return connectClient;
   }
 
+  bool isConnected() const;
+
   /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
 

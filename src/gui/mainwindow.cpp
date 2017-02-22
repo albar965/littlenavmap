@@ -825,10 +825,12 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
 
+  // Deliver first to route controller to update active leg and distances
+  connect(connectClient, &ConnectClient::dataPacketReceived, routeController, &RouteController::simDataChanged);
+
   connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simulatorDataReceived);
-  connect(connectClient, &ConnectClient::dataPacketReceived, routeController, &RouteController::simDataChanged);
 
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
@@ -867,8 +869,6 @@ void MainWindow::connectAllSlots()
   connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
   connect(approachController, &ApproachTreeController::routeAttachApproach, routeController,
           &RouteController::routeAttachApproach);
-  connect(approachController, &ApproachTreeController::routeClearApproach, routeController,
-          &RouteController::routeClearApproach);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1004,6 +1004,11 @@ void MainWindow::setMapObjectsShownMessageText(const QString& text, const QStrin
 const ElevationModel *MainWindow::getElevationModel()
 {
   return mapWidget->model()->elevationModel();
+}
+
+bool MainWindow::isConnected() const
+{
+  return connectClient->isConnected();
 }
 
 /* Called after each query */

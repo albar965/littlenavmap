@@ -204,7 +204,6 @@ void ApproachTreeController::showApproaches(maptypes::MapAirport airport)
 
     // Change mode
     disableSelectedMode();
-    emit routeClearApproach();
   }
   else
   {
@@ -606,6 +605,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   Q_UNUSED(saver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
+  int itemRow = treeWidget->invisibleRootItem()->indexOfChild(item);
   MapApproachRef ref;
   if(item != nullptr)
     ref = itemIndex.at(item->type());
@@ -616,6 +616,10 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   ui->actionInfoApproachUnselect->setDisabled(!approachSelectedMode);
   ui->actionInfoApproachSelect->setDisabled(item == nullptr || approachSelectedMode);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
+
+  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteApprMapObjects();
+  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() ||
+                                                 !rmos.isConnectedToApproach() || !mainWindow->isConnected());
 
   if(approachSelectedMode)
     ui->actionInfoApproachAttach->setDisabled(mainWindow->getRouteController()->isFlightplanEmpty());
@@ -629,7 +633,10 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachClear);
   menu.addSeparator();
   if(approachSelectedMode)
+  {
     menu.addAction(ui->actionInfoApproachUnselect);
+    menu.addAction(ui->actionInfoApproachActivateLeg);
+  }
   else
     menu.addAction(ui->actionInfoApproachSelect);
   menu.addAction(ui->actionInfoApproachAttach);
@@ -699,10 +706,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   QAction *action = menu.exec(menuPos);
   if(action == ui->actionInfoApproachExpandAll)
   {
-    // treeWidget->expandAll();
     const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-
-    // First load child nodes to get the same tree
     for(int i = 0; i < root->childCount(); ++i)
       root->child(i)->setExpanded(true);
   }
@@ -719,7 +723,6 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachUnselect)
   {
     disableSelectedMode();
-    emit routeClearApproach();
   }
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false);
@@ -737,6 +740,10 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     if(legs != nullptr)
       emit routeAttachApproach(*legs);
   }
+  else if(action == ui->actionInfoApproachActivateLeg)
+    // Will call this class back to highlight row
+    mainWindow->getRouteController()->activateApproachLeg(itemRow);
+
   // Done by the actions themselves
   // else if(action == ui->actionInfoApproachShowAppr ||
   // action == ui->actionInfoApproachShowMissedAppr ||

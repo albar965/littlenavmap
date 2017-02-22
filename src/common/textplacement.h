@@ -29,6 +29,7 @@
 namespace atools {
 namespace geo {
 class Line;
+class LineString;
 class Pos;
 }
 }
@@ -44,8 +45,12 @@ class TextPlacement
 public:
   TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter);
 
-  /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints */
+  /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
+   * Lines do not have to form a connected linestring. */
   void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts);
+
+  /* Calculate point coordinates and visibility */
+  void calculateTextPositions(const atools::geo::LineString& points);
 
   /* Draw text after calling calculateTextAlongLines. Text is aligned with lines and kept in an
    * upwards readable position. Arrows are optionally added to end or start.

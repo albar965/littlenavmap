@@ -20,6 +20,7 @@
 
 #include "geo/line.h"
 #include "geo/calculations.h"
+#include "geo/linestring.h"
 
 #include <QPainter>
 
@@ -32,10 +33,21 @@ TextPlacement::TextPlacement(QPainter *painterParam, CoordinateConverter *coordi
 
 }
 
+void TextPlacement::calculateTextPositions(const atools::geo::LineString& points)
+{
+  visibleStartPoints.resize(points.size() + 1);
+
+  int x1, y1;
+  for(int i = 0; i < points.size(); i++)
+  {
+    bool visibleStart = converter->wToS(points.at(i), x1, y1);
+    visibleStartPoints.setBit(i, visibleStart);
+    startPoints.append(QPointF(x1, y1));
+  }
+}
+
 void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts)
 {
-  clearLineTextData();
-
   visibleStartPoints.resize(lines.size() + 1);
 
   QFontMetrics metrics = painter->fontMetrics();
@@ -43,11 +55,8 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   for(int i = 0; i < lines.size(); i++)
   {
     const Line& line = lines.at(i);
-    bool visibleStart = converter->wToS(line.getPos1(), x1, y1);
-    visibleStartPoints.setBit(i, visibleStart);
+    converter->wToS(line.getPos1(), x1, y1);
     converter->wToS(line.getPos2(), x2, y2);
-
-    startPoints.append(QPointF(x1, y1));
 
     if(!fast)
     {
@@ -91,9 +100,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   {
     // Add last point
     const Line& line = lines.last();
-    bool visibleStart = converter->wToS(line.getPos2(), x2, y2);
-    visibleStartPoints.setBit(lines.size(), visibleStart);
-    startPoints.append(QPointF(x2, y2));
+    converter->wToS(line.getPos2(), x2, y2);
 
     if(!colors.isEmpty())
       colors2.append(colors.at(lines.size() - 1));

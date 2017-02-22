@@ -79,13 +79,12 @@ signals:
   /* Show approaches and highlight circles on the map */
   void approachSelected(maptypes::MapApproachRef);
   void approachLegSelected(maptypes::MapApproachRef);
-  void approachAddToFlightPlan(maptypes::MapApproachRef);
 
   /* Zoom to approaches/transitions or waypoints */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
-  /* Add, replace or delete object from flight plan from context menu or drag and drop */
+  /* Add the initial fix to the route */
   void routeAttachApproach(const maptypes::MapApproachLegs& legs);
   void routeClearApproach();
 

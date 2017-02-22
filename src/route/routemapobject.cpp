@@ -73,27 +73,26 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
   return TYPE();
 }
 
-void RouteMapObject::createFromAirport(int entryIndex,
-                                       const maptypes::MapAirport& newAirport,
-                                       const RouteMapObject *predRouteMapObj,
-                                       const RouteMapObjectList *routeList)
+void RouteMapObject::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
+                                       const RouteMapObject *predRouteMapObj)
 {
   index = entryIndex;
   predecessor = predRouteMapObj != nullptr;
   type = maptypes::AIRPORT;
   airport = newAirport;
 
-  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
+  updateMagvar();
+  updateDistanceAndCourse(entryIndex, predRouteMapObj);
   valid = true;
 }
 
 void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
-                                           const RouteMapObject *predRouteMapObj,
-                                           const RouteMapObjectList *routeList)
+                                           const RouteMapObject *predRouteMapObj)
 {
   index = entryIndex;
   predecessor = predRouteMapObj != nullptr;
   approachLeg = legs.at(entryIndex);
+  magvar = approachLeg.magvar;
 
   if(approachLeg.transition)
     type = maptypes::APPROACH_TRANSITION;
@@ -102,13 +101,12 @@ void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapAp
   else
     type = maptypes::APPROACH;
 
-  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
+  updateMagvar();
+  updateDistanceAndCourse(entryIndex, predRouteMapObj);
   valid = true;
 }
 
-void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                               const RouteMapObject *predRouteMapObj,
-                                               const RouteMapObjectList *routeList)
+void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteMapObject *predRouteMapObj)
 {
   index = entryIndex;
 
@@ -275,7 +273,8 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query,
   if(!valid)
     type = maptypes::INVALID;
 
-  updateDistanceAndCourse(entryIndex, predRouteMapObj, routeList);
+  updateMagvar();
+  updateDistanceAndCourse(entryIndex, predRouteMapObj);
 }
 
 void RouteMapObject::setDepartureParking(const maptypes::MapParking& departureParking)
@@ -290,62 +289,77 @@ void RouteMapObject::setDepartureStart(const maptypes::MapStart& departureStart)
   parking = maptypes::MapParking();
 }
 
-void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
-                                             const RouteMapObjectList *routeList)
+void RouteMapObject::updateMagvar()
+{
+  if(isAnyApproach())
+    magvar = approachLeg.magvar;
+  else if(airport.isValid())
+    magvar = airport.magvar;
+  else if(vor.isValid())
+    magvar = vor.magvar;
+  else if(ndb.isValid())
+    magvar = ndb.magvar;
+  else if(waypoint.isValid())
+    magvar = waypoint.magvar;
+  else
+    magvar = 0.f;
+}
+
+void RouteMapObject::updateInvalidMagvar(int entryIndex, const RouteMapObjectList *routeList)
+{
+  if(type == maptypes::USER || type == maptypes::INVALID)
+  {
+    magvar = 0.f;
+    // Get magnetic variance from one of the next and previous waypoints if not set
+    float magvarnext = 0.f, magvarprev = 0.f;
+    for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
+    {
+      if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
+      {
+        magvarnext = routeList->at(i).getMagvar();
+        break;
+      }
+    }
+
+    for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
+    {
+      if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
+      {
+        magvarprev = routeList->at(i).getMagvar();
+        break;
+      }
+    }
+
+    // Use average of previous and next or one valid value
+    if(std::abs(magvarnext) > 0.f && std::abs(magvarprev) > 0.f)
+      magvar = (magvarnext + magvarprev) / 2.f;
+    else if(std::abs(magvarnext) > 0.f)
+      magvar = magvarnext;
+    else if(std::abs(magvarprev) > 0.f)
+      magvar = magvarprev;
+  }
+}
+
+void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj)
 {
   index = entryIndex;
 
-  if(predRouteMapObj != nullptr)
+  if(isAnyApproach())
   {
-    if(isAnyApproach())
-    {
-      distanceTo = approachLeg.calculatedDistance;
-      distanceToRhumb = approachLeg.calculatedDistance;
-      courseTo = normalizeCourse(approachLeg.calculatedTrueCourse - approachLeg.magvar);
-      courseRhumbTo = normalizeCourse(approachLeg.calculatedTrueCourse - approachLeg.magvar);
-    }
-    else
-    {
-      const Pos& prevPos = predRouteMapObj->getPosition();
-
-      distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
-      distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
-
-      float magvar = getMagvar();
-      if(magvar == 0.f)
-      {
-        // Get magnetic variance from one of the next and previous waypoints if not set
-        float magvarnext = 0.f, magvarprev = 0.f;
-        for(int i = std::min(entryIndex, routeList->size() - 1); i >= 0; i--)
-        {
-          if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-          {
-            magvarnext = routeList->at(i).getMagvar();
-            break;
-          }
-        }
-
-        for(int i = std::min(entryIndex, routeList->size() - 1); i < routeList->size(); i++)
-        {
-          if(atools::almostNotEqual(routeList->at(i).getMagvar(), 0.f))
-          {
-            magvarprev = routeList->at(i).getMagvar();
-            break;
-          }
-        }
-
-        // Use average of previous and next or one valid value
-        if(std::abs(magvarnext) > 0.f && std::abs(magvarprev) > 0.f)
-          magvar = (magvarnext + magvarprev) / 2.f;
-        else if(std::abs(magvarnext) > 0.f)
-          magvar = magvarnext;
-        else if(std::abs(magvarprev) > 0.f)
-          magvar = magvarprev;
-      }
-
-      courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()) - magvar);
-      courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()) - magvar);
-    }
+    predecessor = true;
+    distanceTo = approachLeg.calculatedDistance;
+    distanceToRhumb = approachLeg.calculatedDistance;
+    courseTo = normalizeCourse(approachLeg.calculatedTrueCourse);
+    courseRhumbTo = normalizeCourse(approachLeg.calculatedTrueCourse);
+  }
+  else if(predRouteMapObj != nullptr)
+  {
+    predecessor = true;
+    const Pos& prevPos = predRouteMapObj->getPosition();
+    distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
+    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
+    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()));
+    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()));
   }
   else
   {
@@ -403,39 +417,6 @@ int RouteMapObject::getId() const
     }
   }
   return -1;
-}
-
-float RouteMapObject::getMagvar() const
-{
-  if(type == maptypes::INVALID)
-    return -1;
-
-  if(isAnyApproach())
-    return approachLeg.magvar;
-  else
-  {
-    switch(curEntry().getWaypointType())
-    {
-      case atools::fs::pln::entry::UNKNOWN:
-        return 0.f;
-
-      case atools::fs::pln::entry::AIRPORT:
-        return airport.magvar;
-
-      case atools::fs::pln::entry::INTERSECTION:
-        return waypoint.magvar;
-
-      case atools::fs::pln::entry::VOR:
-        return vor.magvar;
-
-      case atools::fs::pln::entry::NDB:
-        return ndb.magvar;
-
-      case atools::fs::pln::entry::USER:
-        return 0.f;
-    }
-  }
-  return 0.f;
 }
 
 int RouteMapObject::getRange() const

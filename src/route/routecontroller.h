@@ -169,7 +169,6 @@ public:
 
   /* Add an approach and/or a transition */
   void routeAttachApproach(const maptypes::MapApproachLegs& legs);
-  void routeClearApproach();
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
@@ -230,6 +229,9 @@ public:
   void approachSelected(const maptypes::MapApproachLegs& approach);
 
   void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
+
+  void activateLeg(int index);
+  void activateApproachLeg(int index);
 
 signals:
   /* Show airport on map */
@@ -346,6 +348,7 @@ private:
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
+  void disableApproachItems();
 
   void updateRouteAppr();
   void routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);

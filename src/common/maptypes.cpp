@@ -1021,6 +1021,7 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   out << "recNavId" << leg.recNavId << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
   out << "pc pos" << leg.procedureTurnPos << endl;
+  out << "geometry" << leg.geometry << endl;
 
   out << "turnDirection" << leg.turnDirection
   << "flyover" << leg.flyover
@@ -1079,7 +1080,7 @@ QString vorFullShortText(const MapVor& vor)
 
 QString ndbFullShortText(const MapNdb& ndb)
 {
-  QString type = ndb.type == "CP" ? QObject::tr("CP") : ndb.type;
+  QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
   return QObject::tr("NDB (%1)").arg(type);
 }
 

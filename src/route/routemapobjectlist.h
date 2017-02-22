@@ -41,11 +41,8 @@ public:
    * @return positive leg or negative point index */
   int getNearestRouteLegOrPointIndex(const atools::geo::Pos& pos) const;
 
-  /* Get nearest leg index along the position and cross track distance in nautical miles to the leg. */
-  /* Includes approach legs using their own offset in the array based on MapApproachLegs. */
-  void getNearestLegIndex(const atools::geo::Pos& pos, int& routeIndex, int& approachIndex) const;
-  void getNearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance,
-                          int& routeIndex, int& approachIndex) const;
+  /* Update positions, distances and try to select next leg*/
+  void updateActiveLegAndPos(const maptypes::PosCourse& pos);
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -60,9 +57,20 @@ public:
    * @param nextRouteLegIndex Index of next leg
    * @return false if no current/next leg was found
    */
-  bool getRouteDistances(const atools::geo::Pos& pos, float *distFromStart, float *distToDest,
+  bool getRouteDistances(float *distFromStart, float *distToDest,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
                          int *nextRouteLegIndex = nullptr) const;
+
+  /* Index of the first approach entry or size() if none */
+  int getApproachStartIndex() const
+  {
+    return approachStartIndex;
+  }
+
+  bool isConnectedToApproach() const
+  {
+    return approachStartIndex < size();
+  }
 
   /* Get top of descent position based on the option setting (default is 3 nm per 1000 ft) */
   atools::geo::Pos getTopOfDescent() const;
@@ -124,22 +132,20 @@ public:
 
   /* Do not overwrite approach legs */
   void copyNoLegs(const RouteMapObjectList& other);
+
+  /* Calculate new indexes for new route after copying */
   void updateFromApproachLegs();
 
+  /* Get a new number for a user waypoint */
   int getNextUserWaypointNumber() const;
 
-  /* Calculate the index in the route where an approach or transition starts - size of route if not found */
-  int calculateApproachIndex() const;
-
+  /* Assign and update internal indexes for approach legs */
   void setApproachLegs(const maptypes::MapApproachLegs& legs);
 
   const maptypes::MapApproachLegs& getApproachLegs() const
   {
     return approachLegs;
   }
-
-  int getNearestRouteLegIndex(const atools::geo::Pos& pos) const;
-  int getNearestApproachLegIndex(const atools::geo::Pos& pos) const;
 
   void setShownMapFeatures(maptypes::MapObjectTypes types)
   {
@@ -151,10 +157,7 @@ public:
     return boundingRect;
   }
 
-  void updateBoundingRect();
-  void updateTotalDistance();
-  void updateMagvar();
-  void updateIndices();
+  void updateAll();
 
   /* Pull only the needed methods in public space */
   using QList<RouteMapObject>::const_iterator;
@@ -175,24 +178,53 @@ public:
   using QList<RouteMapObject>::removeLast;
   using QList<RouteMapObject>::operator[];
 
+  int getActiveRouteLeg() const;
+  int getActiveApproachLeg() const;
+
+  /* Set active leg and update all internal distances */
+  void setActiveLeg(int value);
+
+  bool isTrueCourse() const
+  {
+    return trueCourse;
+  }
+
 private:
-  /* Get a position along the route. Pos is invalid if not along */
-  atools::geo::Pos positionAtDistance(float distFromStart) const;
+  /* Calculate all distances and courses for route map objects */
+  void updateDistancesAndCourse();
+  void updateBoundingRect();
+
+  /* Update and calculate magnetic variation for all route map objects */
+  void updateMagvar();
+
+  /* Assign index and pointer to flight plan for all objects */
+  void updateIndices();
+
+  /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
+  atools::geo::Pos positionAtDistance(float distFromStartNm) const;
 
   /* Get nearest waypoint index and distance in nautical miles to this point.  */
-  int nearestPointIndex(const atools::geo::Pos& pos, float& pointDistance) const;
+  int nearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceMeter) const;
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
-  void nearestLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance, int& routeIndex,
+  void nearestLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& routeIndex,
                        int& approachIndex) const;
   void copy(const RouteMapObjectList& other);
-  void nearestAllLegIndex(const atools::geo::Pos& pos, float& crossTrackDistance, int& index) const;
+  void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
+  void resetActive();
+
+  bool trueCourse = false;
 
   atools::geo::Rect boundingRect;
+  /* Nautical miles not including missed approach */
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
   maptypes::MapApproachLegs approachLegs;
   maptypes::MapObjectTypes shownTypes;
+
+  int activeLeg = maptypes::INVALID_INDEX_VALUE, approachStartIndex = 0;
+  atools::geo::LineDistance activeLegResult;
+  maptypes::PosCourse activePos;
 };
 
 #endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H

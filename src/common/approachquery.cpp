@@ -29,6 +29,7 @@ using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Rect;
 using atools::geo::Line;
+using atools::geo::LineString;
 using atools::contains;
 using atools::geo::meterToNm;
 using atools::geo::opposedCourseDeg;
@@ -261,7 +262,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     if(!rn.waypoints.isEmpty())
     {
       leg.recFixPos = rn.waypoints.first().position;
-      if(leg.magvar == maptypes::INVALID_MAGVAR)
+      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.waypoints.first().magvar;
     }
   }
@@ -271,7 +272,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     if(!rn.vors.isEmpty())
     {
       leg.recFixPos = rn.vors.first().position;
-      if(leg.magvar == maptypes::INVALID_MAGVAR)
+      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.vors.first().magvar;
     }
   }
@@ -281,7 +282,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     if(!rn.ndbs.isEmpty())
     {
       leg.recFixPos = rn.ndbs.first().position;
-      if(leg.magvar == maptypes::INVALID_MAGVAR)
+      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.ndbs.first().magvar;
     }
   }
@@ -291,7 +292,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     if(!rn.ils.isEmpty())
     {
       leg.recFixPos = rn.ils.first().position;
-      if(leg.magvar == maptypes::INVALID_MAGVAR)
+      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.ils.first().magvar;
     }
   }
@@ -302,18 +303,31 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   }
 }
 
-void ApproachQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
+void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
 {
+  float avgMagvar = 0.f;
+  float num = 0.f;
+  for(int i = 0; i < legs.size(); i++)
+  {
+    if(legs.at(i).magvar < maptypes::INVALID_MAGVAR)
+    {
+      avgMagvar += legs.at(i).magvar;
+      num++;
+    }
+  }
+
+  avgMagvar /= num;
+
   for(maptypes::MapApproachLeg& leg : legs.approachLegs)
   {
-    if(leg.magvar == maptypes::INVALID_MAGVAR)
-      leg.magvar = airport.magvar;
+    if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      leg.magvar = avgMagvar;
   }
 
   for(maptypes::MapApproachLeg& leg : legs.transitionLegs)
   {
-    if(leg.magvar == maptypes::INVALID_MAGVAR)
-      leg.magvar = airport.magvar;
+    if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      leg.magvar = avgMagvar;
   }
 }
 
@@ -424,7 +438,7 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
 
 void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
 {
-  updateMagvar(airport, legs);
+  updateMagvar(legs);
 
   // Prepare all leg coordinates
   processLegs(legs);
@@ -464,6 +478,8 @@ void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, 
         rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
         rwleg.altRestriction.alt2 = 0.f;
         rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
+        rwleg.geometry.append(leg.line.getPos2());
+        rwleg.geometry.append(legs.runwayEnd.position);
         rwleg.fixType = "R";
         rwleg.fixIdent = "RW" + legs.runwayEnd.name;
         rwleg.fixPos = legs.runwayEnd.position;
@@ -619,10 +635,10 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       }
       else
       {
-        atools::geo::CrossTrackStatus status;
-        float dist = lastPos.distanceMeterToLine(extended, leg.fixPos, status);
+        atools::geo::LineDistance result;
+        lastPos.distanceMeterToLine(extended, leg.fixPos, result);
 
-        if(dist > nmToMeter(1.f))
+        if(std::abs(result.distance) > nmToMeter(1.f))
         {
           // Extended position leading towards the fix which is far away from last fix - calculate an intercept position
           float crs = leg.legTrueCourse();
@@ -639,13 +655,13 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
 
           if(intersect.isValid())
           {
-            intersect.distanceMeterToLine(leg.fixPos, extended, status);
+            intersect.distanceMeterToLine(leg.fixPos, extended, result);
 
-            if(status == atools::geo::ALONG_TRACK)
+            if(result.status == atools::geo::ALONG_TRACK)
               leg.interceptPos = intersect;
-            else if(status == atools::geo::BEFORE_START)
+            else if(result.status == atools::geo::BEFORE_START)
               ;  // Fly to fix
-            else if(status == atools::geo::AFTER_END)
+            else if(result.status == atools::geo::AFTER_END)
               // Fly to start of leg
               lastPos = extended;
             else
@@ -832,11 +848,11 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
 
           if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
           {
-            atools::geo::CrossTrackStatus status;
+            atools::geo::LineDistance result;
 
-            next->line.distanceMeterToLine(intersect, status);
+            next->line.distanceMeterToLine(intersect, result);
 
-            if(status == atools::geo::ALONG_TRACK)
+            if(result.status == atools::geo::ALONG_TRACK)
             {
               next->intercept = true;
               next->line.setPos1(intersect);
@@ -849,11 +865,11 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
               else
                 leg.displayText << tr("Leg");
             }
-            else if(status == atools::geo::BEFORE_START)
+            else if(result.status == atools::geo::BEFORE_START)
             {
               leg.line.setPos2(next->line.getPos2());
             }
-            else if(status == atools::geo::AFTER_END)
+            else if(result.status == atools::geo::AFTER_END)
             {
               next->intercept = true;
               leg.line.setPos2(next->line.getPos2());

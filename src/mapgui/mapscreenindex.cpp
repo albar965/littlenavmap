@@ -131,7 +131,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
     Pos p1;
     const QRect& mapGeo = mapWidget->rect();
 
-    for(int i = 0; i < routeMapObjects.calculateApproachIndex(); i++)
+    for(int i = 0; i < routeMapObjects.getApproachStartIndex(); i++)
     {
       const Pos& p2 = routeMapObjects.at(i).getPosition();
       maptypes::MapObjectTypes type = routeMapObjects.at(i).getMapObjectType();

@@ -36,10 +36,38 @@
 namespace maptypes {
 
 /* Value for invalid/not found distances */
+Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
+
+struct PosCourse
+{
+  PosCourse()
+    : course(INVALID_COURSE_VALUE)
+  {
+  }
+
+  explicit PosCourse(atools::geo::Pos posParam, float courseParam = INVALID_COURSE_VALUE)
+    : pos(posParam), course(courseParam)
+  {
+  }
+
+  atools::geo::Pos pos;
+  float course;
+
+  bool isCourseValid() const
+  {
+    return course < INVALID_COURSE_VALUE;
+  }
+
+  bool isValid() const
+  {
+    return pos.isValid();
+  }
+
+};
 
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapObjectType
@@ -73,6 +101,7 @@ enum MapObjectType
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
+  NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
   APPROACH_ALL = APPROACH | APPROACH_MISSED | APPROACH_TRANSITION,
   ALL = 0xffffffff
 };
@@ -1040,6 +1069,7 @@ Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::PosCourse, Q_PRIMITIVE_TYPE);
 
 Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(maptypes::RangeMarker);

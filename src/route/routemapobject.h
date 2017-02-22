@@ -56,7 +56,7 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                 const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
+                                 const RouteMapObject *predRouteMapObj);
 
   /*
    * Creates a route map object from an airport database object.
@@ -65,17 +65,22 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                         const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
+                         const RouteMapObject *predRouteMapObj);
 
   void createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
-                             const RouteMapObject *predRouteMapObj, const RouteMapObjectList *routeList);
+                             const RouteMapObject *predRouteMapObj);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
    */
-  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj,
-                               const RouteMapObjectList *routeList);
+  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj);
+
+  /* Get magvar from all known objects */
+  void updateMagvar();
+
+  /* Update for user and invalid. Needs all others updated before */
+  void updateInvalidMagvar(int entryIndex, const RouteMapObjectList *routeList);
 
   /* Change user defined waypoint name */
   void updateUserName(const QString& name);
@@ -105,7 +110,10 @@ public:
   int getFrequency() const;
 
   /* Get magnetic variation. Source is always database. */
-  float getMagvar() const;
+  float getMagvar() const
+  {
+    return magvar;
+  }
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
@@ -171,13 +179,25 @@ public:
   }
 
   /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseTo() const
+  float getCourseToMag() const
+  {
+    return courseTo - magvar;
+  }
+
+  /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
+  float getCourseToRhumbMag() const
+  {
+    return courseRhumbTo - magvar;
+  }
+
+  /* Great circle start true course to this route map object from the predecessor in degrees or 0 if first in route */
+  float getCourseToTrue() const
   {
     return courseTo;
   }
 
-  /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumb() const
+  /* Rhumb line true course to this route map object from the predecessor in degrees or 0 if first in route */
+  float getCourseToRhumbTrue() const
   {
     return courseRhumbTo;
   }
@@ -239,7 +259,8 @@ private:
         distanceToRhumb = 0.f,
         courseTo = 0.f,
         courseRhumbTo = 0.f,
-        groundAltitude = 0.f;
+        groundAltitude = 0.f,
+        magvar = 0.f; /* Either taken from navaid or average across the route */
 
 };
 

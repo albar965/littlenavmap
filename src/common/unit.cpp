@@ -330,6 +330,9 @@ float Unit::ffLbsF(float value)
 
 QString Unit::coords(const atools::geo::Pos& pos)
 {
+  if(!pos.isValid())
+    return QObject::tr("Invalid");
+
   switch(unitCoords)
   {
     case opts::COORDS_DMS:

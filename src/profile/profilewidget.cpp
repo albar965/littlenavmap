@@ -111,8 +111,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     if(showAircraft || showAircraftTrack)
     {
       simData = simulatorData;
-      if(rmoList.getRouteDistances(simData.getUserAircraft().getPosition(), &aircraftDistanceFromStart,
-                                   &aircraftDistanceToDest))
+      if(rmoList.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
       {
         // Get screen point from last update
         QPoint lastPoint;
@@ -270,12 +269,12 @@ void ProfileWidget::updateScreenCoords()
 
     for(int i = 0; i < aircraftTrack.size(); i++)
     {
-      const Pos& p = aircraftTrack.at(i).pos;
+      const Pos& aircraftPos = aircraftTrack.at(i).pos;
       float distFromStart = 0.f;
-      if(rmoList.getRouteDistances(p, &distFromStart, nullptr))
+      if(rmoList.getRouteDistances(&distFromStart, nullptr))
       {
         QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
-                  Y0 + static_cast<int>(rect().height() - Y0 - p.getAltitude() * verticalScale));
+                  Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
 
         if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - pt).manhattanLength() > 3)
           aircraftTrackPoints.append(pt);
@@ -928,9 +927,8 @@ void ProfileWidget::updateLabel()
 
   if(simData.getUserAircraft().getPosition().isValid())
   {
-    if(routeController->getRouteMapObjects().getRouteDistances(simData.getUserAircraft().getPosition(),
-                                                               &distFromStartNm, &distToDestNm, nullptr,
-                                                               nullptr, nullptr))
+    if(routeController->getRouteMapObjects().getRouteDistances(&distFromStartNm, &distToDestNm,
+                                                               nullptr, nullptr, nullptr))
     {
       float toTod = routeController->getRouteMapObjects().getTopOfDescentFromStart() - distFromStartNm;
 

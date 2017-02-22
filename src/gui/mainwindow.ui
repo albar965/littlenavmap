@@ -5299,6 +5299,36 @@
     <string>Attaches the approach and/or transition to the flight plan</string>
    </property>
   </action>
+  <action name="actionRouteActivateLeg">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Activate Flight Plan Leg</string>
+   </property>
+   <property name="toolTip">
+    <string>Activate Flight Plan Leg</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a direct flight plan</string>
+   </property>
+  </action>
+  <action name="actionInfoApproachActivateLeg">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Activate Flight Plan Leg</string>
+   </property>
+   <property name="toolTip">
+    <string>Activate Flight Plan Leg</string>
+   </property>
+   <property name="statusTip">
+    <string>Calculate a direct flight plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

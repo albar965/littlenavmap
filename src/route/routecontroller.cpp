@@ -477,10 +477,10 @@ void RouteController::newFlightplan()
   updateFlightplanFromWidgets();
 
   createRouteMapObjects();
+  updateRouteAppr();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
-  updateRouteAppr();
   emit routeChanged(true);
 }
 
@@ -517,10 +517,10 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   if(speedKts > 0.f)
     mainWindow->getUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
 
+  updateRouteAppr();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
-  updateRouteAppr();
 
   emit routeChanged(true);
 }
@@ -576,11 +576,11 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     createRouteMapObjects();
 
+    updateRouteAppr();
     updateTableModel();
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
     updateWindowLabel();
-    updateRouteAppr();
     emit routeChanged(true);
   }
   catch(atools::Exception& e)
@@ -700,11 +700,11 @@ void RouteController::calculateDirect()
     flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
 
   createRouteMapObjects();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Calculated direct flight plan."));
 }
@@ -857,11 +857,11 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       QGuiApplication::restoreOverrideCursor();
       createRouteMapObjects();
+      updateRouteAppr();
       updateTableModel();
       updateWindowLabel();
       postChange(undoCommand);
       mainWindow->updateWindowTitle();
-      updateRouteAppr();
       emit routeChanged(true);
     }
     else
@@ -893,6 +893,7 @@ void RouteController::adjustFlightplanAltitude()
   {
     RouteCommand *undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
     fp.setCruisingAltitude(alt);
+    updateRouteAppr();
     updateTableModel();
 
     if(!route.isEmpty())
@@ -901,10 +902,7 @@ void RouteController::adjustFlightplanAltitude()
     mainWindow->updateWindowTitle();
 
     if(!route.isEmpty())
-    {
-      updateRouteAppr();
       emit routeChanged(false);
-    }
 
     mainWindow->setStatusMessage(tr("Adjusted flight plan altitude."));
   }
@@ -961,11 +959,11 @@ void RouteController::reverseRoute()
 
   createRouteMapObjects();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Reversed flight plan."));
 }
@@ -1176,6 +1174,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // Menu above a row
     const RouteMapObject& routeMapObject = route.at(index.row());
 
+    if(index.row() >= routeAppr.getApproachStartIndex())
+      return;
+
     updateMoveAndDeleteActions();
 
     ui->actionSearchTableCopy->setEnabled(index.isValid());
@@ -1188,6 +1189,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteShowApproaches->setEnabled(routeMapObject.isValid() &&
                                               routeMapObject.getMapObjectType() == maptypes::AIRPORT &&
                                               (routeMapObject.getAirport().flags & maptypes::AP_APPROACH));
+
+    ui->actionRouteActivateLeg->setEnabled(routeMapObject.isValid() &&
+                                           index.row() <= routeAppr.getApproachStartIndex() && mainWindow->isConnected());
 
     ui->actionRouteShowOnMap->setEnabled(true);
 
@@ -1214,6 +1218,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     menu.addAction(ui->actionRouteShowInformation);
     menu.addAction(ui->actionRouteShowApproaches);
     menu.addAction(ui->actionRouteShowOnMap);
+    menu.addAction(ui->actionRouteActivateLeg);
     menu.addSeparator();
 
     menu.addAction(ui->actionRouteLegUp);
@@ -1271,10 +1276,26 @@ void RouteController::tableContextMenu(const QPoint& pos)
         mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
       else if(action == ui->actionMapEditUserWaypoint)
         editUserWaypointName(index.row());
+      else if(action == ui->actionRouteActivateLeg)
+        activateLeg(index.row());
 
       // Other actions emit signals directly
     }
   }
+}
+
+void RouteController::activateApproachLeg(int index)
+{
+  activateLeg(routeAppr.getApproachStartIndex() + index);
+}
+
+void RouteController::activateLeg(int index)
+{
+  routeAppr.setActiveLeg(index);
+  route.setActiveLeg(index);
+  highlightNextWaypoint(routeAppr.getActiveRouteLeg());
+  mainWindow->getApproachController()->highlightNextWaypoint(routeAppr.getActiveApproachLeg());
+  emit routeChanged(false);
 }
 
 void RouteController::editUserWaypointName(int index)
@@ -1294,9 +1315,8 @@ void RouteController::editUserWaypointName(int index)
 /* Truncate route if it overlaps with and add approach or transition */
 void RouteController::approachSelected(const maptypes::MapApproachLegs& approach)
 {
-  routeAppr = route;
+  routeAppr.copyNoLegs(route);
   routeAppr.setApproachLegs(approach);
-  routeAppr.updateFromApproachLegs();
 
   updateTableModel();
   updateWindowLabel();
@@ -1305,6 +1325,7 @@ void RouteController::approachSelected(const maptypes::MapApproachLegs& approach
 /* Update the approach route from route changes */
 void RouteController::updateRouteAppr()
 {
+  // Copy but do not overwrite legs
   routeAppr.copyNoLegs(route);
   routeAppr.updateFromApproachLegs();
 }
@@ -1373,11 +1394,11 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.setFlightplan(newFlightplan);
 
   createRouteMapObjects();
+  updateRouteAppr();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
   updateMoveAndDeleteActions();
-  updateRouteAppr();
   emit routeChanged(true);
 }
 
@@ -1493,6 +1514,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     routeToFlightPlan();
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
+    updateRouteAppr();
     updateTableModel();
     updateWindowLabel();
 
@@ -1505,7 +1527,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
-    updateRouteAppr();
     emit routeChanged(true);
     mainWindow->setStatusMessage(tr("Moved flight plan legs."));
   }
@@ -1549,6 +1570,7 @@ void RouteController::deleteSelectedLegs()
     routeToFlightPlan();
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
+    updateRouteAppr();
     updateTableModel();
     updateWindowLabel();
 
@@ -1558,7 +1580,6 @@ void RouteController::deleteSelectedLegs()
 
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
-    updateRouteAppr();
     emit routeChanged(true);
     mainWindow->setStatusMessage(tr("Removed flight plan legs."));
   }
@@ -1620,12 +1641,12 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
 
   emit routeChanged(true);
 
@@ -1657,12 +1678,12 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.first().getIdent()).
@@ -1691,7 +1712,7 @@ void RouteController::routeSetDepartureInternal(const maptypes::MapAirport& airp
   flightplan.getEntries().prepend(entry);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(0, airport, nullptr, &route);
+  rmo.createFromAirport(0, airport, nullptr);
   route.prepend(rmo);
 
   updateStartPositionBestRunway(true /* force */, false /* undo */);
@@ -1709,12 +1730,12 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Departure set to %1.").arg(route.first().getIdent()));
 }
@@ -1750,7 +1771,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
     rmoPred = &route.at(route.size() - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromAirport(flightplan.getEntries().size() - 1, airport, rmoPred, &route);
+  rmo.createFromAirport(flightplan.getEntries().size() - 1, airport, rmoPred);
   route.append(rmo);
 
   updateRouteMapObjects();
@@ -1758,26 +1779,15 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
-}
-
-void RouteController::routeClearApproach()
-{
-  // RouteCommand *undoCommand = preChange(tr("Detach approach or transition"));
-  // for(FlightplanEntry& entry : route.getFlightplan().getEntries())
-  // entry.setApproachPoint(false);
-  // postChange(undoCommand);
-  // mainWindow->updateWindowTitle();
-  // emit routeChanged(true);
-  // mainWindow->setStatusMessage(tr("Detached approach or transition from flight plan."));
 }
 
 void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
@@ -1880,7 +1890,7 @@ void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptype
   if(flightplan.isEmpty() && insertIndex > 0)
     rmoPred = &route.at(insertIndex - 1);
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(insertIndex, query, rmoPred, &route);
+  rmo.createFromDatabaseByEntry(insertIndex, query, rmoPred);
 
   route.insert(insertIndex, rmo);
 
@@ -1890,12 +1900,12 @@ void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptype
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
 
   emit routeChanged(true);
 
@@ -1929,7 +1939,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
     rmoPred = &route.at(legIndex - 1);
 
   RouteMapObject rmo(&flightplan);
-  rmo.createFromDatabaseByEntry(legIndex, query, rmoPred, &route);
+  rmo.createFromDatabaseByEntry(legIndex, query, rmoPred);
 
   route.replace(legIndex, rmo);
   eraseAirway(legIndex);
@@ -1943,12 +1953,12 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
   mainWindow->setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
@@ -1971,12 +1981,12 @@ void RouteController::routeDelete(int index)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
+  updateRouteAppr();
   updateTableModel();
   updateWindowLabel();
 
   postChange(undoCommand);
   mainWindow->updateWindowTitle();
-  updateRouteAppr();
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Removed waypoint from flight plan."));
@@ -2075,18 +2085,7 @@ void RouteController::updateFlightplanFromWidgets()
  *  Also calculates maximum number of user points. */
 void RouteController::updateRouteMapObjects()
 {
-  route.updateIndices();
-
-  RouteMapObject *last = nullptr;
-  for(int i = 0; i < route.size(); i++)
-  {
-    RouteMapObject& mapobj = route[i];
-    mapobj.updateDistanceAndCourse(i, last, &route);
-    last = &mapobj;
-  }
-  route.updateTotalDistance();
-  route.updateMagvar();
-  route.updateBoundingRect();
+  route.updateAll();
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
@@ -2102,7 +2101,7 @@ void RouteController::createRouteMapObjects()
   for(int i = 0; i < flightplan.getEntries().size(); i++)
   {
     RouteMapObject mapobj(&flightplan);
-    mapobj.createFromDatabaseByEntry(i, query, last, &route);
+    mapobj.createFromDatabaseByEntry(i, query, last);
 
     if(mapobj.getMapObjectType() == maptypes::INVALID)
       // Not found in database
@@ -2113,9 +2112,7 @@ void RouteController::createRouteMapObjects()
     last = &route.last();
   }
 
-  route.updateTotalDistance();
-  route.updateMagvar();
-  route.updateBoundingRect();
+  route.updateAll();
 }
 
 /* Update travel times in table view model after speed change */
@@ -2205,11 +2202,13 @@ void RouteController::updateTableModel()
     }
     else
     {
-      item = new QStandardItem(QLocale().toString(mapobj.getCourseTo(), 'f', 0));
+      QString trueCourse = route.isTrueCourse() ? tr("(°T)") : QString();
+
+      item = new QStandardItem(QLocale().toString(mapobj.getCourseToMag(), 'f', 0) + trueCourse);
       item->setTextAlignment(Qt::AlignRight);
       itemRow.append(item);
 
-      item = new QStandardItem(QLocale().toString(mapobj.getCourseToRhumb(), 'f', 0));
+      item = new QStandardItem(QLocale().toString(mapobj.getCourseToRhumbMag(), 'f', 0) + trueCourse);
       item->setTextAlignment(Qt::AlignRight);
       itemRow.append(item);
 
@@ -2254,6 +2253,7 @@ void RouteController::updateTableModel()
       ui->comboBoxRouteType->setCurrentIndex(1);
     ui->comboBoxRouteType->blockSignals(false);
   }
+  disableApproachItems();
 }
 
 void RouteController::disconnectedFromSimulator()
@@ -2263,13 +2263,17 @@ void RouteController::disconnectedFromSimulator()
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
+  maptypes::PosCourse pc(simulatorData.getUserAircraft().getPosition(),
+                         simulatorData.getUserAircraft().getHeadingDegTrue());
+
+  routeAppr.updateActiveLegAndPos(pc);
+  route.updateActiveLegAndPos(pc);
+
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    int routeLeg = 0, apprLeg = 0;
-    routeAppr.getNearestLegIndex(simulatorData.getUserAircraft().getPosition(), routeLeg, apprLeg);
-    highlightNextWaypoint(routeLeg);
-    mainWindow->getApproachController()->highlightNextWaypoint(apprLeg);
+    highlightNextWaypoint(routeAppr.getActiveRouteLeg());
+    mainWindow->getApproachController()->highlightNextWaypoint(routeAppr.getActiveApproachLeg());
 
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
@@ -2299,7 +2303,7 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
 
   if(!routeAppr.isEmpty())
   {
-    if(nearestLegIndex >= 0 && nearestLegIndex < routeAppr.calculateApproachIndex())
+    if(nearestLegIndex >= 0 && nearestLegIndex < routeAppr.getApproachStartIndex())
     {
       QColor color = OptionData::instance().isGuiStyleDark() ?
                      mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
@@ -2317,6 +2321,25 @@ void RouteController::highlightNextWaypoint(int nearestLegIndex)
             item->setFont(font);
           }
         }
+      }
+    }
+  }
+  disableApproachItems();
+}
+
+void RouteController::disableApproachItems()
+{
+  for(int row = 0; row < model->rowCount(); ++row)
+  {
+    for(int col = 0; col < model->columnCount(); ++col)
+    {
+      QStandardItem *item = model->item(row, col);
+      if(item != nullptr)
+      {
+        if(row >= routeAppr.getApproachStartIndex())
+          item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+        else
+          item->setFlags(item->flags() | Qt::ItemIsEnabled);
       }
     }
   }
@@ -2428,7 +2451,6 @@ void RouteController::clearRoute()
   route.getFlightplan().clear();
   route.clear();
   route.setTotalDistance(0.f);
-  routeFilename.clear();
   routeFilename.clear();
   fileDeparture.clear();
   fileDestination.clear();

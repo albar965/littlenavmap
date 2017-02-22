@@ -75,7 +75,7 @@ private:
   void processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+  void updateMagvar(maptypes::MapApproachLegs& legs);
   void updateBoundingRectangle(maptypes::MapApproachLegs& legs);
 
   maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);

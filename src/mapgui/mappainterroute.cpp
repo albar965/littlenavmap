@@ -38,6 +38,7 @@ using namespace Marble;
 using namespace atools::geo;
 using maptypes::MapApproachLeg;
 using maptypes::MapApproachLegs;
+using maptypes::PosCourse;
 using atools::contains;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
@@ -115,23 +116,13 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
-  // Check if there is any magnetic variance on the route
-  // If not (all user waypoints) use true heading
-  bool foundMagvarObject = false;
-  for(const RouteMapObject& obj : routeMapObjects)
-  {
-    // Route contains correct magvar if any of these objects were found
-    if(obj.getMapObjectType() == maptypes::AIRPORT || obj.getMapObjectType() == maptypes::VOR ||
-       obj.getMapObjectType() == maptypes::NDB || obj.getMapObjectType() == maptypes::WAYPOINT)
-      foundMagvarObject = true;
-  }
-
   // Calculate the index where an approach or transition starts
-  int approachIndex = routeApprMapObjects.calculateApproachIndex();
+  int approachIndex = routeApprMapObjects.getApproachStartIndex();
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
   QVector<Line> lines;
+  LineString positions;
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
@@ -142,10 +133,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     if(i > 0)
     {
       // Build text only for the route part - not for the approach
-      if(i < approachIndex)
+      if(i <= approachIndex)
         routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
-                          QString::number(obj.getCourseToRhumb(), 'f', 0) +
-                          (foundMagvarObject ? tr("°M") : tr("°T")));
+                          QString::number(obj.getCourseToRhumbMag(), 'f', 0) +
+                          (routeMapObjects.isTrueCourse() ? tr("°T") : tr("°M")));
       else
         routeTexts.append(QString());
 
@@ -153,8 +144,10 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
 
     // Draw line only for the route part - not for the approach
-    if(i < approachIndex)
+    if(i <= approachIndex)
       linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
+
+    positions.append(obj.getPosition());
   }
 
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -166,11 +159,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
                                 Qt::RoundCap, Qt::RoundJoin));
   drawLineString(context, linestring);
 
-  const Pos& pos = mapWidget->getUserAircraft().getPosition();
-
-  // Get active route leg
-  int activeRouteLeg = routeApprMapObjects.getNearestRouteLegIndex(pos);
-
   // Draw innner line
   context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -180,17 +168,20 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   {
     ls.clear();
     ls << linestring.at(i - 1) << linestring.at(i);
+    context->painter->drawPolyline(ls);
+  }
 
-    if(i == activeRouteLeg)
-    {
-      context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
-                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-      context->painter->drawPolyline(ls);
-      context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
-                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    }
-    else
-      context->painter->drawPolyline(ls);
+  // Get active route leg
+  int activeRouteLeg = routeApprMapObjects.getActiveRouteLeg();
+
+  if(activeRouteLeg < maptypes::INVALID_INDEX_VALUE)
+  {
+    // Draw active leg on top of all others to keep it visible
+    context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
+                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    ls.clear();
+    ls << linestring.at(activeRouteLeg - 1) << linestring.at(activeRouteLeg);
+    context->painter->drawPolyline(ls);
   }
 
   context->szFont(context->textSizeFlightplan * 1.1f);
@@ -199,6 +190,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   TextPlacement textPlacement(context->painter, this);
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setLineWidth(outerlinewidth);
+  textPlacement.calculateTextPositions(positions);
   textPlacement.calculateTextAlongLines(lines, routeTexts);
   context->painter->save();
   context->painter->setBackgroundMode(Qt::OpaqueMode);
@@ -254,13 +246,12 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
 
-  const Pos& pos = mapWidget->getUserAircraft().getPosition();
   const RouteMapObjectList& routeMapObjects = routeController->getRouteApprMapObjects();
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
-  QLineF lastLine;
+  QLineF lastLine, lastActiveLine;
 
   context->painter->setPen(QPen(mapcolors::routeApproachOutlineColor, outerlinewidth,
                                 Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -282,30 +273,32 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   QVector<DrawText> drawTextLines;
   drawTextLines.fill({Line(), false, false}, legs.size());
 
+  // Get active approach leg
+  int activeLeg = routeMapObjects.getActiveApproachLeg();
+
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
   context->szFont(context->textSizeFlightplan * 1.1f);
 
   // Get active approach leg
-  int activeLeg = routeMapObjects.getNearestApproachLegIndex(pos);
   for(int i = 0; i < legs.size(); i++)
   {
     if(legs.isMissed(i))
-      context->painter->setPen(i == activeLeg ? missedActivePen : missedPen);
+      context->painter->setPen(missedPen);
     else
-      context->painter->setPen(i == activeLeg ? apprActivePen : apprPen);
+      context->painter->setPen(apprPen);
 
-    // if(legs.at(i).type == maptypes::DIRECT_TO_RUNWAY)
-    // {
-    // QPen pen = context->painter->pen();
-    // pen.setWidthF(pen.widthF() / 2.f);
-    // context->painter->setPen(pen);
-    // paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
-    // pen.setWidthF(pen.widthF() * 2.f);
-    // context->painter->setPen(pen);
-    // }
-    // else
+    if(i == activeLeg)
+      // Remember for drawing the active one
+      lastActiveLine = lastLine;
+
     paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
+  }
+
+  if(activeLeg < maptypes::INVALID_INDEX_VALUE)
+  {
+    context->painter->setPen(legs.isMissed(activeLeg) ? missedActivePen : apprActivePen);
+    paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
   }
 
   if(!context->drawFast)
@@ -347,14 +340,20 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     context->painter->setBackground(mapcolors::routeTextBackgroundColor);
 
     QVector<Line> textLines;
+    LineString positions;
+
     for(const DrawText& dt : drawTextLines)
+    {
       textLines.append(dt.line);
+      positions.append(dt.line.getPos1());
+    }
 
     TextPlacement textPlacement(context->painter, this);
     textPlacement.setDrawFast(context->drawFast);
     textPlacement.setTextOnTopOfLine(false);
     textPlacement.setLineWidth(outerlinewidth);
     textPlacement.setColors(textColors);
+    textPlacement.calculateTextPositions(positions);
     textPlacement.calculateTextAlongLines(textLines, approachTexts);
     textPlacement.drawTextAlongLines();
   }
@@ -401,7 +400,6 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     return;
   }
 
-  QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
   QPointF intersectPoint = wToS(leg.interceptPos, size, &hiddenDummy);
 
   QPainter *painter = context->painter;
@@ -416,7 +414,10 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   if(contains(leg.type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
   {
     if(line.length() > 2)
+    {
+      QPointF point = wToS(leg.recFixPos, size, &hiddenDummy);
       paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
+    }
     lastLine = line;
   }
   // ===========================================================
@@ -625,12 +626,58 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs,
                                           int index)
 {
+  const maptypes::MapApproachLeg& leg = legs.at(index);
+
+  // Debugging code for drawing ================================================
+#ifdef DEBUG_APPROACH_PAINT
+  bool hiddenDummy;
+  QSize size = scale->getScreeenSizeForRect(legs.bounding);
+
+  QLineF line;
+  wToS(leg.line, line, size, &hiddenDummy);
+  QPainter *painter = context->painter;
+
+  if(leg.disabled)
+  {
+    painter->setPen(Qt::red);
+  }
+
+  QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
+
+  painter->save();
+  painter->setPen(Qt::black);
+  painter->drawEllipse(line.p1(), 20, 10);
+  painter->drawEllipse(line.p2(), 10, 20);
+  painter->drawText(line.x1() - 40, line.y1() + 40,
+                    "Start " + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
+
+  painter->drawText(line.x2() - 40, line.y2() + 60,
+                    "End" + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
+  if(!intersectPoint.isNull())
+  {
+    painter->drawEllipse(intersectPoint, 30, 30);
+    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
+  }
+
+  painter->setPen(QPen(Qt::darkBlue, 1));
+  for(int i = 0; i < leg.geometry.size() - 1; i++)
+  {
+    QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
+    QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
+
+    painter->drawLine(pt1, pt2);
+  }
+
+  painter->setPen(QPen(Qt::darkBlue, 7));
+  for(int i = 0; i < leg.geometry.size(); i++)
+    painter->drawPoint(wToS(leg.geometry.at(i)));
+  painter->restore();
+#endif
+
   if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
      (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
      (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
     return;
-
-  const maptypes::MapApproachLeg& leg = legs.at(index);
 
   if(leg.disabled)
     return;
@@ -745,50 +792,6 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     paintApproachpoint(context, x, y);
     paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
   }
-
-  // Debugging code for drawing ================================================
-#ifdef DEBUG_APPROACH_PAINT
-  bool hiddenDummy;
-  QSize size = scale->getScreeenSizeForRect(legs.bounding);
-
-  QLineF line;
-  wToS(leg.line, line, size, &hiddenDummy);
-
-  if(leg.disabled)
-    return;
-
-  QPainter *painter = context->painter;
-  QPointF intersectPoint = wToS(leg.interceptPos, DEFAULT_WTOS_SIZE, &hiddenDummy);
-
-  painter->save();
-  painter->setPen(Qt::black);
-  painter->drawEllipse(line.p1(), 20, 10);
-  painter->drawEllipse(line.p2(), 10, 20);
-  painter->drawText(line.x1() - 40, line.y1() + 40,
-                    "Start " + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
-
-  painter->drawText(line.x2() - 40, line.y2() + 60,
-                    "End" + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
-  if(!intersectPoint.isNull())
-  {
-    painter->drawEllipse(intersectPoint, 30, 30);
-    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 1));
-  for(int i = 0; i < leg.geometry.size() - 1; i++)
-  {
-    QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
-    QPoint pt2 = wToS(leg.geometry.at(i + 1), size, &hiddenDummy);
-
-    painter->drawLine(pt1, pt2);
-  }
-
-  painter->setPen(QPen(Qt::darkBlue, 7));
-  for(int i = 0; i < leg.geometry.size(); i++)
-    painter->drawPoint(wToS(leg.geometry.at(i)));
-  painter->restore();
-#endif
 }
 
 void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)
