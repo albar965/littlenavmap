@@ -341,7 +341,6 @@ void ApproachTreeController::saveState()
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->actionInfoApproachShowAppr,
                                               ui->actionInfoApproachShowMissedAppr,
-                                              ui->actionInfoApproachShowTrans,
                                               ui->splitterApproachInfo,
                                               ui->tabWidgetRoute});
 
@@ -380,7 +379,6 @@ void ApproachTreeController::restoreState()
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->actionInfoApproachShowAppr,
                                                  ui->actionInfoApproachShowMissedAppr,
-                                                 ui->actionInfoApproachShowTrans,
                                                  ui->splitterApproachInfo,
                                                  ui->tabWidgetRoute});
 
@@ -645,8 +643,6 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachShowAppr);
   menu.addAction(ui->actionInfoApproachShowMissedAppr);
-  menu.addAction(ui->actionInfoApproachShowTrans);
-  // menu.addAction(ui->actionInfoApproachAddToFlightPlan);
 
   QString text, showText;
 
@@ -719,11 +715,10 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     emit approachSelected(maptypes::MapApproachRef());
   }
   else if(action == ui->actionInfoApproachSelect)
+    // Show only legs of currently selected approach and transition
     enableSelectedMode(ref);
   else if(action == ui->actionInfoApproachUnselect)
-  {
     disableSelectedMode();
-  }
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false);
   else if(action == ui->actionInfoApproachAttach)
@@ -736,6 +731,8 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
       legs = approachQuery->getApproachLegs(currentAirport, addRef.approachId);
     else if(addRef.isApproachAndTransition())
       legs = approachQuery->getTransitionLegs(currentAirport, addRef.transitionId);
+
+    enableSelectedMode(addRef);
 
     if(legs != nullptr)
       emit routeAttachApproach(*legs);

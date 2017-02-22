@@ -872,7 +872,6 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionInfoApproachShowTrans, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 }
 
 /* Update the info weather */

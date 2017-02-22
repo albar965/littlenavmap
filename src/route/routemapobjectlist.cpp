@@ -189,7 +189,7 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       }
     }
   }
-  qDebug() << "active" << activeLeg << "size" << size();
+  // qDebug() << "active" << activeLeg << "size" << size();
 }
 
 bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDest,

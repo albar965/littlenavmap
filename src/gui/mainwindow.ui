@@ -5148,10 +5148,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Approaches</string>
+    <string>Show Approaches and Transitions</string>
    </property>
    <property name="toolTip">
-    <string>Show approach legs on the map</string>
+    <string>Show approach and transition legs on the map</string>
    </property>
    <property name="statusTip">
     <string>Show approach legs on the map</string>
@@ -5172,23 +5172,6 @@
    </property>
    <property name="statusTip">
     <string>Show missed approach legs on the map</string>
-   </property>
-  </action>
-  <action name="actionInfoApproachShowTrans">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show Transitions</string>
-   </property>
-   <property name="toolTip">
-    <string>Show transition legs on the map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show transition legs on the map</string>
    </property>
   </action>
   <action name="actionInfoApproachesForAirport">

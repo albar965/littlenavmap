@@ -1795,93 +1795,54 @@ void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
 {
   // Calculate insertion point
   const maptypes::MapSearchResult& navaids = legs.at(0).navaids;
-  int insertIndex;
-  if(route.hasValidDestination() && route.size() >= 2)
-    insertIndex = route.size() - 2;
-  else
-    insertIndex = route.size() - 1;
+  const Pos& pos = legs.at(0).line.getPos1();
 
-  // bool markApproachPoint = false;
+  FlightplanEntry entry;
+  entryBuilder->buildFlightplanEntry(navaids, entry, true);
 
+  int insertIndex = calculateInsertIndex(pos, -1);
   const RouteMapObject& insertRmo = route.at(insertIndex);
+
   // Add as navaid or custom point
   if(navaids.hasWaypoints())
   {
     if(!(insertRmo.getId() == navaids.waypoints.first().id && insertRmo.getMapObjectType() == maptypes::WAYPOINT))
-      routeAddInternal(navaids.waypoints.first().id, atools::geo::EMPTY_POS, maptypes::WAYPOINT, insertIndex);
-    // else
-    // markApproachPoint = true;
+      routeAddInternal(entry, insertIndex);
   }
   else if(navaids.hasVor())
   {
     if(!(insertRmo.getId() == navaids.vors.first().id && insertRmo.getMapObjectType() == maptypes::VOR))
-      routeAddInternal(navaids.vors.first().id, atools::geo::EMPTY_POS, maptypes::VOR, insertIndex);
-    // else
-    // markApproachPoint = true;
+      routeAddInternal(entry, insertIndex);
   }
   else if(navaids.hasNdb())
   {
     if(!(insertRmo.getId() == navaids.ndbs.first().id && insertRmo.getMapObjectType() == maptypes::NDB))
-      routeAddInternal(navaids.ndbs.first().id, atools::geo::EMPTY_POS, maptypes::NDB, insertIndex);
-    // else
-    // markApproachPoint = true;
+      routeAddInternal(entry, insertIndex);
   }
   else
-    routeAddInternal(-1, legs.at(0).line.getPos1(), maptypes::NDB, insertIndex);
-
-  // if(markApproachPoint)
-  // {
-  // // RouteCommand *undoCommand = preChange(tr("Attach approach or transition"));
-  // route.getFlightplan().getEntries()[insertIndex].setApproachPoint(true);
-  // // postChange(undoCommand);
-  // mainWindow->updateWindowTitle();
-  // emit routeChanged(true);
-  // mainWindow->setStatusMessage(tr("Attached approach or transition to flight plan."));
-  // }
+  {
+    routeAddInternal(entry, insertIndex);
+  }
 }
 
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
 {
-  routeAddInternal(id, userPos, type, legIndex);
-}
-
-void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex)
-{
   qDebug() << "route add" << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
 
-  RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
-
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1, curUserpointNumber);
-  // entry.setApproachPoint(approachPoint);
+
+  int insertIndex = calculateInsertIndex(entry.getPosition(), legIndex);
+
+  routeAddInternal(entry, insertIndex);
+}
+
+void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertIndex)
+{
+  RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
+
   Flightplan& flightplan = route.getFlightplan();
-
-  int insertIndex = -1;
-  if(legIndex != -1)
-    // Use given leg index
-    insertIndex = legIndex + 1;
-  else
-  {
-    if(flightplan.isEmpty())
-      // First is  departure
-      insertIndex = 0;
-    else if(flightplan.getEntries().size() == 1)
-      // Keep first as departure
-      insertIndex = 1;
-    else
-    {
-      // No leg index given - search for nearest
-      int legOrPt = route.getNearestRouteLegOrPointIndex(entry.getPosition());
-      qDebug() << "nearestLeg" << legOrPt;
-
-      // Positive values are legs - negative are points
-      insertIndex = atools::absInt(legOrPt);
-      if(legOrPt == -1 /* First point - add before departure */)
-        // Add at the beginning
-        insertIndex = 0;
-    }
-  }
   flightplan.getEntries().insert(insertIndex, entry);
   eraseAirway(insertIndex);
   eraseAirway(insertIndex + 1);
@@ -1911,6 +1872,39 @@ void RouteController::routeAddInternal(int id, atools::geo::Pos userPos, maptype
   emit routeChanged(true);
 
   mainWindow->setStatusMessage(tr("Added waypoint to flight plan."));
+}
+
+int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIndex)
+{
+  Flightplan& flightplan = route.getFlightplan();
+
+  int insertIndex = -1;
+  if(legIndex != -1)
+    // Use given leg index
+    insertIndex = legIndex + 1;
+  else
+  {
+    if(flightplan.isEmpty())
+      // First is  departure
+      insertIndex = 0;
+    else if(flightplan.getEntries().size() == 1)
+      // Keep first as departure
+      insertIndex = 1;
+    else
+    {
+      // No leg index given - search for nearest
+      int legOrPt = route.getNearestRouteLegOrPointIndex(pos);
+      qDebug() << "nearestLeg" << legOrPt;
+
+      // Positive values are legs - negative are points
+      insertIndex = atools::absInt(legOrPt);
+      if(legOrPt == -1 /* First point - add before departure */)
+        // Add at the beginning
+        insertIndex = 0;
+    }
+  }
+  qDebug() << "insertIndex" << insertIndex << "pos" << pos;
+  return insertIndex;
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type,

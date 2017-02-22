@@ -280,7 +280,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   // Need to set font since it is used by drawHold
   context->szFont(context->textSizeFlightplan * 1.1f);
 
-  // Get active approach leg
+  // Paint legs
   for(int i = 0; i < legs.size(); i++)
   {
     if(legs.isMissed(i))
@@ -295,6 +295,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     paintApproachSegment(context, legs, i, lastLine, &drawTextLines, context->drawFast);
   }
 
+  // Paint active leg
   if(activeLeg < maptypes::INVALID_INDEX_VALUE)
   {
     context->painter->setPen(legs.isMissed(activeLeg) ? missedActivePen : apprActivePen);

@@ -781,7 +781,11 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
 
-      curPos = leg.fixPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+      if(leg.fixPos.isValid())
+        curPos = leg.fixPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+      else
+        curPos = lastPos.endpoint(nmToMeter(3.f), leg.legTrueCourse()).normalize();
+
       leg.displayText << tr("Manual");
     }
     // ===========================================================

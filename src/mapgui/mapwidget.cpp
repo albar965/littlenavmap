@@ -229,9 +229,8 @@ void MapWidget::updateMapObjectsShown()
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
-  setShowMapFeatures(maptypes::APPROACH, ui->actionInfoApproachShowAppr->isChecked());
+  setShowMapFeatures(maptypes::APPROACH | maptypes::APPROACH_TRANSITION, ui->actionInfoApproachShowAppr->isChecked());
   setShowMapFeatures(maptypes::APPROACH_MISSED, ui->actionInfoApproachShowMissedAppr->isChecked());
-  setShowMapFeatures(maptypes::APPROACH_TRANSITION, ui->actionInfoApproachShowTrans->isChecked());
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
