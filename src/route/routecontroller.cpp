@@ -1174,9 +1174,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // Menu above a row
     const RouteMapObject& routeMapObject = route.at(index.row());
 
-    if(index.row() >= routeAppr.getApproachStartIndex())
-      return;
-
     updateMoveAndDeleteActions();
 
     ui->actionSearchTableCopy->setEnabled(index.isValid());
@@ -1185,13 +1182,17 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
                                             !mainWindow->getMapWidget()->getRangeRings().isEmpty());
 
-    ui->actionRouteShowInformation->setEnabled(routeMapObject.isValid());
+    ui->actionRouteShowInformation->setEnabled(routeMapObject.isValid() &&
+                                               routeMapObject.getMapObjectType() != maptypes::USER &&
+                                               routeMapObject.getMapObjectType() != maptypes::INVALID);
     ui->actionRouteShowApproaches->setEnabled(routeMapObject.isValid() &&
                                               routeMapObject.getMapObjectType() == maptypes::AIRPORT &&
                                               (routeMapObject.getAirport().flags & maptypes::AP_APPROACH));
 
     ui->actionRouteActivateLeg->setEnabled(routeMapObject.isValid() &&
-                                           index.row() <= routeAppr.getApproachStartIndex() && mainWindow->isConnected());
+                                           index.row() <= routeAppr.getApproachStartIndex() &&
+                                           mainWindow->isConnected() &&
+                                           index.row() < routeAppr.getApproachStartIndex());
 
     ui->actionRouteShowOnMap->setEnabled(true);
 
@@ -2337,9 +2338,9 @@ void RouteController::disableApproachItems()
       if(item != nullptr)
       {
         if(row >= routeAppr.getApproachStartIndex())
-          item->setFlags(item->flags() & ~Qt::ItemIsEnabled);
+          item->setForeground(QApplication::palette().color(QPalette::Disabled, QPalette::Text));
         else
-          item->setFlags(item->flags() | Qt::ItemIsEnabled);
+          item->setForeground(QApplication::palette().color(QPalette::Normal, QPalette::Text));
       }
     }
   }
