@@ -54,17 +54,19 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::render(PaintContext *context)
 {
+  atools::util::PainterContextSaver saver(context->painter);
+  Q_UNUSED(saver);
+
+  setRenderHints(context->painter);
+
   if(context->objectTypes.testFlag(maptypes::ROUTE))
-  {
-    setRenderHints(context->painter);
-
-    atools::util::PainterContextSaver saver(context->painter);
-    Q_UNUSED(saver);
     paintRoute(context);
-  }
 
-  if(context->mapLayer->isAirport())
+  if(context->mapLayer->isApproach())
     paintApproach(context, mapWidget->getApproachHighlight());
+
+  if(context->objectTypes.testFlag(maptypes::ROUTE))
+    paintTopOfDescent(context);
 }
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
@@ -215,7 +217,11 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   // Draw symbol text
   drawSymbolText(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
+}
 
+void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
+{
+  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteApprMapObjects();
   if(routeApprMapObjects.size() >= 2)
   {
     // Draw the top of descent circle and text
@@ -302,64 +308,68 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
   }
 
-  if(!context->drawFast)
+  if(context->mapLayer->isApproachText())
   {
-    // Build text strings for along the line ===========================
-    QStringList approachTexts;
-    QVector<Line> lines;
-    QVector<QColor> textColors;
-    for(int i = 0; i < legs.size(); i++)
+    if(!context->drawFast)
     {
-      const maptypes::MapApproachLeg& leg = legs.at(i);
-      lines.append(leg.line);
-
-      QString approachText;
-
-      if(drawTextLines.at(i).distance)
+      // Build text strings for along the line ===========================
+      QStringList approachTexts;
+      QVector<Line> lines;
+      QVector<QColor> textColors;
+      for(int i = 0; i < legs.size(); i++)
       {
-        float dist = leg.calculatedDistance;
-        if(leg.type == maptypes::PROCEDURE_TURN)
-          dist /= 2.f;
+        const maptypes::MapApproachLeg& leg = legs.at(i);
+        lines.append(leg.line);
 
-        approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+        QString approachText;
+
+        if(drawTextLines.at(i).distance)
+        {
+          float dist = leg.calculatedDistance;
+          if(leg.type == maptypes::PROCEDURE_TURN)
+            dist /= 2.f;
+
+          approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+        }
+
+        if(drawTextLines.at(i).course)
+        {
+          if(!approachText.isEmpty())
+            approachText.append(tr("/"));
+          approachText +=
+            (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+             tr("°M"));
+        }
+
+        approachTexts.append(approachText);
+
+        textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
       }
 
-      if(drawTextLines.at(i).course)
+      // Draw text along lines ====================================================
+      context->painter->setBackground(mapcolors::routeTextBackgroundColor);
+
+      QVector<Line> textLines;
+      LineString positions;
+
+      for(const DrawText& dt : drawTextLines)
       {
-        if(!approachText.isEmpty())
-          approachText.append(tr("/"));
-        approachText += (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-                         tr("°M"));
+        textLines.append(dt.line);
+        positions.append(dt.line.getPos1());
       }
 
-      approachTexts.append(approachText);
-
-      textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
+      TextPlacement textPlacement(context->painter, this);
+      textPlacement.setDrawFast(context->drawFast);
+      textPlacement.setTextOnTopOfLine(false);
+      textPlacement.setLineWidth(outerlinewidth);
+      textPlacement.setColors(textColors);
+      textPlacement.calculateTextPositions(positions);
+      textPlacement.calculateTextAlongLines(textLines, approachTexts);
+      textPlacement.drawTextAlongLines();
     }
 
-    // Draw text along lines ====================================================
-    context->painter->setBackground(mapcolors::routeTextBackgroundColor);
-
-    QVector<Line> textLines;
-    LineString positions;
-
-    for(const DrawText& dt : drawTextLines)
-    {
-      textLines.append(dt.line);
-      positions.append(dt.line.getPos1());
-    }
-
-    TextPlacement textPlacement(context->painter, this);
-    textPlacement.setDrawFast(context->drawFast);
-    textPlacement.setTextOnTopOfLine(false);
-    textPlacement.setLineWidth(outerlinewidth);
-    textPlacement.setColors(textColors);
-    textPlacement.calculateTextPositions(positions);
-    textPlacement.calculateTextAlongLines(textLines, approachTexts);
-    textPlacement.drawTextAlongLines();
+    context->szFont(context->textSizeFlightplan);
   }
-
-  context->szFont(context->textSizeFlightplan);
 
   // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
@@ -628,6 +638,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
                                           int index)
 {
   const maptypes::MapApproachLeg& leg = legs.at(index);
+  bool drawText = context->mapLayer->isApproachText();
 
   // Debugging code for drawing ================================================
 #ifdef DEBUG_APPROACH_PAINT
@@ -729,7 +740,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
       texts.append(leg.displayText);
       texts.append(maptypes::restrictionText(leg.altRestriction));
       paintApproachpoint(context, x, y);
-      paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+      if(drawText)
+        paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
       texts.clear();
     }
   }
@@ -742,7 +754,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
         // Draw intercept comment - no altitude restriction there
         texts.append(leg.displayText);
         paintApproachpoint(context, x, y);
-        paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+        if(drawText)
+          paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
         texts.clear();
       }
     }
@@ -769,29 +782,34 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
     paintWaypoint(context, QColor(), x, y);
-    paintWaypointText(context, x, y, navaids.waypoints.first(), &texts);
+    if(drawText)
+      paintWaypointText(context, x, y, navaids.waypoints.first(), &texts);
   }
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
     paintVor(context, x, y, navaids.vors.first());
-    paintVorText(context, x, y, navaids.vors.first(), &texts);
+    if(drawText)
+      paintVorText(context, x, y, navaids.vors.first(), &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
     paintNdb(context, x, y);
-    paintNdbText(context, x, y, navaids.ndbs.first(), &texts);
+    if(drawText)
+      paintNdbText(context, x, y, navaids.ndbs.first(), &texts);
   }
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
     paintApproachpoint(context, x, y);
-    paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+    if(drawText)
+      paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
   }
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
     paintApproachpoint(context, x, y);
-    paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+    if(drawText)
+      paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
   }
 }
 

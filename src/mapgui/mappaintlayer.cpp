@@ -107,7 +107,7 @@ void MapPaintLayer::initMapLayerSettings()
   layers = new MapLayerSettings();
 
   // Create a default layer
-  MapLayer defLayer = MapLayer(0).airport().airportName().airportIdent().
+  MapLayer defLayer = MapLayer(0).airport().approach().approachText().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       vor().ndb().waypoint().marker().ils().airway().
@@ -182,6 +182,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, VOR, NDB, airway
   append(defLayer.clone(150.f).airportSymbolSize(10).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
+         approachText(false).
          waypoint(false).
          vorSymbolSize(12).
          ndbSymbolSize(12).
@@ -190,17 +191,20 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 4000, VOR
   append(defLayer.clone(200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         approachText(false).
          vorSymbolSize(8).ndb(false).waypoint(false).marker(false).ils(false).airway(false)).
 
   // airport > 4000
   append(defLayer.clone(300.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         approachText(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).waypointRouteName(false)).
 
   // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(10).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         approach(false).approachText(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
@@ -208,12 +212,14 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(DISTANCE_CUT_OFF_LIMIT).airportSymbolSize(5).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         approach(false).approachText(false).
          vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false)).
 
   // Make sure that there is always an layer
   append(defLayer.clone(100000.f).airportSymbolSize(5).
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         approach(false).approachText(false).
          airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
          airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false));
 

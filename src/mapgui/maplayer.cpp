@@ -35,6 +35,18 @@ MapLayer& MapLayer::airport(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::approach(bool value)
+{
+  layerApproach = value;
+  return *this;
+}
+
+MapLayer& MapLayer::approachText(bool value)
+{
+  layerApproachText = value;
+  return *this;
+}
+
 MapLayer& MapLayer::airportSource(layer::AirportSource source)
 {
   src = source;

@@ -59,7 +59,7 @@ private:
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
   void paintApproach(const PaintContext *context,
-                            const maptypes::MapApproachLegs& legs);
+                     const maptypes::MapApproachLegs& legs);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
@@ -82,6 +82,8 @@ private:
                             int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);
+
+  void paintTopOfDescent(const PaintContext *context);
 
 };
 

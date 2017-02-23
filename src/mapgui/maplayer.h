@@ -56,6 +56,9 @@ public:
   /* Show airports */
   MapLayer& airport(bool value = true);
 
+  MapLayer& approach(bool value = true);
+  MapLayer& approachText(bool value = true);
+
   /* Define source table for airports */
   MapLayer& airportSource(layer::AirportSource source);
 
@@ -135,6 +138,16 @@ public:
   bool isAirport() const
   {
     return layerAirport;
+  }
+
+  bool isApproach() const
+  {
+    return layerApproach;
+  }
+
+  bool isApproachText() const
+  {
+    return layerApproachText;
   }
 
   bool isAirportOverviewRunway() const
@@ -344,7 +357,7 @@ private:
   bool layerAirport = false, layerAirportOverviewRunway = false,
        layerAirportDiagram = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
        layerAirportSoft = false, layerAirportNoRating = false, layerAirportIdent = false,
-       layerAirportName = false, layerAirportInfo = false;
+       layerAirportName = false, layerAirportInfo = false, layerApproach = false, layerApproachText = false;
   int layerAirportSymbolSize = 5, layerMinRunwayLength = 0;
 
   bool layerWaypoint = false, layerWaypointName = false,
