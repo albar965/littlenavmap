@@ -495,7 +495,7 @@ void RouteMapObjectList::updateFromApproachLegs()
   {
     // No approach legs - erase all in the current object
     QList<RouteMapObject>::iterator it = std::remove_if(begin(), end(),
-                                                        [ = ](const RouteMapObject &p)->bool
+                                                        [] (const RouteMapObject &p)->bool
                                                         {
                                                           return p.isAnyApproach();
                                                         });

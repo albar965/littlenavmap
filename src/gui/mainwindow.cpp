@@ -711,13 +711,13 @@ void MainWindow::connectAllSlots()
   connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
-  connect(ui->actionMapProjectionMercator, &QAction::triggered, [ = ](bool checked)
+  connect(ui->actionMapProjectionMercator, &QAction::triggered, [this](bool checked)
           {
             if(checked)
               mapProjectionComboBox->setCurrentIndex(0);
           });
 
-  connect(ui->actionMapProjectionSpherical, &QAction::triggered, [ = ](bool checked)
+  connect(ui->actionMapProjectionSpherical, &QAction::triggered, [this](bool checked)
           {
             if(checked)
               mapProjectionComboBox->setCurrentIndex(1);

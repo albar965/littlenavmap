@@ -49,7 +49,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
 
   // Sort by type (order: runway, helipad, parking), name and numbers
   std::sort(entries.begin(), entries.end(),
-            [ = ](const StartPosition &p1, const StartPosition &p2)->bool
+            [] (const StartPosition &p1, const StartPosition &p2)->bool
             {
               if(p1.parking.isValid() == p2.parking.isValid() &&
                  p1.start.isValid() == p2.start.isValid())

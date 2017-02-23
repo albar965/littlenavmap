@@ -1224,7 +1224,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     {
       // Sort airways by name
       std::sort(airwayTexts.begin(), airwayTexts.end(),
-                [ = ](const std::pair<QString, QString> &item1, const std::pair<QString, QString> &item2)
+                [] (const std::pair<QString, QString> &item1, const std::pair<QString, QString> &item2)
                 {
                   return item1.first < item2.first;
                 });
