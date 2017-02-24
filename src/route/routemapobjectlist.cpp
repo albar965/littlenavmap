@@ -81,7 +81,7 @@ void RouteMapObjectList::copyNoLegs(const RouteMapObjectList& other)
   boundingRect = other.boundingRect;
   activePos = other.activePos;
   trueCourse = other.trueCourse;
-  approachStartIndex = size();
+  approachStartIndex = maptypes::INVALID_INDEX_VALUE;
 
   // Update flightplan pointers to this instance
   for(RouteMapObject& rmo : *this)
@@ -117,12 +117,13 @@ int RouteMapObjectList::getNearestRouteLegOrPointIndex(const atools::geo::Pos& p
     return legIndex;
 }
 
-void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
+int RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 {
+  int previousLeg = activeLeg;
   if(isEmpty() || !pos.isValid())
   {
     activeLeg = maptypes::INVALID_INDEX_VALUE;
-    return;
+    return previousLeg;
   }
 
   if(activeLeg == maptypes::INVALID_INDEX_VALUE)
@@ -156,7 +157,7 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
   {
     Pos pos1 = at(newLeg - 1).getPosition();
     Pos pos2 = at(newLeg).getPosition();
-    if(pos1.almostEqual(pos2, 0.f) && newLeg < size() - 2)
+    if(pos1.almostEqual(pos2) && newLeg < size() - 2)
     {
       // Catch the case of initial fixes that are points instead of lines and try the second next leg
       newLeg++;
@@ -189,12 +190,13 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       }
     }
   }
-  // qDebug() << "active" << activeLeg << "size" << size();
+  // qDebug() << "active" << activeLeg << "size" << size() << "ident" << at(activeLeg).getIdent() <<
+  // maptypes::approachLegTypeFullStr(at(activeLeg).getApproachLeg().type);
+  return previousLeg;
 }
 
 bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDest,
-                                           float *nextLegDistance, float *crossTrackDistance,
-                                           int *nextRouteLegIndex) const
+                                           float *nextLegDistance, float *crossTrackDistance) const
 {
   if(crossTrackDistance != nullptr)
   {
@@ -209,9 +211,6 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
   {
     if(routeIndex >= size())
       routeIndex = size() - 1;
-
-    if(nextRouteLegIndex != nullptr)
-      *nextRouteLegIndex = routeIndex;
 
     float distToCur = 0.f;
 
@@ -325,7 +324,7 @@ void RouteMapObjectList::getNearest(const CoordinateConverter& conv, int xs, int
 
   int x, y;
 
-  for(int i = 0; i < approachStartIndex; i++)
+  for(int i = 0; i < getApproachStartIndex(); i++)
   {
     const RouteMapObject& obj = at(i);
     if(conv.wToS(obj.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -479,15 +478,18 @@ void RouteMapObjectList::updateFromApproachLegs()
 
   approachStartIndex = size();
 
-  // Check if the route contains the initial fix and return the index to it
-  for(int i = 0; i < size(); i++)
+  if(initialFixRef.id != -1)
   {
-    const RouteMapObject& obj = at(i);
-
-    if(obj.getId() == initialFixRef.id && obj.getMapObjectType() == initialFixRef.type)
+    // Check if the route contains the initial fix and return the index to it
+    for(int i = 0; i < size(); i++)
     {
-      approachStartIndex = i;
-      break;
+      const RouteMapObject& obj = at(i);
+
+      if(obj.getId() == initialFixRef.id && obj.getMapObjectType() == initialFixRef.type)
+      {
+        approachStartIndex = i + 1;
+        break;
+      }
     }
   }
 
@@ -528,21 +530,60 @@ void RouteMapObjectList::updateIndices()
     (*this)[i].setFlightplanEntryIndex(i);
 }
 
-int RouteMapObjectList::getActiveRouteLeg() const
+int RouteMapObjectList::activeRouteLegInternal(int leg) const
 {
-  if(activeLeg < maptypes::INVALID_INDEX_VALUE && size() > 1)
+  if(leg < maptypes::INVALID_INDEX_VALUE && size() > 1)
     // Last leg before approach is part of route and approach
-    return activeLeg <= approachStartIndex ? activeLeg : maptypes::INVALID_INDEX_VALUE;
+    return leg <= getApproachStartIndex() ? leg : maptypes::INVALID_INDEX_VALUE;
   else
     return maptypes::INVALID_INDEX_VALUE;
 }
 
-int RouteMapObjectList::getActiveApproachLeg() const
+int RouteMapObjectList::activeApproachLegInternal(int leg) const
 {
-  if(activeLeg < maptypes::INVALID_INDEX_VALUE && size() > 1)
-    return at(activeLeg).isAnyApproach() ? activeLeg - (size() - approachLegs.size()) : maptypes::INVALID_INDEX_VALUE;
+  if(leg < maptypes::INVALID_INDEX_VALUE && size() > 1)
+    return at(leg).isAnyApproach() ? leg - (size() - approachLegs.size()) : maptypes::INVALID_INDEX_VALUE;
   else
     return maptypes::INVALID_INDEX_VALUE;
+}
+
+int RouteMapObjectList::getActiveRouteLeg() const
+{
+  return activeRouteLegInternal(activeLeg);
+}
+
+int RouteMapObjectList::getActiveApproachLeg() const
+{
+  return activeApproachLegInternal(activeLeg);
+}
+
+int RouteMapObjectList::getActiveRouteLegCorrected() const
+{
+  return activeRouteLegInternal(getActiveLegCorrected());
+}
+
+int RouteMapObjectList::getActiveApproachLegCorrected() const
+{
+  return activeApproachLegInternal(getActiveLegCorrected());
+}
+
+int RouteMapObjectList::getActiveLegCorrected() const
+{
+  int nextLeg = activeLeg + 1;
+  if(nextLeg == getApproachStartIndex() && nextLeg < size() &&
+     at(nextLeg).isAnyApproach() && at(nextLeg).getApproachLeg().type == maptypes::INITIAL_FIX)
+    return activeLeg + 1;
+  else
+    return activeLeg;
+}
+
+bool RouteMapObjectList::isPassedLastLeg() const
+{
+  if((activeLeg >= size() - 1 || (activeLeg + 1 < size() && at(activeLeg + 1).isMissed())) &&
+     activeLegResult.status == atools::geo::AFTER_END)
+    return true;
+  else
+    return false;
 }
 
 void RouteMapObjectList::setActiveLeg(int value)
@@ -636,7 +677,7 @@ int RouteMapObjectList::nearestPointIndex(const atools::geo::Pos& pos, float& po
 
   pointDistanceMeter = maptypes::INVALID_DISTANCE_VALUE;
 
-  for(int i = 0; i < approachStartIndex; i++)
+  for(int i = 0; i < getApproachStartIndex(); i++)
   {
     float distance = at(i).getPosition().distanceMeterTo(pos);
     if(distance < minDistance)

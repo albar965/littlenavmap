@@ -128,14 +128,13 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
-  // Find the index when the currently shown approach or transition starts to stop painting there
   for(int i = 0; i < routeMapObjects.size(); i++)
   {
     const RouteMapObject& obj = routeMapObjects.at(i);
     if(i > 0)
     {
       // Build text only for the route part - not for the approach
-      if(i <= approachIndex)
+      if(i < approachIndex)
         routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                           QString::number(obj.getCourseToRhumbMag(), 'f', 0) +
                           (routeMapObjects.isTrueCourse() ? tr("°T") : tr("°M")));
@@ -146,7 +145,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
 
     // Draw line only for the route part - not for the approach
-    if(i <= approachIndex)
+    if(i < approachIndex)
       linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
 
     positions.append(obj.getPosition());
@@ -732,7 +731,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     if(wToS(leg.line.getPos2(), x, y))
     {
       texts.append(leg.displayText);
-      texts.append(maptypes::restrictionText(leg.altRestriction));
+      texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
       paintApproachpoint(context, x, y);
       if(drawText)
         paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
@@ -759,7 +758,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
         return;
 
       texts.append(leg.displayText);
-      texts.append(maptypes::restrictionText(leg.altRestriction));
+      texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
     }
   }
   else
@@ -768,7 +767,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
       return;
 
     texts.append(leg.displayText);
-    texts.append(maptypes::restrictionText(leg.altRestriction));
+    texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
   }
 
   const maptypes::MapSearchResult& navaids = leg.navaids;

@@ -973,7 +973,7 @@ QString altRestrictionText(const MapAltRestriction& restriction)
   return QString();
 }
 
-QString restrictionText(const maptypes::MapAltRestriction& altRestriction)
+QString altRestrictionTextNarrow(const maptypes::MapAltRestriction& altRestriction)
 {
   QString retval;
   switch(altRestriction.descriptor)
@@ -992,6 +992,30 @@ QString restrictionText(const maptypes::MapAltRestriction& altRestriction)
     case maptypes::MapAltRestriction::BETWEEN:
       retval = Unit::altFeet(altRestriction.alt1, false, true) + "-" +
                Unit::altFeet(altRestriction.alt2, true, true);
+      break;
+  }
+  return retval;
+}
+
+QString altRestrictionTextShort(const maptypes::MapAltRestriction& altRestriction)
+{
+  QString retval;
+  switch(altRestriction.descriptor)
+  {
+    case maptypes::MapAltRestriction::NONE:
+      break;
+    case maptypes::MapAltRestriction::AT:
+      retval = Unit::altFeet(altRestriction.alt1, false, false);
+      break;
+    case maptypes::MapAltRestriction::AT_OR_ABOVE:
+      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt1, false, false);
+      break;
+    case maptypes::MapAltRestriction::AT_OR_BELOW:
+      retval = QObject::tr("B ") + Unit::altFeet(altRestriction.alt1, false, false);
+      break;
+    case maptypes::MapAltRestriction::BETWEEN:
+      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt1, false, false) + QObject::tr(", B ") +
+               Unit::altFeet(altRestriction.alt2, false, false);
       break;
   }
   return retval;

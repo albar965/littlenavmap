@@ -453,6 +453,8 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
   updateBoundingRectangle(legs);
 
   qDebug() << "---------------------------------";
+  qDebug() << "appr dist" << legs.approachDistance << "trans dist" << legs.transitionDistance
+           << "missed dist" << legs.missedDistance;
   for(int i = 0; i < legs.size(); ++i)
     qDebug() << legs.at(i);
   qDebug() << "---------------------------------";
@@ -593,11 +595,11 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       leg.calculatedTrueCourse = 0.f;
 
     if(legs.isTransition(i))
-      legs.transitionDistance += leg.distance;
+      legs.transitionDistance += leg.calculatedDistance;
     if(legs.isApproach(i))
-      legs.approachDistance += leg.distance;
+      legs.approachDistance += leg.calculatedDistance;
     if(legs.isMissed(i))
-      legs.missedDistance += leg.distance;
+      legs.missedDistance += leg.calculatedDistance;
   }
 }
 

@@ -97,7 +97,7 @@ private:
 
   QTreeWidgetItem *buildApprItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
-  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg);
+  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg, float& remainingDistance);
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
 
   // Save and restore expanded and selected item state
@@ -107,10 +107,12 @@ private:
   QString buildRemarkStr(const maptypes::MapApproachLeg& leg);
   QString buildCourseStr(const maptypes::MapApproachLeg& leg);
   QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
+  QString buildRemDistanceStr(const maptypes::MapApproachLeg& leg, float& remainingDistance);
+
   void showEntry(QTreeWidgetItem *item, bool doubleClick);
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
-  void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item);
-  void addTransitionLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item);
+  void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
+  void addTransitionLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
   void fillApproachTreeWidget();
   void anchorClicked(const QUrl& url);
   void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapApproachRef& ref);
