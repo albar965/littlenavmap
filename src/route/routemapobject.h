@@ -179,16 +179,10 @@ public:
   }
 
   /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToMag() const
-  {
-    return courseTo - magvar;
-  }
+  float getCourseToMag() const;
 
   /* Rhumb line magnetic  course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToRhumbMag() const
-  {
-    return courseRhumbTo - magvar;
-  }
+  float getCourseToRhumbMag() const;
 
   /* Great circle start true course to this route map object from the predecessor in degrees or 0 if first in route */
   float getCourseToTrue() const

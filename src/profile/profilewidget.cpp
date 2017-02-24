@@ -107,54 +107,57 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   if(!routeController->isFlightplanEmpty())
   {
-    const RouteMapObjectList& rmoList = legList.routeApprMapObjects;
+    const RouteMapObjectList& rmoList = routeController->getRouteApprMapObjects();
 
-    if(showAircraft || showAircraftTrack)
+    if((showAircraft || showAircraftTrack))
     {
-      simData = simulatorData;
-      if(rmoList.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+      if(!rmoList.isPassedLastLeg())
       {
-        // Get screen point from last update
-        QPoint lastPoint;
-        if(lastSimData.getUserAircraft().getPosition().isValid())
-          lastPoint = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
-                             Y0 + static_cast<int>(rect().height() - Y0 -
-                                                   lastSimData.getUserAircraft().getPosition().getAltitude()
-                                                   * verticalScale));
-
-        // Get screen point for current update
-        QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
-                            Y0 + static_cast<int>(rect().height() - Y0 -
-                                                  simData.getUserAircraft().getPosition().getAltitude() *
-                                                  verticalScale));
-
-        if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
+        simData = simulatorData;
+        if(rmoList.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
         {
-          // Add track point and update widget if delta value between last and current update is large enough
-          if(simData.getUserAircraft().getPosition().isValid())
-          {
-            aircraftTrackPoints.append(currentPoint);
-            maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
-                                          simData.getUserAircraft().getPosition().getAltitude());
+          // Get screen point from last update
+          QPoint lastPoint;
+          if(lastSimData.getUserAircraft().getPosition().isValid())
+            lastPoint = QPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
+                               Y0 + static_cast<int>(rect().height() - Y0 -
+                                                     lastSimData.getUserAircraft().getPosition().getAltitude()
+                                                     * verticalScale));
 
+          // Get screen point for current update
+          QPoint currentPoint(X0 + static_cast<int>(aircraftDistanceFromStart * horizontalScale),
+                              Y0 + static_cast<int>(rect().height() - Y0 -
+                                                    simData.getUserAircraft().getPosition().getAltitude() *
+                                                    verticalScale));
+
+          if(aircraftTrackPoints.isEmpty() || (aircraftTrackPoints.last() - currentPoint).manhattanLength() > 3)
+          {
+            // Add track point and update widget if delta value between last and current update is large enough
+            if(simData.getUserAircraft().getPosition().isValid())
+            {
+              aircraftTrackPoints.append(currentPoint);
+              maxTrackAltitudeFt = std::max(maxTrackAltitudeFt,
+                                            simData.getUserAircraft().getPosition().getAltitude());
+
+              updateWidget = true;
+            }
+          }
+
+          const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+
+          using atools::almostNotEqual;
+          if(!lastSimData.getUserAircraft().getPosition().isValid() ||
+             (lastPoint - currentPoint).manhattanLength() > deltas.manhattanLengthDelta ||
+             almostNotEqual(lastSimData.getUserAircraft().getPosition().getAltitude(),
+                            simData.getUserAircraft().getPosition().getAltitude(), deltas.altitudeDelta))
+          {
+            // Aircraft position has changed enough
+            lastSimData = simData;
+            if(simData.getUserAircraft().getPosition().getAltitude() > maxWindowAlt)
+              // Scale up to keep the aircraft visible
+              updateScreenCoords();
             updateWidget = true;
           }
-        }
-
-        const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
-
-        using atools::almostNotEqual;
-        if(!lastSimData.getUserAircraft().getPosition().isValid() ||
-           (lastPoint - currentPoint).manhattanLength() > deltas.manhattanLengthDelta ||
-           almostNotEqual(lastSimData.getUserAircraft().getPosition().getAltitude(),
-                          simData.getUserAircraft().getPosition().getAltitude(), deltas.altitudeDelta))
-        {
-          // Aircraft position has changed enough
-          lastSimData = simData;
-          if(simData.getUserAircraft().getPosition().getAltitude() > maxWindowAlt)
-            // Scale up to keep the aircraft visible
-            updateScreenCoords();
-          updateWidget = true;
         }
       }
     }
@@ -422,6 +425,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.textBox(&painter, {rmo.getIdent()}, mapcolors::routeInvalidPointColor,
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
       }
+      else if(type == maptypes::APPROACH || type == maptypes::APPROACH_TRANSITION)
+        symPainter.drawApproachSymbol(&painter, symx, flightplanY, 6, true, false);
     }
   }
 

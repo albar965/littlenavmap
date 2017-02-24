@@ -42,7 +42,7 @@ public:
   int getNearestRouteLegOrPointIndex(const atools::geo::Pos& pos) const;
 
   /* Update positions, distances and try to select next leg*/
-  void updateActiveLegAndPos(const maptypes::PosCourse& pos);
+  int updateActiveLegAndPos(const maptypes::PosCourse& pos);
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -58,19 +58,32 @@ public:
    * @return false if no current/next leg was found
    */
   bool getRouteDistances(float *distFromStart, float *distToDest,
-                         float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr,
-                         int *nextRouteLegIndex = nullptr) const;
+                         float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
+
+  /* Get active index in the route leg vector or invalid value if this is an approach */
+  int getActiveRouteLeg() const;
+
+  /* Get active index in the approach leg vector or invalid value if this is an index to a route leg */
+  int getActiveApproachLeg() const;
+
+  /* Replaces the current leg with the initial fix if one follows between route and transition/approach.  */
+  int getActiveLegCorrected() const;
+  int getActiveRouteLegCorrected() const;
+  int getActiveApproachLegCorrected() const;
 
   /* Index of the first approach entry or size() if none */
   int getApproachStartIndex() const
   {
-    return approachStartIndex;
+    return approachStartIndex == maptypes::INVALID_INDEX_VALUE ? size() : approachStartIndex;
   }
 
   bool isConnectedToApproach() const
   {
     return approachStartIndex < size();
   }
+
+  /* At the end of the route and beyond */
+  bool isPassedLastLeg() const;
 
   /* Get top of descent position based on the option setting (default is 3 nm per 1000 ft) */
   atools::geo::Pos getTopOfDescent() const;
@@ -136,7 +149,7 @@ public:
   /* Calculate new indexes for new route after copying */
   void updateFromApproachLegs();
 
-  /* Get a new number for a user waypoint */
+  /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
 
   /* Assign and update internal indexes for approach legs */
@@ -178,9 +191,6 @@ public:
   using QList<RouteMapObject>::removeLast;
   using QList<RouteMapObject>::operator[];
 
-  int getActiveRouteLeg() const;
-  int getActiveApproachLeg() const;
-
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
 
@@ -212,6 +222,8 @@ private:
   void copy(const RouteMapObjectList& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   void resetActive();
+  int activeRouteLegInternal(int leg) const;
+  int activeApproachLegInternal(int leg) const;
 
   bool trueCourse = false;
 
@@ -222,7 +234,9 @@ private:
   maptypes::MapApproachLegs approachLegs;
   maptypes::MapObjectTypes shownTypes;
 
-  int activeLeg = maptypes::INVALID_INDEX_VALUE, approachStartIndex = 0;
+  int activeLeg = maptypes::INVALID_INDEX_VALUE,
+      approachStartIndex = maptypes::INVALID_INDEX_VALUE; /* Index of the initial fix of an approach/transition if any are attached.
+                                                           *  The route leg directing to this fix remains in the list. */
   atools::geo::LineDistance activeLegResult;
   maptypes::PosCourse activePos;
 };

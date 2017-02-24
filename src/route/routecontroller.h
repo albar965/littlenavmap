@@ -389,8 +389,8 @@ private:
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
 
-  /* Do not update aircraft information more than every 0.5 seconds */
-  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
+  /* Do not update aircraft information more than every 0.1 seconds */
+  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
   qint64 lastSimUpdate = 0;
 
 };

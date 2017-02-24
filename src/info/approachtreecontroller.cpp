@@ -61,7 +61,10 @@ enum TreeColumnIndex
   SELECTED_ALTITUDE = 4,
   SELECTED_COURSE = 5,
   SELECTED_DISTANCE = 6,
-  SELECTED_REMARKS = 7
+  SELECTED_REMAINING_DISTANCE = 7,
+  SELECTED_REMARKS = 8,
+
+  INVALID = -1
 };
 
 using atools::sql::SqlRecord;
@@ -247,6 +250,7 @@ void ApproachTreeController::fillApproachTreeWidget()
   {
     if(approachSelectedMode)
     {
+
       // Show information for the selected approach and/or transition
       fillApproachInformation(currentAirport, approachSelectedLegs.ref);
       treeWidget->setIndentation(0);
@@ -257,23 +261,24 @@ void ApproachTreeController::fillApproachTreeWidget()
       {
         const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport,
                                                                      approachSelectedLegs.ref.approachId);
-
+        float remainingDistance = legs->approachDistance;
         if(legs != nullptr)
         {
           approachSelectedLegs = *legs;
-          addApproachLegs(&approachSelectedLegs, root);
+
+          addApproachLegs(&approachSelectedLegs, root, remainingDistance);
         }
       }
       else if(approachSelectedLegs.ref.isApproachAndTransition())
       {
         const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport,
                                                                        approachSelectedLegs.ref.transitionId);
-
+        float remainingDistance = legs->approachDistance + legs->transitionDistance;
         if(legs != nullptr)
         {
           approachSelectedLegs = *legs;
-          addTransitionLegs(&approachSelectedLegs, root);
-          addApproachLegs(&approachSelectedLegs, root);
+          addTransitionLegs(&approachSelectedLegs, root, remainingDistance);
+          addApproachLegs(&approachSelectedLegs, root, remainingDistance);
         }
       }
     }
@@ -416,27 +421,37 @@ void ApproachTreeController::restoreState()
 
 void ApproachTreeController::updateTreeHeader()
 {
-  QTreeWidgetItem *header = treeWidget->headerItem();
+  QTreeWidgetItem *header = new QTreeWidgetItem();
+
   if(approachSelectedMode)
   {
     header->setText(SELECTED_IDENT, tr("Ident"));
-    header->setText(SELECTED_IDENT_TYPE, tr("Type"));
-    header->setText(SELECTED_IDENT_FREQUENCY, tr("Frequency"));
+    header->setText(SELECTED_IDENT_TYPE, tr("Navaid\nType"));
+    header->setText(SELECTED_IDENT_FREQUENCY, tr("Freq.\nMHz/kHz"));
     header->setText(SELECTED_LEGTYPE, tr("Leg Type"));
-    header->setText(SELECTED_ALTITUDE, tr("Altitude"));
-    header->setText(SELECTED_COURSE, tr("Course"));
-    header->setText(SELECTED_DISTANCE, tr("Distance/Time"));
+    header->setText(SELECTED_ALTITUDE, tr("Altitude\nft"));
+    header->setText(SELECTED_COURSE, tr("Course\n°M"));
+    header->setText(SELECTED_DISTANCE, tr("Dist./Time\nnm/min"));
+    header->setText(SELECTED_REMAINING_DISTANCE, tr("Remaining\nnm"));
     header->setText(SELECTED_REMARKS, tr("Remarks"));
+
+    for(int col = SELECTED_IDENT; col <= SELECTED_REMARKS; col++)
+      header->setTextAlignment(col, Qt::AlignCenter);
   }
   else
   {
     header->setText(OVERVIEW_DESCRIPTION, tr("Description"));
     header->setText(OVERVIEW_IDENT, tr("Ident"));
-    header->setText(OVERVIEW_ALTITUDE, tr("Altitude"));
-    header->setText(OVERVIEW_COURSE, tr("Course"));
-    header->setText(OVERVIEW_DISTANCE, tr("Distance/Time"));
+    header->setText(OVERVIEW_ALTITUDE, tr("Altitude\nft"));
+    header->setText(OVERVIEW_COURSE, tr("Course\n°M"));
+    header->setText(OVERVIEW_DISTANCE, tr("Dist./Time\nnm/min"));
     header->setText(OVERVIEW_REMARKS, tr("Remarks"));
+
+    for(int col = OVERVIEW_DESCRIPTION; col <= OVERVIEW_REMARKS; col++)
+      header->setTextAlignment(col, Qt::AlignCenter);
   }
+
+  treeWidget->setHeaderItem(header);
 }
 
 void ApproachTreeController::itemSelectionChanged()
@@ -546,16 +561,17 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 
     if(ref.legId == -1)
     {
+      float remainingDistance = 100.f;
       if(ref.approachId != -1 && ref.transitionId == -1)
       {
         const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
-        addApproachLegs(legs, item);
+        addApproachLegs(legs, item, remainingDistance);
         itemLoadedIndex.setBit(item->type());
       }
       else if(ref.approachId != -1 && ref.transitionId != -1)
       {
         const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
-        addTransitionLegs(legs, item);
+        addTransitionLegs(legs, item, remainingDistance);
         itemLoadedIndex.setBit(item->type());
       }
       itemLoadedIndex.resize(itemIndex.size());
@@ -563,19 +579,21 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
   }
 }
 
-void ApproachTreeController::addApproachLegs(const MapApproachLegs *legs, QTreeWidgetItem *item)
+void ApproachTreeController::addApproachLegs(const MapApproachLegs *legs, QTreeWidgetItem *item,
+                                             float& remainingDistance)
 {
   if(legs != nullptr)
   {
     for(const MapApproachLeg& leg : legs->approachLegs)
     {
       itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId, -1, leg.legId));
-      buildLegItem(item, leg);
+      buildLegItem(item, leg, remainingDistance);
     }
   }
 }
 
-void ApproachTreeController::addTransitionLegs(const MapApproachLegs *legs, QTreeWidgetItem *item)
+void ApproachTreeController::addTransitionLegs(const MapApproachLegs *legs, QTreeWidgetItem *item,
+                                               float& remainingDistance)
 {
   if(legs != nullptr)
   {
@@ -583,7 +601,7 @@ void ApproachTreeController::addTransitionLegs(const MapApproachLegs *legs, QTre
     {
       itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId,
                                       legs->ref.transitionId, leg.legId));
-      buildLegItem(item, leg);
+      buildLegItem(item, leg, remainingDistance);
     }
   }
 }
@@ -811,7 +829,7 @@ QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayIt
 
   QString altStr;
   if(recApp.valueFloat("altitude") > 0.f)
-    altStr = Unit::altFeet(recApp.valueFloat("altitude"));
+    altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
                                                 approachType,
@@ -819,6 +837,9 @@ QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayIt
                                                 altStr
                                               }, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+  item->setTextAlignment(OVERVIEW_ALTITUDE, Qt::AlignRight);
+  item->setTextAlignment(OVERVIEW_COURSE, Qt::AlignRight);
+  item->setTextAlignment(OVERVIEW_DISTANCE, Qt::AlignRight);
 
   for(int i = 0; i < item->columnCount(); i++)
     item->setFont(i, approachFont);
@@ -832,7 +853,7 @@ QTreeWidgetItem *ApproachTreeController::buildTransitionItem(QTreeWidgetItem *ap
 {
   QString altStr;
   if(recTrans.valueFloat("altitude") > 0.f)
-    altStr = Unit::altFeet(recTrans.valueFloat("altitude"));
+    altStr = Unit::altFeet(recTrans.valueFloat("altitude"), false);
 
   QString name(tr("Transition"));
   if(recTrans.valueStr("type") == "F")
@@ -847,6 +868,9 @@ QTreeWidgetItem *ApproachTreeController::buildTransitionItem(QTreeWidgetItem *ap
                                               },
                                               itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+  item->setTextAlignment(OVERVIEW_ALTITUDE, Qt::AlignRight);
+  item->setTextAlignment(OVERVIEW_COURSE, Qt::AlignRight);
+  item->setTextAlignment(OVERVIEW_DISTANCE, Qt::AlignRight);
 
   for(int i = 0; i < item->columnCount(); i++)
     item->setFont(i, transitionFont);
@@ -856,7 +880,8 @@ QTreeWidgetItem *ApproachTreeController::buildTransitionItem(QTreeWidgetItem *ap
   return item;
 }
 
-void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg)
+void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg,
+                                          float& remainingDistance)
 {
   QStringList texts;
   QIcon icon;
@@ -896,8 +921,13 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
     texts << maptypes::approachLegTypeStr(leg.type) << leg.fixIdent;
 
   QString remarkStr = buildRemarkStr(leg);
-  texts << maptypes::altRestrictionText(leg.altRestriction)
-        << buildCourseStr(leg) << buildDistanceStr(leg) << remarkStr;
+  texts << maptypes::altRestrictionTextShort(leg.altRestriction)
+        << buildCourseStr(leg) << buildDistanceStr(leg);
+
+  if(approachSelectedMode)
+    texts << buildRemDistanceStr(leg, remainingDistance);
+
+  texts << remarkStr;
 
   QTreeWidgetItem *item = new QTreeWidgetItem(texts, itemIndex.size() - 1);
   if(!icon.isNull())
@@ -907,6 +937,21 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
   }
 
   item->setToolTip(approachSelectedMode ? SELECTED_REMARKS : OVERVIEW_REMARKS, remarkStr);
+
+  if(approachSelectedMode)
+  {
+    item->setTextAlignment(SELECTED_IDENT_FREQUENCY, Qt::AlignRight);
+    item->setTextAlignment(SELECTED_ALTITUDE, Qt::AlignRight);
+    item->setTextAlignment(SELECTED_COURSE, Qt::AlignRight);
+    item->setTextAlignment(SELECTED_DISTANCE, Qt::AlignRight);
+    item->setTextAlignment(SELECTED_REMAINING_DISTANCE, Qt::AlignRight);
+  }
+  else
+  {
+    item->setTextAlignment(OVERVIEW_ALTITUDE, Qt::AlignRight);
+    item->setTextAlignment(OVERVIEW_COURSE, Qt::AlignRight);
+    item->setTextAlignment(OVERVIEW_DISTANCE, Qt::AlignRight);
+  }
 
   setItemStyle(item, leg);
 
@@ -939,7 +984,10 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 
 QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
-  return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) + tr("°M");
+  if(leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::ARC_TO_FIX && leg.type != maptypes::CONSTANT_RADIUS_ARC)
+    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
+  else
+    return QString();
 }
 
 QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
@@ -947,15 +995,40 @@ QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
   QString retval;
 
   if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX)
-    retval += Unit::distNm(leg.calculatedDistance);
+    retval += Unit::distNm(leg.calculatedDistance, false);
   else if(leg.distance > 0.f)
-    retval += Unit::distNm(leg.distance);
+    retval += Unit::distNm(leg.distance, false);
 
   if(leg.time > 0.f)
   {
     if(!retval.isEmpty())
       retval += ", ";
     retval += QLocale().toString(leg.time, 'f', 0) + tr(" min");
+  }
+
+  return retval;
+}
+
+QString ApproachTreeController::buildRemDistanceStr(const MapApproachLeg& leg, float& remainingDistance)
+{
+  QString retval;
+
+  if(!leg.missed)
+  {
+    if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX)
+      remainingDistance -= leg.calculatedDistance;
+    else if(leg.distance > 0.f)
+      remainingDistance -= leg.distance;
+
+    retval += Unit::distNm(remainingDistance, false);
+
+    if(leg.time > 0.f)
+    {
+      if(!retval.isEmpty())
+        retval += ", ";
+      retval += QLocale().toString(leg.time, 'f', 0) + tr(" min");
+      remainingDistance -= leg.time * 3.5f; // 3.5 nm per minute
+    }
   }
 
   return retval;
@@ -1109,11 +1182,15 @@ void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& 
   approachSelectedLegs.ref = ref;
   approachSelectedMode = true;
 
+  treeWidget->clear();
   updateTreeHeader();
 
   WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).restore(ui->treeWidgetApproachInfo);
 
   fillApproachTreeWidget();
+
+  highlightNextWaypoint(mainWindow->getRouteController()->getRouteApprMapObjects().getActiveApproachLegCorrected());
+
   emit approachSelected(approachSelectedLegs.ref);
 }
 
@@ -1127,6 +1204,7 @@ void ApproachTreeController::disableSelectedMode()
   approachSelectedLegs.ref = MapApproachRef();
   approachSelectedMode = false;
 
+  treeWidget->clear();
   updateTreeHeader();
 
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(ui->treeWidgetApproachInfo);

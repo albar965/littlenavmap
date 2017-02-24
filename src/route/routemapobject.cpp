@@ -353,11 +353,20 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
 
   if(isAnyApproach())
   {
+    if(predRouteMapObj != nullptr && approachLeg.type == maptypes::INITIAL_FIX)
+    {
+      courseTo = predRouteMapObj->courseTo;
+      courseRhumbTo = predRouteMapObj->courseRhumbTo;
+    }
+    else
+    {
+      courseTo = normalizeCourse(approachLeg.calculatedTrueCourse);
+      courseRhumbTo = normalizeCourse(approachLeg.calculatedTrueCourse);
+    }
+
     predecessor = true;
     distanceTo = approachLeg.calculatedDistance;
     distanceToRhumb = approachLeg.calculatedDistance;
-    courseTo = normalizeCourse(approachLeg.calculatedTrueCourse);
-    courseRhumbTo = normalizeCourse(approachLeg.calculatedTrueCourse);
   }
   else if(predRouteMapObj != nullptr)
   {
@@ -501,6 +510,16 @@ QString RouteMapObject::getMapObjectTypeName() const
     }
   }
   return EMPTY_STRING;
+}
+
+float RouteMapObject::getCourseToMag() const
+{
+  return atools::geo::normalizeCourse(courseTo - magvar);
+}
+
+float RouteMapObject::getCourseToRhumbMag() const
+{
+  return atools::geo::normalizeCourse(courseRhumbTo - magvar);
 }
 
 const atools::geo::Pos& RouteMapObject::getPosition() const

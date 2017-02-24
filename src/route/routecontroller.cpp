@@ -2118,17 +2118,20 @@ void RouteController::updateModelRouteTime()
   float cumulatedDistance = 0.f;
   for(const RouteMapObject& mapobj : route)
   {
-    cumulatedDistance += mapobj.getDistanceTo();
-    if(row == 0)
-      model->setItem(row, rc::LEG_TIME, new QStandardItem());
-    else
+    if(row < routeAppr.getApproachStartIndex())
     {
-      float travelTime = calcTravelTime(mapobj.getDistanceTo());
-      model->setItem(row, rc::LEG_TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
-    }
+      cumulatedDistance += mapobj.getDistanceTo();
+      if(row == 0)
+        model->setItem(row, rc::LEG_TIME, new QStandardItem());
+      else
+      {
+        float travelTime = calcTravelTime(mapobj.getDistanceTo());
+        model->setItem(row, rc::LEG_TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
+      }
 
-    float eta = calcTravelTime(cumulatedDistance);
-    model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
+      float eta = calcTravelTime(cumulatedDistance);
+      model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
+    }
     row++;
   }
 }
@@ -2194,7 +2197,6 @@ void RouteController::updateTableModel()
       // No course and distance for departure airport
       itemRow.append(new QStandardItem());
       itemRow.append(new QStandardItem());
-      itemRow.append(new QStandardItem());
     }
     else
     {
@@ -2207,20 +2209,28 @@ void RouteController::updateTableModel()
       item = new QStandardItem(QLocale().toString(mapobj.getCourseToRhumbMag(), 'f', 0) + trueCourse);
       item->setTextAlignment(Qt::AlignRight);
       itemRow.append(item);
-
-      item = new QStandardItem(Unit::distNm(mapobj.getDistanceTo(), false));
-      item->setTextAlignment(Qt::AlignRight);
-      itemRow.append(item);
     }
 
     cumulatedDistance += mapobj.getDistanceTo();
 
-    float remaining = totalDistance - cumulatedDistance;
-    if(remaining < 0.f)
-      remaining = 0.f;  // Catch the -0 case due to rounding errors
-    item = new QStandardItem(Unit::distNm(remaining, false));
-    item->setTextAlignment(Qt::AlignRight);
-    itemRow.append(item);
+    if(row < routeAppr.getApproachStartIndex())
+    {
+      item = new QStandardItem(Unit::distNm(mapobj.getDistanceTo(), false));
+      item->setTextAlignment(Qt::AlignRight);
+      itemRow.append(item);
+
+      float remaining = totalDistance - cumulatedDistance;
+      if(remaining < 0.f)
+        remaining = 0.f;  // Catch the -0 case due to rounding errors
+      item = new QStandardItem(Unit::distNm(remaining, false));
+      item->setTextAlignment(Qt::AlignRight);
+      itemRow.append(item);
+    }
+    else
+    {
+      itemRow.append(new QStandardItem());
+      itemRow.append(new QStandardItem());
+    }
 
     // Travel time and ETA are updated in updateModelRouteTime
     itemRow.append(new QStandardItem());
@@ -2259,17 +2269,36 @@ void RouteController::disconnectedFromSimulator()
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  maptypes::PosCourse pc(simulatorData.getUserAircraft().getPosition(),
-                         simulatorData.getUserAircraft().getHeadingDegTrue());
-
-  routeAppr.updateActiveLegAndPos(pc);
-  route.updateActiveLegAndPos(pc);
-
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    highlightNextWaypoint(routeAppr.getActiveRouteLeg());
-    mainWindow->getApproachController()->highlightNextWaypoint(routeAppr.getActiveApproachLeg());
+    maptypes::PosCourse position(simulatorData.getUserAircraft().getPosition(),
+                                 simulatorData.getUserAircraft().getHeadingDegTrue());
+
+    int previousAppLeg = routeAppr.getActiveApproachLegCorrected();
+    routeAppr.updateActiveLegAndPos(position);
+    int apprLeg = routeAppr.getActiveApproachLegCorrected();
+
+    int previousRouteLeg = route.getActiveRouteLegCorrected();
+    route.updateActiveLegAndPos(position);
+    int routeLeg = routeAppr.getActiveRouteLegCorrected();
+
+    if(routeLeg != previousRouteLeg)
+    {
+      // Use corrected indexes to highlight initial fix
+      qDebug() << "new route leg" << previousRouteLeg << routeLeg;
+      highlightNextWaypoint(routeLeg);
+    }
+
+    if(apprLeg != previousAppLeg)
+    {
+      qDebug() << "new approach leg" << previousAppLeg << apprLeg;
+
+      if(apprLeg == 0)
+        mainWindow->getUi()->tabWidgetRoute->setCurrentIndex(1);
+
+      mainWindow->getApproachController()->highlightNextWaypoint(apprLeg);
+    }
 
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }

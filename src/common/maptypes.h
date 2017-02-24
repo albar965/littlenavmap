@@ -1041,7 +1041,8 @@ QString magvarText(float magvar);
 int surfaceQuality(const QString& surface);
 
 /* Put altitude restriction texts into list */
-QString restrictionText(const MapAltRestriction& altRestriction);
+QString altRestrictionTextNarrow(const MapAltRestriction& altRestriction);
+QString altRestrictionTextShort(const maptypes::MapAltRestriction& altRestriction);
 
 } // namespace types
 

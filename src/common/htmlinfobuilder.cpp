@@ -1483,12 +1483,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
-  int nearestLegIndex;
-
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
-    if(route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance,
-                               &nearestLegIndex))
+    int activeLeg = route.getActiveLegCorrected();
+
+    if(activeLeg != maptypes::INVALID_INDEX_VALUE &&
+       route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
       head(html, tr("Flight Plan Progress"));
       html.table();
@@ -1528,12 +1528,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       html.tableEnd();
 
-      bool nearestLegValid = nearestLegIndex >= 0 && nearestLegIndex < route.size();
+      bool nearestLegValid = activeLeg >= 0 && activeLeg < route.size();
 
       QString apprText;
       if(nearestLegValid)
       {
-        const RouteMapObject& rmo = route.at(nearestLegIndex);
+        const RouteMapObject& rmo = route.at(activeLeg);
 
         if(rmo.isApproach())
           apprText = tr(" - Approach");
@@ -1548,7 +1548,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       if(nearestLegValid)
       {
-        const RouteMapObject& rmo = route.at(nearestLegIndex);
+        const RouteMapObject& rmo = route.at(activeLeg);
         const MapApproachLeg& leg = rmo.getApproachLeg();
         bool routeTrueCourse = route.isTrueCourse();
 
@@ -1615,7 +1615,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                     (routeTrueCourse ? tr("°T") : tr("°M")));
       }
       else
-        qWarning() << "Invalid route leg index" << nearestLegIndex;
+        qWarning() << "Invalid route leg index" << activeLeg;
 
       if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
       {
