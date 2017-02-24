@@ -56,6 +56,7 @@ static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELT
 using Marble::GeoDataCoordinates;
 using Marble::GeoDataLineString;
 using atools::geo::Pos;
+using atools::geo::LineString;
 
 ProfileWidget::ProfileWidget(MainWindow *parent)
   : QWidget(parent), mainWindow(parent)
@@ -106,7 +107,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   if(!routeController->isFlightplanEmpty())
   {
-    const RouteMapObjectList& rmoList = legList.routeMapObjects;
+    const RouteMapObjectList& rmoList = legList.routeApprMapObjects;
 
     if(showAircraft || showAircraftTrack)
     {
@@ -216,7 +217,7 @@ void ProfileWidget::updateScreenCoords()
   minSafeAltitudeFt = calcGroundBuffer(legList.maxElevationFt);
   flightplanAltFt =
     static_cast<float>(Unit::rev(
-                         routeController->getRouteMapObjects().getFlightplan().getCruisingAltitude(),
+                         routeController->getRouteApprMapObjects().getFlightplan().getCruisingAltitude(),
                          Unit::altFeetF));
   maxWindowAlt = std::max(minSafeAltitudeFt, flightplanAltFt);
 
@@ -264,7 +265,7 @@ void ProfileWidget::updateScreenCoords()
   if(!routeController->isFlightplanEmpty() && showAircraftTrack)
   {
     // Update aircraft track screen coordinates
-    const RouteMapObjectList& rmoList = legList.routeMapObjects;
+    const RouteMapObjectList& rmoList = legList.routeApprMapObjects;
     const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
 
     for(int i = 0; i < aircraftTrack.size(); i++)
@@ -291,14 +292,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
-  painter.fillRect(
-    rect(), darkStyle ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
-
+  painter.fillRect(rect(), darkStyle ? mapcolors::profileBackgroundDarkColor : mapcolors::profileBackgroundColor);
   painter.fillRect(X0, 0, w, h + Y0, darkStyle ? mapcolors::profileSkyDarkColor : mapcolors::profileSkyColor);
 
   SymbolPainter symPainter;
 
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeApprMapObjects.isEmpty())
   {
     symPainter.textBox(&painter, {tr("No Flight Plan loaded.")}, QPen(Qt::black),
                        X0 + w / 4, Y0 + h / 2, textatt::BOLD, 255);
@@ -344,7 +343,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                        mapcolors::profleElevationScalePen, X0 + w + 4, i, textatt::BOLD | textatt::LEFT, 0);
   }
 
-  const RouteMapObjectList& route = routeController->getRouteMapObjects();
+  const RouteMapObjectList& route = routeController->getRouteApprMapObjects();
 
   // Draw orange minimum safe altitude lines for each segment
   painter.setPen(mapcolors::profileSafeAltLegLinePen);
@@ -367,7 +366,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     todX = X0;
 
   // Draw the flightplan line
-  float destAlt = legList.routeMapObjects.last().getPosition().getAltitude();
+  float destAlt = legList.routeApprMapObjects.last().getPosition().getAltitude();
   QPolygon line;
   line << QPoint(X0, flightplanY);
   if(todX < X0 + w)
@@ -397,49 +396,55 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
   // Draw the most unimportant symbols and texts first
-  for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
+  for(int i = legList.routeApprMapObjects.size() - 1; i >= 0; i--)
   {
-    const RouteMapObject& rmo = legList.routeMapObjects.at(i);
-    int symx = waypointX.at(i);
-
-    switch(rmo.getMapObjectType())
+    const RouteMapObject& rmo = legList.routeApprMapObjects.at(i);
+    if(!rmo.isMissed())
     {
-      case maptypes::WAYPOINT:
+      int symx = waypointX.at(i);
+
+      maptypes::MapObjectTypes type = rmo.getMapObjectType();
+
+      if(type == maptypes::WAYPOINT || rmo.getWaypoint().isValid())
+      {
         symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
         symPainter.drawWaypointText(&painter, rmo.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
-        break;
-      case maptypes::USER:
+      }
+      else if(type == maptypes::USER)
+      {
         symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
         symPainter.textBox(&painter, {rmo.getIdent()}, mapcolors::routeUserPointColor,
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-        break;
-      case maptypes::INVALID:
-        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true,
-                                      false);
+      }
+      else if(type == maptypes::INVALID)
+      {
+        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
         symPainter.textBox(&painter, {rmo.getIdent()}, mapcolors::routeInvalidPointColor,
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-        break;
+      }
     }
   }
 
   // Draw the more important radio navaids
-  for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
+  for(int i = legList.routeApprMapObjects.size() - 1; i >= 0; i--)
   {
-    const RouteMapObject& rmo = legList.routeMapObjects.at(i);
-    int symx = waypointX.at(i);
-
-    switch(rmo.getMapObjectType())
+    const RouteMapObject& rmo = legList.routeApprMapObjects.at(i);
+    if(!rmo.isMissed())
     {
-      case maptypes::NDB:
+      int symx = waypointX.at(i);
+
+      maptypes::MapObjectTypes type = rmo.getMapObjectType();
+
+      if(type == maptypes::NDB || rmo.getNdb().isValid())
+      {
         symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
-        symPainter.drawNdbText(&painter, rmo.getNdb(), symx - 5, flightplanY + 18,
-                               flags, 10, true);
-        break;
-      case maptypes::VOR:
+        symPainter.drawNdbText(&painter, rmo.getNdb(), symx - 5, flightplanY + 18, flags, 10, true);
+      }
+      else if(type == maptypes::VOR || rmo.getVor().isValid())
+      {
         symPainter.drawVorSymbol(&painter, rmo.getVor(), symx, flightplanY, 12, true, false, false);
-        symPainter.drawVorText(&painter, rmo.getVor(), symx - 5, flightplanY + 18,
-                               flags, 10, true);
-        break;
+        symPainter.drawVorText(&painter, rmo.getVor(), symx - 5, flightplanY + 18, flags, 10, true);
+      }
     }
   }
 
@@ -447,17 +452,33 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   font.setBold(true);
   font.setPointSizeF(defaultFontSize);
   painter.setFont(font);
-  for(int i = legList.routeMapObjects.size() - 1; i >= 0; i--)
+  for(int i = legList.routeApprMapObjects.size() - 1; i >= 0; i--)
   {
-    const RouteMapObject& rmo = legList.routeMapObjects.at(i);
-    int symx = waypointX.at(i);
+    const RouteMapObject& rmo = legList.routeApprMapObjects.at(i);
+    if(!rmo.isMissed())
+    {
+      int symx = waypointX.at(i);
 
-    int symy = flightplanY;
-    // if(i == legList.routeMapObjects.size() - 1)
-    // symy = Y0 + static_cast<int>(h - destAlt * verticalScale);
+      int symy = flightplanY;
+      // if(i == legList.routeMapObjects.size() - 1)
+      // symy = Y0 + static_cast<int>(h - destAlt * verticalScale);
 
+      if(rmo.getMapObjectType() == maptypes::AIRPORT)
+      {
+        symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, symy, 10, false, false);
+        symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, symy + 22,
+                                   OptionData::instance().getDisplayOptions(), flags, 10, false);
+      }
+    }
+  }
+
+  if(legList.routeApprMapObjects.isConnectedToApproach())
+  {
+    const RouteMapObject& rmo = legList.routeMapObjects.last();
     if(rmo.getMapObjectType() == maptypes::AIRPORT)
     {
+      int symx = waypointX.last();
+      int symy = flightplanY;
       symPainter.drawAirportSymbol(&painter, rmo.getAirport(), symx, symy, 10, false, false);
       symPainter.drawAirportText(&painter, rmo.getAirport(), symx - 5, symy + 22,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
@@ -466,7 +487,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw text labels
   // Departure altitude label
-  float startAlt = legList.routeMapObjects.first().getPosition().getAltitude();
+  float startAlt = legList.routeApprMapObjects.first().getPosition().getAltitude();
   QString startAltStr = Unit::altFeet(startAlt);
   symPainter.textBox(&painter, {startAltStr},
                      QPen(Qt::black), X0 - 8,
@@ -626,6 +647,7 @@ void ProfileWidget::updateTimeout()
   // Need a copy of the leg list before starting thread to avoid synchronization problems
   // Start the computation in background
   ElevationLegList legs;
+  legs.routeApprMapObjects = routeController->getRouteApprMapObjects();
   legs.routeMapObjects = routeController->getRouteMapObjects();
 
   // Start thread
@@ -654,18 +676,15 @@ void ProfileWidget::updateThreadFinished()
 
 /* Get elevation points between the two points. This returns also correct results if the antimeridian is crossed
  * @return true if not aborted */
-bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
+bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
                                          const atools::geo::Pos& lastPos,
                                          const atools::geo::Pos& curPos) const
 {
-
-  GeoDataCoordinates start(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree);
-  GeoDataCoordinates end(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
-
   // Create a line string from the two points and split it at the date line if crossing
   GeoDataLineString coords;
   coords.setTessellate(true);
-  coords << start << end;
+  coords << GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree)
+         << GeoDataCoordinates(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
 
   QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
   for(const Marble::GeoDataLineString *ls : coordsCorrected)
@@ -682,24 +701,22 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
       // The might not be complete and will be more complete on further iterations when we get a signal
       // from the elevation model
       QVector<GeoDataCoordinates> temp = elevationModel->heightProfile(
-        c1.longitude(GeoDataCoordinates::Degree),
-        c1.latitude(GeoDataCoordinates::Degree),
-        c2.longitude(GeoDataCoordinates::Degree),
-        c2.latitude(GeoDataCoordinates::Degree));
+        c1.longitude(GeoDataCoordinates::Degree), c1.latitude(GeoDataCoordinates::Degree),
+        c2.longitude(GeoDataCoordinates::Degree), c2.latitude(GeoDataCoordinates::Degree));
 
       for(const GeoDataCoordinates& c : temp)
       {
         if(terminateThreadSignal)
           return false;
 
-        elevations.append(c);
+        elevations.append(Pos(c.longitude(), c.latitude(), c.altitude()).toDeg());
       }
 
       if(elevations.isEmpty())
       {
         // Workaround for invalid geometry data - add void
-        elevations.append(c1);
-        elevations.append(c2);
+        elevations.append(Pos(c1.longitude(), c1.latitude(), c1.altitude()).toDeg());
+        elevations.append(Pos(c2.longitude(), c2.latitude(), c2.altitude()).toDeg());
       }
     }
   }
@@ -707,17 +724,11 @@ bool ProfileWidget::fetchRouteElevations(Marble::GeoDataLineString& elevations,
   if(!elevations.isEmpty())
   {
     // Add start or end point if heightProfile omitted these - check only lat lon not alt
-    if(elevations.first().latitude(GeoDataCoordinates::Degree) !=
-       start.latitude(GeoDataCoordinates::Degree) &&
-       elevations.first().longitude(GeoDataCoordinates::Degree) !=
-       start.longitude(GeoDataCoordinates::Degree))
-      elevations.insert(0, start);
+    if(!elevations.first().almostEqual(lastPos))
+      elevations.prepend(Pos(lastPos.getLonX(), lastPos.getLatY(), elevations.first().getAltitude()));
 
-    if(elevations.last().latitude(GeoDataCoordinates::Degree) !=
-       end.latitude(GeoDataCoordinates::Degree) &&
-       elevations.last().longitude(GeoDataCoordinates::Degree) !=
-       end.longitude(GeoDataCoordinates::Degree))
-      elevations.append(end);
+    if(!elevations.last().almostEqual(curPos))
+      elevations.append(Pos(curPos.getLonX(), curPos.getLatY(), elevations.last().getAltitude()));
   }
 
   return true;
@@ -738,20 +749,22 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
   legs.elevationLegs.clear();
 
   // Loop over all route legs
-  for(int i = 1; i < legs.routeMapObjects.size(); i++)
+  for(int i = 1; i < legs.routeApprMapObjects.size(); i++)
   {
     if(terminateThreadSignal)
       // Return empty result
       return ElevationLegList();
 
-    const RouteMapObject& lastRmo = legs.routeMapObjects.at(i - 1);
-    const RouteMapObject& rmo = legs.routeMapObjects.at(i);
+    const RouteMapObject& rmo = legs.routeApprMapObjects.at(i);
+    if(rmo.isMissed())
+      break;
+
+    const RouteMapObject& lastRmo = legs.routeApprMapObjects.at(i - 1);
     ElevationLeg leg;
 
     if(rmo.getDistanceTo() < ELEVATION_MAX_LEG_NM)
     {
-      GeoDataLineString elevations;
-      elevations.setTessellate(true);
+      LineString elevations;
       if(!fetchRouteElevations(elevations, lastRmo.getPosition(), rmo.getPosition()))
         return ElevationLegList();
 
@@ -762,22 +775,21 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         if(terminateThreadSignal)
           return ElevationLegList();
 
-        const GeoDataCoordinates& coord = elevations.at(j);
-        double altFeet = meterToFeet(coord.altitude());
+        Pos coord = elevations.at(j);
+        float altFeet = meterToFeet(coord.getAltitude());
 
         // Limit ground altitude to 30000 feet
-        altFeet = std::min(altFeet, static_cast<double>(ALTITUDE_LIMIT_FT));
+        altFeet = std::min(altFeet, ALTITUDE_LIMIT_FT);
 
-        Pos pos(coord.longitude(GeoDataCoordinates::Degree), coord.latitude(GeoDataCoordinates::Degree),
-                altFeet);
+        coord.setAltitude(altFeet);
 
         // Drop points with similar altitude except the first and last one on a segment
         if(lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
            legs.elevationLegs.size() > 2 &&
-           atools::almostEqual(pos.getAltitude(), lastPos.getAltitude(), 10.f))
+           atools::almostEqual(coord.getAltitude(), lastPos.getAltitude(), 10.f))
           continue;
 
-        float alt = pos.getAltitude();
+        float alt = coord.getAltitude();
 
         // Adjust maximum
         if(alt > leg.maxElevation)
@@ -785,18 +797,18 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         if(alt > legs.maxElevationFt)
           legs.maxElevationFt = alt;
 
-        leg.elevation.append(pos);
+        leg.elevation.append(coord);
         if(j > 0)
         {
           // Update total distance
-          float dist = meterToNm(lastPos.distanceMeterTo(pos));
+          float dist = meterToNm(lastPos.distanceMeterTo(coord));
           legs.totalDistance += dist;
         }
         // Distance to elevation point from departure
         leg.distances.append(legs.totalDistance);
 
         legs.totalNumPoints++;
-        lastPos = pos;
+        lastPos = coord;
       }
     }
     else
@@ -831,7 +843,7 @@ void ProfileWidget::hideEvent(QHideEvent *)
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeApprMapObjects.isEmpty())
     return;
 
   if(rubberBand == nullptr)
@@ -902,8 +914,8 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   float maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get from/to text
-  QString from = legList.routeMapObjects.at(index).getIdent();
-  QString to = legList.routeMapObjects.at(index + 1).getIdent();
+  QString from = legList.routeApprMapObjects.at(index).getIdent();
+  QString to = legList.routeApprMapObjects.at(index + 1).getIdent();
 
   // Add text to upper dock window label
   variableLabelText =
@@ -927,10 +939,9 @@ void ProfileWidget::updateLabel()
 
   if(simData.getUserAircraft().getPosition().isValid())
   {
-    if(routeController->getRouteMapObjects().getRouteDistances(&distFromStartNm, &distToDestNm,
-                                                               nullptr, nullptr, nullptr))
+    if(routeController->getRouteApprMapObjects().getRouteDistances(&distFromStartNm, &distToDestNm))
     {
-      float toTod = routeController->getRouteMapObjects().getTopOfDescentFromStart() - distFromStartNm;
+      float toTod = routeController->getRouteApprMapObjects().getTopOfDescentFromStart() - distFromStartNm;
 
       fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").
                        arg(Unit::distNm(distToDestNm)).
@@ -946,7 +957,7 @@ void ProfileWidget::updateLabel()
 /* Cursor leaves widget. Stop displaying the rubberband */
 void ProfileWidget::leaveEvent(QEvent *)
 {
-  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeMapObjects.isEmpty())
+  if(!widgetVisible || legList.elevationLegs.isEmpty() || legList.routeApprMapObjects.isEmpty())
     return;
 
   delete rubberBand;

@@ -101,6 +101,13 @@ void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapAp
   else
     type = maptypes::APPROACH;
 
+  if(!approachLeg.navaids.waypoints.isEmpty())
+    waypoint = approachLeg.navaids.waypoints.first();
+  else if(!approachLeg.navaids.vors.isEmpty())
+    vor = approachLeg.navaids.vors.first();
+  else if(!approachLeg.navaids.ndbs.isEmpty())
+    ndb = approachLeg.navaids.ndbs.first();
+
   updateMagvar();
   updateDistanceAndCourse(entryIndex, predRouteMapObj);
   valid = true;

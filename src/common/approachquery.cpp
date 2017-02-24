@@ -472,6 +472,8 @@ void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, 
         rwleg.transitionId = legs.ref.transitionId;
         rwleg.approachId = legs.ref.approachId;
         rwleg.navId = leg.navId;
+
+        // Use a generated id base on the previous leg id
         rwleg.legId = RUNWAY_LEG_ID_BASE + leg.legId;
 
         rwleg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
@@ -512,6 +514,9 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
+
+    if(!leg.line.isValid())
+      qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
     if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))

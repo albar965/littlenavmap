@@ -308,68 +308,65 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
   }
 
-  if(context->mapLayer->isApproachText())
+  if(!context->drawFast)
   {
-    if(!context->drawFast)
+    // Build text strings for along the line ===========================
+    QStringList approachTexts;
+    QVector<Line> lines;
+    QVector<QColor> textColors;
+    for(int i = 0; i < legs.size(); i++)
     {
-      // Build text strings for along the line ===========================
-      QStringList approachTexts;
-      QVector<Line> lines;
-      QVector<QColor> textColors;
-      for(int i = 0; i < legs.size(); i++)
+      const maptypes::MapApproachLeg& leg = legs.at(i);
+      lines.append(leg.line);
+
+      QString approachText;
+
+      if(drawTextLines.at(i).distance)
       {
-        const maptypes::MapApproachLeg& leg = legs.at(i);
-        lines.append(leg.line);
+        float dist = leg.calculatedDistance;
+        if(leg.type == maptypes::PROCEDURE_TURN)
+          dist /= 2.f;
 
-        QString approachText;
-
-        if(drawTextLines.at(i).distance)
-        {
-          float dist = leg.calculatedDistance;
-          if(leg.type == maptypes::PROCEDURE_TURN)
-            dist /= 2.f;
-
-          approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
-        }
-
-        if(drawTextLines.at(i).course)
-        {
-          if(!approachText.isEmpty())
-            approachText.append(tr("/"));
-          approachText +=
-            (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-             tr("°M"));
-        }
-
-        approachTexts.append(approachText);
-
-        textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
+        approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
       }
 
-      // Draw text along lines ====================================================
-      context->painter->setBackground(mapcolors::routeTextBackgroundColor);
-
-      QVector<Line> textLines;
-      LineString positions;
-
-      for(const DrawText& dt : drawTextLines)
+      if(drawTextLines.at(i).course)
       {
-        textLines.append(dt.line);
-        positions.append(dt.line.getPos1());
+        if(!approachText.isEmpty())
+          approachText.append(tr("/"));
+        approachText +=
+          (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+           tr("°M"));
       }
 
-      TextPlacement textPlacement(context->painter, this);
-      textPlacement.setDrawFast(context->drawFast);
-      textPlacement.setTextOnTopOfLine(false);
-      textPlacement.setLineWidth(outerlinewidth);
-      textPlacement.setColors(textColors);
-      textPlacement.calculateTextPositions(positions);
-      textPlacement.calculateTextAlongLines(textLines, approachTexts);
-      textPlacement.drawTextAlongLines();
+      approachTexts.append(approachText);
+
+      textColors.append(leg.missed ? mapcolors::routeApproachMissedTextColor : mapcolors::routeApproachTextColor);
     }
 
-    context->szFont(context->textSizeFlightplan);
+    // Draw text along lines ====================================================
+    context->painter->setBackground(mapcolors::routeTextBackgroundColor);
+
+    QVector<Line> textLines;
+    LineString positions;
+
+    for(const DrawText& dt : drawTextLines)
+    {
+      textLines.append(dt.line);
+      positions.append(dt.line.getPos1());
+    }
+
+    TextPlacement textPlacement(context->painter, this);
+    textPlacement.setDrawFast(context->drawFast);
+    textPlacement.setTextOnTopOfLine(false);
+    textPlacement.setLineWidth(outerlinewidth);
+    textPlacement.setColors(textColors);
+    textPlacement.calculateTextPositions(positions);
+    textPlacement.calculateTextAlongLines(textLines, approachTexts);
+    textPlacement.drawTextAlongLines();
   }
+
+  context->szFont(context->textSizeFlightplan);
 
   // Texts and navaid icons ====================================================
   for(int i = 0; i < legs.size(); i++)
@@ -392,10 +389,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
   if(!leg.line.isValid())
-  {
-    // qWarning() << "leg line" << index << leg.line << "is invalid";
     return;
-  }
 
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QLineF line;

@@ -100,7 +100,7 @@ private:
   /* Route leg storing all elevation points */
   struct ElevationLeg
   {
-    QVector<atools::geo::Pos> elevation; /* Ground elevation (Pos.altitude) and position */
+    atools::geo::LineString elevation; /* Ground elevation (Pos.altitude) and position */
     QVector<float> distances; /* Distances along the route for each elevation point.
                                *  Measured from departure point. Nautical miles. */
     float maxElevation = 0.f; /* Max ground altitude for this leg */
@@ -108,8 +108,8 @@ private:
 
   struct ElevationLegList
   {
-    RouteMapObjectList routeMapObjects; /* Copy from route controller.
-                                         * Need a copy to avoid thread synchronization problems. */
+    RouteMapObjectList routeApprMapObjects, routeMapObjects; /* Copy from route controller.
+                                                              * Need a copy to avoid thread synchronization problems. */
     QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
     float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
           totalDistance = 0.f /* Total route distance in nautical miles */;
@@ -123,7 +123,7 @@ private:
   virtual void resizeEvent(QResizeEvent *) override;
   virtual void leaveEvent(QEvent *) override;
 
-  bool fetchRouteElevations(Marble::GeoDataLineString& elevations, const atools::geo::Pos& lastPos,
+  bool fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::Pos& lastPos,
                             const atools::geo::Pos& curPos) const;
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
   void elevationUpdateAvailable();
@@ -151,7 +151,7 @@ private:
   static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
 
   /* Limt altitude to this value */
-  static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_FT = 30000.f;
+  const float ALTITUDE_LIMIT_FT = 30000.f;
 
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;

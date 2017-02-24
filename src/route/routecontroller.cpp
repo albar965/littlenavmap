@@ -1321,6 +1321,7 @@ void RouteController::approachSelected(const maptypes::MapApproachLegs& approach
 
   updateTableModel();
   updateWindowLabel();
+  emit routeChanged(true);
 }
 
 /* Update the approach route from route changes */
