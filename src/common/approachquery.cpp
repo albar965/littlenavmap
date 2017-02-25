@@ -639,7 +639,6 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
     Pos curPos;
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
-    maptypes::ApproachLegType prevType = prevLeg != nullptr ? prevLeg->type : maptypes::INVALID_LEG_TYPE;
     maptypes::ApproachLegType type = leg.type;
 
     // ===========================================================
@@ -657,57 +656,66 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       // Calculate the leading extended position to the fix
       Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance),
                                          opposedCourseDeg(leg.legTrueCourse())).normalize();
-      if(contains(prevType, {maptypes::TRACK_FROM_FIX_FROM_DISTANCE, maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
-                             maptypes::HEADING_TO_INTERCEPT, maptypes::COURSE_TO_INTERCEPT}))
-      {
-        float extDist = extended.distanceMeterTo(lastPos);
-        if(extDist > nmToMeter(1.f))
-          // Draw large bow to extended postition or allow intercept of leg
-          lastPos = extended;
-      }
-      else
-      {
-        atools::geo::LineDistance result;
-        lastPos.distanceMeterToLine(extended, leg.fixPos, result);
+      atools::geo::LineDistance result;
+      lastPos.distanceMeterToLine(extended, leg.fixPos, result);
 
-        if(std::abs(result.distance) > nmToMeter(1.f))
+      // Check if lines overlap - if not calculate an intercept position
+      if(std::abs(result.distance) > nmToMeter(1.f))
+      {
+        // Extended position leading towards the fix which is far away from last fix - calculate an intercept position
+        float crs = leg.legTrueCourse();
+
+        // Try left or right
+        Pos intr1 = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
+        Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
+        Pos intersect;
+
+        // Use whatever course is shorter - calculate distance to interception candidates
+        float dist1 = intr1.distanceMeterTo(lastPos);
+        float dist2 = intr2.distanceMeterTo(lastPos);
+        float dist;
+        if(dist1 < dist2)
         {
-          // Extended position leading towards the fix which is far away from last fix - calculate an intercept position
-          float crs = leg.legTrueCourse();
+          intersect = intr1;
+          dist = dist1;
+        }
+        else
+        {
+          intersect = intr2;
+          dist = dist2;
+        }
 
-          // Try left or right
-          Pos intr = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
-          Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
-          Pos intersect;
-          // Use whatever course is shorter
-          if(intr.distanceMeterTo(lastPos) < intr2.distanceMeterTo(lastPos))
-            intersect = intr;
+        float maxDist = std::max(intr1.distanceMeterTo(extended), intr1.distanceMeterTo(leg.fixPos));
+        if(intersect.isValid() && dist < maxDist)
+        {
+          intersect.distanceMeterToLine(leg.fixPos, extended, result);
+
+          if(result.status == atools::geo::ALONG_TRACK)
+            leg.interceptPos = intersect;
+          else if(result.status == atools::geo::BEFORE_START)
+            ;    // Fly to fix
+          else if(result.status == atools::geo::AFTER_END)
+            // Fly to start of leg
+            lastPos = extended;
           else
-            intersect = intr2;
-
-          if(intersect.isValid())
-          {
-            intersect.distanceMeterToLine(leg.fixPos, extended, result);
-
-            if(result.status == atools::geo::ALONG_TRACK)
-              leg.interceptPos = intersect;
-            else if(result.status == atools::geo::BEFORE_START)
-              ;  // Fly to fix
-            else if(result.status == atools::geo::AFTER_END)
-              // Fly to start of leg
-              lastPos = extended;
-            else
-              qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
-                         << "invalid cross track"
-                         << "approachId" << leg.approachId
-                         << "transitionId" << leg.transitionId << "legId" << leg.legId;
-          }
+            qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
+                       << "invalid cross track"
+                       << "approachId" << leg.approachId
+                       << "transitionId" << leg.transitionId << "legId" << leg.legId;
         }
-        if(leg.interceptPos.isValid())
+        else
         {
-          leg.displayText << tr("Intercept");
-          leg.displayText << tr("Course to Fix");
+          // No intercept point in reasonable distance found
+          float extDist = extended.distanceMeterTo(lastPos);
+          if(extDist > nmToMeter(1.f))
+            // Draw large bow to extended postition or allow intercept of leg
+            lastPos = extended;
         }
+      }
+      if(leg.interceptPos.isValid())
+      {
+        leg.displayText << tr("Intercept");
+        leg.displayText << tr("Course to Fix");
       }
 
       curPos = leg.fixPos;
