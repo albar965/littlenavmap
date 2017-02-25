@@ -342,8 +342,10 @@ private:
 
   void dockVisibilityChanged(bool visible);
   void eraseAirway(int row);
+
   QString buildFlightplanLabel(bool html) const;
   QString buildFlightplanLabel2() const;
+
   void updateTableHeaders();
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;

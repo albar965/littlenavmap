@@ -126,6 +126,8 @@ void ApproachTreeController::optionsChanged()
   // Adapt table view text size
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   createFonts();
+  updateTreeHeader();
+  fillApproachTreeWidget();
 }
 
 void ApproachTreeController::preDatabaseLoad()
@@ -149,7 +151,7 @@ void ApproachTreeController::preDatabaseLoad()
 
 void ApproachTreeController::postDatabaseLoad()
 {
-
+  // Nothing to do here - keep the view clean after switching
 }
 
 void ApproachTreeController::highlightNextWaypoint(int leg)
@@ -241,7 +243,6 @@ void ApproachTreeController::fillApproachInformation(const maptypes::MapAirport&
 
 void ApproachTreeController::fillApproachTreeWidget()
 {
-  treeWidget->clearSelection();
   treeWidget->clear();
   itemIndex.clear();
   itemLoadedIndex.clear();
@@ -304,7 +305,7 @@ void ApproachTreeController::fillApproachTreeWidget()
 
           itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId));
 
-          QTreeWidgetItem *apprItem = buildApprItem(root, recApp);
+          QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
 
           const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
           if(recTransVector != nullptr)
@@ -429,10 +430,10 @@ void ApproachTreeController::updateTreeHeader()
     header->setText(SELECTED_IDENT_TYPE, tr("Navaid\nType"));
     header->setText(SELECTED_IDENT_FREQUENCY, tr("Freq.\nMHz/kHz"));
     header->setText(SELECTED_LEGTYPE, tr("Leg Type"));
-    header->setText(SELECTED_ALTITUDE, tr("Altitude\nft"));
+    header->setText(SELECTED_ALTITUDE, tr("Altitude\n%1").arg(Unit::getUnitAltStr()));
     header->setText(SELECTED_COURSE, tr("Course\n°M"));
-    header->setText(SELECTED_DISTANCE, tr("Dist./Time\nnm/min"));
-    header->setText(SELECTED_REMAINING_DISTANCE, tr("Remaining\nnm"));
+    header->setText(SELECTED_DISTANCE, tr("Dist./Time\n%1/min").arg(Unit::getUnitDistStr()));
+    header->setText(SELECTED_REMAINING_DISTANCE, tr("Remaining\n%1").arg(Unit::getUnitDistStr()));
     header->setText(SELECTED_REMARKS, tr("Remarks"));
 
     for(int col = SELECTED_IDENT; col <= SELECTED_REMARKS; col++)
@@ -442,9 +443,9 @@ void ApproachTreeController::updateTreeHeader()
   {
     header->setText(OVERVIEW_DESCRIPTION, tr("Description"));
     header->setText(OVERVIEW_IDENT, tr("Ident"));
-    header->setText(OVERVIEW_ALTITUDE, tr("Altitude\nft"));
+    header->setText(OVERVIEW_ALTITUDE, tr("Altitude\n%1").arg(Unit::getUnitAltStr()));
     header->setText(OVERVIEW_COURSE, tr("Course\n°M"));
-    header->setText(OVERVIEW_DISTANCE, tr("Dist./Time\nnm/min"));
+    header->setText(OVERVIEW_DISTANCE, tr("Dist./Time\n%1/min").arg(Unit::getUnitDistStr()));
     header->setText(OVERVIEW_REMARKS, tr("Remarks"));
 
     for(int col = OVERVIEW_DESCRIPTION; col <= OVERVIEW_REMARKS; col++)
@@ -798,7 +799,7 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
   }
 }
 
-QTreeWidgetItem *ApproachTreeController::buildApprItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
+QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));

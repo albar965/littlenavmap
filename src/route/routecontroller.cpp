@@ -2373,7 +2373,8 @@ void RouteController::disableApproachItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + buildFlightplanLabel2());
+  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) +
+                                               buildFlightplanLabel2());
 }
 
 QString RouteController::buildFlightplanLabel(bool html) const
@@ -2414,14 +2415,37 @@ QString RouteController::buildFlightplanLabel(bool html) const
                     arg(flightplan.getEntries().last().getIcaoIdent()).
                     arg(flightplan.getEntries().last().getWaypointTypeAsString());
 
+    QString approach;
+    const maptypes::MapApproachLegs& legs = routeAppr.getApproachLegs();
+    if(!legs.isEmpty())
+    {
+      approach += " " + maptypes::approachType(legs.approachType);
+      approach += " " + legs.approachFixIdent;
+      approach += " Runway " + legs.runwayEnd.name;
+
+      if(!legs.transitionFixIdent.isEmpty())
+        approach += (html ? tr("</b> via <b>") : tr(" via ")) + legs.transitionFixIdent;
+      approach += " ";
+      if(html)
+        approach = "<b>" + approach + "</b>";
+
+      if(!routeAppr.isConnectedToApproach())
+        approach += tr(" (not connected)");
+
+      if(html)
+        approach += "<br/>";
+    }
+
     if(html)
-      return tr("<b>%1</b> to <b>%2</b><br/>").
+      return tr("<b>%1</b> to <b>%2</b><br/>%3").
              arg(departure).
-             arg(destination);
+             arg(destination).
+             arg(approach);
     else
-      return tr("%1 to %2").
+      return tr("%1 to %2 %3").
              arg(departure).
-             arg(destination);
+             arg(destination).
+             arg(approach);
   }
   else
     return tr("No Flightplan loaded");

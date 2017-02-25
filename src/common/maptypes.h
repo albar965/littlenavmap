@@ -861,8 +861,12 @@ struct MapApproachLegs
   atools::geo::Rect bounding;
   float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
 
+  QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent;
+
   /* Only for approaches */
   maptypes::MapRunwayEnd runwayEnd;
+
+  bool gpsOverlay;
 
   bool isEmpty() const
   {

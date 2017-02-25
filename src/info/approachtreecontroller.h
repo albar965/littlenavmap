@@ -64,10 +64,13 @@ public:
   void saveState();
   void restoreState();
 
+  /* Update fonts units, etc. */
   void optionsChanged();
+
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Highlight approach waypoint in the list */
   void highlightNextWaypoint(int leg);
 
   const maptypes::MapApproachLegs& getApproachSelectedLegs() const
@@ -86,38 +89,55 @@ signals:
 
   /* Add the initial fix to the route */
   void routeAttachApproach(const maptypes::MapApproachLegs& legs);
-  void routeClearApproach();
 
 private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
-  void treeClicked(QTreeWidgetItem *item, int column);
-  void itemExpanded(QTreeWidgetItem *item);
-  void contextMenu(const QPoint& pos);
 
-  QTreeWidgetItem *buildApprItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
-  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
-  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg, float& remainingDistance);
-  void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
+  /* Load legs dynamically as approaches or transitions are expanded */
+  void itemExpanded(QTreeWidgetItem *item);
+
+  void contextMenu(const QPoint& pos);
 
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
   void restoreTreeViewState(const QBitArray& state);
 
+  /* Build full approach or transition items for the tree view */
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
+  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
+
+  /* Build an leg for the selected/table or tree view */
+  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg, float& remainingDistance);
   QString buildRemarkStr(const maptypes::MapApproachLeg& leg);
   QString buildCourseStr(const maptypes::MapApproachLeg& leg);
   QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
   QString buildRemDistanceStr(const maptypes::MapApproachLeg& leg, float& remainingDistance);
 
+  /* Highlight missing navaids red */
+  void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);
+
+  /* Show transition, approach or waypoint on map */
   void showEntry(QTreeWidgetItem *item, bool doubleClick);
+
+  /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
+
   void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
   void addTransitionLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
   void fillApproachTreeWidget();
-  void anchorClicked(const QUrl& url);
   void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapApproachRef& ref);
+
+  /* Anchor clicked in the text browser */
+  void anchorClicked(const QUrl& url);
+
+  /* Focus on an approach and transition */
   void enableSelectedMode(const maptypes::MapApproachRef& ref);
+
+  /* Unfocus and go back to tree  view */
   void disableSelectedMode();
+
+  /* Fill header for tree or selected/table view */
   void updateTreeHeader();
   void createFonts();
 

@@ -5122,7 +5122,10 @@
     <string>&amp;Show %1 on Map</string>
    </property>
    <property name="toolTip">
-    <string>Show on map</string>
+    <string>Show approach and/or transition on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show approach and/or transition on map</string>
    </property>
   </action>
   <action name="actionInfoApproachClear">
@@ -5148,7 +5151,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Approaches and Transitions</string>
+    <string>Show &amp;Approaches and Transitions</string>
    </property>
    <property name="toolTip">
     <string>Show approach and transition legs on the map</string>
@@ -5165,7 +5168,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Missed Approaches</string>
+    <string>Show &amp;Missed Approaches</string>
    </property>
    <property name="toolTip">
     <string>Show missed approach legs on the map</string>
@@ -5180,7 +5183,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Approaches for %1</string>
+    <string>Show &amp;Approaches for %1</string>
    </property>
    <property name="toolTip">
     <string>Show approaches and transitions for airport</string>
@@ -5195,13 +5198,13 @@
      <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
    </property>
    <property name="text">
-    <string>Select %1</string>
+    <string>Show and Activate &amp;Legs for %1</string>
    </property>
    <property name="toolTip">
-    <string>Show only this approach and/or transition.</string>
+    <string>Show all legs only this approach and/or transition.</string>
    </property>
    <property name="statusTip">
-    <string>Show only this approach and/or transition.</string>
+    <string>Show all legs only this approach and/or transition.</string>
    </property>
   </action>
   <action name="actionInfoApproachUnselect">
@@ -5210,10 +5213,10 @@
      <normaloff>:/littlenavmap/resources/icons/approachunselect.svg</normaloff>:/littlenavmap/resources/icons/approachunselect.svg</iconset>
    </property>
    <property name="text">
-    <string>Return to Approach Overview</string>
+    <string>&amp;Return to Approach Overview</string>
    </property>
    <property name="toolTip">
-    <string>Return to the overview showing all approaches for an airport</string>
+    <string>Return to the overview showing all approaches and transitions for an airport</string>
    </property>
    <property name="statusTip">
     <string>Return to the overview showing all approaches for an airport</string>
@@ -5225,7 +5228,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Approaches for %1</string>
+    <string>Show &amp;Approaches and Transitions for %1</string>
    </property>
    <property name="toolTip">
     <string>Show approaches, transitions, SIDs and STARs for this airport</string>
@@ -5240,7 +5243,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Approaches</string>
+    <string>Show &amp;Approaches and Transitions</string>
    </property>
    <property name="toolTip">
     <string>Show approaches, transitions, SIDs and STARs for this airport</string>
@@ -5255,7 +5258,7 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Approaches</string>
+    <string>Show &amp;Approaches and Transitions</string>
    </property>
    <property name="toolTip">
     <string>Show approaches, transitions, SIDs and STARs for this airport</string>
@@ -5270,7 +5273,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
    </property>
    <property name="text">
-    <string>Attach %1 to Flight Plan</string>
+    <string>Attach &amp;Initial Fix of %1 to Flight Plan</string>
    </property>
    <property name="iconText">
     <string>Attach to Flight Plan</string>
@@ -5303,7 +5306,7 @@
      <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Activate Flight Plan Leg</string>
+    <string>Activate &amp;Flight Plan Leg</string>
    </property>
    <property name="toolTip">
     <string>Activate Flight Plan Leg</string>

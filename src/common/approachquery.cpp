@@ -80,7 +80,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::Ma
   else
 #endif
   {
-    // Get approach ID for leg
+    // Ensure it is in the cache - reload if needed
     const maptypes::MapApproachLegs *legs = getApproachLegs(airport, approachId);
     if(legs != nullptr && approachLegIndex.contains(legId))
       // Use index to get leg
@@ -211,7 +211,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
 
   leg.magvar = maptypes::INVALID_MAGVAR;
 
-  // Load full navaid information for fix an set fix position
+  // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
     mapQuery->getMapObjectById(leg.navaids, maptypes::WAYPOINT, leg.navId);
@@ -305,6 +305,7 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
 
 void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
 {
+  // Calculate average magvar for all legs
   float avgMagvar = 0.f;
   float num = 0.f;
   for(int i = 0; i < legs.size(); i++)
@@ -315,9 +316,9 @@ void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
       num++;
     }
   }
-
   avgMagvar /= num;
 
+  // Assign average to legs with no magvar
   for(maptypes::MapApproachLeg& leg : legs.approachLegs)
   {
     if(!(leg.magvar < maptypes::INVALID_MAGVAR))
@@ -388,13 +389,26 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
       legs->transitionLegs.last().transitionId = transitionId;
     }
 
-    // Add a full copy of the approach because approach legs will be modified
+    // Add a full copy of the approach because approach legs will be modified for different transitions
     maptypes::MapApproachLegs *approach = buildApproachLegs(airport, approachId);
     legs->approachLegs = approach->approachLegs;
     legs->runwayEnd = approach->runwayEnd;
+    legs->approachType = approach->approachType;
+    legs->approachSuffix = approach->approachSuffix;
+    legs->approachFixIdent = approach->approachFixIdent;
+    legs->gpsOverlay = approach->gpsOverlay;
     delete approach;
 
     postProcessLegs(airport, *legs);
+
+    transitionQuery->bindValue(":id", transitionId);
+    transitionQuery->exec();
+    if(transitionQuery->next())
+    {
+      legs->transitionType = transitionQuery->value("type").toString();
+      legs->transitionFixIdent = transitionQuery->value("fix_ident").toString();
+    }
+    transitionQuery->finish();
 
     if(!legs->isEmpty())
     {
@@ -428,10 +442,21 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
     legs->approachLegs.last().approachId = approachId;
   }
 
+  runwayEndIdQuery->bindValue(":id", approachId);
+  runwayEndIdQuery->exec();
+  if(runwayEndIdQuery->next())
+    legs->runwayEnd = mapQuery->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
+
   approachQuery->bindValue(":id", approachId);
   approachQuery->exec();
   if(approachQuery->next())
-    legs->runwayEnd = mapQuery->getRunwayEndById(approachQuery->value("runway_end_id").toInt());
+  {
+    legs->approachType = approachQuery->value("type").toString();
+    legs->approachSuffix = approachQuery->value("suffix").toString();
+    legs->approachFixIdent = approachQuery->value("fix_ident").toString();
+    legs->gpsOverlay = approachQuery->value("has_gps_overlay").toBool();
+  }
+  approachQuery->finish();
 
   return legs;
 }
@@ -843,7 +868,6 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
 
         if(next != nullptr)
         {
-          // TODO catch case of non intersecting legs properly
           bool nextIsArc = contains(next->type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
           Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
           Pos intersect;
@@ -936,11 +960,16 @@ void ApproachQuery::initQueries()
   approachIdForTransQuery = new SqlQuery(db);
   approachIdForTransQuery->prepare("select approach_id from transition where transition_id = :id");
 
-  approachQuery = new SqlQuery(db);
-  approachQuery->prepare("select * from approach join runway_end where approach_id = :id");
+  runwayEndIdQuery = new SqlQuery(db);
+  runwayEndIdQuery->prepare("select e.runway_end_id from approach a "
+                            "join runway_end e on a.runway_end_id = e.runway_end_id where approach_id = :id");
 
   transitionQuery = new SqlQuery(db);
-  transitionQuery->prepare("select * from transition where transition_id = :id");
+  transitionQuery->prepare("select type, fix_ident from transition where transition_id = :id");
+
+  approachQuery = new SqlQuery(db);
+  approachQuery->prepare("select type, suffix, has_gps_overlay, fix_ident "
+                         "from approach where approach_id = :id");
 }
 
 void ApproachQuery::deInitQueries()
@@ -962,9 +991,12 @@ void ApproachQuery::deInitQueries()
   delete approachIdForTransQuery;
   approachIdForTransQuery = nullptr;
 
-  delete approachQuery;
-  approachQuery = nullptr;
+  delete runwayEndIdQuery;
+  runwayEndIdQuery = nullptr;
 
   delete transitionQuery;
   transitionQuery = nullptr;
+
+  delete approachQuery;
+  approachQuery = nullptr;
 }
