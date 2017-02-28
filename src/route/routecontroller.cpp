@@ -1794,35 +1794,43 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
 
 void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
 {
-  // Calculate insertion point
-  const maptypes::MapSearchResult& navaids = legs.at(0).navaids;
-  const Pos& pos = legs.at(0).line.getPos1();
+  if(!legs.isEmpty())
+  {
+    const maptypes::MapApproachLeg& leg = legs.first();
+    maptypes::MapSearchResult navaids = leg.navaids;
+    FlightplanEntry entry;
 
-  FlightplanEntry entry;
-  entryBuilder->buildFlightplanEntry(navaids, entry, true);
+    if(leg.type == maptypes::COURSE_TO_FIX)
+    {
+      // Add a user entry to the route for a CF leg which does not start at a waypoint
+      navaids = maptypes::MapSearchResult();
+      entryBuilder->entryFromUserPos(leg.line.getPos1(), entry, curUserpointNumber);
+      entry.setWaypointId(leg.fixIdent + "_" + QString::number(curUserpointNumber));
+    }
+    else
+      entryBuilder->buildFlightplanEntry(navaids, entry, true);
 
-  int insertIndex = calculateInsertIndex(pos, -1);
-  const RouteMapObject& insertRmo = route.at(insertIndex);
+    int insertIndex = calculateInsertIndex(leg.line.getPos1(), -1);
+    const RouteMapObject& insertRmo = route.at(insertIndex);
 
-  // Add as navaid or custom point
-  if(navaids.hasWaypoints())
-  {
-    if(!(insertRmo.getId() == navaids.waypoints.first().id && insertRmo.getMapObjectType() == maptypes::WAYPOINT))
+    // Add as navaid or custom point
+    if(navaids.hasWaypoints())
+    {
+      if(!(insertRmo.getId() == navaids.waypoints.first().id && insertRmo.getMapObjectType() == maptypes::WAYPOINT))
+        routeAddInternal(entry, insertIndex);
+    }
+    else if(navaids.hasVor())
+    {
+      if(!(insertRmo.getId() == navaids.vors.first().id && insertRmo.getMapObjectType() == maptypes::VOR))
+        routeAddInternal(entry, insertIndex);
+    }
+    else if(navaids.hasNdb())
+    {
+      if(!(insertRmo.getId() == navaids.ndbs.first().id && insertRmo.getMapObjectType() == maptypes::NDB))
+        routeAddInternal(entry, insertIndex);
+    }
+    else
       routeAddInternal(entry, insertIndex);
-  }
-  else if(navaids.hasVor())
-  {
-    if(!(insertRmo.getId() == navaids.vors.first().id && insertRmo.getMapObjectType() == maptypes::VOR))
-      routeAddInternal(entry, insertIndex);
-  }
-  else if(navaids.hasNdb())
-  {
-    if(!(insertRmo.getId() == navaids.ndbs.first().id && insertRmo.getMapObjectType() == maptypes::NDB))
-      routeAddInternal(entry, insertIndex);
-  }
-  else
-  {
-    routeAddInternal(entry, insertIndex);
   }
 }
 
@@ -2281,7 +2289,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
 
     int previousRouteLeg = route.getActiveRouteLegCorrected();
     route.updateActiveLegAndPos(position);
-    int routeLeg = routeAppr.getActiveRouteLegCorrected();
+    int routeLeg = route.getActiveRouteLegCorrected();
 
     if(routeLeg != previousRouteLeg)
     {

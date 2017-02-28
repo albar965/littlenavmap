@@ -477,12 +477,7 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
 
   updateBoundingRectangle(legs);
 
-  qDebug() << "---------------------------------";
-  qDebug() << "appr dist" << legs.approachDistance << "trans dist" << legs.transitionDistance
-           << "missed dist" << legs.missedDistance;
-  for(int i = 0; i < legs.size(); ++i)
-    qDebug() << legs.at(i);
-  qDebug() << "---------------------------------";
+  qDebug() << legs;
 }
 
 void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
@@ -507,8 +502,7 @@ void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, 
         rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
         rwleg.altRestriction.alt2 = 0.f;
         rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
-        rwleg.geometry.append(leg.line.getPos2());
-        rwleg.geometry.append(legs.runwayEnd.position);
+        // geometry is populated later
         rwleg.fixType = "R";
         rwleg.fixIdent = "RW" + legs.runwayEnd.name;
         rwleg.fixPos = legs.runwayEnd.position;
@@ -540,13 +534,20 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
   {
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    maptypes::MapApproachLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
 
     if(!leg.line.isValid())
       qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
-    if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
+    else if(type == maptypes::INITIAL_FIX)
+    {
+      leg.calculatedDistance = 0.f;
+      leg.calculatedTrueCourse = 0.f;
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
+    }
+    else if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
     {
       atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
                                  &leg.geometry);
@@ -578,7 +579,11 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       // Course from fix to turn point
       leg.calculatedTrueCourse = normalizeCourse(leg.course + (leg.turnDirection == "L" ? -45.f : 45.f) + leg.magvar);
 
-      leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << leg.line.getPos2();
+      // leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << leg.line.getPos2();
+      // if(nextLeg != nullptr)
+      // leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << nextLeg->fixPos;
+      // else
+      leg.geometry << leg.line.getPos1() << leg.procedureTurnPos;
     }
     // ===========================================================
     else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
@@ -610,7 +615,7 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
 
-    if(prevLeg != nullptr && !leg.intercept)
+    if(prevLeg != nullptr && !leg.intercept && type != maptypes::INITIAL_FIX)
       // Add distance from any existing gaps, bows or turns except for intercept legs
       leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
 
@@ -665,7 +670,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
         // Extended position leading towards the fix which is far away from last fix - calculate an intercept position
         float crs = leg.legTrueCourse();
 
-        // Try left or right
+        // Try left or right intercept
         Pos intr1 = Pos::intersectingRadials(extended, crs, lastPos, crs - 45.f).normalize();
         Pos intr2 = Pos::intersectingRadials(extended, crs, lastPos, crs + 45.f).normalize();
         Pos intersect;
@@ -673,30 +678,38 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
         // Use whatever course is shorter - calculate distance to interception candidates
         float dist1 = intr1.distanceMeterTo(lastPos);
         float dist2 = intr2.distanceMeterTo(lastPos);
-        float dist;
         if(dist1 < dist2)
-        {
           intersect = intr1;
-          dist = dist1;
-        }
         else
-        {
           intersect = intr2;
-          dist = dist2;
-        }
 
-        float maxDist = std::max(intr1.distanceMeterTo(extended), intr1.distanceMeterTo(leg.fixPos));
-        if(intersect.isValid() && dist < maxDist)
+        if(intersect.isValid())
         {
-          intersect.distanceMeterToLine(leg.fixPos, extended, result);
+          intersect.distanceMeterToLine(extended, leg.fixPos, result);
 
           if(result.status == atools::geo::ALONG_TRACK)
+          {
+            // Leg intercepted - set point for drawing
             leg.interceptPos = intersect;
-          else if(result.status == atools::geo::BEFORE_START)
-            ;    // Fly to fix
+          }
           else if(result.status == atools::geo::AFTER_END)
+          {
+            // Fly to fix - end of leg
+
+            if(!leg.turnDirection.isEmpty())
+            {
+              float extDist = extended.distanceMeterTo(lastPos);
+              if(extDist > nmToMeter(1.f))
+                // Draw large bow to extended postition or allow intercept of leg
+                lastPos = extended;
+            }
+            // else turn
+          }
+          else if(result.status == atools::geo::BEFORE_START)
+          {
             // Fly to start of leg
             lastPos = extended;
+          }
           else
             qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent
                        << "invalid cross track"
@@ -714,6 +727,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       }
       if(leg.interceptPos.isValid())
       {
+        // Add intercept for display
         leg.displayText << tr("Intercept");
         leg.displayText << tr("Course to Fix");
       }

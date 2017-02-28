@@ -42,7 +42,7 @@ public:
   int getNearestRouteLegOrPointIndex(const atools::geo::Pos& pos) const;
 
   /* Update positions, distances and try to select next leg*/
-  int updateActiveLegAndPos(const maptypes::PosCourse& pos);
+  void updateActiveLegAndPos(const maptypes::PosCourse& pos);
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.
@@ -168,6 +168,11 @@ public:
   const atools::geo::Rect& getBoundingRect() const
   {
     return boundingRect;
+  }
+
+  const atools::geo::Pos& getPositionAt(int i) const
+  {
+    return at(i).getPosition();
   }
 
   void updateAll();

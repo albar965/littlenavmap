@@ -757,6 +757,11 @@ struct MapSearchResult
     return !waypoints.isEmpty();
   }
 
+  bool hasApproachPoints() const
+  {
+    return !approachPoints.isEmpty();
+  }
+
 };
 
 struct MapApproachRef
@@ -898,6 +903,16 @@ struct MapApproachLegs
     return isTransition(i) ? transitionLegs.at(i) : approachLegs.at(apprIdx(i));
   }
 
+  const MapApproachLeg& first() const
+  {
+    return at(0);
+  }
+
+  const MapApproachLeg& last() const
+  {
+    return at(size() - 1);
+  }
+
   const MapApproachLeg *approachLegById(int legId) const
   {
     for(const MapApproachLeg& leg : approachLegs)
@@ -930,6 +945,8 @@ private:
   }
 
 };
+
+QDebug operator<<(QDebug out, const MapApproachLegs& legs);
 
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker

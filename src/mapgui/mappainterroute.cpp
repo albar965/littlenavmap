@@ -175,7 +175,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // Get active route leg
   int activeRouteLeg = routeApprMapObjects.getActiveRouteLeg();
 
-  if(activeRouteLeg < maptypes::INVALID_INDEX_VALUE)
+  if(activeRouteLeg > 0 && activeRouteLeg < linestring.size())
   {
     // Draw active leg on top of all others to keep it visible
     context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
@@ -301,7 +301,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   }
 
   // Paint active leg
-  if(activeLeg < maptypes::INVALID_INDEX_VALUE)
+  if(activeLeg > 0 && activeLeg < legs.size())
   {
     context->painter->setPen(legs.isMissed(activeLeg) ? missedActivePen : apprActivePen);
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
@@ -480,6 +480,10 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
         // The returned value represents the number of degrees you need to add to this
         // line to make it have the same angle as the given line, going counter-clockwise.
+        QPointF endPos = line.p2();
+        if(leg.interceptPos.isValid())
+          endPos = intersectPoint;
+
         double angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
 
         // Calculate the start position of the next line and leave space for the arc
@@ -492,7 +496,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
           arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.));
 
         // Calculate bezier control points by extending the last and next line
-        QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(line.p2(), arc.p2());
+        QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(endPos, arc.p2());
         ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(.5f));
         ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(.5f));
 
@@ -503,8 +507,12 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         painter->drawPath(path);
 
         // Draw the next line
-        QLineF nextLine(arc.p2(), line.p2());
+        QLineF nextLine(arc.p2(), endPos);
         painter->drawLine(nextLine);
+
+        if(leg.interceptPos.isValid())
+          // Add line from intercept leg
+          painter->drawLine(endPos, line.p2());
 
         lastLine = nextLine.toLine();
 
@@ -512,8 +520,13 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         Pos p2 = sToW(nextLine.p2());
 
         if(drawTextLines != nullptr)
+        {
           // Can draw a label along the line with course but not distance
-          (*drawTextLines)[index] = {Line(p1, p2), showDistance, true};
+          if(leg.interceptPos.isValid())
+            (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), true, true};
+          else
+            (*drawTextLines)[index] = {Line(p1, p2), showDistance, true};
+        }
       }
     }
     else
@@ -664,7 +677,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
   }
 
-  painter->setPen(QPen(Qt::darkBlue, 1));
+  painter->setPen(QPen(Qt::darkBlue, 2));
   for(int i = 0; i < leg.geometry.size() - 1; i++)
   {
     QPoint pt1 = wToS(leg.geometry.at(i), size, &hiddenDummy);
@@ -740,7 +753,12 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   }
   else if(leg.type == maptypes::COURSE_TO_FIX)
   {
-    if(leg.interceptPos.isValid())
+    if(index == 0)
+    {
+      if(wToS(leg.line.getPos1(), x, y))
+        paintApproachpoint(context, x, y);
+    }
+    else if(leg.interceptPos.isValid())
     {
       if(wToS(leg.interceptPos, x, y))
       {

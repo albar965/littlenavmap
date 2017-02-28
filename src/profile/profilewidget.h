@@ -123,8 +123,7 @@ private:
   virtual void resizeEvent(QResizeEvent *) override;
   virtual void leaveEvent(QEvent *) override;
 
-  bool fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::Pos& lastPos,
-                            const atools::geo::Pos& curPos) const;
+  bool fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::LineString& geometry) const;
   ElevationLegList fetchRouteElevationsThread(ElevationLegList legs) const;
   void elevationUpdateAvailable();
   void updateTimeout();

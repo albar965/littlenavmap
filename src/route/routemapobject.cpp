@@ -367,6 +367,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
     predecessor = true;
     distanceTo = approachLeg.calculatedDistance;
     distanceToRhumb = approachLeg.calculatedDistance;
+    geometry = approachLeg.geometry;
   }
   else if(predRouteMapObj != nullptr)
   {
@@ -376,6 +377,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
     distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
     courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()));
     courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()));
+    geometry = LineString({prevPos, getPosition()});
   }
   else
   {
@@ -385,6 +387,7 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
     distanceToRhumb = 0.f;
     courseTo = 0.f;
     courseRhumbTo = 0.f;
+    geometry = LineString({getPosition()});
   }
 }
 
@@ -574,6 +577,8 @@ QString RouteMapObject::getIdent() const
       return approachLeg.navaids.runwayEnds.first().name;
     else if(!approachLeg.navaids.ils.isEmpty())
       return approachLeg.navaids.ils.first().ident;
+    else if(!approachLeg.displayText.isEmpty())
+      return approachLeg.displayText.first();
   }
   else
   {
@@ -725,6 +730,11 @@ const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
     return flightplan->at(index);
   else
     return EMPTY_FLIGHTPLAN_ENTRY;
+}
+
+const LineString& RouteMapObject::getGeometry() const
+{
+  return geometry;
 }
 
 bool RouteMapObject::isRoute() const

@@ -229,6 +229,13 @@ public:
   bool isMissed() const;
   bool isTransition() const;
 
+  const atools::geo::LineString& getGeometry() const;
+
+  bool isApproachPoint() const
+  {
+    return isAnyApproach() && approachLeg.geometry.isPoint();
+  }
+
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;
 
@@ -255,7 +262,7 @@ private:
         courseRhumbTo = 0.f,
         groundAltitude = 0.f,
         magvar = 0.f; /* Either taken from navaid or average across the route */
-
+  atools::geo::LineString geometry;
 };
 
 #endif // LITTLENAVMAP_ROUTEMAPOBJECT_H

@@ -1027,6 +1027,31 @@ QDebug operator<<(QDebug out, const ApproachLegType& type)
   return out;
 }
 
+QDebug operator<<(QDebug out, const MapApproachLegs& legs)
+{
+  out << "==========================" << endl;
+  out << "===== Transition legs =====";
+  for(const MapApproachLeg& ls : legs.transitionLegs)
+    out << ls;
+
+  out << "===== Approach legs =====";
+  for(const MapApproachLeg& ls : legs.approachLegs)
+    out << ls;
+
+  out << "approachDistance" << legs.approachDistance
+  << "transitionDistance" << legs.transitionDistance
+  << "missedDistance" << legs.missedDistance << endl;
+
+  out << "approachType" << legs.approachType
+  << "approachSuffix" << legs.approachSuffix
+  << "approachFixIdent" << legs.approachFixIdent
+  << "transitionType" << legs.transitionType
+  << "transitionFixIdent" << legs.transitionFixIdent
+  << "runwayEnd.name" << legs.runwayEnd.name << endl;
+  out << "==========================" << endl;
+  return out;
+}
+
 QDebug operator<<(QDebug out, const MapApproachLeg& leg)
 {
   out << "=============" << endl;
@@ -1050,6 +1075,7 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   out << "turnDirection" << leg.turnDirection
   << "flyover" << leg.flyover
   << "trueCourse" << leg.trueCourse
+  << "disabled" << leg.disabled
   << "course" << leg.course << endl;
 
   out << "calculatedDistance" << leg.calculatedDistance

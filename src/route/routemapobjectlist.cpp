@@ -27,6 +27,7 @@
 
 using atools::geo::Pos;
 using atools::geo::Line;
+using atools::geo::LineString;
 using atools::geo::nmToMeter;
 using atools::geo::normalizeCourse;
 using atools::geo::meterToNm;
@@ -117,13 +118,12 @@ int RouteMapObjectList::getNearestRouteLegOrPointIndex(const atools::geo::Pos& p
     return legIndex;
 }
 
-int RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
+void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 {
-  int previousLeg = activeLeg;
   if(isEmpty() || !pos.isValid())
   {
     activeLeg = maptypes::INVALID_INDEX_VALUE;
-    return previousLeg;
+    return;
   }
 
   if(activeLeg == maptypes::INVALID_INDEX_VALUE)
@@ -147,23 +147,27 @@ int RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     if(activeLeg == 0)
       // Reset from point route
       activeLeg = 1;
-    activePos.pos.distanceMeterToLine(at(activeLeg - 1).getPosition(), at(activeLeg).getPosition(), activeLegResult);
+
+    activePos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
   }
+
+  // if(at(activeLeg).isAnyApproach())
+  // qDebug() << "ACTIVE" << at(activeLeg).getApproachLeg();
 
   int newLeg = activeLeg + 1;
   float courseDiff = 0.f;
   atools::geo::LineDistance nextLegResult;
   if(newLeg < size())
   {
-    Pos pos1 = at(newLeg - 1).getPosition();
-    Pos pos2 = at(newLeg).getPosition();
-    if(pos1.almostEqual(pos2) && newLeg < size() - 2)
-    {
-      // Catch the case of initial fixes that are points instead of lines and try the second next leg
+    while(at(newLeg).isApproachPoint() && newLeg < size() - 2)
+      // Catch the case of initial fixes or others that are points instead of lines and try the next legs
       newLeg++;
-      pos1 = at(newLeg - 1).getPosition();
-      pos2 = at(newLeg).getPosition();
-    }
+
+    Pos pos1 = getPositionAt(newLeg - 1);
+    Pos pos2 = getPositionAt(newLeg);
+
+    // if(at(newLeg).isAnyApproach())
+    // qDebug() << "NEXT" << at(newLeg).getApproachLeg();
 
     // Test next leg
     activePos.pos.distanceMeterToLine(pos1, pos2, nextLegResult);
@@ -186,22 +190,38 @@ int RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       {
         // Go to next leg and increase all values
         activeLeg = newLeg;
-        pos.pos.distanceMeterToLine(at(activeLeg - 1).getPosition(), at(activeLeg).getPosition(), activeLegResult);
+        pos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
       }
     }
   }
   // qDebug() << "active" << activeLeg << "size" << size() << "ident" << at(activeLeg).getIdent() <<
   // maptypes::approachLegTypeFullStr(at(activeLeg).getApproachLeg().type);
-  return previousLeg;
 }
 
 bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDest,
                                            float *nextLegDistance, float *crossTrackDistance) const
 {
+  const maptypes::MapApproachLeg *geomentryLeg = nullptr;
+
+  if(activeLeg == maptypes::INVALID_INDEX_VALUE)
+    return false;
+
+  if(at(activeLeg).isAnyApproach() && (at(activeLeg).getGeometry().size() > 2))
+    geomentryLeg = &at(activeLeg).getApproachLeg();
+
   if(crossTrackDistance != nullptr)
   {
     if(activeLegResult.status == atools::geo::ALONG_TRACK)
-      *crossTrackDistance = meterToNm(activeLegResult.distance);
+    {
+      if(geomentryLeg != nullptr)
+      {
+        // Use distance to DME to calculate cross track for any circular leg
+        float ctd = geomentryLeg->rho - meterToNm(geomentryLeg->recFixPos.distanceMeterTo(activePos.pos));
+        *crossTrackDistance = ctd * (geomentryLeg->turnDirection == "R" ? -1.f : 1.f);
+      }
+      else
+        *crossTrackDistance = meterToNm(activeLegResult.distance);
+    }
     else
       *crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
   }
@@ -215,7 +235,16 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
     float distToCur = 0.f;
 
     if(!at(routeIndex).isMissed())
-      distToCur = meterToNm(at(routeIndex).getPosition().distanceMeterTo(activePos.pos));
+    {
+      if(geomentryLeg != nullptr)
+      {
+        atools::geo::LineDistance result;
+        geomentryLeg->geometry.distanceMeterToLineString(activePos.pos, result);
+        distToCur = meterToNm(result.distanceFrom2);
+      }
+      else
+        distToCur = meterToNm(getPositionAt(routeIndex).distanceMeterTo(activePos.pos));
+    }
 
     if(nextLegDistance != nullptr)
       *nextLegDistance = distToCur;
@@ -296,24 +325,55 @@ atools::geo::Pos RouteMapObjectList::positionAtDistance(float distFromStartNm) c
 
   atools::geo::Pos retval;
 
+  // Find the leg that contains the given distance point
   float total = 0.f;
   int foundIndex = maptypes::INVALID_INDEX_VALUE; // Found leg is from this index to index + 1
-  for(int i = 1; i < size(); i++)
+  for(int i = 0; i < size() - 1; i++)
   {
-    if(total + at(i).getDistanceTo() > distFromStartNm)
+    total += at(i + 1).getDistanceTo();
+    if(total > distFromStartNm)
     {
       // Distance already within leg
-      foundIndex = i - 1;
+      foundIndex = i;
       break;
     }
-    total += at(i).getDistanceTo();
   }
 
-  if(foundIndex != maptypes::INVALID_INDEX_VALUE)
+  if(foundIndex < size() - 1)
   {
-    float fraction = (distFromStartNm - total) / at(foundIndex + 1).getDistanceTo();
-    retval = at(foundIndex).getPosition().interpolate(at(foundIndex + 1).getPosition(), fraction);
+    if(!at(foundIndex).isAnyApproach())
+    {
+      float base = distFromStartNm - (total - at(foundIndex + 1).getDistanceTo());
+      float fraction = base / at(foundIndex + 1).getDistanceTo();
+
+      // qDebug() << "idx" << foundIndex << "total" << total << "rem"
+      // << at(foundIndex + 1).getDistanceTo() << "distFromStartNm" << distFromStartNm << "base"
+      // << base << "frac" << fraction;
+
+      retval = getPositionAt(foundIndex).interpolate(getPositionAt(foundIndex + 1), fraction);
+    }
+    else
+    {
+      // Skip all points like initial fixes or any other intercepted/collapsed legs
+      foundIndex++;
+      while(at(foundIndex).isApproachPoint() && foundIndex < size())
+        foundIndex++;
+
+      float base = distFromStartNm - (total - at(foundIndex).getApproachLeg().calculatedDistance);
+      float fraction = base / at(foundIndex).getApproachLeg().calculatedDistance;
+
+      // qDebug() << "idx appr" << foundIndex << "total" << total << "rem"
+      // << at(foundIndex).getApproachLeg().calculatedDistance << "distFromStartNm" << distFromStartNm << "base"
+      // << base << "frac" << fraction;
+      // qDebug() << "foundIndex" << at(foundIndex).getApproachLeg();
+      // qDebug() << "foundIndex + 1" << at(foundIndex + 1).getApproachLeg();
+      // qDebug() << "foundIndex + 2" << at(foundIndex + 2).getApproachLeg();
+
+      retval = at(foundIndex).getGeometry().interpolate(fraction);
+      // qDebug() << "isAnyApproach";
+    }
   }
+
   return retval;
 }
 
@@ -455,11 +515,16 @@ void RouteMapObjectList::updateFromApproachLegs()
   /* Calculate the index in the route where an approach or transition starts - size of route if not found */
   // Get type and id of initial fix if there is an approach shown
   maptypes::MapObjectRef initialFixRef({-1, maptypes::NONE});
+  Pos initialPos;
 
   if(!approachLegs.isEmpty())
   {
-    const maptypes::MapApproachLeg& initialFix = approachLegs.at(0);
-    if(initialFix.navaids.hasWaypoints())
+    const maptypes::MapApproachLeg& initialFix = approachLegs.first();
+
+    if(initialFix.type == maptypes::COURSE_TO_FIX)
+      // The only legs that starts before the fix
+      initialPos = initialFix.line.getPos1();
+    else if(initialFix.navaids.hasWaypoints())
     {
       initialFixRef.id = initialFix.navaids.waypoints.first().id;
       initialFixRef.type = maptypes::WAYPOINT;
@@ -484,8 +549,19 @@ void RouteMapObjectList::updateFromApproachLegs()
     for(int i = 0; i < size(); i++)
     {
       const RouteMapObject& obj = at(i);
-
       if(obj.getId() == initialFixRef.id && obj.getMapObjectType() == initialFixRef.type)
+      {
+        approachStartIndex = i + 1;
+        break;
+      }
+    }
+  }
+  else if(initialPos.isValid())
+  {
+    // Check if the route contains a user waypoint overlapping with the intial fix and return the index to it
+    for(int i = 0; i < size(); i++)
+    {
+      if(initialPos.almostEqual(at(i).getPosition(), atools::geo::Pos::POS_EPSILON_10M))
       {
         approachStartIndex = i + 1;
         break;
@@ -679,7 +755,7 @@ int RouteMapObjectList::nearestPointIndex(const atools::geo::Pos& pos, float& po
 
   for(int i = 0; i < getApproachStartIndex(); i++)
   {
-    float distance = at(i).getPosition().distanceMeterTo(pos);
+    float distance = getPositionAt(i).distanceMeterTo(pos);
     if(distance < minDistance)
     {
       minDistance = distance;
@@ -708,7 +784,7 @@ void RouteMapObjectList::nearestAllLegIndex(const maptypes::PosCourse& pos, floa
 
   for(int i = 1; i < size(); i++)
   {
-    pos.pos.distanceMeterToLine(at(i - 1).getPosition(), at(i).getPosition(), result);
+    pos.pos.distanceMeterToLine(getPositionAt(i - 1), getPositionAt(i), result);
     float distance = std::abs(result.distance);
 
     if(result.status != atools::geo::INVALID && distance < minDistance)

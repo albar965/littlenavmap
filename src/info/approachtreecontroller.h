@@ -123,7 +123,7 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
+  void addApproachLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, int transitionId, float& remainingDistance);
   void addTransitionLegs(const maptypes::MapApproachLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
   void fillApproachTreeWidget();
   void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapApproachRef& ref);

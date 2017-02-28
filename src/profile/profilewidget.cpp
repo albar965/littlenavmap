@@ -682,46 +682,50 @@ void ProfileWidget::updateThreadFinished()
 /* Get elevation points between the two points. This returns also correct results if the antimeridian is crossed
  * @return true if not aborted */
 bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
-                                         const atools::geo::Pos& lastPos,
-                                         const atools::geo::Pos& curPos) const
+                                         const atools::geo::LineString& geometry) const
 {
-  // Create a line string from the two points and split it at the date line if crossing
-  GeoDataLineString coords;
-  coords.setTessellate(true);
-  coords << GeoDataCoordinates(lastPos.getLonX(), lastPos.getLatY(), 0., GeoDataCoordinates::Degree)
-         << GeoDataCoordinates(curPos.getLonX(), curPos.getLatY(), 0., GeoDataCoordinates::Degree);
-
-  QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
-  for(const Marble::GeoDataLineString *ls : coordsCorrected)
+  for(int i = 0; i < geometry.size() - 1; i++)
   {
-    for(int j = 1; j < ls->size(); j++)
+    // Create a line string from the two points and split it at the date line if crossing
+    GeoDataLineString coords;
+    coords.setTessellate(true);
+    coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(),
+                                 0., GeoDataCoordinates::Degree)
+           << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(),
+                          0., GeoDataCoordinates::Degree);
+
+    QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+    for(const Marble::GeoDataLineString *ls : coordsCorrected)
     {
-      if(terminateThreadSignal)
-        return false;
-
-      const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
-      const Marble::GeoDataCoordinates& c2 = ls->at(j);
-
-      // Get altitude points for the line segment
-      // The might not be complete and will be more complete on further iterations when we get a signal
-      // from the elevation model
-      QVector<GeoDataCoordinates> temp = elevationModel->heightProfile(
-        c1.longitude(GeoDataCoordinates::Degree), c1.latitude(GeoDataCoordinates::Degree),
-        c2.longitude(GeoDataCoordinates::Degree), c2.latitude(GeoDataCoordinates::Degree));
-
-      for(const GeoDataCoordinates& c : temp)
+      for(int j = 1; j < ls->size(); j++)
       {
         if(terminateThreadSignal)
           return false;
 
-        elevations.append(Pos(c.longitude(), c.latitude(), c.altitude()).toDeg());
-      }
+        const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
+        const Marble::GeoDataCoordinates& c2 = ls->at(j);
 
-      if(elevations.isEmpty())
-      {
-        // Workaround for invalid geometry data - add void
-        elevations.append(Pos(c1.longitude(), c1.latitude(), c1.altitude()).toDeg());
-        elevations.append(Pos(c2.longitude(), c2.latitude(), c2.altitude()).toDeg());
+        // Get altitude points for the line segment
+        // The might not be complete and will be more complete on further iterations when we get a signal
+        // from the elevation model
+        QVector<GeoDataCoordinates> temp = elevationModel->heightProfile(
+          c1.longitude(GeoDataCoordinates::Degree), c1.latitude(GeoDataCoordinates::Degree),
+          c2.longitude(GeoDataCoordinates::Degree), c2.latitude(GeoDataCoordinates::Degree));
+
+        for(const GeoDataCoordinates& c : temp)
+        {
+          if(terminateThreadSignal)
+            return false;
+
+          elevations.append(Pos(c.longitude(), c.latitude(), c.altitude()).toDeg());
+        }
+
+        if(elevations.isEmpty())
+        {
+          // Workaround for invalid geometry data - add void
+          elevations.append(Pos(c1.longitude(), c1.latitude(), c1.altitude()).toDeg());
+          elevations.append(Pos(c2.longitude(), c2.latitude(), c2.altitude()).toDeg());
+        }
       }
     }
   }
@@ -729,11 +733,11 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
   if(!elevations.isEmpty())
   {
     // Add start or end point if heightProfile omitted these - check only lat lon not alt
-    if(!elevations.first().almostEqual(lastPos))
-      elevations.prepend(Pos(lastPos.getLonX(), lastPos.getLatY(), elevations.first().getAltitude()));
+    if(!elevations.first().almostEqual(geometry.first()))
+      elevations.prepend(Pos(geometry.first().getLonX(), geometry.first().getLatY(), elevations.first().getAltitude()));
 
-    if(!elevations.last().almostEqual(curPos))
-      elevations.append(Pos(curPos.getLonX(), curPos.getLatY(), elevations.last().getAltitude()));
+    if(!elevations.last().almostEqual(geometry.last()))
+      elevations.append(Pos(geometry.last().getLonX(), geometry.last().getLatY(), elevations.last().getAltitude()));
   }
 
   return true;
@@ -769,10 +773,17 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
 
     if(rmo.getDistanceTo() < ELEVATION_MAX_LEG_NM)
     {
+      LineString geometry;
+      if(rmo.isAnyApproach() && rmo.getGeometry().size() > 2)
+        geometry = rmo.getGeometry();
+      else
+        geometry << lastRmo.getPosition() << rmo.getPosition();
+
       LineString elevations;
-      if(!fetchRouteElevations(elevations, lastRmo.getPosition(), rmo.getPosition()))
+      if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();
 
+      float dist = legs.totalDistance;
       // Loop over all elevation points for the current leg
       Pos lastPos;
       for(int j = 0; j < elevations.size(); j++)
@@ -780,41 +791,38 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
         if(terminateThreadSignal)
           return ElevationLegList();
 
-        Pos coord = elevations.at(j);
-        float altFeet = meterToFeet(coord.getAltitude());
-
+        Pos& coord = elevations[j];
         // Limit ground altitude to 30000 feet
-        altFeet = std::min(altFeet, ALTITUDE_LIMIT_FT);
-
+        float altFeet = std::min(meterToFeet(coord.getAltitude()), ALTITUDE_LIMIT_FT);
         coord.setAltitude(altFeet);
 
         // Drop points with similar altitude except the first and last one on a segment
-        if(lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
-           legs.elevationLegs.size() > 2 &&
-           atools::almostEqual(coord.getAltitude(), lastPos.getAltitude(), 10.f))
+        if(geometry.size() == 2 && lastPos.isValid() && j != 0 && j != elevations.size() - 1 &&
+           legs.elevationLegs.size() > 2 && atools::almostEqual(altFeet, lastPos.getAltitude(), 10.f))
           continue;
 
-        float alt = coord.getAltitude();
-
         // Adjust maximum
-        if(alt > leg.maxElevation)
-          leg.maxElevation = alt;
-        if(alt > legs.maxElevationFt)
-          legs.maxElevationFt = alt;
+        if(altFeet > leg.maxElevation)
+          leg.maxElevation = altFeet;
+        if(altFeet > legs.maxElevationFt)
+          legs.maxElevationFt = altFeet;
 
         leg.elevation.append(coord);
         if(j > 0)
-        {
           // Update total distance
-          float dist = meterToNm(lastPos.distanceMeterTo(coord));
-          legs.totalDistance += dist;
-        }
+          dist += meterToNm(lastPos.distanceMeterTo(coord));
+
         // Distance to elevation point from departure
-        leg.distances.append(legs.totalDistance);
+        leg.distances.append(dist);
 
         legs.totalNumPoints++;
         lastPos = coord;
       }
+
+      legs.totalDistance += rmo.getDistanceTo();
+      leg.elevation.append(lastPos);
+      leg.distances.append(legs.totalDistance);
+
     }
     else
     {
