@@ -1003,7 +1003,7 @@ QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
   {
     if(!retval.isEmpty())
       retval += ", ";
-    retval += QLocale().toString(leg.time, 'f', 0) + tr(" min");
+    retval += QString::number(leg.time, 'g', 2) + tr(" min");
   }
 
   return retval;
@@ -1022,14 +1022,6 @@ QString ApproachTreeController::buildRemDistanceStr(const MapApproachLeg& leg, f
       remainingDistance = 0.f;
 
     retval += Unit::distNm(remainingDistance, false);
-
-    if(leg.time > 0.f)
-    {
-      if(!retval.isEmpty())
-        retval += ", ";
-      retval += QLocale().toString(leg.time, 'f', 0) + tr(" min");
-      remainingDistance -= leg.time * 3.5f; // 3.5 nm per minute
-    }
   }
 
   return retval;

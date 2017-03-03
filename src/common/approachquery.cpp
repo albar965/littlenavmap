@@ -534,7 +534,6 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
   {
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
-    maptypes::MapApproachLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
 
     if(!leg.line.isValid())
@@ -574,15 +573,15 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     // ===========================================================
     else if(type == maptypes::PROCEDURE_TURN)
     {
-      // Distance is towards and return leg until turn point
-      leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.procedureTurnPos) * 2.f);
+      // Distance is towards turn point
+      leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.procedureTurnPos));
+
+      // if(nextLeg != nullptr)
+      // leg.calculatedDistance += meterToNm(leg.procedureTurnPos.distanceMeterTo(nextLeg->line.getPos1()));
+
       // Course from fix to turn point
       leg.calculatedTrueCourse = normalizeCourse(leg.course + (leg.turnDirection == "L" ? -45.f : 45.f) + leg.magvar);
 
-      // leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << leg.line.getPos2();
-      // if(nextLeg != nullptr)
-      // leg.geometry << leg.line.getPos1() << leg.procedureTurnPos << nextLeg->fixPos;
-      // else
       leg.geometry << leg.line.getPos1() << leg.procedureTurnPos;
     }
     // ===========================================================
@@ -602,8 +601,26 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     // ===========================================================
-    else if(contains(type, {maptypes::HOLD_TO_MANUAL_TERMINATION, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_ALTITUDE,
-                            maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE, maptypes::COURSE_TO_DME_DISTANCE,
+    else if(contains(type, {maptypes::HOLD_TO_MANUAL_TERMINATION, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_ALTITUDE}))
+    {
+      leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
+      leg.calculatedTrueCourse = leg.legTrueCourse();
+      leg.geometry << leg.line.getPos1() << leg.line.getPos2();
+
+      float segmentLength;
+      if(leg.time > 0.f)
+        // 3.5 nm per minute
+        segmentLength = leg.time * 3.5f;
+      else if(leg.distance > 0.f)
+        segmentLength = leg.distance;
+      else
+        segmentLength = 3.5f;
+
+      leg.holdLine.setPos1(leg.line.getPos1());
+      leg.holdLine.setPos2(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
+                                                       opposedCourseDeg(leg.calculatedTrueCourse)));
+    }
+    else if(contains(type, {maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE, maptypes::COURSE_TO_DME_DISTANCE,
                             maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
                             maptypes::COURSE_TO_RADIAL_TERMINATION, maptypes::HEADING_TO_RADIAL_TERMINATION,
                             maptypes::DIRECT_TO_FIX, maptypes::TRACK_TO_FIX,
@@ -752,7 +769,8 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
         course = leg.legTrueCourse() + 45.f;
 
       leg.procedureTurnPos = leg.fixPos.endpoint(nmToMeter(leg.distance), course);
-      curPos = leg.fixPos;
+      lastPos = leg.fixPos;
+      curPos = leg.procedureTurnPos;
     }
     // ===========================================================
     else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,

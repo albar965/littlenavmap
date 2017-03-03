@@ -321,13 +321,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
       QString approachText;
 
       if(drawTextLines.at(i).distance)
-      {
-        float dist = leg.calculatedDistance;
-        if(leg.type == maptypes::PROCEDURE_TURN)
-          dist /= 2.f;
-
-        approachText.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
-      }
+        approachText.append(Unit::distNm(leg.calculatedDistance, true /*addUnit*/, 20, true /*narrow*/));
 
       if(drawTextLines.at(i).course)
       {
@@ -443,31 +437,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
       if(!lastLine.p2().isNull() && lineDist > 2)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
-        QLineF lineDraw(line.p2(), line.p1());
-
-        // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
-        float oneNmPixel = scale->getPixelForNm(0.95f);
-        if(lineDraw.length() > oneNmPixel * 2.f)
-          lineDraw.setLength(lineDraw.length() - oneNmPixel);
-        lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
-
-        // Calculate distance to control points
-        float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1()) * 3 / 4;
-
-        // Calculate bezier control points by extending the last and next line
-        QLineF ctrl1(lastLine.p1(), lastLine.p2());
-        ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
-        QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
-        ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
-
-        // Draw a bow connecting the two lines
-        QPainterPath path;
-        path.moveTo(lastLine.p2());
-        path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
-        painter->drawPath(path);
-
-        painter->drawLine(lineDraw);
-        lastLine = lineDraw;
+        paintApproachBow(prevLeg, lastLine, painter, line, leg);
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line with course but not distance
@@ -478,43 +448,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
         // Lines are connected but a turn direction is given
         // Draw a small arc if a turn direction is given
 
-        // The returned value represents the number of degrees you need to add to this
-        // line to make it have the same angle as the given line, going counter-clockwise.
-        QPointF endPos = line.p2();
-        if(leg.interceptPos.isValid())
-          endPos = intersectPoint;
-
-        double angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
-
-        // Calculate the start position of the next line and leave space for the arc
-        QLineF arc(line.p1(), QPointF(line.x2(), line.y2() + 100.));
-        arc.setLength(scale->getPixelForNm(1.f));
-        if(leg.turnDirection == "R")
-          arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
-                                                    lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
-        else
-          arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.));
-
-        // Calculate bezier control points by extending the last and next line
-        QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(endPos, arc.p2());
-        ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(.5f));
-        ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(.5f));
-
-        // Draw the arc
-        QPainterPath path;
-        path.moveTo(arc.p1());
-        path.cubicTo(ctrl1.p2(), ctrl2.p2(), arc.p2());
-        painter->drawPath(path);
-
-        // Draw the next line
-        QLineF nextLine(arc.p2(), endPos);
-        painter->drawLine(nextLine);
-
-        if(leg.interceptPos.isValid())
-          // Add line from intercept leg
-          painter->drawLine(endPos, line.p2());
-
-        lastLine = nextLine.toLine();
+        QLineF nextLine = paintApproachTurn(lastLine, line, leg, painter, intersectPoint);
 
         Pos p1 = sToW(nextLine.p1());
         Pos p2 = sToW(nextLine.p2());
@@ -640,6 +574,80 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   }
 }
 
+void MapPainterRoute::paintApproachBow(const maptypes::MapApproachLeg *prevLeg, QLineF& lastLine, QPainter *painter,
+                                       QLineF line, const maptypes::MapApproachLeg& leg)
+{
+  QLineF lineDraw(line.p2(), line.p1());
+
+  // Shorten the next line to get a better curve - use a value less than 1 nm to avoid flickering on 1 nm legs
+  float oneNmPixel = scale->getPixelForNm(0.95f);
+  if(lineDraw.length() > oneNmPixel * 2.f)
+    lineDraw.setLength(lineDraw.length() - oneNmPixel);
+  lineDraw.setPoints(lineDraw.p2(), lineDraw.p1());
+
+  // Calculate distance to control points
+  float dist = prevLeg->line.getPos2().distanceMeterToRhumb(leg.line.getPos1()) * 3 / 4;
+
+  // Calculate bezier control points by extending the last and next line
+  QLineF ctrl1(lastLine.p1(), lastLine.p2());
+  ctrl1.setLength(ctrl1.length() + scale->getPixelForMeter(dist));
+  QLineF ctrl2(lineDraw.p2(), lineDraw.p1());
+  ctrl2.setLength(ctrl2.length() + scale->getPixelForMeter(dist));
+
+  // Draw a bow connecting the two lines
+  QPainterPath path;
+  path.moveTo(lastLine.p2());
+  path.cubicTo(ctrl1.p2(), ctrl2.p2(), lineDraw.p1());
+  painter->drawPath(path);
+
+  painter->drawLine(lineDraw);
+  lastLine = lineDraw;
+}
+
+QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapApproachLeg& leg,
+                                          QPainter *painter, QPointF intersectPoint)
+{
+  QPointF endPos = line.p2();
+  if(leg.interceptPos.isValid())
+    endPos = intersectPoint;
+
+  // The returned value represents the number of degrees you need to add to this
+  // line to make it have the same angle as the given line, going counter-clockwise.
+  double angleToLastRev = line.angleTo(QLineF(lastLine.p1(), lastLine.p2()));
+
+  // Calculate the start position of the next line and leave space for the arc
+  QLineF arc(line.p1(), QPointF(line.x2(), line.y2() + 100.));
+  arc.setLength(scale->getPixelForNm(1.f));
+  if(leg.turnDirection == "R")
+    arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
+                                              lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
+  else
+    arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.));
+
+  // Calculate bezier control points by extending the last and next line
+  QLineF ctrl1(lastLine.p1(), lastLine.p2()), ctrl2(endPos, arc.p2());
+  ctrl1.setLength(ctrl1.length() + scale->getPixelForNm(.5f));
+  ctrl2.setLength(ctrl2.length() + scale->getPixelForNm(.5f));
+
+  // Draw the arc
+  QPainterPath path;
+  path.moveTo(arc.p1());
+  path.cubicTo(ctrl1.p2(), ctrl2.p2(), arc.p2());
+  painter->drawPath(path);
+
+  // Draw the next line
+  QLineF nextLine(arc.p2(), endPos);
+  painter->drawLine(nextLine);
+
+  if(leg.interceptPos.isValid())
+    // Add line from intercept leg
+    painter->drawLine(endPos, line.p2());
+
+  lastLine = nextLine.toLine();
+
+  return nextLine;
+}
+
 void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs,
                                           int index)
 {
@@ -651,8 +659,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   bool hiddenDummy;
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
-  QLineF line;
+  QLineF line, holdLine;
   wToS(leg.line, line, size, &hiddenDummy);
+  wToS(leg.holdLine, holdLine, size, &hiddenDummy);
   QPainter *painter = context->painter;
 
   if(leg.disabled)
@@ -685,6 +694,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
     painter->drawLine(pt1, pt2);
   }
+
+  painter->setPen(QPen(Qt::darkBlue, 10));
+  painter->drawLine(holdLine);
 
   painter->setPen(QPen(Qt::darkBlue, 7));
   for(int i = 0; i < leg.geometry.size(); i++)

@@ -225,16 +225,25 @@ public:
     return approachLeg;
   }
 
+  /* invalid type if not an approach */
+  maptypes::ApproachLegType getApproachLegType() const
+  {
+    return approachLeg.type;
+  }
+
   bool isApproach() const;
   bool isMissed() const;
   bool isTransition() const;
 
+  bool isHold() const
+  {
+    return approachLeg.isHold();
+  }
+
   const atools::geo::LineString& getGeometry() const;
 
-  bool isApproachPoint() const
-  {
-    return isAnyApproach() && approachLeg.geometry.isPoint();
-  }
+  /* true if approach and inital fix or any other point that should be skipped for certain calculations */
+  bool isApproachPoint() const;
 
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;

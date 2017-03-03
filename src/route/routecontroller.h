@@ -352,7 +352,7 @@ private:
   void highlightNextWaypoint(int nearestLegIndex);
   void disableApproachItems();
 
-  void updateRouteAppr();
+  void updateRouteApprAndActive();
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
 

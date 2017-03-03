@@ -118,6 +118,11 @@ int RouteMapObjectList::getNearestRouteLegOrPointIndex(const atools::geo::Pos& p
     return legIndex;
 }
 
+void RouteMapObjectList::updateActiveLegAndPos()
+{
+  updateActiveLegAndPos(activePos);
+}
+
 void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 {
   if(isEmpty() || !pos.isValid())
@@ -127,8 +132,11 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
   }
 
   if(activeLeg == maptypes::INVALID_INDEX_VALUE)
-    // Start with first leg
-    activeLeg = 1;
+  {
+    // Start with nearest leg
+    float crossDummy;
+    nearestAllLegIndex(pos, crossDummy, activeLeg);
+  }
 
   if(activeLeg >= size())
     activeLeg = size() - 1;
@@ -151,45 +159,92 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     activePos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
   }
 
-  // if(at(activeLeg).isAnyApproach())
-  // qDebug() << "ACTIVE" << at(activeLeg).getApproachLeg();
-
-  int newLeg = activeLeg + 1;
+  // Get potential next leg and course difference
+  int nextLeg = activeLeg + 1;
   float courseDiff = 0.f;
-  atools::geo::LineDistance nextLegResult;
-  if(newLeg < size())
+  if(nextLeg < size())
   {
-    while(at(newLeg).isApproachPoint() && newLeg < size() - 2)
+    while(at(nextLeg).isApproachPoint() && nextLeg < size() - 2)
       // Catch the case of initial fixes or others that are points instead of lines and try the next legs
-      newLeg++;
+      nextLeg++;
 
-    Pos pos1 = getPositionAt(newLeg - 1);
-    Pos pos2 = getPositionAt(newLeg);
-
-    // if(at(newLeg).isAnyApproach())
-    // qDebug() << "NEXT" << at(newLeg).getApproachLeg();
-
-    // Test next leg
-    activePos.pos.distanceMeterToLine(pos1, pos2, nextLegResult);
+    Pos pos1 = getPositionAt(nextLeg - 1);
+    Pos pos2 = getPositionAt(nextLeg);
 
     // Calculate course difference
     float legCrs = normalizeCourse(pos1.angleDegTo(pos2));
     courseDiff = atools::mod(pos.course - legCrs + 360.f, 360.f);
     if(courseDiff > 180.f)
       courseDiff = 360.f - courseDiff;
-  }
 
-  if(activeLegResult.status == atools::geo::AFTER_END ||
-     (std::abs(nextLegResult.distance) < std::abs(activeLegResult.distance) && courseDiff < 90.f))
-  {
-    // Either left current leg or closer to next and on courses
-    if(newLeg < size())
+    // if(at(activeLeg).isAnyApproach())
+    // qDebug() << "ACTIVE" << at(activeLeg).getApproachLeg();
+
+    // if(at(nextLeg).isAnyApproach())
+    // qDebug() << "NEXT" << at(nextLeg).getApproachLeg();
+
+    // qDebug() << "ACTIVE" << activeLeg << activeLegResult;
+    // qDebug() << "legCrs" << legCrs << "course diff" << courseDiff;
+    // << "holdStarted" << holdStarted << "inHold" << inHold;
+
+    // Test next leg
+    atools::geo::LineDistance nextLegResult;
+    activePos.pos.distanceMeterToLine(pos1, pos2, nextLegResult);
+    // qDebug() << "NEXT" << nextLeg << nextLegResult;
+
+    bool switchToNextLeg = false;
+    if(at(activeLeg).isHold())
     {
+      // Test next leg if we can exit a hold
+      atools::geo::LineDistance resultHold;
+      at(activeLeg).getApproachLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
+      // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
+
+      if(at(nextLeg).getApproachLeg().line.getPos1() == at(activeLeg).getPosition())
+      {
+        // qDebug() << "HOLD SAME";
+        // hold point is the same as next leg starting point
+        if(nextLegResult.status == atools::geo::ALONG_TRACK && // on track of next
+           std::abs(nextLegResult.distance) < nmToMeter(0.5f) && // not too far away from start of next
+           nextLegResult.distanceFrom1 > nmToMeter(0.75f) && // Travelled some distance into the new segment
+           courseDiff < 25.f) // Keep course
+          switchToNextLeg = true;
+      }
+      else
+      {
+        // qDebug() << "HOLD DIFFER";
+        // Hold point differs from next leg start - use the helping line
+        if(resultHold.status == atools::geo::ALONG_TRACK &&
+           resultHold.distance < nmToMeter(-0.5f))
+          switchToNextLeg = true;
+      }
+    }
+    else
+    {
+      if(at(nextLeg).isHold())
+      {
+        // Ignore all other rulues and use distance to hold point to activate hold
+        if(std::abs(nextLegResult.distance) < nmToMeter(0.5f))
+          switchToNextLeg = true;
+      }
+      else
+      {
+        // Check if we can advance to the next leg - if at end of current and distance to next is smaller and course similar
+        if(activeLegResult.status == atools::geo::AFTER_END ||
+           (std::abs(nextLegResult.distance) < std::abs(activeLegResult.distance) && courseDiff < 90.f))
+          switchToNextLeg = true;
+      }
+    }
+
+    if(switchToNextLeg)
+    {
+      // qDebug() << "Switching to next leg";
+      // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes & maptypes::APPROACH_MISSED) && at(newLeg).isMissed()))
+      if(!(!(shownTypes & maptypes::APPROACH_MISSED) && at(nextLeg).isMissed()))
       {
         // Go to next leg and increase all values
-        activeLeg = newLeg;
+        activeLeg = nextLeg;
         pos.pos.distanceMeterToLine(getPositionAt(activeLeg - 1), getPositionAt(activeLeg), activeLegResult);
       }
     }
@@ -201,23 +256,23 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDest,
                                            float *nextLegDistance, float *crossTrackDistance) const
 {
-  const maptypes::MapApproachLeg *geomentryLeg = nullptr;
+  const maptypes::MapApproachLeg *geometryLeg = nullptr;
 
   if(activeLeg == maptypes::INVALID_INDEX_VALUE)
     return false;
 
   if(at(activeLeg).isAnyApproach() && (at(activeLeg).getGeometry().size() > 2))
-    geomentryLeg = &at(activeLeg).getApproachLeg();
+    geometryLeg = &at(activeLeg).getApproachLeg();
 
   if(crossTrackDistance != nullptr)
   {
     if(activeLegResult.status == atools::geo::ALONG_TRACK)
     {
-      if(geomentryLeg != nullptr)
+      if(geometryLeg != nullptr)
       {
         // Use distance to DME to calculate cross track for any circular leg
-        float ctd = geomentryLeg->rho - meterToNm(geomentryLeg->recFixPos.distanceMeterTo(activePos.pos));
-        *crossTrackDistance = ctd * (geomentryLeg->turnDirection == "R" ? -1.f : 1.f);
+        float ctd = geometryLeg->rho - meterToNm(geometryLeg->recFixPos.distanceMeterTo(activePos.pos));
+        *crossTrackDistance = ctd * (geometryLeg->turnDirection == "R" ? -1.f : 1.f);
       }
       else
         *crossTrackDistance = meterToNm(activeLegResult.distance);
@@ -236,10 +291,10 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
 
     if(!at(routeIndex).isMissed())
     {
-      if(geomentryLeg != nullptr)
+      if(geometryLeg != nullptr)
       {
         atools::geo::LineDistance result;
-        geomentryLeg->geometry.distanceMeterToLineString(activePos.pos, result);
+        geometryLeg->geometry.distanceMeterToLineString(activePos.pos, result);
         distToCur = meterToNm(result.distanceFrom2);
       }
       else
@@ -370,7 +425,6 @@ atools::geo::Pos RouteMapObjectList::positionAtDistance(float distFromStartNm) c
       // qDebug() << "foundIndex + 2" << at(foundIndex + 2).getApproachLeg();
 
       retval = at(foundIndex).getGeometry().interpolate(fraction);
-      // qDebug() << "isAnyApproach";
     }
   }
 

@@ -43,6 +43,7 @@ public:
 
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const maptypes::PosCourse& pos);
+  void updateActiveLegAndPos();
 
   /*
    * Get multiple flight plan distances for the given position. If value pointers are null they will be ignored.

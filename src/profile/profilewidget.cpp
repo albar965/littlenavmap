@@ -426,6 +426,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                            symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
       }
       else if(type == maptypes::APPROACH || type == maptypes::APPROACH_TRANSITION)
+        // Missed is not included
         symPainter.drawApproachSymbol(&painter, symx, flightplanY, 6, true, false);
     }
   }

@@ -802,7 +802,30 @@ struct MapApproachRef
 
 struct MapApproachLeg
 {
+
+  QString fixType, fixIdent, fixRegion,
+          recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
+          turnDirection /* Turn to this fix*/;
+
+  QStringList displayText /* Fix label for map - filled in approach query */,
+              remarks /* Additional remarks for tree - filled in approach query */;
+  atools::geo::Pos fixPos, recFixPos,
+                   interceptPos, /* Position of an intercept leg for grey circle */
+                   procedureTurnPos /* Extended position of a procedure turn */;
+  atools::geo::Line line, /* Line with flying direction from pos1 to pos2 */
+                    holdLine; /* Helping line to find out if aircraft leaves the hold */
+
+  atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
+
+  /* Navaids resolved by approach query class */
+  MapSearchResult navaids;
+
+  MapAltRestriction altRestriction;
+
+  maptypes::ApproachLegType type = INVALID_LEG_TYPE;
+
   int approachId, transitionId, legId, navId, recNavId;
+
   float course,
         distance /* Distance from source in nm */,
         calculatedDistance /* Calculated distance closer to the real one in nm */,
@@ -812,23 +835,6 @@ struct MapApproachLeg
         rho /* distance to recommended navaid */,
         magvar /* from navaid or airport */;
 
-  QString fixType, fixIdent, fixRegion,
-          recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
-          turnDirection /* Turn to this fix*/;
-
-  QStringList displayText /* Fix label for map - filled in approach query */,
-              remarks /* Additional remarks for tree - filled in approach query */;
-  atools::geo::Pos fixPos, recFixPos,
-                   interceptPos, /* Position of an intercept leg */
-                   procedureTurnPos /* Extended position of a procedure turn */;
-  atools::geo::Line line /* Line with flying direction from pos1 to pos2 */;
-  atools::geo::LineString geometry; /* Same as line or geometry approximation for distance to leg calculation */
-  MapAltRestriction altRestriction;
-
-  /* Navaids resolved by approach query class */
-  MapSearchResult navaids;
-
-  maptypes::ApproachLegType type = INVALID_LEG_TYPE;
   bool missed, flyover, trueCourse,
        transition, /* Leg is part of a transition */
        intercept, /* Leg was modfied by a previous intercept */
@@ -843,6 +849,8 @@ struct MapApproachLeg
   {
     return trueCourse ? course : course + magvar;
   }
+
+  bool isHold() const;
 
 };
 

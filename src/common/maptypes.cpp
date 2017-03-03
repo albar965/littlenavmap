@@ -1134,4 +1134,10 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
+bool MapApproachLeg::isHold() const
+{
+  return atools::contains(type,
+                          {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_MANUAL_TERMINATION});
+}
+
 } // namespace types

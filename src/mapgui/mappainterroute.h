@@ -85,6 +85,11 @@ private:
 
   void paintTopOfDescent(const PaintContext *context);
 
+  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapApproachLeg& leg, QPainter *painter,
+                           QPointF intersectPoint);
+  void paintApproachBow(const maptypes::MapApproachLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
+                        const maptypes::MapApproachLeg& leg);
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H

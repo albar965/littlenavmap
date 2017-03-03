@@ -737,6 +737,15 @@ const LineString& RouteMapObject::getGeometry() const
   return geometry;
 }
 
+bool RouteMapObject::isApproachPoint() const
+{
+  return isAnyApproach() &&
+         !atools::contains(approachLeg.type,
+                           {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX,
+                            maptypes::HOLD_TO_MANUAL_TERMINATION}) &&
+         (approachLeg.geometry.isPoint() || approachLeg.type == maptypes::INITIAL_FIX);
+}
+
 bool RouteMapObject::isRoute() const
 {
   return !isAnyApproach();
@@ -761,3 +770,5 @@ bool RouteMapObject::isTransition() const
 {
   return type & maptypes::APPROACH_TRANSITION;
 }
+
+

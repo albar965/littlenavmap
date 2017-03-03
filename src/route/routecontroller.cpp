@@ -331,7 +331,7 @@ void RouteController::routeAltChanged()
 
   if(!route.isEmpty())
   {
-    updateRouteAppr();
+    updateRouteApprAndActive();
     emit routeChanged(false);
   }
 }
@@ -354,7 +354,7 @@ void RouteController::routeTypeChanged()
 
   if(!route.isEmpty())
   {
-    updateRouteAppr();
+    updateRouteApprAndActive();
     emit routeChanged(false);
     Ui::MainWindow *ui = mainWindow->getUi();
     mainWindow->setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
@@ -477,7 +477,7 @@ void RouteController::newFlightplan()
   updateFlightplanFromWidgets();
 
   createRouteMapObjects();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
@@ -517,7 +517,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   if(speedKts > 0.f)
     mainWindow->getUi()->spinBoxRouteSpeed->setValue(atools::roundToInt(Unit::speedKtsF(speedKts)));
 
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
@@ -576,7 +576,7 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     createRouteMapObjects();
 
-    updateRouteAppr();
+    updateRouteApprAndActive();
     updateTableModel();
     postChange(undoCommand);
     mainWindow->updateWindowTitle();
@@ -700,7 +700,7 @@ void RouteController::calculateDirect()
     flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
 
   createRouteMapObjects();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
@@ -857,7 +857,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
       QGuiApplication::restoreOverrideCursor();
       createRouteMapObjects();
-      updateRouteAppr();
+      updateRouteApprAndActive();
       updateTableModel();
       updateWindowLabel();
       postChange(undoCommand);
@@ -893,7 +893,7 @@ void RouteController::adjustFlightplanAltitude()
   {
     RouteCommand *undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
     fp.setCruisingAltitude(alt);
-    updateRouteAppr();
+    updateRouteApprAndActive();
     updateTableModel();
 
     if(!route.isEmpty())
@@ -959,7 +959,7 @@ void RouteController::reverseRoute()
 
   createRouteMapObjects();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
   postChange(undoCommand);
@@ -1308,7 +1308,7 @@ void RouteController::editUserWaypointName(int index)
     route[index].updateUserName(dialog.getName());
     model->item(index, rc::IDENT)->setText(dialog.getName());
     postChange(undoCommand);
-    updateRouteAppr();
+    updateRouteApprAndActive();
     emit routeChanged(true);
   }
 }
@@ -1325,11 +1325,12 @@ void RouteController::approachSelected(const maptypes::MapApproachLegs& approach
 }
 
 /* Update the approach route from route changes */
-void RouteController::updateRouteAppr()
+void RouteController::updateRouteApprAndActive()
 {
   // Copy but do not overwrite legs
   routeAppr.copyNoLegs(route);
   routeAppr.updateFromApproachLegs();
+  route.updateActiveLegAndPos();
 }
 
 void RouteController::shownMapFeaturesChanged(maptypes::MapObjectTypes types)
@@ -1396,7 +1397,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.setFlightplan(newFlightplan);
 
   createRouteMapObjects();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   mainWindow->updateWindowTitle();
   updateWindowLabel();
@@ -1516,7 +1517,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     routeToFlightPlan();
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
-    updateRouteAppr();
+    updateRouteApprAndActive();
     updateTableModel();
     updateWindowLabel();
 
@@ -1572,7 +1573,7 @@ void RouteController::deleteSelectedLegs()
     routeToFlightPlan();
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
-    updateRouteAppr();
+    updateRouteApprAndActive();
     updateTableModel();
     updateWindowLabel();
 
@@ -1643,7 +1644,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1680,7 +1681,7 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1732,7 +1733,7 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1781,7 +1782,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1871,7 +1872,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1912,7 +1913,11 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
         insertIndex = 0;
     }
   }
+
+  insertIndex = std::max(insertIndex, 0);
+  insertIndex = std::min(insertIndex, route.size());
   qDebug() << "insertIndex" << insertIndex << "pos" << pos;
+
   return insertIndex;
 }
 
@@ -1957,7 +1962,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -1985,7 +1990,7 @@ void RouteController::routeDelete(int index)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateRouteAppr();
+  updateRouteApprAndActive();
   updateTableModel();
   updateWindowLabel();
 
@@ -2281,9 +2286,10 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
     maptypes::PosCourse position(simulatorData.getUserAircraft().getPosition(),
-                                 simulatorData.getUserAircraft().getHeadingDegTrue());
+                                 simulatorData.getUserAircraft().getTrackDegTrue());
 
     int previousAppLeg = routeAppr.getActiveApproachLegCorrected();
+
     routeAppr.updateActiveLegAndPos(position);
     int apprLeg = routeAppr.getActiveApproachLegCorrected();
 
