@@ -990,8 +990,8 @@ QString altRestrictionTextNarrow(const maptypes::MapAltRestriction& altRestricti
       retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
     case maptypes::MapAltRestriction::BETWEEN:
-      retval = Unit::altFeet(altRestriction.alt1, false, true) + "-" +
-               Unit::altFeet(altRestriction.alt2, true, true);
+      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, false, true) +
+               QObject::tr("B") + Unit::altFeet(altRestriction.alt2, true, true);
       break;
   }
   return retval;

@@ -203,7 +203,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
     facilities.append(tr("Jetfuel"));
 
   if(airport.flags.testFlag(AP_APPROACH))
-    facilities.append(tr("Approaches"));
+    facilities.append(tr("Procedures"));
 
   if(airport.flags.testFlag(AP_ILS))
     facilities.append(tr("ILS"));

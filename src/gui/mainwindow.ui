@@ -2199,7 +2199,7 @@
        </widget>
        <widget class="QWidget" name="tabRouteApproaches">
         <attribute name="title">
-         <string>Approaches</string>
+         <string>Procedures</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_12">
          <property name="spacing">
@@ -2268,7 +2268,7 @@
              <bool>true</bool>
             </property>
             <property name="placeholderText">
-             <string>No approach selected.</string>
+             <string>No procedure selected.</string>
             </property>
             <property name="openLinks">
              <bool>false</bool>
@@ -5104,12 +5104,21 @@
    <property name="text">
     <string>&amp;Expand All</string>
    </property>
+   <property name="toolTip">
+    <string>Show all procedures</string>
+   </property>
+   <property name="statusTip">
+    <string>Show all procedures</string>
+   </property>
   </action>
   <action name="actionInfoApproachCollapseAll">
    <property name="text">
     <string>&amp;Collapse All</string>
    </property>
    <property name="toolTip">
+    <string>Collapse All</string>
+   </property>
+   <property name="statusTip">
     <string>Collapse All</string>
    </property>
   </action>
@@ -5122,10 +5131,10 @@
     <string>&amp;Show %1 on Map</string>
    </property>
    <property name="toolTip">
-    <string>Show approach and/or transition on map</string>
+    <string>Show procedure on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show approach and/or transition on map</string>
+    <string>Show procedure on the map</string>
    </property>
   </action>
   <action name="actionInfoApproachClear">
@@ -5151,13 +5160,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show &amp;Approaches and Transitions</string>
+    <string>Show &amp;Procedures</string>
    </property>
    <property name="toolTip">
-    <string>Show approach and transition legs on the map</string>
+    <string>Show procedure legs on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show approach legs on the map</string>
+    <string>Show procedure legs on the map</string>
    </property>
   </action>
   <action name="actionInfoApproachShowMissedAppr">
@@ -5183,13 +5192,13 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Approaches for %1</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
-    <string>Show approaches and transitions for airport</string>
+    <string>Show procedures for airport</string>
    </property>
    <property name="statusTip">
-    <string>Show approaches and transitions for airport</string>
+    <string>Show procedures for airport</string>
    </property>
   </action>
   <action name="actionInfoApproachSelect">
@@ -5201,10 +5210,10 @@
     <string>Show and Activate &amp;Legs for %1</string>
    </property>
    <property name="toolTip">
-    <string>Show all legs only this approach and/or transition.</string>
+    <string>Show all legs only this procedure.</string>
    </property>
    <property name="statusTip">
-    <string>Show all legs only this approach and/or transition.</string>
+    <string>Show all legs only this procedure.</string>
    </property>
   </action>
   <action name="actionInfoApproachUnselect">
@@ -5213,13 +5222,13 @@
      <normaloff>:/littlenavmap/resources/icons/approachunselect.svg</normaloff>:/littlenavmap/resources/icons/approachunselect.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Return to Approach Overview</string>
+    <string>&amp;Return to Procedure Overview</string>
    </property>
    <property name="toolTip">
-    <string>Return to the overview showing all approaches and transitions for an airport</string>
+    <string>Return to the overview showing all procedures for an airport</string>
    </property>
    <property name="statusTip">
-    <string>Return to the overview showing all approaches for an airport</string>
+    <string>Return to the overview showing all procedures for an airport</string>
    </property>
   </action>
   <action name="actionMapShowApproaches">
@@ -5228,13 +5237,13 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Approaches and Transitions for %1</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
    <property name="statusTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
   </action>
   <action name="actionRouteShowApproaches">
@@ -5243,13 +5252,13 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Approaches and Transitions</string>
+    <string>Show &amp;Procedures</string>
    </property>
    <property name="toolTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
    <property name="statusTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
   </action>
   <action name="actionSearchShowApproaches">
@@ -5258,13 +5267,13 @@
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Approaches and Transitions</string>
+    <string>Show &amp;Procedures</string>
    </property>
    <property name="toolTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
    <property name="statusTip">
-    <string>Show approaches, transitions, SIDs and STARs for this airport</string>
+    <string>Show procedures for this airport</string>
    </property>
   </action>
   <action name="actionInfoApproachAttach">
@@ -5279,10 +5288,10 @@
     <string>Attach to Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Attaches the approach and/or transition to the flight plan</string>
+    <string>Attach the procedure to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Attaches the approach and/or transition to the flight plan</string>
+    <string>Attach the procedure to the flight plan</string>
    </property>
   </action>
   <action name="actionRouteActivateLeg">
@@ -5312,7 +5321,7 @@
     <string>Activate Flight Plan Leg</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a direct flight plan</string>
+    <string>Activate Flight Plan Leg</string>
    </property>
   </action>
  </widget>

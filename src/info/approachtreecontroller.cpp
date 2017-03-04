@@ -333,7 +333,7 @@ void ApproachTreeController::fillApproachTreeWidget()
     else
     {
       QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(),
-                                                  {tr("%1 has no approaches.").
+                                                  {tr("%1 has no procedures.").
                                                    arg(maptypes::airportText(currentAirport))}, -1);
       item->setDisabled(true);
       item->setFirstColumnSpanned(true);

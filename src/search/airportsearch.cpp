@@ -177,7 +177,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   .
   append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).
          conditions("> 0", "== 0").hidden()).
-  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Approaches")).
+  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Procedures")).
          conditions("> 0", "== 0").hidden()).
 
   append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).
