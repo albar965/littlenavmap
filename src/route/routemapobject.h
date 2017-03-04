@@ -240,6 +240,11 @@ public:
     return approachLeg.isHold();
   }
 
+  bool isCircular() const
+  {
+    return approachLeg.isCircular();
+  }
+
   const atools::geo::LineString& getGeometry() const;
 
   /* true if approach and inital fix or any other point that should be skipped for certain calculations */

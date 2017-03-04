@@ -196,10 +196,6 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     if(at(activeLeg).isHold())
     {
       // Test next leg if we can exit a hold
-      atools::geo::LineDistance resultHold;
-      at(activeLeg).getApproachLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
-      // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
-
       if(at(nextLeg).getApproachLeg().line.getPos1() == at(activeLeg).getPosition())
       {
         // qDebug() << "HOLD SAME";
@@ -212,10 +208,14 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       }
       else
       {
+        atools::geo::LineDistance resultHold;
+        at(activeLeg).getApproachLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
+        // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
+
         // qDebug() << "HOLD DIFFER";
         // Hold point differs from next leg start - use the helping line
-        if(resultHold.status == atools::geo::ALONG_TRACK &&
-           resultHold.distance < nmToMeter(-0.5f))
+        if(resultHold.status == atools::geo::ALONG_TRACK && // Check if we are outside of the hold
+           resultHold.distance < nmToMeter(at(activeLeg).getApproachLeg().turnDirection == "R" ? -0.5f : 0.5f))
           switchToNextLeg = true;
       }
     }
@@ -266,17 +266,17 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
 
   if(crossTrackDistance != nullptr)
   {
-    if(activeLegResult.status == atools::geo::ALONG_TRACK)
+    if(geometryLeg != nullptr)
     {
-      if(geometryLeg != nullptr)
-      {
-        // Use distance to DME to calculate cross track for any circular leg
-        float ctd = geometryLeg->rho - meterToNm(geometryLeg->recFixPos.distanceMeterTo(activePos.pos));
-        *crossTrackDistance = ctd * (geometryLeg->turnDirection == "R" ? -1.f : 1.f);
-      }
+      atools::geo::LineDistance lineDist;
+      geometryLeg->geometry.distanceMeterToLineString(activePos.pos, lineDist);
+      if(lineDist.status == atools::geo::ALONG_TRACK)
+        *crossTrackDistance = meterToNm(lineDist.distance);
       else
-        *crossTrackDistance = meterToNm(activeLegResult.distance);
+        *crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
     }
+    else if(activeLegResult.status == atools::geo::ALONG_TRACK)
+      *crossTrackDistance = meterToNm(activeLegResult.distance);
     else
       *crossTrackDistance = maptypes::INVALID_DISTANCE_VALUE;
   }

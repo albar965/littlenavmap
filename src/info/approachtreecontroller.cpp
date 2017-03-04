@@ -985,8 +985,7 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 
 QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
-  if(leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::ARC_TO_FIX &&
-     leg.type != maptypes::CONSTANT_RADIUS_ARC && leg.calculatedDistance > 0.f)
+  if(leg.type != maptypes::INITIAL_FIX && leg.isCircular() && leg.calculatedDistance > 0.f)
     return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
   else
     return QString();

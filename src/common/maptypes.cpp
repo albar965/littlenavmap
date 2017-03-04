@@ -1140,4 +1140,9 @@ bool MapApproachLeg::isHold() const
                           {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_MANUAL_TERMINATION});
 }
 
+bool MapApproachLeg::isCircular() const
+{
+  return atools::contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
+}
+
 } // namespace types

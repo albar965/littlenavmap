@@ -851,6 +851,7 @@ struct MapApproachLeg
   }
 
   bool isHold() const;
+  bool isCircular() const;
 
 };
 

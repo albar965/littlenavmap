@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
   Application::setApplicationName("Little Navmap");
   Application::setOrganizationName("ABarthel");
   Application::setOrganizationDomain("abarthel.org");
-  Application::setApplicationVersion("1.3.0.devel");
+  Application::setApplicationVersion("1.3.1.devel");
 
   // Start splash screen
   QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");

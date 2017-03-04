@@ -1597,8 +1597,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(aircraft.getGroundSpeedKts() > 20.f)
             timeStr = tr(", ") + formatter::formatMinutesHoursLong(
               nearestLegDistance / aircraft.getGroundSpeedKts());
-          if(rmo.isRoute() || (leg.type != maptypes::ARC_TO_FIX &&
-                               leg.type != maptypes::CONSTANT_RADIUS_ARC))
+          if(rmo.isRoute() || leg.isCircular())
           {
             float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
             html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
@@ -1609,8 +1608,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + ", " + timeStr);
         }
 
-        if(rmo.isRoute() || (leg.type != maptypes::ARC_TO_FIX &&
-                             leg.type != maptypes::CONSTANT_RADIUS_ARC))
+        if(rmo.isRoute() || leg.isCircular())
           html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumbMag(), 'f', 0) +
                     (routeTrueCourse ? tr("°T") : tr("°M")));
       }

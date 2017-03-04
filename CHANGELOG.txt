@@ -1,3 +1,8 @@
+Version 1.3.1.devel
+* Added approach and transition support. Drawing, attaching to flight plan, active leg detection and more.
+* Fixed errors in METAR parser.
+* Completely changed active segment logic for flight plan.
+
 Version 1.2.4
 
 Release

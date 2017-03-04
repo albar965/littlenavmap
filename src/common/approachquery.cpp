@@ -908,7 +908,7 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
 
         if(next != nullptr)
         {
-          bool nextIsArc = contains(next->type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
+          bool nextIsArc = next->isCircular();
           Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
           Pos intersect;
           if(nextIsArc)

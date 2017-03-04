@@ -301,7 +301,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   }
 
   // Paint active leg
-  if(activeLeg > 0 && activeLeg < legs.size())
+  if(activeLeg >= 0 && activeLeg < legs.size())
   {
     context->painter->setPen(legs.isMissed(activeLeg) ? missedActivePen : apprActivePen);
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
