@@ -275,7 +275,8 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
 
     float distToCur = 0.f;
 
-    if(!at(routeIndex).isMissed())
+    // Ignore missed approach legs until the active is one
+    if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
     {
       if(geometryLeg != nullptr)
       {
@@ -296,7 +297,7 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
       *distFromStart = 0.f;
       for(int i = 0; i <= routeIndex; i++)
       {
-        if(!at(i).isMissed())
+        if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
           *distFromStart += at(i).getDistanceTo();
         else
           break;
@@ -310,7 +311,7 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
       *distToDest = 0.f;
       for(int i = routeIndex + 1; i < size(); i++)
       {
-        if(!at(i).isMissed())
+        if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
           *distToDest += at(i).getDistanceTo();
       }
       *distToDest += distToCur;
@@ -663,33 +664,49 @@ int RouteMapObjectList::activeApproachLegInternal(int leg) const
     return maptypes::INVALID_INDEX_VALUE;
 }
 
-int RouteMapObjectList::getActiveRouteLeg() const
+int RouteMapObjectList::getActiveRouteLegIndex() const
 {
   return activeRouteLegInternal(activeLeg);
 }
 
-int RouteMapObjectList::getActiveApproachLeg() const
+int RouteMapObjectList::getActiveApproachLegIndex() const
 {
   return activeApproachLegInternal(activeLeg);
 }
 
-int RouteMapObjectList::getActiveRouteLegCorrected() const
+const RouteMapObject *RouteMapObjectList::getActiveLeg() const
 {
-  return activeRouteLegInternal(getActiveLegCorrected());
+  if(activeLeg != maptypes::INVALID_INDEX_VALUE)
+    return &at(activeLeg);
+  else
+    return nullptr;
 }
 
-int RouteMapObjectList::getActiveApproachLegCorrected() const
+const RouteMapObject *RouteMapObjectList::getActiveLegCorrected(bool *corrected) const
 {
-  return activeApproachLegInternal(getActiveLegCorrected());
+  int idx = getActiveLegIndexCorrected(corrected);
+
+  if(idx != maptypes::INVALID_INDEX_VALUE)
+    return &at(idx);
+  else
+    return nullptr;
 }
 
-int RouteMapObjectList::getActiveLeg() const
+int RouteMapObjectList::getActiveRouteLegIndexCorrected() const
 {
-  return activeLeg;
+  return activeRouteLegInternal(getActiveLegIndexCorrected());
 }
 
-int RouteMapObjectList::getActiveLegCorrected(bool *corrected) const
+int RouteMapObjectList::getActiveApproachLegIndexCorrected() const
 {
+  return activeApproachLegInternal(getActiveLegIndexCorrected());
+}
+
+int RouteMapObjectList::getActiveLegIndexCorrected(bool *corrected) const
+{
+  if(activeLeg == maptypes::INVALID_INDEX_VALUE)
+    return maptypes::INVALID_INDEX_VALUE;
+
   int nextLeg = activeLeg + 1;
   if(nextLeg < size() && nextLeg == getApproachStartIndex() &&
      at(nextLeg).isAnyApproach() /* && (at(nextLeg).getApproachLeg().type == maptypes::INITIAL_FIX ||

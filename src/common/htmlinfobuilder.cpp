@@ -1487,8 +1487,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     // The corrected leg will point to an approach leg if we head to the start of a procedure
     bool isCorrected = false;
-    int activeLegCorrected = route.getActiveLegCorrected(&isCorrected);
-    int activeLeg = route.getActiveLeg();
+    int activeLegCorrected = route.getActiveLegIndexCorrected(&isCorrected);
+    int activeLeg = route.getActiveLegIndex();
 
     if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
@@ -1500,7 +1500,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(distToDestNm < maptypes::INVALID_DISTANCE_VALUE)
       {
         // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
-        html.row2(tr("To Destination:"), Unit::distNm(distToDestNm));
+        QString destinationText(tr("To Destination:"));
+
+        if(route.getActiveLeg() != nullptr && route.getActiveLeg()->isMissed())
+          destinationText = tr("To End of Missed Approach:");
+
+        html.row2(destinationText, Unit::distNm(distToDestNm));
 
         timeAndDate(userAircaft, html);
 

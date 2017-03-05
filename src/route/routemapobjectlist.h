@@ -60,17 +60,25 @@ public:
   int getNearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
 
   /* Get active index in the route leg vector or invalid value if this is an approach */
-  int getActiveRouteLeg() const;
+  int getActiveRouteLegIndex() const;
 
   /* Get active index in the approach leg vector or invalid value if this is an index to a route leg */
-  int getActiveApproachLeg() const;
+  int getActiveApproachLegIndex() const;
 
-  int getActiveLeg() const;
+  int getActiveLegIndex() const
+  {
+    return activeLeg;
+  }
 
-  /* Replaces the current leg with the initial fix if one follows between route and transition/approach.  */
-  int getActiveLegCorrected(bool *corrected = nullptr) const;
-  int getActiveRouteLegCorrected() const;
-  int getActiveApproachLegCorrected() const;
+  /* Get active leg or null if this is none */
+  const RouteMapObject *getActiveLeg() const;
+  const RouteMapObject *getActiveLegCorrected(bool *corrected = nullptr) const;
+
+  /* Corrected methods replace the current leg with the initial fix
+   * if one follows between route and transition/approach.  */
+  int getActiveLegIndexCorrected(bool *corrected = nullptr) const;
+  int getActiveRouteLegIndexCorrected() const;
+  int getActiveApproachLegIndexCorrected() const;
 
   /* Index of the first approach entry or size() if none */
   int getApproachStartIndex() const

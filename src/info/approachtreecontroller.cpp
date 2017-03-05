@@ -1181,7 +1181,7 @@ void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& 
 
   fillApproachTreeWidget();
 
-  highlightNextWaypoint(mainWindow->getRouteController()->getRouteApprMapObjects().getActiveApproachLegCorrected());
+  highlightNextWaypoint(mainWindow->getRouteController()->getRouteApprMapObjects().getActiveApproachLegIndexCorrected());
 
   emit approachSelected(approachSelectedLegs.ref);
 }

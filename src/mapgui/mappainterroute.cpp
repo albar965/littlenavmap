@@ -173,7 +173,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Get active route leg
-  int activeRouteLeg = routeApprMapObjects.getActiveRouteLeg();
+  int activeRouteLeg = routeApprMapObjects.getActiveRouteLegIndex();
 
   if(activeRouteLeg > 0 && activeRouteLeg < linestring.size())
   {
@@ -279,7 +279,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   drawTextLines.fill({Line(), false, false}, legs.size());
 
   // Get active approach leg
-  int activeLeg = routeMapObjects.getActiveApproachLeg();
+  int activeLeg = routeMapObjects.getActiveApproachLegIndex();
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold

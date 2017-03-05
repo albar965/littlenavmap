@@ -1294,8 +1294,8 @@ void RouteController::activateLeg(int index)
 {
   routeAppr.setActiveLeg(index);
   route.setActiveLeg(index);
-  highlightNextWaypoint(routeAppr.getActiveRouteLeg());
-  mainWindow->getApproachController()->highlightNextWaypoint(routeAppr.getActiveApproachLeg());
+  highlightNextWaypoint(routeAppr.getActiveRouteLegIndex());
+  mainWindow->getApproachController()->highlightNextWaypoint(routeAppr.getActiveApproachLegIndex());
   emit routeChanged(false);
 }
 
@@ -2306,14 +2306,14 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
     maptypes::PosCourse position(simulatorData.getUserAircraft().getPosition(),
                                  simulatorData.getUserAircraft().getTrackDegTrue());
 
-    int previousAppLeg = routeAppr.getActiveApproachLegCorrected();
+    int previousAppLeg = routeAppr.getActiveApproachLegIndexCorrected();
 
     routeAppr.updateActiveLegAndPos(position);
-    int apprLeg = routeAppr.getActiveApproachLegCorrected();
+    int apprLeg = routeAppr.getActiveApproachLegIndexCorrected();
 
-    int previousRouteLeg = route.getActiveRouteLegCorrected();
+    int previousRouteLeg = route.getActiveRouteLegIndexCorrected();
     route.updateActiveLegAndPos(position);
-    int routeLeg = route.getActiveRouteLegCorrected();
+    int routeLeg = route.getActiveRouteLegIndexCorrected();
 
     if(routeLeg != previousRouteLeg)
     {
