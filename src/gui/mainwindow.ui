@@ -564,13 +564,13 @@
              <item row="2" column="2">
               <widget class="QCheckBox" name="checkBoxAirportApprSearch">
                <property name="toolTip">
-                <string>Airports with approach procedures</string>
+                <string>Airports with procedures</string>
                </property>
                <property name="statusTip">
-                <string>Airports with approach procedures</string>
+                <string>Airports with procedures</string>
                </property>
                <property name="text">
-                <string>A&amp;pproach</string>
+                <string>&amp;Procedures</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -4061,7 +4061,7 @@
     <string>Set this as destionation for the flight plan</string>
    </property>
   </action>
-  <action name="actionRouteAdd">
+  <action name="actionRouteAddPos">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
@@ -4070,10 +4070,10 @@
     <string>Add %1 to Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Add airport, navaid or map position to flight plan</string>
+    <string>Add airport, navaid or map position to the nearest flight plan leg</string>
    </property>
    <property name="statusTip">
-    <string>Add airport, navaid or map position to flight plan</string>
+    <string>Add airport, navaid or map position to the nearest flight plan leg</string>
    </property>
   </action>
   <action name="actionRouteDeleteLeg">
@@ -5322,6 +5322,21 @@
    </property>
    <property name="statusTip">
     <string>Activate Flight Plan Leg</string>
+   </property>
+  </action>
+  <action name="actionRouteAppendPos">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Append %1 to Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Add airport, navaid or map position to the end of the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add airport, navaid or map position to the end of the flight plan</string>
    </property>
   </action>
  </widget>

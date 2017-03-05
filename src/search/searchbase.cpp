@@ -643,7 +643,7 @@ void SearchBase::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   atools::gui::ActionTextSaver saver({ui->actionSearchFilterIncluding, ui->actionSearchFilterExcluding,
                                       ui->actionRouteAirportDest, ui->actionRouteAirportStart,
-                                      ui->actionRouteAdd, ui->actionMapNavaidRange});
+                                      ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionMapNavaidRange});
   Q_UNUSED(saver);
 
   bool columnCanFilter = false;
@@ -683,8 +683,10 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   ui->actionMapNavaidRange->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB);
 
-  ui->actionRouteAdd->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
-                                 navType == maptypes::WAYPOINT || navType == maptypes::AIRPORT);
+  ui->actionRouteAddPos->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
+                                    navType == maptypes::WAYPOINT || navType == maptypes::AIRPORT);
+  ui->actionRouteAppendPos->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
+                                       navType == maptypes::WAYPOINT || navType == maptypes::AIRPORT);
 
   ui->actionRouteAirportDest->setEnabled(navType == maptypes::AIRPORT);
   ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
@@ -698,7 +700,8 @@ void SearchBase::contextMenu(const QPoint& pos)
   ui->actionSearchSetMark->setEnabled(index.isValid());
 
   ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
-  ui->actionRouteAdd->setText(tr("Add to Flight Plan"));
+  ui->actionRouteAddPos->setText(tr("Add to Flight Plan"));
+  ui->actionRouteAppendPos->setText(tr("Append to Flight Plan"));
   ui->actionRouteAirportStart->setText(tr("Set as Flight Plan Departure"));
   ui->actionRouteAirportDest->setText(tr("Set as Flight Plan Destination"));
 
@@ -730,7 +733,8 @@ void SearchBase::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteAirportDest);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteAdd);
+  menu.addAction(ui->actionRouteAddPos);
+  menu.addAction(ui->actionRouteAppendPos);
   menu.addSeparator();
 
   menu.addAction(ui->actionSearchTableCopy);
@@ -776,8 +780,10 @@ void SearchBase::contextMenu(const QPoint& pos)
     }
     else if(action == ui->actionMapHideRangeRings)
       mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
-    else if(action == ui->actionRouteAdd)
+    else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
+    else if(action == ui->actionRouteAppendPos)
+      emit routeAdd(id, atools::geo::EMPTY_POS, navType, maptypes::INVALID_INDEX_VALUE);
     else if(action == ui->actionRouteAirportStart)
     {
       maptypes::MapAirport ap;

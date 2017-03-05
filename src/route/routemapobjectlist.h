@@ -37,10 +37,6 @@ public:
 
   RouteMapObjectList& operator=(const RouteMapObjectList& other);
 
-  /* Get nearest leg or waypoint index, whatever is closer to the position.
-   * @return positive leg or negative point index */
-  int getNearestRouteLegOrPointIndex(const atools::geo::Pos& pos) const;
-
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const maptypes::PosCourse& pos);
   void updateActiveLegAndPos();
@@ -61,14 +57,18 @@ public:
   bool getRouteDistances(float *distFromStart, float *distToDest,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
 
+  int getNearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
+
   /* Get active index in the route leg vector or invalid value if this is an approach */
   int getActiveRouteLeg() const;
 
   /* Get active index in the approach leg vector or invalid value if this is an index to a route leg */
   int getActiveApproachLeg() const;
 
+  int getActiveLeg() const;
+
   /* Replaces the current leg with the initial fix if one follows between route and transition/approach.  */
-  int getActiveLegCorrected() const;
+  int getActiveLegCorrected(bool *corrected = nullptr) const;
   int getActiveRouteLegCorrected() const;
   int getActiveApproachLegCorrected() const;
 
@@ -219,9 +219,6 @@ private:
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos positionAtDistance(float distFromStartNm) const;
 
-  /* Get nearest waypoint index and distance in nautical miles to this point.  */
-  int nearestPointIndex(const atools::geo::Pos& pos, float& pointDistanceMeter) const;
-
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
   void nearestLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& routeIndex,
                        int& approachIndex) const;
@@ -230,6 +227,8 @@ private:
   void resetActive();
   int activeRouteLegInternal(int leg) const;
   int activeApproachLegInternal(int leg) const;
+  void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
+                        int& index) const;
 
   bool trueCourse = false;
 
@@ -245,6 +244,7 @@ private:
                                                            *  The route leg directing to this fix remains in the list. */
   atools::geo::LineDistance activeLegResult;
   maptypes::PosCourse activePos;
+
 };
 
 #endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H

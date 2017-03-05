@@ -1126,7 +1126,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
   atools::gui::ActionTextSaver textSaver({ui->actionMapMeasureDistance, ui->actionMapMeasureRhumbDistance,
                                           ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                          ui->actionShowInSearch, ui->actionRouteAdd,
+                                          ui->actionShowInSearch, ui->actionRouteAddPos, ui->actionRouteAppendPos,
                                           ui->actionMapShowInformation, ui->actionMapShowApproaches,
                                           ui->actionRouteDeleteWaypoint, ui->actionRouteAirportStart,
                                           ui->actionRouteAirportDest,
@@ -1154,7 +1154,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(ui->actionRouteAirportDest);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteAdd);
+  menu.addAction(ui->actionRouteAddPos);
+  menu.addAction(ui->actionRouteAppendPos);
   menu.addAction(ui->actionRouteDeleteWaypoint);
   menu.addAction(ui->actionMapEditUserWaypoint);
   menu.addSeparator();
@@ -1200,7 +1201,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapShowApproaches->setEnabled(false);
   ui->actionMapNavaidRange->setEnabled(false);
   ui->actionShowInSearch->setEnabled(false);
-  ui->actionRouteAdd->setEnabled(visibleOnMap);
+  ui->actionRouteAddPos->setEnabled(visibleOnMap);
+  ui->actionRouteAppendPos->setEnabled(visibleOnMap);
   ui->actionRouteAirportStart->setEnabled(false);
   ui->actionRouteAirportDest->setEnabled(false);
   ui->actionRouteDeleteWaypoint->setEnabled(false);
@@ -1366,8 +1368,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionShowInSearch->setEnabled(true);
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(searchText));
 
-    ui->actionRouteAdd->setEnabled(true);
-    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(addRouteText));
+    ui->actionRouteAddPos->setEnabled(true);
+    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(addRouteText));
+
+    ui->actionRouteAppendPos->setEnabled(true);
+    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(addRouteText));
 
     ui->actionMapShowInformation->setEnabled(true);
     ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().
@@ -1376,7 +1381,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
   {
     ui->actionShowInSearch->setText(ui->actionShowInSearch->text().arg(QString()));
-    ui->actionRouteAdd->setText(ui->actionRouteAdd->text().arg(tr("Position")));
+    ui->actionRouteAddPos->setText(ui->actionRouteAddPos->text().arg(tr("Position")));
+    ui->actionRouteAppendPos->setText(ui->actionRouteAppendPos->text().arg(tr("Position")));
     if(isAircraft)
     {
       ui->actionMapShowInformation->setEnabled(true);
@@ -1551,7 +1557,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       mainWindow->getRouteController()->routeDelete(routeIndex);
     else if(action == ui->actionMapEditUserWaypoint)
       mainWindow->getRouteController()->editUserWaypointName(routeIndex);
-    else if(action == ui->actionRouteAdd || action == ui->actionRouteAirportStart ||
+    else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos ||
+            action == ui->actionRouteAirportStart ||
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
       Pos position = pos;
@@ -1593,7 +1600,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
       if(action == ui->actionRouteAirportStart && parking != nullptr)
         emit routeSetParkingStart(*parking);
-      else if(action == ui->actionRouteAdd)
+      else if(action == ui->actionRouteAddPos || action == ui->actionRouteAppendPos)
       {
         if(parking != nullptr)
         {
@@ -1601,7 +1608,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           type = maptypes::USER;
           id = -1;
         }
-        emit routeAdd(id, position, type, -1 /* leg index */);
+
+        if(action == ui->actionRouteAddPos)
+          emit routeAdd(id, position, type, -1 /* leg index */);
+        else if(action == ui->actionRouteAppendPos)
+          emit routeAdd(id, position, type, maptypes::INVALID_INDEX_VALUE);
       }
       else if(action == ui->actionRouteAirportStart)
         emit routeSetStart(*airport);

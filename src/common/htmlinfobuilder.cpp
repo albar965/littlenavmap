@@ -1485,14 +1485,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
   if(!route.isEmpty() && userAircaft != nullptr && info)
   {
-    int activeLeg = route.getActiveLegCorrected();
+    // The corrected leg will point to an approach leg if we head to the start of a procedure
+    bool isCorrected = false;
+    int activeLegCorrected = route.getActiveLegCorrected(&isCorrected);
+    int activeLeg = route.getActiveLeg();
 
-    if(activeLeg != maptypes::INVALID_INDEX_VALUE &&
+    if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE &&
        route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
     {
       head(html, tr("Flight Plan Progress"));
       html.table();
 
+      // Route distances ===============================================================
       if(distToDestNm < maptypes::INVALID_DISTANCE_VALUE)
       {
         // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
@@ -1510,6 +1514,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
       }
 
+      // Top of descent  ===============================================================
       if(distFromStartNm < maptypes::INVALID_DISTANCE_VALUE)
       {
         float toTod = route.getTopOfDescentFromStart() - distFromStartNm;
@@ -1528,12 +1533,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       html.tableEnd();
 
-      bool nearestLegValid = activeLeg >= 0 && activeLeg < route.size();
-
+      // Next leg ====================================================
       QString apprText;
-      if(nearestLegValid)
+      if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE)
       {
-        const RouteMapObject& rmo = route.at(activeLeg);
+        const RouteMapObject& rmo = route.at(activeLegCorrected);
 
         if(rmo.isApproach())
           apprText = tr(" - Approach");
@@ -1546,13 +1550,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       head(html, tr("Next Waypoint") + apprText);
       html.table();
 
-      if(nearestLegValid)
+      if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE)
       {
-        const RouteMapObject& rmo = route.at(activeLeg);
-        const MapApproachLeg& leg = rmo.getApproachLeg();
+        // If approaching an initial fix use corrected version
+        const RouteMapObject& rmoCorrected = route.at(activeLegCorrected);
+
+        // For course and distance use not corrected leg
+        const RouteMapObject& rmo = activeLeg != maptypes::INVALID_INDEX_VALUE && isCorrected ?
+                                    route.at(activeLeg) :
+                                    rmoCorrected;
+
+        const MapApproachLeg& leg = rmoCorrected.getApproachLeg();
         bool routeTrueCourse = route.isTrueCourse();
 
-        if(rmo.isAnyApproach())
+        // Next leg - approach data ====================================================
+        if(rmoCorrected.isAnyApproach())
         {
           html.row2(tr("Leg Type:"), maptypes::approachLegTypeStr(leg.type));
 
@@ -1573,10 +1585,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Instructions:"), instructions.join(", "));
         }
 
-        if(!rmo.getIdent().isEmpty())
-          html.row2(tr("Name and Type:"), rmo.getIdent() +
-                    (rmo.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") + rmo.getMapObjectTypeName()));
+        // Next leg - waypoint data ====================================================
+        if(!rmoCorrected.getIdent().isEmpty())
+          html.row2(tr("Name and Type:"), rmoCorrected.getIdent() +
+                    (rmoCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
+                     rmoCorrected.getMapObjectTypeName()));
 
+        // Next leg - approach related navaid ====================================================
         if(!leg.recFixIdent.isEmpty())
         {
           if(leg.rho > 0.f)
@@ -1587,47 +1602,59 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
         }
 
-        if(rmo.isAnyApproach() && leg.altRestriction.isValid())
+        if(rmoCorrected.isAnyApproach() && leg.altRestriction.isValid())
           html.row2(tr("Restriction:"), maptypes::altRestrictionText(leg.altRestriction));
 
         if(nearestLegDistance < maptypes::INVALID_DISTANCE_VALUE)
         {
-
           QString timeStr;
           if(aircraft.getGroundSpeedKts() > 20.f)
             timeStr = tr(", ") + formatter::formatMinutesHoursLong(
               nearestLegDistance / aircraft.getGroundSpeedKts());
-          if(rmo.isRoute() || leg.isCircular())
+
+          // Not for arc legs
+          if(rmo.isRoute() || !leg.isCircular())
           {
-            float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(rmo.getPosition()) - rmo.getMagvar());
+            float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(
+                                          rmo.getPosition()) - rmo.getMagvar());
             html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
                       locale.toString(crs, 'f', 0) +
                       (routeTrueCourse ? tr("°T, ") : tr("°M, ")) + timeStr);
           }
           else
+            // Only distance and time for arc legs
             html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + ", " + timeStr);
         }
 
-        if(rmo.isRoute() || leg.isCircular())
-          html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumbMag(), 'f', 0) +
-                    (routeTrueCourse ? tr("°T") : tr("°M")));
+        // No cross track and course for holds
+        if(route.size() > 1)
+        {
+          // No course for arcs
+          if(rmo.isRoute() || !rmo.isCircular())
+            html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumbMag(), 'f', 0) +
+                      (routeTrueCourse ? tr("°T") : tr("°M")));
+
+          if(!rmo.isHold())
+          {
+            if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
+            {
+              QString crossDirection;
+              if(crossTrackDistance >= 0.1f)
+                crossDirection = tr("<b>►</b>");
+              else if(crossTrackDistance <= -0.1f)
+                crossDirection = tr("<b>◄</b>");
+
+              html.row2(tr("Cross Track Distance:"),
+                        Unit::distNm(std::abs(
+                                       crossTrackDistance)) + " " + crossDirection, atools::util::html::NO_ENTITIES);
+            }
+            else
+              html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
+          }
+        }
       }
       else
-        qWarning() << "Invalid route leg index" << activeLeg;
-
-      if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
-      {
-        QString crossDirection;
-        if(crossTrackDistance >= 0.1f)
-          crossDirection = tr("<b>►</b>");
-        else if(crossTrackDistance <= -0.1f)
-          crossDirection = tr("<b>◄</b>");
-
-        html.row2(tr("Cross Track Distance:"),
-                  Unit::distNm(std::abs(crossTrackDistance)) + " " + crossDirection, atools::util::html::NO_ENTITIES);
-      }
-      else
-        html.row2(tr("Cross Track Distance:"), tr("Not along Track"));
+        qWarning() << "Invalid route leg index" << activeLegCorrected;
 
       html.tableEnd();
     }

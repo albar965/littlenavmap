@@ -293,7 +293,9 @@ signals:
   void routeSetStart(maptypes::MapAirport ap);
   void routeSetDest(maptypes::MapAirport ap);
 
-  /* Add, replace or delete object from flight plan from context menu or drag and drop */
+  /* Add, replace or delete object from flight plan from context menu or drag and drop.
+   *  index = 0: prepend to route
+   *  index = size()-1: append to route */
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
 

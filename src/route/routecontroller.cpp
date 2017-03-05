@@ -1812,6 +1812,11 @@ void RouteController::routeAttachApproach(const maptypes::MapApproachLegs& legs)
       entryBuilder->buildFlightplanEntry(navaids, entry, true);
 
     int insertIndex = calculateInsertIndex(leg.line.getPos1(), -1);
+
+    // Do not add before departure or after destination
+    insertIndex = std::max(insertIndex, 1);
+    insertIndex = std::min(insertIndex, route.size() - 1);
+
     const RouteMapObject& insertRmo = route.at(insertIndex);
 
     // Add as navaid or custom point
@@ -1889,10 +1894,10 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
   Flightplan& flightplan = route.getFlightplan();
 
   int insertIndex = -1;
-  if(legIndex != -1)
-    // Use given leg index
-    insertIndex = legIndex + 1;
-  else
+  if(legIndex == maptypes::INVALID_INDEX_VALUE)
+    // Append
+    insertIndex = route.size();
+  else if(legIndex == -1)
   {
     if(flightplan.isEmpty())
       // First is  departure
@@ -1903,19 +1908,32 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
     else
     {
       // No leg index given - search for nearest
-      int legOrPt = route.getNearestRouteLegOrPointIndex(pos);
-      qDebug() << "nearestLeg" << legOrPt;
+      atools::geo::LineDistance result;
+      int leg = route.getNearestLegResult(pos, result);
 
-      // Positive values are legs - negative are points
-      insertIndex = atools::absInt(legOrPt);
-      if(legOrPt == -1 /* First point - add before departure */)
-        // Add at the beginning
-        insertIndex = 0;
+      qDebug() << "nearestLeg" << result;
+
+      switch(result.status)
+      {
+        case atools::geo::INVALID:
+          insertIndex = 0;
+          break;
+        case atools::geo::ALONG_TRACK:
+          insertIndex = leg;
+          break;
+        case atools::geo::BEFORE_START:
+          insertIndex = leg - 1;
+          break;
+        case atools::geo::AFTER_END:
+          insertIndex = leg + 1;
+          break;
+      }
     }
   }
+  else
+    // Use given leg index
+    insertIndex = legIndex + 1;
 
-  insertIndex = std::max(insertIndex, 0);
-  insertIndex = std::min(insertIndex, route.size());
   qDebug() << "insertIndex" << insertIndex << "pos" << pos;
 
   return insertIndex;
