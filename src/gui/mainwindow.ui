@@ -5339,6 +5339,20 @@
     <string>Add airport, navaid or map position to the end of the flight plan</string>
    </property>
   </action>
+  <action name="actionSearchTableSelectNothing">
+   <property name="text">
+    <string>Clear &amp;Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="statusTip">
+    <string>Unselect all entries in the table</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+N</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

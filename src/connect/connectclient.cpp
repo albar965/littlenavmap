@@ -279,6 +279,7 @@ void ConnectClient::autoConnectToggled(bool state)
         qDebug() << "Stopping reconnect done";
       }
     }
+    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Autoconnect switched off."));
   }
 }
 
@@ -386,7 +387,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError error)
 
 void ConnectClient::closeSocket(bool allowRestart)
 {
-  // qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO;
 
   QAbstractSocket::SocketError error = QAbstractSocket::SocketError::UnknownSocketError;
   QString peer("Unknown"), errorStr("No error");

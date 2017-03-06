@@ -125,6 +125,7 @@ public:
 
   /* Select all rows in view */
   void selectAllRows();
+  void selectNoRows();
 
   /* Get the database id for the row at the index or -1 if the index is not valid */
   int getIdForRow(const QModelIndex& index);

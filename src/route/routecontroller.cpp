@@ -1169,119 +1169,144 @@ void RouteController::tableContextMenu(const QPoint& pos)
   Q_UNUSED(saver);
 
   QModelIndex index = view->indexAt(pos);
+  const RouteMapObject *routeMapObject = nullptr;
   if(index.isValid())
+    routeMapObject = &route.at(index.row());
+
+  // Menu above a row
+
+  updateMoveAndDeleteActions();
+
+  ui->actionSearchTableCopy->setEnabled(index.isValid());
+
+  ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
+                                          !mainWindow->getMapWidget()->getRangeRings().isEmpty());
+
+  if(routeMapObject != nullptr)
   {
-    // Menu above a row
-    const RouteMapObject& routeMapObject = route.at(index.row());
-
-    updateMoveAndDeleteActions();
-
-    ui->actionSearchTableCopy->setEnabled(index.isValid());
-
+    ui->actionRouteShowInformation->setEnabled(routeMapObject->isValid() &&
+                                               routeMapObject->getMapObjectType() != maptypes::USER &&
+                                               routeMapObject->getMapObjectType() != maptypes::INVALID);
+    ui->actionRouteShowApproaches->setEnabled(routeMapObject->isValid() &&
+                                              routeMapObject->getMapObjectType() == maptypes::AIRPORT &&
+                                              (routeMapObject->getAirport().flags & maptypes::AP_APPROACH));
+    ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
-    ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                            !mainWindow->getMapWidget()->getRangeRings().isEmpty());
+    ui->actionSearchSetMark->setEnabled(true);
 
-    ui->actionRouteShowInformation->setEnabled(routeMapObject.isValid() &&
-                                               routeMapObject.getMapObjectType() != maptypes::USER &&
-                                               routeMapObject.getMapObjectType() != maptypes::INVALID);
-    ui->actionRouteShowApproaches->setEnabled(routeMapObject.isValid() &&
-                                              routeMapObject.getMapObjectType() == maptypes::AIRPORT &&
-                                              (routeMapObject.getAirport().flags & maptypes::AP_APPROACH));
-
+#ifdef DEBUG_MOVING_AIRPLANE
+    ui->actionRouteActivateLeg->setEnabled(routeMapObject->isValid() &&
+                                           index.row() <= routeAppr.getApproachStartIndex() &&
+                                           index.row() < routeAppr.getApproachStartIndex());
+#else
     ui->actionRouteActivateLeg->setEnabled(routeMapObject.isValid() &&
                                            index.row() <= routeAppr.getApproachStartIndex() &&
                                            mainWindow->isConnected() &&
                                            index.row() < routeAppr.getApproachStartIndex());
+#endif
+  }
+  else
+  {
+    ui->actionRouteShowInformation->setEnabled(false);
+    ui->actionRouteShowApproaches->setEnabled(false);
+    ui->actionRouteActivateLeg->setEnabled(false);
+    ui->actionRouteShowOnMap->setEnabled(false);
+    ui->actionMapRangeRings->setEnabled(false);
+    ui->actionSearchSetMark->setEnabled(false);
+  }
 
-    ui->actionRouteShowOnMap->setEnabled(true);
+  ui->actionMapNavaidRange->setEnabled(false);
 
-    ui->actionMapNavaidRange->setEnabled(false);
-    ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
+  ui->actionSearchTableSelectNothing->setEnabled(view->selectionModel()->hasSelection());
 
-    ui->actionMapEditUserWaypoint->setEnabled(routeMapObject.getMapObjectType() == maptypes::USER);
-    ui->actionMapEditUserWaypoint->setText(tr("Edit Name of User Waypoint"));
+  ui->actionMapNavaidRange->setText(tr("Show Navaid Range"));
 
-    QList<int> selectedRouteMapObjectIndexes;
-    getSelectedRouteMapObjects(selectedRouteMapObjectIndexes);
-    // If there are any radio navaids in the selected list enable range menu item
-    for(int idx : selectedRouteMapObjectIndexes)
+  ui->actionMapEditUserWaypoint->setEnabled(routeMapObject != nullptr &&
+                                            routeMapObject->getMapObjectType() == maptypes::USER);
+  ui->actionMapEditUserWaypoint->setText(tr("Edit Name of User Waypoint"));
+
+  QList<int> selectedRouteMapObjectIndexes;
+  getSelectedRouteMapObjects(selectedRouteMapObjectIndexes);
+  // If there are any radio navaids in the selected list enable range menu item
+  for(int idx : selectedRouteMapObjectIndexes)
+  {
+    const RouteMapObject& rmo = route.at(idx);
+    if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
     {
-      const RouteMapObject& rmo = route.at(idx);
-      if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
+      ui->actionMapNavaidRange->setEnabled(true);
+      break;
+    }
+  }
+
+  QMenu menu;
+  menu.addAction(ui->actionRouteShowInformation);
+  menu.addAction(ui->actionRouteShowApproaches);
+  menu.addAction(ui->actionRouteShowOnMap);
+  menu.addAction(ui->actionRouteActivateLeg);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteLegUp);
+  menu.addAction(ui->actionRouteLegDown);
+  menu.addAction(ui->actionRouteDeleteLeg);
+  menu.addAction(ui->actionMapEditUserWaypoint);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionMapRangeRings);
+  menu.addAction(ui->actionMapNavaidRange);
+  menu.addAction(ui->actionMapHideRangeRings);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchTableCopy);
+  menu.addAction(ui->actionSearchTableSelectAll);
+  menu.addAction(ui->actionSearchTableSelectNothing);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchResetView);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionSearchSetMark);
+
+  QAction *action = menu.exec(menuPos);
+  if(action != nullptr)
+  {
+    if(action == ui->actionSearchResetView)
+    {
+      // Reorder columns to match model order
+      QHeaderView *header = view->horizontalHeader();
+      for(int i = 0; i < header->count(); i++)
+        header->moveSection(header->visualIndex(i), i);
+
+      view->resizeColumnsToContents();
+      mainWindow->setStatusMessage(tr("Table view reset to defaults."));
+    }
+    else if(action == ui->actionSearchTableSelectAll)
+      view->selectAll();
+    else if(action == ui->actionSearchTableSelectNothing)
+      view->clearSelection();
+    else if(action == ui->actionSearchSetMark)
+      emit changeMark(routeMapObject->getPosition());
+    else if(action == ui->actionMapRangeRings)
+      mainWindow->getMapWidget()->addRangeRing(routeMapObject->getPosition());
+    else if(action == ui->actionMapNavaidRange)
+    {
+      // Show range rings for all radio navaids
+      for(int idx : selectedRouteMapObjectIndexes)
       {
-        ui->actionMapNavaidRange->setEnabled(true);
-        break;
+        const RouteMapObject& rmo = route.at(idx);
+        if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
+          mainWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
+                                                      rmo.getIdent(), rmo.getFrequency(),
+                                                      rmo.getRange());
       }
     }
+    else if(action == ui->actionMapHideRangeRings)
+      mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
+    else if(action == ui->actionMapEditUserWaypoint)
+      editUserWaypointName(index.row());
+    else if(action == ui->actionRouteActivateLeg)
+      activateLeg(index.row());
 
-    QMenu menu;
-    menu.addAction(ui->actionRouteShowInformation);
-    menu.addAction(ui->actionRouteShowApproaches);
-    menu.addAction(ui->actionRouteShowOnMap);
-    menu.addAction(ui->actionRouteActivateLeg);
-    menu.addSeparator();
-
-    menu.addAction(ui->actionRouteLegUp);
-    menu.addAction(ui->actionRouteLegDown);
-    menu.addAction(ui->actionRouteDeleteLeg);
-    menu.addAction(ui->actionMapEditUserWaypoint);
-    menu.addSeparator();
-
-    menu.addAction(ui->actionMapRangeRings);
-    menu.addAction(ui->actionMapNavaidRange);
-    menu.addAction(ui->actionMapHideRangeRings);
-    menu.addSeparator();
-
-    menu.addAction(ui->actionSearchTableCopy);
-    menu.addAction(ui->actionSearchTableSelectAll);
-    menu.addSeparator();
-
-    menu.addAction(ui->actionSearchResetView);
-    menu.addSeparator();
-
-    menu.addAction(ui->actionSearchSetMark);
-
-    QAction *action = menu.exec(menuPos);
-    if(action != nullptr)
-    {
-      if(action == ui->actionSearchResetView)
-      {
-        // Reorder columns to match model order
-        QHeaderView *header = view->horizontalHeader();
-        for(int i = 0; i < header->count(); i++)
-          header->moveSection(header->visualIndex(i), i);
-
-        view->resizeColumnsToContents();
-        mainWindow->setStatusMessage(tr("Table view reset to defaults."));
-      }
-      else if(action == ui->actionSearchTableSelectAll)
-        view->selectAll();
-      else if(action == ui->actionSearchSetMark)
-        emit changeMark(routeMapObject.getPosition());
-      else if(action == ui->actionMapRangeRings)
-        mainWindow->getMapWidget()->addRangeRing(routeMapObject.getPosition());
-      else if(action == ui->actionMapNavaidRange)
-      {
-        // Show range rings for all radio navaids
-        for(int idx : selectedRouteMapObjectIndexes)
-        {
-          const RouteMapObject& rmo = route.at(idx);
-          if(rmo.getMapObjectType() == maptypes::VOR || rmo.getMapObjectType() == maptypes::NDB)
-            mainWindow->getMapWidget()->addNavRangeRing(rmo.getPosition(), rmo.getMapObjectType(),
-                                                        rmo.getIdent(), rmo.getFrequency(),
-                                                        rmo.getRange());
-        }
-      }
-      else if(action == ui->actionMapHideRangeRings)
-        mainWindow->getMapWidget()->clearRangeRingsAndDistanceMarkers();
-      else if(action == ui->actionMapEditUserWaypoint)
-        editUserWaypointName(index.row());
-      else if(action == ui->actionRouteActivateLeg)
-        activateLeg(index.row());
-
-      // Other actions emit signals directly
-    }
+    // Other actions emit signals directly
   }
 }
 

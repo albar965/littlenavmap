@@ -266,6 +266,12 @@ void SqlController::selectAllRows()
   view->selectAll();
 }
 
+void SqlController::selectNoRows()
+{
+  Q_ASSERT(view->selectionModel() != nullptr);
+  view->clearSelection();
+}
+
 const QItemSelection SqlController::getSelection() const
 {
   if(view->selectionModel() != nullptr)

@@ -707,6 +707,8 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
+  ui->actionSearchTableSelectNothing->setEnabled(
+    controller->getTotalRowCount() > 0 && view->selectionModel()->hasSelection());
 
   // Build the menu
   QMenu menu;
@@ -739,6 +741,7 @@ void SearchBase::contextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionSearchTableCopy);
   menu.addAction(ui->actionSearchTableSelectAll);
+  menu.addAction(ui->actionSearchTableSelectNothing);
   menu.addSeparator();
 
   menu.addAction(ui->actionSearchResetView);
@@ -761,6 +764,8 @@ void SearchBase::contextMenu(const QPoint& pos)
       controller->filterExcluding(index);
     else if(action == ui->actionSearchTableSelectAll)
       controller->selectAllRows();
+    else if(action == ui->actionSearchTableSelectNothing)
+      controller->selectNoRows();
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(controller->getGeoPos(index));
     else if(action == ui->actionMapRangeRings)

@@ -629,7 +629,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
 
   ui->actionInfoApproachExpandAll->setDisabled(approachSelectedMode);
   ui->actionInfoApproachCollapseAll->setDisabled(approachSelectedMode);
-  ui->actionInfoApproachClear->setDisabled(treeWidget->selectedItems().isEmpty() || approachSelectedMode);
+  ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachUnselect->setDisabled(!approachSelectedMode);
   ui->actionInfoApproachSelect->setDisabled(item == nullptr || approachSelectedMode);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
@@ -731,7 +731,8 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   {
     treeWidget->clearSelection();
     emit approachLegSelected(maptypes::MapApproachRef());
-    emit approachSelected(maptypes::MapApproachRef());
+    if(!approachSelectedMode)
+      emit approachSelected(maptypes::MapApproachRef());
   }
   else if(action == ui->actionInfoApproachSelect)
     // Show only legs of currently selected approach and transition
