@@ -2320,7 +2320,12 @@ void RouteController::updateTableModel()
 
 void RouteController::disconnectedFromSimulator()
 {
+  qDebug() << Q_FUNC_INFO;
+
   highlightNextWaypoint(-1);
+  route.resetActive();
+  routeAppr.resetActive();
+  emit routeChanged(false);
 }
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)

@@ -18,6 +18,15 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
+/* Define to skip caching of approaches when loading */
+// #define DEBUG_APPROACH_NO_CACHE
+
+/* Paint additional information useful for debugging for approaches */
+// #define DEBUG_APPROACH_PAINT
+
+/* Use Shift+Ctrl-Mousemove to simulate an aircraft */
+// #define DEBUG_MOVING_AIRPLANE
+
 #include "geo/pos.h"
 
 const atools::geo::Pos MAG_NORTH_POLE_2007 = atools::geo::Pos(-120.72f, 83.95f, 0.f);

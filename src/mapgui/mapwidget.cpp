@@ -53,8 +53,6 @@
 #include <marble/MarbleModel.h>
 #include <marble/AbstractFloatItem.h>
 
-#define DEBUG_MOVING_AIRPLANE
-
 // Default zoom distance if start position was not set (usually first start after installation */
 const int DEFAULT_MAP_DISTANCE = 7000;
 
@@ -741,6 +739,8 @@ void MapWidget::changeRouteHighlights(const QList<int>& routeHighlight)
 
 void MapWidget::routeChanged(bool geometryChanged)
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(geometryChanged)
   {
     cancelDragAll();

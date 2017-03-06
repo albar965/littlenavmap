@@ -111,7 +111,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
     if((showAircraft || showAircraftTrack))
     {
-      if(!rmoList.isPassedLastLeg())
+      if(!rmoList.isPassedLastLeg() && !rmoList.isActiveMissed())
       {
         simData = simulatorData;
         if(rmoList.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
@@ -955,6 +955,9 @@ void ProfileWidget::updateLabel()
   {
     if(routeController->getRouteApprMapObjects().getRouteDistances(&distFromStartNm, &distToDestNm))
     {
+      if(routeController->getRouteApprMapObjects().isActiveMissed())
+        distToDestNm = 0.f;
+
       float toTod = routeController->getRouteApprMapObjects().getTopOfDescentFromStart() - distFromStartNm;
 
       fixedLabelText = tr("<b>To Destination %1, to Top of Descent %2.</b>&nbsp;&nbsp;").

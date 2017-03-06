@@ -32,8 +32,6 @@
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
-// #define DEBUG_APPROACH_PAINT
-
 using namespace Marble;
 using namespace atools::geo;
 using maptypes::MapApproachLeg;

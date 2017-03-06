@@ -175,18 +175,23 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 
   positions.clear();
 
-  // if(leg.waypoint.isValid())
-  // positions.append(leg.waypoint.position);
-  // if(leg.vor.isValid())
-  // positions.append(leg.vor.position);
-  // if(leg.ndb.isValid())
-  // positions.append(leg.ndb.position);
-  // if(leg.ils.isValid())
-  // positions.append(leg.ils.position);
-  // if(leg.runwayEnd.isValid())
-  // positions.append(leg.runwayEnd.position);
-  // if(leg.userpoint.isValid())
-  // positions.append(leg.userpoint.position);
+  if(leg.recFixPos.isValid())
+  {
+    int ellipseSize = size / 2;
+
+    int x, y;
+    if(wToS(leg.recFixPos, x, y))
+    {
+      // Draw recommended fix with a thin small circle
+      if(!context->drawFast)
+      {
+        painter->setPen(QPen(mapcolors::highlightBackColor, size / 5 + 2));
+        painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+        painter->setPen(QPen(mapcolors::highlightApproachColor, size / 5));
+      }
+      painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
+    }
+  }
 
   if(leg.line.isValid())
   {

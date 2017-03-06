@@ -832,14 +832,18 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simulatorDataReceived);
 
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
+          &RouteController::disconnectedFromSimulator);
+
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, approachController,
+          &ApproachTreeController::disconnectedFromSimulator);
+
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
-          &RouteController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, infoController, &InfoController::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController,
@@ -1686,7 +1690,8 @@ void MainWindow::mainWindowShown()
 /* Enable or disable actions */
 void MainWindow::updateActionStates()
 {
-  qDebug() << "Updating action states";
+  qDebug() << Q_FUNC_INFO;
+
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());

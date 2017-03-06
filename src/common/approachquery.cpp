@@ -19,11 +19,10 @@
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 #include "common/unit.h"
+#include "common/constants.h"
 #include "geo/line.h"
 
 #include "sql/sqlquery.h"
-
-// #define DEBUG_NO_CACHE
 
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
@@ -66,7 +65,7 @@ const maptypes::MapApproachLegs *ApproachQuery::getTransitionLegs(const maptypes
 const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::MapAirport& airport, int approachId,
                                                               int legId)
 {
-#ifndef DEBUG_NO_CACHE
+#ifndef DEBUG_APPROACH_NO_CACHE
   if(approachLegIndex.contains(legId))
   {
     // Already in index
@@ -92,7 +91,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::Ma
 
 const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::MapAirport& airport, int legId)
 {
-#ifndef DEBUG_NO_CACHE
+#ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionLegIndex.contains(legId))
   {
     // Already in index
@@ -334,7 +333,7 @@ void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
 
 maptypes::MapApproachLegs *ApproachQuery::fetchApproachLegs(const maptypes::MapAirport& airport, int approachId)
 {
-#ifndef DEBUG_NO_CACHE
+#ifndef DEBUG_APPROACH_NO_CACHE
   if(approachCache.contains(approachId))
     return approachCache.object(approachId);
   else
@@ -365,7 +364,7 @@ maptypes::MapApproachLegs *ApproachQuery::fetchApproachLegs(const maptypes::MapA
 maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::MapAirport& airport,
                                                               int approachId, int transitionId)
 {
-#ifndef DEBUG_NO_CACHE
+#ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionCache.contains(transitionId))
     return transitionCache.object(transitionId);
   else
@@ -468,12 +467,16 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
   // Prepare all leg coordinates
   processLegs(legs);
 
+  // Add artificial legs (not in the database) that end at the runway
   processFinalRunwayLegs(airport, legs);
-  // Calculate intercept terminators
 
+  // Calculate intercept terminators
   processCourseInterceptLegs(legs);
 
   processLegsDistanceAndCourse(legs);
+
+  // Correct overlapping conflicting altitude restrictions
+  processLegsFixRestrictions(legs);
 
   updateBoundingRectangle(legs);
 
@@ -524,6 +527,21 @@ void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, 
   }
 }
 
+void ApproachQuery::processLegsFixRestrictions(maptypes::MapApproachLegs& legs)
+{
+  for(int i = 1; i < legs.size(); i++)
+  {
+    maptypes::MapApproachLeg& leg = legs[i];
+    maptypes::MapApproachLeg& prevLeg = legs[i - 1];
+
+    if(legs.isTransition(i - 1) && legs.isApproach(i) && leg.type == maptypes::INITIAL_FIX &&
+       atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1))
+      // Found the connection between transition and approach with same altitudes
+      // Use restriction of the initial fix
+      prevLeg.altRestriction.descriptor = leg.altRestriction.descriptor;
+  }
+}
+
 void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs)
 {
   legs.transitionDistance += 0.f;
@@ -533,7 +551,7 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
   for(int i = 0; i < legs.size(); i++)
   {
     maptypes::MapApproachLeg& leg = legs[i];
-    maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    const maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
 
     if(!leg.line.isValid())
@@ -660,7 +678,7 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
   {
     Pos curPos;
     maptypes::MapApproachLeg& leg = legs[i];
-    maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    const maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
 
     // ===========================================================

@@ -74,6 +74,8 @@ public:
   const RouteMapObject *getActiveLeg() const;
   const RouteMapObject *getActiveLegCorrected(bool *corrected = nullptr) const;
 
+  bool isActiveMissed() const;
+
   /* Corrected methods replace the current leg with the initial fix
    * if one follows between route and transition/approach.  */
   int getActiveLegIndexCorrected(bool *corrected = nullptr) const;
@@ -207,6 +209,7 @@ public:
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
+  void resetActive();
 
   bool isTrueCourse() const
   {
@@ -232,7 +235,6 @@ private:
                        int& approachIndex) const;
   void copy(const RouteMapObjectList& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
-  void resetActive();
   int activeRouteLegInternal(int leg) const;
   int activeApproachLegInternal(int leg) const;
   void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,

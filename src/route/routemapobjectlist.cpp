@@ -62,6 +62,7 @@ void RouteMapObjectList::resetActive()
                                                                     maptypes::INVALID_DISTANCE_VALUE;
   activeLegResult.status = atools::geo::INVALID;
   activePos = maptypes::PosCourse();
+  activeLeg = maptypes::INVALID_INDEX_VALUE;
 }
 
 void RouteMapObjectList::copy(const RouteMapObjectList& other)
@@ -113,7 +114,7 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 {
   if(isEmpty() || !pos.isValid())
   {
-    activeLeg = maptypes::INVALID_INDEX_VALUE;
+    resetActive();
     return;
   }
 
@@ -275,8 +276,10 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
 
     float distToCur = 0.f;
 
+    bool activeIsMissed = at(activeLeg).isMissed();
+
     // Ignore missed approach legs until the active is one
-    if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
+    if(!at(routeIndex).isMissed() || activeIsMissed)
     {
       if(geometryLeg != nullptr)
       {
@@ -297,7 +300,7 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
       *distFromStart = 0.f;
       for(int i = 0; i <= routeIndex; i++)
       {
-        if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
+        if(!at(i).isMissed() || activeIsMissed)
           *distFromStart += at(i).getDistanceTo();
         else
           break;
@@ -311,7 +314,7 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
       *distToDest = 0.f;
       for(int i = routeIndex + 1; i < size(); i++)
       {
-        if(!at(routeIndex).isMissed() || at(activeLeg).isMissed())
+        if(!at(i).isMissed() || activeIsMissed)
           *distToDest += at(i).getDistanceTo();
       }
       *distToDest += distToCur;
@@ -690,6 +693,15 @@ const RouteMapObject *RouteMapObjectList::getActiveLegCorrected(bool *corrected)
     return &at(idx);
   else
     return nullptr;
+}
+
+bool RouteMapObjectList::isActiveMissed() const
+{
+  const RouteMapObject *leg = getActiveLeg();
+  if(leg != nullptr)
+    return leg->isMissed();
+  else
+    return false;
 }
 
 int RouteMapObjectList::getActiveRouteLegIndexCorrected() const

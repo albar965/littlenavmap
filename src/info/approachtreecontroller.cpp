@@ -154,6 +154,13 @@ void ApproachTreeController::postDatabaseLoad()
   // Nothing to do here - keep the view clean after switching
 }
 
+void ApproachTreeController::disconnectedFromSimulator()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  highlightNextWaypoint(-1);
+}
+
 void ApproachTreeController::highlightNextWaypoint(int leg)
 {
   if(approachSelectedMode)
@@ -635,8 +642,13 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
   const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteApprMapObjects();
+
+#ifdef DEBUG_MOVING_AIRPLANE
+  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || !rmos.isConnectedToApproach());
+#else
   ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() ||
                                                  !rmos.isConnectedToApproach() || !mainWindow->isConnected());
+#endif
 
   if(approachSelectedMode)
     ui->actionInfoApproachAttach->setDisabled(mainWindow->getRouteController()->isFlightplanEmpty());

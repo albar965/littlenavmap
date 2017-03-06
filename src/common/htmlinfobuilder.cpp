@@ -1502,7 +1502,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // html.row2("Distance from Start:", locale.toString(distFromStartNm, 'f', 0) + tr(" nm"));
         QString destinationText(tr("To Destination:"));
 
-        if(route.getActiveLeg() != nullptr && route.getActiveLeg()->isMissed())
+        if(route.isActiveMissed())
           destinationText = tr("To End of Missed Approach:");
 
         html.row2(destinationText, Unit::distNm(distToDestNm));

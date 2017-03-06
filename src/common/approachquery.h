@@ -76,6 +76,10 @@ private:
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
   void processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
 
+  /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
+   * initial fix having "2000" */
+  void processLegsFixRestrictions(maptypes::MapApproachLegs& legs);
+
   /* Assign magnetic variation from the navaids */
   void updateMagvar(maptypes::MapApproachLegs& legs);
   void updateBoundingRectangle(maptypes::MapApproachLegs& legs);
