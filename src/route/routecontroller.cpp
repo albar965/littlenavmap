@@ -1199,7 +1199,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
                                            index.row() <= routeAppr.getApproachStartIndex() &&
                                            index.row() < routeAppr.getApproachStartIndex());
 #else
-    ui->actionRouteActivateLeg->setEnabled(routeMapObject.isValid() &&
+    ui->actionRouteActivateLeg->setEnabled(routeMapObject->isValid() &&
                                            index.row() <= routeAppr.getApproachStartIndex() &&
                                            mainWindow->isConnected() &&
                                            index.row() < routeAppr.getApproachStartIndex());
