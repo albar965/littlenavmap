@@ -132,10 +132,13 @@ void ApproachTreeController::optionsChanged()
 
 void ApproachTreeController::preDatabaseLoad()
 {
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(approachSelectedMode)
+    WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).save(ui->treeWidgetApproachInfo);
+
+  // Clear display on map
   emit approachSelected(maptypes::MapApproachRef());
   emit approachLegSelected(maptypes::MapApproachRef());
-
-  Ui::MainWindow *ui = mainWindow->getUi();
 
   ui->textBrowserApproachInfo->clear();
   treeWidget->clear();
@@ -151,7 +154,10 @@ void ApproachTreeController::preDatabaseLoad()
 
 void ApproachTreeController::postDatabaseLoad()
 {
-  // Nothing to do here - keep the view clean after switching
+  updateTreeHeader();
+
+  Ui::MainWindow *ui = mainWindow->getUi();
+  WidgetState(lnm::APPROACHTREE_WIDGET).restore(ui->treeWidgetApproachInfo);
 }
 
 void ApproachTreeController::disconnectedFromSimulator()
@@ -1202,7 +1208,6 @@ void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& 
 void ApproachTreeController::disableSelectedMode()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-
   if(approachSelectedMode)
     WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).save(ui->treeWidgetApproachInfo);
 
