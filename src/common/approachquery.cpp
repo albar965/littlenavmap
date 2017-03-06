@@ -535,7 +535,8 @@ void ApproachQuery::processLegsFixRestrictions(maptypes::MapApproachLegs& legs)
     maptypes::MapApproachLeg& prevLeg = legs[i - 1];
 
     if(legs.isTransition(i - 1) && legs.isApproach(i) && leg.type == maptypes::INITIAL_FIX &&
-       atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1))
+       atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1) &&
+       leg.fixIdent == prevLeg.fixIdent)
       // Found the connection between transition and approach with same altitudes
       // Use restriction of the initial fix
       prevLeg.altRestriction.descriptor = leg.altRestriction.descriptor;
