@@ -110,6 +110,13 @@ void RouteMapObjectList::updateActiveLegAndPos()
   updateActiveLegAndPos(activePos);
 }
 
+/* Compare crosstrack distance fuzzy */
+bool RouteMapObjectList::isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2,
+                                   float epsilon)
+{
+  return std::abs(dist1.distance) < std::abs(dist2.distance) + epsilon;
+}
+
 void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
 {
   if(isEmpty() || !pos.isValid())
@@ -214,11 +221,17 @@ void RouteMapObjectList::updateActiveLegAndPos(const maptypes::PosCourse& pos)
         if(std::abs(nextLegResult.distance) < nmToMeter(0.5f))
           switchToNextLeg = true;
       }
+      else if(at(activeLeg).getApproachLegType() == maptypes::PROCEDURE_TURN)
+      {
+        // Ignore the after end indication for current leg for procedure turns since turn can happen earlier
+        if(isSmaller(nextLegResult, activeLegResult, 100.f /* meter */) && courseDiff < 45.f)
+          switchToNextLeg = true;
+      }
       else
       {
         // Check if we can advance to the next leg - if at end of current and distance to next is smaller and course similar
         if(activeLegResult.status == atools::geo::AFTER_END ||
-           (std::abs(nextLegResult.distance) < std::abs(activeLegResult.distance) && courseDiff < 90.f))
+           (isSmaller(nextLegResult, activeLegResult, 10.f /* meter */) && courseDiff < 90.f))
           switchToNextLeg = true;
       }
     }
@@ -278,7 +291,7 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
 
     bool activeIsMissed = at(activeLeg).isMissed();
 
-    // Ignore missed approach legs until the active is one
+    // Ignore missed approach legs until the active is a missedd approach leg
     if(!at(routeIndex).isMissed() || activeIsMissed)
     {
       if(geometryLeg != nullptr)
@@ -294,7 +307,8 @@ bool RouteMapObjectList::getRouteDistances(float *distFromStart, float *distToDe
     if(nextLegDistance != nullptr)
       *nextLegDistance = distToCur;
 
-    // Sum up all distances along the legs except missed approaches
+    // Sum up all distances along the legs
+    // Ignore missed approach legs until the active is a missedd approach leg
     if(distFromStart != nullptr)
     {
       *distFromStart = 0.f;

@@ -25,7 +25,8 @@
 class CoordinateConverter;
 
 /*
- * Aggregates the flight plan and is a list of all route map objects.
+ * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
+ * about the active route leg and current aircraft position.
  */
 class RouteMapObjectList :
   private QList<RouteMapObject>
@@ -239,6 +240,7 @@ private:
   int activeApproachLegInternal(int leg) const;
   void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                         int& index) const;
+  bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
 
   bool trueCourse = false;
 
