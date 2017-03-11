@@ -888,6 +888,8 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   filled |= types & maptypes::VOR && !vors.isEmpty();
   filled |= types & maptypes::NDB && !ndbs.isEmpty();
   filled |= types & maptypes::AIRWAY && !airways.isEmpty();
+  filled |= types & maptypes::RUNWAYEND && !runwayEnds.isEmpty();
+  filled |= types & maptypes::ILS && !ils.isEmpty();
   filled |= types & maptypes::USER && !userPoints.isEmpty();
   return !filled;
 }

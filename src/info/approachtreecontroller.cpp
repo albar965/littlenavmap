@@ -259,6 +259,7 @@ void ApproachTreeController::fillApproachInformation(const maptypes::MapAirport&
 
 void ApproachTreeController::fillApproachTreeWidget()
 {
+  treeWidget->blockSignals(true);
   treeWidget->clear();
   itemIndex.clear();
   itemLoadedIndex.clear();
@@ -364,6 +365,8 @@ void ApproachTreeController::fillApproachTreeWidget()
       item->setFirstColumnSpanned(true);
     }
   }
+  treeWidget->blockSignals(false);
+
 }
 
 void ApproachTreeController::saveState()
@@ -1003,8 +1006,8 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
 
 void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproachLeg& leg)
 {
-  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-                 /* ||   (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())*/;
+  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid()) ||
+                 (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid());
 
   for(int i = 0; i < item->columnCount(); i++)
   {
@@ -1101,11 +1104,11 @@ QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
     remarks.append(leg.remarks);
 
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-    remarks.append(tr("Data error: Fix %1/%2 not found").
-                   arg(leg.fixIdent).arg(leg.fixRegion));
+    remarks.append(tr("Data error: Fix %1/%2 type %3 not found").
+                   arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
-    remarks.append(tr("Data error: Recommended fix %1/%2 not found").
-                   arg(leg.recFixIdent).arg(leg.recFixRegion));
+    remarks.append(tr("Data error: Recommended fix %1/%2 type %3 not found").
+                   arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
 
   return remarks.join(", ");
 }

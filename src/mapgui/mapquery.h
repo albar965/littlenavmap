@@ -97,7 +97,9 @@ public:
    * @param region two letter ICAO region code
    */
   void getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
-                           const QString& ident, const QString& region = QString());
+                           const QString& ident, const QString& region = QString(), const QString& airport = QString(),
+                           const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
+                           float maxDistance = maptypes::INVALID_DISTANCE_VALUE);
 
   /*
    * Get a map object by type and id
@@ -276,11 +278,11 @@ private:
   *airwayByRectQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *vorByIdentQuery = nullptr,
-  *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr;
+  *ndbByIdentQuery = nullptr, *waypointByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr,
   *vorByWaypointIdQuery = nullptr, *ndbByWaypointIdQuery = nullptr, *waypointByIdQuery = nullptr,
-  *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr,
+  *ilsByIdQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
   *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr;

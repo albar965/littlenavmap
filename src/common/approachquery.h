@@ -63,9 +63,9 @@ public:
   void setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType);
 
 private:
-  maptypes::MapApproachLeg buildTransitionLegEntry();
-  maptypes::MapApproachLeg buildApproachLegEntry();
-  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg);
+  maptypes::MapApproachLeg buildTransitionLegEntry(const maptypes::MapAirport& airport);
+  maptypes::MapApproachLeg buildApproachLegEntry(const maptypes::MapAirport& airport);
+  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg, const maptypes::MapAirport& airport);
 
   void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
   void processLegs(maptypes::MapApproachLegs& legs);
@@ -95,6 +95,9 @@ private:
   maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *fetchTransitionLegs(const maptypes::MapAirport& airport, int approachId, int transitionId);
   int approachIdForTransitionId(int transitionId);
+  void mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, const QString& ident,
+                        const QString& region, const QString& airport,
+                        const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

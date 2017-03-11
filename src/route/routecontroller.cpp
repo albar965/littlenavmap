@@ -2495,7 +2495,13 @@ QString RouteController::buildFlightplanLabel(bool html) const
       approach += tr("%1 (%2)").arg(airport.name).arg(airport.ident);
     }
 
-    approach += " " + maptypes::approachType(legs.approachType);
+    if(legs.mapType == maptypes::APPROACH_SID)
+      approach += tr(" SID");
+    else if(legs.mapType == maptypes::APPROACH_STAR)
+      approach += tr(" STAR");
+    else
+      approach += " " + maptypes::approachType(legs.approachType);
+
     approach += " " + legs.approachFixIdent;
 
     if(html)

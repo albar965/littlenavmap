@@ -20,6 +20,7 @@
 
 #include "common/coordinateconverter.h"
 #include "geo/calculations.h"
+#include "common/maptypes.h"
 #include "geo/pos.h"
 
 #include <QList>
@@ -57,12 +58,33 @@ float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
 
 /* Sorts elements by distance to a point */
 template<typename TYPE>
-void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDistance)
+void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDistanceMeter)
 {
+  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < maptypes::INVALID_INDEX_VALUE))
+    return;
+
   auto it = std::remove_if(list.begin(), list.end(),
                            [ = ](const TYPE &type)->bool
                            {
-                             return type.getPosition().distanceMeterTo(pos) > maxDistance;
+                             return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
+                           });
+
+  if(it != list.end())
+    list.erase(it, list.end());
+
+}
+
+/* Sorts elements by distance to a point */
+template<typename TYPE>
+void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxDistanceMeter)
+{
+  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < maptypes::INVALID_DISTANCE_VALUE))
+    return;
+
+  auto it = std::remove_if(list.begin(), list.end(),
+                           [ = ](const TYPE &type)->bool
+                           {
+                             return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
                            });
 
   if(it != list.end())
@@ -74,6 +96,9 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
 template<typename TYPE>
 void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastDirection)
 {
+  if(list.isEmpty() || !pos.isValid())
+    return;
+
   auto it = std::remove_if(list.begin(), list.end(),
                            [ = ](const TYPE &type)->bool
                            {
@@ -91,6 +116,9 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
 template<typename TYPE>
 void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 {
+  if(list.isEmpty() || !pos.isValid())
+    return;
+
   std::sort(list.begin(), list.end(),
             [ = ](const TYPE &t1, const TYPE &t2)->bool
             {

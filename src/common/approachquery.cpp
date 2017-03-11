@@ -128,17 +128,17 @@ const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::
   return nullptr;
 }
 
-maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry()
+maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry(const maptypes::MapAirport& airport)
 {
   MapApproachLeg leg;
   leg.legId = approachLegQuery->value("approach_leg_id").toInt();
   leg.missed = approachLegQuery->value("is_missed").toBool();
   leg.transition = false;
-  buildLegEntry(approachLegQuery, leg);
+  buildLegEntry(approachLegQuery, leg, airport);
   return leg;
 }
 
-maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry()
+maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry(const maptypes::MapAirport& airport)
 {
   MapApproachLeg leg;
 
@@ -156,21 +156,21 @@ maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry()
 
   leg.missed = false;
   leg.transition = true;
-  buildLegEntry(transitionLegQuery, leg);
+  buildLegEntry(transitionLegQuery, leg, airport);
   return leg;
 }
 
-void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg)
+void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg,
+                                  const maptypes::MapAirport& airport)
 {
   leg.type = maptypes::approachLegEnum(query->value("type").toString());
 
   leg.turnDirection = query->value("turn_direction").toString();
-  leg.navId = query->value("fix_nav_id").toInt();
+
   leg.fixType = query->value("fix_type").toString();
   leg.fixIdent = query->value("fix_ident").toString();
   leg.fixRegion = query->value("fix_region").toString();
   // query->value("fix_airport_ident");
-  leg.recNavId = query->value("recommended_fix_nav_id").toInt();
   leg.recFixType = query->value("recommended_fix_type").toString();
   leg.recFixIdent = query->value("recommended_fix_ident").toString();
   leg.recFixRegion = query->value("recommended_fix_region").toString();
@@ -220,43 +220,48 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
-    mapQuery->getMapObjectById(leg.navaids, maptypes::WAYPOINT, leg.navId);
+    mapObjectByIdent(leg.navaids, maptypes::WAYPOINT, leg.fixIdent, leg.fixRegion,
+                     QString(), airport.position);
     if(!leg.navaids.waypoints.isEmpty())
     {
       leg.fixPos = leg.navaids.waypoints.first().position;
       leg.magvar = leg.navaids.waypoints.first().magvar;
+      leg.navId = leg.navaids.waypoints.first().id;
     }
   }
   else if(leg.fixType == "V")
   {
-    mapQuery->getMapObjectById(leg.navaids, maptypes::VOR, leg.navId);
+    mapObjectByIdent(leg.navaids, maptypes::VOR, leg.fixIdent, leg.fixRegion, QString(), airport.position);
     if(!leg.navaids.vors.isEmpty())
     {
       leg.fixPos = leg.navaids.vors.first().position;
       leg.magvar = leg.navaids.vors.first().magvar;
+      leg.navId = leg.navaids.vors.first().id;
     }
   }
   else if(leg.fixType == "N" || leg.fixType == "TN")
   {
-    mapQuery->getMapObjectById(leg.navaids, maptypes::NDB, leg.navId);
+    mapObjectByIdent(leg.navaids, maptypes::NDB, leg.fixIdent, leg.fixRegion, QString(), airport.position);
     if(!leg.navaids.ndbs.isEmpty())
     {
       leg.fixPos = leg.navaids.ndbs.first().position;
       leg.magvar = leg.navaids.ndbs.first().magvar;
+      leg.navId = leg.navaids.ndbs.first().id;
     }
   }
   else if(leg.fixType == "L")
   {
-    mapQuery->getMapObjectById(leg.navaids, maptypes::ILS, leg.navId);
+    mapObjectByIdent(leg.navaids, maptypes::ILS, leg.fixIdent, QString(), airport.ident, airport.position);
     if(!leg.navaids.ils.isEmpty())
     {
       leg.fixPos = leg.navaids.ils.first().position;
       leg.magvar = leg.navaids.ils.first().magvar;
+      leg.navId = leg.navaids.ils.first().id;
     }
   }
   else if(leg.fixType == "R")
   {
-    mapQuery->getMapObjectById(leg.navaids, maptypes::RUNWAYEND, leg.navId);
+    mapObjectByIdent(leg.navaids, maptypes::RUNWAYEND, leg.fixIdent, QString(), airport.ident);
     leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? Pos() : leg.navaids.runwayEnds.first().position;
   }
 
@@ -264,49 +269,69 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
   maptypes::MapSearchResult rn;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
-    mapQuery->getMapObjectById(rn, maptypes::WAYPOINT, leg.recNavId);
+    mapObjectByIdent(rn, maptypes::WAYPOINT, leg.recFixIdent, leg.recFixRegion,
+                     QString(), airport.position);
     if(!rn.waypoints.isEmpty())
     {
       leg.recFixPos = rn.waypoints.first().position;
+      leg.recNavId = leg.navaids.waypoints.first().id;
+
       if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.waypoints.first().magvar;
     }
   }
   else if(leg.recFixType == "V")
   {
-    mapQuery->getMapObjectById(rn, maptypes::VOR, leg.recNavId);
+    mapObjectByIdent(rn, maptypes::VOR, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
     if(!rn.vors.isEmpty())
     {
       leg.recFixPos = rn.vors.first().position;
+      leg.recNavId = rn.vors.first().id;
+
       if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.vors.first().magvar;
     }
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
   {
-    mapQuery->getMapObjectById(rn, maptypes::NDB, leg.recNavId);
+    mapObjectByIdent(rn, maptypes::NDB, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
     if(!rn.ndbs.isEmpty())
     {
       leg.recFixPos = rn.ndbs.first().position;
+      leg.recNavId = rn.ndbs.first().id;
+
       if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.ndbs.first().magvar;
     }
   }
   else if(leg.recFixType == "L")
   {
-    mapQuery->getMapObjectById(rn, maptypes::ILS, leg.recNavId);
+    mapObjectByIdent(rn, maptypes::ILS, leg.recFixIdent, QString(), airport.ident, airport.position);
     if(!rn.ils.isEmpty())
     {
       leg.recFixPos = rn.ils.first().position;
+      leg.recNavId = rn.ils.first().id;
+
       if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.ils.first().magvar;
     }
   }
   else if(leg.recFixType == "R")
   {
-    mapQuery->getMapObjectById(rn, maptypes::RUNWAYEND, leg.recNavId);
+    mapObjectByIdent(rn, maptypes::RUNWAYEND, leg.recFixIdent, QString(), airport.ident);
     leg.recFixPos = rn.runwayEnds.isEmpty() ? Pos() : rn.runwayEnds.first().position;
+    leg.recNavId = -1;
   }
+}
+
+void ApproachQuery::mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+                                     const QString& ident, const QString& region, const QString& airport,
+                                     const Pos& sortByDistancePos)
+{
+  mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos);
+  if(result.isEmpty(type))
+    mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
+                                  atools::geo::nmToMeter(200.f));
 }
 
 void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
@@ -410,7 +435,7 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
 
     while(transitionLegQuery->next())
     {
-      legs->transitionLegs.append(buildTransitionLegEntry());
+      legs->transitionLegs.append(buildTransitionLegEntry(airport));
       legs->transitionLegs.last().approachId = approachId;
       legs->transitionLegs.last().transitionId = transitionId;
     }
@@ -466,7 +491,7 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
 
   while(approachLegQuery->next())
   {
-    legs->approachLegs.append(buildApproachLegEntry());
+    legs->approachLegs.append(buildApproachLegEntry(airport));
     legs->approachLegs.last().approachId = approachId;
   }
 

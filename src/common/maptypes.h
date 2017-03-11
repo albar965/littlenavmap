@@ -844,7 +844,7 @@ struct MapApproachLeg
   MapAltRestriction altRestriction;
 
   maptypes::ApproachLegType type = INVALID_LEG_TYPE;
-  maptypes::MapObjectTypes mapType = NONE;
+  maptypes::MapObjectTypes mapType = NONE; /* Any of the APPROACH_* types*/
 
   int approachId, transitionId, legId, navId, recNavId;
 

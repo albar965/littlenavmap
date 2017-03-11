@@ -668,13 +668,13 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background,
                                    const maptypes::MapApproachRef& ref) const
 {
-  if(info && infoQuery != nullptr)
+  if(info && infoQuery != nullptr && airport.isValid())
   {
     if(!print)
       airportTitle(airport, html, -1, background);
 
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(airport.id);
-    if(recAppVector != nullptr)
+    if(recAppVector != nullptr && !ref.isEmpty())
     {
       for(const SqlRecord& recApp : *recAppVector)
       {
@@ -847,20 +847,19 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
     else if(fixType == "TV")
       html.row2(tr("Fix Type:"), tr("Terminal VOR"));
 
-    const atools::sql::SqlRecord *vorInfo = infoQuery->getVorInformation(recApp.valueInt("fix_nav_id"));
+    maptypes::MapSearchResult result;
+    mapQuery->getMapObjectByIdent(result, maptypes::VOR, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
-    if(vorInfo != nullptr)
+    if(result.hasVor())
     {
-      html.row2(tr("VOR Type:"), maptypes::navTypeNameVorLong(vorInfo->valueStr("type")));
-      html.row2(tr("VOR Frequency:"),
-                locale.toString(vorInfo->valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
-      html.row2(tr("VOR Range:"), Unit::distNm(vorInfo->valueInt("range")));
-      html.row2(tr("VOR Morse:"), morse->getCode(vorInfo->valueStr("ident")),
-                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+      const MapVor& vor = result.vors.first();
+      html.row2(tr("VOR Type:"), maptypes::navTypeNameVorLong(vor.type));
+      html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+      html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
+      html.row2(tr("VOR Morse:"), morse->getCode(vor.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
       qWarning() << "VOR data not found";
-
   }
   else if(fixType == "N" || fixType == "TN")
   {
@@ -869,16 +868,16 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
     else if(fixType == "TN")
       html.row2(tr("Fix Type:"), tr("Terminal NDB"));
 
-    const atools::sql::SqlRecord *ndbInfo = infoQuery->getNdbInformation(recApp.valueInt("fix_nav_id"));
+    maptypes::MapSearchResult result;
+    mapQuery->getMapObjectByIdent(result, maptypes::NDB, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
-    if(ndbInfo != nullptr)
+    if(result.hasNdb())
     {
-      html.row2(tr("NDB Type:"), maptypes::navTypeNameNdb(ndbInfo->valueStr("type")));
-      html.row2(tr("NDB Frequency:"),
-                locale.toString(ndbInfo->valueInt("frequency") / 100., 'f', 2) + tr(" MHz"));
-      html.row2(tr("NDB Range:"), Unit::distNm(ndbInfo->valueInt("range")));
-      html.row2(tr("NDB Morse:"), morse->getCode(ndbInfo->valueStr("ident")),
-                atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
+      const MapNdb& ndb = result.ndbs.first();
+      html.row2(tr("NDB Type:"), maptypes::navTypeNameNdb(ndb.type));
+      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" MHz"));
+      html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
+      html.row2(tr("NDB Morse:"), morse->getCode(ndb.ident), atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
       qWarning() << "NDB data not found";

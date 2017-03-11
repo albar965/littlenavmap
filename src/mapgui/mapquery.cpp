@@ -18,6 +18,7 @@
 #include "mapgui/mapquery.h"
 
 #include "common/maptypesfactory.h"
+#include "common/maptools.h"
 #include "sql/sqlquery.h"
 #include "common/maptools.h"
 
@@ -214,7 +215,8 @@ void MapQuery::getAirwayById(maptypes::MapAirway& airway, int airwayId)
 }
 
 void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
-                                   const QString& ident, const QString& region)
+                                   const QString& ident, const QString& region, const QString& airport,
+                                   const Pos& sortByDistancePos, float maxDistance)
 {
   if(type & maptypes::AIRPORT)
   {
@@ -226,6 +228,8 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
       mapTypesFactory->fillAirport(airportByIdentQuery->record(), ap, true);
       result.airports.append(ap);
     }
+    maptools::sortByDistance(result.airports, sortByDistancePos);
+    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistance);
   }
 
   if(type & maptypes::VOR)
@@ -239,6 +243,8 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
       mapTypesFactory->fillVor(vorByIdentQuery->record(), vor);
       result.vors.append(vor);
     }
+    maptools::sortByDistance(result.vors, sortByDistancePos);
+    maptools::removeByDistance(result.vors, sortByDistancePos, maxDistance);
   }
 
   if(type & maptypes::NDB)
@@ -252,6 +258,8 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
       mapTypesFactory->fillNdb(ndbByIdentQuery->record(), ndb);
       result.ndbs.append(ndb);
     }
+    maptools::sortByDistance(result.ndbs, sortByDistancePos);
+    maptools::removeByDistance(result.ndbs, sortByDistancePos, maxDistance);
   }
 
   if(type & maptypes::WAYPOINT)
@@ -264,6 +272,40 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
       maptypes::MapWaypoint wp;
       mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp);
       result.waypoints.append(wp);
+    }
+    maptools::sortByDistance(result.waypoints, sortByDistancePos);
+    maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistance);
+  }
+
+  if(type & maptypes::ILS)
+  {
+    ilsByIdentQuery->bindValue(":ident", ident);
+    ilsByIdentQuery->bindValue(":airport", airport);
+    ilsByIdentQuery->exec();
+    while(ilsByIdentQuery->next())
+    {
+      maptypes::MapIls ils;
+      mapTypesFactory->fillIls(ilsByIdentQuery->record(), ils);
+      result.ils.append(ils);
+    }
+    maptools::sortByDistance(result.ils, sortByDistancePos);
+    maptools::removeByDistance(result.ils, sortByDistancePos, maxDistance);
+  }
+
+  if(type & maptypes::RUNWAYEND)
+  {
+    QString rname(ident);
+    if(rname.startsWith("RW"))
+      rname.remove(0, 2);
+
+    runwayEndByNameQuery->bindValue(":name", rname);
+    runwayEndByNameQuery->bindValue(":airport", airport);
+    runwayEndByNameQuery->exec();
+    while(runwayEndByNameQuery->next())
+    {
+      maptypes::MapRunwayEnd end;
+      mapTypesFactory->fillRunwayEnd(runwayEndByNameQuery->record(), end);
+      result.runwayEnds.append(end);
     }
   }
 
@@ -1155,6 +1197,9 @@ void MapQuery::initQueries()
   waypointByIdentQuery = new SqlQuery(db);
   waypointByIdentQuery->prepare("select " + waypointQueryBase + " from waypoint where " + whereIdentRegion);
 
+  ilsByIdentQuery = new SqlQuery(db);
+  ilsByIdentQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident and loc_airport_ident = :airport");
+
   vorByIdQuery = new SqlQuery(db);
   vorByIdQuery->prepare("select " + vorQueryBase + " from vor where vor_id = :id");
 
@@ -1190,14 +1235,14 @@ void MapQuery::initQueries()
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
   runwayEndByIdQuery = new SqlQuery(db);
-  runwayEndByIdQuery->prepare(
-    "select 'P' as end_type, e.name as name, r.heading as heading, r.primary_lonx as lonx, r.primary_laty as laty "
-    "from runway r join runway_end e on r.primary_end_id = e.runway_end_id "
-    "where r.primary_end_id = :id "
-    "union "
-    "select 'S' as end_type, e.name as name, r.heading as heading, r.secondary_lonx as lonx, r.secondary_laty as laty "
-    "from runway r join runway_end e on r.secondary_end_id = e.runway_end_id "
-    "where r.secondary_end_id = :id");
+  runwayEndByIdQuery->prepare("select end_type, name, heading, lonx, laty from runway_end where runway_end_id = :id");
+
+  runwayEndByNameQuery = new SqlQuery(db);
+  runwayEndByNameQuery->prepare(
+    "select e.end_type, e.name, e.heading, e.lonx, e.laty "
+    "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
+    "join airport a on r.airport_id = a.airport_id "
+    "where e.name = :name and a.ident = :airport");
 
   airportByRectQuery = new SqlQuery(db);
   airportByRectQuery->prepare(
@@ -1255,19 +1300,19 @@ void MapQuery::initQueries()
   // Runway joined with both runway ends
   runwaysQuery = new SqlQuery(db);
   runwaysQuery->prepare(
-    "select length, heading, width, surface, lonx, laty, p.name as primary_name, s.name as secondary_name, "
+    "select r.length, r.heading, r.width, r.surface, r.lonx, r.laty, p.name as primary_name, s.name as secondary_name, "
     "p.name as primary_name, s.name as secondary_name, "
-    "primary_end_id, secondary_end_id, "
-    "edge_light, "
+    "r.primary_end_id, r.secondary_end_id, "
+    "r.edge_light, "
     "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
     "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
     "p.blast_pad as primary_blast_pad,  p.overrun as primary_overrun, "
     "s.blast_pad as secondary_blast_pad,  s.overrun as secondary_overrun,"
-    "primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway "
-    "join runway_end p on primary_end_id = p.runway_end_id "
-    "join runway_end s on secondary_end_id = s.runway_end_id "
-    "where airport_id = :airportId");
+    "r.primary_lonx, r.primary_laty, r.secondary_lonx, r.secondary_laty "
+    "from runway r "
+    "join runway_end p on r.primary_end_id = p.runway_end_id "
+    "join runway_end s on r.secondary_end_id = s.runway_end_id "
+    "where r.airport_id = :airportId");
 
   waypointsByRectQuery = new SqlQuery(db);
   waypointsByRectQuery->prepare(
@@ -1392,6 +1437,8 @@ void MapQuery::deInitQueries()
   ndbByIdentQuery = nullptr;
   delete waypointByIdentQuery;
   waypointByIdentQuery = nullptr;
+  delete ilsByIdentQuery;
+  ilsByIdentQuery = nullptr;
 
   delete vorByIdQuery;
   vorByIdQuery = nullptr;
@@ -1416,6 +1463,9 @@ void MapQuery::deInitQueries()
 
   delete runwayEndByIdQuery;
   runwayEndByIdQuery = nullptr;
+
+  delete runwayEndByNameQuery;
+  runwayEndByNameQuery = nullptr;
 
   delete airwayWaypointByIdentQuery;
   airwayWaypointByIdentQuery = nullptr;
