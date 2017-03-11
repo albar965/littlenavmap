@@ -90,6 +90,8 @@ private:
   void paintApproachBow(const maptypes::MapApproachLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
                         const maptypes::MapApproachLeg& leg);
 
+  void paintApproachFlyover(const PaintContext *context, int x, int y);
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H

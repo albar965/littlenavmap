@@ -286,7 +286,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   // Paint legs
   for(int i = 0; i < legs.size(); i++)
   {
-    if(legs.isMissed(i))
+    if(legs.at(i).isMissed())
       context->painter->setPen(missedPen);
     else
       context->painter->setPen(apprPen);
@@ -301,7 +301,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   // Paint active leg
   if(activeLeg >= 0 && activeLeg < legs.size())
   {
-    context->painter->setPen(legs.isMissed(activeLeg) ? missedActivePen : apprActivePen);
+    context->painter->setPen(legs.at(activeLeg).isMissed() ? missedActivePen : apprActivePen);
     paintApproachSegment(context, legs, activeLeg, lastActiveLine, &drawTextLines, context->drawFast);
   }
 
@@ -368,12 +368,12 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
                                            bool noText)
 {
-  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
-     (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
-     (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
-    return;
-
   const maptypes::MapApproachLeg& leg = legs.at(index);
+
+  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && leg.isTransition()) ||
+     (!(context->objectTypes & maptypes::APPROACH) && leg.isApproach()) ||
+     (!(context->objectTypes & maptypes::APPROACH_MISSED) && leg.isMissed()))
+    return;
 
   const maptypes::MapApproachLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
@@ -400,11 +400,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 
   QPainter *painter = context->painter;
 
-  bool showDistance = !contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
-                                           maptypes::FIX_TO_ALTITUDE,
-                                           maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
-                                           maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                                           maptypes::HEADING_TO_MANUAL_TERMINATION});
+  bool showDistance = !leg.noDistanceDisplay();
 
   // ===========================================================
   if(contains(leg.type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
@@ -429,7 +425,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::COURSE_TO_INTERCEPT,
                               maptypes::HEADING_TO_INTERCEPT}))
   {
-    if(contains(leg.turnDirection, {"R", "L", "B"}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
+    if(contains(leg.turnDirection,
+                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
     {
       float lineDist = QLineF(lastLine.p2(), line.p1()).length();
       if(!lastLine.p2().isNull() && lineDist > 2)
@@ -702,9 +699,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->restore();
 #endif
 
-  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && legs.isTransition(index)) ||
-     (!(context->objectTypes & maptypes::APPROACH) && legs.isApproach(index)) ||
-     (!(context->objectTypes & maptypes::APPROACH_MISSED) && legs.isMissed(index)))
+  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && leg.isTransition()) ||
+     (!(context->objectTypes & maptypes::APPROACH) && leg.isApproach()) ||
+     (!(context->objectTypes & maptypes::APPROACH_MISSED) && leg.isMissed()))
     return;
 
   if(leg.disabled)
@@ -717,8 +714,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
      leg.type != maptypes::HOLD_TO_MANUAL_TERMINATION)
     // Do not paint the last point in the transition since it overlaps with the approach
     // But draw the intercept and hold text
-    lastInTransition = legs.isTransition(index) &&
-                       legs.isApproach(index + 1) && context->objectTypes & maptypes::APPROACH;
+    lastInTransition = legs.at(index).isTransition() &&
+                       legs.at(index + 1).isApproach() && context->objectTypes & maptypes::APPROACH;
 
   QStringList texts;
   // if(index > 0 && legs.isApproach(index) &&
@@ -728,6 +725,28 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   // texts.append(legs.at(index - 1).displayText);
 
   int x = 0, y = 0;
+
+  if(leg.mapType == maptypes::APPROACH_SID && index == 0)
+  {
+    // All legs with a calculated end point
+    if(wToS(leg.line.getPos1(), x, y))
+    {
+      texts.append("RW" + legs.runwayEnd.name);
+
+      maptypes::MapAltRestriction altRestriction;
+      altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+      altRestriction.alt1 = legs.runwayEnd.getPosition().getAltitude();
+      altRestriction.alt2 = 0.f;
+
+      texts.append(maptypes::altRestrictionTextNarrow(altRestriction));
+      if(leg.flyover)
+        paintApproachFlyover(context, x, y);
+      paintApproachpoint(context, x, y);
+      if(drawText)
+        paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
+      texts.clear();
+    }
+  }
 
   // Manual and altitude terminated legs that have a calculated position needing extra text
   if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
@@ -755,6 +774,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     {
       texts.append(leg.displayText);
       texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
+      if(leg.flyover)
+        paintApproachFlyover(context, x, y);
       paintApproachpoint(context, x, y);
       if(drawText)
         paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
@@ -766,7 +787,11 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     if(index == 0)
     {
       if(wToS(leg.line.getPos1(), x, y))
+      {
+        if(leg.flyover)
+          paintApproachFlyover(context, x, y);
         paintApproachpoint(context, x, y);
+      }
     }
     else if(leg.interceptPos.isValid())
     {
@@ -774,6 +799,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
       {
         // Draw intercept comment - no altitude restriction there
         texts.append(leg.displayText);
+        if(leg.flyover)
+          paintApproachFlyover(context, x, y);
         paintApproachpoint(context, x, y);
         if(drawText)
           paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
@@ -802,18 +829,24 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
+    if(leg.flyover)
+      paintApproachFlyover(context, x, y);
     paintWaypoint(context, QColor(), x, y);
     if(drawText)
       paintWaypointText(context, x, y, navaids.waypoints.first(), &texts);
   }
   else if(!navaids.vors.isEmpty() && wToS(navaids.vors.first().position, x, y))
   {
+    if(leg.flyover)
+      paintApproachFlyover(context, x, y);
     paintVor(context, x, y, navaids.vors.first());
     if(drawText)
       paintVorText(context, x, y, navaids.vors.first(), &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToS(navaids.ndbs.first().position, x, y))
   {
+    if(leg.flyover)
+      paintApproachFlyover(context, x, y);
     paintNdb(context, x, y);
     if(drawText)
       paintNdbText(context, x, y, navaids.ndbs.first(), &texts);
@@ -821,6 +854,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   else if(!navaids.ils.isEmpty() && wToS(navaids.ils.first().position, x, y))
   {
     texts.append(leg.fixIdent);
+    if(leg.flyover)
+      paintApproachFlyover(context, x, y);
     paintApproachpoint(context, x, y);
     if(drawText)
       paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
@@ -828,6 +863,8 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   else if(!navaids.runwayEnds.isEmpty() && wToS(navaids.runwayEnds.first().position, x, y))
   {
     texts.append(leg.fixIdent);
+    if(leg.flyover)
+      paintApproachFlyover(context, x, y);
     paintApproachpoint(context, x, y);
     if(drawText)
       paintText(context, mapcolors::routeApproachPointColor, x, y, texts);
@@ -921,6 +958,12 @@ void MapPainterRoute::paintApproachpoint(const PaintContext *context, int x, int
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
   symbolPainter->drawApproachSymbol(context->painter, x, y, size, true, false);
+}
+
+void MapPainterRoute::paintApproachFlyover(const PaintContext *context, int x, int y)
+{
+  int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
+  symbolPainter->drawApproachFlyover(context->painter, x, y, size * 2.5f);
 }
 
 /* Paint user defined waypoint */

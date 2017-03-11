@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 #include "common/maptypes.h"
+#include "fs/fspaths.h"
 
 #include <QCache>
 #include <QApplication>
@@ -59,6 +60,8 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
+  void setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType);
+
 private:
   maptypes::MapApproachLeg buildTransitionLegEntry();
   maptypes::MapApproachLeg buildApproachLegEntry();
@@ -82,11 +85,16 @@ private:
 
   /* Assign magnetic variation from the navaids */
   void updateMagvar(maptypes::MapApproachLegs& legs);
-  void updateBoundingRectangle(maptypes::MapApproachLegs& legs);
+  void updateBoundingAndDirection(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+
+  void assignType(maptypes::MapApproachLegs& approach);
+  maptypes::MapApproachLeg createRunwayLeg(const maptypes::MapApproachLeg& leg,
+                                           const maptypes::MapApproachLegs& legs);
 
   maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *fetchTransitionLegs(const maptypes::MapAirport& airport, int approachId, int transitionId);
+  int approachIdForTransitionId(int transitionId);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
@@ -105,6 +113,8 @@ private:
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */
   Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
+
+  atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::UNKNOWN;
 
 };
 

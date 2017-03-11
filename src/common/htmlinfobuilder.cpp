@@ -691,29 +691,30 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
           runway = tr(" - Runway ") + runwayName;
 
         // STARS use the suffix="A" while SIDS use the suffix="D".
-        QString suffix = recApp.valueStr("suffix");
-        QString type;
-
-        if(suffix == "A")
-          type = tr("Approach (STAR)");
-        else if(suffix == "D")
-          type = tr("Approach (SID)");
-        else
-          type = tr("Approach");
 
         QString approachType = recApp.valueStr("type");
-        html.h3(type + " " + maptypes::approachType(approachType) + " " + suffix + runway,
-                atools::util::html::UNDERLINE);
+        QString fix = recApp.valueStr("fix_ident");
+        if(ref.mapType & maptypes::APPROACH_SID)
+          html.h3(tr("SID") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
+        else if(ref.mapType & maptypes::APPROACH_STAR)
+          html.h3(tr("STAR") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
+        else
+          html.h3(tr("Approach") + " " + maptypes::approachType(approachType) + " " +
+                  recApp.valueStr("suffix") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
 
         html.table();
-        rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
-        html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
-                  recApp.valueStr("fix_region"));
 
-        float hdg = recApp.valueFloat("heading") - airport.magvar;
-        hdg = normalizeCourse(hdg);
-        html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
-                  arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
+        if(!(ref.mapType & maptypes::APPROACH_SID) && !(ref.mapType & maptypes::APPROACH_STAR))
+        {
+          rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
+          html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
+                    recApp.valueStr("fix_region"));
+
+          float hdg = recApp.valueFloat("heading") - airport.magvar;
+          hdg = normalizeCourse(hdg);
+          html.row2(tr("Heading:"), tr("%1°M, %2°T").arg(locale.toString(hdg, 'f', 0)).
+                    arg(locale.toString(recApp.valueFloat("heading"), 'f', 0)));
+        }
 
         // html.row2(tr("Altitude:"), Unit::altFeet(recApp.valueFloat("altitude")));
         // html.row2(tr("Missed Altitude:"), Unit::altFeet(recApp.valueFloat("missed_altitude")));
@@ -777,14 +778,18 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
               if(ref.transitionId != -1 && recTrans.valueInt("transition_id") != ref.transitionId)
                 continue;
 
-              html.h3(tr("Transition ") + recTrans.valueStr("fix_ident"));
+              if(!(ref.mapType & maptypes::APPROACH_SID))
+                html.h3(tr("Transition ") + recTrans.valueStr("fix_ident"));
 
               html.table();
 
-              if(recTrans.valueStr("type") == "F")
-                html.row2(tr("Type:"), tr("Full"));
-              else if(recTrans.valueStr("type") == "D")
-                html.row2(tr("Type:"), tr("DME"));
+              if(!(ref.mapType & maptypes::APPROACH_SID))
+              {
+                if(recTrans.valueStr("type") == "F")
+                  html.row2(tr("Type:"), tr("Full"));
+                else if(recTrans.valueStr("type") == "D")
+                  html.row2(tr("Type:"), tr("DME"));
+              }
 
               html.row2(tr("Fix Ident and Region:"), recTrans.valueStr("fix_ident") + tr(", ") +
                         recTrans.valueStr("fix_region"));
@@ -854,7 +859,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
                 atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
-      html.row2(tr("VOR data not found"));
+      qWarning() << "VOR data not found";
 
   }
   else if(fixType == "N" || fixType == "TN")
@@ -876,7 +881,7 @@ void HtmlInfoBuilder::addRadionavFixType(atools::util::HtmlBuilder& html, const 
                 atools::util::html::BOLD | atools::util::html::NO_ENTITIES);
     }
     else
-      html.row2(tr("NDB data not found."));
+      qWarning() << "NDB data not found";
   }
 }
 
@@ -1626,8 +1631,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                       locale.toString(crs, 'f', 0) +
                       (routeTrueCourse ? tr("°T, ") : tr("°M, ")) + timeStr);
           }
-          else
-            // Only distance and time for arc legs
+          else // if(!leg.noDistanceDisplay())
+               // Only distance and time for arc legs
             html.row2(tr("Distance and Time:"), Unit::distNm(nearestLegDistance) + ", " + timeStr);
         }
 

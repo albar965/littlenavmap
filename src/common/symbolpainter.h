@@ -109,7 +109,7 @@ public:
   QIcon createNdbIcon(int size);
   QIcon createWaypointIcon(int size, const QColor& color = QColor());
   QIcon createUserpointIcon(int size);
-  QIcon createApproachpointIcon(int size);
+  QIcon createApproachPointIcon(int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, float x, float y, int size,
@@ -152,7 +152,11 @@ public:
   /* User defined flight plan waypoint */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
 
+  /* Circle for approach points which are not navaids */
   void drawApproachSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast);
+
+  /* Flyover underlay */
+  void drawApproachFlyover(QPainter *painter, int x, int y, int size);
 
   /* Simulator aircraft symbol. Only used for HTML display */
   void drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround);
@@ -175,6 +179,7 @@ private:
   QColor iconBackground;
   QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
   void prepareForIcon(QPainter& painter);
+
 };
 
 #endif // LITTLENAVMAP_SYMBOLPAINTER_H

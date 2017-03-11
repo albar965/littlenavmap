@@ -1030,13 +1030,7 @@ QDebug operator<<(QDebug out, const ApproachLegType& type)
 QDebug operator<<(QDebug out, const MapApproachLegs& legs)
 {
   out << "==========================" << endl;
-  out << "===== Transition legs =====";
-  for(const MapApproachLeg& ls : legs.transitionLegs)
-    out << ls;
-
-  out << "===== Approach legs =====";
-  for(const MapApproachLeg& ls : legs.approachLegs)
-    out << ls;
+  out << "maptype" << legs.mapType;
 
   out << "approachDistance" << legs.approachDistance
   << "transitionDistance" << legs.transitionDistance
@@ -1048,6 +1042,15 @@ QDebug operator<<(QDebug out, const MapApproachLegs& legs)
   << "transitionType" << legs.transitionType
   << "transitionFixIdent" << legs.transitionFixIdent
   << "runwayEnd.name" << legs.runwayEnd.name << endl;
+
+  out << "===== Transition legs =====";
+  for(const MapApproachLeg& ls : legs.transitionLegs)
+    out << ls;
+
+  out << "===== Approach legs =====";
+  for(const MapApproachLeg& ls : legs.approachLegs)
+    out << ls;
+
   out << "==========================" << endl;
   return out;
 }
@@ -1059,6 +1062,7 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   << "transitionId" << leg.transitionId
   << "legId" << leg.legId
   << "type" << leg.type
+  << "maptype" << leg.mapType
   << "missed" << leg.missed
   << "line" << leg.line << endl;
 
@@ -1143,6 +1147,94 @@ bool MapApproachLeg::isHold() const
 bool MapApproachLeg::isCircular() const
 {
   return atools::contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
+}
+
+bool MapApproachLeg::noDistanceDisplay() const
+{
+  return atools::contains(type,
+                          {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
+                           maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_ALTITUDE_TERMINATION,
+                           maptypes::HEADING_TO_MANUAL_TERMINATION, });
+}
+
+bool MapApproachLeg::noCourseDisplay() const
+{
+  return type == maptypes::INITIAL_FIX || isCircular();
+}
+
+QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
+{
+  if(type == NONE)
+    out << "NONE";
+  else
+  {
+    if(type & AIRPORT)
+      out << "AIRPORT|";
+    if(type & AIRPORT_HARD)
+      out << "AIRPORT_HARD|";
+    if(type & AIRPORT_SOFT)
+      out << "AIRPORT_SOFT|";
+    if(type & AIRPORT_EMPTY)
+      out << "AIRPORT_EMPTY|";
+    if(type & AIRPORT_ADDON)
+      out << "AIRPORT_ADDON|";
+    if(type & VOR)
+      out << "VOR|";
+    if(type & NDB)
+      out << "NDB|";
+    if(type & ILS)
+      out << "ILS|";
+    if(type & MARKER)
+      out << "MARKER|";
+    if(type & WAYPOINT)
+      out << "WAYPOINT|";
+    if(type & AIRWAY)
+      out << "AIRWAY|";
+    if(type & AIRWAYV)
+      out << "AIRWAYV|";
+    if(type & AIRWAYJ)
+      out << "AIRWAYJ|";
+    if(type & ROUTE)
+      out << "ROUTE|";
+    if(type & AIRCRAFT)
+      out << "AIRCRAFT|";
+    if(type & AIRCRAFT_AI)
+      out << "AIRCRAFT_AI|";
+    if(type & AIRCRAFT_TRACK)
+      out << "AIRCRAFT_TRACK|";
+    if(type & USER)
+      out << "USER|";
+    if(type & PARKING)
+      out << "PARKING|";
+    if(type & RUNWAYEND)
+      out << "RUNWAYEND|";
+    if(type & POSITION)
+      out << "POSITION|";
+    if(type & INVALID)
+      out << "INVALID|";
+    if(type & APPROACH)
+      out << "APPROACH|";
+    if(type & APPROACH_MISSED)
+      out << "APPROACH_MISSED|";
+    if(type & APPROACH_TRANSITION)
+      out << "APPROACH_TRANSITION|";
+    if(type & APPROACH_SID)
+      out << "APPROACH_SID|";
+    if(type & APPROACH_STAR)
+      out << "APPROACH_STAR|";
+  }
+
+  return out;
+}
+
+const MapApproachLeg *MapApproachLegs::transitionLegById(int legId) const
+{
+  for(const MapApproachLeg& leg : transitionLegs)
+  {
+    if(leg.legId == legId)
+      return &leg;
+  }
+  return nullptr;
 }
 
 } // namespace types

@@ -103,7 +103,7 @@ QIcon SymbolPainter::createUserpointIcon(int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createApproachpointIcon(int size)
+QIcon SymbolPainter::createApproachPointIcon(int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
@@ -301,6 +301,19 @@ void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size
   }
   else
     painter->drawPoint(x, y);
+}
+
+void SymbolPainter::drawApproachFlyover(QPainter *painter, int x, int y, int size)
+{
+  atools::util::PainterContextSaver saver(painter);
+  painter->setBackgroundMode(Qt::OpaqueMode);
+
+  painter->setPen(mapcolors::routeApproachPointFlyoverColor);
+  painter->setBackground(mapcolors::routeApproachPointFlyoverColor);
+  painter->setBrush(mapcolors::routeApproachPointFlyoverColor);
+
+  int radius = size / 2;
+  painter->drawEllipse(x - radius, y - radius, size, size);
 }
 
 void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size, bool onGround)

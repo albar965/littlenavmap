@@ -2442,6 +2442,7 @@ void RouteController::updateWindowLabel()
 QString RouteController::buildFlightplanLabel(bool html) const
 {
   const Flightplan& flightplan = route.getFlightplan();
+  int airportId = -1;
 
   QString departure(tr("Invalid")), destination(tr("Invalid"));
   if(!flightplan.isEmpty())
@@ -2469,48 +2470,67 @@ QString RouteController::buildFlightplanLabel(bool html) const
                   arg(flightplan.getEntries().first().getIcaoIdent()).
                   arg(flightplan.getEntries().first().getWaypointTypeAsString());
 
-    if(flightplan.getEntries().last().getWaypointType() == entry::AIRPORT)
-      destination = flightplan.getDestinationAiportName() +
-                    " (" + flightplan.getDestinationIdent() + ")";
+    if(hasValidDestination())
+    {
+      destination = flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
+      airportId = route.last().getAirport().id;
+    }
     else
       destination = QString("%1 (%2)").
                     arg(flightplan.getEntries().last().getIcaoIdent()).
                     arg(flightplan.getEntries().last().getWaypointTypeAsString());
+  }
 
-    QString approach;
-    const maptypes::MapApproachLegs& legs = routeAppr.getApproachLegs();
-    if(!legs.isEmpty())
+  QString approach;
+  const maptypes::MapApproachLegs& legs = routeAppr.getApproachLegs();
+  if(!legs.isEmpty())
+  {
+    if(html)
+      approach = "<b>";
+
+    if(airportId == -1 || legs.ref.airportId != airportId)
     {
-      approach += " " + maptypes::approachType(legs.approachType);
-      approach += " " + legs.approachFixIdent;
-      approach += " Runway " + legs.runwayEnd.name;
-
-      if(!legs.transitionFixIdent.isEmpty())
-        approach += (html ? tr("</b> via <b>") : tr(" via ")) + legs.transitionFixIdent;
-      approach += " ";
-      if(html)
-        approach = "<b>" + approach + "</b>";
-
-      if(!routeAppr.isConnectedToApproach())
-        approach += tr(" (not connected)");
-
-      if(html)
-        approach += "<br/>";
+      // No destination airport or different airport
+      maptypes::MapAirport airport = query->getAirportById(legs.ref.airportId);
+      approach += tr("%1 (%2)").arg(airport.name).arg(airport.ident);
     }
 
+    approach += " " + maptypes::approachType(legs.approachType);
+    approach += " " + legs.approachFixIdent;
+
     if(html)
-      return tr("<b>%1</b> to <b>%2</b><br/>%3").
-             arg(departure).
-             arg(destination).
-             arg(approach);
+      approach += tr("</b> to runway <b>");
     else
-      return tr("%1 to %2 %3").
-             arg(departure).
-             arg(destination).
-             arg(approach);
+      approach += tr(" to runway ");
+
+    approach += legs.runwayEnd.name;
+
+    if(!legs.transitionFixIdent.isEmpty())
+      approach += (html ? tr("</b> via <b>") : tr(" via ")) + legs.transitionFixIdent;
+    approach += " ";
+    if(html)
+      approach += "</b>";
+
+    if(!routeAppr.isConnectedToApproach())
+      approach += tr(" (not connected)");
+
+    if(html)
+      approach += "<br/>";
   }
+
+  QString fp(tr("No Flightplan loaded"));
+  if(!flightplan.isEmpty())
+  {
+    fp = tr("<b>%1</b> to <b>%2</b>").arg(departure).arg(destination);
+  }
+
+  if(html)
+    return fp + (approach.isEmpty() ? QString() : "<br/>" + approach);
   else
-    return tr("No Flightplan loaded");
+    return tr("%1 to %2 %3").
+           arg(departure).
+           arg(destination).
+           arg(approach);
 }
 
 QString RouteController::buildFlightplanLabel2() const

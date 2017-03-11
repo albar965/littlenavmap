@@ -34,6 +34,9 @@ using atools::geo::meterToNm;
 using atools::geo::opposedCourseDeg;
 using atools::geo::nmToMeter;
 using atools::geo::normalizeCourse;
+using maptypes::MapApproachLegs;
+using maptypes::MapApproachLeg;
+using maptypes::MapAltRestriction;
 
 ApproachQuery::ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -50,16 +53,20 @@ const maptypes::MapApproachLegs *ApproachQuery::getApproachLegs(const maptypes::
   return fetchApproachLegs(airport, approachId);
 }
 
-const maptypes::MapApproachLegs *ApproachQuery::getTransitionLegs(const maptypes::MapAirport& airport, int transitionId)
+int ApproachQuery::approachIdForTransitionId(int transitionId)
 {
-  // Get approach id for this transition
   int approachId = -1;
   approachIdForTransQuery->bindValue(":id", transitionId);
   approachIdForTransQuery->exec();
   if(approachIdForTransQuery->next())
     approachId = approachIdForTransQuery->value("approach_id").toInt();
+  approachIdForTransQuery->finish();
+  return approachId;
+}
 
-  return fetchTransitionLegs(airport, approachId, transitionId);
+const maptypes::MapApproachLegs *ApproachQuery::getTransitionLegs(const maptypes::MapAirport& airport, int transitionId)
+{
+  return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
 const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::MapAirport& airport, int approachId,
@@ -72,7 +79,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::Ma
     std::pair<int, int> val = approachLegIndex.value(legId);
 
     // Ensure it is in the cache - reload if needed
-    const maptypes::MapApproachLegs *legs = getApproachLegs(airport, val.first);
+    const MapApproachLegs *legs = getApproachLegs(airport, val.first);
     if(legs != nullptr)
       return &legs->at(approachLegIndex.value(legId).second);
   }
@@ -80,7 +87,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getApproachLeg(const maptypes::Ma
 #endif
   {
     // Ensure it is in the cache - reload if needed
-    const maptypes::MapApproachLegs *legs = getApproachLegs(airport, approachId);
+    const MapApproachLegs *legs = getApproachLegs(airport, approachId);
     if(legs != nullptr && approachLegIndex.contains(legId))
       // Use index to get leg
       return &legs->at(approachLegIndex.value(legId).second);
@@ -98,7 +105,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::
     std::pair<int, int> val = transitionLegIndex.value(legId);
 
     // Ensure it is in the cache - reload if needed
-    const maptypes::MapApproachLegs *legs = getTransitionLegs(airport, val.first);
+    const MapApproachLegs *legs = getTransitionLegs(airport, val.first);
 
     if(legs != nullptr)
       return &legs->at(transitionLegIndex.value(legId).second);
@@ -111,7 +118,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::
     transitionIdForLegQuery->exec();
     if(transitionIdForLegQuery->next())
     {
-      const maptypes::MapApproachLegs *legs = getTransitionLegs(airport, transitionIdForLegQuery->value("id").toInt());
+      const MapApproachLegs *legs = getTransitionLegs(airport, transitionIdForLegQuery->value("id").toInt());
       if(legs != nullptr && transitionLegIndex.contains(legId))
         return &legs->at(transitionLegIndex.value(legId).second);
     }
@@ -123,7 +130,7 @@ const maptypes::MapApproachLeg *ApproachQuery::getTransitionLeg(const maptypes::
 
 maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry()
 {
-  maptypes::MapApproachLeg leg;
+  MapApproachLeg leg;
   leg.legId = approachLegQuery->value("approach_leg_id").toInt();
   leg.missed = approachLegQuery->value("is_missed").toBool();
   leg.transition = false;
@@ -133,7 +140,7 @@ maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry()
 
 maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry()
 {
-  maptypes::MapApproachLeg leg;
+  MapApproachLeg leg;
 
   leg.legId = transitionLegQuery->value("transition_leg_id").toInt();
 
@@ -188,22 +195,22 @@ void ApproachQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApp
     QString descriptor = query->value("alt_descriptor").toString();
 
     if(descriptor == "A")
-      leg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+      leg.altRestriction.descriptor = MapAltRestriction::AT;
     else if(descriptor == "+")
-      leg.altRestriction.descriptor = maptypes::MapAltRestriction::AT_OR_ABOVE;
+      leg.altRestriction.descriptor = MapAltRestriction::AT_OR_ABOVE;
     else if(descriptor == "-")
-      leg.altRestriction.descriptor = maptypes::MapAltRestriction::AT_OR_BELOW;
+      leg.altRestriction.descriptor = MapAltRestriction::AT_OR_BELOW;
     else if(descriptor == "B")
-      leg.altRestriction.descriptor = maptypes::MapAltRestriction::BETWEEN;
+      leg.altRestriction.descriptor = MapAltRestriction::BETWEEN;
     else
-      leg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+      leg.altRestriction.descriptor = MapAltRestriction::AT;
 
     leg.altRestriction.alt1 = alt1;
     leg.altRestriction.alt2 = alt2;
   }
   else
   {
-    leg.altRestriction.descriptor = maptypes::MapAltRestriction::NONE;
+    leg.altRestriction.descriptor = MapAltRestriction::NONE;
     leg.altRestriction.alt1 = 0.f;
     leg.altRestriction.alt2 = 0.f;
   }
@@ -318,16 +325,36 @@ void ApproachQuery::updateMagvar(maptypes::MapApproachLegs& legs)
   avgMagvar /= num;
 
   // Assign average to legs with no magvar
-  for(maptypes::MapApproachLeg& leg : legs.approachLegs)
+  for(MapApproachLeg& leg : legs.approachLegs)
   {
     if(!(leg.magvar < maptypes::INVALID_MAGVAR))
       leg.magvar = avgMagvar;
   }
 
-  for(maptypes::MapApproachLeg& leg : legs.transitionLegs)
+  for(MapApproachLeg& leg : legs.transitionLegs)
   {
     if(!(leg.magvar < maptypes::INVALID_MAGVAR))
       leg.magvar = avgMagvar;
+  }
+}
+
+void ApproachQuery::updateBoundingAndDirection(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
+{
+  for(int i = 0; i < legs.size(); i++)
+  {
+    const maptypes::MapApproachLeg& leg = legs.at(i);
+    legs.bounding.extend(leg.fixPos);
+    legs.bounding.extend(leg.interceptPos);
+    legs.bounding.extend(leg.line.boundingRect());
+  }
+
+  if(!legs.isEmpty())
+  {
+    // Calculate airport direction to be able to assign SIDs and STARs to heaven's directions
+    if(legs.mapType == maptypes::APPROACH_SID)
+      legs.airportDirection = atools::geo::normalizeCourse(airport.position.angleDegTo(legs.last().line.getPos2()));
+    else if(legs.mapType == maptypes::APPROACH_STAR)
+      legs.airportDirection = atools::geo::normalizeCourse(airport.position.angleDegTo(legs.first().line.getPos1()));
   }
 }
 
@@ -341,7 +368,7 @@ maptypes::MapApproachLegs *ApproachQuery::fetchApproachLegs(const maptypes::MapA
   {
     qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId;
 
-    maptypes::MapApproachLegs *legs = buildApproachLegs(airport, approachId);
+    MapApproachLegs *legs = buildApproachLegs(airport, approachId);
     postProcessLegs(airport, *legs);
 
     if(!legs->isEmpty())
@@ -396,6 +423,7 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
     legs->approachSuffix = approach->approachSuffix;
     legs->approachFixIdent = approach->approachFixIdent;
     legs->gpsOverlay = approach->gpsOverlay;
+
     delete approach;
 
     postProcessLegs(airport, *legs);
@@ -435,6 +463,7 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
   legs->ref.airportId = airport.id;
   legs->ref.approachId = approachId;
   legs->ref.transitionId = -1;
+
   while(approachLegQuery->next())
   {
     legs->approachLegs.append(buildApproachLegEntry());
@@ -444,7 +473,12 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
   runwayEndIdQuery->bindValue(":id", approachId);
   runwayEndIdQuery->exec();
   if(runwayEndIdQuery->next())
+  {
     legs->runwayEnd = mapQuery->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
+
+    // Add altitude to position since it is needed to display the first point in the SID
+    legs->runwayEnd.position.setAltitude(airport.getPosition().getAltitude());
+  }
 
   approachQuery->bindValue(":id", approachId);
   approachQuery->exec();
@@ -462,6 +496,8 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
 
 void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
 {
+  assignType(legs);
+
   updateMagvar(legs);
 
   // Prepare all leg coordinates
@@ -478,7 +514,7 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
   // Correct overlapping conflicting altitude restrictions
   processLegsFixRestrictions(legs);
 
-  updateBoundingRectangle(legs);
+  updateBoundingAndDirection(airport, legs);
 
   qDebug() << legs;
 }
@@ -487,40 +523,19 @@ void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, 
 {
   for(int i = 0; i < legs.size() - 1; i++)
   {
-    if(legs.isApproach(i) && legs.isMissed(i + 1))
+    // Look for the transition from approach to missed
+    maptypes::MapApproachLeg& leg = legs[i];
+    if(leg.isApproach() && legs.at(i + 1).isMissed())
     {
-      maptypes::MapApproachLeg& leg = legs[i];
       if(leg.fixType != "R" && legs.runwayEnd.isValid())
       {
-        maptypes::MapApproachLeg rwleg;
-        rwleg.approachId = legs.ref.approachId;
-        rwleg.transitionId = legs.ref.transitionId;
-        rwleg.approachId = legs.ref.approachId;
-        rwleg.navId = leg.navId;
-
-        // Use a generated id base on the previous leg id
-        rwleg.legId = RUNWAY_LEG_ID_BASE + leg.legId;
-
-        rwleg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
-        rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
-        rwleg.altRestriction.alt2 = 0.f;
-        rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
-        // geometry is populated later
-        rwleg.fixType = "R";
-        rwleg.fixIdent = "RW" + legs.runwayEnd.name;
-        rwleg.fixPos = legs.runwayEnd.position;
-        rwleg.time = 0.f;
-        rwleg.theta = 0.f;
-        rwleg.rho = 0.f;
-        rwleg.magvar = leg.magvar;
-        rwleg.distance = meterToNm(rwleg.line.lengthMeter());
-        rwleg.course = normalizeCourse(rwleg.line.angleDeg() - rwleg.magvar);
-        rwleg.navaids.runwayEnds.append(legs.runwayEnd);
-        rwleg.missed = rwleg.transition = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = false;
+        // Not a runway fix and runway reference is valid - add own runway fix
+        maptypes::MapApproachLeg rwleg = createRunwayLeg(leg, legs);
         rwleg.type = maptypes::DIRECT_TO_RUNWAY;
+        rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
+        rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
 
         legs.approachLegs.insert(i + 1 - legs.transitionLegs.size(), rwleg);
-
         break;
       }
     }
@@ -534,7 +549,7 @@ void ApproachQuery::processLegsFixRestrictions(maptypes::MapApproachLegs& legs)
     maptypes::MapApproachLeg& leg = legs[i];
     maptypes::MapApproachLeg& prevLeg = legs[i - 1];
 
-    if(legs.isTransition(i - 1) && legs.isApproach(i) && leg.type == maptypes::INITIAL_FIX &&
+    if(legs.at(i - 1).isTransition() && legs.at(i).isApproach() && leg.type == maptypes::INITIAL_FIX &&
        atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1) &&
        leg.fixIdent == prevLeg.fixIdent)
       // Found the connection between transition and approach with same altitudes
@@ -660,11 +675,11 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     if(leg.calculatedTrueCourse >= maptypes::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedTrueCourse = 0.f;
 
-    if(legs.isTransition(i))
+    if(leg.isTransition())
       legs.transitionDistance += leg.calculatedDistance;
-    if(legs.isApproach(i))
+    if(leg.isApproach())
       legs.approachDistance += leg.calculatedDistance;
-    if(legs.isMissed(i))
+    if(leg.isMissed())
       legs.missedDistance += leg.calculatedDistance;
   }
 }
@@ -677,9 +692,11 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
   Pos lastPos;
   for(int i = 0; i < legs.size(); ++i)
   {
+    if(legs.mapType == maptypes::APPROACH_SID && i == 0)
+      lastPos = legs.runwayEnd.position;
+
     Pos curPos;
     maptypes::MapApproachLeg& leg = legs[i];
-    const maptypes::MapApproachLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
     maptypes::ApproachLegType type = leg.type;
 
     // ===========================================================
@@ -795,19 +812,13 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
     else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
                             maptypes::HEADING_TO_ALTITUDE_TERMINATION}))
     {
-      if(prevLeg != nullptr)
-      {
-        // TODO calculate distance by altitude
-        Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
+      // TODO calculate distance by altitude
+      Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
 
-        if(!lastPos.isValid())
-          lastPos = start;
-        curPos = start.endpoint(nmToMeter(2.f), leg.legTrueCourse()).normalize();
-        leg.displayText << tr("Altitude");
-      }
-      else
-        qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "no previous leg found"
-                   << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+      if(!lastPos.isValid())
+        lastPos = start;
+      curPos = start.endpoint(nmToMeter(2.f), leg.legTrueCourse()).normalize();
+      leg.displayText << tr("Altitude");
     }
     // ===========================================================
     else if(contains(type, {maptypes::COURSE_TO_RADIAL_TERMINATION, maptypes::HEADING_TO_RADIAL_TERMINATION}))
@@ -898,7 +909,12 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       leg.displayText << tr("Manual");
     }
 
-    leg.line = Line(lastPos.isValid() ? lastPos : curPos, curPos);
+    if(legs.mapType == maptypes::APPROACH_SID && i == 0)
+      // First leg of a SID start at runway end
+      leg.line = Line(legs.runwayEnd.position, curPos);
+    else
+      leg.line = Line(lastPos.isValid() ? lastPos : curPos, curPos);
+
     if(!leg.line.isValid())
       qWarning() << "leg line type" << type << "fix" << leg.fixIdent << "invalid line"
                  << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
@@ -990,17 +1006,6 @@ void ApproachQuery::processCourseInterceptLegs(maptypes::MapApproachLegs& legs)
   }
 }
 
-void ApproachQuery::updateBoundingRectangle(maptypes::MapApproachLegs& legs)
-{
-  for(int i = 0; i < legs.size(); i++)
-  {
-    const maptypes::MapApproachLeg& leg = legs.at(i);
-    legs.bounding.extend(leg.fixPos);
-    legs.bounding.extend(leg.interceptPos);
-    legs.bounding.extend(leg.line.boundingRect());
-  }
-}
-
 void ApproachQuery::initQueries()
 {
   deInitQueries();
@@ -1058,4 +1063,71 @@ void ApproachQuery::deInitQueries()
 
   delete approachQuery;
   approachQuery = nullptr;
+}
+
+void ApproachQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType)
+{
+  simulatorType = simType;
+}
+
+void ApproachQuery::assignType(maptypes::MapApproachLegs& approach)
+{
+  if(simulatorType == atools::fs::FsPaths::P3D_V3 && approach.approachType == "GPS" &&
+     (approach.approachSuffix == "A" || approach.approachSuffix == "D") && approach.gpsOverlay)
+  {
+    if(approach.approachSuffix == "A")
+      approach.mapType |= maptypes::APPROACH_STAR;
+    else if(approach.approachSuffix == "D")
+      approach.mapType |= maptypes::APPROACH_SID;
+  }
+  else
+  {
+    if(!approach.approachLegs.isEmpty())
+      approach.mapType |= maptypes::APPROACH;
+    if(!approach.transitionLegs.isEmpty())
+      approach.mapType |= maptypes::APPROACH_TRANSITION;
+  }
+
+  for(MapApproachLeg& leg : approach.approachLegs)
+  {
+    leg.mapType = approach.mapType & ~maptypes::APPROACH_TRANSITION;
+    if(leg.missed)
+    {
+      leg.mapType &= ~maptypes::APPROACH;
+      leg.mapType |= maptypes::APPROACH_MISSED;
+    }
+  }
+
+  for(MapApproachLeg& leg : approach.transitionLegs)
+    leg.mapType = approach.mapType & ~maptypes::APPROACH;
+}
+
+maptypes::MapApproachLeg ApproachQuery::createRunwayLeg(const maptypes::MapApproachLeg& leg,
+                                                        const maptypes::MapApproachLegs& legs)
+{
+  maptypes::MapApproachLeg rwleg;
+  rwleg.approachId = legs.ref.approachId;
+  rwleg.transitionId = legs.ref.transitionId;
+  rwleg.approachId = legs.ref.approachId;
+  rwleg.navId = leg.navId;
+
+  // Use a generated id base on the previous leg id
+  rwleg.legId = RUNWAY_LEG_ID_BASE + leg.legId;
+
+  rwleg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+  rwleg.altRestriction.alt2 = 0.f;
+  // geometry is populated later
+  rwleg.fixType = "R";
+  rwleg.fixIdent = "RW" + legs.runwayEnd.name;
+  rwleg.fixPos = legs.runwayEnd.position;
+  rwleg.time = 0.f;
+  rwleg.theta = 0.f;
+  rwleg.rho = 0.f;
+  rwleg.magvar = leg.magvar;
+  rwleg.distance = meterToNm(rwleg.line.lengthMeter());
+  rwleg.course = normalizeCourse(rwleg.line.angleDeg() - rwleg.magvar);
+  rwleg.navaids.runwayEnds.append(legs.runwayEnd);
+  rwleg.missed = rwleg.transition = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = false;
+
+  return rwleg;
 }

@@ -92,6 +92,9 @@ signals:
   /* Add the initial fix to the route */
   void routeAttachApproach(const maptypes::MapApproachLegs& legs);
 
+  /* Show information info window on navaid on double click */
+  void showInformation(maptypes::MapSearchResult result);
+
 private:
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
@@ -144,6 +147,11 @@ private:
   void updateTreeHeader();
   void createFonts();
 
+  QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
+  QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
+
+  maptypes::MapObjectTypes buildType(const atools::sql::SqlRecord& recApp);
+
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapApproachRef> itemIndex;
 
@@ -170,6 +178,7 @@ private:
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   atools::gui::GridDelegate *gridDelegate = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_APPROACHTREECONTROLLER_H

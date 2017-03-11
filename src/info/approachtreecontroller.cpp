@@ -158,6 +158,7 @@ void ApproachTreeController::postDatabaseLoad()
 
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(ui->treeWidgetApproachInfo);
+  approachQuery->setCurrentSimulator(mainWindow->getCurrentSimulator());
 }
 
 void ApproachTreeController::disconnectedFromSimulator()
@@ -251,7 +252,9 @@ void ApproachTreeController::fillApproachInformation(const maptypes::MapAirport&
 
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->textBrowserApproachInfo->clear();
-  ui->textBrowserApproachInfo->setText(html.getHtml());
+
+  if(!ref.isEmpty())
+    ui->textBrowserApproachInfo->setText(html.getHtml());
 }
 
 void ApproachTreeController::fillApproachTreeWidget()
@@ -301,7 +304,6 @@ void ApproachTreeController::fillApproachTreeWidget()
       fillApproachInformation(currentAirport, maptypes::MapApproachRef());
 
       // Reset table like style back to plain tree
-      treeWidget->setStyleSheet(QString());
       treeWidget->resetIndentation();
 
       // Add a tree of transitions and approaches
@@ -315,18 +317,28 @@ void ApproachTreeController::fillApproachTreeWidget()
           int runwayEndId = recApp.valueInt("runway_end_id");
           int apprId = recApp.valueInt("approach_id");
 
-          itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId));
+          const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+          maptypes::MapObjectTypes type = buildType(recApp);
+
+          int transitionId = -1;
+          if(type == maptypes::APPROACH_SID)
+            transitionId = recTransVector->first().valueInt("transition_id");
+
+          itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId, transitionId, -1, type));
 
           QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
 
-          const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
-          if(recTransVector != nullptr)
+          if(type != maptypes::APPROACH_SID)
           {
-            // Transitions for this approach
-            for(const SqlRecord& recTrans : *recTransVector)
+            if(recTransVector != nullptr)
             {
-              itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId, recTrans.valueInt("transition_id")));
-              buildTransitionItem(apprItem, recTrans);
+              // Transitions for this approach
+              for(const SqlRecord& recTrans : *recTransVector)
+              {
+                itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId,
+                                                recTrans.valueInt("transition_id"), -1, type));
+                buildTransitionItem(apprItem, recTrans);
+              }
             }
           }
         }
@@ -482,7 +494,7 @@ void ApproachTreeController::itemSelectionChanged()
   }
   else
   {
-    for(const QTreeWidgetItem *item : items)
+    for(QTreeWidgetItem *item : items)
     {
       const MapApproachRef& ref = itemIndex.at(item->type());
 
@@ -501,15 +513,7 @@ void ApproachTreeController::itemSelectionChanged()
           emit approachLegSelected(maptypes::MapApproachRef());
 
         if(ref.isApproachAndTransition())
-        {
-          QTreeWidgetItem *apprItem;
-          if(ref.isLeg())
-            apprItem = item->parent()->parent();
-          else
-            apprItem = item->parent();
-
-          updateApproachItem(apprItem, ref.transitionId);
-        }
+          updateApproachItem(parentApproachItem(item), ref.transitionId);
       }
 
       if(!approachSelectedMode)
@@ -574,17 +578,17 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
 
     if(ref.legId == -1)
     {
-      float remainingDistance = 100.f;
+      float remainingDistanceDummy = 0.f;
       if(ref.approachId != -1 && ref.transitionId == -1)
       {
         const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
-        addApproachLegs(legs, item, -1, remainingDistance);
+        addApproachLegs(legs, item, -1, remainingDistanceDummy);
         itemLoadedIndex.setBit(item->type());
       }
       else if(ref.approachId != -1 && ref.transitionId != -1)
       {
         const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
-        addTransitionLegs(legs, item, remainingDistance);
+        addTransitionLegs(legs, item, remainingDistanceDummy);
         itemLoadedIndex.setBit(item->type());
       }
       itemLoadedIndex.resize(itemIndex.size());
@@ -600,7 +604,7 @@ void ApproachTreeController::addApproachLegs(const MapApproachLegs *legs, QTreeW
     for(const MapApproachLeg& leg : legs->approachLegs)
     {
       itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId, transitionId,
-                                      leg.legId));
+                                      leg.legId, legs->mapType));
       buildLegItem(item, leg, remainingDistance);
     }
   }
@@ -614,7 +618,7 @@ void ApproachTreeController::addTransitionLegs(const MapApproachLegs *legs, QTre
     for(const MapApproachLeg& leg : legs->transitionLegs)
     {
       itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId,
-                                      legs->ref.transitionId, leg.legId));
+                                      legs->ref.transitionId, leg.legId, legs->mapType));
       buildLegItem(item, leg, remainingDistance);
     }
   }
@@ -684,25 +688,25 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   QString text, showText;
 
   int descriptionIndex = approachSelectedMode ? SELECTED_LEGTYPE : OVERVIEW_DESCRIPTION;
+  int identIndex = approachSelectedMode ? SELECTED_IDENT : OVERVIEW_IDENT;
 
   if(item != nullptr)
   {
     if(!approachSelectedMode)
     {
-      if(ref.isApproachAndTransition())
+      QTreeWidgetItem *parentAppr = parentApproachItem(item);
+      QTreeWidgetItem *parentTrans = parentTransitionItem(item);
+
+      if(ref.isSid())
+        text = parentTrans->text(descriptionIndex) + " " + parentTrans->text(identIndex);
+      else if(ref.isApproachAndTransition())
       {
-        if(ref.isLeg())
-          text = item->parent()->text(descriptionIndex) + tr(" and ") + item->parent()->parent()->text(descriptionIndex);
-        else
-          text = item->text(descriptionIndex) + tr(" and ") + item->parent()->text(descriptionIndex);
+        text = parentAppr->text(descriptionIndex) + " " + parentAppr->text(identIndex) +
+               tr(" and ") +
+               parentTrans->text(descriptionIndex) + " " + parentTrans->text(identIndex);
       }
       else if(ref.isApproachOnly())
-      {
-        if(ref.isLeg())
-          text = item->parent()->text(descriptionIndex);
-        else
-          text = item->text(descriptionIndex);
-      }
+        text = parentAppr->text(descriptionIndex) + " " + parentAppr->text(identIndex);
     }
     else
       text = item->text(descriptionIndex);
@@ -713,7 +717,6 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
       ui->actionInfoApproachSelect->setEnabled(true);
     }
 
-    int identIndex = approachSelectedMode ? SELECTED_IDENT : OVERVIEW_IDENT;
     if(ref.isLeg())
       showText = item->text(identIndex).isEmpty() ? tr("Position") : item->text(identIndex);
     else
@@ -802,7 +805,12 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
       leg = approachQuery->getApproachLeg(currentAirport, ref.approachId, ref.legId);
 
     if(leg != nullptr)
+    {
       emit showPos(leg->line.getPos2(), 0.f, doubleClick);
+
+      if(doubleClick && (leg->navaids.hasNdb() || leg->navaids.hasVor() || leg->navaids.hasWaypoints()))
+        emit showInformation(leg->navaids);
+    }
   }
   else if(ref.transitionId != -1 && !doubleClick)
   {
@@ -816,6 +824,24 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
+
+}
+
+maptypes::MapObjectTypes ApproachTreeController::buildType(const SqlRecord& recApp)
+{
+  QString suffix(recApp.valueStr("suffix"));
+  QString type(recApp.valueStr("type"));
+  int gpsOverlay = recApp.valueBool("has_gps_overlay");
+
+  if(mainWindow->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
+     (suffix == "A" || suffix == "D") && gpsOverlay)
+  {
+    if(suffix == "A")
+      return maptypes::APPROACH_STAR;
+    else if(suffix == "D")
+      return maptypes::APPROACH_SID;
+  }
+  return maptypes::APPROACH;
 }
 
 QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
@@ -826,15 +852,12 @@ QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runw
 
   QString approachType;
 
-  if(mainWindow->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
-     (suffix == "A" || suffix == "D") && gpsOverlay)
-  {
-    if(suffix == "A")
-      approachType += tr("STAR");
-    else if(suffix == "D")
-      approachType += tr("SID");
-  }
-  else
+  maptypes::MapObjectTypes maptype = buildType(recApp);
+  if(maptype == maptypes::APPROACH_SID)
+    approachType += tr("SID");
+  else if(maptype == maptypes::APPROACH_STAR)
+    approachType += tr("STAR");
+  else if(maptype == maptypes::APPROACH)
   {
     approachType = tr("Approach ") + maptypes::approachType(type);
 
@@ -931,7 +954,7 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
     }
     else
     {
-      icon = SymbolPainter(Qt::transparent).createApproachpointIcon(size);
+      icon = SymbolPainter(Qt::transparent).createApproachPointIcon(size);
       texts << "" << "";
     }
 
@@ -1004,7 +1027,7 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 
 QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
 {
-  if(leg.type != maptypes::INITIAL_FIX && leg.isCircular() && leg.calculatedDistance > 0.f)
+  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
     return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
   else
     return QString();
@@ -1014,16 +1037,18 @@ QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
 {
   QString retval;
 
-  if(leg.calculatedDistance > 0.f)
-    retval += Unit::distNm(leg.calculatedDistance, false);
-
-  if(leg.time > 0.f)
+  if(!leg.noDistanceDisplay())
   {
-    if(!retval.isEmpty())
-      retval += ", ";
-    retval += QString::number(leg.time, 'g', 2) + tr(" min");
-  }
+    if(leg.calculatedDistance > 0.f)
+      retval += Unit::distNm(leg.calculatedDistance, false);
 
+    if(leg.time > 0.f)
+    {
+      if(!retval.isEmpty())
+        retval += ", ";
+      retval += QString::number(leg.time, 'g', 2) + tr(" min");
+    }
+  }
   return retval;
 }
 
@@ -1250,4 +1275,32 @@ void ApproachTreeController::createFonts()
 
   activeLegFont = legFont;
   activeLegFont.setBold(true);
+}
+
+QTreeWidgetItem *ApproachTreeController::parentApproachItem(QTreeWidgetItem *item) const
+{
+  QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
+  while(current != nullptr && current != root)
+  {
+    const MapApproachRef& ref = itemIndex.at(current->type());
+    if(ref.isApproachOnly() && !ref.isLeg())
+      return current;
+
+    current = current->parent();
+  }
+  return current != nullptr ? current : item;
+}
+
+QTreeWidgetItem *ApproachTreeController::parentTransitionItem(QTreeWidgetItem *item) const
+{
+  QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
+  while(current != nullptr && current != root)
+  {
+    const MapApproachRef& ref = itemIndex.at(current->type());
+    if(ref.isApproachAndTransition() && !ref.isLeg())
+      return current;
+
+    current = current->parent();
+  }
+  return current != nullptr ? current : item;
 }

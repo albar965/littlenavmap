@@ -98,16 +98,20 @@ enum MapObjectType
   APPROACH = 1 << 22,
   APPROACH_MISSED = 1 << 23,
   APPROACH_TRANSITION = 1 << 24,
+  APPROACH_SID = 1 << 25,
+  APPROACH_STAR = 1 << 26,
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
-  APPROACH_ALL = APPROACH | APPROACH_MISSED | APPROACH_TRANSITION,
+  APPROACH_ALL = APPROACH | APPROACH_MISSED | APPROACH_TRANSITION | APPROACH_SID | APPROACH_STAR,
   ALL = 0xffffffff
 };
 
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
+
+QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type);
 
 /* Primitive id type combo that is hashable */
 struct MapObjectRef
@@ -766,16 +770,33 @@ struct MapSearchResult
 
 struct MapApproachRef
 {
-  MapApproachRef(int airport = -1, int runwayEnd = -1, int approach = -1, int transition = -1, int leg = -1)
-    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg)
+  MapApproachRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapObjectTypes type)
+    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
+      mapType(type)
+  {
+  }
+
+  MapApproachRef()
+    : airportId(-1), runwayEndId(-1), approachId(-1), transitionId(-1), legId(-1), mapType(NONE)
   {
   }
 
   int airportId, runwayEndId, approachId, transitionId, legId;
+  maptypes::MapObjectTypes mapType = NONE;
 
   bool isLeg() const
   {
     return legId != -1;
+  }
+
+  bool isSid() const
+  {
+    return mapType & maptypes::APPROACH_SID;
+  }
+
+  bool isStar() const
+  {
+    return mapType & maptypes::APPROACH_STAR;
   }
 
   bool isApproachOnly() const
@@ -823,6 +844,7 @@ struct MapApproachLeg
   MapAltRestriction altRestriction;
 
   maptypes::ApproachLegType type = INVALID_LEG_TYPE;
+  maptypes::MapObjectTypes mapType = NONE;
 
   int approachId, transitionId, legId, navId, recNavId;
 
@@ -850,8 +872,29 @@ struct MapApproachLeg
     return trueCourse ? course : course + magvar;
   }
 
+  bool isApproach() const
+  {
+    return !isTransition() && !isMissed();
+  }
+
+  bool isTransition() const
+  {
+    return mapType & maptypes::APPROACH_TRANSITION;
+  }
+
+  bool isMissed() const
+  {
+    return mapType & maptypes::APPROACH_MISSED;
+  }
+
   bool isHold() const;
   bool isCircular() const;
+
+  /* Do not display distance e.g. for course to altitude */
+  bool noDistanceDisplay() const;
+
+  /* No course display for e.g. arc legs */
+  bool noCourseDisplay() const;
 
 };
 
@@ -873,12 +916,13 @@ struct MapApproachLegs
   QVector<MapApproachLeg> approachLegs;
   MapApproachRef ref;
   atools::geo::Rect bounding;
-  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
+  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f, airportDirection = INVALID_COURSE_VALUE;
 
   QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent;
 
   /* Only for approaches */
   maptypes::MapRunwayEnd runwayEnd;
+  MapObjectTypes mapType = NONE;
 
   bool gpsOverlay;
 
@@ -892,24 +936,9 @@ struct MapApproachLegs
     return transitionLegs.size() + approachLegs.size();
   }
 
-  bool isTransition(int i) const
-  {
-    return i < transitionLegs.size();
-  }
-
-  bool isApproach(int i) const
-  {
-    return !isTransition(i) && !isMissed(i);
-  }
-
-  bool isMissed(int i) const
-  {
-    return at(i).missed;
-  }
-
   const MapApproachLeg& at(int i) const
   {
-    return isTransition(i) ? transitionLegs.at(i) : approachLegs.at(apprIdx(i));
+    return i < transitionLegs.size() ? transitionLegs.at(i) : approachLegs.at(apprIdx(i));
   }
 
   const MapApproachLeg& first() const
@@ -932,19 +961,11 @@ struct MapApproachLegs
     return nullptr;
   }
 
-  const MapApproachLeg *transitionLegById(int legId) const
-  {
-    for(const MapApproachLeg& leg : transitionLegs)
-    {
-      if(leg.legId == legId)
-        return &leg;
-    }
-    return nullptr;
-  }
+  const MapApproachLeg *transitionLegById(int legId) const;
 
   MapApproachLeg& operator[](int i)
   {
-    return isTransition(i) ? transitionLegs[i] : approachLegs[apprIdx(i)];
+    return i < transitionLegs.size() ? transitionLegs[i] : approachLegs[apprIdx(i)];
   }
 
 private:

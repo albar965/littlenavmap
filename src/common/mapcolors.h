@@ -109,6 +109,7 @@ const QColor routeApproachMissedTextColor = QColor(90, 90, 90);
 const QColor routeApproachTextColor = QColor(0, 0, 0);
 
 const QColor routeApproachPointColor = QColor(90, 90, 90);
+const QColor routeApproachPointFlyoverColor = QColor(255, 255, 0);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);

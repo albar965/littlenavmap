@@ -134,6 +134,7 @@ MainWindow::MainWindow()
     infoQuery->initQueries();
 
     approachQuery = new ApproachQuery(databaseManager->getDatabase(), mapQuery);
+    approachQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
     approachQuery->initQueries();
 
     qDebug() << "MainWindow Creating Approach controller";
@@ -873,6 +874,8 @@ void MainWindow::connectAllSlots()
   connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
   connect(approachController, &ApproachTreeController::routeAttachApproach, routeController,
           &RouteController::routeAttachApproach);
+  connect(approachController, &ApproachTreeController::showInformation, infoController,
+          &InfoController::showInformation);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);

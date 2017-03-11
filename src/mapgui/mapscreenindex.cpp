@@ -281,9 +281,9 @@ void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistanc
   {
     const maptypes::MapApproachLeg& leg = approachHighlight.at(i);
 
-    if((!(mapWidget->getShownMapFeatures() & maptypes::APPROACH) && approachHighlight.isApproach(i)) ||
-       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_MISSED) && approachHighlight.isMissed(i)) ||
-       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_TRANSITION) && approachHighlight.isTransition(i)))
+    if((!(mapWidget->getShownMapFeatures() & maptypes::APPROACH) && leg.isApproach()) ||
+       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_MISSED) && leg.isMissed()) ||
+       (!(mapWidget->getShownMapFeatures() & maptypes::APPROACH_TRANSITION) && leg.isTransition()))
       continue;
 
     for(const maptypes::MapAirport& obj : leg.navaids.airports)
