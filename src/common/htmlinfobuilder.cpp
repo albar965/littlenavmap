@@ -41,7 +41,6 @@
 using namespace maptypes;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
-using formatter::capNavString;
 using atools::geo::normalizeCourse;
 using atools::geo::opposedCourseDeg;
 using atools::capString;

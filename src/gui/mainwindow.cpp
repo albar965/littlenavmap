@@ -873,7 +873,7 @@ void MainWindow::connectAllSlots()
   connect(approachController, &ApproachTreeController::showRect, mapWidget, &MapWidget::showRect);
   connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
   connect(approachController, &ApproachTreeController::routeAttachApproach, routeController,
-          &RouteController::routeAttachApproach);
+          &RouteController::routeAttachProcedure);
   connect(approachController, &ApproachTreeController::showInformation, infoController,
           &InfoController::showInformation);
 
@@ -1500,20 +1500,14 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
   if(approachRef.isEmpty())
-  {
-    routeController->approachSelected(maptypes::MapApproachLegs());
     mapWidget->changeApproachHighlight(maptypes::MapApproachLegs());
-  }
   else
   {
     if(approachRef.isApproachAndTransition())
     {
       const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
-      {
-        routeController->approachSelected(*legs);
         mapWidget->changeApproachHighlight(*legs);
-      }
       else
         qWarning() << "Transition not found" << approachRef.transitionId;
     }
@@ -1521,10 +1515,7 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
     {
       const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
-      {
-        routeController->approachSelected(*legs);
         mapWidget->changeApproachHighlight(*legs);
-      }
       else
         qWarning() << "Approach not found" << approachRef.transitionId;
     }

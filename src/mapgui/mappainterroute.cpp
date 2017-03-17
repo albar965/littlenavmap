@@ -69,30 +69,29 @@ void MapPainterRoute::render(PaintContext *context)
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
 {
-  const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
-  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteApprMapObjects();
+  const RouteMapObjectList& route = routeController->getRouteMapObjects();
 
-  if(routeMapObjects.isEmpty())
+  if(route.isEmpty())
     return;
 
   context->painter->setBrush(Qt::NoBrush);
 
   // Use a layer that is independent of the declutter factor
-  if(!routeMapObjects.isEmpty() && context->mapLayerEffective->isAirportDiagram())
+  if(!route.isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw start position or parking circle into the airport diagram
-    const RouteMapObject& first = routeMapObjects.at(0);
+    const RouteMapObject& first = route.at(0);
     if(first.getMapObjectType() == maptypes::AIRPORT)
     {
       int size = 100;
 
       Pos startPos;
-      if(routeMapObjects.hasDepartureParking())
+      if(route.hasDepartureParking())
       {
         startPos = first.getDepartureParking().position;
         size = first.getDepartureParking().radius;
       }
-      else if(routeMapObjects.hasDepartureStart())
+      else if(route.hasDepartureStart())
         startPos = first.getDepartureStart().position;
 
       if(startPos.isValid())
@@ -117,7 +116,6 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Calculate the index where an approach or transition starts
-  int approachIndex = routeApprMapObjects.getApproachStartIndex();
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -126,24 +124,24 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   GeoDataLineString linestring;
   linestring.setTessellate(true);
 
-  for(int i = 0; i < routeMapObjects.size(); i++)
+  for(int i = 0; i < route.size(); i++)
   {
-    const RouteMapObject& obj = routeMapObjects.at(i);
+    const RouteMapObject& obj = route.at(i);
     if(i > 0)
     {
       // Build text only for the route part - not for the approach
-      if(i < approachIndex)
+      if(obj.isRoute())
         routeTexts.append(Unit::distNm(obj.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                           QString::number(obj.getCourseToRhumbMag(), 'f', 0) +
-                          (routeMapObjects.isTrueCourse() ? tr("°T") : tr("°M")));
+                          (route.isTrueCourse() ? tr("°T") : tr("°M")));
       else
         routeTexts.append(QString());
 
-      lines.append(Line(routeMapObjects.at(i - 1).getPosition(), obj.getPosition()));
+      lines.append(Line(route.at(i - 1).getPosition(), obj.getPosition()));
     }
 
     // Draw line only for the route part - not for the approach
-    if(i < approachIndex)
+    if(obj.isRoute())
       linestring.append(GeoDataCoordinates(obj.getPosition().getLonX(), obj.getPosition().getLatY(), 0, DEG));
 
     positions.append(obj.getPosition());
@@ -171,7 +169,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   }
 
   // Get active route leg
-  int activeRouteLeg = routeApprMapObjects.getActiveRouteLegIndex();
+  int activeRouteLeg = route.getActiveLegIndex();
 
   if(activeRouteLeg > 0 && activeRouteLeg < linestring.size())
   {
@@ -202,23 +200,23 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // ================================================================================
 
   QBitArray visibleStartPoints = textPlacement.getVisibleStartPoints();
-  if(approachIndex < maptypes::INVALID_INDEX_VALUE)
+  for(int i = 0; i < route.size(); i++)
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
-    for(int i = approachIndex; i < visibleStartPoints.size() - 1; i++)
+    if(route.at(i).isAnyApproach())
       visibleStartPoints.clearBit(i);
   }
 
   // Draw airport and navaid symbols
-  drawSymbols(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
+  drawSymbols(context, route, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw symbol text
-  drawSymbolText(context, routeMapObjects, visibleStartPoints, textPlacement.getStartPoints());
+  drawSymbolText(context, route, visibleStartPoints, textPlacement.getStartPoints());
 }
 
 void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 {
-  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteApprMapObjects();
+  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteMapObjects();
   if(routeApprMapObjects.size() >= 2)
   {
     // Draw the top of descent circle and text
@@ -249,7 +247,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
 
-  const RouteMapObjectList& routeMapObjects = routeController->getRouteApprMapObjects();
+  const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -277,7 +275,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   drawTextLines.fill({Line(), false, false}, legs.size());
 
   // Get active approach leg
-  int activeLeg = routeMapObjects.getActiveApproachLegIndex();
+  int activeLeg = routeMapObjects.getActiveLegIndex();
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
@@ -390,7 +388,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   if(leg.disabled)
     return;
 
-  if(leg.type == maptypes::INITIAL_FIX) // Nothing to do here
+  if(leg.type == maptypes::INITIAL_FIX || leg.type == maptypes::START_OF_PROCEDURE) // Nothing to do here
   {
     lastLine = line;
     return;
@@ -426,7 +424,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                               maptypes::HEADING_TO_INTERCEPT}))
   {
     if(contains(leg.turnDirection,
-                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX)
+                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX &&
+       prevLeg->type != maptypes::START_OF_PROCEDURE)
     {
       float lineDist = QLineF(lastLine.p2(), line.p1()).length();
       if(!lastLine.p2().isNull() && lineDist > 2)
@@ -957,7 +956,7 @@ void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int 
 void MapPainterRoute::paintApproachpoint(const PaintContext *context, int x, int y)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
-  symbolPainter->drawApproachSymbol(context->painter, x, y, size, true, false);
+  symbolPainter->drawApproachSymbol(context->painter, x, y, size + 3, true, false);
 }
 
 void MapPainterRoute::paintApproachFlyover(const PaintContext *context, int x, int y)

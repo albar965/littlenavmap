@@ -547,8 +547,8 @@ void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int t
 
           if(aleg != nullptr)
           {
-            child->setText(courseIndex, buildCourseStr(*aleg));
-            child->setText(distanceIndex, buildDistanceStr(*aleg));
+            child->setText(courseIndex, maptypes::approachLegCourse(*aleg));
+            child->setText(distanceIndex, maptypes::approachLegDistance(*aleg));
           }
           else
             qWarning() << "Approach legs not found" << childref.legId;
@@ -654,13 +654,12 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   ui->actionInfoApproachSelect->setDisabled(item == nullptr || approachSelectedMode);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteApprMapObjects();
+  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
 
 #ifdef DEBUG_MOVING_AIRPLANE
-  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || !rmos.isConnectedToApproach());
+  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty());
 #else
-  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() ||
-                                                 !rmos.isConnectedToApproach() || !mainWindow->isConnected());
+  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || !rmos.isConnectedToApproach());
 #endif
 
   if(approachSelectedMode)
@@ -776,14 +775,14 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     else if(addRef.isApproachAndTransition())
       legs = approachQuery->getTransitionLegs(currentAirport, addRef.transitionId);
 
-    enableSelectedMode(addRef);
+    // enableSelectedMode(addRef);
 
     if(legs != nullptr)
       emit routeAttachApproach(*legs);
   }
   else if(action == ui->actionInfoApproachActivateLeg)
     // Will call this class back to highlight row
-    mainWindow->getRouteController()->activateApproachLeg(itemRow);
+    mainWindow->getRouteController()->activateLeg(itemRow);
 
   // Done by the actions themselves
   // else if(action == ui->actionInfoApproachShowAppr ||
@@ -966,12 +965,12 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
   else
     texts << maptypes::approachLegTypeStr(leg.type) << leg.fixIdent;
 
-  QString remarkStr = buildRemarkStr(leg);
+  QString remarkStr = maptypes::approachLegRemark(leg);
   texts << maptypes::altRestrictionTextShort(leg.altRestriction)
-        << buildCourseStr(leg) << buildDistanceStr(leg);
+        << maptypes::approachLegCourse(leg) << maptypes::approachLegDistance(leg);
 
   if(approachSelectedMode)
-    texts << buildRemDistanceStr(leg, remainingDistance);
+    texts << maptypes::approachLegRemDistance(leg, remainingDistance);
 
   texts << remarkStr;
 
@@ -1006,8 +1005,7 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
 
 void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproachLeg& leg)
 {
-  bool invalid = (!leg.fixIdent.isEmpty() && !leg.fixPos.isValid()) ||
-                 (!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid());
+  bool invalid = leg.hasInvalidRef();
 
   for(int i = 0; i < item->columnCount(); i++)
   {
@@ -1026,91 +1024,6 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
 
   if(approachSelectedMode)
     item->setFont(0, identFont);
-}
-
-QString ApproachTreeController::buildCourseStr(const MapApproachLeg& leg)
-{
-  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
-    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
-  else
-    return QString();
-}
-
-QString ApproachTreeController::buildDistanceStr(const MapApproachLeg& leg)
-{
-  QString retval;
-
-  if(!leg.noDistanceDisplay())
-  {
-    if(leg.calculatedDistance > 0.f)
-      retval += Unit::distNm(leg.calculatedDistance, false);
-
-    if(leg.time > 0.f)
-    {
-      if(!retval.isEmpty())
-        retval += ", ";
-      retval += QString::number(leg.time, 'g', 2) + tr(" min");
-    }
-  }
-  return retval;
-}
-
-QString ApproachTreeController::buildRemDistanceStr(const MapApproachLeg& leg, float& remainingDistance)
-{
-  QString retval;
-
-  if(!leg.missed)
-  {
-    if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX)
-      remainingDistance -= leg.calculatedDistance;
-
-    if(remainingDistance < 0.f)
-      remainingDistance = 0.f;
-
-    retval += Unit::distNm(remainingDistance, false);
-  }
-
-  return retval;
-}
-
-QString ApproachTreeController::buildRemarkStr(const MapApproachLeg& leg)
-{
-  QStringList remarks;
-  if(leg.flyover)
-    remarks.append(tr("Fly over"));
-
-  if(leg.turnDirection == "R")
-    remarks.append(tr("Turn right"));
-  else if(leg.turnDirection == "L")
-    remarks.append(tr("Turn left"));
-  else if(leg.turnDirection == "B")
-    remarks.append(tr("Turn left or right"));
-
-  QString legremarks = maptypes::approachLegRemarks(leg.type);
-  if(!legremarks.isEmpty())
-    remarks.append(legremarks);
-
-  if(!leg.recFixIdent.isEmpty())
-  {
-    if(leg.rho > 0.f)
-      remarks.append(tr("%1 / %2 / %3").arg(leg.recFixIdent).
-                     arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                     arg(QLocale().toString(leg.theta, 'f', 0) + tr("°M")));
-    else
-      remarks.append(tr("%1").arg(leg.recFixIdent));
-  }
-
-  if(!leg.remarks.isEmpty())
-    remarks.append(leg.remarks);
-
-  if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-    remarks.append(tr("Data error: Fix %1/%2 type %3 not found").
-                   arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
-  if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
-    remarks.append(tr("Data error: Recommended fix %1/%2 type %3 not found").
-                   arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
-
-  return remarks.join(", ");
 }
 
 QBitArray ApproachTreeController::saveTreeViewState()
@@ -1228,7 +1141,7 @@ void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& 
 
   fillApproachTreeWidget();
 
-  highlightNextWaypoint(mainWindow->getRouteController()->getRouteApprMapObjects().getActiveApproachLegIndexCorrected());
+  highlightNextWaypoint(mainWindow->getRouteController()->getRouteMapObjects().getActiveLegIndexCorrected());
 
   emit approachSelected(approachSelectedLegs.ref);
 }

@@ -75,15 +75,16 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   // Draw the icon
   if(mapObj.getMapObjectType() == maptypes::AIRPORT)
     symbolPainter->drawAirportSymbol(painter, mapObj.getAirport(), x, y, symbolSize, false, false);
-  else if(mapObj.getMapObjectType() == maptypes::VOR)
+  else if(mapObj.getVor().isValid())
     symbolPainter->drawVorSymbol(painter, mapObj.getVor(), x, y, symbolSize, false, false, 0);
-  else if(mapObj.getMapObjectType() == maptypes::NDB)
+  else if(mapObj.getNdb().isValid())
     symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
-  else if(mapObj.getMapObjectType() == maptypes::WAYPOINT)
+  else if(mapObj.getWaypoint().isValid())
     symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::USER)
     symbolPainter->drawUserpointSymbol(painter, x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::INVALID)
-    symbolPainter->drawWaypointSymbol(painter, mapcolors::routeInvalidPointColor, x, y, symbolSize,
-                                      false, false);
+    symbolPainter->drawWaypointSymbol(painter, mapcolors::routeInvalidPointColor, x, y, symbolSize, false, false);
+  else if(mapObj.isAnyApproach())
+    symbolPainter->drawApproachSymbol(painter, x, y, symbolSize, false, false);
 }

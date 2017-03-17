@@ -133,6 +133,9 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
   for(int i = 0; i < route.size(); i++)
   {
     const RouteMapObject& entry = route.at(i);
+    if(entry.isAnyApproach())
+      continue;
+
     const QString& airway = entry.getAirway();
     QString ident = entry.getIdent();
 
@@ -269,12 +272,10 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     {
       // Add a single waypoint from direct
       FlightplanEntry entry;
-      int userWaypointDummy = -1;
       if(!result.userPoints.isEmpty())
       {
         // Convert a coordinate to a user defined waypoint
-        entryBuilder->buildFlightplanEntry(
-          result.userPoints.first().position, result, entry, true, userWaypointDummy);
+        entryBuilder->buildFlightplanEntry(result.userPoints.first().position, result, entry, true);
 
         // Use the original string as name but limit it for fs
         entry.setWaypointId(item.left(10));

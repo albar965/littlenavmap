@@ -295,7 +295,7 @@ void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size
 
   if(!fast)
   {
-    size = size + 3;
+    size = size;
     int radius = size / 2;
     painter->drawEllipse(x - radius, y - radius, size, size);
   }

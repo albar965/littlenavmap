@@ -36,7 +36,7 @@ FlightplanEntryBuilder::~FlightplanEntryBuilder()
 }
 
 /* Copy airport attributes to flight plan entry */
-void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry)
+void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(airport.ident);
   entry.setPosition(airport.position);
@@ -47,16 +47,15 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& ai
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
                                                   maptypes::MapObjectTypes type, FlightplanEntry& entry,
-                                                  bool resolveWaypoints, int& curUserpointNumber)
+                                                  bool resolveWaypoints)
 {
   maptypes::MapSearchResult result;
   query->getMapObjectById(result, type, id);
-  buildFlightplanEntry(userPos, result, entry, resolveWaypoints, curUserpointNumber, maptypes::NONE);
+  buildFlightplanEntry(userPos, result, entry, resolveWaypoints, maptypes::NONE);
 }
 
 /* create a flight plan entry from object id/type or user position */
-void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, FlightplanEntry& entry,
-                                              int& curUserpointNumber)
+void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, FlightplanEntry& entry)
 {
   entry.setPosition(userPos);
   entry.setWaypointType(atools::fs::pln::entry::USER);
@@ -64,7 +63,7 @@ void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, F
   entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
 }
 
-void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, FlightplanEntry& entry)
+void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(ndb.ident);
   entry.setPosition(ndb.position);
@@ -73,7 +72,7 @@ void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, Flightpla
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-void FlightplanEntryBuilder::entryFromVor(const maptypes::MapVor& vor, FlightplanEntry& entry)
+void FlightplanEntryBuilder::entryFromVor(const maptypes::MapVor& vor, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(vor.ident);
   entry.setPosition(vor.position);
@@ -82,7 +81,7 @@ void FlightplanEntryBuilder::entryFromVor(const maptypes::MapVor& vor, Flightpla
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airport, FlightplanEntry& entry)
+void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airport, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(airport.ident);
   entry.setPosition(airport.position);
@@ -90,7 +89,7 @@ void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airpor
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor)
+bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor) const
 {
   query->getVorForWaypoint(vor, waypoint.id);
 
@@ -100,7 +99,7 @@ bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoin
          vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
 }
 
-bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb)
+bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb) const
 {
   query->getNdbForWaypoint(ndb, waypoint.id);
 
@@ -112,7 +111,7 @@ bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoin
 }
 
 void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& waypoint, FlightplanEntry& entry,
-                                               bool resolveWaypoints)
+                                               bool resolveWaypoints) const
 {
   bool useWaypoint = true;
   maptypes::MapVor vor;
@@ -160,7 +159,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
                                                   const maptypes::MapSearchResult& result,
                                                   FlightplanEntry& entry,
-                                                  bool resolveWaypoints, int& curUserpointNumber,
+                                                  bool resolveWaypoints,
                                                   maptypes::MapObjectTypes type)
 {
   maptypes::MapObjectTypes moType = type;
@@ -188,7 +187,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   else if(moType == maptypes::NDB)
     entryFromNdb(result.ndbs.first(), entry);
   else if(moType == maptypes::USER)
-    entryFromUserPos(userPos, entry, curUserpointNumber);
+    entryFromUserPos(userPos, entry);
   else
     qWarning() << "Unknown Map object type" << moType;
 }
@@ -197,6 +196,22 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapSearchResul
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  int userWaypointDummy = -1;
-  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints, userWaypointDummy);
+  buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints);
+}
+
+void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapApproachLeg& leg,
+                                                  atools::fs::pln::FlightplanEntry& entry,
+                                                  bool resolveWaypoints)
+{
+  if(leg.navaids.hasWaypoints())
+    entryFromWaypoint(leg.navaids.waypoints.first(), entry, resolveWaypoints);
+  else if(leg.navaids.hasVor())
+    entryFromVor(leg.navaids.vors.first(), entry);
+  else if(leg.navaids.hasNdb())
+    entryFromNdb(leg.navaids.ndbs.first(), entry);
+  else
+    entryFromUserPos(leg.line.getPos1(), entry);
+
+  // Do not save procedure legs
+  entry.setNoSave(true);
 }

@@ -133,7 +133,6 @@ maptypes::MapApproachLeg ApproachQuery::buildApproachLegEntry(const maptypes::Ma
   MapApproachLeg leg;
   leg.legId = approachLegQuery->value("approach_leg_id").toInt();
   leg.missed = approachLegQuery->value("is_missed").toBool();
-  leg.transition = false;
   buildLegEntry(approachLegQuery, leg, airport);
   return leg;
 }
@@ -155,7 +154,6 @@ maptypes::MapApproachLeg ApproachQuery::buildTransitionLegEntry(const maptypes::
   // }
 
   leg.missed = false;
-  leg.transition = true;
   buildLegEntry(transitionLegQuery, leg, airport);
   return leg;
 }
@@ -396,20 +394,11 @@ maptypes::MapApproachLegs *ApproachQuery::fetchApproachLegs(const maptypes::MapA
     MapApproachLegs *legs = buildApproachLegs(airport, approachId);
     postProcessLegs(airport, *legs);
 
-    if(!legs->isEmpty())
-    {
-      for(int i = 0; i < legs->size(); i++)
-        approachLegIndex.insert(legs->at(i).legId, std::make_pair(approachId, i));
+    for(int i = 0; i < legs->size(); i++)
+      approachLegIndex.insert(legs->at(i).legId, std::make_pair(approachId, i));
 
-      approachCache.insert(approachId, legs);
-      return legs;
-    }
-    else
-    {
-      approachCache.insert(approachId, nullptr);
-      delete legs;
-    }
-    return nullptr;
+    approachCache.insert(approachId, legs);
+    return legs;
   }
 }
 
@@ -451,8 +440,6 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
 
     delete approach;
 
-    postProcessLegs(airport, *legs);
-
     transitionQuery->bindValue(":id", transitionId);
     transitionQuery->exec();
     if(transitionQuery->next())
@@ -462,20 +449,13 @@ maptypes::MapApproachLegs *ApproachQuery::fetchTransitionLegs(const maptypes::Ma
     }
     transitionQuery->finish();
 
-    if(!legs->isEmpty())
-    {
-      for(int i = 0; i < legs->size(); ++i)
-        transitionLegIndex.insert(legs->at(i).legId, std::make_pair(transitionId, i));
+    postProcessLegs(airport, *legs);
 
-      transitionCache.insert(transitionId, legs);
-      return legs;
-    }
-    else
-    {
-      transitionCache.insert(transitionId, nullptr);
-      delete legs;
-    }
-    return nullptr;
+    for(int i = 0; i < legs->size(); ++i)
+      transitionLegIndex.insert(legs->at(i).legId, std::make_pair(transitionId, i));
+
+    transitionCache.insert(transitionId, legs);
+    return legs;
   }
 }
 
@@ -521,6 +501,7 @@ maptypes::MapApproachLegs *ApproachQuery::buildApproachLegs(const maptypes::MapA
 
 void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
 {
+  // Update the mapTypes
   assignType(legs);
 
   updateMagvar(legs);
@@ -529,7 +510,7 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
   processLegs(legs);
 
   // Add artificial legs (not in the database) that end at the runway
-  processFinalRunwayLegs(airport, legs);
+  processArtificialLegs(airport, legs);
 
   // Calculate intercept terminators
   processCourseInterceptLegs(legs);
@@ -544,24 +525,69 @@ void ApproachQuery::postProcessLegs(const maptypes::MapAirport& airport, maptype
   qDebug() << legs;
 }
 
-void ApproachQuery::processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
+void ApproachQuery::processArtificialLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs)
 {
-  for(int i = 0; i < legs.size() - 1; i++)
+  if(!legs.isEmpty())
   {
-    // Look for the transition from approach to missed
-    maptypes::MapApproachLeg& leg = legs[i];
-    if(leg.isApproach() && legs.at(i + 1).isMissed())
+    if(legs.mapType == maptypes::APPROACH_SID)
     {
-      if(leg.fixType != "R" && legs.runwayEnd.isValid())
+      if(legs.runwayEnd.isValid())
       {
-        // Not a runway fix and runway reference is valid - add own runway fix
-        maptypes::MapApproachLeg rwleg = createRunwayLeg(leg, legs);
+        // Add runway fix to departure
+        maptypes::MapApproachLeg rwleg = createRunwayLeg(legs.first(), legs);
         rwleg.type = maptypes::DIRECT_TO_RUNWAY;
-        rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
-        rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
+        rwleg.altRestriction.alt1 = airport.position.getAltitude(); // At 50ft above threshold
+        rwleg.line = Line(legs.first().line.getPos2(), legs.runwayEnd.position);
+        rwleg.mapType = maptypes::APPROACH_SID;
+        legs.transitionLegs.prepend(rwleg);
+      }
+    }
+    else
+    {
+      // if(!legs.first().line.isPoint())
+      if(legs.first().type == maptypes::COURSE_TO_FIX)
+      {
+        // Add an artificial initial fix to keep all consistent
+        maptypes::MapApproachLeg sleg = createStartLeg(legs.first(), legs);
+        sleg.type = maptypes::START_OF_PROCEDURE;
+        sleg.line = Line(legs.first().line.getPos1());
 
-        legs.approachLegs.insert(i + 1 - legs.transitionLegs.size(), rwleg);
-        break;
+        if(legs.mapType == maptypes::APPROACH_STAR)
+        {
+          sleg.mapType = maptypes::APPROACH_STAR;
+          legs.approachLegs.prepend(sleg);
+        }
+        else if(legs.mapType & maptypes::APPROACH_TRANSITION)
+        {
+          sleg.mapType = maptypes::APPROACH_TRANSITION;
+          legs.transitionLegs.prepend(sleg);
+        }
+        else if(legs.mapType & maptypes::APPROACH)
+        {
+          sleg.mapType = maptypes::APPROACH;
+          legs.approachLegs.prepend(sleg);
+        }
+      }
+
+      for(int i = 0; i < legs.size() - 1; i++)
+      {
+        // Look for the transition from approach to missed
+        maptypes::MapApproachLeg& leg = legs[i];
+        if(leg.isApproach() && legs.at(i + 1).isMissed())
+        {
+          if(leg.fixType != "R" && legs.runwayEnd.isValid())
+          {
+            // Not a runway fix and runway reference is valid - add own runway fix
+            maptypes::MapApproachLeg rwleg = createRunwayLeg(leg, legs);
+            rwleg.type = maptypes::DIRECT_TO_RUNWAY;
+            rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
+            rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
+            rwleg.mapType = maptypes::APPROACH;
+
+            legs.approachLegs.insert(i + 1 - legs.transitionLegs.size(), rwleg);
+            break;
+          }
+        }
       }
     }
   }
@@ -585,9 +611,9 @@ void ApproachQuery::processLegsFixRestrictions(maptypes::MapApproachLegs& legs)
 
 void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs)
 {
-  legs.transitionDistance += 0.f;
-  legs.approachDistance += 0.f;
-  legs.missedDistance += 0.f;
+  legs.transitionDistance = 0.f;
+  legs.approachDistance = 0.f;
+  legs.missedDistance = 0.f;
 
   for(int i = 0; i < legs.size(); i++)
   {
@@ -599,7 +625,7 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
       qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
-    else if(type == maptypes::INITIAL_FIX)
+    else if(type == maptypes::INITIAL_FIX || type == maptypes::START_OF_PROCEDURE)
     {
       leg.calculatedDistance = 0.f;
       leg.calculatedTrueCourse = 0.f;
@@ -700,10 +726,12 @@ void ApproachQuery::processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs
     if(leg.calculatedTrueCourse >= maptypes::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedTrueCourse = 0.f;
 
-    if(leg.isTransition())
+    if(leg.isTransition() || leg.isSid())
       legs.transitionDistance += leg.calculatedDistance;
-    if(leg.isApproach())
+
+    if(leg.isApproach() || leg.isStar())
       legs.approachDistance += leg.calculatedDistance;
+
     if(leg.isMissed())
       legs.missedDistance += leg.calculatedDistance;
   }
@@ -813,8 +841,8 @@ void ApproachQuery::processLegs(maptypes::MapApproachLegs& legs)
       curPos = leg.fixPos;
     }
     // ===========================================================
-    else if(contains(type, {maptypes::DIRECT_TO_FIX, maptypes::INITIAL_FIX, maptypes::TRACK_TO_FIX,
-                            maptypes::CONSTANT_RADIUS_ARC}))
+    else if(contains(type, {maptypes::DIRECT_TO_FIX, maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE,
+                            maptypes::TRACK_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
     {
       curPos = leg.fixPos;
     }
@@ -1059,6 +1087,17 @@ void ApproachQuery::initQueries()
   approachQuery = new SqlQuery(db);
   approachQuery->prepare("select type, suffix, has_gps_overlay, fix_ident "
                          "from approach where approach_id = :id");
+
+  approachIdByNameQuery = new SqlQuery(db);
+  approachIdByNameQuery->prepare("select approach_id, suffix from approach "
+                                 "where fix_ident = :fixident and type = :type and airport_id = :apid");
+
+  transitionIdByNameQuery = new SqlQuery(db);
+  transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident = :fixident and "
+                                   "type = :type and approach_id = :apprid");
+
+  transitionIdsForApproachQuery = new SqlQuery(db);
+  transitionIdsForApproachQuery->prepare("select transition_id from transition where approach_id = :id");
 }
 
 void ApproachQuery::deInitQueries()
@@ -1088,11 +1127,252 @@ void ApproachQuery::deInitQueries()
 
   delete approachQuery;
   approachQuery = nullptr;
+
+  delete approachIdByNameQuery;
+  approachIdByNameQuery = nullptr;
+
+  delete transitionIdByNameQuery;
+  transitionIdByNameQuery = nullptr;
+
+  delete transitionIdsForApproachQuery;
+  transitionIdsForApproachQuery = nullptr;
 }
 
 void ApproachQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType)
 {
   simulatorType = simType;
+}
+
+void ApproachQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
+                                                       maptypes::MapObjectTypes type)
+{
+  if(type & maptypes::APPROACH_SID)
+  {
+    properties.remove("sidappr");
+    properties.remove("sidtrans");
+    properties.remove("sidapprdistance");
+    properties.remove("sidapprsize");
+    properties.remove("sidtransdistance");
+    properties.remove("sidtranssize");
+  }
+
+  if(type & maptypes::APPROACH_STAR)
+  {
+    properties.remove("star");
+    properties.remove("stardistance");
+    properties.remove("starsize");
+  }
+
+  if(type & maptypes::APPROACH_TRANSITION)
+  {
+    properties.remove("transition");
+    properties.remove("transitiontype");
+    properties.remove("transitiondistance");
+    properties.remove("transitionsize");
+  }
+
+  if(type & maptypes::APPROACH)
+  {
+    properties.remove("approach");
+    properties.remove("approachtype");
+    properties.remove("approachsuffix");
+    properties.remove("approachdistance");
+    properties.remove("approachsize");
+  }
+}
+
+void ApproachQuery::extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
+                                                       const maptypes::MapApproachLegs& arrivalLegs,
+                                                       const maptypes::MapApproachLegs& starLegs,
+                                                       const maptypes::MapApproachLegs& departureLegs)
+{
+  if(!departureLegs.isEmpty())
+  {
+    properties.insert("sidappr", departureLegs.approachFixIdent);
+    properties.insert("sidtrans", departureLegs.transitionFixIdent);
+    properties.insert("sidapprdistance", QString::number(departureLegs.approachDistance, 'f', 1));
+    properties.insert("sidapprsize", QString::number(departureLegs.approachLegs.size()));
+    properties.insert("sidtransdistance", QString::number(departureLegs.transitionDistance, 'f', 1));
+    properties.insert("sidtranssize", QString::number(departureLegs.transitionLegs.size()));
+  }
+
+  if(!starLegs.isEmpty() && !starLegs.approachFixIdent.isEmpty())
+  {
+    properties.insert("star", starLegs.approachFixIdent);
+    properties.insert("stardistance", QString::number(starLegs.approachDistance, 'f', 1));
+    properties.insert("starsize", QString::number(starLegs.approachLegs.size()));
+  }
+
+  if(!arrivalLegs.isEmpty())
+  {
+    if(!arrivalLegs.transitionFixIdent.isEmpty())
+    {
+      properties.insert("transition", arrivalLegs.transitionFixIdent);
+      properties.insert("transitiontype", arrivalLegs.transitionType);
+      properties.insert("transitiondistance", QString::number(arrivalLegs.transitionDistance, 'f', 1));
+      properties.insert("transitionsize", QString::number(arrivalLegs.transitionLegs.size()));
+    }
+
+    if(!arrivalLegs.approachFixIdent.isEmpty())
+    {
+      properties.insert("approach", arrivalLegs.approachFixIdent);
+      properties.insert("approachtype", arrivalLegs.approachType);
+      properties.insert("approachsuffix", arrivalLegs.approachSuffix);
+      properties.insert("approachdistance", QString::number(arrivalLegs.approachDistance, 'f', 1));
+      properties.insert("approachsize", QString::number(arrivalLegs.approachLegs.size()));
+    }
+  }
+}
+
+bool ApproachQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+                                                   const maptypes::MapAirport& departure,
+                                                   const maptypes::MapAirport& destination,
+                                                   maptypes::MapApproachLegs& arrivalLegs,
+                                                   maptypes::MapApproachLegs& starLegs,
+                                                   maptypes::MapApproachLegs& departureLegs)
+{
+  bool error = false;
+
+  int sidApprId = -1, sidTransId = -1, approachId = -1, starId = -1, transitionId = -1;
+  // Get a SID id (approach and transition) =================================================================
+  if(properties.contains("sidappr"))
+  {
+    approachIdByNameQuery->bindValue(":fixident", properties.value("sidappr"));
+    approachIdByNameQuery->bindValue(":type", "GPS");
+    approachIdByNameQuery->bindValue(":apid", departure.id);
+
+    sidApprId = findProcedureLegId(departure, approachIdByNameQuery, "D", 0.f, 0, false /* transition */);
+    if(sidApprId == -1)
+    {
+      qWarning() << "Loading of approach" << properties.value("approach") << "failed";
+      error = true;
+    }
+    else
+    {
+      transitionIdByNameQuery->bindValue(":fixident", properties.value("sidtrans"));
+      transitionIdByNameQuery->bindValue(":type", "F");
+      transitionIdByNameQuery->bindValue(":apprid", sidApprId);
+
+      sidTransId = findProcedureLegId(destination, transitionIdByNameQuery, QString(),
+                                      properties.value("sidtransdistance").toFloat(),
+                                      properties.value("sidtranssize").toInt(), true /* transition */);
+      if(sidTransId == -1)
+      {
+        qWarning() << "Loading of approach" << properties.value("approach") << "failed";
+        error = true;
+      }
+    }
+  }
+
+  // Get an approach id =================================================================
+  if(properties.contains("approach"))
+  {
+    approachIdByNameQuery->bindValue(":fixident", properties.value("approach"));
+    approachIdByNameQuery->bindValue(":type", properties.value("approachtype"));
+    approachIdByNameQuery->bindValue(":apid", destination.id);
+
+    approachId = findProcedureLegId(destination, approachIdByNameQuery,
+                                    properties.value("approachsuffix"),
+                                    properties.value("approachdistance").toFloat(),
+                                    properties.value("approachsize").toInt(), false /* transition */);
+    if(approachId == -1)
+    {
+      qWarning() << "Loading of approach" << properties.value("approach") << "failed";
+      error = true;
+    }
+  }
+
+  // Get a transition id =================================================================
+  if(properties.contains("transition") && approachId != -1)
+  {
+    transitionIdByNameQuery->bindValue(":fixident", properties.value("transition"));
+    transitionIdByNameQuery->bindValue(":type", properties.value("transitiontype"));
+    transitionIdByNameQuery->bindValue(":apprid", approachId);
+
+    transitionId = findProcedureLegId(destination, transitionIdByNameQuery, QString(),
+                                      properties.value("transitiondistance").toFloat(),
+                                      properties.value("transitionsize").toInt(), true /* transition */);
+    if(transitionId == -1)
+    {
+      qWarning() << "Loading of transition" << properties.value("transition") << "failed";
+      error = true;
+    }
+  }
+
+  // Fetch a STAR id (approach) =================================================================
+  if(properties.contains("star"))
+  {
+    // Star comes as an approach
+    approachIdByNameQuery->bindValue(":fixident", properties.value("star"));
+    approachIdByNameQuery->bindValue(":type", "GPS");
+    approachIdByNameQuery->bindValue(":apid", destination.id);
+
+    starId = findProcedureLegId(destination, approachIdByNameQuery, "A",
+                                properties.value("stardistance").toFloat(),
+                                properties.value("starsize").toInt(), false /* transition */);
+    if(starId == -1)
+    {
+      qWarning() << "Loading of STAR" << properties.value("star") << "failed";
+      error = true;
+    }
+  }
+
+  if(!error) // load all or nothing in case of error
+  {
+    if(sidTransId != -1)
+      departureLegs = *getTransitionLegs(departure, sidTransId);
+
+    if(transitionId != -1)
+      // Fetch and copy transition together with approach (here from cache)
+      arrivalLegs = *getTransitionLegs(destination, transitionId);
+    else if(approachId != -1)
+      // Fetch and copy approach only from cache
+      arrivalLegs = *getApproachLegs(destination, approachId);
+
+    if(starId != -1)
+      starLegs = *getApproachLegs(destination, starId);
+  }
+  return !error;
+}
+
+int ApproachQuery::findProcedureLegId(const maptypes::MapAirport& airport, atools::sql::SqlQuery *query,
+                                      const QString& suffix, float distance, int size, bool transition)
+{
+  int procedureId = -1;
+  query->exec();
+  QVector<int> ids;
+  while(query->next())
+  {
+    // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
+    if(!transition && suffix != query->value("suffix").toString())
+      continue;
+
+    ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
+  }
+  query->finish();
+
+  if(ids.size() == 1)
+    // Found exactly one - no need to compare distance and leg number
+    procedureId = ids.first();
+  else
+  {
+    for(int id : ids)
+    {
+      const maptypes::MapApproachLegs *legs = getApproachLegs(airport, id);
+      float legdist = transition ? legs->transitionDistance : legs->approachDistance;
+      int legsize = transition ? legs->transitionLegs.size() : legs->approachLegs.size();
+
+      if(legs != nullptr &&
+         (distance == 0.f || atools::almostEqual(legdist, distance, 1.f)) &&
+         (size == -1 || size == legsize))
+      {
+        procedureId = id;
+        break;
+      }
+    }
+  }
+
+  return procedureId;
 }
 
 void ApproachQuery::assignType(maptypes::MapApproachLegs& approach)
@@ -1101,30 +1381,31 @@ void ApproachQuery::assignType(maptypes::MapApproachLegs& approach)
      (approach.approachSuffix == "A" || approach.approachSuffix == "D") && approach.gpsOverlay)
   {
     if(approach.approachSuffix == "A")
-      approach.mapType |= maptypes::APPROACH_STAR;
+      approach.mapType = maptypes::APPROACH_STAR;
     else if(approach.approachSuffix == "D")
-      approach.mapType |= maptypes::APPROACH_SID;
+      approach.mapType = maptypes::APPROACH_SID;
+
+    for(MapApproachLeg& leg : approach.approachLegs)
+      leg.mapType = approach.mapType;
+    for(MapApproachLeg& leg : approach.transitionLegs)
+      leg.mapType = approach.mapType;
   }
   else
   {
     if(!approach.approachLegs.isEmpty())
-      approach.mapType |= maptypes::APPROACH;
-    if(!approach.transitionLegs.isEmpty())
-      approach.mapType |= maptypes::APPROACH_TRANSITION;
-  }
-
-  for(MapApproachLeg& leg : approach.approachLegs)
-  {
-    leg.mapType = approach.mapType & ~maptypes::APPROACH_TRANSITION;
-    if(leg.missed)
     {
-      leg.mapType &= ~maptypes::APPROACH;
-      leg.mapType |= maptypes::APPROACH_MISSED;
+      approach.mapType = maptypes::APPROACH;
+      for(MapApproachLeg& leg : approach.approachLegs)
+        leg.mapType = leg.missed ? maptypes::APPROACH_MISSED : maptypes::APPROACH;
+    }
+
+    if(!approach.transitionLegs.isEmpty())
+    {
+      approach.mapType |= maptypes::APPROACH_TRANSITION;
+      for(MapApproachLeg& leg : approach.transitionLegs)
+        leg.mapType = maptypes::APPROACH_TRANSITION;
     }
   }
-
-  for(MapApproachLeg& leg : approach.transitionLegs)
-    leg.mapType = approach.mapType & ~maptypes::APPROACH;
 }
 
 maptypes::MapApproachLeg ApproachQuery::createRunwayLeg(const maptypes::MapApproachLeg& leg,
@@ -1152,7 +1433,31 @@ maptypes::MapApproachLeg ApproachQuery::createRunwayLeg(const maptypes::MapAppro
   rwleg.distance = meterToNm(rwleg.line.lengthMeter());
   rwleg.course = normalizeCourse(rwleg.line.angleDeg() - rwleg.magvar);
   rwleg.navaids.runwayEnds.append(legs.runwayEnd);
-  rwleg.missed = rwleg.transition = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = false;
+  rwleg.missed = rwleg.flyover = rwleg.trueCourse = rwleg.intercept = rwleg.disabled = false;
 
   return rwleg;
+}
+
+maptypes::MapApproachLeg ApproachQuery::createStartLeg(const maptypes::MapApproachLeg& leg,
+                                                       const maptypes::MapApproachLegs& legs)
+{
+  maptypes::MapApproachLeg sleg;
+  sleg.approachId = legs.ref.approachId;
+  sleg.transitionId = legs.ref.transitionId;
+  sleg.approachId = legs.ref.approachId;
+
+  // Use a generated id base on the previous leg id
+  sleg.legId = START_LEG_ID_BASE + leg.legId;
+  sleg.displayText.append(tr("Start"));
+  // geometry is populated later
+  sleg.fixPos = legs.runwayEnd.position;
+  sleg.time = 0.f;
+  sleg.theta = 0.f;
+  sleg.rho = 0.f;
+  sleg.magvar = leg.magvar;
+  sleg.distance = 0.f;
+  sleg.course = 0.f;
+  sleg.missed = sleg.flyover = sleg.trueCourse = sleg.intercept = sleg.disabled = false;
+
+  return sleg;
 }

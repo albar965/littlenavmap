@@ -62,6 +62,18 @@ public:
 
   void setCurrentSimulator(atools::fs::FsPaths::SimulatorType simType);
 
+  bool getLegsForFlightplanProperties(const QHash<QString, QString> properties, const maptypes::MapAirport& departure,
+                                      const maptypes::MapAirport& destination,
+                                      maptypes::MapApproachLegs& arrivalLegs, maptypes::MapApproachLegs& starLegs,
+                                      maptypes::MapApproachLegs& departureLegs);
+
+  static void extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
+                                                 const maptypes::MapApproachLegs& arrivalLegs,
+                                                 const maptypes::MapApproachLegs& starLegs,
+                                                 const maptypes::MapApproachLegs& departureLegs);
+
+  static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, maptypes::MapObjectTypes type);
+
 private:
   maptypes::MapApproachLeg buildTransitionLegEntry(const maptypes::MapAirport& airport);
   maptypes::MapApproachLeg buildApproachLegEntry(const maptypes::MapAirport& airport);
@@ -77,7 +89,7 @@ private:
   void processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs);
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processFinalRunwayLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+  void processArtificialLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000" */
@@ -90,6 +102,7 @@ private:
   void assignType(maptypes::MapApproachLegs& approach);
   maptypes::MapApproachLeg createRunwayLeg(const maptypes::MapApproachLeg& leg,
                                            const maptypes::MapApproachLegs& legs);
+  maptypes::MapApproachLeg createStartLeg(const maptypes::MapApproachLeg& leg, const maptypes::MapApproachLegs& legs);
 
   maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
   maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
@@ -98,11 +111,14 @@ private:
   void mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, const QString& ident,
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
+  int findProcedureLegId(const maptypes::MapAirport& airport, atools::sql::SqlQuery *query,
+                         const QString& suffix, float distance, int size, bool transition);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,
   *transitionIdForLegQuery = nullptr, *approachIdForTransQuery = nullptr,
-  *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr;
+  *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *approachQuery = nullptr,
+  *transitionIdByNameQuery = nullptr, *approachIdByNameQuery = nullptr, *transitionIdsForApproachQuery = nullptr;
 
   /* approach ID and transition ID to full lists
    * The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.) */
@@ -116,6 +132,7 @@ private:
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */
   Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 1000000000;
+  Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
 
   atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::UNKNOWN;
 

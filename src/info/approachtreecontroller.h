@@ -114,10 +114,6 @@ private:
 
   /* Build an leg for the selected/table or tree view */
   void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapApproachLeg& leg, float& remainingDistance);
-  QString buildRemarkStr(const maptypes::MapApproachLeg& leg);
-  QString buildCourseStr(const maptypes::MapApproachLeg& leg);
-  QString buildDistanceStr(const maptypes::MapApproachLeg& leg);
-  QString buildRemDistanceStr(const maptypes::MapApproachLeg& leg, float& remainingDistance);
 
   /* Highlight missing navaids red */
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapApproachLeg& leg);

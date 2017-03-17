@@ -161,11 +161,6 @@ public:
     return waypoint;
   }
 
-  bool hasPredecessor() const
-  {
-    return predecessor;
-  }
-
   /* Great circle distance to this route map object from the predecessor in nautical miles or 0 if first in route */
   float getDistanceTo() const
   {
@@ -202,8 +197,15 @@ public:
     return valid;
   }
 
-  bool isRoute() const;
-  bool isAnyApproach() const;
+  bool isRoute() const
+  {
+    return !isAnyApproach();
+  }
+
+  bool isAnyApproach() const
+  {
+    return type & maptypes::APPROACH_ALL;
+  }
 
   float getGroundAltitude() const
   {
@@ -231,9 +233,40 @@ public:
     return approachLeg.type;
   }
 
-  bool isApproach() const;
-  bool isMissed() const;
-  bool isTransition() const;
+  bool isArrivalProcedure() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_ARRIVAL;
+  }
+
+  bool isDepartureProcedure() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_DEPARTURE;
+  }
+
+  bool isApproach() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH;
+  }
+
+  bool isMissed() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_MISSED;
+  }
+
+  bool isTransition() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_TRANSITION;
+  }
+
+  bool isSid() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_SID;
+  }
+
+  bool isStar() const
+  {
+    return approachLeg.mapType & maptypes::APPROACH_STAR;
+  }
 
   bool isHold() const
   {
@@ -250,6 +283,11 @@ public:
   /* true if approach and inital fix or any other point that should be skipped for certain calculations */
   bool isApproachPoint() const;
 
+  int getFlightplanIndex() const
+  {
+    return index;
+  }
+
 private:
   const atools::fs::pln::FlightplanEntry& curEntry() const;
 
@@ -264,10 +302,11 @@ private:
   maptypes::MapStart start;
   maptypes::MapVor vor;
   maptypes::MapNdb ndb;
+  maptypes::MapIls ils;
+  maptypes::MapRunwayEnd runwayEnd;
   maptypes::MapWaypoint waypoint;
   maptypes::MapApproachLeg approachLeg;
 
-  bool predecessor = false;
   bool valid = false;
 
   float distanceTo = 0.f,

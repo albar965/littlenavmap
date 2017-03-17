@@ -251,7 +251,7 @@ void InfoController::updateProgress()
     // ok - scrollbars not pressed
     html.clear();
     infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html,
-                                      mainWindow->getRouteController()->getRouteApprMapObjects());
+                                      mainWindow->getRouteController()->getRouteMapObjects());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
@@ -531,7 +531,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
         // ok - scrollbars not pressed
         html.clear();
         infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
-                                          mainWindow->getRouteController()->getRouteApprMapObjects());
+                                          mainWindow->getRouteController()->getRouteMapObjects());
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
 

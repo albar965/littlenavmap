@@ -23,6 +23,7 @@
 #include "fs/pln/flightplan.h"
 
 class CoordinateConverter;
+class FlightplanEntryBuilder;
 
 /*
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
@@ -58,13 +59,8 @@ public:
   bool getRouteDistances(float *distFromStart, float *distToDest,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
 
+  /* Ignores approach objects */
   int getNearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
-
-  /* Get active index in the route leg vector or invalid value if this is an approach */
-  int getActiveRouteLegIndex() const;
-
-  /* Get active index in the approach leg vector or invalid value if this is an index to a route leg */
-  int getActiveApproachLegIndex() const;
 
   int getActiveLegIndex() const
   {
@@ -80,19 +76,6 @@ public:
   /* Corrected methods replace the current leg with the initial fix
    * if one follows between route and transition/approach.  */
   int getActiveLegIndexCorrected(bool *corrected = nullptr) const;
-  int getActiveRouteLegIndexCorrected() const;
-  int getActiveApproachLegIndexCorrected() const;
-
-  /* Index of the first approach entry or size() if none */
-  int getApproachStartIndex() const
-  {
-    return approachStartIndex == maptypes::INVALID_INDEX_VALUE ? size() : approachStartIndex;
-  }
-
-  bool isConnectedToApproach() const
-  {
-    return approachStartIndex < size();
-  }
 
   /* At the end of the route and beyond */
   bool isPassedLastLeg() const;
@@ -105,7 +88,10 @@ public:
   float getTopOfDescentFromStart() const;
 
   /* Total route distance in nautical miles */
-  float getTotalDistance() const;
+  float getTotalDistance() const
+  {
+    return totalDistance;
+  }
 
   void setTotalDistance(float value)
   {
@@ -155,22 +141,47 @@ public:
   /* @return true if it has at least two waypoints */
   bool canCalcRoute() const;
 
-  /* Do not overwrite approach legs */
-  void copyNoLegs(const RouteMapObjectList& other);
-
-  /* Calculate new indexes for new route after copying */
-  void updateFromApproachLegs();
-
   /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
 
-  /* Assign and update internal indexes for approach legs */
-  void setApproachLegs(const maptypes::MapApproachLegs& legs);
-
-  const maptypes::MapApproachLegs& getApproachLegs() const
+  bool hasDepartureProcedure() const
   {
-    return approachLegs;
+    return !departureLegs.isEmpty();
   }
+
+  bool hasArrivalProcedure() const
+  {
+    return !arrivalLegs.isEmpty();
+  }
+
+  bool hasStarProcedure() const
+  {
+    return !starLegs.isEmpty();
+  }
+
+  /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
+   * transition or approach they are added at the end of start of the route
+   *  call updateProcedureLegs after setting */
+  void setArrivalProcedureLegs(const maptypes::MapApproachLegs& legs)
+  {
+    arrivalLegs = legs;
+  }
+
+  void setStarProcedureLegs(const maptypes::MapApproachLegs& legs)
+  {
+    starLegs = legs;
+  }
+
+  void setDepartureProcedureLegs(const maptypes::MapApproachLegs& legs)
+  {
+    departureLegs = legs;
+  }
+
+  void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
+
+  void clearArrivalProcedures();
+  void clearDepartureProcedures();
+  void clearStarProcedures();
 
   void setShownMapFeatures(maptypes::MapObjectTypes types)
   {
@@ -188,6 +199,7 @@ public:
   }
 
   void updateAll();
+  void clearFlightplanProcedureProperties(maptypes::MapObjectTypes type);
 
   /* Pull only the needed methods in public space */
   using QList<RouteMapObject>::const_iterator;
@@ -217,6 +229,23 @@ public:
     return trueCourse;
   }
 
+  bool isAirportAfterArrival(int index);
+
+  const maptypes::MapApproachLegs& getArrivalLegs() const
+  {
+    return arrivalLegs;
+  }
+
+  const maptypes::MapApproachLegs& getStarLegs() const
+  {
+    return starLegs;
+  }
+
+  const maptypes::MapApproachLegs& getDepartureLegs() const
+  {
+    return departureLegs;
+  }
+
 private:
   /* Calculate all distances and courses for route map objects */
   void updateDistancesAndCourse();
@@ -232,15 +261,12 @@ private:
   atools::geo::Pos positionAtDistance(float distFromStartNm) const;
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
-  void nearestLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& routeIndex,
-                       int& approachIndex) const;
   void copy(const RouteMapObjectList& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
-  int activeRouteLegInternal(int leg) const;
-  int activeApproachLegInternal(int leg) const;
   void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                         int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
+  void eraseProcedureLegs(maptypes::MapObjectTypes type);
 
   bool trueCourse = false;
 
@@ -248,12 +274,10 @@ private:
   /* Nautical miles not including missed approach */
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
-  maptypes::MapApproachLegs approachLegs;
+  maptypes::MapApproachLegs arrivalLegs, starLegs, departureLegs;
   maptypes::MapObjectTypes shownTypes;
 
-  int activeLeg = maptypes::INVALID_INDEX_VALUE,
-      approachStartIndex = maptypes::INVALID_INDEX_VALUE; /* Index of the initial fix of an approach/transition if any are attached.
-                                                           *  The route leg directing to this fix remains in the list. */
+  int activeLeg = maptypes::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
   maptypes::PosCourse activePos;
 

@@ -116,7 +116,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
 {
   using atools::geo::Pos;
 
-  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteApprMapObjects();
+  const RouteMapObjectList& routeMapObjects = mapWidget->getRouteController()->getRouteMapObjects();
 
   routeLines.clear();
   routePoints.clear();
@@ -131,10 +131,14 @@ void MapScreenIndex::updateRouteScreenGeometry()
     Pos p1;
     const QRect& mapGeo = mapWidget->rect();
 
-    for(int i = 0; i < routeMapObjects.getApproachStartIndex(); i++)
+    for(int i = 0; i < routeMapObjects.size(); i++)
     {
+      const RouteMapObject& rmo = routeMapObjects.at(i);
+      if(i > 0 && routeMapObjects.at(i - 1).isAnyApproach())
+        continue;
+
       const Pos& p2 = routeMapObjects.at(i).getPosition();
-      maptypes::MapObjectTypes type = routeMapObjects.at(i).getMapObjectType();
+      maptypes::MapObjectTypes type = rmo.getMapObjectType();
       int x2, y2;
       conv.wToS(p2, x2, y2);
 
@@ -213,7 +217,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
 
   if(paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
     // Get copies from flight plan if visible
-    mapWidget->getRouteController()->getRouteApprMapObjects().getNearest(conv, xs, ys, maxDistance, result);
+    mapWidget->getRouteController()->getRouteMapObjects().getNearest(conv, xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
   getNearestApproachHighlights(xs, ys, maxDistance, result);

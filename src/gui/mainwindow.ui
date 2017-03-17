@@ -3983,10 +3983,10 @@
     <string>Show &amp;Victor Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show victor airways on map</string>
+    <string>Show Victor airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show victor airways on map</string>
+    <string>Show Victor airways on map</string>
    </property>
   </action>
   <action name="actionMapShowJetAirways">
@@ -4001,10 +4001,10 @@
     <string>Show &amp;Jet Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show jet airways on map</string>
+    <string>Show Jet airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show jet airways on map</string>
+    <string>Show Jet airways on map</string>
    </property>
   </action>
   <action name="actionMapShowRoute">
@@ -4082,7 +4082,7 @@
      <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete selected Legs</string>
+    <string>Delete selected Legs or Procedure</string>
    </property>
    <property name="toolTip">
     <string>Delete all selected flight plan legs</string>
@@ -5207,7 +5207,7 @@
      <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
    </property>
    <property name="text">
-    <string>Show and Activate &amp;Legs for %1</string>
+    <string>Show &amp;Legs for %1</string>
    </property>
    <property name="toolTip">
     <string>Show all legs only this procedure.</string>
@@ -5282,16 +5282,16 @@
      <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
    </property>
    <property name="text">
-    <string>Attach &amp;Initial Fix of %1 to Flight Plan</string>
+    <string>Insert %1 into Flight Plan</string>
    </property>
    <property name="iconText">
     <string>Attach to Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Attach the procedure to the flight plan</string>
+    <string>Insert the selected procedure into the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Attach the procedure to the flight plan</string>
+    <string>Insert the selected procedure into the flight plan</string>
    </property>
   </action>
   <action name="actionRouteActivateLeg">

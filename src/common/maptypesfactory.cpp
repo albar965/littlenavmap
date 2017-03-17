@@ -232,7 +232,7 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, maptypes::MapVor& vor
   vor.id = record.valueInt("vor_id");
   vor.ident = record.valueStr("ident");
   vor.region = record.valueStr("region");
-  vor.name = record.valueStr("name");
+  vor.name = atools::capString(record.valueStr("name"));
   vor.type = record.valueStr("type");
   vor.frequency = record.valueInt("frequency");
   vor.range = record.valueInt("range");
@@ -246,7 +246,7 @@ void MapTypesFactory::fillNdb(const SqlRecord& record, maptypes::MapNdb& ndb)
   ndb.id = record.valueInt("ndb_id");
   ndb.ident = record.valueStr("ident");
   ndb.region = record.valueStr("region");
-  ndb.name = record.valueStr("name");
+  ndb.name = atools::capString(record.valueStr("name"));
   ndb.type = record.valueStr("type");
   ndb.frequency = record.valueInt("frequency");
   ndb.range = record.valueInt("range");

@@ -354,7 +354,8 @@ const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
     {"VM", HEADING_TO_MANUAL_TERMINATION},
     {"VR", HEADING_TO_RADIAL_TERMINATION},
 
-    {"RX", DIRECT_TO_RUNWAY}
+    {"RX", DIRECT_TO_RUNWAY},
+    {"SX", START_OF_PROCEDURE}
   });
 
 const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
@@ -383,7 +384,8 @@ const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
     {HEADING_TO_MANUAL_TERMINATION, "VM"},
     {HEADING_TO_RADIAL_TERMINATION, "VR"},
 
-    {DIRECT_TO_RUNWAY, "RX"}
+    {DIRECT_TO_RUNWAY, "RX"},
+    {START_OF_PROCEDURE, "SX"}
   });
 
 const static QHash<ApproachLegType, QString> approachLegTypeToStr(
@@ -412,7 +414,8 @@ const static QHash<ApproachLegType, QString> approachLegTypeToStr(
     {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
     {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
 
-    {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")}
+    {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
+    {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
   });
 
 const static QHash<ApproachLegType, QString> approachLegRemarkStr(
@@ -441,7 +444,8 @@ const static QHash<ApproachLegType, QString> approachLegRemarkStr(
     {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
     {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
 
-    {DIRECT_TO_RUNWAY, QObject::tr("")}
+    {DIRECT_TO_RUNWAY, QObject::tr("")},
+    {START_OF_PROCEDURE, QObject::tr("")}
   });
 
 int qHash(const maptypes::MapObjectRef& type)
@@ -1118,7 +1122,6 @@ MapApproachpoint::MapApproachpoint(const MapApproachLeg& leg)
   type = leg.type;
   missed = leg.missed;
   flyover = leg.flyover;
-  transition = leg.transition;
   position = leg.line.getPos1();
 }
 
@@ -1161,7 +1164,7 @@ bool MapApproachLeg::noDistanceDisplay() const
 
 bool MapApproachLeg::noCourseDisplay() const
 {
-  return type == maptypes::INITIAL_FIX || isCircular();
+  return type == /*maptypes::INITIAL_FIX ||*/ isCircular();
 }
 
 QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
@@ -1237,6 +1240,117 @@ const MapApproachLeg *MapApproachLegs::transitionLegById(int legId) const
       return &leg;
   }
   return nullptr;
+}
+
+MapApproachLeg& MapApproachLegs::atInternal(int i)
+{
+  if(i < transitionLegs.size())
+    return transitionLegs[transIdx(i)];
+  else
+    return approachLegs[apprIdx(i)];
+}
+
+const MapApproachLeg& MapApproachLegs::atInternal(int i) const
+{
+  if(i < transitionLegs.size())
+    return transitionLegs[transIdx(i)];
+  else
+    return approachLegs[apprIdx(i)];
+}
+
+const MapApproachLeg *maptypes::MapApproachLegs::approachLegById(int legId) const
+{
+  for(const MapApproachLeg& leg : approachLegs)
+  {
+    if(leg.legId == legId)
+      return &leg;
+  }
+  return nullptr;
+}
+
+QString approachLegCourse(const MapApproachLeg& leg)
+{
+  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
+    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
+  else
+    return QString();
+}
+
+QString approachLegDistance(const MapApproachLeg& leg)
+{
+  QString retval;
+
+  if(!leg.noDistanceDisplay())
+  {
+    if(leg.calculatedDistance > 0.f)
+      retval += Unit::distNm(leg.calculatedDistance, false);
+
+    if(leg.time > 0.f)
+    {
+      if(!retval.isEmpty())
+        retval += ", ";
+      retval += QString::number(leg.time, 'g', 2) + QObject::tr(" min");
+    }
+  }
+  return retval;
+}
+
+QString approachLegRemDistance(const MapApproachLeg& leg, float& remainingDistance)
+{
+  QString retval;
+
+  if(!leg.missed)
+  {
+    if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::START_OF_PROCEDURE)
+      remainingDistance -= leg.calculatedDistance;
+
+    if(remainingDistance < 0.f)
+      remainingDistance = 0.f;
+
+    retval += Unit::distNm(remainingDistance, false);
+  }
+
+  return retval;
+}
+
+QString approachLegRemark(const MapApproachLeg& leg)
+{
+  QStringList remarks;
+  if(leg.flyover)
+    remarks.append(QObject::tr("Fly over"));
+
+  if(leg.turnDirection == "R")
+    remarks.append(QObject::tr("Turn right"));
+  else if(leg.turnDirection == "L")
+    remarks.append(QObject::tr("Turn left"));
+  else if(leg.turnDirection == "B")
+    remarks.append(QObject::tr("Turn left or right"));
+
+  QString legremarks = maptypes::approachLegRemarks(leg.type);
+  if(!legremarks.isEmpty())
+    remarks.append(legremarks);
+
+  if(!leg.recFixIdent.isEmpty())
+  {
+    if(leg.rho > 0.f)
+      remarks.append(QObject::tr("Related: %1 / %2 / %3").arg(leg.recFixIdent).
+                     arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
+                     arg(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M")));
+    else
+      remarks.append(QObject::tr("Related: %1").arg(leg.recFixIdent));
+  }
+
+  if(!leg.remarks.isEmpty())
+    remarks.append(leg.remarks);
+
+  if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
+    remarks.append(QObject::tr("Data error: Fix %1/%2 type %3 not found").
+                   arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
+  if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
+    remarks.append(QObject::tr("Data error: Recommended fix %1/%2 type %3 not found").
+                   arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
+
+  return remarks.join(", ");
 }
 
 } // namespace types

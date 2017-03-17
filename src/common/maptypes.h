@@ -104,7 +104,10 @@ enum MapObjectType
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
-  APPROACH_ALL = APPROACH | APPROACH_MISSED | APPROACH_TRANSITION | APPROACH_SID | APPROACH_STAR,
+  APPROACH_ARRIVAL = APPROACH_TRANSITION | APPROACH | APPROACH_MISSED,
+  APPROACH_ARRIVAL_ALL = APPROACH_ARRIVAL | APPROACH_STAR,
+  APPROACH_DEPARTURE = APPROACH_SID,
+  APPROACH_ALL = APPROACH_ARRIVAL_ALL | APPROACH_DEPARTURE,
   ALL = 0xffffffff
 };
 
@@ -669,7 +672,8 @@ enum ApproachLegType
   HEADING_TO_MANUAL_TERMINATION,
   HEADING_TO_RADIAL_TERMINATION,
 
-  DIRECT_TO_RUNWAY /* Artifical last segment inserted if approach does not contain runway end */
+  DIRECT_TO_RUNWAY, /* Artifical last segment inserted if approach does not contain runway end */
+  START_OF_PROCEDURE /* Artifical first point if procedures does not start with an initial fix */
 };
 
 QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
@@ -754,6 +758,16 @@ struct MapSearchResult
   bool hasNdb() const
   {
     return !ndbs.isEmpty();
+  }
+
+  bool hasIls() const
+  {
+    return !ils.isEmpty();
+  }
+
+  bool hasRunwayEnd() const
+  {
+    return !runwayEnds.isEmpty();
   }
 
   bool hasWaypoints() const
@@ -858,13 +872,17 @@ struct MapApproachLeg
         magvar /* from navaid or airport */;
 
   bool missed, flyover, trueCourse,
-       transition, /* Leg is part of a transition */
        intercept, /* Leg was modfied by a previous intercept */
        disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
 
   bool isValid() const
   {
     return type != INVALID_LEG_TYPE;
+  }
+
+  bool hasInvalidRef() const
+  {
+    return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
   }
 
   float legTrueCourse() const
@@ -874,12 +892,22 @@ struct MapApproachLeg
 
   bool isApproach() const
   {
-    return !isTransition() && !isMissed();
+    return mapType & maptypes::APPROACH;
   }
 
   bool isTransition() const
   {
     return mapType & maptypes::APPROACH_TRANSITION;
+  }
+
+  bool isSid() const
+  {
+    return mapType & maptypes::APPROACH_SID;
+  }
+
+  bool isStar() const
+  {
+    return mapType & maptypes::APPROACH_STAR;
   }
 
   bool isMissed() const
@@ -900,29 +928,27 @@ struct MapApproachLeg
 
 QDebug operator<<(QDebug out, const maptypes::MapApproachLeg& leg);
 
-struct MapApproachDme
-{
-  QString dmeIdent, turnDirection;
-  int dmeNavId;
-  float dmeRadial, dmeDistance;
-  atools::geo::Pos dmePos;
-  MapVor dme;
-};
-
-/* Includes transition legs */
+/* All legs for a arrival or departure including STAR, transition and approach in order or
+ * legs for SID only.
+ * SID contains all in approach and legs transition fields.
+ * STAR contins all in approach fields */
 struct MapApproachLegs
 {
-  QVector<MapApproachLeg> transitionLegs;
-  QVector<MapApproachLeg> approachLegs;
+  QVector<MapApproachLeg> transitionLegs, approachLegs;
+
   MapApproachRef ref;
   atools::geo::Rect bounding;
-  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f, airportDirection = INVALID_COURSE_VALUE;
 
   QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent;
 
   /* Only for approaches */
   maptypes::MapRunwayEnd runwayEnd;
   MapObjectTypes mapType = NONE;
+
+  float approachDistance = 0.f,
+        transitionDistance = 0.f,
+        missedDistance = 0.f,
+        airportDirection = INVALID_COURSE_VALUE;
 
   bool gpsOverlay;
 
@@ -936,42 +962,42 @@ struct MapApproachLegs
     return transitionLegs.size() + approachLegs.size();
   }
 
+  /* first in list is transition and then approach or SID  or STAR only */
   const MapApproachLeg& at(int i) const
   {
-    return i < transitionLegs.size() ? transitionLegs.at(i) : approachLegs.at(apprIdx(i));
+    return atInternal(i);
   }
 
   const MapApproachLeg& first() const
   {
-    return at(0);
+    return atInternal(0);
   }
 
   const MapApproachLeg& last() const
   {
-    return at(size() - 1);
+    return atInternal(size() - 1);
   }
 
-  const MapApproachLeg *approachLegById(int legId) const
-  {
-    for(const MapApproachLeg& leg : approachLegs)
-    {
-      if(leg.legId == legId)
-        return &leg;
-    }
-    return nullptr;
-  }
-
+  const MapApproachLeg *approachLegById(int legId) const;
   const MapApproachLeg *transitionLegById(int legId) const;
 
   MapApproachLeg& operator[](int i)
   {
-    return i < transitionLegs.size() ? transitionLegs[i] : approachLegs[apprIdx(i)];
+    return atInternal(i);
   }
 
 private:
+  MapApproachLeg& atInternal(int i);
+  const MapApproachLeg& atInternal(int i) const;
+
   int apprIdx(int i) const
   {
-    return transitionLegs.isEmpty() ? i : i - transitionLegs.size();
+    return i - transitionLegs.size();
+  }
+
+  int transIdx(int i) const
+  {
+    return i;
   }
 
 };
@@ -1051,6 +1077,11 @@ QString approachLegTypeFullStr(ApproachLegType type);
 QString approachLegRemarks(maptypes::ApproachLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
+QString approachLegRemark(const MapApproachLeg& leg);
+QString approachLegRemDistance(const MapApproachLeg& leg, float& remainingDistance);
+QString approachLegDistance(const MapApproachLeg& leg);
+QString approachLegCourse(const MapApproachLeg& leg);
+
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
@@ -1116,7 +1147,6 @@ Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachDme, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);

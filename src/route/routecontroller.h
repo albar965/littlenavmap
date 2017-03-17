@@ -97,12 +97,6 @@ public:
     return route;
   }
 
-  /* Get the route including all approach segments */
-  const RouteMapObjectList& getRouteApprMapObjects() const
-  {
-    return routeAppr;
-  }
-
   float getSpeedKts() const;
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
@@ -168,7 +162,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachApproach(const maptypes::MapApproachLegs& legs);
+  void routeAttachProcedure(const maptypes::MapApproachLegs& legs);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
@@ -226,12 +220,9 @@ public:
 
   void editUserWaypointName(int index);
 
-  void approachSelected(const maptypes::MapApproachLegs& approach);
-
   void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
 
   void activateLeg(int index);
-  void activateApproachLeg(int index);
 
 signals:
   /* Show airport on map */
@@ -303,6 +294,7 @@ private:
   void routeToFlightPlan();
 
   void routeSetDepartureInternal(const maptypes::MapAirport& airport);
+  void routeSetDestinationInternal(const maptypes::MapAirport& airport);
 
   void updateTableModel();
 
@@ -350,11 +342,12 @@ private:
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
-  void disableApproachItems();
+  void highlightApproachItems();
+  bool loadProceduresFromFlightplan(bool quiet);
 
-  void updateRouteApprAndActive();
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
+  maptypes::MapObjectTypes affectedProcedures(const QList<int>& indexes);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
@@ -368,16 +361,11 @@ private:
   /* Clean index of the undo stack or -1 if not clean state exists */
   int undoIndexClean = 0;
 
-  /* Used to number user defined positions */
-  int curUserpointNumber = 1;
-
   /* Network cache for flight plan calculation */
   RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
 
   /* Flightplan and route objects */
-  RouteMapObjectList route, /* real route containing all segments */
-                     routeAppr; /* Route truncated at overlap with appoach and all
-                                 *  approach, transition and missed segments added */
+  RouteMapObjectList route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
   QString routeFilename, fileDeparture, fileDestination;
