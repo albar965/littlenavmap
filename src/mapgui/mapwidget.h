@@ -46,7 +46,7 @@ class RouteController;
 class MapTooltip;
 class QRubberBand;
 class MapScreenIndex;
-class RouteMapObjectList;
+class Route;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
@@ -104,9 +104,9 @@ public:
   /* Update hightlighted objects */
   void changeSearchHighlights(const maptypes::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeApproachLegHighlights(const maptypes::MapApproachLeg *leg);
+  void changeApproachLegHighlights(const maptypes::MapProcedureLeg *leg);
 
-  void changeApproachHighlight(const maptypes::MapApproachLegs& approach);
+  void changeApproachHighlight(const maptypes::MapProcedureLegs& approach);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -141,9 +141,9 @@ public:
 
   /* Getters used by the painters */
   const maptypes::MapSearchResult& getSearchHighlights() const;
-  const maptypes::MapApproachLeg& getApproachLegHighlights() const;
+  const maptypes::MapProcedureLeg& getApproachLegHighlights() const;
 
-  const maptypes::MapApproachLegs& getApproachHighlight() const;
+  const maptypes::MapProcedureLegs& getApproachHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 

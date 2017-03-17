@@ -52,7 +52,7 @@ public:
   void buildFlightplanEntry(const maptypes::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void buildFlightplanEntry(const maptypes::MapApproachLeg& leg,
+  void buildFlightplanEntry(const maptypes::MapProcedureLeg& leg,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
   void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry);

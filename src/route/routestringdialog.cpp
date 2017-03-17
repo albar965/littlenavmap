@@ -44,7 +44,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   routeString = new RouteString(routeController->getFlightplanEntryBuilder());
 
   ui->plainTextEditRouteString->setPlainText(
-    routeString->createStringForRoute(routeController->getRouteMapObjects(), routeController->getSpeedKts()));
+    routeString->createStringForRoute(routeController->getRoute(), routeController->getSpeedKts()));
 
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked,
           this, &RouteStringDialog::readClicked);

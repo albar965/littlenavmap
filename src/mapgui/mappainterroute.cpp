@@ -34,8 +34,8 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using maptypes::MapApproachLeg;
-using maptypes::MapApproachLegs;
+using maptypes::MapProcedureLeg;
+using maptypes::MapProcedureLegs;
 using maptypes::PosCourse;
 using atools::contains;
 
@@ -69,7 +69,7 @@ void MapPainterRoute::render(PaintContext *context)
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
 {
-  const RouteMapObjectList& route = routeController->getRouteMapObjects();
+  const Route& route = routeController->getRoute();
 
   if(route.isEmpty())
     return;
@@ -80,7 +80,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   if(!route.isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw start position or parking circle into the airport diagram
-    const RouteMapObject& first = route.at(0);
+    const RouteLeg& first = route.at(0);
     if(first.getMapObjectType() == maptypes::AIRPORT)
     {
       int size = 100;
@@ -126,7 +126,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   for(int i = 0; i < route.size(); i++)
   {
-    const RouteMapObject& obj = route.at(i);
+    const RouteLeg& obj = route.at(i);
     if(i > 0)
     {
       // Build text only for the route part - not for the approach
@@ -203,7 +203,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   for(int i = 0; i < route.size(); i++)
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
-    if(route.at(i).isAnyApproach())
+    if(route.at(i).isAnyProcedure())
       visibleStartPoints.clearBit(i);
   }
 
@@ -216,7 +216,7 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
 void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 {
-  const RouteMapObjectList& routeApprMapObjects = routeController->getRouteMapObjects();
+  const Route& routeApprMapObjects = routeController->getRoute();
   if(routeApprMapObjects.size() >= 2)
   {
     // Draw the top of descent circle and text
@@ -242,12 +242,12 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes::MapApproachLegs& legs)
+void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes::MapProcedureLegs& legs)
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
 
-  const RouteMapObjectList& routeMapObjects = routeController->getRouteMapObjects();
+  const Route& route = routeController->getRoute();
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -275,7 +275,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   drawTextLines.fill({Line(), false, false}, legs.size());
 
   // Get active approach leg
-  int activeLeg = routeMapObjects.getActiveLegIndex();
+  int activeLeg = route.getActiveLegIndex();
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
@@ -311,7 +311,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     QVector<QColor> textColors;
     for(int i = 0; i < legs.size(); i++)
     {
-      const maptypes::MapApproachLeg& leg = legs.at(i);
+      const maptypes::MapProcedureLeg& leg = legs.at(i);
       lines.append(leg.line);
 
       QString approachText;
@@ -362,18 +362,18 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     paintApproachPoints(context, legs, i);
 }
 
-void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
+void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
                                            bool noText)
 {
-  const maptypes::MapApproachLeg& leg = legs.at(index);
+  const maptypes::MapProcedureLeg& leg = legs.at(index);
 
-  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && leg.isTransition()) ||
-     (!(context->objectTypes & maptypes::APPROACH) && leg.isApproach()) ||
-     (!(context->objectTypes & maptypes::APPROACH_MISSED) && leg.isMissed()))
+  if((!(context->objectTypes & maptypes::PROCEDURE_TRANSITION) && leg.isTransition()) ||
+     (!(context->objectTypes & maptypes::PROCEDURE_APPROACH) && leg.isApproach()) ||
+     (!(context->objectTypes & maptypes::PROCEDURE_MISSED) && leg.isMissed()))
     return;
 
-  const maptypes::MapApproachLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
+  const maptypes::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
@@ -568,8 +568,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   }
 }
 
-void MapPainterRoute::paintApproachBow(const maptypes::MapApproachLeg *prevLeg, QLineF& lastLine, QPainter *painter,
-                                       QLineF line, const maptypes::MapApproachLeg& leg)
+void MapPainterRoute::paintApproachBow(const maptypes::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
+                                       QLineF line, const maptypes::MapProcedureLeg& leg)
 {
   QLineF lineDraw(line.p2(), line.p1());
 
@@ -598,7 +598,7 @@ void MapPainterRoute::paintApproachBow(const maptypes::MapApproachLeg *prevLeg, 
   lastLine = lineDraw;
 }
 
-QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapApproachLeg& leg,
+QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapProcedureLeg& leg,
                                           QPainter *painter, QPointF intersectPoint)
 {
   QPointF endPos = line.p2();
@@ -642,10 +642,10 @@ QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const m
   return nextLine;
 }
 
-void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs,
+void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
                                           int index)
 {
-  const maptypes::MapApproachLeg& leg = legs.at(index);
+  const maptypes::MapProcedureLeg& leg = legs.at(index);
   bool drawText = context->mapLayer->isApproachText();
 
   // Debugging code for drawing ================================================
@@ -698,9 +698,9 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->restore();
 #endif
 
-  if((!(context->objectTypes & maptypes::APPROACH_TRANSITION) && leg.isTransition()) ||
-     (!(context->objectTypes & maptypes::APPROACH) && leg.isApproach()) ||
-     (!(context->objectTypes & maptypes::APPROACH_MISSED) && leg.isMissed()))
+  if((!(context->objectTypes & maptypes::PROCEDURE_TRANSITION) && leg.isTransition()) ||
+     (!(context->objectTypes & maptypes::PROCEDURE_APPROACH) && leg.isApproach()) ||
+     (!(context->objectTypes & maptypes::PROCEDURE_MISSED) && leg.isMissed()))
     return;
 
   if(leg.disabled)
@@ -714,7 +714,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     // Do not paint the last point in the transition since it overlaps with the approach
     // But draw the intercept and hold text
     lastInTransition = legs.at(index).isTransition() &&
-                       legs.at(index + 1).isApproach() && context->objectTypes & maptypes::APPROACH;
+                       legs.at(index + 1).isApproach() && context->objectTypes & maptypes::PROCEDURE_APPROACH;
 
   QStringList texts;
   // if(index > 0 && legs.isApproach(index) &&
@@ -725,7 +725,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
   int x = 0, y = 0;
 
-  if(leg.mapType == maptypes::APPROACH_SID && index == 0)
+  if(leg.mapType == maptypes::PROCEDURE_SID && index == 0)
   {
     // All legs with a calculated end point
     if(wToS(leg.line.getPos1(), x, y))
@@ -984,7 +984,7 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }
 
-void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+void MapPainterRoute::drawSymbols(const PaintContext *context, const Route& route,
                                   const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
@@ -994,7 +994,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObj
     {
       int x = pt.x();
       int y = pt.y();
-      const RouteMapObject& obj = routeMapObjects.at(i);
+      const RouteLeg& obj = route.at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
@@ -1023,7 +1023,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context, const RouteMapObj
   }
 }
 
-void MapPainterRoute::drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+void MapPainterRoute::drawSymbolText(const PaintContext *context, const Route& route,
                                      const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
@@ -1033,7 +1033,7 @@ void MapPainterRoute::drawSymbolText(const PaintContext *context, const RouteMap
     {
       int x = pt.x();
       int y = pt.y();
-      const RouteMapObject& obj = routeMapObjects.at(i);
+      const RouteLeg& obj = route.at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {

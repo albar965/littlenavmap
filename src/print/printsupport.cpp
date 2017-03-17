@@ -91,7 +91,7 @@ void PrintSupport::fillWeatherCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+  const Route& rmos = mainWindow->getRouteController()->getRoute();
 
   if(!rmos.isEmpty())
   {
@@ -192,7 +192,7 @@ void PrintSupport::createFlightplanDocuments()
   prt::PrintFlightPlanOpts opts = printFlightplanDialog->getPrintOptions();
   atools::util::HtmlBuilder html(false);
 
-  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+  const Route& rmos = mainWindow->getRouteController()->getRoute();
 
   bool printFlightplan = opts & prt::FLIGHTPLAN;
   bool printAnyDeparture = rmos.hasValidDeparture() && opts & prt::DEPARTURE_ANY;
@@ -246,7 +246,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder departureAppr(true);
       if(opts & prt::DEPARTURE_APPR)
-        builder.approachText(rmos.first().getAirport(), departureAppr, Qt::white, maptypes::MapApproachRef());
+        builder.approachText(rmos.first().getAirport(), departureAppr, Qt::white, maptypes::MapProcedureRef());
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;
@@ -304,7 +304,7 @@ void PrintSupport::createFlightplanDocuments()
 
       HtmlBuilder destinationAppr(true);
       if(opts & prt::DESTINATION_APPR)
-        builder.approachText(rmos.last().getAirport(), destinationAppr, Qt::white, maptypes::MapApproachRef());
+        builder.approachText(rmos.last().getAirport(), destinationAppr, Qt::white, maptypes::MapProcedureRef());
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;

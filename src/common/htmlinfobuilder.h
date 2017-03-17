@@ -25,11 +25,11 @@
 #include <QDateTime>
 #include <QLocale>
 
-class RouteMapObject;
+class RouteLeg;
 class MapQuery;
 class InfoQuery;
 class WeatherReporter;
-class RouteMapObjectList;
+class Route;
 class MainWindow;
 
 namespace maptypes {
@@ -53,9 +53,9 @@ struct MapHelipad;
 
 struct MapUserpoint;
 
-struct MapApproachpoint;
+struct MapProcedurePoint;
 
-struct MapApproachRef;
+struct MapProcedureRef;
 
 }
 
@@ -102,14 +102,12 @@ public:
    * Creates a HTML description for an airport.
    * @param airport
    * @param html Result containing HTML snippet
-   * @param routeMapObjects
+   * @param route
    * @param weather
    * @param background Background color for icons
    */
   void airportText(const maptypes::MapAirport& airport, const maptypes::WeatherContext& weatherContext,
-                   atools::util::HtmlBuilder& html,
-                   const RouteMapObjectList *routeMapObjects,
-                   QColor background) const;
+                   atools::util::HtmlBuilder& html, const Route *route, QColor background) const;
 
   /*
    * Creates a HTML description for all runways of an airport.
@@ -136,7 +134,7 @@ public:
    */
   void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
                     QColor background,
-                    const maptypes::MapApproachRef& ref) const;
+                    const maptypes::MapProcedureRef& ref) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;
@@ -208,7 +206,7 @@ public:
    */
   void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void approachPointText(const maptypes::MapApproachpoint& ap, atools::util::HtmlBuilder& html) const;
+  void approachPointText(const maptypes::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates an overview HTML description for the user aircraft in the simulator.
@@ -227,7 +225,7 @@ public:
    */
   void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
                             atools::util::HtmlBuilder& html,
-                            const RouteMapObjectList& route);
+                            const Route& route);
 
   void updateAircraftIcons(bool force);
 

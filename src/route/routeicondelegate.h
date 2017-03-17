@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_NAVICONDELEGATE_H
 #define LITTLENAVMAP_NAVICONDELEGATE_H
 
-#include "route/routemapobject.h"
+#include "route/routeleg.h"
 
 #include <QStyledItemDelegate>
 
@@ -33,7 +33,7 @@ class RouteIconDelegate :
   Q_OBJECT
 
 public:
-  RouteIconDelegate(const RouteMapObjectList& routeMapObjects);
+  RouteIconDelegate(const Route& route);
   virtual ~RouteIconDelegate();
 
 private:
@@ -41,7 +41,7 @@ private:
                      const QModelIndex& index) const override;
 
   SymbolPainter *symbolPainter;
-  const RouteMapObjectList& routeObjects;
+  const Route& routeLegs;
 
 };
 

@@ -199,7 +199,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapSearchResul
   buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints);
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapApproachLeg& leg,
+void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapProcedureLeg& leg,
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {

@@ -95,19 +95,19 @@ enum MapObjectType
   RUNWAYEND = 1 << 19,
   POSITION = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
-  APPROACH = 1 << 22,
-  APPROACH_MISSED = 1 << 23,
-  APPROACH_TRANSITION = 1 << 24,
-  APPROACH_SID = 1 << 25,
-  APPROACH_STAR = 1 << 26,
+  PROCEDURE_APPROACH = 1 << 22,
+  PROCEDURE_MISSED = 1 << 23,
+  PROCEDURE_TRANSITION = 1 << 24,
+  PROCEDURE_SID = 1 << 25,
+  PROCEDURE_STAR = 1 << 26,
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
-  APPROACH_ARRIVAL = APPROACH_TRANSITION | APPROACH | APPROACH_MISSED,
-  APPROACH_ARRIVAL_ALL = APPROACH_ARRIVAL | APPROACH_STAR,
-  APPROACH_DEPARTURE = APPROACH_SID,
-  APPROACH_ALL = APPROACH_ARRIVAL_ALL | APPROACH_DEPARTURE,
+  PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
+  PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR,
+  PROCEDURE_DEPARTURE = PROCEDURE_SID,
+  PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
   ALL = 0xffffffff
 };
 
@@ -142,7 +142,7 @@ enum MapAirportFlag
   AP_LIGHT = 1 << 1, /* Has at least one lighted runway */
   AP_TOWER = 1 << 2, /* Has a tower frequency */
   AP_ILS = 1 << 3, /* At least one runway end has ILS */
-  AP_APPROACH = 1 << 4, /* At least one runway end has an approach */
+  AP_PROCEDURE = 1 << 4, /* At least one runway end has an approach */
   AP_MIL = 1 << 5,
   AP_CLOSED = 1 << 6, /* All runways are closed */
   AP_AVGAS = 1 << 7,
@@ -504,8 +504,8 @@ struct MapWaypoint
 /* Waypoint or intersection */
 struct MapAirwayWaypoint
 {
-  int airwayId, airwayFragmentId, seqNum;
   maptypes::MapWaypoint waypoint;
+  int airwayId, airwayFragmentId, seqNum;
 };
 
 /* User defined waypoint of a flight plan */
@@ -645,7 +645,7 @@ struct MapAltRestriction
 
 };
 
-enum ApproachLegType
+enum ProcedureLegType
 {
   INVALID_LEG_TYPE,
   ARC_TO_FIX,
@@ -676,13 +676,13 @@ enum ApproachLegType
   START_OF_PROCEDURE /* Artifical first point if procedures does not start with an initial fix */
 };
 
-QDebug operator<<(QDebug out, const maptypes::ApproachLegType& type);
+QDebug operator<<(QDebug out, const maptypes::ProcedureLegType& type);
 
-struct MapApproachLeg;
+struct MapProcedureLeg;
 
-struct MapApproachpoint
+struct MapProcedurePoint
 {
-  MapApproachpoint(const MapApproachLeg& leg);
+  MapProcedurePoint(const MapProcedureLeg& leg);
 
   float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
 
@@ -691,7 +691,7 @@ struct MapApproachpoint
   QStringList displayText, remarks;
   MapAltRestriction altRestriction;
 
-  maptypes::ApproachLegType type;
+  maptypes::ProcedureLegType type;
 
   bool missed, flyover, transition;
 
@@ -743,7 +743,7 @@ struct MapSearchResult
   QList<MapUserpoint> userPoints;
 
   /* General approach information */
-  QList<MapApproachpoint> approachPoints;
+  QList<MapProcedurePoint> procedurePoints;
 
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
@@ -775,22 +775,22 @@ struct MapSearchResult
     return !waypoints.isEmpty();
   }
 
-  bool hasApproachPoints() const
+  bool hasProcedurePoints() const
   {
-    return !approachPoints.isEmpty();
+    return !procedurePoints.isEmpty();
   }
 
 };
 
-struct MapApproachRef
+struct MapProcedureRef
 {
-  MapApproachRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapObjectTypes type)
+  MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapObjectTypes type)
     : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
       mapType(type)
   {
   }
 
-  MapApproachRef()
+  MapProcedureRef()
     : airportId(-1), runwayEndId(-1), approachId(-1), transitionId(-1), legId(-1), mapType(NONE)
   {
   }
@@ -805,12 +805,12 @@ struct MapApproachRef
 
   bool isSid() const
   {
-    return mapType & maptypes::APPROACH_SID;
+    return mapType & maptypes::PROCEDURE_SID;
   }
 
   bool isStar() const
   {
-    return mapType & maptypes::APPROACH_STAR;
+    return mapType & maptypes::PROCEDURE_STAR;
   }
 
   bool isApproachOnly() const
@@ -835,7 +835,7 @@ struct MapApproachRef
 
 };
 
-struct MapApproachLeg
+struct MapProcedureLeg
 {
 
   QString fixType, fixIdent, fixRegion,
@@ -857,8 +857,8 @@ struct MapApproachLeg
 
   MapAltRestriction altRestriction;
 
-  maptypes::ApproachLegType type = INVALID_LEG_TYPE;
-  maptypes::MapObjectTypes mapType = NONE; /* Any of the APPROACH_* types*/
+  maptypes::ProcedureLegType type = INVALID_LEG_TYPE;
+  maptypes::MapObjectTypes mapType = NONE; /* Any of the PROCEDURE_* types*/
 
   int approachId, transitionId, legId, navId, recNavId;
 
@@ -892,27 +892,27 @@ struct MapApproachLeg
 
   bool isApproach() const
   {
-    return mapType & maptypes::APPROACH;
+    return mapType & maptypes::PROCEDURE_APPROACH;
   }
 
   bool isTransition() const
   {
-    return mapType & maptypes::APPROACH_TRANSITION;
+    return mapType & maptypes::PROCEDURE_TRANSITION;
   }
 
   bool isSid() const
   {
-    return mapType & maptypes::APPROACH_SID;
+    return mapType & maptypes::PROCEDURE_SID;
   }
 
   bool isStar() const
   {
-    return mapType & maptypes::APPROACH_STAR;
+    return mapType & maptypes::PROCEDURE_STAR;
   }
 
   bool isMissed() const
   {
-    return mapType & maptypes::APPROACH_MISSED;
+    return mapType & maptypes::PROCEDURE_MISSED;
   }
 
   bool isHold() const;
@@ -926,17 +926,17 @@ struct MapApproachLeg
 
 };
 
-QDebug operator<<(QDebug out, const maptypes::MapApproachLeg& leg);
+QDebug operator<<(QDebug out, const maptypes::MapProcedureLeg& leg);
 
 /* All legs for a arrival or departure including STAR, transition and approach in order or
  * legs for SID only.
  * SID contains all in approach and legs transition fields.
  * STAR contins all in approach fields */
-struct MapApproachLegs
+struct MapProcedureLegs
 {
-  QVector<MapApproachLeg> transitionLegs, approachLegs;
+  QVector<MapProcedureLeg> transitionLegs, approachLegs;
 
-  MapApproachRef ref;
+  MapProcedureRef ref;
   atools::geo::Rect bounding;
 
   QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent;
@@ -952,6 +952,10 @@ struct MapApproachLegs
 
   bool gpsOverlay;
 
+  void clearApproach();
+
+  void clearTransition();
+
   bool isEmpty() const
   {
     return size() == 0;
@@ -963,32 +967,32 @@ struct MapApproachLegs
   }
 
   /* first in list is transition and then approach or SID  or STAR only */
-  const MapApproachLeg& at(int i) const
+  const MapProcedureLeg& at(int i) const
   {
     return atInternal(i);
   }
 
-  const MapApproachLeg& first() const
+  const MapProcedureLeg& first() const
   {
     return atInternal(0);
   }
 
-  const MapApproachLeg& last() const
+  const MapProcedureLeg& last() const
   {
     return atInternal(size() - 1);
   }
 
-  const MapApproachLeg *approachLegById(int legId) const;
-  const MapApproachLeg *transitionLegById(int legId) const;
+  const MapProcedureLeg *approachLegById(int legId) const;
+  const MapProcedureLeg *transitionLegById(int legId) const;
 
-  MapApproachLeg& operator[](int i)
+  MapProcedureLeg& operator[](int i)
   {
     return atInternal(i);
   }
 
 private:
-  MapApproachLeg& atInternal(int i);
-  const MapApproachLeg& atInternal(int i) const;
+  MapProcedureLeg& atInternal(int i);
+  const MapProcedureLeg& atInternal(int i) const;
 
   int apprIdx(int i) const
   {
@@ -1002,7 +1006,7 @@ private:
 
 };
 
-QDebug operator<<(QDebug out, const MapApproachLegs& legs);
+QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
@@ -1068,19 +1072,19 @@ QString navTypeNameVorLong(const QString& type);
 QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
 
-QString approachFixType(const QString& type);
-QString approachType(const QString& type);
-maptypes::ApproachLegType approachLegEnum(const QString& type);
-QString approachLegTypeStr(ApproachLegType type);
-QString approachLegTypeShortStr(ApproachLegType type);
-QString approachLegTypeFullStr(ApproachLegType type);
-QString approachLegRemarks(maptypes::ApproachLegType);
+QString procedureFixType(const QString& type);
+QString procedureType(const QString& type);
+maptypes::ProcedureLegType procedureLegEnum(const QString& type);
+QString procedureLegTypeStr(ProcedureLegType type);
+QString procedureLegTypeShortStr(ProcedureLegType type);
+QString procedureLegTypeFullStr(ProcedureLegType type);
+QString procedureLegRemarks(maptypes::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
-QString approachLegRemark(const MapApproachLeg& leg);
-QString approachLegRemDistance(const MapApproachLeg& leg, float& remainingDistance);
-QString approachLegDistance(const MapApproachLeg& leg);
-QString approachLegCourse(const MapApproachLeg& leg);
+QString procedureLegRemark(const MapProcedureLeg& leg);
+QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance);
+QString procedureLegDistance(const MapProcedureLeg& leg);
+QString procedureLegCourse(const MapProcedureLeg& leg);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -1145,10 +1149,10 @@ Q_DECLARE_TYPEINFO(maptypes::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachRef, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachLeg, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapProcedureRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapProcedureLeg, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApproachLegs, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(maptypes::MapProcedureLegs, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(maptypes::PosCourse, Q_PRIMITIVE_TYPE);

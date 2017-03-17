@@ -19,12 +19,12 @@
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 
 #include <QPainter>
 
-RouteIconDelegate::RouteIconDelegate(const RouteMapObjectList& routeMapObjects)
-  : routeObjects(routeMapObjects)
+RouteIconDelegate::RouteIconDelegate(const Route& route)
+  : routeLegs(route)
 {
   symbolPainter = new SymbolPainter();
 }
@@ -38,10 +38,10 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
                               const QModelIndex& index) const
 {
   // Fixed crash when error dialog is displayed
-  if(routeObjects.isEmpty())
+  if(routeLegs.isEmpty())
     return;
 
-  if(index.row() > routeObjects.size() - 1)
+  if(index.row() > routeLegs.size() - 1)
     return;
 
   int symbolSize = option.rect.height() - 4;
@@ -53,7 +53,7 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   styleOption.font.setBold(true);
   styleOption.displayAlignment = Qt::AlignRight;
 
-  const RouteMapObject& mapObj = routeObjects.at(index.row());
+  const RouteLeg& mapObj = routeLegs.at(index.row());
   if(mapObj.getMapObjectType() == maptypes::AIRPORT && mapObj.getAirport().addon())
     // Italic for addons
     styleOption.font.setItalic(true);
@@ -85,6 +85,6 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
     symbolPainter->drawUserpointSymbol(painter, x, y, symbolSize, false, false);
   else if(mapObj.getMapObjectType() == maptypes::INVALID)
     symbolPainter->drawWaypointSymbol(painter, mapcolors::routeInvalidPointColor, x, y, symbolSize, false, false);
-  else if(mapObj.isAnyApproach())
+  else if(mapObj.isAnyProcedure())
     symbolPainter->drawApproachSymbol(painter, x, y, symbolSize, false, false);
 }

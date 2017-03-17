@@ -56,12 +56,12 @@ void MapPainterAirport::render(PaintContext *context)
 
   if(context->objectTypes.testFlag(maptypes::ROUTE))
   {
-    for(const RouteMapObject& rmo : routeController->getRouteMapObjects())
+    for(const RouteLeg& routeLeg : routeController->getRoute())
     {
-      if(rmo.getMapObjectType() == maptypes::AIRPORT)
+      if(routeLeg.getMapObjectType() == maptypes::AIRPORT)
       {
-        airportMap.insert(rmo.getAirport().id, &rmo.getAirport());
-        routeAirportIds.insert(rmo.getAirport().id);
+        airportMap.insert(routeLeg.getAirport().id, &routeLeg.getAirport());
+        routeAirportIds.insert(routeLeg.getAirport().id);
       }
     }
   }

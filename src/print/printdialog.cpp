@@ -28,7 +28,7 @@
 
 #include <QPushButton>
 
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 
 PrintDialog::PrintDialog(QWidget *parent)
   : QDialog(parent), ui(new Ui::PrintDialog)

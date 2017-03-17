@@ -151,7 +151,7 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
 
   if(!overview)
   {
-    flags |= airportFlag(record, "num_approach", AP_APPROACH);
+    flags |= airportFlag(record, "num_approach", AP_PROCEDURE);
     flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
     flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);
 

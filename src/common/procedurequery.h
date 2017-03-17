@@ -37,22 +37,22 @@ class MapQuery;
 
 /* Loads and caches approaches and transitions. The corresponding approach is also loaded and cached if a
  * transition is loaded since legs depend on each other.*/
-class ApproachQuery
+class ProcedureQuery
 {
-  Q_DECLARE_TR_FUNCTIONS(ApproachQuery)
+  Q_DECLARE_TR_FUNCTIONS(ProcedureQuery)
 
 public:
-  ApproachQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
-  virtual ~ApproachQuery();
+  ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam);
+  virtual ~ProcedureQuery();
 
-  const maptypes::MapApproachLeg *getApproachLeg(const maptypes::MapAirport& airport, int approachId, int legId);
-  const maptypes::MapApproachLeg *getTransitionLeg(const maptypes::MapAirport& airport, int legId);
+  const maptypes::MapProcedureLeg *getApproachLeg(const maptypes::MapAirport& airport, int approachId, int legId);
+  const maptypes::MapProcedureLeg *getTransitionLeg(const maptypes::MapAirport& airport, int legId);
 
   /* Get approach only */
-  const maptypes::MapApproachLegs *getApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  const maptypes::MapProcedureLegs *getApproachLegs(const maptypes::MapAirport& airport, int approachId);
 
   /* Get transition and its approach */
-  const maptypes::MapApproachLegs *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
+  const maptypes::MapProcedureLegs *getTransitionLegs(const maptypes::MapAirport& airport, int transitionId);
 
   /* Create all queries */
   void initQueries();
@@ -64,49 +64,49 @@ public:
 
   bool getLegsForFlightplanProperties(const QHash<QString, QString> properties, const maptypes::MapAirport& departure,
                                       const maptypes::MapAirport& destination,
-                                      maptypes::MapApproachLegs& arrivalLegs, maptypes::MapApproachLegs& starLegs,
-                                      maptypes::MapApproachLegs& departureLegs);
+                                      maptypes::MapProcedureLegs& arrivalLegs, maptypes::MapProcedureLegs& starLegs,
+                                      maptypes::MapProcedureLegs& departureLegs);
 
   static void extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
-                                                 const maptypes::MapApproachLegs& arrivalLegs,
-                                                 const maptypes::MapApproachLegs& starLegs,
-                                                 const maptypes::MapApproachLegs& departureLegs);
+                                                 const maptypes::MapProcedureLegs& arrivalLegs,
+                                                 const maptypes::MapProcedureLegs& starLegs,
+                                                 const maptypes::MapProcedureLegs& departureLegs);
 
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, maptypes::MapObjectTypes type);
 
 private:
-  maptypes::MapApproachLeg buildTransitionLegEntry(const maptypes::MapAirport& airport);
-  maptypes::MapApproachLeg buildApproachLegEntry(const maptypes::MapAirport& airport);
-  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapApproachLeg& leg, const maptypes::MapAirport& airport);
+  maptypes::MapProcedureLeg buildTransitionLegEntry(const maptypes::MapAirport& airport);
+  maptypes::MapProcedureLeg buildApproachLegEntry(const maptypes::MapAirport& airport);
+  void buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapProcedureLeg& leg, const maptypes::MapAirport& airport);
 
-  void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
-  void processLegs(maptypes::MapApproachLegs& legs);
+  void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
+  void processLegs(maptypes::MapProcedureLegs& legs);
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
-  void processCourseInterceptLegs(maptypes::MapApproachLegs& legs);
+  void processCourseInterceptLegs(maptypes::MapProcedureLegs& legs);
 
   /* Fill calculatedDistance and calculated course fields */
-  void processLegsDistanceAndCourse(maptypes::MapApproachLegs& legs);
+  void processLegsDistanceAndCourse(maptypes::MapProcedureLegs& legs);
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+  void processArtificialLegs(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000" */
-  void processLegsFixRestrictions(maptypes::MapApproachLegs& legs);
+  void processLegsFixRestrictions(maptypes::MapProcedureLegs& legs);
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(maptypes::MapApproachLegs& legs);
-  void updateBoundingAndDirection(const maptypes::MapAirport& airport, maptypes::MapApproachLegs& legs);
+  void updateMagvar(maptypes::MapProcedureLegs& legs);
+  void updateBoundingAndDirection(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
 
-  void assignType(maptypes::MapApproachLegs& approach);
-  maptypes::MapApproachLeg createRunwayLeg(const maptypes::MapApproachLeg& leg,
-                                           const maptypes::MapApproachLegs& legs);
-  maptypes::MapApproachLeg createStartLeg(const maptypes::MapApproachLeg& leg, const maptypes::MapApproachLegs& legs);
+  void assignType(maptypes::MapProcedureLegs& approach);
+  maptypes::MapProcedureLeg createRunwayLeg(const maptypes::MapProcedureLeg& leg,
+                                           const maptypes::MapProcedureLegs& legs);
+  maptypes::MapProcedureLeg createStartLeg(const maptypes::MapProcedureLeg& leg, const maptypes::MapProcedureLegs& legs);
 
-  maptypes::MapApproachLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
-  maptypes::MapApproachLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
-  maptypes::MapApproachLegs *fetchTransitionLegs(const maptypes::MapAirport& airport, int approachId, int transitionId);
+  maptypes::MapProcedureLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  maptypes::MapProcedureLegs *fetchApproachLegs(const maptypes::MapAirport& airport, int approachId);
+  maptypes::MapProcedureLegs *fetchTransitionLegs(const maptypes::MapAirport& airport, int approachId, int transitionId);
   int approachIdForTransitionId(int transitionId);
   void mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, const QString& ident,
                         const QString& region, const QString& airport,
@@ -122,7 +122,7 @@ private:
 
   /* approach ID and transition ID to full lists
    * The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.) */
-  QCache<int, maptypes::MapApproachLegs> approachCache, transitionCache;
+  QCache<int, maptypes::MapProcedureLegs> approachCache, transitionCache;
 
   /* maps leg ID to approach/transition ID and index in list */
   QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;

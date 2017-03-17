@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_PROFILEWIDGET_H
 #define LITTLENAVMAP_PROFILEWIDGET_H
 
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 #include "fs/sc/simconnectdata.h"
 
 #include <QFuture>
@@ -108,7 +108,7 @@ private:
 
   struct ElevationLegList
   {
-    RouteMapObjectList routeMapObjects; /* Copy from route controller.
+    Route route; /* Copy from route controller.
                                          * Need a copy to avoid thread synchronization problems. */
     QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
     float maxElevationFt = 0.f /* Maximum ground elevation for the route */,

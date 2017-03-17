@@ -122,7 +122,6 @@ SOURCES += src/main.cpp\
     src/mapgui/mappainterils.cpp \
     src/common/maptools.cpp \
     src/route/routecontroller.cpp \
-    src/route/routemapobject.cpp \
     src/mapgui/mappainterroute.cpp \
     src/route/routeicondelegate.cpp \
     src/mapgui/maptooltip.cpp \
@@ -142,7 +141,6 @@ SOURCES += src/main.cpp\
     src/connect/connectclient.cpp \
     src/mapgui/mappainteraircraft.cpp \
     src/profile/profilewidget.cpp \
-    src/route/routemapobjectlist.cpp \
     src/common/aircrafttrack.cpp \
     src/info/infocontroller.cpp \
     src/common/symbolpainter.cpp \
@@ -167,10 +165,12 @@ SOURCES += src/main.cpp\
     src/common/unit.cpp \
     src/common/coordinates.cpp \
     src/route/userwaypointdialog.cpp \
-    src/info/approachtreecontroller.cpp \
     src/common/infoquery.cpp \
-    src/common/approachquery.cpp \
-    src/common/textplacement.cpp
+    src/common/textplacement.cpp \
+    src/route/routeleg.cpp \
+    src/route/route.cpp \
+    src/info/proceduretreecontroller.cpp \
+    src/common/procedurequery.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -196,7 +196,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/mapgui/mappainterils.h \
     src/common/maptools.h \
     src/route/routecontroller.h \
-    src/route/routemapobject.h \
     src/mapgui/mappainterroute.h \
     src/route/routeicondelegate.h \
     src/mapgui/maptooltip.h \
@@ -216,7 +215,6 @@ HEADERS  += src/gui/mainwindow.h \
     src/connect/connectclient.h \
     src/mapgui/mappainteraircraft.h \
     src/profile/profilewidget.h \
-    src/route/routemapobjectlist.h \
     src/common/aircrafttrack.h \
     src/info/infocontroller.h \
     src/common/symbolpainter.h \
@@ -241,10 +239,12 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/unit.h \
     src/common/coordinates.h \
     src/route/userwaypointdialog.h \
-    src/info/approachtreecontroller.h \
     src/common/infoquery.h \
-    src/common/approachquery.h \
-    src/common/textplacement.h
+    src/common/textplacement.h \
+    src/route/routeleg.h \
+    src/route/route.h \
+    src/info/proceduretreecontroller.h \
+    src/common/procedurequery.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

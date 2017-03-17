@@ -47,8 +47,8 @@
 #include "route/routestringdialog.h"
 #include "route/routestring.h"
 #include "common/unit.h"
-#include "common/approachquery.h"
-#include "info/approachtreecontroller.h"
+#include "common/procedurequery.h"
+#include "info/proceduretreecontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -133,12 +133,12 @@ MainWindow::MainWindow()
     infoQuery = new InfoQuery(databaseManager->getDatabase());
     infoQuery->initQueries();
 
-    approachQuery = new ApproachQuery(databaseManager->getDatabase(), mapQuery);
+    approachQuery = new ProcedureQuery(databaseManager->getDatabase(), mapQuery);
     approachQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
     approachQuery->initQueries();
 
     qDebug() << "MainWindow Creating Approach controller";
-    approachController = new ApproachTreeController(this);
+    approachController = new ProcedureTreeController(this);
 
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
@@ -598,7 +598,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, approachController, &ApproachTreeController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, approachController, &ProcedureTreeController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
@@ -614,7 +614,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
   connect(routeController, &RouteController::showApproaches, approachController,
-          &ApproachTreeController::showApproaches);
+          &ProcedureTreeController::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
@@ -630,7 +630,7 @@ void MainWindow::connectAllSlots()
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
   connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
-          approachController, &ApproachTreeController::showApproaches);
+          approachController, &ProcedureTreeController::showProcedures);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
@@ -703,7 +703,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
-  connect(mapWidget, &MapWidget::showApproaches, approachController, &ApproachTreeController::showApproaches);
+  connect(mapWidget, &MapWidget::showApproaches, approachController, &ProcedureTreeController::showProcedures);
   connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
 
   // Connect toolbar combo boxes
@@ -837,7 +837,7 @@ void MainWindow::connectAllSlots()
           &RouteController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, approachController,
-          &ApproachTreeController::disconnectedFromSimulator);
+          &ProcedureTreeController::disconnectedFromSimulator);
 
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
@@ -868,13 +868,13 @@ void MainWindow::connectAllSlots()
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
   // Approach controller ===================================================================
-  connect(approachController, &ApproachTreeController::approachLegSelected, this, &MainWindow::approachLegSelected);
-  connect(approachController, &ApproachTreeController::approachSelected, this, &MainWindow::approachSelected);
-  connect(approachController, &ApproachTreeController::showRect, mapWidget, &MapWidget::showRect);
-  connect(approachController, &ApproachTreeController::showPos, mapWidget, &MapWidget::showPos);
-  connect(approachController, &ApproachTreeController::routeAttachApproach, routeController,
+  connect(approachController, &ProcedureTreeController::procedureLegSelected, this, &MainWindow::approachLegSelected);
+  connect(approachController, &ProcedureTreeController::procedureSelected, this, &MainWindow::approachSelected);
+  connect(approachController, &ProcedureTreeController::showRect, mapWidget, &MapWidget::showRect);
+  connect(approachController, &ProcedureTreeController::showPos, mapWidget, &MapWidget::showPos);
+  connect(approachController, &ProcedureTreeController::routeInsertProcedure, routeController,
           &RouteController::routeAttachProcedure);
-  connect(approachController, &ApproachTreeController::showInformation, infoController,
+  connect(approachController, &ProcedureTreeController::showInformation, infoController,
           &InfoController::showInformation);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1465,7 +1465,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
   Q_UNUSED(selected);
   Q_UNUSED(total);
   QList<int> result;
-  routeController->getSelectedRouteMapObjects(result);
+  routeController->getSelectedRouteLegs(result);
   mapWidget->changeRouteHighlights(result);
 }
 
@@ -1491,7 +1491,7 @@ void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, 
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
+void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
 {
   qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
            << "transitionId" << approachRef.transitionId
@@ -1500,12 +1500,12 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
   maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
   if(approachRef.isEmpty())
-    mapWidget->changeApproachHighlight(maptypes::MapApproachLegs());
+    mapWidget->changeApproachHighlight(maptypes::MapProcedureLegs());
   else
   {
     if(approachRef.isApproachAndTransition())
     {
-      const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
+      const maptypes::MapProcedureLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1513,7 +1513,7 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
     }
     else if(approachRef.isApproachOnly() && !approachRef.isLeg())
     {
-      const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
+      const maptypes::MapProcedureLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1524,7 +1524,7 @@ void MainWindow::approachSelected(maptypes::MapApproachRef approachRef)
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
+void MainWindow::approachLegSelected(maptypes::MapProcedureRef approachRef)
 {
   qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
            << "transitionId" << approachRef.transitionId
@@ -1532,7 +1532,7 @@ void MainWindow::approachLegSelected(maptypes::MapApproachRef approachRef)
 
   if(approachRef.legId != -1)
   {
-    const maptypes::MapApproachLeg *leg;
+    const maptypes::MapProcedureLeg *leg;
 
     maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
     if(approachRef.transitionId != -1)

@@ -40,7 +40,7 @@ class InfoController;
 class OptionsDialog;
 class QActionGroup;
 class PrintSupport;
-class ApproachTreeController;
+class ProcedureTreeController;
 
 namespace Marble {
 class LegendWidget;
@@ -69,7 +69,7 @@ class MainWindow;
 class MapWidget;
 class MapQuery;
 class InfoQuery;
-class ApproachQuery;
+class ProcedureQuery;
 
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
@@ -146,7 +146,7 @@ public:
     return infoQuery;
   }
 
-  ApproachQuery *getApproachQuery() const
+  ProcedureQuery *getApproachQuery() const
   {
     return approachQuery;
   }
@@ -165,7 +165,7 @@ public:
 
   void resultTruncated(int truncatedTo);
 
-  ApproachTreeController *getApproachController() const
+  ProcedureTreeController *getApproachController() const
   {
     return approachController;
   }
@@ -192,8 +192,8 @@ private:
   void updateMapObjectsShown();
 
   void searchSelectionChanged(const SearchBase *source, int selected, int visible, int total);
-  void approachLegSelected(maptypes::MapApproachRef approachRef);
-  void approachSelected(maptypes::MapApproachRef approachRef);
+  void approachLegSelected(maptypes::MapProcedureRef approachRef);
+  void approachSelected(maptypes::MapProcedureRef approachRef);
 
   void routeSelectionChanged(int selected, int total);
 
@@ -291,8 +291,8 @@ private:
   /* Database query helpers and caches */
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
-  ApproachQuery *approachQuery = nullptr;
-  ApproachTreeController *approachController = nullptr;
+  ProcedureQuery *approachQuery = nullptr;
+  ProcedureTreeController *approachController = nullptr;
 
   QTimer weatherUpdateTimer;
 

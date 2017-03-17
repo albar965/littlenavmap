@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_ROUTEMAPOBJECT_H
-#define LITTLENAVMAP_ROUTEMAPOBJECT_H
+#ifndef LITTLENAVMAP_ROUTELEG_H
+#define LITTLENAVMAP_ROUTELEG_H
 
 #include "common/maptypes.h"
 
@@ -32,19 +32,19 @@ class Flightplan;
 }
 
 class MapQuery;
-class RouteMapObjectList;
+class Route;
 
 /*
  * A flight plan waypoint, departure or destination. Data is loaded from the database. Provides
  * methods to get route table information, like distance, course and more.
  */
-class RouteMapObject
+class RouteLeg
 {
-  Q_DECLARE_TR_FUNCTIONS(RouteMapObject)
+  Q_DECLARE_TR_FUNCTIONS(RouteLeg)
 
 public:
-  RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan);
-  ~RouteMapObject();
+  RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
+  ~RouteLeg();
 
   /*
    * Creates a route map object from a flight plan entry. Queries the database for existing navaids and airports.
@@ -56,7 +56,7 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                 const RouteMapObject *predRouteMapObj);
+                                 const RouteLeg *predRouteMapObj);
 
   /*
    * Creates a route map object from an airport database object.
@@ -65,22 +65,22 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                         const RouteMapObject *predRouteMapObj);
+                         const RouteLeg *predRouteMapObj);
 
-  void createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
-                             const RouteMapObject *predRouteMapObj);
+  void createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
+                             const RouteLeg *predRouteMapObj);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
    */
-  void updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj);
+  void updateDistanceAndCourse(int entryIndex, const RouteLeg *predRouteMapObj);
 
   /* Get magvar from all known objects */
   void updateMagvar();
 
   /* Update for user and invalid. Needs all others updated before */
-  void updateInvalidMagvar(int entryIndex, const RouteMapObjectList *routeList);
+  void updateInvalidMagvar(int entryIndex, const Route *routeList);
 
   /* Change user defined waypoint name */
   void updateUserName(const QString& name);
@@ -199,12 +199,12 @@ public:
 
   bool isRoute() const
   {
-    return !isAnyApproach();
+    return !isAnyProcedure();
   }
 
-  bool isAnyApproach() const
+  bool isAnyProcedure() const
   {
-    return type & maptypes::APPROACH_ALL;
+    return type & maptypes::PROCEDURE_ALL;
   }
 
   float getGroundAltitude() const
@@ -222,50 +222,50 @@ public:
     index = value;
   }
 
-  const maptypes::MapApproachLeg& getApproachLeg() const
+  const maptypes::MapProcedureLeg& getApproachLeg() const
   {
     return approachLeg;
   }
 
   /* invalid type if not an approach */
-  maptypes::ApproachLegType getApproachLegType() const
+  maptypes::ProcedureLegType getApproachLegType() const
   {
     return approachLeg.type;
   }
 
   bool isArrivalProcedure() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_ARRIVAL;
+    return approachLeg.mapType & maptypes::PROCEDURE_ARRIVAL;
   }
 
   bool isDepartureProcedure() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_DEPARTURE;
+    return approachLeg.mapType & maptypes::PROCEDURE_DEPARTURE;
   }
 
   bool isApproach() const
   {
-    return approachLeg.mapType & maptypes::APPROACH;
+    return approachLeg.mapType & maptypes::PROCEDURE_APPROACH;
   }
 
   bool isMissed() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_MISSED;
+    return approachLeg.mapType & maptypes::PROCEDURE_MISSED;
   }
 
   bool isTransition() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_TRANSITION;
+    return approachLeg.mapType & maptypes::PROCEDURE_TRANSITION;
   }
 
   bool isSid() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_SID;
+    return approachLeg.mapType & maptypes::PROCEDURE_SID;
   }
 
   bool isStar() const
   {
-    return approachLeg.mapType & maptypes::APPROACH_STAR;
+    return approachLeg.mapType & maptypes::PROCEDURE_STAR;
   }
 
   bool isHold() const
@@ -305,7 +305,7 @@ private:
   maptypes::MapIls ils;
   maptypes::MapRunwayEnd runwayEnd;
   maptypes::MapWaypoint waypoint;
-  maptypes::MapApproachLeg approachLeg;
+  maptypes::MapProcedureLeg approachLeg;
 
   bool valid = false;
 
@@ -318,4 +318,4 @@ private:
   atools::geo::LineString geometry;
 };
 
-#endif // LITTLENAVMAP_ROUTEMAPOBJECT_H
+#endif // LITTLENAVMAP_ROUTELEG_H

@@ -20,7 +20,7 @@
 
 #include "fs/sc/simconnectdata.h"
 
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 
 namespace maptypes {
 struct MapSearchResult;
@@ -99,15 +99,15 @@ public:
     return highlights;
   }
 
-  void setApproachLegHighlights(const maptypes::MapApproachLeg *leg)
+  void setApproachLegHighlights(const maptypes::MapProcedureLeg *leg)
   {
     if(leg != nullptr)
       approachLegHighlights = *leg;
     else
-      approachLegHighlights = maptypes::MapApproachLeg();
+      approachLegHighlights = maptypes::MapProcedureLeg();
   }
 
-  const maptypes::MapApproachLeg& getApproachLegHighlights() const
+  const maptypes::MapProcedureLeg& getApproachLegHighlights() const
   {
     return approachLegHighlights;
   }
@@ -159,12 +159,12 @@ public:
     lastSimData = data;
   }
 
-  const maptypes::MapApproachLegs& getApproachHighlight() const
+  const maptypes::MapProcedureLegs& getApproachHighlight() const
   {
     return approachHighlight;
   }
 
-  maptypes::MapApproachLegs& getApproachHighlight()
+  maptypes::MapProcedureLegs& getApproachHighlight()
   {
     return approachHighlight;
   }
@@ -180,9 +180,9 @@ private:
   MapPaintLayer *paintLayer;
 
   maptypes::MapSearchResult highlights;
-  maptypes::MapApproachLeg approachLegHighlights;
+  maptypes::MapProcedureLeg approachLegHighlights;
 
-  maptypes::MapApproachLegs approachHighlight;
+  maptypes::MapProcedureLegs approachHighlight;
 
   QList<int> routeHighlights;
   QList<maptypes::RangeMarker> rangeMarks;

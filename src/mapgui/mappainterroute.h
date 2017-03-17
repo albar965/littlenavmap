@@ -26,7 +26,7 @@ class GeoDataLineString;
 
 class MapWidget;
 class RouteController;
-class RouteMapObjectList;
+class Route;
 
 /*
  * Draws the flight plan line and all enroute navaid and departure and destination airports (airport symbols only).
@@ -59,7 +59,7 @@ private:
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
   void paintApproach(const PaintContext *context,
-                     const maptypes::MapApproachLegs& legs);
+                     const maptypes::MapProcedureLegs& legs);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
@@ -70,25 +70,25 @@ private:
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
-  void drawSymbols(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+  void drawSymbols(const PaintContext *context, const Route& route,
                    const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void drawSymbolText(const PaintContext *context, const RouteMapObjectList& routeMapObjects,
+  void drawSymbolText(const PaintContext *context, const Route& route,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintApproachPoints(const PaintContext *context, const maptypes::MapApproachLegs& legs, int index);
+  void paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs, int index);
 
-  void paintApproachSegment(const PaintContext *context, const maptypes::MapApproachLegs& legs,
+  void paintApproachSegment(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
                             int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText);
 
   void paintApproachpoint(const PaintContext *context, int x, int y);
 
   void paintTopOfDescent(const PaintContext *context);
 
-  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapApproachLeg& leg, QPainter *painter,
+  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapProcedureLeg& leg, QPainter *painter,
                            QPointF intersectPoint);
-  void paintApproachBow(const maptypes::MapApproachLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
-                        const maptypes::MapApproachLeg& leg);
+  void paintApproachBow(const maptypes::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
+                        const maptypes::MapProcedureLeg& leg);
 
   void paintApproachFlyover(const PaintContext *context, int x, int y);
 

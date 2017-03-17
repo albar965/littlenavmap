@@ -26,7 +26,7 @@
 #include "geo/calculations.h"
 #include "common/infoquery.h"
 #include "mapgui/mapquery.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
@@ -127,8 +127,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::WeatherContext& weatherContext,
-                                  HtmlBuilder& html, const RouteMapObjectList *routeMapObjects,
-                                  QColor background) const
+                                  HtmlBuilder& html, const Route *route, QColor background) const
 {
   const SqlRecord *rec = infoQuery->getAirportInformation(airport.id);
   int rating = -1;
@@ -143,12 +142,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
   mapQuery->getAirportAdminNamesById(airport.id, city, state, country);
 
   html.table();
-  if(routeMapObjects != nullptr && !routeMapObjects->isEmpty() && airport.routeIndex != -1)
+  if(route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
   {
     // Add flight plan information if airport is a part of it
     if(airport.routeIndex == 0)
       html.row2(tr("Departure Airport"), QString());
-    else if(airport.routeIndex == routeMapObjects->size() - 1)
+    else if(airport.routeIndex == route->size() - 1)
       html.row2(tr("Destination Airport"), QString());
     else
       html.row2(tr("Flight Plan position:"), locale.toString(airport.routeIndex + 1));
@@ -201,7 +200,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const maptypes::Wea
   if(airport.flags.testFlag(AP_JETFUEL))
     facilities.append(tr("Jetfuel"));
 
-  if(airport.flags.testFlag(AP_APPROACH))
+  if(airport.flags.testFlag(AP_PROCEDURE))
     facilities.append(tr("Procedures"));
 
   if(airport.flags.testFlag(AP_ILS))
@@ -665,7 +664,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html, QColor background,
-                                   const maptypes::MapApproachRef& ref) const
+                                   const maptypes::MapProcedureRef& ref) const
 {
   if(info && infoQuery != nullptr && airport.isValid())
   {
@@ -693,17 +692,17 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
 
         QString approachType = recApp.valueStr("type");
         QString fix = recApp.valueStr("fix_ident");
-        if(ref.mapType & maptypes::APPROACH_SID)
+        if(ref.mapType & maptypes::PROCEDURE_SID)
           html.h3(tr("SID") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
-        else if(ref.mapType & maptypes::APPROACH_STAR)
+        else if(ref.mapType & maptypes::PROCEDURE_STAR)
           html.h3(tr("STAR") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
         else
-          html.h3(tr("Approach") + " " + maptypes::approachType(approachType) + " " +
+          html.h3(tr("Approach") + " " + maptypes::procedureType(approachType) + " " +
                   recApp.valueStr("suffix") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
 
         html.table();
 
-        if(!(ref.mapType & maptypes::APPROACH_SID) && !(ref.mapType & maptypes::APPROACH_STAR))
+        if(!(ref.mapType & maptypes::PROCEDURE_SID) && !(ref.mapType & maptypes::PROCEDURE_STAR))
         {
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
           html.row2(tr("Fix Ident and Region:"), recApp.valueStr("fix_ident") + tr(", ") +
@@ -777,12 +776,12 @@ void HtmlInfoBuilder::approachText(const MapAirport& airport, HtmlBuilder& html,
               if(ref.transitionId != -1 && recTrans.valueInt("transition_id") != ref.transitionId)
                 continue;
 
-              if(!(ref.mapType & maptypes::APPROACH_SID))
+              if(!(ref.mapType & maptypes::PROCEDURE_SID))
                 html.h3(tr("Transition ") + recTrans.valueStr("fix_ident"));
 
               html.table();
 
-              if(!(ref.mapType & maptypes::APPROACH_SID))
+              if(!(ref.mapType & maptypes::PROCEDURE_SID))
               {
                 if(recTrans.valueStr("type") == "F")
                   html.row2(tr("Type:"), tr("Full"));
@@ -1326,7 +1325,7 @@ void HtmlInfoBuilder::userpointText(const MapUserpoint& userpoint, HtmlBuilder& 
     html.p().b(tr("Flight Plan position: ") + QString::number(userpoint.routeIndex + 1)).pEnd();
 }
 
-void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder& html) const
+void HtmlInfoBuilder::approachPointText(const MapProcedurePoint& ap, HtmlBuilder& html) const
 {
   QString heading;
   if(ap.missed)
@@ -1349,7 +1348,7 @@ void HtmlInfoBuilder::approachPointText(const MapApproachpoint& ap, HtmlBuilder&
 
   html.table();
 
-  html.row2(tr("Leg Type:"), maptypes::approachLegTypeStr(ap.type));
+  html.row2(tr("Leg Type:"), maptypes::procedureLegTypeStr(ap.type));
   html.row2(tr("Fix:"), ap.fixIdent);
 
   if(!atts.isEmpty())
@@ -1471,7 +1470,7 @@ void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, Htm
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                            HtmlBuilder& html,
-                                           const RouteMapObjectList& route)
+                                           const Route& route)
 {
   if(!aircraft.getPosition().isValid())
     return;
@@ -1545,13 +1544,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       QString apprText;
       if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE)
       {
-        const RouteMapObject& rmo = route.at(activeLegCorrected);
+        const RouteLeg& routeLeg = route.at(activeLegCorrected);
 
-        if(rmo.isApproach())
+        if(routeLeg.isApproach())
           apprText = tr(" - Approach");
-        else if(rmo.isTransition())
+        else if(routeLeg.isTransition())
           apprText = tr(" - Transition");
-        else if(rmo.isMissed())
+        else if(routeLeg.isMissed())
           apprText = tr(" - Missed Approach");
       }
 
@@ -1561,20 +1560,20 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE)
       {
         // If approaching an initial fix use corrected version
-        const RouteMapObject& rmoCorrected = route.at(activeLegCorrected);
+        const RouteLeg& rmoCorrected = route.at(activeLegCorrected);
 
         // For course and distance use not corrected leg
-        const RouteMapObject& rmo = activeLeg != maptypes::INVALID_INDEX_VALUE && isCorrected ?
-                                    route.at(activeLeg) :
-                                    rmoCorrected;
+        const RouteLeg& routeLeg = activeLeg != maptypes::INVALID_INDEX_VALUE && isCorrected ?
+                              route.at(activeLeg) :
+                              rmoCorrected;
 
-        const MapApproachLeg& leg = rmoCorrected.getApproachLeg();
+        const MapProcedureLeg& leg = rmoCorrected.getApproachLeg();
         bool routeTrueCourse = route.isTrueCourse();
 
         // Next leg - approach data ====================================================
-        if(rmoCorrected.isAnyApproach())
+        if(rmoCorrected.isAnyProcedure())
         {
-          html.row2(tr("Leg Type:"), maptypes::approachLegTypeStr(leg.type));
+          html.row2(tr("Leg Type:"), maptypes::procedureLegTypeStr(leg.type));
 
           QStringList instructions;
           if(leg.flyover)
@@ -1610,7 +1609,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
         }
 
-        if(rmoCorrected.isAnyApproach() && leg.altRestriction.isValid())
+        if(rmoCorrected.isAnyProcedure() && leg.altRestriction.isValid())
           html.row2(tr("Restriction:"), maptypes::altRestrictionText(leg.altRestriction));
 
         if(nearestLegDistance < maptypes::INVALID_DISTANCE_VALUE)
@@ -1621,10 +1620,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               nearestLegDistance / aircraft.getGroundSpeedKts());
 
           // Not for arc legs
-          if(rmo.isRoute() || !leg.isCircular())
+          if(routeLeg.isRoute() || !leg.isCircular())
           {
             float crs = normalizeCourse(aircraft.getPosition().angleDegToRhumb(
-                                          rmo.getPosition()) - rmo.getMagvar());
+                                          routeLeg.getPosition()) - routeLeg.getMagvar());
             html.row2(tr("Distance, Course and Time:"), Unit::distNm(nearestLegDistance) + ", " +
                       locale.toString(crs, 'f', 0) +
                       (routeTrueCourse ? tr("°T, ") : tr("°M, ")) + timeStr);
@@ -1638,11 +1637,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(route.size() > 1)
         {
           // No course for arcs
-          if(rmo.isRoute() || !rmo.isCircular())
-            html.row2(tr("Leg Course:"), locale.toString(rmo.getCourseToRhumbMag(), 'f', 0) +
+          if(routeLeg.isRoute() || !routeLeg.isCircular())
+            html.row2(tr("Leg Course:"), locale.toString(routeLeg.getCourseToRhumbMag(), 'f', 0) +
                       (routeTrueCourse ? tr("°T") : tr("°M")));
 
-          if(!rmo.isHold())
+          if(!routeLeg.isHold())
           {
             if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
             {

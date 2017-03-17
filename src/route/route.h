@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_ROUTEMAPOBJECTLIST_H
-#define LITTLENAVMAP_ROUTEMAPOBJECTLIST_H
+#ifndef LITTLENAVMAP_ROUTE_H
+#define LITTLENAVMAP_ROUTE_H
 
-#include "routemapobject.h"
+#include "routeleg.h"
 
 #include "fs/pln/flightplan.h"
 
@@ -29,15 +29,15 @@ class FlightplanEntryBuilder;
  * Aggregates the flight plan and is a list of all route map objects. Also contains and stores information
  * about the active route leg and current aircraft position.
  */
-class RouteMapObjectList :
-  private QList<RouteMapObject>
+class Route :
+  private QList<RouteLeg>
 {
 public:
-  RouteMapObjectList();
-  RouteMapObjectList(const RouteMapObjectList& other);
-  virtual ~RouteMapObjectList();
+  Route();
+  Route(const Route& other);
+  virtual ~Route();
 
-  RouteMapObjectList& operator=(const RouteMapObjectList& other);
+  Route& operator=(const Route& other);
 
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const maptypes::PosCourse& pos);
@@ -68,8 +68,8 @@ public:
   }
 
   /* Get active leg or null if this is none */
-  const RouteMapObject *getActiveLeg() const;
-  const RouteMapObject *getActiveLegCorrected(bool *corrected = nullptr) const;
+  const RouteLeg *getActiveLeg() const;
+  const RouteLeg *getActiveLegCorrected(bool *corrected = nullptr) const;
 
   bool isActiveMissed() const;
 
@@ -154,6 +154,11 @@ public:
     return !arrivalLegs.isEmpty();
   }
 
+  bool hasTransitionProcedure() const
+  {
+    return !arrivalLegs.transitionLegs.isEmpty();
+  }
+
   bool hasStarProcedure() const
   {
     return !starLegs.isEmpty();
@@ -162,26 +167,27 @@ public:
   /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
    * transition or approach they are added at the end of start of the route
    *  call updateProcedureLegs after setting */
-  void setArrivalProcedureLegs(const maptypes::MapApproachLegs& legs)
+  void setArrivalProcedureLegs(const maptypes::MapProcedureLegs& legs)
   {
     arrivalLegs = legs;
   }
 
-  void setStarProcedureLegs(const maptypes::MapApproachLegs& legs)
+  void setStarProcedureLegs(const maptypes::MapProcedureLegs& legs)
   {
     starLegs = legs;
   }
 
-  void setDepartureProcedureLegs(const maptypes::MapApproachLegs& legs)
+  void setDepartureProcedureLegs(const maptypes::MapProcedureLegs& legs)
   {
     departureLegs = legs;
   }
 
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
-  void clearArrivalProcedures();
-  void clearDepartureProcedures();
-  void clearStarProcedures();
+  void clearApproachAndTransProcedure();
+  void clearTransitionProcedure();
+  void clearDepartureProcedure();
+  void clearStarProcedure();
 
   void setShownMapFeatures(maptypes::MapObjectTypes types)
   {
@@ -202,23 +208,23 @@ public:
   void clearFlightplanProcedureProperties(maptypes::MapObjectTypes type);
 
   /* Pull only the needed methods in public space */
-  using QList<RouteMapObject>::const_iterator;
-  using QList<RouteMapObject>::begin;
-  using QList<RouteMapObject>::end;
-  using QList<RouteMapObject>::at;
-  using QList<RouteMapObject>::first;
-  using QList<RouteMapObject>::last;
-  using QList<RouteMapObject>::size;
-  using QList<RouteMapObject>::isEmpty;
-  using QList<RouteMapObject>::clear;
-  using QList<RouteMapObject>::append;
-  using QList<RouteMapObject>::prepend;
-  using QList<RouteMapObject>::insert;
-  using QList<RouteMapObject>::replace;
-  using QList<RouteMapObject>::move;
-  using QList<RouteMapObject>::removeAt;
-  using QList<RouteMapObject>::removeLast;
-  using QList<RouteMapObject>::operator[];
+  using QList<RouteLeg>::const_iterator;
+  using QList<RouteLeg>::begin;
+  using QList<RouteLeg>::end;
+  using QList<RouteLeg>::at;
+  using QList<RouteLeg>::first;
+  using QList<RouteLeg>::last;
+  using QList<RouteLeg>::size;
+  using QList<RouteLeg>::isEmpty;
+  using QList<RouteLeg>::clear;
+  using QList<RouteLeg>::append;
+  using QList<RouteLeg>::prepend;
+  using QList<RouteLeg>::insert;
+  using QList<RouteLeg>::replace;
+  using QList<RouteLeg>::move;
+  using QList<RouteLeg>::removeAt;
+  using QList<RouteLeg>::removeLast;
+  using QList<RouteLeg>::operator[];
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
@@ -231,17 +237,17 @@ public:
 
   bool isAirportAfterArrival(int index);
 
-  const maptypes::MapApproachLegs& getArrivalLegs() const
+  const maptypes::MapProcedureLegs& getArrivalLegs() const
   {
     return arrivalLegs;
   }
 
-  const maptypes::MapApproachLegs& getStarLegs() const
+  const maptypes::MapProcedureLegs& getStarLegs() const
   {
     return starLegs;
   }
 
-  const maptypes::MapApproachLegs& getDepartureLegs() const
+  const maptypes::MapProcedureLegs& getDepartureLegs() const
   {
     return departureLegs;
   }
@@ -261,7 +267,7 @@ private:
   atools::geo::Pos positionAtDistance(float distFromStartNm) const;
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
-  void copy(const RouteMapObjectList& other);
+  void copy(const Route& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                         int& index) const;
@@ -274,7 +280,7 @@ private:
   /* Nautical miles not including missed approach */
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
-  maptypes::MapApproachLegs arrivalLegs, starLegs, departureLegs;
+  maptypes::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
   maptypes::MapObjectTypes shownTypes;
 
   int activeLeg = maptypes::INVALID_INDEX_VALUE;
@@ -283,4 +289,4 @@ private:
 
 };
 
-#endif // LITTLENAVMAP_ROUTEMAPOBJECTLIST_H
+#endif // LITTLENAVMAP_ROUTE_H

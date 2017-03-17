@@ -227,8 +227,8 @@ void MapWidget::updateMapObjectsShown()
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
-  setShowMapFeatures(maptypes::APPROACH | maptypes::APPROACH_TRANSITION, ui->actionInfoApproachShowAppr->isChecked());
-  setShowMapFeatures(maptypes::APPROACH_MISSED, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapFeatures(maptypes::PROCEDURE_APPROACH | maptypes::PROCEDURE_TRANSITION, ui->actionInfoApproachShowAppr->isChecked());
+  setShowMapFeatures(maptypes::PROCEDURE_MISSED, ui->actionInfoApproachShowMissedAppr->isChecked());
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
@@ -921,17 +921,17 @@ const maptypes::MapSearchResult& MapWidget::getSearchHighlights() const
   return screenIndex->getSearchHighlights();
 }
 
-const maptypes::MapApproachLeg& MapWidget::getApproachLegHighlights() const
+const maptypes::MapProcedureLeg& MapWidget::getApproachLegHighlights() const
 {
   return screenIndex->getApproachLegHighlights();
 }
 
-const maptypes::MapApproachLegs& MapWidget::getApproachHighlight() const
+const maptypes::MapProcedureLegs& MapWidget::getApproachHighlight() const
 {
   return screenIndex->getApproachHighlight();
 }
 
-void MapWidget::changeApproachHighlight(const maptypes::MapApproachLegs& approach)
+void MapWidget::changeApproachHighlight(const maptypes::MapProcedureLegs& approach)
 {
   cancelDragAll();
   screenIndex->getApproachHighlight() = approach;
@@ -945,7 +945,7 @@ void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& position
   update();
 }
 
-void MapWidget::changeApproachLegHighlights(const maptypes::MapApproachLeg *leg)
+void MapWidget::changeApproachLegHighlights(const maptypes::MapProcedureLeg *leg)
 {
   screenIndex->setApproachLegHighlights(leg);
   update();
@@ -1392,7 +1392,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
-  if(airport != nullptr && (airport->flags & maptypes::AP_APPROACH))
+  if(airport != nullptr && (airport->flags & maptypes::AP_PROCEDURE))
   {
     ui->actionMapShowApproaches->setEnabled(true);
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
@@ -1853,7 +1853,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+      const Route& rmos = mainWindow->getRouteController()->getRoute();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -1978,7 +1978,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+        const Route& rmos = mainWindow->getRouteController()->getRoute();
 
         if(rmos.size() > 1)
         {
@@ -2154,7 +2154,7 @@ void MapWidget::showTooltip(bool update)
 
   // Build a new tooltip HTML for weather changes or aircraft updates
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
-                                          mainWindow->getRouteController()->getRouteMapObjects(),
+                                          mainWindow->getRouteController()->getRoute(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())

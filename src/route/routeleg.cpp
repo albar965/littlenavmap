@@ -15,12 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routemapobject.h"
+#include "route/routeleg.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "atools.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 
 #include <QRegularExpression>
 
@@ -35,13 +35,13 @@ const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
 const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 
-RouteMapObject::RouteMapObject(atools::fs::pln::Flightplan *parentFlightplan)
+RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
 {
 
 }
 
-RouteMapObject::~RouteMapObject()
+RouteLeg::~RouteLeg()
 {
 
 }
@@ -73,8 +73,8 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
   return TYPE();
 }
 
-void RouteMapObject::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                                       const RouteMapObject *predRouteMapObj)
+void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
+                                       const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
   type = maptypes::AIRPORT;
@@ -85,8 +85,8 @@ void RouteMapObject::createFromAirport(int entryIndex, const maptypes::MapAirpor
   valid = true;
 }
 
-void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapApproachLegs& legs,
-                                           const RouteMapObject *predRouteMapObj)
+void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
+                                           const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
   approachLeg = legs.at(entryIndex);
@@ -110,7 +110,7 @@ void RouteMapObject::createFromApproachLeg(int entryIndex, const maptypes::MapAp
   valid = true;
 }
 
-void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteMapObject *predRouteMapObj)
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
 
@@ -279,21 +279,21 @@ void RouteMapObject::createFromDatabaseByEntry(int entryIndex, MapQuery *query, 
   updateDistanceAndCourse(entryIndex, predRouteMapObj);
 }
 
-void RouteMapObject::setDepartureParking(const maptypes::MapParking& departureParking)
+void RouteLeg::setDepartureParking(const maptypes::MapParking& departureParking)
 {
   parking = departureParking;
   start = maptypes::MapStart();
 }
 
-void RouteMapObject::setDepartureStart(const maptypes::MapStart& departureStart)
+void RouteLeg::setDepartureStart(const maptypes::MapStart& departureStart)
 {
   start = departureStart;
   parking = maptypes::MapParking();
 }
 
-void RouteMapObject::updateMagvar()
+void RouteLeg::updateMagvar()
 {
-  if(isAnyApproach())
+  if(isAnyProcedure())
     magvar = approachLeg.magvar;
   else if(airport.isValid())
     magvar = airport.magvar;
@@ -307,7 +307,7 @@ void RouteMapObject::updateMagvar()
     magvar = 0.f;
 }
 
-void RouteMapObject::updateInvalidMagvar(int entryIndex, const RouteMapObjectList *routeList)
+void RouteLeg::updateInvalidMagvar(int entryIndex, const Route *routeList)
 {
   if(type == maptypes::USER || type == maptypes::INVALID)
   {
@@ -342,11 +342,11 @@ void RouteMapObject::updateInvalidMagvar(int entryIndex, const RouteMapObjectLis
   }
 }
 
-void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObject *predRouteMapObj)
+void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
 
-  if(isAnyApproach())
+  if(isAnyProcedure())
   {
     if(predRouteMapObj != nullptr && predRouteMapObj->isRoute() && approachLeg.line.isPoint())
     {
@@ -386,12 +386,12 @@ void RouteMapObject::updateDistanceAndCourse(int entryIndex, const RouteMapObjec
   }
 }
 
-void RouteMapObject::updateUserName(const QString& name)
+void RouteLeg::updateUserName(const QString& name)
 {
   flightplan->getEntries()[index].setWaypointId(name);
 }
 
-int RouteMapObject::getId() const
+int RouteLeg::getId() const
 {
   if(type == maptypes::INVALID)
     return -1;
@@ -410,7 +410,7 @@ int RouteMapObject::getId() const
   return -1;
 }
 
-int RouteMapObject::getRange() const
+int RouteLeg::getRange() const
 {
   if(type == maptypes::INVALID)
     return -1;
@@ -425,7 +425,7 @@ int RouteMapObject::getRange() const
   return -1;
 }
 
-QString RouteMapObject::getMapObjectTypeName() const
+QString RouteLeg::getMapObjectTypeName() const
 {
   if(type == maptypes::INVALID)
     return tr("Invalid");
@@ -447,19 +447,19 @@ QString RouteMapObject::getMapObjectTypeName() const
     return tr("Unknown");
 }
 
-float RouteMapObject::getCourseToMag() const
+float RouteLeg::getCourseToMag() const
 {
   return atools::geo::normalizeCourse(courseTo - magvar);
 }
 
-float RouteMapObject::getCourseToRhumbMag() const
+float RouteLeg::getCourseToRhumbMag() const
 {
   return atools::geo::normalizeCourse(courseRhumbTo - magvar);
 }
 
-const atools::geo::Pos& RouteMapObject::getPosition() const
+const atools::geo::Pos& RouteLeg::getPosition() const
 {
-  if(isAnyApproach())
+  if(isAnyProcedure())
     return approachLeg.line.getPos2();
   else
   {
@@ -489,7 +489,7 @@ const atools::geo::Pos& RouteMapObject::getPosition() const
   return atools::geo::EMPTY_POS;
 }
 
-QString RouteMapObject::getIdent() const
+QString RouteLeg::getIdent() const
 {
   if(airport.isValid())
     return airport.ident;
@@ -515,7 +515,7 @@ QString RouteMapObject::getIdent() const
     return EMPTY_STRING;
 }
 
-QString RouteMapObject::getRegion() const
+QString RouteLeg::getRegion() const
 {
   if(vor.isValid())
     return vor.region;
@@ -527,7 +527,7 @@ QString RouteMapObject::getRegion() const
   return EMPTY_STRING;
 }
 
-QString RouteMapObject::getName() const
+QString RouteLeg::getName() const
 {
   if(type == maptypes::INVALID)
     return EMPTY_STRING;
@@ -544,7 +544,7 @@ QString RouteMapObject::getName() const
     return EMPTY_STRING;
 }
 
-const QString& RouteMapObject::getAirway() const
+const QString& RouteLeg::getAirway() const
 {
   if(isRoute())
     return curEntry().getAirway();
@@ -552,7 +552,7 @@ const QString& RouteMapObject::getAirway() const
     return EMPTY_STRING;
 }
 
-int RouteMapObject::getFrequency() const
+int RouteLeg::getFrequency() const
 {
   if(type == maptypes::INVALID)
     return 0;
@@ -567,7 +567,7 @@ int RouteMapObject::getFrequency() const
   return 0;
 }
 
-const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
+const atools::fs::pln::FlightplanEntry& RouteLeg::curEntry() const
 {
   if(isRoute())
     return flightplan->at(index);
@@ -575,14 +575,14 @@ const atools::fs::pln::FlightplanEntry& RouteMapObject::curEntry() const
     return EMPTY_FLIGHTPLAN_ENTRY;
 }
 
-const LineString& RouteMapObject::getGeometry() const
+const LineString& RouteLeg::getGeometry() const
 {
   return geometry;
 }
 
-bool RouteMapObject::isApproachPoint() const
+bool RouteLeg::isApproachPoint() const
 {
-  return isAnyApproach() &&
+  return isAnyProcedure() &&
          !atools::contains(approachLeg.type,
                            {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX,
                             maptypes::HOLD_TO_MANUAL_TERMINATION}) &&

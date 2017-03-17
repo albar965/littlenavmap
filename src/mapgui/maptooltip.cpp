@@ -21,7 +21,7 @@
 #include "util/htmlbuilder.h"
 #include "common/htmlinfobuilder.h"
 #include "gui/mainwindow.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -42,8 +42,7 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
-                                 const RouteMapObjectList& routeMapObjects,
+QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult, const Route& route,
                                  bool airportDiagram)
 {
 #if defined(Q_OS_WIN32)
@@ -71,7 +70,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     html.p();
     info.aircraftText(mapSearchResult.userAircraft, html);
-    info.aircraftProgressText(mapSearchResult.userAircraft, html, routeMapObjects);
+    info.aircraftProgressText(mapSearchResult.userAircraft, html, route);
     html.pEnd();
     numEntries++;
   }
@@ -86,12 +85,12 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     html.p();
     info.aircraftText(aircraft, html);
-    info.aircraftProgressText(aircraft, html, RouteMapObjectList());
+    info.aircraftProgressText(aircraft, html, Route());
     html.pEnd();
     numEntries++;
   }
 
-  for(const MapApproachpoint& ap : mapSearchResult.approachPoints)
+  for(const MapProcedurePoint& ap : mapSearchResult.procedurePoints)
   {
     if(checkText(html, numEntries))
       return html.getHtml();
@@ -117,7 +116,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     maptypes::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
-    info.airportText(airport, currentWeatherContext, html, &routeMapObjects, iconBackColor);
+    info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
     html.pEnd();
     numEntries++;
   }

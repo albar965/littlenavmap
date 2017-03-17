@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
 #include "route/routecommand.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 #include "common/maptypes.h"
 
 #include <QObject>
@@ -92,7 +92,7 @@ public:
   void restoreState();
 
   /* Get the route only */
-  const RouteMapObjectList& getRouteMapObjects() const
+  const Route& getRoute() const
   {
     return route;
   }
@@ -100,7 +100,7 @@ public:
   float getSpeedKts() const;
 
   /* Get a copy of all route map objects (legs) that are selected in the flight plan table view */
-  void getSelectedRouteMapObjects(QList<int>& selRouteMapObjectIndexes) const;
+  void getSelectedRouteLegs(QList<int>& selLegIndexes) const;
 
   /* Get bounding rectangle for flight plan */
   const atools::geo::Rect& getBoundingRect() const
@@ -162,7 +162,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(const maptypes::MapApproachLegs& legs);
+  void routeAttachProcedure(const maptypes::MapProcedureLegs& legs);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
@@ -298,8 +298,8 @@ private:
 
   void updateTableModel();
 
-  void createRouteMapObjects();
-  void updateRouteMapObjects();
+  void createRouteLegs();
+  void updateRouteLegs();
 
   void routeAltChanged();
   void routeTypeChanged();
@@ -342,7 +342,7 @@ private:
   void updateSpinboxSuffices();
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
-  void highlightApproachItems();
+  void highlightProcedureItems();
   bool loadProceduresFromFlightplan(bool quiet);
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
@@ -365,7 +365,7 @@ private:
   RouteNetwork *routeNetworkRadio = nullptr, *routeNetworkAirway = nullptr;
 
   /* Flightplan and route objects */
-  RouteMapObjectList route; /* real route containing all segments */
+  Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
   QString routeFilename, fileDeparture, fileDestination;

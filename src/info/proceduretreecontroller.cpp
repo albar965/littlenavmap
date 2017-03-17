@@ -15,13 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "info/approachtreecontroller.h"
+#include "info/proceduretreecontroller.h"
 
 #include "common/unit.h"
 #include "common/mapcolors.h"
 #include "gui/mainwindow.h"
 #include "common/infoquery.h"
-#include "common/approachquery.h"
+#include "common/procedurequery.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "gui/actiontextsaver.h"
@@ -69,13 +69,13 @@ enum TreeColumnIndex
 
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
-using maptypes::MapApproachLeg;
-using maptypes::MapApproachLegs;
-using maptypes::MapApproachRef;
+using maptypes::MapProcedureLeg;
+using maptypes::MapProcedureLegs;
+using maptypes::MapProcedureRef;
 using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
 
-ApproachTreeController::ApproachTreeController(MainWindow *main)
+ProcedureTreeController::ProcedureTreeController(MainWindow *main)
   : infoQuery(main->getInfoQuery()), approachQuery(main->getApproachQuery()),
     treeWidget(main->getUi()->treeWidgetApproachInfo), mainWindow(main)
 {
@@ -86,12 +86,12 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
 
   treeWidget->setItemDelegate(gridDelegate);
 
-  connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ApproachTreeController::itemSelectionChanged);
-  connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ApproachTreeController::itemDoubleClicked);
-  connect(treeWidget, &QTreeWidget::itemExpanded, this, &ApproachTreeController::itemExpanded);
-  connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &ApproachTreeController::contextMenu);
+  connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureTreeController::itemSelectionChanged);
+  connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureTreeController::itemDoubleClicked);
+  connect(treeWidget, &QTreeWidget::itemExpanded, this, &ProcedureTreeController::itemExpanded);
+  connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &ProcedureTreeController::contextMenu);
   connect(mainWindow->getUi()->textBrowserApproachInfo,
-          &QTextBrowser::anchorClicked, this, &ApproachTreeController::anchorClicked);
+          &QTextBrowser::anchorClicked, this, &ProcedureTreeController::anchorClicked);
 
   currentAirport.id = -1;
 
@@ -113,7 +113,7 @@ ApproachTreeController::ApproachTreeController(MainWindow *main)
   }
 }
 
-ApproachTreeController::~ApproachTreeController()
+ProcedureTreeController::~ProcedureTreeController()
 {
   delete infoBuilder;
   delete zoomHandler;
@@ -121,7 +121,7 @@ ApproachTreeController::~ApproachTreeController()
   delete gridDelegate;
 }
 
-void ApproachTreeController::optionsChanged()
+void ProcedureTreeController::optionsChanged()
 {
   // Adapt table view text size
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
@@ -130,15 +130,15 @@ void ApproachTreeController::optionsChanged()
   fillApproachTreeWidget();
 }
 
-void ApproachTreeController::preDatabaseLoad()
+void ProcedureTreeController::preDatabaseLoad()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(approachSelectedMode)
     WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).save(ui->treeWidgetApproachInfo);
 
   // Clear display on map
-  emit approachSelected(maptypes::MapApproachRef());
-  emit approachLegSelected(maptypes::MapApproachRef());
+  emit procedureSelected(maptypes::MapProcedureRef());
+  emit procedureLegSelected(maptypes::MapProcedureRef());
 
   ui->textBrowserApproachInfo->clear();
   treeWidget->clear();
@@ -149,10 +149,10 @@ void ApproachTreeController::preDatabaseLoad()
   currentAirport.position = atools::geo::Pos();
   recentTreeState.clear();
   approachSelectedMode = false;
-  approachSelectedLegs = maptypes::MapApproachLegs();
+  approachSelectedLegs = maptypes::MapProcedureLegs();
 }
 
-void ApproachTreeController::postDatabaseLoad()
+void ProcedureTreeController::postDatabaseLoad()
 {
   updateTreeHeader();
 
@@ -161,14 +161,14 @@ void ApproachTreeController::postDatabaseLoad()
   approachQuery->setCurrentSimulator(mainWindow->getCurrentSimulator());
 }
 
-void ApproachTreeController::disconnectedFromSimulator()
+void ProcedureTreeController::disconnectedFromSimulator()
 {
   qDebug() << Q_FUNC_INFO;
 
   highlightNextWaypoint(-1);
 }
 
-void ApproachTreeController::highlightNextWaypoint(int leg)
+void ProcedureTreeController::highlightNextWaypoint(int leg)
 {
   if(approachSelectedMode)
   {
@@ -203,7 +203,7 @@ void ApproachTreeController::highlightNextWaypoint(int leg)
   }
 }
 
-void ApproachTreeController::showApproaches(maptypes::MapAirport airport)
+void ProcedureTreeController::showProcedures(maptypes::MapAirport airport)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->dockWidgetRoute->show();
@@ -214,8 +214,8 @@ void ApproachTreeController::showApproaches(maptypes::MapAirport airport)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
-  emit approachLegSelected(maptypes::MapApproachRef());
-  emit approachSelected(maptypes::MapApproachRef());
+  emit procedureLegSelected(maptypes::MapProcedureRef());
+  emit procedureSelected(maptypes::MapProcedureRef());
 
   if(approachSelectedMode)
   {
@@ -238,14 +238,14 @@ void ApproachTreeController::showApproaches(maptypes::MapAirport airport)
   }
 }
 
-void ApproachTreeController::anchorClicked(const QUrl& url)
+void ProcedureTreeController::anchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm")
     emit showRect(currentAirport.bounding, false);
 }
 
-void ApproachTreeController::fillApproachInformation(const maptypes::MapAirport& airport,
-                                                     const maptypes::MapApproachRef& ref)
+void ProcedureTreeController::fillApproachInformation(const maptypes::MapAirport& airport,
+                                                     const maptypes::MapProcedureRef& ref)
 {
   atools::util::HtmlBuilder html(true);
   infoBuilder->approachText(airport, html, QApplication::palette().color(QPalette::Active, QPalette::Base), ref);
@@ -257,7 +257,7 @@ void ApproachTreeController::fillApproachInformation(const maptypes::MapAirport&
     ui->textBrowserApproachInfo->setText(html.getHtml());
 }
 
-void ApproachTreeController::fillApproachTreeWidget()
+void ProcedureTreeController::fillApproachTreeWidget()
 {
   treeWidget->blockSignals(true);
   treeWidget->clear();
@@ -276,7 +276,7 @@ void ApproachTreeController::fillApproachTreeWidget()
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       if(approachSelectedLegs.ref.isApproachOnly())
       {
-        const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport,
+        const MapProcedureLegs *legs = approachQuery->getApproachLegs(currentAirport,
                                                                      approachSelectedLegs.ref.approachId);
         float remainingDistance = legs->approachDistance;
         if(legs != nullptr)
@@ -288,7 +288,7 @@ void ApproachTreeController::fillApproachTreeWidget()
       }
       else if(approachSelectedLegs.ref.isApproachAndTransition())
       {
-        const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport,
+        const MapProcedureLegs *legs = approachQuery->getTransitionLegs(currentAirport,
                                                                        approachSelectedLegs.ref.transitionId);
         float remainingDistance = legs->approachDistance + legs->transitionDistance;
         if(legs != nullptr)
@@ -302,7 +302,7 @@ void ApproachTreeController::fillApproachTreeWidget()
     else
     {
       // Show all approaches in the text information
-      fillApproachInformation(currentAirport, maptypes::MapApproachRef());
+      fillApproachInformation(currentAirport, maptypes::MapProcedureRef());
 
       // Reset table like style back to plain tree
       treeWidget->resetIndentation();
@@ -322,21 +322,21 @@ void ApproachTreeController::fillApproachTreeWidget()
           maptypes::MapObjectTypes type = buildType(recApp);
 
           int transitionId = -1;
-          if(type == maptypes::APPROACH_SID)
+          if(type == maptypes::PROCEDURE_SID)
             transitionId = recTransVector->first().valueInt("transition_id");
 
-          itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId, transitionId, -1, type));
+          itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, transitionId, -1, type));
 
           QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
 
-          if(type != maptypes::APPROACH_SID)
+          if(type != maptypes::PROCEDURE_SID)
           {
             if(recTransVector != nullptr)
             {
               // Transitions for this approach
               for(const SqlRecord& recTrans : *recTransVector)
               {
-                itemIndex.append(MapApproachRef(currentAirport.id, runwayEndId, apprId,
+                itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
                                                 recTrans.valueInt("transition_id"), -1, type));
                 buildTransitionItem(apprItem, recTrans);
               }
@@ -369,7 +369,7 @@ void ApproachTreeController::fillApproachTreeWidget()
 
 }
 
-void ApproachTreeController::saveState()
+void ProcedureTreeController::saveState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->actionInfoApproachShowAppr,
@@ -407,7 +407,7 @@ void ApproachTreeController::saveState()
   settings.setValue(lnm::APPROACHTREE_AIRPORT, currentAirport.id);
 }
 
-void ApproachTreeController::restoreState()
+void ProcedureTreeController::restoreState()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->actionInfoApproachShowAppr,
@@ -436,7 +436,7 @@ void ApproachTreeController::restoreState()
   {
     WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).restore(ui->treeWidgetApproachInfo);
 
-    emit approachSelected(approachSelectedLegs.ref);
+    emit procedureSelected(approachSelectedLegs.ref);
   }
   else
   {
@@ -447,7 +447,7 @@ void ApproachTreeController::restoreState()
   }
 }
 
-void ApproachTreeController::updateTreeHeader()
+void ProcedureTreeController::updateTreeHeader()
 {
   QTreeWidgetItem *header = new QTreeWidgetItem();
 
@@ -482,38 +482,38 @@ void ApproachTreeController::updateTreeHeader()
   treeWidget->setHeaderItem(header);
 }
 
-void ApproachTreeController::itemSelectionChanged()
+void ProcedureTreeController::itemSelectionChanged()
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   if(items.isEmpty())
   {
     if(!approachSelectedMode)
-      emit approachSelected(maptypes::MapApproachRef());
+      emit procedureSelected(maptypes::MapProcedureRef());
 
-    emit approachLegSelected(maptypes::MapApproachRef());
+    emit procedureLegSelected(maptypes::MapProcedureRef());
 
     if(!approachSelectedMode)
-      fillApproachInformation(currentAirport, maptypes::MapApproachRef());
+      fillApproachInformation(currentAirport, maptypes::MapProcedureRef());
   }
   else
   {
     for(QTreeWidgetItem *item : items)
     {
-      const MapApproachRef& ref = itemIndex.at(item->type());
+      const MapProcedureRef& ref = itemIndex.at(item->type());
 
       qDebug() << Q_FUNC_INFO << ref.runwayEndId << ref.approachId << ref.transitionId << ref.legId;
 
       if(approachSelectedMode)
-        emit approachLegSelected(ref);
+        emit procedureLegSelected(ref);
       else
       {
         if(ref.isApproachOrTransition())
-          emit approachSelected(ref);
+          emit procedureSelected(ref);
 
         if(ref.isLeg())
-          emit approachLegSelected(ref);
+          emit procedureLegSelected(ref);
         else
-          emit approachLegSelected(maptypes::MapApproachRef());
+          emit procedureLegSelected(maptypes::MapProcedureRef());
 
         if(ref.isApproachAndTransition())
           updateApproachItem(parentApproachItem(item), ref.transitionId);
@@ -527,7 +527,7 @@ void ApproachTreeController::itemSelectionChanged()
 }
 
 /* Update course and distance for the parent approach of this leg item */
-void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int transitionId)
+void ProcedureTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int transitionId)
 {
   if(apprItem != nullptr)
   {
@@ -537,18 +537,18 @@ void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int t
     for(int i = 0; i < apprItem->childCount(); i++)
     {
       QTreeWidgetItem *child = apprItem->child(i);
-      const MapApproachRef& childref = itemIndex.at(child->type());
+      const MapProcedureRef& childref = itemIndex.at(child->type());
       if(childref.isLeg())
       {
-        const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, transitionId);
+        const maptypes::MapProcedureLegs *legs = approachQuery->getTransitionLegs(currentAirport, transitionId);
         if(legs != nullptr)
         {
-          const maptypes::MapApproachLeg *aleg = legs->approachLegById(childref.legId);
+          const maptypes::MapProcedureLeg *aleg = legs->approachLegById(childref.legId);
 
           if(aleg != nullptr)
           {
-            child->setText(courseIndex, maptypes::approachLegCourse(*aleg));
-            child->setText(distanceIndex, maptypes::approachLegDistance(*aleg));
+            child->setText(courseIndex, maptypes::procedureLegCourse(*aleg));
+            child->setText(distanceIndex, maptypes::procedureLegDistance(*aleg));
           }
           else
             qWarning() << "Approach legs not found" << childref.legId;
@@ -560,13 +560,13 @@ void ApproachTreeController::updateApproachItem(QTreeWidgetItem *apprItem, int t
   }
 }
 
-void ApproachTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column)
+void ProcedureTreeController::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
   Q_UNUSED(column);
   showEntry(item, true);
 }
 
-void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
+void ProcedureTreeController::itemExpanded(QTreeWidgetItem *item)
 {
   if(approachSelectedMode)
     return;
@@ -577,20 +577,20 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
       return;
 
     // Get a copy since vector is rebuilt underneath
-    const MapApproachRef ref = itemIndex.at(item->type());
+    const MapProcedureRef ref = itemIndex.at(item->type());
 
     if(ref.legId == -1)
     {
       float remainingDistanceDummy = 0.f;
       if(ref.approachId != -1 && ref.transitionId == -1)
       {
-        const MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
+        const MapProcedureLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
         addApproachLegs(legs, item, -1, remainingDistanceDummy);
         itemLoadedIndex.setBit(item->type());
       }
       else if(ref.approachId != -1 && ref.transitionId != -1)
       {
-        const MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
+        const MapProcedureLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
         addTransitionLegs(legs, item, remainingDistanceDummy);
         itemLoadedIndex.setBit(item->type());
       }
@@ -599,35 +599,35 @@ void ApproachTreeController::itemExpanded(QTreeWidgetItem *item)
   }
 }
 
-void ApproachTreeController::addApproachLegs(const MapApproachLegs *legs, QTreeWidgetItem *item, int transitionId,
+void ProcedureTreeController::addApproachLegs(const MapProcedureLegs *legs, QTreeWidgetItem *item, int transitionId,
                                              float& remainingDistance)
 {
   if(legs != nullptr)
   {
-    for(const MapApproachLeg& leg : legs->approachLegs)
+    for(const MapProcedureLeg& leg : legs->approachLegs)
     {
-      itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId, transitionId,
+      itemIndex.append(MapProcedureRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId, transitionId,
                                       leg.legId, legs->mapType));
       buildLegItem(item, leg, remainingDistance);
     }
   }
 }
 
-void ApproachTreeController::addTransitionLegs(const MapApproachLegs *legs, QTreeWidgetItem *item,
+void ProcedureTreeController::addTransitionLegs(const MapProcedureLegs *legs, QTreeWidgetItem *item,
                                                float& remainingDistance)
 {
   if(legs != nullptr)
   {
-    for(const MapApproachLeg& leg : legs->transitionLegs)
+    for(const MapProcedureLeg& leg : legs->transitionLegs)
     {
-      itemIndex.append(MapApproachRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId,
+      itemIndex.append(MapProcedureRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId,
                                       legs->ref.transitionId, leg.legId, legs->mapType));
       buildLegItem(item, leg, remainingDistance);
     }
   }
 }
 
-void ApproachTreeController::contextMenu(const QPoint& pos)
+void ProcedureTreeController::contextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -643,7 +643,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
   int itemRow = treeWidget->invisibleRootItem()->indexOfChild(item);
-  MapApproachRef ref;
+  MapProcedureRef ref;
   if(item != nullptr)
     ref = itemIndex.at(item->type());
 
@@ -654,7 +654,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   ui->actionInfoApproachSelect->setDisabled(item == nullptr || approachSelectedMode);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const RouteMapObjectList& rmos = mainWindow->getRouteController()->getRouteMapObjects();
+  const Route& rmos = mainWindow->getRouteController()->getRoute();
 
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty());
@@ -753,9 +753,9 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachClear)
   {
     treeWidget->clearSelection();
-    emit approachLegSelected(maptypes::MapApproachRef());
+    emit procedureLegSelected(maptypes::MapProcedureRef());
     if(!approachSelectedMode)
-      emit approachSelected(maptypes::MapApproachRef());
+      emit procedureSelected(maptypes::MapProcedureRef());
   }
   else if(action == ui->actionInfoApproachSelect)
     // Show only legs of currently selected approach and transition
@@ -766,10 +766,10 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     showEntry(item, false);
   else if(action == ui->actionInfoApproachAttach)
   {
-    const maptypes::MapApproachRef& addRef = approachSelectedMode ? approachSelectedLegs.ref : ref;
+    const maptypes::MapProcedureRef& addRef = approachSelectedMode ? approachSelectedLegs.ref : ref;
 
     // Get the aproach legs for the initial fix
-    const maptypes::MapApproachLegs *legs = nullptr;
+    const maptypes::MapProcedureLegs *legs = nullptr;
     if(addRef.isApproachOnly())
       legs = approachQuery->getApproachLegs(currentAirport, addRef.approachId);
     else if(addRef.isApproachAndTransition())
@@ -778,7 +778,7 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
     // enableSelectedMode(addRef);
 
     if(legs != nullptr)
-      emit routeAttachApproach(*legs);
+      emit routeInsertProcedure(*legs);
   }
   else if(action == ui->actionInfoApproachActivateLeg)
     // Will call this class back to highlight row
@@ -790,16 +790,16 @@ void ApproachTreeController::contextMenu(const QPoint& pos)
   // action == ui->actionInfoApproachShowTrans)
 }
 
-void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
+void ProcedureTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
 {
   if(item == nullptr)
     return;
 
-  const MapApproachRef& ref = itemIndex.at(item->type());
+  const MapProcedureRef& ref = itemIndex.at(item->type());
 
   if(ref.legId != -1)
   {
-    const maptypes::MapApproachLeg *leg = nullptr;
+    const maptypes::MapProcedureLeg *leg = nullptr;
 
     if(ref.transitionId != -1)
       leg = approachQuery->getTransitionLeg(currentAirport, ref.legId);
@@ -816,20 +816,20 @@ void ApproachTreeController::showEntry(QTreeWidgetItem *item, bool doubleClick)
   }
   else if(ref.transitionId != -1 && !doubleClick)
   {
-    const maptypes::MapApproachLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
+    const maptypes::MapProcedureLegs *legs = approachQuery->getTransitionLegs(currentAirport, ref.transitionId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
   else if(ref.approachId != -1 && !doubleClick)
   {
-    const maptypes::MapApproachLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
+    const maptypes::MapProcedureLegs *legs = approachQuery->getApproachLegs(currentAirport, ref.approachId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
 
 }
 
-maptypes::MapObjectTypes ApproachTreeController::buildType(const SqlRecord& recApp)
+maptypes::MapObjectTypes ProcedureTreeController::buildType(const SqlRecord& recApp)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
@@ -839,14 +839,14 @@ maptypes::MapObjectTypes ApproachTreeController::buildType(const SqlRecord& recA
      (suffix == "A" || suffix == "D") && gpsOverlay)
   {
     if(suffix == "A")
-      return maptypes::APPROACH_STAR;
+      return maptypes::PROCEDURE_STAR;
     else if(suffix == "D")
-      return maptypes::APPROACH_SID;
+      return maptypes::PROCEDURE_SID;
   }
-  return maptypes::APPROACH;
+  return maptypes::PROCEDURE_APPROACH;
 }
 
-QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
+QTreeWidgetItem *ProcedureTreeController::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
@@ -855,13 +855,13 @@ QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runw
   QString approachType;
 
   maptypes::MapObjectTypes maptype = buildType(recApp);
-  if(maptype == maptypes::APPROACH_SID)
+  if(maptype == maptypes::PROCEDURE_SID)
     approachType += tr("SID");
-  else if(maptype == maptypes::APPROACH_STAR)
+  else if(maptype == maptypes::PROCEDURE_STAR)
     approachType += tr("STAR");
-  else if(maptype == maptypes::APPROACH)
+  else if(maptype == maptypes::PROCEDURE_APPROACH)
   {
-    approachType = tr("Approach ") + maptypes::approachType(type);
+    approachType = tr("Approach ") + maptypes::procedureType(type);
 
     if(!suffix.isEmpty())
       approachType += " " + suffix;
@@ -894,7 +894,7 @@ QTreeWidgetItem *ApproachTreeController::buildApproachItem(QTreeWidgetItem *runw
   return item;
 }
 
-QTreeWidgetItem *ApproachTreeController::buildTransitionItem(QTreeWidgetItem *apprItem, const SqlRecord& recTrans)
+QTreeWidgetItem *ProcedureTreeController::buildTransitionItem(QTreeWidgetItem *apprItem, const SqlRecord& recTrans)
 {
   QString altStr;
   if(recTrans.valueFloat("altitude") > 0.f)
@@ -925,7 +925,7 @@ QTreeWidgetItem *ApproachTreeController::buildTransitionItem(QTreeWidgetItem *ap
   return item;
 }
 
-void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const MapApproachLeg& leg,
+void ProcedureTreeController::buildLegItem(QTreeWidgetItem *parentItem, const MapProcedureLeg& leg,
                                           float& remainingDistance)
 {
   QStringList texts;
@@ -960,17 +960,17 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
       texts << "" << "";
     }
 
-    texts << maptypes::approachLegTypeStr(leg.type);
+    texts << maptypes::procedureLegTypeStr(leg.type);
   }
   else
-    texts << maptypes::approachLegTypeStr(leg.type) << leg.fixIdent;
+    texts << maptypes::procedureLegTypeStr(leg.type) << leg.fixIdent;
 
-  QString remarkStr = maptypes::approachLegRemark(leg);
+  QString remarkStr = maptypes::procedureLegRemark(leg);
   texts << maptypes::altRestrictionTextShort(leg.altRestriction)
-        << maptypes::approachLegCourse(leg) << maptypes::approachLegDistance(leg);
+        << maptypes::procedureLegCourse(leg) << maptypes::procedureLegDistance(leg);
 
   if(approachSelectedMode)
-    texts << maptypes::approachLegRemDistance(leg, remainingDistance);
+    texts << maptypes::procedureLegRemDistance(leg, remainingDistance);
 
   texts << remarkStr;
 
@@ -1003,7 +1003,7 @@ void ApproachTreeController::buildLegItem(QTreeWidgetItem *parentItem, const Map
   parentItem->addChild(item);
 }
 
-void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproachLeg& leg)
+void ProcedureTreeController::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg& leg)
 {
   bool invalid = leg.hasInvalidRef();
 
@@ -1026,7 +1026,7 @@ void ApproachTreeController::setItemStyle(QTreeWidgetItem *item, const MapApproa
     item->setFont(0, identFont);
 }
 
-QBitArray ApproachTreeController::saveTreeViewState()
+QBitArray ProcedureTreeController::saveTreeViewState()
 {
   QList<const QTreeWidgetItem *> itemStack;
   const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
@@ -1078,7 +1078,7 @@ QBitArray ApproachTreeController::saveTreeViewState()
   return state;
 }
 
-void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
+void ProcedureTreeController::restoreTreeViewState(const QBitArray& state)
 {
   if(state.isEmpty())
     return;
@@ -1120,7 +1120,7 @@ void ApproachTreeController::restoreTreeViewState(const QBitArray& state)
   }
 }
 
-void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& ref)
+void ProcedureTreeController::enableSelectedMode(const maptypes::MapProcedureRef& ref)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -1141,18 +1141,18 @@ void ApproachTreeController::enableSelectedMode(const maptypes::MapApproachRef& 
 
   fillApproachTreeWidget();
 
-  highlightNextWaypoint(mainWindow->getRouteController()->getRouteMapObjects().getActiveLegIndexCorrected());
+  highlightNextWaypoint(mainWindow->getRouteController()->getRoute().getActiveLegIndexCorrected());
 
-  emit approachSelected(approachSelectedLegs.ref);
+  emit procedureSelected(approachSelectedLegs.ref);
 }
 
-void ApproachTreeController::disableSelectedMode()
+void ProcedureTreeController::disableSelectedMode()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(approachSelectedMode)
     WidgetState(lnm::APPROACHTREE_SELECTED_WIDGET).save(ui->treeWidgetApproachInfo);
 
-  approachSelectedLegs.ref = MapApproachRef();
+  approachSelectedLegs.ref = MapProcedureRef();
   approachSelectedMode = false;
 
   treeWidget->clear();
@@ -1168,7 +1168,7 @@ void ApproachTreeController::disableSelectedMode()
   // Selected signal will be emitted when selecting tree item
 }
 
-void ApproachTreeController::createFonts()
+void ProcedureTreeController::createFonts()
 {
   const QFont& font = treeWidget->font();
   identFont = font;
@@ -1193,12 +1193,12 @@ void ApproachTreeController::createFonts()
   activeLegFont.setBold(true);
 }
 
-QTreeWidgetItem *ApproachTreeController::parentApproachItem(QTreeWidgetItem *item) const
+QTreeWidgetItem *ProcedureTreeController::parentApproachItem(QTreeWidgetItem *item) const
 {
   QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
   while(current != nullptr && current != root)
   {
-    const MapApproachRef& ref = itemIndex.at(current->type());
+    const MapProcedureRef& ref = itemIndex.at(current->type());
     if(ref.isApproachOnly() && !ref.isLeg())
       return current;
 
@@ -1207,12 +1207,12 @@ QTreeWidgetItem *ApproachTreeController::parentApproachItem(QTreeWidgetItem *ite
   return current != nullptr ? current : item;
 }
 
-QTreeWidgetItem *ApproachTreeController::parentTransitionItem(QTreeWidgetItem *item) const
+QTreeWidgetItem *ProcedureTreeController::parentTransitionItem(QTreeWidgetItem *item) const
 {
   QTreeWidgetItem *current = item, *root = treeWidget->invisibleRootItem();
   while(current != nullptr && current != root)
   {
-    const MapApproachRef& ref = itemIndex.at(current->type());
+    const MapProcedureRef& ref = itemIndex.at(current->type());
     if(ref.isApproachAndTransition() && !ref.isLeg())
       return current;
 

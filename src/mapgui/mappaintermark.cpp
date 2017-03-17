@@ -26,8 +26,8 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "common/unit.h"
-#include "route/routemapobject.h"
-#include "route/routemapobjectlist.h"
+#include "route/routeleg.h"
+#include "route/route.h"
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
@@ -171,7 +171,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const maptypes::MapApproachLeg& leg = mapWidget->getApproachLegHighlights();
+  const maptypes::MapProcedureLeg& leg = mapWidget->getApproachLegHighlights();
 
   positions.clear();
 
@@ -253,8 +253,8 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   positions.clear();
   for(int idx : routeHighlightResults)
   {
-    const RouteMapObject& rmo = mapWidget->getRouteController()->getRouteMapObjects().at(idx);
-    positions.append(rmo.getPosition());
+    const RouteLeg& routeLeg = mapWidget->getRouteController()->getRoute().at(idx);
+    positions.append(routeLeg.getPosition());
   }
 
   painter->setBrush(Qt::NoBrush);

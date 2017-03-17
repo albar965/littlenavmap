@@ -18,7 +18,7 @@
 #include "route/routestring.h"
 
 #include "common/coordinates.h"
-#include "route/routemapobjectlist.h"
+#include "route/route.h"
 #include "mapgui/mapquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "common/maptools.h"
@@ -80,7 +80,7 @@ RouteString::~RouteString()
  *
  * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
  */
-QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
+QString RouteString::createGfpStringForRoute(const Route& route)
 {
   QString retval;
 
@@ -116,12 +116,12 @@ QString RouteString::createGfpStringForRoute(const RouteMapObjectList& route)
   return retval.toUpper();
 }
 
-QString RouteString::createStringForRoute(const RouteMapObjectList& route, float speed)
+QString RouteString::createStringForRoute(const Route& route, float speed)
 {
   return createStringForRouteInternal(route, speed, false).join(" ").simplified().toUpper();
 }
 
-QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& route, float speed,
+QStringList RouteString::createStringForRouteInternal(const Route& route, float speed,
                                                       bool gfpFormat)
 {
   QStringList retval;
@@ -132,8 +132,8 @@ QStringList RouteString::createStringForRouteInternal(const RouteMapObjectList& 
   QString lastAw, lastId;
   for(int i = 0; i < route.size(); i++)
   {
-    const RouteMapObject& entry = route.at(i);
-    if(entry.isAnyApproach())
+    const RouteLeg& entry = route.at(i);
+    if(entry.isAnyProcedure())
       continue;
 
     const QString& airway = entry.getAirway();

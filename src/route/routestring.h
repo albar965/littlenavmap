@@ -34,7 +34,7 @@ class FlightplanEntry;
 
 class MapQuery;
 class FlightplanEntryBuilder;
-class RouteMapObjectList;
+class Route;
 
 class RouteString
 {
@@ -49,13 +49,13 @@ public:
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const RouteMapObjectList& route, float speed);
+  QString createStringForRoute(const Route& route, float speed);
 
   /*
    * Create a route string in garming flight plan format (GFP):
    * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
    */
-  QString createGfpStringForRoute(const RouteMapObjectList& route);
+  QString createGfpStringForRoute(const Route& route);
 
   bool createRouteFromString(const QString& routeString, atools::fs::pln::Flightplan& flightplan,
                              float& speedKts);
@@ -85,7 +85,7 @@ private:
   void extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
                         int startIndex, int endIndex,
                         QList<maptypes::MapWaypoint>& airwayWaypoints);
-  QStringList createStringForRouteInternal(const RouteMapObjectList& route, float speed, bool gfpFormat);
+  QStringList createStringForRouteInternal(const Route& route, float speed, bool gfpFormat);
   void findWaypoints(maptypes::MapSearchResult& result, const QString& item);
   void filterWaypoints(maptypes::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);

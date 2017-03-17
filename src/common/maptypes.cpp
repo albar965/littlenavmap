@@ -328,7 +328,7 @@ const static QHash<QString, QString> approachTypeToStr(
     {"LOCB", QObject::tr("Localizer Backcourse")}
   });
 
-const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
+const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
   {
     {"AF", ARC_TO_FIX},
     {"CA", COURSE_TO_ALTITUDE},
@@ -358,7 +358,7 @@ const static QHash<QString, ApproachLegType> approachLegTypeToEnum(
     {"SX", START_OF_PROCEDURE}
   });
 
-const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
+const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
   {
     {ARC_TO_FIX, "AF"},
     {COURSE_TO_ALTITUDE, "CA"},
@@ -388,7 +388,7 @@ const static QHash<ApproachLegType, QString> approachLegTypeToShortStr(
     {START_OF_PROCEDURE, "SX"}
   });
 
-const static QHash<ApproachLegType, QString> approachLegTypeToStr(
+const static QHash<ProcedureLegType, QString> approachLegTypeToStr(
   {
     {ARC_TO_FIX, QObject::tr("Arc to fix")},
     {COURSE_TO_ALTITUDE, QObject::tr("Course to altitude")},
@@ -418,7 +418,7 @@ const static QHash<ApproachLegType, QString> approachLegTypeToStr(
     {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
   });
 
-const static QHash<ApproachLegType, QString> approachLegRemarkStr(
+const static QHash<ProcedureLegType, QString> approachLegRemarkStr(
   {
     {ARC_TO_FIX, QObject::tr("")},
     {COURSE_TO_ALTITUDE, QObject::tr("")},
@@ -898,12 +898,12 @@ bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
   return !filled;
 }
 
-QString approachFixType(const QString& type)
+QString procedureFixType(const QString& type)
 {
   return approachFixTypeToStr.value(type);
 }
 
-QString approachType(const QString& type)
+QString procedureType(const QString& type)
 {
   return approachTypeToStr.value(type);
 }
@@ -930,27 +930,27 @@ QString patternDirection(const QString& type)
     return QString();
 }
 
-maptypes::ApproachLegType approachLegEnum(const QString& type)
+maptypes::ProcedureLegType procedureLegEnum(const QString& type)
 {
   return approachLegTypeToEnum.value(type);
 }
 
-QString approachLegTypeStr(maptypes::ApproachLegType type)
+QString procedureLegTypeStr(maptypes::ProcedureLegType type)
 {
   return approachLegTypeToStr.value(type);
 }
 
-QString approachLegTypeShortStr(ApproachLegType type)
+QString procedureLegTypeShortStr(ProcedureLegType type)
 {
   return approachLegTypeToShortStr.value(type);
 }
 
-QString approachLegTypeFullStr(ApproachLegType type)
+QString procedureLegTypeFullStr(ProcedureLegType type)
 {
   return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
 }
 
-QString approachLegRemarks(maptypes::ApproachLegType type)
+QString procedureLegRemarks(maptypes::ProcedureLegType type)
 {
   return approachLegRemarkStr.value(type);
 }
@@ -1027,13 +1027,13 @@ QString altRestrictionTextShort(const maptypes::MapAltRestriction& altRestrictio
   return retval;
 }
 
-QDebug operator<<(QDebug out, const ApproachLegType& type)
+QDebug operator<<(QDebug out, const ProcedureLegType& type)
 {
-  out << maptypes::approachLegTypeFullStr(type);
+  out << maptypes::procedureLegTypeFullStr(type);
   return out;
 }
 
-QDebug operator<<(QDebug out, const MapApproachLegs& legs)
+QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
   out << "==========================" << endl;
   out << "maptype" << legs.mapType;
@@ -1050,18 +1050,18 @@ QDebug operator<<(QDebug out, const MapApproachLegs& legs)
   << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Transition legs =====";
-  for(const MapApproachLeg& ls : legs.transitionLegs)
+  for(const MapProcedureLeg& ls : legs.transitionLegs)
     out << ls;
 
   out << "===== Approach legs =====";
-  for(const MapApproachLeg& ls : legs.approachLegs)
+  for(const MapProcedureLeg& ls : legs.approachLegs)
     out << ls;
 
   out << "==========================" << endl;
   return out;
 }
 
-QDebug operator<<(QDebug out, const MapApproachLeg& leg)
+QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   out << "=============" << endl;
   out << "approachId" << leg.approachId
@@ -1103,7 +1103,7 @@ QDebug operator<<(QDebug out, const MapApproachLeg& leg)
   return out;
 }
 
-MapApproachpoint::MapApproachpoint(const MapApproachLeg& leg)
+MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg)
 {
   calculatedDistance = leg.calculatedDistance;
   calculatedTrueCourse = leg.calculatedTrueCourse;
@@ -1143,18 +1143,18 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
-bool MapApproachLeg::isHold() const
+bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,
                           {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_MANUAL_TERMINATION});
 }
 
-bool MapApproachLeg::isCircular() const
+bool MapProcedureLeg::isCircular() const
 {
   return atools::contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
 }
 
-bool MapApproachLeg::noDistanceDisplay() const
+bool MapProcedureLeg::noDistanceDisplay() const
 {
   return atools::contains(type,
                           {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
@@ -1162,7 +1162,7 @@ bool MapApproachLeg::noDistanceDisplay() const
                            maptypes::HEADING_TO_MANUAL_TERMINATION, });
 }
 
-bool MapApproachLeg::noCourseDisplay() const
+bool MapProcedureLeg::noCourseDisplay() const
 {
   return type == /*maptypes::INITIAL_FIX ||*/ isCircular();
 }
@@ -1217,24 +1217,24 @@ QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
       out << "POSITION|";
     if(type & INVALID)
       out << "INVALID|";
-    if(type & APPROACH)
+    if(type & PROCEDURE_APPROACH)
       out << "APPROACH|";
-    if(type & APPROACH_MISSED)
+    if(type & PROCEDURE_MISSED)
       out << "APPROACH_MISSED|";
-    if(type & APPROACH_TRANSITION)
+    if(type & PROCEDURE_TRANSITION)
       out << "APPROACH_TRANSITION|";
-    if(type & APPROACH_SID)
+    if(type & PROCEDURE_SID)
       out << "APPROACH_SID|";
-    if(type & APPROACH_STAR)
+    if(type & PROCEDURE_STAR)
       out << "APPROACH_STAR|";
   }
 
   return out;
 }
 
-const MapApproachLeg *MapApproachLegs::transitionLegById(int legId) const
+const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
 {
-  for(const MapApproachLeg& leg : transitionLegs)
+  for(const MapProcedureLeg& leg : transitionLegs)
   {
     if(leg.legId == legId)
       return &leg;
@@ -1242,7 +1242,7 @@ const MapApproachLeg *MapApproachLegs::transitionLegById(int legId) const
   return nullptr;
 }
 
-MapApproachLeg& MapApproachLegs::atInternal(int i)
+MapProcedureLeg& MapProcedureLegs::atInternal(int i)
 {
   if(i < transitionLegs.size())
     return transitionLegs[transIdx(i)];
@@ -1250,7 +1250,7 @@ MapApproachLeg& MapApproachLegs::atInternal(int i)
     return approachLegs[apprIdx(i)];
 }
 
-const MapApproachLeg& MapApproachLegs::atInternal(int i) const
+const MapProcedureLeg& MapProcedureLegs::atInternal(int i) const
 {
   if(i < transitionLegs.size())
     return transitionLegs[transIdx(i)];
@@ -1258,9 +1258,26 @@ const MapApproachLeg& MapApproachLegs::atInternal(int i) const
     return approachLegs[apprIdx(i)];
 }
 
-const MapApproachLeg *maptypes::MapApproachLegs::approachLegById(int legId) const
+void MapProcedureLegs::clearApproach()
 {
-  for(const MapApproachLeg& leg : approachLegs)
+  approachLegs.clear();
+  approachDistance = missedDistance = 0.f;
+  approachType.clear();
+  approachSuffix.clear();
+  approachFixIdent.clear();
+}
+
+void MapProcedureLegs::clearTransition()
+{
+  transitionLegs.clear();
+  transitionDistance = 0.f;
+  transitionType.clear();
+  transitionFixIdent.clear();
+}
+
+const MapProcedureLeg *maptypes::MapProcedureLegs::approachLegById(int legId) const
+{
+  for(const MapProcedureLeg& leg : approachLegs)
   {
     if(leg.legId == legId)
       return &leg;
@@ -1268,7 +1285,7 @@ const MapApproachLeg *maptypes::MapApproachLegs::approachLegById(int legId) cons
   return nullptr;
 }
 
-QString approachLegCourse(const MapApproachLeg& leg)
+QString procedureLegCourse(const MapProcedureLeg& leg)
 {
   if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
     return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
@@ -1276,7 +1293,7 @@ QString approachLegCourse(const MapApproachLeg& leg)
     return QString();
 }
 
-QString approachLegDistance(const MapApproachLeg& leg)
+QString procedureLegDistance(const MapProcedureLeg& leg)
 {
   QString retval;
 
@@ -1295,7 +1312,7 @@ QString approachLegDistance(const MapApproachLeg& leg)
   return retval;
 }
 
-QString approachLegRemDistance(const MapApproachLeg& leg, float& remainingDistance)
+QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance)
 {
   QString retval;
 
@@ -1313,7 +1330,7 @@ QString approachLegRemDistance(const MapApproachLeg& leg, float& remainingDistan
   return retval;
 }
 
-QString approachLegRemark(const MapApproachLeg& leg)
+QString procedureLegRemark(const MapProcedureLeg& leg)
 {
   QStringList remarks;
   if(leg.flyover)
@@ -1326,7 +1343,7 @@ QString approachLegRemark(const MapApproachLeg& leg)
   else if(leg.turnDirection == "B")
     remarks.append(QObject::tr("Turn left or right"));
 
-  QString legremarks = maptypes::approachLegRemarks(leg.type);
+  QString legremarks = maptypes::procedureLegRemarks(leg.type);
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
 
