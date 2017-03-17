@@ -807,6 +807,11 @@ QString airportText(const MapAirport& airport)
   return QObject::tr("Airport %1 (%2)").arg(airport.name).arg(airport.ident);
 }
 
+QString airportTextShort(const MapAirport& airport)
+{
+  return QObject::tr("%1 (%2)").arg(airport.name).arg(airport.ident);
+}
+
 QString comTypeName(const QString& type)
 {
   return comTypeNames.value(type);
@@ -1368,6 +1373,20 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
                    arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
 
   return remarks.join(", ");
+}
+
+maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
+                                       const QString& suffix, bool gpsOverlay)
+{
+  if(simType == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
+     (suffix == "A" || suffix == "D") && gpsOverlay)
+  {
+    if(suffix == "A")
+      return maptypes::PROCEDURE_STAR;
+    else if(suffix == "D")
+      return maptypes::PROCEDURE_SID;
+  }
+  return maptypes::PROCEDURE_APPROACH;
 }
 
 } // namespace types

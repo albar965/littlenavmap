@@ -169,8 +169,9 @@ SOURCES += src/main.cpp\
     src/common/textplacement.cpp \
     src/route/routeleg.cpp \
     src/route/route.cpp \
-    src/info/proceduretreecontroller.cpp \
-    src/common/procedurequery.cpp
+    src/common/procedurequery.cpp \
+    src/search/abstractsearch.cpp \
+    src/search/proceduresearch.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -243,8 +244,9 @@ HEADERS  += src/gui/mainwindow.h \
     src/common/textplacement.h \
     src/route/routeleg.h \
     src/route/route.h \
-    src/info/proceduretreecontroller.h \
-    src/common/procedurequery.h
+    src/common/procedurequery.h \
+    src/search/abstractsearch.h \
+    src/search/proceduresearch.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

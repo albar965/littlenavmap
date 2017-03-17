@@ -26,6 +26,7 @@
 #include "gui/helphandler.h"
 #include "ui_mainwindow.h"
 #include "common/constants.h"
+#include "search/proceduresearch.h"
 
 #include <QTabWidget>
 #include <QUrl>
@@ -47,6 +48,7 @@ SearchController::~SearchController()
 {
   delete airportSearch;
   delete navSearch;
+  delete procedureSearch;
 }
 
 void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) const
@@ -56,7 +58,7 @@ void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) 
 
 void SearchController::optionsChanged()
 {
-  for(SearchBase *search : allSearchTabs)
+  for(AbstractSearch *search : allSearchTabs)
     search->optionsChanged();
 }
 
@@ -73,13 +75,13 @@ void SearchController::tabChanged(int index)
 
 void SearchController::saveState()
 {
-  for(SearchBase *s : allSearchTabs)
+  for(AbstractSearch *s : allSearchTabs)
     s->saveState();
 }
 
 void SearchController::restoreState()
 {
-  for(SearchBase *s : allSearchTabs)
+  for(AbstractSearch *s : allSearchTabs)
     s->restoreState();
 }
 
@@ -95,26 +97,34 @@ void SearchController::createNavSearch(QTableView *tableView)
   postCreateSearch(navSearch);
 }
 
+void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
+{
+  procedureSearch = new ProcedureSearch(mainWindow, treeWidget);
+  postCreateSearch(procedureSearch);
+}
+
 /* Connect signals and append search object to all search tabs list */
-void SearchController::postCreateSearch(SearchBase *search)
+void SearchController::postCreateSearch(AbstractSearch *search)
 {
   search->connectSearchSlots();
   search->updateUnits();
 
-  mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
-                                      search, &SearchBase::searchMarkChanged);
+  SearchBase *base = dynamic_cast<SearchBase *>(search);
+  if(base != nullptr)
+    mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
+                                        base, &SearchBase::searchMarkChanged);
   allSearchTabs.append(search);
 }
 
 void SearchController::preDatabaseLoad()
 {
-  for(SearchBase *search : allSearchTabs)
+  for(AbstractSearch *search : allSearchTabs)
     search->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  for(SearchBase *search : allSearchTabs)
+  for(AbstractSearch *search : allSearchTabs)
     search->postDatabaseLoad();
 }
 

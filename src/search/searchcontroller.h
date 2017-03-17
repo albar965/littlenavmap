@@ -23,12 +23,14 @@
 #define LITTLENAVMAP_SEARCHCONTROLLER_H
 
 class MainWindow;
-class SearchBase;
+class AbstractSearch;
 class AirportSearch;
 class NavSearch;
+class ProcedureSearch;
 class ColumnList;
 class QTableView;
 class QTabWidget;
+class QTreeWidget;
 class MapQuery;
 
 namespace atools {
@@ -65,6 +67,13 @@ public:
     return navSearch;
   }
 
+  void createProcedureSearch(QTreeWidget *treeWidget);
+
+  ProcedureSearch *getProcedureSearch() const
+  {
+    return procedureSearch;
+  }
+
   /* Disconnect and reconnect all queries if a new database is loaded or changed */
   void preDatabaseLoad();
   void postDatabaseLoad();
@@ -86,17 +95,18 @@ public:
 
 private:
   void tabChanged(int index);
-  void postCreateSearch(SearchBase *search);
+  void postCreateSearch(AbstractSearch *search);
   void helpPressed();
 
   MapQuery *mapQuery;
 
   AirportSearch *airportSearch = nullptr;
   NavSearch *navSearch = nullptr;
+  ProcedureSearch *procedureSearch = nullptr;
 
   MainWindow *mainWindow;
   QTabWidget *tabWidget = nullptr;
-  QList<SearchBase *> allSearchTabs;
+  QList<AbstractSearch *> allSearchTabs;
 
 };
 

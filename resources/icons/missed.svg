@@ -14,7 +14,7 @@
    height="300"
    id="svg2"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="approach.svg">
+   sodipodi:docname="missed.svg">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -41,7 +41,7 @@
      id="namedview15"
      showgrid="true"
      inkscape:zoom="1.5733333"
-     inkscape:cx="-117.58476"
+     inkscape:cx="-3.4957755"
      inkscape:cy="86.764814"
      inkscape:window-x="38"
      inkscape:window-y="24"
@@ -271,13 +271,29 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#ffb400;stroke-width:23;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:23;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="M 56.712459,245.7805 177.94762,141.82478"
+       id="path8098-8-5-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ffb500;stroke-width:23;stroke-linecap:round;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:23, 46;stroke-opacity:1;stroke-dashoffset:0"
        d="M 57.432799,245.56864 178.66796,141.61292"
        id="path8098-8-5"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <rect
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffb400;stroke-width:23;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:23;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4156-6"
+       width="180"
+       height="100"
+       x="-50.576172"
+       y="124.84715"
+       rx="50.000008"
+       ry="50"
+       transform="matrix(0.73496689,-0.678103,0.678103,0.73496689,0,0)" />
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffb500;stroke-width:23;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:23, 46;stroke-dashoffset:0;stroke-opacity:1"
        id="rect4156"
        width="180"
        height="100"

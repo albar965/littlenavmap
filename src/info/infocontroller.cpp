@@ -60,6 +60,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   ui->textBrowserAirportInfo->setSearchPaths(paths);
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
   ui->textBrowserComInfo->setSearchPaths(paths);
+  ui->textBrowserApproachInfo->setSearchPaths(paths);
   ui->textBrowserWeatherInfo->setSearchPaths(paths);
   ui->textBrowserNavaidInfo->setSearchPaths(paths);
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
@@ -70,6 +71,7 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
   connect(ui->textBrowserAirportInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserRunwayInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserComInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+  connect(ui->textBrowserApproachInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserWeatherInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
   connect(ui->textBrowserNavaidInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
 
@@ -310,6 +312,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserAirportInfo->clear();
   ui->textBrowserRunwayInfo->clear();
   ui->textBrowserComInfo->clear();
+  ui->textBrowserApproachInfo->clear();
   ui->textBrowserWeatherInfo->clear();
   ui->textBrowserNavaidInfo->clear();
 }
@@ -367,6 +370,10 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     html.clear();
     infoBuilder->comText(airport, html, iconBackColor);
     ui->textBrowserComInfo->setText(html.getHtml());
+
+    html.clear();
+    infoBuilder->procedureText(airport, html, iconBackColor);
+    ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
     maptypes::WeatherContext currentWeatherContext;
@@ -458,7 +465,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     if(foundAirport && !foundNavaid)
     {
       // If no airport related tab is shown bring airport tab to front
-      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::WEATHER)
+      if(idx != ic::AIRPORT && idx != ic::RUNWAYS && idx != ic::COM && idx != ic::APPROACHES && idx != ic::WEATHER)
         ui->tabWidgetInformation->setCurrentIndex(ic::AIRPORT);
     }
     else if(!foundAirport && foundNavaid)
@@ -638,6 +645,7 @@ void InfoController::updateTextEditFontSizes()
   setTextEditFontSize(ui->textBrowserAirportInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
+  setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
   setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
 

@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_PROCTREECONTROLLER_H
 
 #include "common/maptypes.h"
+#include "search/abstractsearch.h"
 
 #include <QBitArray>
 #include <QFont>
@@ -48,37 +49,33 @@ class ProcedureQuery;
 class HtmlInfoBuilder;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
-class ProcedureTreeController :
-  public QObject
+class ProcedureSearch :
+  public AbstractSearch
 {
   Q_OBJECT
 
 public:
-  ProcedureTreeController(MainWindow *main);
-  virtual ~ProcedureTreeController();
+  ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam);
+  virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
   void showProcedures(maptypes::MapAirport airport);
 
   /* Save tree view state */
-  void saveState();
-  void restoreState();
+  virtual void saveState() override;
+  virtual void restoreState() override;
 
   /* Update fonts units, etc. */
-  void optionsChanged();
+  virtual void optionsChanged() override;
 
-  void preDatabaseLoad();
-  void postDatabaseLoad();
+  virtual void preDatabaseLoad() override;
+  virtual void postDatabaseLoad() override;
 
-  /* Highlight approach waypoint in the list */
-  void highlightNextWaypoint(int leg);
-
-  const maptypes::MapProcedureLegs& getApproachSelectedLegs() const
-  {
-    return approachSelectedLegs;
-  }
-
-  void disconnectedFromSimulator();
+  /* No op overrides */
+  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
+  virtual void connectSearchSlots() override;
+  virtual void updateUnits() override;
+  virtual void updateTableSelection() override;
 
 signals:
   /* Show approaches and highlight circles on the map */
@@ -96,6 +93,14 @@ signals:
   void showInformation(maptypes::MapSearchResult result);
 
 private:
+  enum FilterIndex
+  {
+    FILTER_ALL_PROCEDURES,
+    FILTER_DEPARTURE_PROCEDURES,
+    FILTER_ARRIVAL_PROCEDURES,
+    FILTER_APPROACH_AND_TRANSITIONS
+  };
+
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
 
@@ -113,7 +118,7 @@ private:
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
 
   /* Build an leg for the selected/table or tree view */
-  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapProcedureLeg& leg, float& remainingDistance);
+  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapProcedureLeg& leg);
 
   /* Highlight missing navaids red */
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapProcedureLeg& leg);
@@ -124,20 +129,9 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  void addApproachLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item, int transitionId,
-                       float& remainingDistance);
-  void addTransitionLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item, float& remainingDistance);
+  void addApproachLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item, int transitionId);
+  void addTransitionLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item);
   void fillApproachTreeWidget();
-  void fillApproachInformation(const maptypes::MapAirport& airport, const maptypes::MapProcedureRef& ref);
-
-  /* Anchor clicked in the text browser */
-  void anchorClicked(const QUrl& url);
-
-  /* Focus on an approach and transition */
-  void enableSelectedMode(const maptypes::MapProcedureRef& ref);
-
-  /* Unfocus and go back to tree  view */
-  void disableSelectedMode();
 
   /* Fill header for tree or selected/table view */
   void updateTreeHeader();
@@ -147,6 +141,8 @@ private:
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
   maptypes::MapObjectTypes buildType(const atools::sql::SqlRecord& recApp);
+  void updateHeaderLabel();
+  void filterIndexChanged(int index);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapProcedureRef> itemIndex;
@@ -157,8 +153,7 @@ private:
   QBitArray itemLoadedIndex;
 
   InfoQuery *infoQuery = nullptr;
-  ProcedureQuery *approachQuery = nullptr;
-  HtmlInfoBuilder *infoBuilder = nullptr;
+  ProcedureQuery *procedureQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, activeLegFont, identFont;
@@ -167,14 +162,11 @@ private:
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;
 
-  /* View mode: True if only one selected approach is shown */
-  bool approachSelectedMode = false;
-  maptypes::MapProcedureLegs approachSelectedLegs;
-
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
+  FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H

@@ -48,7 +48,7 @@
 #include "route/routestring.h"
 #include "common/unit.h"
 #include "common/procedurequery.h"
-#include "info/proceduretreecontroller.h"
+#include "search/proceduresearch.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -137,9 +137,6 @@ MainWindow::MainWindow()
     approachQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
     approachQuery->initQueries();
 
-    qDebug() << "MainWindow Creating Approach controller";
-    approachController = new ProcedureTreeController(this);
-
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
 
@@ -172,6 +169,7 @@ MainWindow::MainWindow()
     searchController = new SearchController(this, mapQuery, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
+    searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
 
     qDebug() << "MainWindow Creating ConnectClient";
     connectClient = new ConnectClient(this);
@@ -231,8 +229,6 @@ MainWindow::~MainWindow()
   delete connectClient;
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
-  qDebug() << Q_FUNC_INFO << "delete approachController";
-  delete approachController;
   qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
@@ -598,7 +594,6 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::distanceChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, approachController, &ProcedureTreeController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapWidget::optionsChanged);
@@ -613,8 +608,8 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
 
-  connect(routeController, &RouteController::showApproaches, approachController,
-          &ProcedureTreeController::showProcedures);
+  connect(routeController, &RouteController::showApproaches, searchController->getProcedureSearch(),
+          &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapWidget::highlightProfilePoint);
@@ -630,7 +625,7 @@ void MainWindow::connectAllSlots()
   connect(searchController->getAirportSearch(), &AirportSearch::showInformation,
           infoController, &InfoController::showInformation);
   connect(searchController->getAirportSearch(), &AirportSearch::showApproaches,
-          approachController, &ProcedureTreeController::showProcedures);
+          searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
@@ -703,7 +698,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::renderStatusChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
-  connect(mapWidget, &MapWidget::showApproaches, approachController, &ProcedureTreeController::showProcedures);
+  connect(mapWidget, &MapWidget::showApproaches,
+          searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(mapWidget, &MapWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
 
   // Connect toolbar combo boxes
@@ -836,9 +832,6 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
           &RouteController::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, approachController,
-          &ProcedureTreeController::disconnectedFromSimulator);
-
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapWidget::disconnectedFromSimulator);
@@ -868,13 +861,14 @@ void MainWindow::connectAllSlots()
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
   // Approach controller ===================================================================
-  connect(approachController, &ProcedureTreeController::procedureLegSelected, this, &MainWindow::approachLegSelected);
-  connect(approachController, &ProcedureTreeController::procedureSelected, this, &MainWindow::approachSelected);
-  connect(approachController, &ProcedureTreeController::showRect, mapWidget, &MapWidget::showRect);
-  connect(approachController, &ProcedureTreeController::showPos, mapWidget, &MapWidget::showPos);
-  connect(approachController, &ProcedureTreeController::routeInsertProcedure, routeController,
+  ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
+  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::approachLegSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::approachSelected);
+  connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapWidget::showRect);
+  connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapWidget::showPos);
+  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
           &RouteController::routeAttachProcedure);
-  connect(approachController, &ProcedureTreeController::showInformation, infoController,
+  connect(procedureSearch, &ProcedureSearch::showInformation, infoController,
           &InfoController::showInformation);
 
   connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1813,9 +1807,6 @@ void MainWindow::readSettings()
   qDebug() << "MainWindow restoring state of connectClient";
   connectClient->restoreState();
 
-  qDebug() << "MainWindow restoring state of approachController";
-  approachController->restoreState();
-
   qDebug() << "MainWindow restoring state of infoController";
   infoController->restoreState();
 
@@ -1891,10 +1882,6 @@ void MainWindow::writeSettings()
   qDebug() << "infoController";
   if(infoController != nullptr)
     infoController->saveState();
-
-  qDebug() << "approachController";
-  if(approachController != nullptr)
-    approachController->saveState();
 
   qDebug() << "routeFileHistory";
   if(routeFileHistory != nullptr)
@@ -1985,7 +1972,6 @@ void MainWindow::preDatabaseLoad()
 
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
-    approachController->preDatabaseLoad();
     mapWidget->preDatabaseLoad();
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
@@ -2011,7 +1997,6 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     approachQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
-    approachController->postDatabaseLoad();
     mapWidget->postDatabaseLoad();
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();

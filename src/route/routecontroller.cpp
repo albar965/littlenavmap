@@ -23,7 +23,7 @@
 #include "common/procedurequery.h"
 #include "common/constants.h"
 #include "common/formatter.h"
-#include "info/proceduretreecontroller.h"
+#include "search/proceduresearch.h"
 #include "common/unit.h"
 #include "exception.h"
 #include "export/csvexporter.h"

@@ -20,6 +20,8 @@
 
 #include "common/maptypes.h"
 
+#include "search/abstractsearch.h"
+
 #include <QObject>
 
 namespace atools {
@@ -46,7 +48,7 @@ class QLineEdit;
  * search widgets.
  */
 class SearchBase :
-  public QObject
+  public AbstractSearch
 {
   Q_OBJECT
 
@@ -57,15 +59,8 @@ public:
   virtual ~SearchBase();
 
   /* Disconnect and reconnect queries on database change */
-  virtual void preDatabaseLoad();
-  virtual void postDatabaseLoad();
-
-  /* Save and restore state of table header, sort column, search criteria and more */
-  virtual void saveState() = 0;
-  virtual void restoreState() = 0;
-
-  /* Get all selected map objects (MapAirport will be only partially filled */
-  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const = 0;
+  virtual void preDatabaseLoad() override;
+  virtual void postDatabaseLoad() override;
 
   /* Clear all search widgets */
   void resetSearch();
@@ -78,15 +73,15 @@ public:
                      const QString& airportIdent = QString());
 
   /* Options dialog has changed some options */
-  void optionsChanged();
+  virtual void optionsChanged() override;
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
-  void updateTableSelection();
+  virtual void updateTableSelection() override;
 
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */
-  virtual void connectSearchSlots();
+  virtual void connectSearchSlots() override;
 
-  void updateUnits();
+  virtual void updateUnits() override;
 
   void showFirstEntry();
 

@@ -35,9 +35,10 @@ enum TabIndex
   AIRPORT = 0,
   RUNWAYS = 1,
   COM = 2,
-  WEATHER = 3,
-  NAVAID = 4,
-  MAP_LEGEND = 5
+  APPROACHES= 3,
+  WEATHER = 4,
+  NAVAID = 5,
+  MAP_LEGEND = 6
 };
 
 enum TabIndexAircraft

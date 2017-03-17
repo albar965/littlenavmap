@@ -99,7 +99,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
       html.hr();
 
     html.p();
-    info.approachPointText(ap, html);
+    info.procedurePointText(ap, html);
     html.pEnd();
     numEntries++;
   }

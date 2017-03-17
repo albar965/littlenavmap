@@ -109,7 +109,8 @@ private:
 
 SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                        MapQuery *mapQuery, int tabWidgetIndex)
-  : QObject(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery), tabIndex(tabWidgetIndex)
+  : AbstractSearch(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery),
+    tabIndex(tabWidgetIndex)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 

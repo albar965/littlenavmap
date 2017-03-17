@@ -132,9 +132,8 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void approachText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
-                    QColor background,
-                    const maptypes::MapProcedureRef& ref) const;
+  void procedureText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+                    QColor background) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;
@@ -206,7 +205,7 @@ public:
    */
   void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void approachPointText(const maptypes::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
+  void procedurePointText(const maptypes::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates an overview HTML description for the user aircraft in the simulator.

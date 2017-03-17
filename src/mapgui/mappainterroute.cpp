@@ -368,9 +368,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 {
   const maptypes::MapProcedureLeg& leg = legs.at(index);
 
-  if((!(context->objectTypes & maptypes::PROCEDURE_TRANSITION) && leg.isTransition()) ||
-     (!(context->objectTypes & maptypes::PROCEDURE_APPROACH) && leg.isApproach()) ||
-     (!(context->objectTypes & maptypes::PROCEDURE_MISSED) && leg.isMissed()))
+  if(!(context->objectTypes & leg.mapType))
     return;
 
   const maptypes::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
@@ -698,9 +696,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->restore();
 #endif
 
-  if((!(context->objectTypes & maptypes::PROCEDURE_TRANSITION) && leg.isTransition()) ||
-     (!(context->objectTypes & maptypes::PROCEDURE_APPROACH) && leg.isApproach()) ||
-     (!(context->objectTypes & maptypes::PROCEDURE_MISSED) && leg.isMissed()))
+  if(!(context->objectTypes & leg.mapType))
     return;
 
   if(leg.disabled)

@@ -40,7 +40,7 @@ class InfoController;
 class OptionsDialog;
 class QActionGroup;
 class PrintSupport;
-class ProcedureTreeController;
+class ProcedureSearch;
 
 namespace Marble {
 class LegendWidget;
@@ -165,11 +165,6 @@ public:
 
   void resultTruncated(int truncatedTo);
 
-  ProcedureTreeController *getApproachController() const
-  {
-    return approachController;
-  }
-
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -292,7 +287,6 @@ private:
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *approachQuery = nullptr;
-  ProcedureTreeController *approachController = nullptr;
 
   QTimer weatherUpdateTimer;
 

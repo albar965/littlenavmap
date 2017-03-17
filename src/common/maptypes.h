@@ -21,6 +21,7 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 #include "geo/line.h"
+#include "fs/fspaths.h"
 #include "geo/linestring.h"
 #include "fs/sc/simconnectaircraft.h"
 #include "fs/sc/simconnectuseraircraft.h"
@@ -108,6 +109,7 @@ enum MapObjectType
   PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR,
   PROCEDURE_DEPARTURE = PROCEDURE_SID,
   PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
+  PROCEDURE_ALL_BUT_MISSED = PROCEDURE_APPROACH | PROCEDURE_TRANSITION | PROCEDURE_STAR | PROCEDURE_SID,
   ALL = 0xffffffff
 };
 
@@ -1086,6 +1088,9 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);
 
+maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
+                                       const QString& suffix, bool gpsOverlay);
+
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
@@ -1113,6 +1118,7 @@ MapAirwayType  airwayTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
 QString airportText(const maptypes::MapAirport& airport);
+QString airportTextShort(const maptypes::MapAirport& airport);
 QString vorFullShortText(const maptypes::MapVor& vor);
 QString vorText(const maptypes::MapVor& vor);
 QString vorType(const maptypes::MapVor& vor);
