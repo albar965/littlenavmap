@@ -79,7 +79,7 @@ const maptypes::MapProcedureLeg *ProcedureQuery::getApproachLeg(const maptypes::
     std::pair<int, int> val = approachLegIndex.value(legId);
 
     // Ensure it is in the cache - reload if needed
-    const MapApproachLegs *legs = getApproachLegs(airport, val.first);
+    const MapProcedureLegs *legs = getApproachLegs(airport, val.first);
     if(legs != nullptr)
       return &legs->at(approachLegIndex.value(legId).second);
   }
@@ -105,7 +105,7 @@ const maptypes::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const maptypes
     std::pair<int, int> val = transitionLegIndex.value(legId);
 
     // Ensure it is in the cache - reload if needed
-    const MapApproachLegs *legs = getTransitionLegs(airport, val.first);
+    const MapProcedureLegs *legs = getTransitionLegs(airport, val.first);
 
     if(legs != nullptr)
       return &legs->at(transitionLegIndex.value(legId).second);

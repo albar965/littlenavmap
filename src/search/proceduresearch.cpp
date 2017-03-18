@@ -623,7 +623,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty());
 #else
-  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || !rmos.isConnectedToApproach());
+  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || mainWindow->isConnected());
 #endif
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr || mainWindow->getRouteController()->isFlightplanEmpty());
