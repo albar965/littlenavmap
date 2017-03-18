@@ -109,8 +109,7 @@ private:
 
 SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                        MapQuery *mapQuery, int tabWidgetIndex)
-  : AbstractSearch(parent), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery),
-    tabIndex(tabWidgetIndex)
+  : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
@@ -151,6 +150,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
 
 SearchBase::~SearchBase()
 {
+  view->removeEventFilter(viewEventFilter);
   delete csvExporter;
   delete updateTimer;
   delete zoomHandler;

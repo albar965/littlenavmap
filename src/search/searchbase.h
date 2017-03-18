@@ -24,11 +24,6 @@
 
 #include <QObject>
 
-namespace atools {
-namespace gui {
-class ItemViewZoomHandler;
-}
-}
 
 class QTableView;
 class SqlController;
@@ -165,18 +160,12 @@ private:
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row);
 
-  /* Used to make the table rows smaller and also used to adjust font size */
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
-
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
   MapQuery *query;
 
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;
-
-  /* Tab index of this search tab on the search dock window */
-  int tabIndex;
 
   ViewEventFilter *viewEventFilter = nullptr;
   LineEditEventFilter *lineEditEventFilter = nullptr;

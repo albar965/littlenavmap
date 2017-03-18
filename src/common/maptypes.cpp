@@ -1378,6 +1378,8 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
 maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
                                        const QString& suffix, bool gpsOverlay)
 {
+  // STARS use the suffix="A" while SIDS use the suffix="D".
+
   if(simType == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
      (suffix == "A" || suffix == "D") && gpsOverlay)
   {

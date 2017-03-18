@@ -47,6 +47,7 @@ class QTreeWidgetItem;
 class MainWindow;
 class ProcedureQuery;
 class HtmlInfoBuilder;
+class TreeEventFilter;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
 class ProcedureSearch :
@@ -55,7 +56,7 @@ class ProcedureSearch :
   Q_OBJECT
 
 public:
-  ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam);
+  ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex);
   virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
@@ -143,6 +144,10 @@ private:
   maptypes::MapObjectTypes buildType(const atools::sql::SqlRecord& recApp);
   void updateHeaderLabel();
   void filterIndexChanged(int index);
+  void filterIndexRunwayChanged(int index);
+  void clearRunwayFilter();
+  void fillRunwayFilter();
+  void resetSearch();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapProcedureRef> itemIndex;
@@ -167,6 +172,8 @@ private:
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
+  TreeEventFilter *treeEventFilter = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H

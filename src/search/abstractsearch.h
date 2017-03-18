@@ -25,13 +25,19 @@ struct MapSearchResult;
 
 }
 
+namespace atools {
+namespace gui {
+class ItemViewZoomHandler;
+}
+}
+
 class AbstractSearch :
   public QObject
 {
   Q_OBJECT
 
 public:
-  AbstractSearch(QObject *parent);
+  AbstractSearch(QObject *parent, int tabWidgetIndex);
   virtual ~AbstractSearch();
 
   /* Disconnect and reconnect queries on database change */
@@ -55,6 +61,12 @@ public:
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
   virtual void updateTableSelection() = 0;
+
+protected:
+  /* Used to make the table rows smaller and also used to adjust font size */
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  /* Tab index of this search tab on the search dock window */
+  int tabIndex;
 
 };
 

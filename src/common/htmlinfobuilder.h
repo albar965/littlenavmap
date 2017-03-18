@@ -133,7 +133,7 @@ public:
    * @param background Background color for icons
    */
   void procedureText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
-                    QColor background) const;
+                     QColor background) const;
 
   void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;

@@ -256,7 +256,7 @@
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tabAirportSearch">
         <attribute name="title">
@@ -2020,6 +2020,9 @@
              <property name="text">
               <string/>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -2034,6 +2037,15 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxProcedureRunwayFilter">
+             <item>
+              <property name="text">
+               <string>All Runways</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item>
             <widget class="QComboBox" name="comboBoxProcedureSearchFilter">

@@ -126,6 +126,9 @@ MapWidget::MapWidget(MainWindow *parent, MapQuery *query)
 
 MapWidget::~MapWidget()
 {
+  qDebug() << Q_FUNC_INFO << "removeEventFilter";
+  removeEventFilter(this);
+
   qDebug() << Q_FUNC_INFO << "delete paintLayer";
   delete paintLayer;
 

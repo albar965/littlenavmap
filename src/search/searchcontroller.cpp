@@ -99,7 +99,7 @@ void SearchController::createNavSearch(QTableView *tableView)
 
 void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
 {
-  procedureSearch = new ProcedureSearch(mainWindow, treeWidget);
+  procedureSearch = new ProcedureSearch(mainWindow, treeWidget, 2);
   postCreateSearch(procedureSearch);
 }
 

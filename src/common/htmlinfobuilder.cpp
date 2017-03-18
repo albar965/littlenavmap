@@ -683,8 +683,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         if(!runwayName.isEmpty())
           runway = tr(" - Runway ") + runwayName;
 
-        // STARS use the suffix="A" while SIDS use the suffix="D".
-
+        // Build header ===============================================
         QString procType = recApp.valueStr("type");
         maptypes::MapObjectTypes type = maptypes::procedureType(mainWindow->getCurrentSimulator(),
                                                                 procType,
@@ -692,14 +691,19 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                                                                 recApp.valueBool("has_gps_overlay"));
 
         QString fix = recApp.valueStr("fix_ident");
-        if(type & maptypes::PROCEDURE_SID)
-          html.h3(tr("SID") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
-        else if(type & maptypes::PROCEDURE_STAR)
-          html.h3(tr("STAR") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
-        else
-          html.h3(tr("Approach") + " " + maptypes::procedureType(procType) + " " +
-                  recApp.valueStr("suffix") + " " + fix + " " + runway, atools::util::html::UNDERLINE);
+        QString header;
 
+        if(type & maptypes::PROCEDURE_SID)
+          header = tr("SID %1 %2").arg(fix).arg(runway);
+        else if(type & maptypes::PROCEDURE_STAR)
+          header = tr("STAR %1 %2").arg(fix).arg(runway);
+        else
+          header = tr("Approach %1 %2 %3 %4").arg(maptypes::procedureType(procType)).
+                   arg(recApp.valueStr("suffix")).arg(fix).arg(runway);
+
+        html.h3(header, atools::util::html::UNDERLINE);
+
+        // Fill table ==========================================================
         html.table();
 
         if(!(type & maptypes::PROCEDURE_SID) && !(type & maptypes::PROCEDURE_STAR))
@@ -1462,8 +1466,7 @@ void HtmlInfoBuilder::timeAndDate(const SimConnectUserAircraft *userAircaft, Htm
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                                           HtmlBuilder& html,
-                                           const Route& route)
+                                           HtmlBuilder& html, const Route& route)
 {
   if(!aircraft.getPosition().isValid())
     return;

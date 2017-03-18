@@ -38,6 +38,7 @@
 #include "geo/calculations.h"
 
 #include <QMenu>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QStyledItemDelegate>
 #include <QTreeWidget>
@@ -63,8 +64,44 @@ using maptypes::MapProcedureRef;
 using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
 
-ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam)
-  : AbstractSearch(main), infoQuery(main->getInfoQuery()), procedureQuery(main->getApproachQuery()),
+class TreeEventFilter :
+  public QObject
+{
+
+public:
+  TreeEventFilter(QTreeWidget *parent)
+    : QObject(parent), tree(parent)
+  {
+  }
+
+  virtual ~TreeEventFilter()
+  {
+
+  }
+
+private:
+  bool eventFilter(QObject *object, QEvent *event)
+  {
+    if(event->type() == QEvent::MouseButtonPress)
+    {
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+      if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
+      {
+        QTreeWidgetItem *item = tree->itemAt(mouseEvent->pos());
+        if(item == nullptr)
+          tree->clearSelection();
+      }
+    }
+
+    return QObject::eventFilter(object, event);
+  }
+
+  QTreeWidget *tree;
+};
+
+ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, int tabWidgetIndex)
+  : AbstractSearch(main,
+                   tabWidgetIndex), infoQuery(main->getInfoQuery()), procedureQuery(main->getApproachQuery()),
     treeWidget(treeWidgetParam), mainWindow(main)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
@@ -79,6 +116,8 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam)
   connect(treeWidget, &QTreeWidget::customContextMenuRequested, this, &ProcedureSearch::contextMenu);
   connect(ui->comboBoxProcedureSearchFilter, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &ProcedureSearch::filterIndexChanged);
+  connect(ui->comboBoxProcedureRunwayFilter, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+          this, &ProcedureSearch::filterIndexRunwayChanged);
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
@@ -86,13 +125,36 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam)
   createFonts();
 
   ui->labelProcedureSearch->setText(tr("No Airport selected."));
+
+  treeEventFilter = new TreeEventFilter(treeWidget);
+  treeWidget->viewport()->installEventFilter(treeEventFilter);
+
+  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &ProcedureSearch::resetSearch);
+
 }
 
 ProcedureSearch::~ProcedureSearch()
 {
   delete zoomHandler;
   treeWidget->setItemDelegate(nullptr);
+  treeWidget->viewport()->removeEventFilter(treeEventFilter);
+  delete treeEventFilter;
   delete gridDelegate;
+}
+
+void ProcedureSearch::resetSearch()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(ui->tabWidgetSearch->currentIndex() == tabIndex)
+  {
+    ui->comboBoxProcedureRunwayFilter->blockSignals(true);
+    ui->comboBoxProcedureSearchFilter->blockSignals(true);
+    ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
+    ui->comboBoxProcedureSearchFilter->setCurrentIndex(0);
+    ui->comboBoxProcedureRunwayFilter->blockSignals(false);
+    ui->comboBoxProcedureSearchFilter->blockSignals(false);
+    fillApproachTreeWidget();
+  }
 }
 
 void ProcedureSearch::filterIndexChanged(int index)
@@ -100,6 +162,16 @@ void ProcedureSearch::filterIndexChanged(int index)
   qDebug() << Q_FUNC_INFO;
   filterIndex = static_cast<FilterIndex>(index);
 
+  treeWidget->clearSelection();
+  fillApproachTreeWidget();
+}
+
+void ProcedureSearch::filterIndexRunwayChanged(int index)
+{
+  qDebug() << Q_FUNC_INFO;
+  Q_UNUSED(index);
+
+  treeWidget->clearSelection();
   fillApproachTreeWidget();
 }
 
@@ -156,6 +228,7 @@ void ProcedureSearch::showProcedures(maptypes::MapAirport airport)
 
   currentAirport = airport;
 
+  fillRunwayFilter();
   fillApproachTreeWidget();
 
   restoreTreeViewState(recentTreeState.value(currentAirport.id));
@@ -195,6 +268,48 @@ void ProcedureSearch::updateHeaderLabel()
     mainWindow->getUi()->labelProcedureSearch->setText(tr("No Airport selected."));
 }
 
+void ProcedureSearch::clearRunwayFilter()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+
+  ui->comboBoxProcedureRunwayFilter->blockSignals(true);
+  ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
+  ui->comboBoxProcedureRunwayFilter->blockSignals(false);
+
+  for(int i = 1; i < ui->comboBoxProcedureRunwayFilter->count(); i++)
+    ui->comboBoxProcedureRunwayFilter->removeItem(1);
+}
+
+void ProcedureSearch::fillRunwayFilter()
+{
+  clearRunwayFilter();
+
+  if(currentAirport.id != -1)
+  {
+    Ui::MainWindow *ui = mainWindow->getUi();
+
+    // Add a tree of transitions and approaches
+    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirport.id);
+
+    // Deduplicate runways
+    QSet<QString> runways;
+    for(const SqlRecord& recApp : *recAppVector)
+      runways.insert(recApp.valueStr("runway_name"));
+
+    // Sort list of runways
+    QList<QString> runwaylist = runways.toList();
+    std::sort(runwaylist.begin(), runwaylist.end());
+
+    for(const QString& rw : runwaylist)
+    {
+      if(rw.isEmpty())
+        ui->comboBoxProcedureRunwayFilter->addItem(tr("No Runway"), rw);
+      else
+        ui->comboBoxProcedureRunwayFilter->addItem(tr("Runway %1").arg(rw), rw);
+    }
+  }
+}
+
 void ProcedureSearch::fillApproachTreeWidget()
 {
   treeWidget->blockSignals(true);
@@ -202,18 +317,23 @@ void ProcedureSearch::fillApproachTreeWidget()
   itemIndex.clear();
   itemLoadedIndex.clear();
 
+  bool foundItems = false;
   if(currentAirport.id != -1)
   {
     // Add a tree of transitions and approaches
     const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirport.id);
+    Ui::MainWindow *ui = mainWindow->getUi();
+
     if(recAppVector != nullptr)
     {
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
 
       for(const SqlRecord& recApp : *recAppVector)
       {
+        foundItems = true;
         int runwayEndId = recApp.valueInt("runway_end_id");
         int apprId = recApp.valueInt("approach_id");
+        QString rwname(recApp.valueStr("runway_name"));
 
         const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
         maptypes::MapObjectTypes type = buildType(recApp);
@@ -234,6 +354,9 @@ void ProcedureSearch::fillApproachTreeWidget()
             filterOk = type & maptypes::PROCEDURE_ARRIVAL;
             break;
         }
+
+        QString rwnamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
+        filterOk &= rwname == rwnamefilter || ui->comboBoxProcedureRunwayFilter->currentIndex() == 0;
 
         if(filterOk)
         {
@@ -266,20 +389,20 @@ void ProcedureSearch::fillApproachTreeWidget()
 
   if(itemIndex.isEmpty())
   {
+    QString message;
     if(currentAirport.id == -1)
-    {
-      QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {tr("No airport selected.")});
-      item->setDisabled(true);
-      item->setFirstColumnSpanned(true);
-    }
+      message = tr("No airport selected.");
     else
     {
-      QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(),
-                                                  {tr("%1 has no procedures.").
-                                                   arg(maptypes::airportText(currentAirport))}, -1);
-      item->setDisabled(true);
-      item->setFirstColumnSpanned(true);
+      if(foundItems)
+        message = tr("No procedures found.");
+      else
+        message = tr("%1 has no procedures.").arg(maptypes::airportText(currentAirport));
     }
+
+    QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {message});
+    item->setDisabled(true);
+    item->setFirstColumnSpanned(true);
   }
   treeWidget->blockSignals(false);
 
@@ -290,7 +413,8 @@ void ProcedureSearch::saveState()
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->actionInfoApproachShowAppr,
                                               ui->actionInfoApproachShowMissedAppr,
-                                              ui->comboBoxProcedureSearchFilter});
+                                              ui->comboBoxProcedureSearchFilter,
+                                              ui->comboBoxProcedureRunwayFilter});
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -306,14 +430,15 @@ void ProcedureSearch::saveState()
 
 void ProcedureSearch::restoreState()
 {
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  mainWindow->getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+  fillRunwayFilter();
+
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->actionInfoApproachShowAppr,
                                                  ui->actionInfoApproachShowMissedAppr,
-                                                 ui->comboBoxProcedureSearchFilter});
-
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-
-  mainWindow->getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
+                                                 ui->comboBoxProcedureSearchFilter,
+                                                 ui->comboBoxProcedureRunwayFilter});
 
   fillApproachTreeWidget();
 
@@ -507,7 +632,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachExpandAll);
   menu.addAction(ui->actionInfoApproachCollapseAll);
   menu.addSeparator();
-  menu.addAction(ui->actionInfoApproachClear);
+  menu.addAction(ui->actionSearchResetSearch);
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachAttach);
   menu.addSeparator();
@@ -515,6 +640,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachShowAppr);
   menu.addAction(ui->actionInfoApproachShowMissedAppr);
+  menu.addSeparator();
+  menu.addAction(ui->actionInfoApproachClear);
+  menu.addSeparator();
+  menu.addAction(ui->actionSearchResetView);
 
   QString text, showText;
 
@@ -552,6 +681,13 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
     for(int i = 0; i < root->childCount(); ++i)
       root->child(i)->setExpanded(true);
+  }
+  else if(action == ui->actionSearchResetView)
+  {
+    resetSearch();
+    for(int i = 0; i < treeWidget->columnCount(); i++)
+      treeWidget->resizeColumnToContents(i);
+    mainWindow->setStatusMessage(tr("Table view reset to defaults."));
   }
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();

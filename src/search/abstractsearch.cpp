@@ -17,8 +17,8 @@
 
 #include "abstractsearch.h"
 
-AbstractSearch::AbstractSearch(QObject *parent)
-  : QObject(parent)
+AbstractSearch::AbstractSearch(QObject *parent, int tabWidgetIndex)
+  : QObject(parent), tabIndex(tabWidgetIndex)
 {
 
 }
