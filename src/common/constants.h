@@ -23,6 +23,7 @@
 
 /* Paint additional information useful for debugging for approaches */
 // #define DEBUG_APPROACH_PAINT
+// #define DEBUG_ROUTE_PAINT
 
 /* Use Shift+Ctrl-Mousemove to simulate an aircraft */
 // #define DEBUG_MOVING_AIRPLANE

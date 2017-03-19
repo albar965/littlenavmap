@@ -89,21 +89,21 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedur
                                            const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
-  approachLeg = legs.at(entryIndex);
-  magvar = approachLeg.magvar;
+  procedureLeg = legs.at(entryIndex);
+  magvar = procedureLeg.magvar;
 
-  type = approachLeg.mapType;
+  type = procedureLeg.mapType;
 
-  if(approachLeg.navaids.hasWaypoints())
-    waypoint = approachLeg.navaids.waypoints.first();
-  if(approachLeg.navaids.hasVor())
-    vor = approachLeg.navaids.vors.first();
-  if(approachLeg.navaids.hasNdb())
-    ndb = approachLeg.navaids.ndbs.first();
-  if(approachLeg.navaids.hasIls())
-    ils = approachLeg.navaids.ils.first();
-  if(approachLeg.navaids.hasRunwayEnd())
-    runwayEnd = approachLeg.navaids.runwayEnds.first();
+  if(procedureLeg.navaids.hasWaypoints())
+    waypoint = procedureLeg.navaids.waypoints.first();
+  if(procedureLeg.navaids.hasVor())
+    vor = procedureLeg.navaids.vors.first();
+  if(procedureLeg.navaids.hasNdb())
+    ndb = procedureLeg.navaids.ndbs.first();
+  if(procedureLeg.navaids.hasIls())
+    ils = procedureLeg.navaids.ils.first();
+  if(procedureLeg.navaids.hasRunwayEnd())
+    runwayEnd = procedureLeg.navaids.runwayEnds.first();
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, predRouteMapObj);
@@ -294,7 +294,7 @@ void RouteLeg::setDepartureStart(const maptypes::MapStart& departureStart)
 void RouteLeg::updateMagvar()
 {
   if(isAnyProcedure())
-    magvar = approachLeg.magvar;
+    magvar = procedureLeg.magvar;
   else if(airport.isValid())
     magvar = airport.magvar;
   else if(vor.isValid())
@@ -348,23 +348,23 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRoute
 
   if(isAnyProcedure())
   {
-    if(predRouteMapObj != nullptr && predRouteMapObj->isRoute() && approachLeg.line.isPoint())
+    if(predRouteMapObj != nullptr && predRouteMapObj->isRoute() && procedureLeg.line.isPoint())
     {
       const Pos& prevPos = predRouteMapObj->getPosition();
-      courseTo = normalizeCourse(prevPos.angleDegTo(approachLeg.line.getPos1()));
-      courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(approachLeg.line.getPos1()));
-      distanceTo = meterToNm(approachLeg.line.getPos1().distanceMeterTo(prevPos));
-      distanceToRhumb = meterToNm(approachLeg.line.getPos1().distanceMeterToRhumb(prevPos));
+      courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
+      courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(procedureLeg.line.getPos1()));
+      distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
+      distanceToRhumb = meterToNm(procedureLeg.line.getPos1().distanceMeterToRhumb(prevPos));
     }
     else
     {
-      courseTo = approachLeg.calculatedTrueCourse;
-      courseRhumbTo = approachLeg.calculatedTrueCourse;
-      distanceTo = approachLeg.calculatedDistance;
-      distanceToRhumb = approachLeg.calculatedDistance;
+      courseTo = procedureLeg.calculatedTrueCourse;
+      courseRhumbTo = procedureLeg.calculatedTrueCourse;
+      distanceTo = procedureLeg.calculatedDistance;
+      distanceToRhumb = procedureLeg.calculatedDistance;
     }
 
-    geometry = approachLeg.geometry;
+    geometry = procedureLeg.geometry;
   }
   else if(predRouteMapObj != nullptr)
   {
@@ -460,7 +460,7 @@ float RouteLeg::getCourseToRhumbMag() const
 const atools::geo::Pos& RouteLeg::getPosition() const
 {
   if(isAnyProcedure())
-    return approachLeg.line.getPos2();
+    return procedureLeg.line.getPos2();
   else
   {
     if(type == maptypes::INVALID)
@@ -503,8 +503,8 @@ QString RouteLeg::getIdent() const
     return ils.ident;
   else if(runwayEnd.isValid())
     return "RW" + runwayEnd.name;
-  else if(!approachLeg.displayText.isEmpty())
-    return approachLeg.displayText.first();
+  else if(!procedureLeg.displayText.isEmpty())
+    return procedureLeg.displayText.first();
   else if(type == maptypes::INVALID)
     return curEntry().getIcaoIdent();
   else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
@@ -583,9 +583,9 @@ const LineString& RouteLeg::getGeometry() const
 bool RouteLeg::isApproachPoint() const
 {
   return isAnyProcedure() &&
-         !atools::contains(approachLeg.type,
+         !atools::contains(procedureLeg.type,
                            {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX,
                             maptypes::HOLD_TO_MANUAL_TERMINATION}) &&
-         (approachLeg.geometry.isPoint() || approachLeg.type == maptypes::INITIAL_FIX ||
-          approachLeg.type == maptypes::START_OF_PROCEDURE);
+         (procedureLeg.geometry.isPoint() || procedureLeg.type == maptypes::INITIAL_FIX ||
+          procedureLeg.type == maptypes::START_OF_PROCEDURE);
 }

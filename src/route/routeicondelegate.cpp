@@ -86,5 +86,5 @@ void RouteIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   else if(mapObj.getMapObjectType() == maptypes::INVALID)
     symbolPainter->drawWaypointSymbol(painter, mapcolors::routeInvalidPointColor, x, y, symbolSize, false, false);
   else if(mapObj.isAnyProcedure())
-    symbolPainter->drawApproachSymbol(painter, x, y, symbolSize, false, false);
+    symbolPainter->drawProcedureSymbol(painter, x, y, symbolSize, false, false);
 }

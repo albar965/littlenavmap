@@ -164,7 +164,10 @@
     <addaction name="actionMapShowIls"/>
     <addaction name="actionMapShowVictorAirways"/>
     <addaction name="actionMapShowJetAirways"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
+    <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
     <addaction name="actionMapShowAircraftAi"/>
@@ -173,8 +176,6 @@
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowHillshading"/>
     <addaction name="separator"/>
-    <addaction name="actionInfoApproachShowAppr"/>
-    <addaction name="actionInfoApproachShowMissedAppr"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -281,12 +282,12 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutAirportSearch">
            <property name="spacing">
-            <number>6</number>
+            <number>4</number>
            </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
@@ -397,6 +398,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch2">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportCitySearch">
                <property name="toolTip">
@@ -646,7 +650,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportFuelParkSearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QComboBox" name="comboBoxAirportRampSearch">
@@ -766,7 +770,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportRunwaySearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QLabel" name="labelAirportRunwayMinSearch">
@@ -927,7 +931,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportAltitudeSearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1044,7 +1048,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportDistanceSearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1221,7 +1225,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportScenerySearch">
              <property name="spacing">
-              <number>6</number>
+              <number>2</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
@@ -1344,11 +1348,17 @@
          </property>
          <item>
           <layout class="QVBoxLayout" name="verticalLayoutNavSearch">
+           <property name="spacing">
+            <number>4</number>
+           </property>
            <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavNameSearch">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -1520,6 +1530,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavExtSearch">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -1715,6 +1728,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -1876,6 +1892,9 @@
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
+             <property name="spacing">
+              <number>2</number>
+             </property>
              <property name="bottomMargin">
               <number>0</number>
              </property>
@@ -2016,38 +2035,6 @@
             <number>2</number>
            </property>
            <item>
-            <widget class="QLabel" name="labelProcedureSearch">
-             <property name="text">
-              <string/>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBoxProcedureRunwayFilter">
-             <item>
-              <property name="text">
-               <string>All Runways</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
             <widget class="QComboBox" name="comboBoxProcedureSearchFilter">
              <item>
               <property name="text">
@@ -2071,7 +2058,39 @@
              </item>
             </widget>
            </item>
+           <item>
+            <widget class="QComboBox" name="comboBoxProcedureRunwayFilter">
+             <item>
+              <property name="text">
+               <string>All Runways</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelProcedureSearch">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QTreeWidget" name="treeWidgetApproachSearch">
@@ -2611,7 +2630,6 @@
    <addaction name="actionMapShowAircraftTrack"/>
    <addaction name="actionMapShowAircraftAi"/>
    <addaction name="separator"/>
-   <addaction name="actionInfoApproachShowAppr"/>
    <addaction name="actionInfoApproachShowMissedAppr"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
@@ -5215,27 +5233,6 @@
    </property>
    <property name="statusTip">
     <string>Clear selection and preview on map</string>
-   </property>
-  </action>
-  <action name="actionInfoApproachShowAppr">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;Procedures</string>
-   </property>
-   <property name="toolTip">
-    <string>Show procedure legs on the map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show procedure legs on the map</string>
    </property>
   </action>
   <action name="actionInfoApproachShowMissedAppr">

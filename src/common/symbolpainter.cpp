@@ -110,7 +110,7 @@ QIcon SymbolPainter::createApproachPointIcon(int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawApproachSymbol(&painter, size / 2, size / 2, size / 2, false, false);
+  SymbolPainter().drawProcedureSymbol(&painter, size / 2, size / 2, size / 2, false, false);
   return QIcon(pixmap);
 }
 
@@ -280,7 +280,7 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, int x, int y, int siz
     painter->drawPoint(x, y);
 }
 
-void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
+void SymbolPainter::drawProcedureSymbol(QPainter *painter, int x, int y, int size, bool routeFill, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -291,7 +291,7 @@ void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size
 
   float penSize = fast ? 6.f : 3.f;
 
-  painter->setPen(QPen(mapcolors::routeApproachPointColor, penSize, Qt::SolidLine, Qt::SquareCap));
+  painter->setPen(QPen(mapcolors::routeProcedurePointColor, penSize, Qt::SolidLine, Qt::SquareCap));
 
   if(!fast)
   {
@@ -303,14 +303,14 @@ void SymbolPainter::drawApproachSymbol(QPainter *painter, int x, int y, int size
     painter->drawPoint(x, y);
 }
 
-void SymbolPainter::drawApproachFlyover(QPainter *painter, int x, int y, int size)
+void SymbolPainter::drawProcedureFlyover(QPainter *painter, int x, int y, int size)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  painter->setPen(mapcolors::routeApproachPointFlyoverColor);
-  painter->setBackground(mapcolors::routeApproachPointFlyoverColor);
-  painter->setBrush(mapcolors::routeApproachPointFlyoverColor);
+  painter->setPen(mapcolors::routeProcedurePointFlyoverColor);
+  painter->setBackground(mapcolors::routeProcedurePointFlyoverColor);
+  painter->setBrush(mapcolors::routeProcedurePointFlyoverColor);
 
   int radius = size / 2;
   painter->drawEllipse(x - radius, y - radius, size, size);

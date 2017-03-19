@@ -93,9 +93,13 @@ const QColor highlightApproachColorFast = QColor(0, 0, 150);
 const QColor routeOutlineColor = QColor(Qt::black);
 const QColor routeDragColor = QColor(Qt::darkYellow);
 
-const QColor routeApproachOutlineColor = QColor(Qt::black);
-const QColor routeApproachColor = QColor(255, 150, 0);
-const QColor routeApproachMissedColor = QColor(255, 150, 0);
+const QColor routeProcedurePreviewOutlineColor = QColor(Qt::black);
+const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
+const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
+
+const QColor routeProcedureOutlineColor = QColor(Qt::black);
+const QColor routeProcedureColor = QColor(255, 150, 0);
+const QColor routeProcedureMissedColor = QColor(255, 150, 0);
 
 const QColor routeHighlightBackColor = QColor(Qt::black);
 const QColor routeHighlightColor = QColor(Qt::green);
@@ -105,11 +109,11 @@ const QColor routeHighlightColorFast = QColor(Qt::darkGreen);
 const QColor routeTextColor = QColor(0, 0, 0);
 const QColor routeTextBackgroundColor = QColor(255, 255, 255, 180);
 
-const QColor routeApproachMissedTextColor = QColor(90, 90, 90);
-const QColor routeApproachTextColor = QColor(0, 0, 0);
+const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
+const QColor routeProcedureTextColor = QColor(0, 0, 0);
 
-const QColor routeApproachPointColor = QColor(90, 90, 90);
-const QColor routeApproachPointFlyoverColor = QColor(255, 255, 0);
+const QColor routeProcedurePointColor = QColor(90, 90, 90);
+const QColor routeProcedurePointFlyoverColor = QColor(255, 255, 0);
 const QColor routeUserPointColor = QColor(Qt::darkYellow);
 /* Point not found in database */
 const QColor routeInvalidPointColor = QColor(Qt::red);

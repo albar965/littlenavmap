@@ -747,6 +747,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -870,9 +871,6 @@ void MainWindow::connectAllSlots()
           &RouteController::routeAttachProcedure);
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController,
           &InfoController::showInformation);
-
-  connect(ui->actionInfoApproachShowAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 }
 
 /* Update the info weather */
@@ -1731,11 +1729,17 @@ void MainWindow::updateActionStates()
       ui->menuMap->removeAction(ui->actionMapShowEmptyAirports);
   }
 
+#ifdef DEBUG_MOVING_AIRPLANE
+  ui->actionMapShowAircraft->setEnabled(true);
+  ui->actionMapAircraftCenter->setEnabled(true);
+#else
   ui->actionMapShowAircraft->setEnabled(connectClient->isConnected());
+  ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
+#endif
+
   ui->actionMapShowAircraftAi->setEnabled(connectClient->isConnected());
   ui->actionMapShowAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
   ui->actionMapDeleteAircraftTrack->setEnabled(!mapWidget->getAircraftTrack().isEmpty());
-  ui->actionMapAircraftCenter->setEnabled(connectClient->isConnected());
 
   bool canCalcRoute = routeController->canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && routeController->hasEntries());
@@ -1824,7 +1828,7 @@ void MainWindow::readSettings()
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi,
-                         ui->actionMapShowAircraftTrack});
+                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr});
     widgetState.setBlockSignals(false);
   }
 
@@ -1907,7 +1911,7 @@ void MainWindow::writeSettings()
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                     ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                     ui->actionMapShowAircraftAi,
-                    ui->actionMapShowAircraftTrack,
+                    ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline});

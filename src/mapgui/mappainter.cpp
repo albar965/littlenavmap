@@ -205,6 +205,18 @@ void MapPainter::drawLineString(const PaintContext *context, const atools::geo::
   }
 }
 
+void MapPainter::drawLine(const PaintContext *context, const atools::geo::Line& line)
+{
+  if(line.isValid())
+  {
+    GeoDataLineString ls;
+    ls.setTessellate(true);
+    ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY(), 0, DEG)
+       << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY(), 0, DEG);
+    context->painter->drawPolyline(ls);
+  }
+}
+
 void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left)
 {
   QRectF arcRect;

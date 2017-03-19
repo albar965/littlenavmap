@@ -154,6 +154,7 @@ protected:
 
   void drawLineString(const PaintContext *context, const Marble::GeoDataLineString& linestring);
   void drawLineString(const PaintContext *context, const atools::geo::LineString& linestring);
+  void drawLine(const PaintContext *context, const atools::geo::Line& line);
 
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
 

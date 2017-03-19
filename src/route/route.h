@@ -184,6 +184,7 @@ public:
 
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
+  void clearAllProcedures();
   void clearApproachAndTransProcedure();
   void clearTransitionProcedure();
   void clearDepartureProcedure();
@@ -207,7 +208,55 @@ public:
   void updateAll();
   void clearFlightplanProcedureProperties(maptypes::MapObjectTypes type);
 
-  /* Pull only the needed methods in public space */
+  /* Set active leg and update all internal distances */
+  void setActiveLeg(int value);
+  void resetActive();
+
+  /* All couse values in the route are true since no navaid having magvar was found */
+  bool isTrueCourse() const
+  {
+    return trueCourse;
+  }
+
+  bool isAirportAfterArrival(int index);
+
+  /* Get approach and transition in one legs struct */
+  const maptypes::MapProcedureLegs& getArrivalLegs() const
+  {
+    return arrivalLegs;
+  }
+
+  /* Get STAR legs only */
+  const maptypes::MapProcedureLegs& getStarLegs() const
+  {
+    return starLegs;
+  }
+
+  /* Get SID legs only */
+  const maptypes::MapProcedureLegs& getDepartureLegs() const
+  {
+    return departureLegs;
+  }
+
+  /* Index of first transition and/or approach leg in the route */
+  int getArrivalLegsOffset() const
+  {
+    return arrivalLegsOffset;
+  }
+
+  /* Index of first SID leg in the route */
+  int getDepartureLegsOffset() const
+  {
+    return departureLegsOffset;
+  }
+
+  /* Index of first STAR leg in the route */
+  int getStarLegsOffset() const
+  {
+    return starLegsOffset;
+  }
+
+  /* Pull only the needed methods in public space to have control over it */
   using QList<RouteLeg>::const_iterator;
   using QList<RouteLeg>::begin;
   using QList<RouteLeg>::end;
@@ -225,32 +274,6 @@ public:
   using QList<RouteLeg>::removeAt;
   using QList<RouteLeg>::removeLast;
   using QList<RouteLeg>::operator[];
-
-  /* Set active leg and update all internal distances */
-  void setActiveLeg(int value);
-  void resetActive();
-
-  bool isTrueCourse() const
-  {
-    return trueCourse;
-  }
-
-  bool isAirportAfterArrival(int index);
-
-  const maptypes::MapProcedureLegs& getArrivalLegs() const
-  {
-    return arrivalLegs;
-  }
-
-  const maptypes::MapProcedureLegs& getStarLegs() const
-  {
-    return starLegs;
-  }
-
-  const maptypes::MapProcedureLegs& getDepartureLegs() const
-  {
-    return departureLegs;
-  }
 
 private:
   /* Calculate all distances and courses for route map objects */
@@ -286,6 +309,8 @@ private:
   int activeLeg = maptypes::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
   maptypes::PosCourse activePos;
+  int departureLegsOffset = maptypes::INVALID_INDEX_VALUE, starLegsOffset = maptypes::INVALID_INDEX_VALUE,
+      arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
 
 };
 

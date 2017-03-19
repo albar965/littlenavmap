@@ -224,58 +224,58 @@ public:
 
   const maptypes::MapProcedureLeg& getApproachLeg() const
   {
-    return approachLeg;
+    return procedureLeg;
   }
 
   /* invalid type if not an approach */
   maptypes::ProcedureLegType getApproachLegType() const
   {
-    return approachLeg.type;
+    return procedureLeg.type;
   }
 
   bool isArrivalProcedure() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_ARRIVAL;
+    return procedureLeg.mapType & maptypes::PROCEDURE_ARRIVAL;
   }
 
   bool isDepartureProcedure() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_DEPARTURE;
+    return procedureLeg.mapType & maptypes::PROCEDURE_DEPARTURE;
   }
 
   bool isApproach() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_APPROACH;
+    return procedureLeg.mapType & maptypes::PROCEDURE_APPROACH;
   }
 
   bool isMissed() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_MISSED;
+    return procedureLeg.mapType & maptypes::PROCEDURE_MISSED;
   }
 
   bool isTransition() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_TRANSITION;
+    return procedureLeg.mapType & maptypes::PROCEDURE_TRANSITION;
   }
 
   bool isSid() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_SID;
+    return procedureLeg.mapType & maptypes::PROCEDURE_SID;
   }
 
   bool isStar() const
   {
-    return approachLeg.mapType & maptypes::PROCEDURE_STAR;
+    return procedureLeg.mapType & maptypes::PROCEDURE_STAR;
   }
 
   bool isHold() const
   {
-    return approachLeg.isHold();
+    return procedureLeg.isHold();
   }
 
   bool isCircular() const
   {
-    return approachLeg.isCircular();
+    return procedureLeg.isCircular();
   }
 
   const atools::geo::LineString& getGeometry() const;
@@ -305,7 +305,7 @@ private:
   maptypes::MapIls ils;
   maptypes::MapRunwayEnd runwayEnd;
   maptypes::MapWaypoint waypoint;
-  maptypes::MapProcedureLeg approachLeg;
+  maptypes::MapProcedureLeg procedureLeg;
 
   bool valid = false;
 

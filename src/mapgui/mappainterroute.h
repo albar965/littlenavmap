@@ -59,7 +59,7 @@ private:
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
   void paintApproach(const PaintContext *context,
-                     const maptypes::MapProcedureLegs& legs);
+                     const maptypes::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
   void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
   void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
@@ -76,12 +76,12 @@ private:
   void drawSymbolText(const PaintContext *context, const Route& route,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs, int index);
+  void paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs, int index, bool preview);
 
   void paintApproachSegment(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
-                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText);
+                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview);
 
-  void paintApproachpoint(const PaintContext *context, int x, int y);
+  void paintProcedurePoint(const PaintContext *context, int x, int y);
 
   void paintTopOfDescent(const PaintContext *context);
 
@@ -90,7 +90,9 @@ private:
   void paintApproachBow(const maptypes::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
                         const maptypes::MapProcedureLeg& leg);
 
-  void paintApproachFlyover(const PaintContext *context, int x, int y);
+  void paintProcedureFlyover(const PaintContext *context, int x, int y);
+
+  void drawStartParking(const PaintContext *context, const Route& route);
 
 };
 

@@ -157,9 +157,12 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
   float courseDiff = 0.f;
   if(nextLeg < size())
   {
-    while(at(nextLeg).isApproachPoint() && nextLeg < size() - 2)
-      // Catch the case of initial fixes or others that are points instead of lines and try the next legs
-      nextLeg++;
+    if(at(activeLeg).isHold())
+    {
+      while(at(nextLeg).getApproachLegType() == maptypes::INITIAL_FIX && nextLeg < size() - 2)
+        // Catch the case of initial fixes or others that are points instead of lines and try the next legs
+        nextLeg++;
+    }
 
     Pos pos1 = getPositionAt(nextLeg - 1);
     Pos pos2 = getPositionAt(nextLeg);
@@ -551,12 +554,19 @@ bool Route::canCalcRoute() const
   return getFlightplan().getEntries().size() >= 2;
 }
 
+void Route::clearAllProcedures()
+{
+  clearApproachAndTransProcedure();
+  clearTransitionProcedure();
+  clearStarProcedure();
+  clearDepartureProcedure();
+}
+
 void Route::clearApproachAndTransProcedure()
 {
   if(hasArrivalProcedure())
   {
-    arrivalLegs.clearApproach();
-    arrivalLegs.clearTransition();
+    arrivalLegs = maptypes::MapProcedureLegs();
     clearFlightplanProcedureProperties(maptypes::PROCEDURE_ARRIVAL);
     eraseProcedureLegs(maptypes::PROCEDURE_ARRIVAL);
     updateAll();
@@ -605,7 +615,15 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
 {
   eraseProcedureLegs(maptypes::PROCEDURE_ALL);
 
+  departureLegsOffset = maptypes::INVALID_INDEX_VALUE;
+  starLegsOffset = maptypes::INVALID_INDEX_VALUE;
+  arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
+
   // Create route legs and flight plan entries from departure
+  if(!departureLegs.isEmpty())
+    // Starts always after departure airport
+    departureLegsOffset = 1;
+
   QList<atools::fs::pln::FlightplanEntry>& entries = flightplan.getEntries();
   for(int i = 0; i < departureLegs.size(); i++)
   {
@@ -620,6 +638,9 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   }
 
   // Create route legs and flight plan entries from STAR
+  if(!starLegs.isEmpty())
+    starLegsOffset = size() - 1;
+
   for(int i = 0; i < starLegs.size(); i++)
   {
     RouteLeg obj(&flightplan);
@@ -632,6 +653,9 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   }
 
   // Create route legs and flight plan entries from arrival
+  if(!arrivalLegs.isEmpty())
+    arrivalLegsOffset = size() - 1;
+
   for(int i = 0; i < arrivalLegs.size(); i++)
   {
     RouteLeg obj(&flightplan);

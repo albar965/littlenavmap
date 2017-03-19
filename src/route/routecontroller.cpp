@@ -480,7 +480,7 @@ void RouteController::newFlightplan()
   // Copy current alt and type from widgets to flightplan
   updateFlightplanFromWidgets();
 
-  createRouteLegs();
+  createRouteLegsFromFlightplan();
   updateRouteLegs();
 
   updateTableModel();
@@ -506,7 +506,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   fileIfrVfr = flightplan.getFlightplanType();
 
   route.setFlightplan(flightplan);
-  createRouteLegs();
+  createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
   updateRouteLegs();
@@ -534,14 +534,17 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   emit routeChanged(true);
 }
 
-bool RouteController::loadProceduresFromFlightplan(bool quiet)
+void RouteController::loadProceduresFromFlightplan(bool quiet)
 {
+  if(route.isEmpty())
+    return;
+
   if(!route.hasValidDeparture() || !route.hasValidDestination())
   {
     if(!quiet)
       QMessageBox::warning(mainWindow, QApplication::applicationName(),
                            tr("Need valid departure and destination airport to load procedures."));
-    return false;
+    return;
   }
 
   maptypes::MapProcedureLegs arrival, departure, star;
@@ -560,10 +563,9 @@ bool RouteController::loadProceduresFromFlightplan(bool quiet)
     route.clearFlightplanProcedureProperties(maptypes::PROCEDURE_ALL);
     if(!quiet)
       QMessageBox::warning(mainWindow, QApplication::applicationName(), tr("Could not load procedures for flight plan."));
-    return false;
+    return;
   }
 
-  return true;
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -620,7 +622,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.clearApproachAndTransProcedure();
     route.clearStarProcedure();
 
-    createRouteLegs();
+    createRouteLegsFromFlightplan();
     updateRouteLegs();
 
     updateTableModel();
@@ -752,7 +754,7 @@ void RouteController::calculateDirect()
     // Remove all waypoints
     flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
 
-  createRouteLegs();
+  createRouteLegsFromFlightplan();
   updateRouteLegs();
 
   updateTableModel();
@@ -910,7 +912,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       }
 
       QGuiApplication::restoreOverrideCursor();
-      createRouteLegs();
+      createRouteLegsFromFlightplan();
       loadProceduresFromFlightplan(true /* quiet */);
       updateRouteLegs();
 
@@ -1018,7 +1020,7 @@ void RouteController::reverseRoute()
   route.clearStarProcedure();
   route.clearDepartureProcedure();
 
-  createRouteLegs();
+  createRouteLegsFromFlightplan();
   updateRouteLegs();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
@@ -1111,7 +1113,9 @@ void RouteController::postDatabaseLoad()
 {
   routeNetworkRadio->initQueries();
   routeNetworkAirway->initQueries();
-  createRouteLegs();
+
+  route.getFlightplan().removeNoSaveEntries();
+  createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
   updateRouteLegs();
 
@@ -1471,7 +1475,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 {
   route.setFlightplan(newFlightplan);
 
-  createRouteLegs();
+  createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
   updateRouteLegs();
 
@@ -2270,7 +2274,7 @@ void RouteController::updateRouteLegs()
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
-void RouteController::createRouteLegs()
+void RouteController::createRouteLegsFromFlightplan()
 {
   route.clear();
 
@@ -2734,7 +2738,10 @@ float RouteController::calcTravelTime(float distance) const
 /* Reset route and clear undo stack (new route) */
 void RouteController::clearRoute()
 {
+  route.clearAllProcedures();
   route.getFlightplan().clear();
+  route.getFlightplan().getProperties().clear();
+  route.resetActive();
   route.clear();
   route.setTotalDistance(0.f);
 

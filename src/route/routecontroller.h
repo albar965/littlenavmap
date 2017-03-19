@@ -298,7 +298,7 @@ private:
 
   void updateTableModel();
 
-  void createRouteLegs();
+  void createRouteLegsFromFlightplan();
   void updateRouteLegs();
 
   void routeAltChanged();
@@ -343,7 +343,7 @@ private:
   float calcTravelTime(float distance) const;
   void highlightNextWaypoint(int nearestLegIndex);
   void highlightProcedureItems();
-  bool loadProceduresFromFlightplan(bool quiet);
+  void loadProceduresFromFlightplan(bool quiet);
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);

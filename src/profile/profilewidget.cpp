@@ -427,7 +427,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
       else if(type == maptypes::PROCEDURE_APPROACH || type == maptypes::PROCEDURE_TRANSITION)
         // Missed is not included
-        symPainter.drawApproachSymbol(&painter, symx, flightplanY, 9, true, false);
+        symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
     }
   }
 

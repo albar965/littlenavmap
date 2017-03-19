@@ -64,13 +64,14 @@ int ProcedureQuery::approachIdForTransitionId(int transitionId)
   return approachId;
 }
 
-const maptypes::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const maptypes::MapAirport& airport, int transitionId)
+const maptypes::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const maptypes::MapAirport& airport,
+                                                                    int transitionId)
 {
   return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
 const maptypes::MapProcedureLeg *ProcedureQuery::getApproachLeg(const maptypes::MapAirport& airport, int approachId,
-                                                              int legId)
+                                                                int legId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(approachLegIndex.contains(legId))
@@ -159,7 +160,7 @@ maptypes::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const maptypes
 }
 
 void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapProcedureLeg& leg,
-                                  const maptypes::MapAirport& airport)
+                                   const maptypes::MapAirport& airport)
 {
   leg.type = maptypes::procedureLegEnum(query->value("type").toString());
 
@@ -323,8 +324,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
 }
 
 void ProcedureQuery::mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
-                                     const QString& ident, const QString& region, const QString& airport,
-                                     const Pos& sortByDistancePos)
+                                      const QString& ident, const QString& region, const QString& airport,
+                                      const Pos& sortByDistancePos)
 {
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos);
   if(result.isEmpty(type))
@@ -403,7 +404,7 @@ maptypes::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const maptypes::Ma
 }
 
 maptypes::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const maptypes::MapAirport& airport,
-                                                              int approachId, int transitionId)
+                                                                int approachId, int transitionId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionCache.contains(transitionId))
@@ -1144,7 +1145,7 @@ void ProcedureQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simT
 }
 
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                       maptypes::MapObjectTypes type)
+                                                        maptypes::MapObjectTypes type)
 {
   if(type & maptypes::PROCEDURE_SID)
   {
@@ -1182,9 +1183,9 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
 }
 
 void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
-                                                       const maptypes::MapProcedureLegs& arrivalLegs,
-                                                       const maptypes::MapProcedureLegs& starLegs,
-                                                       const maptypes::MapProcedureLegs& departureLegs)
+                                                        const maptypes::MapProcedureLegs& arrivalLegs,
+                                                        const maptypes::MapProcedureLegs& starLegs,
+                                                        const maptypes::MapProcedureLegs& departureLegs)
 {
   if(!departureLegs.isEmpty())
   {
@@ -1225,11 +1226,11 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
 }
 
 bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                                   const maptypes::MapAirport& departure,
-                                                   const maptypes::MapAirport& destination,
-                                                   maptypes::MapProcedureLegs& arrivalLegs,
-                                                   maptypes::MapProcedureLegs& starLegs,
-                                                   maptypes::MapProcedureLegs& departureLegs)
+                                                    const maptypes::MapAirport& departure,
+                                                    const maptypes::MapAirport& destination,
+                                                    maptypes::MapProcedureLegs& arrivalLegs,
+                                                    maptypes::MapProcedureLegs& starLegs,
+                                                    maptypes::MapProcedureLegs& departureLegs)
 {
   bool error = false;
 
@@ -1241,7 +1242,8 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     approachIdByNameQuery->bindValue(":type", "GPS");
     approachIdByNameQuery->bindValue(":apid", departure.id);
 
-    sidApprId = findProcedureLegId(departure, approachIdByNameQuery, "D", 0.f, 0, false /* transition */);
+    sidApprId = findProcedureLegId(departure, approachIdByNameQuery, "D", maptypes::INVALID_DISTANCE_VALUE,
+                                   0, false /* transition */);
     if(sidApprId == -1)
     {
       qWarning() << "Loading of approach" << properties.value("approach") << "failed";
@@ -1320,23 +1322,44 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   if(!error) // load all or nothing in case of error
   {
     if(sidTransId != -1)
-      departureLegs = *getTransitionLegs(departure, sidTransId);
-
-    if(transitionId != -1)
-      // Fetch and copy transition together with approach (here from cache)
-      arrivalLegs = *getTransitionLegs(destination, transitionId);
-    else if(approachId != -1)
-      // Fetch and copy approach only from cache
-      arrivalLegs = *getApproachLegs(destination, approachId);
+    {
+      const maptypes::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
+      if(legs != nullptr)
+        departureLegs = *legs;
+      else
+        qWarning() << Q_FUNC_INFO << "legs not found for" << departure.id << sidTransId;
+    }
+    if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
+    {
+      const maptypes::MapProcedureLegs *legs = getTransitionLegs(destination, transitionId);
+      if(legs != nullptr)
+        arrivalLegs = *legs;
+      else
+        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << transitionId;
+    }
+    else if(approachId != -1) // Fetch and copy approach only from cache
+    {
+      const maptypes::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
+      if(legs != nullptr)
+        arrivalLegs = *legs;
+      else
+        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << approachId;
+    }
 
     if(starId != -1)
-      starLegs = *getApproachLegs(destination, starId);
+    {
+      const maptypes::MapProcedureLegs *legs = getApproachLegs(destination, starId);
+      if(legs != nullptr)
+        starLegs = *legs;
+      else
+        qWarning() << Q_FUNC_INFO << "legs not found for" << destination.id << starId;
+    }
   }
   return !error;
 }
 
 int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atools::sql::SqlQuery *query,
-                                      const QString& suffix, float distance, int size, bool transition)
+                                       const QString& suffix, float distance, int size, bool transition)
 {
   int procedureId = -1;
   query->exec();
@@ -1358,12 +1381,18 @@ int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atoo
   {
     for(int id : ids)
     {
-      const maptypes::MapProcedureLegs *legs = getApproachLegs(airport, id);
+      const maptypes::MapProcedureLegs *legs = nullptr;
+
+      if(transition)
+        legs = getTransitionLegs(airport, id);
+      else
+        legs = getApproachLegs(airport, id);
+
       float legdist = transition ? legs->transitionDistance : legs->approachDistance;
       int legsize = transition ? legs->transitionLegs.size() : legs->approachLegs.size();
 
       if(legs != nullptr &&
-         (distance == 0.f || atools::almostEqual(legdist, distance, 1.f)) &&
+         (!(distance < maptypes::INVALID_DISTANCE_VALUE) || atools::almostEqual(legdist, distance, 0.5f)) &&
          (size == -1 || size == legsize))
       {
         procedureId = id;
@@ -1409,7 +1438,7 @@ void ProcedureQuery::assignType(maptypes::MapProcedureLegs& approach)
 }
 
 maptypes::MapProcedureLeg ProcedureQuery::createRunwayLeg(const maptypes::MapProcedureLeg& leg,
-                                                        const maptypes::MapProcedureLegs& legs)
+                                                          const maptypes::MapProcedureLegs& legs)
 {
   maptypes::MapProcedureLeg rwleg;
   rwleg.approachId = legs.ref.approachId;
@@ -1439,7 +1468,7 @@ maptypes::MapProcedureLeg ProcedureQuery::createRunwayLeg(const maptypes::MapPro
 }
 
 maptypes::MapProcedureLeg ProcedureQuery::createStartLeg(const maptypes::MapProcedureLeg& leg,
-                                                       const maptypes::MapProcedureLegs& legs)
+                                                         const maptypes::MapProcedureLegs& legs)
 {
   maptypes::MapProcedureLeg sleg;
   sleg.approachId = legs.ref.approachId;
