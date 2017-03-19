@@ -108,6 +108,11 @@ public:
     return flightplan;
   }
 
+  void removeAllProcedureLegs()
+  {
+    flightplan.removeNoSaveEntries();
+  }
+
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
     flightplan = value;

@@ -643,8 +643,10 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
 
   for(int i = 0; i < starLegs.size(); i++)
   {
+    const RouteLeg *prev = size() >= 2 ? &at(size() - 2) : nullptr;
+
     RouteLeg obj(&flightplan);
-    obj.createFromApproachLeg(i, starLegs, &at(size() - 2));
+    obj.createFromApproachLeg(i, starLegs, prev);
     insert(size() - 1, obj);
 
     atools::fs::pln::FlightplanEntry entry;
@@ -658,8 +660,10 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
 
   for(int i = 0; i < arrivalLegs.size(); i++)
   {
+    const RouteLeg *prev = size() >= 2 ? &at(size() - 2) : nullptr;
+
     RouteLeg obj(&flightplan);
-    obj.createFromApproachLeg(i, arrivalLegs, &at(size() - 2));
+    obj.createFromApproachLeg(i, arrivalLegs, prev);
     insert(size() - 1, obj);
 
     atools::fs::pln::FlightplanEntry entry;

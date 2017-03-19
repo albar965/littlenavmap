@@ -1114,7 +1114,8 @@ void RouteController::postDatabaseLoad()
   routeNetworkRadio->initQueries();
   routeNetworkAirway->initQueries();
 
-  route.getFlightplan().removeNoSaveEntries();
+  route.removeAllProcedureLegs();
+
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
   updateRouteLegs();
@@ -2633,13 +2634,13 @@ QString RouteController::buildFlightplanLabel(bool html) const
       {
         // Add departure procedure to text
         boldTextFlag << false << true;
-        procedureText.append(tr("Depart via"));
+        procedureText.append(tr("Depart via SID"));
         procedureText.append(departureLegs.approachFixIdent);
 
-        if(arrivalLegs.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
+        if(arrivalLegs.mapType & maptypes::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
         {
           boldTextFlag << false;
-          procedureText.append(tr(", "));
+          procedureText.append(tr(". "));
         }
       }
 
@@ -2654,14 +2655,15 @@ QString RouteController::buildFlightplanLabel(bool html) const
       if(arrivalLegs.mapType & maptypes::PROCEDURE_TRANSITION)
       {
         boldTextFlag << false << true;
-        procedureText.append(procedureText.isEmpty() ? tr("Via") : tr("via"));
+        procedureText.append(starLegs.mapType & maptypes::PROCEDURE_STAR ? tr("via") : tr("Via"));
         procedureText.append(arrivalLegs.transitionFixIdent);
       }
 
       if(arrivalLegs.mapType & maptypes::PROCEDURE_APPROACH)
       {
         boldTextFlag << false << true;
-        procedureText.append(procedureText.isEmpty() ? tr("Via") : tr("and"));
+        procedureText.append((arrivalLegs.mapType & maptypes::PROCEDURE_TRANSITION ||
+                              starLegs.mapType & maptypes::PROCEDURE_STAR) ? tr("and") : tr("Via"));
         procedureText.append(arrivalLegs.approachFixIdent);
 
         // Add runway for approach

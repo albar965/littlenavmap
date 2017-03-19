@@ -1265,6 +1265,7 @@ const MapProcedureLeg& MapProcedureLegs::atInternal(int i) const
 
 void MapProcedureLegs::clearApproach()
 {
+  mapType &= ~maptypes::PROCEDURE_APPROACH;
   approachLegs.clear();
   approachDistance = missedDistance = 0.f;
   approachType.clear();
@@ -1274,6 +1275,7 @@ void MapProcedureLegs::clearApproach()
 
 void MapProcedureLegs::clearTransition()
 {
+  mapType &= ~maptypes::PROCEDURE_TRANSITION;
   transitionLegs.clear();
   transitionDistance = 0.f;
   transitionType.clear();

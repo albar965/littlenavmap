@@ -111,66 +111,68 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     }
   }
 
-  // Do not draw a line from airport to runway end
-  if(route.hasArrivalProcedure())
+  if(!lines.isEmpty()) // Do not draw a line from airport to runway end
   {
-    lines.last() = Line();
-    routeTexts.last().clear();
-  }
-  if(route.hasDepartureProcedure())
-  {
-    lines.first() = Line();
-    routeTexts.first().clear();
-  }
-
-  // Draw outer line
-  context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
-                                Qt::RoundCap, Qt::RoundJoin));
-  for(const Line& line : lines)
-    drawLine(context, line);
-
-  // Draw innner line
-  context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
-                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  for(const Line& line : lines)
-    drawLine(context, line);
-
-#ifdef DEBUG_ROUTE_PAINT
-  {
-    bool hiddenDummy;
-    context->painter->save();
-    context->painter->setPen(Qt::black);
-
-    int idx = 0;
-    for(const Line& line : lines)
+    if(route.hasArrivalProcedure())
     {
-      if(line.isValid())
-      {
-
-        QLineF linef;
-        wToS(line, linef, DEFAULT_WTOS_SIZE, &hiddenDummy);
-
-        context->painter->drawText(linef.p1() + QPointF(10, 20), "start " + QString::number(idx) + " " +
-                                   (route.at(idx).isAnyProcedure() ? "P" : ""));
-        context->painter->drawText(linef.p2() + QPointF(10, -20), "end " + QString::number(idx) + " " +
-                                   (route.at(idx).isAnyProcedure() ? "P" : ""));
-      }
-      idx++;
+      lines.last() = Line();
+      routeTexts.last().clear();
+    }
+    if(route.hasDepartureProcedure())
+    {
+      lines.first() = Line();
+      routeTexts.first().clear();
     }
 
-    context->painter->restore();
-  }
+    // Draw outer line
+    context->painter->setPen(QPen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine,
+                                  Qt::RoundCap, Qt::RoundJoin));
+    for(const Line& line : lines)
+      drawLine(context, line);
+
+    // Draw innner line
+    context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), innerlinewidth,
+                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    for(const Line& line : lines)
+      drawLine(context, line);
+
+#ifdef DEBUG_ROUTE_PAINT
+    {
+      bool hiddenDummy;
+      context->painter->save();
+      context->painter->setPen(Qt::black);
+
+      int idx = 0;
+      for(const Line& line : lines)
+      {
+        if(line.isValid())
+        {
+
+          QLineF linef;
+          wToS(line, linef, DEFAULT_WTOS_SIZE, &hiddenDummy);
+
+          context->painter->drawText(linef.p1() + QPointF(10, 20), "start " + QString::number(idx) + " " +
+                                     (route.at(idx).isAnyProcedure() ? "P" : ""));
+          context->painter->drawText(linef.p2() + QPointF(10, -20), "end " + QString::number(idx) + " " +
+                                     (route.at(idx).isAnyProcedure() ? "P" : ""));
+        }
+        idx++;
+      }
+
+      context->painter->restore();
+    }
 #endif
 
-  // Get active route leg
-  int activeRouteLeg = route.getActiveLegIndex();
-  if(activeRouteLeg > 0 && activeRouteLeg <= lines.size())
-  {
-    // Draw active leg on top of all others to keep it visible
-    context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
-                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    // Get active route leg
+    int activeRouteLeg = route.getActiveLegIndex();
+    if(activeRouteLeg > 0 && activeRouteLeg <= lines.size())
+    {
+      // Draw active leg on top of all others to keep it visible
+      context->painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
+                                    Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
-    drawLine(context, lines.at(activeRouteLeg - 1));
+      drawLine(context, lines.at(activeRouteLeg - 1));
+    }
   }
 
   context->szFont(context->textSizeFlightplan * 1.1f);

@@ -615,7 +615,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   Ui::MainWindow *ui = mainWindow->getUi();
-  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach});
+  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach, ui->actionInfoApproachAttach});
   Q_UNUSED(saver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
@@ -635,20 +635,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || mainWindow->isConnected());
 #endif
 
-  ui->actionInfoApproachAttach->setDisabled(item == nullptr || mainWindow->getRouteController()->isFlightplanEmpty());
-
-  QMenu menu;
-
-  menu.addAction(ui->actionInfoApproachShow);
-  menu.addSeparator();
-  menu.addAction(ui->actionInfoApproachAttach);
-  menu.addSeparator();
-  menu.addAction(ui->actionInfoApproachExpandAll);
-  menu.addAction(ui->actionInfoApproachCollapseAll);
-  menu.addSeparator();
-  menu.addAction(ui->actionSearchResetSearch);
-  menu.addAction(ui->actionInfoApproachClear);
-  menu.addAction(ui->actionSearchResetView);
+  ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
   QString text, showText;
 
@@ -678,7 +665,31 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
 
   ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
-  ui->actionInfoApproachAttach->setText(ui->actionInfoApproachAttach->text().arg(text));
+
+  const Route& route = mainWindow->getRouteController()->getRoute();
+
+  if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
+     (route.hasValidDestination() && route.last().getId() == currentAirport.id))
+    ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
+  else
+  {
+    if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
+      ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
+    else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
+      ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
+  }
+
+  QMenu menu;
+  menu.addAction(ui->actionInfoApproachShow);
+  menu.addSeparator();
+  menu.addAction(ui->actionInfoApproachAttach);
+  menu.addSeparator();
+  menu.addAction(ui->actionInfoApproachExpandAll);
+  menu.addAction(ui->actionInfoApproachCollapseAll);
+  menu.addSeparator();
+  menu.addAction(ui->actionSearchResetSearch);
+  menu.addAction(ui->actionInfoApproachClear);
+  menu.addAction(ui->actionSearchResetView);
 
   QAction *action = menu.exec(menuPos);
   if(action == ui->actionInfoApproachExpandAll)
