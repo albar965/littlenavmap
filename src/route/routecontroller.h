@@ -299,7 +299,6 @@ private:
   void updateTableModel();
 
   void createRouteLegsFromFlightplan();
-  void updateRouteLegs();
 
   void routeAltChanged();
   void routeTypeChanged();

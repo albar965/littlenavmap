@@ -105,11 +105,13 @@ enum MapObjectType
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
+
   PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
   PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR,
   PROCEDURE_DEPARTURE = PROCEDURE_SID,
   PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_APPROACH | PROCEDURE_TRANSITION | PROCEDURE_STAR | PROCEDURE_SID,
+
   ALL = 0xffffffff
 };
 
@@ -896,6 +898,16 @@ struct MapProcedureLeg
   bool isApproach() const
   {
     return mapType & maptypes::PROCEDURE_APPROACH;
+  }
+
+  bool isArrival() const
+  {
+    return mapType & maptypes::PROCEDURE_ARRIVAL;
+  }
+
+  bool isAnyArrival() const
+  {
+    return mapType & maptypes::PROCEDURE_ARRIVAL_ALL;
   }
 
   bool isTransition() const

@@ -115,12 +115,12 @@ bool Route::canEditLeg(int index) const
   if(hasDepartureProcedure() && index < departureLegsOffset + departureLegs.size())
     return false;
 
-  if(hasStarProcedure() && hasArrivalProcedure() &&
-     hasStarProcedure() && index > starLegsOffset && index < arrivalLegsOffset + arrivalLegs.size())
+  if(hasStarProcedure() && hasArrivalProcedure() && hasStarProcedure() &&
+     index > starLegsOffset && index < arrivalLegsOffset + arrivalLegs.size())
     // Do not allow any edits between the procedures
     return false;
 
-  if(hasStarProcedure() && index > starLegsOffset && index < starLegsOffset + starLegs.size())
+  if(hasStarProcedure() && index > starLegsOffset /* && index < starLegsOffset + starLegs.size()*/)
     return false;
 
   if(hasArrivalProcedure() && index > arrivalLegsOffset)
@@ -836,7 +836,7 @@ void Route::setActiveLeg(int value)
 
 bool Route::isAirportAfterArrival(int index)
 {
-  return (hasArrivalProcedure() || hasStarProcedure()) &&
+  return (hasArrivalProcedure() /*|| hasStarProcedure()*/) &&
          index == size() - 1 && at(index).getMapObjectType() == maptypes::AIRPORT;
 }
 
@@ -849,11 +849,11 @@ void Route::updateDistancesAndCourse()
     if(isAirportAfterArrival(i))
       break;
 
-    RouteLeg& mapobj = (*this)[i];
-    mapobj.updateDistanceAndCourse(i, last);
-    if(!mapobj.isMissed())
-      totalDistance += mapobj.getDistanceTo();
-    last = &mapobj;
+    RouteLeg& leg = (*this)[i];
+    leg.updateDistanceAndCourse(i, last);
+    if(!leg.isMissed())
+      totalDistance += leg.getDistanceTo();
+    last = &leg;
   }
 }
 

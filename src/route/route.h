@@ -216,6 +216,8 @@ public:
     return at(i).getPosition();
   }
 
+  /* Update distance, course, bounding rect and total distance for route map objects.
+   *  Also calculates maximum number of user points. */
   void updateAll();
   void clearFlightplanProcedureProperties(maptypes::MapObjectTypes type);
 

@@ -74,19 +74,19 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
 }
 
 void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                                 const RouteLeg *predRouteMapObj)
+                                 const RouteLeg *prevLeg)
 {
   index = entryIndex;
   type = maptypes::AIRPORT;
   airport = newAirport;
 
   updateMagvar();
-  updateDistanceAndCourse(entryIndex, predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, prevLeg);
   valid = true;
 }
 
 void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
-                                     const RouteLeg *predRouteMapObj)
+                                     const RouteLeg *prevLeg)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
@@ -106,11 +106,11 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedur
     runwayEnd = procedureLeg.navaids.runwayEnds.first();
 
   updateMagvar();
-  updateDistanceAndCourse(entryIndex, predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, prevLeg);
   valid = true;
 }
 
-void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *predRouteMapObj)
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
@@ -136,7 +136,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
         valid = true;
 
         QString name = flightplan->getDepartureParkingName().trimmed();
-        if(!name.isEmpty() && predRouteMapObj == nullptr)
+        if(!name.isEmpty() && prevLeg == nullptr)
         {
           if(!name.isEmpty())
           {
@@ -276,7 +276,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
     type = maptypes::INVALID;
 
   updateMagvar();
-  updateDistanceAndCourse(entryIndex, predRouteMapObj);
+  updateDistanceAndCourse(entryIndex, prevLeg);
 }
 
 void RouteLeg::setDepartureParking(const maptypes::MapParking& departureParking)
@@ -342,19 +342,28 @@ void RouteLeg::updateInvalidMagvar(int entryIndex, const Route *routeList)
   }
 }
 
-void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRouteMapObj)
+void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
-  if(predRouteMapObj != nullptr)
+  if(prevLeg != nullptr)
   {
-    const Pos& prevPos = predRouteMapObj->getPosition();
+    const Pos& prevPos = prevLeg->getPosition();
 
     if(isAnyProcedure())
     {
-      if(predRouteMapObj->isRoute() &&
-         atools::contains(procedureLeg.type, {maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE}))
+      if(
+        (prevLeg->isRoute() || // Transition from route to procedure
+         (prevLeg->isDepartureProcedure() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
+         (prevLeg->isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
+
+        ) && // Direct connection between procedures
+
+        atools::contains(procedureLeg.type, {maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE}) // Beginning of procedure
+        )
       {
+        qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
+
         // Use course and distance from last route leg to get to this point legs
         courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
         courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(procedureLeg.line.getPos1()));
@@ -375,6 +384,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRoute
     {
       if(getPosition() == prevPos)
       {
+        // Collapse any overlapping waypoints to avoid course display
         distanceTo = 0.f;
         distanceToRhumb = 0.f;
         courseTo = maptypes::INVALID_COURSE_VALUE;
@@ -385,8 +395,8 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRoute
       {
         distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
         distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
-        courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()));
-        courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()));
+        courseTo = normalizeCourse(prevLeg->getPosition().angleDegTo(getPosition()));
+        courseRhumbTo = normalizeCourse(prevLeg->getPosition().angleDegToRhumb(getPosition()));
         geometry = LineString({prevPos, getPosition()});
       }
     }
@@ -609,8 +619,10 @@ bool RouteLeg::isApproachPoint() const
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)
 {
-  out << "RouteLeg[id" << leg.getId() << leg.getPosition() << "distance" << leg.getDistanceTo()
-  << "course" << leg.getCourseToMag() << leg.getIdent() << leg.getMapObjectTypeName()
+  out << "RouteLeg[id" << leg.getId() << leg.getPosition()
+  << "magvar" << leg.getMagvar() << "distance" << leg.getDistanceTo()
+  << "course mag" << leg.getCourseToMag() << "course true" << leg.getCourseToTrue()
+  << leg.getIdent() << leg.getMapObjectTypeName()
   << maptypes::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
   return out;
 }

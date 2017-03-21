@@ -92,8 +92,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     const RouteLeg& leg = route->at(i);
     const RouteLeg& last = route->at(i - 1);
 
-    // Build text only for the route part - not for the approach
-    if(last.isRoute() || leg.isRoute())
+    // Draw if at least one is part of the route - also draw empty spaces between procedures
+    if(
+      last.isRoute() || leg.isRoute() ||  // Draw if any is route - also covers STAR to airport
+      (last.isDepartureProcedure() && leg.isAnyArrivalProcedure()) ||  // empty space from SID to STAR, transition or approach
+      (last.isStar() && leg.isArrivalProcedure())  // empty space from STAR to transition or approach
+      )
     {
       routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                         QString::number(leg.getCourseToRhumbMag(), 'f', 0) +

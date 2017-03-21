@@ -56,7 +56,7 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromDatabaseByEntry(int entryIndex, MapQuery *query,
-                                 const RouteLeg *predRouteMapObj);
+                                 const RouteLeg *prevLeg);
 
   /*
    * Creates a route map object from an airport database object.
@@ -65,16 +65,16 @@ public:
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
   void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                         const RouteLeg *predRouteMapObj);
+                         const RouteLeg *prevLeg);
 
   void createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
-                             const RouteLeg *predRouteMapObj);
+                             const RouteLeg *prevLeg);
 
   /*
    * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
    * @param predRouteMapObj
    */
-  void updateDistanceAndCourse(int entryIndex, const RouteLeg *predRouteMapObj);
+  void updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg);
 
   /* Get magvar from all known objects */
   void updateMagvar();

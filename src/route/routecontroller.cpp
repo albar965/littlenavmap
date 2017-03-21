@@ -481,7 +481,7 @@ void RouteController::newFlightplan()
   updateFlightplanFromWidgets();
 
   createRouteLegsFromFlightplan();
-  updateRouteLegs();
+  route.updateAll();
 
   updateTableModel();
   mainWindow->updateWindowTitle();
@@ -509,7 +509,7 @@ void RouteController::loadFlightplan(const atools::fs::pln::Flightplan& flightpl
   createRouteLegsFromFlightplan();
 
   loadProceduresFromFlightplan(false /* quiet */);
-  updateRouteLegs();
+  route.updateAll();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -626,7 +626,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.clearStarProcedure();
 
     createRouteLegsFromFlightplan();
-    updateRouteLegs();
+    route.updateAll();
 
     updateTableModel();
     postChange(undoCommand);
@@ -758,7 +758,7 @@ void RouteController::calculateDirect()
     flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
 
   createRouteLegsFromFlightplan();
-  updateRouteLegs();
+  route.updateAll();
 
   updateTableModel();
   updateWindowLabel();
@@ -917,7 +917,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       QGuiApplication::restoreOverrideCursor();
       createRouteLegsFromFlightplan();
       loadProceduresFromFlightplan(true /* quiet */);
-      updateRouteLegs();
+      route.updateAll();
 
       updateTableModel();
       updateWindowLabel();
@@ -1024,7 +1024,7 @@ void RouteController::reverseRoute()
   route.clearDepartureProcedure();
 
   createRouteLegsFromFlightplan();
-  updateRouteLegs();
+  route.updateAll();
   updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   updateTableModel();
@@ -1121,7 +1121,7 @@ void RouteController::postDatabaseLoad()
 
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
-  updateRouteLegs();
+  route.updateAll();
 
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
@@ -1481,7 +1481,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(true /* quiet */);
-  updateRouteLegs();
+  route.updateAll();
 
   updateTableModel();
   mainWindow->updateWindowTitle();
@@ -1594,7 +1594,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       eraseAirway(lastRow + 1);
     }
 
-    updateRouteLegs();
+    route.updateAll();
 
     // Force update of start if departure airport was moved
     updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
@@ -1667,7 +1667,7 @@ void RouteController::deleteSelectedLegs()
     if(procs & maptypes::PROCEDURE_DEPARTURE)
       route.clearDepartureProcedure();
 
-    updateRouteLegs();
+    route.updateAll();
 
     // Force update of start if departure airport was removed
     updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
@@ -1743,7 +1743,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
   route.getFlightplan().setDeparturePosition(parking.position);
   route.first().setDepartureParking(parking);
 
-  updateRouteLegs();
+  route.updateAll();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1780,7 +1780,7 @@ void RouteController::routeSetStartPosition(maptypes::MapStart start)
   route.getFlightplan().setDeparturePosition(start.position);
   route.first().setDepartureStart(start);
 
-  updateRouteLegs();
+  route.updateAll();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1806,7 +1806,7 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
 
   route.clearDepartureProcedure();
 
-  updateRouteLegs();
+  route.updateAll();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1858,7 +1858,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
   route.clearApproachAndTransProcedure();
   route.clearStarProcedure();
 
-  updateRouteLegs();
+  route.updateAll();
   routeToFlightPlan();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1945,7 +1945,7 @@ void RouteController::routeAttachProcedure(const maptypes::MapProcedureLegs& leg
     route.updateProcedureLegs(entryBuilder);
   }
 
-  updateRouteLegs();
+  route.updateAll();
   routeToFlightPlan();
 
   // Get type and cruise altitude from widgets
@@ -2008,7 +2008,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   if(procs & maptypes::PROCEDURE_DEPARTURE)
     route.clearDepartureProcedure();
 
-  updateRouteLegs();
+  route.updateAll();
   // Force update of start if departure airport was added
   updateStartPositionBestRunway(false /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2123,7 +2123,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   if(legIndex == 0)
     route.clearDepartureProcedure();
 
-  updateRouteLegs();
+  route.updateAll();
 
   // Force update of start if departure airport was changed
   updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
@@ -2161,7 +2161,7 @@ void RouteController::routeDelete(int index)
   if(index == 0)
     route.clearDepartureProcedure();
 
-  updateRouteLegs();
+  route.updateAll();
   // Force update of start if departure airport was removed
   updateStartPositionBestRunway(index == 0 /* force */, false /* undo */);
   routeToFlightPlan();
@@ -2265,13 +2265,6 @@ void RouteController::updateFlightplanFromWidgets()
   flightplan.setFlightplanType(
     ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
-}
-
-/* Update distance, course, bounding rect and total distance for route map objects.
- *  Also calculates maximum number of user points. */
-void RouteController::updateRouteLegs()
-{
-  route.updateAll();
 }
 
 /* Loads navaids from database and create all route map objects from flight plan.  */
