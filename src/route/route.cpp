@@ -745,6 +745,13 @@ void Route::updateAll()
 
 void Route::updateIndicesAndOffsets()
 {
+  if(activeLeg < maptypes::INVALID_INDEX_VALUE)
+  {
+    // Put the active back into bounds
+    activeLeg = std::min(activeLeg, size() - 1);
+    activeLeg = std::max(activeLeg, 0);
+  }
+
   departureLegsOffset = maptypes::INVALID_INDEX_VALUE;
   starLegsOffset = maptypes::INVALID_INDEX_VALUE;
   arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
