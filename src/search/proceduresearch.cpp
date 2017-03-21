@@ -33,9 +33,10 @@
 #include "util/htmlbuilder.h"
 #include "common/symbolpainter.h"
 #include "gui/itemviewzoomhandler.h"
-#include "route/routecontroller.h"
+#include "route/route.h"
 #include "gui/griddelegate.h"
 #include "geo/calculations.h"
+#include "gui/dialog.h"
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -273,10 +274,9 @@ void ProcedureSearch::clearRunwayFilter()
 
   ui->comboBoxProcedureRunwayFilter->blockSignals(true);
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
+  ui->comboBoxProcedureRunwayFilter->clear();
+  ui->comboBoxProcedureRunwayFilter->addItem(tr("All Runways"));
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);
-
-  for(int i = 1; i < ui->comboBoxProcedureRunwayFilter->count(); i++)
-    ui->comboBoxProcedureRunwayFilter->removeItem(1);
 }
 
 void ProcedureSearch::fillRunwayFilter()
@@ -619,7 +619,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   Q_UNUSED(saver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
-  int itemRow = treeWidget->invisibleRootItem()->indexOfChild(item);
   MapProcedureRef ref;
   if(item != nullptr)
     ref = itemIndex.at(item->type());
@@ -627,13 +626,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
-  const Route& rmos = mainWindow->getRouteController()->getRoute();
-
-#ifdef DEBUG_MOVING_AIRPLANE
-  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty());
-#else
-  ui->actionInfoApproachActivateLeg->setDisabled(rmos.isEmpty() || mainWindow->isConnected());
-#endif
+  const Route& route = mainWindow->getRoute();
 
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
@@ -665,8 +658,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
 
   ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
-
-  const Route& route = mainWindow->getRouteController()->getRoute();
 
   if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
      (route.hasValidDestination() && route.last().getId() == currentAirport.id))
@@ -725,11 +716,26 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
 
     if(legs != nullptr)
-      emit routeInsertProcedure(*legs);
+    {
+      if(legs->hasError)
+      {
+        int result = atools::gui::Dialog(mainWindow).
+                     showQuestionMsgBox(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING,
+                                        tr("Procedure has errors and will not display correctly.\n"
+                                           "Really use it?"),
+                                        tr("Do not &show this dialog again."),
+                                        QMessageBox::Yes | QMessageBox::No,
+                                        QMessageBox::No, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
+          emit routeInsertProcedure(*legs);
+      }
+      else
+        emit routeInsertProcedure(*legs);
+    }
+    else
+      qDebug() << Q_FUNC_INFO << "legs not found";
   }
-  else if(action == ui->actionInfoApproachActivateLeg)
-    // Will call this class back to highlight row
-    mainWindow->getRouteController()->activateLeg(itemRow);
 
   // Done by the actions themselves
   // else if(action == ui->actionInfoApproachShowAppr ||
@@ -1023,9 +1029,6 @@ void ProcedureSearch::createFonts()
 
   invalidLegFont = legFont;
   invalidLegFont.setBold(true);
-
-  activeLegFont = legFont;
-  activeLegFont.setBold(true);
 }
 
 QTreeWidgetItem *ProcedureSearch::parentApproachItem(QTreeWidgetItem *item) const

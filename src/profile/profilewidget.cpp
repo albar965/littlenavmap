@@ -107,14 +107,14 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   if(!routeController->isFlightplanEmpty())
   {
-    const Route& rmoList = routeController->getRoute();
+    const Route& route = routeController->getRoute();
 
     if((showAircraft || showAircraftTrack))
     {
-      if(!rmoList.isPassedLastLeg() && !rmoList.isActiveMissed())
+      if(!route.isPassedLastLeg() && !route.isActiveMissed())
       {
         simData = simulatorData;
-        if(rmoList.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
+        if(route.getRouteDistances(&aircraftDistanceFromStart, &aircraftDistanceToDest))
         {
           // Get screen point from last update
           QPoint lastPoint;
@@ -268,14 +268,14 @@ void ProfileWidget::updateScreenCoords()
   if(!routeController->isFlightplanEmpty() && showAircraftTrack)
   {
     // Update aircraft track screen coordinates
-    const Route& rmoList = legList.route;
+    const Route& route = legList.route;
     const AircraftTrack& aircraftTrack = mapWidget->getAircraftTrack();
 
     for(int i = 0; i < aircraftTrack.size(); i++)
     {
       const Pos& aircraftPos = aircraftTrack.at(i).pos;
       float distFromStart = 0.f;
-      if(rmoList.getRouteDistances(&distFromStart, nullptr))
+      if(route.getRouteDistances(&distFromStart, nullptr))
       {
         QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
                   Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
@@ -352,6 +352,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.setPen(mapcolors::profileSafeAltLegLinePen);
   for(int i = 0; i < legList.elevationLegs.size(); i++)
   {
+    if(waypointX.at(i) == waypointX.at(i + 1))
+      // Skip zero length segments to avoid dots on the graph
+      continue;
+
     const ElevationLeg& leg = legList.elevationLegs.at(i);
     int lineY = Y0 + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
     painter.drawLine(waypointX.at(i), lineY, waypointX.at(i + 1), lineY);
@@ -398,59 +402,65 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
 
-  // Draw the most unimportant symbols and texts first
-  for(int i = legList.route.size() - 1; i >= 0; i--)
+  // Collect indexes in reverse (painting) order without missed
+  QVector<int> indexes;
+  for(int i = 0; i < legList.route.size(); i++)
   {
-    const RouteLeg& routeLeg = legList.route.at(i);
-    if(!routeLeg.isMissed())
+    if(legList.route.at(i).isMissed())
+      break;
+    else
+      indexes.prepend(i);
+  }
+
+  // Draw the most unimportant symbols and texts first
+  int waypointIndex = waypointX.size();
+  for(int routeIndex : indexes)
+  {
+    const RouteLeg& leg = legList.route.at(routeIndex);
+    int symx = waypointX.at(--waypointIndex);
+
+    maptypes::MapObjectTypes type = leg.getMapObjectType();
+
+    if(type == maptypes::WAYPOINT || leg.getWaypoint().isValid())
     {
-      int symx = waypointX.at(i);
-
-      maptypes::MapObjectTypes type = routeLeg.getMapObjectType();
-
-      if(type == maptypes::WAYPOINT || routeLeg.getWaypoint().isValid())
-      {
-        symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
-        symPainter.drawWaypointText(&painter, routeLeg.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
-      }
-      else if(type == maptypes::USER)
-      {
-        symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
-        symPainter.textBox(&painter, {routeLeg.getIdent()}, mapcolors::routeUserPointColor,
-                           symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-      }
-      else if(type == maptypes::INVALID)
-      {
-        symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
-        symPainter.textBox(&painter, {routeLeg.getIdent()}, mapcolors::routeInvalidPointColor,
-                           symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
-      }
-      else if(type == maptypes::PROCEDURE_APPROACH || type == maptypes::PROCEDURE_TRANSITION)
-        // Missed is not included
-        symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
+      symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
+      symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
     }
+    else if(type == maptypes::USER)
+    {
+      symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
+      symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeUserPointColor,
+                         symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+    }
+    else if(type == maptypes::INVALID)
+    {
+      symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
+      symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeInvalidPointColor,
+                         symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
+    }
+    else if(type == maptypes::PROCEDURE_APPROACH || type == maptypes::PROCEDURE_TRANSITION)
+      // Missed is not included
+      symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
   }
 
   // Draw the more important radio navaids
-  for(int i = legList.route.size() - 1; i >= 0; i--)
+  waypointIndex = waypointX.size();
+  for(int routeIndex : indexes)
   {
-    const RouteLeg& routeLeg = legList.route.at(i);
-    if(!routeLeg.isMissed())
+    const RouteLeg& leg = legList.route.at(routeIndex);
+    int symx = waypointX.at(--waypointIndex);
+
+    maptypes::MapObjectTypes type = leg.getMapObjectType();
+
+    if(type == maptypes::NDB || leg.getNdb().isValid())
     {
-      int symx = waypointX.at(i);
-
-      maptypes::MapObjectTypes type = routeLeg.getMapObjectType();
-
-      if(type == maptypes::NDB || routeLeg.getNdb().isValid())
-      {
-        symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
-        symPainter.drawNdbText(&painter, routeLeg.getNdb(), symx - 5, flightplanY + 18, flags, 10, true);
-      }
-      else if(type == maptypes::VOR || routeLeg.getVor().isValid())
-      {
-        symPainter.drawVorSymbol(&painter, routeLeg.getVor(), symx, flightplanY, 12, true, false, false);
-        symPainter.drawVorText(&painter, routeLeg.getVor(), symx - 5, flightplanY + 18, flags, 10, true);
-      }
+      symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
+      symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, flightplanY + 18, flags, 10, true);
+    }
+    else if(type == maptypes::VOR || leg.getVor().isValid())
+    {
+      symPainter.drawVorSymbol(&painter, leg.getVor(), symx, flightplanY, 12, true, false, false);
+      symPainter.drawVorText(&painter, leg.getVor(), symx - 5, flightplanY + 18, flags, 10, true);
     }
   }
 
@@ -458,21 +468,19 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   font.setBold(true);
   font.setPointSizeF(defaultFontSize);
   painter.setFont(font);
-  for(int i = legList.route.size() - 1; i >= 0; i--)
+  waypointIndex = waypointX.size();
+  for(int routeIndex : indexes)
   {
-    const RouteLeg& routeLeg = legList.route.at(i);
-    if(!routeLeg.isMissed())
+    const RouteLeg& leg = legList.route.at(routeIndex);
+    int symx = waypointX.at(--waypointIndex);
+
+    int symy = flightplanY;
+
+    if(leg.getMapObjectType() == maptypes::AIRPORT)
     {
-      int symx = waypointX.at(i);
-
-      int symy = flightplanY;
-
-      if(routeLeg.getMapObjectType() == maptypes::AIRPORT)
-      {
-        symPainter.drawAirportSymbol(&painter, routeLeg.getAirport(), symx, symy, 10, false, false);
-        symPainter.drawAirportText(&painter, routeLeg.getAirport(), symx - 5, symy + 22,
-                                   OptionData::instance().getDisplayOptions(), flags, 10, false);
-      }
+      symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, symy, 10, false, false);
+      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, symy + 22,
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }
 
@@ -753,7 +761,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     if(routeLeg.isMissed())
       break;
 
-    const RouteLeg& lastRmo = legs.route.at(i - 1);
+    const RouteLeg& lastLeg = legs.route.at(i - 1);
     ElevationLeg leg;
 
     if(routeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM)
@@ -762,7 +770,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
       if(routeLeg.isAnyProcedure() && routeLeg.getGeometry().size() > 2)
         geometry = routeLeg.getGeometry();
       else
-        geometry << lastRmo.getPosition() << routeLeg.getPosition();
+        geometry << lastLeg.getPosition() << routeLeg.getPosition();
 
       LineString elevations;
       if(!fetchRouteElevations(elevations, geometry))
@@ -811,11 +819,11 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
     }
     else
     {
-      float dist = meterToNm(lastRmo.getPosition().distanceMeterTo(routeLeg.getPosition()));
+      float dist = meterToNm(lastLeg.getPosition().distanceMeterTo(routeLeg.getPosition()));
       leg.distances.append(legs.totalDistance);
       legs.totalDistance += dist;
       leg.distances.append(legs.totalDistance);
-      leg.elevation.append(lastRmo.getPosition());
+      leg.elevation.append(lastLeg.getPosition());
       leg.elevation.append(routeLeg.getPosition());
     }
     legs.elevationLegs.append(leg);

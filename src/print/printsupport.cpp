@@ -91,13 +91,13 @@ void PrintSupport::fillWeatherCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const Route& rmos = mainWindow->getRouteController()->getRoute();
+  const Route& route = mainWindow->getRoute();
 
-  if(!rmos.isEmpty())
+  if(!route.isEmpty())
   {
     maptypes::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContext(currentWeatherContext, rmos.first().getAirport());
-    mainWindow->buildWeatherContext(currentWeatherContext, rmos.last().getAirport());
+    mainWindow->buildWeatherContext(currentWeatherContext, route.first().getAirport());
+    mainWindow->buildWeatherContext(currentWeatherContext, route.last().getAirport());
   }
 }
 
@@ -192,11 +192,11 @@ void PrintSupport::createFlightplanDocuments()
   prt::PrintFlightPlanOpts opts = printFlightplanDialog->getPrintOptions();
   atools::util::HtmlBuilder html(false);
 
-  const Route& rmos = mainWindow->getRouteController()->getRoute();
+  const Route& route = mainWindow->getRoute();
 
   bool printFlightplan = opts & prt::FLIGHTPLAN;
-  bool printAnyDeparture = rmos.hasValidDeparture() && opts & prt::DEPARTURE_ANY;
-  bool printAnyDestination = rmos.hasValidDestination() && opts & prt::DESTINATION_ANY;
+  bool printAnyDeparture = route.hasValidDeparture() && opts & prt::DEPARTURE_ANY;
+  bool printAnyDestination = route.hasValidDestination() && opts & prt::DESTINATION_ANY;
 
   if(printFlightplan)
   {
@@ -226,27 +226,27 @@ void PrintSupport::createFlightplanDocuments()
       HtmlBuilder departureHtml(true);
       if(opts & prt::DEPARTURE_OVERVIEW)
       {
-        mainWindow->buildWeatherContext(weatherContext, rmos.first().getAirport());
+        mainWindow->buildWeatherContext(weatherContext, route.first().getAirport());
         builder.airportText(
-          rmos.first().getAirport(), weatherContext, departureHtml, nullptr, Qt::white);
+          route.first().getAirport(), weatherContext, departureHtml, nullptr, Qt::white);
       }
 
       HtmlBuilder departureRunway(true);
       if(opts & prt::DEPARTURE_RUNWAYS)
-        builder.runwayText(rmos.first().getAirport(), departureRunway, Qt::white,
+        builder.runwayText(route.first().getAirport(), departureRunway, Qt::white,
                            opts & prt::DEPARTURE_RUNWAYS_DETAIL, opts & prt::DEPARTURE_RUNWAYS_SOFT);
 
       HtmlBuilder departureCom(true);
       if(opts & prt::DEPARTURE_COM)
-        builder.comText(rmos.first().getAirport(), departureCom, Qt::white);
+        builder.comText(route.first().getAirport(), departureCom, Qt::white);
 
       HtmlBuilder departureWeather(true);
       if(opts & prt::DEPARTURE_WEATHER)
-        builder.weatherText(weatherContext, rmos.first().getAirport(), departureCom, Qt::white);
+        builder.weatherText(weatherContext, route.first().getAirport(), departureCom, Qt::white);
 
       HtmlBuilder departureAppr(true);
       if(opts & prt::DEPARTURE_APPR)
-        builder.procedureText(rmos.first().getAirport(), departureAppr, Qt::white);
+        builder.procedureText(route.first().getAirport(), departureAppr, Qt::white);
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;
@@ -284,27 +284,27 @@ void PrintSupport::createFlightplanDocuments()
       HtmlBuilder destinationHtml(true);
       if(opts & prt::DESTINATION_OVERVIEW)
       {
-        mainWindow->buildWeatherContext(weatherContext, rmos.last().getAirport());
+        mainWindow->buildWeatherContext(weatherContext, route.last().getAirport());
         builder.airportText(
-          rmos.last().getAirport(), weatherContext, destinationHtml, nullptr, Qt::white);
+          route.last().getAirport(), weatherContext, destinationHtml, nullptr, Qt::white);
       }
 
       HtmlBuilder destinationRunway(true);
       if(opts & prt::DESTINATION_RUNWAYS)
-        builder.runwayText(rmos.last().getAirport(), destinationRunway, Qt::white,
+        builder.runwayText(route.last().getAirport(), destinationRunway, Qt::white,
                            opts & prt::DESTINATION_RUNWAYS_DETAIL, opts & prt::DESTINATION_RUNWAYS_SOFT);
 
       HtmlBuilder destinationCom(true);
       if(opts & prt::DESTINATION_COM)
-        builder.comText(rmos.last().getAirport(), destinationCom, Qt::white);
+        builder.comText(route.last().getAirport(), destinationCom, Qt::white);
 
       HtmlBuilder destinationWeather(true);
       if(opts & prt::DESTINATION_WEATHER)
-        builder.weatherText(weatherContext, rmos.last().getAirport(), destinationCom, Qt::white);
+        builder.weatherText(weatherContext, route.last().getAirport(), destinationCom, Qt::white);
 
       HtmlBuilder destinationAppr(true);
       if(opts & prt::DESTINATION_APPR)
-        builder.procedureText(rmos.last().getAirport(), destinationAppr, Qt::white);
+        builder.procedureText(route.last().getAirport(), destinationAppr, Qt::white);
 
       // Calculate the number of table columns - need to calculate column width in percent
       int numCols = 0;

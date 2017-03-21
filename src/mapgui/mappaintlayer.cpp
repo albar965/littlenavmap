@@ -28,7 +28,7 @@
 #include "mapgui/mappainternav.h"
 #include "mapgui/mappainterroute.h"
 #include "mapgui/mapscale.h"
-#include "route/routecontroller.h"
+#include "route/route.h"
 #include "options/optiondata.h"
 
 #include <QElapsedTimer>
@@ -49,9 +49,9 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   // Create all painters
   mapPainterNav = new MapPainterNav(mapWidget, mapQuery, mapScale);
   mapPainterIls = new MapPainterIls(mapWidget, mapQuery, mapScale);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, mapWidget->getRouteController());
+  mapPainterAirport = new MapPainterAirport(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
   mapPainterMark = new MapPainterMark(mapWidget, mapQuery, mapScale);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, mapWidget->getRouteController());
+  mapPainterRoute = new MapPainterRoute(mapWidget, mapQuery, mapScale, &mapWidget->getRoute());
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
 
   // Default for visible object types

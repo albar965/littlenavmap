@@ -81,6 +81,7 @@ private:
 
   void postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
   void processLegs(maptypes::MapProcedureLegs& legs);
+  void processLegErrors(maptypes::MapProcedureLegs& legs);
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(maptypes::MapProcedureLegs& legs);
@@ -101,7 +102,7 @@ private:
 
   void assignType(maptypes::MapProcedureLegs& approach);
   maptypes::MapProcedureLeg createRunwayLeg(const maptypes::MapProcedureLeg& leg,
-                                           const maptypes::MapProcedureLegs& legs);
+                                            const maptypes::MapProcedureLegs& legs);
   maptypes::MapProcedureLeg createStartLeg(const maptypes::MapProcedureLeg& leg, const maptypes::MapProcedureLegs& legs);
 
   maptypes::MapProcedureLegs *buildApproachLegs(const maptypes::MapAirport& airport, int approachId);

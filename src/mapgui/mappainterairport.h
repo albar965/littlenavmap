@@ -29,7 +29,7 @@ struct MapRunway;
 
 }
 
-class RouteController;
+class Route;
 
 /*
  * Draws airport symbols, runway overview and complete airport diagram. Airport details are also drawn for
@@ -41,13 +41,13 @@ class MapPainterAirport :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
+  MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterAirport();
 
   virtual void render(PaintContext *context) override;
 
 private:
-  void drawAirportSymbol(PaintContext* context, const maptypes::MapAirport& ap, float x, float y);
+  void drawAirportSymbol(PaintContext *context, const maptypes::MapAirport& ap, float x, float y);
 
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 
@@ -64,7 +64,7 @@ private:
   static Q_DECL_CONSTEXPR int TAXIWAY_TEXT_MIN_LENGTH = 40;
   static Q_DECL_CONSTEXPR int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
   static Q_DECL_CONSTEXPR float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
-  RouteController *routeController;
+  const Route *route;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

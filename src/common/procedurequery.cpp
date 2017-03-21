@@ -523,6 +523,8 @@ void ProcedureQuery::postProcessLegs(const maptypes::MapAirport& airport, maptyp
 
   updateBoundingAndDirection(airport, legs);
 
+  processLegErrors(legs);
+
   qDebug() << legs;
 }
 
@@ -546,7 +548,7 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
     else
     {
       // if(!legs.first().line.isPoint())
-      if(legs.first().type == maptypes::COURSE_TO_FIX)
+      if(!contains(legs.first().type, {maptypes::INITIAL_FIX}))
       {
         // Add an artificial initial fix to keep all consistent
         maptypes::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
@@ -592,6 +594,13 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
       }
     }
   }
+}
+
+void ProcedureQuery::processLegErrors(maptypes::MapProcedureLegs& legs)
+{
+  legs.hasError = false;
+  for(int i = 1; i < legs.size(); i++)
+    legs.hasError |= legs.at(i).hasErrorRef();
 }
 
 void ProcedureQuery::processLegsFixRestrictions(maptypes::MapProcedureLegs& legs)
@@ -1479,7 +1488,15 @@ maptypes::MapProcedureLeg ProcedureQuery::createStartLeg(const maptypes::MapProc
   sleg.legId = START_LEG_ID_BASE + leg.legId;
   sleg.displayText.append(tr("Start"));
   // geometry is populated later
-  sleg.fixPos = legs.runwayEnd.position;
+
+  sleg.fixPos = leg.fixPos;
+  sleg.fixIdent = leg.fixIdent;
+  sleg.fixRegion = leg.fixRegion;
+  sleg.fixType = leg.fixType;
+  sleg.navId = leg.navId;
+  sleg.navaids = leg.navaids;
+
+  // Correct distance is calculated in the RouteLeg to get a transition from route to procedure
   sleg.time = 0.f;
   sleg.theta = 0.f;
   sleg.rho = 0.f;

@@ -74,7 +74,7 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
 }
 
 void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
-                                       const RouteLeg *predRouteMapObj)
+                                 const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
   type = maptypes::AIRPORT;
@@ -86,7 +86,7 @@ void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& new
 }
 
 void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
-                                           const RouteLeg *predRouteMapObj)
+                                     const RouteLeg *predRouteMapObj)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
@@ -346,34 +346,50 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *predRoute
 {
   index = entryIndex;
 
-  if(isAnyProcedure())
+  if(predRouteMapObj != nullptr)
   {
-    if(predRouteMapObj != nullptr && predRouteMapObj->isRoute() && procedureLeg.line.isPoint())
+    const Pos& prevPos = predRouteMapObj->getPosition();
+
+    if(isAnyProcedure())
     {
-      const Pos& prevPos = predRouteMapObj->getPosition();
-      courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
-      courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(procedureLeg.line.getPos1()));
-      distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
-      distanceToRhumb = meterToNm(procedureLeg.line.getPos1().distanceMeterToRhumb(prevPos));
+      if(predRouteMapObj->isRoute() &&
+         atools::contains(procedureLeg.type, {maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE}))
+      {
+        // Use course and distance from last route leg to get to this point legs
+        courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
+        courseRhumbTo = normalizeCourse(prevPos.angleDegToRhumb(procedureLeg.line.getPos1()));
+        distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
+        distanceToRhumb = meterToNm(procedureLeg.line.getPos1().distanceMeterToRhumb(prevPos));
+      }
+      else
+      {
+        // Use course and distance from last procedure leg
+        courseTo = procedureLeg.calculatedTrueCourse;
+        courseRhumbTo = procedureLeg.calculatedTrueCourse;
+        distanceTo = procedureLeg.calculatedDistance;
+        distanceToRhumb = procedureLeg.calculatedDistance;
+      }
+      geometry = procedureLeg.geometry;
     }
     else
     {
-      courseTo = procedureLeg.calculatedTrueCourse;
-      courseRhumbTo = procedureLeg.calculatedTrueCourse;
-      distanceTo = procedureLeg.calculatedDistance;
-      distanceToRhumb = procedureLeg.calculatedDistance;
+      if(getPosition() == prevPos)
+      {
+        distanceTo = 0.f;
+        distanceToRhumb = 0.f;
+        courseTo = maptypes::INVALID_COURSE_VALUE;
+        courseRhumbTo = maptypes::INVALID_COURSE_VALUE;
+        geometry = LineString({getPosition()});
+      }
+      else
+      {
+        distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
+        distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
+        courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()));
+        courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()));
+        geometry = LineString({prevPos, getPosition()});
+      }
     }
-
-    geometry = procedureLeg.geometry;
-  }
-  else if(predRouteMapObj != nullptr)
-  {
-    const Pos& prevPos = predRouteMapObj->getPosition();
-    distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
-    distanceToRhumb = meterToNm(getPosition().distanceMeterToRhumb(prevPos));
-    courseTo = normalizeCourse(predRouteMapObj->getPosition().angleDegTo(getPosition()));
-    courseRhumbTo = normalizeCourse(predRouteMapObj->getPosition().angleDegToRhumb(getPosition()));
-    geometry = LineString({prevPos, getPosition()});
   }
   else
   {
@@ -449,12 +465,13 @@ QString RouteLeg::getMapObjectTypeName() const
 
 float RouteLeg::getCourseToMag() const
 {
-  return atools::geo::normalizeCourse(courseTo - magvar);
+  return courseTo < maptypes::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseTo - magvar) : courseTo;
 }
 
 float RouteLeg::getCourseToRhumbMag() const
 {
-  return atools::geo::normalizeCourse(courseRhumbTo - magvar);
+  return courseRhumbTo <
+         maptypes::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseRhumbTo - magvar) : courseTo;
 }
 
 const atools::geo::Pos& RouteLeg::getPosition() const
@@ -588,4 +605,12 @@ bool RouteLeg::isApproachPoint() const
                             maptypes::HOLD_TO_MANUAL_TERMINATION}) &&
          (procedureLeg.geometry.isPoint() || procedureLeg.type == maptypes::INITIAL_FIX ||
           procedureLeg.type == maptypes::START_OF_PROCEDURE);
+}
+
+QDebug operator<<(QDebug out, const RouteLeg& leg)
+{
+  out << "RouteLeg[id" << leg.getId() << leg.getPosition() << "distance" << leg.getDistanceTo()
+  << "course" << leg.getCourseToMag() << leg.getIdent() << leg.getMapObjectTypeName()
+  << maptypes::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
+  return out;
 }

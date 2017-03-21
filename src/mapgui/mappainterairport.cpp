@@ -39,8 +39,8 @@ using namespace atools::geo;
 using namespace maptypes;
 
 MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                                     RouteController *controller)
-  : MapPainter(mapWidget, mapQuery, mapScale), routeController(controller)
+                                     const Route *routeParam)
+  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
 {
 }
 
@@ -56,7 +56,7 @@ void MapPainterAirport::render(PaintContext *context)
 
   if(context->objectTypes.testFlag(maptypes::ROUTE))
   {
-    for(const RouteLeg& routeLeg : routeController->getRoute())
+    for(const RouteLeg& routeLeg : *route)
     {
       if(routeLeg.getMapObjectType() == maptypes::AIRPORT)
       {

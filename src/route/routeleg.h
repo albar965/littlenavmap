@@ -222,20 +222,27 @@ public:
     index = value;
   }
 
-  const maptypes::MapProcedureLeg& getApproachLeg() const
+  const maptypes::MapProcedureLeg& getProcedureLeg() const
   {
     return procedureLeg;
   }
 
   /* invalid type if not an approach */
-  maptypes::ProcedureLegType getApproachLegType() const
+  maptypes::ProcedureLegType getProcedureLegType() const
   {
     return procedureLeg.type;
   }
 
+  /* Approach, missed or transition */
   bool isArrivalProcedure() const
   {
     return procedureLeg.mapType & maptypes::PROCEDURE_ARRIVAL;
+  }
+
+  /* Approach, missed, transition or STAR */
+  bool isAnyArrivalProcedure() const
+  {
+    return procedureLeg.mapType & maptypes::PROCEDURE_ARRIVAL_ALL;
   }
 
   bool isDepartureProcedure() const
@@ -317,5 +324,7 @@ private:
         magvar = 0.f; /* Either taken from navaid or average across the route */
   atools::geo::LineString geometry;
 };
+
+QDebug operator<<(QDebug out, const RouteLeg& leg);
 
 #endif // LITTLENAVMAP_ROUTELEG_H

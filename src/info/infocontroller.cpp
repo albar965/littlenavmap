@@ -24,7 +24,7 @@
 #include "gui/widgetutil.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapquery.h"
-#include "route/routecontroller.h"
+#include "route/route.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
@@ -252,8 +252,7 @@ void InfoController::updateProgress()
   {
     // ok - scrollbars not pressed
     html.clear();
-    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html,
-                                      mainWindow->getRouteController()->getRoute());
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, mainWindow->getRoute());
     atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
   }
 }
@@ -280,9 +279,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
-      infoBuilder->airportText(airport, currentWeatherContext, html,
-                               &mainWindow->getRouteController()->getRoute(),
-                               iconBackColor);
+      infoBuilder->airportText(airport, currentWeatherContext, html, &mainWindow->getRoute(), iconBackColor);
 
       Ui::MainWindow *ui = mainWindow->getUi();
       if(newAirport)
@@ -537,8 +534,7 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
       {
         // ok - scrollbars not pressed
         html.clear();
-        infoBuilder->aircraftProgressText(data.getUserAircraft(), html,
-                                          mainWindow->getRouteController()->getRoute());
+        infoBuilder->aircraftProgressText(data.getUserAircraft(), html, mainWindow->getRoute());
         atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
       }
 

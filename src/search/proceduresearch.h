@@ -161,7 +161,7 @@ private:
   ProcedureQuery *procedureQuery = nullptr;
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
-  QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, activeLegFont, identFont;
+  QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
   maptypes::MapAirport currentAirport;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex

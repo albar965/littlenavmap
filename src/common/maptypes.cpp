@@ -1040,7 +1040,7 @@ QDebug operator<<(QDebug out, const ProcedureLegType& type)
 
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
-  out << "==========================" << endl;
+  out << "ProcedureLeg =====" << endl;
   out << "maptype" << legs.mapType;
 
   out << "approachDistance" << legs.approachDistance
@@ -1068,7 +1068,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 
 QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
-  out << "=============" << endl;
+  out << "ProcedureLegs =============" << endl;
   out << "approachId" << leg.approachId
   << "transitionId" << leg.transitionId
   << "legId" << leg.legId
@@ -1146,6 +1146,18 @@ QString ndbFullShortText(const MapNdb& ndb)
 {
   QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
   return QObject::tr("NDB (%1)").arg(type);
+}
+
+bool MapProcedureLeg::hasInvalidRef() const
+{
+  return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
+}
+
+bool MapProcedureLeg::hasErrorRef() const
+{
+  return (!fixIdent.isEmpty() && !fixPos.isValid()) ||
+         (!recFixIdent.isEmpty() && !recFixPos.isValid() &&
+          atools::contains(type, {maptypes::ARC_TO_FIX, CONSTANT_RADIUS_ARC}));
 }
 
 bool MapProcedureLeg::isHold() const

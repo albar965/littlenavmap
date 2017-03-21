@@ -291,6 +291,11 @@ maptypes::MapObjectTypes MainWindow::getShownMapFeatures() const
   return mapWidget->getShownMapFeatures();
 }
 
+const Route& MainWindow::getRoute() const
+{
+  return routeController->getRoute();
+}
+
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
@@ -1567,6 +1572,7 @@ void MainWindow::resetMessages()
   // Show all message dialogs again
   s.setValue(lnm::ACTIONS_SHOWDISCONNECTINFO, true);
   s.setValue(lnm::ACTIONS_SHOWQUIT, true);
+  s.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
   s.setValue(lnm::ACTIONS_SHOWRESETVIEW, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEPARKINGWARNING, true);
   s.setValue(lnm::ACTIONS_SHOWROUTEWARNING, true);

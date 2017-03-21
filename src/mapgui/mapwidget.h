@@ -216,6 +216,7 @@ public:
   void setMapDetail(int factor);
 
   RouteController *getRouteController() const;
+  const Route& getRoute();
 
   /* Update the shown map object types depending on action status (toolbar or menu) */
   void updateMapObjectsShown();

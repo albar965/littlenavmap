@@ -116,7 +116,7 @@ void MapScreenIndex::updateRouteScreenGeometry()
 {
   using atools::geo::Pos;
 
-  const Route& route = mapWidget->getRouteController()->getRoute();
+  const Route& route = mapWidget->getRoute();
 
   routeLines.clear();
   routePoints.clear();
@@ -134,19 +134,23 @@ void MapScreenIndex::updateRouteScreenGeometry()
     for(int i = 0; i < route.size(); i++)
     {
       const RouteLeg& routeLeg = route.at(i);
-      if(i > 0 && route.at(i - 1).isAnyProcedure())
-        continue;
 
-      const Pos& p2 = route.at(i).getPosition();
-      maptypes::MapObjectTypes type = routeLeg.getMapObjectType();
+      const Pos& p2 = routeLeg.getPosition();
       int x2, y2;
       conv.wToS(p2, x2, y2);
 
+      maptypes::MapObjectTypes type = routeLeg.getMapObjectType();
       if(type == maptypes::AIRPORT && (i == 0 || i == route.size() - 1))
         // Departure or destination airport
         airportPoints.append(std::make_pair(i, QPoint(x2, y2)));
-      else
+      else if(route.canEditPoint(i))
         otherPoints.append(std::make_pair(i, QPoint(x2, y2)));
+
+      if(!route.canEditLeg(i))
+      {
+        p1 = p2;
+        continue;
+      }
 
       if(p1.isValid())
       {
@@ -217,10 +221,12 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
 
   if(paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
     // Get copies from flight plan if visible
-    mapWidget->getRouteController()->getRoute().getNearest(conv, xs, ys, maxDistance, result);
+    mapWidget->getRoute().getNearest(conv, xs, ys, maxDistance, result, true /* include procs */);
+
+  // Get points of procedure preview
+  getNearestProcedureHighlights(xs, ys, maxDistance, result);
 
   // Get copies from highlightMapObjects
-  getNearestApproachHighlights(xs, ys, maxDistance, result);
   getNearestHighlights(xs, ys, maxDistance, result);
 
   // Get objects from cache - already present objects will be skipped
@@ -274,7 +280,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, mapty
         insertSortedByDistance(conv, result.runwayEnds, nullptr, xs, ys, obj);
 }
 
-void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result)
+void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result)
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
@@ -284,11 +290,6 @@ void MapScreenIndex::getNearestApproachHighlights(int xs, int ys, int maxDistanc
   for(int i = 0; i < approachHighlight.size(); i++)
   {
     const maptypes::MapProcedureLeg& leg = approachHighlight.at(i);
-
-    if((!(mapWidget->getShownMapFeatures() & maptypes::PROCEDURE_APPROACH) && leg.isApproach()) ||
-       (!(mapWidget->getShownMapFeatures() & maptypes::PROCEDURE_MISSED) && leg.isMissed()) ||
-       (!(mapWidget->getShownMapFeatures() & maptypes::PROCEDURE_TRANSITION) && leg.isTransition()))
-      continue;
 
     for(const maptypes::MapAirport& obj : leg.navaids.airports)
       if(conv.wToS(obj.position, x, y))
@@ -361,6 +362,7 @@ int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
       minIndex = rsp.first;
     }
   }
+
   return minIndex;
 }
 

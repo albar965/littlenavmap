@@ -31,13 +31,15 @@ class ItemViewZoomHandler;
 }
 }
 
+class MainWindow;
+
 class AbstractSearch :
   public QObject
 {
   Q_OBJECT
 
 public:
-  AbstractSearch(QObject *parent, int tabWidgetIndex);
+  AbstractSearch(MainWindow *parent, int tabWidgetIndex);
   virtual ~AbstractSearch();
 
   /* Disconnect and reconnect queries on database change */
@@ -67,6 +69,7 @@ protected:
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   /* Tab index of this search tab on the search dock window */
   int tabIndex;
+  MainWindow *mainWindow = nullptr;
 
 };
 

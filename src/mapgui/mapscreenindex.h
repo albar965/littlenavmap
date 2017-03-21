@@ -172,7 +172,7 @@ public:
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
   void getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
-  void getNearestApproachHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;

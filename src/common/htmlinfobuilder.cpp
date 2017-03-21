@@ -1556,18 +1556,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(activeLegCorrected != maptypes::INVALID_INDEX_VALUE)
       {
         // If approaching an initial fix use corrected version
-        const RouteLeg& rmoCorrected = route.at(activeLegCorrected);
+        const RouteLeg& routeLegCorrected = route.at(activeLegCorrected);
 
         // For course and distance use not corrected leg
         const RouteLeg& routeLeg = activeLeg != maptypes::INVALID_INDEX_VALUE && isCorrected ?
-                                   route.at(activeLeg) :
-                                   rmoCorrected;
+                                   route.at(activeLeg) : routeLegCorrected;
 
-        const MapProcedureLeg& leg = rmoCorrected.getApproachLeg();
+        const MapProcedureLeg& leg = routeLegCorrected.getProcedureLeg();
         bool routeTrueCourse = route.isTrueCourse();
 
         // Next leg - approach data ====================================================
-        if(rmoCorrected.isAnyProcedure())
+        if(routeLegCorrected.isAnyProcedure())
         {
           html.row2(tr("Leg Type:"), maptypes::procedureLegTypeStr(leg.type));
 
@@ -1589,10 +1588,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
 
         // Next leg - waypoint data ====================================================
-        if(!rmoCorrected.getIdent().isEmpty())
-          html.row2(tr("Name and Type:"), rmoCorrected.getIdent() +
-                    (rmoCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
-                     rmoCorrected.getMapObjectTypeName()));
+        if(!routeLegCorrected.getIdent().isEmpty())
+          html.row2(tr("Name and Type:"), routeLegCorrected.getIdent() +
+                    (routeLegCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
+                     routeLegCorrected.getMapObjectTypeName()));
 
         // Next leg - approach related navaid ====================================================
         if(!leg.recFixIdent.isEmpty())
@@ -1605,7 +1604,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(tr("Related Navaid:"), tr("%1").arg(leg.recFixIdent));
         }
 
-        if(rmoCorrected.isAnyProcedure() && leg.altRestriction.isValid())
+        if(routeLegCorrected.isAnyProcedure() && leg.altRestriction.isValid())
           html.row2(tr("Restriction:"), maptypes::altRestrictionText(leg.altRestriction));
 
         if(nearestLegDistance < maptypes::INVALID_DISTANCE_VALUE)

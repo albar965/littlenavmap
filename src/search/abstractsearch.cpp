@@ -15,10 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "abstractsearch.h"
+#include "search/abstractsearch.h"
 
-AbstractSearch::AbstractSearch(QObject *parent, int tabWidgetIndex)
-  : QObject(parent), tabIndex(tabWidgetIndex)
+#include "gui/mainwindow.h"
+
+AbstractSearch::AbstractSearch(MainWindow *parent, int tabWidgetIndex)
+  : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent)
 {
 
 }

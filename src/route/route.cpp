@@ -83,6 +83,12 @@ void Route::copy(const Route& other)
   starLegs = other.starLegs;
   departureLegs = other.departureLegs;
 
+  departureLegsOffset = other.departureLegsOffset;
+  starLegsOffset = other.starLegsOffset;
+  arrivalLegsOffset = other.arrivalLegsOffset;
+  activeLeg = other.activeLeg;
+  activeLegResult = other.activeLegResult;
+
   // Update flightplan pointers to this instance
   for(RouteLeg& routeLeg : *this)
     routeLeg.setFlightplan(&flightplan);
@@ -102,6 +108,30 @@ int Route::getNextUserWaypointNumber() const
       nextNum = std::max(QString(USER_WP_ID.match(entry.getWaypointId()).captured(1)).toInt(), nextNum);
   }
   return nextNum + 1;
+}
+
+bool Route::canEditLeg(int index) const
+{
+  if(hasDepartureProcedure() && index < departureLegsOffset + departureLegs.size())
+    return false;
+
+  if(hasStarProcedure() && hasArrivalProcedure() &&
+     hasStarProcedure() && index > starLegsOffset && index < arrivalLegsOffset + arrivalLegs.size())
+    // Do not allow any edits between the procedures
+    return false;
+
+  if(hasStarProcedure() && index > starLegsOffset && index < starLegsOffset + starLegs.size())
+    return false;
+
+  if(hasArrivalProcedure() && index > arrivalLegsOffset)
+    return false;
+
+  return true;
+}
+
+bool Route::canEditPoint(int index) const
+{
+  return at(index).isRoute();
 }
 
 void Route::updateActiveLegAndPos()
@@ -159,7 +189,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
   {
     if(at(activeLeg).isHold())
     {
-      while(at(nextLeg).getApproachLegType() == maptypes::INITIAL_FIX && nextLeg < size() - 2)
+      while(at(nextLeg).getProcedureLegType() == maptypes::INITIAL_FIX && nextLeg < size() - 2)
         // Catch the case of initial fixes or others that are points instead of lines and try the next legs
         nextLeg++;
     }
@@ -174,10 +204,10 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       courseDiff = 360.f - courseDiff;
 
     // if(at(activeLeg).isAnyProcedure())
-    // qDebug() << "ACTIVE" << at(activeLeg).getApproachLeg();
+    // qDebug() << "ACTIVE" << at(activeLeg).getProcedureLeg();
 
     // if(at(nextLeg).isAnyProcedure())
-    // qDebug() << "NEXT" << at(nextLeg).getApproachLeg();
+    // qDebug() << "NEXT" << at(nextLeg).getProcedureLeg();
 
     // qDebug() << "ACTIVE" << activeLeg << activeLegResult;
     // qDebug() << "legCrs" << legCrs << "course diff" << courseDiff;
@@ -192,7 +222,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     if(at(activeLeg).isHold())
     {
       // Test next leg if we can exit a hold
-      if(at(nextLeg).getApproachLeg().line.getPos1() == at(activeLeg).getPosition())
+      if(at(nextLeg).getProcedureLeg().line.getPos1() == at(activeLeg).getPosition())
       {
         // qDebug() << "HOLD SAME";
         // hold point is the same as next leg starting point
@@ -205,13 +235,13 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       else
       {
         atools::geo::LineDistance resultHold;
-        at(activeLeg).getApproachLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
+        at(activeLeg).getProcedureLeg().holdLine.distanceMeterToLine(activePos.pos, resultHold);
         // qDebug() << "NEXT HOLD" << nextLeg << resultHold;
 
         // qDebug() << "HOLD DIFFER";
         // Hold point differs from next leg start - use the helping line
         if(resultHold.status == atools::geo::ALONG_TRACK && // Check if we are outside of the hold
-           resultHold.distance < nmToMeter(at(activeLeg).getApproachLeg().turnDirection == "R" ? -0.5f : 0.5f))
+           resultHold.distance < nmToMeter(at(activeLeg).getProcedureLeg().turnDirection == "R" ? -0.5f : 0.5f))
           switchToNextLeg = true;
       }
     }
@@ -223,7 +253,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
         if(std::abs(nextLegResult.distance) < nmToMeter(0.5f))
           switchToNextLeg = true;
       }
-      else if(at(activeLeg).getApproachLegType() == maptypes::PROCEDURE_TURN)
+      else if(at(activeLeg).getProcedureLegType() == maptypes::PROCEDURE_TURN)
       {
         // Ignore the after end indication for current leg for procedure turns since turn can happen earlier
         if(isSmaller(nextLegResult, activeLegResult, 100.f /* meter */) && courseDiff < 45.f)
@@ -252,7 +282,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     }
   }
   // qDebug() << "active" << activeLeg << "size" << size() << "ident" << at(activeLeg).getIdent() <<
-  // maptypes::approachLegTypeFullStr(at(activeLeg).getApproachLeg().type);
+  // maptypes::approachLegTypeFullStr(at(activeLeg).getProcedureLeg().type);
 }
 
 bool Route::getRouteDistances(float *distFromStart, float *distToDest,
@@ -264,7 +294,8 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     return false;
 
   if(at(activeLeg).isAnyProcedure() && (at(activeLeg).getGeometry().size() > 2))
-    geometryLeg = &at(activeLeg).getApproachLeg();
+    // Use arc or intercept geometry to calculate distance
+    geometryLeg = &at(activeLeg).getProcedureLeg();
 
   if(crossTrackDistance != nullptr)
   {
@@ -293,7 +324,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     bool activeIsMissed = at(activeLeg).isMissed();
 
-    // Ignore missed approach legs until the active is a missedd approach leg
+    // Ignore missed approach legs until the active is a missed approach leg
     if(!at(routeIndex).isMissed() || activeIsMissed)
     {
       if(geometryLeg != nullptr)
@@ -311,30 +342,36 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     // Sum up all distances along the legs
     // Ignore missed approach legs until the active is a missedd approach leg
-    if(distFromStart != nullptr)
+    float fromstart = 0.f;
+    for(int i = 0; i <= routeIndex; i++)
     {
-      *distFromStart = 0.f;
-      for(int i = 0; i <= routeIndex; i++)
-      {
-        if(!at(i).isMissed() || activeIsMissed)
-          *distFromStart += at(i).getDistanceTo();
-        else
-          break;
-      }
-      *distFromStart -= distToCur;
-      *distFromStart = std::abs(*distFromStart);
+      if(!at(i).isMissed() || activeIsMissed)
+        fromstart += at(i).getDistanceTo();
+      else
+        break;
     }
+    fromstart -= distToCur;
+    fromstart = std::abs(fromstart);
+
+    if(distFromStart != nullptr)
+      *distFromStart = std::max(fromstart, 0.f);
 
     if(distToDest != nullptr)
     {
-      *distToDest = 0.f;
-      for(int i = routeIndex + 1; i < size(); i++)
+      if(!activeIsMissed)
+        *distToDest = std::max(totalDistance - fromstart, 0.f);
+      else
       {
-        if(!at(i).isMissed() || activeIsMissed)
-          *distToDest += at(i).getDistanceTo();
+        // Summarize remaining missed leg distance if on missed
+        *distToDest = 0.f;
+        for(int i = routeIndex + 1; i < size(); i++)
+        {
+          if(at(i).isMissed())
+            *distToDest += at(i).getDistanceTo();
+        }
+        *distToDest += distToCur;
+        *distToDest = std::abs(*distToDest);
       }
-      *distToDest += distToCur;
-      *distToDest = std::abs(*distToDest);
     }
 
     return true;
@@ -415,15 +452,15 @@ atools::geo::Pos Route::positionAtDistance(float distFromStartNm) const
       while(at(foundIndex).isApproachPoint() && foundIndex < size())
         foundIndex++;
 
-      float base = distFromStartNm - (total - at(foundIndex).getApproachLeg().calculatedDistance);
-      float fraction = base / at(foundIndex).getApproachLeg().calculatedDistance;
+      float base = distFromStartNm - (total - at(foundIndex).getProcedureLeg().calculatedDistance);
+      float fraction = base / at(foundIndex).getProcedureLeg().calculatedDistance;
 
       // qDebug() << "idx appr" << foundIndex << "total" << total << "rem"
-      // << at(foundIndex).getApproachLeg().calculatedDistance << "distFromStartNm" << distFromStartNm << "base"
+      // << at(foundIndex).getProcedureLeg().calculatedDistance << "distFromStartNm" << distFromStartNm << "base"
       // << base << "frac" << fraction;
-      // qDebug() << "foundIndex" << at(foundIndex).getApproachLeg();
-      // qDebug() << "foundIndex + 1" << at(foundIndex + 1).getApproachLeg();
-      // qDebug() << "foundIndex + 2" << at(foundIndex + 2).getApproachLeg();
+      // qDebug() << "foundIndex" << at(foundIndex).getProcedureLeg();
+      // qDebug() << "foundIndex + 1" << at(foundIndex + 1).getProcedureLeg();
+      // qDebug() << "foundIndex + 2" << at(foundIndex + 2).getProcedureLeg();
 
       retval = at(foundIndex).getGeometry().interpolate(fraction);
     }
@@ -433,7 +470,7 @@ atools::geo::Pos Route::positionAtDistance(float distFromStartNm) const
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                       maptypes::MapSearchResult& mapobjects) const
+                       maptypes::MapSearchResult& mapobjects, bool includeProcedure) const
 {
   using maptools::insertSortedByDistance;
 
@@ -441,62 +478,61 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 
   for(int i = 0; i < size(); i++)
   {
-    const RouteLeg& obj = at(i);
-    if(obj.isAnyProcedure())
+    const RouteLeg& leg = at(i);
+    if(!includeProcedure && leg.isAnyProcedure())
       continue;
 
-    if(conv.wToS(obj.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
+    if(conv.wToS(leg.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
     {
-      switch(obj.getMapObjectType())
+      if(leg.getVor().isValid())
       {
-        case maptypes::VOR:
-          {
-            maptypes::MapVor vor = obj.getVor();
-            vor.routeIndex = i;
-            insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
-          }
-          break;
-        case maptypes::WAYPOINT:
-          {
-            maptypes::MapWaypoint wp = obj.getWaypoint();
-            wp.routeIndex = i;
-            insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
-          }
-          break;
-        case maptypes::NDB:
-          {
-            maptypes::MapNdb ndb = obj.getNdb();
-            ndb.routeIndex = i;
-            insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
-          }
-          break;
-        case maptypes::AIRPORT:
-          {
-            maptypes::MapAirport ap = obj.getAirport();
-            ap.routeIndex = i;
-            insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
-          }
-          break;
-        case maptypes::INVALID:
-          {
-            maptypes::MapUserpoint up;
-            up.routeIndex = i;
-            up.name = obj.getIdent() + " (not found)";
-            up.position = obj.getPosition();
-            mapobjects.userPoints.append(up);
-          }
-          break;
-        case maptypes::USER:
-          {
-            maptypes::MapUserpoint up;
-            up.id = i;
-            up.routeIndex = i;
-            up.name = obj.getIdent();
-            up.position = obj.getPosition();
-            mapobjects.userPoints.append(up);
-          }
-          break;
+        maptypes::MapVor vor = leg.getVor();
+        vor.routeIndex = i;
+        insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
       }
+
+      if(leg.getWaypoint().isValid())
+      {
+        maptypes::MapWaypoint wp = leg.getWaypoint();
+        wp.routeIndex = i;
+        insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+      }
+
+      if(leg.getNdb().isValid())
+      {
+        maptypes::MapNdb ndb = leg.getNdb();
+        ndb.routeIndex = i;
+        insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+      }
+
+      if(leg.getAirport().isValid())
+      {
+        maptypes::MapAirport ap = leg.getAirport();
+        ap.routeIndex = i;
+        insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
+      }
+
+      if(leg.getMapObjectType() == maptypes::INVALID)
+      {
+        maptypes::MapUserpoint up;
+        up.routeIndex = i;
+        up.name = leg.getIdent() + " (not found)";
+        up.position = leg.getPosition();
+        mapobjects.userPoints.append(up);
+      }
+
+      if(leg.getMapObjectType() == maptypes::USER)
+      {
+        maptypes::MapUserpoint up;
+        up.id = i;
+        up.routeIndex = i;
+        up.name = leg.getIdent();
+        up.position = leg.getPosition();
+        mapobjects.userPoints.append(up);
+      }
+
+      if(leg.isAnyProcedure())
+        mapobjects.procedurePoints.append(maptypes::MapProcedurePoint(leg.getProcedureLeg()));
     }
   }
 }
@@ -701,17 +737,33 @@ void Route::eraseProcedureLegs(maptypes::MapObjectTypes type)
 
 void Route::updateAll()
 {
-  updateIndices();
+  updateIndicesAndOffsets();
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
 }
 
-void Route::updateIndices()
+void Route::updateIndicesAndOffsets()
 {
+  departureLegsOffset = maptypes::INVALID_INDEX_VALUE;
+  starLegsOffset = maptypes::INVALID_INDEX_VALUE;
+  arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
+
   // Update indices
   for(int i = 0; i < size(); i++)
-    (*this)[i].setFlightplanEntryIndex(i);
+  {
+    RouteLeg& leg = (*this)[i];
+    leg.setFlightplanEntryIndex(i);
+
+    if(leg.isDepartureProcedure() && departureLegsOffset == maptypes::INVALID_INDEX_VALUE)
+      departureLegsOffset = i;
+
+    if(leg.isStar() && starLegsOffset == maptypes::INVALID_INDEX_VALUE)
+      starLegsOffset = i;
+
+    if(leg.isArrivalProcedure() && arrivalLegsOffset == maptypes::INVALID_INDEX_VALUE)
+      arrivalLegsOffset = i;
+  }
 }
 
 const RouteLeg *Route::getActiveLegCorrected(bool *corrected) const
@@ -739,7 +791,7 @@ int Route::getActiveLegIndexCorrected(bool *corrected) const
 
   int nextLeg = activeLeg + 1;
   if(nextLeg < size() && nextLeg == size() &&
-     at(nextLeg).isAnyProcedure() /* && (at(nextLeg).getApproachLeg().type == maptypes::INITIAL_FIX ||
+     at(nextLeg).isAnyProcedure() /* && (at(nextLeg).getProcedureLeg().type == maptypes::INITIAL_FIX ||
                                    *    at(nextLeg).isHold())*/)
   {
     if(corrected != nullptr)
@@ -881,23 +933,15 @@ void Route::nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrack
   }
 }
 
-int Route::getNearestLegResult(const atools::geo::Pos& pos,
-                               atools::geo::LineDistance& lineDistanceResult) const
+int Route::getNearestRouteLegResult(const atools::geo::Pos& pos,
+                                    atools::geo::LineDistance& lineDistanceResult) const
 {
-  int index;
-  nearestLegResult(pos, lineDistanceResult, index);
-  return index;
-}
-
-void Route::nearestLegResult(const atools::geo::Pos& pos,
-                             atools::geo::LineDistance& lineDistanceResult, int& index) const
-{
-  index = maptypes::INVALID_INDEX_VALUE;
+  int index = maptypes::INVALID_INDEX_VALUE;
   lineDistanceResult.status = atools::geo::INVALID;
   lineDistanceResult.distance = maptypes::INVALID_DISTANCE_VALUE;
 
   if(!pos.isValid())
-    return;
+    return index;
 
   // Check only until the approach starts if required
   atools::geo::LineDistance result, minResult;
@@ -906,7 +950,7 @@ void Route::nearestLegResult(const atools::geo::Pos& pos,
 
   for(int i = 1; i < size(); i++)
   {
-    if(at(i - 1).isAnyProcedure())
+    if(!canEditLeg(i))
       continue;
 
     pos.distanceMeterToLine(getPositionAt(i - 1), getPositionAt(i), result);
@@ -920,4 +964,26 @@ void Route::nearestLegResult(const atools::geo::Pos& pos,
 
   if(index != maptypes::INVALID_INDEX_VALUE)
     lineDistanceResult = minResult;
+
+  return index;
+}
+
+QDebug operator<<(QDebug out, const Route& route)
+{
+  out << "Route ======================" << endl;
+  out << "Departure ======================" << endl;
+  out << "offset" << route.getDepartureLegsOffset() << endl;
+  out << route.getDepartureLegs() << endl;
+  out << "STAR ======================" << endl;
+  out << "offset" << route.getStarLegsOffset() << endl;
+  out << route.getStarLegs() << endl;
+  out << "Arrival ======================" << endl;
+  out << "offset" << route.getArrivalLegsOffset() << endl;
+  out << route.getArrivalLegs() << endl;
+
+  for(int i = 0; i < route.size(); ++i)
+    out << i << route.at(i) << endl;
+  out << "======================" << endl;
+
+  return out;
 }

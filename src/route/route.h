@@ -60,7 +60,7 @@ public:
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
 
   /* Ignores approach objects */
-  int getNearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
+  int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
 
   int getActiveLegIndex() const
   {
@@ -120,7 +120,7 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  maptypes::MapSearchResult& mapobjects) const;
+                  maptypes::MapSearchResult& mapobjects, bool includeProcedure) const;
 
   /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
@@ -148,6 +148,12 @@ public:
 
   /* Get a new number for a user waypoint for automatic naming */
   int getNextUserWaypointNumber() const;
+
+  /* Index from 0 (departure) to size() -1 */
+  bool canEditLeg(int index) const;
+
+  /* Index from 0 (departure) to size() -1 */
+  bool canEditPoint(int index) const;
 
   bool hasDepartureProcedure() const
   {
@@ -289,7 +295,7 @@ private:
   void updateMagvar();
 
   /* Assign index and pointer to flight plan for all objects */
-  void updateIndices();
+  void updateIndicesAndOffsets();
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos positionAtDistance(float distFromStartNm) const;
@@ -297,8 +303,6 @@ private:
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
   void copy(const Route& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
-  void nearestLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
-                        int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
   void eraseProcedureLegs(maptypes::MapObjectTypes type);
 
@@ -318,5 +322,7 @@ private:
       arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
 
 };
+
+QDebug operator<<(QDebug out, const Route& route);
 
 #endif // LITTLENAVMAP_ROUTE_H

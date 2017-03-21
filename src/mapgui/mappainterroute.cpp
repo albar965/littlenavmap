@@ -39,9 +39,8 @@ using maptypes::MapProcedureLegs;
 using maptypes::PosCourse;
 using atools::contains;
 
-MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
-                                 RouteController *controller)
-  : MapPainter(mapWidget, mapQuery, mapScale), routeController(controller)
+MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam)
+  : MapPainter(mapWidget, mapQuery, mapScale), route(routeParam)
 {
 }
 
@@ -69,14 +68,12 @@ void MapPainterRoute::render(PaintContext *context)
 
 void MapPainterRoute::paintRoute(const PaintContext *context)
 {
-  const Route& route = routeController->getRoute();
-
-  if(route.isEmpty())
+  if(route->isEmpty())
     return;
 
   context->painter->setBrush(Qt::NoBrush);
 
-  drawStartParking(context, route);
+  drawStartParking(context);
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -86,22 +83,22 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
   float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
-  for(int i = 0; i < route.size(); i++)
-    positions.append(route.at(i).getPosition());
+  for(int i = 0; i < route->size(); i++)
+    positions.append(route->at(i).getPosition());
 
   // Collect route only coordinates and texts ===============================
-  for(int i = 1; i < route.size(); i++)
+  for(int i = 1; i < route->size(); i++)
   {
-    const RouteLeg& leg = route.at(i);
-    const RouteLeg& last = route.at(i - 1);
+    const RouteLeg& leg = route->at(i);
+    const RouteLeg& last = route->at(i - 1);
 
     // Build text only for the route part - not for the approach
     if(last.isRoute() || leg.isRoute())
     {
       routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
                         QString::number(leg.getCourseToRhumbMag(), 'f', 0) +
-                        (route.isTrueCourse() ? tr("°T") : tr("°M")));
-      lines.append(Line(route.at(i - 1).getPosition(), leg.getPosition()));
+                        (route->isTrueCourse() ? tr("°T") : tr("°M")));
+      lines.append(Line(last.getPosition(), leg.getPosition()));
     }
     else
     {
@@ -113,12 +110,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   if(!lines.isEmpty()) // Do not draw a line from airport to runway end
   {
-    if(route.hasArrivalProcedure())
+    if(route->hasArrivalProcedure())
     {
       lines.last() = Line();
       routeTexts.last().clear();
     }
-    if(route.hasDepartureProcedure())
+    if(route->hasDepartureProcedure())
     {
       lines.first() = Line();
       routeTexts.first().clear();
@@ -136,35 +133,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     for(const Line& line : lines)
       drawLine(context, line);
 
-#ifdef DEBUG_ROUTE_PAINT
-    {
-      bool hiddenDummy;
-      context->painter->save();
-      context->painter->setPen(Qt::black);
-
-      int idx = 0;
-      for(const Line& line : lines)
-      {
-        if(line.isValid())
-        {
-
-          QLineF linef;
-          wToS(line, linef, DEFAULT_WTOS_SIZE, &hiddenDummy);
-
-          context->painter->drawText(linef.p1() + QPointF(10, 20), "start " + QString::number(idx) + " " +
-                                     (route.at(idx).isAnyProcedure() ? "P" : ""));
-          context->painter->drawText(linef.p2() + QPointF(10, -20), "end " + QString::number(idx) + " " +
-                                     (route.at(idx).isAnyProcedure() ? "P" : ""));
-        }
-        idx++;
-      }
-
-      context->painter->restore();
-    }
-#endif
-
     // Get active route leg
-    int activeRouteLeg = route.getActiveLegIndex();
+    int activeRouteLeg = route->getActiveLegIndex();
     if(activeRouteLeg > 0 && activeRouteLeg <= lines.size())
     {
       // Draw active leg on top of all others to keep it visible
@@ -194,40 +164,64 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   // ================================================================================
 
   QBitArray visibleStartPoints = textPlacement.getVisibleStartPoints();
-  for(int i = 0; i < route.size(); i++)
+  for(int i = 0; i < route->size(); i++)
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
-    if(route.at(i).isAnyProcedure())
+    if(route->at(i).isAnyProcedure())
       visibleStartPoints.clearBit(i);
   }
 
   // Draw airport and navaid symbols
-  drawSymbols(context, route, visibleStartPoints, textPlacement.getStartPoints());
+  drawSymbols(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw symbol text
-  drawSymbolText(context, route, visibleStartPoints, textPlacement.getStartPoints());
+  drawSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw arrival and departure procedures ============================
-  if(route.hasDepartureProcedure())
-    paintApproach(context, route.getDepartureLegs(), route.getDepartureLegsOffset(),
+  if(route->hasDepartureProcedure())
+    paintApproach(context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
 
-  if(route.hasStarProcedure())
-    paintApproach(context, route.getStarLegs(), route.getStarLegsOffset(),
+  if(route->hasStarProcedure())
+    paintApproach(context, route->getStarLegs(), route->getStarLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
 
-  if(route.hasArrivalProcedure())
-    paintApproach(context, route.getArrivalLegs(), route.getArrivalLegsOffset(),
+  if(route->hasArrivalProcedure())
+    paintApproach(context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
+
+#ifdef DEBUG_ROUTE_PAINT
+  context->painter->save();
+  context->painter->setPen(Qt::black);
+  context->painter->setBrush(Qt::white);
+  context->painter->setBackground(Qt::white);
+  context->painter->setBackgroundMode(Qt::OpaqueMode);
+  for(int i = 1; i < route->size(); i++)
+  {
+    const RouteLeg& leg = route->at(i);
+    const RouteLeg& last = route->at(i - 1);
+
+    bool hiddenDummy;
+
+    QLineF linef;
+    wToS(Line(last.getPosition(), leg.getPosition()), linef, DEFAULT_WTOS_SIZE, &hiddenDummy);
+
+    context->painter->drawText(linef.p1() + QPointF(-60, 20), "start " + QString::number(i) + " " +
+                               (leg.isAnyProcedure() ? "P" : ""));
+    context->painter->drawText(linef.p2() + QPointF(-60, -20), "end " + QString::number(i) + " " +
+                               (leg.isAnyProcedure() ? "P" : ""));
+  }
+  context->painter->restore();
+#endif
+
 }
 
 void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 {
-  const Route& routeApprMapObjects = routeController->getRoute();
-  if(routeApprMapObjects.size() >= 2)
+  if(route->size() >= 2)
   {
     // Draw the top of descent circle and text
-    QPoint pt = wToS(routeApprMapObjects.getTopOfDescent());
+    QPoint pt = wToS(route->getTopOfDescent());
     if(!pt.isNull())
     {
       float width = context->sz(context->thicknessFlightplan, 3);
@@ -239,7 +233,7 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
       QStringList tod;
       tod.append(tr("TOD"));
       if(context->mapLayer->isAirportRouteInfo())
-        tod.append(Unit::distNm(routeApprMapObjects.getTopOfDescentFromDestination()));
+        tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
       symbolPainter->textBox(context->painter, tod, QPen(mapcolors::routeTextColor),
                              pt.x() + radius, pt.y() + radius,
@@ -254,8 +248,6 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
-
-  const Route& route = routeController->getRoute();
 
   // Draw black background ========================================
   float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
@@ -287,11 +279,8 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
   context->szFont(context->textSizeFlightplan * 1.1f);
 
   // Get active approach leg
-  int activeLeg = route.getActiveLegIndex();
-  qDebug() << activeLeg << legsRouteOffset;
+  int activeLeg = route->getActiveLegIndex();
   activeLeg -= legsRouteOffset;
-
-  qDebug() << activeLeg;
 
   // Paint legs
   for(int i = 0; i < legs.size(); i++)
@@ -683,14 +672,15 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->drawEllipse(line.p1(), 20, 10);
   painter->drawEllipse(line.p2(), 10, 20);
   painter->drawText(line.x1() - 40, line.y1() + 40,
-                    "Start " + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
+                    "Start " + maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
 
   painter->drawText(line.x2() - 40, line.y2() + 60,
-                    "End" + maptypes::approachLegTypeShortStr(leg.type) + " " + QString::number(index));
+                    "End " + maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
   if(!intersectPoint.isNull())
   {
     painter->drawEllipse(intersectPoint, 30, 30);
-    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20, leg.type + " " + QString::number(index));
+    painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
+                      maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
   }
 
   painter->setPen(QPen(Qt::darkBlue, 2));
@@ -1000,7 +990,7 @@ void MapPainterRoute::paintText(const PaintContext *context, const QColor& color
                            y, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
 }
 
-void MapPainterRoute::drawSymbols(const PaintContext *context, const Route& route,
+void MapPainterRoute::drawSymbols(const PaintContext *context,
                                   const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
@@ -1010,7 +1000,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context, const Route& rout
     {
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
-      const RouteLeg& obj = route.at(i);
+      const RouteLeg& obj = route->at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
@@ -1039,7 +1029,7 @@ void MapPainterRoute::drawSymbols(const PaintContext *context, const Route& rout
   }
 }
 
-void MapPainterRoute::drawSymbolText(const PaintContext *context, const Route& route,
+void MapPainterRoute::drawSymbolText(const PaintContext *context,
                                      const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints)
 {
   int i = 0;
@@ -1049,7 +1039,7 @@ void MapPainterRoute::drawSymbolText(const PaintContext *context, const Route& r
     {
       int x = pt.x();
       int y = pt.y();
-      const RouteLeg& obj = route.at(i);
+      const RouteLeg& obj = route->at(i);
       maptypes::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
@@ -1077,24 +1067,24 @@ void MapPainterRoute::drawSymbolText(const PaintContext *context, const Route& r
   }
 }
 
-void MapPainterRoute::drawStartParking(const PaintContext *context, const Route& route)
+void MapPainterRoute::drawStartParking(const PaintContext *context)
 {
   // Use a layer that is independent of the declutter factor
-  if(!route.isEmpty() && context->mapLayerEffective->isAirportDiagram())
+  if(!route->isEmpty() && context->mapLayerEffective->isAirportDiagram())
   {
     // Draw start position or parking circle into the airport diagram
-    const RouteLeg& first = route.at(0);
+    const RouteLeg& first = route->at(0);
     if(first.getMapObjectType() == maptypes::AIRPORT)
     {
       int size = 100;
 
       Pos startPos;
-      if(route.hasDepartureParking())
+      if(route->hasDepartureParking())
       {
         startPos = first.getDepartureParking().position;
         size = first.getDepartureParking().radius;
       }
-      else if(route.hasDepartureStart())
+      else if(route->hasDepartureStart())
         startPos = first.getDepartureStart().position;
 
       if(startPos.isValid())

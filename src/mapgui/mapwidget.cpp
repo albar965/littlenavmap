@@ -28,6 +28,7 @@
 #include "common/mapcolors.h"
 #include "connect/connectclient.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "route/route.h"
 #include "route/routecontroller.h"
 #include "atools.h"
 #include "mapgui/mapquery.h"
@@ -318,6 +319,11 @@ RouteController *MapWidget::getRouteController() const
   return mainWindow->getRouteController();
 }
 
+const Route& MapWidget::getRoute()
+{
+  return mainWindow->getRoute();
+}
+
 void MapWidget::getRouteDragPoints(atools::geo::Pos& from, atools::geo::Pos& to, QPoint& cur)
 {
   from = routeDragFrom;
@@ -575,9 +581,9 @@ void MapWidget::showSavedPosOnStartup()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
   {
-    qDebug() << "Show Route" << mainWindow->getRouteController()->getBoundingRect();
-    if(!mainWindow->getRouteController()->isFlightplanEmpty())
-      showRect(mainWindow->getRouteController()->getBoundingRect(), false);
+    qDebug() << "Show Route" << mainWindow->getRoute().getBoundingRect();
+    if(!mainWindow->getRoute().isFlightplanEmpty())
+      showRect(mainWindow->getRoute().getBoundingRect(), false);
     else
       showHome();
   }
@@ -1403,7 +1409,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(QString()));
 
   // Update "delete in route"
-  if(routeIndex != -1)
+  if(routeIndex != -1 && getRoute().canEditPoint(routeIndex))
   {
     ui->actionRouteDeleteWaypoint->setEnabled(true);
     ui->actionRouteDeleteWaypoint->setText(ui->actionRouteDeleteWaypoint->text().arg(routeText));
@@ -1855,7 +1861,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     if(event->buttons() == Qt::NoButton)
     {
       // No dragging going on now - update cursor over flight plan legs or markers
-      const Route& rmos = mainWindow->getRouteController()->getRoute();
+      const Route& route = mainWindow->getRoute();
 
       Qt::CursorShape cursorShape = Qt::ArrowCursor;
       bool routeEditMode = mainWindow->getUi()->actionRouteEditMode->isChecked();
@@ -1864,13 +1870,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       if(routeEditMode &&
          screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
                                                 screenSearchDistance * 4 / 3) != -1 &&
-         rmos.size() > 1)
+         route.size() > 1)
         // Change cursor at one route point
-        cursorShape = Qt::CrossCursor;
+        cursorShape = Qt::SizeAllCursor;
       else if(routeEditMode &&
-              screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
-                                                   screenSearchDistance) != -1 &&
-              rmos.size() > 1)
+              screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1 &&
+              route.size() > 1)
         // Change cursor above a route line
         cursorShape = Qt::CrossCursor;
       else if(screenIndex->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
@@ -1980,9 +1985,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       if(mainWindow->getUi()->actionRouteEditMode->isChecked())
       {
-        const Route& rmos = mainWindow->getRouteController()->getRoute();
+        const Route& route = mainWindow->getRoute();
 
-        if(rmos.size() > 1)
+        if(route.size() > 1)
         {
           // Make distance a bit larger to prefer points
           int routePoint =
@@ -1999,12 +2004,12 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
             if(routePoint > 0)
-              routeDragFrom = rmos.at(routePoint - 1).getPosition();
+              routeDragFrom = route.at(routePoint - 1).getPosition();
             else
               routeDragFrom = atools::geo::EMPTY_POS;
 
-            if(routePoint < rmos.size() - 1)
-              routeDragTo = rmos.at(routePoint + 1).getPosition();
+            if(routePoint < route.size() - 1)
+              routeDragTo = route.at(routePoint + 1).getPosition();
             else
               routeDragTo = atools::geo::EMPTY_POS;
             setContextMenuPolicy(Qt::PreventContextMenu);
@@ -2022,8 +2027,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
-              routeDragFrom = rmos.at(routeLeg).getPosition();
-              routeDragTo = rmos.at(routeLeg + 1).getPosition();
+              routeDragFrom = route.at(routeLeg).getPosition();
+              routeDragTo = route.at(routeLeg + 1).getPosition();
               setContextMenuPolicy(Qt::PreventContextMenu);
             }
           }
@@ -2156,7 +2161,7 @@ void MapWidget::showTooltip(bool update)
 
   // Build a new tooltip HTML for weather changes or aircraft updates
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
-                                          mainWindow->getRouteController()->getRoute(),
+                                          mainWindow->getRoute(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())

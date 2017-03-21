@@ -56,6 +56,7 @@ const QStringList helpLanguages();
 /* State of "do not show again" dialog buttons */
 const QString ACTIONS_SHOWDISCONNECTINFO = "Actions/ShowDisconnectInfo";
 const QString ACTIONS_SHOWQUIT = "Actions/ShowQuit";
+const QString ACTIONS_SHOW_INVALID_PROC_WARNING = "Actions/ShowInvalidProcedure";
 const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
 const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
 const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";

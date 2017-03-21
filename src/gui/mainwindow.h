@@ -41,6 +41,7 @@ class OptionsDialog;
 class QActionGroup;
 class PrintSupport;
 class ProcedureSearch;
+class Route;
 
 namespace Marble {
 class LegendWidget;
@@ -102,6 +103,8 @@ public:
   {
     return routeController;
   }
+
+  const Route& getRoute() const;
 
   const Marble::ElevationModel *getElevationModel();
 

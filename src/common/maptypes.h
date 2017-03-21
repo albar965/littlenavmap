@@ -882,10 +882,11 @@ struct MapProcedureLeg
     return type != INVALID_LEG_TYPE;
   }
 
-  bool hasInvalidRef() const
-  {
-    return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
-  }
+  /* Draw red if there is an error in the leg (navaid could not be resolved */
+  bool hasInvalidRef() const;
+
+  /* true if leg is unusable because a required navaid could not be resolved */
+  bool hasErrorRef() const;
 
   float legTrueCourse() const
   {
@@ -952,7 +953,7 @@ struct MapProcedureLegs
         missedDistance = 0.f,
         airportDirection = INVALID_COURSE_VALUE;
 
-  bool gpsOverlay;
+  bool gpsOverlay, hasError /* Unusable due to missing navaid */;
 
   void clearApproach();
 

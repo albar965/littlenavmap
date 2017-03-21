@@ -38,14 +38,12 @@ class MapPainterRoute :
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, RouteController *controller);
+  MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam);
   virtual ~MapPainterRoute();
 
   virtual void render(PaintContext *context) override;
 
 private:
-  RouteController *routeController;
-
   struct DrawText
   {
     atools::geo::Line line;
@@ -70,10 +68,10 @@ private:
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
-  void drawSymbols(const PaintContext *context, const Route& route,
+  void drawSymbols(const PaintContext *context,
                    const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void drawSymbolText(const PaintContext *context, const Route& route,
+  void drawSymbolText(const PaintContext *context,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs, int index, bool preview);
@@ -92,8 +90,9 @@ private:
 
   void paintProcedureFlyover(const PaintContext *context, int x, int y);
 
-  void drawStartParking(const PaintContext *context, const Route& route);
+  void drawStartParking(const PaintContext *context);
 
+  const Route *route;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H
