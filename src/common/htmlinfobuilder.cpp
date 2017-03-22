@@ -999,13 +999,13 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const maptypes::MapAirport
 
   float temp = parsed.getTemperatureC();
   if(temp != MetarNaN)
-    html.row2(tr("Temperature:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
+              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
 
   temp = parsed.getDewpointDegC();
   if(temp != MetarNaN)
-    html.row2(tr("Dewpoint:"), locale.toString(temp, 'f', 0) + tr("°C, ") +
-              locale.toString(atools::geo::degCToDegF(temp), 'f', 0) + tr("°F"));
+    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
+              locale.toString(atools::roundToInt(atools::geo::degCToDegF(temp))) + tr("°F"));
 
   float slp = parsed.getPressureMbar();
   if(slp != MetarNaN)
@@ -1393,6 +1393,9 @@ void HtmlInfoBuilder::procedurePointText(const MapProcedurePoint& ap, HtmlBuilde
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                    HtmlBuilder& html, int num, int total)
 {
+  if(!aircraft.getPosition().isValid())
+    return;
+
   aircraftTitle(aircraft, html);
 
   html.nbsp().nbsp();
@@ -1443,6 +1446,9 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
                                                 HtmlBuilder& html) const
 {
+  if(!userAircraft.getPosition().isValid())
+    return;
+
   if(info)
   {
     head(html, tr("Weight and Fuel"));
