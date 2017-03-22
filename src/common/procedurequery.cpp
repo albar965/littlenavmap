@@ -273,7 +273,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
     if(!rn.waypoints.isEmpty())
     {
       leg.recFixPos = rn.waypoints.first().position;
-      leg.recNavId = leg.navaids.waypoints.first().id;
+      leg.recNavId = rn.waypoints.first().id;
 
       if(!(leg.magvar < maptypes::INVALID_MAGVAR))
         leg.magvar = rn.waypoints.first().magvar;
