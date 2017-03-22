@@ -102,6 +102,8 @@ private:
     FILTER_APPROACH_AND_TRANSITIONS
   };
 
+  virtual void tabDeactivated() override;
+
   void itemSelectionChanged();
   void itemDoubleClicked(QTreeWidgetItem *item, int column);
 
@@ -148,6 +150,7 @@ private:
   void clearRunwayFilter();
   void fillRunwayFilter();
   void resetSearch();
+  void dockVisibilityChanged(bool visible);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<maptypes::MapProcedureRef> itemIndex;

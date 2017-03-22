@@ -36,7 +36,7 @@ class SqlDatabase;
  * Airport search tab including all search widgets and the result table view.
  */
 class AirportSearch :
-  public SearchBase
+  public SearchBaseTable
 {
   Q_OBJECT
 

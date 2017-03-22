@@ -120,6 +120,8 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   connect(ui->comboBoxProcedureRunwayFilter, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &ProcedureSearch::filterIndexRunwayChanged);
 
+  connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &ProcedureSearch::dockVisibilityChanged);
+
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
@@ -179,7 +181,7 @@ void ProcedureSearch::filterIndexRunwayChanged(int index)
 void ProcedureSearch::optionsChanged()
 {
   // Adapt table view text size
-  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
   createFonts();
   updateTreeHeader();
   fillApproachTreeWidget();
@@ -472,7 +474,7 @@ void ProcedureSearch::updateTreeHeader()
 void ProcedureSearch::itemSelectionChanged()
 {
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
-  if(items.isEmpty())
+  if(items.isEmpty() || mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
     emit procedureSelected(maptypes::MapProcedureRef());
 
@@ -615,7 +617,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   Ui::MainWindow *ui = mainWindow->getUi();
-  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach, ui->actionInfoApproachAttach});
+  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionInfoApproachAttach});
   Q_UNUSED(saver);
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
@@ -655,19 +657,24 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       showText = item->text(COL_IDENT).isEmpty() ? tr("Position") : item->text(COL_IDENT);
     else
       showText = text;
+
+    ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
+
+    if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
+       (route.hasValidDestination() && route.last().getId() == currentAirport.id))
+      ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
+    else
+    {
+      if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
+        ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
+      else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
+        ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
+    }
   }
-
-  ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
-
-  if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
-     (route.hasValidDestination() && route.last().getId() == currentAirport.id))
-    ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
   else
   {
-    if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
-      ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
-    else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
-      ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
+    ui->actionInfoApproachAttach->setText(ui->actionInfoApproachAttach->text().arg(tr("Procedure")));
+    ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(tr("Procedure")));
   }
 
   QMenu menu;
@@ -1074,4 +1081,31 @@ void ProcedureSearch::updateUnits()
 
 void ProcedureSearch::updateTableSelection()
 {
+  if(mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
+  {
+    // Hide preview if another tab is activated
+    emit procedureSelected(maptypes::MapProcedureRef());
+    emit procedureLegSelected(maptypes::MapProcedureRef());
+  }
+  else
+    itemSelectionChanged();
+}
+
+/* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
+void ProcedureSearch::dockVisibilityChanged(bool visible)
+{
+  if(!visible)
+  {
+    // Hide preview of dock is closed
+    emit procedureSelected(maptypes::MapProcedureRef());
+    emit procedureLegSelected(maptypes::MapProcedureRef());
+  }
+  else
+    itemSelectionChanged();
+}
+
+void ProcedureSearch::tabDeactivated()
+{
+  emit procedureSelected(maptypes::MapProcedureRef());
+  emit procedureLegSelected(maptypes::MapProcedureRef());
 }

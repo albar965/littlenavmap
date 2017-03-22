@@ -784,9 +784,9 @@ void MainWindow::connectAllSlots()
 
   connect(routeController, &RouteController::routeSelectionChanged,
           this, &MainWindow::routeSelectionChanged);
-  connect(searchController->getAirportSearch(), &SearchBase::selectionChanged,
+  connect(searchController->getAirportSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
-  connect(searchController->getNavSearch(), &SearchBase::selectionChanged,
+  connect(searchController->getNavSearch(), &SearchBaseTable::selectionChanged,
           this, &MainWindow::searchSelectionChanged);
 
   connect(ui->actionRouteSelectParking, &QAction::triggered,
@@ -804,14 +804,14 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeReplace,
           routeController, &RouteController::routeReplace);
 
-  connect(searchController->getAirportSearch(), &SearchBase::routeSetDeparture,
+  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDeparture,
           routeController, &RouteController::routeSetDeparture);
-  connect(searchController->getAirportSearch(), &SearchBase::routeSetDestination,
+  connect(searchController->getAirportSearch(), &SearchBaseTable::routeSetDestination,
           routeController, &RouteController::routeSetDestination);
-  connect(searchController->getAirportSearch(), &SearchBase::routeAdd,
+  connect(searchController->getAirportSearch(), &SearchBaseTable::routeAdd,
           routeController, &RouteController::routeAdd);
 
-  connect(searchController->getNavSearch(), &SearchBase::routeAdd,
+  connect(searchController->getNavSearch(), &SearchBaseTable::routeAdd,
           routeController, &RouteController::routeAdd);
 
   // Messages about database query result status
@@ -1467,7 +1467,7 @@ void MainWindow::routeSelectionChanged(int selected, int total)
 }
 
 /* Selection in one of the search result tables has changed */
-void MainWindow::searchSelectionChanged(const SearchBase *source, int selected, int visible, int total)
+void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
 {
   static QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.");
   QString type;

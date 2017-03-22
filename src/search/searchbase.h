@@ -24,7 +24,6 @@
 
 #include <QObject>
 
-
 class QTableView;
 class SqlController;
 class ColumnList;
@@ -42,16 +41,16 @@ class QLineEdit;
  * Base for all search classes which reside each in its own tab, contains a result table view and a list of
  * search widgets.
  */
-class SearchBase :
+class SearchBaseTable :
   public AbstractSearch
 {
   Q_OBJECT
 
 public:
   /* Class will take ownership of columnList */
-  SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
-             int tabWidgetIndex);
-  virtual ~SearchBase();
+  SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList, MapQuery *mapQuery,
+                  int tabWidgetIndex);
+  virtual ~SearchBaseTable();
 
   /* Disconnect and reconnect queries on database change */
   virtual void preDatabaseLoad() override;
@@ -94,7 +93,7 @@ signals:
   void changeSearchMark(const atools::geo::Pos& pos);
 
   /* Selection in table view has changed. Update label and map highlights */
-  void selectionChanged(const SearchBase *source, int selected, int visible, int total);
+  void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
   void showInformation(maptypes::MapSearchResult result);
@@ -136,6 +135,7 @@ protected:
 private:
   virtual void saveViewState(bool distSearchActive) = 0;
   virtual void restoreViewState(bool distSearchActive) = 0;
+  virtual void tabDeactivated() override;
 
   void tableSelectionChanged();
   void resetView();
@@ -169,7 +169,6 @@ private:
 
   ViewEventFilter *viewEventFilter = nullptr;
   LineEditEventFilter *lineEditEventFilter = nullptr;
-
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

@@ -34,7 +34,7 @@
 
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
                      MapQuery *mapQuery, int tabWidgetIndex)
-  : SearchBase(parent, tableView, new ColumnList("nav_search", "nav_search_id"), mapQuery, tabWidgetIndex)
+  : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -129,7 +129,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView,
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  SearchBase::initViewAndController();
+  SearchBaseTable::initViewAndController();
 
   // Add model data handler and model format handler as callbacks
   setCallbacks();
@@ -142,7 +142,7 @@ NavSearch::~NavSearch()
 
 void NavSearch::connectSearchSlots()
 {
-  SearchBase::connectSearchSlots();
+  SearchBaseTable::connectSearchSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -158,7 +158,7 @@ void NavSearch::connectSearchSlots()
                                        ui->spinBoxNavDistMaxSearch);
 
   // Connect widgets to the controller
-  SearchBase::connectSearchWidgets();
+  SearchBaseTable::connectSearchWidgets();
   ui->toolButtonNavSearch->addActions({ui->actionNavSearchShowAllOptions,
                                        ui->actionNavSearchShowDistOptions,
                                        ui->actionNavSearchShowSceneryOptions});
@@ -344,7 +344,7 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 
 void NavSearch::postDatabaseLoad()
 {
-  SearchBase::postDatabaseLoad();
+  SearchBaseTable::postDatabaseLoad();
   setCallbacks();
 }
 

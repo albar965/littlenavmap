@@ -35,7 +35,7 @@ enum TabIndex
   AIRPORT = 0,
   RUNWAYS = 1,
   COM = 2,
-  APPROACHES= 3,
+  APPROACHES = 3,
   WEATHER = 4,
   NAVAID = 5,
   MAP_LEGEND = 6
@@ -109,6 +109,10 @@ private:
   void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
+  void currentTabChanged(int index);
+  void updateAircraftText();
+  void updateAircraftProgressText();
+  void updateAiAircraftText();
 
   bool databaseLoadStatus = false;
   atools::fs::sc::SimConnectData lastSimData;
@@ -123,6 +127,7 @@ private:
   HtmlInfoBuilder *infoBuilder = nullptr;
 
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
+
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

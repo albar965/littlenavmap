@@ -41,7 +41,7 @@ class SqlDatabase;
  * Navaid (VOR, NDB, and waypoint) search tab including all search widgets and the result table view.
  */
 class NavSearch :
-  public SearchBase
+  public SearchBaseTable
 {
   Q_OBJECT
 

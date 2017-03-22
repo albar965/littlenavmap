@@ -42,7 +42,7 @@ class ViewEventFilter :
 {
 
 public:
-  ViewEventFilter(SearchBase *parent)
+  ViewEventFilter(SearchBaseTable *parent)
     : QObject(parent), searchBase(parent)
   {
   }
@@ -69,7 +69,7 @@ private:
     return QObject::eventFilter(object, event);
   }
 
-  SearchBase *searchBase;
+  SearchBaseTable *searchBase;
 };
 
 class LineEditEventFilter :
@@ -77,7 +77,7 @@ class LineEditEventFilter :
 {
 
 public:
-  LineEditEventFilter(SearchBase *parent)
+  LineEditEventFilter(SearchBaseTable *parent)
     : QObject(parent), searchBase(parent)
   {
   }
@@ -104,11 +104,11 @@ private:
     return QObject::eventFilter(object, event);
   }
 
-  SearchBase *searchBase;
+  SearchBaseTable *searchBase;
 };
 
-SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
-                       MapQuery *mapQuery, int tabWidgetIndex)
+SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
+                                 MapQuery *mapQuery, int tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView), mainWindow(parent), query(mapQuery)
 {
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -124,7 +124,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Need extra action connected to catch the default Ctrl-C in the table view
-  connect(ui->actionSearchTableCopy, &QAction::triggered, this, &SearchBase::tableCopyClipboard);
+  connect(ui->actionSearchTableCopy, &QAction::triggered, this, &SearchBaseTable::tableCopyClipboard);
 
   // Actions that cover the whole dock window
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
@@ -135,10 +135,10 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   // Update single shot timer
   updateTimer = new QTimer(this);
   updateTimer->setSingleShot(true);
-  connect(updateTimer, &QTimer::timeout, this, &SearchBase::editTimeout);
-  connect(ui->actionSearchShowInformation, &QAction::triggered, this, &SearchBase::showInformationTriggered);
-  connect(ui->actionSearchShowApproaches, &QAction::triggered, this, &SearchBase::showApproachesTriggered);
-  connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &SearchBase::showOnMapTriggered);
+  connect(updateTimer, &QTimer::timeout, this, &SearchBaseTable::editTimeout);
+  connect(ui->actionSearchShowInformation, &QAction::triggered, this, &SearchBaseTable::showInformationTriggered);
+  connect(ui->actionSearchShowApproaches, &QAction::triggered, this, &SearchBaseTable::showApproachesTriggered);
+  connect(ui->actionSearchShowOnMap, &QAction::triggered, this, &SearchBaseTable::showOnMapTriggered);
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
@@ -148,7 +148,7 @@ SearchBase::SearchBase(MainWindow *parent, QTableView *tableView, ColumnList *co
   view->installEventFilter(viewEventFilter);
 }
 
-SearchBase::~SearchBase()
+SearchBaseTable::~SearchBaseTable()
 {
   view->removeEventFilter(viewEventFilter);
   delete csvExporter;
@@ -160,7 +160,7 @@ SearchBase::~SearchBase()
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */
-void SearchBase::tableCopyClipboard()
+void SearchBaseTable::tableCopyClipboard()
 {
   if(view->isVisible())
   {
@@ -174,7 +174,7 @@ void SearchBase::tableCopyClipboard()
   }
 }
 
-void SearchBase::initViewAndController()
+void SearchBaseTable::initViewAndController()
 {
   view->horizontalHeader()->setSectionsMovable(true);
   view->verticalHeader()->setSectionsMovable(false);
@@ -186,12 +186,12 @@ void SearchBase::initViewAndController()
   csvExporter = new CsvExporter(mainWindow, controller);
 }
 
-void SearchBase::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
+void SearchBaseTable::filterByIdent(const QString& ident, const QString& region, const QString& airportIdent)
 {
   controller->filterByIdent(ident, region, airportIdent);
 }
 
-void SearchBase::optionsChanged()
+void SearchBaseTable::optionsChanged()
 {
   // Need to reset model for "treat empty icons special"
   preDatabaseLoad();
@@ -220,19 +220,19 @@ void SearchBase::optionsChanged()
   view->update();
 }
 
-void SearchBase::updateTableSelection()
+void SearchBaseTable::updateTableSelection()
 {
   tableSelectionChanged();
 }
 
-void SearchBase::searchMarkChanged(const atools::geo::Pos& mark)
+void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 {
   qDebug() << "new mark" << mark;
   if(columns->getDistanceCheckBox()->isChecked() && mark.isValid())
     updateDistanceSearch();
 }
 
-void SearchBase::updateDistanceSearch()
+void SearchBaseTable::updateDistanceSearch()
 {
   if(columns->getDistanceCheckBox()->isChecked() &&
      mainWindow->getMapWidget()->getSearchMarkPos().isValid())
@@ -251,7 +251,7 @@ void SearchBase::updateDistanceSearch()
   }
 }
 
-void SearchBase::connectSearchWidgets()
+void SearchBaseTable::connectSearchWidgets()
 {
   void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
   void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
@@ -322,7 +322,7 @@ void SearchBase::connectSearchWidgets()
      distanceDirWidget != nullptr && distanceCheckBox != nullptr)
   {
     // If all distance widgets are present connect them
-    connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBase::distanceSearchStateChanged);
+    connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
     connect(minDistanceWidget, valueChangedPtr, [ = ](int value)
             {
@@ -358,7 +358,7 @@ void SearchBase::connectSearchWidgets()
   }
 }
 
-void SearchBase::updateFromSpinBox(int value, const Column *col)
+void SearchBaseTable::updateFromSpinBox(int value, const Column *col)
 {
   if(col->getUnitConvert() != nullptr)
     // Convert widget units to internal units using the given function pointer
@@ -368,7 +368,7 @@ void SearchBase::updateFromSpinBox(int value, const Column *col)
     controller->filterBySpinBox(col, value);
 }
 
-void SearchBase::updateFromMinSpinBox(int value, const Column *col)
+void SearchBaseTable::updateFromMinSpinBox(int value, const Column *col)
 {
   float valMin = value, valMax = col->getMaxSpinBoxWidget()->value();
 
@@ -385,7 +385,7 @@ void SearchBase::updateFromMinSpinBox(int value, const Column *col)
 
 }
 
-void SearchBase::updateFromMaxSpinBox(int value, const Column *col)
+void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
 {
   float valMin = col->getMinSpinBoxWidget()->value(), valMax = value;
 
@@ -402,12 +402,12 @@ void SearchBase::updateFromMaxSpinBox(int value, const Column *col)
 
 }
 
-void SearchBase::distanceSearchStateChanged(int state)
+void SearchBaseTable::distanceSearchStateChanged(int state)
 {
   distanceSearchChanged(state == Qt::Checked, true);
 }
 
-void SearchBase::distanceSearchChanged(bool checked, bool changeViewState)
+void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
 {
   QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
   QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
@@ -431,15 +431,15 @@ void SearchBase::distanceSearchChanged(bool checked, bool changeViewState)
   updateButtonMenu();
 }
 
-void SearchBase::connectLineEdit(QLineEdit *lineEdit)
+void SearchBaseTable::connectLineEdit(QLineEdit *lineEdit)
 {
-  connect(lineEdit, &QLineEdit::returnPressed, this, &SearchBase::showFirstEntry);
+  connect(lineEdit, &QLineEdit::returnPressed, this, &SearchBaseTable::showFirstEntry);
   lineEdit->installEventFilter(lineEditEventFilter);
 }
 
 /* Search criteria editing has started. Start or restart the timer for a
  * delayed update if distance search is used */
-void SearchBase::editStartTimer()
+void SearchBaseTable::editStartTimer()
 {
   if(controller->isDistanceSearch())
   {
@@ -449,51 +449,51 @@ void SearchBase::editStartTimer()
 }
 
 /* Delayed update timeout. Update result if distance search is active */
-void SearchBase::editTimeout()
+void SearchBaseTable::editTimeout()
 {
   qDebug() << "editTimeout";
   controller->loadAllRowsForDistanceSearch();
 }
 
-void SearchBase::connectSearchSlots()
+void SearchBaseTable::connectSearchSlots()
 {
-  connect(view, &QTableView::doubleClicked, this, &SearchBase::doubleClick);
-  connect(view, &QTableView::customContextMenuRequested, this, &SearchBase::contextMenu);
+  connect(view, &QTableView::doubleClicked, this, &SearchBaseTable::doubleClick);
+  connect(view, &QTableView::customContextMenuRequested, this, &SearchBaseTable::contextMenu);
 
   Ui::MainWindow *ui = mainWindow->getUi();
 
-  connect(ui->actionSearchShowAll, &QAction::triggered, this, &SearchBase::loadAllRowsIntoView);
-  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &SearchBase::resetSearch);
+  connect(ui->actionSearchShowAll, &QAction::triggered, this, &SearchBaseTable::loadAllRowsIntoView);
+  connect(ui->actionSearchResetSearch, &QAction::triggered, this, &SearchBaseTable::resetSearch);
 
   reconnectSelectionModel();
 
-  connect(controller->getSqlModel(), &SqlModel::modelReset, this, &SearchBase::reconnectSelectionModel);
-  void (SearchBase::*selChangedPtr)() = &SearchBase::tableSelectionChanged;
+  connect(controller->getSqlModel(), &SqlModel::modelReset, this, &SearchBaseTable::reconnectSelectionModel);
+  void (SearchBaseTable::*selChangedPtr)() = &SearchBaseTable::tableSelectionChanged;
   connect(controller->getSqlModel(), &SqlModel::fetchedMore, this, selChangedPtr);
 
-  connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchBase::dockVisibilityChanged);
+  connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchBaseTable::dockVisibilityChanged);
 }
 
-void SearchBase::updateUnits()
+void SearchBaseTable::updateUnits()
 {
   columns->updateUnits();
   controller->updateHeaderData();
 }
 
 /* Connect selection model again after a SQL model reset */
-void SearchBase::reconnectSelectionModel()
+void SearchBaseTable::reconnectSelectionModel()
 {
   if(view->selectionModel() != nullptr)
   {
-    void (SearchBase::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
-      &SearchBase::tableSelectionChanged;
+    void (SearchBaseTable::*selChangedPtr)(const QItemSelection &selected, const QItemSelection &deselected) =
+      &SearchBaseTable::tableSelectionChanged;
 
     connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
   }
 }
 
 /* Slot for table selection changed */
-void SearchBase::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void SearchBaseTable::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
   Q_UNUSED(selected);
   Q_UNUSED(deselected);
@@ -502,14 +502,14 @@ void SearchBase::tableSelectionChanged(const QItemSelection& selected, const QIt
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
-void SearchBase::dockVisibilityChanged(bool visible)
+void SearchBaseTable::dockVisibilityChanged(bool visible)
 {
   Q_UNUSED(visible);
 
   tableSelectionChanged();
 }
 
-void SearchBase::tableSelectionChanged()
+void SearchBaseTable::tableSelectionChanged()
 {
   QItemSelectionModel *sm = view->selectionModel();
 
@@ -520,20 +520,20 @@ void SearchBase::tableSelectionChanged()
   emit selectionChanged(this, selectedRows, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }
 
-void SearchBase::preDatabaseLoad()
+void SearchBaseTable::preDatabaseLoad()
 {
   saveViewState(controller->isDistanceSearch());
   controller->preDatabaseLoad();
 }
 
-void SearchBase::postDatabaseLoad()
+void SearchBaseTable::postDatabaseLoad()
 {
   controller->postDatabaseLoad();
   restoreViewState(controller->isDistanceSearch());
 }
 
 /* Reset view sort order, column width and column order back to default values */
-void SearchBase::resetView()
+void SearchBaseTable::resetView()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -543,7 +543,7 @@ void SearchBase::resetView()
   }
 }
 
-void SearchBase::resetSearch()
+void SearchBaseTable::resetSearch()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -554,7 +554,7 @@ void SearchBase::resetSearch()
 }
 
 /* Loads all rows into the table view */
-void SearchBase::loadAllRowsIntoView()
+void SearchBaseTable::loadAllRowsIntoView()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -564,12 +564,12 @@ void SearchBase::loadAllRowsIntoView()
   }
 }
 
-void SearchBase::showFirstEntry()
+void SearchBaseTable::showFirstEntry()
 {
   showRow(0);
 }
 
-void SearchBase::showSelectedEntry()
+void SearchBaseTable::showSelectedEntry()
 {
   QModelIndex idx = view->currentIndex();
 
@@ -577,7 +577,7 @@ void SearchBase::showSelectedEntry()
     showRow(idx.row());
 }
 
-void SearchBase::activateView()
+void SearchBaseTable::activateView()
 {
   // view->raise();
   // view->activateWindow();
@@ -585,13 +585,13 @@ void SearchBase::activateView()
 }
 
 /* Double click into table view */
-void SearchBase::doubleClick(const QModelIndex& index)
+void SearchBaseTable::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
     showRow(index.row());
 }
 
-void SearchBase::showRow(int row)
+void SearchBaseTable::showRow(int row)
 {
   // Show on information panel
   maptypes::MapObjectTypes navType = maptypes::NONE;
@@ -630,7 +630,7 @@ void SearchBase::showRow(int row)
 }
 
 /* Context menu in table view selected */
-void SearchBase::contextMenu(const QPoint& pos)
+void SearchBaseTable::contextMenu(const QPoint& pos)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -806,7 +806,7 @@ void SearchBase::contextMenu(const QPoint& pos)
 }
 
 /* Triggered by show information action in context menu. Populates map search result and emits show information */
-void SearchBase::showInformationTriggered()
+void SearchBaseTable::showInformationTriggered()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -827,7 +827,7 @@ void SearchBase::showInformationTriggered()
 }
 
 /* Triggered by show approaches action in context menu. Populates map search result and emits show information */
-void SearchBase::showApproachesTriggered()
+void SearchBaseTable::showApproachesTriggered()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -845,7 +845,7 @@ void SearchBase::showApproachesTriggered()
 }
 
 /* Show on map action in context menu */
-void SearchBase::showOnMapTriggered()
+void SearchBaseTable::showOnMapTriggered()
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
@@ -880,7 +880,7 @@ void SearchBase::showOnMapTriggered()
 }
 
 /* Fetch nav type and database id from a model row */
-void SearchBase::getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id)
+void SearchBaseTable::getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id)
 {
   navType = maptypes::NONE;
   id = -1;
@@ -903,4 +903,9 @@ void SearchBase::getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int
     else if(navType == maptypes::WAYPOINT)
       id = controller->getRawData(row, "waypoint_id").toInt();
   }
+}
+
+void SearchBaseTable::tabDeactivated()
+{
+  emit selectionChanged(this, 0, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }

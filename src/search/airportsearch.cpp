@@ -42,7 +42,7 @@ const QSet<QString> AirportSearch::NUMBER_COLUMNS(
 
 AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery *mapQuery,
                              int tabWidgetIndex)
-  : SearchBase(parent, tableView, new ColumnList("airport", "airport_id"), mapQuery, tabWidgetIndex)
+  : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), mapQuery, tabWidgetIndex)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
 
@@ -226,7 +226,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, MapQuery
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  SearchBase::initViewAndController();
+  SearchBaseTable::initViewAndController();
 
   // Add model data handler and model format handler as callbacks
   setCallbacks();
@@ -239,7 +239,7 @@ AirportSearch::~AirportSearch()
 
 void AirportSearch::connectSearchSlots()
 {
-  SearchBase::connectSearchSlots();
+  SearchBaseTable::connectSearchSlots();
 
   Ui::MainWindow *ui = mainWindow->getUi();
   connectLineEdit(ui->lineEditAirportIcaoSearch);
@@ -264,7 +264,7 @@ void AirportSearch::connectSearchSlots()
                                        ui->spinBoxAirportDistMaxSearch);
 
   // Connect widgets to the controller
-  SearchBase::connectSearchWidgets();
+  SearchBaseTable::connectSearchWidgets();
   ui->toolButtonAirportSearch->addActions({ui->actionAirportSearchShowAllOptions,
                                            ui->actionAirportSearchShowExtOptions,
                                            ui->actionAirportSearchShowFuelParkOptions,
@@ -476,7 +476,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
 
 void AirportSearch::postDatabaseLoad()
 {
-  SearchBase::postDatabaseLoad();
+  SearchBaseTable::postDatabaseLoad();
   setCallbacks();
 }
 

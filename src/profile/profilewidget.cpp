@@ -274,8 +274,9 @@ void ProfileWidget::updateScreenCoords()
     for(int i = 0; i < aircraftTrack.size(); i++)
     {
       const Pos& aircraftPos = aircraftTrack.at(i).pos;
-      float distFromStart = 0.f;
-      if(route.getRouteDistances(&distFromStart, nullptr))
+      float distFromStart = route.getDistanceFromStart(aircraftPos);
+
+      if(distFromStart < maptypes::INVALID_DISTANCE_VALUE)
       {
         QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
                   Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
@@ -474,12 +475,23 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& leg = legList.route.at(routeIndex);
     int symx = waypointX.at(--waypointIndex);
 
-    int symy = flightplanY;
+    // Draw all airport except destination
+    if(leg.getMapObjectType() == maptypes::AIRPORT && routeIndex == legList.route.size() - 1)
+    {
+      symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
+      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanY + 22,
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
+    }
+  }
 
+  if(!legList.route.isEmpty())
+  {
+    // Draw destination always on the right also if there are approach procedures
+    const RouteLeg& leg = legList.route.last();
     if(leg.getMapObjectType() == maptypes::AIRPORT)
     {
-      symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, symy, 10, false, false);
-      symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, symy + 22,
+      symPainter.drawAirportSymbol(&painter, leg.getAirport(), X0 + w, flightplanY, 10, false, false);
+      symPainter.drawAirportText(&painter, leg.getAirport(), X0 + w - 5, flightplanY + 22,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }

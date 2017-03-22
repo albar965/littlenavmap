@@ -70,6 +70,12 @@ void SearchController::helpPressed()
 /* Forces an emit of selection changed signal if the active tab changes */
 void SearchController::tabChanged(int index)
 {
+  for(int i = 0; i < allSearchTabs.size(); i++)
+  {
+    if(i != index)
+      allSearchTabs.at(i)->tabDeactivated();
+  }
+
   allSearchTabs.at(index)->updateTableSelection();
 }
 
@@ -109,10 +115,10 @@ void SearchController::postCreateSearch(AbstractSearch *search)
   search->connectSearchSlots();
   search->updateUnits();
 
-  SearchBase *base = dynamic_cast<SearchBase *>(search);
+  SearchBaseTable *base = dynamic_cast<SearchBaseTable *>(search);
   if(base != nullptr)
     mainWindow->getMapWidget()->connect(mainWindow->getMapWidget(), &MapWidget::searchMarkChanged,
-                                        base, &SearchBase::searchMarkChanged);
+                                        base, &SearchBaseTable::searchMarkChanged);
   allSearchTabs.append(search);
 }
 

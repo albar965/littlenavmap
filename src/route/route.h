@@ -58,9 +58,10 @@ public:
    */
   bool getRouteDistances(float *distFromStart, float *distToDest,
                          float *nextLegDistance = nullptr, float *crossTrackDistance = nullptr) const;
+  float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects */
-  int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult) const;
+  int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const;
 
   int getActiveLegIndex() const
   {

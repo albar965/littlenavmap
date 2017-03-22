@@ -63,6 +63,7 @@ public:
 
   /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
   virtual void updateTableSelection() = 0;
+  virtual void tabDeactivated() = 0;
 
 protected:
   /* Used to make the table rows smaller and also used to adjust font size */

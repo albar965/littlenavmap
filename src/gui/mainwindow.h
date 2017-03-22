@@ -31,7 +31,7 @@ class SearchController;
 class RouteController;
 class QComboBox;
 class QLabel;
-class SearchBase;
+class SearchBaseTable;
 class DatabaseManager;
 class WeatherReporter;
 class ConnectClient;
@@ -189,7 +189,7 @@ private:
 
   void updateMapObjectsShown();
 
-  void searchSelectionChanged(const SearchBase *source, int selected, int visible, int total);
+  void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
   void approachLegSelected(maptypes::MapProcedureRef approachRef);
   void approachSelected(maptypes::MapProcedureRef approachRef);
 

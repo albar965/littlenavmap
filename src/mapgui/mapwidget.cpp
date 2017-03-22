@@ -1811,7 +1811,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat);
+      Pos pos(lon, lat, mainWindow->getRoute().getFlightplan().getCruisingAltitude() + 200);
 
       atools::fs::sc::SimConnectData data = atools::fs::sc::SimConnectData::buildDebugForPosition(pos, lastPos);
       data.setPacketId(packetId++);

@@ -37,6 +37,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QDir>
+#include <QTabWidget>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -80,11 +81,30 @@ InfoController::InfoController(MainWindow *parent, MapQuery *mapDbQuery)
           &InfoController::anchorClicked);
 
   connect(ui->textBrowserAircraftAiInfo, &QTextBrowser::anchorClicked, this, &InfoController::anchorClicked);
+
+  connect(ui->tabWidgetAircraft, &QTabWidget::currentChanged, this, &InfoController::currentTabChanged);
 }
 
 InfoController::~InfoController()
 {
   delete infoBuilder;
+}
+
+void InfoController::currentTabChanged(int index)
+{
+  // Update new tab to avoid half a second delay or obsolete information
+  switch(static_cast<ic::TabIndexAircraft>(index))
+  {
+    case ic::AIRCRAFT_USER:
+      updateAircraftText();
+      break;
+    case ic::AIRCRAFT_USER_PROGRESS:
+      updateAircraftProgressText();
+      break;
+    case ic::AIRCRAFT_AI:
+      updateAiAircraftText();
+      break;
+  }
 }
 
 /* User clicked on "Map" link in text browsers */
@@ -503,6 +523,67 @@ void InfoController::postDatabaseLoad()
   databaseLoadStatus = false;
 }
 
+void InfoController::updateAircraftText()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
+  {
+    // ok - scrollbars not pressed
+    HtmlBuilder html(true /* has background color */);
+    infoBuilder->aircraftText(lastSimData.getUserAircraft(), html);
+    infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraft(), html);
+    atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
+  }
+}
+
+void InfoController::updateAircraftProgressText()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+  {
+    // ok - scrollbars not pressed
+    HtmlBuilder html(true /* has background color */);
+    infoBuilder->aircraftProgressText(lastSimData.getUserAircraft(), html, mainWindow->getRoute());
+    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
+  }
+}
+
+void InfoController::updateAiAircraftText()
+{
+  Ui::MainWindow *ui = mainWindow->getUi();
+  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+  {
+    // ok - scrollbars not pressed
+    HtmlBuilder html(true /* has background color */);
+    html.clear();
+    if(!currentSearchResult.aiAircraft.isEmpty())
+    {
+      int num = 1;
+      for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
+      {
+        infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
+        infoBuilder->aircraftProgressText(aircraft, html, Route());
+        num++;
+      }
+
+      atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
+    }
+    else
+    {
+      int numAi = lastSimData.getAiAircraft().size();
+      QString text;
+
+      if(!(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT_AI))
+        text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
+
+      text += tr("No AI or multiplayer aircraft selected.<br/>"
+                 "Found %1 AI or multiplayer aircraft.").
+              arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
+      atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
+    }
+  }
+}
+
 void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
 {
   if(databaseLoadStatus)
@@ -512,65 +593,22 @@ void InfoController::simulatorDataReceived(atools::fs::sc::SimConnectData data)
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
     // Last update was more than 500 ms ago
-
     updateAiAirports(data);
 
-    HtmlBuilder html(true /* has background color */);
     Ui::MainWindow *ui = mainWindow->getUi();
 
+    lastSimData = data;
     if(data.getUserAircraft().getPosition().isValid() && ui->dockWidgetAircraft->isVisible())
     {
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER &&
-         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
-      {
-        // ok - scrollbars not pressed
-        infoBuilder->aircraftText(data.getUserAircraft(), html);
-        infoBuilder->aircraftTextWeightAndFuel(data.getUserAircraft(), html);
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml());
-      }
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER)
+        updateAircraftText();
 
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS &&
-         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
-      {
-        // ok - scrollbars not pressed
-        html.clear();
-        infoBuilder->aircraftProgressText(data.getUserAircraft(), html, mainWindow->getRoute());
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml());
-      }
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_USER_PROGRESS)
+        updateAircraftProgressText();
 
-      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI &&
-         atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
-      {
-        // ok - scrollbars not pressed
-        html.clear();
-        if(!currentSearchResult.aiAircraft.isEmpty())
-        {
-          int num = 1;
-          for(const SimConnectAircraft& aircraft : currentSearchResult.aiAircraft)
-          {
-            infoBuilder->aircraftText(aircraft, html, num, lastSimData.getAiAircraft().size());
-            infoBuilder->aircraftProgressText(aircraft, html, Route());
-            num++;
-          }
-
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml());
-        }
-        else
-        {
-          int numAi = lastSimData.getAiAircraft().size();
-          QString text;
-
-          if(!(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT_AI))
-            text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
-
-          text += tr("No AI or multiplayer aircraft selected.<br/>"
-                     "Found %1 AI or multiplayer aircraft.").
-                  arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text);
-        }
-      }
+      if(ui->tabWidgetAircraft->currentIndex() == ic::AIRCRAFT_AI)
+        updateAiAircraftText();
     }
-    lastSimData = data;
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
   }
 }

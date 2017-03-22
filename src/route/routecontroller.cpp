@@ -2046,7 +2046,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
     {
       // No leg index given - search for nearest available route leg
       atools::geo::LineDistance result;
-      int nearestlegIndex = route.getNearestRouteLegResult(pos, result);
+      int nearestlegIndex = route.getNearestRouteLegResult(pos, result, true /* ignoreNotEditable */);
 
       switch(result.status)
       {
@@ -2576,7 +2576,7 @@ void RouteController::highlightProcedureItems()
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + buildFlightplanLabel2());
+  mainWindow->getUi()->labelRouteInfo->setText(buildFlightplanLabel(true) + "<br/>" + buildFlightplanLabel2());
 }
 
 QString RouteController::buildFlightplanLabel(bool html) const
@@ -2678,7 +2678,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
             procedureText[i] = "<b>" + procedureText.at(i) + "</b>";
         }
       }
-      approach = procedureText.join(" ") + "<br/>";
+      approach = procedureText.join(" ");
     }
   }
 

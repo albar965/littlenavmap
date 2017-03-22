@@ -208,7 +208,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="labelOptionsGuiSearchText">
          <property name="text">
-          <string>Text size for &amp;search result tables:</string>
+          <string>Text size for &amp;search result tables and procedure view:</string>
          </property>
          <property name="buddy">
           <cstring>spinBoxOptionsGuiSearchText</cstring>
