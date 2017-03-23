@@ -636,6 +636,12 @@ void MapWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   qDebug() << "rect w" << QString::number(w, 'f')
            << "h" << QString::number(h, 'f');
 
+  if(!rect.isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "invalid rectangle";
+    return;
+  }
+
   if(rect.isPoint(POS_IS_POINT_EPSILON))
     showPos(rect.getTopLeft(), 0.f, doubleClick);
   else

@@ -150,13 +150,9 @@ void ProcedureSearch::resetSearch()
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {
-    ui->comboBoxProcedureRunwayFilter->blockSignals(true);
-    ui->comboBoxProcedureSearchFilter->blockSignals(true);
+    // Only reset if this tab is active
     ui->comboBoxProcedureRunwayFilter->setCurrentIndex(0);
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(0);
-    ui->comboBoxProcedureRunwayFilter->blockSignals(false);
-    ui->comboBoxProcedureSearchFilter->blockSignals(false);
-    fillApproachTreeWidget();
   }
 }
 
