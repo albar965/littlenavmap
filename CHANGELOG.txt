@@ -1,4 +1,26 @@
+Version 1.3.2.devel
+
+* Changed GUI around procedures completely - added procedure search tab
+* Added filter to procedure search
+* Procedure information now saved with flight plan
+* Fixed multiple display issues and crashes for procedures
+* Procedure fixes are now displayed in flight plan
+* Added full support for SIDs, STARs and the respective transitions
+* Added help button to procedure search.
+* Procedure preview is now hidden when clicking into empty space in tree or activating another search tab.
+* Flyover waypoints are now highlighted with a yellow background.
+
+derived from atools:
+* Solved problem where airports without delete record lost approaches.
+* Fixed METAR parser errors with NOSIG token for weather or sky condition.
+* Cleanup in database around transitions and approaches:
+** Navaid ids have to be resolved during runtime now and not during compilation time.
+** Fix for multiple navaids with the same name and same region in the database.
+** Added more redundant information to runway end table to speed up program during runtime.
+* Now nearest VOR and NDBs are assigned to waypoint if duplicates exist.
+
 Version 1.3.1.devel
+
 * Added approach and transition support. Drawing, attaching to flight plan, active leg detection and more.
 * Fixed errors in METAR parser.
 * Completely changed active segment logic for flight plan.
