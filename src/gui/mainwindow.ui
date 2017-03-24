@@ -56,8 +56,9 @@
     <addaction name="actionRouteSave"/>
     <addaction name="actionRouteSaveAs"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteSaveAsRte"/>
     <addaction name="actionRouteSaveAsGfp"/>
+    <addaction name="actionRouteSaveAsRte"/>
+    <addaction name="actionRouteSaveAsFlp"/>
     <addaction name="separator"/>
     <addaction name="actionLoadKml"/>
     <addaction name="menuRecentKml"/>
@@ -5438,6 +5439,21 @@
    </property>
    <property name="shortcut">
     <string>Alt+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsFlp">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/saveasflp.svg</normaloff>:/littlenavmap/resources/icons/saveasflp.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan as &amp;FLP ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
+   </property>
+   <property name="statusTip">
+    <string>Save flight plan as FLP file usable by the Aerosoft Airbus</string>
    </property>
   </action>
  </widget>

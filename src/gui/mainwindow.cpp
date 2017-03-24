@@ -665,6 +665,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAs);
   connect(ui->actionRouteSaveAsGfp, &QAction::triggered, this, &MainWindow::routeSaveAsGfp);
   connect(ui->actionRouteSaveAsRte, &QAction::triggered, this, &MainWindow::routeSaveAsRte);
+  connect(ui->actionRouteSaveAsFlp, &QAction::triggered, this, &MainWindow::routeSaveAsFlp);
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
 
   connect(ui->actionPrintMap, &QAction::triggered, printSupport, &PrintSupport::printMap);
@@ -1372,7 +1373,7 @@ bool MainWindow::routeSaveAsRte()
     QString routeFile = dialog->saveFileDialog(
       tr("Save Flightplan as PMDG RTE Format"),
       tr("RTE Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_RTE),
-      "gfp", "Route/Rte",
+      "rte", "Route/Rte",
       atools::fs::FsPaths::getBasePath(databaseManager->getCurrentSimulator()) +
       QDir::separator() + "PMDG" + QDir::separator() + "FLIGHTPLANS",
       routeController->buildDefaultFilenameShort(QString(), "rte"));
@@ -1382,6 +1383,28 @@ bool MainWindow::routeSaveAsRte()
       if(routeController->saveFlighplanAsRte(routeFile))
       {
         setStatusMessage(tr("Flight plan saved as RTE."));
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool MainWindow::routeSaveAsFlp()
+{
+  if(routeValidate(false /*valideParking*/))
+  {
+    QString routeFile = dialog->saveFileDialog(
+      tr("Save Flightplan as Aerosoft Airbus FLP Format"),
+      tr("FLP Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLP),
+      "flp", "Route/Flp", QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first(),
+      routeController->buildDefaultFilenameShort(QString(), "flp"));
+
+    if(!routeFile.isEmpty())
+    {
+      if(routeController->saveFlighplanAsFlp(routeFile))
+      {
+        setStatusMessage(tr("Flight plan saved as FLP."));
         return true;
       }
     }

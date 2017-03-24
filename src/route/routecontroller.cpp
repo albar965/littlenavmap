@@ -698,6 +698,27 @@ bool RouteController::saveFlighplanAsRte(const QString& filename)
   return true;
 }
 
+bool RouteController::saveFlighplanAsFlp(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  try
+  {
+    route.getFlightplan().saveFlp(filename);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
 bool RouteController::saveFlightplan()
 {
   try

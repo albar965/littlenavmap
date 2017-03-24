@@ -138,5 +138,6 @@
         <file>resources/icons/approachunselect.svg</file>
         <file>resources/icons/routeactiveleg.svg</file>
         <file>resources/icons/missed.svg</file>
+        <file>resources/icons/saveasflp.svg</file>
     </qresource>
 </RCC>

@@ -87,6 +87,7 @@ public:
   bool saveFlightplan();
   bool saveFlighplanAsGfp(const QString& filename);
   bool saveFlighplanAsRte(const QString& filename);
+  bool saveFlighplanAsFlp(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
   void saveState();
