@@ -1719,6 +1719,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsGfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsRte->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsFlp->setEnabled(hasFlightplan);
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(routeController->hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
