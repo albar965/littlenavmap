@@ -407,7 +407,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   QVector<int> indexes;
   for(int i = 0; i < legList.route.size(); i++)
   {
-    if(legList.route.at(i).isMissed())
+    if(legList.route.at(i).getProcedureLeg().isMissed())
       break;
     else
       indexes.prepend(i);
@@ -770,7 +770,7 @@ ProfileWidget::ElevationLegList ProfileWidget::fetchRouteElevationsThread(Elevat
       return ElevationLegList();
 
     const RouteLeg& routeLeg = legs.route.at(i);
-    if(routeLeg.isMissed())
+    if(routeLeg.getProcedureLeg().isMissed())
       break;
 
     const RouteLeg& lastLeg = legs.route.at(i - 1);

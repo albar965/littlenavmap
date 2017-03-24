@@ -22,6 +22,7 @@
 #include "route/route.h"
 #include "common/maptypes.h"
 
+#include <QIcon>
 #include <QObject>
 
 namespace atools {
@@ -45,10 +46,10 @@ class MainWindow;
 class QTableView;
 class QStandardItemModel;
 class QItemSelection;
-class RouteIconDelegate;
 class RouteNetwork;
 class RouteFinder;
 class FlightplanEntryBuilder;
+class SymbolPainter;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -224,6 +225,8 @@ public:
 
   void activateLeg(int index);
 
+  QString procedureTypeText(const RouteLeg& leg);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -343,6 +346,7 @@ private:
   void highlightNextWaypoint(int nearestLegIndex);
   void highlightProcedureItems();
   void loadProceduresFromFlightplan(bool quiet);
+  void updateIcons();
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
@@ -374,7 +378,6 @@ private:
   QTableView *view;
   MapQuery *query;
   QStandardItemModel *model;
-  RouteIconDelegate *iconDelegate = nullptr;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
 
@@ -382,6 +385,9 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
   qint64 lastSimUpdate = 0;
 
+  QIcon ndbIcon, waypointIcon, userpointIcon, invalidIcon, procedureIcon;
+  SymbolPainter *symbolPainter = nullptr;
+  int iconSize = 20;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

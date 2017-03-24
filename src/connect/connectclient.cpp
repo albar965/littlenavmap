@@ -131,6 +131,8 @@ void ConnectClient::tryConnectOnStartup()
 
 void ConnectClient::connectedToSimulatorDirect()
 {
+  qDebug() << Q_FUNC_INFO;
+
   mainWindow->setConnectionStatusMessageText(tr("Connected"),
                                              tr("Connected to local flight simulator."));
   dialog->setConnected(isConnected());
@@ -140,6 +142,8 @@ void ConnectClient::connectedToSimulatorDirect()
 
 void ConnectClient::disconnectedFromSimulatorDirect()
 {
+  qDebug() << Q_FUNC_INFO;
+
   // Try to reconnect if it was not unlinked by using the disconnect button
   if(dialog->isAutoConnect() && dialog->isConnectDirect() && !manualDisconnect)
     connectInternal();
@@ -435,7 +439,7 @@ void ConnectClient::closeSocket(bool allowRestart)
 
   if(socketConnected)
   {
-    // qDebug() << Q_FUNC_INFO << "***** sending messages";
+    qDebug() << Q_FUNC_INFO << "emit disconnectedFromSimulator();";
     emit disconnectedFromSimulator();
     emit weatherUpdated();
     socketConnected = false;

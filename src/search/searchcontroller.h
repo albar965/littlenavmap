@@ -97,6 +97,7 @@ private:
   void tabChanged(int index);
   void postCreateSearch(AbstractSearch *search);
   void helpPressed();
+  void helpPressedProcedure();
 
   MapQuery *mapQuery;
 

@@ -36,7 +36,6 @@
 #include "mapgui/mapwidget.h"
 #include "parkingdialog.h"
 #include "route/routefinder.h"
-#include "route/routeicondelegate.h"
 #include "route/routenetworkairway.h"
 #include "route/routenetworkradio.h"
 #include "settings/settings.h"
@@ -62,7 +61,8 @@
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
                                     QObject::tr("Name"),
-                                    QObject::tr("Airway or\nLeg Type"),
+                                    QObject::tr("Procedure"),
+                                    QObject::tr("Airway or\nProcedure"),
                                     QObject::tr("Restriction\n%alt%"),
                                     QObject::tr("Type"),
                                     QObject::tr("Freq.\nMHz/kHz"),
@@ -83,6 +83,7 @@ enum RouteColumns
   IDENT = FIRST_COLUMN,
   REGION,
   NAME,
+  PROCEDURE,
   AIRWAY_OR_LEGTYPE,
   RESTRICTION,
   TYPE,
@@ -113,6 +114,12 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
 
   entryBuilder = new FlightplanEntryBuilder(query);
+
+  symbolPainter = new SymbolPainter(Qt::transparent);
+
+  // Use saved font size for table view
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  updateIcons();
 
   view->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -164,10 +171,6 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
   view->setModel(model);
   delete m;
 
-  // Add airport and navaid icons to first column
-  iconDelegate = new RouteIconDelegate(route);
-  view->setItemDelegateForColumn(0, iconDelegate);
-
   // Avoid stealing of keys from other default menus
   ui->actionRouteLegDown->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -203,19 +206,17 @@ RouteController::RouteController(MainWindow *parentWindow, MapQuery *mapQuery, Q
 
   updateSpinboxSuffices();
 
-  // Use saved font size for table view
-  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
 }
 
 RouteController::~RouteController()
 {
   delete entryBuilder;
   delete model;
-  delete iconDelegate;
   delete undoStack;
   delete routeNetworkRadio;
   delete routeNetworkAirway;
   delete zoomHandler;
+  delete symbolPainter;
 }
 
 void RouteController::undoTriggered()
@@ -565,7 +566,10 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
   {
     route.clearFlightplanProcedureProperties(maptypes::PROCEDURE_ALL);
     if(!quiet)
-      QMessageBox::warning(mainWindow, QApplication::applicationName(), tr("Could not load procedures for flight plan."));
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Could not load procedures for flight plan.\n"
+                              "Removing procedure information.\n\n"
+                              "Reload flight plan after switching simulator."));
     return;
   }
 
@@ -622,8 +626,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
     route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
 
-    route.clearApproachAndTransProcedure();
-    route.clearStarProcedure();
+    route.clearProcedures(maptypes::PROCEDURE_ARRIVAL_ALL);
 
     createRouteLegsFromFlightplan();
     route.updateAll();
@@ -1019,9 +1022,7 @@ void RouteController::reverseRoute()
   }
 
   // Remove all procedures
-  route.clearApproachAndTransProcedure();
-  route.clearStarProcedure();
-  route.clearDepartureProcedure();
+  route.clearProcedures(maptypes::PROCEDURE_ALL);
 
   createRouteLegsFromFlightplan();
   route.updateAll();
@@ -1493,6 +1494,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  updateIcons();
   updateTableHeaders();
   updateTableModel();
   updateWindowLabel();
@@ -1656,16 +1658,7 @@ void RouteController::deleteSelectedLegs()
       model->removeRow(row);
     }
 
-    if(procs & maptypes::PROCEDURE_APPROACH || procs & maptypes::PROCEDURE_MISSED)
-      route.clearApproachAndTransProcedure();
-    else if(procs & maptypes::PROCEDURE_TRANSITION)
-      route.clearTransitionProcedure();
-
-    if(procs & maptypes::PROCEDURE_STAR)
-      route.clearStarProcedure();
-
-    if(procs & maptypes::PROCEDURE_DEPARTURE)
-      route.clearDepartureProcedure();
+    route.clearProcedures(procs);
 
     route.updateAll();
 
@@ -1735,7 +1728,7 @@ void RouteController::routeSetParking(maptypes::MapParking parking)
     maptypes::MapAirport ap;
     query->getAirportById(ap, parking.airportId);
     routeSetDepartureInternal(ap);
-    route.clearDepartureProcedure();
+    route.clearProcedures(maptypes::PROCEDURE_DEPARTURE);
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
@@ -1804,7 +1797,7 @@ void RouteController::routeSetDeparture(maptypes::MapAirport airport)
 
   routeSetDepartureInternal(airport);
 
-  route.clearDepartureProcedure();
+  route.clearProcedures(maptypes::PROCEDURE_DEPARTURE);
 
   route.updateAll();
   routeToFlightPlan();
@@ -1855,8 +1848,7 @@ void RouteController::routeSetDestination(maptypes::MapAirport airport)
 
   routeSetDestinationInternal(airport);
 
-  route.clearApproachAndTransProcedure();
-  route.clearStarProcedure();
+  route.clearProcedures(maptypes::PROCEDURE_ARRIVAL_ALL);
 
   route.updateAll();
   routeToFlightPlan();
@@ -1919,8 +1911,7 @@ void RouteController::routeAttachProcedure(const maptypes::MapProcedureLegs& leg
        route.last().getId() != legs.ref.airportId)
     {
       // No route, no destination airport or different airport
-      route.clearStarProcedure();
-      route.clearApproachAndTransProcedure();
+      route.clearProcedures(maptypes::PROCEDURE_ARRIVAL_ALL);
       routeSetDestinationInternal(airport);
     }
     // Will take care of the flight plan entries too
@@ -1937,7 +1928,7 @@ void RouteController::routeAttachProcedure(const maptypes::MapProcedureLegs& leg
        route.first().getId() != legs.ref.airportId)
     {
       // No route, no departure airport or different airport
-      route.clearDepartureProcedure();
+      route.clearProcedures(maptypes::PROCEDURE_DEPARTURE);
       routeSetDepartureInternal(airport);
     }
     // Will take care of the flight plan entries too
@@ -1996,17 +1987,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   route.insert(insertIndex, routeLeg);
 
   maptypes::MapObjectTypes procs = affectedProcedures({insertIndex});
-
-  if(procs & maptypes::PROCEDURE_APPROACH || procs & maptypes::PROCEDURE_MISSED)
-    route.clearApproachAndTransProcedure();
-  else if(procs & maptypes::PROCEDURE_TRANSITION)
-    route.clearTransitionProcedure();
-
-  if(procs & maptypes::PROCEDURE_STAR)
-    route.clearStarProcedure();
-
-  if(procs & maptypes::PROCEDURE_DEPARTURE)
-    route.clearDepartureProcedure();
+  route.clearProcedures(procs);
 
   route.updateAll();
   // Force update of start if departure airport was added
@@ -2115,13 +2096,10 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, maptypes::M
   eraseAirway(legIndex + 1);
 
   if(legIndex == route.size() - 1)
-  {
-    route.clearApproachAndTransProcedure();
-    route.clearStarProcedure();
-  }
+    route.clearProcedures(maptypes::PROCEDURE_ARRIVAL_ALL);
 
   if(legIndex == 0)
-    route.clearDepartureProcedure();
+    route.clearProcedures(maptypes::PROCEDURE_DEPARTURE);
 
   route.updateAll();
 
@@ -2153,13 +2131,10 @@ void RouteController::routeDelete(int index)
   eraseAirway(index);
 
   if(index == route.size())
-  {
-    route.clearApproachAndTransProcedure();
-    route.clearStarProcedure();
-  }
+    route.clearProcedures(maptypes::PROCEDURE_ARRIVAL_ALL);
 
   if(index == 0)
-    route.clearDepartureProcedure();
+    route.clearProcedures(maptypes::PROCEDURE_DEPARTURE);
 
   route.updateAll();
   // Force update of start if departure airport was removed
@@ -2309,79 +2284,84 @@ void RouteController::updateTableModel()
 
   for(int i = 0; i < route.size(); i++)
   {
-    const RouteLeg& mapobj = route.at(i);
+    const RouteLeg& leg = route.at(i);
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
 
-    QString suffix;
+    QIcon icon;
+    if(leg.getMapObjectType() == maptypes::AIRPORT)
+      icon = symbolPainter->createAirportIcon(leg.getAirport(), iconSize);
+    else if(leg.getVor().isValid())
+      icon = symbolPainter->createVorIcon(leg.getVor(), iconSize);
+    else if(leg.getNdb().isValid())
+      icon = ndbIcon;
+    else if(leg.getWaypoint().isValid())
+      icon = waypointIcon;
+    else if(leg.getMapObjectType() == maptypes::USER)
+      icon = userpointIcon;
+    else if(leg.getMapObjectType() == maptypes::INVALID)
+      icon = invalidIcon;
+    else if(leg.isAnyProcedure())
+      icon = procedureIcon;
 
-    if(route.hasArrivalProcedure() || route.hasDepartureProcedure() || route.hasStarProcedure())
-    {
-      if(mapobj.isRoute())
-        suffix = "  ";
-      else if(mapobj.isApproach())
-        suffix = tr(" A");
-      else if(mapobj.isMissed())
-        suffix = tr(" M");
-      else if(mapobj.isTransition())
-        suffix = tr(" T");
-      else if(mapobj.isStar())
-        suffix = tr(" S");
-      else if(mapobj.isSid())
-        suffix = tr(" D");
-    }
+    QStandardItem *ident = new QStandardItem(icon, leg.getIdent());
+    QFont f = ident->font();
+    f.setBold(true);
+    ident->setFont(f);
+    ident->setTextAlignment(Qt::AlignRight);
 
-    itemRow[rc::IDENT] = new QStandardItem(mapobj.getIdent() + suffix);
-    itemRow[rc::REGION] = new QStandardItem(mapobj.getRegion());
-    itemRow[rc::NAME] = new QStandardItem(mapobj.getName());
+    itemRow[rc::IDENT] = ident;
+    itemRow[rc::REGION] = new QStandardItem(leg.getRegion());
+    itemRow[rc::NAME] = new QStandardItem(leg.getName());
+    itemRow[rc::PROCEDURE] = new QStandardItem(maptypes::procedureTypeText(leg.getProcedureLeg()));
 
-    if(mapobj.isRoute())
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(mapobj.getAirway());
+    if(leg.isRoute())
+      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(leg.getAirway());
     else
     {
-      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(maptypes::procedureLegTypeStr(mapobj.getProcedureLegType()));
+      itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(maptypes::procedureLegTypeStr(leg.getProcedureLegType()));
 
       itemRow[rc::RESTRICTION] =
-        new QStandardItem(maptypes::altRestrictionTextShort(mapobj.getProcedureLeg().altRestriction));
+        new QStandardItem(maptypes::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
     }
 
     // VOR/NDB type ===========================
-    if(mapobj.getVor().isValid())
-      itemRow[rc::TYPE] = new QStandardItem(maptypes::vorFullShortText(mapobj.getVor()));
-    else if(mapobj.getNdb().isValid())
-      itemRow[rc::TYPE] = new QStandardItem(maptypes::ndbFullShortText(mapobj.getNdb()));
+    if(leg.getVor().isValid())
+      itemRow[rc::TYPE] = new QStandardItem(maptypes::vorFullShortText(leg.getVor()));
+    else if(leg.getNdb().isValid())
+      itemRow[rc::TYPE] = new QStandardItem(maptypes::ndbFullShortText(leg.getNdb()));
 
     // VOR/NDB frequency =====================
-    if(mapobj.getFrequency() > 0)
+    if(leg.getFrequency() > 0)
     {
-      if(mapobj.getVor().isValid())
-        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(mapobj.getFrequency() / 1000.f, 'f', 2));
-      else if(mapobj.getNdb().isValid())
-        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(mapobj.getFrequency() / 100.f, 'f', 1));
+      if(leg.getVor().isValid())
+        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
+      else if(leg.getNdb().isValid())
+        itemRow[rc::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
     }
 
     // VOR/NDB range =====================
-    if(mapobj.getRange() > 0 && (mapobj.getVor().isValid() || mapobj.getNdb().isValid()))
-      itemRow[rc::RANGE] = new QStandardItem(Unit::distNm(mapobj.getRange(), false));
+    if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
+      itemRow[rc::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
 
     // Course =====================
     if(row > 0 && !afterArrivalAirport)
     {
       QString trueCourse = route.isTrueCourse() ? tr("(°T)") : QString();
 
-      if(mapobj.getCourseToMag() < maptypes::INVALID_COURSE_VALUE)
-        itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(mapobj.getCourseToMag(), 'f', 0) + trueCourse);
-      if(mapobj.getCourseToRhumbMag() < maptypes::INVALID_COURSE_VALUE)
-        itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(mapobj.getCourseToRhumbMag(), 'f', 0) + trueCourse);
+      if(leg.getCourseToMag() < maptypes::INVALID_COURSE_VALUE)
+        itemRow[rc::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0) + trueCourse);
+      if(leg.getCourseToRhumbMag() < maptypes::INVALID_COURSE_VALUE)
+        itemRow[rc::DIRECT] = new QStandardItem(QLocale().toString(leg.getCourseToRhumbMag(), 'f', 0) + trueCourse);
     }
 
     if(!afterArrivalAirport)
     {
-      if(mapobj.getDistanceTo() < maptypes::INVALID_DISTANCE_VALUE) // Distance =====================
+      if(leg.getDistanceTo() < maptypes::INVALID_DISTANCE_VALUE) // Distance =====================
       {
-        cumulatedDistance += mapobj.getDistanceTo();
-        itemRow[rc::DIST] = new QStandardItem(Unit::distNm(mapobj.getDistanceTo(), false));
+        cumulatedDistance += leg.getDistanceTo();
+        itemRow[rc::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
 
-        if(!mapobj.isMissed())
+        if(!leg.getProcedureLeg().isMissed())
         {
           float remaining = totalDistance - cumulatedDistance;
           if(remaining < 0.f)
@@ -2391,8 +2371,8 @@ void RouteController::updateTableModel()
       }
     }
 
-    if(mapobj.isAnyProcedure())
-      itemRow[rc::REMARKS] = new QStandardItem(maptypes::procedureLegRemark(mapobj.getProcedureLeg()));
+    if(leg.isAnyProcedure())
+      itemRow[rc::REMARKS] = new QStandardItem(maptypes::procedureLegRemark(leg.getProcedureLeg()));
 
     // Travel time and ETA are updated in updateModelRouteTime
 
@@ -2447,7 +2427,7 @@ void RouteController::updateModelRouteTime()
 {
   int row = 0;
   float cumulatedDistance = 0.f;
-  for(const RouteLeg& mapobj : route)
+  for(const RouteLeg& leg : route)
   {
     if(!route.isAirportAfterArrival(row))
     {
@@ -2455,13 +2435,13 @@ void RouteController::updateModelRouteTime()
         model->setItem(row, rc::LEG_TIME, new QStandardItem());
       else
       {
-        float travelTime = calcTravelTime(mapobj.getDistanceTo());
+        float travelTime = calcTravelTime(leg.getDistanceTo());
         model->setItem(row, rc::LEG_TIME, new QStandardItem(formatter::formatMinutesHours(travelTime)));
       }
 
-      if(!mapobj.isMissed())
+      if(!leg.getProcedureLeg().isMissed())
       {
-        cumulatedDistance += mapobj.getDistanceTo();
+        cumulatedDistance += leg.getDistanceTo();
         float eta = calcTravelTime(cumulatedDistance);
         model->setItem(row, rc::ETA, new QStandardItem(formatter::formatMinutesHours(eta)));
       }
@@ -2561,7 +2541,7 @@ void RouteController::highlightProcedureItems()
       {
         if(route.at(row).isAnyProcedure())
         {
-          if(route.at(row).isMissed())
+          if(route.at(row).getProcedureLeg().isMissed())
             item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::darkYellow : Qt::darkRed);
           else
             item->setForeground(OptionData::instance().isGuiStyleDark() ? Qt::cyan : Qt::darkBlue);
@@ -2587,6 +2567,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
 
   if(!flightplan.isEmpty())
   {
+    // Add departure to text ==============================================================
     if(hasValidDeparture())
     {
       departure = flightplan.getDepartureAiportName() +
@@ -2610,6 +2591,7 @@ QString RouteController::buildFlightplanLabel(bool html) const
                   arg(flightplan.getEntries().first().getIcaoIdent()).
                   arg(flightplan.getEntries().first().getWaypointTypeAsString());
 
+    // Add destination to text ==============================================================
     if(hasValidDestination())
     {
       destination = flightplan.getDestinationAiportName() + " (" + flightplan.getDestinationIdent() + ")";
@@ -2620,20 +2602,25 @@ QString RouteController::buildFlightplanLabel(bool html) const
                     arg(flightplan.getEntries().last().getIcaoIdent()).
                     arg(flightplan.getEntries().last().getWaypointTypeAsString());
 
+    // Add procedures to text ==============================================================
     const maptypes::MapProcedureLegs& arrivalLegs = route.getArrivalLegs();
     const maptypes::MapProcedureLegs& starLegs = route.getStarLegs();
-    const maptypes::MapProcedureLegs& departureLegs = route.getDepartureLegs();
-    if(!arrivalLegs.isEmpty() || !departureLegs.isEmpty())
+    if(route.hasAnyProcedure())
     {
       QStringList procedureText;
       QVector<bool> boldTextFlag;
 
-      if(departureLegs.mapType & maptypes::PROCEDURE_SID)
+      const maptypes::MapProcedureLegs& departureLegs = route.getDepartureLegs();
+      if(!departureLegs.isEmpty())
       {
         // Add departure procedure to text
         boldTextFlag << false << true;
         procedureText.append(tr("Depart via SID"));
-        procedureText.append(departureLegs.approachFixIdent);
+
+        QString sid(departureLegs.approachFixIdent);
+        if(!departureLegs.transitionFixIdent.isEmpty())
+          sid += "." + departureLegs.transitionFixIdent;
+        procedureText.append(sid);
 
         if(arrivalLegs.mapType & maptypes::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
         {
@@ -2643,17 +2630,21 @@ QString RouteController::buildFlightplanLabel(bool html) const
       }
 
       // Add arrival procedures procedure to text
-      if(starLegs.mapType & maptypes::PROCEDURE_STAR)
+      if(!starLegs.isEmpty())
       {
         boldTextFlag << false << true;
         procedureText.append(tr("From STAR"));
-        procedureText.append(starLegs.approachFixIdent);
+
+        QString star(starLegs.approachFixIdent);
+        if(!starLegs.transitionFixIdent.isEmpty())
+          star += "." + starLegs.transitionFixIdent;
+        procedureText.append(star);
       }
 
       if(arrivalLegs.mapType & maptypes::PROCEDURE_TRANSITION)
       {
         boldTextFlag << false << true;
-        procedureText.append(starLegs.mapType & maptypes::PROCEDURE_STAR ? tr("via") : tr("Via"));
+        procedureText.append(!starLegs.isEmpty() ? tr("via") : tr("Via"));
         procedureText.append(arrivalLegs.transitionFixIdent);
       }
 
@@ -2661,13 +2652,18 @@ QString RouteController::buildFlightplanLabel(bool html) const
       {
         boldTextFlag << false << true;
         procedureText.append((arrivalLegs.mapType & maptypes::PROCEDURE_TRANSITION ||
-                              starLegs.mapType & maptypes::PROCEDURE_STAR) ? tr("and") : tr("Via"));
+                              !starLegs.isEmpty()) ? tr("and") : tr("Via"));
         procedureText.append(arrivalLegs.approachFixIdent);
 
         // Add runway for approach
         boldTextFlag << false << true;
         procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
         procedureText.append(arrivalLegs.runwayEnd.name);
+      }
+      else
+      {
+        boldTextFlag << false;
+        procedureText.append(tr("to airport"));
       }
 
       if(html)
@@ -2838,21 +2834,40 @@ maptypes::MapObjectTypes RouteController::affectedProcedures(const QList<int>& i
 
     if(index >= 0 && index < route.size())
     {
-      const RouteLeg& leg = route.at(index);
+      const maptypes::MapProcedureLeg& leg = route.at(index).getProcedureLeg();
+
+      if(leg.isSidTransition())
+        types |= maptypes::PROCEDURE_SID_TRANSITION;
 
       if(leg.isSid())
-        types |= maptypes::PROCEDURE_SID;
+        // Delete SID and transition
+        types |= maptypes::PROCEDURE_DEPARTURE;
+
+      if(leg.isStarTransition())
+        types |= maptypes::PROCEDURE_STAR_TRANSITION;
 
       if(leg.isStar())
-        types |= maptypes::PROCEDURE_STAR;
+        // Delete STAR and transition
+        types |= maptypes::PROCEDURE_STAR_ALL;
 
       if(leg.isTransition())
+        // Delete transition only
         types |= maptypes::PROCEDURE_TRANSITION;
 
       if(leg.isApproach() || leg.isMissed())
+        // Delete transition and approach
         types |= maptypes::PROCEDURE_ARRIVAL;
     }
   }
 
   return types;
+}
+
+void RouteController::updateIcons()
+{
+  ndbIcon = symbolPainter->createNdbIcon(iconSize);
+  waypointIcon = symbolPainter->createWaypointIcon(iconSize);
+  userpointIcon = symbolPainter->createUserpointIcon(iconSize);
+  invalidIcon = symbolPainter->createWaypointIcon(iconSize, mapcolors::routeInvalidPointColor);
+  procedureIcon = symbolPainter->createProcedurePointIcon(iconSize);
 }

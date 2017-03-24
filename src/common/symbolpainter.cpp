@@ -103,7 +103,7 @@ QIcon SymbolPainter::createUserpointIcon(int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createApproachPointIcon(int size)
+QIcon SymbolPainter::createProcedurePointIcon(int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);

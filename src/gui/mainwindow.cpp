@@ -1500,7 +1500,7 @@ void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
     mapWidget->changeApproachHighlight(maptypes::MapProcedureLegs());
   else
   {
-    if(approachRef.isApproachAndTransition())
+    if(approachRef.hasApproachAndTransitionIds())
     {
       const maptypes::MapProcedureLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
@@ -1508,7 +1508,7 @@ void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
       else
         qWarning() << "Transition not found" << approachRef.transitionId;
     }
-    else if(approachRef.isApproachOnly() && !approachRef.isLeg())
+    else if(approachRef.hasApproachOnlyIds() && !approachRef.isLeg())
     {
       const maptypes::MapProcedureLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)

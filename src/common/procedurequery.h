@@ -97,10 +97,10 @@ private:
   void processLegsFixRestrictions(maptypes::MapProcedureLegs& legs);
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(maptypes::MapProcedureLegs& legs);
-  void updateBoundingAndDirection(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
+  void updateMagvar(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs);
+  void updateBounding(maptypes::MapProcedureLegs& legs);
 
-  void assignType(maptypes::MapProcedureLegs& approach);
+  void assignType(maptypes::MapProcedureLegs& procedure);
   maptypes::MapProcedureLeg createRunwayLeg(const maptypes::MapProcedureLeg& leg,
                                             const maptypes::MapProcedureLegs& legs);
   maptypes::MapProcedureLeg createStartLeg(const maptypes::MapProcedureLeg& leg, const maptypes::MapProcedureLegs& legs);

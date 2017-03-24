@@ -1548,11 +1548,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       {
         const RouteLeg& routeLeg = route.at(activeLegCorrected);
 
-        if(routeLeg.isApproach())
+        if(routeLeg.getProcedureLeg().isApproach())
           apprText = tr(" - Approach");
-        else if(routeLeg.isTransition())
+        else if(routeLeg.getProcedureLeg().isTransition())
           apprText = tr(" - Transition");
-        else if(routeLeg.isMissed())
+        else if(routeLeg.getProcedureLeg().isMissed())
           apprText = tr(" - Missed Approach");
       }
 
@@ -1638,11 +1638,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(route.size() > 1)
         {
           // No course for arcs
-          if(routeLeg.isRoute() || !routeLeg.isCircular())
+          if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
             html.row2(tr("Leg Course:"), locale.toString(routeLeg.getCourseToRhumbMag(), 'f', 0) +
                       (routeTrueCourse ? tr("°T") : tr("°M")));
 
-          if(!routeLeg.isHold())
+          if(!routeLeg.getProcedureLeg().isHold())
           {
             if(crossTrackDistance < maptypes::INVALID_DISTANCE_VALUE)
             {

@@ -249,7 +249,7 @@ void ProcedureSearch::updateHeaderLabel()
 
     if(item != nullptr)
     {
-      if(ref.isApproachAndTransition())
+      if(ref.hasApproachAndTransitionIds())
       {
         QTreeWidgetItem *appr = item->parent();
         if(appr != nullptr)
@@ -336,8 +336,7 @@ void ProcedureSearch::fillApproachTreeWidget()
         int apprId = recApp.valueInt("approach_id");
         QString rwname(recApp.valueStr("runway_name"));
 
-        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
-        maptypes::MapObjectTypes type = buildType(recApp);
+        maptypes::MapObjectTypes type = buildTypeFromApproachRec(recApp);
 
         bool filterOk = false;
         switch(filterIndex)
@@ -361,25 +360,20 @@ void ProcedureSearch::fillApproachTreeWidget()
 
         if(filterOk)
         {
-          int transitionId = -1;
-          if(type == maptypes::PROCEDURE_SID)
-            transitionId = recTransVector->first().valueInt("transition_id");
-
-          itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, transitionId, -1, type));
+          itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId, -1, -1, type));
+          const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
           QTreeWidgetItem *apprItem = buildApproachItem(root, recApp);
 
-          if(type != maptypes::PROCEDURE_SID)
+          if(recTransVector != nullptr)
           {
-            if(recTransVector != nullptr)
+            // Transitions for this approach
+            for(const SqlRecord& recTrans : *recTransVector)
             {
-              // Transitions for this approach
-              for(const SqlRecord& recTrans : *recTransVector)
-              {
-                itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
-                                                 recTrans.valueInt("transition_id"), -1, type));
-                buildTransitionItem(apprItem, recTrans);
-              }
+              itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
+                                               recTrans.valueInt("transition_id"), -1, type));
+              buildTransitionItem(apprItem, recTrans,
+                                  type & maptypes::PROCEDURE_DEPARTURE || type & maptypes::PROCEDURE_STAR_ALL);
             }
           }
         }
@@ -484,7 +478,7 @@ void ProcedureSearch::itemSelectionChanged()
 
       qDebug() << Q_FUNC_INFO << ref.runwayEndId << ref.approachId << ref.transitionId << ref.legId;
 
-      if(ref.isApproachOrTransition())
+      if(ref.hasApproachOrTransitionIds())
         emit procedureSelected(ref);
 
       if(ref.isLeg())
@@ -492,7 +486,7 @@ void ProcedureSearch::itemSelectionChanged()
       else
         emit procedureLegSelected(maptypes::MapProcedureRef());
 
-      if(ref.isApproachAndTransition())
+      if(ref.hasApproachAndTransitionIds())
         updateApproachItem(parentApproachItem(item), ref.transitionId);
     }
   }
@@ -554,8 +548,13 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         const MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
         if(legs != nullptr)
         {
-          addApproachLegs(legs, item, -1);
+          QList<QTreeWidgetItem *> items = addApproachLegs(legs, -1);
           itemLoadedIndex.setBit(item->type());
+
+          if(legs->mapType & maptypes::PROCEDURE_DEPARTURE)
+            item->insertChildren(0, items);
+          else
+            item->addChildren(items);
         }
         else
           qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirport.id << ref.approachId;
@@ -565,7 +564,8 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         const MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
         if(legs != nullptr)
         {
-          addTransitionLegs(legs, item);
+          QList<QTreeWidgetItem *> items = addTransitionLegs(legs);
+          item->addChildren(items);
           itemLoadedIndex.setBit(item->type());
         }
         else
@@ -576,30 +576,34 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
   }
 }
 
-void ProcedureSearch::addApproachLegs(const MapProcedureLegs *legs, QTreeWidgetItem *item, int transitionId)
+QList<QTreeWidgetItem *> ProcedureSearch::addApproachLegs(const MapProcedureLegs *legs, int transitionId)
 {
+  QList<QTreeWidgetItem *> items;
   if(legs != nullptr)
   {
     for(const MapProcedureLeg& leg : legs->approachLegs)
     {
       itemIndex.append(MapProcedureRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId, transitionId,
                                        leg.legId, legs->mapType));
-      buildLegItem(item, leg);
+      items.append(buildLegItem(leg));
     }
   }
+  return items;
 }
 
-void ProcedureSearch::addTransitionLegs(const MapProcedureLegs *legs, QTreeWidgetItem *item)
+QList<QTreeWidgetItem *> ProcedureSearch::addTransitionLegs(const MapProcedureLegs *legs)
 {
+  QList<QTreeWidgetItem *> items;
   if(legs != nullptr)
   {
     for(const MapProcedureLeg& leg : legs->transitionLegs)
     {
       itemIndex.append(MapProcedureRef(legs->ref.airportId, legs->ref.runwayEndId, legs->ref.approachId,
                                        legs->ref.transitionId, leg.legId, legs->mapType));
-      buildLegItem(item, leg);
+      items.append(buildLegItem(leg));
     }
   }
+  return items;
 }
 
 void ProcedureSearch::contextMenu(const QPoint& pos)
@@ -629,46 +633,57 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
   QString text, showText;
+  const maptypes::MapProcedureLegs *procedureLegs = nullptr;
 
   if(item != nullptr)
   {
-    QTreeWidgetItem *parentAppr = parentApproachItem(item);
-    QTreeWidgetItem *parentTrans = parentTransitionItem(item);
+    // Get the aproach legs for the initial fix
+    if(ref.hasApproachOnlyIds())
+      procedureLegs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
+    else if(ref.hasApproachAndTransitionIds())
+      procedureLegs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
 
-    if(ref.isSid())
-      text = parentTrans->text(COL_DESCRIPTION) + " " + parentTrans->text(COL_IDENT);
-    else if(ref.isApproachAndTransition())
+    if(!procedureLegs->isEmpty())
     {
-      text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT) +
-             tr(" and ") +
-             parentTrans->text(COL_DESCRIPTION) + " " + parentTrans->text(COL_IDENT);
-    }
-    else if(ref.isApproachOnly())
-      text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT);
+      QTreeWidgetItem *parentAppr = parentApproachItem(item);
+      QTreeWidgetItem *parentTrans = parentTransitionItem(item);
 
-    if(!text.isEmpty())
-      ui->actionInfoApproachShow->setEnabled(true);
+      if(ref.hasApproachAndTransitionIds())
+      {
+        text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT) +
+               tr(" and ") +
+               parentTrans->text(COL_DESCRIPTION) + " " + parentTrans->text(COL_IDENT);
+      }
+      else if(ref.hasApproachOnlyIds())
+        text = parentAppr->text(COL_DESCRIPTION) + " " + parentAppr->text(COL_IDENT);
 
-    if(ref.isLeg())
-      showText = item->text(COL_IDENT).isEmpty() ? tr("Position") : item->text(COL_IDENT);
-    else
-      showText = text;
+      if(!text.isEmpty())
+        ui->actionInfoApproachShow->setEnabled(true);
 
-    ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
+      if(ref.isLeg())
+        showText = item->text(COL_IDENT).isEmpty() ? tr("Position") : item->text(COL_IDENT);
+      else
+        showText = text;
 
-    if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
-       (route.hasValidDestination() && route.last().getId() == currentAirport.id))
-      ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
-    else
-    {
-      if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
-        ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
-      else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
-        ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
+      ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
+
+      if((route.hasValidDeparture() && route.first().getId() == currentAirport.id) ||
+         (route.hasValidDestination() && route.last().getId() == currentAirport.id))
+        ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
+      else
+      {
+        if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
+          ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
+        else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
+          ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
+      }
     }
   }
-  else
+
+  if(procedureLegs == nullptr || procedureLegs->isEmpty())
   {
+    ui->actionInfoApproachAttach->setEnabled(false);
+    ui->actionInfoApproachShow->setEnabled(false);
     ui->actionInfoApproachAttach->setText(ui->actionInfoApproachAttach->text().arg(tr("Procedure")));
     ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(tr("Procedure")));
   }
@@ -711,16 +726,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     showEntry(item, false);
   else if(action == ui->actionInfoApproachAttach)
   {
-    // Get the aproach legs for the initial fix
-    const maptypes::MapProcedureLegs *legs = nullptr;
-    if(ref.isApproachOnly())
-      legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
-    else if(ref.isApproachAndTransition())
-      legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
-
-    if(legs != nullptr)
+    if(procedureLegs != nullptr)
     {
-      if(legs->hasError)
+      if(procedureLegs->hasError)
       {
         int result = atools::gui::Dialog(mainWindow).
                      showQuestionMsgBox(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING,
@@ -731,10 +739,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
                                         QMessageBox::No, QMessageBox::Yes);
 
         if(result == QMessageBox::Yes)
-          emit routeInsertProcedure(*legs);
+          emit routeInsertProcedure(*procedureLegs);
       }
       else
-        emit routeInsertProcedure(*legs);
+        emit routeInsertProcedure(*procedureLegs);
     }
     else
       qDebug() << Q_FUNC_INFO << "legs not found";
@@ -785,7 +793,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 }
 
-maptypes::MapObjectTypes ProcedureSearch::buildType(const SqlRecord& recApp)
+maptypes::MapObjectTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
   return maptypes::procedureType(mainWindow->getCurrentSimulator(),
                                  recApp.valueStr("type"), recApp.valueStr("suffix"), recApp.valueBool("has_gps_overlay"));
@@ -799,7 +807,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
 
   QString approachType;
 
-  maptypes::MapObjectTypes maptype = buildType(recApp);
+  maptypes::MapObjectTypes maptype = buildTypeFromApproachRec(recApp);
   if(maptype == maptypes::PROCEDURE_SID)
     approachType += tr("SID");
   else if(maptype == maptypes::PROCEDURE_STAR)
@@ -839,17 +847,22 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
   return item;
 }
 
-QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem, const SqlRecord& recTrans)
+QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem, const SqlRecord& recTrans,
+                                                      bool sidOrStar)
 {
   QString altStr;
   if(recTrans.valueFloat("altitude") > 0.f)
     altStr = Unit::altFeet(recTrans.valueFloat("altitude"), false);
 
   QString name(tr("Transition"));
-  if(recTrans.valueStr("type") == "F")
-    name.append(tr(" (Full)"));
-  else if(recTrans.valueStr("type") == "D")
-    name.append(tr(" (DME)"));
+
+  if(!sidOrStar)
+  {
+    if(recTrans.valueStr("type") == "F")
+      name.append(tr(" (Full)"));
+    else if(recTrans.valueStr("type") == "D")
+      name.append(tr(" (DME)"));
+  }
 
   QTreeWidgetItem *item = new QTreeWidgetItem({
                                                 name,
@@ -870,7 +883,7 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *apprItem,
   return item;
 }
 
-void ProcedureSearch::buildLegItem(QTreeWidgetItem *parentItem, const MapProcedureLeg& leg)
+QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
 {
   QStringList texts;
   QIcon icon;
@@ -897,8 +910,7 @@ void ProcedureSearch::buildLegItem(QTreeWidgetItem *parentItem, const MapProcedu
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 
   setItemStyle(item, leg);
-
-  parentItem->addChild(item);
+  return item;
 }
 
 void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg& leg)
@@ -1040,7 +1052,7 @@ QTreeWidgetItem *ProcedureSearch::parentApproachItem(QTreeWidgetItem *item) cons
   while(current != nullptr && current != root)
   {
     const MapProcedureRef& ref = itemIndex.at(current->type());
-    if(ref.isApproachOnly() && !ref.isLeg())
+    if(ref.hasApproachOnlyIds() && !ref.isLeg())
       return current;
 
     current = current->parent();
@@ -1054,7 +1066,7 @@ QTreeWidgetItem *ProcedureSearch::parentTransitionItem(QTreeWidgetItem *item) co
   while(current != nullptr && current != root)
   {
     const MapProcedureRef& ref = itemIndex.at(current->type());
-    if(ref.isApproachAndTransition() && !ref.isLeg())
+    if(ref.hasApproachAndTransitionIds() && !ref.isLeg())
       return current;
 
     current = current->parent();

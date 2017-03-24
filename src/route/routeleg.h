@@ -233,56 +233,10 @@ public:
     return procedureLeg.type;
   }
 
-  /* Approach, missed or transition */
-  bool isArrivalProcedure() const
+  /* invalid type if not an approach */
+  maptypes::MapObjectTypes getProcedureType() const
   {
-    return procedureLeg.mapType & maptypes::PROCEDURE_ARRIVAL;
-  }
-
-  /* Approach, missed, transition or STAR */
-  bool isAnyArrivalProcedure() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_ARRIVAL_ALL;
-  }
-
-  bool isDepartureProcedure() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_DEPARTURE;
-  }
-
-  bool isApproach() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_APPROACH;
-  }
-
-  bool isMissed() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_MISSED;
-  }
-
-  bool isTransition() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_TRANSITION;
-  }
-
-  bool isSid() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_SID;
-  }
-
-  bool isStar() const
-  {
-    return procedureLeg.mapType & maptypes::PROCEDURE_STAR;
-  }
-
-  bool isHold() const
-  {
-    return procedureLeg.isHold();
-  }
-
-  bool isCircular() const
-  {
-    return procedureLeg.isCircular();
+    return procedureLeg.mapType;
   }
 
   const atools::geo::LineString& getGeometry() const;

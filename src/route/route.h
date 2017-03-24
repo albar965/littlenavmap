@@ -61,7 +61,8 @@ public:
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects */
-  int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const;
+  int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
+                               bool ignoreNotEditable) const;
 
   int getActiveLegIndex() const
   {
@@ -70,8 +71,11 @@ public:
 
   /* Get active leg or null if this is none */
   const RouteLeg *getActiveLeg() const;
+
+  /* Give next procedure leg instead of route leg if approaching one */
   const RouteLeg *getActiveLegCorrected(bool *corrected = nullptr) const;
 
+  /* Currently flying missed approach */
   bool isActiveMissed() const;
 
   /* Corrected methods replace the current leg with the initial fix
@@ -156,12 +160,12 @@ public:
   /* Index from 0 (departure) to size() -1 */
   bool canEditPoint(int index) const;
 
-  bool hasDepartureProcedure() const
+  bool hasAnyProcedure() const
   {
-    return !departureLegs.isEmpty();
+    return hasAnyArrivalProcedure() || hasAnyDepartureProcedure() || hasAnyStarProcedure();
   }
 
-  bool hasArrivalProcedure() const
+  bool hasAnyArrivalProcedure() const
   {
     return !arrivalLegs.isEmpty();
   }
@@ -171,9 +175,14 @@ public:
     return !arrivalLegs.transitionLegs.isEmpty();
   }
 
-  bool hasStarProcedure() const
+  bool hasAnyStarProcedure() const
   {
     return !starLegs.isEmpty();
+  }
+
+  bool hasAnyDepartureProcedure() const
+  {
+    return !departureLegs.isEmpty();
   }
 
   /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
@@ -197,10 +206,7 @@ public:
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
   void clearAllProcedures();
-  void clearApproachAndTransProcedure();
-  void clearTransitionProcedure();
-  void clearDepartureProcedure();
-  void clearStarProcedure();
+  void clearProcedures(maptypes::MapObjectTypes type);
 
   void setShownMapFeatures(maptypes::MapObjectTypes types)
   {

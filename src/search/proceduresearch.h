@@ -118,10 +118,11 @@ private:
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp);
-  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans);
+  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans,
+                                       bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
-  void buildLegItem(QTreeWidgetItem *parentItem, const maptypes::MapProcedureLeg& leg);
+  QTreeWidgetItem *buildLegItem(const maptypes::MapProcedureLeg& leg);
 
   /* Highlight missing navaids red */
   void setItemStyle(QTreeWidgetItem *item, const maptypes::MapProcedureLeg& leg);
@@ -132,8 +133,10 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  void addApproachLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item, int transitionId);
-  void addTransitionLegs(const maptypes::MapProcedureLegs *legs, QTreeWidgetItem *item);
+  QList<QTreeWidgetItem*> addApproachLegs(const maptypes::MapProcedureLegs *legs, int transitionId);
+
+  QList<QTreeWidgetItem*> addTransitionLegs(const maptypes::MapProcedureLegs *legs);
+
   void fillApproachTreeWidget();
 
   /* Fill header for tree or selected/table view */
@@ -143,7 +146,7 @@ private:
   QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
-  maptypes::MapObjectTypes buildType(const atools::sql::SqlRecord& recApp);
+  maptypes::MapObjectTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   void updateHeaderLabel();
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);

@@ -109,7 +109,7 @@ public:
   QIcon createNdbIcon(int size);
   QIcon createWaypointIcon(int size, const QColor& color = QColor());
   QIcon createUserpointIcon(int size);
-  QIcon createApproachPointIcon(int size);
+  QIcon createProcedurePointIcon(int size);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport, float x, float y, int size,

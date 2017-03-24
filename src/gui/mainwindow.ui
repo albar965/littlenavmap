@@ -1302,7 +1302,7 @@
               <bool>false</bool>
              </property>
              <attribute name="horizontalHeaderMinimumSectionSize">
-              <number>5</number>
+              <number>3</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>true</bool>
@@ -1973,7 +1973,7 @@
               <bool>false</bool>
              </property>
              <attribute name="horizontalHeaderMinimumSectionSize">
-              <number>5</number>
+              <number>3</number>
              </attribute>
              <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
               <bool>true</bool>
@@ -2080,6 +2080,35 @@
              </property>
             </spacer>
            </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProcedureHelpSearch">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
+&lt;p&gt;Search tips for text fields: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
+&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
+&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Check boxes: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
+&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
+&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -2125,7 +2154,7 @@
             <number>0</number>
            </property>
            <attribute name="headerMinimumSectionSize">
-            <number>5</number>
+            <number>3</number>
            </attribute>
           </widget>
          </item>
@@ -2310,7 +2339,7 @@
         <bool>true</bool>
        </property>
        <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>5</number>
+        <number>1</number>
        </attribute>
        <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
         <bool>false</bool>

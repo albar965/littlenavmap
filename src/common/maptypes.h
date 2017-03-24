@@ -100,17 +100,24 @@ enum MapObjectType
   PROCEDURE_MISSED = 1 << 23,
   PROCEDURE_TRANSITION = 1 << 24,
   PROCEDURE_SID = 1 << 25,
-  PROCEDURE_STAR = 1 << 26,
+  PROCEDURE_SID_TRANSITION = 1 << 26,
+  PROCEDURE_STAR = 1 << 27,
+  PROCEDURE_STAR_TRANSITION = 1 << 28,
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
 
   PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
-  PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR,
-  PROCEDURE_DEPARTURE = PROCEDURE_SID,
+  PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
+  PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
+
+  PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR_ALL,
+
+  PROCEDURE_DEPARTURE = PROCEDURE_SID_ALL,
+
   PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
-  PROCEDURE_ALL_BUT_MISSED = PROCEDURE_APPROACH | PROCEDURE_TRANSITION | PROCEDURE_STAR | PROCEDURE_SID,
+  PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
 
   ALL = 0xffffffff
 };
@@ -807,27 +814,17 @@ struct MapProcedureRef
     return legId != -1;
   }
 
-  bool isSid() const
-  {
-    return mapType & maptypes::PROCEDURE_SID;
-  }
-
-  bool isStar() const
-  {
-    return mapType & maptypes::PROCEDURE_STAR;
-  }
-
-  bool isApproachOnly() const
+  bool hasApproachOnlyIds() const
   {
     return approachId != -1 && transitionId == -1;
   }
 
-  bool isApproachAndTransition() const
+  bool hasApproachAndTransitionIds() const
   {
     return approachId != -1 && transitionId != -1;
   }
 
-  bool isApproachOrTransition() const
+  bool hasApproachOrTransitionIds() const
   {
     return approachId != -1 || transitionId != -1;
   }
@@ -890,10 +887,7 @@ struct MapProcedureLeg
   /* true if leg is unusable because a required navaid could not be resolved */
   bool hasErrorRef() const;
 
-  float legTrueCourse() const
-  {
-    return trueCourse ? course : course + magvar;
-  }
+  float legTrueCourse() const;
 
   bool isApproach() const
   {
@@ -910,6 +904,11 @@ struct MapProcedureLeg
     return mapType & maptypes::PROCEDURE_ARRIVAL_ALL;
   }
 
+  bool isAnyDeparture() const
+  {
+    return mapType & maptypes::PROCEDURE_DEPARTURE;
+  }
+
   bool isTransition() const
   {
     return mapType & maptypes::PROCEDURE_TRANSITION;
@@ -920,9 +919,24 @@ struct MapProcedureLeg
     return mapType & maptypes::PROCEDURE_SID;
   }
 
+  bool isSidTransition() const
+  {
+    return mapType & maptypes::PROCEDURE_SID_TRANSITION;
+  }
+
+  bool isAnyStar() const
+  {
+    return mapType & maptypes::PROCEDURE_STAR_ALL;
+  }
+
   bool isStar() const
   {
     return mapType & maptypes::PROCEDURE_STAR;
+  }
+
+  bool isStarTransition() const
+  {
+    return mapType & maptypes::PROCEDURE_STAR_TRANSITION;
   }
 
   bool isMissed() const
@@ -962,8 +976,7 @@ struct MapProcedureLegs
 
   float approachDistance = 0.f,
         transitionDistance = 0.f,
-        missedDistance = 0.f,
-        airportDirection = INVALID_COURSE_VALUE;
+        missedDistance = 0.f;
 
   bool gpsOverlay, hasError /* Unusable due to missing navaid */;
 
@@ -981,20 +994,21 @@ struct MapProcedureLegs
     return transitionLegs.size() + approachLegs.size();
   }
 
-  /* first in list is transition and then approach or SID  or STAR only */
+  /* first in list is transition and then approach  or STAR only.
+   *  Order is reversed for departure - first approach and then transition */
   const MapProcedureLeg& at(int i) const
   {
-    return atInternal(i);
+    return atInternalConst(i);
   }
 
   const MapProcedureLeg& first() const
   {
-    return atInternal(0);
+    return atInternalConst(0);
   }
 
   const MapProcedureLeg& last() const
   {
-    return atInternal(size() - 1);
+    return atInternalConst(size() - 1);
   }
 
   const MapProcedureLeg *approachLegById(int legId) const;
@@ -1007,16 +1021,13 @@ struct MapProcedureLegs
 
 private:
   MapProcedureLeg& atInternal(int i);
-  const MapProcedureLeg& atInternal(int i) const;
+  const MapProcedureLeg& atInternalConst(int i) const;
+  int apprIdx(int i) const;
+  int transIdx(int i) const;
 
-  int apprIdx(int i) const
+  bool isDeparture() const
   {
-    return i - transitionLegs.size();
-  }
-
-  int transIdx(int i) const
-  {
-    return i;
+    return mapType & maptypes::PROCEDURE_DEPARTURE;
   }
 
 };
@@ -1087,6 +1098,7 @@ QString navTypeNameVorLong(const QString& type);
 QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
 
+QString procedureTypeText(const maptypes::MapProcedureLeg& leg);
 QString procedureFixType(const QString& type);
 QString procedureType(const QString& type);
 maptypes::ProcedureLegType procedureLegEnum(const QString& type);

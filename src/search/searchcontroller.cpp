@@ -42,6 +42,8 @@ SearchController::SearchController(MainWindow *parent, MapQuery *mQuery,
           this, &SearchController::helpPressed);
   connect(parent->getUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
+  connect(parent->getUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
+          this, &SearchController::helpPressedProcedure);
 }
 
 SearchController::~SearchController()
@@ -65,6 +67,11 @@ void SearchController::optionsChanged()
 void SearchController::helpPressed()
 {
   HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "SEARCH.html", lnm::helpLanguages());
+}
+
+void SearchController::helpPressedProcedure()
+{
+  HelpHandler::openHelpUrl(mainWindow, lnm::HELP_ONLINE_URL + "APPROACHES.html", lnm::helpLanguages());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */

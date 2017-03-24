@@ -86,6 +86,7 @@ void Route::copy(const Route& other)
   departureLegsOffset = other.departureLegsOffset;
   starLegsOffset = other.starLegsOffset;
   arrivalLegsOffset = other.arrivalLegsOffset;
+
   activeLeg = other.activeLeg;
   activeLegResult = other.activeLegResult;
 
@@ -112,18 +113,15 @@ int Route::getNextUserWaypointNumber() const
 
 bool Route::canEditLeg(int index) const
 {
-  if(hasDepartureProcedure() && index < departureLegsOffset + departureLegs.size())
+  // Do not allow any edits between the procedures
+
+  if(hasAnyDepartureProcedure() && index < departureLegsOffset + departureLegs.size())
     return false;
 
-  if(hasStarProcedure() && hasArrivalProcedure() && hasStarProcedure() &&
-     index > starLegsOffset && index < arrivalLegsOffset + arrivalLegs.size())
-    // Do not allow any edits between the procedures
+  if(hasAnyStarProcedure() && index > starLegsOffset)
     return false;
 
-  if(hasStarProcedure() && index > starLegsOffset /* && index < starLegsOffset + starLegs.size()*/)
-    return false;
-
-  if(hasArrivalProcedure() && index > arrivalLegsOffset)
+  if(hasAnyArrivalProcedure() && index > arrivalLegsOffset)
     return false;
 
   return true;
@@ -188,7 +186,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
   if(nextLeg < size())
   {
     // Catch the case of initial fixes or others that are points instead of lines and try the next legs
-    if(!at(activeLeg).isHold())
+    if(!at(activeLeg).getProcedureLeg().isHold())
     {
       while(atools::contains(at(nextLeg).getProcedureLegType(),
                              {maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE}) &&
@@ -221,7 +219,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     // qDebug() << "NEXT" << nextLeg << nextLegResult;
 
     bool switchToNextLeg = false;
-    if(at(activeLeg).isHold())
+    if(at(activeLeg).getProcedureLeg().isHold())
     {
       // qDebug() << "ACTIVE HOLD";
       // Test next leg if we can exit a hold
@@ -251,7 +249,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
     }
     else
     {
-      if(at(nextLeg).isHold())
+      if(at(nextLeg).getProcedureLeg().isHold())
       {
         // Ignore all other rulues and use distance to hold point to activate hold
         if(std::abs(nextLegResult.distance) < nmToMeter(0.5f))
@@ -277,7 +275,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       // qDebug() << "Switching to next leg";
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes & maptypes::PROCEDURE_MISSED) && at(nextLeg).isMissed()))
+      if(!(!(shownTypes & maptypes::PROCEDURE_MISSED) && at(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLeg = nextLeg;
@@ -326,10 +324,10 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     float distToCurrent = 0.f;
 
-    bool activeIsMissed = at(activeLeg).isMissed();
+    bool activeIsMissed = at(activeLeg).getProcedureLeg().isMissed();
 
     // Ignore missed approach legs until the active is a missed approach leg
-    if(!at(routeIndex).isMissed() || activeIsMissed)
+    if(!at(routeIndex).getProcedureLeg().isMissed() || activeIsMissed)
     {
       if(geometryLeg != nullptr)
       {
@@ -349,7 +347,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     float fromstart = 0.f;
     for(int i = 0; i <= routeIndex; i++)
     {
-      if(!at(i).isMissed() || activeIsMissed)
+      if(!at(i).getProcedureLeg().isMissed() || activeIsMissed)
         fromstart += at(i).getDistanceTo();
       else
         break;
@@ -370,7 +368,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
         *distToDest = 0.f;
         for(int i = routeIndex + 1; i < size(); i++)
         {
-          if(at(i).isMissed())
+          if(at(i).getProcedureLeg().isMissed())
             *distToDest += at(i).getDistanceTo();
         }
         *distToDest += distToCurrent;
@@ -394,7 +392,7 @@ float Route::getDistanceFromStart(const atools::geo::Pos& pos) const
     float fromstart = 0.f;
     for(int i = 1; i < leg; i++)
     {
-      if(!at(i).isMissed())
+      if(!at(i).getProcedureLeg().isMissed())
         fromstart += nmToMeter(at(i).getDistanceTo());
       else
         break;
@@ -508,6 +506,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
   {
     const RouteLeg& leg = at(i);
     if(!includeProcedure && leg.isAnyProcedure())
+      // Do not edit procedures
       continue;
 
     if(conv.wToS(leg.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -620,54 +619,33 @@ bool Route::canCalcRoute() const
 
 void Route::clearAllProcedures()
 {
-  clearApproachAndTransProcedure();
-  clearTransitionProcedure();
-  clearStarProcedure();
-  clearDepartureProcedure();
+  clearProcedures(maptypes::PROCEDURE_ALL);
 }
 
-void Route::clearApproachAndTransProcedure()
+void Route::clearProcedures(maptypes::MapObjectTypes type)
 {
-  if(hasArrivalProcedure())
-  {
-    arrivalLegs = maptypes::MapProcedureLegs();
-    clearFlightplanProcedureProperties(maptypes::PROCEDURE_ARRIVAL);
-    eraseProcedureLegs(maptypes::PROCEDURE_ARRIVAL);
-    updateAll();
-  }
-}
+  // Clear procedure legs
+  if(type & maptypes::PROCEDURE_SID)
+    departureLegs.clearApproach();
+  if(type & maptypes::PROCEDURE_SID_TRANSITION)
+    departureLegs.clearTransition();
 
-void Route::clearTransitionProcedure()
-{
-  if(hasTransitionProcedure())
-  {
+  if(type & maptypes::PROCEDURE_STAR_TRANSITION)
+    starLegs.clearTransition();
+  if(type & maptypes::PROCEDURE_STAR)
+    starLegs.clearApproach();
+
+  if(type & maptypes::PROCEDURE_TRANSITION)
     arrivalLegs.clearTransition();
-    clearFlightplanProcedureProperties(maptypes::PROCEDURE_TRANSITION);
-    eraseProcedureLegs(maptypes::PROCEDURE_TRANSITION);
-    updateAll();
-  }
-}
+  if(type & maptypes::PROCEDURE_APPROACH)
+    arrivalLegs.clearApproach();
 
-void Route::clearStarProcedure()
-{
-  if(hasStarProcedure())
-  {
-    starLegs = maptypes::MapProcedureLegs();
-    clearFlightplanProcedureProperties(maptypes::PROCEDURE_STAR);
-    eraseProcedureLegs(maptypes::PROCEDURE_STAR);
-    updateAll();
-  }
-}
+  // Remove properties from flight plan
+  clearFlightplanProcedureProperties(type);
 
-void Route::clearDepartureProcedure()
-{
-  if(hasDepartureProcedure())
-  {
-    departureLegs = maptypes::MapProcedureLegs();
-    clearFlightplanProcedureProperties(maptypes::PROCEDURE_DEPARTURE);
-    eraseProcedureLegs(maptypes::PROCEDURE_DEPARTURE);
-    updateAll();
-  }
+  // Remove legs from flight plan and route legs
+  eraseProcedureLegs(type);
+  updateAll();
 }
 
 void Route::clearFlightplanProcedureProperties(maptypes::MapObjectTypes type)
@@ -745,17 +723,15 @@ void Route::eraseProcedureLegs(maptypes::MapObjectTypes type)
 {
   QVector<int> indexes;
 
+  // Collect indexes to delete in reverse order
   for(int i = size() - 1; i >= 0; i--)
   {
     const RouteLeg& routeLeg = at(i);
-    if((type & maptypes::PROCEDURE_APPROACH && routeLeg.isApproach()) ||
-       (type & maptypes::PROCEDURE_MISSED && routeLeg.isMissed()) ||
-       (type & maptypes::PROCEDURE_TRANSITION && routeLeg.isTransition()) ||
-       (type & maptypes::PROCEDURE_SID && routeLeg.isSid()) ||
-       (type & maptypes::PROCEDURE_STAR && routeLeg.isStar()))
+    if(type & routeLeg.getProcedureLeg().mapType) // Check if any bits/flags overlap
       indexes.append(i);
   }
 
+  // Delete in route legs and flight plan from the end
   for(int i = 0; i < indexes.size(); i++)
   {
     removeAt(indexes.at(i));
@@ -784,19 +760,19 @@ void Route::updateIndicesAndOffsets()
   starLegsOffset = maptypes::INVALID_INDEX_VALUE;
   arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
 
-  // Update indices
+  // Update offsets
   for(int i = 0; i < size(); i++)
   {
     RouteLeg& leg = (*this)[i];
     leg.setFlightplanEntryIndex(i);
 
-    if(leg.isDepartureProcedure() && departureLegsOffset == maptypes::INVALID_INDEX_VALUE)
+    if(leg.getProcedureLeg().isAnyDeparture() && departureLegsOffset == maptypes::INVALID_INDEX_VALUE)
       departureLegsOffset = i;
 
-    if(leg.isStar() && starLegsOffset == maptypes::INVALID_INDEX_VALUE)
+    if(leg.getProcedureLeg().isAnyStar() && starLegsOffset == maptypes::INVALID_INDEX_VALUE)
       starLegsOffset = i;
 
-    if(leg.isArrivalProcedure() && arrivalLegsOffset == maptypes::INVALID_INDEX_VALUE)
+    if(leg.getProcedureLeg().isArrival() && arrivalLegsOffset == maptypes::INVALID_INDEX_VALUE)
       arrivalLegsOffset = i;
   }
 }
@@ -845,18 +821,18 @@ bool Route::isActiveMissed() const
 {
   const RouteLeg *leg = getActiveLeg();
   if(leg != nullptr)
-    return leg->isMissed();
+    return leg->getProcedureLeg().isMissed();
   else
     return false;
 }
 
 bool Route::isPassedLastLeg() const
 {
-  if((activeLeg >= size() - 1 || (activeLeg + 1 < size() && at(activeLeg + 1).isMissed())) &&
+  if((activeLeg >= size() - 1 || (activeLeg + 1 < size() && at(activeLeg + 1).getProcedureLeg().isMissed())) &&
      activeLegResult.status == atools::geo::AFTER_END)
     return true;
-  else
-    return false;
+
+  return false;
 }
 
 void Route::setActiveLeg(int value)
@@ -871,7 +847,7 @@ void Route::setActiveLeg(int value)
 
 bool Route::isAirportAfterArrival(int index)
 {
-  return (hasArrivalProcedure() /*|| hasStarProcedure()*/) &&
+  return (hasAnyArrivalProcedure() /*|| hasStarProcedure()*/) &&
          index == size() - 1 && at(index).getMapObjectType() == maptypes::AIRPORT;
 }
 
@@ -886,7 +862,7 @@ void Route::updateDistancesAndCourse()
 
     RouteLeg& leg = (*this)[i];
     leg.updateDistanceAndCourse(i, last);
-    if(!leg.isMissed())
+    if(!leg.getProcedureLeg().isMissed())
       totalDistance += leg.getDistanceTo();
     last = &leg;
   }
@@ -894,7 +870,7 @@ void Route::updateDistancesAndCourse()
 
 void Route::updateMagvar()
 {
-  // get magvar from internal database objects
+  // get magvar from internal database objects (waypoints, VOR and others)
   for(int i = 0; i < size(); i++)
     (*this)[i].updateMagvar();
 

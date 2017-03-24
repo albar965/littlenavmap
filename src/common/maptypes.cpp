@@ -1041,7 +1041,7 @@ QDebug operator<<(QDebug out, const ProcedureLegType& type)
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
   out << "ProcedureLeg =====" << endl;
-  out << "maptype" << legs.mapType;
+  out << "maptype" << legs.mapType << endl;
 
   out << "approachDistance" << legs.approachDistance
   << "transitionDistance" << legs.transitionDistance
@@ -1054,24 +1054,19 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
   << "transitionFixIdent" << legs.transitionFixIdent
   << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
-  out << "===== Transition legs =====";
-  for(const MapProcedureLeg& ls : legs.transitionLegs)
-    out << ls;
-
-  out << "===== Approach legs =====";
-  for(const MapProcedureLeg& ls : legs.approachLegs)
-    out << ls;
-
+  out << "===== Legs =====" << endl;
+  for(int i = 0; i < legs.size(); i++)
+    out << "#" << i << legs.at(i);
   out << "==========================" << endl;
   return out;
 }
 
 QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
-  out << "ProcedureLegs =============" << endl;
+  out << "ProcedureLeg =============" << endl;
   out << "approachId" << leg.approachId
   << "transitionId" << leg.transitionId
-  << "legId" << leg.legId
+  << "legId" << leg.legId << endl
   << "type" << leg.type
   << "maptype" << leg.mapType
   << "missed" << leg.missed
@@ -1160,6 +1155,11 @@ bool MapProcedureLeg::hasErrorRef() const
           atools::contains(type, {maptypes::ARC_TO_FIX, CONSTANT_RADIUS_ARC}));
 }
 
+float MapProcedureLeg::legTrueCourse() const
+{
+  return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type,
@@ -1186,65 +1186,75 @@ bool MapProcedureLeg::noCourseDisplay() const
 
 QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
 {
+  QDebugStateSaver saver(out);
+  Q_UNUSED(saver);
+
+  QStringList flags;
   if(type == NONE)
-    out << "NONE";
+    flags.append("NONE");
   else
   {
     if(type & AIRPORT)
-      out << "AIRPORT|";
+      flags.append("AIRPORT");
     if(type & AIRPORT_HARD)
-      out << "AIRPORT_HARD|";
+      flags.append("AIRPORT_HARD");
     if(type & AIRPORT_SOFT)
-      out << "AIRPORT_SOFT|";
+      flags.append("AIRPORT_SOFT");
     if(type & AIRPORT_EMPTY)
-      out << "AIRPORT_EMPTY|";
+      flags.append("AIRPORT_EMPTY");
     if(type & AIRPORT_ADDON)
-      out << "AIRPORT_ADDON|";
+      flags.append("AIRPORT_ADDON");
     if(type & VOR)
-      out << "VOR|";
+      flags.append("VOR");
     if(type & NDB)
-      out << "NDB|";
+      flags.append("NDB");
     if(type & ILS)
-      out << "ILS|";
+      flags.append("ILS");
     if(type & MARKER)
-      out << "MARKER|";
+      flags.append("MARKER");
     if(type & WAYPOINT)
-      out << "WAYPOINT|";
+      flags.append("WAYPOINT");
     if(type & AIRWAY)
-      out << "AIRWAY|";
+      flags.append("AIRWAY");
     if(type & AIRWAYV)
-      out << "AIRWAYV|";
+      flags.append("AIRWAYV");
     if(type & AIRWAYJ)
-      out << "AIRWAYJ|";
+      flags.append("AIRWAYJ");
     if(type & ROUTE)
-      out << "ROUTE|";
+      flags.append("ROUTE");
     if(type & AIRCRAFT)
-      out << "AIRCRAFT|";
+      flags.append("AIRCRAFT");
     if(type & AIRCRAFT_AI)
-      out << "AIRCRAFT_AI|";
+      flags.append("AIRCRAFT_AI");
     if(type & AIRCRAFT_TRACK)
-      out << "AIRCRAFT_TRACK|";
+      flags.append("AIRCRAFT_TRACK");
     if(type & USER)
-      out << "USER|";
+      flags.append("USER");
     if(type & PARKING)
-      out << "PARKING|";
+      flags.append("PARKING");
     if(type & RUNWAYEND)
-      out << "RUNWAYEND|";
+      flags.append("RUNWAYEND");
     if(type & POSITION)
-      out << "POSITION|";
+      flags.append("POSITION");
     if(type & INVALID)
-      out << "INVALID|";
+      flags.append("INVALID");
     if(type & PROCEDURE_APPROACH)
-      out << "APPROACH|";
+      flags.append("PROCEDURE_APPROACH");
     if(type & PROCEDURE_MISSED)
-      out << "APPROACH_MISSED|";
+      flags.append("PROCEDURE_MISSED");
     if(type & PROCEDURE_TRANSITION)
-      out << "APPROACH_TRANSITION|";
+      flags.append("PROCEDURE_TRANSITION");
     if(type & PROCEDURE_SID)
-      out << "APPROACH_SID|";
+      flags.append("PROCEDURE_SID");
+    if(type & PROCEDURE_SID_TRANSITION)
+      flags.append("PROCEDURE_SID_TRANSITION");
     if(type & PROCEDURE_STAR)
-      out << "APPROACH_STAR|";
+      flags.append("PROCEDURE_STAR");
+    if(type & PROCEDURE_STAR_TRANSITION)
+      flags.append("PROCEDURE_STAR_TRANSITION");
   }
+
+  out.nospace().noquote() << flags.join("|");
 
   return out;
 }
@@ -1261,18 +1271,48 @@ const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
 
 MapProcedureLeg& MapProcedureLegs::atInternal(int i)
 {
-  if(i < transitionLegs.size())
-    return transitionLegs[transIdx(i)];
+  if(isDeparture())
+  {
+    if(i < approachLegs.size())
+      return approachLegs[apprIdx(i)];
+    else
+      return transitionLegs[transIdx(i)];
+  }
   else
-    return approachLegs[apprIdx(i)];
+  {
+    if(i < transitionLegs.size())
+      return transitionLegs[transIdx(i)];
+    else
+      return approachLegs[apprIdx(i)];
+  }
 }
 
-const MapProcedureLeg& MapProcedureLegs::atInternal(int i) const
+const MapProcedureLeg& MapProcedureLegs::atInternalConst(int i) const
 {
-  if(i < transitionLegs.size())
-    return transitionLegs[transIdx(i)];
+  if(isDeparture())
+  {
+    if(i < approachLegs.size())
+      return approachLegs[apprIdx(i)];
+    else
+      return transitionLegs[transIdx(i)];
+  }
   else
-    return approachLegs[apprIdx(i)];
+  {
+    if(i < transitionLegs.size())
+      return transitionLegs[transIdx(i)];
+    else
+      return approachLegs[apprIdx(i)];
+  }
+}
+
+int MapProcedureLegs::apprIdx(int i) const
+{
+  return isDeparture() ? i : i - transitionLegs.size();
+}
+
+int MapProcedureLegs::transIdx(int i) const
+{
+  return isDeparture() ? i - approachLegs.size() : i;
 }
 
 void MapProcedureLegs::clearApproach()
@@ -1403,6 +1443,26 @@ maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simTyp
       return maptypes::PROCEDURE_SID;
   }
   return maptypes::PROCEDURE_APPROACH;
+}
+
+QString procedureTypeText(const maptypes::MapProcedureLeg& leg)
+{
+  QString suffix;
+  if(leg.isApproach())
+    suffix = QObject::tr("Approach");
+  else if(leg.isMissed())
+    suffix = QObject::tr("Missed");
+  else if(leg.isTransition())
+    suffix = QObject::tr("Transition");
+  else if(leg.isStar())
+    suffix = QObject::tr("STAR");
+  else if(leg.isSid())
+    suffix = QObject::tr("SID");
+  else if(leg.isSidTransition())
+    suffix = QObject::tr("SID Transition");
+  else if(leg.isStarTransition())
+    suffix = QObject::tr("STAR Transition");
+  return suffix;
 }
 
 } // namespace types

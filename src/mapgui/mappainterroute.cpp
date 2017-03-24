@@ -95,8 +95,8 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
     // Draw if at least one is part of the route - also draw empty spaces between procedures
     if(
       last.isRoute() || leg.isRoute() ||  // Draw if any is route - also covers STAR to airport
-      (last.isDepartureProcedure() && leg.isAnyArrivalProcedure()) ||  // empty space from SID to STAR, transition or approach
-      (last.isStar() && leg.isArrivalProcedure())  // empty space from STAR to transition or approach
+      (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) ||  // empty space from SID to STAR, transition or approach
+      (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())  // empty space from STAR to transition or approach
       )
     {
       routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
@@ -114,12 +114,12 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
   if(!lines.isEmpty()) // Do not draw a line from airport to runway end
   {
-    if(route->hasArrivalProcedure())
+    if(route->hasAnyArrivalProcedure())
     {
       lines.last() = Line();
       routeTexts.last().clear();
     }
-    if(route->hasDepartureProcedure())
+    if(route->hasAnyDepartureProcedure())
     {
       lines.first() = Line();
       routeTexts.first().clear();
@@ -182,15 +182,15 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
   drawSymbolText(context, visibleStartPoints, textPlacement.getStartPoints());
 
   // Draw arrival and departure procedures ============================
-  if(route->hasDepartureProcedure())
+  if(route->hasAnyDepartureProcedure())
     paintApproach(context, route->getDepartureLegs(), route->getDepartureLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
 
-  if(route->hasStarProcedure())
+  if(route->hasAnyStarProcedure())
     paintApproach(context, route->getStarLegs(), route->getStarLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
 
-  if(route->hasArrivalProcedure())
+  if(route->hasAnyArrivalProcedure())
     paintApproach(context, route->getArrivalLegs(), route->getArrivalLegsOffset(),
                   mapcolors::routeProcedureColor, false /* preview */);
 

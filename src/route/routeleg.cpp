@@ -295,14 +295,15 @@ void RouteLeg::updateMagvar()
 {
   if(isAnyProcedure())
     magvar = procedureLeg.magvar;
-  else if(airport.isValid())
-    magvar = airport.magvar;
+  else if(waypoint.isValid())
+    magvar = waypoint.magvar;
   else if(vor.isValid())
     magvar = vor.magvar;
   else if(ndb.isValid())
     magvar = ndb.magvar;
-  else if(waypoint.isValid())
-    magvar = waypoint.magvar;
+  // Airport is least reliable and often wrong
+  else if(airport.isValid())
+    magvar = airport.magvar;
   else
     magvar = 0.f;
 }
@@ -354,8 +355,8 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
     {
       if(
         (prevLeg->isRoute() || // Transition from route to procedure
-         (prevLeg->isDepartureProcedure() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
-         (prevLeg->isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
+         (prevLeg->getProcedureLeg().isAnyDeparture() && procedureLeg.isAnyArrival()) || // from SID to aproach, STAR or transition
+         (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
 
         ) && // Direct connection between procedures
 
