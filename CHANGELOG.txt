@@ -9,6 +9,7 @@ Version 1.3.2.devel
 * Added help button to procedure search.
 * Procedure preview is now hidden when clicking into empty space in tree or activating another search tab.
 * Flyover waypoints are now highlighted with a yellow background.
+* Added Aerosoft Airbus FLP flight plan export
 
 derived from atools:
 * Solved problem where airports without delete record lost approaches.
