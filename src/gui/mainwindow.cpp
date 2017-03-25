@@ -18,6 +18,7 @@
 #include "gui/mainwindow.h"
 
 #include "common/constants.h"
+#include "common/proctypes.h"
 #include "gui/application.h"
 #include "common/weatherreporter.h"
 #include "connect/connectclient.h"
@@ -286,7 +287,7 @@ void MainWindow::updateMap() const
   mapWidget->update();
 }
 
-maptypes::MapObjectTypes MainWindow::getShownMapFeatures() const
+map::MapObjectTypes MainWindow::getShownMapFeatures() const
 {
   return mapWidget->getShownMapFeatures();
 }
@@ -1118,7 +1119,7 @@ bool RouteController::hasValidParking() const
 {
   if(hasValidDeparture())
   {
-    const QList<maptypes::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
+    const QList<map::MapParking> *parkingCache = query->getParkingsForAirport(route.first().getId());
 
     if(!parkingCache->isEmpty())
       return route.hasDepartureParking() || route.hasDepartureHelipad();
@@ -1505,27 +1506,27 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
     ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible));
   }
 
-  maptypes::MapSearchResult result;
+  map::MapSearchResult result;
   searchController->getSelectedMapObjects(result);
   mapWidget->changeSearchHighlights(result);
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
+void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
 {
   qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
            << "transitionId" << approachRef.transitionId
            << "legId" << approachRef.legId;
 
-  maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
+  map::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
 
   if(approachRef.isEmpty())
-    mapWidget->changeApproachHighlight(maptypes::MapProcedureLegs());
+    mapWidget->changeApproachHighlight(proc::MapProcedureLegs());
   else
   {
     if(approachRef.hasApproachAndTransitionIds())
     {
-      const maptypes::MapProcedureLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
+      const proc::MapProcedureLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1533,7 +1534,7 @@ void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
     }
     else if(approachRef.hasApproachOnlyIds() && !approachRef.isLeg())
     {
-      const maptypes::MapProcedureLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
+      const proc::MapProcedureLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1544,7 +1545,7 @@ void MainWindow::approachSelected(maptypes::MapProcedureRef approachRef)
 }
 
 /* Selection in approach view has changed */
-void MainWindow::approachLegSelected(maptypes::MapProcedureRef approachRef)
+void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
 {
   qDebug() << Q_FUNC_INFO << "approachId" << approachRef.approachId
            << "transitionId" << approachRef.transitionId
@@ -1552,9 +1553,9 @@ void MainWindow::approachLegSelected(maptypes::MapProcedureRef approachRef)
 
   if(approachRef.legId != -1)
   {
-    const maptypes::MapProcedureLeg *leg;
+    const proc::MapProcedureLeg *leg;
 
-    maptypes::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
+    map::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
     if(approachRef.transitionId != -1)
       leg = approachQuery->getTransitionLeg(airport, approachRef.legId);
     else
@@ -2049,8 +2050,8 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
 /* Update the current weather context for the information window. Returns true if any
  * weather has changed or an update is needed */
-bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
-                                            const maptypes::MapAirport& airport)
+bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
+                                            const map::MapAirport& airport)
 {
   opts::Flags flags = OptionData::instance().getFlags();
   bool changed = false;
@@ -2138,8 +2139,8 @@ bool MainWindow::buildWeatherContextForInfo(maptypes::WeatherContext& weatherCon
 }
 
 /* Build a normal weather context - used by printing */
-void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
-                                     const maptypes::MapAirport& airport) const
+void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext,
+                                     const map::MapAirport& airport) const
 {
   opts::Flags flags = OptionData::instance().getFlags();
 
@@ -2162,8 +2163,8 @@ void MainWindow::buildWeatherContext(maptypes::WeatherContext& weatherContext,
 }
 
 /* Build a temporary weather context for the map tooltip */
-void MainWindow::buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
-                                               const maptypes::MapAirport& airport) const
+void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherContext,
+                                               const map::MapAirport& airport) const
 {
   opts::Flags flags = OptionData::instance().getFlags();
 
@@ -2186,7 +2187,7 @@ void MainWindow::buildWeatherContextForTooltip(maptypes::WeatherContext& weather
 }
 
 /* Fill active sky information into the weather context */
-void MainWindow::fillActiveSkyType(maptypes::WeatherContext& weatherContext,
+void MainWindow::fillActiveSkyType(map::WeatherContext& weatherContext,
                                    const QString& airportIdent) const
 {
   if(weatherReporter->getCurrentActiveSkyType() == WeatherReporter::AS16)
@@ -2210,5 +2211,5 @@ void MainWindow::clearWeatherContext()
   qDebug() << Q_FUNC_INFO;
 
   // Clear all weather and fetch new
-  currentWeatherContext = maptypes::WeatherContext();
+  currentWeatherContext = map::WeatherContext();
 }

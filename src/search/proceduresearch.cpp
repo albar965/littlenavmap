@@ -59,9 +59,9 @@ enum TreeColumnIndex
 
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
-using maptypes::MapProcedureLeg;
-using maptypes::MapProcedureLegs;
-using maptypes::MapProcedureRef;
+using proc::MapProcedureLeg;
+using proc::MapProcedureLegs;
+using proc::MapProcedureRef;
 using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
 
@@ -186,8 +186,8 @@ void ProcedureSearch::optionsChanged()
 void ProcedureSearch::preDatabaseLoad()
 {
   // Clear display on map
-  emit procedureSelected(maptypes::MapProcedureRef());
-  emit procedureLegSelected(maptypes::MapProcedureRef());
+  emit procedureSelected(proc::MapProcedureRef());
+  emit procedureLegSelected(proc::MapProcedureRef());
 
   treeWidget->clear();
 
@@ -205,7 +205,7 @@ void ProcedureSearch::postDatabaseLoad()
   procedureQuery->setCurrentSimulator(mainWindow->getCurrentSimulator());
 }
 
-void ProcedureSearch::showProcedures(maptypes::MapAirport airport)
+void ProcedureSearch::showProcedures(map::MapAirport airport)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
   ui->dockWidgetSearch->show();
@@ -217,8 +217,8 @@ void ProcedureSearch::showProcedures(maptypes::MapAirport airport)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
-  emit procedureLegSelected(maptypes::MapProcedureRef());
-  emit procedureSelected(maptypes::MapProcedureRef());
+  emit procedureLegSelected(proc::MapProcedureRef());
+  emit procedureSelected(proc::MapProcedureRef());
 
   // Put state on stack and update tree
   if(currentAirport.isValid())
@@ -261,7 +261,7 @@ void ProcedureSearch::updateHeaderLabel()
 
   if(currentAirport.isValid())
     mainWindow->getUi()->labelProcedureSearch->setText(
-      "<b>" + maptypes::airportTextShort(currentAirport) + "</b> " + procs);
+      "<b>" + map::airportTextShort(currentAirport) + "</b> " + procs);
   else
     mainWindow->getUi()->labelProcedureSearch->setText(tr("No Airport selected."));
 }
@@ -336,7 +336,7 @@ void ProcedureSearch::fillApproachTreeWidget()
         int apprId = recApp.valueInt("approach_id");
         QString rwname(recApp.valueStr("runway_name"));
 
-        maptypes::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
+        proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
         bool filterOk = false;
         switch(filterIndex)
@@ -345,13 +345,13 @@ void ProcedureSearch::fillApproachTreeWidget()
             filterOk = true;
             break;
           case ProcedureSearch::FILTER_DEPARTURE_PROCEDURES:
-            filterOk = type & maptypes::PROCEDURE_DEPARTURE;
+            filterOk = type & proc::PROCEDURE_DEPARTURE;
             break;
           case ProcedureSearch::FILTER_ARRIVAL_PROCEDURES:
-            filterOk = type & maptypes::PROCEDURE_ARRIVAL_ALL;
+            filterOk = type & proc::PROCEDURE_ARRIVAL_ALL;
             break;
           case ProcedureSearch::FILTER_APPROACH_AND_TRANSITIONS:
-            filterOk = type & maptypes::PROCEDURE_ARRIVAL;
+            filterOk = type & proc::PROCEDURE_ARRIVAL;
             break;
         }
 
@@ -373,7 +373,7 @@ void ProcedureSearch::fillApproachTreeWidget()
               itemIndex.append(MapProcedureRef(currentAirport.id, runwayEndId, apprId,
                                                recTrans.valueInt("transition_id"), -1, type));
               buildTransitionItem(apprItem, recTrans,
-                                  type & maptypes::PROCEDURE_DEPARTURE || type & maptypes::PROCEDURE_STAR_ALL);
+                                  type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
             }
           }
         }
@@ -392,7 +392,7 @@ void ProcedureSearch::fillApproachTreeWidget()
       if(foundItems)
         message = tr("No procedures found.");
       else
-        message = tr("%1 has no procedures.").arg(maptypes::airportText(currentAirport));
+        message = tr("%1 has no procedures.").arg(map::airportText(currentAirport));
     }
 
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {message});
@@ -466,9 +466,9 @@ void ProcedureSearch::itemSelectionChanged()
   QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   if(items.isEmpty() || mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
-    emit procedureSelected(maptypes::MapProcedureRef());
+    emit procedureSelected(proc::MapProcedureRef());
 
-    emit procedureLegSelected(maptypes::MapProcedureRef());
+    emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
   {
@@ -484,7 +484,7 @@ void ProcedureSearch::itemSelectionChanged()
       if(ref.isLeg())
         emit procedureLegSelected(ref);
       else
-        emit procedureLegSelected(maptypes::MapProcedureRef());
+        emit procedureLegSelected(proc::MapProcedureRef());
 
       if(ref.hasApproachAndTransitionIds())
         updateApproachItem(parentApproachItem(item), ref.transitionId);
@@ -505,15 +505,15 @@ void ProcedureSearch::updateApproachItem(QTreeWidgetItem *apprItem, int transiti
       const MapProcedureRef& childref = itemIndex.at(child->type());
       if(childref.isLeg())
       {
-        const maptypes::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, transitionId);
+        const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, transitionId);
         if(legs != nullptr)
         {
-          const maptypes::MapProcedureLeg *aleg = legs->approachLegById(childref.legId);
+          const proc::MapProcedureLeg *aleg = legs->approachLegById(childref.legId);
 
           if(aleg != nullptr)
           {
-            child->setText(COL_COURSE, maptypes::procedureLegCourse(*aleg));
-            child->setText(COL_DISTANCE, maptypes::procedureLegDistance(*aleg));
+            child->setText(COL_COURSE, proc::procedureLegCourse(*aleg));
+            child->setText(COL_DISTANCE, proc::procedureLegDistance(*aleg));
           }
           else
             qWarning() << "Approach legs not found" << childref.legId;
@@ -551,7 +551,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
           QList<QTreeWidgetItem *> items = addApproachLegs(legs, -1);
           itemLoadedIndex.setBit(item->type());
 
-          if(legs->mapType & maptypes::PROCEDURE_DEPARTURE)
+          if(legs->mapType & proc::PROCEDURE_DEPARTURE)
             item->insertChildren(0, items);
           else
             item->addChildren(items);
@@ -633,7 +633,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   ui->actionInfoApproachAttach->setDisabled(item == nullptr);
 
   QString text, showText;
-  const maptypes::MapProcedureLegs *procedureLegs = nullptr;
+  const proc::MapProcedureLegs *procedureLegs = nullptr;
 
   if(item != nullptr)
   {
@@ -672,9 +672,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
         ui->actionInfoApproachAttach->setText(tr("Insert %1 into Flight Plan").arg(text));
       else
       {
-        if(ref.mapType & maptypes::PROCEDURE_ARRIVAL_ALL)
+        if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Destination").arg(currentAirport.ident).arg(text));
-        else if(ref.mapType & maptypes::PROCEDURE_DEPARTURE)
+        else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
           ui->actionInfoApproachAttach->setText(tr("Use %1 and %2 as Departure").arg(currentAirport.ident).arg(text));
       }
     }
@@ -719,8 +719,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachClear)
   {
     treeWidget->clearSelection();
-    emit procedureLegSelected(maptypes::MapProcedureRef());
-    emit procedureSelected(maptypes::MapProcedureRef());
+    emit procedureLegSelected(proc::MapProcedureRef());
+    emit procedureSelected(proc::MapProcedureRef());
   }
   else if(action == ui->actionInfoApproachShow)
     showEntry(item, false);
@@ -763,7 +763,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
   if(ref.legId != -1)
   {
-    const maptypes::MapProcedureLeg *leg = nullptr;
+    const proc::MapProcedureLeg *leg = nullptr;
 
     if(ref.transitionId != -1)
       leg = procedureQuery->getTransitionLeg(currentAirport, ref.legId);
@@ -780,23 +780,24 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
   }
   else if(ref.transitionId != -1 && !doubleClick)
   {
-    const maptypes::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
+    const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirport, ref.transitionId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
   else if(ref.approachId != -1 && !doubleClick)
   {
-    const maptypes::MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
+    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirport, ref.approachId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
 
 }
 
-maptypes::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
+proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
-  return maptypes::procedureType(mainWindow->getCurrentSimulator(),
-                                 recApp.valueStr("type"), recApp.valueStr("suffix"), recApp.valueBool("has_gps_overlay"));
+  return proc::procedureType(mainWindow->getCurrentSimulator(),
+                             recApp.valueStr("type"), recApp.valueStr("suffix"),
+                             recApp.valueBool("has_gps_overlay"));
 }
 
 QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp)
@@ -807,14 +808,14 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
 
   QString approachType;
 
-  maptypes::MapProcedureTypes maptype = buildTypeFromApproachRec(recApp);
-  if(maptype == maptypes::PROCEDURE_SID)
+  proc::MapProcedureTypes maptype = buildTypeFromApproachRec(recApp);
+  if(maptype == proc::PROCEDURE_SID)
     approachType += tr("SID");
-  else if(maptype == maptypes::PROCEDURE_STAR)
+  else if(maptype == proc::PROCEDURE_STAR)
     approachType += tr("STAR");
-  else if(maptype == maptypes::PROCEDURE_APPROACH)
+  else if(maptype == proc::PROCEDURE_APPROACH)
   {
-    approachType = tr("Approach ") + maptypes::procedureType(type);
+    approachType = tr("Approach ") + proc::procedureType(type);
 
     if(!suffix.isEmpty())
       approachType += " " + suffix;
@@ -888,11 +889,11 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   QStringList texts;
   QIcon icon;
   int fontHeight = treeWidget->fontMetrics().height();
-  texts << maptypes::procedureLegTypeStr(leg.type) << leg.fixIdent;
+  texts << proc::procedureLegTypeStr(leg.type) << leg.fixIdent;
 
-  QString remarkStr = maptypes::procedureLegRemark(leg);
-  texts << maptypes::altRestrictionTextShort(leg.altRestriction)
-        << maptypes::procedureLegCourse(leg) << maptypes::procedureLegDistance(leg);
+  QString remarkStr = proc::procedureLegRemark(leg);
+  texts << proc::altRestrictionTextShort(leg.altRestriction)
+        << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
   texts << remarkStr;
 
@@ -1074,7 +1075,7 @@ QTreeWidgetItem *ProcedureSearch::parentTransitionItem(QTreeWidgetItem *item) co
   return current != nullptr ? current : item;
 }
 
-void ProcedureSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+void ProcedureSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 {
   Q_UNUSED(result);
 }
@@ -1092,8 +1093,8 @@ void ProcedureSearch::updateTableSelection()
   if(mainWindow->getUi()->tabWidgetSearch->currentIndex() != tabIndex)
   {
     // Hide preview if another tab is activated
-    emit procedureSelected(maptypes::MapProcedureRef());
-    emit procedureLegSelected(maptypes::MapProcedureRef());
+    emit procedureSelected(proc::MapProcedureRef());
+    emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
     itemSelectionChanged();
@@ -1105,8 +1106,8 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
   if(!visible)
   {
     // Hide preview of dock is closed
-    emit procedureSelected(maptypes::MapProcedureRef());
-    emit procedureLegSelected(maptypes::MapProcedureRef());
+    emit procedureSelected(proc::MapProcedureRef());
+    emit procedureLegSelected(proc::MapProcedureRef());
   }
   else
     itemSelectionChanged();
@@ -1114,6 +1115,6 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
 
 void ProcedureSearch::tabDeactivated()
 {
-  emit procedureSelected(maptypes::MapProcedureRef());
-  emit procedureLegSelected(maptypes::MapProcedureRef());
+  emit procedureSelected(proc::MapProcedureRef());
+  emit procedureLegSelected(proc::MapProcedureRef());
 }

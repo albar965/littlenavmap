@@ -60,7 +60,7 @@ float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
 template<typename TYPE>
 void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDistanceMeter)
 {
-  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < maptypes::INVALID_INDEX_VALUE))
+  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_INDEX_VALUE))
     return;
 
   auto it = std::remove_if(list.begin(), list.end(),
@@ -78,7 +78,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
 template<typename TYPE>
 void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxDistanceMeter)
 {
-  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < maptypes::INVALID_DISTANCE_VALUE))
+  if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_DISTANCE_VALUE))
     return;
 
   auto it = std::remove_if(list.begin(), list.end(),

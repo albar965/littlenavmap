@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_ROUTELEG_H
 #define LITTLENAVMAP_ROUTELEG_H
 
-#include "common/maptypes.h"
+#include "common/proctypes.h"
 
 #include <QApplication>
 
@@ -64,10 +64,10 @@ public:
    * @param newAirport
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
+  void createFromAirport(int entryIndex, const map::MapAirport& newAirport,
                          const RouteLeg *prevLeg);
 
-  void createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
+  void createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs,
                              const RouteLeg *prevLeg);
 
   /*
@@ -86,8 +86,8 @@ public:
   void updateUserName(const QString& name);
 
   /* Set parking and start position. Does not modify the flight plan entry. */
-  void setDepartureParking(const maptypes::MapParking& departureParking);
-  void setDepartureStart(const maptypes::MapStart& departureStart);
+  void setDepartureParking(const map::MapParking& departureParking);
+  void setDepartureStart(const map::MapStart& departureStart);
 
   /* Get database id of airport or navaid. -1 for invalid or user position. */
   int getId() const;
@@ -118,7 +118,7 @@ public:
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
-  maptypes::MapObjectTypes getMapObjectType() const
+  map::MapObjectTypes getMapObjectType() const
   {
     return type;
   }
@@ -126,37 +126,37 @@ public:
   QString getMapObjectTypeName() const;
 
   /* Get airport or empty airport object if not an airport. Use position.isValid to check for empty */
-  const maptypes::MapAirport& getAirport() const
+  const map::MapAirport& getAirport() const
   {
     return airport;
   }
 
   /* Get parking or empty parking object if parking is not assigned. Use position.isValid to check for empty */
-  const maptypes::MapParking& getDepartureParking() const
+  const map::MapParking& getDepartureParking() const
   {
     return parking;
   }
 
   /* Get start position or empty object if not assigned. Use position.isValid to check for empty */
-  const maptypes::MapStart& getDepartureStart() const
+  const map::MapStart& getDepartureStart() const
   {
     return start;
   }
 
   /* Get VOR or empty object if not assigned. Use position.isValid to check for empty */
-  const maptypes::MapVor& getVor() const
+  const map::MapVor& getVor() const
   {
     return vor;
   }
 
   /* Get NDB or empty object if not assigned. Use position.isValid to check for empty */
-  const maptypes::MapNdb& getNdb() const
+  const map::MapNdb& getNdb() const
   {
     return ndb;
   }
 
   /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
-  const maptypes::MapWaypoint& getWaypoint() const
+  const map::MapWaypoint& getWaypoint() const
   {
     return waypoint;
   }
@@ -204,7 +204,7 @@ public:
 
   bool isAnyProcedure() const
   {
-    return type & maptypes::PROCEDURE;
+    return type & map::PROCEDURE;
   }
 
   float getGroundAltitude() const
@@ -222,19 +222,19 @@ public:
     index = value;
   }
 
-  const maptypes::MapProcedureLeg& getProcedureLeg() const
+  const proc::MapProcedureLeg& getProcedureLeg() const
   {
     return procedureLeg;
   }
 
   /* invalid type if not an approach */
-  maptypes::ProcedureLegType getProcedureLegType() const
+  proc::ProcedureLegType getProcedureLegType() const
   {
     return procedureLeg.type;
   }
 
   /* invalid type if not an approach */
-  maptypes::MapProcedureTypes getProcedureType() const
+  proc::MapProcedureTypes getProcedureType() const
   {
     return procedureLeg.mapType;
   }
@@ -257,16 +257,16 @@ private:
   /* Associated flight plan entry or approach leg entry */
   int index = -1;
 
-  maptypes::MapObjectTypes type = maptypes::NONE;
-  maptypes::MapAirport airport;
-  maptypes::MapParking parking;
-  maptypes::MapStart start;
-  maptypes::MapVor vor;
-  maptypes::MapNdb ndb;
-  maptypes::MapIls ils;
-  maptypes::MapRunwayEnd runwayEnd;
-  maptypes::MapWaypoint waypoint;
-  maptypes::MapProcedureLeg procedureLeg;
+  map::MapObjectTypes type = map::NONE;
+  map::MapAirport airport;
+  map::MapParking parking;
+  map::MapStart start;
+  map::MapVor vor;
+  map::MapNdb ndb;
+  map::MapIls ils;
+  map::MapRunwayEnd runwayEnd;
+  map::MapWaypoint waypoint;
+  proc::MapProcedureLeg procedureLeg;
 
   bool valid = false;
 

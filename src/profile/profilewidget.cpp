@@ -276,7 +276,7 @@ void ProfileWidget::updateScreenCoords()
       const Pos& aircraftPos = aircraftTrack.at(i).pos;
       float distFromStart = route.getDistanceFromStart(aircraftPos);
 
-      if(distFromStart < maptypes::INVALID_DISTANCE_VALUE)
+      if(distFromStart < map::INVALID_DISTANCE_VALUE)
       {
         QPoint pt(X0 + static_cast<int>(distFromStart * horizontalScale),
                   Y0 + static_cast<int>(rect().height() - Y0 - aircraftPos.getAltitude() * verticalScale));
@@ -420,26 +420,26 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& leg = legList.route.at(routeIndex);
     int symx = waypointX.at(--waypointIndex);
 
-    maptypes::MapObjectTypes type = leg.getMapObjectType();
+    map::MapObjectTypes type = leg.getMapObjectType();
 
-    if(type == maptypes::WAYPOINT || leg.getWaypoint().isValid())
+    if(type == map::WAYPOINT || leg.getWaypoint().isValid())
     {
       symPainter.drawWaypointSymbol(&painter, QColor(), symx, flightplanY, 8, true, false);
       symPainter.drawWaypointText(&painter, leg.getWaypoint(), symx - 5, flightplanY + 18, flags, 10, true);
     }
-    else if(type == maptypes::USER)
+    else if(type == map::USER)
     {
       symPainter.drawUserpointSymbol(&painter, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeUserPointColor,
                          symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
-    else if(type == maptypes::INVALID)
+    else if(type == map::INVALID)
     {
       symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symx, flightplanY, 8, true, false);
       symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeInvalidPointColor,
                          symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
-    else if(type == maptypes::PROCEDURE)
+    else if(type == map::PROCEDURE)
       // Missed is not included
       symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
   }
@@ -451,14 +451,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& leg = legList.route.at(routeIndex);
     int symx = waypointX.at(--waypointIndex);
 
-    maptypes::MapObjectTypes type = leg.getMapObjectType();
+    map::MapObjectTypes type = leg.getMapObjectType();
 
-    if(type == maptypes::NDB || leg.getNdb().isValid())
+    if(type == map::NDB || leg.getNdb().isValid())
     {
       symPainter.drawNdbSymbol(&painter, symx, flightplanY, 12, true, false);
       symPainter.drawNdbText(&painter, leg.getNdb(), symx - 5, flightplanY + 18, flags, 10, true);
     }
-    else if(type == maptypes::VOR || leg.getVor().isValid())
+    else if(type == map::VOR || leg.getVor().isValid())
     {
       symPainter.drawVorSymbol(&painter, leg.getVor(), symx, flightplanY, 12, true, false, false);
       symPainter.drawVorText(&painter, leg.getVor(), symx - 5, flightplanY + 18, flags, 10, true);
@@ -476,7 +476,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int symx = waypointX.at(--waypointIndex);
 
     // Draw all airport except destination
-    if(leg.getMapObjectType() == maptypes::AIRPORT && routeIndex == legList.route.size() - 1)
+    if(leg.getMapObjectType() == map::AIRPORT && routeIndex == legList.route.size() - 1)
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanY + 22,
@@ -488,7 +488,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     // Draw destination always on the right also if there are approach procedures
     const RouteLeg& leg = legList.route.last();
-    if(leg.getMapObjectType() == maptypes::AIRPORT)
+    if(leg.getMapObjectType() == map::AIRPORT)
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), X0 + w, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, leg.getAirport(), X0 + w - 5, flightplanY + 22,

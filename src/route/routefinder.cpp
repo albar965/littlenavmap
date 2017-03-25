@@ -255,29 +255,29 @@ float RouteFinder::costEstimate(const nw::Node& currentNode, const nw::Node& des
 }
 
 /* Convert internal network type to MapObjectTypes for extract route */
-maptypes::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
+map::MapObjectTypes RouteFinder::toMapObjectType(nw::NodeType type)
 {
   switch(type)
   {
     case nw::WAYPOINT_JET:
     case nw::WAYPOINT_VICTOR:
     case nw::WAYPOINT_BOTH:
-      return maptypes::WAYPOINT;
+      return map::WAYPOINT;
 
     case nw::VOR:
     case nw::VORDME:
     case nw::DME:
-      return maptypes::VOR;
+      return map::VOR;
 
     case nw::NDB:
-      return maptypes::NDB;
+      return map::NDB;
 
     case nw::DEPARTURE:
     case nw::DESTINATION:
-      return maptypes::USER;
+      return map::USER;
 
     case nw::NONE:
       break;
   }
-  return maptypes::NONE;
+  return map::NONE;
 }

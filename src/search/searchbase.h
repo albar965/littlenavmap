@@ -96,19 +96,19 @@ signals:
   void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
-  void showInformation(maptypes::MapSearchResult result);
+  void showInformation(map::MapSearchResult result);
 
   /* Show approaches in context menu selected */
-  void showApproaches(maptypes::MapAirport airport);
+  void showApproaches(map::MapAirport airport);
 
   /* Set airport as flight plan departure (from context menu) */
-  void routeSetDeparture(maptypes::MapAirport airport);
+  void routeSetDeparture(map::MapAirport airport);
 
   /* Set airport as flight plan destination (from context menu) */
-  void routeSetDestination(maptypes::MapAirport airport);
+  void routeSetDestination(map::MapAirport airport);
 
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
@@ -143,7 +143,7 @@ private:
   void doubleClick(const QModelIndex& index);
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void reconnectSelectionModel();
-  void getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id);
+  void getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();

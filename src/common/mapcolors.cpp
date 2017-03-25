@@ -27,7 +27,7 @@
 
 namespace mapcolors {
 
-const QColor& colorForAirport(const maptypes::MapAirport& ap)
+const QColor& colorForAirport(const map::MapAirport& ap)
 {
   static const QColor airportEmptyColor = QColor::fromRgb(110, 110, 110);
   static const QColor toweredAirportColor = QColor::fromRgb(15, 70, 130);

@@ -84,11 +84,11 @@ public:
 
   /* Reset search and show the given type in the search result. Search widgets are populated with the
    * given parameters. Types can be airport, VOR, NDB or waypoint */
-  void showInSearch(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
+  void showInSearch(map::MapObjectTypes type, const QString& ident, const QString& region,
                     const QString& airportIdent);
 
   /* Get all selected airports or navaids from the active search tab */
-  void getSelectedMapObjects(maptypes::MapSearchResult& result) const;
+  void getSelectedMapObjects(map::MapSearchResult& result) const;
 
   /* Options have changed. Update table font, empty airport handling etc. */
   void optionsChanged();

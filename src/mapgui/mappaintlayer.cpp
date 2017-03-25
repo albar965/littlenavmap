@@ -55,9 +55,9 @@ MapPaintLayer::MapPaintLayer(MapWidget *widget, MapQuery *mapQueries)
   mapPainterAircraft = new MapPainterAircraft(mapWidget, mapQuery, mapScale);
 
   // Default for visible object types
-  objectTypes = maptypes::MapObjectTypes(
-    maptypes::AIRPORT | maptypes::VOR | maptypes::NDB | maptypes::AP_ILS | maptypes::MARKER |
-    maptypes::WAYPOINT);
+  objectTypes = map::MapObjectTypes(
+    map::AIRPORT | map::VOR | map::NDB | map::AP_ILS | map::MARKER |
+    map::WAYPOINT);
 }
 
 MapPaintLayer::~MapPaintLayer()
@@ -82,7 +82,7 @@ void MapPaintLayer::postDatabaseLoad()
   databaseLoadStatus = false;
 }
 
-void MapPaintLayer::setShowMapObjects(maptypes::MapObjectTypes type, bool show)
+void MapPaintLayer::setShowMapObjects(map::MapObjectTypes type, bool show)
 {
   if(show)
     objectTypes |= type;

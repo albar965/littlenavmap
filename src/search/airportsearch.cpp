@@ -420,15 +420,15 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   else if(col->getColumnName() == "longest_runway_length")
     return Unit::distShortFeet(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(displayRoleValue.toFloat());
+    return map::magvarText(displayRoleValue.toFloat());
   else if(NUMBER_COLUMNS.contains(col->getColumnName()))
     return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QString();
   else if(col->getColumnName() == "longest_runway_surface")
-    return maptypes::surfaceName(displayRoleValue.toString());
+    return map::surfaceName(displayRoleValue.toString());
   else if(col->getColumnName() == "largest_parking_ramp")
-    return maptypes::parkingRampName(displayRoleValue.toString());
+    return map::parkingRampName(displayRoleValue.toString());
   else if(col->getColumnName() == "largest_parking_gate")
-    return maptypes::parkingGateName(displayRoleValue.toString());
+    return map::parkingGateName(displayRoleValue.toString());
   else if(col->getColumnName() == "rating")
     return atools::ratingString(displayRoleValue.toInt(), 5);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
@@ -441,7 +441,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   return displayRoleValue.toString();
 }
 
-void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+void AirportSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 {
   if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
     return;
@@ -462,7 +462,7 @@ void AirportSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) con
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      maptypes::MapAirport ap;
+      map::MapAirport ap;
       rec.setValue(0, controller->getRawData(row, idColumnName));
       rec.setValue(1, controller->getRawData(row, "lonx"));
       rec.setValue(2, controller->getRawData(row, "laty"));

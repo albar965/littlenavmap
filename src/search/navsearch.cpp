@@ -264,9 +264,9 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
 {
   // Called directly by the model for export functions
   if(col->getColumnName() == "type")
-    return maptypes::navTypeName(displayRoleValue.toString());
+    return map::navTypeName(displayRoleValue.toString());
   else if(col->getColumnName() == "nav_type")
-    return maptypes::navName(displayRoleValue.toString());
+    return map::navName(displayRoleValue.toString());
   else if(col->getColumnName() == "name")
     return atools::capString(displayRoleValue.toString());
   else if(col->getColumnName() == "range")
@@ -286,7 +286,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return maptypes::magvarText(displayRoleValue.toFloat());
+    return map::magvarText(displayRoleValue.toFloat());
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());
   else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
@@ -297,7 +297,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
   return displayRoleValue.toString();
 }
 
-void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+void NavSearch::getSelectedMapObjects(map::MapSearchResult& result) const
 {
   if(!mainWindow->getUi()->dockWidgetSearch->isVisible())
     return;
@@ -318,23 +318,23 @@ void NavSearch::getSelectedMapObjects(maptypes::MapSearchResult& result) const
 
       // All objects are fully populated
       QString navType = rec.valueStr("nav_type");
-      maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navType);
+      map::MapObjectTypes type = map::navTypeToMapObjectType(navType);
 
-      if(type == maptypes::WAYPOINT)
+      if(type == map::WAYPOINT)
       {
-        maptypes::MapWaypoint obj;
+        map::MapWaypoint obj;
         factory.fillWaypointFromNav(rec, obj);
         result.waypoints.append(obj);
       }
-      else if(type == maptypes::NDB)
+      else if(type == map::NDB)
       {
-        maptypes::MapNdb obj;
+        map::MapNdb obj;
         factory.fillNdb(rec, obj);
         result.ndbs.append(obj);
       }
-      else if(type == maptypes::VOR)
+      else if(type == map::VOR)
       {
-        maptypes::MapVor obj;
+        map::MapVor obj;
         factory.fillVorFromNav(rec, obj);
         result.vors.append(obj);
       }

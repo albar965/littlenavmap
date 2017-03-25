@@ -21,7 +21,7 @@
 #include <QColor>
 #include <QApplication>
 
-namespace maptypes {
+namespace map {
 struct MapSearchResult;
 
 }
@@ -35,6 +35,11 @@ namespace atools {
 namespace util {
 class HtmlBuilder;
 }
+}
+
+namespace proc {
+struct MapProcedurePoint;
+
 }
 
 /*
@@ -57,8 +62,8 @@ public:
    * displayed in airport diagrams.
    * @return HTML code of the tooltip
    */
-  QString buildTooltip(const maptypes::MapSearchResult& mapSearchResult,
-                       const Route& route,
+  QString buildTooltip(const map::MapSearchResult& mapSearchResult,
+                       const QList<proc::MapProcedurePoint>& procPoints, const Route& route,
                        bool airportDiagram);
 
 private:

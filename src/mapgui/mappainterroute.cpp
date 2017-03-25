@@ -34,9 +34,9 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using maptypes::MapProcedureLeg;
-using maptypes::MapProcedureLegs;
-using maptypes::PosCourse;
+using proc::MapProcedureLeg;
+using proc::MapProcedureLegs;
+using map::PosCourse;
 using atools::contains;
 
 MapPainterRoute::MapPainterRoute(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale, const Route *routeParam)
@@ -56,13 +56,13 @@ void MapPainterRoute::render(PaintContext *context)
 
   setRenderHints(context->painter);
 
-  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
+  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
     paintRoute(context);
 
   if(context->mapLayer->isApproach())
     paintApproach(context, mapWidget->getApproachHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
-  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
+  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
     paintTopOfDescent(context);
 }
 
@@ -94,9 +94,9 @@ void MapPainterRoute::paintRoute(const PaintContext *context)
 
     // Draw if at least one is part of the route - also draw empty spaces between procedures
     if(
-      last.isRoute() || leg.isRoute() ||  // Draw if any is route - also covers STAR to airport
-      (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) ||  // empty space from SID to STAR, transition or approach
-      (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())  // empty space from STAR to transition or approach
+      last.isRoute() || leg.isRoute() || // Draw if any is route - also covers STAR to airport
+      (last.getProcedureLeg().isAnyDeparture() && leg.getProcedureLeg().isAnyArrival()) || // empty space from SID to STAR, transition or approach
+      (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival()) // empty space from STAR to transition or approach
       )
     {
       routeTexts.append(Unit::distNm(leg.getDistanceTo(), true /*addUnit*/, 20, true /*narrow*/) + tr(" / ") +
@@ -247,7 +247,7 @@ void MapPainterRoute::paintTopOfDescent(const PaintContext *context)
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
+void MapPainterRoute::paintApproach(const PaintContext *context, const proc::MapProcedureLegs& legs,
                                     int legsRouteOffset, const QColor& color, bool preview)
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
@@ -316,7 +316,7 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     QVector<QColor> textColors;
     for(int i = 0; i < legs.size(); i++)
     {
-      const maptypes::MapProcedureLeg& leg = legs.at(i);
+      const proc::MapProcedureLeg& leg = legs.at(i);
       lines.append(leg.line);
 
       QString approachText;
@@ -367,16 +367,16 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const maptypes:
     paintApproachPoints(context, legs, i, preview);
 }
 
-void MapPainterRoute::paintApproachSegment(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
+void MapPainterRoute::paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
                                            int index, QLineF& lastLine, QVector<DrawText> *drawTextLines,
                                            bool noText, bool preview)
 {
-  const maptypes::MapProcedureLeg& leg = legs.at(index);
+  const proc::MapProcedureLeg& leg = legs.at(index);
 
-  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::MISSED_APPROACH))
+  if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
     return;
 
-  const maptypes::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
+  const proc::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
   QSize size = scale->getScreeenSizeForRect(legs.bounding);
 
@@ -391,7 +391,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   if(leg.disabled)
     return;
 
-  if(leg.type == maptypes::INITIAL_FIX || leg.type == maptypes::START_OF_PROCEDURE) // Nothing to do here
+  if(leg.type == proc::INITIAL_FIX || leg.type == proc::START_OF_PROCEDURE) // Nothing to do here
   {
     lastLine = line;
     return;
@@ -404,7 +404,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   bool showDistance = !leg.noDistanceDisplay();
 
   // ===========================================================
-  if(contains(leg.type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
+  if(contains(leg.type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
   {
     if(line.length() > 2)
     {
@@ -414,21 +414,21 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     lastLine = line;
   }
   // ===========================================================
-  else if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
-                              maptypes::COURSE_TO_FIX,
-                              maptypes::DIRECT_TO_FIX,
-                              maptypes::FIX_TO_ALTITUDE,
-                              maptypes::TRACK_TO_FIX,
-                              maptypes::TRACK_FROM_FIX_FROM_DISTANCE,
-                              maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
-                              maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                              maptypes::HEADING_TO_MANUAL_TERMINATION,
-                              maptypes::COURSE_TO_INTERCEPT,
-                              maptypes::HEADING_TO_INTERCEPT}))
+  else if(contains(leg.type, {proc::COURSE_TO_ALTITUDE,
+                              proc::COURSE_TO_FIX,
+                              proc::DIRECT_TO_FIX,
+                              proc::FIX_TO_ALTITUDE,
+                              proc::TRACK_TO_FIX,
+                              proc::TRACK_FROM_FIX_FROM_DISTANCE,
+                              proc::FROM_FIX_TO_MANUAL_TERMINATION,
+                              proc::HEADING_TO_ALTITUDE_TERMINATION,
+                              proc::HEADING_TO_MANUAL_TERMINATION,
+                              proc::COURSE_TO_INTERCEPT,
+                              proc::HEADING_TO_INTERCEPT}))
   {
     if(contains(leg.turnDirection,
-                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != maptypes::INITIAL_FIX &&
-       prevLeg->type != maptypes::START_OF_PROCEDURE)
+                {"R", "L" /*, "B"*/}) && prevLeg != nullptr && prevLeg->type != proc::INITIAL_FIX &&
+       prevLeg->type != proc::START_OF_PROCEDURE)
     {
       float lineDist = static_cast<float>(QLineF(lastLine.p2(), line.p1()).length());
       if(!lastLine.p2().isNull() && lineDist > 2)
@@ -491,12 +491,12 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
     }
   }
   // ===========================================================
-  else if(contains(leg.type, {maptypes::COURSE_TO_RADIAL_TERMINATION,
-                              maptypes::HEADING_TO_RADIAL_TERMINATION,
-                              maptypes::COURSE_TO_DME_DISTANCE,
-                              maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
-                              maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
-                              maptypes::DIRECT_TO_RUNWAY}))
+  else if(contains(leg.type, {proc::COURSE_TO_RADIAL_TERMINATION,
+                              proc::HEADING_TO_RADIAL_TERMINATION,
+                              proc::COURSE_TO_DME_DISTANCE,
+                              proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                              proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                              proc::DIRECT_TO_RUNWAY}))
   {
     painter->drawLine(line);
     lastLine = line;
@@ -506,9 +506,9 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
       (*drawTextLines)[index] = {leg.line, showDistance, true};
   }
   // ===========================================================
-  else if(contains(leg.type, {maptypes::HOLD_TO_ALTITUDE,
-                              maptypes::HOLD_TO_FIX,
-                              maptypes::HOLD_TO_MANUAL_TERMINATION}))
+  else if(contains(leg.type, {proc::HOLD_TO_ALTITUDE,
+                              proc::HOLD_TO_FIX,
+                              proc::HOLD_TO_MANUAL_TERMINATION}))
   {
     QString holdText, holdText2;
 
@@ -543,7 +543,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
                       mapcolors::routeTextBackgroundColor);
   }
   // ===========================================================
-  else if(leg.type == maptypes::PROCEDURE_TURN)
+  else if(leg.type == proc::PROCEDURE_TURN)
   {
     QString text;
 
@@ -574,8 +574,8 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
   }
 }
 
-void MapPainterRoute::paintApproachBow(const maptypes::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
-                                       QLineF line, const maptypes::MapProcedureLeg& leg)
+void MapPainterRoute::paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter,
+                                       QLineF line, const proc::MapProcedureLeg& leg)
 {
   QLineF lineDraw(line.p2(), line.p1());
 
@@ -604,7 +604,7 @@ void MapPainterRoute::paintApproachBow(const maptypes::MapProcedureLeg *prevLeg,
   lastLine = lineDraw;
 }
 
-QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapProcedureLeg& leg,
+QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg,
                                           QPainter *painter, QPointF intersectPoint)
 {
   QPointF endPos = line.p2();
@@ -648,10 +648,10 @@ QLineF MapPainterRoute::paintApproachTurn(QLineF& lastLine, QLineF line, const m
   return nextLine;
 }
 
-void MapPainterRoute::paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
+void MapPainterRoute::paintApproachPoints(const PaintContext *context, const proc::MapProcedureLegs& legs,
                                           int index, bool preview)
 {
-  const maptypes::MapProcedureLeg& leg = legs.at(index);
+  const proc::MapProcedureLeg& leg = legs.at(index);
   bool drawText = context->mapLayer->isApproachText();
 
   // Debugging code for drawing ================================================
@@ -676,15 +676,15 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->drawEllipse(line.p1(), 20, 10);
   painter->drawEllipse(line.p2(), 10, 20);
   painter->drawText(line.x1() - 40, line.y1() + 40,
-                    "Start " + maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+                    "Start " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
 
   painter->drawText(line.x2() - 40, line.y2() + 60,
-                    "End " + maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+                    "End " + proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
   if(!intersectPoint.isNull())
   {
     painter->drawEllipse(intersectPoint, 30, 30);
     painter->drawText(intersectPoint.x() - 40, intersectPoint.y() + 20,
-                      maptypes::procedureLegTypeShortStr(leg.type) + " " + QString::number(index));
+                      proctypes::ProcedureLegTypeShortStr(leg.type) + " " + QString::number(index));
   }
 
   painter->setPen(QPen(Qt::darkBlue, 2));
@@ -705,7 +705,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->restore();
 #endif
 
-  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::MISSED_APPROACH))
+  if(!preview && leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
     return;
 
   if(leg.disabled)
@@ -713,36 +713,36 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
 
   bool lastInTransition = false;
   if(index < legs.size() - 1 &&
-     leg.type != maptypes::HEADING_TO_INTERCEPT && leg.type != maptypes::COURSE_TO_INTERCEPT &&
-     leg.type != maptypes::HOLD_TO_ALTITUDE && leg.type != maptypes::HOLD_TO_FIX &&
-     leg.type != maptypes::HOLD_TO_MANUAL_TERMINATION)
+     leg.type != proc::HEADING_TO_INTERCEPT && leg.type != proc::COURSE_TO_INTERCEPT &&
+     leg.type != proc::HOLD_TO_ALTITUDE && leg.type != proc::HOLD_TO_FIX &&
+     leg.type != proc::HOLD_TO_MANUAL_TERMINATION)
     // Do not paint the last point in the transition since it overlaps with the approach
     // But draw the intercept and hold text
     lastInTransition = legs.at(index).isTransition() &&
-                       legs.at(index + 1).isApproach() && context->objectTypes & maptypes::PROCEDURE_APPROACH;
+                       legs.at(index + 1).isApproach() && context->objectTypes & proc::PROCEDURE_APPROACH;
 
   QStringList texts;
   // if(index > 0 && legs.isApproach(index) &&
-  // legs.isTransition(index - 1) && context->objectTypes & maptypes::APPROACH &&
-  // context->objectTypes & maptypes::APPROACH_TRANSITION)
+  // legs.isTransition(index - 1) && context->objectTypes & proctypes::APPROACH &&
+  // context->objectTypes & proctypes::APPROACH_TRANSITION)
   // // Merge display text to get any text from a preceding transition point
   // texts.append(legs.at(index - 1).displayText);
 
   int x = 0, y = 0;
 
-  if(leg.mapType == maptypes::PROCEDURE_SID && index == 0)
+  if(leg.mapType == proc::PROCEDURE_SID && index == 0)
   {
     // All legs with a calculated end point
     if(wToS(leg.line.getPos1(), x, y))
     {
       texts.append("RW" + legs.runwayEnd.name);
 
-      maptypes::MapAltRestriction altRestriction;
-      altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+      proc::MapAltRestriction altRestriction;
+      altRestriction.descriptor = proc::MapAltRestriction::AT;
       altRestriction.alt1 = legs.runwayEnd.getPosition().getAltitude();
       altRestriction.alt2 = 0.f;
 
-      texts.append(maptypes::altRestrictionTextNarrow(altRestriction));
+      texts.append(proc::altRestrictionTextNarrow(altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
       paintProcedurePoint(context, x, y);
@@ -753,22 +753,22 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   }
 
   // Manual and altitude terminated legs that have a calculated position needing extra text
-  if(contains(leg.type, {maptypes::COURSE_TO_ALTITUDE,
-                         maptypes::COURSE_TO_DME_DISTANCE,
-                         maptypes::COURSE_TO_INTERCEPT,
-                         maptypes::COURSE_TO_RADIAL_TERMINATION,
-                         maptypes::HOLD_TO_FIX,
-                         maptypes::HOLD_TO_MANUAL_TERMINATION,
-                         maptypes::HOLD_TO_ALTITUDE,
-                         maptypes::FIX_TO_ALTITUDE,
-                         maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE,
-                         maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                         maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
-                         maptypes::HEADING_TO_INTERCEPT,
-                         maptypes::HEADING_TO_RADIAL_TERMINATION,
-                         maptypes::TRACK_FROM_FIX_FROM_DISTANCE,
-                         maptypes::FROM_FIX_TO_MANUAL_TERMINATION,
-                         maptypes::HEADING_TO_MANUAL_TERMINATION}))
+  if(contains(leg.type, {proc::COURSE_TO_ALTITUDE,
+                         proc::COURSE_TO_DME_DISTANCE,
+                         proc::COURSE_TO_INTERCEPT,
+                         proc::COURSE_TO_RADIAL_TERMINATION,
+                         proc::HOLD_TO_FIX,
+                         proc::HOLD_TO_MANUAL_TERMINATION,
+                         proc::HOLD_TO_ALTITUDE,
+                         proc::FIX_TO_ALTITUDE,
+                         proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
+                         proc::HEADING_TO_ALTITUDE_TERMINATION,
+                         proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                         proc::HEADING_TO_INTERCEPT,
+                         proc::HEADING_TO_RADIAL_TERMINATION,
+                         proc::TRACK_FROM_FIX_FROM_DISTANCE,
+                         proc::FROM_FIX_TO_MANUAL_TERMINATION,
+                         proc::HEADING_TO_MANUAL_TERMINATION}))
   {
     if(lastInTransition)
       return;
@@ -777,7 +777,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
     if(wToS(leg.line.getPos2(), x, y))
     {
       texts.append(leg.displayText);
-      texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
+      texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
       if(leg.flyover)
         paintProcedureFlyover(context, x, y);
       paintProcedurePoint(context, x, y);
@@ -786,12 +786,12 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
       texts.clear();
     }
   }
-  else if(leg.type == maptypes::START_OF_PROCEDURE)
+  else if(leg.type == proc::START_OF_PROCEDURE)
   {
     if(wToS(leg.line.getPos1(), x, y))
       paintProcedurePoint(context, x, y);
   }
-  else if(leg.type == maptypes::COURSE_TO_FIX)
+  else if(leg.type == proc::COURSE_TO_FIX)
   {
     if(index == 0)
     {
@@ -822,7 +822,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
         return;
 
       texts.append(leg.displayText);
-      texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
+      texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
     }
   }
   else
@@ -831,10 +831,10 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
       return;
 
     texts.append(leg.displayText);
-    texts.append(maptypes::altRestrictionTextNarrow(leg.altRestriction));
+    texts.append(proc::altRestrictionTextNarrow(leg.altRestriction));
   }
 
-  const maptypes::MapSearchResult& navaids = leg.navaids;
+  const map::MapSearchResult& navaids = leg.navaids;
 
   if(!navaids.waypoints.isEmpty() && wToS(navaids.waypoints.first().position, x, y))
   {
@@ -880,14 +880,14 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   }
 }
 
-void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj)
+void MapPainterRoute::paintAirport(const PaintContext *context, int x, int y, const map::MapAirport& obj)
 {
   int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
   symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false);
 }
 
 void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y,
-                                       const maptypes::MapAirport& obj)
+                                       const map::MapAirport& obj)
 {
   int size = context->sz(context->symbolSizeAirport, context->mapLayerEffective->getAirportSymbolSize());
   textflags::TextFlags flags = textflags::IDENT | textflags::ROUTE_TEXT;
@@ -900,7 +900,7 @@ void MapPainterRoute::paintAirportText(const PaintContext *context, int x, int y
                                  context->mapLayerEffective->isAirportDiagram());
 }
 
-void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj)
+void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
@@ -908,7 +908,7 @@ void MapPainterRoute::paintVor(const PaintContext *context, int x, int y, const 
                                context->mapLayerEffective->isVorLarge() ? size * 5 : 0);
 }
 
-void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
+void MapPainterRoute::paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj,
                                    const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getVorSymbolSize());
@@ -929,7 +929,7 @@ void MapPainterRoute::paintNdb(const PaintContext *context, int x, int y)
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, true, false);
 }
 
-void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
+void MapPainterRoute::paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj,
                                    const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getNdbSymbolSize());
@@ -951,7 +951,7 @@ void MapPainterRoute::paintWaypoint(const PaintContext *context, const QColor& c
 }
 
 void MapPainterRoute::paintWaypointText(const PaintContext *context, int x, int y,
-                                        const maptypes::MapWaypoint& obj,
+                                        const map::MapWaypoint& obj,
                                         const QStringList *addtionalText)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerEffective->getWaypointSymbolSize());
@@ -1005,26 +1005,26 @@ void MapPainterRoute::drawSymbols(const PaintContext *context,
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
       const RouteLeg& obj = route->at(i);
-      maptypes::MapObjectTypes type = obj.getMapObjectType();
+      map::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
-        case maptypes::INVALID:
+        case map::INVALID:
           // name and region not found in database
           paintWaypoint(context, mapcolors::routeInvalidPointColor, x, y);
           break;
-        case maptypes::USER:
+        case map::USER:
           paintUserpoint(context, x, y);
           break;
-        case maptypes::AIRPORT:
+        case map::AIRPORT:
           paintAirport(context, x, y, obj.getAirport());
           break;
-        case maptypes::VOR:
+        case map::VOR:
           paintVor(context, x, y, obj.getVor());
           break;
-        case maptypes::NDB:
+        case map::NDB:
           paintNdb(context, x, y);
           break;
-        case maptypes::WAYPOINT:
+        case map::WAYPOINT:
           paintWaypoint(context, QColor(), x, y);
           break;
       }
@@ -1044,25 +1044,25 @@ void MapPainterRoute::drawSymbolText(const PaintContext *context,
       int x = pt.x();
       int y = pt.y();
       const RouteLeg& obj = route->at(i);
-      maptypes::MapObjectTypes type = obj.getMapObjectType();
+      map::MapObjectTypes type = obj.getMapObjectType();
       switch(type)
       {
-        case maptypes::INVALID:
+        case map::INVALID:
           paintText(context, mapcolors::routeInvalidPointColor, x, y, {obj.getIdent()});
           break;
-        case maptypes::USER:
+        case map::USER:
           paintText(context, mapcolors::routeUserPointColor, x, y, {obj.getIdent()});
           break;
-        case maptypes::AIRPORT:
+        case map::AIRPORT:
           paintAirportText(context, x, y, obj.getAirport());
           break;
-        case maptypes::VOR:
+        case map::VOR:
           paintVorText(context, x, y, obj.getVor());
           break;
-        case maptypes::NDB:
+        case map::NDB:
           paintNdbText(context, x, y, obj.getNdb());
           break;
-        case maptypes::WAYPOINT:
+        case map::WAYPOINT:
           paintWaypointText(context, x, y, obj.getWaypoint());
           break;
       }
@@ -1078,7 +1078,7 @@ void MapPainterRoute::drawStartParking(const PaintContext *context)
   {
     // Draw start position or parking circle into the airport diagram
     const RouteLeg& first = route->at(0);
-    if(first.getMapObjectType() == maptypes::AIRPORT)
+    if(first.getMapObjectType() == map::AIRPORT)
     {
       int size = 100;
 

@@ -32,7 +32,7 @@ class WeatherReporter;
 class Route;
 class MainWindow;
 
-namespace maptypes {
+namespace map {
 struct MapAirport;
 
 struct MapVor;
@@ -75,11 +75,15 @@ class MorseCode;
 }
 }
 
-namespace maptypes {
+namespace map {
 struct WeatherContext;
 
 }
 
+namespace proc {
+struct MapProcedurePoint;
+
+}
 /*
  * Builds HTML snippets (no <html> and no <body> tags) for QTextEdits or tooltips.
  */
@@ -106,7 +110,7 @@ public:
    * @param weather
    * @param background Background color for icons
    */
-  void airportText(const maptypes::MapAirport& airport, const maptypes::WeatherContext& weatherContext,
+  void airportText(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
                    atools::util::HtmlBuilder& html, const Route *route, QColor background) const;
 
   /*
@@ -115,7 +119,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void runwayText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+  void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
                   QColor background, bool details = true, bool soft = true) const;
 
   /*
@@ -124,7 +128,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void comText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background) const;
+  void comText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for all approaches of an airport.
@@ -132,10 +136,10 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void procedureText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html,
+  void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
                      QColor background) const;
 
-  void weatherText(const maptypes::WeatherContext& context, const maptypes::MapAirport& airport,
+  void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
                    atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
@@ -144,7 +148,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void vorText(const maptypes::MapVor& vor, atools::util::HtmlBuilder& html, QColor background) const;
+  void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a NDB station.
@@ -152,7 +156,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void ndbText(const maptypes::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background) const;
+  void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html, QColor background) const;
 
   /*
    * Creates a HTML description for a waypoint including all attached airways.
@@ -160,7 +164,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void waypointText(const maptypes::MapWaypoint& waypoint, atools::util::HtmlBuilder& html,
+  void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html,
                     QColor background) const;
 
   /*
@@ -168,44 +172,44 @@ public:
    * @param airway
    * @param html Result containing HTML snippet
    */
-  void airwayText(const maptypes::MapAirway& airway, atools::util::HtmlBuilder& html) const;
+  void airwayText(const map::MapAirway& airway, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a marker.
    * @param marker
    * @param html Result containing HTML snippet
    */
-  void markerText(const maptypes::MapMarker& marker, atools::util::HtmlBuilder& html) const;
+  void markerText(const map::MapMarker& marker, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for an airport's tower including frequency if available.
    * @param airport
    * @param html Result containing HTML snippet
    */
-  void towerText(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void towerText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a parking spot (ramp GA, gate, etc.).
    * @param parking
    * @param html Result containing HTML snippet
    */
-  void parkingText(const maptypes::MapParking& parking, atools::util::HtmlBuilder& html) const;
+  void parkingText(const map::MapParking& parking, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a helipad.
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const maptypes::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
+  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
    * @param userpoint
    * @param html Result containing HTML snippet
    */
-  void userpointText(const maptypes::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointText(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const maptypes::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
+  void procedurePointText(const proc::MapProcedurePoint& ap, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates an overview HTML description for the user aircraft in the simulator.
@@ -230,13 +234,13 @@ public:
 
 private:
   void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
-  void addAirportScenery(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void addAirportScenery(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
 
-  void airportTitle(const maptypes::MapAirport& airport, atools::util::HtmlBuilder& html, int rating,
+  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating,
                     QColor background) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
@@ -265,11 +269,11 @@ private:
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& heading, const QString& metar,
                     const QString& station = QString(),
                     const QDateTime& timestamp = QDateTime(), bool fsMetar = false) const;
-  void decodedMetar(atools::util::HtmlBuilder& html, const maptypes::MapAirport& airport,
+  void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const atools::fs::weather::Metar& metar,
                     bool isInterpolated) const;
-  bool buildWeatherContext(maptypes::WeatherContext& lastContext, maptypes::WeatherContext& newContext,
-                           const maptypes::MapAirport& airport);
+  bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
+                           const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
   void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach) const;
 

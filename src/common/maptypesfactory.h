@@ -42,40 +42,40 @@ public:
    * @param complete if false only id and position are present in the record. Used for creating the object
    * based on incomplete records in the search.
    */
-  void fillAirport(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport, bool complete);
+  void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete);
 
   /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, maptypes::MapAirport& airport);
+  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport);
 
   /*
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
    */
-  void fillRunway(const atools::sql::SqlRecord& record, maptypes::MapRunway& runway, bool overview);
-  void fillRunwayEnd(const atools::sql::SqlRecord& record, maptypes::MapRunwayEnd& end);
+  void fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview);
+  void fillRunwayEnd(const atools::sql::SqlRecord& record, map::MapRunwayEnd& end);
 
-  void fillVor(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
-  void fillVorFromNav(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
+  void fillVor(const atools::sql::SqlRecord& record, map::MapVor& vor);
+  void fillVorFromNav(const atools::sql::SqlRecord& record, map::MapVor& vor);
 
-  void fillNdb(const atools::sql::SqlRecord& record, maptypes::MapNdb& ndb);
+  void fillNdb(const atools::sql::SqlRecord& record, map::MapNdb& ndb);
 
-  void fillWaypoint(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& waypoint);
-  void fillWaypointFromNav(const atools::sql::SqlRecord& record, maptypes::MapWaypoint& waypoint);
+  void fillWaypoint(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
+  void fillWaypointFromNav(const atools::sql::SqlRecord& record, map::MapWaypoint& waypoint);
 
-  void fillAirway(const atools::sql::SqlRecord& record, maptypes::MapAirway& airway);
-  void fillMarker(const atools::sql::SqlRecord& record, maptypes::MapMarker& marker);
-  void fillIls(const atools::sql::SqlRecord& record, maptypes::MapIls& ils);
+  void fillAirway(const atools::sql::SqlRecord& record, map::MapAirway& airway);
+  void fillMarker(const atools::sql::SqlRecord& record, map::MapMarker& marker);
+  void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils);
 
-  void fillParking(const atools::sql::SqlRecord& record, maptypes::MapParking& parking);
-  void fillStart(const atools::sql::SqlRecord& record, maptypes::MapStart& start);
+  void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
+  void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
 private:
-  void fillVorBase(const atools::sql::SqlRecord& record, maptypes::MapVor& vor);
+  void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);
 
-  void fillAirportBase(const atools::sql::SqlRecord& record, maptypes::MapAirport& ap, bool complete);
+  void fillAirportBase(const atools::sql::SqlRecord& record, map::MapAirport& ap, bool complete);
 
-  maptypes::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
-                                        maptypes::MapAirportFlags airportFlag);
-  maptypes::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
+  map::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
+                                   map::MapAirportFlags airportFlag);
+  map::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
 
 };
 

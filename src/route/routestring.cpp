@@ -28,7 +28,7 @@
 
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
-using maptypes::MapSearchResult;
+using map::MapSearchResult;
 
 const static int MAX_WAYPOINT_DISTANCE_NM = 1000;
 
@@ -37,9 +37,9 @@ const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM
 const static QRegularExpression AIRPORT_TIME("^([A-Z0-9]{3,4})\\d{4}$");
 const static QRegularExpression SIDSTAR_TRANS("^[A-Z_0-9]+(\\.[A-Z_0-9]+)+$");
 
-const static maptypes::MapObjectTypes ROUTE_TYPES(maptypes::AIRPORT | maptypes::WAYPOINT |
-                                                  maptypes::VOR | maptypes::NDB | maptypes::USER |
-                                                  maptypes::AIRWAY);
+const static map::MapObjectTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT |
+                                             map::VOR | map::NDB | map::USER |
+                                             map::AIRWAY);
 
 const static QString SPANERR("<span style=\"color: #ff0000; font-weight:600\">");
 const static QString SPANWARN("<span style=\"color: #ff5000\">");
@@ -139,7 +139,7 @@ QStringList RouteString::createStringForRouteInternal(const Route& route, float 
     const QString& airway = entry.getAirway();
     QString ident = entry.getIdent();
 
-    if(entry.getMapObjectType() == maptypes::INVALID || entry.getMapObjectType() == maptypes::USER)
+    if(entry.getMapObjectType() == map::INVALID || entry.getMapObjectType() == map::USER)
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
       ident = gfpFormat ?
               coords::toGfpFormat(entry.getPosition()) : coords::toDegMinFormat(entry.getPosition());
@@ -250,7 +250,7 @@ bool RouteString::createRouteFromString(const QString& routeString, atools::fs::
     if(!result.airways.isEmpty())
     {
       // Add all airway waypoints if any were found
-      for(const maptypes::MapWaypoint& wp : result.waypoints)
+      for(const map::MapWaypoint& wp : result.waypoints)
       {
         // Reset but keep the last one
         FlightplanEntry entry;
@@ -336,7 +336,7 @@ bool RouteString::addDeparture(atools::fs::pln::Flightplan& flightplan, const QS
     appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
   }
 
-  maptypes::MapAirport departure;
+  map::MapAirport departure;
   query->getAirportByIdent(departure, ident);
   if(departure.isValid())
   {
@@ -368,7 +368,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
     appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
   }
 
-  maptypes::MapAirport destination;
+  map::MapAirport destination;
   query->getAirportByIdent(destination, airportIdent);
   if(destination.isValid())
   {
@@ -390,7 +390,7 @@ bool RouteString::addDestination(atools::fs::pln::Flightplan& flightplan, const 
   }
 }
 
-void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
+void RouteString::findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
                                       int lastId, int nextId, int& startIndex, int& endIndex,
                                       const QString& airway)
 {
@@ -398,7 +398,7 @@ void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& 
   // TODO handle fragments properly
   for(int idx = 0; idx < allAirwayWaypoints.size(); idx++)
   {
-    const maptypes::MapAirwayWaypoint& wp = allAirwayWaypoints.at(idx);
+    const map::MapAirwayWaypoint& wp = allAirwayWaypoints.at(idx);
     // qDebug() << "found idx" << idx << allAirwayWaypoints.at(idx).waypoint.ident
     // << "in" << currentAirway.name;
 
@@ -423,9 +423,9 @@ void RouteString::findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& 
 }
 
 /* Always excludes the first waypoint */
-void RouteString::extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
+void RouteString::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
                                    int startIndex, int endIndex,
-                                   QList<maptypes::MapWaypoint>& airwayWaypoints)
+                                   QList<map::MapWaypoint>& airwayWaypoints)
 {
   if(startIndex < endIndex)
   {
@@ -485,7 +485,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
   if(!result.airways.isEmpty())
   {
-    QList<maptypes::MapWaypoint> waypoints;
+    QList<map::MapWaypoint> waypoints;
     MapSearchResult& lastResult = resultList[i - 1].result;
     MapSearchResult& nextResult = resultList[i + 1].result;
     const QString& airwayName = resultList.at(i).item;
@@ -512,7 +512,7 @@ void RouteString::filterAirways(QList<ParseEntry>& resultList, int i)
 
     if(!waypoints.isEmpty())
     {
-      QList<maptypes::MapAirwayWaypoint> allAirwayWaypoints;
+      QList<map::MapAirwayWaypoint> allAirwayWaypoints;
 
       // Get all waypoints for the airway sorted by fragment and sequence
       query->getWaypointListForAirwayName(allAirwayWaypoints, airwayName);
@@ -573,7 +573,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
     atools::geo::Pos pos = coords::fromAnyWaypointFormat(item);
     if(pos.isValid())
     {
-      maptypes::MapUserpoint user;
+      map::MapUserpoint user;
       user.position = pos;
       result.userPoints.append(user);
     }
@@ -588,7 +588,7 @@ void RouteString::findWaypoints(MapSearchResult& result, const QString& item)
       atools::geo::Pos pos = coords::fromAnyWaypointFormat(item);
       if(pos.isValid())
       {
-        maptypes::MapUserpoint user;
+        map::MapUserpoint user;
         user.position = pos;
         result.userPoints.append(user);
       }

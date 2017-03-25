@@ -57,37 +57,37 @@ public:
 
   void getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country);
 
-  void getAirportById(maptypes::MapAirport& airport, int airportId);
-  maptypes::MapAirport getAirportById(int airportId);
+  void getAirportById(map::MapAirport& airport, int airportId);
+  map::MapAirport getAirportById(int airportId);
 
-  void getAirportByIdent(maptypes::MapAirport& airport, const QString& ident);
-
-  /* Get all airways that are attached to a waypoint */
-  void getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId);
+  void getAirportByIdent(map::MapAirport& airport, const QString& ident);
 
   /* Get all airways that are attached to a waypoint */
-  void getWaypointsForAirway(QList<maptypes::MapWaypoint>& waypoints, const QString& airwayName,
+  void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
+
+  /* Get all airways that are attached to a waypoint */
+  void getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                              const QString& waypointIdent = QString());
 
   /* Get all waypoints or an airway ordered by fragment an sequence number */
-  void getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& waypoints, const QString& airwayName);
+  void getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName);
 
-  void getAirwayById(maptypes::MapAirway& airway, int airwayId);
+  void getAirwayById(map::MapAirway& airway, int airwayId);
 
   /* If waypoint is of type VOR get the related VOR object */
-  void getVorForWaypoint(maptypes::MapVor& vor, int waypointId);
-  void getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos);
+  void getVorForWaypoint(map::MapVor& vor, int waypointId);
+  void getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos);
 
   /* If waypoint is of type NDB get the related NDB object */
-  void getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId);
-  void getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos);
+  void getNdbForWaypoint(map::MapNdb& ndb, int waypointId);
+  void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos);
 
   /* Get map objects by unique database id  */
-  maptypes::MapVor getVorById(int id);
-  maptypes::MapNdb getNdbById(int id);
-  maptypes::MapIls getIlsById(int id);
-  maptypes::MapWaypoint getWaypointById(int id);
-  maptypes::MapRunwayEnd getRunwayEndById(int id);
+  map::MapVor getVorById(int id);
+  map::MapNdb getNdbById(int id);
+  map::MapIls getIlsById(int id);
+  map::MapWaypoint getWaypointById(int id);
+  map::MapRunwayEnd getRunwayEndById(int id);
 
   /*
    * Get a map object by type, ident and region
@@ -96,10 +96,10 @@ public:
    * @param ident ICAO ident
    * @param region two letter ICAO region code
    */
-  void getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+  void getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
                            const QString& ident, const QString& region = QString(), const QString& airport = QString(),
                            const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistance = maptypes::INVALID_DISTANCE_VALUE);
+                           float maxDistance = map::INVALID_DISTANCE_VALUE);
 
   /*
    * Get a map object by type and id
@@ -107,7 +107,7 @@ public:
    * @param type AIRPORT, VOR, NDB or WAYPOINT
    * @param id database id
    */
-  void getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id);
+  void getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id);
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.
@@ -122,8 +122,8 @@ public:
    * @param result will receive objects based on type
    */
   void getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
-                         maptypes::MapObjectTypes types, int xs, int ys, int screenDistance,
-                         maptypes::MapSearchResult& result);
+                         map::MapObjectTypes types, int xs, int ys, int screenDistance,
+                         map::MapSearchResult& result);
 
   /*
    * Get a parking spot of an airport by name and number
@@ -132,7 +132,7 @@ public:
    * @param name name like PARKING, GATE_P, etc.
    * @param number parking number
    */
-  void getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, int airportId, const QString& name,
+  void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name,
                                  int number);
 
   /*
@@ -142,11 +142,11 @@ public:
    * @param runwayEndName name like 24, 12C, 13W
    * @param position needed to distinguish between helipads and runways which can have the same name
    */
-  void getStartByNameAndPos(maptypes::MapStart& start, int airportId, const QString& runwayEndName,
+  void getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
                             const atools::geo::Pos& position);
 
   /* Get best start position for an airport. This is the longest preferrably hard surfaced primary runway end */
-  void getBestStartPositionForAirport(maptypes::MapStart& start, int airportId);
+  void getBestStartPositionForAirport(map::MapStart& start, int airportId);
 
   /*
    * Fetch airports for a map coordinate rectangle
@@ -156,48 +156,48 @@ public:
    * @return pointer to airport cache. Create a copy if this is needed for a longer
    * time than for e.g. one drawing request.
    */
-  const QList<maptypes::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                 const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect,
+                                            const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect,
-                                                   const MapLayer *mapLayer, bool lazy);
+  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect,
+                                              const MapLayer *mapLayer, bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                         bool lazy);
+  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                    bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                         bool lazy);
+  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                    bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                               bool lazy);
+  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                          bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                        bool lazy);
+  const QList<map::MapIls> *getIls(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                   bool lazy);
 
   /* Similar to getAirports */
-  const QList<maptypes::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                               bool lazy);
+  const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                          bool lazy);
 
   /* Get a partially filled runway list for the overview */
-  const QList<maptypes::MapRunway> *getRunwaysForOverview(int airportId);
+  const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
   /* Get a completely filled runway list for the airport */
-  const QList<maptypes::MapRunway> *getRunways(int airportId);
+  const QList<map::MapRunway> *getRunways(int airportId);
 
-  const QList<maptypes::MapApron> *getAprons(int airportId);
+  const QList<map::MapApron> *getAprons(int airportId);
 
-  const QList<maptypes::MapTaxiPath> *getTaxiPaths(int airportId);
+  const QList<map::MapTaxiPath> *getTaxiPaths(int airportId);
 
-  const QList<maptypes::MapParking> *getParkingsForAirport(int airportId);
+  const QList<map::MapParking> *getParkingsForAirport(int airportId);
 
-  const QList<maptypes::MapStart> *getStartPositionsForAirport(int airportId);
+  const QList<map::MapStart> *getStartPositionsForAirport(int airportId);
 
-  const QList<maptypes::MapHelipad> *getHelipads(int airportId);
+  const QList<map::MapHelipad> *getHelipads(int airportId);
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -225,9 +225,9 @@ private:
     QList<TYPE> list;
   };
 
-  const QList<maptypes::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                   atools::sql::SqlQuery *query, bool reverse,
-                                                   bool lazy, bool overview);
+  const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
+                                              atools::sql::SqlQuery *query, bool reverse,
+                                              bool lazy, bool overview);
 
   void bindCoordinatePointInRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                  const QString& prefix = QString());
@@ -236,28 +236,28 @@ private:
 
   static void inflateRect(Marble::GeoDataLatLonBox& rect, double width, double height);
 
-  bool runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2);
+  bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
   /* Simple bounding rectangle caches */
-  SimpleRectCache<maptypes::MapAirport> airportCache;
-  SimpleRectCache<maptypes::MapWaypoint> waypointCache;
-  SimpleRectCache<maptypes::MapVor> vorCache;
-  SimpleRectCache<maptypes::MapNdb> ndbCache;
-  SimpleRectCache<maptypes::MapMarker> markerCache;
-  SimpleRectCache<maptypes::MapIls> ilsCache;
-  SimpleRectCache<maptypes::MapAirway> airwayCache;
+  SimpleRectCache<map::MapAirport> airportCache;
+  SimpleRectCache<map::MapWaypoint> waypointCache;
+  SimpleRectCache<map::MapVor> vorCache;
+  SimpleRectCache<map::MapNdb> ndbCache;
+  SimpleRectCache<map::MapMarker> markerCache;
+  SimpleRectCache<map::MapIls> ilsCache;
+  SimpleRectCache<map::MapAirway> airwayCache;
 
   /* ID/object caches */
-  QCache<int, QList<maptypes::MapRunway> > runwayCache;
-  QCache<int, QList<maptypes::MapRunway> > runwayOverwiewCache;
-  QCache<int, QList<maptypes::MapApron> > apronCache;
-  QCache<int, QList<maptypes::MapTaxiPath> > taxipathCache;
-  QCache<int, QList<maptypes::MapParking> > parkingCache;
-  QCache<int, QList<maptypes::MapStart> > startCache;
-  QCache<int, QList<maptypes::MapHelipad> > helipadCache;
+  QCache<int, QList<map::MapRunway> > runwayCache;
+  QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
+  QCache<int, QList<map::MapApron> > apronCache;
+  QCache<int, QList<map::MapTaxiPath> > taxipathCache;
+  QCache<int, QList<map::MapParking> > parkingCache;
+  QCache<int, QList<map::MapStart> > startCache;
+  QCache<int, QList<map::MapHelipad> > helipadCache;
 
   /* Inflate bounding rectangle before passing it to query */
   static Q_DECL_CONSTEXPR double RECT_INFLATION_FACTOR_DEG = 0.3;

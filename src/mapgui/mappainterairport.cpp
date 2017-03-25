@@ -36,7 +36,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using namespace maptypes;
+using namespace map;
 
 MapPainterAirport::MapPainterAirport(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale,
                                      const Route *routeParam)
@@ -54,11 +54,11 @@ void MapPainterAirport::render(PaintContext *context)
   QHash<int, const MapAirport *> airportMap; // Collect all airports from route and bounding rectangle
   QSet<int> routeAirportIds; // Airport ids from departure and destination
 
-  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
+  if(context->objectTypes.testFlag(map::FLIGHTPLAN))
   {
     for(const RouteLeg& routeLeg : *route)
     {
-      if(routeLeg.getMapObjectType() == maptypes::AIRPORT)
+      if(routeLeg.getMapObjectType() == map::AIRPORT)
       {
         airportMap.insert(routeLeg.getAirport().id, &routeLeg.getAirport());
         routeAirportIds.insert(routeLeg.getAirport().id);
@@ -66,7 +66,7 @@ void MapPainterAirport::render(PaintContext *context)
     }
   }
 
-  if((!context->objectTypes.testFlag(maptypes::AIRPORT) || !context->mapLayer->isAirport()) &&
+  if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
      (!context->mapLayerEffective->isAirportDiagram()) && airportMap.isEmpty())
     return;
 
@@ -170,7 +170,7 @@ void MapPainterAirport::render(PaintContext *context)
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
 void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
-                                                    const maptypes::MapAirport& airport)
+                                                    const map::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
@@ -230,7 +230,7 @@ void MapPainterAirport::drawAirportDiagramBackround(const PaintContext *context,
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport,
+void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport,
                                            bool fast)
 {
   Marble::GeoPainter *painter = context->painter;
@@ -694,7 +694,7 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
       if(!runway.edgeLight.isEmpty())
         text += tr(" / L");
 
-      QString surface = maptypes::surfaceName(runway.surface);
+      QString surface = map::surfaceName(runway.surface);
       if(!surface.isEmpty())
         text += tr(" / ") + surface;
 
@@ -835,13 +835,13 @@ void MapPainterAirport::drawAirportDiagram(const PaintContext *context, const ma
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap)
+void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap)
 {
   Marble::GeoPainter *painter = context->painter;
 
   if(ap.longestRunwayLength >= RUNWAY_OVERVIEW_MIN_LENGTH_FEET &&
      context->mapLayerEffective->isAirportOverviewRunway() &&
-     !ap.flags.testFlag(maptypes::AP_CLOSED) && !ap.waterOnly())
+     !ap.flags.testFlag(map::AP_CLOSED) && !ap.waterOnly())
   {
     // Draw only for airports with a runway longer than 8000 feet otherwise use symbol
     atools::util::PainterContextSaver saver(painter);
@@ -850,7 +850,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
     painter->setBackgroundMode(Qt::OpaqueMode);
 
     // Get all runways longer than 4000 feet
-    const QList<maptypes::MapRunway> *rw = query->getRunwaysForOverview(ap.id);
+    const QList<map::MapRunway> *rw = query->getRunwaysForOverview(ap.id);
 
     QList<QPoint> centers;
     QList<QRect> rects, innerRects;
@@ -884,10 +884,10 @@ void MapPainterAirport::drawAirportSymbolOverview(const PaintContext *context, c
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportSymbol(PaintContext *context, const maptypes::MapAirport& ap,
+void MapPainterAirport::drawAirportSymbol(PaintContext *context, const map::MapAirport& ap,
                                           float x, float y)
 {
-  if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(maptypes::AP_CLOSED) ||
+  if(!context->mapLayerEffective->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||
      context->mapLayerEffective->isAirportDiagram())
   {
@@ -921,11 +921,11 @@ void MapPainterAirport::drawAirportSymbol(PaintContext *context, const maptypes:
  * @param innerRects Fill rectangles
  * @param outlineRects Big white outline
  */
-void MapPainterAirport::runwayCoords(const QList<maptypes::MapRunway> *runways, QList<QPoint> *centers,
+void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers,
                                      QList<QRect> *rects, QList<QRect> *innerRects,
                                      QList<QRect> *outlineRects)
 {
-  for(const maptypes::MapRunway& r : *runways)
+  for(const map::MapRunway& r : *runways)
   {
     Rect bounding(r.primaryPosition);
     bounding.extend(r.secondaryPosition);

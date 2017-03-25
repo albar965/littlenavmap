@@ -29,8 +29,7 @@ Column::Column(const QString& columnName, const QString& columnDisplayName)
 }
 
 Column::Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName)
-  : colName(columnName), colDisplayName(columnDisplayName), colOrigDisplayName(columnDisplayName),
-    colWidget(widget)
+  : colName(columnName), colDisplayName(columnDisplayName), colOrigDisplayName(columnDisplayName), colWidget(widget)
 {
 
 }
@@ -162,5 +161,3 @@ QSpinBox *Column::getMaxSpinBoxWidget() const
 {
   return dynamic_cast<QSpinBox *>(colMaxWidget);
 }
-
-

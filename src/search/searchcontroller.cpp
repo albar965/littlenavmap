@@ -53,7 +53,7 @@ SearchController::~SearchController()
   delete procedureSearch;
 }
 
-void SearchController::getSelectedMapObjects(maptypes::MapSearchResult& result) const
+void SearchController::getSelectedMapObjects(map::MapSearchResult& result) const
 {
   allSearchTabs.at(tabWidget->currentIndex())->getSelectedMapObjects(result);
 }
@@ -141,30 +141,30 @@ void SearchController::postDatabaseLoad()
     search->postDatabaseLoad();
 }
 
-void SearchController::showInSearch(maptypes::MapObjectTypes type, const QString& ident,
+void SearchController::showInSearch(map::MapObjectTypes type, const QString& ident,
                                     const QString& region, const QString& airportIdent)
 {
   qDebug() << "SearchController::objectSelected type" << type << "ident" << ident << "region" << region;
 
   switch(type)
   {
-    case maptypes::AIRPORT:
+    case map::AIRPORT:
       // Shown in airport tab
       airportSearch->resetSearch();
       airportSearch->filterByIdent(ident);
       break;
-    case maptypes::NDB:
-    case maptypes::VOR:
-    case maptypes::WAYPOINT:
+    case map::NDB:
+    case map::VOR:
+    case map::WAYPOINT:
       // Shown in navaid tab
       navSearch->resetSearch();
       navSearch->filterByIdent(ident, region, airportIdent);
       break;
-    case maptypes::ILS:
-    case maptypes::MARKER:
-    case maptypes::NONE:
-    case maptypes::NAV_ALL:
-    case maptypes::ALL:
+    case map::ILS:
+    case map::MARKER:
+    case map::NONE:
+    case map::NAV_ALL:
+    case map::ALL:
       qWarning() << "showInSearch invalid type" << type;
       break;
   }

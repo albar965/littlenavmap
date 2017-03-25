@@ -31,7 +31,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using namespace maptypes;
+using namespace map;
 
 MapPainterNav::MapPainterNav(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(mapWidget, mapQuery, mapScale)
@@ -50,8 +50,8 @@ void MapPainterNav::render(PaintContext *context)
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
-                    (context->objectTypes.testFlag(maptypes::AIRWAYJ) ||
-                     context->objectTypes.testFlag(maptypes::AIRWAYV));
+                    (context->objectTypes.testFlag(map::AIRWAYJ) ||
+                     context->objectTypes.testFlag(map::AIRWAYV));
 
   context->szFont(context->textSizeNavaid);
 
@@ -64,7 +64,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // Waypoints -------------------------------------------------
-  bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(maptypes::WAYPOINT);
+  bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
   if(drawWaypoint || drawAirway)
   {
     // If airways are drawn we also have to go through waypoints
@@ -74,7 +74,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // VOR -------------------------------------------------
-  if(context->mapLayer->isVor() && context->objectTypes.testFlag(maptypes::VOR))
+  if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR))
   {
     const QList<MapVor> *vors = query->getVors(curBox, context->mapLayer, context->drawFast);
     if(vors != nullptr)
@@ -82,7 +82,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // NDB -------------------------------------------------
-  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(maptypes::NDB))
+  if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB))
   {
     const QList<MapNdb> *ndbs = query->getNdbs(curBox, context->mapLayer, context->drawFast);
     if(ndbs != nullptr)
@@ -90,7 +90,7 @@ void MapPainterNav::render(PaintContext *context)
   }
 
   // Marker -------------------------------------------------
-  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(maptypes::ILS))
+  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::ILS))
   {
     const QList<MapMarker> *markers = query->getMarkers(curBox, context->mapLayer, context->drawFast);
     if(markers != nullptr)
@@ -115,16 +115,16 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
   {
     const MapAirway& airway = airways->at(i);
 
-    if(airway.type == maptypes::JET && !context->objectTypes.testFlag(maptypes::AIRWAYJ))
+    if(airway.type == map::JET && !context->objectTypes.testFlag(map::AIRWAYJ))
       continue;
-    if(airway.type == maptypes::VICTOR && !context->objectTypes.testFlag(maptypes::AIRWAYV))
+    if(airway.type == map::VICTOR && !context->objectTypes.testFlag(map::AIRWAYV))
       continue;
 
-    if(airway.type == maptypes::VICTOR)
+    if(airway.type == map::VICTOR)
       context->painter->setPen(QPen(mapcolors::airwayVictorColor, 1.5));
-    else if(airway.type == maptypes::JET)
+    else if(airway.type == map::JET)
       context->painter->setPen(QPen(mapcolors::airwayJetColor, 1.5));
-    else if(airway.type == maptypes::BOTH)
+    else if(airway.type == map::BOTH)
       context->painter->setPen(QPen(mapcolors::airwayBothColor, 1.5));
 
     // Get start and end point of airway segment in screen coordinates
@@ -157,7 +157,7 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
           text += airway.name;
         if(context->mapLayer->isAirwayInfo())
         {
-          text += QString(tr(" / ")) + maptypes::airwayTypeToShortString(airway.type);
+          text += QString(tr(" / ")) + map::airwayTypeToShortString(airway.type);
           if(airway.minAltitude)
             text += QString(tr(" / ")) + Unit::altFeet(airway.minAltitude, true /*addUnit*/, true /*narrow*/);
         }
@@ -228,8 +228,8 @@ void MapPainterNav::paintAirways(PaintContext *context, const QList<MapAirway> *
 void MapPainterNav::paintWaypoints(PaintContext *context, const QList<MapWaypoint> *waypoints,
                                    bool drawWaypoint, bool drawFast)
 {
-  bool drawAirwayV = context->mapLayer->isAirway() && context->objectTypes.testFlag(maptypes::AIRWAYV);
-  bool drawAirwayJ = context->mapLayer->isAirway() && context->objectTypes.testFlag(maptypes::AIRWAYJ);
+  bool drawAirwayV = context->mapLayer->isAirway() && context->objectTypes.testFlag(map::AIRWAYV);
+  bool drawAirwayJ = context->mapLayer->isAirway() && context->objectTypes.testFlag(map::AIRWAYJ);
 
   for(const MapWaypoint& waypoint : *waypoints)
   {

@@ -28,14 +28,14 @@
 using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
-using maptypes::MapAirport;
-using maptypes::MapVor;
-using maptypes::MapNdb;
-using maptypes::MapWaypoint;
-using maptypes::MapMarker;
-using maptypes::MapIls;
-using maptypes::MapParking;
-using maptypes::MapHelipad;
+using map::MapAirport;
+using map::MapVor;
+using map::MapNdb;
+using map::MapWaypoint;
+using map::MapMarker;
+using map::MapIls;
+using map::MapParking;
+using map::MapHelipad;
 
 // Extract runway number and designator
 static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
@@ -65,14 +65,14 @@ void MapQuery::getAirportAdminNamesById(int airportId, QString& city, QString& s
   airportAdminByIdQuery->finish();
 }
 
-maptypes::MapAirport MapQuery::getAirportById(int airportId)
+map::MapAirport MapQuery::getAirportById(int airportId)
 {
-  maptypes::MapAirport airport;
+  map::MapAirport airport;
   getAirportById(airport, airportId);
   return airport;
 }
 
-void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
+void MapQuery::getAirportById(map::MapAirport& airport, int airportId)
 {
   airportByIdQuery->bindValue(":id", airportId);
   airportByIdQuery->exec();
@@ -81,7 +81,7 @@ void MapQuery::getAirportById(maptypes::MapAirport& airport, int airportId)
   airportByIdQuery->finish();
 }
 
-void MapQuery::getAirportByIdent(maptypes::MapAirport& airport, const QString& ident)
+void MapQuery::getAirportByIdent(map::MapAirport& airport, const QString& ident)
 {
   airportByIdentQuery->bindValue(":ident", ident);
   airportByIdentQuery->exec();
@@ -90,7 +90,7 @@ void MapQuery::getAirportByIdent(maptypes::MapAirport& airport, const QString& i
   airportByIdentQuery->finish();
 }
 
-void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
+void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
 {
   vorByWaypointIdQuery->bindValue(":id", waypointId);
   vorByWaypointIdQuery->exec();
@@ -99,7 +99,7 @@ void MapQuery::getVorForWaypoint(maptypes::MapVor& vor, int waypointId)
   vorByWaypointIdQuery->finish();
 }
 
-void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
+void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId)
 {
   ndbByWaypointIdQuery->bindValue(":id", waypointId);
   ndbByWaypointIdQuery->exec();
@@ -108,7 +108,7 @@ void MapQuery::getNdbForWaypoint(maptypes::MapNdb& ndb, int waypointId)
   ndbByWaypointIdQuery->finish();
 }
 
-void MapQuery::getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos)
+void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos)
 {
   vorNearestQuery->bindValue(":lonx", pos.getLonX());
   vorNearestQuery->bindValue(":laty", pos.getLatY());
@@ -118,7 +118,7 @@ void MapQuery::getVorNearest(maptypes::MapVor& vor, const atools::geo::Pos& pos)
   vorNearestQuery->finish();
 }
 
-void MapQuery::getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos)
+void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
 {
   ndbNearestQuery->bindValue(":lonx", pos.getLonX());
   ndbNearestQuery->bindValue(":laty", pos.getLatY());
@@ -128,19 +128,19 @@ void MapQuery::getNdbNearest(maptypes::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-void MapQuery::getAirwaysForWaypoint(QList<maptypes::MapAirway>& airways, int waypointId)
+void MapQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId)
 {
   airwayByWaypointIdQuery->bindValue(":id", waypointId);
   airwayByWaypointIdQuery->exec();
   while(airwayByWaypointIdQuery->next())
   {
-    maptypes::MapAirway airway;
+    map::MapAirway airway;
     mapTypesFactory->fillAirway(airwayByWaypointIdQuery->record(), airway);
     airways.append(airway);
   }
 }
 
-void MapQuery::getWaypointsForAirway(QList<maptypes::MapWaypoint>& waypoints, const QString& airwayName,
+void MapQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
                                      const QString& waypointIdent)
 {
   airwayWaypointByIdentQuery->bindValue(":waypoint", waypointIdent.isEmpty() ? "%" : waypointIdent);
@@ -148,13 +148,13 @@ void MapQuery::getWaypointsForAirway(QList<maptypes::MapWaypoint>& waypoints, co
   airwayWaypointByIdentQuery->exec();
   while(airwayWaypointByIdentQuery->next())
   {
-    maptypes::MapWaypoint waypoint;
+    map::MapWaypoint waypoint;
     mapTypesFactory->fillWaypoint(airwayWaypointByIdentQuery->record(), waypoint);
     waypoints.append(waypoint);
   }
 }
 
-void MapQuery::getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& waypoints,
+void MapQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints,
                                             const QString& airwayName)
 {
   airwayWaypointsQuery->bindValue(":name", airwayName);
@@ -174,15 +174,15 @@ void MapQuery::getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& 
     int nextFragment = i < records.size() - 1 ?
                        records.at(i + 1).valueInt("airway_fragment_no") : -1;
 
-    maptypes::MapAirwayWaypoint aw;
+    map::MapAirwayWaypoint aw;
     aw.airwayFragmentId = fragment;
     aw.seqNum = rec.valueInt("sequence_no");
     aw.airwayId = rec.valueInt("airway_id");
 
     // Add from waypoint
-    maptypes::MapSearchResult result;
+    map::MapSearchResult result;
     int fromId = rec.valueInt("from_waypoint_id");
-    getMapObjectById(result, maptypes::WAYPOINT, fromId);
+    getMapObjectById(result, map::WAYPOINT, fromId);
     if(!result.waypoints.isEmpty())
       aw.waypoint = result.waypoints.first();
     else
@@ -194,7 +194,7 @@ void MapQuery::getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& 
       // Add to waypoint if this is the last one or if the fragment is about to change
       result.waypoints.clear();
       int toId = rec.valueInt("to_waypoint_id");
-      getMapObjectById(result, maptypes::WAYPOINT, toId);
+      getMapObjectById(result, map::WAYPOINT, toId);
       if(!result.waypoints.isEmpty())
         aw.waypoint = result.waypoints.first();
       else
@@ -204,7 +204,7 @@ void MapQuery::getWaypointListForAirwayName(QList<maptypes::MapAirwayWaypoint>& 
   }
 }
 
-void MapQuery::getAirwayById(maptypes::MapAirway& airway, int airwayId)
+void MapQuery::getAirwayById(map::MapAirway& airway, int airwayId)
 {
   airwayByIdQuery->bindValue(":id", airwayId);
   airwayByIdQuery->exec();
@@ -214,17 +214,17 @@ void MapQuery::getAirwayById(maptypes::MapAirway& airway, int airwayId)
 
 }
 
-void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+void MapQuery::getMapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
                                    const QString& ident, const QString& region, const QString& airport,
                                    const Pos& sortByDistancePos, float maxDistance)
 {
-  if(type & maptypes::AIRPORT)
+  if(type & map::AIRPORT)
   {
     airportByIdentQuery->bindValue(":ident", ident);
     airportByIdentQuery->exec();
     while(airportByIdentQuery->next())
     {
-      maptypes::MapAirport ap;
+      map::MapAirport ap;
       mapTypesFactory->fillAirport(airportByIdentQuery->record(), ap, true);
       result.airports.append(ap);
     }
@@ -232,14 +232,14 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     maptools::removeByDistance(result.airports, sortByDistancePos, maxDistance);
   }
 
-  if(type & maptypes::VOR)
+  if(type & map::VOR)
   {
     vorByIdentQuery->bindValue(":ident", ident);
     vorByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
     vorByIdentQuery->exec();
     while(vorByIdentQuery->next())
     {
-      maptypes::MapVor vor;
+      map::MapVor vor;
       mapTypesFactory->fillVor(vorByIdentQuery->record(), vor);
       result.vors.append(vor);
     }
@@ -247,14 +247,14 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     maptools::removeByDistance(result.vors, sortByDistancePos, maxDistance);
   }
 
-  if(type & maptypes::NDB)
+  if(type & map::NDB)
   {
     ndbByIdentQuery->bindValue(":ident", ident);
     ndbByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
     ndbByIdentQuery->exec();
     while(ndbByIdentQuery->next())
     {
-      maptypes::MapNdb ndb;
+      map::MapNdb ndb;
       mapTypesFactory->fillNdb(ndbByIdentQuery->record(), ndb);
       result.ndbs.append(ndb);
     }
@@ -262,14 +262,14 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     maptools::removeByDistance(result.ndbs, sortByDistancePos, maxDistance);
   }
 
-  if(type & maptypes::WAYPOINT)
+  if(type & map::WAYPOINT)
   {
     waypointByIdentQuery->bindValue(":ident", ident);
     waypointByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
     waypointByIdentQuery->exec();
     while(waypointByIdentQuery->next())
     {
-      maptypes::MapWaypoint wp;
+      map::MapWaypoint wp;
       mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp);
       result.waypoints.append(wp);
     }
@@ -277,14 +277,14 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistance);
   }
 
-  if(type & maptypes::ILS)
+  if(type & map::ILS)
   {
     ilsByIdentQuery->bindValue(":ident", ident);
     ilsByIdentQuery->bindValue(":airport", airport);
     ilsByIdentQuery->exec();
     while(ilsByIdentQuery->next())
     {
-      maptypes::MapIls ils;
+      map::MapIls ils;
       mapTypesFactory->fillIls(ilsByIdentQuery->record(), ils);
       result.ils.append(ils);
     }
@@ -292,7 +292,7 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     maptools::removeByDistance(result.ils, sortByDistancePos, maxDistance);
   }
 
-  if(type & maptypes::RUNWAYEND)
+  if(type & map::RUNWAYEND)
   {
     QString rname(ident);
     if(rname.startsWith("RW"))
@@ -303,68 +303,68 @@ void MapQuery::getMapObjectByIdent(maptypes::MapSearchResult& result, maptypes::
     runwayEndByNameQuery->exec();
     while(runwayEndByNameQuery->next())
     {
-      maptypes::MapRunwayEnd end;
+      map::MapRunwayEnd end;
       mapTypesFactory->fillRunwayEnd(runwayEndByNameQuery->record(), end);
       result.runwayEnds.append(end);
     }
   }
 
-  if(type & maptypes::AIRWAY)
+  if(type & map::AIRWAY)
   {
     airwayByNameQuery->bindValue(":name", ident);
     airwayByNameQuery->exec();
     while(airwayByNameQuery->next())
     {
-      maptypes::MapAirway airway;
+      map::MapAirway airway;
       mapTypesFactory->fillAirway(airwayByNameQuery->record(), airway);
       result.airways.append(airway);
     }
   }
 }
 
-void MapQuery::getMapObjectById(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type, int id)
+void MapQuery::getMapObjectById(map::MapSearchResult& result, map::MapObjectTypes type, int id)
 {
-  if(type == maptypes::AIRPORT)
+  if(type == map::AIRPORT)
   {
-    maptypes::MapAirport airport = getAirportById(id);
+    map::MapAirport airport = getAirportById(id);
     if(airport.isValid())
       result.airports.append(airport);
   }
-  else if(type == maptypes::VOR)
+  else if(type == map::VOR)
   {
-    maptypes::MapVor vor = getVorById(id);
+    map::MapVor vor = getVorById(id);
     if(vor.isValid())
       result.vors.append(vor);
   }
-  else if(type == maptypes::NDB)
+  else if(type == map::NDB)
   {
-    maptypes::MapNdb ndb = getNdbById(id);
+    map::MapNdb ndb = getNdbById(id);
     if(ndb.isValid())
       result.ndbs.append(ndb);
   }
-  else if(type == maptypes::WAYPOINT)
+  else if(type == map::WAYPOINT)
   {
-    maptypes::MapWaypoint waypoint = getWaypointById(id);
+    map::MapWaypoint waypoint = getWaypointById(id);
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
-  else if(type == maptypes::ILS)
+  else if(type == map::ILS)
   {
-    maptypes::MapIls ils = getIlsById(id);
+    map::MapIls ils = getIlsById(id);
     if(ils.isValid())
       result.ils.append(ils);
   }
-  else if(type == maptypes::RUNWAYEND)
+  else if(type == map::RUNWAYEND)
   {
-    maptypes::MapRunwayEnd end = getRunwayEndById(id);
+    map::MapRunwayEnd end = getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
 }
 
-maptypes::MapVor MapQuery::getVorById(int id)
+map::MapVor MapQuery::getVorById(int id)
 {
-  maptypes::MapVor vor;
+  map::MapVor vor;
   vorByIdQuery->bindValue(":id", id);
   vorByIdQuery->exec();
   if(vorByIdQuery->next())
@@ -375,9 +375,9 @@ maptypes::MapVor MapQuery::getVorById(int id)
   return vor;
 }
 
-maptypes::MapNdb MapQuery::getNdbById(int id)
+map::MapNdb MapQuery::getNdbById(int id)
 {
-  maptypes::MapNdb ndb;
+  map::MapNdb ndb;
   ndbByIdQuery->bindValue(":id", id);
   ndbByIdQuery->exec();
   if(ndbByIdQuery->next())
@@ -388,9 +388,9 @@ maptypes::MapNdb MapQuery::getNdbById(int id)
   return ndb;
 }
 
-maptypes::MapIls MapQuery::getIlsById(int id)
+map::MapIls MapQuery::getIlsById(int id)
 {
-  maptypes::MapIls ils;
+  map::MapIls ils;
   ilsByIdQuery->bindValue(":id", id);
   ilsByIdQuery->exec();
   if(ilsByIdQuery->next())
@@ -401,9 +401,9 @@ maptypes::MapIls MapQuery::getIlsById(int id)
   return ils;
 }
 
-maptypes::MapWaypoint MapQuery::getWaypointById(int id)
+map::MapWaypoint MapQuery::getWaypointById(int id)
 {
-  maptypes::MapWaypoint wp;
+  map::MapWaypoint wp;
   waypointByIdQuery->bindValue(":id", id);
   waypointByIdQuery->exec();
   if(waypointByIdQuery->next())
@@ -414,9 +414,9 @@ maptypes::MapWaypoint MapQuery::getWaypointById(int id)
   return wp;
 }
 
-maptypes::MapRunwayEnd MapQuery::getRunwayEndById(int id)
+map::MapRunwayEnd MapQuery::getRunwayEndById(int id)
 {
-  maptypes::MapRunwayEnd end;
+  map::MapRunwayEnd end;
   runwayEndByIdQuery->bindValue(":id", id);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
@@ -428,15 +428,15 @@ maptypes::MapRunwayEnd MapQuery::getRunwayEndById(int id)
 }
 
 void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                 bool airportDiagram, maptypes::MapObjectTypes types,
+                                 bool airportDiagram, map::MapObjectTypes types,
                                  int xs, int ys, int screenDistance,
-                                 maptypes::MapSearchResult& result)
+                                 map::MapSearchResult& result)
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
 
   int x, y;
-  if(mapLayer->isAirport() && types.testFlag(maptypes::AIRPORT))
+  if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
     for(int i = airportCache.list.size() - 1; i >= 0; i--)
     {
@@ -459,7 +459,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isVor() && types.testFlag(maptypes::VOR))
+  if(mapLayer->isVor() && types.testFlag(map::VOR))
   {
     for(int i = vorCache.list.size() - 1; i >= 0; i--)
     {
@@ -470,7 +470,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isNdb() && types.testFlag(maptypes::NDB))
+  if(mapLayer->isNdb() && types.testFlag(map::NDB))
   {
     for(int i = ndbCache.list.size() - 1; i >= 0; i--)
     {
@@ -481,7 +481,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isWaypoint() && types.testFlag(maptypes::WAYPOINT))
+  if(mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT))
   {
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
@@ -497,15 +497,15 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     for(int i = waypointCache.list.size() - 1; i >= 0; i--)
     {
       const MapWaypoint& wp = waypointCache.list.at(i);
-      if((wp.hasVictorAirways && types.testFlag(maptypes::AIRWAYV)) ||
-         (wp.hasJetAirways && types.testFlag(maptypes::AIRWAYJ)))
+      if((wp.hasVictorAirways && types.testFlag(map::AIRWAYV)) ||
+         (wp.hasJetAirways && types.testFlag(map::AIRWAYJ)))
         if(conv.wToS(wp.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
             insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
   }
 
-  if(mapLayer->isMarker() && types.testFlag(maptypes::MARKER))
+  if(mapLayer->isMarker() && types.testFlag(map::MARKER))
   {
     for(int i = markerCache.list.size() - 1; i >= 0; i--)
     {
@@ -516,7 +516,7 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
     }
   }
 
-  if(mapLayer->isIls() && types.testFlag(maptypes::ILS))
+  if(mapLayer->isIls() && types.testFlag(map::ILS))
   {
     for(int i = ilsCache.list.size() - 1; i >= 0; i--)
     {
@@ -552,8 +552,8 @@ void MapQuery::getNearestObjects(const CoordinateConverter& conv, const MapLayer
   }
 }
 
-const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                         const MapLayer *mapLayer, bool lazy)
+const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
+                                                    const MapLayer *mapLayer, bool lazy)
 {
   airportCache.updateCache(rect, mapLayer, lazy);
 
@@ -575,8 +575,8 @@ const QList<maptypes::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLa
   return nullptr;
 }
 
-const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
-                                                           const MapLayer *mapLayer, bool lazy)
+const QList<map::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBox& rect,
+                                                      const MapLayer *mapLayer, bool lazy)
 {
   waypointCache.updateCache(rect, mapLayer, lazy);
 
@@ -588,7 +588,7 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
       waypointsByRectQuery->exec();
       while(waypointsByRectQuery->next())
       {
-        maptypes::MapWaypoint wp;
+        map::MapWaypoint wp;
         mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp);
         waypointCache.list.append(wp);
       }
@@ -598,8 +598,8 @@ const QList<maptypes::MapWaypoint> *MapQuery::getWaypoints(const GeoDataLatLonBo
   return &waypointCache.list;
 }
 
-const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                 bool lazy)
+const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                            bool lazy)
 {
   vorCache.updateCache(rect, mapLayer, lazy);
 
@@ -611,7 +611,7 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
       vorsByRectQuery->exec();
       while(vorsByRectQuery->next())
       {
-        maptypes::MapVor vor;
+        map::MapVor vor;
         mapTypesFactory->fillVor(vorsByRectQuery->record(), vor);
         vorCache.list.append(vor);
       }
@@ -621,8 +621,8 @@ const QList<maptypes::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, c
   return &vorCache.list;
 }
 
-const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                 bool lazy)
+const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                            bool lazy)
 {
   ndbCache.updateCache(rect, mapLayer, lazy);
 
@@ -634,7 +634,7 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
       ndbsByRectQuery->exec();
       while(ndbsByRectQuery->next())
       {
-        maptypes::MapNdb ndb;
+        map::MapNdb ndb;
         mapTypesFactory->fillNdb(ndbsByRectQuery->record(), ndb);
         ndbCache.list.append(ndb);
       }
@@ -644,8 +644,8 @@ const QList<maptypes::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, c
   return &ndbCache.list;
 }
 
-const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                       bool lazy)
+const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                  bool lazy)
 {
   markerCache.updateCache(rect, mapLayer, lazy);
 
@@ -657,7 +657,7 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
       markersByRectQuery->exec();
       while(markersByRectQuery->next())
       {
-        maptypes::MapMarker marker;
+        map::MapMarker marker;
         mapTypesFactory->fillMarker(markersByRectQuery->record(), marker);
         markerCache.list.append(marker);
       }
@@ -667,8 +667,8 @@ const QList<maptypes::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& r
   return &markerCache.list;
 }
 
-const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                bool lazy)
+const QList<map::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                           bool lazy)
 {
   ilsCache.updateCache(rect, mapLayer, lazy);
 
@@ -680,7 +680,7 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
       {
-        maptypes::MapIls ils;
+        map::MapIls ils;
         mapTypesFactory->fillIls(ilsByRectQuery->record(), ils);
         ilsCache.list.append(ils);
       }
@@ -690,8 +690,8 @@ const QList<maptypes::MapIls> *MapQuery::getIls(const GeoDataLatLonBox& rect, co
   return &ilsCache.list;
 }
 
-const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                       bool lazy)
+const QList<map::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                  bool lazy)
 {
   airwayCache.updateCache(rect, mapLayer, lazy);
 
@@ -703,7 +703,7 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
       airwayByRectQuery->exec();
       while(airwayByRectQuery->next())
       {
-        maptypes::MapAirway airway;
+        map::MapAirway airway;
         mapTypesFactory->fillAirway(airwayByRectQuery->record(), airway);
         airwayCache.list.append(airway);
       }
@@ -720,9 +720,9 @@ const QList<maptypes::MapAirway> *MapQuery::getAirways(const GeoDataLatLonBox& r
  * @param overview fetch only incomplete data for overview airports
  * @return pointer to the airport cache
  */
-const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                           atools::sql::SqlQuery *query, bool reverse,
-                                                           bool lazy, bool overview)
+const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
+                                                      atools::sql::SqlQuery *query, bool reverse,
+                                                      bool lazy, bool overview)
 {
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -732,7 +732,7 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
       query->exec();
       while(query->next())
       {
-        maptypes::MapAirport ap;
+        map::MapAirport ap;
         if(overview)
           // Fill only a part of the object
           mapTypesFactory->fillAirportForOverview(query->record(), ap);
@@ -750,7 +750,7 @@ const QList<maptypes::MapAirport> *MapQuery::fetchAirports(const Marble::GeoData
   return &airportCache.list;
 }
 
-const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
+const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 {
   if(runwayOverwiewCache.contains(airportId))
     return runwayOverwiewCache.object(airportId);
@@ -761,10 +761,10 @@ const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     runwayOverviewQuery->bindValue(":airportId", airportId);
     runwayOverviewQuery->exec();
 
-    QList<maptypes::MapRunway> *rws = new QList<maptypes::MapRunway>;
+    QList<map::MapRunway> *rws = new QList<map::MapRunway>;
     while(runwayOverviewQuery->next())
     {
-      maptypes::MapRunway runway;
+      map::MapRunway runway;
       mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true);
       rws->append(runway);
     }
@@ -773,7 +773,7 @@ const QList<maptypes::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
   }
 }
 
-const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
+const QList<map::MapApron> *MapQuery::getAprons(int airportId)
 {
   if(apronCache.contains(airportId))
     return apronCache.object(airportId);
@@ -782,10 +782,10 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
     apronQuery->bindValue(":airportId", airportId);
     apronQuery->exec();
 
-    QList<maptypes::MapApron> *aprons = new QList<maptypes::MapApron>;
+    QList<map::MapApron> *aprons = new QList<map::MapApron>;
     while(apronQuery->next())
     {
-      maptypes::MapApron ap;
+      map::MapApron ap;
 
       ap.surface = apronQuery->value("surface").toString();
       ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
@@ -811,7 +811,7 @@ const QList<maptypes::MapApron> *MapQuery::getAprons(int airportId)
   }
 }
 
-const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId)
+const QList<map::MapParking> *MapQuery::getParkingsForAirport(int airportId)
 {
   if(parkingCache.contains(airportId))
     return parkingCache.object(airportId);
@@ -820,10 +820,10 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
     parkingQuery->bindValue(":airportId", airportId);
     parkingQuery->exec();
 
-    QList<maptypes::MapParking> *ps = new QList<maptypes::MapParking>;
+    QList<map::MapParking> *ps = new QList<map::MapParking>;
     while(parkingQuery->next())
     {
-      maptypes::MapParking p;
+      map::MapParking p;
 
       // Vehicle paths are filtered out in the compiler
       mapTypesFactory->fillParking(parkingQuery->record(), p);
@@ -834,7 +834,7 @@ const QList<maptypes::MapParking> *MapQuery::getParkingsForAirport(int airportId
   }
 }
 
-const QList<maptypes::MapStart> *MapQuery::getStartPositionsForAirport(int airportId)
+const QList<map::MapStart> *MapQuery::getStartPositionsForAirport(int airportId)
 {
   if(startCache.contains(airportId))
     return startCache.object(airportId);
@@ -843,10 +843,10 @@ const QList<maptypes::MapStart> *MapQuery::getStartPositionsForAirport(int airpo
     startQuery->bindValue(":airportId", airportId);
     startQuery->exec();
 
-    QList<maptypes::MapStart> *ps = new QList<maptypes::MapStart>;
+    QList<map::MapStart> *ps = new QList<map::MapStart>;
     while(startQuery->next())
     {
-      maptypes::MapStart p;
+      map::MapStart p;
       mapTypesFactory->fillStart(startQuery->record(), p);
       ps->append(p);
     }
@@ -855,7 +855,7 @@ const QList<maptypes::MapStart> *MapQuery::getStartPositionsForAirport(int airpo
   }
 }
 
-void MapQuery::getBestStartPositionForAirport(maptypes::MapStart& start, int airportId)
+void MapQuery::getBestStartPositionForAirport(map::MapStart& start, int airportId)
 {
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
@@ -873,18 +873,18 @@ void MapQuery::getBestStartPositionForAirport(maptypes::MapStart& start, int air
   while(query.next())
   {
     QString surface = query.value("surface").toString();
-    int quality = maptypes::surfaceQuality(surface);
+    int quality = map::surfaceQuality(surface);
     if(quality > bestSurfaceQuality || bestSurfaceQuality == -1)
     {
       bestSurfaceQuality = quality;
       mapTypesFactory->fillStart(query.record(), start);
     }
-    if(maptypes::isHardSurface(surface))
+    if(map::isHardSurface(surface))
       break;
   }
 }
 
-void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
+void MapQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
                                     const QString& runwayEndName, const atools::geo::Pos& position)
 {
   // Get runway number for the first part of the query fetching start positions (before union)
@@ -919,10 +919,10 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
   query.exec();
 
   // Get all start positions
-  QList<maptypes::MapStart> starts;
+  QList<map::MapStart> starts;
   while(query.next())
   {
-    maptypes::MapStart s;
+    map::MapStart s;
     mapTypesFactory->fillStart(query.record(), s);
     starts.append(s);
   }
@@ -930,9 +930,9 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
   if(!starts.isEmpty())
   {
     // Now find the nearest since number is not unique for helipads and runways
-    maptypes::MapStart minStart;
-    float minDistance = maptypes::INVALID_DISTANCE_VALUE;
-    for(const maptypes::MapStart& s : starts)
+    map::MapStart minStart;
+    float minDistance = map::INVALID_DISTANCE_VALUE;
+    for(const map::MapStart& s : starts)
     {
       float dist = position.distanceMeterTo(s.position);
 
@@ -945,10 +945,10 @@ void MapQuery::getStartByNameAndPos(maptypes::MapStart& start, int airportId,
     start = minStart;
   }
   else
-    start = maptypes::MapStart();
+    start = map::MapStart();
 }
 
-void MapQuery::getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, int airportId,
+void MapQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId,
                                          const QString& name, int number)
 {
   parkingTypeAndNumberQuery->bindValue(":airportId", airportId);
@@ -962,13 +962,13 @@ void MapQuery::getParkingByNameAndNumber(QList<maptypes::MapParking>& parkings, 
 
   while(parkingTypeAndNumberQuery->next())
   {
-    maptypes::MapParking parking;
+    map::MapParking parking;
     mapTypesFactory->fillParking(parkingTypeAndNumberQuery->record(), parking);
     parkings.append(parking);
   }
 }
 
-const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
+const QList<map::MapHelipad> *MapQuery::getHelipads(int airportId)
 {
   if(helipadCache.contains(airportId))
     return helipadCache.object(airportId);
@@ -977,11 +977,11 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
     helipadQuery->bindValue(":airportId", airportId);
     helipadQuery->exec();
 
-    QList<maptypes::MapHelipad> *hs = new QList<maptypes::MapHelipad>;
+    QList<map::MapHelipad> *hs = new QList<map::MapHelipad>;
     while(helipadQuery->next())
     {
       // TODO should be moved to MapTypesFactory
-      maptypes::MapHelipad hp;
+      map::MapHelipad hp;
 
       hp.position = Pos(helipadQuery->value("lonx").toFloat(), helipadQuery->value("laty").toFloat());
 
@@ -1005,7 +1005,7 @@ const QList<maptypes::MapHelipad> *MapQuery::getHelipads(int airportId)
   }
 }
 
-const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
+const QList<map::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
 {
   if(taxipathCache.contains(airportId))
     return taxipathCache.object(airportId);
@@ -1014,11 +1014,11 @@ const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
     taxiparthQuery->bindValue(":airportId", airportId);
     taxiparthQuery->exec();
 
-    QList<maptypes::MapTaxiPath> *tps = new QList<maptypes::MapTaxiPath>;
+    QList<map::MapTaxiPath> *tps = new QList<map::MapTaxiPath>;
     while(taxiparthQuery->next())
     {
       // TODO should be moved to MapTypesFactory
-      maptypes::MapTaxiPath tp;
+      map::MapTaxiPath tp;
       tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
       tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
       tp.start = Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value(
@@ -1035,7 +1035,7 @@ const QList<maptypes::MapTaxiPath> *MapQuery::getTaxiPaths(int airportId)
   }
 }
 
-const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
+const QList<map::MapRunway> *MapQuery::getRunways(int airportId)
 {
   if(runwayCache.contains(airportId))
     return runwayCache.object(airportId);
@@ -1044,10 +1044,10 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
     runwaysQuery->bindValue(":airportId", airportId);
     runwaysQuery->exec();
 
-    QList<maptypes::MapRunway> *rs = new QList<maptypes::MapRunway>;
+    QList<map::MapRunway> *rs = new QList<map::MapRunway>;
     while(runwaysQuery->next())
     {
-      maptypes::MapRunway runway;
+      map::MapRunway runway;
       mapTypesFactory->fillRunway(runwaysQuery->record(), runway, false);
       rs->append(runway);
     }
@@ -1062,12 +1062,12 @@ const QList<maptypes::MapRunway> *MapQuery::getRunways(int airportId)
 }
 
 /* Compare runways to put betters ones (hard surface, longer) at the end of a list */
-bool MapQuery::runwayCompare(const maptypes::MapRunway& r1, const maptypes::MapRunway& r2)
+bool MapQuery::runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2)
 {
   // The value returned indicates whether the element passed as first argument is
   // considered to go before the second
-  int s1 = maptypes::surfaceQuality(r1.surface);
-  int s2 = maptypes::surfaceQuality(r2.surface);
+  int s1 = map::surfaceQuality(r1.surface);
+  int s2 = map::surfaceQuality(r2.surface);
   if(s1 == s2)
     return r1.length < r2.length;
   else

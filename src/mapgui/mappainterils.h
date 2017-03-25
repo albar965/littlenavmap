@@ -41,7 +41,7 @@ private:
   static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
   static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
 
-  void drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils);
+  void drawIlsSymbol(const PaintContext *context, const map::MapIls& ils);
 
 };
 

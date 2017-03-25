@@ -39,16 +39,16 @@ class ParkingDialog :
   Q_OBJECT
 
 public:
-  ParkingDialog(QWidget *parent, MapQuery *mapQuery, const maptypes::MapAirport& departureAirport);
+  ParkingDialog(QWidget *parent, MapQuery *mapQuery, const map::MapAirport& departureAirport);
   virtual ~ParkingDialog();
 
   /* Get selected parking spot
    * @return true if parking was selected */
-  bool getSelectedParking(maptypes::MapParking& parking);
+  bool getSelectedParking(map::MapParking& parking);
 
   /* Get selected start position.
    * @return true if a start was selected */
-  bool getSelectedStartPosition(maptypes::MapStart& start);
+  bool getSelectedStartPosition(map::MapStart& start);
 
 private:
   void updateButtons();
@@ -56,8 +56,8 @@ private:
   // Used to fill the list
   struct StartPosition
   {
-    maptypes::MapParking parking;
-    maptypes::MapStart start;
+    map::MapParking parking;
+    map::MapStart start;
   };
 
   QList<StartPosition> entries;

@@ -22,7 +22,7 @@
 #include <QPen>
 #include <QStyle>
 
-namespace maptypes {
+namespace map {
 struct MapAirport;
 
 }
@@ -169,7 +169,7 @@ const QColor& colorForSurface(const QString& surface);
 const QColor& colorForParkingType(const QString& type);
 
 /* Color for airport symbol */
-const QColor& colorForAirport(const maptypes::MapAirport& ap);
+const QColor& colorForAirport(const map::MapAirport& ap);
 
 /* Alternating row background color for search tables */
 const QColor& alternatingRowColor(int row, bool isSort);

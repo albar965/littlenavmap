@@ -71,7 +71,7 @@ private:
   struct ParseEntry
   {
     QString item, airway;
-    maptypes::MapSearchResult result;
+    map::MapSearchResult result;
   };
 
   void appendMessage(const QString& message);
@@ -80,14 +80,14 @@ private:
 
   bool addDeparture(atools::fs::pln::Flightplan& flightplan,
                     const QString& airportIdent);
-  void findIndexesInAirway(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
+  void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
                            int nextId, int& startIndex, int& endIndex, const QString& airway);
-  void extractWaypoints(const QList<maptypes::MapAirwayWaypoint>& allAirwayWaypoints,
+  void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
                         int startIndex, int endIndex,
-                        QList<maptypes::MapWaypoint>& airwayWaypoints);
+                        QList<map::MapWaypoint>& airwayWaypoints);
   QStringList createStringForRouteInternal(const Route& route, float speed, bool gfpFormat);
-  void findWaypoints(maptypes::MapSearchResult& result, const QString& item);
-  void filterWaypoints(maptypes::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
+  void findWaypoints(map::MapSearchResult& result, const QString& item);
+  void filterWaypoints(map::MapSearchResult& result, atools::geo::Pos& lastPos, int maxDistance);
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);

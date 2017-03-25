@@ -594,7 +594,7 @@ void SearchBaseTable::doubleClick(const QModelIndex& index)
 void SearchBaseTable::showRow(int row)
 {
   // Show on information panel
-  maptypes::MapObjectTypes navType = maptypes::NONE;
+  map::MapObjectTypes navType = map::NONE;
   int id = -1;
   // get airport, VOR, NDB or waypoint id from model row
   getNavTypeAndId(row, navType, id);
@@ -622,7 +622,7 @@ void SearchBaseTable::showRow(int row)
         emit showPos(p, 0.f, true);
     }
 
-    maptypes::MapSearchResult result;
+    map::MapSearchResult result;
     query->getMapObjectById(result, navType, id);
 
     emit showInformation(result);
@@ -650,8 +650,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   bool columnCanFilter = false;
   atools::geo::Pos position;
   QModelIndex index = controller->getModelIndexAt(pos);
-  maptypes::MapObjectTypes navType = maptypes::NONE;
-  maptypes::MapAirport airport;
+  map::MapObjectTypes navType = map::NONE;
+  map::MapAirport airport;
   int id = -1;
   if(index.isValid())
   {
@@ -669,7 +669,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
     // get airport, VOR, NDB or waypoint id from model row
     getNavTypeAndId(index.row(), navType, id);
-    if(navType == maptypes::AIRPORT)
+    if(navType == map::AIRPORT)
       query->getAirportById(airport, id);
   }
   else
@@ -682,17 +682,17 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchFilterExcluding->setText(ui->actionSearchFilterExcluding->text().arg("\"" + fieldData + "\""));
   ui->actionSearchFilterExcluding->setEnabled(index.isValid() && columnCanFilter);
 
-  ui->actionMapNavaidRange->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB);
+  ui->actionMapNavaidRange->setEnabled(navType == map::VOR || navType == map::NDB);
 
-  ui->actionRouteAddPos->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
-                                    navType == maptypes::WAYPOINT || navType == maptypes::AIRPORT);
-  ui->actionRouteAppendPos->setEnabled(navType == maptypes::VOR || navType == maptypes::NDB ||
-                                       navType == maptypes::WAYPOINT || navType == maptypes::AIRPORT);
+  ui->actionRouteAddPos->setEnabled(navType == map::VOR || navType == map::NDB ||
+                                    navType == map::WAYPOINT || navType == map::AIRPORT);
+  ui->actionRouteAppendPos->setEnabled(navType == map::VOR || navType == map::NDB ||
+                                       navType == map::WAYPOINT || navType == map::AIRPORT);
 
-  ui->actionRouteAirportDest->setEnabled(navType == maptypes::AIRPORT);
-  ui->actionRouteAirportStart->setEnabled(navType == maptypes::AIRPORT);
-  ui->actionSearchShowApproaches->setEnabled(navType == maptypes::AIRPORT && airport.isValid() &&
-                                             (airport.flags & maptypes::AP_PROCEDURE));
+  ui->actionRouteAirportDest->setEnabled(navType == map::AIRPORT);
+  ui->actionRouteAirportStart->setEnabled(navType == map::AIRPORT);
+  ui->actionSearchShowApproaches->setEnabled(navType == map::AIRPORT && airport.isValid() &&
+                                             (airport.flags & map::AP_PROCEDURE));
 
   ui->actionMapRangeRings->setEnabled(index.isValid());
   ui->actionMapHideRangeRings->setEnabled(!mainWindow->getMapWidget()->getDistanceMarkers().isEmpty() ||
@@ -714,7 +714,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Build the menu
   QMenu menu;
   menu.addAction(ui->actionSearchShowInformation);
-  if(navType == maptypes::AIRPORT)
+  if(navType == map::AIRPORT)
     menu.addAction(ui->actionSearchShowApproaches);
   menu.addAction(ui->actionSearchShowOnMap);
   menu.addSeparator();
@@ -775,7 +775,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     {
       // Radio navaid range ring
       int frequency = controller->getRawData(index.row(), "frequency").toInt();
-      if(navType == maptypes::VOR)
+      if(navType == map::VOR)
         // Adapt scaled frequency from nav_search table to the scale used the VOR table
         frequency /= 10;
 
@@ -789,16 +789,16 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, navType, -1);
     else if(action == ui->actionRouteAppendPos)
-      emit routeAdd(id, atools::geo::EMPTY_POS, navType, maptypes::INVALID_INDEX_VALUE);
+      emit routeAdd(id, atools::geo::EMPTY_POS, navType, map::INVALID_INDEX_VALUE);
     else if(action == ui->actionRouteAirportStart)
     {
-      maptypes::MapAirport ap;
+      map::MapAirport ap;
       query->getAirportById(ap, controller->getIdForRow(index));
       emit routeSetDeparture(ap);
     }
     else if(action == ui->actionRouteAirportDest)
     {
-      maptypes::MapAirport ap;
+      map::MapAirport ap;
       query->getAirportById(ap, controller->getIdForRow(index));
       emit routeSetDestination(ap);
     }
@@ -815,11 +815,11 @@ void SearchBaseTable::showInformationTriggered()
     QModelIndex index = view->currentIndex();
     if(index.isValid())
     {
-      maptypes::MapObjectTypes navType = maptypes::NONE;
+      map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
 
-      maptypes::MapSearchResult result;
+      map::MapSearchResult result;
       query->getMapObjectById(result, navType, id);
       emit showInformation(result);
     }
@@ -836,7 +836,7 @@ void SearchBaseTable::showApproachesTriggered()
     QModelIndex index = view->currentIndex();
     if(index.isValid())
     {
-      maptypes::MapObjectTypes navType = maptypes::NONE;
+      map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
       emit showApproaches(query->getAirportById(id));
@@ -853,11 +853,11 @@ void SearchBaseTable::showOnMapTriggered()
     QModelIndex index = view->currentIndex();
     if(index.isValid())
     {
-      maptypes::MapObjectTypes navType = maptypes::NONE;
+      map::MapObjectTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
 
-      maptypes::MapSearchResult result;
+      map::MapSearchResult result;
       query->getMapObjectById(result, navType, id);
 
       if(!result.airports.isEmpty())
@@ -880,27 +880,27 @@ void SearchBaseTable::showOnMapTriggered()
 }
 
 /* Fetch nav type and database id from a model row */
-void SearchBaseTable::getNavTypeAndId(int row, maptypes::MapObjectTypes& navType, int& id)
+void SearchBaseTable::getNavTypeAndId(int row, map::MapObjectTypes& navType, int& id)
 {
-  navType = maptypes::NONE;
+  navType = map::NONE;
   id = -1;
 
   if(columns->getTablename() == "airport")
   {
     // Airport table
-    navType = maptypes::AIRPORT;
+    navType = map::AIRPORT;
     id = controller->getRawData(row, columns->getIdColumn()->getIndex()).toInt();
   }
   else
   {
     // Otherwise nav_search table
-    navType = maptypes::navTypeToMapObjectType(controller->getRawData(row, "nav_type").toString());
+    navType = map::navTypeToMapObjectType(controller->getRawData(row, "nav_type").toString());
 
-    if(navType == maptypes::VOR)
+    if(navType == map::VOR)
       id = controller->getRawData(row, "vor_id").toInt();
-    else if(navType == maptypes::NDB)
+    else if(navType == map::NDB)
       id = controller->getRawData(row, "ndb_id").toInt();
-    else if(navType == maptypes::WAYPOINT)
+    else if(navType == map::WAYPOINT)
       id = controller->getRawData(row, "waypoint_id").toInt();
   }
 }

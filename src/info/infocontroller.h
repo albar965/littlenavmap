@@ -64,7 +64,7 @@ public:
 
   /* Populates all tabs in the information dock with the given results. Only one airport is shown
    * but multiple navaids can be shown in the tab. */
-  void showInformation(maptypes::MapSearchResult result);
+  void showInformation(map::MapSearchResult result);
 
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();
@@ -106,7 +106,7 @@ private:
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(maptypes::MapSearchResult result, bool showWindows);
+  void showInformationInternal(map::MapSearchResult result, bool showWindows);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateAirportInternal(bool newAirport);
   void currentTabChanged(int index);
@@ -119,7 +119,7 @@ private:
   qint64 lastSimUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
-  maptypes::MapSearchResult currentSearchResult;
+  map::MapSearchResult currentSearchResult;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;

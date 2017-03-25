@@ -22,7 +22,7 @@
 
 #include "route/route.h"
 
-namespace maptypes {
+namespace map {
 struct MapSearchResult;
 
 }
@@ -53,7 +53,8 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+                     QList<proc::MapProcedurePoint>& procPoints);
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
@@ -89,47 +90,47 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  maptypes::MapSearchResult& getSearchHighlights()
+  map::MapSearchResult& getSearchHighlights()
   {
     return highlights;
   }
 
-  const maptypes::MapSearchResult& getSearchHighlights() const
+  const map::MapSearchResult& getSearchHighlights() const
   {
     return highlights;
   }
 
-  void setApproachLegHighlights(const maptypes::MapProcedureLeg *leg)
+  void setApproachLegHighlights(const proc::MapProcedureLeg *leg)
   {
     if(leg != nullptr)
       approachLegHighlights = *leg;
     else
-      approachLegHighlights = maptypes::MapProcedureLeg();
+      approachLegHighlights = proc::MapProcedureLeg();
   }
 
-  const maptypes::MapProcedureLeg& getApproachLegHighlights() const
+  const proc::MapProcedureLeg& getApproachLegHighlights() const
   {
     return approachLegHighlights;
   }
 
   /* Get range rings */
-  QList<maptypes::RangeMarker>& getRangeMarks()
+  QList<map::RangeMarker>& getRangeMarks()
   {
     return rangeMarks;
   }
 
-  const QList<maptypes::RangeMarker>& getRangeMarks() const
+  const QList<map::RangeMarker>& getRangeMarks() const
   {
     return rangeMarks;
   }
 
   /* Get distance measurment lines */
-  QList<maptypes::DistanceMarker>& getDistanceMarks()
+  QList<map::DistanceMarker>& getDistanceMarks()
   {
     return distanceMarks;
   }
 
-  const QList<maptypes::DistanceMarker>& getDistanceMarks() const
+  const QList<map::DistanceMarker>& getDistanceMarks() const
   {
     return distanceMarks;
   }
@@ -159,34 +160,35 @@ public:
     lastSimData = data;
   }
 
-  const maptypes::MapProcedureLegs& getApproachHighlight() const
+  const proc::MapProcedureLegs& getApproachHighlight() const
   {
     return approachHighlight;
   }
 
-  maptypes::MapProcedureLegs& getApproachHighlight()
+  proc::MapProcedureLegs& getApproachHighlight()
   {
     return approachHighlight;
   }
 
 private:
-  void getNearestAirways(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
-  void getNearestHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
-  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, maptypes::MapSearchResult& result);
+  void getNearestAirways(int xs, int ys, int maxDistance, map::MapSearchResult& result);
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result);
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapSearchResult& result,
+                                     QList<proc::MapProcedurePoint>& procPoints);
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapWidget *mapWidget;
   MapQuery *mapQuery;
   MapPaintLayer *paintLayer;
 
-  maptypes::MapSearchResult highlights;
-  maptypes::MapProcedureLeg approachLegHighlights;
+  map::MapSearchResult highlights;
+  proc::MapProcedureLeg approachLegHighlights;
 
-  maptypes::MapProcedureLegs approachHighlight;
+  proc::MapProcedureLegs approachHighlight;
 
   QList<int> routeHighlights;
-  QList<maptypes::RangeMarker> rangeMarks;
-  QList<maptypes::DistanceMarker> distanceMarks;
+  QList<map::RangeMarker> rangeMarks;
+  QList<map::DistanceMarker> distanceMarks;
   QList<std::pair<int, QLine> > routeLines;
   QList<std::pair<int, QLine> > airwayLines;
   QList<std::pair<int, QPoint> > routePoints;

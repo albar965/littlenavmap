@@ -100,6 +100,10 @@ const QString DATABASE_INFO_TEXT(QObject::tr("<table>"
                                                    "</td> "
                                                    "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
                                                    "</td> "
+                                                   "<td width=\"60\"><b>Airspaces:</b>"
+                                                   "</td>  "
+                                                   "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
+                                                   "</td>"
                                                  "</tr>"
                                                "</tbody>"
                                              "</table>"
@@ -802,7 +806,8 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
         arg(progress.getNumIls()).
         arg(progress.getNumNdbs()).
         arg(progress.getNumMarker()).
-        arg(progress.getNumWaypoints()));
+        arg(progress.getNumWaypoints()).
+        arg(progress.getNumBoundaries()));
     }
     else if(progress.isNewSceneryArea() || progress.isNewFile())
     {
@@ -821,7 +826,8 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
         arg(progress.getNumIls()).
         arg(progress.getNumNdbs()).
         arg(progress.getNumMarker()).
-        arg(progress.getNumWaypoints()));
+        arg(progress.getNumWaypoints()).
+        arg(progress.getNumBoundaries()));
     }
     else if(progress.isLastCall())
     {
@@ -841,7 +847,8 @@ bool DatabaseManager::progressCallback(const atools::fs::NavDatabaseProgress& pr
         arg(progress.getNumIls()).
         arg(progress.getNumNdbs()).
         arg(progress.getNumMarker()).
-        arg(progress.getNumWaypoints()));
+        arg(progress.getNumWaypoints()).
+        arg(progress.getNumBoundaries()));
     }
 
     QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -979,7 +986,8 @@ void DatabaseManager::updateDialogInfo()
                 arg(util.rowCount("ils")).
                 arg(util.rowCount("ndb")).
                 arg(util.rowCount("marker")).
-                arg(util.rowCount("waypoint"));
+                arg(util.rowCount("waypoint")).
+                arg(util.rowCount("boundary"));
   }
   else
     tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);

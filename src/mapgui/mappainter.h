@@ -54,7 +54,7 @@ struct PaintContext
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   bool drawFast; /* true if reduced details should be used */
-  maptypes::MapObjectTypes objectTypes; /* Object types that should be drawn */
+  map::MapObjectTypes objectTypes; /* Object types that should be drawn */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;

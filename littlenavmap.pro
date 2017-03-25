@@ -170,7 +170,8 @@ SOURCES += src/main.cpp\
     src/route/route.cpp \
     src/common/procedurequery.cpp \
     src/search/abstractsearch.cpp \
-    src/search/proceduresearch.cpp
+    src/search/proceduresearch.cpp \
+    src/common/proctypes.cpp
 
 HEADERS  += src/gui/mainwindow.h \
     src/search/columnlist.h \
@@ -244,7 +245,8 @@ HEADERS  += src/gui/mainwindow.h \
     src/route/route.h \
     src/common/procedurequery.h \
     src/search/abstractsearch.h \
-    src/search/proceduresearch.h
+    src/search/proceduresearch.h \
+    src/common/proctypes.h
 
 FORMS    += src/gui/mainwindow.ui \
     src/db/databasedialog.ui \

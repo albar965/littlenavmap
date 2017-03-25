@@ -55,7 +55,7 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
     TYPE nearest = waypoints.first();
     if(waypoints.size() > 1)
     {
-      float distance = maptypes::INVALID_DISTANCE_VALUE;
+      float distance = map::INVALID_DISTANCE_VALUE;
       for(const TYPE& obj : waypoints)
       {
         float d = pos.distanceSimpleTo(obj.position);
@@ -73,11 +73,11 @@ TYPE findMapObject(const QList<TYPE>& waypoints, const atools::geo::Pos& pos, bo
   return TYPE();
 }
 
-void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& newAirport,
+void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirport,
                                  const RouteLeg *prevLeg)
 {
   index = entryIndex;
-  type = maptypes::AIRPORT;
+  type = map::AIRPORT;
   airport = newAirport;
 
   updateMagvar();
@@ -85,14 +85,14 @@ void RouteLeg::createFromAirport(int entryIndex, const maptypes::MapAirport& new
   valid = true;
 }
 
-void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedureLegs& legs,
+void RouteLeg::createFromApproachLeg(int entryIndex, const proc::MapProcedureLegs& legs,
                                      const RouteLeg *prevLeg)
 {
   index = entryIndex;
   procedureLeg = legs.at(entryIndex);
   magvar = procedureLeg.magvar;
 
-  type = maptypes::PROCEDURE;
+  type = map::PROCEDURE;
 
   if(procedureLeg.navaids.hasWaypoints())
     waypoint = procedureLeg.navaids.waypoints.first();
@@ -122,16 +122,16 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
     region.clear();
 
   bool found;
-  maptypes::MapSearchResult mapobjectResult;
+  map::MapSearchResult mapobjectResult;
   switch(flightplanEntry->getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
       break;
     case atools::fs::pln::entry::AIRPORT:
-      query->getMapObjectByIdent(mapobjectResult, maptypes::AIRPORT, flightplanEntry->getIcaoIdent());
+      query->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIcaoIdent());
       if(!mapobjectResult.airports.isEmpty())
       {
-        type = maptypes::AIRPORT;
+        type = map::AIRPORT;
         airport = mapobjectResult.airports.first();
         valid = true;
 
@@ -150,9 +150,9 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
             {
               // Seems to be a parking position
               int number = QString(match.captured(2)).toInt();
-              QList<maptypes::MapParking> parkings;
+              QList<map::MapParking> parkings;
               query->getParkingByNameAndNumber(parkings, airport.id,
-                                               maptypes::parkingDatabaseName(parkingName), number);
+                                               map::parkingDatabaseName(parkingName), number);
 
               if(parkings.isEmpty())
               {
@@ -166,7 +166,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
 
                 parking = parkings.first();
                 // Update flightplan with found name
-                flightplan->setDepartureParkingName(maptypes::parkingNameForFlightplan(parking));
+                flightplan->setDepartureParkingName(map::parkingNameForFlightplan(parking));
               }
             }
             else
@@ -195,21 +195,21 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
         else
         {
           // Airport is not departure reset start and parking
-          start = maptypes::MapStart();
-          parking = maptypes::MapParking();
+          start = map::MapStart();
+          parking = map::MapParking();
         }
       }
       break;
     case atools::fs::pln::entry::INTERSECTION:
       {
         // Navaid waypoint
-        query->getMapObjectByIdent(mapobjectResult, maptypes::WAYPOINT,
+        query->getMapObjectByIdent(mapobjectResult, map::WAYPOINT,
                                    flightplanEntry->getIcaoIdent(), region);
-        const maptypes::MapWaypoint& obj = findMapObject(mapobjectResult.waypoints,
-                                                         flightplanEntry->getPosition(), found);
+        const map::MapWaypoint& obj = findMapObject(mapobjectResult.waypoints,
+                                                    flightplanEntry->getPosition(), found);
         if(found)
         {
-          type = maptypes::WAYPOINT;
+          type = map::WAYPOINT;
           waypoint = obj;
           valid = waypoint.position.distanceMeterTo(flightplanEntry->getPosition()) <
                   MAX_WAYPOINT_DISTANCE_METER;
@@ -225,12 +225,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
       }
     case atools::fs::pln::entry::VOR:
       {
-        query->getMapObjectByIdent(mapobjectResult, maptypes::VOR, flightplanEntry->getIcaoIdent(), region);
-        const maptypes::MapVor& obj = findMapObject(mapobjectResult.vors,
-                                                    flightplanEntry->getPosition(), found);
+        query->getMapObjectByIdent(mapobjectResult, map::VOR, flightplanEntry->getIcaoIdent(), region);
+        const map::MapVor& obj = findMapObject(mapobjectResult.vors,
+                                               flightplanEntry->getPosition(), found);
         if(found)
         {
-          type = maptypes::VOR;
+          type = map::VOR;
           vor = obj;
           valid = vor.position.distanceMeterTo(flightplanEntry->getPosition()) < MAX_WAYPOINT_DISTANCE_METER;
           if(valid)
@@ -245,12 +245,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
       }
     case atools::fs::pln::entry::NDB:
       {
-        query->getMapObjectByIdent(mapobjectResult, maptypes::NDB, flightplanEntry->getIcaoIdent(), region);
-        const maptypes::MapNdb& obj = findMapObject(mapobjectResult.ndbs,
-                                                    flightplanEntry->getPosition(), found);
+        query->getMapObjectByIdent(mapobjectResult, map::NDB, flightplanEntry->getIcaoIdent(), region);
+        const map::MapNdb& obj = findMapObject(mapobjectResult.ndbs,
+                                               flightplanEntry->getPosition(), found);
         if(found)
         {
-          type = maptypes::NDB;
+          type = map::NDB;
           ndb = obj;
           valid = ndb.position.distanceMeterTo(flightplanEntry->getPosition()) < MAX_WAYPOINT_DISTANCE_METER;
           if(valid)
@@ -265,7 +265,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
       }
     case atools::fs::pln::entry::USER:
       valid = true;
-      type = maptypes::USER;
+      type = map::USER;
       flightplanEntry->setIcaoIdent(QString());
       flightplanEntry->setIcaoRegion(QString());
       // flightplanEntry->setWaypointId(userName);
@@ -273,22 +273,22 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, MapQuery *query, const 
   }
 
   if(!valid)
-    type = maptypes::INVALID;
+    type = map::INVALID;
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
 }
 
-void RouteLeg::setDepartureParking(const maptypes::MapParking& departureParking)
+void RouteLeg::setDepartureParking(const map::MapParking& departureParking)
 {
   parking = departureParking;
-  start = maptypes::MapStart();
+  start = map::MapStart();
 }
 
-void RouteLeg::setDepartureStart(const maptypes::MapStart& departureStart)
+void RouteLeg::setDepartureStart(const map::MapStart& departureStart)
 {
   start = departureStart;
-  parking = maptypes::MapParking();
+  parking = map::MapParking();
 }
 
 void RouteLeg::updateMagvar()
@@ -310,7 +310,7 @@ void RouteLeg::updateMagvar()
 
 void RouteLeg::updateInvalidMagvar(int entryIndex, const Route *routeList)
 {
-  if(type == maptypes::USER || type == maptypes::INVALID)
+  if(type == map::USER || type == map::INVALID)
   {
     magvar = 0.f;
     // Get magnetic variance from one of the next and previous waypoints if not set
@@ -360,7 +360,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 
         ) && // Direct connection between procedures
 
-        atools::contains(procedureLeg.type, {maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE}) // Beginning of procedure
+        atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) // Beginning of procedure
         )
       {
         qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
@@ -388,8 +388,8 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
         // Collapse any overlapping waypoints to avoid course display
         distanceTo = 0.f;
         distanceToRhumb = 0.f;
-        courseTo = maptypes::INVALID_COURSE_VALUE;
-        courseRhumbTo = maptypes::INVALID_COURSE_VALUE;
+        courseTo = map::INVALID_COURSE_VALUE;
+        courseRhumbTo = map::INVALID_COURSE_VALUE;
         geometry = LineString({getPosition()});
       }
       else
@@ -420,7 +420,7 @@ void RouteLeg::updateUserName(const QString& name)
 
 int RouteLeg::getId() const
 {
-  if(type == maptypes::INVALID)
+  if(type == map::INVALID)
     return -1;
 
   if(waypoint.isValid())
@@ -439,7 +439,7 @@ int RouteLeg::getId() const
 
 int RouteLeg::getRange() const
 {
-  if(type == maptypes::INVALID)
+  if(type == map::INVALID)
     return -1;
 
   if(vor.isValid())
@@ -454,21 +454,21 @@ int RouteLeg::getRange() const
 
 QString RouteLeg::getMapObjectTypeName() const
 {
-  if(type == maptypes::INVALID)
+  if(type == map::INVALID)
     return tr("Invalid");
   else if(waypoint.isValid())
     return tr("Waypoint");
   else if(vor.isValid())
-    return maptypes::vorType(vor) + " (" + maptypes::navTypeNameVor(vor.type) + ")";
+    return map::vorType(vor) + " (" + map::navTypeNameVor(vor.type) + ")";
   else if(ndb.isValid())
-    return tr("NDB (%1)").arg(maptypes::navTypeNameNdb(ndb.type));
+    return tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.type));
   else if(airport.isValid())
     return tr("Airport");
   else if(ils.isValid())
     return tr("ILS");
   else if(runwayEnd.isValid())
     return tr("Runway");
-  else if(type == maptypes::USER)
+  else if(type == map::USER)
     return EMPTY_STRING;
   else
     return tr("Unknown");
@@ -476,13 +476,13 @@ QString RouteLeg::getMapObjectTypeName() const
 
 float RouteLeg::getCourseToMag() const
 {
-  return courseTo < maptypes::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseTo - magvar) : courseTo;
+  return courseTo < map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseTo - magvar) : courseTo;
 }
 
 float RouteLeg::getCourseToRhumbMag() const
 {
   return courseRhumbTo <
-         maptypes::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseRhumbTo - magvar) : courseTo;
+         map::INVALID_COURSE_VALUE ? atools::geo::normalizeCourse(courseRhumbTo - magvar) : courseTo;
 }
 
 const atools::geo::Pos& RouteLeg::getPosition() const
@@ -491,7 +491,7 @@ const atools::geo::Pos& RouteLeg::getPosition() const
     return procedureLeg.line.getPos2();
   else
   {
-    if(type == maptypes::INVALID)
+    if(type == map::INVALID)
     {
       if(curEntry().getPosition().isValid())
         return curEntry().getPosition();
@@ -533,7 +533,7 @@ QString RouteLeg::getIdent() const
     return "RW" + runwayEnd.name;
   else if(!procedureLeg.displayText.isEmpty())
     return procedureLeg.displayText.first();
-  else if(type == maptypes::INVALID)
+  else if(type == map::INVALID)
     return curEntry().getIcaoIdent();
   else if(curEntry().getWaypointType() == atools::fs::pln::entry::USER)
     return curEntry().getWaypointId();
@@ -557,7 +557,7 @@ QString RouteLeg::getRegion() const
 
 QString RouteLeg::getName() const
 {
-  if(type == maptypes::INVALID)
+  if(type == map::INVALID)
     return EMPTY_STRING;
 
   if(airport.isValid())
@@ -582,7 +582,7 @@ const QString& RouteLeg::getAirway() const
 
 int RouteLeg::getFrequency() const
 {
-  if(type == maptypes::INVALID)
+  if(type == map::INVALID)
     return 0;
 
   if(vor.isValid())
@@ -612,10 +612,10 @@ bool RouteLeg::isApproachPoint() const
 {
   return isAnyProcedure() &&
          !atools::contains(procedureLeg.type,
-                           {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX,
-                            maptypes::HOLD_TO_MANUAL_TERMINATION}) &&
-         (procedureLeg.geometry.isPoint() || procedureLeg.type == maptypes::INITIAL_FIX ||
-          procedureLeg.type == maptypes::START_OF_PROCEDURE);
+                           {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX,
+                            proc::HOLD_TO_MANUAL_TERMINATION}) &&
+         (procedureLeg.geometry.isPoint() || procedureLeg.type == proc::INITIAL_FIX ||
+          procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
 QDebug operator<<(QDebug out, const RouteLeg& leg)
@@ -624,6 +624,6 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
   << "magvar" << leg.getMagvar() << "distance" << leg.getDistanceTo()
   << "course mag" << leg.getCourseToMag() << "course true" << leg.getCourseToTrue()
   << leg.getIdent() << leg.getMapObjectTypeName()
-  << maptypes::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
+  << proc::procedureLegTypeStr(leg.getProcedureLegType()) << "]";
   return out;
 }

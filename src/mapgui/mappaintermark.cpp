@@ -37,7 +37,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using namespace maptypes;
+using namespace map;
 
 MapPainterMark::MapPainterMark(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(mapWidget, mapQuery, mapScale)
@@ -171,7 +171,7 @@ void MapPainterMark::paintHighlights(PaintContext *context)
   }
 
   // Draw hightlights from the approach selection ------------------------------------------
-  const maptypes::MapProcedureLeg& leg = mapWidget->getApproachLegHighlights();
+  const proc::MapProcedureLeg& leg = mapWidget->getApproachLegHighlights();
 
   positions.clear();
 
@@ -279,14 +279,14 @@ void MapPainterMark::paintHighlights(PaintContext *context)
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
 void MapPainterMark::paintRangeRings(const PaintContext *context)
 {
-  const QList<maptypes::RangeMarker>& rangeRings = mapWidget->getRangeRings();
+  const QList<map::RangeMarker>& rangeRings = mapWidget->getRangeRings();
   GeoPainter *painter = context->painter;
 
   painter->setBrush(Qt::NoBrush);
 
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
 
-  for(const maptypes::RangeMarker& rings : rangeRings)
+  for(const map::RangeMarker& rings : rangeRings)
   {
     // Get the biggest ring to check visibility
     QVector<int>::const_iterator maxRingIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
@@ -303,12 +303,12 @@ void MapPainterMark::paintRangeRings(const PaintContext *context)
 
         // Select color according to source
         QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
-        if(rings.type == maptypes::VOR)
+        if(rings.type == map::VOR)
         {
           color = mapcolors::vorSymbolColor;
           textColor = mapcolors::vorSymbolColor;
         }
-        else if(rings.type == maptypes::NDB)
+        else if(rings.type == map::NDB)
         {
           color = mapcolors::ndbSymbolColor;
           textColor = mapcolors::ndbSymbolColor;
@@ -366,11 +366,11 @@ void MapPainterMark::paintDistanceMarkers(const PaintContext *context)
   GeoPainter *painter = context->painter;
   QFontMetrics metrics = painter->fontMetrics();
 
-  const QList<maptypes::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
+  const QList<map::DistanceMarker>& distanceMarkers = mapWidget->getDistanceMarkers();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   TextPlacement textPlacement(context->painter, this);
 
-  for(const maptypes::DistanceMarker& m : distanceMarkers)
+  for(const map::DistanceMarker& m : distanceMarkers)
   {
     // Get color from marker
     painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));

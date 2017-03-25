@@ -28,6 +28,13 @@ class MapWidget;
 class RouteController;
 class Route;
 
+namespace proc {
+struct MapProcedureLegs;
+
+struct MapProcedureLeg;
+
+}
+
 /*
  * Draws the flight plan line and all enroute navaid and departure and destination airports (airport symbols only).
  * Airport diagrams and route overview are drawn by the airport painter.
@@ -52,19 +59,19 @@ private:
 
   void paintRoute(const PaintContext *context);
 
-  void paintAirport(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
-  void paintVor(const PaintContext *context, int x, int y, const maptypes::MapVor& obj);
+  void paintAirport(const PaintContext *context, int x, int y, const map::MapAirport& obj);
+  void paintVor(const PaintContext *context, int x, int y, const map::MapVor& obj);
   void paintNdb(const PaintContext *context, int x, int y);
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
   void paintApproach(const PaintContext *context,
-                     const maptypes::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
-  void paintWaypointText(const PaintContext *context, int x, int y, const maptypes::MapWaypoint& obj,
+                     const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
+  void paintWaypointText(const PaintContext *context, int x, int y, const map::MapWaypoint& obj,
                          const QStringList *addtionalText = nullptr);
-  void paintNdbText(const PaintContext *context, int x, int y, const maptypes::MapNdb& obj,
+  void paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj,
                     const QStringList *addtionalText = nullptr);
-  void paintVorText(const PaintContext *context, int x, int y, const maptypes::MapVor& obj,
+  void paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj,
                     const QStringList *addtionalText = nullptr);
-  void paintAirportText(const PaintContext *context, int x, int y, const maptypes::MapAirport& obj);
+  void paintAirportText(const PaintContext *context, int x, int y, const map::MapAirport& obj);
   void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
@@ -74,19 +81,20 @@ private:
   void drawSymbolText(const PaintContext *context,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void paintApproachPoints(const PaintContext *context, const maptypes::MapProcedureLegs& legs, int index, bool preview);
+  void paintApproachPoints(const PaintContext *context, const proc::MapProcedureLegs& legs, int index,
+                           bool preview);
 
-  void paintApproachSegment(const PaintContext *context, const maptypes::MapProcedureLegs& legs,
+  void paintApproachSegment(const PaintContext *context, const proc::MapProcedureLegs& legs,
                             int index, QLineF& lastLine, QVector<DrawText> *drawTextLines, bool noText, bool preview);
 
   void paintProcedurePoint(const PaintContext *context, int x, int y);
 
   void paintTopOfDescent(const PaintContext *context);
 
-  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const maptypes::MapProcedureLeg& leg, QPainter *painter,
+  QLineF paintApproachTurn(QLineF& lastLine, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
                            QPointF intersectPoint);
-  void paintApproachBow(const maptypes::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
-                        const maptypes::MapProcedureLeg& leg);
+  void paintApproachBow(const proc::MapProcedureLeg *prevLeg, QLineF& lastLine, QPainter *painter, QLineF line,
+                        const proc::MapProcedureLeg& leg);
 
   void paintProcedureFlyover(const PaintContext *context, int x, int y);
 

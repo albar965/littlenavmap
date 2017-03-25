@@ -67,11 +67,11 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
   qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
 
-  qRegisterMetaTypeStreamOperators<maptypes::DistanceMarker>();
-  qRegisterMetaTypeStreamOperators<QList<maptypes::DistanceMarker> >();
+  qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
 
-  qRegisterMetaTypeStreamOperators<maptypes::RangeMarker>();
-  qRegisterMetaTypeStreamOperators<QList<maptypes::RangeMarker> >();
+  qRegisterMetaTypeStreamOperators<map::RangeMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
 
   qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
   qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();

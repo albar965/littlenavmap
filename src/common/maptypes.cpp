@@ -26,7 +26,7 @@
 #include <QHash>
 #include <QObject>
 
-namespace maptypes {
+namespace map {
 
 const static QHash<QString, QString> surfaceMap(
   {
@@ -301,154 +301,7 @@ const static QHash<QString, QString> comTypeNames(
     {"RCD", QObject::tr("Remote Clearance Delivery")}
   });
 
-const static QHash<QString, QString> approachFixTypeToStr(
-  {
-    {"NONE", QObject::tr("NONE")},
-    {"L", QObject::tr("Localizer")},
-    {"V", QObject::tr("VOR")},
-    {"N", QObject::tr("NDB")},
-    {"TN", QObject::tr("Terminal NDB")},
-    {"W", QObject::tr("Waypoint")},
-    {"TW", QObject::tr("Terminal Waypoint")},
-    {"R", QObject::tr("Runway")}
-  });
-
-const static QHash<QString, QString> approachTypeToStr(
-  {
-    {"GPS", QObject::tr("GPS")},
-    {"VOR", QObject::tr("VOR")},
-    {"NDB", QObject::tr("NDB")},
-    {"ILS", QObject::tr("ILS")},
-    {"LOC", QObject::tr("Localizer")},
-    {"SDF", QObject::tr("SDF")},
-    {"LDA", QObject::tr("LDA")},
-    {"VORDME", QObject::tr("VORDME")},
-    {"NDBDME", QObject::tr("NDBDME")},
-    {"RNAV", QObject::tr("RNAV")},
-    {"LOCB", QObject::tr("Localizer Backcourse")}
-  });
-
-const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
-  {
-    {"AF", ARC_TO_FIX},
-    {"CA", COURSE_TO_ALTITUDE},
-    {"CD", COURSE_TO_DME_DISTANCE},
-    {"CF", COURSE_TO_FIX},
-    {"CI", COURSE_TO_INTERCEPT},
-    {"CR", COURSE_TO_RADIAL_TERMINATION},
-    {"DF", DIRECT_TO_FIX},
-    {"FA", FIX_TO_ALTITUDE},
-    {"FC", TRACK_FROM_FIX_FROM_DISTANCE},
-    {"FD", TRACK_FROM_FIX_TO_DME_DISTANCE},
-    {"FM", FROM_FIX_TO_MANUAL_TERMINATION},
-    {"HA", HOLD_TO_ALTITUDE},
-    {"HF", HOLD_TO_FIX},
-    {"HM", HOLD_TO_MANUAL_TERMINATION},
-    {"IF", INITIAL_FIX},
-    {"PI", PROCEDURE_TURN},
-    {"RF", CONSTANT_RADIUS_ARC},
-    {"TF", TRACK_TO_FIX},
-    {"VA", HEADING_TO_ALTITUDE_TERMINATION},
-    {"VD", HEADING_TO_DME_DISTANCE_TERMINATION},
-    {"VI", HEADING_TO_INTERCEPT},
-    {"VM", HEADING_TO_MANUAL_TERMINATION},
-    {"VR", HEADING_TO_RADIAL_TERMINATION},
-
-    {"RX", DIRECT_TO_RUNWAY},
-    {"SX", START_OF_PROCEDURE}
-  });
-
-const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
-  {
-    {ARC_TO_FIX, "AF"},
-    {COURSE_TO_ALTITUDE, "CA"},
-    {COURSE_TO_DME_DISTANCE, "CD"},
-    {COURSE_TO_FIX, "CF"},
-    {COURSE_TO_INTERCEPT, "CI"},
-    {COURSE_TO_RADIAL_TERMINATION, "CR"},
-    {DIRECT_TO_FIX, "DF"},
-    {FIX_TO_ALTITUDE, "FA"},
-    {TRACK_FROM_FIX_FROM_DISTANCE, "FC"},
-    {TRACK_FROM_FIX_TO_DME_DISTANCE, "FD"},
-    {FROM_FIX_TO_MANUAL_TERMINATION, "FM"},
-    {HOLD_TO_ALTITUDE, "HA"},
-    {HOLD_TO_FIX, "HF"},
-    {HOLD_TO_MANUAL_TERMINATION, "HM"},
-    {INITIAL_FIX, "IF"},
-    {PROCEDURE_TURN, "PI"},
-    {CONSTANT_RADIUS_ARC, "RF"},
-    {TRACK_TO_FIX, "TF"},
-    {HEADING_TO_ALTITUDE_TERMINATION, "VA"},
-    {HEADING_TO_DME_DISTANCE_TERMINATION, "VD"},
-    {HEADING_TO_INTERCEPT, "VI"},
-    {HEADING_TO_MANUAL_TERMINATION, "VM"},
-    {HEADING_TO_RADIAL_TERMINATION, "VR"},
-
-    {DIRECT_TO_RUNWAY, "RX"},
-    {START_OF_PROCEDURE, "SX"}
-  });
-
-const static QHash<ProcedureLegType, QString> approachLegTypeToStr(
-  {
-    {ARC_TO_FIX, QObject::tr("Arc to fix")},
-    {COURSE_TO_ALTITUDE, QObject::tr("Course to altitude")},
-    {COURSE_TO_DME_DISTANCE, QObject::tr("Course to DME distance")},
-    {COURSE_TO_FIX, QObject::tr("Course to fix")},
-    {COURSE_TO_INTERCEPT, QObject::tr("Course to intercept")},
-    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("Course to radial termination")},
-    {DIRECT_TO_FIX, QObject::tr("Direct to fix")},
-    {FIX_TO_ALTITUDE, QObject::tr("Fix to altitude")},
-    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("Track from fix from distance")},
-    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("Track from fix to DME distance")},
-    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("From fix to manual termination")},
-    {HOLD_TO_ALTITUDE, QObject::tr("Hold to altitude")},
-    {HOLD_TO_FIX, QObject::tr("Hold to fix")},
-    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Hold to manual termination")},
-    {INITIAL_FIX, QObject::tr("Initial fix")},
-    {PROCEDURE_TURN, QObject::tr("Procedure turn")},
-    {CONSTANT_RADIUS_ARC, QObject::tr("Constant radius arc")},
-    {TRACK_TO_FIX, QObject::tr("Track to fix")},
-    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("Heading to altitude termination")},
-    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("Heading to DME distance termination")},
-    {HEADING_TO_INTERCEPT, QObject::tr("Heading to intercept")},
-    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("Heading to manual termination")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("Heading to radial termination")},
-
-    {DIRECT_TO_RUNWAY, QObject::tr("Proceed to runway")},
-    {START_OF_PROCEDURE, QObject::tr("Start of procedure")}
-  });
-
-const static QHash<ProcedureLegType, QString> approachLegRemarkStr(
-  {
-    {ARC_TO_FIX, QObject::tr("")},
-    {COURSE_TO_ALTITUDE, QObject::tr("")},
-    {COURSE_TO_DME_DISTANCE, QObject::tr("")},
-    {COURSE_TO_FIX, QObject::tr("")},
-    {COURSE_TO_INTERCEPT, QObject::tr("")},
-    {COURSE_TO_RADIAL_TERMINATION, QObject::tr("")},
-    {DIRECT_TO_FIX, QObject::tr("")},
-    {FIX_TO_ALTITUDE, QObject::tr("")},
-    {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("")},
-    {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("")},
-    {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("")},
-    {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
-    {HOLD_TO_FIX, QObject::tr("Single circuit")},
-    {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
-    {INITIAL_FIX, QObject::tr("")},
-    {PROCEDURE_TURN, QObject::tr("")},
-    {CONSTANT_RADIUS_ARC, QObject::tr("")},
-    {TRACK_TO_FIX, QObject::tr("")},
-    {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("")},
-    {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
-    {HEADING_TO_INTERCEPT, QObject::tr("")},
-    {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
-    {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
-
-    {DIRECT_TO_RUNWAY, QObject::tr("")},
-    {START_OF_PROCEDURE, QObject::tr("")}
-  });
-
-int qHash(const maptypes::MapObjectRef& type)
+int qHash(const map::MapObjectRef& type)
 {
   return type.id ^ static_cast<int>(type.type);
 }
@@ -525,13 +378,13 @@ QString parkingDatabaseName(const QString& name)
   return parkingDatabaseNameMap.value(name);
 }
 
-QString parkingNameNumberType(const maptypes::MapParking& parking)
+QString parkingNameNumberType(const map::MapParking& parking)
 {
-  return maptypes::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
-         ", " + maptypes::parkingTypeName(parking.type);
+  return map::parkingName(parking.name) + " " + QLocale().toString(parking.number) +
+         ", " + map::parkingTypeName(parking.type);
 }
 
-QString startType(const maptypes::MapStart& start)
+QString startType(const map::MapStart& start)
 {
   if(start.type == "R")
     return "Runway";
@@ -543,7 +396,7 @@ QString startType(const maptypes::MapStart& start)
     return QString();
 }
 
-QString parkingNameForFlightplan(const maptypes::MapParking& parking)
+QString parkingNameForFlightplan(const map::MapParking& parking)
 {
   return parkingNameMap.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
@@ -659,34 +512,34 @@ bool MapAirport::noRunways() const
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isVisible(maptypes::MapObjectTypes objectTypes) const
+bool MapAirport::isVisible(map::MapObjectTypes objectTypes) const
 {
-  if(addon() && objectTypes.testFlag(maptypes::AIRPORT_ADDON))
+  if(addon() && objectTypes.testFlag(map::AIRPORT_ADDON))
     return true;
 
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS &&
-     empty() && !waterOnly() && !objectTypes.testFlag(maptypes::AIRPORT_EMPTY))
+     empty() && !waterOnly() && !objectTypes.testFlag(map::AIRPORT_EMPTY))
     return false;
 
-  if(hard() && !objectTypes.testFlag(maptypes::AIRPORT_HARD))
+  if(hard() && !objectTypes.testFlag(map::AIRPORT_HARD))
     return false;
 
-  if((softOnly() || waterOnly() || noRunways()) && !objectTypes.testFlag(maptypes::AIRPORT_SOFT))
+  if((softOnly() || waterOnly() || noRunways()) && !objectTypes.testFlag(map::AIRPORT_SOFT))
     return false;
 
   return true;
 }
 
 /* Convert nav_search type */
-maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType)
+map::MapObjectTypes navTypeToMapObjectType(const QString& navType)
 {
-  maptypes::MapObjectTypes type = NONE;
+  map::MapObjectTypes type = NONE;
   if(navType == "V" || navType == "VD" || navType == "D")
-    type = maptypes::VOR;
+    type = map::VOR;
   else if(navType == "N")
-    type = maptypes::NDB;
+    type = map::NDB;
   else if(navType == "W")
-    type = maptypes::WAYPOINT;
+    type = map::WAYPOINT;
   return type;
 }
 
@@ -694,15 +547,15 @@ QString airwayTypeToShortString(MapAirwayType type)
 {
   switch(type)
   {
-    case maptypes::NO_AIRWAY:
+    case map::NO_AIRWAY:
       break;
-    case maptypes::VICTOR:
+    case map::VICTOR:
       return QObject::tr("V");
 
-    case maptypes::JET:
+    case map::JET:
       return QObject::tr("J");
 
-    case maptypes::BOTH:
+    case map::BOTH:
       return QObject::tr("B");
 
   }
@@ -713,15 +566,15 @@ QString airwayTypeToString(MapAirwayType type)
 {
   switch(type)
   {
-    case maptypes::NO_AIRWAY:
+    case map::NO_AIRWAY:
       break;
-    case maptypes::VICTOR:
+    case map::VICTOR:
       return QObject::tr("Victor");
 
-    case maptypes::JET:
+    case map::JET:
       return QObject::tr("Jet");
 
-    case maptypes::BOTH:
+    case map::BOTH:
       return QObject::tr("Both");
 
   }
@@ -731,36 +584,36 @@ QString airwayTypeToString(MapAirwayType type)
 MapAirwayType airwayTypeFromString(const QString& typeStr)
 {
   if(typeStr.startsWith("V"))
-    return maptypes::VICTOR;
+    return map::VICTOR;
   else if(typeStr.startsWith("J"))
-    return maptypes::JET;
+    return map::JET;
   else if(typeStr.startsWith("B"))
-    return maptypes::BOTH;
+    return map::BOTH;
   else
-    return maptypes::NO_AIRWAY;
+    return map::NO_AIRWAY;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj)
+QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
   qint32 types;
   dataStream >> obj.text >> obj.ranges >> obj.center >> types;
-  obj.type = static_cast<maptypes::MapObjectTypes>(types);
+  obj.type = static_cast<map::MapObjectTypes>(types);
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj)
+QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 {
   dataStream << obj.text << obj.ranges << obj.center << static_cast<qint32>(obj.type);
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj)
+QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
   dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.isRhumbLine >> obj.hasMagvar;
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj)
+QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
   dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.isRhumbLine << obj.hasMagvar;
   return dataStream;
@@ -892,25 +745,15 @@ QString parkingShortName(const QString& name)
 bool MapSearchResult::isEmpty(const MapObjectTypes& types) const
 {
   bool filled = false;
-  filled |= types & maptypes::AIRPORT && !airports.isEmpty();
-  filled |= types & maptypes::WAYPOINT && !waypoints.isEmpty();
-  filled |= types & maptypes::VOR && !vors.isEmpty();
-  filled |= types & maptypes::NDB && !ndbs.isEmpty();
-  filled |= types & maptypes::AIRWAY && !airways.isEmpty();
-  filled |= types & maptypes::RUNWAYEND && !runwayEnds.isEmpty();
-  filled |= types & maptypes::ILS && !ils.isEmpty();
-  filled |= types & maptypes::USER && !userPoints.isEmpty();
+  filled |= types & map::AIRPORT && !airports.isEmpty();
+  filled |= types & map::WAYPOINT && !waypoints.isEmpty();
+  filled |= types & map::VOR && !vors.isEmpty();
+  filled |= types & map::NDB && !ndbs.isEmpty();
+  filled |= types & map::AIRWAY && !airways.isEmpty();
+  filled |= types & map::RUNWAYEND && !runwayEnds.isEmpty();
+  filled |= types & map::ILS && !ils.isEmpty();
+  filled |= types & map::USER && !userPoints.isEmpty();
   return !filled;
-}
-
-QString procedureFixType(const QString& type)
-{
-  return approachFixTypeToStr.value(type);
-}
-
-QString procedureType(const QString& type)
-{
-  return approachTypeToStr.value(type);
 }
 
 QString edgeLights(const QString& type)
@@ -935,196 +778,6 @@ QString patternDirection(const QString& type)
     return QString();
 }
 
-maptypes::ProcedureLegType procedureLegEnum(const QString& type)
-{
-  return approachLegTypeToEnum.value(type);
-}
-
-QString procedureLegTypeStr(maptypes::ProcedureLegType type)
-{
-  return approachLegTypeToStr.value(type);
-}
-
-QString procedureLegTypeShortStr(ProcedureLegType type)
-{
-  return approachLegTypeToShortStr.value(type);
-}
-
-QString procedureLegTypeFullStr(ProcedureLegType type)
-{
-  return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
-}
-
-QString procedureLegRemarks(maptypes::ProcedureLegType type)
-{
-  return approachLegRemarkStr.value(type);
-}
-
-QString altRestrictionText(const MapAltRestriction& restriction)
-{
-  switch(restriction.descriptor)
-  {
-    case maptypes::MapAltRestriction::NONE:
-      return QString();
-
-    case maptypes::MapAltRestriction::AT:
-      return QObject::tr("At %1").arg(Unit::altFeet(restriction.alt1));
-
-    case maptypes::MapAltRestriction::AT_OR_ABOVE:
-      return QObject::tr("At or above %1").arg(Unit::altFeet(restriction.alt1));
-
-    case maptypes::MapAltRestriction::AT_OR_BELOW:
-      return QObject::tr("At or below %1").arg(Unit::altFeet(restriction.alt1));
-
-    case maptypes::MapAltRestriction::BETWEEN:
-      return QObject::tr("At or above %1 and at or below %2").
-             arg(Unit::altFeet(restriction.alt1)).
-             arg(Unit::altFeet(restriction.alt2));
-  }
-  return QString();
-}
-
-QString altRestrictionTextNarrow(const maptypes::MapAltRestriction& altRestriction)
-{
-  QString retval;
-  switch(altRestriction.descriptor)
-  {
-    case maptypes::MapAltRestriction::NONE:
-      break;
-    case maptypes::MapAltRestriction::AT:
-      retval = Unit::altFeet(altRestriction.alt1, true, true);
-      break;
-    case maptypes::MapAltRestriction::AT_OR_ABOVE:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, true, true);
-      break;
-    case maptypes::MapAltRestriction::AT_OR_BELOW:
-      retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
-      break;
-    case maptypes::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, false, true) +
-               QObject::tr("B") + Unit::altFeet(altRestriction.alt2, true, true);
-      break;
-  }
-  return retval;
-}
-
-QString altRestrictionTextShort(const maptypes::MapAltRestriction& altRestriction)
-{
-  QString retval;
-  switch(altRestriction.descriptor)
-  {
-    case maptypes::MapAltRestriction::NONE:
-      break;
-    case maptypes::MapAltRestriction::AT:
-      retval = Unit::altFeet(altRestriction.alt1, false, false);
-      break;
-    case maptypes::MapAltRestriction::AT_OR_ABOVE:
-      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt1, false, false);
-      break;
-    case maptypes::MapAltRestriction::AT_OR_BELOW:
-      retval = QObject::tr("B ") + Unit::altFeet(altRestriction.alt1, false, false);
-      break;
-    case maptypes::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A ") + Unit::altFeet(altRestriction.alt1, false, false) + QObject::tr(", B ") +
-               Unit::altFeet(altRestriction.alt2, false, false);
-      break;
-  }
-  return retval;
-}
-
-QDebug operator<<(QDebug out, const ProcedureLegType& type)
-{
-  out << maptypes::procedureLegTypeFullStr(type);
-  return out;
-}
-
-QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
-{
-  out << "ProcedureLeg =====" << endl;
-  out << "maptype" << legs.mapType << endl;
-
-  out << "approachDistance" << legs.approachDistance
-  << "transitionDistance" << legs.transitionDistance
-  << "missedDistance" << legs.missedDistance << endl;
-
-  out << "approachType" << legs.approachType
-  << "approachSuffix" << legs.approachSuffix
-  << "approachFixIdent" << legs.approachFixIdent
-  << "transitionType" << legs.transitionType
-  << "transitionFixIdent" << legs.transitionFixIdent
-  << "runwayEnd.name" << legs.runwayEnd.name << endl;
-
-  out << "===== Legs =====" << endl;
-  for(int i = 0; i < legs.size(); i++)
-    out << "#" << i << legs.at(i);
-  out << "==========================" << endl;
-  return out;
-}
-
-QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
-{
-  out << "ProcedureLeg =============" << endl;
-  out << "approachId" << leg.approachId
-  << "transitionId" << leg.transitionId
-  << "legId" << leg.legId << endl
-  << "type" << leg.type
-  << "maptype" << leg.mapType
-  << "missed" << leg.missed
-  << "line" << leg.line << endl;
-
-  out << "displayText" << leg.displayText
-  << "remarks" << leg.remarks;
-
-  out << "navId" << leg.navId << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
-
-  out << "recNavId" << leg.recNavId << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
-  out << "intercept" << leg.interceptPos << leg.intercept << endl;
-  out << "pc pos" << leg.procedureTurnPos << endl;
-  out << "geometry" << leg.geometry << endl;
-
-  out << "turnDirection" << leg.turnDirection
-  << "flyover" << leg.flyover
-  << "trueCourse" << leg.trueCourse
-  << "disabled" << leg.disabled
-  << "course" << leg.course << endl;
-
-  out << "calculatedDistance" << leg.calculatedDistance
-  << "calculatedTrueCourse" << leg.calculatedTrueCourse << endl;
-
-  out << "magvar" << leg.magvar
-  << "theta" << leg.theta
-  << "rho" << leg.rho
-  << "dist" << leg.distance
-  << "time" << leg.time << endl;
-
-  out << "altDescriptor" << leg.altRestriction.descriptor
-  << "alt1" << leg.altRestriction.alt1
-  << "alt2" << leg.altRestriction.alt2 << endl;
-  return out;
-}
-
-MapProcedurePoint::MapProcedurePoint(const MapProcedureLeg& leg)
-{
-  calculatedDistance = leg.calculatedDistance;
-  calculatedTrueCourse = leg.calculatedTrueCourse;
-  time = leg.time;
-  theta = leg.theta;
-  rho = leg.rho;
-  magvar = leg.magvar;
-  fixType = leg.fixType;
-  fixIdent = leg.fixIdent;
-  recFixType = leg.recFixType;
-  recFixIdent = leg.recFixIdent;
-  turnDirection = leg.turnDirection;
-  displayText = leg.displayText;
-  remarks = leg.remarks;
-  altRestriction = leg.altRestriction;
-  type = leg.type;
-  missed = leg.missed;
-  flyover = leg.flyover;
-  position = leg.line.getPos1();
-}
-
 QString vorFullShortText(const MapVor& vor)
 {
   QString type = vor.type.at(0);
@@ -1143,48 +796,7 @@ QString ndbFullShortText(const MapNdb& ndb)
   return QObject::tr("NDB (%1)").arg(type);
 }
 
-bool MapProcedureLeg::hasInvalidRef() const
-{
-  return (!fixIdent.isEmpty() && !fixPos.isValid()) || (!recFixIdent.isEmpty() && !recFixPos.isValid());
-}
-
-bool MapProcedureLeg::hasErrorRef() const
-{
-  return (!fixIdent.isEmpty() && !fixPos.isValid()) ||
-         (!recFixIdent.isEmpty() && !recFixPos.isValid() &&
-          atools::contains(type, {maptypes::ARC_TO_FIX, CONSTANT_RADIUS_ARC}));
-}
-
-float MapProcedureLeg::legTrueCourse() const
-{
-  return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
-}
-
-bool MapProcedureLeg::isHold() const
-{
-  return atools::contains(type,
-                          {maptypes::HOLD_TO_ALTITUDE, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_MANUAL_TERMINATION});
-}
-
-bool MapProcedureLeg::isCircular() const
-{
-  return atools::contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC});
-}
-
-bool MapProcedureLeg::noDistanceDisplay() const
-{
-  return atools::contains(type,
-                          {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
-                           maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                           maptypes::HEADING_TO_MANUAL_TERMINATION, });
-}
-
-bool MapProcedureLeg::noCourseDisplay() const
-{
-  return type == /*maptypes::INITIAL_FIX ||*/ isCircular();
-}
-
-QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
+QDebug operator<<(QDebug out, const map::MapObjectTypes& type)
 {
   QDebugStateSaver saver(out);
   Q_UNUSED(saver);
@@ -1241,244 +853,6 @@ QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
   out.nospace().noquote() << flags.join("|");
 
   return out;
-}
-
-const MapProcedureLeg *MapProcedureLegs::transitionLegById(int legId) const
-{
-  for(const MapProcedureLeg& leg : transitionLegs)
-  {
-    if(leg.legId == legId)
-      return &leg;
-  }
-  return nullptr;
-}
-
-MapProcedureLeg& MapProcedureLegs::atInternal(int i)
-{
-  if(isDeparture())
-  {
-    if(i < approachLegs.size())
-      return approachLegs[apprIdx(i)];
-    else
-      return transitionLegs[transIdx(i)];
-  }
-  else
-  {
-    if(i < transitionLegs.size())
-      return transitionLegs[transIdx(i)];
-    else
-      return approachLegs[apprIdx(i)];
-  }
-}
-
-const MapProcedureLeg& MapProcedureLegs::atInternalConst(int i) const
-{
-  if(isDeparture())
-  {
-    if(i < approachLegs.size())
-      return approachLegs[apprIdx(i)];
-    else
-      return transitionLegs[transIdx(i)];
-  }
-  else
-  {
-    if(i < transitionLegs.size())
-      return transitionLegs[transIdx(i)];
-    else
-      return approachLegs[apprIdx(i)];
-  }
-}
-
-int MapProcedureLegs::apprIdx(int i) const
-{
-  return isDeparture() ? i : i - transitionLegs.size();
-}
-
-int MapProcedureLegs::transIdx(int i) const
-{
-  return isDeparture() ? i - approachLegs.size() : i;
-}
-
-void MapProcedureLegs::clearApproach()
-{
-  mapType &= ~maptypes::PROCEDURE_APPROACH;
-  approachLegs.clear();
-  approachDistance = missedDistance = 0.f;
-  approachType.clear();
-  approachSuffix.clear();
-  approachFixIdent.clear();
-}
-
-void MapProcedureLegs::clearTransition()
-{
-  mapType &= ~maptypes::PROCEDURE_TRANSITION;
-  transitionLegs.clear();
-  transitionDistance = 0.f;
-  transitionType.clear();
-  transitionFixIdent.clear();
-}
-
-const MapProcedureLeg *maptypes::MapProcedureLegs::approachLegById(int legId) const
-{
-  for(const MapProcedureLeg& leg : approachLegs)
-  {
-    if(leg.legId == legId)
-      return &leg;
-  }
-  return nullptr;
-}
-
-QString procedureLegCourse(const MapProcedureLeg& leg)
-{
-  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
-    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
-  else
-    return QString();
-}
-
-QString procedureLegDistance(const MapProcedureLeg& leg)
-{
-  QString retval;
-
-  if(!leg.noDistanceDisplay())
-  {
-    if(leg.calculatedDistance > 0.f)
-      retval += Unit::distNm(leg.calculatedDistance, false);
-
-    if(leg.time > 0.f)
-    {
-      if(!retval.isEmpty())
-        retval += ", ";
-      retval += QString::number(leg.time, 'g', 2) + QObject::tr(" min");
-    }
-  }
-  return retval;
-}
-
-QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance)
-{
-  QString retval;
-
-  if(!leg.missed)
-  {
-    if(leg.calculatedDistance > 0.f && leg.type != maptypes::INITIAL_FIX && leg.type != maptypes::START_OF_PROCEDURE)
-      remainingDistance -= leg.calculatedDistance;
-
-    if(remainingDistance < 0.f)
-      remainingDistance = 0.f;
-
-    retval += Unit::distNm(remainingDistance, false);
-  }
-
-  return retval;
-}
-
-QString procedureLegRemark(const MapProcedureLeg& leg)
-{
-  QStringList remarks;
-  if(leg.flyover)
-    remarks.append(QObject::tr("Fly over"));
-
-  if(leg.turnDirection == "R")
-    remarks.append(QObject::tr("Turn right"));
-  else if(leg.turnDirection == "L")
-    remarks.append(QObject::tr("Turn left"));
-  else if(leg.turnDirection == "B")
-    remarks.append(QObject::tr("Turn left or right"));
-
-  QString legremarks = maptypes::procedureLegRemarks(leg.type);
-  if(!legremarks.isEmpty())
-    remarks.append(legremarks);
-
-  if(!leg.recFixIdent.isEmpty())
-  {
-    if(leg.rho > 0.f)
-      remarks.append(QObject::tr("Related: %1 / %2 / %3").arg(leg.recFixIdent).
-                     arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                     arg(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M")));
-    else
-      remarks.append(QObject::tr("Related: %1").arg(leg.recFixIdent));
-  }
-
-  if(!leg.remarks.isEmpty())
-    remarks.append(leg.remarks);
-
-  if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
-    remarks.append(QObject::tr("Data error: Fix %1/%2 type %3 not found").
-                   arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
-  if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
-    remarks.append(QObject::tr("Data error: Recommended fix %1/%2 type %3 not found").
-                   arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
-
-  return remarks.join(", ");
-}
-
-maptypes::MapProcedureTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
-                                          const QString& suffix, bool gpsOverlay)
-{
-  // STARS use the suffix="A" while SIDS use the suffix="D".
-
-  if(simType == atools::fs::FsPaths::P3D_V3 && type == "GPS" &&
-     (suffix == "A" || suffix == "D") && gpsOverlay)
-  {
-    if(suffix == "A")
-      return maptypes::PROCEDURE_STAR;
-    else if(suffix == "D")
-      return maptypes::PROCEDURE_SID;
-  }
-  return maptypes::PROCEDURE_APPROACH;
-}
-
-QString procedureTypeText(const maptypes::MapProcedureLeg& leg)
-{
-  QString suffix;
-  if(leg.isApproach())
-    suffix = QObject::tr("Approach");
-  else if(leg.isMissed())
-    suffix = QObject::tr("Missed");
-  else if(leg.isTransition())
-    suffix = QObject::tr("Transition");
-  else if(leg.isStar())
-    suffix = QObject::tr("STAR");
-  else if(leg.isSid())
-    suffix = QObject::tr("SID");
-  else if(leg.isSidTransition())
-    suffix = QObject::tr("SID Transition");
-  else if(leg.isStarTransition())
-    suffix = QObject::tr("STAR Transition");
-  return suffix;
-}
-
-QDebug operator<<(QDebug out, const maptypes::MapProcedureTypes& type)
-{
-  QDebugStateSaver saver(out);
-  Q_UNUSED(saver);
-
-  QStringList flags;
-  if(type == NONE)
-    flags.append("PROC_NONE");
-  else
-  {
-    if(type & PROCEDURE_APPROACH)
-      flags.append("PROC_APPROACH");
-    if(type & PROCEDURE_MISSED)
-      flags.append("PROC_MISSED");
-    if(type & PROCEDURE_TRANSITION)
-      flags.append("PROC_TRANSITION");
-    if(type & PROCEDURE_SID)
-      flags.append("PROC_SID");
-    if(type & PROCEDURE_SID_TRANSITION)
-      flags.append("PROC_SID_TRANSITION");
-    if(type & PROCEDURE_STAR)
-      flags.append("PROC_STAR");
-    if(type & PROCEDURE_STAR_TRANSITION)
-      flags.append("PROC_STAR_TRANSITION");
-  }
-
-  out.nospace().noquote() << flags.join("|");
-
-  return out;
-
 }
 
 } // namespace types

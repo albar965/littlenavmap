@@ -30,7 +30,7 @@
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
-using namespace maptypes;
+using namespace map;
 
 /* Simulator aircraft symbol */
 const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
@@ -48,7 +48,7 @@ SymbolPainter::SymbolPainter()
   iconBackground = QApplication::palette().color(QPalette::Active, QPalette::Window);
 }
 
-QIcon SymbolPainter::createAirportIcon(const maptypes::MapAirport& airport, int size)
+QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
@@ -59,7 +59,7 @@ QIcon SymbolPainter::createAirportIcon(const maptypes::MapAirport& airport, int 
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createVorIcon(const maptypes::MapVor& vor, int size)
+QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(iconBackground);
@@ -114,7 +114,7 @@ QIcon SymbolPainter::createProcedurePointIcon(int size)
   return QIcon(pixmap);
 }
 
-void SymbolPainter::drawAirportSymbol(QPainter *painter, const maptypes::MapAirport& airport,
+void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& airport,
                                       float x, float y, int size, bool isAirportDiagram, bool fast)
 {
   if(airport.longestRunwayLength == 0)
@@ -340,7 +340,7 @@ void SymbolPainter::drawAircraftSymbol(QPainter *painter, int x, int y, int size
   painter->drawLines(lines);
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const maptypes::MapVor& vor, int x, int y, int size,
+void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, int x, int y, int size,
                                   bool routeFill, bool fast, int largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
@@ -449,7 +449,7 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, int x, int y, int size, boo
   painter->drawPoint(x, y);
 }
 
-void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarker& marker, int x, int y,
+void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, int x, int y,
                                      int size, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
@@ -473,7 +473,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const maptypes::MapMarke
   painter->drawPoint(x, y);
 }
 
-void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, int x, int y,
+void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, int x, int y,
                                 textflags::TextFlags flags, int size, bool fill,
                                 const QStringList *addtionalText)
 {
@@ -504,7 +504,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const maptypes::MapNdb& ndb, 
   textBox(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, int x, int y,
+void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, int x, int y,
                                 textflags::TextFlags flags, int size, bool fill,
                                 const QStringList *addtionalText)
 {
@@ -535,7 +535,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const maptypes::MapVor& vor, 
   textBox(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypoint& wp, int x, int y,
+void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, int x, int y,
                                      textflags::TextFlags flags, int size, bool fill,
                                      const QStringList *addtionalText)
 {
@@ -561,7 +561,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const maptypes::MapWaypo
   textBox(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
 }
 
-void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirport& airport, float x, float y,
+void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
                                     opts::DisplayOptions dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram)
 {
@@ -569,7 +569,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirpor
   if(!texts.isEmpty())
   {
     textatt::TextAttributes atts = textatt::BOLD;
-    if(airport.flags.testFlag(maptypes::AP_ADDON))
+    if(airport.flags.testFlag(map::AP_ADDON))
       atts |= textatt::ITALIC | textatt::UNDERLINE;
 
     if(flags & textflags::ROUTE_TEXT)
@@ -587,7 +587,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const maptypes::MapAirpor
 }
 
 QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags::TextFlags flags,
-                                        const maptypes::MapAirport& airport)
+                                        const map::MapAirport& airport)
 {
   QStringList texts;
 
@@ -622,7 +622,7 @@ QStringList SymbolPainter::airportTexts(opts::DisplayOptions dispOpts, textflags
       if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
         texts.append(Unit::altFeet(airport.getPosition().getAltitude(),
                                    true /*addUnit*/, true /*narrow*/) + " " +
-                     (airport.flags.testFlag(maptypes::AP_LIGHT) ? "L " : "- ") +
+                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") +
                      Unit::distShortFeet(airport.longestRunwayLength,
                                          true /*addUnit*/, true /*narrow*/) + " "
                      // + (airport.unicomFrequency == 0 ? QString() :

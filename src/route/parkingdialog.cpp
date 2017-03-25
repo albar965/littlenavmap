@@ -26,7 +26,7 @@
 #include <QPushButton>
 
 ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
-                             const maptypes::MapAirport& departureAirport)
+                             const map::MapAirport& departureAirport)
   : QDialog(parent), ui(new Ui::ParkingDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -34,18 +34,18 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
   ui->setupUi(this);
 
   // Update label with airport name/ident
-  ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(maptypes::airportText(departureAirport)));
+  ui->labelSelectParking->setText(ui->labelSelectParking->text().arg(map::airportText(departureAirport)));
 
-  const QList<maptypes::MapStart> *startCache = mapQuery->getStartPositionsForAirport(departureAirport.id);
+  const QList<map::MapStart> *startCache = mapQuery->getStartPositionsForAirport(departureAirport.id);
   // Create a copy from the cached start objects to allow sorting
-  for(const maptypes::MapStart& start : *startCache)
-    entries.append({maptypes::MapParking(), start});
+  for(const map::MapStart& start : *startCache)
+    entries.append({map::MapParking(), start});
 
-  const QList<maptypes::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
+  const QList<map::MapParking> *parkingCache = mapQuery->getParkingsForAirport(departureAirport.id);
   // Create a copy from the cached parking objects and exclude fuel
-  for(const maptypes::MapParking& parking : *parkingCache)
+  for(const map::MapParking& parking : *parkingCache)
     // Vehicles are already omitted in database creation
-    entries.append({parking, maptypes::MapStart()});
+    entries.append({parking, map::MapStart()});
 
   // Sort by type (order: runway, helipad, parking), name and numbers
   std::sort(entries.begin(), entries.end(),
@@ -94,7 +94,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
     {
       if(startPos.parking.isValid())
       {
-        QString text = tr("%1, %2%3").arg(maptypes::parkingNameNumberType(startPos.parking)).
+        QString text = tr("%1, %2%3").arg(map::parkingNameNumberType(startPos.parking)).
                        arg(Unit::distShortFeet(startPos.parking.radius * 2)).
                        arg((startPos.parking.jetway ? tr(", Has Jetway") : QString()));
 
@@ -109,7 +109,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, MapQuery *mapQuery,
           number = QString::number(startPos.start.helipadNumber);
 
         QString text = tr("%1 %2 %3").
-                       arg(maptypes::startType(startPos.start)).
+                       arg(map::startType(startPos.start)).
                        arg(startPos.start.helipadNumber == 0 ? startPos.start.runwayName : QString()).
                        arg(number);
 
@@ -136,7 +136,7 @@ ParkingDialog::~ParkingDialog()
   delete ui;
 }
 
-bool ParkingDialog::getSelectedParking(maptypes::MapParking& parking)
+bool ParkingDialog::getSelectedParking(map::MapParking& parking)
 {
   if(ui->listWidgetSelectParking->currentItem() != nullptr)
   {
@@ -147,7 +147,7 @@ bool ParkingDialog::getSelectedParking(maptypes::MapParking& parking)
   return false;
 }
 
-bool ParkingDialog::getSelectedStartPosition(maptypes::MapStart& start)
+bool ParkingDialog::getSelectedStartPosition(map::MapStart& start)
 {
   if(ui->listWidgetSelectParking->currentItem() != nullptr)
   {

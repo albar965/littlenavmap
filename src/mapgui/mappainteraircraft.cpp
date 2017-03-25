@@ -30,7 +30,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using namespace maptypes;
+using namespace map;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectData;
@@ -60,7 +60,7 @@ void MapPainterAircraft::render(PaintContext *context)
 {
   if(!context->objectTypes.testFlag(AIRCRAFT) &&
      !context->objectTypes.testFlag(AIRCRAFT_AI) &&
-     !context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
+     !context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     // If actions are unchecked return
     return;
 
@@ -69,7 +69,7 @@ void MapPainterAircraft::render(PaintContext *context)
 
   setRenderHints(context->painter);
 
-  if(context->objectTypes.testFlag(maptypes::AIRCRAFT_TRACK))
+  if(context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
     paintAircraftTrack(context);
 
   if(mapWidget->isConnected() || mapWidget->getUserAircraft().isDebug())

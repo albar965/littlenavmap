@@ -29,12 +29,17 @@
 #include <QColor>
 #include <QString>
 
+namespace proc {
+
+struct MapProcedurePoint;
+
+}
 /*
  * Maptypes are mostly filled from database tables and are used to pass airport, navaid and more information
  * around in the program. The types are kept primitive (no inheritance no vtable) for performance reasons.
  * Units are usually feet. Type string are as they appear in the database.
  */
-namespace maptypes {
+namespace map {
 
 /* Value for invalid/not found distances */
 Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
@@ -107,56 +112,27 @@ enum MapObjectType
 };
 
 Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectTypes);
 
-QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type);
-
-/* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapProcedureType
-{
-  PROCEDURE_NONE = 0,
-  PROCEDURE_APPROACH = 1 << 0,
-  PROCEDURE_MISSED = 1 << 1,
-  PROCEDURE_TRANSITION = 1 << 2,
-  PROCEDURE_SID = 1 << 3,
-  PROCEDURE_SID_TRANSITION = 1 << 4,
-  PROCEDURE_STAR = 1 << 5,
-  PROCEDURE_STAR_TRANSITION = 1 << 6,
-
-  PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
-  PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
-  PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
-
-  PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR_ALL,
-
-  PROCEDURE_DEPARTURE = PROCEDURE_SID_ALL,
-
-  PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
-  PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
-};
-
-Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapProcedureTypes);
-
-QDebug operator<<(QDebug out, const maptypes::MapProcedureTypes& type);
+QDebug operator<<(QDebug out, const map::MapObjectTypes& type);
 
 /* Primitive id type combo that is hashable */
 struct MapObjectRef
 {
   int id;
-  maptypes::MapObjectTypes type;
+  map::MapObjectTypes type;
 
-  bool operator==(const maptypes::MapObjectRef& other) const;
-  bool operator!=(const maptypes::MapObjectRef& other) const;
+  bool operator==(const map::MapObjectRef& other) const;
+  bool operator!=(const map::MapObjectRef& other) const;
 
 };
 
-int qHash(const maptypes::MapObjectRef& type);
+int qHash(const map::MapObjectRef& type);
 
 typedef QVector<MapObjectRef> MapObjectRefList;
 
 /* Convert type from nav_search table to enum */
-maptypes::MapObjectTypes navTypeToMapObjectType(const QString& navType);
+map::MapObjectTypes navTypeToMapObjectType(const QString& navType);
 
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
@@ -241,7 +217,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(maptypes::MapObjectTypes objectTypes) const;
+  bool isVisible(map::MapObjectTypes objectTypes) const;
 
   /* Used by template functions */
   const atools::geo::Pos& getPosition() const
@@ -528,7 +504,7 @@ struct MapWaypoint
 /* Waypoint or intersection */
 struct MapAirwayWaypoint
 {
-  maptypes::MapWaypoint waypoint;
+  map::MapWaypoint waypoint;
   int airwayId, airwayFragmentId, seqNum;
 };
 
@@ -570,7 +546,7 @@ enum MapAirwayType
 struct MapAirway
 {
   QString name;
-  maptypes::MapAirwayType type;
+  map::MapAirwayType type;
   int id, fromWaypointId, toWaypointId; /* all database ids waypoint.waypoint_id */
   int minAltitude /* feet */, sequence /* segment sequence in airway */,
       fragment /* fragment number of disconnected airways with the same name */;
@@ -647,97 +623,6 @@ struct MapIls
 
 };
 
-/* Altitude restriction for approaches or transitions */
-struct MapAltRestriction
-{
-  enum Descriptor
-  {
-    NONE,
-    AT,
-    AT_OR_ABOVE,
-    AT_OR_BELOW,
-    BETWEEN
-  };
-
-  Descriptor descriptor = NONE;
-  float alt1, alt2;
-
-  bool isValid() const
-  {
-    return descriptor != NONE;
-  }
-
-};
-
-enum ProcedureLegType
-{
-  INVALID_LEG_TYPE,
-  ARC_TO_FIX,
-  COURSE_TO_ALTITUDE,
-  COURSE_TO_DME_DISTANCE,
-  COURSE_TO_FIX,
-  COURSE_TO_INTERCEPT,
-  COURSE_TO_RADIAL_TERMINATION,
-  DIRECT_TO_FIX,
-  FIX_TO_ALTITUDE,
-  TRACK_FROM_FIX_FROM_DISTANCE,
-  TRACK_FROM_FIX_TO_DME_DISTANCE,
-  FROM_FIX_TO_MANUAL_TERMINATION,
-  HOLD_TO_ALTITUDE,
-  HOLD_TO_FIX,
-  HOLD_TO_MANUAL_TERMINATION,
-  INITIAL_FIX,
-  PROCEDURE_TURN,
-  CONSTANT_RADIUS_ARC,
-  TRACK_TO_FIX,
-  HEADING_TO_ALTITUDE_TERMINATION,
-  HEADING_TO_DME_DISTANCE_TERMINATION,
-  HEADING_TO_INTERCEPT,
-  HEADING_TO_MANUAL_TERMINATION,
-  HEADING_TO_RADIAL_TERMINATION,
-
-  DIRECT_TO_RUNWAY, /* Artifical last segment inserted if approach does not contain runway end */
-  START_OF_PROCEDURE /* Artifical first point if procedures does not start with an initial fix */
-};
-
-QDebug operator<<(QDebug out, const maptypes::ProcedureLegType& type);
-
-struct MapProcedureLeg;
-
-struct MapProcedurePoint
-{
-  MapProcedurePoint(const MapProcedureLeg& leg);
-
-  float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
-
-  QString fixType, fixIdent, recFixType, recFixIdent, turnDirection;
-
-  QStringList displayText, remarks;
-  MapAltRestriction altRestriction;
-
-  maptypes::ProcedureLegType type;
-
-  bool missed, flyover, transition;
-
-  atools::geo::Pos position;
-
-  bool isValid() const
-  {
-    return position.isValid();
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-  int getId() const
-  {
-    return -1;
-  }
-
-};
-
 /* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
 struct MapSearchResult
 {
@@ -766,13 +651,10 @@ struct MapSearchResult
   /* User defined route points */
   QList<MapUserpoint> userPoints;
 
-  /* General approach information */
-  QList<MapProcedurePoint> procedurePoints;
-
   QList<atools::fs::sc::SimConnectAircraft> aiAircraft;
   atools::fs::sc::SimConnectUserAircraft userAircraft;
 
-  bool isEmpty(const maptypes::MapObjectTypes& types) const;
+  bool isEmpty(const map::MapObjectTypes& types) const;
 
   bool hasVor() const
   {
@@ -799,253 +681,7 @@ struct MapSearchResult
     return !waypoints.isEmpty();
   }
 
-  bool hasProcedurePoints() const
-  {
-    return !procedurePoints.isEmpty();
-  }
-
 };
-
-struct MapProcedureRef
-{
-  MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapProcedureTypes type)
-    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
-      mapType(type)
-  {
-  }
-
-  MapProcedureRef()
-    : airportId(-1), runwayEndId(-1), approachId(-1), transitionId(-1), legId(-1), mapType(NONE)
-  {
-  }
-
-  int airportId, runwayEndId, approachId, transitionId, legId;
-  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE;
-
-  bool isLeg() const
-  {
-    return legId != -1;
-  }
-
-  bool hasApproachOnlyIds() const
-  {
-    return approachId != -1 && transitionId == -1;
-  }
-
-  bool hasApproachAndTransitionIds() const
-  {
-    return approachId != -1 && transitionId != -1;
-  }
-
-  bool hasApproachOrTransitionIds() const
-  {
-    return approachId != -1 || transitionId != -1;
-  }
-
-  bool isEmpty() const
-  {
-    return approachId == -1 && transitionId == -1;
-  }
-
-};
-
-struct MapProcedureLeg
-{
-
-  QString fixType, fixIdent, fixRegion,
-          recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
-          turnDirection /* Turn to this fix*/;
-
-  QStringList displayText /* Fix label for map - filled in approach query */,
-              remarks /* Additional remarks for tree - filled in approach query */;
-  atools::geo::Pos fixPos, recFixPos,
-                   interceptPos, /* Position of an intercept leg for grey circle */
-                   procedureTurnPos /* Extended position of a procedure turn */;
-  atools::geo::Line line, /* Line with flying direction from pos1 to pos2 */
-                    holdLine; /* Helping line to find out if aircraft leaves the hold */
-
-  atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
-
-  /* Navaids resolved by approach query class */
-  MapSearchResult navaids;
-
-  MapAltRestriction altRestriction;
-
-  maptypes::ProcedureLegType type = INVALID_LEG_TYPE;
-  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE; /* Any of the PROCEDURE_* types*/
-
-  int approachId, transitionId, legId, navId, recNavId;
-
-  float course,
-        distance /* Distance from source in nm */,
-        calculatedDistance /* Calculated distance closer to the real one in nm */,
-        calculatedTrueCourse /* Calculated distance closer to the real one */,
-        time /* Only for holds in minutes */,
-        theta /* magnetic course to recommended navaid */,
-        rho /* distance to recommended navaid */,
-        magvar /* from navaid or airport */;
-
-  bool missed, flyover, trueCourse,
-       intercept, /* Leg was modfied by a previous intercept */
-       disabled /* Neither line nor fix should be painted - currently for IF legs after a CI or similar */;
-
-  bool isValid() const
-  {
-    return type != INVALID_LEG_TYPE;
-  }
-
-  /* Draw red if there is an error in the leg (navaid could not be resolved */
-  bool hasInvalidRef() const;
-
-  /* true if leg is unusable because a required navaid could not be resolved */
-  bool hasErrorRef() const;
-
-  float legTrueCourse() const;
-
-  bool isApproach() const
-  {
-    return mapType & maptypes::PROCEDURE_APPROACH;
-  }
-
-  bool isArrival() const
-  {
-    return mapType & maptypes::PROCEDURE_ARRIVAL;
-  }
-
-  bool isAnyArrival() const
-  {
-    return mapType & maptypes::PROCEDURE_ARRIVAL_ALL;
-  }
-
-  bool isAnyDeparture() const
-  {
-    return mapType & maptypes::PROCEDURE_DEPARTURE;
-  }
-
-  bool isTransition() const
-  {
-    return mapType & maptypes::PROCEDURE_TRANSITION;
-  }
-
-  bool isSid() const
-  {
-    return mapType & maptypes::PROCEDURE_SID;
-  }
-
-  bool isSidTransition() const
-  {
-    return mapType & maptypes::PROCEDURE_SID_TRANSITION;
-  }
-
-  bool isAnyStar() const
-  {
-    return mapType & maptypes::PROCEDURE_STAR_ALL;
-  }
-
-  bool isStar() const
-  {
-    return mapType & maptypes::PROCEDURE_STAR;
-  }
-
-  bool isStarTransition() const
-  {
-    return mapType & maptypes::PROCEDURE_STAR_TRANSITION;
-  }
-
-  bool isMissed() const
-  {
-    return mapType & maptypes::PROCEDURE_MISSED;
-  }
-
-  bool isHold() const;
-  bool isCircular() const;
-
-  /* Do not display distance e.g. for course to altitude */
-  bool noDistanceDisplay() const;
-
-  /* No course display for e.g. arc legs */
-  bool noCourseDisplay() const;
-
-};
-
-QDebug operator<<(QDebug out, const maptypes::MapProcedureLeg& leg);
-
-/* All legs for a arrival or departure including STAR, transition and approach in order or
- * legs for SID only.
- * SID contains all in approach and legs transition fields.
- * STAR contins all in approach fields */
-struct MapProcedureLegs
-{
-  QVector<MapProcedureLeg> transitionLegs, approachLegs;
-
-  MapProcedureRef ref;
-  atools::geo::Rect bounding;
-
-  QString approachType, approachSuffix, approachFixIdent, transitionType, transitionFixIdent;
-
-  /* Only for approaches */
-  maptypes::MapRunwayEnd runwayEnd;
-  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE;
-
-  float approachDistance = 0.f,
-        transitionDistance = 0.f,
-        missedDistance = 0.f;
-
-  bool gpsOverlay, hasError /* Unusable due to missing navaid */;
-
-  void clearApproach();
-
-  void clearTransition();
-
-  bool isEmpty() const
-  {
-    return size() == 0;
-  }
-
-  int size() const
-  {
-    return transitionLegs.size() + approachLegs.size();
-  }
-
-  /* first in list is transition and then approach  or STAR only.
-   *  Order is reversed for departure - first approach and then transition */
-  const MapProcedureLeg& at(int i) const
-  {
-    return atInternalConst(i);
-  }
-
-  const MapProcedureLeg& first() const
-  {
-    return atInternalConst(0);
-  }
-
-  const MapProcedureLeg& last() const
-  {
-    return atInternalConst(size() - 1);
-  }
-
-  const MapProcedureLeg *approachLegById(int legId) const;
-  const MapProcedureLeg *transitionLegById(int legId) const;
-
-  MapProcedureLeg& operator[](int i)
-  {
-    return atInternal(i);
-  }
-
-private:
-  MapProcedureLeg& atInternal(int i);
-  const MapProcedureLeg& atInternalConst(int i) const;
-  int apprIdx(int i) const;
-  int transIdx(int i) const;
-
-  bool isDeparture() const
-  {
-    return mapType & maptypes::PROCEDURE_DEPARTURE;
-  }
-
-};
-
-QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
@@ -1067,8 +703,8 @@ struct RangeMarker
 
 };
 
-QDataStream& operator>>(QDataStream& dataStream, maptypes::RangeMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const maptypes::RangeMarker& obj);
+QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 
 /* Distance measurement line. Can be converted to QVariant */
 struct DistanceMarker
@@ -1101,8 +737,20 @@ struct WeatherContext
 
 };
 
-QDataStream& operator>>(QDataStream& dataStream, maptypes::DistanceMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const maptypes::DistanceMarker& obj);
+enum MapAirspaceType
+{
+};
+
+/* Airspace boundary */
+struct MapAirspace
+{
+  atools::geo::Rect bounding;
+
+  atools::geo::LineString line;
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
@@ -1110,24 +758,6 @@ QString navTypeNameVor(const QString& type);
 QString navTypeNameVorLong(const QString& type);
 QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
-
-QString procedureTypeText(const maptypes::MapProcedureLeg& leg);
-QString procedureFixType(const QString& type);
-QString procedureType(const QString& type);
-maptypes::ProcedureLegType procedureLegEnum(const QString& type);
-QString procedureLegTypeStr(ProcedureLegType type);
-QString procedureLegTypeShortStr(ProcedureLegType type);
-QString procedureLegTypeFullStr(ProcedureLegType type);
-QString procedureLegRemarks(maptypes::ProcedureLegType);
-QString altRestrictionText(const MapAltRestriction& restriction);
-
-QString procedureLegRemark(const MapProcedureLeg& leg);
-QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance);
-QString procedureLegDistance(const MapProcedureLeg& leg);
-QString procedureLegCourse(const MapProcedureLeg& leg);
-
-maptypes::MapProcedureTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
-                                          const QString& suffix, bool gpsOverlay);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -1138,8 +768,8 @@ QString parkingGateName(const QString& gate);
 QString parkingRampName(const QString& ramp);
 QString parkingTypeName(const QString& type);
 QString parkingName(const QString& name);
-QString parkingNameNumberType(const maptypes::MapParking& parking);
-QString startType(const maptypes::MapStart& start);
+QString parkingNameNumberType(const map::MapParking& parking);
+QString startType(const map::MapStart& start);
 
 /* Parking name from PLN to database name */
 QString parkingDatabaseName(const QString& name);
@@ -1150,60 +780,52 @@ QString parkingShortName(const QString& name);
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
 
-QString airwayTypeToShortString(maptypes::MapAirwayType type);
-QString airwayTypeToString(maptypes::MapAirwayType type);
+QString airwayTypeToShortString(map::MapAirwayType type);
+QString airwayTypeToString(map::MapAirwayType type);
 MapAirwayType  airwayTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
-QString airportText(const maptypes::MapAirport& airport);
-QString airportTextShort(const maptypes::MapAirport& airport);
-QString vorFullShortText(const maptypes::MapVor& vor);
-QString vorText(const maptypes::MapVor& vor);
-QString vorType(const maptypes::MapVor& vor);
-QString ndbFullShortText(const maptypes::MapNdb& ndb);
-QString ndbText(const maptypes::MapNdb& ndb);
-QString waypointText(const maptypes::MapWaypoint& waypoint);
-QString userpointText(const maptypes::MapUserpoint& userpoint);
-QString airwayText(const maptypes::MapAirway& airway);
+QString airportText(const map::MapAirport& airport);
+QString airportTextShort(const map::MapAirport& airport);
+QString vorFullShortText(const map::MapVor& vor);
+QString vorText(const map::MapVor& vor);
+QString vorType(const map::MapVor& vor);
+QString ndbFullShortText(const map::MapNdb& ndb);
+QString ndbText(const map::MapNdb& ndb);
+QString waypointText(const map::MapWaypoint& waypoint);
+QString userpointText(const map::MapUserpoint& userpoint);
+QString airwayText(const map::MapAirway& airway);
 QString magvarText(float magvar);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
-/* Put altitude restriction texts into list */
-QString altRestrictionTextNarrow(const MapAltRestriction& altRestriction);
-QString altRestrictionTextShort(const maptypes::MapAltRestriction& altRestriction);
-
 } // namespace types
 
-Q_DECLARE_TYPEINFO(maptypes::MapObjectRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
 
-Q_DECLARE_TYPEINFO(maptypes::MapAirport, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapRunway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapRunwayEnd, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapApron, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapTaxiPath, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapParking, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapStart, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapHelipad, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapVor, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapNdb, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapAirwayWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapAirway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapProcedureRef, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapProcedureLeg, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapAltRestriction, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapProcedureLegs, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapUserpoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::MapSearchResult, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(maptypes::PosCourse, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapStart, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapUserpoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapSearchResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 
-Q_DECLARE_TYPEINFO(maptypes::RangeMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(maptypes::RangeMarker);
-Q_DECLARE_TYPEINFO(maptypes::DistanceMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(maptypes::DistanceMarker);
+Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::RangeMarker);
+Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::DistanceMarker);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

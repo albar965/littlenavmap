@@ -27,7 +27,7 @@ namespace rf {
 /* Used when fetching the route points after calculation. Adds airway id to node */
 struct RouteEntry
 {
-  maptypes::MapObjectRef ref;
+  map::MapObjectRef ref;
   int airwayId;
 };
 
@@ -74,7 +74,7 @@ private:
   void expandNode(const nw::Node& node, const nw::Node& destNode);
   float calculateEdgeCost(const nw::Node& node, const nw::Node& successorNode, int lengthMeter);
   float costEstimate(const nw::Node& currentNode, const nw::Node& destNode);
-  maptypes::MapObjectTypes toMapObjectType(nw::NodeType type);
+  map::MapObjectTypes toMapObjectType(nw::NodeType type);
 
   /* Force algortihm to avoid direct route from start to destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;

@@ -64,20 +64,20 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
 
   // Get nav type from SQL model
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
-  maptypes::MapObjectTypes type = maptypes::navTypeToMapObjectType(navtype);
+  map::MapObjectTypes type = map::navTypeToMapObjectType(navtype);
 
   int symbolSize = option.rect.height() - 4;
   int x = option.rect.x() + symbolSize;
   int y = option.rect.y() + symbolSize / 2 + 2;
 
-  if(type == maptypes::WAYPOINT)
+  if(type == map::WAYPOINT)
     // An empty waypoint is enough to draw the symbol
     symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false, false);
-  else if(type == maptypes::NDB)
+  else if(type == map::NDB)
     symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
-  else if(type == maptypes::VOR)
+  else if(type == map::VOR)
   {
-    maptypes::MapVor vor;
+    map::MapVor vor;
     vor.dmeOnly = navtype == "D";
     vor.hasDme = navtype == "VD" || navtype == "D";
     symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize, false, false, 0);

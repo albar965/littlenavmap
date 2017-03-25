@@ -26,7 +26,7 @@
 #include <QPalette>
 #include <QToolTip>
 
-using namespace maptypes;
+using namespace map;
 using atools::util::HtmlBuilder;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
@@ -42,8 +42,9 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
-QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResult, const Route& route,
-                                 bool airportDiagram)
+QString MapTooltip::buildTooltip(const map::MapSearchResult& mapSearchResult,
+                                 const QList<proc::MapProcedurePoint>& procPoints,
+                                 const Route& route, bool airportDiagram)
 {
 #if defined(Q_OS_WIN32)
   QColor iconBackColor(Qt::transparent);
@@ -90,7 +91,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
     numEntries++;
   }
 
-  for(const MapProcedurePoint& ap : mapSearchResult.procedurePoints)
+  for(const proc::MapProcedurePoint& ap : procPoints)
   {
     if(checkText(html, numEntries))
       return html.getHtml();
@@ -114,7 +115,7 @@ QString MapTooltip::buildTooltip(const maptypes::MapSearchResult& mapSearchResul
 
     html.p();
 
-    maptypes::WeatherContext currentWeatherContext;
+    map::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
     info.airportText(airport, currentWeatherContext, html, &route, iconBackColor);
     html.pEnd();

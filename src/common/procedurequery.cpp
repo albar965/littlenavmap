@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "common/procedurequery.h"
+#include "common/proctypes.h"
 #include "mapgui/mapquery.h"
 #include "geo/calculations.h"
 #include "common/unit.h"
@@ -34,9 +35,9 @@ using atools::geo::meterToNm;
 using atools::geo::opposedCourseDeg;
 using atools::geo::nmToMeter;
 using atools::geo::normalizeCourse;
-using maptypes::MapProcedureLegs;
-using maptypes::MapProcedureLeg;
-using maptypes::MapAltRestriction;
+using proc::MapProcedureLegs;
+using proc::MapProcedureLeg;
+using proc::MapAltRestriction;
 
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDb, MapQuery *mapQueryParam)
   : db(sqlDb), mapQuery(mapQueryParam)
@@ -48,7 +49,7 @@ ProcedureQuery::~ProcedureQuery()
   deInitQueries();
 }
 
-const maptypes::MapProcedureLegs *ProcedureQuery::getApproachLegs(const maptypes::MapAirport& airport, int approachId)
+const proc::MapProcedureLegs *ProcedureQuery::getApproachLegs(const map::MapAirport& airport, int approachId)
 {
   return fetchApproachLegs(airport, approachId);
 }
@@ -64,14 +65,14 @@ int ProcedureQuery::approachIdForTransitionId(int transitionId)
   return approachId;
 }
 
-const maptypes::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const maptypes::MapAirport& airport,
-                                                                    int transitionId)
+const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(const map::MapAirport& airport,
+                                                                int transitionId)
 {
   return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
-const maptypes::MapProcedureLeg *ProcedureQuery::getApproachLeg(const maptypes::MapAirport& airport, int approachId,
-                                                                int legId)
+const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirport& airport, int approachId,
+                                                            int legId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(approachLegIndex.contains(legId))
@@ -97,7 +98,7 @@ const maptypes::MapProcedureLeg *ProcedureQuery::getApproachLeg(const maptypes::
   return nullptr;
 }
 
-const maptypes::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const maptypes::MapAirport& airport, int legId)
+const proc::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const map::MapAirport& airport, int legId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionLegIndex.contains(legId))
@@ -129,7 +130,7 @@ const maptypes::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const maptypes
   return nullptr;
 }
 
-maptypes::MapProcedureLeg ProcedureQuery::buildApproachLegEntry(const maptypes::MapAirport& airport)
+proc::MapProcedureLeg ProcedureQuery::buildApproachLegEntry(const map::MapAirport& airport)
 {
   MapProcedureLeg leg;
   leg.legId = approachLegQuery->value("approach_leg_id").toInt();
@@ -138,7 +139,7 @@ maptypes::MapProcedureLeg ProcedureQuery::buildApproachLegEntry(const maptypes::
   return leg;
 }
 
-maptypes::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const maptypes::MapAirport& airport)
+proc::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const map::MapAirport& airport)
 {
   MapProcedureLeg leg;
 
@@ -159,10 +160,10 @@ maptypes::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const maptypes
   return leg;
 }
 
-void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapProcedureLeg& leg,
-                                   const maptypes::MapAirport& airport)
+void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg,
+                                   const map::MapAirport& airport)
 {
-  leg.type = maptypes::procedureLegEnum(query->value("type").toString());
+  leg.type = proc::procedureLegEnum(query->value("type").toString());
 
   leg.turnDirection = query->value("turn_direction").toString();
 
@@ -214,12 +215,12 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
     leg.altRestriction.alt2 = 0.f;
   }
 
-  leg.magvar = maptypes::INVALID_MAGVAR;
+  leg.magvar = map::INVALID_MAGVAR;
 
   // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
-    mapObjectByIdent(leg.navaids, maptypes::WAYPOINT, leg.fixIdent, leg.fixRegion,
+    mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion,
                      QString(), airport.position);
     if(!leg.navaids.waypoints.isEmpty())
     {
@@ -230,7 +231,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
   }
   else if(leg.fixType == "V")
   {
-    mapObjectByIdent(leg.navaids, maptypes::VOR, leg.fixIdent, leg.fixRegion, QString(), airport.position);
+    mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, leg.fixRegion, QString(), airport.position);
     if(!leg.navaids.vors.isEmpty())
     {
       leg.fixPos = leg.navaids.vors.first().position;
@@ -240,7 +241,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
   }
   else if(leg.fixType == "N" || leg.fixType == "TN")
   {
-    mapObjectByIdent(leg.navaids, maptypes::NDB, leg.fixIdent, leg.fixRegion, QString(), airport.position);
+    mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, leg.fixRegion, QString(), airport.position);
     if(!leg.navaids.ndbs.isEmpty())
     {
       leg.fixPos = leg.navaids.ndbs.first().position;
@@ -250,7 +251,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
   }
   else if(leg.fixType == "L")
   {
-    mapObjectByIdent(leg.navaids, maptypes::ILS, leg.fixIdent, QString(), airport.ident, airport.position);
+    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, airport.position);
     if(!leg.navaids.ils.isEmpty())
     {
       leg.fixPos = leg.navaids.ils.first().position;
@@ -260,70 +261,70 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, maptypes::MapPr
   }
   else if(leg.fixType == "R")
   {
-    mapObjectByIdent(leg.navaids, maptypes::RUNWAYEND, leg.fixIdent, QString(), airport.ident);
+    mapObjectByIdent(leg.navaids, map::RUNWAYEND, leg.fixIdent, QString(), airport.ident);
     leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? Pos() : leg.navaids.runwayEnds.first().position;
   }
 
   // Load navaid information for recommended fix and set fix position
-  maptypes::MapSearchResult rn;
+  map::MapSearchResult rn;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
-    mapObjectByIdent(rn, maptypes::WAYPOINT, leg.recFixIdent, leg.recFixRegion,
+    mapObjectByIdent(rn, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion,
                      QString(), airport.position);
     if(!rn.waypoints.isEmpty())
     {
       leg.recFixPos = rn.waypoints.first().position;
       leg.recNavId = rn.waypoints.first().id;
 
-      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = rn.waypoints.first().magvar;
     }
   }
   else if(leg.recFixType == "V")
   {
-    mapObjectByIdent(rn, maptypes::VOR, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
+    mapObjectByIdent(rn, map::VOR, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
     if(!rn.vors.isEmpty())
     {
       leg.recFixPos = rn.vors.first().position;
       leg.recNavId = rn.vors.first().id;
 
-      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = rn.vors.first().magvar;
     }
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
   {
-    mapObjectByIdent(rn, maptypes::NDB, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
+    mapObjectByIdent(rn, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), airport.position);
     if(!rn.ndbs.isEmpty())
     {
       leg.recFixPos = rn.ndbs.first().position;
       leg.recNavId = rn.ndbs.first().id;
 
-      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = rn.ndbs.first().magvar;
     }
   }
   else if(leg.recFixType == "L")
   {
-    mapObjectByIdent(rn, maptypes::ILS, leg.recFixIdent, QString(), airport.ident, airport.position);
+    mapObjectByIdent(rn, map::ILS, leg.recFixIdent, QString(), airport.ident, airport.position);
     if(!rn.ils.isEmpty())
     {
       leg.recFixPos = rn.ils.first().position;
       leg.recNavId = rn.ils.first().id;
 
-      if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+      if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = rn.ils.first().magvar;
     }
   }
   else if(leg.recFixType == "R")
   {
-    mapObjectByIdent(rn, maptypes::RUNWAYEND, leg.recFixIdent, QString(), airport.ident);
+    mapObjectByIdent(rn, map::RUNWAYEND, leg.recFixIdent, QString(), airport.ident);
     leg.recFixPos = rn.runwayEnds.isEmpty() ? Pos() : rn.runwayEnds.first().position;
     leg.recNavId = -1;
   }
 }
 
-void ProcedureQuery::mapObjectByIdent(maptypes::MapSearchResult& result, maptypes::MapObjectTypes type,
+void ProcedureQuery::mapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type,
                                       const QString& ident, const QString& region, const QString& airport,
                                       const Pos& sortByDistancePos)
 {
@@ -333,14 +334,14 @@ void ProcedureQuery::mapObjectByIdent(maptypes::MapSearchResult& result, maptype
                                   atools::geo::nmToMeter(200.f));
 }
 
-void ProcedureQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
 {
   // Calculate average magvar for all legs
   float avgMagvar = 0.f;
   float num = 0.f;
   for(int i = 0; i < legs.size(); i++)
   {
-    if(legs.at(i).magvar < maptypes::INVALID_MAGVAR)
+    if(legs.at(i).magvar < map::INVALID_MAGVAR)
     {
       avgMagvar += legs.at(i).magvar;
       num++;
@@ -356,29 +357,29 @@ void ProcedureQuery::updateMagvar(const maptypes::MapAirport& airport, maptypes:
   // Assign average to legs with no magvar
   for(MapProcedureLeg& leg : legs.approachLegs)
   {
-    if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+    if(!(leg.magvar < map::INVALID_MAGVAR))
       leg.magvar = avgMagvar;
   }
 
   for(MapProcedureLeg& leg : legs.transitionLegs)
   {
-    if(!(leg.magvar < maptypes::INVALID_MAGVAR))
+    if(!(leg.magvar < map::INVALID_MAGVAR))
       leg.magvar = avgMagvar;
   }
 }
 
-void ProcedureQuery::updateBounding(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs)
 {
   for(int i = 0; i < legs.size(); i++)
   {
-    const maptypes::MapProcedureLeg& leg = legs.at(i);
+    const proc::MapProcedureLeg& leg = legs.at(i);
     legs.bounding.extend(leg.fixPos);
     legs.bounding.extend(leg.interceptPos);
     legs.bounding.extend(leg.line.boundingRect());
   }
 }
 
-maptypes::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const maptypes::MapAirport& airport, int approachId)
+proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport& airport, int approachId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(approachCache.contains(approachId))
@@ -399,8 +400,8 @@ maptypes::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const maptypes::Ma
   }
 }
 
-maptypes::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const maptypes::MapAirport& airport,
-                                                                int approachId, int transitionId)
+proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirport& airport,
+                                                            int approachId, int transitionId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionCache.contains(transitionId))
@@ -414,7 +415,7 @@ maptypes::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const maptypes::
     transitionLegQuery->bindValue(":id", transitionId);
     transitionLegQuery->exec();
 
-    maptypes::MapProcedureLegs *legs = new maptypes::MapProcedureLegs;
+    proc::MapProcedureLegs *legs = new proc::MapProcedureLegs;
     legs->ref.airportId = airport.id;
     legs->ref.approachId = approachId;
     legs->ref.transitionId = transitionId;
@@ -427,7 +428,7 @@ maptypes::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const maptypes::
     }
 
     // Add a full copy of the approach because approach legs will be modified for different transitions
-    maptypes::MapProcedureLegs *approach = buildApproachLegs(airport, approachId);
+    proc::MapProcedureLegs *approach = buildApproachLegs(airport, approachId);
     legs->approachLegs = approach->approachLegs;
     legs->runwayEnd = approach->runwayEnd;
     legs->approachType = approach->approachType;
@@ -456,12 +457,12 @@ maptypes::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const maptypes::
   }
 }
 
-maptypes::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const maptypes::MapAirport& airport, int approachId)
+proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport& airport, int approachId)
 {
   approachLegQuery->bindValue(":id", approachId);
   approachLegQuery->exec();
 
-  maptypes::MapProcedureLegs *legs = new maptypes::MapProcedureLegs;
+  proc::MapProcedureLegs *legs = new proc::MapProcedureLegs;
   legs->ref.airportId = airport.id;
   legs->ref.approachId = approachId;
   legs->ref.transitionId = -1;
@@ -496,7 +497,7 @@ maptypes::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const maptypes::Ma
   return legs;
 }
 
-void ProcedureQuery::postProcessLegs(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
 {
   // Update the mapTypes
   assignType(legs);
@@ -524,11 +525,11 @@ void ProcedureQuery::postProcessLegs(const maptypes::MapAirport& airport, maptyp
   qDebug() << legs;
 }
 
-void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs)
 {
   if(!legs.isEmpty())
   {
-    if(legs.mapType & maptypes::PROCEDURE_DEPARTURE)
+    if(legs.mapType & proc::PROCEDURE_DEPARTURE)
     {
       if(legs.runwayEnd.isValid())
       {
@@ -536,13 +537,13 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
 
         if(!legList.isEmpty()) // Add runway fix to departure
         {
-          maptypes::MapProcedureLeg rwleg = createRunwayLeg(legList.first(), legs);
-          rwleg.type = maptypes::DIRECT_TO_RUNWAY;
+          proc::MapProcedureLeg rwleg = createRunwayLeg(legList.first(), legs);
+          rwleg.type = proc::DIRECT_TO_RUNWAY;
           rwleg.altRestriction.alt1 = airport.position.getAltitude(); // At 50ft above threshold
           rwleg.line = Line(legs.runwayEnd.position);
-          rwleg.mapType = legs.approachLegs.isEmpty() ? maptypes::PROCEDURE_SID_TRANSITION : maptypes::PROCEDURE_SID;
+          rwleg.mapType = legs.approachLegs.isEmpty() ? proc::PROCEDURE_SID_TRANSITION : proc::PROCEDURE_SID;
           rwleg.distance = 0.f;
-          rwleg.course = maptypes::INVALID_COURSE_VALUE;
+          rwleg.course = map::INVALID_COURSE_VALUE;
 
           legList.prepend(rwleg);
         }
@@ -551,31 +552,31 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
     else
     {
       // if(!legs.first().line.isPoint())
-      if(!contains(legs.first().type, {maptypes::INITIAL_FIX}))
+      if(!contains(legs.first().type, {proc::INITIAL_FIX}))
       {
         // Add an artificial initial fix to keep all consistent
-        maptypes::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
-        sleg.type = maptypes::START_OF_PROCEDURE;
+        proc::MapProcedureLeg sleg = createStartLeg(legs.first(), legs);
+        sleg.type = proc::START_OF_PROCEDURE;
         sleg.line = Line(legs.first().line.getPos1());
 
-        if(legs.mapType & maptypes::PROCEDURE_STAR_TRANSITION)
+        if(legs.mapType & proc::PROCEDURE_STAR_TRANSITION)
         {
-          sleg.mapType = maptypes::PROCEDURE_STAR_TRANSITION;
+          sleg.mapType = proc::PROCEDURE_STAR_TRANSITION;
           legs.approachLegs.prepend(sleg);
         }
-        else if(legs.mapType & maptypes::PROCEDURE_STAR)
+        else if(legs.mapType & proc::PROCEDURE_STAR)
         {
-          sleg.mapType = maptypes::PROCEDURE_STAR;
+          sleg.mapType = proc::PROCEDURE_STAR;
           legs.approachLegs.prepend(sleg);
         }
-        else if(legs.mapType & maptypes::PROCEDURE_TRANSITION)
+        else if(legs.mapType & proc::PROCEDURE_TRANSITION)
         {
-          sleg.mapType = maptypes::PROCEDURE_TRANSITION;
+          sleg.mapType = proc::PROCEDURE_TRANSITION;
           legs.transitionLegs.prepend(sleg);
         }
-        else if(legs.mapType & maptypes::PROCEDURE_APPROACH)
+        else if(legs.mapType & proc::PROCEDURE_APPROACH)
         {
-          sleg.mapType = maptypes::PROCEDURE_APPROACH;
+          sleg.mapType = proc::PROCEDURE_APPROACH;
           legs.approachLegs.prepend(sleg);
         }
       }
@@ -583,17 +584,17 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
       for(int i = 0; i < legs.size() - 1; i++)
       {
         // Look for the transition from approach to missed
-        maptypes::MapProcedureLeg& leg = legs[i];
+        proc::MapProcedureLeg& leg = legs[i];
         if(leg.isApproach() && legs.at(i + 1).isMissed())
         {
           if(leg.fixType != "R" && legs.runwayEnd.isValid())
           {
             // Not a runway fix and runway reference is valid - add own runway fix
-            maptypes::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
-            rwleg.type = maptypes::DIRECT_TO_RUNWAY;
+            proc::MapProcedureLeg rwleg = createRunwayLeg(leg, legs);
+            rwleg.type = proc::DIRECT_TO_RUNWAY;
             rwleg.altRestriction.alt1 = airport.position.getAltitude() + 50.f; // At 50ft above threshold
             rwleg.line = Line(leg.line.getPos2(), legs.runwayEnd.position);
-            rwleg.mapType = maptypes::PROCEDURE_APPROACH;
+            rwleg.mapType = proc::PROCEDURE_APPROACH;
 
             legs.approachLegs.insert(i + 1 - legs.transitionLegs.size(), rwleg);
             break;
@@ -604,21 +605,21 @@ void ProcedureQuery::processArtificialLegs(const maptypes::MapAirport& airport, 
   }
 }
 
-void ProcedureQuery::processLegErrors(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs)
 {
   legs.hasError = false;
   for(int i = 1; i < legs.size(); i++)
     legs.hasError |= legs.at(i).hasErrorRef();
 }
 
-void ProcedureQuery::processLegsFixRestrictions(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs)
 {
   for(int i = 1; i < legs.size(); i++)
   {
-    maptypes::MapProcedureLeg& leg = legs[i];
-    maptypes::MapProcedureLeg& prevLeg = legs[i - 1];
+    proc::MapProcedureLeg& leg = legs[i];
+    proc::MapProcedureLeg& prevLeg = legs[i - 1];
 
-    if(legs.at(i - 1).isTransition() && legs.at(i).isApproach() && leg.type == maptypes::INITIAL_FIX &&
+    if(legs.at(i - 1).isTransition() && legs.at(i).isApproach() && leg.type == proc::INITIAL_FIX &&
        atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1) &&
        leg.fixIdent == prevLeg.fixIdent)
       // Found the connection between transition and approach with same altitudes
@@ -627,7 +628,7 @@ void ProcedureQuery::processLegsFixRestrictions(maptypes::MapProcedureLegs& legs
   }
 }
 
-void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
 {
   legs.transitionDistance = 0.f;
   legs.approachDistance = 0.f;
@@ -635,21 +636,21 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
 
   for(int i = 0; i < legs.size(); i++)
   {
-    maptypes::MapProcedureLeg& leg = legs[i];
-    const maptypes::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
-    maptypes::ProcedureLegType type = leg.type;
+    proc::MapProcedureLeg& leg = legs[i];
+    const proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    proc::ProcedureLegType type = leg.type;
 
     if(!leg.line.isValid())
       qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
-    else if(type == maptypes::INITIAL_FIX || type == maptypes::START_OF_PROCEDURE)
+    else if(type == proc::INITIAL_FIX || type == proc::START_OF_PROCEDURE)
     {
       leg.calculatedDistance = 0.f;
       leg.calculatedTrueCourse = 0.f;
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
-    else if(contains(type, {maptypes::ARC_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
+    else if(contains(type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
     {
       atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
                                  &leg.geometry);
@@ -657,7 +658,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
       leg.calculatedTrueCourse = 0.f;
     }
     // ===========================================================
-    else if(type == maptypes::COURSE_TO_FIX)
+    else if(type == proc::COURSE_TO_FIX)
     {
       if(leg.interceptPos.isValid())
       {
@@ -674,7 +675,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
       }
     }
     // ===========================================================
-    else if(type == maptypes::PROCEDURE_TURN)
+    else if(type == proc::PROCEDURE_TURN)
     {
       // Distance is towards turn point
       leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.procedureTurnPos));
@@ -688,23 +689,23 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
       leg.geometry << leg.line.getPos1() << leg.procedureTurnPos;
     }
     // ===========================================================
-    else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
-                            maptypes::HEADING_TO_ALTITUDE_TERMINATION,
-                            maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_MANUAL_TERMINATION}))
+    else if(contains(type, {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
+                            proc::HEADING_TO_ALTITUDE_TERMINATION,
+                            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
     {
       leg.calculatedDistance = 2.f;
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     // ===========================================================
-    else if(type == maptypes::TRACK_FROM_FIX_FROM_DISTANCE)
+    else if(type == proc::TRACK_FROM_FIX_FROM_DISTANCE)
     {
       leg.calculatedDistance = leg.distance;
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     // ===========================================================
-    else if(contains(type, {maptypes::HOLD_TO_MANUAL_TERMINATION, maptypes::HOLD_TO_FIX, maptypes::HOLD_TO_ALTITUDE}))
+    else if(contains(type, {proc::HOLD_TO_MANUAL_TERMINATION, proc::HOLD_TO_FIX, proc::HOLD_TO_ALTITUDE}))
     {
       leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
       leg.calculatedTrueCourse = leg.legTrueCourse();
@@ -723,25 +724,25 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
       leg.holdLine.setPos2(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
                                                        opposedCourseDeg(leg.calculatedTrueCourse)));
     }
-    else if(contains(type, {maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE, maptypes::COURSE_TO_DME_DISTANCE,
-                            maptypes::HEADING_TO_DME_DISTANCE_TERMINATION,
-                            maptypes::COURSE_TO_RADIAL_TERMINATION, maptypes::HEADING_TO_RADIAL_TERMINATION,
-                            maptypes::DIRECT_TO_FIX, maptypes::TRACK_TO_FIX,
-                            maptypes::COURSE_TO_INTERCEPT, maptypes::HEADING_TO_INTERCEPT,
-                            maptypes::DIRECT_TO_RUNWAY}))
+    else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
+                            proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                            proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION,
+                            proc::DIRECT_TO_FIX, proc::TRACK_TO_FIX,
+                            proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT,
+                            proc::DIRECT_TO_RUNWAY}))
     {
       leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
       leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
 
-    if(prevLeg != nullptr && !leg.intercept && type != maptypes::INITIAL_FIX)
+    if(prevLeg != nullptr && !leg.intercept && type != proc::INITIAL_FIX)
       // Add distance from any existing gaps, bows or turns except for intercept legs
       leg.calculatedDistance += meterToNm(prevLeg->line.getPos2().distanceMeterTo(leg.line.getPos1()));
 
-    if(leg.calculatedDistance >= maptypes::INVALID_DISTANCE_VALUE / 2)
+    if(leg.calculatedDistance >= map::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedDistance = 0.f;
-    if(leg.calculatedTrueCourse >= maptypes::INVALID_DISTANCE_VALUE / 2)
+    if(leg.calculatedTrueCourse >= map::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedTrueCourse = 0.f;
 
     if(leg.isTransition() || leg.isSidTransition() || leg.isStarTransition())
@@ -755,7 +756,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(maptypes::MapProcedureLegs& le
   }
 }
 
-void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs)
 {
   // Assumptions: 3.5 nm per min
   // Climb 500 ft/min
@@ -763,15 +764,15 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
   Pos lastPos;
   for(int i = 0; i < legs.size(); ++i)
   {
-    if(legs.mapType & maptypes::PROCEDURE_DEPARTURE && i == 0)
+    if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
       lastPos = legs.runwayEnd.position;
 
     Pos curPos;
-    maptypes::MapProcedureLeg& leg = legs[i];
-    maptypes::ProcedureLegType type = leg.type;
+    proc::MapProcedureLeg& leg = legs[i];
+    proc::ProcedureLegType type = leg.type;
 
     // ===========================================================
-    if(type == maptypes::ARC_TO_FIX)
+    if(type == proc::ARC_TO_FIX)
     {
       curPos = leg.fixPos;
 
@@ -780,7 +781,7 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
     // ===========================================================
-    else if(type == maptypes::COURSE_TO_FIX)
+    else if(type == proc::COURSE_TO_FIX)
     {
       // Calculate the leading extended position to the fix
       Pos extended = leg.fixPos.endpoint(nmToMeter(leg.distance),
@@ -859,13 +860,13 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       curPos = leg.fixPos;
     }
     // ===========================================================
-    else if(contains(type, {maptypes::DIRECT_TO_FIX, maptypes::INITIAL_FIX, maptypes::START_OF_PROCEDURE,
-                            maptypes::TRACK_TO_FIX, maptypes::CONSTANT_RADIUS_ARC}))
+    else if(contains(type, {proc::DIRECT_TO_FIX, proc::INITIAL_FIX, proc::START_OF_PROCEDURE,
+                            proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
     {
       curPos = leg.fixPos;
     }
     // ===========================================================
-    else if(type == maptypes::PROCEDURE_TURN)
+    else if(type == proc::PROCEDURE_TURN)
     {
       float course;
       if(leg.turnDirection == "L")
@@ -880,13 +881,13 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       curPos = leg.procedureTurnPos;
     }
     // ===========================================================
-    else if(contains(type, {maptypes::COURSE_TO_ALTITUDE, maptypes::FIX_TO_ALTITUDE,
-                            maptypes::HEADING_TO_ALTITUDE_TERMINATION}))
+    else if(contains(type, {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
+                            proc::HEADING_TO_ALTITUDE_TERMINATION}))
     {
       // TODO calculate distance by altitude
       Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
 
-      if(!start.isValid() && legs.mapType & maptypes::PROCEDURE_DEPARTURE && legs.runwayEnd.isValid())
+      if(!start.isValid() && legs.mapType & proc::PROCEDURE_DEPARTURE && legs.runwayEnd.isValid())
         start = legs.runwayEnd.position;
 
       if(!lastPos.isValid())
@@ -895,7 +896,7 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       leg.displayText << tr("Altitude");
     }
     // ===========================================================
-    else if(contains(type, {maptypes::COURSE_TO_RADIAL_TERMINATION, maptypes::HEADING_TO_RADIAL_TERMINATION}))
+    else if(contains(type, {proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
     {
       Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
       if(!lastPos.isValid())
@@ -916,7 +917,7 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta, 'f', 0);
     }
     // ===========================================================
-    else if(type == maptypes::TRACK_FROM_FIX_FROM_DISTANCE)
+    else if(type == proc::TRACK_FROM_FIX_FROM_DISTANCE)
     {
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
@@ -927,8 +928,8 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
-    else if(contains(type, {maptypes::TRACK_FROM_FIX_TO_DME_DISTANCE, maptypes::COURSE_TO_DME_DISTANCE,
-                            maptypes::HEADING_TO_DME_DISTANCE_TERMINATION}))
+    else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
+                            proc::HEADING_TO_DME_DISTANCE_TERMINATION}))
     {
       Pos start = lastPos.isValid() ? lastPos : (leg.fixPos.isValid() ? leg.fixPos : leg.recFixPos);
 
@@ -952,7 +953,7 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
     }
     // ===========================================================
-    else if(contains(type, {maptypes::FROM_FIX_TO_MANUAL_TERMINATION, maptypes::HEADING_TO_MANUAL_TERMINATION}))
+    else if(contains(type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
     {
       if(!lastPos.isValid())
         lastPos = leg.fixPos;
@@ -965,25 +966,25 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
       leg.displayText << tr("Manual");
     }
     // ===========================================================
-    else if(type == maptypes::HOLD_TO_ALTITUDE)
+    else if(type == proc::HOLD_TO_ALTITUDE)
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Altitude");
     }
     // ===========================================================
-    else if(type == maptypes::HOLD_TO_FIX)
+    else if(type == proc::HOLD_TO_FIX)
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Single");
     }
     // ===========================================================
-    else if(type == maptypes::HOLD_TO_MANUAL_TERMINATION)
+    else if(type == proc::HOLD_TO_MANUAL_TERMINATION)
     {
       curPos = leg.fixPos;
       leg.displayText << tr("Manual");
     }
 
-    if(legs.mapType & maptypes::PROCEDURE_DEPARTURE && i == 0)
+    if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
       // First leg of a SID start at runway end
       leg.line = Line(legs.runwayEnd.position, curPos);
     else
@@ -996,22 +997,22 @@ void ProcedureQuery::processLegs(maptypes::MapProcedureLegs& legs)
   }
 }
 
-void ProcedureQuery::processCourseInterceptLegs(maptypes::MapProcedureLegs& legs)
+void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs)
 {
   for(int i = 0; i < legs.size(); ++i)
   {
-    maptypes::MapProcedureLeg& leg = legs[i];
-    maptypes::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
-    maptypes::MapProcedureLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
-    maptypes::MapProcedureLeg *secondNextLeg = i < legs.size() - 2 ? &legs[i + 2] : nullptr;
+    proc::MapProcedureLeg& leg = legs[i];
+    proc::MapProcedureLeg *prevLeg = i > 0 ? &legs[i - 1] : nullptr;
+    proc::MapProcedureLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
+    proc::MapProcedureLeg *secondNextLeg = i < legs.size() - 2 ? &legs[i + 2] : nullptr;
 
-    if(contains(leg.type, {maptypes::COURSE_TO_INTERCEPT, maptypes::HEADING_TO_INTERCEPT}))
+    if(contains(leg.type, {proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT}))
     {
       if(nextLeg != nullptr)
       {
-        maptypes::MapProcedureLeg *next = nextLeg->type == maptypes::INITIAL_FIX ? secondNextLeg : nextLeg;
+        proc::MapProcedureLeg *next = nextLeg->type == proc::INITIAL_FIX ? secondNextLeg : nextLeg;
 
-        if(nextLeg->type == maptypes::INITIAL_FIX)
+        if(nextLeg->type == proc::INITIAL_FIX)
           // Do not show the cut-off initial fix
           nextLeg->disabled = true;
 
@@ -1166,37 +1167,37 @@ void ProcedureQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simT
 }
 
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                        maptypes::MapProcedureTypes type)
+                                                        const proc::MapProcedureTypes& type)
 {
-  if(type & maptypes::PROCEDURE_SID)
+  if(type & proc::PROCEDURE_SID)
   {
     properties.remove("sidappr");
     properties.remove("sidapprdistance");
     properties.remove("sidapprsize");
   }
 
-  if(type & maptypes::PROCEDURE_SID_TRANSITION)
+  if(type & proc::PROCEDURE_SID_TRANSITION)
   {
     properties.remove("sidtrans");
     properties.remove("sidtransdistance");
     properties.remove("sidtranssize");
   }
 
-  if(type & maptypes::PROCEDURE_STAR)
+  if(type & proc::PROCEDURE_STAR)
   {
     properties.remove("star");
     properties.remove("stardistance");
     properties.remove("starsize");
   }
 
-  if(type & maptypes::PROCEDURE_STAR_TRANSITION)
+  if(type & proc::PROCEDURE_STAR_TRANSITION)
   {
     properties.remove("startrans");
     properties.remove("startransdistance");
     properties.remove("startranssize");
   }
 
-  if(type & maptypes::PROCEDURE_TRANSITION)
+  if(type & proc::PROCEDURE_TRANSITION)
   {
     properties.remove("transition");
     properties.remove("transitiontype");
@@ -1204,7 +1205,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
     properties.remove("transitionsize");
   }
 
-  if(type & maptypes::PROCEDURE_APPROACH)
+  if(type & proc::PROCEDURE_APPROACH)
   {
     properties.remove("approach");
     properties.remove("approachtype");
@@ -1215,9 +1216,9 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
 }
 
 void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>& properties,
-                                                        const maptypes::MapProcedureLegs& arrivalLegs,
-                                                        const maptypes::MapProcedureLegs& starLegs,
-                                                        const maptypes::MapProcedureLegs& departureLegs)
+                                                        const proc::MapProcedureLegs& arrivalLegs,
+                                                        const proc::MapProcedureLegs& starLegs,
+                                                        const proc::MapProcedureLegs& departureLegs)
 {
   if(!departureLegs.isEmpty())
   {
@@ -1273,11 +1274,11 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
 }
 
 bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                                    const maptypes::MapAirport& departure,
-                                                    const maptypes::MapAirport& destination,
-                                                    maptypes::MapProcedureLegs& arrivalLegs,
-                                                    maptypes::MapProcedureLegs& starLegs,
-                                                    maptypes::MapProcedureLegs& departureLegs)
+                                                    const map::MapAirport& departure,
+                                                    const map::MapAirport& destination,
+                                                    proc::MapProcedureLegs& arrivalLegs,
+                                                    proc::MapProcedureLegs& starLegs,
+                                                    proc::MapProcedureLegs& departureLegs)
 {
   bool error = false;
 
@@ -1390,7 +1391,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
     {
-      const maptypes::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
+      const proc::MapProcedureLegs *legs = getTransitionLegs(departure, sidTransId);
       if(legs != nullptr)
         departureLegs = *legs;
       else
@@ -1398,7 +1399,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
     else if(sidApprId != -1) // Fetch and copy SID only from cache
     {
-      const maptypes::MapProcedureLegs *legs = getApproachLegs(departure, sidApprId);
+      const proc::MapProcedureLegs *legs = getApproachLegs(departure, sidApprId);
       if(legs != nullptr)
         departureLegs = *legs;
       else
@@ -1407,7 +1408,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
     if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
     {
-      const maptypes::MapProcedureLegs *legs = getTransitionLegs(destination, transitionId);
+      const proc::MapProcedureLegs *legs = getTransitionLegs(destination, transitionId);
       if(legs != nullptr)
         arrivalLegs = *legs;
       else
@@ -1415,7 +1416,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
     else if(approachId != -1) // Fetch and copy approach only from cache
     {
-      const maptypes::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
+      const proc::MapProcedureLegs *legs = getApproachLegs(destination, approachId);
       if(legs != nullptr)
         arrivalLegs = *legs;
       else
@@ -1424,7 +1425,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
     if(starTransId != -1)
     {
-      const maptypes::MapProcedureLegs *legs = getTransitionLegs(destination, starTransId);
+      const proc::MapProcedureLegs *legs = getTransitionLegs(destination, starTransId);
       if(legs != nullptr)
         starLegs = *legs;
       else
@@ -1432,7 +1433,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
     else if(starId != -1)
     {
-      const maptypes::MapProcedureLegs *legs = getApproachLegs(destination, starId);
+      const proc::MapProcedureLegs *legs = getApproachLegs(destination, starId);
       if(legs != nullptr)
         starLegs = *legs;
       else
@@ -1442,7 +1443,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   return !error;
 }
 
-int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atools::sql::SqlQuery *query,
+int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                                        const QString& suffix, float distance, int size, bool transition)
 {
   int procedureId = -1;
@@ -1465,7 +1466,7 @@ int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atoo
   {
     for(int id : ids)
     {
-      const maptypes::MapProcedureLegs *legs = nullptr;
+      const proc::MapProcedureLegs *legs = nullptr;
 
       if(transition)
         legs = getTransitionLegs(airport, id);
@@ -1476,7 +1477,7 @@ int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atoo
       int legsize = transition ? legs->transitionLegs.size() : legs->approachLegs.size();
 
       if(legs != nullptr &&
-         (!(distance < maptypes::INVALID_DISTANCE_VALUE) || atools::almostEqual(legdist, distance, 0.5f)) &&
+         (!(distance < map::INVALID_DISTANCE_VALUE) || atools::almostEqual(legdist, distance, 0.5f)) &&
          (size == -1 || size == legsize))
       {
         procedureId = id;
@@ -1488,7 +1489,7 @@ int ProcedureQuery::findProcedureLegId(const maptypes::MapAirport& airport, atoo
   return procedureId;
 }
 
-void ProcedureQuery::assignType(maptypes::MapProcedureLegs& procedure)
+void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure)
 {
   if(simulatorType == atools::fs::FsPaths::P3D_V3 && procedure.approachType == "GPS" &&
      (procedure.approachSuffix == "A" || procedure.approachSuffix == "D") && procedure.gpsOverlay)
@@ -1497,32 +1498,32 @@ void ProcedureQuery::assignType(maptypes::MapProcedureLegs& procedure)
     {
       if(!procedure.approachLegs.isEmpty())
       {
-        procedure.mapType = maptypes::PROCEDURE_STAR;
+        procedure.mapType = proc::PROCEDURE_STAR;
         for(MapProcedureLeg& leg : procedure.approachLegs)
-          leg.mapType = maptypes::PROCEDURE_STAR;
+          leg.mapType = proc::PROCEDURE_STAR;
       }
 
       if(!procedure.transitionLegs.isEmpty())
       {
-        procedure.mapType |= maptypes::PROCEDURE_STAR_TRANSITION;
+        procedure.mapType |= proc::PROCEDURE_STAR_TRANSITION;
         for(MapProcedureLeg& leg : procedure.transitionLegs)
-          leg.mapType = maptypes::PROCEDURE_STAR_TRANSITION;
+          leg.mapType = proc::PROCEDURE_STAR_TRANSITION;
       }
     }
     else if(procedure.approachSuffix == "D")
     {
       if(!procedure.approachLegs.isEmpty())
       {
-        procedure.mapType = maptypes::PROCEDURE_SID;
+        procedure.mapType = proc::PROCEDURE_SID;
         for(MapProcedureLeg& leg : procedure.approachLegs)
-          leg.mapType = maptypes::PROCEDURE_SID;
+          leg.mapType = proc::PROCEDURE_SID;
       }
 
       if(!procedure.transitionLegs.isEmpty())
       {
-        procedure.mapType |= maptypes::PROCEDURE_SID_TRANSITION;
+        procedure.mapType |= proc::PROCEDURE_SID_TRANSITION;
         for(MapProcedureLeg& leg : procedure.transitionLegs)
-          leg.mapType = maptypes::PROCEDURE_SID_TRANSITION;
+          leg.mapType = proc::PROCEDURE_SID_TRANSITION;
       }
     }
   }
@@ -1530,24 +1531,24 @@ void ProcedureQuery::assignType(maptypes::MapProcedureLegs& procedure)
   {
     if(!procedure.approachLegs.isEmpty())
     {
-      procedure.mapType = maptypes::PROCEDURE_APPROACH;
+      procedure.mapType = proc::PROCEDURE_APPROACH;
       for(MapProcedureLeg& leg : procedure.approachLegs)
-        leg.mapType = leg.missed ? maptypes::PROCEDURE_MISSED : maptypes::PROCEDURE_APPROACH;
+        leg.mapType = leg.missed ? proc::PROCEDURE_MISSED : proc::PROCEDURE_APPROACH;
     }
 
     if(!procedure.transitionLegs.isEmpty())
     {
-      procedure.mapType |= maptypes::PROCEDURE_TRANSITION;
+      procedure.mapType |= proc::PROCEDURE_TRANSITION;
       for(MapProcedureLeg& leg : procedure.transitionLegs)
-        leg.mapType = maptypes::PROCEDURE_TRANSITION;
+        leg.mapType = proc::PROCEDURE_TRANSITION;
     }
   }
 }
 
-maptypes::MapProcedureLeg ProcedureQuery::createRunwayLeg(const maptypes::MapProcedureLeg& leg,
-                                                          const maptypes::MapProcedureLegs& legs)
+proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLeg& leg,
+                                                      const proc::MapProcedureLegs& legs)
 {
-  maptypes::MapProcedureLeg rwleg;
+  proc::MapProcedureLeg rwleg;
   rwleg.approachId = legs.ref.approachId;
   rwleg.transitionId = legs.ref.transitionId;
   rwleg.approachId = legs.ref.approachId;
@@ -1556,7 +1557,7 @@ maptypes::MapProcedureLeg ProcedureQuery::createRunwayLeg(const maptypes::MapPro
   // Use a generated id base on the previous leg id
   rwleg.legId = RUNWAY_LEG_ID_BASE + leg.legId;
 
-  rwleg.altRestriction.descriptor = maptypes::MapAltRestriction::AT;
+  rwleg.altRestriction.descriptor = proc::MapAltRestriction::AT;
   rwleg.altRestriction.alt2 = 0.f;
   // geometry is populated later
   rwleg.fixType = "R";
@@ -1574,10 +1575,10 @@ maptypes::MapProcedureLeg ProcedureQuery::createRunwayLeg(const maptypes::MapPro
   return rwleg;
 }
 
-maptypes::MapProcedureLeg ProcedureQuery::createStartLeg(const maptypes::MapProcedureLeg& leg,
-                                                         const maptypes::MapProcedureLegs& legs)
+proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg& leg,
+                                                     const proc::MapProcedureLegs& legs)
 {
-  maptypes::MapProcedureLeg sleg;
+  proc::MapProcedureLeg sleg;
   sleg.approachId = legs.ref.approachId;
   sleg.transitionId = legs.ref.transitionId;
   sleg.approachId = legs.ref.approachId;

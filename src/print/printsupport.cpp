@@ -95,7 +95,7 @@ void PrintSupport::fillWeatherCache()
 
   if(!route.isEmpty())
   {
-    maptypes::WeatherContext currentWeatherContext;
+    map::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContext(currentWeatherContext, route.first().getAirport());
     mainWindow->buildWeatherContext(currentWeatherContext, route.last().getAirport());
   }
@@ -215,7 +215,7 @@ void PrintSupport::createFlightplanDocuments()
 
   if(printAnyDeparture || printAnyDestination)
   {
-    maptypes::WeatherContext weatherContext;
+    map::WeatherContext weatherContext;
 
     // print start and destination information if these are airports
     if(printAnyDeparture)

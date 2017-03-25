@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_PROCTREECONTROLLER_H
 #define LITTLENAVMAP_PROCTREECONTROLLER_H
 
-#include "common/maptypes.h"
+#include "common/proctypes.h"
 #include "search/abstractsearch.h"
 
 #include <QBitArray>
@@ -60,7 +60,7 @@ public:
   virtual ~ProcedureSearch();
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
-  void showProcedures(maptypes::MapAirport airport);
+  void showProcedures(map::MapAirport airport);
 
   /* Save tree view state */
   virtual void saveState() override;
@@ -73,25 +73,25 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* No op overrides */
-  virtual void getSelectedMapObjects(maptypes::MapSearchResult& result) const override;
+  virtual void getSelectedMapObjects(map::MapSearchResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void updateUnits() override;
   virtual void updateTableSelection() override;
 
 signals:
   /* Show approaches and highlight circles on the map */
-  void procedureSelected(maptypes::MapProcedureRef);
-  void procedureLegSelected(maptypes::MapProcedureRef);
+  void procedureSelected(proc::MapProcedureRef);
+  void procedureLegSelected(proc::MapProcedureRef);
 
   /* Zoom to approaches/transitions or waypoints */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const maptypes::MapProcedureLegs& legs);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
 
   /* Show information info window on navaid on double click */
-  void showInformation(maptypes::MapSearchResult result);
+  void showInformation(map::MapSearchResult result);
 
 private:
   enum FilterIndex
@@ -122,10 +122,10 @@ private:
                                        bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
-  QTreeWidgetItem *buildLegItem(const maptypes::MapProcedureLeg& leg);
+  QTreeWidgetItem *buildLegItem(const proc::MapProcedureLeg& leg);
 
   /* Highlight missing navaids red */
-  void setItemStyle(QTreeWidgetItem *item, const maptypes::MapProcedureLeg& leg);
+  void setItemStyle(QTreeWidgetItem *item, const proc::MapProcedureLeg& leg);
 
   /* Show transition, approach or waypoint on map */
   void showEntry(QTreeWidgetItem *item, bool doubleClick);
@@ -133,9 +133,9 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  QList<QTreeWidgetItem *> addApproachLegs(const maptypes::MapProcedureLegs *legs, int transitionId);
+  QList<QTreeWidgetItem *> addApproachLegs(const proc::MapProcedureLegs *legs, int transitionId);
 
-  QList<QTreeWidgetItem *> addTransitionLegs(const maptypes::MapProcedureLegs *legs);
+  QList<QTreeWidgetItem *> addTransitionLegs(const proc::MapProcedureLegs *legs);
 
   void fillApproachTreeWidget();
 
@@ -146,7 +146,7 @@ private:
   QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
-  maptypes::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
+  proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   void updateHeaderLabel();
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);
@@ -156,7 +156,7 @@ private:
   void dockVisibilityChanged(bool visible);
 
   // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<maptypes::MapProcedureRef> itemIndex;
+  QVector<proc::MapProcedureRef> itemIndex;
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set
@@ -168,7 +168,7 @@ private:
   QTreeWidget *treeWidget = nullptr;
   MainWindow *mainWindow = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
-  maptypes::MapAirport currentAirport;
+  map::MapAirport currentAirport;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;

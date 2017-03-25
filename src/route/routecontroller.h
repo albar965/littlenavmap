@@ -149,10 +149,10 @@ public:
   void postDatabaseLoad();
 
   /* Replaces departure airport or adds departure if not valid. Adds best start position (runway). */
-  void routeSetDeparture(maptypes::MapAirport airport);
+  void routeSetDeparture(map::MapAirport airport);
 
   /* Replaces destination airport or adds destination if not valid */
-  void routeSetDestination(maptypes::MapAirport airport);
+  void routeSetDestination(map::MapAirport airport);
 
   /*
    * Adds a navaid, airport or user defined position to flight plan.
@@ -161,20 +161,20 @@ public:
    * @param type Type of object to insert. maptypes::USER if userPos is set.
    * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1.
    */
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAttachProcedure(const maptypes::MapProcedureLegs& legs);
+  void routeAttachProcedure(const proc::MapProcedureLegs& legs);
 
   /* Same as above but replaces waypoint at legIndex */
-  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
 
   /* Delete waypoint at the given index. Will also delete departure or destination */
   void routeDelete(int index);
 
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
-  void routeSetParking(maptypes::MapParking parking);
+  void routeSetParking(map::MapParking parking);
 
   /* Shows the dialog to select departure parking or start position.
    *  @return true if position was set. false is dialog was canceled. */
@@ -222,7 +222,7 @@ public:
 
   void editUserWaypointName(int index);
 
-  void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapObjectTypes types);
 
   void activateLeg(int index);
 
@@ -245,10 +245,10 @@ signals:
   void routeChanged(bool geometryChanged);
 
   /* Show information about the airports or navaids in the search result */
-  void showInformation(maptypes::MapSearchResult result);
+  void showInformation(map::MapSearchResult result);
 
   /* Show approach information about the airport */
-  void showApproaches(maptypes::MapAirport airport);
+  void showApproaches(map::MapAirport airport);
 
   /* Emitted before route calculation to stop any background tasks */
   void preRouteCalc();
@@ -276,7 +276,7 @@ private:
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);
 
-  void routeSetStartPosition(maptypes::MapStart start);
+  void routeSetStartPosition(map::MapStart start);
 
   void updateWindowLabel();
 
@@ -297,8 +297,8 @@ private:
 
   void routeToFlightPlan();
 
-  void routeSetDepartureInternal(const maptypes::MapAirport& airport);
-  void routeSetDestinationInternal(const maptypes::MapAirport& airport);
+  void routeSetDepartureInternal(const map::MapAirport& airport);
+  void routeSetDestinationInternal(const map::MapAirport& airport);
 
   void updateTableModel();
 
@@ -351,7 +351,7 @@ private:
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
-  maptypes::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
+  proc::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;

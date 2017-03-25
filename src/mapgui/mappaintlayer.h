@@ -70,13 +70,13 @@ public:
   }
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
-  void setShowMapObjects(maptypes::MapObjectTypes type, bool show);
+  void setShowMapObjects(map::MapObjectTypes type, bool show);
 
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  maptypes::MapObjectTypes getShownMapObjects() const
+  map::MapObjectTypes getShownMapObjects() const
   {
     return objectTypes;
   }
@@ -110,7 +110,7 @@ private:
   static Q_DECL_CONSTEXPR float DISTANCE_CUT_OFF_LIMIT = 4000.f;
 
   /* Map objects currently shown */
-  maptypes::MapObjectTypes objectTypes;
+  map::MapObjectTypes objectTypes;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;

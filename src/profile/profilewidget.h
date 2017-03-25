@@ -109,7 +109,7 @@ private:
   struct ElevationLegList
   {
     Route route; /* Copy from route controller.
-                                         * Need a copy to avoid thread synchronization problems. */
+                  * Need a copy to avoid thread synchronization problems. */
     QList<ElevationLeg> elevationLegs; /* Elevation data for each route leg */
     float maxElevationFt = 0.f /* Maximum ground elevation for the route */,
           totalDistance = 0.f /* Total route distance in nautical miles */;

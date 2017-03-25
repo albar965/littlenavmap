@@ -67,6 +67,12 @@ Q_DECLARE_FLAGS(MouseStates, MouseState);
 Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates);
 }
 
+namespace proc {
+struct MapProcedureLeg;
+
+struct MapProcedureLegs;
+
+}
 class MapWidget :
   public Marble::MarbleWidget
 {
@@ -102,11 +108,11 @@ public:
   void showAircraft(bool centerAircraftChecked);
 
   /* Update hightlighted objects */
-  void changeSearchHighlights(const maptypes::MapSearchResult& positions);
+  void changeSearchHighlights(const map::MapSearchResult& positions);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeApproachLegHighlights(const maptypes::MapProcedureLeg *leg);
+  void changeApproachLegHighlights(const proc::MapProcedureLeg *leg);
 
-  void changeApproachHighlight(const maptypes::MapProcedureLegs& approach);
+  void changeApproachHighlight(const proc::MapProcedureLegs& approach);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -140,16 +146,16 @@ public:
   }
 
   /* Getters used by the painters */
-  const maptypes::MapSearchResult& getSearchHighlights() const;
-  const maptypes::MapProcedureLeg& getApproachLegHighlights() const;
+  const map::MapSearchResult& getSearchHighlights() const;
+  const proc::MapProcedureLeg& getApproachLegHighlights() const;
 
-  const maptypes::MapProcedureLegs& getApproachHighlight() const;
+  const proc::MapProcedureLegs& getApproachHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 
-  const QList<maptypes::RangeMarker>& getRangeRings() const;
+  const QList<map::RangeMarker>& getRangeRings() const;
 
-  const QList<maptypes::DistanceMarker>& getDistanceMarkers() const;
+  const QList<map::DistanceMarker>& getDistanceMarkers() const;
 
   const AircraftTrack& getAircraftTrack() const
   {
@@ -167,7 +173,7 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
 
   /* Add radio navaid range ring */
-  void addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type, const QString& ident,
+  void addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type, const QString& ident,
                        int frequency, int range);
 
   /* Removes all range rings and distance measurement lines */
@@ -206,8 +212,8 @@ public:
   void setShowMapPois(bool show);
 
   /* Define which airport or navaid types are shown on the map */
-  void setShowMapFeatures(maptypes::MapObjectTypes type, bool show);
-  maptypes::MapObjectTypes getShownMapFeatures();
+  void setShowMapFeatures(map::MapObjectTypes type, bool show);
+  map::MapObjectTypes getShownMapFeatures();
 
   /* Change map detail level */
   void increaseMapDetail();
@@ -284,35 +290,35 @@ signals:
   void searchMarkChanged(const atools::geo::Pos& mark);
 
   /* Show a map object in the search panel (context menu) */
-  void showInSearch(maptypes::MapObjectTypes type, const QString& ident, const QString& region,
+  void showInSearch(map::MapObjectTypes type, const QString& ident, const QString& region,
                     const QString& airportIdent);
 
   /* Set parking position, departure, destination for flight plan from context menu */
-  void routeSetParkingStart(maptypes::MapParking parking);
+  void routeSetParkingStart(map::MapParking parking);
 
   /* Set route departure or destination from context menu */
-  void routeSetStart(maptypes::MapAirport ap);
-  void routeSetDest(maptypes::MapAirport ap);
+  void routeSetStart(map::MapAirport ap);
+  void routeSetDest(map::MapAirport ap);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
    *  index = 0: prepend to route
    *  index = size()-1: append to route */
-  void routeAdd(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int legIndex);
-  void routeReplace(int id, atools::geo::Pos userPos, maptypes::MapObjectTypes type, int oldIndex);
+  void routeAdd(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int legIndex);
+  void routeReplace(int id, atools::geo::Pos userPos, map::MapObjectTypes type, int oldIndex);
 
   /* Update action state (disabled/enabled) */
   void updateActionStates();
 
   /* Show information about objects from single click or context menu */
-  void showInformation(maptypes::MapSearchResult result);
+  void showInformation(map::MapSearchResult result);
 
   /* Show approaches from context menu */
-  void showApproaches(maptypes::MapAirport airport);
+  void showApproaches(map::MapAirport airport);
 
   /* Aircraft track was pruned and needs to be updated */
   void aircraftTrackPruned();
 
-  void shownMapFeaturesChanged(maptypes::MapObjectTypes types);
+  void shownMapFeaturesChanged(map::MapObjectTypes types);
 
 private:
   bool eventFilter(QObject *obj, QEvent *e) override;
@@ -371,7 +377,8 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
-  maptypes::MapSearchResult mapSearchResultTooltip;
+  map::MapSearchResult mapSearchResultTooltip;
+  QList<proc::MapProcedurePoint> procPointsTooltip;
   MapTooltip *mapTooltip;
 
   MainWindow *mainWindow;
@@ -388,7 +395,7 @@ private:
   /* Distance marker that is changed using drag and drop */
   int currentDistanceMarkerIndex = -1;
   /* Backup of distance marker for drag and drop in case the action is cancelled */
-  maptypes::DistanceMarker distanceMarkerBackup;
+  map::DistanceMarker distanceMarkerBackup;
 
   atools::gui::MapPosHistory history;
   Marble::Projection currentProjection;

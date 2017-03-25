@@ -23,7 +23,7 @@
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
-using namespace maptypes;
+using namespace map;
 
 MapTypesFactory::MapTypesFactory()
 {
@@ -35,7 +35,7 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const SqlRecord& record, maptypes::MapAirport& airport, bool complete)
+void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete)
 {
   fillAirportBase(record, airport, complete);
 
@@ -57,7 +57,7 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, maptypes::MapAirport&
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, maptypes::MapAirport& airport)
+void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport)
 {
   fillAirportBase(record, airport, true);
 
@@ -65,7 +65,7 @@ void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, maptypes::
   airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
-void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, maptypes::MapRunway& runway,
+void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway,
                                  bool overview)
 {
   if(!overview)
@@ -116,7 +116,7 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
     end.heading = atools::geo::opposedCourseDeg(end.heading);
 }
 
-void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirport& ap, bool complete)
+void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
 {
   ap.id = record.valueInt("airport_id");
 
@@ -135,7 +135,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, maptypes::MapAirp
   }
 }
 
-maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, bool overview)
+map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, bool overview)
 {
   MapAirportFlags flags = 0;
   flags |= airportFlag(record, "num_helipad", AP_HELIPAD);
@@ -185,8 +185,8 @@ maptypes::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& rec
   return flags;
 }
 
-maptypes::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, const QString& field,
-                                                       maptypes::MapAirportFlags flag)
+map::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, const QString& field,
+                                                  map::MapAirportFlags flag)
 {
   if(record.isNull(field) || record.valueInt(field) == 0)
     return AP_NONE;
@@ -194,7 +194,7 @@ maptypes::MapAirportFlags MapTypesFactory::airportFlag(const SqlRecord& record, 
     return flag;
 }
 
-void MapTypesFactory::fillVor(const SqlRecord& record, maptypes::MapVor& vor)
+void MapTypesFactory::fillVor(const SqlRecord& record, map::MapVor& vor)
 {
   fillVorBase(record, vor);
 
@@ -202,7 +202,7 @@ void MapTypesFactory::fillVor(const SqlRecord& record, maptypes::MapVor& vor)
   vor.hasDme = !record.isNull("dme_altitude");
 }
 
-void MapTypesFactory::fillVorFromNav(const SqlRecord& record, maptypes::MapVor& vor)
+void MapTypesFactory::fillVorFromNav(const SqlRecord& record, map::MapVor& vor)
 {
   fillVorBase(record, vor);
 
@@ -227,7 +227,7 @@ void MapTypesFactory::fillVorFromNav(const SqlRecord& record, maptypes::MapVor& 
   vor.frequency /= 10;
 }
 
-void MapTypesFactory::fillVorBase(const SqlRecord& record, maptypes::MapVor& vor)
+void MapTypesFactory::fillVorBase(const SqlRecord& record, map::MapVor& vor)
 {
   vor.id = record.valueInt("vor_id");
   vor.ident = record.valueStr("ident");
@@ -241,7 +241,7 @@ void MapTypesFactory::fillVorBase(const SqlRecord& record, maptypes::MapVor& vor
                      record.valueFloat("altitude"));
 }
 
-void MapTypesFactory::fillNdb(const SqlRecord& record, maptypes::MapNdb& ndb)
+void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
 {
   ndb.id = record.valueInt("ndb_id");
   ndb.ident = record.valueStr("ident");
@@ -255,7 +255,7 @@ void MapTypesFactory::fillNdb(const SqlRecord& record, maptypes::MapNdb& ndb)
                      record.valueFloat("altitude"));
 }
 
-void MapTypesFactory::fillWaypoint(const SqlRecord& record, maptypes::MapWaypoint& waypoint)
+void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& waypoint)
 {
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
@@ -268,7 +268,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, maptypes::MapWaypoin
   waypoint.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, maptypes::MapWaypoint& waypoint)
+void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypoint& waypoint)
 {
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
@@ -280,7 +280,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, maptypes::Map
   waypoint.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillAirway(const SqlRecord& record, maptypes::MapAirway& airway)
+void MapTypesFactory::fillAirway(const SqlRecord& record, map::MapAirway& airway)
 {
   airway.id = record.valueInt("airway_id");
   airway.type = airwayTypeFromString(record.valueStr("airway_type"));
@@ -298,7 +298,7 @@ void MapTypesFactory::fillAirway(const SqlRecord& record, maptypes::MapAirway& a
   airway.bounding.extend(airway.to);
 }
 
-void MapTypesFactory::fillMarker(const SqlRecord& record, maptypes::MapMarker& marker)
+void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker)
 {
   marker.id = record.valueInt("marker_id");
   marker.type = record.valueStr("type");
@@ -307,7 +307,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, maptypes::MapMarker& m
                         record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillIls(const SqlRecord& record, maptypes::MapIls& ils)
+void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
 {
   ils.id = record.valueInt("ils_id");
   ils.ident = record.valueStr("ident");
@@ -332,7 +332,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, maptypes::MapIls& ils)
   ils.bounding.extend(ils.pos2);
 }
 
-void MapTypesFactory::fillParking(const SqlRecord& record, maptypes::MapParking& parking)
+void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& parking)
 {
   parking.id = record.valueInt("parking_id");
   parking.airportId = record.valueInt("airport_id");
@@ -348,7 +348,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, maptypes::MapParking&
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 }
 
-void MapTypesFactory::fillStart(const SqlRecord& record, maptypes::MapStart& start)
+void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
 {
   start.id = record.valueInt("start_id");
   start.airportId = record.valueInt("airport_id");

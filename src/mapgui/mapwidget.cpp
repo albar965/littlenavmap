@@ -231,29 +231,29 @@ void MapWidget::updateMapObjectsShown()
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
-  setShowMapFeatures(maptypes::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
-  setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
-  setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
+  setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
+  setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapFeatures(maptypes::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
-  setShowMapFeatures(maptypes::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
+  setShowMapFeatures(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
+  setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
 
-  setShowMapFeatures(maptypes::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
-  setShowMapFeatures(maptypes::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
+  setShowMapFeatures(map::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
+  setShowMapFeatures(map::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
 
   // Force addon airport independent of other settings or not
-  setShowMapFeatures(maptypes::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
+  setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
 
   if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
   {
     // Treat empty airports special
-    setShowMapFeatures(maptypes::AIRPORT_EMPTY, ui->actionMapShowEmptyAirports->isChecked());
+    setShowMapFeatures(map::AIRPORT_EMPTY, ui->actionMapShowEmptyAirports->isChecked());
 
     // Set the general airport flag if any airport is selected
-    setShowMapFeatures(maptypes::AIRPORT,
+    setShowMapFeatures(map::AIRPORT,
                        ui->actionMapShowAirports->isChecked() ||
                        ui->actionMapShowSoftAirports->isChecked() ||
                        ui->actionMapShowEmptyAirports->isChecked() ||
@@ -262,19 +262,19 @@ void MapWidget::updateMapObjectsShown()
   else
   {
     // Treat empty airports as all others
-    setShowMapFeatures(maptypes::AIRPORT_EMPTY, true);
+    setShowMapFeatures(map::AIRPORT_EMPTY, true);
 
     // Set the general airport flag if any airport is selected
-    setShowMapFeatures(maptypes::AIRPORT,
+    setShowMapFeatures(map::AIRPORT,
                        ui->actionMapShowAirports->isChecked() ||
                        ui->actionMapShowSoftAirports->isChecked() ||
                        ui->actionMapShowAddonAirports->isChecked());
   }
 
-  setShowMapFeatures(maptypes::VOR, ui->actionMapShowVor->isChecked());
-  setShowMapFeatures(maptypes::NDB, ui->actionMapShowNdb->isChecked());
-  setShowMapFeatures(maptypes::ILS, ui->actionMapShowIls->isChecked());
-  setShowMapFeatures(maptypes::WAYPOINT, ui->actionMapShowWp->isChecked());
+  setShowMapFeatures(map::VOR, ui->actionMapShowVor->isChecked());
+  setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
+  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
 
   updateVisibleObjectsStatusBar();
 
@@ -293,11 +293,11 @@ void MapWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapWidget::setShowMapFeatures(maptypes::MapObjectTypes type, bool show)
+void MapWidget::setShowMapFeatures(map::MapObjectTypes type, bool show)
 {
   paintLayer->setShowMapObjects(type, show);
 
-  if(type & maptypes::AIRWAYV || type & maptypes::AIRWAYJ)
+  if(type & map::AIRWAYV || type & map::AIRWAYJ)
     screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
 }
 
@@ -309,7 +309,7 @@ void MapWidget::setDetailLevel(int factor)
   screenIndex->updateAirwayScreenGeometry(currentViewBoundingBox);
 }
 
-maptypes::MapObjectTypes MapWidget::getShownMapFeatures()
+map::MapObjectTypes MapWidget::getShownMapFeatures()
 {
   return paintLayer->getShownMapObjects();
 }
@@ -788,8 +788,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // We have a track - update toolbar and menu
     emit updateActionStates();
 
-  if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT ||
-     paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI)
+  if(paintLayer->getShownMapObjects() & map::AIRCRAFT ||
+     paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
   {
     // Show aircraft is enabled
 
@@ -806,7 +806,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Check if any AI aircraft are visible
       bool aiVisible = false;
-      if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_AI)
+      if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI)
       {
         for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraft())
         {
@@ -855,7 +855,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       }
     }
   }
-  else if(paintLayer->getShownMapObjects() & maptypes::AIRCRAFT_TRACK)
+  else if(paintLayer->getShownMapObjects() & map::AIRCRAFT_TRACK)
   {
     // No aircraft but track - update track only
     if(!lastUserAircraft.getPosition().isValid() || diff.manhattanLength() > 4)
@@ -930,22 +930,22 @@ void MapWidget::clearKmlFiles()
   kmlFilePaths.clear();
 }
 
-const maptypes::MapSearchResult& MapWidget::getSearchHighlights() const
+const map::MapSearchResult& MapWidget::getSearchHighlights() const
 {
   return screenIndex->getSearchHighlights();
 }
 
-const maptypes::MapProcedureLeg& MapWidget::getApproachLegHighlights() const
+const proc::MapProcedureLeg& MapWidget::getApproachLegHighlights() const
 {
   return screenIndex->getApproachLegHighlights();
 }
 
-const maptypes::MapProcedureLegs& MapWidget::getApproachHighlight() const
+const proc::MapProcedureLegs& MapWidget::getApproachHighlight() const
 {
   return screenIndex->getApproachHighlight();
 }
 
-void MapWidget::changeApproachHighlight(const maptypes::MapProcedureLegs& approach)
+void MapWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
 {
   cancelDragAll();
   screenIndex->getApproachHighlight() = approach;
@@ -953,13 +953,13 @@ void MapWidget::changeApproachHighlight(const maptypes::MapProcedureLegs& approa
   update();
 }
 
-void MapWidget::changeSearchHighlights(const maptypes::MapSearchResult& positions)
+void MapWidget::changeSearchHighlights(const map::MapSearchResult& positions)
 {
   screenIndex->getSearchHighlights() = positions;
   update();
 }
 
-void MapWidget::changeApproachLegHighlights(const maptypes::MapProcedureLeg *leg)
+void MapWidget::changeApproachLegHighlights(const proc::MapProcedureLeg *leg)
 {
   screenIndex->setApproachLegHighlights(leg);
   update();
@@ -972,27 +972,28 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
   qDebug() << "End route drag" << newPoint << "state" << state << "leg" << leg << "point" << point;
 
   // Get all objects where the mouse button was released
-  maptypes::MapSearchResult result;
-  screenIndex->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result);
+  map::MapSearchResult result;
+  QList<proc::MapProcedurePoint> procPoints;
+  screenIndex->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, procPoints);
 
   CoordinateConverter conv(viewport());
 
   // Get objects from cache - already present objects will be skipped
   mapQuery->getNearestObjects(conv, paintLayer->getMapLayer(), false,
                               paintLayer->getShownMapObjects() &
-                              (maptypes::AIRPORT_ALL | maptypes::VOR | maptypes::NDB | maptypes::WAYPOINT),
+                              (map::AIRPORT_ALL | map::VOR | map::NDB | map::WAYPOINT),
                               newPoint.x(), newPoint.y(), screenSearchDistance, result);
 
   int totalSize = result.airports.size() + result.vors.size() + result.ndbs.size() + result.waypoints.size();
 
   int id = -1;
-  maptypes::MapObjectTypes type = maptypes::NONE;
+  map::MapObjectTypes type = map::NONE;
   Pos pos = atools::geo::EMPTY_POS;
   if(totalSize == 0)
   {
     // Nothing at the position - add userpoint
     qDebug() << "add userpoint";
-    type = maptypes::USER;
+    type = map::USER;
   }
   else if(totalSize == 1)
   {
@@ -1002,22 +1003,22 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     if(!result.airports.isEmpty())
     {
       id = result.airports.first().id;
-      type = maptypes::AIRPORT;
+      type = map::AIRPORT;
     }
     else if(!result.vors.isEmpty())
     {
       id = result.vors.first().id;
-      type = maptypes::VOR;
+      type = map::VOR;
     }
     else if(!result.ndbs.isEmpty())
     {
       id = result.ndbs.first().id;
-      type = maptypes::NDB;
+      type = map::NDB;
     }
     else if(!result.waypoints.isEmpty())
     {
       id = result.waypoints.first().id;
-      type = maptypes::WAYPOINT;
+      type = map::WAYPOINT;
     }
   }
   else
@@ -1033,11 +1034,11 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     QString menuPrefix(tr("Add ")), menuSuffix(tr(" to Flight Plan"));
     SymbolPainter symbolPainter;
 
-    for(const maptypes::MapAirport& obj : result.airports)
+    for(const map::MapAirport& obj : result.airports)
     {
       QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
-                                    menuPrefix + maptypes::airportText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, maptypes::AIRPORT}));
+                                    menuPrefix + map::airportText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, map::AIRPORT}));
       menu.addAction(action);
     }
 
@@ -1046,25 +1047,25 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       // There will be more entries - add a separator
       menu.addSeparator();
 
-    for(const maptypes::MapVor& obj : result.vors)
+    for(const map::MapVor& obj : result.vors)
     {
       QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE),
-                                    menuPrefix + maptypes::vorText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, maptypes::VOR}));
+                                    menuPrefix + map::vorText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, map::VOR}));
       menu.addAction(action);
     }
-    for(const maptypes::MapNdb& obj : result.ndbs)
+    for(const map::MapNdb& obj : result.ndbs)
     {
       QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE),
-                                    menuPrefix + maptypes::ndbText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, maptypes::NDB}));
+                                    menuPrefix + map::ndbText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, map::NDB}));
       menu.addAction(action);
     }
-    for(const maptypes::MapWaypoint& obj : result.waypoints)
+    for(const map::MapWaypoint& obj : result.waypoints)
     {
       QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
-                                    menuPrefix + maptypes::waypointText(obj) + menuSuffix, this);
-      action->setData(QVariantList({obj.id, maptypes::WAYPOINT}));
+                                    menuPrefix + map::waypointText(obj) + menuSuffix, this);
+      action->setData(QVariantList({obj.id, map::WAYPOINT}));
       menu.addAction(action);
     }
 
@@ -1073,7 +1074,7 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
     {
       QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
                                     menuPrefix + "Userpoint" + menuSuffix, this);
-      action->setData(QVariantList({-1, maptypes::USER}));
+      action->setData(QVariantList({-1, map::USER}));
       menu.addAction(action);
     }
 
@@ -1090,17 +1091,17 @@ void MapWidget::updateRouteFromDrag(QPoint newPoint, mw::MouseStates state, int 
       // Get id and type from selected action
       QVariantList data = action->data().toList();
       id = data.first().toInt();
-      type = maptypes::MapObjectTypes(data.at(1).toInt());
+      type = map::MapObjectTypes(data.at(1).toInt());
     }
 
     mouseState &= ~mw::DRAG_POST_MENU;
   }
 
-  if(type == maptypes::USER)
+  if(type == map::USER)
     // Get position for new user point from from screen
     pos = conv.sToW(newPoint.x(), newPoint.y());
 
-  if((id != -1 && type != maptypes::NONE) || type == maptypes::USER)
+  if((id != -1 && type != map::NONE) || type == map::USER)
   {
     if(leg != -1)
       emit routeAdd(id, pos, type, leg);
@@ -1224,18 +1225,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   ui->actionMapEditUserWaypoint->setEnabled(false);
 
   // Get objects near position
-  maptypes::MapSearchResult result;
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result);
+  map::MapSearchResult result;
+  QList<proc::MapProcedurePoint> procPoints;
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDistance, result, procPoints);
 
-  maptypes::MapAirport *airport = nullptr;
+  map::MapAirport *airport = nullptr;
   SimConnectAircraft *aiAircraft = nullptr;
   SimConnectUserAircraft *userAircraft = nullptr;
-  maptypes::MapVor *vor = nullptr;
-  maptypes::MapNdb *ndb = nullptr;
-  maptypes::MapWaypoint *waypoint = nullptr;
-  maptypes::MapUserpoint *userpoint = nullptr;
-  maptypes::MapAirway *airway = nullptr;
-  maptypes::MapParking *parking = nullptr;
+  map::MapVor *vor = nullptr;
+  map::MapNdb *ndb = nullptr;
+  map::MapWaypoint *waypoint = nullptr;
+  map::MapUserpoint *userpoint = nullptr;
+  map::MapAirway *airway = nullptr;
+  map::MapParking *parking = nullptr;
 
   // Get only one object of each type
   if(result.userAircraft.getPosition().isValid())
@@ -1267,28 +1269,28 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           addRouteText, searchText;
 
   if(airway != nullptr)
-    informationText = maptypes::airwayText(*airway);
+    informationText = map::airwayText(*airway);
 
   if(userpoint != nullptr)
     // No show information on user point
     informationText.clear();
 
   if(waypoint != nullptr)
-    informationText = measureText = addRouteText = searchText = maptypes::waypointText(*waypoint);
+    informationText = measureText = addRouteText = searchText = map::waypointText(*waypoint);
 
   if(ndb != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = maptypes::ndbText(*ndb);
+    informationText = measureText = rangeRingText = addRouteText = searchText = map::ndbText(*ndb);
 
   if(vor != nullptr)
-    informationText = measureText = rangeRingText = addRouteText = searchText = maptypes::vorText(*vor);
+    informationText = measureText = rangeRingText = addRouteText = searchText = map::vorText(*vor);
 
   if(airport != nullptr)
     informationText = measureText = departureText
-                                      = destinationText = addRouteText = searchText = maptypes::airportText(*airport);
+                                      = destinationText = addRouteText = searchText = map::airportText(*airport);
 
   if(parking != nullptr)
   {
-    departureParkingText = maptypes::parkingName(parking->name) + " " + QLocale().toString(parking->number);
+    departureParkingText = map::parkingName(parking->name) + " " + QLocale().toString(parking->number);
     informationText.clear();
     measureText.clear();
     rangeRingText.clear();
@@ -1312,37 +1314,37 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Build "delete from flight plan" text
   int routeIndex = -1;
-  maptypes::MapObjectTypes deleteType = maptypes::NONE;
+  map::MapObjectTypes deleteType = map::NONE;
   QString routeText;
   if(airport != nullptr && airport->routeIndex != -1)
   {
-    routeText = maptypes::airportText(*airport);
+    routeText = map::airportText(*airport);
     routeIndex = airport->routeIndex;
-    deleteType = maptypes::AIRPORT;
+    deleteType = map::AIRPORT;
   }
   else if(vor != nullptr && vor->routeIndex != -1)
   {
-    routeText = maptypes::vorText(*vor);
+    routeText = map::vorText(*vor);
     routeIndex = vor->routeIndex;
-    deleteType = maptypes::VOR;
+    deleteType = map::VOR;
   }
   else if(ndb != nullptr && ndb->routeIndex != -1)
   {
-    routeText = maptypes::ndbText(*ndb);
+    routeText = map::ndbText(*ndb);
     routeIndex = ndb->routeIndex;
-    deleteType = maptypes::NDB;
+    deleteType = map::NDB;
   }
   else if(waypoint != nullptr && waypoint->routeIndex != -1)
   {
-    routeText = maptypes::waypointText(*waypoint);
+    routeText = map::waypointText(*waypoint);
     routeIndex = waypoint->routeIndex;
-    deleteType = maptypes::WAYPOINT;
+    deleteType = map::WAYPOINT;
   }
   else if(userpoint != nullptr && userpoint->routeIndex != -1)
   {
-    routeText = maptypes::userpointText(*userpoint);
+    routeText = map::userpointText(*userpoint);
     routeIndex = userpoint->routeIndex;
-    deleteType = maptypes::USER;
+    deleteType = map::USER;
   }
 
   // Update "set airport as start/dest"
@@ -1353,9 +1355,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     if(parking != nullptr)
     {
       // Get airport for parking
-      maptypes::MapAirport parkAp;
+      map::MapAirport parkAp;
       mapQuery->getAirportById(parkAp, parking->airportId);
-      airportText = maptypes::airportText(parkAp) + " / ";
+      airportText = map::airportText(parkAp) + " / ";
     }
 
     ui->actionRouteAirportStart->setEnabled(true);
@@ -1406,7 +1408,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       ui->actionMapShowInformation->setText(ui->actionMapShowInformation->text().arg(QString()));
   }
 
-  if(airport != nullptr && (airport->flags & maptypes::AP_PROCEDURE))
+  if(airport != nullptr && (airport->flags & map::AP_PROCEDURE))
   {
     ui->actionMapShowApproaches->setEnabled(true);
     ui->actionMapShowApproaches->setText(ui->actionMapShowApproaches->text().arg(informationText));
@@ -1472,30 +1474,30 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       if(airport != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(0);
-        emit showInSearch(maptypes::AIRPORT, airport->ident, QString(), QString());
+        emit showInSearch(map::AIRPORT, airport->ident, QString(), QString());
       }
       else if(vor != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::VOR, vor->ident, vor->region, QString() /*, vor->airportIdent*/);
+        emit showInSearch(map::VOR, vor->ident, vor->region, QString() /*, vor->airportIdent*/);
       }
       else if(ndb != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::NDB, ndb->ident, ndb->region, QString() /*, ndb->airportIdent*/);
+        emit showInSearch(map::NDB, ndb->ident, ndb->region, QString() /*, ndb->airportIdent*/);
       }
       else if(waypoint != nullptr)
       {
         ui->tabWidgetSearch->setCurrentIndex(1);
-        emit showInSearch(maptypes::WAYPOINT, waypoint->ident, waypoint->region, QString() /*, waypoint->airportIdent*/);
+        emit showInSearch(map::WAYPOINT, waypoint->ident, waypoint->region, QString() /*, waypoint->airportIdent*/);
       }
     }
     else if(action == ui->actionMapNavaidRange)
     {
       if(vor != nullptr)
-        addNavRangeRing(vor->position, maptypes::VOR, vor->ident, vor->frequency, vor->range);
+        addNavRangeRing(vor->position, map::VOR, vor->ident, vor->frequency, vor->range);
       else if(ndb != nullptr)
-        addNavRangeRing(ndb->position, maptypes::NDB, ndb->ident, ndb->frequency, ndb->range);
+        addNavRangeRing(ndb->position, map::NDB, ndb->ident, ndb->frequency, ndb->range);
     }
     else if(action == ui->actionMapRangeRings)
       addRangeRing(pos);
@@ -1516,7 +1518,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     else if(action == ui->actionMapMeasureDistance || action == ui->actionMapMeasureRhumbDistance)
     {
       // Distance line
-      maptypes::DistanceMarker dm;
+      map::DistanceMarker dm;
       dm.isRhumbLine = action == ui->actionMapMeasureRhumbDistance;
       dm.to = pos;
 
@@ -1576,39 +1578,39 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
             action == ui->actionRouteAirportDest || action == ui->actionMapShowInformation)
     {
       Pos position = pos;
-      maptypes::MapObjectTypes type;
+      map::MapObjectTypes type;
 
       int id = -1;
       if(airport != nullptr)
       {
         id = airport->id;
-        type = maptypes::AIRPORT;
+        type = map::AIRPORT;
       }
       else if(parking != nullptr)
       {
         id = parking->id;
-        type = maptypes::PARKING;
+        type = map::PARKING;
       }
       else if(vor != nullptr)
       {
         id = vor->id;
-        type = maptypes::VOR;
+        type = map::VOR;
       }
       else if(ndb != nullptr)
       {
         id = ndb->id;
-        type = maptypes::NDB;
+        type = map::NDB;
       }
       else if(waypoint != nullptr)
       {
         id = waypoint->id;
-        type = maptypes::WAYPOINT;
+        type = map::WAYPOINT;
       }
       else
       {
         if(userpoint != nullptr)
           id = userpoint->id;
-        type = maptypes::USER;
+        type = map::USER;
         position = pos;
       }
 
@@ -1619,14 +1621,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         if(parking != nullptr)
         {
           // Adjust values in case user selected "add" on a parking position
-          type = maptypes::USER;
+          type = map::USER;
           id = -1;
         }
 
         if(action == ui->actionRouteAddPos)
           emit routeAdd(id, position, type, -1 /* leg index */);
         else if(action == ui->actionRouteAppendPos)
-          emit routeAdd(id, position, type, maptypes::INVALID_INDEX_VALUE);
+          emit routeAdd(id, position, type, map::INVALID_INDEX_VALUE);
       }
       else if(action == ui->actionRouteAirportStart)
         emit routeSetStart(*airport);
@@ -1640,16 +1642,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 }
 
-void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObjectTypes type,
+void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapObjectTypes type,
                                 const QString& ident, int frequency, int range)
 {
-  maptypes::RangeMarker ring;
+  map::RangeMarker ring;
   ring.type = type;
   ring.center = pos;
 
-  if(type == maptypes::VOR)
+  if(type == map::VOR)
     ring.text = ident + " " + QString::number(frequency / 1000., 'f', 2);
-  else if(type == maptypes::NDB)
+  else if(type == map::NDB)
     ring.text = ident + " " + QString::number(frequency / 100., 'f', 2);
 
   ring.ranges.append(range);
@@ -1661,8 +1663,8 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, maptypes::MapObject
 
 void MapWidget::addRangeRing(const atools::geo::Pos& pos)
 {
-  maptypes::RangeMarker rings;
-  rings.type = maptypes::NONE;
+  map::RangeMarker rings;
+  rings.type = map::NONE;
   rings.center = pos;
 
   const QVector<int> dists = OptionData::instance().getMapRangeRings();
@@ -2066,8 +2068,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(mouseState != mw::NONE)
     return;
 
-  maptypes::MapSearchResult mapSearchResult;
-  screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult);
+  map::MapSearchResult mapSearchResult;
+  QList<proc::MapProcedurePoint> procPoints;
+  screenIndex->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult, procPoints);
 
   if(mapSearchResult.userAircraft.getPosition().isValid())
   {
@@ -2133,12 +2136,12 @@ const QList<int>& MapWidget::getRouteHighlights() const
   return screenIndex->getRouteHighlights();
 }
 
-const QList<maptypes::RangeMarker>& MapWidget::getRangeRings() const
+const QList<map::RangeMarker>& MapWidget::getRangeRings() const
 {
   return screenIndex->getRangeMarks();
 }
 
-const QList<maptypes::DistanceMarker>& MapWidget::getDistanceMarkers() const
+const QList<map::DistanceMarker>& MapWidget::getDistanceMarkers() const
 {
   return screenIndex->getDistanceMarks();
 }
@@ -2166,7 +2169,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip,
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, procPointsTooltip,
                                           mainWindow->getRoute(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
@@ -2206,9 +2209,10 @@ bool MapWidget::event(QEvent *event)
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
 
     // Load tooltip data into mapSearchResultTooltip
-    mapSearchResultTooltip = maptypes::MapSearchResult();
+    mapSearchResultTooltip = map::MapSearchResult();
+    procPointsTooltip.clear();
     screenIndex->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                               mapSearchResultTooltip);
+                               mapSearchResultTooltip, procPointsTooltip);
     tooltipPos = helpEvent->globalPos();
 
     // Build HTML
@@ -2227,7 +2231,7 @@ void MapWidget::updateVisibleObjectsStatusBar()
 
   if(layer != nullptr)
   {
-    maptypes::MapObjectTypes shown = paintLayer->getShownMapObjects();
+    map::MapObjectTypes shown = paintLayer->getShownMapObjects();
 
     QStringList visible;
     atools::util::HtmlBuilder visibleTooltip(false);
@@ -2236,33 +2240,33 @@ void MapWidget::updateVisibleObjectsStatusBar()
     bool foundMapObjects = false;
 
     // qDebug() << "Visible objects" << shown;
-    if(layer->isAirport() && ((shown & maptypes::AIRPORT_HARD) || (shown & maptypes::AIRPORT_SOFT) ||
-                              (shown & maptypes::AIRPORT_ADDON)))
+    if(layer->isAirport() && ((shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT) ||
+                              (shown & map::AIRPORT_ADDON)))
     {
       QString runway, runwayShort;
       QString apShort, apTooltip, apTooltipAddon;
-      bool showAddon = shown & maptypes::AIRPORT_ADDON;
-      bool showStock = (shown & maptypes::AIRPORT_HARD) || (shown & maptypes::AIRPORT_SOFT);
-      bool showHard = shown & maptypes::AIRPORT_HARD;
+      bool showAddon = shown & map::AIRPORT_ADDON;
+      bool showStock = (shown & map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT);
+      bool showHard = shown & map::AIRPORT_HARD;
       bool showAny = showStock | showAddon;
 
       // Prepare runway texts
-      if(!(shown & maptypes::AIRPORT_HARD) && (shown & maptypes::AIRPORT_SOFT))
+      if(!(shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" soft runways");
         runwayShort = tr("/S");
       }
-      else if((shown & maptypes::AIRPORT_HARD) && !(shown & maptypes::AIRPORT_SOFT))
+      else if((shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
         runway = tr(" hard runways");
         runwayShort = tr("/H");
       }
-      else if((shown & maptypes::AIRPORT_HARD) && (shown & maptypes::AIRPORT_SOFT))
+      else if((shown & map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
       {
         runway = tr(" all runway types");
         runwayShort = tr("/H/S");
       }
-      else if(!(shown & maptypes::AIRPORT_HARD) && !(shown & maptypes::AIRPORT_SOFT))
+      else if(!(shown & map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
       {
         runway.clear();
         runwayShort.clear();
@@ -2352,37 +2356,37 @@ void MapWidget::updateVisibleObjectsStatusBar()
       // qDebug() << "=================== apTooltipAddon" << apTooltipAddon;
     }
 
-    if(layer->isVor() && shown & maptypes::VOR)
+    if(layer->isVor() && shown & map::VOR)
     {
       visible.append(tr("VOR"));
       visibleTooltip.tr().td(tr("VOR")).trEnd();
       foundMapObjects = true;
     }
-    if(layer->isNdb() && shown & maptypes::NDB)
+    if(layer->isNdb() && shown & map::NDB)
     {
       visible.append(tr("NDB"));
       visibleTooltip.tr().td(tr("NDB")).trEnd();
       foundMapObjects = true;
     }
-    if(layer->isIls() && shown & maptypes::ILS)
+    if(layer->isIls() && shown & map::ILS)
     {
       visible.append(tr("ILS"));
       visibleTooltip.tr().td(tr("ILS")).trEnd();
       foundMapObjects = true;
     }
-    if(layer->isWaypoint() && shown & maptypes::WAYPOINT)
+    if(layer->isWaypoint() && shown & map::WAYPOINT)
     {
       visible.append(tr("W"));
       visibleTooltip.tr().td(tr("Waypoints")).trEnd();
       foundMapObjects = true;
     }
-    if(layer->isAirway() && shown & maptypes::AIRWAYJ)
+    if(layer->isAirway() && shown & map::AIRWAYJ)
     {
       visible.append(tr("J"));
       visibleTooltip.tr().td(tr("Jet Airways")).trEnd();
       foundMapObjects = true;
     }
-    if(layer->isAirway() && shown & maptypes::AIRWAYV)
+    if(layer->isAirway() && shown & map::AIRWAYV)
     {
       visible.append(tr("V"));
       visibleTooltip.tr().td(tr("Victor Airways")).trEnd();
@@ -2445,8 +2449,9 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 
 void MapWidget::handleInfoClick(QPoint pos)
 {
-  maptypes::MapSearchResult result;
-  screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result);
+  map::MapSearchResult result;
+  QList<proc::MapProcedurePoint> procPoints;
+  screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result, procPoints);
 
   emit showInformation(result);
 }

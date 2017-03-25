@@ -130,14 +130,14 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
         // Only airport used for id variable
-        maptypes::MapAirport airport;
+        map::MapAirport airport;
         mapQuery->getAirportById(airport, query.queryItemValue("id").toInt());
         emit showRect(airport.bounding, false);
       }
       else if(query.hasQueryItem("airport"))
       {
         // Airport ident
-        maptypes::MapAirport airport;
+        map::MapAirport airport;
         mapQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
         emit showRect(airport.bounding, false);
       }
@@ -217,21 +217,21 @@ void InfoController::saveState()
                                                          ui->tabWidgetLegend});
 
   // Store currently shown map objects in a string list containing id and type
-  maptypes::MapObjectRefList refs;
-  for(const maptypes::MapAirport& airport  : currentSearchResult.airports)
-    refs.append({airport.id, maptypes::AIRPORT});
-  for(const maptypes::MapVor& vor : currentSearchResult.vors)
-    refs.append({vor.id, maptypes::VOR});
-  for(const maptypes::MapNdb& ndb : currentSearchResult.ndbs)
-    refs.append({ndb.id, maptypes::NDB});
-  for(const maptypes::MapWaypoint& waypoint : currentSearchResult.waypoints)
-    refs.append({waypoint.id, maptypes::WAYPOINT});
-  for(const maptypes::MapAirway& airway : currentSearchResult.airways)
-    refs.append({airway.id, maptypes::AIRWAY});
+  map::MapObjectRefList refs;
+  for(const map::MapAirport& airport  : currentSearchResult.airports)
+    refs.append({airport.id, map::AIRPORT});
+  for(const map::MapVor& vor : currentSearchResult.vors)
+    refs.append({vor.id, map::VOR});
+  for(const map::MapNdb& ndb : currentSearchResult.ndbs)
+    refs.append({ndb.id, map::NDB});
+  for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
+    refs.append({waypoint.id, map::WAYPOINT});
+  for(const map::MapAirway& airway : currentSearchResult.airways)
+    refs.append({airway.id, map::AIRWAY});
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
-  for(const maptypes::MapObjectRef& ref : refs)
+  for(const map::MapObjectRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.type));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 }
@@ -242,10 +242,10 @@ void InfoController::restoreState()
   QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
 
   // Go through the string and collect all objects in the MapSearchResult
-  maptypes::MapSearchResult res;
+  map::MapSearchResult res;
   for(int i = 0; i < refsStrList.size(); i += 2)
     mapQuery->getMapObjectById(res,
-                               maptypes::MapObjectTypes(refsStrList.at(i + 1).toInt()),
+                               map::MapObjectTypes(refsStrList.at(i + 1).toInt()),
                                refsStrList.at(i).toInt());
 
   iconBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
@@ -284,7 +284,7 @@ void InfoController::updateAirportInternal(bool newAirport)
 
   if(!currentSearchResult.airports.isEmpty())
   {
-    maptypes::WeatherContext currentWeatherContext;
+    map::WeatherContext currentWeatherContext;
     bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
                                                                  currentSearchResult.airports.first());
 
@@ -294,7 +294,7 @@ void InfoController::updateAirportInternal(bool newAirport)
     if(newAirport || weatherChanged)
     {
       HtmlBuilder html(true);
-      maptypes::MapAirport airport;
+      map::MapAirport airport;
       mapQuery->getAirportById(airport, currentSearchResult.airports.first().id);
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
@@ -334,7 +334,7 @@ void InfoController::clearInfoTextBrowsers()
   ui->textBrowserNavaidInfo->clear();
 }
 
-void InfoController::showInformation(maptypes::MapSearchResult result)
+void InfoController::showInformation(map::MapSearchResult result)
 {
   showInformationInternal(result, true);
 }
@@ -346,7 +346,7 @@ void InfoController::updateAllInformation()
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(maptypes::MapSearchResult result, bool showWindows)
+void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
 {
   qDebug() << "InfoController::showInformation";
 
@@ -371,7 +371,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   if(!result.airports.isEmpty())
   {
     // Only one airport shown
-    const maptypes::MapAirport& airport = result.airports.first();
+    const map::MapAirport& airport = result.airports.first();
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
@@ -393,7 +393,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     ui->textBrowserApproachInfo->setText(html.getHtml());
 
     html.clear();
-    maptypes::WeatherContext currentWeatherContext;
+    map::WeatherContext currentWeatherContext;
     mainWindow->buildWeatherContextForInfo(currentWeatherContext, airport);
     infoBuilder->weatherText(currentWeatherContext, airport, html, iconBackColor);
     ui->textBrowserWeatherInfo->setText(html.getHtml());
@@ -417,7 +417,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   }
 
   html.clear();
-  for(const maptypes::MapVor& vor : result.vors)
+  for(const map::MapVor& vor : result.vors)
   {
     currentSearchResult.vors.append(vor);
     infoBuilder->vorText(vor, html, iconBackColor);
@@ -425,7 +425,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     foundNavaid = true;
   }
 
-  for(const maptypes::MapNdb& ndb : result.ndbs)
+  for(const map::MapNdb& ndb : result.ndbs)
   {
     currentSearchResult.ndbs.append(ndb);
     infoBuilder->ndbText(ndb, html, iconBackColor);
@@ -433,7 +433,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
     foundNavaid = true;
   }
 
-  for(const maptypes::MapWaypoint& waypoint : result.waypoints)
+  for(const map::MapWaypoint& waypoint : result.waypoints)
   {
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
@@ -442,7 +442,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
   }
 
   // Remove the worst airway duplicates as a workaround for buggy source data
-  for(const maptypes::MapAirway& airway : result.airways)
+  for(const map::MapAirway& airway : result.airways)
   {
     currentSearchResult.airways.append(airway);
 
@@ -513,7 +513,7 @@ void InfoController::showInformationInternal(maptypes::MapSearchResult result, b
 void InfoController::preDatabaseLoad()
 {
   // Clear current airport and navaids result
-  currentSearchResult = maptypes::MapSearchResult();
+  currentSearchResult = map::MapSearchResult();
   databaseLoadStatus = true;
   clearInfoTextBrowsers();
 }
@@ -573,7 +573,7 @@ void InfoController::updateAiAircraftText()
       int numAi = lastSimData.getAiAircraft().size();
       QString text;
 
-      if(!(mainWindow->getShownMapFeatures() & maptypes::AIRCRAFT_AI))
+      if(!(mainWindow->getShownMapFeatures() & map::AIRCRAFT_AI))
         text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
 
       text += tr("No AI or multiplayer aircraft selected.<br/>"

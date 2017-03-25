@@ -40,7 +40,7 @@ public:
   Route& operator=(const Route& other);
 
   /* Update positions, distances and try to select next leg*/
-  void updateActiveLegAndPos(const maptypes::PosCourse& pos);
+  void updateActiveLegAndPos(const map::PosCourse& pos);
   void updateActiveLegAndPos();
 
   /*
@@ -125,7 +125,8 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  maptypes::MapSearchResult& mapobjects, bool includeProcedure) const;
+                  map::MapSearchResult& mapobjects, QList<proc::MapProcedurePoint>& procPoints,
+                  bool includeProcedure) const;
 
   /* @return true if departure is an airport and parking is set */
   bool hasDepartureParking() const;
@@ -188,17 +189,17 @@ public:
   /* Assign and update internal indexes for approach legs. Depending if legs are type SID, STAR,
    * transition or approach they are added at the end of start of the route
    *  call updateProcedureLegs after setting */
-  void setArrivalProcedureLegs(const maptypes::MapProcedureLegs& legs)
+  void setArrivalProcedureLegs(const proc::MapProcedureLegs& legs)
   {
     arrivalLegs = legs;
   }
 
-  void setStarProcedureLegs(const maptypes::MapProcedureLegs& legs)
+  void setStarProcedureLegs(const proc::MapProcedureLegs& legs)
   {
     starLegs = legs;
   }
 
-  void setDepartureProcedureLegs(const maptypes::MapProcedureLegs& legs)
+  void setDepartureProcedureLegs(const proc::MapProcedureLegs& legs)
   {
     departureLegs = legs;
   }
@@ -206,9 +207,9 @@ public:
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
   void clearAllProcedures();
-  void clearProcedures(maptypes::MapProcedureTypes type);
+  void clearProcedures(proc::MapProcedureTypes type);
 
-  void setShownMapFeatures(maptypes::MapObjectTypes types)
+  void setShownMapFeatures(map::MapObjectTypes types)
   {
     shownTypes = types;
   }
@@ -226,7 +227,7 @@ public:
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
   void updateAll();
-  void clearFlightplanProcedureProperties(maptypes::MapProcedureTypes type);
+  void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
@@ -241,19 +242,19 @@ public:
   bool isAirportAfterArrival(int index);
 
   /* Get approach and transition in one legs struct */
-  const maptypes::MapProcedureLegs& getArrivalLegs() const
+  const proc::MapProcedureLegs& getArrivalLegs() const
   {
     return arrivalLegs;
   }
 
   /* Get STAR legs only */
-  const maptypes::MapProcedureLegs& getStarLegs() const
+  const proc::MapProcedureLegs& getStarLegs() const
   {
     return starLegs;
   }
 
   /* Get SID legs only */
-  const maptypes::MapProcedureLegs& getDepartureLegs() const
+  const proc::MapProcedureLegs& getDepartureLegs() const
   {
     return departureLegs;
   }
@@ -311,9 +312,9 @@ private:
 
   /* Get indexes to nearest approach or route leg and cross track distance to the nearest ofthem in nm */
   void copy(const Route& other);
-  void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
+  void nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
-  void eraseProcedureLegs(maptypes::MapProcedureTypes type);
+  void eraseProcedureLegs(proc::MapProcedureTypes type);
 
   bool trueCourse = false;
 
@@ -321,14 +322,14 @@ private:
   /* Nautical miles not including missed approach */
   float totalDistance = 0.f;
   atools::fs::pln::Flightplan flightplan;
-  maptypes::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
-  maptypes::MapObjectTypes shownTypes;
+  proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
+  map::MapObjectTypes shownTypes;
 
-  int activeLeg = maptypes::INVALID_INDEX_VALUE;
+  int activeLeg = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
-  maptypes::PosCourse activePos;
-  int departureLegsOffset = maptypes::INVALID_INDEX_VALUE, starLegsOffset = maptypes::INVALID_INDEX_VALUE,
-      arrivalLegsOffset = maptypes::INVALID_INDEX_VALUE;
+  map::PosCourse activePos;
+  int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
+      arrivalLegsOffset = map::INVALID_INDEX_VALUE;
 
 };
 

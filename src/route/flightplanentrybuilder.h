@@ -32,6 +32,11 @@ class FlightplanEntry;
 }
 }
 
+namespace proc {
+struct MapProcedureLeg;
+
+}
+
 class MapQuery;
 
 class FlightplanEntryBuilder
@@ -40,30 +45,30 @@ public:
   FlightplanEntryBuilder(MapQuery *mapQuery = nullptr);
   virtual ~FlightplanEntryBuilder();
 
-  void buildFlightplanEntry(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
+  void buildFlightplanEntry(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
 
-  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, maptypes::MapObjectTypes type,
+  void buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapObjectTypes type,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void buildFlightplanEntry(const atools::geo::Pos& userPos, const maptypes::MapSearchResult& result,
+  void buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints,
-                            maptypes::MapObjectTypes type = maptypes::NONE);
+                            map::MapObjectTypes type = map::NONE);
 
-  void buildFlightplanEntry(const maptypes::MapSearchResult& result,
+  void buildFlightplanEntry(const map::MapSearchResult& result,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
-  void buildFlightplanEntry(const maptypes::MapProcedureLeg& leg,
+  void buildFlightplanEntry(const proc::MapProcedureLeg& leg,
                             atools::fs::pln::FlightplanEntry& entry, bool resolveWaypoints);
 
   void entryFromUserPos(const atools::geo::Pos& userPos, atools::fs::pln::FlightplanEntry& entry);
 
-  void entryFromNdb(const maptypes::MapNdb& ndb, atools::fs::pln::FlightplanEntry& entry) const;
+  void entryFromNdb(const map::MapNdb& ndb, atools::fs::pln::FlightplanEntry& entry) const;
 
-  void entryFromVor(const maptypes::MapVor& vor, atools::fs::pln::FlightplanEntry& entry) const;
+  void entryFromVor(const map::MapVor& vor, atools::fs::pln::FlightplanEntry& entry) const;
 
-  void entryFromAirport(const maptypes::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
+  void entryFromAirport(const map::MapAirport& airport, atools::fs::pln::FlightplanEntry& entry) const;
 
-  void entryFromWaypoint(const maptypes::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
+  void entryFromWaypoint(const map::MapWaypoint& waypoint, atools::fs::pln::FlightplanEntry& entry,
                          bool resolveWaypoints) const;
 
   MapQuery *getMapQuery() const
@@ -84,8 +89,8 @@ public:
 private:
   MapQuery *query = nullptr;
 
-  bool vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor) const;
-  bool ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb) const;
+  bool vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const;
+  bool ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const;
 
   /* Used to number user defined positions */
   int curUserpointNumber = 1;

@@ -31,7 +31,7 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using maptypes::MapIls;
+using map::MapIls;
 
 MapPainterIls::MapPainterIls(MapWidget *mapWidget, MapQuery *mapQuery, MapScale *mapScale)
   : MapPainter(mapWidget, mapQuery, mapScale)
@@ -44,7 +44,7 @@ MapPainterIls::~MapPainterIls()
 
 void MapPainterIls::render(PaintContext *context)
 {
-  if(!context->objectTypes.testFlag(maptypes::ILS))
+  if(!context->objectTypes.testFlag(map::ILS))
     return;
 
   if(context->mapLayer->isIls())
@@ -78,7 +78,7 @@ void MapPainterIls::render(PaintContext *context)
   }
 }
 
-void MapPainterIls::drawIlsSymbol(const PaintContext *context, const maptypes::MapIls& ils)
+void MapPainterIls::drawIlsSymbol(const PaintContext *context, const map::MapIls& ils)
 {
   atools::util::PainterContextSaver saver(context->painter);
 

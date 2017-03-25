@@ -22,7 +22,7 @@
 
 class SymbolPainter;
 
-namespace maptypes {
+namespace map {
 struct MapAirport;
 
 struct MapRunway;
@@ -47,14 +47,14 @@ public:
   virtual void render(PaintContext *context) override;
 
 private:
-  void drawAirportSymbol(PaintContext *context, const maptypes::MapAirport& ap, float x, float y);
+  void drawAirportSymbol(PaintContext *context, const map::MapAirport& ap, float x, float y);
 
   // void drawWindPointer(const PaintContext *context, const maptypes::MapAirport& ap, int x, int y);
 
-  void drawAirportDiagram(const PaintContext *context, const maptypes::MapAirport& airport, bool fast);
-  void drawAirportDiagramBackround(const PaintContext *context, const maptypes::MapAirport& airport);
-  void drawAirportSymbolOverview(const PaintContext *context, const maptypes::MapAirport& ap);
-  void runwayCoords(const QList<maptypes::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
+  void drawAirportDiagram(const PaintContext *context, const map::MapAirport& airport, bool fast);
+  void drawAirportDiagramBackround(const PaintContext *context, const map::MapAirport& airport);
+  void drawAirportSymbolOverview(const PaintContext *context, const map::MapAirport& ap);
+  void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects);
 
   /* All sizes in pixel */

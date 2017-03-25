@@ -17,6 +17,7 @@
 
 #include "route/flightplanentrybuilder.h"
 
+#include "common/proctypes.h"
 #include "fs/pln/flightplan.h"
 #include "fs/pln/flightplanentry.h"
 #include "mapgui/mapquery.h"
@@ -36,7 +37,7 @@ FlightplanEntryBuilder::~FlightplanEntryBuilder()
 }
 
 /* Copy airport attributes to flight plan entry */
-void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& airport, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(airport.ident);
   entry.setPosition(airport.position);
@@ -46,12 +47,12 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapAirport& ai
 
 /* create a flight plan entry from object id/type or user position */
 void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
-                                                  maptypes::MapObjectTypes type, FlightplanEntry& entry,
+                                                  map::MapObjectTypes type, FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
-  maptypes::MapSearchResult result;
+  map::MapSearchResult result;
   query->getMapObjectById(result, type, id);
-  buildFlightplanEntry(userPos, result, entry, resolveWaypoints, maptypes::NONE);
+  buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
 /* create a flight plan entry from object id/type or user position */
@@ -63,7 +64,7 @@ void FlightplanEntryBuilder::entryFromUserPos(const atools::geo::Pos& userPos, F
   entry.setWaypointId("WP" + QString::number(curUserpointNumber++));
 }
 
-void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::entryFromNdb(const map::MapNdb& ndb, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(ndb.ident);
   entry.setPosition(ndb.position);
@@ -72,7 +73,7 @@ void FlightplanEntryBuilder::entryFromNdb(const maptypes::MapNdb& ndb, Flightpla
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-void FlightplanEntryBuilder::entryFromVor(const maptypes::MapVor& vor, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::entryFromVor(const map::MapVor& vor, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(vor.ident);
   entry.setPosition(vor.position);
@@ -81,7 +82,7 @@ void FlightplanEntryBuilder::entryFromVor(const maptypes::MapVor& vor, Flightpla
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airport, FlightplanEntry& entry) const
+void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, FlightplanEntry& entry) const
 {
   entry.setIcaoIdent(airport.ident);
   entry.setPosition(airport.position);
@@ -89,7 +90,7 @@ void FlightplanEntryBuilder::entryFromAirport(const maptypes::MapAirport& airpor
   entry.setWaypointId(entry.getIcaoIdent());
 }
 
-bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapVor& vor) const
+bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const
 {
   query->getVorForWaypoint(vor, waypoint.id);
 
@@ -99,7 +100,7 @@ bool FlightplanEntryBuilder::vorForWaypoint(const maptypes::MapWaypoint& waypoin
          vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M);
 }
 
-bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoint, maptypes::MapNdb& ndb) const
+bool FlightplanEntryBuilder::ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const
 {
   query->getNdbForWaypoint(ndb, waypoint.id);
 
@@ -110,12 +111,12 @@ bool FlightplanEntryBuilder::ndbForWaypoint(const maptypes::MapWaypoint& waypoin
 
 }
 
-void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& waypoint, FlightplanEntry& entry,
+void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint, FlightplanEntry& entry,
                                                bool resolveWaypoints) const
 {
   bool useWaypoint = true;
-  maptypes::MapVor vor;
-  maptypes::MapNdb ndb;
+  map::MapVor vor;
+  map::MapNdb ndb;
 
   if(resolveWaypoints && waypoint.type == "V")
   {
@@ -157,49 +158,49 @@ void FlightplanEntryBuilder::entryFromWaypoint(const maptypes::MapWaypoint& wayp
 }
 
 void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
-                                                  const maptypes::MapSearchResult& result,
+                                                  const map::MapSearchResult& result,
                                                   FlightplanEntry& entry,
                                                   bool resolveWaypoints,
-                                                  maptypes::MapObjectTypes type)
+                                                  map::MapObjectTypes type)
 {
-  maptypes::MapObjectTypes moType = type;
+  map::MapObjectTypes moType = type;
 
-  if(moType == maptypes::NONE)
+  if(moType == map::NONE)
   {
     if(!result.airports.isEmpty())
-      moType = maptypes::AIRPORT;
+      moType = map::AIRPORT;
     else if(!result.waypoints.isEmpty())
-      moType = maptypes::WAYPOINT;
+      moType = map::WAYPOINT;
     else if(!result.vors.isEmpty())
-      moType = maptypes::VOR;
+      moType = map::VOR;
     else if(!result.ndbs.isEmpty())
-      moType = maptypes::NDB;
+      moType = map::NDB;
     else if(userPos.isValid())
-      moType = maptypes::USER;
+      moType = map::USER;
   }
 
-  if(moType == maptypes::AIRPORT)
+  if(moType == map::AIRPORT)
     entryFromAirport(result.airports.first(), entry);
-  else if(moType == maptypes::WAYPOINT)
+  else if(moType == map::WAYPOINT)
     entryFromWaypoint(result.waypoints.first(), entry, resolveWaypoints);
-  else if(moType == maptypes::VOR)
+  else if(moType == map::VOR)
     entryFromVor(result.vors.first(), entry);
-  else if(moType == maptypes::NDB)
+  else if(moType == map::NDB)
     entryFromNdb(result.ndbs.first(), entry);
-  else if(moType == maptypes::USER)
+  else if(moType == map::USER)
     entryFromUserPos(userPos, entry);
   else
     qWarning() << "Unknown Map object type" << moType;
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapSearchResult& result,
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapSearchResult& result,
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
   buildFlightplanEntry(atools::geo::EMPTY_POS, result, entry, resolveWaypoints);
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const maptypes::MapProcedureLeg& leg,
+void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& leg,
                                                   atools::fs::pln::FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {

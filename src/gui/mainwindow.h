@@ -18,8 +18,8 @@
 #ifndef LITTLENAVMAP_MAINWINDOW_H
 #define LITTLENAVMAP_MAINWINDOW_H
 
-#include "common/maptypes.h"
 #include "fs/fspaths.h"
+#include "common/maptypes.h"
 
 #include <QMainWindow>
 #include <QUrl>
@@ -72,6 +72,11 @@ class MapQuery;
 class InfoQuery;
 class ProcedureQuery;
 
+namespace proc {
+struct MapProcedureRef;
+
+}
+
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
  */
@@ -97,7 +102,7 @@ public:
 
   void updateMap() const;
 
-  maptypes::MapObjectTypes getShownMapFeatures() const;
+  map::MapObjectTypes getShownMapFeatures() const;
 
   RouteController *getRouteController() const
   {
@@ -154,14 +159,14 @@ public:
     return approachQuery;
   }
 
-  bool buildWeatherContextForInfo(maptypes::WeatherContext& weatherContext,
-                                  const maptypes::MapAirport& airport);
+  bool buildWeatherContextForInfo(map::WeatherContext& weatherContext,
+                                  const map::MapAirport& airport);
 
-  void buildWeatherContext(maptypes::WeatherContext& weatherContext,
-                           const maptypes::MapAirport& airport) const;
+  void buildWeatherContext(map::WeatherContext& weatherContext,
+                           const map::MapAirport& airport) const;
 
-  void buildWeatherContextForTooltip(maptypes::WeatherContext& weatherContext,
-                                     const maptypes::MapAirport& airport) const;
+  void buildWeatherContextForTooltip(map::WeatherContext& weatherContext,
+                                     const map::MapAirport& airport) const;
 
   /* Render status from marble widget */
   void renderStatusChanged(Marble::RenderStatus status);
@@ -190,8 +195,8 @@ private:
   void updateMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
-  void approachLegSelected(maptypes::MapProcedureRef approachRef);
-  void approachSelected(maptypes::MapProcedureRef approachRef);
+  void approachLegSelected(const proc::MapProcedureRef& approachRef);
+  void approachSelected(const proc::MapProcedureRef& approachRef);
 
   void routeSelectionChanged(int selected, int total);
 
@@ -239,7 +244,7 @@ private:
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
-  void fillActiveSkyType(maptypes::WeatherContext& weatherContext, const QString& airportIdent) const;
+  void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
 
   /* Original unchanged window title */
   QString mainWindowTitle;
@@ -297,7 +302,7 @@ private:
   bool firstStart = true /* emit window shown only once after startup */,
        firstApplicationStart = false /* first starup on a system after installation */;
 
-  maptypes::WeatherContext currentWeatherContext;
+  map::WeatherContext currentWeatherContext;
 
   QAction *emptyAirportSeparator = nullptr;
 };
