@@ -133,9 +133,9 @@ private:
   /* Update course and distances in the approach legs when a preceding transition is selected */
   void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  QList<QTreeWidgetItem*> addApproachLegs(const maptypes::MapProcedureLegs *legs, int transitionId);
+  QList<QTreeWidgetItem *> addApproachLegs(const maptypes::MapProcedureLegs *legs, int transitionId);
 
-  QList<QTreeWidgetItem*> addTransitionLegs(const maptypes::MapProcedureLegs *legs);
+  QList<QTreeWidgetItem *> addTransitionLegs(const maptypes::MapProcedureLegs *legs);
 
   void fillApproachTreeWidget();
 
@@ -146,7 +146,7 @@ private:
   QTreeWidgetItem *parentApproachItem(QTreeWidgetItem *item) const;
   QTreeWidgetItem *parentTransitionItem(QTreeWidgetItem *item) const;
 
-  maptypes::MapObjectTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
+  maptypes::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   void updateHeaderLabel();
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);

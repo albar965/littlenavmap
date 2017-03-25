@@ -231,12 +231,12 @@ void MapWidget::updateMapObjectsShown()
                     currentComboIndex == MapWidget::OPENSTREETMAPROADS ||
                     currentComboIndex >= MapWidget::CUSTOM));
 
-  setShowMapFeatures(maptypes::PROCEDURE_MISSED, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapFeatures(maptypes::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
   setShowMapFeatures(maptypes::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapFeatures(maptypes::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
 
-  setShowMapFeatures(maptypes::ROUTE, ui->actionMapShowRoute->isChecked());
+  setShowMapFeatures(maptypes::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(maptypes::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());

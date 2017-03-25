@@ -92,7 +92,7 @@ void RouteLeg::createFromApproachLeg(int entryIndex, const maptypes::MapProcedur
   procedureLeg = legs.at(entryIndex);
   magvar = procedureLeg.magvar;
 
-  type = procedureLeg.mapType;
+  type = maptypes::PROCEDURE;
 
   if(procedureLeg.navaids.hasWaypoints())
     waypoint = procedureLeg.navaids.waypoints.first();

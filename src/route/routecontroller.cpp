@@ -1660,7 +1660,7 @@ void RouteController::deleteSelectedLegs()
 
   if(!rows.isEmpty())
   {
-    maptypes::MapObjectTypes procs = affectedProcedures(rows);
+    maptypes::MapProcedureTypes procs = affectedProcedures(rows);
 
     // Do not merge for procedure deletes
     RouteCommand *undoCommand = preChange(
@@ -2007,7 +2007,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
 
   route.insert(insertIndex, routeLeg);
 
-  maptypes::MapObjectTypes procs = affectedProcedures({insertIndex});
+  maptypes::MapProcedureTypes procs = affectedProcedures({insertIndex});
   route.clearProcedures(procs);
 
   route.updateAll();
@@ -2839,9 +2839,9 @@ bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
   return false;
 }
 
-maptypes::MapObjectTypes RouteController::affectedProcedures(const QList<int>& indexes)
+maptypes::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& indexes)
 {
-  maptypes::MapObjectTypes types = maptypes::NONE;
+  maptypes::MapProcedureTypes types = maptypes::PROCEDURE_NONE;
 
   for(int index : indexes)
   {

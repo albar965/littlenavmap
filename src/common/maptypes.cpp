@@ -1220,7 +1220,7 @@ QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
       flags.append("AIRWAYV");
     if(type & AIRWAYJ)
       flags.append("AIRWAYJ");
-    if(type & ROUTE)
+    if(type & FLIGHTPLAN)
       flags.append("ROUTE");
     if(type & AIRCRAFT)
       flags.append("AIRCRAFT");
@@ -1234,24 +1234,8 @@ QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type)
       flags.append("PARKING");
     if(type & RUNWAYEND)
       flags.append("RUNWAYEND");
-    if(type & POSITION)
-      flags.append("POSITION");
     if(type & INVALID)
       flags.append("INVALID");
-    if(type & PROCEDURE_APPROACH)
-      flags.append("PROCEDURE_APPROACH");
-    if(type & PROCEDURE_MISSED)
-      flags.append("PROCEDURE_MISSED");
-    if(type & PROCEDURE_TRANSITION)
-      flags.append("PROCEDURE_TRANSITION");
-    if(type & PROCEDURE_SID)
-      flags.append("PROCEDURE_SID");
-    if(type & PROCEDURE_SID_TRANSITION)
-      flags.append("PROCEDURE_SID_TRANSITION");
-    if(type & PROCEDURE_STAR)
-      flags.append("PROCEDURE_STAR");
-    if(type & PROCEDURE_STAR_TRANSITION)
-      flags.append("PROCEDURE_STAR_TRANSITION");
   }
 
   out.nospace().noquote() << flags.join("|");
@@ -1429,8 +1413,8 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
   return remarks.join(", ");
 }
 
-maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
-                                       const QString& suffix, bool gpsOverlay)
+maptypes::MapProcedureTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
+                                          const QString& suffix, bool gpsOverlay)
 {
   // STARS use the suffix="A" while SIDS use the suffix="D".
 
@@ -1463,6 +1447,38 @@ QString procedureTypeText(const maptypes::MapProcedureLeg& leg)
   else if(leg.isStarTransition())
     suffix = QObject::tr("STAR Transition");
   return suffix;
+}
+
+QDebug operator<<(QDebug out, const maptypes::MapProcedureTypes& type)
+{
+  QDebugStateSaver saver(out);
+  Q_UNUSED(saver);
+
+  QStringList flags;
+  if(type == NONE)
+    flags.append("PROC_NONE");
+  else
+  {
+    if(type & PROCEDURE_APPROACH)
+      flags.append("PROC_APPROACH");
+    if(type & PROCEDURE_MISSED)
+      flags.append("PROC_MISSED");
+    if(type & PROCEDURE_TRANSITION)
+      flags.append("PROC_TRANSITION");
+    if(type & PROCEDURE_SID)
+      flags.append("PROC_SID");
+    if(type & PROCEDURE_SID_TRANSITION)
+      flags.append("PROC_SID_TRANSITION");
+    if(type & PROCEDURE_STAR)
+      flags.append("PROC_STAR");
+    if(type & PROCEDURE_STAR_TRANSITION)
+      flags.append("PROC_STAR_TRANSITION");
+  }
+
+  out.nospace().noquote() << flags.join("|");
+
+  return out;
+
 }
 
 } // namespace types

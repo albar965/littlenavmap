@@ -206,7 +206,7 @@ public:
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
   void clearAllProcedures();
-  void clearProcedures(maptypes::MapObjectTypes type);
+  void clearProcedures(maptypes::MapProcedureTypes type);
 
   void setShownMapFeatures(maptypes::MapObjectTypes types)
   {
@@ -226,7 +226,7 @@ public:
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
   void updateAll();
-  void clearFlightplanProcedureProperties(maptypes::MapObjectTypes type);
+  void clearFlightplanProcedureProperties(maptypes::MapProcedureTypes type);
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
@@ -313,7 +313,7 @@ private:
   void copy(const Route& other);
   void nearestAllLegIndex(const maptypes::PosCourse& pos, float& crossTrackDistanceMeter, int& index) const;
   bool isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon);
-  void eraseProcedureLegs(maptypes::MapObjectTypes type);
+  void eraseProcedureLegs(maptypes::MapProcedureTypes type);
 
   bool trueCourse = false;
 

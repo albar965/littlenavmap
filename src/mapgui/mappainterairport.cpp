@@ -54,7 +54,7 @@ void MapPainterAirport::render(PaintContext *context)
   QHash<int, const MapAirport *> airportMap; // Collect all airports from route and bounding rectangle
   QSet<int> routeAirportIds; // Airport ids from departure and destination
 
-  if(context->objectTypes.testFlag(maptypes::ROUTE))
+  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
   {
     for(const RouteLeg& routeLeg : *route)
     {

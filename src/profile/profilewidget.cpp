@@ -439,7 +439,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       symPainter.textBox(&painter, {leg.getIdent()}, mapcolors::routeInvalidPointColor,
                          symx - 5, flightplanY + 18, textatt::BOLD | textatt::ROUTE_BG_COLOR, 255);
     }
-    else if(type == maptypes::PROCEDURE_APPROACH || type == maptypes::PROCEDURE_TRANSITION)
+    else if(type == maptypes::PROCEDURE)
       // Missed is not included
       symPainter.drawProcedureSymbol(&painter, symx, flightplanY, 9, true, false);
   }

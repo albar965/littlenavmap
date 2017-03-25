@@ -72,7 +72,7 @@ public:
                                                  const maptypes::MapProcedureLegs& starLegs,
                                                  const maptypes::MapProcedureLegs& departureLegs);
 
-  static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, maptypes::MapObjectTypes type);
+  static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, maptypes::MapProcedureTypes type);
 
 private:
   maptypes::MapProcedureLeg buildTransitionLegEntry(const maptypes::MapAirport& airport);

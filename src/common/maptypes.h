@@ -87,26 +87,41 @@ enum MapObjectType
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  ROUTE = 1 << 13, /* Flight plan */
+  FLIGHTPLAN = 1 << 13, /* Flight plan */
   AIRCRAFT = 1 << 14, /* Simulator aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer Simulator aircraft */
   AIRCRAFT_TRACK = 1 << 16, /* Simulator aircraft track */
   USER = 1 << 17, /* Flight plan user waypoint */
   PARKING = 1 << 18,
   RUNWAYEND = 1 << 19,
-  POSITION = 1 << 20,
-  INVALID = 1 << 21, /* Flight plan waypoint not found in database */
-  PROCEDURE_APPROACH = 1 << 22,
-  PROCEDURE_MISSED = 1 << 23,
-  PROCEDURE_TRANSITION = 1 << 24,
-  PROCEDURE_SID = 1 << 25,
-  PROCEDURE_SID_TRANSITION = 1 << 26,
-  PROCEDURE_STAR = 1 << 27,
-  PROCEDURE_STAR_TRANSITION = 1 << 28,
+  INVALID = 1 << 20, /* Flight plan waypoint not found in database */
+  MISSED_APPROACH = 1 << 21, /* Only procedure type that can be hidden */
+  PROCEDURE = 1 << 22, /* General procedure leg */
+  AIRSPACE = 1 << 23, /* General airspace boundary */
 
   AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
   NAV_ALL = VOR | NDB | WAYPOINT,
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT, /* All objects that have a magvar assigned */
+
+  ALL = 0xffffffff
+};
+
+Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
+
+QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type);
+
+/* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
+enum MapProcedureType
+{
+  PROCEDURE_NONE = 0,
+  PROCEDURE_APPROACH = 1 << 0,
+  PROCEDURE_MISSED = 1 << 1,
+  PROCEDURE_TRANSITION = 1 << 2,
+  PROCEDURE_SID = 1 << 3,
+  PROCEDURE_SID_TRANSITION = 1 << 4,
+  PROCEDURE_STAR = 1 << 5,
+  PROCEDURE_STAR_TRANSITION = 1 << 6,
 
   PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
@@ -118,14 +133,12 @@ enum MapObjectType
 
   PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
-
-  ALL = 0xffffffff
 };
 
-Q_DECLARE_FLAGS(MapObjectTypes, MapObjectType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapObjectTypes);
+Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(maptypes::MapProcedureTypes);
 
-QDebug operator<<(QDebug out, const maptypes::MapObjectTypes& type);
+QDebug operator<<(QDebug out, const maptypes::MapProcedureTypes& type);
 
 /* Primitive id type combo that is hashable */
 struct MapObjectRef
@@ -795,7 +808,7 @@ struct MapSearchResult
 
 struct MapProcedureRef
 {
-  MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapObjectTypes type)
+  MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, maptypes::MapProcedureTypes type)
     : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
       mapType(type)
   {
@@ -807,7 +820,7 @@ struct MapProcedureRef
   }
 
   int airportId, runwayEndId, approachId, transitionId, legId;
-  maptypes::MapObjectTypes mapType = NONE;
+  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   bool isLeg() const
   {
@@ -859,7 +872,7 @@ struct MapProcedureLeg
   MapAltRestriction altRestriction;
 
   maptypes::ProcedureLegType type = INVALID_LEG_TYPE;
-  maptypes::MapObjectTypes mapType = NONE; /* Any of the PROCEDURE_* types*/
+  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE; /* Any of the PROCEDURE_* types*/
 
   int approachId, transitionId, legId, navId, recNavId;
 
@@ -972,7 +985,7 @@ struct MapProcedureLegs
 
   /* Only for approaches */
   maptypes::MapRunwayEnd runwayEnd;
-  MapObjectTypes mapType = NONE;
+  maptypes::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   float approachDistance = 0.f,
         transitionDistance = 0.f,
@@ -1113,8 +1126,8 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);
 
-maptypes::MapObjectTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
-                                       const QString& suffix, bool gpsOverlay);
+maptypes::MapProcedureTypes procedureType(atools::fs::FsPaths::SimulatorType simType, const QString& type,
+                                          const QString& suffix, bool gpsOverlay);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);

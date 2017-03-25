@@ -204,7 +204,7 @@ public:
 
   bool isAnyProcedure() const
   {
-    return type & maptypes::PROCEDURE_ALL;
+    return type & maptypes::PROCEDURE;
   }
 
   float getGroundAltitude() const
@@ -234,7 +234,7 @@ public:
   }
 
   /* invalid type if not an approach */
-  maptypes::MapObjectTypes getProcedureType() const
+  maptypes::MapProcedureTypes getProcedureType() const
   {
     return procedureLeg.mapType;
   }

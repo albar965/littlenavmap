@@ -685,10 +685,10 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
-        maptypes::MapObjectTypes type = maptypes::procedureType(mainWindow->getCurrentSimulator(),
-                                                                procType,
-                                                                recApp.valueStr("suffix"),
-                                                                recApp.valueBool("has_gps_overlay"));
+        maptypes::MapProcedureTypes type = maptypes::procedureType(mainWindow->getCurrentSimulator(),
+                                                                   procType,
+                                                                   recApp.valueStr("suffix"),
+                                                                   recApp.valueBool("has_gps_overlay"));
 
         QString fix = recApp.valueStr("fix_ident");
         QString header;

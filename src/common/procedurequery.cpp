@@ -1166,7 +1166,7 @@ void ProcedureQuery::setCurrentSimulator(atools::fs::FsPaths::SimulatorType simT
 }
 
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                        maptypes::MapObjectTypes type)
+                                                        maptypes::MapProcedureTypes type)
 {
   if(type & maptypes::PROCEDURE_SID)
   {

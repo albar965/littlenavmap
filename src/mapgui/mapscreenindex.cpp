@@ -219,7 +219,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, maptypes::Ma
   // Airways use a screen coordinate buffer
   getNearestAirways(xs, ys, maxDistance, result);
 
-  if(paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
+  if(paintLayer->getShownMapObjects().testFlag(maptypes::FLIGHTPLAN))
     // Get copies from flight plan if visible
     mapWidget->getRoute().getNearest(conv, xs, ys, maxDistance, result, true /* include procs */);
 
@@ -346,7 +346,7 @@ int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance)
 
 int MapScreenIndex::getNearestRoutePointIndex(int xs, int ys, int maxDistance)
 {
-  if(!paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
+  if(!paintLayer->getShownMapObjects().testFlag(maptypes::FLIGHTPLAN))
     return -1;
 
   int minIndex = -1;
@@ -391,7 +391,7 @@ void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, maptypes
 
 int MapScreenIndex::getNearestRouteLegIndex(int xs, int ys, int maxDistance)
 {
-  if(!paintLayer->getShownMapObjects().testFlag(maptypes::ROUTE))
+  if(!paintLayer->getShownMapObjects().testFlag(maptypes::FLIGHTPLAN))
     return -1;
 
   int minIndex = -1;

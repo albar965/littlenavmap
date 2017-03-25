@@ -56,13 +56,13 @@ void MapPainterRoute::render(PaintContext *context)
 
   setRenderHints(context->painter);
 
-  if(context->objectTypes.testFlag(maptypes::ROUTE))
+  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
     paintRoute(context);
 
   if(context->mapLayer->isApproach())
     paintApproach(context, mapWidget->getApproachHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
-  if(context->objectTypes.testFlag(maptypes::ROUTE))
+  if(context->objectTypes.testFlag(maptypes::FLIGHTPLAN))
     paintTopOfDescent(context);
 }
 
@@ -373,7 +373,7 @@ void MapPainterRoute::paintApproachSegment(const PaintContext *context, const ma
 {
   const maptypes::MapProcedureLeg& leg = legs.at(index);
 
-  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::PROCEDURE_MISSED))
+  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::MISSED_APPROACH))
     return;
 
   const maptypes::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
@@ -705,7 +705,7 @@ void MapPainterRoute::paintApproachPoints(const PaintContext *context, const map
   painter->restore();
 #endif
 
-  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::PROCEDURE_MISSED))
+  if(!preview && leg.isMissed() && !(context->objectTypes & maptypes::MISSED_APPROACH))
     return;
 
   if(leg.disabled)

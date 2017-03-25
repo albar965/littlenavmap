@@ -275,7 +275,7 @@ void Route::updateActiveLegAndPos(const maptypes::PosCourse& pos)
       // qDebug() << "Switching to next leg";
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes & maptypes::PROCEDURE_MISSED) && at(nextLeg).getProcedureLeg().isMissed()))
+      if(!(!(shownTypes & maptypes::MISSED_APPROACH) && at(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLeg = nextLeg;
@@ -622,7 +622,7 @@ void Route::clearAllProcedures()
   clearProcedures(maptypes::PROCEDURE_ALL);
 }
 
-void Route::clearProcedures(maptypes::MapObjectTypes type)
+void Route::clearProcedures(maptypes::MapProcedureTypes type)
 {
   // Clear procedure legs
   if(type & maptypes::PROCEDURE_SID)
@@ -648,7 +648,7 @@ void Route::clearProcedures(maptypes::MapObjectTypes type)
   updateAll();
 }
 
-void Route::clearFlightplanProcedureProperties(maptypes::MapObjectTypes type)
+void Route::clearFlightplanProcedureProperties(maptypes::MapProcedureTypes type)
 {
   ProcedureQuery::clearFlightplanProcedureProperties(flightplan.getProperties(), type);
 }
@@ -719,7 +719,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   ProcedureQuery::extractLegsForFlightplanProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
 }
 
-void Route::eraseProcedureLegs(maptypes::MapObjectTypes type)
+void Route::eraseProcedureLegs(maptypes::MapProcedureTypes type)
 {
   QVector<int> indexes;
 

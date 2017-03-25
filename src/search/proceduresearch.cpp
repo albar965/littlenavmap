@@ -336,7 +336,7 @@ void ProcedureSearch::fillApproachTreeWidget()
         int apprId = recApp.valueInt("approach_id");
         QString rwname(recApp.valueStr("runway_name"));
 
-        maptypes::MapObjectTypes type = buildTypeFromApproachRec(recApp);
+        maptypes::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
         bool filterOk = false;
         switch(filterIndex)
@@ -793,7 +793,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 
 }
 
-maptypes::MapObjectTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
+maptypes::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
   return maptypes::procedureType(mainWindow->getCurrentSimulator(),
                                  recApp.valueStr("type"), recApp.valueStr("suffix"), recApp.valueBool("has_gps_overlay"));
@@ -807,7 +807,7 @@ QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem,
 
   QString approachType;
 
-  maptypes::MapObjectTypes maptype = buildTypeFromApproachRec(recApp);
+  maptypes::MapProcedureTypes maptype = buildTypeFromApproachRec(recApp);
   if(maptype == maptypes::PROCEDURE_SID)
     approachType += tr("SID");
   else if(maptype == maptypes::PROCEDURE_STAR)

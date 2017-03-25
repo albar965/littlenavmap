@@ -351,7 +351,7 @@ private:
 
   void routeAddInternal(const atools::fs::pln::FlightplanEntry& entry, int insertIndex);
   int calculateInsertIndex(const atools::geo::Pos& pos, int legIndex);
-  maptypes::MapObjectTypes affectedProcedures(const QList<int>& indexes);
+  maptypes::MapProcedureTypes affectedProcedures(const QList<int>& indexes);
 
   /* If route distance / direct distance if bigger than this value fail routing */
   static Q_DECL_CONSTEXPR float MAX_DISTANCE_DIRECT_RATIO = 1.5f;
