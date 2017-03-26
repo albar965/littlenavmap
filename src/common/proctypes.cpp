@@ -525,7 +525,7 @@ const MapProcedureLeg *proc::MapProcedureLegs::approachLegById(int legId) const
 
 QString procedureLegCourse(const MapProcedureLeg& leg)
 {
-  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f)
+  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
     return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
   else
     return QString();

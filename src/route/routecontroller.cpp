@@ -2642,12 +2642,23 @@ QString RouteController::buildFlightplanLabel(bool html) const
       if(!departureLegs.isEmpty())
       {
         // Add departure procedure to text
-        boldTextFlag << false << true;
-        procedureText.append(tr("Depart via SID"));
+        if(!departureLegs.runwayEnd.isValid())
+        {
+          boldTextFlag << false;
+          procedureText.append(tr("Depart via SID"));
+        }
+        else
+        {
+          boldTextFlag << false << true << false;
+          procedureText.append(tr("Depart runway "));
+          procedureText.append(departureLegs.runwayEnd.name);
+          procedureText.append(tr("via SID"));
+        }
 
         QString sid(departureLegs.approachFixIdent);
         if(!departureLegs.transitionFixIdent.isEmpty())
           sid += "." + departureLegs.transitionFixIdent;
+        boldTextFlag << true;
         procedureText.append(sid);
 
         if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType &

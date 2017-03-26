@@ -1361,7 +1361,7 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
     html.row2(tr("Distance:"), Unit::distNm(ap.calculatedDistance /*, true, 20, true*/));
   if(ap.time > 0.f)
     html.row2(tr("Time:"), QLocale().toString(ap.time, 'f', 0) + tr(" min"));
-  if(ap.calculatedTrueCourse > 0.f)
+  if(ap.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
     html.row2(tr("Course:"), QLocale().toString(normalizeCourse(ap.calculatedTrueCourse - ap.magvar), 'f', 0) +
               tr("°M"));
 
@@ -1387,7 +1387,6 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& ap, Html
   }
 
   html.tableEnd();
-
 }
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,

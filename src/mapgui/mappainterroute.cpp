@@ -326,11 +326,14 @@ void MapPainterRoute::paintApproach(const PaintContext *context, const proc::Map
 
       if(drawTextLines.at(i).course)
       {
-        if(!approachText.isEmpty())
-          approachText.append(tr("/"));
-        approachText +=
-          (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
-           tr("°M"));
+        if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+        {
+          if(!approachText.isEmpty())
+            approachText.append(tr("/"));
+          approachText +=
+            (QString::number(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0) +
+             tr("°M"));
+        }
       }
 
       approachTexts.append(approachText);

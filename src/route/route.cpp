@@ -460,35 +460,19 @@ atools::geo::Pos Route::positionAtDistance(float distFromStartNm) const
 
   if(foundIndex < size() - 1)
   {
-    if(!at(foundIndex).isAnyProcedure())
+    foundIndex++;
+    if(at(foundIndex).getGeometry().size() > 2)
     {
-      float base = distFromStartNm - (total - at(foundIndex + 1).getDistanceTo());
-      float fraction = base / at(foundIndex + 1).getDistanceTo();
-
-      // qDebug() << "idx" << foundIndex << "total" << total << "rem"
-      // << at(foundIndex + 1).getDistanceTo() << "distFromStartNm" << distFromStartNm << "base"
-      // << base << "frac" << fraction;
-
-      retval = getPositionAt(foundIndex).interpolate(getPositionAt(foundIndex + 1), fraction);
+      // Use approach geometry to display
+      float base = distFromStartNm - (total - at(foundIndex).getProcedureLeg().calculatedDistance);
+      float fraction = base / at(foundIndex).getProcedureLeg().calculatedDistance;
+      retval = at(foundIndex).getGeometry().interpolate(fraction);
     }
     else
     {
-      // Skip all points like initial fixes or any other intercepted/collapsed legs
-      foundIndex++;
-      while(at(foundIndex).isApproachPoint() && foundIndex < size())
-        foundIndex++;
-
-      float base = distFromStartNm - (total - at(foundIndex).getProcedureLeg().calculatedDistance);
-      float fraction = base / at(foundIndex).getProcedureLeg().calculatedDistance;
-
-      // qDebug() << "idx appr" << foundIndex << "total" << total << "rem"
-      // << at(foundIndex).getProcedureLeg().calculatedDistance << "distFromStartNm" << distFromStartNm << "base"
-      // << base << "frac" << fraction;
-      // qDebug() << "foundIndex" << at(foundIndex).getProcedureLeg();
-      // qDebug() << "foundIndex + 1" << at(foundIndex + 1).getProcedureLeg();
-      // qDebug() << "foundIndex + 2" << at(foundIndex + 2).getProcedureLeg();
-
-      retval = at(foundIndex).getGeometry().interpolate(fraction);
+      float base = distFromStartNm - (total - at(foundIndex).getDistanceTo());
+      float fraction = base / at(foundIndex).getDistanceTo();
+      retval = getPositionAt(foundIndex - 1).interpolate(getPositionAt(foundIndex), fraction);
     }
   }
 

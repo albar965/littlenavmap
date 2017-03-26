@@ -647,7 +647,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     else if(type == proc::INITIAL_FIX || type == proc::START_OF_PROCEDURE)
     {
       leg.calculatedDistance = 0.f;
-      leg.calculatedTrueCourse = 0.f;
+      leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
       leg.geometry << leg.line.getPos1() << leg.line.getPos2();
     }
     else if(contains(type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC}))
@@ -655,7 +655,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
       atools::geo::calcArcLength(leg.line, leg.recFixPos, leg.turnDirection == "L", &leg.calculatedDistance,
                                  &leg.geometry);
       leg.calculatedDistance = meterToNm(leg.calculatedDistance);
-      leg.calculatedTrueCourse = 0.f;
+      leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
     }
     // ===========================================================
     else if(type == proc::COURSE_TO_FIX)
@@ -743,7 +743,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs)
     if(leg.calculatedDistance >= map::INVALID_DISTANCE_VALUE / 2)
       leg.calculatedDistance = 0.f;
     if(leg.calculatedTrueCourse >= map::INVALID_DISTANCE_VALUE / 2)
-      leg.calculatedTrueCourse = 0.f;
+      leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
 
     if(leg.isTransition() || leg.isSidTransition() || leg.isStarTransition())
       legs.transitionDistance += leg.calculatedDistance;
