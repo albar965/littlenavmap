@@ -185,7 +185,7 @@ MainWindow::MainWindow()
     connectAllSlots();
 
     qDebug() << "MainWindow Reading settings";
-    readSettings();
+    restoreStateMain();
 
     updateActionStates();
 
@@ -1247,6 +1247,7 @@ void MainWindow::routeOpen()
       }
     }
   }
+  saveFileHistoryStates();
 }
 
 /* Called from menu or toolbar by action */
@@ -1268,6 +1269,7 @@ void MainWindow::routeAppend()
       setStatusMessage(tr("Flight plan appended."));
     }
   }
+  saveFileHistoryStates();
 }
 
 /* Called from menu or toolbar by action */
@@ -1292,6 +1294,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       routeFileHistory->removeFile(routeFile);
     }
   }
+  saveFileHistoryStates();
 }
 
 /* Called from menu or toolbar by action */
@@ -1309,6 +1312,7 @@ bool MainWindow::routeSave()
         routeFileHistory->addFile(routeController->getCurrentRouteFilename());
         updateActionStates();
         setStatusMessage(tr("Flight plan saved."));
+        saveFileHistoryStates();
         return true;
       }
     }
@@ -1335,6 +1339,7 @@ bool MainWindow::routeSaveAs()
         routeFileHistory->addFile(routeFile);
         updateActionStates();
         setStatusMessage(tr("Flight plan saved."));
+        saveFileHistoryStates();
         return true;
       }
     }
@@ -1575,6 +1580,9 @@ void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
 void MainWindow::updateMapObjectsShown()
 {
+  // Save to configuration
+  saveActionStates();
+
   mapWidget->updateMapObjectsShown();
   profileWidget->update();
   setStatusMessage(tr("Map settigs changed."));
@@ -1785,7 +1793,7 @@ void MainWindow::updateActionStates()
 }
 
 /* Read settings for all windows, docks, controller and manager classes */
-void MainWindow::readSettings()
+void MainWindow::restoreStateMain()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
@@ -1848,9 +1856,9 @@ void MainWindow::readSettings()
   qDebug() << "MainWindow restoring state of printSupport";
   printSupport->restoreState();
 
+  widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-    widgetState.setBlockSignals(true);
     widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                          ui->actionMapShowEmptyAirports,
                          ui->actionMapShowAddonAirports,
@@ -1860,13 +1868,13 @@ void MainWindow::readSettings()
                          ui->actionMapShowRoute, ui->actionMapShowAircraft, ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi,
                          ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr});
-    widgetState.setBlockSignals(false);
   }
 
   widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid,
                        ui->actionMapShowCities,
                        ui->actionMapShowHillshading, ui->actionRouteEditMode,
                        ui->actionWorkOffline});
+  widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
@@ -1877,7 +1885,7 @@ void MainWindow::readSettings()
 }
 
 /* Write settings for all windows, docks, controller and manager classes */
-void MainWindow::writeSettings()
+void MainWindow::saveStateMain()
 {
   qDebug() << "writeSettings";
 
@@ -1889,14 +1897,7 @@ void MainWindow::writeSettings()
   // << state.size() << "] ="
   // << hexStr.join(",") << "};\n";
 
-  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({ui->statusBar, ui->tabWidgetSearch});
-
-  Settings& settings = Settings::instance();
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", size());
-  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", isMaximized());
+  saveMainWindowStates();
 
   qDebug() << "searchController";
   if(searchController != nullptr)
@@ -1918,13 +1919,7 @@ void MainWindow::writeSettings()
   if(infoController != nullptr)
     infoController->saveState();
 
-  qDebug() << "routeFileHistory";
-  if(routeFileHistory != nullptr)
-    routeFileHistory->saveState();
-
-  qDebug() << "kmlFileHistory";
-  if(kmlFileHistory != nullptr)
-    kmlFileHistory->saveState();
+  saveFileHistoryStates();
 
   qDebug() << "printSupport";
   if(printSupport != nullptr)
@@ -1934,7 +1929,53 @@ void MainWindow::writeSettings()
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
 
-  qDebug() << "widgetState";
+  saveActionStates();
+
+  Settings& settings = Settings::instance();
+  settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
+
+  qDebug() << "databaseManager";
+  if(databaseManager != nullptr)
+    databaseManager->saveState();
+
+  qDebug() << "syncSettings";
+  settings.syncSettings();
+  qDebug() << "save state done";
+}
+
+void MainWindow::saveFileHistoryStates()
+{
+  qDebug() << Q_FUNC_INFO;
+  qDebug() << "routeFileHistory";
+  if(routeFileHistory != nullptr)
+    routeFileHistory->saveState();
+
+  qDebug() << "kmlFileHistory";
+  if(kmlFileHistory != nullptr)
+    kmlFileHistory->saveState();
+  Settings::instance().syncSettings();
+}
+
+void MainWindow::saveMainWindowStates()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
+  widgetState.save({ui->statusBar, ui->tabWidgetSearch});
+
+  Settings& settings = Settings::instance();
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE, saveState(lnm::MAINWINDOW_STATE_VERSION));
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Position", pos());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Size", size());
+  settings.setValueVar(lnm::MAINWINDOW_WIDGET_STATE + "Maximized", isMaximized());
+  Settings::instance().syncSettings();
+}
+
+void MainWindow::saveActionStates()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
   widgetState.save({mapProjectionComboBox, mapThemeComboBox,
                     ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                     ui->actionMapShowAddonAirports,
@@ -1946,16 +1987,7 @@ void MainWindow::writeSettings()
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
                     ui->actionRouteEditMode,
                     ui->actionWorkOffline});
-
-  settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
-
-  qDebug() << "databaseManager";
-  if(databaseManager != nullptr)
-    databaseManager->saveState();
-
-  qDebug() << "syncSettings";
-  settings.syncSettings();
-  qDebug() << "save state done";
+  Settings::instance().syncSettings();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1983,7 +2015,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
     }
   }
-  writeSettings();
+  saveStateMain();
 }
 
 void MainWindow::showEvent(QShowEvent *event)

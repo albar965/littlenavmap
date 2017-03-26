@@ -181,8 +181,12 @@ private:
   void connectAllSlots();
   void mainWindowShown();
 
-  void writeSettings();
-  void readSettings();
+  void saveStateMain();
+  void saveActionStates();
+  void saveMainWindowStates();
+  void saveFileHistoryStates();
+
+  void restoreStateMain();
   void updateActionStates();
   void setupUi();
 

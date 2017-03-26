@@ -406,7 +406,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
   if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
   {
-
     widgetsToOptionData();
     saveState();
     applyStyle();
