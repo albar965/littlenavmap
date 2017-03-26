@@ -756,6 +756,8 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
 void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick)
 {
+  qDebug() << Q_FUNC_INFO;
+
   if(item == nullptr)
     return;
 

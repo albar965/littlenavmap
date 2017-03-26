@@ -348,7 +348,7 @@ void InfoController::updateAllInformation()
  *  @return true if information was updated */
 void InfoController::showInformationInternal(map::MapSearchResult result, bool showWindows)
 {
-  qDebug() << "InfoController::showInformation";
+  qDebug() << Q_FUNC_INFO;
 
   bool foundAirport = false, foundNavaid = false, foundUserAircraft = false, foundAiAircraft = false;
   HtmlBuilder html(true);
@@ -361,6 +361,7 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // Remember the clicked AI for the next update
   if(!result.aiAircraft.isEmpty())
   {
+    qDebug() << "Found AI";
     currentSearchResult.aiAircraft = result.aiAircraft;
     foundAiAircraft = true;
   }
@@ -370,6 +371,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
   if(!result.airports.isEmpty())
   {
+    qDebug() << "Found airport" << result.airports.first().ident;
+
     // Only one airport shown
     const map::MapAirport& airport = result.airports.first();
 
@@ -419,6 +422,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   html.clear();
   for(const map::MapVor& vor : result.vors)
   {
+    qDebug() << "Found vor" << vor.ident;
+
     currentSearchResult.vors.append(vor);
     infoBuilder->vorText(vor, html, iconBackColor);
     html.br();
@@ -427,6 +432,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
   for(const map::MapNdb& ndb : result.ndbs)
   {
+    qDebug() << "Found ndb" << ndb.ident;
+
     currentSearchResult.ndbs.append(ndb);
     infoBuilder->ndbText(ndb, html, iconBackColor);
     html.br();
@@ -435,6 +442,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
 
   for(const map::MapWaypoint& waypoint : result.waypoints)
   {
+    qDebug() << "Found waypoint" << waypoint.ident;
+
     currentSearchResult.waypoints.append(waypoint);
     infoBuilder->waypointText(waypoint, html, iconBackColor);
     html.br();
@@ -444,6 +453,8 @@ void InfoController::showInformationInternal(map::MapSearchResult result, bool s
   // Remove the worst airway duplicates as a workaround for buggy source data
   for(const map::MapAirway& airway : result.airways)
   {
+    qDebug() << "Found airway" << airway.name;
+
     currentSearchResult.airways.append(airway);
 
     infoBuilder->airwayText(airway, html);

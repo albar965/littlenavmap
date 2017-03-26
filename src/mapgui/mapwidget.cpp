@@ -1459,6 +1459,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Show the menu ------------------------------------------------
   QAction *action = menu.exec(menuPos);
 
+  if(action != nullptr)
+    qDebug() << Q_FUNC_INFO << "selected" << action->text();
+  else
+    qDebug() << Q_FUNC_INFO << "no action selected";
+
   if(action == ui->actionMapHideRangeRings)
   {
     clearRangeRingsAndDistanceMarkers();
@@ -2449,6 +2454,8 @@ void MapWidget::paintEvent(QPaintEvent *paintEvent)
 
 void MapWidget::handleInfoClick(QPoint pos)
 {
+  qDebug() << Q_FUNC_INFO;
+
   map::MapSearchResult result;
   QList<proc::MapProcedurePoint> procPoints;
   screenIndex->getAllNearest(pos.x(), pos.y(), screenSearchDistance, result, procPoints);

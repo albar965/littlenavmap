@@ -593,6 +593,8 @@ void SearchBaseTable::doubleClick(const QModelIndex& index)
 
 void SearchBaseTable::showRow(int row)
 {
+  qDebug() << Q_FUNC_INFO;
+
   // Show on information panel
   map::MapObjectTypes navType = map::NONE;
   int id = -1;
@@ -751,6 +753,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);
+
+  if(action != nullptr)
+    qDebug() << Q_FUNC_INFO << "selected" << action->text();
+  else
+    qDebug() << Q_FUNC_INFO << "no action selected";
+
   if(action != nullptr)
   {
     // A menu item was selected
@@ -808,6 +816,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 /* Triggered by show information action in context menu. Populates map search result and emits show information */
 void SearchBaseTable::showInformationTriggered()
 {
+  qDebug() << Q_FUNC_INFO;
+
   Ui::MainWindow *ui = mainWindow->getUi();
   if(ui->tabWidgetSearch->currentIndex() == tabIndex)
   {

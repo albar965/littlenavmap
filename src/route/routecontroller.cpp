@@ -1160,6 +1160,7 @@ void RouteController::postDatabaseLoad()
 /* Double click into table view */
 void RouteController::doubleClick(const QModelIndex& index)
 {
+  qDebug() << Q_FUNC_INFO;
   if(index.isValid())
   {
     qDebug() << "mouseDoubleClickEvent";
@@ -1221,6 +1222,7 @@ void RouteController::updateMoveAndDeleteActions()
 /* From context menu */
 void RouteController::showInformationMenu()
 {
+  qDebug() << Q_FUNC_INFO;
   QModelIndex index = view->currentIndex();
   if(index.isValid())
   {
@@ -1374,6 +1376,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);
+  if(action != nullptr)
+    qDebug() << Q_FUNC_INFO << "selected" << action->text();
+  else
+    qDebug() << Q_FUNC_INFO << "no action selected";
+
   if(action != nullptr)
   {
     if(action == ui->actionSearchResetView)
