@@ -64,6 +64,9 @@ public:
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
                                bool ignoreNotEditable) const;
 
+  const RouteLeg& getStartAfterProcedure() const;
+  const RouteLeg& getDestinationBeforeProcedure() const;
+
   int getActiveLegIndex() const
   {
     return activeLeg;
@@ -111,11 +114,6 @@ public:
   atools::fs::pln::Flightplan& getFlightplan()
   {
     return flightplan;
-  }
-
-  void removeAllProcedureLegs()
-  {
-    flightplan.removeNoSaveEntries();
   }
 
   void setFlightplan(const atools::fs::pln::Flightplan& value)
@@ -206,8 +204,14 @@ public:
 
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
-  void clearAllProcedures();
-  void clearProcedures(proc::MapProcedureTypes type);
+  void removeRouteLegs();
+
+  /* Does not delete flight plan properties */
+  void clearProcedureLegs(proc::MapProcedureTypes type);
+
+  /* Deletes flight plan properties too */
+  void removeProcedureLegs();
+  void removeProcedureLegs(proc::MapProcedureTypes type);
 
   void setShownMapFeatures(map::MapObjectTypes types)
   {
@@ -330,6 +334,8 @@ private:
   map::PosCourse activePos;
   int departureLegsOffset = map::INVALID_INDEX_VALUE, starLegsOffset = map::INVALID_INDEX_VALUE,
       arrivalLegsOffset = map::INVALID_INDEX_VALUE;
+
+  int adjustedActiveLeg() const;
 
 };
 

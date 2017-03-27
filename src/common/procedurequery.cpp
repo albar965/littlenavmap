@@ -1387,7 +1387,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
 
-  if(!error) // load all or nothing in case of error
+  if(!error)  // load all or nothing in case of error
   {
     if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
     {

@@ -548,15 +548,6 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
                                                                     route.last().getAirport(),
                                                                     arrival, star, departure))
   {
-    // No need to check - this will be done by adding logic
-    // if(!route.hasValidDeparture() || !route.hasValidDestination())
-    // {
-    // if(!quiet)
-    // QMessageBox::warning(mainWindow, QApplication::applicationName(),
-    // tr("Need valid departure and destination airport to load procedures."));
-    // return;
-    // }
-
     route.setDepartureProcedureLegs(departure);
     route.setStarProcedureLegs(star);
     route.setArrivalProcedureLegs(arrival);
@@ -564,12 +555,10 @@ void RouteController::loadProceduresFromFlightplan(bool quiet)
   }
   else
   {
-    route.clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
     if(!quiet)
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Could not load procedures for flight plan.\n"
-                              "Removing procedure information.\n\n"
-                              "Reload flight plan after switching simulator."));
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_PROC_ERROR,
+                                                     tr("Cannot load procedures into flight plan."),
+                                                     tr("Do not &show this dialog again."));
     return;
   }
 
@@ -626,7 +615,7 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
     route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
 
-    route.clearProcedures(proc::PROCEDURE_ARRIVAL_ALL);
+    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
     createRouteLegsFromFlightplan();
     route.updateAll();
@@ -773,15 +762,9 @@ void RouteController::calculateDirect()
 
   RouteCommand *undoCommand = preChange(tr("Direct Calculation"));
 
-  Flightplan& flightplan = route.getFlightplan();
+  route.getFlightplan().setRouteType(atools::fs::pln::DIRECT);
+  route.removeRouteLegs();
 
-  flightplan.setRouteType(atools::fs::pln::DIRECT);
-
-  if(flightplan.getEntries().size() >= 2)
-    // Remove all waypoints
-    flightplan.getEntries().erase(flightplan.getEntries().begin() + 1, flightplan.getEntries().end() - 1);
-
-  createRouteLegsFromFlightplan();
   route.updateAll();
 
   updateTableModel();
@@ -878,8 +861,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
   routeFinder->setPreferVorToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_VOR);
   routeFinder->setPreferNdbToAirway(OptionData::instance().getFlags() & opts::ROUTE_PREFER_NDB);
 
-  Pos departurePos = flightplan.getEntries().first().getPosition();
-  Pos destinationPos = flightplan.getEntries().last().getPosition();
+  Pos departurePos = route.getStartAfterProcedure().getPosition();
+  Pos destinationPos = route.getDestinationBeforeProcedure().getPosition();
   bool found = routeFinder->calculateRoute(departurePos, destinationPos, altitude);
 
   if(found)
@@ -956,7 +939,7 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
 
   QGuiApplication::restoreOverrideCursor();
   if(!found)
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTEERROR,
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ERROR,
                                                    tr("Cannot find a route.\n"
                                                       "Try another routing type or create the flight plan manually."),
                                                    tr("Do not &show this dialog again."));
@@ -1043,7 +1026,7 @@ void RouteController::reverseRoute()
   }
 
   // Remove all procedures
-  route.clearProcedures(proc::PROCEDURE_ALL);
+  route.removeProcedureLegs(proc::PROCEDURE_ALL);
 
   createRouteLegsFromFlightplan();
   route.updateAll();
@@ -1139,7 +1122,8 @@ void RouteController::postDatabaseLoad()
   routeNetworkRadio->initQueries();
   routeNetworkAirway->initQueries();
 
-  route.removeAllProcedureLegs();
+  // Remove the legs but keep the properties
+  route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
   createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* quiet */);
@@ -1686,7 +1670,7 @@ void RouteController::deleteSelectedLegs()
       model->removeRow(row);
     }
 
-    route.clearProcedures(procs);
+    route.removeProcedureLegs(procs);
 
     route.updateAll();
 
@@ -1756,7 +1740,7 @@ void RouteController::routeSetParking(map::MapParking parking)
     map::MapAirport ap;
     query->getAirportById(ap, parking.airportId);
     routeSetDepartureInternal(ap);
-    route.clearProcedures(proc::PROCEDURE_DEPARTURE);
+    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
@@ -1825,7 +1809,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   routeSetDepartureInternal(airport);
 
-  route.clearProcedures(proc::PROCEDURE_DEPARTURE);
+  route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
   routeToFlightPlan();
@@ -1876,7 +1860,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 
   routeSetDestinationInternal(airport);
 
-  route.clearProcedures(proc::PROCEDURE_ARRIVAL_ALL);
+  route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   route.updateAll();
   routeToFlightPlan();
@@ -1939,7 +1923,7 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
        route.last().getId() != legs.ref.airportId)
     {
       // No route, no destination airport or different airport
-      route.clearProcedures(proc::PROCEDURE_ARRIVAL_ALL);
+      route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
       routeSetDestinationInternal(airport);
     }
     // Will take care of the flight plan entries too
@@ -1956,7 +1940,7 @@ void RouteController::routeAttachProcedure(const proc::MapProcedureLegs& legs)
        route.first().getId() != legs.ref.airportId)
     {
       // No route, no departure airport or different airport
-      route.clearProcedures(proc::PROCEDURE_DEPARTURE);
+      route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
       routeSetDepartureInternal(airport);
     }
     // Will take care of the flight plan entries too
@@ -2015,7 +1999,7 @@ void RouteController::routeAddInternal(const FlightplanEntry& entry, int insertI
   route.insert(insertIndex, routeLeg);
 
   proc::MapProcedureTypes procs = affectedProcedures({insertIndex});
-  route.clearProcedures(procs);
+  route.removeProcedureLegs(procs);
 
   route.updateAll();
   // Force update of start if departure airport was added
@@ -2124,10 +2108,10 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapObj
   eraseAirway(legIndex + 1);
 
   if(legIndex == route.size() - 1)
-    route.clearProcedures(proc::PROCEDURE_ARRIVAL_ALL);
+    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   if(legIndex == 0)
-    route.clearProcedures(proc::PROCEDURE_DEPARTURE);
+    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
 
@@ -2159,10 +2143,10 @@ void RouteController::routeDelete(int index)
   eraseAirway(index);
 
   if(index == route.size())
-    route.clearProcedures(proc::PROCEDURE_ARRIVAL_ALL);
+    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   if(index == 0)
-    route.clearProcedures(proc::PROCEDURE_DEPARTURE);
+    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
 
   route.updateAll();
   // Force update of start if departure airport was removed
@@ -2347,7 +2331,6 @@ void RouteController::updateTableModel()
     else
     {
       itemRow[rc::AIRWAY_OR_LEGTYPE] = new QStandardItem(proc::procedureLegTypeStr(leg.getProcedureLegType()));
-
       itemRow[rc::RESTRICTION] =
         new QStandardItem(proc::altRestrictionTextShort(leg.getProcedureLeg().altRestriction));
     }
@@ -2774,7 +2757,7 @@ float RouteController::calcTravelTime(float distance) const
 /* Reset route and clear undo stack (new route) */
 void RouteController::clearRoute()
 {
-  route.clearAllProcedures();
+  route.removeProcedureLegs();
   route.getFlightplan().clear();
   route.getFlightplan().getProperties().clear();
   route.resetActive();

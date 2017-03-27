@@ -60,7 +60,8 @@ const QString ACTIONS_SHOW_INVALID_PROC_WARNING = "Actions/ShowInvalidProcedure"
 const QString ACTIONS_SHOWRESETVIEW = "Actions/ShowResetView";
 const QString ACTIONS_SHOWROUTEPARKINGWARNING = "Actions/ShowRouteParkingWarning";
 const QString ACTIONS_SHOWROUTEWARNING = "Actions/ShowRouteWarning";
-const QString ACTIONS_SHOWROUTEERROR = "Actions/ShowRouteError";
+const QString ACTIONS_SHOWROUTE_ERROR = "Actions/ShowRouteError";
+const QString ACTIONS_SHOWROUTE_PROC_ERROR = "Actions/ShowRouteProcedureError";
 const QString ACTIONS_SHOWROUTE_START_CHANGED = "Actions/ShowRouteStartChanged";
 
 /* Other setting key names */

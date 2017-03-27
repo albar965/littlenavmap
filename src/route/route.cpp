@@ -295,9 +295,11 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
   if(activeLeg == map::INVALID_INDEX_VALUE)
     return false;
 
-  if(at(activeLeg).isAnyProcedure() && (at(activeLeg).getGeometry().size() > 2))
+  int active = adjustedActiveLeg();
+
+  if(at(active).isAnyProcedure() && (at(active).getGeometry().size() > 2))
     // Use arc or intercept geometry to calculate distance
-    geometryLeg = &at(activeLeg).getProcedureLeg();
+    geometryLeg = &at(active).getProcedureLeg();
 
   if(crossTrackDistance != nullptr)
   {
@@ -316,7 +318,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
       *crossTrackDistance = map::INVALID_DISTANCE_VALUE;
   }
 
-  int routeIndex = activeLeg;
+  int routeIndex = active;
   if(routeIndex != map::INVALID_INDEX_VALUE)
   {
     if(routeIndex >= size())
@@ -324,7 +326,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 
     float distToCurrent = 0.f;
 
-    bool activeIsMissed = at(activeLeg).getProcedureLeg().isMissed();
+    bool activeIsMissed = at(active).getProcedureLeg().isMissed();
 
     // Ignore missed approach legs until the active is a missed approach leg
     if(!at(routeIndex).getProcedureLeg().isMissed() || activeIsMissed)
@@ -602,12 +604,7 @@ bool Route::canCalcRoute() const
   return getFlightplan().getEntries().size() >= 2;
 }
 
-void Route::clearAllProcedures()
-{
-  clearProcedures(proc::PROCEDURE_ALL);
-}
-
-void Route::clearProcedures(proc::MapProcedureTypes type)
+void Route::clearProcedureLegs(proc::MapProcedureTypes type)
 {
   // Clear procedure legs
   if(type & proc::PROCEDURE_SID)
@@ -625,11 +622,22 @@ void Route::clearProcedures(proc::MapProcedureTypes type)
   if(type & proc::PROCEDURE_APPROACH)
     arrivalLegs.clearApproach();
 
+  // Remove legs from flight plan and route legs
+  eraseProcedureLegs(type);
+}
+
+void Route::removeProcedureLegs()
+{
+  removeProcedureLegs(proc::PROCEDURE_ALL);
+}
+
+void Route::removeProcedureLegs(proc::MapProcedureTypes type)
+{
+  clearProcedureLegs(type);
+
   // Remove properties from flight plan
   clearFlightplanProcedureProperties(type);
 
-  // Remove legs from flight plan and route legs
-  eraseProcedureLegs(type);
   updateAll();
 }
 
@@ -704,6 +712,26 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder)
   ProcedureQuery::extractLegsForFlightplanProperties(flightplan.getProperties(), arrivalLegs, starLegs, departureLegs);
 }
 
+void Route::removeRouteLegs()
+{
+  QVector<int> indexes;
+
+  // Collect indexes to delete in reverse order
+  for(int i = size() - 2; i > 0; i--)
+  {
+    const RouteLeg& routeLeg = at(i);
+    if(routeLeg.isRoute())
+      indexes.append(i);
+  }
+
+  // Delete in route legs and flight plan from the end
+  for(int i = 0; i < indexes.size(); i++)
+  {
+    removeAt(indexes.at(i));
+    flightplan.getEntries().removeAt(indexes.at(i));
+  }
+}
+
 void Route::eraseProcedureLegs(proc::MapProcedureTypes type)
 {
   QVector<int> indexes;
@@ -732,15 +760,21 @@ void Route::updateAll()
   updateBoundingRect();
 }
 
-void Route::updateIndicesAndOffsets()
+int Route::adjustedActiveLeg() const
 {
-  if(activeLeg < map::INVALID_INDEX_VALUE)
+  int retval = activeLeg;
+  if(retval < map::INVALID_INDEX_VALUE)
   {
     // Put the active back into bounds
-    activeLeg = std::min(activeLeg, size() - 1);
-    activeLeg = std::max(activeLeg, 0);
+    retval = std::min(retval, size() - 1);
+    retval = std::max(retval, 0);
   }
+  return retval;
+}
 
+void Route::updateIndicesAndOffsets()
+{
+  activeLeg = adjustedActiveLeg();
   departureLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
   arrivalLegsOffset = map::INVALID_INDEX_VALUE;
@@ -962,6 +996,24 @@ int Route::getNearestRouteLegResult(const atools::geo::Pos& pos,
     lineDistanceResult = minResult;
 
   return index;
+}
+
+const RouteLeg& Route::getStartAfterProcedure() const
+{
+  if(hasAnyDepartureProcedure())
+    return at(departureLegsOffset + departureLegs.size() - 1);
+  else
+    return first();
+}
+
+const RouteLeg& Route::getDestinationBeforeProcedure() const
+{
+  if(hasAnyStarProcedure())
+    return at(starLegsOffset);
+  else if(hasAnyArrivalProcedure())
+    return at(arrivalLegsOffset);
+
+  return last();
 }
 
 QDebug operator<<(QDebug out, const Route& route)
