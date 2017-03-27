@@ -359,11 +359,11 @@ void DatabaseManager::updateSimSwitchActions()
 /* User changed simulator in main menu */
 void DatabaseManager::switchSimFromMainMenu()
 {
-  qDebug() << "switchSim";
+  qDebug() << Q_FUNC_INFO;
 
   QAction *action = dynamic_cast<QAction *>(sender());
 
-  if(action != nullptr)
+  if(action != nullptr && currentFsType != action->data().value<atools::fs::FsPaths::SimulatorType>())
   {
     // Disconnect all queries
     emit preDatabaseLoad();
@@ -378,6 +378,8 @@ void DatabaseManager::switchSimFromMainMenu()
     // Reopen all with new database
     emit postDatabaseLoad(currentFsType);
     mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
+
+    saveState();
   }
 }
 
@@ -490,6 +492,8 @@ void DatabaseManager::run()
 
   // Reconnect all queries
   emit postDatabaseLoad(currentFsType);
+
+  saveState();
 }
 
 /* Shows scenery database loading dialog.

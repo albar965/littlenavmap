@@ -115,8 +115,12 @@ private:
   void mapObjectByIdent(map::MapSearchResult& result, map::MapObjectTypes type, const QString& ident,
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
+
+  int findTransitionLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, float distance, int size);
+  int findApproachLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
+                        const QString& runway, float distance, int size);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
-                         const QString& suffix, float distance, int size, bool transition);
+                         const QString& suffix, const QString& runway, float distance, int size, bool transition);
 
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *approachLegQuery = nullptr, *transitionLegQuery = nullptr,

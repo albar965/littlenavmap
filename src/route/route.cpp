@@ -1019,18 +1019,18 @@ const RouteLeg& Route::getDestinationBeforeProcedure() const
 QDebug operator<<(QDebug out, const Route& route)
 {
   out << "Route ======================" << endl;
-  out << "Departure ======================" << endl;
-  out << "offset" << route.getDepartureLegsOffset() << endl;
-  out << route.getDepartureLegs() << endl;
-  out << "STAR ======================" << endl;
-  out << "offset" << route.getStarLegsOffset() << endl;
-  out << route.getStarLegs() << endl;
-  out << "Arrival ======================" << endl;
-  out << "offset" << route.getArrivalLegsOffset() << endl;
-  out << route.getArrivalLegs() << endl;
-
+  out << route.getFlightplan().getProperties() << endl;
   for(int i = 0; i < route.size(); ++i)
     out << i << route.at(i) << endl;
+  out << "Departure ===========" << endl;
+  out << "offset" << route.getDepartureLegsOffset() << endl;
+  out << route.getDepartureLegs() << endl;
+  out << "STAR ===========" << endl;
+  out << "offset" << route.getStarLegsOffset() << endl;
+  out << route.getStarLegs() << endl;
+  out << "Arrival ========" << endl;
+  out << "offset" << route.getArrivalLegsOffset() << endl;
+  out << route.getArrivalLegs() << endl;
   out << "======================" << endl;
 
   return out;

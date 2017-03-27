@@ -133,7 +133,6 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   treeWidget->viewport()->installEventFilter(treeEventFilter);
 
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &ProcedureSearch::resetSearch);
-
 }
 
 ProcedureSearch::~ProcedureSearch()
@@ -193,16 +192,15 @@ void ProcedureSearch::preDatabaseLoad()
 
   itemIndex.clear();
   itemLoadedIndex.clear();
-  currentAirport.position = atools::geo::Pos();
+  currentAirport = map::MapAirport();
   recentTreeState.clear();
 }
 
 void ProcedureSearch::postDatabaseLoad()
 {
-  updateTreeHeader();
-
-  WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
-  procedureQuery->setCurrentSimulator(mainWindow->getCurrentSimulator());
+  resetSearch();
+  updateFilterBoxes();
+  updateHeaderLabel();
 }
 
 void ProcedureSearch::showProcedures(map::MapAirport airport)
@@ -226,7 +224,7 @@ void ProcedureSearch::showProcedures(map::MapAirport airport)
 
   currentAirport = airport;
 
-  fillRunwayFilter();
+  updateFilterBoxes();
   fillApproachTreeWidget();
 
   restoreTreeViewState(recentTreeState.value(currentAirport.id));
@@ -277,8 +275,11 @@ void ProcedureSearch::clearRunwayFilter()
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);
 }
 
-void ProcedureSearch::fillRunwayFilter()
+void ProcedureSearch::updateFilterBoxes()
 {
+  Ui::MainWindow *ui = mainWindow->getUi();
+  ui->comboBoxProcedureSearchFilter->setHidden(!mainWindow->hasCurrentSimulatorSidStarSupport());
+
   clearRunwayFilter();
 
   if(currentAirport.isValid())
@@ -425,7 +426,7 @@ void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   mainWindow->getMapQuery()->getAirportById(currentAirport, settings.valueInt(lnm::APPROACHTREE_AIRPORT, -1));
-  fillRunwayFilter();
+  updateFilterBoxes();
 
   Ui::MainWindow *ui = mainWindow->getUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter,

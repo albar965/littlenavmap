@@ -475,8 +475,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     const RouteLeg& leg = legList.route.at(routeIndex);
     int symx = waypointX.at(--waypointIndex);
 
-    // Draw all airport except destination
-    if(leg.getMapObjectType() == map::AIRPORT && routeIndex == legList.route.size() - 1)
+    // Draw all airport except destination and departure
+    if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < legList.route.size())
     {
       symPainter.drawAirportSymbol(&painter, leg.getAirport(), symx, flightplanY, 10, false, false);
       symPainter.drawAirportText(&painter, leg.getAirport(), symx - 5, flightplanY + 22,
@@ -486,12 +486,21 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   if(!legList.route.isEmpty())
   {
-    // Draw destination always on the right also if there are approach procedures
-    const RouteLeg& leg = legList.route.last();
-    if(leg.getMapObjectType() == map::AIRPORT)
+    // Draw departure always on the left also if there are departure procedures
+    const RouteLeg& departureLeg = legList.route.first();
+    if(departureLeg.getMapObjectType() == map::AIRPORT)
     {
-      symPainter.drawAirportSymbol(&painter, leg.getAirport(), X0 + w, flightplanY, 10, false, false);
-      symPainter.drawAirportText(&painter, leg.getAirport(), X0 + w - 5, flightplanY + 22,
+      symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), X0, flightplanY, 10, false, false);
+      symPainter.drawAirportText(&painter, departureLeg.getAirport(), X0 - 5, flightplanY + 22,
+                                 OptionData::instance().getDisplayOptions(), flags, 10, false);
+    }
+
+    // Draw destination always on the right also if there are approach procedures
+    const RouteLeg& destinationLeg = legList.route.last();
+    if(destinationLeg.getMapObjectType() == map::AIRPORT)
+    {
+      symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), X0 + w, flightplanY, 10, false, false);
+      symPainter.drawAirportText(&painter, destinationLeg.getAirport(), X0 + w - 5, flightplanY + 22,
                                  OptionData::instance().getDisplayOptions(), flags, 10, false);
     }
   }

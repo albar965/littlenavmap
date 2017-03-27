@@ -134,9 +134,9 @@ MainWindow::MainWindow()
     infoQuery = new InfoQuery(databaseManager->getDatabase());
     infoQuery->initQueries();
 
-    approachQuery = new ProcedureQuery(databaseManager->getDatabase(), mapQuery);
-    approachQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
-    approachQuery->initQueries();
+    procedureQuery = new ProcedureQuery(databaseManager->getDatabase(), mapQuery);
+    procedureQuery->setCurrentSimulator(databaseManager->getCurrentSimulator());
+    procedureQuery->initQueries();
 
     // Add actions for flight simulator database switch in main menu
     databaseManager->insertSimSwitchActions(ui->actionDatabaseFiles, ui->menuDatabase);
@@ -239,7 +239,7 @@ MainWindow::~MainWindow()
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
   qDebug() << Q_FUNC_INFO << "delete approachQuery";
-  delete approachQuery;
+  delete procedureQuery;
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
@@ -1531,7 +1531,7 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
   {
     if(approachRef.hasApproachAndTransitionIds())
     {
-      const proc::MapProcedureLegs *legs = approachQuery->getTransitionLegs(airport, approachRef.transitionId);
+      const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, approachRef.transitionId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1539,7 +1539,7 @@ void MainWindow::approachSelected(const proc::MapProcedureRef& approachRef)
     }
     else if(approachRef.hasApproachOnlyIds() && !approachRef.isLeg())
     {
-      const proc::MapProcedureLegs *legs = approachQuery->getApproachLegs(airport, approachRef.approachId);
+      const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(airport, approachRef.approachId);
       if(legs != nullptr)
         mapWidget->changeApproachHighlight(*legs);
       else
@@ -1562,9 +1562,9 @@ void MainWindow::approachLegSelected(const proc::MapProcedureRef& approachRef)
 
     map::MapAirport airport = mapQuery->getAirportById(approachRef.airportId);
     if(approachRef.transitionId != -1)
-      leg = approachQuery->getTransitionLeg(airport, approachRef.legId);
+      leg = procedureQuery->getTransitionLeg(airport, approachRef.legId);
     else
-      leg = approachQuery->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
+      leg = procedureQuery->getApproachLeg(airport, approachRef.approachId, approachRef.legId);
 
     if(leg != nullptr)
     {
@@ -1632,9 +1632,14 @@ void MainWindow::setDetailLabelText(const QString& text)
   detailLabel->setText(text);
 }
 
-atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator()
+atools::fs::FsPaths::SimulatorType MainWindow::getCurrentSimulator() const
 {
   return databaseManager->getCurrentSimulator();
+}
+
+bool MainWindow::hasCurrentSimulatorSidStarSupport() const
+{
+  return databaseManager->getCurrentSimulator() == atools::fs::FsPaths::P3D_V3;
 }
 
 atools::sql::SqlDatabase *MainWindow::getDatabase() const
@@ -2046,7 +2051,7 @@ void MainWindow::preDatabaseLoad()
     weatherReporter->preDatabaseLoad();
     infoQuery->deInitQueries();
     mapQuery->deInitQueries();
-    approachQuery->deInitQueries();
+    procedureQuery->deInitQueries();
 
     clearWeatherContext();
   }
@@ -2057,12 +2062,14 @@ void MainWindow::preDatabaseLoad()
 /* Call other other classes to reopen queries */
 void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
+  procedureQuery->setCurrentSimulator(getCurrentSimulator());
+
   qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
   {
     mapQuery->initQueries();
     infoQuery->initQueries();
-    approachQuery->initQueries();
+    procedureQuery->initQueries();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
     mapWidget->postDatabaseLoad();

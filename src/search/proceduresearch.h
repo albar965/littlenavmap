@@ -151,7 +151,7 @@ private:
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int index);
   void clearRunwayFilter();
-  void fillRunwayFilter();
+  void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
 

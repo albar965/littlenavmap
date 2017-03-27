@@ -140,7 +140,8 @@ public:
 
   void setDetailLabelText(const QString& text);
 
-  atools::fs::FsPaths::SimulatorType getCurrentSimulator();
+  atools::fs::FsPaths::SimulatorType getCurrentSimulator() const;
+  bool hasCurrentSimulatorSidStarSupport() const;
 
   atools::sql::SqlDatabase *getDatabase() const;
 
@@ -156,7 +157,7 @@ public:
 
   ProcedureQuery *getApproachQuery() const
   {
-    return approachQuery;
+    return procedureQuery;
   }
 
   bool buildWeatherContextForInfo(map::WeatherContext& weatherContext,
@@ -299,7 +300,7 @@ private:
   /* Database query helpers and caches */
   MapQuery *mapQuery = nullptr;
   InfoQuery *infoQuery = nullptr;
-  ProcedureQuery *approachQuery = nullptr;
+  ProcedureQuery *procedureQuery = nullptr;
 
   QTimer weatherUpdateTimer;
 

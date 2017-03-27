@@ -1112,7 +1112,7 @@ void ProcedureQuery::initQueries()
                          "from approach where approach_id = :id");
 
   approachIdByNameQuery = new SqlQuery(db);
-  approachIdByNameQuery->prepare("select approach_id, suffix from approach "
+  approachIdByNameQuery->prepare("select approach_id, suffix , runway_name from approach "
                                  "where fix_ident = :fixident and type = :type and airport_id = :apid");
 
   transitionIdByNameQuery = new SqlQuery(db);
@@ -1172,6 +1172,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   if(type & proc::PROCEDURE_SID)
   {
     properties.remove("sidappr");
+    properties.remove("sidapprrw");
     properties.remove("sidapprdistance");
     properties.remove("sidapprsize");
   }
@@ -1209,6 +1210,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   {
     properties.remove("approach");
     properties.remove("approachtype");
+    properties.remove("approachrw");
     properties.remove("approachsuffix");
     properties.remove("approachdistance");
     properties.remove("approachsize");
@@ -1231,6 +1233,7 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
     if(!departureLegs.approachFixIdent.isEmpty())
     {
       properties.insert("sidappr", departureLegs.approachFixIdent);
+      properties.insert("sidapprrw", departureLegs.runwayEnd.name);
       properties.insert("sidapprdistance", QString::number(departureLegs.approachDistance, 'f', 1));
       properties.insert("sidapprsize", QString::number(departureLegs.approachLegs.size()));
     }
@@ -1266,6 +1269,7 @@ void ProcedureQuery::extractLegsForFlightplanProperties(QHash<QString, QString>&
     {
       properties.insert("approach", arrivalLegs.approachFixIdent);
       properties.insert("approachtype", arrivalLegs.approachType);
+      properties.insert("approachrw", arrivalLegs.runwayEnd.name);
       properties.insert("approachsuffix", arrivalLegs.approachSuffix);
       properties.insert("approachdistance", QString::number(arrivalLegs.approachDistance, 'f', 1));
       properties.insert("approachsize", QString::number(arrivalLegs.approachLegs.size()));
@@ -1291,9 +1295,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     approachIdByNameQuery->bindValue(":type", "GPS");
     approachIdByNameQuery->bindValue(":apid", departure.id);
 
-    sidApprId = findProcedureLegId(departure, approachIdByNameQuery, "D",
-                                   properties.value("sidapprdistance").toFloat(),
-                                   properties.value("sidapprsize").toInt(), false /* transition */);
+    sidApprId = findApproachLegId(departure, approachIdByNameQuery,
+                                  "D",
+                                  properties.value("sidapprrw"),
+                                  properties.value("sidapprdistance").toFloat(),
+                                  properties.value("sidapprsize").toInt());
     if(sidApprId == -1)
     {
       qWarning() << "Loading of SID" << properties.value("sidappr") << "failed";
@@ -1308,9 +1314,9 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     transitionIdByNameQuery->bindValue(":type", "F");
     transitionIdByNameQuery->bindValue(":apprid", sidApprId);
 
-    sidTransId = findProcedureLegId(departure, transitionIdByNameQuery, QString(),
-                                    properties.value("sidtransdistance").toFloat(),
-                                    properties.value("sidtranssize").toInt(), true /* transition */);
+    sidTransId = findTransitionLegId(departure, transitionIdByNameQuery,
+                                     properties.value("sidtransdistance").toFloat(),
+                                     properties.value("sidtranssize").toInt());
     if(sidTransId == -1)
     {
       qWarning() << "Loading of SID transition" << properties.value("sidtrans") << "failed";
@@ -1325,10 +1331,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     approachIdByNameQuery->bindValue(":type", properties.value("approachtype"));
     approachIdByNameQuery->bindValue(":apid", destination.id);
 
-    approachId = findProcedureLegId(destination, approachIdByNameQuery,
-                                    properties.value("approachsuffix"),
-                                    properties.value("approachdistance").toFloat(),
-                                    properties.value("approachsize").toInt(), false /* transition */);
+    approachId = findApproachLegId(destination, approachIdByNameQuery,
+                                   properties.value("approachsuffix"),
+                                   properties.value("approachrw"),
+                                   properties.value("approachdistance").toFloat(),
+                                   properties.value("approachsize").toInt());
     if(approachId == -1)
     {
       qWarning() << "Loading of approach" << properties.value("approach") << "failed";
@@ -1343,9 +1350,9 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     transitionIdByNameQuery->bindValue(":type", properties.value("transitiontype"));
     transitionIdByNameQuery->bindValue(":apprid", approachId);
 
-    transitionId = findProcedureLegId(destination, transitionIdByNameQuery, QString(),
-                                      properties.value("transitiondistance").toFloat(),
-                                      properties.value("transitionsize").toInt(), true /* transition */);
+    transitionId = findTransitionLegId(destination, transitionIdByNameQuery,
+                                       properties.value("transitiondistance").toFloat(),
+                                       properties.value("transitionsize").toInt());
     if(transitionId == -1)
     {
       qWarning() << "Loading of transition" << properties.value("transition") << "failed";
@@ -1360,9 +1367,11 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     approachIdByNameQuery->bindValue(":type", "GPS");
     approachIdByNameQuery->bindValue(":apid", destination.id);
 
-    starId = findProcedureLegId(destination, approachIdByNameQuery, "A",
-                                properties.value("stardistance").toFloat(),
-                                properties.value("starsize").toInt(), false /* transition */);
+    starId = findApproachLegId(destination, approachIdByNameQuery,
+                               "A",
+                               QString(), // No runway
+                               properties.value("stardistance").toFloat(),
+                               properties.value("starsize").toInt());
     if(starId == -1)
     {
       qWarning() << "Loading of STAR" << properties.value("star") << "failed";
@@ -1377,9 +1386,9 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     transitionIdByNameQuery->bindValue(":type", "F");
     transitionIdByNameQuery->bindValue(":apprid", starId);
 
-    starTransId = findProcedureLegId(destination, transitionIdByNameQuery, QString(),
-                                     properties.value("startransdistance").toFloat(),
-                                     properties.value("startranssize").toInt(), true /* transition */);
+    starTransId = findTransitionLegId(destination, transitionIdByNameQuery,
+                                      properties.value("startransdistance").toFloat(),
+                                      properties.value("startranssize").toInt());
     if(starTransId == -1)
     {
       qWarning() << "Loading of STAR transition" << properties.value("startrans") << "failed";
@@ -1387,7 +1396,7 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
 
-  if(!error)  // load all or nothing in case of error
+  if(!error) // load all or nothing in case of error
   {
     if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
     {
@@ -1443,8 +1452,21 @@ bool ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   return !error;
 }
 
+int ProcedureQuery::findTransitionLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
+                                        float distance, int size)
+{
+  return findProcedureLegId(airport, query, QString(), QString(), distance, size, true);
+}
+
+int ProcedureQuery::findApproachLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
+                                      const QString& suffix, const QString& runway, float distance, int size)
+{
+  return findProcedureLegId(airport, query, suffix, runway, distance, size, false);
+}
+
 int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
-                                       const QString& suffix, float distance, int size, bool transition)
+                                       const QString& suffix, const QString& runway,
+                                       float distance, int size, bool transition)
 {
   int procedureId = -1;
   query->exec();
@@ -1452,7 +1474,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
   while(query->next())
   {
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
-    if(!transition && suffix != query->value("suffix").toString())
+    if(!transition && (suffix != query->value("suffix").toString() || runway != query->value("runway_name").toString()))
       continue;
 
     ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
@@ -1477,7 +1499,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
       int legsize = transition ? legs->transitionLegs.size() : legs->approachLegs.size();
 
       if(legs != nullptr &&
-         (!(distance < map::INVALID_DISTANCE_VALUE) || atools::almostEqual(legdist, distance, 0.5f)) &&
+         (!(distance < map::INVALID_DISTANCE_VALUE) || atools::almostEqual(legdist, distance, 0.2f)) &&
          (size == -1 || size == legsize))
       {
         procedureId = id;

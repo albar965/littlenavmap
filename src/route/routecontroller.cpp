@@ -608,6 +608,12 @@ bool RouteController::appendFlightplan(const QString& filename)
 
     RouteCommand *undoCommand = preChange(tr("Append"));
 
+    // Remove arrival from the save properites too
+    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
+
+    // Remove all procedure legs from route
+    route.clearProcedureLegs(proc::PROCEDURE_ALL);
+
     for(const FlightplanEntry& entry : flightplan.getEntries())
       route.getFlightplan().getEntries().append(entry);
 
@@ -615,9 +621,8 @@ bool RouteController::appendFlightplan(const QString& filename)
     route.getFlightplan().setDestinationIdent(flightplan.getDestinationIdent());
     route.getFlightplan().setDestinationPosition(flightplan.getDestinationPosition());
 
-    route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
-
     createRouteLegsFromFlightplan();
+    loadProceduresFromFlightplan(false /* quiet */);
     route.updateAll();
 
     updateTableModel();
