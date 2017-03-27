@@ -990,7 +990,7 @@ void DatabaseManager::updateDialogInfo()
                 arg(util.rowCount("boundary"));
   }
   else
-    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
+    tableText = DATABASE_INFO_TEXT.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
   databaseDialog->setHeader(metaText + tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
 }
