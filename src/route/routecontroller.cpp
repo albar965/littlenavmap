@@ -2480,18 +2480,22 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
   if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
-    map::PosCourse position(simulatorData.getUserAircraft().getPosition(),
-                            simulatorData.getUserAircraft().getTrackDegTrue());
+    const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraft();
 
-    int previousRouteLeg = route.getActiveLegIndexCorrected();
-    route.updateActiveLegAndPos(position);
-    int routeLeg = route.getActiveLegIndexCorrected();
+    map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
 
-    if(routeLeg != previousRouteLeg)
+    if(aircraft.getGroundSpeedKts() > 20.f)
     {
-      // Use corrected indexes to highlight initial fix
-      qDebug() << "new route leg" << previousRouteLeg << routeLeg;
-      highlightNextWaypoint(routeLeg);
+      int previousRouteLeg = route.getActiveLegIndexCorrected();
+      route.updateActiveLegAndPos(position);
+      int routeLeg = route.getActiveLegIndexCorrected();
+
+      if(routeLeg != previousRouteLeg)
+      {
+        // Use corrected indexes to highlight initial fix
+        qDebug() << "new route leg" << previousRouteLeg << routeLeg;
+        highlightNextWaypoint(routeLeg);
+      }
     }
 
     lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
