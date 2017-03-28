@@ -645,6 +645,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
     return;
 
   atools::util::PainterContextSaver saver(painter);
+  Q_UNUSED(saver);
 
   QColor backColor;
   if(atts.testFlag(textatt::ROUTE_BG_COLOR))
@@ -662,11 +663,14 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
       // Use an alpha channel for semi transparency
       backColor.setAlpha(transparency);
       painter->setBrush(backColor);
+      painter->setBackground(backColor);
     }
   }
-  else
-    // Fill background
+  else // Fill background
+  {
     painter->setBrush(backColor);
+    painter->setBackground(backColor);
+  }
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
      atts.testFlag(textatt::OVERLINE))

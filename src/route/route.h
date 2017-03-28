@@ -202,6 +202,7 @@ public:
     departureLegs = legs;
   }
 
+  /* Insert legs of procedures into flight plan and update all offsets and indexes */
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder);
 
   void removeRouteLegs();
@@ -213,6 +214,10 @@ public:
   void removeProcedureLegs();
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
+  /* Removes duplicate waypoints when transitioning from route to procedure and vice versa */
+  void removeDuplicateRouteLegs();
+
+  /* Needed to activate missed approach sequencing or not depending on visibility state */
   void setShownMapFeatures(map::MapObjectTypes types)
   {
     shownTypes = types;
@@ -231,10 +236,11 @@ public:
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
   void updateAll();
-  void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
 
   /* Set active leg and update all internal distances */
   void setActiveLeg(int value);
+
+  /* Set to no active leg */
   void resetActive();
 
   /* All couse values in the route are true since no navaid having magvar was found */
@@ -243,6 +249,7 @@ public:
     return trueCourse;
   }
 
+  /* true if type is airport at the given index and is after an arrival procedure (approach and transition) */
   bool isAirportAfterArrival(int index);
 
   /* Get approach and transition in one legs struct */
@@ -301,6 +308,8 @@ public:
   using QList<RouteLeg>::operator[];
 
 private:
+  void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
+
   /* Calculate all distances and courses for route map objects */
   void updateDistancesAndCourse();
   void updateBoundingRect();

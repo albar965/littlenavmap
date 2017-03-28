@@ -65,20 +65,20 @@ private:
   void paintWaypoint(const PaintContext *context, const QColor& col, int x, int y);
   void paintApproach(const PaintContext *context,
                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
-  void paintWaypointText(const PaintContext *context, int x, int y, const map::MapWaypoint& obj,
-                         const QStringList *addtionalText = nullptr);
-  void paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj,
-                    const QStringList *addtionalText = nullptr);
-  void paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj,
-                    const QStringList *addtionalText = nullptr);
-  void paintAirportText(const PaintContext *context, int x, int y, const map::MapAirport& obj);
-  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts);
+  void paintWaypointText(const PaintContext *context, int x, int y, const map::MapWaypoint& obj, bool drawAsRoute,
+                         const QStringList *additionalText = nullptr);
+  void paintNdbText(const PaintContext *context, int x, int y, const map::MapNdb& obj, bool drawAsRoute,
+                    const QStringList *additionalText = nullptr);
+  void paintVorText(const PaintContext *context, int x, int y, const map::MapVor& obj, bool drawAsRoute,
+                    const QStringList *additionalText = nullptr);
+  void paintAirportText(const PaintContext *context, int x, int y, bool drawAsRoute, const map::MapAirport& obj);
+  void paintText(const PaintContext *context, const QColor& color, int x, int y, const QStringList& texts, bool drawAsRoute);
   void paintUserpoint(const PaintContext *context, int x, int y);
 
   void drawSymbols(const PaintContext *context,
                    const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
-  void drawSymbolText(const PaintContext *context,
+  void drawRouteSymbolText(const PaintContext *context,
                       const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
 
   void paintApproachPoints(const PaintContext *context, const proc::MapProcedureLegs& legs, int index,

@@ -57,6 +57,8 @@
 
 #include <marble/GeoDataLineString.h>
 
+const float MIN_GROUND_SPEED_FOR_SEQUENCING = 30.f;
+
 // Route table colum headings
 const QList<QString> ROUTE_COLUMNS({QObject::tr("Ident"),
                                     QObject::tr("Region"),
@@ -929,6 +931,8 @@ bool RouteController::calculateRouteInternal(RouteFinder *routeFinder, atools::f
       QGuiApplication::restoreOverrideCursor();
       createRouteLegsFromFlightplan();
       loadProceduresFromFlightplan(true /* quiet */);
+
+      route.removeDuplicateRouteLegs();
       route.updateAll();
 
       updateTableModel();
@@ -2484,7 +2488,9 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
 
     map::PosCourse position(aircraft.getPosition(), aircraft.getTrackDegTrue());
 
-    if(aircraft.getGroundSpeedKts() > 20.f)
+    // if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED_FOR_SEQUENCING)
+    // Sequence only for airborne airplanes
+    if(!aircraft.isOnGround())
     {
       int previousRouteLeg = route.getActiveLegIndexCorrected();
       route.updateActiveLegAndPos(position);

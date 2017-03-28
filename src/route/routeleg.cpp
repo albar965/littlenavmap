@@ -437,6 +437,20 @@ int RouteLeg::getId() const
   return -1;
 }
 
+bool RouteLeg::isNavaidEqualTo(const RouteLeg& other) const
+{
+  if(waypoint.isValid() && other.waypoint.isValid())
+    return waypoint.id == other.waypoint.id;
+
+  if(vor.isValid() && other.vor.isValid())
+    return vor.id == other.vor.id;
+
+  if(ndb.isValid() && other.ndb.isValid())
+    return ndb.id == other.ndb.id;
+
+  return false;
+}
+
 int RouteLeg::getRange() const
 {
   if(type == map::INVALID)

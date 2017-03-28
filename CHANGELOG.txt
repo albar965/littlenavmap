@@ -1,3 +1,25 @@
+Version 1.3.3.devel
+
+* Disabled sequencing of active leg when aircraft is on ground
+* Flightplan procedure information is now incompatible to previous files. Had to add runway for finding procedures among duplicates.
+* Now resetting procedure search filters when changing simulator.
+* Approach filter combo box is now hidden if simulator is not P3D (which allows departure procedures only).
+* Enabled loading of airspace boundaries (not displayed yet).
+* Fixed problem with messed up procedures and crashes when appending flight plan or after switching simulators.
+* Routing now considers SID, STAR and approaches and calculates flight plan from end of SID to beginning of STAR or approach.
+* Sequencing of active route legs now stops before destination airport if arrival procedures are active.
+* Fixed direct route messing up procedure information.
+* Fixed crash and display errors in profile for arc procedure legs.
+* Suppressing invalid course values for initial legs (which have no length) in info window and on map.
+* Fixed missing TOD point at legs between procedures.
+* Added departure runway for SIDs in flight plan window header.
+* Certain settings like enabled map objects and selected simulator are now save immediately.
+
+derived from atools:
+* Fixed old problem with empty registry entries when detecting simulator.
+* Fixed reading of airspace boundaries and removed hack.
+* Reduced size of airspace enums in database.
+
 Version 1.3.2.devel
 
 * Changed GUI around procedures completely - added procedure search tab

@@ -92,6 +92,9 @@ public:
   /* Get database id of airport or navaid. -1 for invalid or user position. */
   int getId() const;
 
+  /* Compares only the navaids (waypoints, NDB and VOR) - this works also with route and approach legs*/
+  bool isNavaidEqualTo(const RouteLeg& other) const;
+
   /* Get position of airport or navaid. Source can be flight plan entry or database. */
   const atools::geo::Pos& getPosition() const;
 

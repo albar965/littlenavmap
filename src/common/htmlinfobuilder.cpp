@@ -54,6 +54,8 @@ using atools::fs::weather::Metar;
 const int SYMBOL_SIZE = 20;
 const float HELIPAD_ZOOM_METER = 200.f;
 
+const float MIN_GROUND_SPEED = 30.f;
+
 Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
 Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 
@@ -1512,7 +1514,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         timeAndDate(userAircaft, html);
 
-        if(aircraft.getGroundSpeedKts() > 20.f)
+        if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
         {
           float timeToDestination = distToDestNm / aircraft.getGroundSpeedKts();
           QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(timeToDestination * 3600.f));
@@ -1529,7 +1531,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(toTod > 0)
         {
           QString timeStr;
-          if(aircraft.getGroundSpeedKts() > 20.f)
+          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
             timeStr = tr(", ") + formatter::formatMinutesHoursLong(toTod / aircraft.getGroundSpeedKts());
 
           html.row2(tr("To Top of Descent:"), Unit::distNm(toTod) + timeStr);
@@ -1615,9 +1617,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
         {
           QString timeStr;
-          if(aircraft.getGroundSpeedKts() > 20.f)
-            timeStr = tr(", ") + formatter::formatMinutesHoursLong(
-              nearestLegDistance / aircraft.getGroundSpeedKts());
+          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+            timeStr = formatter::formatMinutesHoursLong(nearestLegDistance / aircraft.getGroundSpeedKts());
 
           // Not for arc legs
           if(routeLeg.isRoute() || !leg.isCircular())
@@ -1721,7 +1722,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.row2(tr("Fuel Flow:"), Unit::ffLbs(userAircaft->getFuelFlowPPH()) + ", " +
               Unit::ffGallon(userAircaft->getFuelFlowGPH()));
 
-    if(userAircaft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > 20.f)
+    if(userAircaft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
     {
       float hoursRemaining = userAircaft->getFuelTotalWeightLbs() / userAircaft->getFuelFlowPPH();
       float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
@@ -1729,7 +1730,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                 Unit::distNm(distanceRemaining));
     }
 
-    if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f && userAircaft->getGroundSpeedKts() > 20.f)
+    if(distToDestNm > 1.f && userAircaft->getFuelFlowPPH() > 1.f && userAircaft->getGroundSpeedKts() > MIN_GROUND_SPEED)
     {
       float neededFuelWeight = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowPPH();
       float neededFuelVol = distToDestNm / aircraft.getGroundSpeedKts() * userAircaft->getFuelFlowGPH();
