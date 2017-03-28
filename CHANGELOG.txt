@@ -1,7 +1,7 @@
 Version 1.3.3.devel
 
 * Disabled sequencing of active leg when aircraft is on ground
-* Flightplan procedure information is now incompatible to previous files. Had to add runway for finding procedures among duplicates.
+* Added runway to saved procedure information to allow finding of procedures among duplicates.
 * Now resetting procedure search filters when changing simulator.
 * Approach filter combo box is now hidden if simulator is not P3D (which allows departure procedures only).
 * Enabled loading of airspace boundaries (not displayed yet).

@@ -1474,7 +1474,8 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
   while(query->next())
   {
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
-    if(!transition && (suffix != query->value("suffix").toString() || runway != query->value("runway_name").toString()))
+    if(!transition && (suffix != query->value("suffix").toString() ||
+                       (!runway.isEmpty() && runway != query->value("runway_name").toString())))
       continue;
 
     ids.append(query->value(transition ? "transition_id" : "approach_id").toInt());
